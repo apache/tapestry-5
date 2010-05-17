@@ -15,6 +15,8 @@
 package org.apache.tapestry5.internal.services;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
@@ -22,30 +24,42 @@ import org.apache.tapestry5.dom.Node;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Func;
 import org.apache.tapestry5.ioc.internal.util.Operation;
+import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.javascript.InitializationPriority;
 
 public class DocumentLinkerImpl implements DocumentLinker
 {
     private final List<String> scripts = CollectionFactory.newList();
 
-    private final StringBuilder scriptBlock = new StringBuilder();
+    private final Map<InitializationPriority, StringBuilder> priorityToScript = CollectionFactory.newMap();
+
+    private final Map<InitializationPriority, JSONObject> priorityToInit = CollectionFactory.newMap();
 
     private final List<IncludedStylesheet> includedStylesheets = CollectionFactory.newList();
+
+    private final boolean compactJSON;
 
     private final boolean omitGeneratorMetaTag;
 
     private final String tapestryBanner;
+
+    private boolean hasDynamicScript;
 
     /**
      * @param omitGeneratorMetaTag
      *            via symbol configuration
      * @param tapestryVersion
      *            version of Tapestry framework (for meta tag)
+     * @param compactJSON
+     *            should JSON content be compact or pretty printed?
      */
-    public DocumentLinkerImpl(boolean omitGeneratorMetaTag, String tapestryVersion)
+    public DocumentLinkerImpl(boolean omitGeneratorMetaTag, String tapestryVersion, boolean compactJSON)
     {
         this.omitGeneratorMetaTag = omitGeneratorMetaTag;
 
         tapestryBanner = String.format("Apache Tapestry Framework (version %s)", tapestryVersion);
+
+        this.compactJSON = compactJSON;
     }
 
     public void addStylesheetLink(String styleURL, String media)
@@ -58,9 +72,29 @@ public class DocumentLinkerImpl implements DocumentLinker
         scripts.add(scriptURL);
     }
 
-    public void addScript(String script)
+    public void addScript(InitializationPriority priority, String script)
     {
-        scriptBlock.append(script);
+
+        StringBuilder builder = priorityToScript.get(priority);
+
+        if (builder == null)
+        {
+            builder = new StringBuilder();
+            priorityToScript.put(priority, builder);
+        }
+
+        builder.append(script);
+
+        builder.append("\n");
+
+        hasDynamicScript = true;
+    }
+
+    public void setInitialization(InitializationPriority priority, JSONObject initialization)
+    {
+        priorityToInit.put(priority, initialization);
+
+        hasDynamicScript = true;
     }
 
     /**
@@ -95,7 +129,7 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     private void addScriptElements(Element root)
     {
-        if (scripts.isEmpty() && scriptBlock.length() == 0)
+        if (scripts.isEmpty() && !hasDynamicScript)
             return;
 
         // This only applies when the document is an HTML document. This may need to change in the
@@ -113,7 +147,8 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         addScriptLinksForIncludedScripts(container, scripts);
 
-        addDynamicScriptBlock(findOrCreateElement(root, "body", false));
+        if (hasDynamicScript)
+            addDynamicScriptBlock(findOrCreateElement(root, "body", false));
     }
 
     private Element findOrCreateElement(Element root, String childElement, boolean atTop)
@@ -136,12 +171,55 @@ public class DocumentLinkerImpl implements DocumentLinker
      */
     protected void addDynamicScriptBlock(Element body)
     {
-        if (scriptBlock.length() == 0)
-            return;
+        StringBuilder block = new StringBuilder();
+
+        boolean wrapped = false;
+
+        for (InitializationPriority p : InitializationPriority.values())
+        {
+            if (p != InitializationPriority.IMMEDIATE && !wrapped
+                    && (priorityToScript.containsKey(p) || priorityToInit.containsKey(p)))
+            {
+
+                block.append("Tapestry.onDOMLoaded(function() {\n");
+
+                wrapped = true;
+            }
+
+            add(block, p);
+        }
+
+        if (wrapped)
+            block.append("});\n");
 
         Element e = body.element("script", "type", "text/javascript");
 
-        e.raw(scriptBlock.toString());
+        e.raw(block.toString());
+
+    }
+
+    private void add(StringBuilder block, InitializationPriority priority)
+    {
+        add(block, priorityToScript.get(priority));
+        add(block, priorityToInit.get(priority));
+    }
+
+    private void add(StringBuilder block, JSONObject init)
+    {
+        if (init == null)
+            return;
+
+        block.append("Tapestry.init(");
+        block.append(init.toString(compactJSON));
+        block.append(");\n");
+    }
+
+    private void add(StringBuilder block, StringBuilder content)
+    {
+        if (content == null)
+            return;
+
+        block.append(content);
     }
 
     /**

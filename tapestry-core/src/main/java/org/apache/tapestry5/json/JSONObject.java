@@ -34,14 +34,12 @@ package org.apache.tapestry5.json;
  * SOFTWARE.
  */
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-
-import java.io.CharArrayWriter;
-import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 /**
  * A JSONObject is an unordered collection of name/value pairs. Its external form is a string wrapped in curly braces
@@ -99,7 +97,7 @@ import java.util.Set;
  */
 @SuppressWarnings(
 { "CloneDoesntCallSuperClone" })
-public final class JSONObject
+public final class JSONObject extends JSONCollection
 {
 
     /**
@@ -802,85 +800,6 @@ public final class JSONObject
 
         }
 
-    }
-
-    /**
-     * Make a JSON text of this JSONObject. For compactness, no whitespace is added. If this would not result in a
-     * syntactically correct JSON text, then null will be returned instead
-     * <p/>
-     * Warning: This method assumes that the data structure is acyclical.
-     * <p>
-     * Starting in release 5.2, the result will be pretty printed for readability.
-     * 
-     * @return a printable, displayable, portable, transmittable representation of the object, beginning with
-     *         <code>{</code>&nbsp;<small>(left brace)</small> and ending with <code>}</code>&nbsp;<small>(right
-     *         brace)</small>.
-     */
-    @Override
-    public String toString()
-    {
-        return toString(this);
-    }
-
-    /**
-     * Prints the JSONArray as a compact string (not extra punctuation). This is, essentially, what
-     * Tapestry 5.1 did inside {@link #toString()}.
-     * 
-     * @since 5.2.0
-     */
-    public String toCompactString()
-    {
-        CharArrayWriter caw = new CharArrayWriter();
-        PrintWriter pw = new PrintWriter(caw);
-
-        print(pw);
-
-        pw.close();
-
-        return caw.toString();
-    }
-
-    /**
-     * Creates a {@link PrettyPrintSession} to print the value (a JSONArray or JSONObject).
-     * 
-     * @since 5.2.0
-     */
-    static String toString(Object value)
-    {
-        CharArrayWriter caw = new CharArrayWriter();
-        PrintWriter pw = new PrintWriter(caw);
-
-        JSONPrintSession session = new PrettyPrintSession(pw);
-
-        printValue(session, value);
-
-        pw.close();
-
-        return caw.toString();
-    }
-
-    /**
-     * Prints the JSONObject to the writer compactly (with no extra whitespace).
-     * 
-     * @since 5.2.0
-     */
-    public JSONObject print(PrintWriter writer)
-    {
-        print(new CompactSession(writer));
-
-        return this;
-    }
-
-    /**
-     * Prints the JSONObject to the writer using indentation (two spaces per indentation level).
-     * 
-     * @since 5.2.0
-     */
-    public JSONObject prettyPrint(PrintWriter writer)
-    {
-        print(new PrettyPrintSession(writer));
-
-        return this;
     }
 
     /**

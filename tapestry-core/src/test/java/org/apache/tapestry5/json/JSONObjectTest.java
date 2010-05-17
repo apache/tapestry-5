@@ -45,8 +45,7 @@ public class JSONObjectTest extends Assert
 
         JSONObject fullCopy = new JSONObject(master, "fred", "barney");
 
-        assertEquals(fullCopy.toString(), "{\n  \"fred\" : \"flintstone\",\n  \"barney\" : \"rubble\"\n"
-                + "}");
+        assertEquals(fullCopy.toString(), "{\n  \"fred\" : \"flintstone\",\n  \"barney\" : \"rubble\"\n" + "}");
 
         JSONObject limitedCopy2 = new JSONObject(master, "fred", "wilma");
         assertEquals(limitedCopy2.keys().size(), 1);
@@ -144,8 +143,7 @@ public class JSONObjectTest extends Assert
         object.accumulate(key, "beta");
         object.accumulate(key, "gamma");
 
-        assertEquals(object.toString(), "{\n  \"key\" : [\n    \"alpha\",\n    \"beta\",\n"
-                + "    \"gamma\"\n  ]\n}");
+        assertEquals(object.toString(), "{\n  \"key\" : [\n    \"alpha\",\n    \"beta\",\n" + "    \"gamma\"\n  ]\n}");
 
         JSONArray array = object.getJSONArray(key);
 
@@ -168,8 +166,7 @@ public class JSONObjectTest extends Assert
 
         array.put("gamma");
 
-        assertEquals(object.toString(), "{\n  \"key\" : [\n    \"alpha\",\n    \"beta\",\n"
-                + "    \"gamma\"\n  ]\n}");
+        assertEquals(object.toString(), "{\n  \"key\" : [\n    \"alpha\",\n    \"beta\",\n" + "    \"gamma\"\n  ]\n}");
     }
 
     @Test
@@ -198,8 +195,7 @@ public class JSONObjectTest extends Assert
 
         object.append(key, "beta");
 
-        assertEquals(object.toString(), "{\n  \"fubar\" : [\n    \"alpha\",\n    \"beta\"\n  ]\n"
-                + "}");
+        assertEquals(object.toString(), "{\n  \"fubar\" : [\n    \"alpha\",\n    \"beta\"\n  ]\n" + "}");
     }
 
     @Test
@@ -922,15 +918,8 @@ public class JSONObjectTest extends Assert
     {
         JSONObject o = new JSONObject("fred", "flintstone", "barney", "rubble");
 
-        CharArrayWriter caw = new CharArrayWriter();
-        PrintWriter pw = new PrintWriter(caw);
-
-        o.prettyPrint(pw);
-
-        String pretty = caw.toString();
-
-        assertEquals(o.toCompactString(), "{\"fred\":\"flintstone\",\"barney\":\"rubble\"}");
-        assertEquals(pretty, "{\n  \"fred\" : \"flintstone\",\n  \"barney\" : \"rubble\"\n}");
+        assertEquals(o.toString(true), "{\"fred\":\"flintstone\",\"barney\":\"rubble\"}");
+        assertEquals(o.toString(false), "{\n  \"fred\" : \"flintstone\",\n  \"barney\" : \"rubble\"\n}");
     }
 
     @Test
@@ -953,5 +942,13 @@ public class JSONObjectTest extends Assert
 
         assertEquals(compact, "[\"fred\",\"barney\"]");
         assertEquals(pretty, "[\n  \"fred\",\n  \"barney\"\n]");
+    }
+
+    @Test
+    public void nested_collection()
+    {
+        JSONObject outer = new JSONObject().put("coll", new JSONArray("fred", "barney"));
+
+        assertEquals(outer.toCompactString(), "{\"coll\":[\"fred\",\"barney\"]}");
     }
 }

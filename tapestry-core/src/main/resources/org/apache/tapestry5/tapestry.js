@@ -314,19 +314,36 @@ var Tapestry = {
 		Tapestry.ScriptManager.addStylesheets(reply.stylesheets);
 
 		Tapestry.ScriptManager.addScripts(reply.scripts, function() {
+			/* Let the caller do its thing first (i.e., modify the DOM). */
 			callback.call(this);
 
-			/*
-			 * After the callback updates the DOM (presumably), continue on with
-			 * evaluating the reply.script and other final steps.
-			 */
-
-			if (reply.script)
-				eval(reply.script);
-
-			Tapestry.onDomLoadedCallback();
-
+			Tapestry.executeReplyScripts(reply.script, reply.inits);
 		});
+	},
+
+	/**
+	 * Called from Tapestry.loadScriptsInReply to load the script block and any
+	 * initializations from the Ajax partial page render response. Calls
+	 * Tapestry.onDomLoadedCallback() last.
+	 * 
+	 * @param scriptBlock
+	 *            block of JavaScript to evaluate (may be null)
+	 * @param initializations
+	 *            array of parameters to pass to Tapestry.init(), one invocation
+	 *            per element (may be null)
+	 */
+	executeReplyScripts : function(scriptBlock, initializations) {
+
+		if (scriptBlock)
+			eval(scriptBlock);
+
+		if (initializations)
+			$A(initializations).each(function(spec) {
+				Tapestry.init(spec);
+			});
+
+		Tapestry.onDomLoadedCallback();
+
 	},
 
 	/**
@@ -2019,9 +2036,9 @@ Tapestry.ScriptManager = {
 
 /**
  * In the spirit of $(), $T() exists to access a hash of extra data about an
- * element. In release 5.1 and prior, a hash attached to the element by
- * Tapestry was returned. In 5.2, Prototype's storage object is returned, which
- * is less like to cause memory leaks in IE.
+ * element. In release 5.1 and prior, a hash attached to the element by Tapestry
+ * was returned. In 5.2, Prototype's storage object is returned, which is less
+ * like to cause memory leaks in IE.
  * 
  * @deprecated With no specific replacement
  * @param element

@@ -14,7 +14,9 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -25,14 +27,31 @@ public class PartialMarkupDocumentLinkerTest extends Assert
     {
         PartialMarkupDocumentLinker linker = new PartialMarkupDocumentLinker();
 
-        linker.addScript("foo();");
-        linker.addScript("bar();");
+        linker.addScript(InitializationPriority.NORMAL, "foo();");
+        linker.addScript(InitializationPriority.NORMAL, "bar();");
 
         JSONObject reply = new JSONObject();
 
         linker.commit(reply);
 
         assertEquals(reply.get("script"), "foo();\nbar();\n");
+    }
+
+    @Test
+    public void script_with_priorty()
+    {
+        PartialMarkupDocumentLinker linker = new PartialMarkupDocumentLinker();
+
+        linker.addScript(InitializationPriority.LATE, "late();");
+        linker.addScript(InitializationPriority.NORMAL, "normal();");
+        linker.addScript(InitializationPriority.IMMEDIATE, "immediate();");
+        linker.addScript(InitializationPriority.EARLY, "early();");
+
+        JSONObject reply = new JSONObject();
+
+        linker.commit(reply);
+
+        assertEquals(reply.get("script"), "immediate();\nearly();\nnormal();\nlate();\n");
     }
 
     @Test
@@ -67,6 +86,25 @@ public class PartialMarkupDocumentLinkerTest extends Assert
                 "{\"stylesheets\":[{\"href\":\"foo.css\",\"media\":\"print\"},{\"href\":\"bar.css\"}]}");
 
         assertEquals(reply, expected);
+    }
 
+    @Test
+    public void set_initialization()
+    {
+        PartialMarkupDocumentLinker linker = new PartialMarkupDocumentLinker();
+
+        JSONObject spec1 = new JSONObject("order", "immediate");
+        JSONObject spec2 = new JSONObject("order", "normal");
+
+        JSONObject reply = new JSONObject();
+
+        linker.setInitialization(InitializationPriority.NORMAL, spec2);
+        linker.setInitialization(InitializationPriority.IMMEDIATE, spec1);
+
+        linker.commit(reply);
+
+        JSONObject expected = new JSONObject().put("inits", new JSONArray(spec1, spec2));
+
+        assertEquals(reply, expected);
     }
 }

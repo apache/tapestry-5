@@ -1,10 +1,10 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -41,22 +41,29 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
 
     private final String outputEncoding;
 
+    private final boolean compactJSON;
+
     public AjaxPartialResponseRendererImpl(MarkupWriterFactory factory,
 
-                                           Request request,
+    Request request,
 
-                                           Response response,
+    Response response,
 
-                                           PartialMarkupRenderer partialMarkupRenderer,
+    PartialMarkupRenderer partialMarkupRenderer,
 
-                                           @Inject @Symbol(SymbolConstants.CHARSET)
-                                           String outputEncoding)
+    @Inject
+    @Symbol(SymbolConstants.CHARSET)
+    String outputEncoding,
+
+    @Symbol(SymbolConstants.COMPACT_JSON)
+    boolean compactJSON)
     {
         this.factory = factory;
         this.request = request;
         this.response = response;
         this.partialMarkupRenderer = partialMarkupRenderer;
         this.outputEncoding = outputEncoding;
+        this.compactJSON = compactJSON;
     }
 
     public void renderPartialPageMarkup() throws IOException
@@ -65,8 +72,7 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
         // separated, and trying to keep stateless and stateful (i.e., perthread scope) services
         // separated. So we inform the stateful queue service what it needs to do here ...
 
-        ContentType pageContentType =
-                (ContentType) request.getAttribute(InternalConstants.CONTENT_TYPE_ATTRIBUTE_NAME);
+        ContentType pageContentType = (ContentType) request.getAttribute(InternalConstants.CONTENT_TYPE_ATTRIBUTE_NAME);
 
         ContentType contentType = new ContentType(InternalConstants.JSON_MIME_TYPE, outputEncoding);
 
@@ -80,7 +86,10 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
 
         PrintWriter pw = response.getPrintWriter(contentType.toString());
 
-        pw.print(reply);
+        if (compactJSON)
+            reply.print(pw);
+        else
+            reply.prettyPrint(pw);
 
         pw.close();
     }

@@ -25,6 +25,7 @@ import org.apache.tapestry5.internal.services.javascript.JavascriptStackPathCons
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.IdAllocator;
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.JavascriptStack;
@@ -43,7 +44,7 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupport jss = new JavascriptSupportImpl(null, null, null, true);
+        JavascriptSupport jss = new JavascriptSupportImpl(null, null, null);
 
         assertEquals(jss.allocateClientId(resources), "tracy");
         assertEquals(jss.allocateClientId(resources), "tracy_0");
@@ -55,7 +56,7 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
     @Test
     public void commit_with_no_javascript()
     {
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(null, null, null, true);
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(null, null, null);
 
         jss.commit();
     }
@@ -65,11 +66,11 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
     {
         DocumentLinker linker = mockDocumentLinker();
 
-        linker.addScript("doSomething();\n");
+        linker.addScript(InitializationPriority.NORMAL, "doSomething();");
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null, new IdAllocator(), true, true);
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null, new IdAllocator(), true);
 
         jss.addScript("doSomething();");
 
@@ -86,11 +87,12 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
         JavascriptStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
         trainForCoreStack(linker, stackSource, pathConstructor);
 
-        linker.addScript("stackInit();\nTapestry.onDOMLoaded(function() {\ndoSomething();\n});");
+        linker.addScript(InitializationPriority.IMMEDIATE, "stackInit();");
+        linker.addScript(InitializationPriority.NORMAL, "doSomething();");
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor, true);
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor);
 
         jss.addScript("doSomething();");
 
@@ -150,70 +152,20 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void only_immediate_script_added()
+    public void add_script_passes_thru_to_document_linker()
     {
         DocumentLinker linker = mockDocumentLinker();
         JavascriptStackSource stackSource = mockJavascriptStackSource();
         JavascriptStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
         trainForEmptyCoreStack(linker, stackSource, pathConstructor);
 
-        linker.addScript("doSomething();\n");
+        linker.addScript(InitializationPriority.IMMEDIATE, "doSomething();");
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor, true);
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor);
 
         jss.addScript(InitializationPriority.IMMEDIATE, "doSomething();");
-
-        jss.commit();
-
-        verify();
-    }
-
-    @Test
-    public void script_within_priority_accumulates()
-    {
-        DocumentLinker linker = mockDocumentLinker();
-        JavascriptStackSource stackSource = mockJavascriptStackSource();
-        JavascriptStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
-        trainForEmptyCoreStack(linker, stackSource, pathConstructor);
-
-        linker
-                .addScript("immediate1();\nimmediate2();\nTapestry.onDOMLoaded(function() {\nnormal1();\nnormal2();\n});");
-
-        replay();
-
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor, true);
-
-        jss.addScript(InitializationPriority.IMMEDIATE, "immediate1();");
-        jss.addScript("normal1();");
-        jss.addScript(InitializationPriority.IMMEDIATE, "immediate2();");
-        jss.addScript("normal2();");
-
-        jss.commit();
-
-        verify();
-    }
-
-    @Test
-    public void priority_order()
-    {
-        DocumentLinker linker = mockDocumentLinker();
-        JavascriptStackSource stackSource = mockJavascriptStackSource();
-        JavascriptStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
-        trainForCoreStack(linker, stackSource, pathConstructor);
-
-        linker.addScript("stackInit();\nTapestry.onDOMLoaded(function() {\nearly();\nnormal();\nlate();\n});");
-
-        replay();
-
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor, true);
-
-        jss.addScript(InitializationPriority.EARLY, "early();");
-        jss.addScript(InitializationPriority.NORMAL, "normal();");
-        jss.addScript(InitializationPriority.LATE, "late();");
-
-        jss.commit();
 
         verify();
     }
@@ -232,7 +184,7 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor, true);
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor);
 
         jss.importJavascriptLibrary(library);
 
@@ -264,14 +216,15 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
         linker.addScriptLink("stack.js");
         linker.addStylesheetLink("stack.css", null);
 
-        linker.addScript("stackInit();\ncustomInit();\n");
+        linker.addScript(InitializationPriority.IMMEDIATE, "stackInit();");
+        linker.addScript(InitializationPriority.IMMEDIATE, "customInit();");
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor, true);
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor);
 
         jss.importStack("custom");
-        
+
         // Duplicate calls are ignored.
         jss.importStack("Custom");
 
@@ -296,7 +249,7 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor, true);
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor);
 
         jss.importJavascriptLibrary(library1);
         jss.importJavascriptLibrary(library2);
@@ -308,22 +261,26 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void init_once()
+    public void initialize_calls_are_aggregated_within_priority()
     {
         DocumentLinker linker = mockDocumentLinker();
         JavascriptStackSource stackSource = mockJavascriptStackSource();
         JavascriptStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
         trainForEmptyCoreStack(linker, stackSource, pathConstructor);
 
-        JSONObject spec = new JSONObject("clientId", "chuck");
+        JSONObject spec1 = new JSONObject("clientId", "chuck");
+        JSONObject spec2 = new JSONObject("clientId", "fred");
 
-        linker.addScript("Tapestry.init({\"setup\":[{\"clientId\":\"chuck\"}]});\n");
+        JSONObject aggregated = new JSONObject().put("setup", new JSONArray(spec1, spec2));
+
+        linker.setInitialization(InitializationPriority.IMMEDIATE, aggregated);
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor, true);
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor);
 
-        jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", spec);
+        jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", spec1);
+        jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", spec2);
 
         jss.commit();
 
@@ -339,35 +296,16 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
         JavascriptStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
         trainForEmptyCoreStack(linker, stackSource, pathConstructor);
 
-        linker.addScript("Tapestry.init({\"setup\":[\"chuck\"]});\n");
+        JSONObject aggregated = new JSONObject().put("setup", new JSONArray("chuck", "charley"));
+
+        linker.setInitialization(InitializationPriority.IMMEDIATE, aggregated);
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor, true);
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor);
 
         jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", "chuck");
-
-        jss.commit();
-
-        verify();
-    }
-
-    @Test
-    public void init_with_string_multiple()
-    {
-        DocumentLinker linker = mockDocumentLinker();
-        JavascriptStackSource stackSource = mockJavascriptStackSource();
-        JavascriptStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
-        trainForEmptyCoreStack(linker, stackSource, pathConstructor);
-
-        linker.addScript("Tapestry.init({\"setup\":[\"chuck\",\"pat\"]});\n");
-
-        replay();
-
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor, true);
-
-        jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", "chuck");
-        jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", "pat");
+        jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", "charley");
 
         jss.commit();
 
@@ -382,64 +320,15 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
         JavascriptStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
         trainForEmptyCoreStack(linker, stackSource, pathConstructor);
 
-        linker.addScript("Tapestry.onDOMLoaded(function() {\nTapestry.init({\"setup\":[\"chuck\"]});\n});");
+        JSONObject aggregated = new JSONObject().put("setup", new JSONArray().put("chuck"));
+
+        linker.setInitialization(InitializationPriority.NORMAL, aggregated);
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor, true);
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor);
 
         jss.addInitializerCall("setup", "chuck");
-
-        jss.commit();
-
-        verify();
-    }
-
-    @Test
-    public void init_multiple()
-    {
-        DocumentLinker linker = mockDocumentLinker();
-        JavascriptStackSource stackSource = mockJavascriptStackSource();
-        JavascriptStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
-        trainForEmptyCoreStack(linker, stackSource, pathConstructor);
-
-        JSONObject spec1 = new JSONObject("clientId", "chuck");
-        JSONObject spec2 = new JSONObject("clientId", "tony");
-
-        linker.addScript("Tapestry.init({\"setup\":[{\"clientId\":\"chuck\"},{\"clientId\":\"tony\"}]});\n");
-
-        replay();
-
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor, true);
-
-        jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", spec1);
-        jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", spec2);
-
-        jss.commit();
-
-        verify();
-    }
-
-    @Test
-    public void init_default_is_normal()
-    {
-
-        DocumentLinker linker = mockDocumentLinker();
-        JavascriptStackSource stackSource = mockJavascriptStackSource();
-        JavascriptStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
-        trainForEmptyCoreStack(linker, stackSource, pathConstructor);
-
-        linker.addScript("Tapestry.onDOMLoaded(function() {\nTapestry.init({\"early\":[{\"id\":\"foo\"}]});\n"
-                + "Tapestry.init({\"normal\":[{\"id\":\"bar\"}]});\n"
-                + "Tapestry.init({\"late\":[{\"id\":\"baz\"}]});\n" + "});");
-
-        replay();
-
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor, true);
-
-        jss.addInitializerCall(InitializationPriority.EARLY, "early", new JSONObject("id", "foo"));
-        jss.addInitializerCall("normal", new JSONObject("id", "bar"));
-        jss.addInitializerCall(InitializationPriority.LATE, "late", new JSONObject("id", "baz"));
 
         jss.commit();
 
@@ -456,7 +345,7 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null, true);
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null);
 
         jss.importStylesheet(stylesheet, "print");
 
@@ -474,7 +363,7 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null, true);
+        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null);
 
         jss.importStylesheet("style.css", "print");
         jss.importStylesheet("style.css", "screen");

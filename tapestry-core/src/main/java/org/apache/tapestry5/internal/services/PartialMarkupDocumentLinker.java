@@ -14,16 +14,22 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Map;
+
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.javascript.InitializationPriority;
 
 public class PartialMarkupDocumentLinker implements DocumentLinker
 {
-    private final StringBuilder buffer = new StringBuilder(1000);
-
     private final JSONArray scripts = new JSONArray();
 
     private final JSONArray stylesheets = new JSONArray();
+
+    private final Map<InitializationPriority, StringBuilder> priorityToScript = CollectionFactory.newMap();
+
+    private final Map<InitializationPriority, JSONObject> priorityToInits = CollectionFactory.newMap();
 
     public void addScriptLink(String scriptURL)
     {
@@ -41,10 +47,23 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
         stylesheets.put(object);
     }
 
-    public void addScript(String script)
+    public void addScript(InitializationPriority priority, String script)
     {
-        buffer.append(script);
-        buffer.append("\n");
+        StringBuilder builder = priorityToScript.get(priority);
+
+        if (builder == null)
+        {
+            builder = new StringBuilder();
+            priorityToScript.put(priority, builder);
+        }
+
+        builder.append(script);
+        builder.append("\n");
+    }
+
+    public void setInitialization(InitializationPriority priority, JSONObject initialization)
+    {
+        priorityToInits.put(priority, initialization);
     }
 
     /**
@@ -55,14 +74,32 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
      */
     public void commit(JSONObject reply)
     {
-        if (buffer.length() > 0)
-            reply.put("script", buffer.toString());
-
         if (scripts.length() > 0)
             reply.put("scripts", scripts);
 
         if (stylesheets.length() > 0)
             reply.put("stylesheets", stylesheets);
 
+        StringBuilder master = new StringBuilder();
+        JSONArray inits = new JSONArray();
+
+        for (InitializationPriority p : InitializationPriority.values())
+        {
+            StringBuilder builder = priorityToScript.get(p);
+
+            if (builder != null)
+                master.append(builder);
+
+            JSONObject init = priorityToInits.get(p);
+
+            if (init != null)
+                inits.put(init);
+        }
+
+        if (master.length() > 0)
+            reply.put("script", master.toString());
+
+        if (inits.length() > 0)
+            reply.put("inits", inits);
     }
 }

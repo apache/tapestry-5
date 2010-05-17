@@ -1951,7 +1951,7 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                DocumentLinkerImpl linker = new DocumentLinkerImpl(omitGeneratorMeta, tapestryVersion);
+                DocumentLinkerImpl linker = new DocumentLinkerImpl(omitGeneratorMeta, tapestryVersion, compactJSON);
 
                 environment.push(DocumentLinker.class, linker);
 
@@ -1970,7 +1970,7 @@ public final class TapestryModule
                 DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
 
                 JavascriptSupportImpl support = new JavascriptSupportImpl(linker, javascriptStackSource,
-                        javascriptStackPathConstructor, compactJSON);
+                        javascriptStackPathConstructor);
 
                 environment.push(JavascriptSupport.class, support);
 
@@ -2133,7 +2133,7 @@ public final class TapestryModule
                 DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
 
                 JavascriptSupportImpl support = new JavascriptSupportImpl(linker, javascriptStackSource,
-                        javascriptStackPathConstructor, idAllocator, true, true);
+                        javascriptStackPathConstructor, idAllocator, true);
 
                 environment.push(JavascriptSupport.class, support);
 

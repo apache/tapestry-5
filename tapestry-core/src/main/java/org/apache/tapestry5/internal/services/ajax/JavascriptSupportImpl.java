@@ -55,10 +55,6 @@ public class JavascriptSupportImpl implements JavascriptSupport
 
     private final DocumentLinker linker;
 
-    private final boolean partialMode;
-
-    private final boolean compactMode;
-
     // Using a Map as a case-insensitive set of stack names.
 
     private final Map<String, Boolean> addedStacks = CollectionFactory.newCaseInsensitiveMap();
@@ -72,8 +68,6 @@ public class JavascriptSupportImpl implements JavascriptSupport
     private final Set<String> importedStylesheets = CollectionFactory.newSet();
 
     private final List<Stylesheet> otherStylesheets = CollectionFactory.newList();
-
-    private final Map<InitializationPriority, StringBuilder> scripts = CollectionFactory.newMap();
 
     private final Map<InitializationPriority, JSONObject> inits = CollectionFactory.newMap();
 
@@ -90,20 +84,17 @@ public class JavascriptSupportImpl implements JavascriptSupport
     };
 
     public JavascriptSupportImpl(DocumentLinker linker, JavascriptStackSource javascriptStackSource,
-            JavascriptStackPathConstructor stackPathConstructor, boolean compactMode)
+            JavascriptStackPathConstructor stackPathConstructor)
     {
-        this(linker, javascriptStackSource, stackPathConstructor, new IdAllocator(), false, compactMode);
+        this(linker, javascriptStackSource, stackPathConstructor, new IdAllocator(), false);
     }
 
     public JavascriptSupportImpl(DocumentLinker linker, JavascriptStackSource javascriptStackSource,
-            JavascriptStackPathConstructor stackPathConstructor, IdAllocator idAllocator, boolean partialMode,
-            boolean compactMode)
+            JavascriptStackPathConstructor stackPathConstructor, IdAllocator idAllocator, boolean partialMode)
     {
         this.linker = linker;
         this.idAllocator = idAllocator;
         this.javascriptStackSource = javascriptStackSource;
-        this.partialMode = partialMode;
-        this.compactMode = compactMode | partialMode;
         this.stackPathConstructor = stackPathConstructor;
 
         // In partial mode, assume that the infrastructure stack is already present
@@ -142,63 +133,13 @@ public class JavascriptSupportImpl implements JavascriptSupport
         Func.each(linkLibrary, stackLibraries);
         Func.each(linkLibrary, otherLibraries);
 
-        convertInitsToScriptBlocks();
-
-        if (scripts.isEmpty())
-            return;
-
-        String masterBlock = assembleMasterScriptBlock();
-
-        linker.addScript(masterBlock);
-    }
-
-    private String assembleMasterScriptBlock()
-    {
-        StringBuilder master = new StringBuilder();
-
-        addIfNonNull(master, InitializationPriority.IMMEDIATE);
-
-        addDomLoadedScriptBlocks(master);
-
-        return master.toString();
-    }
-
-    private void addDomLoadedScriptBlocks(StringBuilder master)
-    {
-        if (scripts.containsKey(InitializationPriority.EARLY) || scripts.containsKey(InitializationPriority.NORMAL)
-                || scripts.containsKey(InitializationPriority.LATE))
-        {
-            if (!partialMode)
-                master.append("Tapestry.onDOMLoaded(function() {\n");
-
-            addIfNonNull(master, InitializationPriority.EARLY);
-            addIfNonNull(master, InitializationPriority.NORMAL);
-            addIfNonNull(master, InitializationPriority.LATE);
-
-            if (!partialMode)
-                master.append("});");
-        }
-    }
-
-    private void convertInitsToScriptBlocks()
-    {
         for (InitializationPriority p : InitializationPriority.values())
         {
             JSONObject init = inits.get(p);
 
             if (init != null)
-            {
-                String printed = compactMode ? init.toCompactString() : init.toString();
-
-                addScript(p, "Tapestry.init(%s);", printed);
-            }
+                linker.setInitialization(p, init);
         }
-    }
-
-    private void addIfNonNull(StringBuilder builder, InitializationPriority priority)
-    {
-        if (scripts.containsKey(priority))
-            builder.append(scripts.get(priority).toString());
     }
 
     public void addInitializerCall(InitializationPriority priority, String functionName, JSONObject parameter)
@@ -257,21 +198,7 @@ public class JavascriptSupportImpl implements JavascriptSupport
 
         String newScript = arguments.length == 0 ? format : String.format(format, arguments);
 
-        appendScript(priority, newScript);
-    }
-
-    private void appendScript(InitializationPriority priority, String newScript)
-    {
-        StringBuilder script = scripts.get(priority);
-
-        if (script == null)
-        {
-            script = new StringBuilder();
-            scripts.put(priority, script);
-        }
-
-        script.append(newScript);
-        script.append("\n");
+        linker.addScript(priority, newScript);
     }
 
     public void addScript(String format, Object... arguments)
@@ -327,7 +254,7 @@ public class JavascriptSupportImpl implements JavascriptSupport
         String initialization = stack.getInitialization();
 
         if (initialization != null)
-            appendScript(InitializationPriority.IMMEDIATE, initialization);
+            linker.addScript(InitializationPriority.IMMEDIATE, initialization);
 
         addedStacks.put(stackName, true);
     }

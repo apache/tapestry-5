@@ -22,7 +22,10 @@ package org.apache.tapestry5.services.javascript;
  */
 public enum InitializationPriority
 {
-    /** Provided JavaScript will be executed immediately (it is not deferred until the page loads). */
+    /**
+     * Provided JavaScript will be executed immediately (it is not deferred until the page loads). In an Ajax
+     * update, IMMEDIATE code executed after the DOM is updated and before EARLY.
+     */
     IMMEDIATE,
 
     /** Execution is deferred until the page loads. All early execution occurs before {@link #NORMAL}. */

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@ package org.apache.tapestry5.json;
  * SOFTWARE.
  */
 
-import java.io.PrintWriter;
 import java.util.List;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -74,7 +73,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
  * @author JSON.org
  * @version 2
  */
-public final class JSONArray
+public final class JSONArray extends JSONCollection
 {
 
     /**
@@ -380,21 +379,6 @@ public final class JSONArray
         return this;
     }
 
-    /**
-     * Make a JSON text of this JSONArray.
-     * <p/>
-     * Warning: This method assumes that the data structure is acyclical.
-     * <p>
-     * Starting in release 5.2, the result will be pretty printed for readability.
-     * 
-     * @return a printable, displayable, transmittable representation of the array.
-     */
-    @Override
-    public String toString()
-    {
-        return JSONObject.toString(this);
-    }
-
     /** Used for testing. */
     Object[] toArray()
     {
@@ -441,29 +425,5 @@ public final class JSONArray
             session.newline();
 
         session.printSymbol(']');
-    }
-
-    /**
-     * Prints the JSONArray to the writer compactly (with no extra whitespace).
-     * 
-     * @since 5.2.0
-     */
-    public JSONArray print(PrintWriter writer)
-    {
-        print(new CompactSession(writer));
-
-        return this;
-    }
-
-    /**
-     * Prints the JSONArray to the writer using indentation (two spaces per indentation level).
-     * 
-     * @since 5.2.0
-     */
-    public JSONArray prettyPrint(PrintWriter writer)
-    {
-        print(new PrettyPrintSession(writer));
-
-        return this;
     }
 }

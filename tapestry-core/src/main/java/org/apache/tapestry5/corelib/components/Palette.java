@@ -1,10 +1,10 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,23 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.Binding;
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.Block;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.FieldValidationSupport;
-import org.apache.tapestry5.FieldValidator;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.OptionGroupModel;
-import org.apache.tapestry5.OptionModel;
-import org.apache.tapestry5.RenderSupport;
-import org.apache.tapestry5.Renderable;
-import org.apache.tapestry5.SelectModel;
-import org.apache.tapestry5.SelectModelVisitor;
-import org.apache.tapestry5.ValidationException;
-import org.apache.tapestry5.ValidationTracker;
-import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.Parameter;
@@ -46,10 +30,12 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.internal.util.SelectModelRenderer;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 /**
  * Multiple selection component. Generates a UI consisting of two &lt;select&gt; elements configured for multiple
@@ -68,8 +54,9 @@ import org.apache.tapestry5.services.Request;
  * buttons appear to move items up and down within the selected list.
  * <p/>
  * Much of the look and feel is driven by CSS, the default Tapestry CSS is used to set up the columns, etc. By default,
- * the &lt;select&gt; element's widths are 200px, and  it is common to override this to a specific value:
+ * the &lt;select&gt; element's widths are 200px, and it is common to override this to a specific value:
  * <p/>
+ * 
  * <pre>
  * &lt;style&gt;
  * DIV.t-palette SELECT { width: 300px; }
@@ -92,11 +79,8 @@ public class Palette extends AbstractField
     {
         public void render(MarkupWriter writer)
         {
-            writer.element("select",
-                           "id", getClientId() + "-avail",
-                           "multiple", "multiple",
-                           "size", getSize(),
-                           "name", getControlName() + "-avail");
+            writer.element("select", "id", getClientId() + "-avail", "multiple", "multiple", "size", getSize(), "name",
+                    getControlName() + "-avail");
 
             writeDisabled(writer, isDisabled());
 
@@ -156,18 +140,15 @@ public class Palette extends AbstractField
     {
         public void render(MarkupWriter writer)
         {
-            writer.element("select",
-                           "id", getClientId(),
-                           "multiple", "multiple",
-                           "size", getSize(),
-                           "name", getControlName());
+            writer.element("select", "id", getClientId(), "multiple", "multiple", "size", getSize(), "name",
+                    getControlName());
 
             writeDisabled(writer, isDisabled());
-            
+
             putPropertyNameIntoBeanValidationContext("selected");
-            
+
             Palette.this.validate.render(writer);
-            
+
             removePropertyNameFromBeanValidationContext();
 
             for (Object value : getSelected())
@@ -210,8 +191,7 @@ public class Palette extends AbstractField
      * conditionals and components. The default is the text "Available".
      */
     @Property(write = false)
-    @Parameter(required = true, allowNull = false, value = "message:available-label",
-               defaultPrefix = BindingConstants.LITERAL)
+    @Parameter(required = true, allowNull = false, value = "message:available-label", defaultPrefix = BindingConstants.LITERAL)
     private Block availableLabel;
 
     /**
@@ -219,8 +199,7 @@ public class Palette extends AbstractField
      * conditionals and components. The default is the text "Available".
      */
     @Property(write = false)
-    @Parameter(required = true, allowNull = false, value = "message:selected-label",
-               defaultPrefix = BindingConstants.LITERAL)
+    @Parameter(required = true, allowNull = false, value = "message:selected-label", defaultPrefix = BindingConstants.LITERAL)
     private Block selectedLabel;
 
     /**
@@ -241,8 +220,8 @@ public class Palette extends AbstractField
      * Used to include scripting code in the rendered page.
      */
     @Environmental
-    private RenderSupport renderSupport;
-    
+    private JavascriptSupport javascriptSupport;
+
     @Environmental
     private ValidationTracker tracker;
 
@@ -251,16 +230,15 @@ public class Palette extends AbstractField
      */
     @Inject
     private Request request;
-    
+
     @Inject
     private ComponentDefaultProvider defaultProvider;
 
     @Inject
     private ComponentResources componentResources;
-    
+
     @Inject
     private FieldValidationSupport fieldValidationSupport;
-
 
     private SelectModelRenderer renderer;
 
@@ -299,16 +277,20 @@ public class Palette extends AbstractField
      */
     @Parameter(value = "10")
     private int size;
-    
+
     /**
      * The object that will perform input validation. The validate binding prefix is generally used to provide
      * this object in a declarative fashion.
      * 
-     * @since 5.2.0.0
+     * @since 5.2.0
      */
     @Parameter(defaultPrefix = BindingConstants.VALIDATE)
     @SuppressWarnings("unchecked")
     private FieldValidator<Object> validate;
+
+    @Inject
+    @Symbol(SymbolConstants.COMPACT_JSON)
+    private boolean compactJSON;
 
     /**
      * The natural order of elements, in terms of their client ids.
@@ -329,7 +311,7 @@ public class Palette extends AbstractField
     protected void processSubmission(String elementName)
     {
         String parameterValue = request.getParameter(elementName + "-values");
-        
+
         this.tracker.recordInput(this, parameterValue);
 
         JSONArray values = new JSONArray(parameterValue);
@@ -338,11 +320,12 @@ public class Palette extends AbstractField
 
         List<Object> selected = this.selected;
 
-        if (selected == null) selected = newList();
-        else selected.clear();
+        if (selected == null)
+            selected = newList();
+        else
+            selected.clear();
 
         ValueEncoder encoder = this.encoder;
-
 
         int count = values.length();
         for (int i = 0; i < count; i++)
@@ -355,24 +338,25 @@ public class Palette extends AbstractField
         }
 
         putPropertyNameIntoBeanValidationContext("selected");
-        
-        try 
+
+        try
         {
             this.fieldValidationSupport.validate(selected, this.componentResources, this.validate);
-            
+
             this.selected = selected;
-        } 
-        catch (final ValidationException e) 
+        }
+        catch (final ValidationException e)
         {
             this.tracker.recordError(this, e.getMessage());
         }
-        
+
         removePropertyNameFromBeanValidationContext();
     }
 
     private void writeDisabled(MarkupWriter writer, boolean disabled)
     {
-        if (disabled) writer.attributes("disabled", "disabled");
+        if (disabled)
+            writer.attributes("disabled", "disabled");
     }
 
     void beginRender(MarkupWriter writer)
@@ -397,13 +381,11 @@ public class Palette extends AbstractField
 
         String clientId = getClientId();
 
-        renderSupport.addScript("new Tapestry.Palette('%s', %s, %s);", clientId, reorder, naturalOrder);
+        javascriptSupport.addScript("new Tapestry.Palette('%s', %s, %s);", clientId, reorder, naturalOrder
+                .toString(compactJSON));
 
-        writer.element("input",
-                       "type", "hidden",
-                       "id", clientId + "-values",
-                       "name", getControlName() + "-values",
-                       "value", selectedValues);
+        writer.element("input", "type", "hidden", "id", clientId + "-values", "name", getControlName() + "-values",
+                "value", selectedValues);
         writer.end();
     }
 
@@ -461,16 +443,15 @@ public class Palette extends AbstractField
 
         model.visit(visitor);
     }
-    
+
     /**
      * Computes a default value for the "validate" parameter using
      * {@link org.apache.tapestry5.services.FieldValidatorDefaultSource}.
      */
-    Binding defaultValidate() 
+    Binding defaultValidate()
     {
-       return this.defaultProvider.defaultValidatorBinding("selected", this.componentResources);
+        return this.defaultProvider.defaultValidatorBinding("selected", this.componentResources);
     }
-
 
     // Avoids a strange Javassist bytecode error, c'est lavie!
     int getSize()
@@ -485,11 +466,12 @@ public class Palette extends AbstractField
 
     List<Object> getSelected()
     {
-        if (selected == null) return Collections.emptyList();
+        if (selected == null)
+            return Collections.emptyList();
 
         return selected;
     }
-    
+
     @Override
     public boolean isRequired()
     {

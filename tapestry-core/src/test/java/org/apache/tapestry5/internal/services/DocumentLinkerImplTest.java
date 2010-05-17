@@ -18,21 +18,13 @@ import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.dom.XMLMarkupModel;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.services.URLEncoder;
-import org.testng.annotations.BeforeClass;
+import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.testng.annotations.Test;
 
 public class DocumentLinkerImplTest extends InternalBaseTestCase
 {
-
-    private URLEncoder urlEncoder;
-
-    @BeforeClass
-    public void setup()
-    {
-        urlEncoder = getService(URLEncoder.class);
-    }
-
     private void check(Document document, String file) throws Exception
     {
         assertEquals(document.toString(), readFile(file));
@@ -45,12 +37,12 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("not-html").text("not an HTML document");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
 
         // Only checked if there's something to link.
 
-        linker.addScript("foo.js");
-        linker.addScript("doSomething();");
+        linker.addScriptLink("foo.js");
+        linker.addScript(InitializationPriority.NORMAL, "doSomething();");
 
         try
         {
@@ -72,7 +64,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("not-html").text("not an HTML document");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
 
         // Only checked if there's something to link.
 
@@ -94,10 +86,10 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
     {
         Document document = new Document();
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
 
-        linker.addScript("foo.js");
-        linker.addScript("doSomething();");
+        linker.addScriptLink("foo.js");
+        linker.addScript(InitializationPriority.NORMAL, "doSomething();");
 
         // No root element is not an error, even though there's work to do.
         // The failure to render is reported elsewhere.
@@ -111,11 +103,11 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
 
         linker.addScriptLink("foo.js");
         linker.addScriptLink("bar/baz.js");
-        linker.addScript("pageInitialization();");
+        linker.addScript(InitializationPriority.NORMAL, "pageInitialization();");
 
         linker.updateDocument(document);
 
@@ -132,7 +124,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be marked with generator meta.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(false, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(false, "1.2.3", true);
 
         linker.updateDocument(document);
 
@@ -149,7 +141,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("no_html").text("Generator meta only added if root is html tag.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(false, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(false, "1.2.3", true);
 
         linker.updateDocument(document);
 
@@ -163,12 +155,12 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
 
         linker.addStylesheetLink("style.css", "print");
         linker.addScriptLink("foo.js");
         linker.addScriptLink("bar/baz.js");
-        linker.addScript("pageInitialization();");
+        linker.addScript(InitializationPriority.IMMEDIATE, "pageInitialization();");
 
         linker.updateDocument(document);
 
@@ -182,11 +174,11 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts at top.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
 
         linker.addScriptLink("foo.js");
         linker.addScriptLink("bar/baz.js");
-        linker.addScript("pageInitialization();");
+        linker.addScript(InitializationPriority.NORMAL, "pageInitialization();");
 
         linker.updateDocument(document);
 
@@ -200,7 +192,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with styles.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
 
         linker.addStylesheetLink("foo.css", null);
         linker.addStylesheetLink("bar/baz.css", "print");
@@ -218,7 +210,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
         document.newRootElement("html").element("head").comment(" existing head ").getParent().element("body").text(
                 "body content");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
 
         linker.addStylesheetLink("foo.css", null);
 
@@ -234,10 +226,10 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
 
-        linker.addScript("doSomething();");
-        linker.addScript("doSomethingElse();");
+        linker.addScript(InitializationPriority.IMMEDIATE, "doSomething();");
+        linker.addScript(InitializationPriority.IMMEDIATE, "doSomethingElse();");
 
         linker.updateDocument(document);
 
@@ -254,7 +246,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("notbody").element("p").text("Ready to be updated with scripts.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
 
         linker.addScriptLink("foo.js");
 
@@ -270,9 +262,9 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
 
-        linker.addScript("for (var i = 0; i < 5; i++)  { doIt(i); }");
+        linker.addScript(InitializationPriority.IMMEDIATE, "for (var i = 0; i < 5; i++)  { doIt(i); }");
 
         linker.updateDocument(document);
 
@@ -286,7 +278,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
 
         linker.addScriptLink("/context/foo.js");
 
@@ -309,13 +301,70 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
         head.element("meta");
         head.element("script");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3");
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
 
         linker.addScriptLink("/foo.js");
 
         linker.updateDocument(document);
 
         assertEquals(document.toString(), readFile("added_scripts_go_before_existing_script.txt"));
+    }
 
+    @Test
+    public void immediate_initialization() throws Exception
+    {
+        Document document = new Document();
+
+        Element head = document.newRootElement("html").element("head");
+
+        head.element("meta");
+        head.element("script");
+
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
+
+        linker.setInitialization(InitializationPriority.IMMEDIATE, new JSONObject("fred", "barney"));
+
+        linker.updateDocument(document);
+
+        assertEquals(document.toString(), readFile("immediate_initialization.txt"));
+    }
+
+    @Test
+    public void pretty_print_initialization() throws Exception
+    {
+        Document document = new Document();
+
+        Element head = document.newRootElement("html").element("head");
+
+        head.element("meta");
+        head.element("script");
+
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", false);
+
+        linker.setInitialization(InitializationPriority.IMMEDIATE, new JSONObject().put("fred", new JSONArray("barney",
+                "wilma", "betty")));
+
+        linker.updateDocument(document);
+
+        assertEquals(document.toString(), readFile("pretty_print_initialization.txt"));
+    }
+
+    @Test
+    public void other_initialization() throws Exception
+    {
+        Document document = new Document();
+
+        Element head = document.newRootElement("html").element("head");
+
+        head.element("meta");
+        head.element("script");
+
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
+
+        linker.setInitialization(InitializationPriority.NORMAL, new JSONObject("fred", "barney"));
+
+        linker.updateDocument(document);
+
+        assertEquals(document.toString(), readFile("other_initialization.txt"));
     }
 }
