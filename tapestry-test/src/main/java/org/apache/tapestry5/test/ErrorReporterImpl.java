@@ -1,10 +1,10 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -46,15 +46,13 @@ public class ErrorReporterImpl implements ErrorReporter
         String htmlSource = commandProcessor.getString("getHtmlSource", new String[]
         {});
 
-        File dir = new File(TapestryTestConstants.MODULE_BASE_DIR, testContext.getOutputDirectory());
+        File dir = new File(testContext.getOutputDirectory());
 
         dir.mkdirs();
 
-        Method testMethod = (Method) testContext
-                .getAttribute(TapestryTestConstants.CURRENT_TEST_METHOD_ATTRIBUTE);
+        Method testMethod = (Method) testContext.getAttribute(TapestryTestConstants.CURRENT_TEST_METHOD_ATTRIBUTE);
 
-        String baseFileName = testMethod == null ? "Unknown-test" : testMethod.getDeclaringClass()
-                .getSimpleName()
+        String baseFileName = testMethod == null ? "Unknown-test" : testMethod.getDeclaringClass().getSimpleName()
                 + "." + testMethod.getName();
 
         if (previousNames.contains(baseFileName))
