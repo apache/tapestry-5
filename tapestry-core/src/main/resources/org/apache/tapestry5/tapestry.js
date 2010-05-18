@@ -254,7 +254,15 @@ var Tapestry = {
 					parameterList = [ parameterList ];
 				}
 
-				initf.apply(this, parameterList);
+				try {
+					initf.apply(this, parameterList);
+				} catch (e) {
+					Tapestry.error(Tapestry.Messages.invocationException, {
+						fname : "Tapestry.Initializer." + functionName,
+						params : Object.toJSON(parameterList),
+						exception : e
+					});
+				}
 			});
 		});
 	},
@@ -1078,7 +1086,15 @@ Tapestry.Initializer = {
 				 * constraint object to the Tapestry.Validator function, so that
 				 * it can, typically, invoke field.addValidator().
 				 */
-				vfunc.call(this, field, message, constraint);
+				try {
+					vfunc.call(this, field, message, constraint);
+				} catch (e) {
+					Tapestry.error(Tapestry.Messages.invocationException, {
+						fname : "Tapestry.Validator." + functionName,
+						params : Object.toJSON([ field.id, message, constraint ]),
+						exception : e
+					});
+				}
 			});
 		});
 	},
