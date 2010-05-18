@@ -54,7 +54,7 @@ it can be tricky because there are overlapping third-party dependencies with sli
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>3.5.1-Final</version>
+            <version>${hibernate-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.transaction</groupId>
@@ -79,7 +79,7 @@ it can be tricky because there are overlapping third-party dependencies with sli
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-annotations</artifactId>
-            <version>3.5.1-Final</version>
+            <version>${hibernate-version}</version>
             <exclusions>
                 <!-- Make sure we use the version defined by tapestry-ioc. -->
                 <exclusion>
@@ -92,7 +92,7 @@ it can be tricky because there are overlapping third-party dependencies with sli
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-c3p0</artifactId>
-            <version>3.5.1-Final</version>
+            <version>${hibernate-version}</version>
         </dependency>
 
     </dependencies>
@@ -148,7 +148,7 @@ it can be tricky because there are overlapping third-party dependencies with sli
         <repository>
             <id>jboss</id>
             <name>JBoss</name>
-            <url>http://repository.jboss.org/maven2</url>
+            <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
         </repository>
     </repositories>
 
@@ -174,4 +174,8 @@ it can be tricky because there are overlapping third-party dependencies with sli
             </plugin>
         </plugins>
     </reporting>
+    
+    <properties>
+        <hibernate-version>3.5.2-Final</hibernate-version>
+    </properties>
 </project>
