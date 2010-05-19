@@ -32,7 +32,7 @@ public interface ComponentRequestHandler
      * Handler for a component action request which will trigger an event on a component and use the return value to
      * send a response to the client (typically, a redirect to a page render URL).
      *
-     * @param parameters defining the requst
+     * @param parameters defining the request
      */
     void handleComponentEvent(ComponentEventRequestParameters parameters) throws IOException;
 
