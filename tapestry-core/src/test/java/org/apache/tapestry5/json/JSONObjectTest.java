@@ -14,20 +14,20 @@
 
 package org.apache.tapestry5.json;
 
-import org.testng.Assert;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
-
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import org.apache.tapestry5.ioc.test.TestUtils;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
 /**
  * Tests JSONObject, particularly in terms of parsing and writing JSON streams.
  */
-public class JSONObjectTest extends Assert
+public class JSONObjectTest extends TestUtils
 {
     @Test
     public void copy_from_object_constructor()
@@ -70,11 +70,6 @@ public class JSONObjectTest extends Assert
         assertEquals(array.getString(0), "foo");
         assertEquals(array.getString(1), "bar");
         assertEquals(array.getString(2), "baz");
-    }
-
-    private void unreachable()
-    {
-        throw new AssertionError("This code should not be reachable.");
     }
 
     @Test
