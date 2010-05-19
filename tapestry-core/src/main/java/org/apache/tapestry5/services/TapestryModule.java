@@ -2439,11 +2439,9 @@ public final class TapestryModule
         configuration.add(SymbolConstants.OMIT_GENERATOR_META, "false");
         configuration.add(SymbolConstants.GZIP_COMPRESSION_ENABLED, "true");
 
-        String matchProductionMode = String.format("${%s}", SymbolConstants.PRODUCTION_MODE);
-
-        configuration.add(SymbolConstants.SECURE_ENABLED, matchProductionMode);
-        configuration.add(SymbolConstants.COMBINE_SCRIPTS, matchProductionMode);
-        configuration.add(SymbolConstants.COMPACT_JSON, matchProductionMode);
+        configuration.add(SymbolConstants.SECURE_ENABLED, SymbolConstants.PRODUCTION_MODE_VALUE);
+        configuration.add(SymbolConstants.COMBINE_SCRIPTS, SymbolConstants.PRODUCTION_MODE_VALUE);
+        configuration.add(SymbolConstants.COMPACT_JSON, SymbolConstants.PRODUCTION_MODE_VALUE);
 
         configuration.add(SymbolConstants.ENCODE_LOCALE_INTO_PATH, "true");
 

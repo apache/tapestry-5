@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,6 +30,15 @@ public class SymbolConstants
      * exceptions are reported.
      */
     public static final String PRODUCTION_MODE = "tapestry.production-mode";
+
+    /**
+     * A version of {@link #PRODUCTION_MODE} as a symbol reference. This can be used as the default value
+     * of other symbols, to indicate that their default matches whatever PRODUCTION_MODE is set to, which is quite
+     * common.
+     * 
+     * @since 5.2.0
+     */
+    public static final String PRODUCTION_MODE_VALUE = String.format("${%s}", PRODUCTION_MODE);
 
     /**
      * Symbol which may be set to "true" to force the use of absolute URIs (not relative URIs) exclusively.
@@ -240,6 +249,8 @@ public class SymbolConstants
      * configured to use when processing requests.
      * The default is 20 page instances.
      * 
+     * @deprecated The hard limit will be removed in a later release of Tapestry, as the maximum number of instance
+     *             is easily controlled by limiting the number of request handling threads in the servlet container.
      * @since 5.2.0
      */
     public static final String PAGE_POOL_HARD_LIMIT = "tapestry.page-pool.hard-limit";
@@ -287,14 +298,14 @@ public class SymbolConstants
     public static final String BLACKBIRD = "tapestry.blackbird";
 
     /**
-     * The default javascript (tapestry.js) automatically injected into every rendered HTML page.
+     * The Asset path of the default javascript (tapestry.js) automatically injected into every rendered HTML page.
      * 
      * @since 5.2.0
      */
     public static final String DEFAULT_JAVASCRIPT = "tapestry.default-javascript";
 
     /**
-     * If "true", then JSON page initialization content is compressed; if false
+     * If "true", then JSON page initialization content is compressed; if "false"
      * then extra white space is added (pretty printing). Defaults to "true" in production mode.
      * 
      * @since 5.2.0
