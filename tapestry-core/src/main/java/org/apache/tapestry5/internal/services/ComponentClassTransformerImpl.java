@@ -14,14 +14,19 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.lang.reflect.Modifier;
+import java.util.Map;
+
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.NotFoundException;
+
 import org.apache.tapestry5.TapestryMarkers;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.model.MutableComponentModelImpl;
 import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.internal.services.CtClassSource;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -32,9 +37,6 @@ import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.ComponentLayer;
 import org.apache.tapestry5.services.InvalidationListener;
 import org.slf4j.Logger;
-
-import java.lang.reflect.Modifier;
-import java.util.Map;
 
 /**
  * Implementation of {@link org.apache.tapestry5.internal.services.ComponentClassTransformer}.
@@ -69,10 +71,18 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
      * @param classSource
      * @param componentClassCache
      */
-    public ComponentClassTransformerImpl(ComponentClassTransformWorker workerChain, LoggerSource loggerSource,
-            @ComponentLayer
-            ClassFactory classFactory, @ComponentLayer
-            CtClassSource classSource, ComponentClassCache componentClassCache)
+    public ComponentClassTransformerImpl(@Primary
+    ComponentClassTransformWorker workerChain,
+
+    LoggerSource loggerSource,
+
+    @ComponentLayer
+    ClassFactory classFactory,
+
+    @ComponentLayer
+    CtClassSource classSource,
+
+    ComponentClassCache componentClassCache)
     {
         this.workerChain = workerChain;
         this.loggerSource = loggerSource;

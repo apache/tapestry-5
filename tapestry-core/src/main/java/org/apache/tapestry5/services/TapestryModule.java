@@ -37,13 +37,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.ajax.MultiZoneUpdate;
-import org.apache.tapestry5.annotations.HeartbeatDeferred;
-import org.apache.tapestry5.annotations.PageAttached;
-import org.apache.tapestry5.annotations.PageDetached;
-import org.apache.tapestry5.annotations.PageLoaded;
-import org.apache.tapestry5.annotations.PageReset;
-import org.apache.tapestry5.annotations.Path;
-import org.apache.tapestry5.annotations.Service;
+import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.annotations.ContentType;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.corelib.LoopFormState;
 import org.apache.tapestry5.corelib.SubmitMode;
@@ -85,6 +80,9 @@ import org.apache.tapestry5.internal.services.javascript.CoreJavascriptStack;
 import org.apache.tapestry5.internal.services.javascript.JavascriptStackPathConstructor;
 import org.apache.tapestry5.internal.services.javascript.JavascriptStackSourceImpl;
 import org.apache.tapestry5.internal.services.messages.PropertiesFileParserImpl;
+import org.apache.tapestry5.internal.services.meta.ContentTypeExtractor;
+import org.apache.tapestry5.internal.services.meta.MetaAnnotationExtractor;
+import org.apache.tapestry5.internal.services.meta.MetaWorkerImpl;
 import org.apache.tapestry5.internal.transform.*;
 import org.apache.tapestry5.internal.translator.NumericTranslator;
 import org.apache.tapestry5.internal.translator.NumericTranslatorSupport;
@@ -115,6 +113,9 @@ import org.apache.tapestry5.services.javascript.JavascriptStackSource;
 import org.apache.tapestry5.services.javascript.JavascriptSupport;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 import org.apache.tapestry5.services.messages.PropertiesFileParser;
+import org.apache.tapestry5.services.meta.FixedExtractor;
+import org.apache.tapestry5.services.meta.MetaDataExtractor;
+import org.apache.tapestry5.services.meta.MetaWorker;
 import org.apache.tapestry5.util.StringToEnumCoercion;
 import org.apache.tapestry5.validator.Email;
 import org.apache.tapestry5.validator.Max;
@@ -374,6 +375,7 @@ public final class TapestryModule
         binder.bind(AssetPathConstructor.class, AssetPathConstructorImpl.class);
         binder.bind(JavascriptStackSource.class, JavascriptStackSourceImpl.class);
         binder.bind(TranslatorAlternatesSource.class, TranslatorAlternatesSourceImpl.class);
+        binder.bind(MetaWorker.class, MetaWorkerImpl.class);
     }
 
     // ========================================================================
@@ -552,7 +554,7 @@ public final class TapestryModule
      * <dt>SupportsInformalParameters</dt>
      * <dd>Checks for the annotation</dd>
      * <dt>Meta</dt>
-     * <dd>Checks for meta data and adds it to the component model</dd>
+     * <dd>Checks for meta data annotations and adds it to the component model</dd>
      * <dt>ApplicationState</dt>
      * <dd>Converts fields that reference application state objects
      * <dt>UnclaimedField</dt>
@@ -564,10 +566,6 @@ public final class TapestryModule
      * <dt>InvokePostRenderCleanupOnResources</dt>
      * <dd>Makes sure {@link org.apache.tapestry5.internal.InternalComponentResources#postRenderCleanup()} is invoked
      * after a component finishes rendering</dd>
-     * <dt>Secure</dt>
-     * <dd>Checks for the {@link org.apache.tapestry5.annotations.Secure} annotation</dd>
-     * <dt>ContentType</dt>
-     * <dd>Checks for {@link org.apache.tapestry5.annotations.ContentType} annotation</dd>
      * <dt>GenerateAccessors</dt>
      * <dd>Generates accessor methods if {@link org.apache.tapestry5.annotations.Property} annotation is present</dd>
      * <dt>Cached</dt>
@@ -587,16 +585,16 @@ public final class TapestryModule
 
             InjectionProvider injectionProvider,
 
+            MetaWorker metaWorker,
+
             ComponentClassResolver resolver)
     {
         configuration.addInstance("Cached", CachedWorker.class);
 
-        configuration.add("Meta", new MetaWorker());
+        configuration.add("Meta", metaWorker);
 
         configuration.add("Inject", new InjectWorker(locator, injectionProvider));
         configuration.addInstance("InjectService", InjectServiceWorker.class);
-
-        configuration.add("Secure", new SecureWorker());
 
         configuration.add("MixinAfter", new MixinAfterWorker());
         configuration.add("Component", new ComponentWorker(resolver));
@@ -641,8 +639,6 @@ public final class TapestryModule
                 .addInstance("IncludeJavaScriptLibrary", IncludeJavaScriptLibraryWorker.class, "after:SetupRender");
 
         configuration.add("InvokePostRenderCleanupOnResources", new InvokePostRenderCleanupOnResourcesWorker());
-
-        configuration.add("ContentType", new ContentTypeWorker());
 
         configuration.add("Property", new PropertyWorker());
 
@@ -1399,6 +1395,7 @@ public final class TapestryModule
      * Allows the exact steps in the component class transformation process to
      * be defined.
      */
+    @Marker(Primary.class)
     public ComponentClassTransformWorker buildComponentClassTransformWorker(
             List<ComponentClassTransformWorker> configuration)
     {
@@ -2896,4 +2893,16 @@ public final class TapestryModule
         configuration.add("AppCatalog", applicationCatalog);
     }
 
+    /**
+     * Contributes ....
+     * 
+     * @since 5.2.0
+     */
+    @SuppressWarnings("unchecked")
+    public static void contributeMetaWorker(MappedConfiguration<Class, MetaDataExtractor> configuration)
+    {
+        configuration.addInstance(Meta.class, MetaAnnotationExtractor.class);
+        configuration.add(Secure.class, new FixedExtractor(MetaDataConstants.SECURE_PAGE));
+        configuration.addInstance(ContentType.class, ContentTypeExtractor.class);
+    }
 }
