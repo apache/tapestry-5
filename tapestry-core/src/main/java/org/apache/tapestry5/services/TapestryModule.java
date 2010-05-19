@@ -2894,7 +2894,7 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes extractors for {@link Meta}, {@link Secure} and {@link ContentType}.
+     * Contributes extractors for {@link Meta}, {@link Secure} and {@link ContentType} annotations.
      * 
      * @since 5.2.0
      */
