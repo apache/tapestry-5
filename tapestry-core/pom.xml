@@ -1,139 +1,199 @@
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
-    <modelVersion>4.0.0</modelVersion>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache.tapestry</groupId>
+  <artifactId>tapestry-core</artifactId>
+  <packaging>jar</packaging>
+  <parent>
     <groupId>org.apache.tapestry</groupId>
-    <artifactId>tapestry-core</artifactId>
-    <packaging>jar</packaging>
-    <parent>
-        <groupId>org.apache.tapestry</groupId>
-        <artifactId>tapestry-project</artifactId>
-        <version>5.2.0-SNAPSHOT</version>
-    </parent>
-    <name>Tapestry Core Library</name>
-    <description>
+    <artifactId>tapestry-project</artifactId>
+    <version>5.2.0-SNAPSHOT</version>
+  </parent>
+  <name>Tapestry Core Library</name>
+  <description>
         Central module for Tapestry, containing interfaces to the Java
         Servlet API and all core services and components.
     </description>
-    <inceptionYear>2006</inceptionYear>
+  <inceptionYear>2006</inceptionYear>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.tapestry</groupId>
-            <artifactId>tapestry-ioc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tapestry</groupId>
-            <artifactId>tapestry-test</artifactId>
-            <!-- This would be test, but we provide a few base classes that depend on TestNG, which is provided by tapestry-test. -->
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>1.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.easymock</groupId>
-            <artifactId>easymock</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-        </dependency>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.tapestry</groupId>
+      <artifactId>tapestry-ioc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tapestry</groupId>
+      <artifactId>tapestry-test</artifactId>
+      <!--
+        This would be test, but we provide a few base classes that depend on TestNG, which is
+        provided by tapestry-test.
+      -->
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymock</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>antlr-runtime</artifactId>
-            <version>3.1.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.antlr</groupId>
-                    <artifactId>stringtemplate</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+    <dependency>
+      <groupId>org.antlr</groupId>
+      <artifactId>antlr-runtime</artifactId>
+      <version>3.1.1</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.antlr</groupId>
+          <artifactId>stringtemplate</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 
-    </dependencies>
+    <dependency>
+      <groupId>org.codehaus.groovy.maven.runtime</groupId>
+      <artifactId>gmaven-runtime-1.6</artifactId>
+      <version>1.0-rc-5</version>
+      <scope>test</scope>
+    </dependency>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.antlr</groupId>
-                <artifactId>antlr3-maven-plugin</artifactId>
-                <version>3.1.1.2</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>antlr</goal>
-                        </goals>
-                        <configuration>
-                            <!-- This is a hack so that the parser grammar can locate the tokens file generated
-                                 by the lexer grammar. -->
-                            <libDirectory>target/generated-sources/antlr/org/apache/tapestry5/internal/antlr
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-all</artifactId>
+      <!--  1.7.0 seems to match what the Eclipse Groovy plugin uses -->
+      <version>1.7.0</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <resources>
+      <resource>
+        <!-- GMaven isn't smart enough to add this automatically. -->
+        <directory>src/test/groovy</directory>
+      </resource>
+      <resource>
+        <!--
+          Once you mention one resource directory, you have to be explicit about all of them,
+          apparently.
+        -->
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.groovy.maven</groupId>
+        <artifactId>gmaven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <!-- generateStubs and compile omitted as no Groovy code in main code base -->
+              <!-- generateTestStubs ommitted as it confused TestNG and/or Surefire -->
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <version>2.8</version>
+        <configuration>
+          <downloadSources>true</downloadSources>
+          <additionalProjectnatures>
+            <projectnature>
+              org.eclipse.jdt.groovy.core.groovyNature
+             </projectnature>
+          </additionalProjectnatures>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr3-maven-plugin</artifactId>
+        <version>3.1.1.2</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>antlr</goal>
+            </goals>
+            <configuration>
+              <!--
+                This is a hack so that the parser grammar can locate the tokens file generated by
+                the lexer grammar.
+              -->
+              <libDirectory>target/generated-sources/antlr/org/apache/tapestry5/internal/antlr
                             </libDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-            </plugin>
-            <!-- This gets the plugin to clean up the cobertura.ser file left
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+      </plugin>
+      <!-- This gets the plugin to clean up the cobertura.ser file left
         in the root directory. -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <version>${cobertura-plugin-version}</version>
-                <executions>
-                    <execution>
-                        <id>clean</id>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>summary</report>
-                            <report>dependencies</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <version>${cobertura-plugin-version}</version>
+        <executions>
+          <execution>
+            <id>clean</id>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>summary</report>
+              <report>dependencies</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
 
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <version>${cobertura-plugin-version}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.tapestry</groupId>
-                <artifactId>tapestry-component-report</artifactId>
-                <version>${project.version}</version>
-                <configuration>
-                    <rootPackage>org.apache.tapestry5.corelib</rootPackage>
-                    <apidocs>../apidocs</apidocs>
-                    <tapestryJavadoc>../apidocs</tapestryJavadoc>
-                </configuration>
-            </plugin>
-        </plugins>
-    </reporting>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <version>${cobertura-plugin-version}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.tapestry</groupId>
+        <artifactId>tapestry-component-report</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <rootPackage>org.apache.tapestry5.corelib</rootPackage>
+          <apidocs>../apidocs</apidocs>
+          <tapestryJavadoc>../apidocs</tapestryJavadoc>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>
