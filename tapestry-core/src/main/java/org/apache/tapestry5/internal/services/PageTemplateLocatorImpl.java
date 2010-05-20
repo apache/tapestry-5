@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.model.ComponentModel;
@@ -57,7 +57,7 @@ public class PageTemplateLocatorImpl implements PageTemplateLocator
             logicalName = logicalName.substring(0, slashx + 1) + simpleClassName;
         }
 
-        String path = format("%s.%s", logicalName, InternalConstants.TEMPLATE_EXTENSION);
+        String path = format("%s.%s", logicalName, TapestryConstants.TEMPLATE_EXTENSION);
 
         return contextRoot.forFile(path).forLocale(locale);
     }

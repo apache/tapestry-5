@@ -33,12 +33,6 @@ public final class InternalConstants
     public static final String DISABLE_DEFAULT_MODULES_PARAM = "tapestry.disable-default-modules";
 
     /**
-     * The extension used for Tapestry component template files, <em>T</em>apestry <em>M</em>arkup <em>L</em>anguage.
-     * Template files are well-formed XML files.
-     */
-    public static final String TEMPLATE_EXTENSION = "tml";
-
-    /**
      * The name of the query parameter that stores the page activation context inside an action
      * request.
      */

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.internal.parser.ComponentTemplate;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Resource;
@@ -86,7 +86,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
         train_getBaseResource(model, baseResource);
 
         train_parseTemplate(parser, baseResource
-                .withExtension(InternalConstants.TEMPLATE_EXTENSION), template);
+                .withExtension(TapestryConstants.TEMPLATE_EXTENSION), template);
 
         replay();
 
@@ -120,7 +120,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
         f.createNewFile();
 
         Resource baseResource = new ClasspathResource(loader, "baz/Biff.class");
-        Resource localized = baseResource.withExtension(InternalConstants.TEMPLATE_EXTENSION);
+        Resource localized = baseResource.withExtension(TapestryConstants.TEMPLATE_EXTENSION);
 
         TemplateParser parser = mockTemplateParser();
         ComponentTemplate template = mockComponentTemplate();
@@ -194,7 +194,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
         train_getBaseResource(model, baseResource);
 
         train_parseTemplate(parser, baseResource
-                .withExtension(InternalConstants.TEMPLATE_EXTENSION), template);
+                .withExtension(TapestryConstants.TEMPLATE_EXTENSION), template);
 
         replay();
 
@@ -298,7 +298,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         train_parseTemplate(
                 parser,
-                baseFred.withExtension(InternalConstants.TEMPLATE_EXTENSION),
+                baseFred.withExtension(TapestryConstants.TEMPLATE_EXTENSION),
                 template);
 
         replay();

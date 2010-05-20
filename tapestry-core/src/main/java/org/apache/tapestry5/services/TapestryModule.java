@@ -2324,7 +2324,7 @@ public final class TapestryModule
         configuration.add("properties");
 
         // Likewise, we don't want people fishing for templates.
-        configuration.add(InternalConstants.TEMPLATE_EXTENSION);
+        configuration.add(TapestryConstants.TEMPLATE_EXTENSION);
     }
 
     public static void contributeTemplateParser(MappedConfiguration<String, URL> config)

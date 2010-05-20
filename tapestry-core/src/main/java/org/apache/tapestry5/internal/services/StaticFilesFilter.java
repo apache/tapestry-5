@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,12 +14,17 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.services.*;
-
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URL;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.tapestry5.TapestryConstants;
+import org.apache.tapestry5.services.Context;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.RequestFilter;
+import org.apache.tapestry5.services.RequestHandler;
+import org.apache.tapestry5.services.Response;
 
 /**
  * Identifies requests that are for actual resource files in the context. For those, Tapestry allows the servlet
@@ -68,7 +73,7 @@ public class StaticFilesFilter implements RequestFilter
                     // It is considered a security risk, like seeing a raw JSP. Earlier alpha versions
                     // of Tapestry required that the templates be stored in WEB-INF.
 
-                    if (suffix.equalsIgnoreCase(InternalConstants.TEMPLATE_EXTENSION))
+                    if (suffix.equalsIgnoreCase(TapestryConstants.TEMPLATE_EXTENSION))
                     {
 
                         response.sendError(HttpServletResponse.SC_FORBIDDEN, ServicesMessages
