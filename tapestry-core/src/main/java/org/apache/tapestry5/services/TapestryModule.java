@@ -83,6 +83,8 @@ import org.apache.tapestry5.internal.services.messages.PropertiesFileParserImpl;
 import org.apache.tapestry5.internal.services.meta.ContentTypeExtractor;
 import org.apache.tapestry5.internal.services.meta.MetaAnnotationExtractor;
 import org.apache.tapestry5.internal.services.meta.MetaWorkerImpl;
+import org.apache.tapestry5.internal.services.templates.DefaultTemplateLocator;
+import org.apache.tapestry5.internal.services.templates.PageTemplateLocator;
 import org.apache.tapestry5.internal.transform.*;
 import org.apache.tapestry5.internal.translator.NumericTranslator;
 import org.apache.tapestry5.internal.translator.NumericTranslatorSupport;
@@ -116,6 +118,7 @@ import org.apache.tapestry5.services.messages.PropertiesFileParser;
 import org.apache.tapestry5.services.meta.FixedExtractor;
 import org.apache.tapestry5.services.meta.MetaDataExtractor;
 import org.apache.tapestry5.services.meta.MetaWorker;
+import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
 import org.apache.tapestry5.util.StringToEnumCoercion;
 import org.apache.tapestry5.validator.Email;
 import org.apache.tapestry5.validator.Max;
@@ -2904,5 +2907,37 @@ public final class TapestryModule
         configuration.addInstance(Meta.class, MetaAnnotationExtractor.class);
         configuration.add(Secure.class, new FixedExtractor(MetaDataConstants.SECURE_PAGE));
         configuration.addInstance(ContentType.class, ContentTypeExtractor.class);
+    }
+
+    /**
+     * Builds the {@link ComponentTemplateLocator} as a chain of command.
+     * 
+     * @since 5.2.0
+     */
+    @Marker(Primary.class)
+    public ComponentTemplateLocator buildComponentTemplateLocator(List<ComponentTemplateLocator> configuration)
+    {
+        return chainBuilder.build(ComponentTemplateLocator.class, configuration);
+    }
+
+    /**
+     * Contributes two template locators:
+     * <dl>
+     * <dt>Default</dt>
+     * <dd>Searches for the template on the classpath ({@link DefaultTemplateLocator}</dd>
+     * <dt>Page (after:Default)</dt>
+     * <dd>Searches for <em>page</em> templates in the context ({@link PageTemplateLocator})</dd>
+     * </dl>
+     * 
+     * @since 5.2.0
+     */
+    public static void contributeComponentTemplateLocator(OrderedConfiguration<ComponentTemplateLocator> configuration,
+            @ContextProvider
+            AssetFactory contextAssetFactory, ComponentClassResolver componentClassResolver)
+    {
+        configuration.add("Default", new DefaultTemplateLocator());
+        configuration
+                .add("Page", new PageTemplateLocator(contextAssetFactory.getRootResource(), componentClassResolver),
+                        "after:Default");
     }
 }

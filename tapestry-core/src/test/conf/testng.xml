@@ -42,6 +42,7 @@
       <package name="org.apache.tapestry5.internal.services.assets"/>
       <package name="org.apache.tapestry5.internal.services.messages"/>
       <package name="org.apache.tapestry5.internal.services.meta"/>
+      <package name="org.apache.tapestry5.internal.services.templates"/>
       <package name="org.apache.tapestry5.internal.structure"/>
       <package name="org.apache.tapestry5.internal.test"/>
       <package name="org.apache.tapestry5.internal.transform"/>

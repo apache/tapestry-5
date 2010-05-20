@@ -1,10 +1,10 @@
-// Copyright 2007, 2010 The Apache Software Foundation
+// Copyright 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,36 +12,44 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.services;
+package org.apache.tapestry5.internal.services.templates;
+
+import static java.lang.String.format;
+
+import java.util.Locale;
 
 import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
 
-import static java.lang.String.format;
-import java.util.Locale;
-
-public class PageTemplateLocatorImpl implements PageTemplateLocator
+/**
+ * The special case for pages, where the template is searched for in the web application context.
+ * 
+ * @since 5.2.0
+ */
+public class PageTemplateLocator implements ComponentTemplateLocator
 {
     private final Resource contextRoot;
 
     private final ComponentClassResolver resolver;
 
-    public PageTemplateLocatorImpl(Resource contextRoot, ComponentClassResolver resolver)
+    public PageTemplateLocator(Resource contextRoot, ComponentClassResolver resolver)
     {
         this.contextRoot = contextRoot;
         this.resolver = resolver;
     }
 
-    public Resource findPageTemplateResource(ComponentModel model, Locale locale)
+    public Resource locateTemplate(ComponentModel model, Locale locale)
     {
         String className = model.getComponentClassName();
 
         // A bit of a hack, but should work.
 
-        if (!className.contains(".pages.")) return null;
+        if (!className.contains(".pages."))
+            return null;
 
         String logicalName = resolver.resolvePageClassNameToPageName(className);
 

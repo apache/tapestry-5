@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,6 +13,13 @@
 // limitations under the License.
 
 package org.apache.tapestry5.internal.services;
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Locale;
+import java.util.UUID;
 
 import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.internal.parser.ComponentTemplate;
@@ -23,14 +30,8 @@ import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.InvalidationListener;
+import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
 import org.testng.annotations.Test;
-
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Locale;
-import java.util.UUID;
 
 public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 {
@@ -39,29 +40,28 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
     static public final String PATH = "org/apache/tapestry5/internal/pageload";
 
     private final ClassLoader loader = Thread.currentThread().getContextClassLoader();
-    
+
     private final ClasspathURLConverter converter = new ClasspathURLConverterImpl();
 
     /**
      * Creates a new class loader, whose parent is the thread's context class loader, but adds a single classpath root
      * from the filesystem.
-     *
+     * 
      * @see #createClasspathRoot()
      */
-    protected final URLClassLoader newLoaderWithClasspathRoot(File rootDir)
-            throws MalformedURLException
+    protected final URLClassLoader newLoaderWithClasspathRoot(File rootDir) throws MalformedURLException
     {
         String urlPath = rootDir.toURL().toString();
         // URLs for folders must end with a slash to make URLClassLoader happy.
         URL url = new URL(urlPath + "/");
 
         return new URLClassLoader(new URL[]
-                {url}, loader);
+        { url }, loader);
     }
 
     /**
      * Creates a new temporary directory which can act as a classpath root.
-     *
+     * 
      * @see #newLoaderWithClasspathRoot(File)
      */
     protected final File createClasspathRoot()
@@ -75,22 +75,24 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
     @Test
     public void caching()
     {
-        Resource baseResource = newResource("Fred.class");
-
         TemplateParser parser = mockTemplateParser();
         ComponentTemplate template = mockComponentTemplate();
         ComponentModel model = mockComponentModel();
+        Resource resource = mockResource();
+        ComponentTemplateLocator locator = mockComponentTemplateLocator();
 
         train_getComponentClassName(model, PACKAGE + ".Fred");
 
-        train_getBaseResource(model, baseResource);
+        expect(locator.locateTemplate(model, Locale.ENGLISH)).andReturn(resource);
 
-        train_parseTemplate(parser, baseResource
-                .withExtension(TapestryConstants.TEMPLATE_EXTENSION), template);
+        expect(resource.exists()).andReturn(true);
+        expect(resource.toURL()).andReturn(null);
+
+        train_parseTemplate(parser, resource, template);
 
         replay();
 
-        ComponentTemplateSource source = new ComponentTemplateSourceImpl(parser, null, converter);
+        ComponentTemplateSource source = new ComponentTemplateSourceImpl(parser, locator, converter);
 
         assertSame(source.getTemplate(model, Locale.ENGLISH), template);
 
@@ -100,6 +102,11 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
         assertSame(source.getTemplate(model, Locale.ENGLISH), template);
 
         verify();
+    }
+
+    protected final ComponentTemplateLocator mockComponentTemplateLocator()
+    {
+        return newMock(ComponentTemplateLocator.class);
     }
 
     /**
@@ -125,16 +132,17 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
         TemplateParser parser = mockTemplateParser();
         ComponentTemplate template = mockComponentTemplate();
         InvalidationListener listener = mockInvalidationListener();
+        ComponentTemplateLocator locator = mockComponentTemplateLocator();
 
         train_getComponentClassName(model, "baz.Biff");
 
-        train_getBaseResource(model, baseResource);
+        expect(locator.locateTemplate(model, Locale.ENGLISH)).andReturn(localized);
 
         train_parseTemplate(parser, localized, template);
 
         replay();
 
-        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(parser, null, converter);
+        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(parser, locator, converter);
         source.addInvalidationListener(listener);
 
         assertSame(source.getTemplate(model, Locale.ENGLISH), template);
@@ -166,7 +174,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         train_getComponentClassName(model, "baz.Biff");
 
-        train_getBaseResource(model, baseResource);
+        expect(locator.locateTemplate(model, Locale.ENGLISH)).andReturn(localized);
 
         train_parseTemplate(parser, localized, template);
 
@@ -183,22 +191,26 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
     @Test
     public void localization_to_same()
     {
-        Resource baseResource = newResource("Fred.class");
-
+        Resource resource = mockResource();
         TemplateParser parser = mockTemplateParser();
         ComponentTemplate template = mockComponentTemplate();
         ComponentModel model = mockComponentModel();
+        ComponentTemplateLocator locator = mockComponentTemplateLocator();
 
         train_getComponentClassName(model, PACKAGE + ".Fred");
 
-        train_getBaseResource(model, baseResource);
+        expect(locator.locateTemplate(model, Locale.ENGLISH)).andReturn(resource);
 
-        train_parseTemplate(parser, baseResource
-                .withExtension(TapestryConstants.TEMPLATE_EXTENSION), template);
+        expect(resource.exists()).andReturn(true).anyTimes();
+        expect(resource.toURL()).andReturn(null).anyTimes();
+
+        expect(locator.locateTemplate(model, Locale.FRENCH)).andReturn(resource);
+
+        train_parseTemplate(parser, resource, template);
 
         replay();
 
-        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(parser, null, converter);
+        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(parser, locator, converter);
 
         assertSame(source.getTemplate(model, Locale.ENGLISH), template);
 
@@ -215,53 +227,25 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void page_template_found_in_context()
-    {
-        Resource baseResource = newResource("NotInClasspath.class");
-
-        // Simpler to do it this way ...
-
-        Resource contextTemplateResource = newResource("Fred.tml");
-
-        TemplateParser parser = mockTemplateParser();
-        ComponentTemplate template = mockComponentTemplate();
-        ComponentModel model = mockComponentModel();
-        PageTemplateLocator locator = mockPageTemplateLocator();
-        Locale locale = Locale.FRENCH;
-
-        train_getComponentClassName(model, PACKAGE + ".NotInClasspath");
-
-        train_getBaseResource(model, baseResource);
-
-        train_findPageTemplateResource(locator, model, locale, contextTemplateResource);
-
-        train_parseTemplate(parser, contextTemplateResource, template);
-
-        replay();
-
-        ComponentTemplateSourceImpl source = new ComponentTemplateSourceImpl(parser, locator, converter);
-
-        assertSame(source.getTemplate(model, locale), template);
-
-        verify();
-    }
-
-    @Test
     public void no_template_found()
     {
         TemplateParser parser = mockTemplateParser();
         ComponentModel model = mockComponentModel();
-        PageTemplateLocator locator = mockPageTemplateLocator();
-
-        Resource baseResource = newResource("Barney.class");
+        ComponentTemplateLocator locator = mockComponentTemplateLocator();
+        Resource baseResource = mockResource();
+        Resource missingResource = mockResource();
 
         train_getComponentClassName(model, PACKAGE + ".Barney");
 
-        train_getBaseResource(model, baseResource);
-
-        train_findPageTemplateResource(locator, model, Locale.ENGLISH, null);
+        expect(locator.locateTemplate(model, Locale.ENGLISH)).andReturn(null);
 
         train_getParentModel(model, null);
+
+        train_getBaseResource(model, baseResource);
+
+        expect(baseResource.withExtension(TapestryConstants.TEMPLATE_EXTENSION)).andReturn(missingResource);
+
+        expect(missingResource.exists()).andReturn(false);
 
         replay();
 
@@ -277,29 +261,25 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
     @Test
     public void child_component_inherits_parent_template()
     {
-        Resource baseFred = newResource("Fred.class");
-        Resource baseBarney = baseFred.forFile("Barney.class");
-        PageTemplateLocator locator = mockPageTemplateLocator();
-
         TemplateParser parser = mockTemplateParser();
         ComponentTemplate template = mockComponentTemplate();
         ComponentModel model = mockComponentModel();
         ComponentModel parentModel = mockComponentModel();
+        Resource resource = mockResource();
+        ComponentTemplateLocator locator = mockComponentTemplateLocator();
 
-        train_getComponentClassName(model, PACKAGE + ".Barney");
+        train_getComponentClassName(model, "foo.Bar");
 
-        train_getBaseResource(model, baseBarney);
-
-        train_findPageTemplateResource(locator, model, Locale.ENGLISH, null);
+        expect(locator.locateTemplate(model, Locale.ENGLISH)).andReturn(null);
 
         train_getParentModel(model, parentModel);
 
-        train_getBaseResource(parentModel, baseFred);
+        expect(locator.locateTemplate(parentModel, Locale.ENGLISH)).andReturn(resource);
 
-        train_parseTemplate(
-                parser,
-                baseFred.withExtension(TapestryConstants.TEMPLATE_EXTENSION),
-                template);
+        expect(resource.exists()).andReturn(true);
+        expect(resource.toURL()).andReturn(null);
+
+        train_parseTemplate(parser, resource, template);
 
         replay();
 

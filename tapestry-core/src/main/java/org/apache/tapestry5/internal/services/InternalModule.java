@@ -27,6 +27,7 @@ import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Autobuild;
 import org.apache.tapestry5.ioc.annotations.Marker;
+import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.services.CtClassSource;
@@ -36,6 +37,7 @@ import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
 import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
 import org.slf4j.Logger;
 
 /**
@@ -113,14 +115,6 @@ public class InternalModule
         perthreadManager.addThreadCleanupListener(service);
 
         return service;
-    }
-
-    public static PageTemplateLocator buildPageTemplateLocator(@ContextProvider
-    AssetFactory contextAssetFactory,
-
-    ComponentClassResolver componentClassResolver)
-    {
-        return new PageTemplateLocatorImpl(contextAssetFactory.getRootResource(), componentClassResolver);
     }
 
     public ComponentInstantiatorSource buildComponentInstantiatorSource(@Builtin
@@ -237,8 +231,8 @@ public class InternalModule
         return service;
     }
 
-    public ComponentTemplateSource buildComponentTemplateSource(TemplateParser parser, PageTemplateLocator locator,
-            ClasspathURLConverter classpathURLConverter)
+    public ComponentTemplateSource buildComponentTemplateSource(TemplateParser parser, @Primary
+    ComponentTemplateLocator locator, ClasspathURLConverter classpathURLConverter)
     {
         ComponentTemplateSourceImpl service = new ComponentTemplateSourceImpl(parser, locator, classpathURLConverter);
 

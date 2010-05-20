@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,11 +22,13 @@ import org.apache.tapestry5.internal.util.MultiKey;
 import org.apache.tapestry5.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.UpdateListener;
+import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
 
 import java.util.Collections;
 import java.util.List;
@@ -36,12 +38,12 @@ import java.util.Map;
 /**
  * Service implementation that manages a cache of parsed component templates.
  */
-public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl implements ComponentTemplateSource, UpdateListener
+public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl implements ComponentTemplateSource,
+        UpdateListener
 {
-
     private final TemplateParser parser;
 
-    private final PageTemplateLocator locator;
+    private final ComponentTemplateLocator locator;
 
     private final URLChangeTracker tracker;
 
@@ -90,13 +92,13 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
         }
     };
 
-    public ComponentTemplateSourceImpl(TemplateParser parser, PageTemplateLocator locator,
-                                       ClasspathURLConverter classpathURLConverter)
+    public ComponentTemplateSourceImpl(TemplateParser parser, @Primary
+    ComponentTemplateLocator templateLocator, ClasspathURLConverter classpathURLConverter)
     {
-        this(parser, locator, new URLChangeTracker(classpathURLConverter));
+        this(parser, templateLocator, new URLChangeTracker(classpathURLConverter));
     }
 
-    ComponentTemplateSourceImpl(TemplateParser parser, PageTemplateLocator locator, URLChangeTracker tracker)
+    ComponentTemplateSourceImpl(TemplateParser parser, ComponentTemplateLocator locator, URLChangeTracker tracker)
     {
         this.parser = parser;
         this.locator = locator;
@@ -104,9 +106,8 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
     }
 
     /**
-     * Resolves the component name to a {@link Resource} and finds the localization of that resource (the combination of
-     * component name and locale is resolved to a resource). The localized resource is used as the key to a cache of
-     * {@link ComponentTemplate}s.
+     * Resolves the component name to a localized {@link Resource} (using the {@link ComponentTemplateLocator} chain of
+     * command service). The localized resource is used as the key to a cache of {@link ComponentTemplate}s.
      * <p/>
      * If a template doesn't exist, then the missing ComponentTemplate is returned.
      */
@@ -144,7 +145,8 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
         // In a race condition, we may parse the same template more than once. This will likely add
         // the resource to the tracker multiple times. Not likely this will cause a big issue.
 
-        if (!r.exists()) return missingTemplate;
+        if (!r.exists())
+            return missingTemplate;
 
         tracker.add(r.toURL());
 
@@ -156,25 +158,10 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
         ComponentModel model = initialModel;
         while (model != null)
         {
+            Resource localized = locator.locateTemplate(model, locale);
 
-            Resource baseResource = baseResourceForModel(model);
-            Resource localized = baseResource.forLocale(locale);
-
-            // In a race condition, we may hit this method a couple of times, and overwrite previous
-            // results with identical new results.
-
-            // If found a properly localized version of the base resource for the model,
-            // then we've found a match (even if we had to ascend a couple of levels
-            // to reach it).
-
-            if (localized != null) return localized;
-
-            // Not on the classpath, the the locator see if its a) a page and b) a resource inside
-            // the context
-
-            localized = locator.findPageTemplateResource(model, locale);
-
-            if (localized != null) return localized;
+            if (localized != null)
+                return localized;
 
             // Otherwise, this component doesn't have its own template ... lets work up to its
             // base class and check there.
@@ -185,12 +172,7 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
         // This will be a Resource whose URL is null, which will be picked up later and force the
         // return of the empty template.
 
-        return baseResourceForModel(initialModel);
-    }
-
-    private Resource baseResourceForModel(ComponentModel model)
-    {
-        return model.getBaseResource().withExtension(TapestryConstants.TEMPLATE_EXTENSION);
+        return initialModel.getBaseResource().withExtension(TapestryConstants.TEMPLATE_EXTENSION);
     }
 
     /**
