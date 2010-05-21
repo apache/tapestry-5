@@ -62,9 +62,7 @@ public class FuncTest extends TestBase
     @Test
     public void combine_coercions()
     {
-        List<String> source = Arrays.asList("Mary", "had", "a", "little", "lamb");
-
-        List<Boolean> even = Func.map(Func.combine(stringToLength, toEven), source);
+        List<Boolean> even = Func.map(Func.combine(stringToLength, toEven), "Mary", "had", "a", "little", "lamb");
 
         assertListsEquals(even, true, false, false, true, true);
     }
@@ -159,13 +157,13 @@ public class FuncTest extends TestBase
     {
         List<String> source = Arrays.asList("Mary", "had", "a", "little", "lamb");
 
-        Predicate<String> combinedp = Func.toPredicate(Func.combine(stringToLength, toEven));        
+        Predicate<String> combinedp = Func.toPredicate(Func.combine(stringToLength, toEven));
         Coercion<String, String> identity = Func.identity();
         Predicate<String> isNull = Func.isNull();
 
         // Converting to null and then filtering out nulls is the hard way to do filter or remove,
         // but exercises the code we want to test.
-        
+
         List<String> filtered = Func.remove(isNull, Func.map(Func.select(combinedp, identity), source));
 
         assertListsEquals(filtered, "Mary", "little", "lamb");

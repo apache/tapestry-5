@@ -15,6 +15,7 @@
 package org.apache.tapestry5.ioc.internal.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -53,6 +54,13 @@ public class Func
         }
 
         return result;
+    }
+
+    public static <S, T> List<T> map(Coercion<S, T> coercion, S... source)
+    {
+        Defense.notNull(source, "source");
+
+        return map(coercion, Arrays.asList(source));
     }
 
     public static <S, T1, T2> Coercion<S, T2> combine(final Coercion<S, T1> first, final Coercion<T1, T2> second)
