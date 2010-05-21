@@ -368,4 +368,22 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         assertEquals(document.toString(), readFile("other_initialization.txt"));
     }
+
+    @Test
+    public void ie_conditional_stylesheet() throws Exception
+    {
+        Document document = new Document();
+
+        document.newRootElement("html");
+
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
+
+        linker.addStylesheetLink(new StylesheetLink("everybody.css"));
+        linker.addStylesheetLink(new StylesheetLink("just_ie.css", new StylesheetOptions(null, "IE")));
+
+        linker.updateDocument(document);
+
+        assertEquals(document.toString(), readFile("ie_conditional_stylesheet.txt"));
+
+    }
 }

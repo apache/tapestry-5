@@ -36,6 +36,10 @@ import org.apache.tapestry5.services.EnvironmentalShadowBuilder;
  * <p>
  * The term "import" is used on many methods to indicate that the indicated resource (stack, library or stylesheet) will
  * only be added to the final Document once.
+ * <p>
+ * The name is slightly a misnomer, since there's a side-line of
+ * {@linkplain #importStylesheet(Asset, StylesheetOptions)
+ * importing stylesheets} as well.
  * 
  * @since 5.2.0
  */

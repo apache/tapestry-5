@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.javascript.StylesheetOptions;
 
 /**
@@ -65,7 +66,16 @@ public final class StylesheetLink
      */
     void add(Element container)
     {
+        String condition = options.getCondition();
+        boolean hasCondition = InternalUtils.isNonBlank(condition);
+
+        if (hasCondition)
+            container.raw(String.format("\n<!--[if %s]>\n", condition));
+
         container.element("link", "href", url, "rel", "stylesheet", "type", "text/css", "media", options.getMedia());
+
+        if (hasCondition)
+            container.raw("\n<![endif]-->\n");
     }
 
     @Override

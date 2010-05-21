@@ -23,11 +23,17 @@ import org.apache.tapestry5.internal.TapestryInternalUtils;
  */
 public class StylesheetOptions
 {
-    private final String media;
+    private final String media, condition;
 
     public StylesheetOptions(String media)
     {
+        this(media, null);
+    }
+
+    public StylesheetOptions(String media, String condition)
+    {
         this.media = media;
+        this.condition = condition;
     }
 
     /**
@@ -39,20 +45,36 @@ public class StylesheetOptions
         return media;
     }
 
+    /**
+     * The Internet Explorer condition associated with the link. When non-blank, the
+     * &lt;link&gt; element will be written inside a specially formatted comment interpreted
+     * by Internet Explorer. Usually null.
+     * 
+     * @see http://en.wikipedia.org/wiki/Conditional_comment
+     */
+    public String getCondition()
+    {
+        return condition;
+    }
+
     @Override
     public String toString()
     {
-        return String.format("StylesheetOptions[media=%s]", media);
+        return String.format("StylesheetOptions[media=%s condition=%s]", media);
     }
 
     @Override
     public boolean equals(Object obj)
     {
+        if (obj == this)
+            return true;
+
         if (obj == null || !(obj instanceof StylesheetOptions))
             return false;
 
         StylesheetOptions sso = (StylesheetOptions) obj;
 
-        return TapestryInternalUtils.isEqual(media, sso.media);
+        return TapestryInternalUtils.isEqual(media, sso.media)
+                && TapestryInternalUtils.isEqual(condition, sso.condition);
     }
 }
