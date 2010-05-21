@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,13 +25,6 @@ Tapestry.DateField = Class.create( {
 		this.trigger.observe("click", this.triggerClicked.bind(this));
 
 		this.popup = null;
-
-		if (spec.localization) {
-			DatePicker.months = spec.localization.months;
-			DatePicker.days = spec.localization.days.toArray();
-
-			Tapestry.DateField.prototype.firstDay = spec.localization.firstDay;
-		}
 	},
 
 	triggerClicked : function() {
@@ -190,6 +183,13 @@ Tapestry.DateField = Class.create( {
 });
 
 Tapestry.DateField.localized = false;
+
+Tapestry.DateField.initLocalization = function(localization) {
+	DatePicker.months = localization.months;
+	DatePicker.days = localization.days.toArray();
+
+	Tapestry.DateField.prototype.firstDay = localization.firstDay;
+};
 
 Tapestry.Initializer.dateField = function(spec) {
 	new Tapestry.DateField(spec);

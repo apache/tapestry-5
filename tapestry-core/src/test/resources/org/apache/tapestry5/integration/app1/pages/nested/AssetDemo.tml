@@ -38,4 +38,12 @@
   <div class="ie-big-blue">
     Normal in most browsers, but Big and Blue in IE.
     </div>
+
+  <p>
+    Via @Import:
+    </p>
+
+  <div class="via-import">
+    This text should be red.
+    </div>
 </html>

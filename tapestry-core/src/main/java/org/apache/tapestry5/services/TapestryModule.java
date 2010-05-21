@@ -77,6 +77,7 @@ import org.apache.tapestry5.internal.services.assets.ClasspathAssetRequestHandle
 import org.apache.tapestry5.internal.services.assets.ContextAssetRequestHandler;
 import org.apache.tapestry5.internal.services.assets.StackAssetRequestHandler;
 import org.apache.tapestry5.internal.services.javascript.CoreJavascriptStack;
+import org.apache.tapestry5.internal.services.javascript.DateFieldStack;
 import org.apache.tapestry5.internal.services.javascript.JavascriptStackPathConstructor;
 import org.apache.tapestry5.internal.services.javascript.JavascriptStackSourceImpl;
 import org.apache.tapestry5.internal.services.messages.PropertiesFileParserImpl;
@@ -554,6 +555,8 @@ public final class TapestryModule
      * <dd>Supports the {@link org.apache.tapestry5.annotations.IncludeStylesheet} annotation</dd>
      * <dt>IncludeJavaScriptLibrary</dt>
      * <dd>Supports the {@link org.apache.tapestry5.annotations.IncludeJavaScriptLibrary} annotation</dd>
+     * <dt>Import</dt>
+     * <dd>Supports the {@link Import} annotation</dd>
      * <dt>SupportsInformalParameters</dt>
      * <dd>Checks for the annotation</dd>
      * <dt>Meta</dt>
@@ -640,6 +643,7 @@ public final class TapestryModule
         configuration.addInstance("IncludeStylesheet", IncludeStylesheetWorker.class, "after:SetupRender");
         configuration
                 .addInstance("IncludeJavaScriptLibrary", IncludeJavaScriptLibraryWorker.class, "after:SetupRender");
+        configuration.addInstance("Import", ImportWorker.class, "after:SetupRender");
 
         configuration.add("InvokePostRenderCleanupOnResources", new InvokePostRenderCleanupOnResourcesWorker());
 
@@ -2868,13 +2872,14 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes the "core" {@link JavascriptStack}.
+     * Contributes the "core" and "core-datefield" {@link JavascriptStack}s
      * 
      * @since 5.2.0
      */
     public static void contributeJavascriptStackSource(MappedConfiguration<String, JavascriptStack> configuration)
     {
         configuration.addInstance(InternalConstants.CORE_STACK_NAME, CoreJavascriptStack.class);
+        configuration.addInstance("core-datefield", DateFieldStack.class);
     }
 
     public static ComponentMessagesSource buildComponentMessagesSource(UpdateListenerHub updateListenerHub, @Autobuild

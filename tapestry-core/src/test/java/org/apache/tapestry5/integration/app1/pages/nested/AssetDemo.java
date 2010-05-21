@@ -16,11 +16,16 @@ package org.apache.tapestry5.integration.app1.pages.nested;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.javascript.JavascriptSupport;
 import org.apache.tapestry5.services.javascript.StylesheetOptions;
 
+/**
+ * Primarily used to demonstrate that assets can be localized and exposed to the client, this has grown to also
+ * demonstrate the use of the {@link Import} annotation.
+ */
 public class AssetDemo
 {
     @Inject
@@ -38,6 +43,7 @@ public class AssetDemo
     @Environmental
     private JavascriptSupport javascriptSupport;
 
+    @Import(stylesheet = "context:css/via-import.css")
     void afterRender()
     {
         javascriptSupport.importStylesheet(ieOnly, new StylesheetOptions(null, "IE"));

@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +19,7 @@ import org.apache.tapestry5.internal.AssetConstants;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
 import org.apache.tapestry5.services.AssetFactory;
@@ -37,11 +38,14 @@ public class AssetSourceImpl implements AssetSource
 
     private final Map<Resource, Asset> cache = CollectionFactory.newConcurrentMap();
 
+    private final SymbolSource symbolSource;
+
     public AssetSourceImpl(ThreadLocale threadLocale,
 
-                           Map<String, AssetFactory> configuration)
+    Map<String, AssetFactory> configuration, SymbolSource symbolSource)
     {
         this.threadLocale = threadLocale;
+        this.symbolSource = symbolSource;
 
         Map<Class, AssetFactory> byResourceClass = CollectionFactory.newMap();
 
@@ -85,6 +89,16 @@ public class AssetSourceImpl implements AssetSource
         return getUnlocalizedResource(null, path);
     }
 
+    public Asset getExpandedAsset(String path)
+    {
+        return getUnlocalizedAsset(symbolSource.expandSymbols(path));
+    }
+
+    public Asset getUnlocalizedAsset(String path)
+    {
+        return getAssetInLocale(null, path, null);
+    }
+
     private Asset getAssetInLocale(Resource baseResource, String path, Locale locale)
     {
         return getLocalizedAssetFromResource(getUnlocalizedResource(baseResource, path), locale);
@@ -110,16 +124,12 @@ public class AssetSourceImpl implements AssetSource
         if (root == null)
             throw new IllegalArgumentException(ServicesMessages.unknownAssetPrefix(path));
 
-
         return root.forFile(path.substring(colonx + 1));
     }
 
-
     private Asset getLocalizedAssetFromResource(Resource unlocalized, Locale locale)
     {
-        Resource localized = locale == null
-                             ? unlocalized
-                             : unlocalized.forLocale(locale);
+        Resource localized = locale == null ? unlocalized : unlocalized.forLocale(locale);
 
         if (localized == null)
             throw new RuntimeException(ServicesMessages.assetDoesNotExist(unlocalized));

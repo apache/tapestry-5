@@ -14,8 +14,18 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ClientElement;
+import org.apache.tapestry5.ComponentAction;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.TrackableComponentEventCallback;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Events;
+import org.apache.tapestry5.annotations.Import;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.SubmitMode;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
@@ -31,7 +41,7 @@ import org.apache.tapestry5.services.javascript.JavascriptSupport;
  * .
  */
 @SupportsInformalParameters
-@IncludeJavaScriptLibrary("linksubmit.js")
+@Import(library = "linksubmit.js")
 @Events(EventConstants.SELECTED + " by default, may be overridden")
 public class LinkSubmit implements ClientElement
 {
@@ -60,7 +70,7 @@ public class LinkSubmit implements ClientElement
 
     /**
      * If true (the default), then any notification sent by the component will be deferred until the end of the form
-     * submission (this is usually desirable).  In general, this can be left as the default except when the LinkSubmit
+     * submission (this is usually desirable). In general, this can be left as the default except when the LinkSubmit
      * component is rendering inside a {@link Loop}, in which case defer should be bound to false (otherwise, the
      * event context will always be the final value of the Loop).
      */

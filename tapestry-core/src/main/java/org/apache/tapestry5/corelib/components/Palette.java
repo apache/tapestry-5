@@ -24,7 +24,7 @@ import java.util.Set;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.base.AbstractField;
@@ -69,7 +69,7 @@ import org.apache.tapestry5.services.javascript.JavascriptSupport;
  * Option groups within the {@link SelectModel} will be rendered, but are not supported by many browsers, and are not
  * fully handled on the client side.
  */
-@IncludeJavaScriptLibrary("palette.js")
+@Import(library = "palette.js")
 public class Palette extends AbstractField
 {
     // These all started as anonymous inner classes, and were refactored out to here.

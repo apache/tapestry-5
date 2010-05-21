@@ -1,10 +1,10 @@
-// Copyright 2007, 2009 The Apache Software Foundation
+// Copyright 2007, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,22 +19,24 @@ import java.lang.annotation.*;
 import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
 import org.apache.tapestry5.ioc.annotations.UseWith;
 
-
 /**
- * Allows for the inclusion of one or more JavaScript libraries.  The libraries are assets, usually (but not always)
+ * Allows for the inclusion of one or more JavaScript libraries. The libraries are assets, usually (but not always)
  * stored on the classpath with the component.
- *
+ * 
  * @see org.apache.tapestry5.annotations.IncludeStylesheet
  * @see org.apache.tapestry5.annotations.Path
+ * @deprecated Use {@link Import} instead
  */
-@Target({ ElementType.TYPE })
+@Target(
+{ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@UseWith({COMPONENT,MIXIN,PAGE})
+@UseWith(
+{ COMPONENT, MIXIN, PAGE })
 public @interface IncludeJavaScriptLibrary
 {
     /**
-     * The paths to the JavaScript library assets.  Symbols in the paths are expanded.  The library may be localized.
+     * The paths to the JavaScript library assets. Symbols in the paths are expanded. The library may be localized.
      */
     String[] value();
 }

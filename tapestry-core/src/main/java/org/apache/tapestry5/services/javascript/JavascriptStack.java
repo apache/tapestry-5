@@ -42,6 +42,7 @@ import org.apache.tapestry5.services.ClientInfrastructure;
  * A planned extension to this interface is to allow for dependencies between JavascriptStacks.
  * 
  * @since 5.2.0
+ * @see ThreadLocale
  */
 public interface JavascriptStack
 {
@@ -56,9 +57,10 @@ public interface JavascriptStack
     List<Asset> getStylesheets();
 
     /**
-     * Returns static JavaScript initialization for the stack. This block JavaScript code will be added to the
+     * Returns static JavaScript initialization for the stack. This block of JavaScript code will be added to the
      * page that imports the stack. The code executes outside of any other function (i.e., the code is not deferred
-     * until the DOM is loaded).
+     * until the DOM is loaded). As with the other methods, if localization is a factor, the result of this method
+     * should be localized.
      */
     String getInitialization();
 }

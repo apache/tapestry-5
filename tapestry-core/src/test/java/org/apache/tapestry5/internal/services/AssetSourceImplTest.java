@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,6 +18,7 @@ import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
+import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.AssetFactory;
 import org.apache.tapestry5.services.AssetSource;
@@ -51,7 +52,7 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        AssetSource source = new AssetSourceImpl(threadLocale, configuration);
+        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null);
 
         // First try creates it:
 
@@ -81,15 +82,44 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        AssetSource source = new AssetSourceImpl(threadLocale, configuration);
+        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null);
 
         // First try creates it:
 
-        assertSame(source.getClasspathAsset(
-                "org/apache/tapestry5/internal/services/SimpleComponent.properties",
+        assertSame(source.getClasspathAsset("org/apache/tapestry5/internal/services/SimpleComponent.properties",
                 Locale.UK), asset);
 
         verify();
+    }
+
+    @Test
+    public void get_expanded_asset()
+    {
+        AssetFactory factory = mockAssetFactory();
+        Asset asset = mockAsset();
+        SymbolSource symbolSource = mockSymbolSource();
+
+        Resource expectedResource = baseResource.forFile("SimpleComponent.properties");
+
+        train_getRootResource(factory, rootResource);
+
+        train_createAsset(factory, expectedResource, asset);
+
+        train_expandSymbols(symbolSource, "${path}/SimpleComponent.properties",
+                "org/apache/tapestry5/internal/services/SimpleComponent.properties");
+
+        Map<String, AssetFactory> configuration = Collections.singletonMap("classpath", factory);
+
+        replay();
+
+        AssetSource source = new AssetSourceImpl(null, configuration, symbolSource);
+
+        // First try creates it:
+
+        assertSame(source.getExpandedAsset("${path}/SimpleComponent.properties"), asset);
+
+        verify();
+
     }
 
     @Test
@@ -112,12 +142,9 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        AssetSource source = new AssetSourceImpl(threadLocale, configuration);
+        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null);
 
-        assertSame(
-                source
-                        .getClasspathAsset("org/apache/tapestry5/internal/services/SimpleComponent.properties"),
-                asset);
+        assertSame(source.getClasspathAsset("org/apache/tapestry5/internal/services/SimpleComponent.properties"), asset);
 
         verify();
     }
@@ -140,19 +167,15 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        AssetSource source = new AssetSourceImpl(threadLocale, configuration);
+        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null);
 
-        assertSame(source.getAsset(
-                baseResource,
-                "classpath:org/apache/tapestry5/internal/services/SimpleComponent.properties",
-                Locale.UK), asset);
+        assertSame(source.getAsset(baseResource,
+                "classpath:org/apache/tapestry5/internal/services/SimpleComponent.properties", Locale.UK), asset);
 
         // Check that a leading slash is not a problem:
 
-        assertSame(source.getAsset(
-                baseResource,
-                "classpath:/org/apache/tapestry5/internal/services/SimpleComponent.properties",
-                Locale.UK), asset);
+        assertSame(source.getAsset(baseResource,
+                "classpath:/org/apache/tapestry5/internal/services/SimpleComponent.properties", Locale.UK), asset);
 
         verify();
     }
@@ -166,20 +189,17 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        AssetSource source = new AssetSourceImpl(threadLocale, configuration);
+        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null);
 
         try
         {
-            source.getAsset(
-                    baseResource,
-                    "classpath:org/apache/tapestry5/internal/services/SimpleComponent.properties",
-                    Locale.UK);
+            source.getAsset(baseResource,
+                    "classpath:org/apache/tapestry5/internal/services/SimpleComponent.properties", Locale.UK);
             unreachable();
         }
         catch (IllegalArgumentException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
+            assertEquals(ex.getMessage(),
                     "Unknown prefix for asset path 'classpath:org/apache/tapestry5/internal/services/SimpleComponent.properties'.");
         }
 
@@ -195,7 +215,7 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        AssetSource source = new AssetSourceImpl(threadLocale, configuration);
+        AssetSource source = new AssetSourceImpl(threadLocale, configuration, null);
 
         try
         {
