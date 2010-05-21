@@ -21,6 +21,7 @@ import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
+import org.apache.tapestry5.services.javascript.StylesheetLink;
 import org.apache.tapestry5.services.javascript.StylesheetOptions;
 import org.testng.annotations.Test;
 

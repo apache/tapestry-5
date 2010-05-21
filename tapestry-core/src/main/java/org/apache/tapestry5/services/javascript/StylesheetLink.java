@@ -12,17 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.services;
+package org.apache.tapestry5.services.javascript;
 
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.internal.services.DocumentLinker;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.services.javascript.StylesheetOptions;
 
 /**
- * Captures the information needed to create a stylesheet link in the final {@link Document}.
+ * Captures the information needed to create a stylesheet link in the final {@link Document}, or
+ * as part of a JSON partial page render response.
  * 
  * @see DocumentLinker
+ * @see JavascriptStack
  * @since 5.2.0
  */
 public final class StylesheetLink
@@ -33,6 +38,16 @@ public final class StylesheetLink
 
     private static final StylesheetOptions BLANK_OPTIONS = new StylesheetOptions(null);
 
+    public StylesheetLink(Asset asset)
+    {
+        this(asset, null);
+    }
+
+    public StylesheetLink(Asset asset, StylesheetOptions options)
+    {
+        this(Defense.notNull(asset, "asset").toClientURL(), options);
+    }
+
     public StylesheetLink(String url)
     {
         this(url, null);
@@ -40,11 +55,11 @@ public final class StylesheetLink
 
     public StylesheetLink(String url, StylesheetOptions options)
     {
-        this.url = url;
+        this.url = Defense.notBlank(url, "url");
         this.options = options != null ? options : BLANK_OPTIONS;
     }
 
-    public String getUrl()
+    public String getURL()
     {
         return url;
     }
@@ -64,7 +79,7 @@ public final class StylesheetLink
      * @param container
      *            to add the new element to
      */
-    void add(Element container)
+    public void add(Element container)
     {
         String condition = options.getCondition();
         boolean hasCondition = InternalUtils.isNonBlank(condition);

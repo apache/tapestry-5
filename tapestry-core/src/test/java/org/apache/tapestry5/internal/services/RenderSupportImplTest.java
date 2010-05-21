@@ -23,6 +23,7 @@ import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.javascript.JavascriptSupport;
+import org.apache.tapestry5.services.javascript.StylesheetLink;
 import org.apache.tapestry5.services.javascript.StylesheetOptions;
 import org.testng.annotations.Test;
 
@@ -110,9 +111,9 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     {
         String media = "print";
         JavascriptSupport javascriptSupport = mockJavascriptSupport();
-        Asset asset = mockAsset();
+        Asset asset = mockAsset("foo.css");
 
-        javascriptSupport.importStylesheet(asset, new StylesheetOptions(media));
+        javascriptSupport.importStylesheet(new StylesheetLink("foo.css", new StylesheetOptions(media)));
 
         replay();
 
@@ -129,7 +130,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
         String media = "print";
         JavascriptSupport javascriptSupport = mockJavascriptSupport();
 
-        javascriptSupport.importStylesheet(ASSET_URL, new StylesheetOptions(media));
+        javascriptSupport.importStylesheet(new StylesheetLink(ASSET_URL, new StylesheetOptions(media)));
 
         replay();
 

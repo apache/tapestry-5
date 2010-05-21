@@ -18,9 +18,12 @@ import java.util.List;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.internal.util.Func;
 import org.apache.tapestry5.services.ClientInfrastructure;
 import org.apache.tapestry5.services.javascript.JavascriptStack;
+import org.apache.tapestry5.services.javascript.StylesheetLink;
 
 /**
  * JavascriptStack based on the information retrieved from {@link ClientInfrastructure}.
@@ -52,9 +55,9 @@ public class CoreJavascriptStack implements JavascriptStack
         return clientInfrastructure.getJavascriptStack();
     }
 
-    public List<Asset> getStylesheets()
+    public List<StylesheetLink> getStylesheets()
     {
-        return clientInfrastructure.getStylesheetStack();
+        return Func.map(TapestryInternalUtils.assetToStylesheetLink, clientInfrastructure.getStylesheetStack());
     }
 
 }

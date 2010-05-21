@@ -21,6 +21,7 @@ import java.util.Locale;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.Func;
 import org.apache.tapestry5.ioc.services.Coercion;
@@ -29,6 +30,7 @@ import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.javascript.JavascriptStack;
+import org.apache.tapestry5.services.javascript.StylesheetLink;
 
 public class DateFieldStack implements JavascriptStack
 {
@@ -36,7 +38,9 @@ public class DateFieldStack implements JavascriptStack
 
     private final boolean compactJSON;
 
-    private final List<Asset> javascriptStack, stylesheetStack;
+    private final List<Asset> javascriptStack;
+
+    private final List<StylesheetLink> stylesheetStack;
 
     public DateFieldStack(ThreadLocale threadLocale, @Symbol(SymbolConstants.COMPACT_JSON)
     boolean compactJSON, final AssetSource assetSource)
@@ -52,10 +56,13 @@ public class DateFieldStack implements JavascriptStack
             }
         };
 
+        Coercion<String, StylesheetLink> pathToStylesheetLink = Func.combine(pathToAsset,
+                TapestryInternalUtils.assetToStylesheetLink);
+
         javascriptStack = Func.map(pathToAsset, "${tapestry.datepicker}/js/datepicker.js",
                 "org/apache/tapestry5/corelib/components/datefield.js");
 
-        stylesheetStack = Func.map(pathToAsset, "${tapestry.datepicker}/css/datepicker.css");
+        stylesheetStack = Func.map(pathToStylesheetLink, "${tapestry.datepicker}/css/datepicker.css");
     }
 
     public String getInitialization()
@@ -101,7 +108,7 @@ public class DateFieldStack implements JavascriptStack
         return javascriptStack;
     }
 
-    public List<Asset> getStylesheets()
+    public List<StylesheetLink> getStylesheets()
     {
         return stylesheetStack;
     }

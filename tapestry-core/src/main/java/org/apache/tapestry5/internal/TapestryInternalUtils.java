@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,14 +14,6 @@
 
 package org.apache.tapestry5.internal;
 
-import org.apache.tapestry5.*;
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.Orderable;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,6 +21,22 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.Asset2;
+import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.OptionModel;
+import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.SelectModel;
+import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.Orderable;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.Func;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.Coercion;
+import org.apache.tapestry5.services.javascript.StylesheetLink;
 
 /**
  * Shared utility methods used by various implementation classes.
@@ -77,7 +85,8 @@ public class TapestryInternalUtils
 
             boolean upperCase = Character.isUpperCase(ch);
 
-            if (upperCase && !postSpace) builder.append(' ');
+            if (upperCase && !postSpace)
+                builder.append(' ');
 
             builder.append(ch);
 
@@ -106,7 +115,7 @@ public class TapestryInternalUtils
     /**
      * Converts a string to an {@link OptionModel}. The string is of the form "value=label". If the equals sign is
      * omitted, then the same value is used for both value and label.
-     *
+     * 
      * @param input
      * @return
      */
@@ -116,7 +125,8 @@ public class TapestryInternalUtils
 
         int equalsx = input.indexOf('=');
 
-        if (equalsx < 0) return new OptionModelImpl(input);
+        if (equalsx < 0)
+            return new OptionModelImpl(input);
 
         String value = input.substring(0, equalsx);
         String label = input.substring(equalsx + 1);
@@ -127,8 +137,9 @@ public class TapestryInternalUtils
     /**
      * Parses a string input into a series of value=label pairs compatible with {@link #toOptionModel(String)}. Splits
      * on commas. Ignores whitespace around commas.
-     *
-     * @param input comma seperated list of terms
+     * 
+     * @param input
+     *            comma seperated list of terms
      * @return list of option models
      */
     public static List<OptionModel> toOptionModels(String input)
@@ -145,7 +156,7 @@ public class TapestryInternalUtils
 
     /**
      * Wraps the result of {@link #toOptionModels(String)} as a {@link SelectModel} (with no option groups).
-     *
+     * 
      * @param input
      * @return
      */
@@ -158,7 +169,7 @@ public class TapestryInternalUtils
 
     /**
      * Converts a map entry to an {@link OptionModel}.
-     *
+     * 
      * @param input
      * @return
      */
@@ -173,8 +184,9 @@ public class TapestryInternalUtils
 
     /**
      * Processes a map input into a series of map entries compatible with {@link #toOptionModel(Map.Entry)}.
-     *
-     * @param input map of elements
+     * 
+     * @param input
+     *            map of elements
      * @return list of option models
      */
     public static <K, V> List<OptionModel> toOptionModels(Map<K, V> input)
@@ -191,7 +203,7 @@ public class TapestryInternalUtils
 
     /**
      * Wraps the result of {@link #toOptionModels(Map)} as a {@link SelectModel} (with no option groups).
-     *
+     * 
      * @param input
      * @return
      */
@@ -204,7 +216,7 @@ public class TapestryInternalUtils
 
     /**
      * Converts an object to an {@link OptionModel}.
-     *
+     * 
      * @param input
      * @return
      */
@@ -217,8 +229,9 @@ public class TapestryInternalUtils
 
     /**
      * Processes a list input into a series of objects compatible with {@link #toOptionModel(Object)}.
-     *
-     * @param input list of elements
+     * 
+     * @param input
+     *            list of elements
      * @return list of option models
      */
     public static <E> List<OptionModel> toOptionModels(List<E> input)
@@ -235,7 +248,7 @@ public class TapestryInternalUtils
 
     /**
      * Wraps the result of {@link #toOptionModels(List)} as a {@link SelectModel} (with no option groups).
-     *
+     * 
      * @param input
      * @return
      */
@@ -249,7 +262,7 @@ public class TapestryInternalUtils
     /**
      * Parses a key/value pair where the key and the value are seperated by an equals sign. The key and value are
      * trimmed of leading and trailing whitespace, and returned as a {@link KeyValue}.
-     *
+     * 
      * @param input
      * @return
      */
@@ -257,7 +270,8 @@ public class TapestryInternalUtils
     {
         int pos = input.indexOf('=');
 
-        if (pos < 1) throw new IllegalArgumentException(InternalMessages.badKeyValue(input));
+        if (pos < 1)
+            throw new IllegalArgumentException(InternalMessages.badKeyValue(input));
 
         String key = input.substring(0, pos);
         String value = input.substring(pos + 1);
@@ -265,13 +279,13 @@ public class TapestryInternalUtils
         return new KeyValue(key.trim(), value.trim());
     }
 
-
     /**
      * Used to convert a property expression into a key that can be used to locate various resources (Blocks, messages,
      * etc.). Strips out any punctuation characters, leaving just words characters (letters, number and the
      * underscore).
-     *
-     * @param expression a property expression
+     * 
+     * @param expression
+     *            a property expression
      * @return the expression with punctuation removed
      */
     public static String extractIdFromPropertyExpression(String expression)
@@ -287,7 +301,8 @@ public class TapestryInternalUtils
     {
         String key = id + "-label";
 
-        if (messages.contains(key)) return messages.get(key);
+        if (messages.contains(key))
+            return messages.get(key);
 
         return toUserPresentable(extractIdFromPropertyExpression(lastTerm(propertyExpression)));
     }
@@ -306,28 +321,33 @@ public class TapestryInternalUtils
     /**
      * Converts an list of strings into a space-separated string combining them all, suitable for use as an HTML class
      * attribute value.
-     *
-     * @param classes classes to combine
+     * 
+     * @param classes
+     *            classes to combine
      * @return the joined classes, or null if classes is empty
      */
     public static String toClassAttributeValue(List<String> classes)
     {
-        if (classes.isEmpty()) return null;
+        if (classes.isEmpty())
+            return null;
 
         return InternalUtils.join(classes, " ");
     }
 
-
     /**
      * Converts an enum to a label string, allowing for overrides from a message catalog.
      * <p/>
-     * <ul> <li>As key <em>prefix</em>.<em>name</em> if present.  Ex: "ElementType.LOCAL_VARIABLE" <li>As key
-     * <em>name</em> if present, i.e., "LOCAL_VARIABLE". <li>As a user-presentable version of the name, i.e., "Local
-     * Variable". </ul>
-     *
-     * @param messages the messages to search for the label
+     * <ul>
+     * <li>As key <em>prefix</em>.<em>name</em> if present. Ex: "ElementType.LOCAL_VARIABLE"
+     * <li>As key <em>name</em> if present, i.e., "LOCAL_VARIABLE".
+     * <li>As a user-presentable version of the name, i.e., "Local Variable".
+     * </ul>
+     * 
+     * @param messages
+     *            the messages to search for the label
      * @param prefix
-     * @param value    to get a label for
+     * @param value
+     *            to get a label for
      * @return the label
      */
     public static String getLabelForEnum(Messages messages, String prefix, Enum value)
@@ -336,9 +356,11 @@ public class TapestryInternalUtils
 
         String key = prefix + "." + name;
 
-        if (messages.contains(key)) return messages.get(key);
+        if (messages.contains(key))
+            return messages.get(key);
 
-        if (messages.contains(name)) return messages.get(name);
+        if (messages.contains(name))
+            return messages.get(name);
 
         return toUserPresentable(name.toLowerCase());
     }
@@ -358,21 +380,24 @@ public class TapestryInternalUtils
     /**
      * Determines if the two values are equal. They are equal if they are the exact same value (including if they are
      * both null). Otherwise standard equals() comparison is used.
-     *
+     * 
      * @param <T>
-     * @param left  value to compare, possibly null
-     * @param right value to compare, possibly null
+     * @param left
+     *            value to compare, possibly null
+     * @param right
+     *            value to compare, possibly null
      * @return true if same value, both null, or equal
      */
     public static <T> boolean isEqual(T left, T right)
     {
-        if (left == right) return true;
+        if (left == right)
+            return true;
 
-        if (left == null) return right == null;
+        if (left == null)
+            return right == null;
 
         return left.equals(right);
     }
-
 
     /**
      * Splits a path at each slash.
@@ -383,24 +408,26 @@ public class TapestryInternalUtils
     }
 
     /**
-     * Splits a value around commas.  Whitespace around the commas is removed, as is leading and trailing whitespace.
-     *
+     * Splits a value around commas. Whitespace around the commas is removed, as is leading and trailing whitespace.
+     * 
      * @since 5.1.0.0
      */
     public static String[] splitAtCommas(String value)
     {
         if (InternalUtils.isBlank(value))
             return InternalConstants.EMPTY_STRING_ARRAY;
-            
+
         return COMMA_PATTERN.split(value.trim());
     }
 
     /**
      * Copies some content from an input stream to an output stream. It is the caller's responsibility to close the
      * streams.
-     *
-     * @param in  source of data
-     * @param out sink of data
+     * 
+     * @param in
+     *            source of data
+     * @param out
+     *            sink of data
      * @throws IOException
      * @since 5.1.0.0
      */
@@ -412,7 +439,8 @@ public class TapestryInternalUtils
         {
             int length = in.read(buffer);
 
-            if (length < 0) break;
+            if (length < 0)
+                break;
 
             out.write(buffer, 0, length);
         }
@@ -423,11 +451,13 @@ public class TapestryInternalUtils
 
     public static boolean isEqual(EventContext left, EventContext right)
     {
-        if (left == right) return true;
+        if (left == right)
+            return true;
 
         int count = left.getCount();
 
-        if (count != right.getCount()) return false;
+        if (count != right.getCount())
+            return false;
 
         for (int i = 0; i < count; i++)
         {
@@ -441,7 +471,7 @@ public class TapestryInternalUtils
     /**
      * Converts an Asset to an Asset2 if necessary. When actually wrapping an Asset as an Asset2, the asset is assumed
      * to be variant (i.e., not cacheable).
-     *
+     * 
      * @since 5.1.0.0
      */
     public static Asset2 toAsset2(final Asset asset)
@@ -474,62 +504,72 @@ public class TapestryInternalUtils
             }
         };
     }
-    
+
     public static InternalPropertyConduit toInternalPropertyConduit(final PropertyConduit conduit)
     {
-    	if(conduit instanceof InternalPropertyConduit)
-    		return (InternalPropertyConduit) conduit;
-    	
-    	return new InternalPropertyConduit() {
-			
-			public <T extends Annotation> T getAnnotation(Class<T> annotationClass) 
-			{
-				return conduit.getAnnotation(annotationClass);
-			}
-			
-			public void set(Object instance, Object value) 
-			{
-				conduit.set(instance, value);
-			}
-			
-			public Class getPropertyType() 
-			{
-				return conduit.getPropertyType();
-			}
-			
-			public Object get(Object instance) 
-			{
-				return conduit.get(instance);
-			}
-			
-			public String getPropertyName() 
-			{
-				return null;
-			}
-		};
+        if (conduit instanceof InternalPropertyConduit)
+            return (InternalPropertyConduit) conduit;
+
+        return new InternalPropertyConduit()
+        {
+
+            public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
+            {
+                return conduit.getAnnotation(annotationClass);
+            }
+
+            public void set(Object instance, Object value)
+            {
+                conduit.set(instance, value);
+            }
+
+            public Class getPropertyType()
+            {
+                return conduit.getPropertyType();
+            }
+
+            public Object get(Object instance)
+            {
+                return conduit.get(instance);
+            }
+
+            public String getPropertyName()
+            {
+                return null;
+            }
+        };
     }
 
     /**
-     *
-     * @param mixinDef the original mixin definition.
+     * @param mixinDef
+     *            the original mixin definition.
      * @return an Orderable whose id is the mixin name.
      */
-    public static Orderable<String> mixinTypeAndOrder(String mixinDef) {
+    public static Orderable<String> mixinTypeAndOrder(String mixinDef)
+    {
         int idx = mixinDef.indexOf("::");
-        if (idx == -1)
-        {
-            return new Orderable(mixinDef,mixinDef);
-        }
-        String type = mixinDef.substring(0,idx);
-        String[] constraints = splitMixinConstraints(mixinDef.substring(idx+2));
+        if (idx == -1) { return new Orderable(mixinDef, mixinDef); }
+        String type = mixinDef.substring(0, idx);
+        String[] constraints = splitMixinConstraints(mixinDef.substring(idx + 2));
 
-        return new Orderable(type,type,constraints);
+        return new Orderable(type, type, constraints);
     }
-
 
     public static String[] splitMixinConstraints(String s)
     {
-        return InternalUtils.isBlank(s)?null:s.split(";");
+        return InternalUtils.isBlank(s) ? null : s.split(";");
     }
 
+    /**
+     * Common coercion, used primarily with {@link Func#map(Coercion, java.util.Collection)}
+     * 
+     * @since 5.2.0
+     */
+    public static Coercion<Asset, StylesheetLink> assetToStylesheetLink = new Coercion<Asset, StylesheetLink>()
+    {
+        public StylesheetLink coerce(Asset input)
+        {
+            return new StylesheetLink(input);
+        };
+    };
 }

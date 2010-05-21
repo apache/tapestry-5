@@ -20,6 +20,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
+import org.apache.tapestry5.services.javascript.StylesheetLink;
 
 public class PartialMarkupDocumentLinker implements DocumentLinker
 {
@@ -40,7 +41,7 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
     {
         JSONObject object = new JSONObject(
 
-        "href", stylesheet.getUrl(),
+        "href", stylesheet.getURL(),
 
         "media", stylesheet.getOptions().getMedia());
 

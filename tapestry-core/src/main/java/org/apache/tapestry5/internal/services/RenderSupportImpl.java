@@ -24,6 +24,7 @@ import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.javascript.JavascriptSupport;
+import org.apache.tapestry5.services.javascript.StylesheetLink;
 import org.apache.tapestry5.services.javascript.StylesheetOptions;
 
 public class RenderSupportImpl implements RenderSupport
@@ -168,11 +169,11 @@ public class RenderSupportImpl implements RenderSupport
 
     public void addStylesheetLink(Asset stylesheet, String media)
     {
-        javascriptSupport.importStylesheet(stylesheet, new StylesheetOptions(media));
+        javascriptSupport.importStylesheet(new StylesheetLink(stylesheet, new StylesheetOptions(media)));
     }
 
     public void addStylesheetLink(String stylesheetURL, String media)
     {
-        javascriptSupport.importStylesheet(stylesheetURL, new StylesheetOptions(media));
+        javascriptSupport.importStylesheet(new StylesheetLink(stylesheetURL, new StylesheetOptions(media)));
     }
 }

@@ -22,7 +22,6 @@ import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.DocumentLinker;
-import org.apache.tapestry5.internal.services.StylesheetLink;
 import org.apache.tapestry5.internal.services.javascript.JavascriptStackPathConstructor;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
@@ -36,7 +35,7 @@ import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.JavascriptStack;
 import org.apache.tapestry5.services.javascript.JavascriptStackSource;
 import org.apache.tapestry5.services.javascript.JavascriptSupport;
-import org.apache.tapestry5.services.javascript.StylesheetOptions;
+import org.apache.tapestry5.services.javascript.StylesheetLink;
 
 public class JavascriptSupportImpl implements JavascriptSupport
 {
@@ -52,11 +51,9 @@ public class JavascriptSupportImpl implements JavascriptSupport
 
     private final List<String> otherLibraries = CollectionFactory.newList();
 
-    private final List<String> stackStylesheets = CollectionFactory.newList();
+    private final Set<String> importedStylesheetURLs = CollectionFactory.newSet();
 
-    private final Set<String> importedStylesheets = CollectionFactory.newSet();
-
-    private final List<StylesheetLink> otherStylesheets = CollectionFactory.newList();
+    private final List<StylesheetLink> stylesheetLinks = CollectionFactory.newList();
 
     private final Map<InitializationPriority, JSONObject> inits = CollectionFactory.newMap();
 
@@ -95,21 +92,13 @@ public class JavascriptSupportImpl implements JavascriptSupport
 
     public void commit()
     {
-        Func.each(new Operation<String>()
-        {
-            public void op(String value)
-            {
-                linker.addStylesheetLink(new StylesheetLink(value, null));
-            }
-        }, stackStylesheets);
-
         Func.each(new Operation<StylesheetLink>()
         {
             public void op(StylesheetLink value)
             {
                 linker.addStylesheetLink(value);
             }
-        }, otherStylesheets);
+        }, stylesheetLinks);
 
         Operation<String> linkLibrary = new Operation<String>()
         {
@@ -236,9 +225,7 @@ public class JavascriptSupportImpl implements JavascriptSupport
 
         stackLibraries.addAll(stackPathConstructor.constructPathsForJavascriptStack(stackName));
 
-        List<String> stylesheetPaths = Func.map(toPath, stack.getStylesheets());
-
-        stackStylesheets.addAll(stylesheetPaths);
+        stylesheetLinks.addAll(stack.getStylesheets());
 
         String initialization = stack.getInitialization();
 
@@ -248,25 +235,27 @@ public class JavascriptSupportImpl implements JavascriptSupport
         addedStacks.put(stackName, true);
     }
 
-    public void importStylesheet(Asset stylesheet, StylesheetOptions options)
+    public void importStylesheet(Asset stylesheet)
     {
         Defense.notNull(stylesheet, "stylesheet");
 
-        importStylesheet(stylesheet.toClientURL(), options);
+        importStylesheet(new StylesheetLink(stylesheet));
     }
 
-    public void importStylesheet(String stylesheetURL, StylesheetOptions options)
+    public void importStylesheet(StylesheetLink stylesheetLink)
     {
-        Defense.notBlank(stylesheetURL, "stylesheetURL");
+        Defense.notNull(stylesheetLink, "stylesheetLink");
 
         // Assumes no overlap between stack stylesheets and all other stylesheets
 
-        if (importedStylesheets.contains(stylesheetURL))
+        String stylesheetURL = stylesheetLink.getURL();
+
+        if (importedStylesheetURLs.contains(stylesheetURL))
             return;
 
-        importedStylesheets.add(stylesheetURL);
+        importedStylesheetURLs.add(stylesheetURL);
 
-        otherStylesheets.add(new StylesheetLink(stylesheetURL, options));
+        stylesheetLinks.add(stylesheetLink);
     }
 
     public void importStack(String stackName)

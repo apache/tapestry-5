@@ -114,6 +114,7 @@ import org.apache.tapestry5.services.assets.AssetRequestHandler;
 import org.apache.tapestry5.services.javascript.JavascriptStack;
 import org.apache.tapestry5.services.javascript.JavascriptStackSource;
 import org.apache.tapestry5.services.javascript.JavascriptSupport;
+import org.apache.tapestry5.services.javascript.StylesheetLink;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 import org.apache.tapestry5.services.messages.PropertiesFileParser;
 import org.apache.tapestry5.services.meta.FixedExtractor;

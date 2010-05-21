@@ -148,27 +148,22 @@ public interface JavascriptSupport
     void importJavascriptLibrary(Asset asset);
 
     /**
-     * Imports a CSS stylesheet as part of the rendered page. CSS stylesheets are added in the
-     * order they are first imported; duplicate imports are ignored. However, CSS stylesheets
-     * added as part of a {@link JavascriptStack} are added before other stylesheets (in the order
-     * the stack is imported).
+     * A convenience method that wraps the Asset as a {@link StylesheetLink}.
      * 
      * @param stylesheet
      *            asset for the stylesheet
-     * @param options
-     *            describes options for importing the stylesheet (may be null)
+     * @see #importStylesheet(StylesheetLink)
      */
-    void importStylesheet(Asset stylesheet, StylesheetOptions options);
+    void importStylesheet(Asset stylesheet);
 
     /**
-     * As with {@link #importStylesheet(Asset, StylesheetOptions)}, but the stylesheet is represented as a URL string.
+     * Imports a Cascading Style Sheet file as part of the rendered page. Stylesheets are added in the
+     * order they are first imported; duplicate imports are ignored.
      * 
-     * @param stylesheet
-     *            URL for the stylesheet
-     * @param options
-     *            describes options for importing the stylesheet (may be null)
+     * @param stylesheetLink
+     *            encapsulates the link URL plus any additional options
      */
-    void importStylesheet(String stylesheetURL, StylesheetOptions options);
+    void importStylesheet(StylesheetLink stylesheetLink);
 
     /**
      * Imports a {@link JavascriptStack} by name, a related set of JavaScript libraries and stylesheets.

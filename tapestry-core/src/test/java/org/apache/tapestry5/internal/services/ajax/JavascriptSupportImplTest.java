@@ -21,7 +21,6 @@ import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.DocumentLinker;
-import org.apache.tapestry5.internal.services.StylesheetLink;
 import org.apache.tapestry5.internal.services.javascript.JavascriptStackPathConstructor;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -32,6 +31,7 @@ import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.JavascriptStack;
 import org.apache.tapestry5.services.javascript.JavascriptStackSource;
 import org.apache.tapestry5.services.javascript.JavascriptSupport;
+import org.apache.tapestry5.services.javascript.StylesheetLink;
 import org.apache.tapestry5.services.javascript.StylesheetOptions;
 import org.testng.annotations.Test;
 
@@ -109,7 +109,7 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
         JavascriptStack stack = mockJavascriptStack();
 
         List<String> libraryPaths = Collections.emptyList();
-        List<Asset> stylesheets = Collections.emptyList();
+        List<StylesheetLink> stylesheets = Collections.emptyList();
 
         expect(stackSource.getStack(InternalConstants.CORE_STACK_NAME)).andReturn(stack);
         expect(pathConstructor.constructPathsForJavascriptStack(InternalConstants.CORE_STACK_NAME)).andReturn(
@@ -124,18 +124,18 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
     {
         JavascriptStack stack = mockJavascriptStack();
 
-        Asset stylesheet = mockAsset("style.css");
+        StylesheetLink stylesheetLink = new StylesheetLink("style.css");
 
         expect(stackSource.getStack(InternalConstants.CORE_STACK_NAME)).andReturn(stack);
         expect(pathConstructor.constructPathsForJavascriptStack(InternalConstants.CORE_STACK_NAME)).andReturn(
                 CollectionFactory.newList("stack1.js", "stack2.js"));
-        expect(stack.getStylesheets()).andReturn(CollectionFactory.newList(stylesheet));
+        expect(stack.getStylesheets()).andReturn(CollectionFactory.newList(stylesheetLink));
 
         expect(stack.getInitialization()).andReturn("stackInit();");
 
         linker.addScriptLink("stack1.js");
         linker.addScriptLink("stack2.js");
-        linker.addStylesheetLink(new StylesheetLink("style.css"));
+        linker.addStylesheetLink(stylesheetLink);
     }
 
     protected final JavascriptStack mockJavascriptStack()
@@ -206,17 +206,17 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
 
         JavascriptStack stack = mockJavascriptStack();
 
-        Asset stylesheet = mockAsset("stack.css");
+        StylesheetLink stylesheetLink = new StylesheetLink("stack.css");
 
         expect(stackSource.getStack("custom")).andReturn(stack);
         expect(pathConstructor.constructPathsForJavascriptStack("custom")).andReturn(
                 CollectionFactory.newList("stack.js"));
-        expect(stack.getStylesheets()).andReturn(CollectionFactory.newList(stylesheet));
+        expect(stack.getStylesheets()).andReturn(CollectionFactory.newList(stylesheetLink));
 
         expect(stack.getInitialization()).andReturn("customInit();");
 
         linker.addScriptLink("stack.js");
-        linker.addStylesheetLink(new StylesheetLink("stack.css"));
+        linker.addStylesheetLink(stylesheetLink);
 
         linker.addScript(InitializationPriority.IMMEDIATE, "stackInit();");
         linker.addScript(InitializationPriority.IMMEDIATE, "customInit();");
@@ -342,15 +342,15 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
     {
         DocumentLinker linker = mockDocumentLinker();
         Asset stylesheet = mockAsset("style.css");
-        StylesheetOptions options = new StylesheetOptions("print");
 
-        linker.addStylesheetLink(new StylesheetLink("style.css", options));
+        StylesheetLink link = new StylesheetLink("style.css");
+        linker.addStylesheetLink(link);
 
         replay();
 
         JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null);
 
-        jss.importStylesheet(stylesheet, options);
+        jss.importStylesheet(stylesheet);
 
         jss.commit();
 
@@ -369,8 +369,8 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
 
         JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null);
 
-        jss.importStylesheet("style.css", options);
-        jss.importStylesheet("style.css", new StylesheetOptions("hologram"));
+        jss.importStylesheet(new StylesheetLink("style.css", options));
+        jss.importStylesheet(new StylesheetLink("style.css", new StylesheetOptions("hologram")));
 
         jss.commit();
 

@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
+import org.apache.tapestry5.services.javascript.StylesheetLink;
 
 /**
  * Responsible for injecting script and style links into the &lt;head&gt; and &lt;body&gt; element of the rendered HTML

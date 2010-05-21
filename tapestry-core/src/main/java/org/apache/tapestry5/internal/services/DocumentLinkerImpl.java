@@ -25,6 +25,7 @@ import org.apache.tapestry5.ioc.internal.util.Func;
 import org.apache.tapestry5.ioc.internal.util.Operation;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
+import org.apache.tapestry5.services.javascript.StylesheetLink;
 
 public class DocumentLinkerImpl implements DocumentLinker
 {

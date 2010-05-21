@@ -64,7 +64,7 @@ public class ImportWorker implements ComponentClassTransformWorker
     {
         public void op(Asset asset)
         {
-            javascriptSupport.importStylesheet(asset, null);
+            javascriptSupport.importStylesheet(asset);
         };
     };
 

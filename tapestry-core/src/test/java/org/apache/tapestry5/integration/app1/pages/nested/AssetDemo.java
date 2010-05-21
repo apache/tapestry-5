@@ -20,6 +20,7 @@ import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.javascript.JavascriptSupport;
+import org.apache.tapestry5.services.javascript.StylesheetLink;
 import org.apache.tapestry5.services.javascript.StylesheetOptions;
 
 /**
@@ -46,7 +47,7 @@ public class AssetDemo
     @Import(stylesheet = "context:css/via-import.css")
     void afterRender()
     {
-        javascriptSupport.importStylesheet(ieOnly, new StylesheetOptions(null, "IE"));
+        javascriptSupport.importStylesheet(new StylesheetLink(ieOnly, new StylesheetOptions(null, "IE")));
     }
 
     public Asset getIcon()

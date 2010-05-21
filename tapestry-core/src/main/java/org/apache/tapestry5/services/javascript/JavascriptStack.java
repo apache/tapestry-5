@@ -52,9 +52,9 @@ public interface JavascriptStack
     List<Asset> getJavascriptLibraries();
 
     /**
-     * Returns a list of <em>localized<m/e> assets for stylesheets that form the stack.
+     * Returns a list of <em>localized<m/e> links for stylesheets that form the stack.
      */
-    List<Asset> getStylesheets();
+    List<StylesheetLink> getStylesheets();
 
     /**
      * Returns static JavaScript initialization for the stack. This block of JavaScript code will be added to the
