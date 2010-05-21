@@ -2006,7 +2006,7 @@ public final class TapestryModule
             {
                 DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
 
-                linker.addStylesheetLink(defaultStylesheet.toClientURL(), null);
+                linker.addStylesheetLink(new StylesheetLink(defaultStylesheet.toClientURL()));
 
                 renderer.renderMarkup(writer);
             }

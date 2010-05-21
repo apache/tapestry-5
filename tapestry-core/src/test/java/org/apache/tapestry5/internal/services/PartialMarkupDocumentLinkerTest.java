@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
+import org.apache.tapestry5.services.javascript.StylesheetOptions;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -75,8 +76,8 @@ public class PartialMarkupDocumentLinkerTest extends Assert
     {
         PartialMarkupDocumentLinker linker = new PartialMarkupDocumentLinker();
 
-        linker.addStylesheetLink("foo.css", "print");
-        linker.addStylesheetLink("bar.css", null);
+        linker.addStylesheetLink(new StylesheetLink("foo.css", new StylesheetOptions("print")));
+        linker.addStylesheetLink(new StylesheetLink("bar.css"));
 
         JSONObject reply = new JSONObject();
 

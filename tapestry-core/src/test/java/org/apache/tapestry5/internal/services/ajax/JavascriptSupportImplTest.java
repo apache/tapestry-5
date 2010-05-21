@@ -21,6 +21,7 @@ import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.DocumentLinker;
+import org.apache.tapestry5.internal.services.StylesheetLink;
 import org.apache.tapestry5.internal.services.javascript.JavascriptStackPathConstructor;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -31,6 +32,7 @@ import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.JavascriptStack;
 import org.apache.tapestry5.services.javascript.JavascriptStackSource;
 import org.apache.tapestry5.services.javascript.JavascriptSupport;
+import org.apache.tapestry5.services.javascript.StylesheetOptions;
 import org.testng.annotations.Test;
 
 public class JavascriptSupportImplTest extends InternalBaseTestCase
@@ -133,7 +135,7 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
 
         linker.addScriptLink("stack1.js");
         linker.addScriptLink("stack2.js");
-        linker.addStylesheetLink("style.css", null);
+        linker.addStylesheetLink(new StylesheetLink("style.css"));
     }
 
     protected final JavascriptStack mockJavascriptStack()
@@ -214,7 +216,7 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
         expect(stack.getInitialization()).andReturn("customInit();");
 
         linker.addScriptLink("stack.js");
-        linker.addStylesheetLink("stack.css", null);
+        linker.addStylesheetLink(new StylesheetLink("stack.css"));
 
         linker.addScript(InitializationPriority.IMMEDIATE, "stackInit();");
         linker.addScript(InitializationPriority.IMMEDIATE, "customInit();");
@@ -340,14 +342,15 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
     {
         DocumentLinker linker = mockDocumentLinker();
         Asset stylesheet = mockAsset("style.css");
+        StylesheetOptions options = new StylesheetOptions("print");
 
-        linker.addStylesheetLink("style.css", "print");
+        linker.addStylesheetLink(new StylesheetLink("style.css", options));
 
         replay();
 
         JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null);
 
-        jss.importStylesheet(stylesheet, "print");
+        jss.importStylesheet(stylesheet, options);
 
         jss.commit();
 
@@ -358,15 +361,16 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
     public void duplicate_stylesheet_ignored_first_media_wins()
     {
         DocumentLinker linker = mockDocumentLinker();
+        StylesheetOptions options = new StylesheetOptions("print");
 
-        linker.addStylesheetLink("style.css", "print");
+        linker.addStylesheetLink(new StylesheetLink("style.css", options));
 
         replay();
 
         JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null);
 
-        jss.importStylesheet("style.css", "print");
-        jss.importStylesheet("style.css", "screen");
+        jss.importStylesheet("style.css", options);
+        jss.importStylesheet("style.css", new StylesheetOptions("hologram"));
 
         jss.commit();
 

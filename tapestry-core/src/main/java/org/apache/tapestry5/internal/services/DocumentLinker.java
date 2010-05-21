@@ -31,13 +31,8 @@ public interface DocumentLinker
 
     /**
      * Adds a link to load a CSS stylesheet.
-     * 
-     * @param styleURL
-     *            URL of stylesheet to load
-     * @param media
-     *            media value (or null to omit the media attribute)
      */
-    void addStylesheetLink(String styleURL, String media);
+    void addStylesheetLink(StylesheetLink stylesheet);
 
     /**
      * Adds JavaScript code. The code is collected into a single block that is injected just before the close body tag

@@ -151,20 +151,20 @@ public interface JavascriptSupport
      * 
      * @param stylesheet
      *            asset for the stylesheet
-     * @param media
-     *            media value for the stylesheet, or null to not specify a specific media type
+     * @param options
+     *            describes options for importing the stylesheet (may be null)
      */
-    void importStylesheet(Asset stylesheet, String media);
+    void importStylesheet(Asset stylesheet, StylesheetOptions options);
 
     /**
-     * As with {@link #importStylesheet(Asset, String)}, but the stylesheet is represented as a URL string.
+     * As with {@link #importStylesheet(Asset, StylesheetOptions)}, but the stylesheet is represented as a URL string.
      * 
      * @param stylesheet
      *            URL for the stylesheet
-     * @param media
-     *            media value for the stylesheet, or null to not specify a specific media type
+     * @param options
+     *            describes options for importing the stylesheet (may be null)
      */
-    void importStylesheet(String stylesheetURL, String media);
+    void importStylesheet(String stylesheetURL, StylesheetOptions options);
 
     /**
      * Imports a {@link JavascriptStack} by name, a related set of JavaScript libraries and stylesheets.

@@ -21,6 +21,7 @@ import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
+import org.apache.tapestry5.services.javascript.StylesheetOptions;
 import org.testng.annotations.Test;
 
 public class DocumentLinkerImplTest extends InternalBaseTestCase
@@ -68,7 +69,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         // Only checked if there's something to link.
 
-        linker.addStylesheetLink("style.css", null);
+        linker.addStylesheetLink(new StylesheetLink("style.css"));
 
         replay();
 
@@ -157,7 +158,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
 
-        linker.addStylesheetLink("style.css", "print");
+        linker.addStylesheetLink(new StylesheetLink("style.css", new StylesheetOptions("print")));
         linker.addScriptLink("foo.js");
         linker.addScriptLink("bar/baz.js");
         linker.addScript(InitializationPriority.IMMEDIATE, "pageInitialization();");
@@ -194,8 +195,8 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
 
-        linker.addStylesheetLink("foo.css", null);
-        linker.addStylesheetLink("bar/baz.css", "print");
+        linker.addStylesheetLink(new StylesheetLink("foo.css"));
+        linker.addStylesheetLink(new StylesheetLink("bar/baz.css", new StylesheetOptions("print")));
 
         linker.updateDocument(document);
 
@@ -212,7 +213,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
 
-        linker.addStylesheetLink("foo.css", null);
+        linker.addStylesheetLink(new StylesheetLink("foo.css"));
 
         linker.updateDocument(document);
 

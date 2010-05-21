@@ -36,13 +36,13 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
         scripts.put(scriptURL);
     }
 
-    public void addStylesheetLink(String styleURL, String media)
+    public void addStylesheetLink(StylesheetLink stylesheet)
     {
-        JSONObject object = new JSONObject();
-        object.put("href", styleURL);
+        JSONObject object = new JSONObject(
 
-        if (media != null)
-            object.put("media", media);
+        "href", stylesheet.getUrl(),
+
+        "media", stylesheet.getOptions().getMedia());
 
         stylesheets.put(object);
     }

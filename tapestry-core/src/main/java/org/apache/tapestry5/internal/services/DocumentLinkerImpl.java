@@ -16,7 +16,6 @@ package org.apache.tapestry5.internal.services;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
@@ -35,7 +34,7 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     private final Map<InitializationPriority, JSONObject> priorityToInit = CollectionFactory.newMap();
 
-    private final List<IncludedStylesheet> includedStylesheets = CollectionFactory.newList();
+    private final List<StylesheetLink> includedStylesheets = CollectionFactory.newList();
 
     private final boolean compactJSON;
 
@@ -62,9 +61,9 @@ public class DocumentLinkerImpl implements DocumentLinker
         this.compactJSON = compactJSON;
     }
 
-    public void addStylesheetLink(String styleURL, String media)
+    public void addStylesheetLink(StylesheetLink sheet)
     {
-        includedStylesheets.add(new IncludedStylesheet(styleURL, media));
+        includedStylesheets.add(sheet);
     }
 
     public void addScriptLink(String scriptURL)
@@ -261,7 +260,7 @@ public class DocumentLinkerImpl implements DocumentLinker
      * @param stylesheets
      *            to add to the document
      */
-    protected void addStylesheetsToHead(Element root, List<IncludedStylesheet> stylesheets)
+    protected void addStylesheetsToHead(Element root, List<StylesheetLink> stylesheets)
     {
         int count = stylesheets.size();
 

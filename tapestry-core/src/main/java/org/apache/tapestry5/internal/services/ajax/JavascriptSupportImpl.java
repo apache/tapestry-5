@@ -22,6 +22,7 @@ import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.DocumentLinker;
+import org.apache.tapestry5.internal.services.StylesheetLink;
 import org.apache.tapestry5.internal.services.javascript.JavascriptStackPathConstructor;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
@@ -35,22 +36,10 @@ import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.JavascriptStack;
 import org.apache.tapestry5.services.javascript.JavascriptStackSource;
 import org.apache.tapestry5.services.javascript.JavascriptSupport;
+import org.apache.tapestry5.services.javascript.StylesheetOptions;
 
 public class JavascriptSupportImpl implements JavascriptSupport
 {
-    private class Stylesheet
-    {
-        final String path;
-
-        final String media;
-
-        public Stylesheet(String path, String media)
-        {
-            this.path = path;
-            this.media = media;
-        }
-    }
-
     private final IdAllocator idAllocator;
 
     private final DocumentLinker linker;
@@ -67,7 +56,7 @@ public class JavascriptSupportImpl implements JavascriptSupport
 
     private final Set<String> importedStylesheets = CollectionFactory.newSet();
 
-    private final List<Stylesheet> otherStylesheets = CollectionFactory.newList();
+    private final List<StylesheetLink> otherStylesheets = CollectionFactory.newList();
 
     private final Map<InitializationPriority, JSONObject> inits = CollectionFactory.newMap();
 
@@ -110,15 +99,15 @@ public class JavascriptSupportImpl implements JavascriptSupport
         {
             public void op(String value)
             {
-                linker.addStylesheetLink(value, null);
+                linker.addStylesheetLink(new StylesheetLink(value, null));
             }
         }, stackStylesheets);
 
-        Func.each(new Operation<Stylesheet>()
+        Func.each(new Operation<StylesheetLink>()
         {
-            public void op(Stylesheet value)
+            public void op(StylesheetLink value)
             {
-                linker.addStylesheetLink(value.path, value.media);
+                linker.addStylesheetLink(value);
             }
         }, otherStylesheets);
 
@@ -259,14 +248,14 @@ public class JavascriptSupportImpl implements JavascriptSupport
         addedStacks.put(stackName, true);
     }
 
-    public void importStylesheet(Asset stylesheet, String media)
+    public void importStylesheet(Asset stylesheet, StylesheetOptions options)
     {
         Defense.notNull(stylesheet, "stylesheet");
 
-        importStylesheet(stylesheet.toClientURL(), media);
+        importStylesheet(stylesheet.toClientURL(), options);
     }
 
-    public void importStylesheet(String stylesheetURL, String media)
+    public void importStylesheet(String stylesheetURL, StylesheetOptions options)
     {
         Defense.notBlank(stylesheetURL, "stylesheetURL");
 
@@ -277,7 +266,7 @@ public class JavascriptSupportImpl implements JavascriptSupport
 
         importedStylesheets.add(stylesheetURL);
 
-        otherStylesheets.add(new Stylesheet(stylesheetURL, media));
+        otherStylesheets.add(new StylesheetLink(stylesheetURL, options));
     }
 
     public void importStack(String stackName)
