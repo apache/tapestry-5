@@ -1,10 +1,10 @@
-//  Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 
 /**
  * Core implementation that manages a logger and catches and reports exception.
- *
+ * 
  * @see org.apache.tapestry5.ioc.internal.PerThreadOperationTracker
  */
 public class OperationTrackerImpl implements OperationTracker
@@ -69,26 +69,13 @@ public class OperationTrackerImpl implements OperationTracker
         }
         catch (RuntimeException ex)
         {
-            if (!logged)
-            {
+            logAndRethrow(ex);
 
-                logger.error(InternalUtils.toMessage(ex));
-                logger.error("Operations trace:");
-
-                Object[] snapshot = operations.getSnapshot();
-                String[] trace = new String[snapshot.length];
-
-                for (int i = 0; i < snapshot.length; i++)
-                {
-                    trace[i] = snapshot[i].toString();
-
-                    logger.error(String.format("[%2d] %s", i + 1, trace[i]));
-                }
-
-                logged = true;
-
-                throw new OperationException(ex, trace);
-            }
+            throw ex;
+        }
+        catch (Error ex)
+        {
+            logAndRethrow(ex);
 
             throw ex;
         }
@@ -98,7 +85,32 @@ public class OperationTrackerImpl implements OperationTracker
 
             // We've finally backed out of the operation stack ... but there may be more to come!
 
-            if (operations.isEmpty()) logged = false;
+            if (operations.isEmpty())
+                logged = false;
+        }
+    }
+
+    private void logAndRethrow(Throwable ex)
+    {
+        if (!logged)
+        {
+
+            logger.error(InternalUtils.toMessage(ex));
+            logger.error("Operations trace:");
+
+            Object[] snapshot = operations.getSnapshot();
+            String[] trace = new String[snapshot.length];
+
+            for (int i = 0; i < snapshot.length; i++)
+            {
+                trace[i] = snapshot[i].toString();
+
+                logger.error(String.format("[%2d] %s", i + 1, trace[i]));
+            }
+
+            logged = true;
+
+            throw new OperationException(ex, trace);
         }
     }
 
