@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,7 +18,9 @@ import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.internal.services.ComponentInstantiatorSource;
 import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.internal.structure.*;
+import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.IdAllocator;
@@ -51,15 +53,15 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
     private final IdAllocator allocator = new IdAllocator();
 
+    private final OperationTracker tracker;
+
     private Map<String, String> publishedParameterToEmbeddedId;
 
     private Map<String, EmbeddedComponentAssembler> embeddedIdToAssembler;
 
     public ComponentAssemblerImpl(ComponentAssemblerSource assemblerSource,
-                                  ComponentInstantiatorSource instantiatorSource,
-                                  ComponentClassResolver componentClassResolver,
-                                  Instantiator instantiator,
-                                  ComponentPageElementResources resources, Locale locale)
+            ComponentInstantiatorSource instantiatorSource, ComponentClassResolver componentClassResolver,
+            Instantiator instantiator, ComponentPageElementResources resources, Locale locale, OperationTracker tracker)
     {
         this.assemblerSource = assemblerSource;
         this.instantiatorSource = instantiatorSource;
@@ -67,9 +69,22 @@ class ComponentAssemblerImpl implements ComponentAssembler
         this.instantiator = instantiator;
         this.resources = resources;
         this.locale = locale;
+        this.tracker = tracker;
     }
 
-    public ComponentPageElement assembleRootComponent(Page page)
+    public ComponentPageElement assembleRootComponent(final Page page)
+    {
+        return tracker.invoke("Assembling root component for page " + page.getName(),
+                new Invokable<ComponentPageElement>()
+                {
+                    public ComponentPageElement invoke()
+                    {
+                        return performAssembleRootComponent(page);
+                    }
+                });
+    }
+
+    private ComponentPageElement performAssembleRootComponent(Page page)
     {
         PageAssembly pageAssembly = new PageAssembly(page);
 
@@ -102,16 +117,12 @@ class ComponentAssemblerImpl implements ComponentAssembler
                 action.execute(pageAssembly);
             }
 
-
             return pageAssembly.createdElement.peek();
         }
         catch (RuntimeException ex)
         {
-            throw new RuntimeException(
-                                PageloadMessages.exceptionAssemblingRootComponent(
-                                        pageAssembly.page.getName(),
-                                        InternalUtils.toMessage(ex)),
-                                ex);
+            throw new RuntimeException(PageloadMessages.exceptionAssemblingRootComponent(pageAssembly.page.getName(),
+                    InternalUtils.toMessage(ex)), ex);
         }
     }
 
@@ -122,56 +133,55 @@ class ComponentAssemblerImpl implements ComponentAssembler
             Instantiator mixinInstantiator = instantiatorSource.getInstantiator(className);
 
             ComponentModel model = instantiator.getModel();
-            element.addMixin(InternalUtils.lastTerm(className),
-                    mixinInstantiator,model.getOrderForMixin(className));
+            element.addMixin(InternalUtils.lastTerm(className), mixinInstantiator, model.getOrderForMixin(className));
         }
     }
 
-    public void assembleEmbeddedComponent(PageAssembly pageAssembly, EmbeddedComponentAssembler embeddedAssembler,
-                                          String embeddedId, String elementName,
-                                          Location location)
+    public void assembleEmbeddedComponent(final PageAssembly pageAssembly,
+            final EmbeddedComponentAssembler embeddedAssembler, final String embeddedId, final String elementName,
+            final Location location)
     {
-        ComponentPageElement container = pageAssembly.activeElement.peek();
+        ComponentName containerName = pageAssembly.componentName.peek();
 
-        try
+        final ComponentName embeddedName = containerName.child(embeddedId.toLowerCase());
+
+        final String componentClassName = instantiator.getModel().getComponentClassName();
+
+        String description = String.format("Assembling component %s (%s)", embeddedName.completeId, componentClassName);
+
+        tracker.run(description, new Runnable()
         {
-            ComponentName containerName = pageAssembly.componentName.peek();
+            public void run()
+            {
+                ComponentPageElement container = pageAssembly.activeElement.peek();
 
-            ComponentName embeddedName = containerName.child(embeddedId.toLowerCase());
+                try
+                {
 
-            pageAssembly.componentName.push(embeddedName);
+                    pageAssembly.componentName.push(embeddedName);
 
-            ComponentPageElement newElement = container.newChild(embeddedId,
-                                                                 embeddedName.nestedId,
-                                                                 embeddedName.completeId,
-                                                                 elementName,
-                                                                 instantiator,
-                                                                 location);
+                    ComponentPageElement newElement = container.newChild(embeddedId, embeddedName.nestedId,
+                            embeddedName.completeId, elementName, instantiator, location);
 
-            pageAssembly.page.addLifecycleListener(newElement);
+                    pageAssembly.page.addLifecycleListener(newElement);
 
-            pushNewElement(pageAssembly, newElement);
+                    pushNewElement(pageAssembly, newElement);
 
-            embeddedAssembler.addMixinsToElement(newElement);
+                    embeddedAssembler.addMixinsToElement(newElement);
 
-            runActions(pageAssembly);
+                    runActions(pageAssembly);
 
-            popNewElement(pageAssembly);
+                    popNewElement(pageAssembly);
 
-            pageAssembly.componentName.pop();
-        }
-        catch (RuntimeException ex)
-        {
-            throw new TapestryException(
-                            PageloadMessages.exceptionAssemblingEmbeddedComponent(
-                                    embeddedId,
-                                    instantiator.getModel().getComponentClassName(),
-                                    container.getCompleteId(),
-                                    InternalUtils.toMessage(ex)
-                            ),
-                            location,
-                            ex);
-        }
+                    pageAssembly.componentName.pop();
+                }
+                catch (RuntimeException ex)
+                {
+                    throw new TapestryException(PageloadMessages.exceptionAssemblingEmbeddedComponent(embeddedId,
+                            componentClassName, container.getCompleteId(), InternalUtils.toMessage(ex)), location, ex);
+                }
+            }
+        });
     }
 
     private void pushNewElement(PageAssembly pageAssembly, final ComponentPageElement componentElement)
@@ -217,7 +227,6 @@ class ComponentAssemblerImpl implements ComponentAssembler
         actions.add(action);
     }
 
-
     public void validateEmbeddedIds(Map<String, Location> componentIds, Resource templateResource)
     {
         Map<String, Boolean> embeddedIds = CollectionFactory.newCaseInsensitiveMap();
@@ -236,12 +245,8 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
             String className = getModel().getComponentClassName();
 
-            throw new RuntimeException(
-                    PageloadMessages.embeddedComponentsNotInTemplate(
-                            InternalUtils.joinSorted(embeddedIds.keySet()),
-                            className,
-                            InternalUtils.lastTerm(className),
-                            templateResource));
+            throw new RuntimeException(PageloadMessages.embeddedComponentsNotInTemplate(InternalUtils
+                    .joinSorted(embeddedIds.keySet()), className, InternalUtils.lastTerm(className), templateResource));
         }
     }
 
@@ -261,24 +266,16 @@ class ComponentAssemblerImpl implements ComponentAssembler
     }
 
     public EmbeddedComponentAssembler createEmbeddedAssembler(String embeddedId, String componentClassName,
-                                                              EmbeddedComponentModel embeddedModel, String mixins,
-                                                              Location location)
+            EmbeddedComponentModel embeddedModel, String mixins, Location location)
     {
         try
         {
 
-            if (InternalUtils.isBlank(componentClassName))
-            {
-                throw new TapestryException(PageloadMessages.missingComponentType(),location,null);
-            }
+            if (InternalUtils.isBlank(componentClassName)) { throw new TapestryException(PageloadMessages
+                    .missingComponentType(), location, null); }
             EmbeddedComponentAssemblerImpl embedded = new EmbeddedComponentAssemblerImpl(assemblerSource,
-                                                                                         instantiatorSource,
-                                                                                         componentClassResolver,
-                                                                                         componentClassName,
-                                                                                         locale, embeddedModel,
-                                                                                         mixins,
-                                                                                         location);
-
+                    instantiatorSource, componentClassResolver, componentClassName, locale, embeddedModel, mixins,
+                    location);
 
             if (embeddedIdToAssembler == null)
                 embeddedIdToAssembler = CollectionFactory.newMap();
@@ -294,15 +291,9 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
                     String existingEmbeddedId = publishedParameterToEmbeddedId.get(publishedParameterName);
 
-                    if (existingEmbeddedId != null)
-                    {
-                        throw new TapestryException(
-                                PageloadMessages.parameterAlreadyPublished(
-                                        publishedParameterName,
-                                        embeddedId,
-                                        instantiator.getModel().getComponentClassName(),
-                                        existingEmbeddedId) , location, null);
-                    }
+                    if (existingEmbeddedId != null) { throw new TapestryException(PageloadMessages
+                            .parameterAlreadyPublished(publishedParameterName, embeddedId, instantiator.getModel()
+                                    .getComponentClassName(), existingEmbeddedId), location, null); }
 
                     publishedParameterToEmbeddedId.put(publishedParameterName, embeddedId);
                 }
@@ -313,14 +304,8 @@ class ComponentAssemblerImpl implements ComponentAssembler
         }
         catch (Exception ex)
         {
-            throw new TapestryException(
-                    PageloadMessages.failureCreatingEmbeddedComponent(
-                            embeddedId,
-                            instantiator.getModel().getComponentClassName(),
-                            InternalUtils.toMessage(ex)
-                    ),
-                    location,
-                    ex);
+            throw new TapestryException(PageloadMessages.failureCreatingEmbeddedComponent(embeddedId, instantiator
+                    .getModel().getComponentClassName(), InternalUtils.toMessage(ex)), location, ex);
         }
     }
 
@@ -328,7 +313,8 @@ class ComponentAssemblerImpl implements ComponentAssembler
     {
         final String embeddedId = InternalUtils.get(publishedParameterToEmbeddedId, parameterName);
 
-        if (embeddedId == null) return null;
+        if (embeddedId == null)
+            return null;
 
         final EmbeddedComponentAssembler embededdedComponentAssembler = embeddedIdToAssembler.get(embeddedId);
 
@@ -336,36 +322,30 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
         final ParameterBinder embeddedBinder = embeddedAssembler.getBinder(parameterName);
 
-        // The complex case: a re-publish!  Yes you can go deep here if you don't
+        // The complex case: a re-publish! Yes you can go deep here if you don't
         // value your sanity!
 
-        if (embeddedBinder != null)
+        if (embeddedBinder != null) { return new ParameterBinder()
         {
-            return new ParameterBinder()
+            public void bind(ComponentPageElement element, Binding binding)
             {
-                public void bind(ComponentPageElement element, Binding binding)
-                {
-                    ComponentPageElement subelement = element.getEmbeddedElement(embeddedId);
+                ComponentPageElement subelement = element.getEmbeddedElement(embeddedId);
 
-                    embeddedBinder.bind(subelement, binding);
-                }
+                embeddedBinder.bind(subelement, binding);
+            }
 
-                public String getDefaultBindingPrefix(String metaDefault)
-                {
-                    return embeddedBinder.getDefaultBindingPrefix(metaDefault);
-                }
-            };
-        }
-
+            public String getDefaultBindingPrefix(String metaDefault)
+            {
+                return embeddedBinder.getDefaultBindingPrefix(metaDefault);
+            }
+        }; }
 
         final ParameterBinder innerBinder = embededdedComponentAssembler.createParameterBinder(parameterName);
 
         if (innerBinder == null)
         {
-            String message = PageloadMessages.publishedParameterNonexistant(
-                    parameterName,
-                    instantiator.getModel().getComponentClassName(),
-                    embeddedId);
+            String message = PageloadMessages.publishedParameterNonexistant(parameterName, instantiator.getModel()
+                    .getComponentClassName(), embeddedId);
 
             throw new TapestryException(message, embededdedComponentAssembler.getLocation(), null);
         }

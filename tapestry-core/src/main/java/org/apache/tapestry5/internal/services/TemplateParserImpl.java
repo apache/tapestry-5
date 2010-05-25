@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,9 +19,10 @@ import java.util.Map;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.parser.ComponentTemplate;
+import org.apache.tapestry5.ioc.Invokable;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 /**
  * Parses Tapestry XML template files into {@link ComponentTemplate} instances.
@@ -36,22 +37,29 @@ public class TemplateParserImpl implements TemplateParser
 
     private final boolean defaultCompressWhitespace;
 
+    private final OperationTracker tracker;
+
     public TemplateParserImpl(Map<String, URL> configuration,
 
     @Symbol(SymbolConstants.COMPRESS_WHITESPACE)
-    boolean defaultCompressWhitespace)
+    boolean defaultCompressWhitespace, OperationTracker tracker)
     {
         this.configuration = configuration;
         this.defaultCompressWhitespace = defaultCompressWhitespace;
+        this.tracker = tracker;
     }
 
-    public ComponentTemplate parseTemplate(Resource templateResource)
+    public ComponentTemplate parseTemplate(final Resource templateResource)
     {
         if (!templateResource.exists())
             throw new RuntimeException(ServicesMessages.missingTemplateResource(templateResource));
 
-        return new SaxTemplateParser(templateResource, configuration)
-                .parse(defaultCompressWhitespace);
+        return tracker.invoke("Parsing component template " + templateResource, new Invokable<ComponentTemplate>()
+        {
+            public ComponentTemplate invoke()
+            {
+                return new SaxTemplateParser(templateResource, configuration).parse(defaultCompressWhitespace);
+            }
+        });
     }
-
 }

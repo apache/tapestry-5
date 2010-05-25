@@ -216,7 +216,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
                 ComponentPageElementResources resources = resourcesSource.get(locale);
 
                 ComponentAssembler assembler = new ComponentAssemblerImpl(PageLoaderImpl.this, instantiatorSource,
-                        componentClassResolver, instantiator, resources, locale);
+                        componentClassResolver, instantiator, resources, locale, tracker);
 
                 // "Program" the assembler by adding actions to it. The actions interact with a
                 // PageAssembly object (a fresh one for each new page being created).
