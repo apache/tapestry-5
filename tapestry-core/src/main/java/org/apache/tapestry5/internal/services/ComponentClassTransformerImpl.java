@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.apache.tapestry5.TapestryMarkers;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.model.MutableComponentModelImpl;
 import org.apache.tapestry5.ioc.LoggerSource;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.internal.services.CtClassSource;
@@ -61,6 +62,8 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
     private final ComponentClassCache componentClassCache;
 
+    private final OperationTracker tracker;
+
     private final String[] SUBPACKAGES =
     { "." + InternalConstants.PAGES_SUBPACKAGE + ".", "." + InternalConstants.COMPONENTS_SUBPACKAGE + ".",
             "." + InternalConstants.MIXINS_SUBPACKAGE + ".", "." + InternalConstants.BASE_SUBPACKAGE + "." };
@@ -82,13 +85,16 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
     @ComponentLayer
     CtClassSource classSource,
 
-    ComponentClassCache componentClassCache)
+    ComponentClassCache componentClassCache,
+
+    OperationTracker tracker)
     {
         this.workerChain = workerChain;
         this.loggerSource = loggerSource;
         this.classFactory = classFactory;
         this.componentClassCache = componentClassCache;
         this.classSource = classSource;
+        this.tracker = tracker;
     }
 
     /**
@@ -100,100 +106,107 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
         nameToComponentModel.clear();
     }
 
-    public void transformComponentClass(CtClass ctClass, ClassLoader classLoader)
+    public void transformComponentClass(final CtClass ctClass, final ClassLoader classLoader)
     {
-        String parentClassname;
-
-        // Component classes must be public
-
-        if (!Modifier.isPublic(ctClass.getModifiers()))
-            return;
-
-        try
+        tracker.run("Transforming component class " + ctClass.getName(), new Runnable()
         {
-            // And have a public constructor.
+            public void run()
+            {
+                String parentClassname;
 
-            CtConstructor ctor = ctClass.getConstructor("()V");
+                // Component classes must be public
 
-            if (!Modifier.isPublic(ctor.getModifiers()))
-                return;
-        }
-        catch (NotFoundException ex)
-        {
-            return;
-        }
+                if (!Modifier.isPublic(ctClass.getModifiers()))
+                    return;
 
-        // Is it an inner class (does the class name contain a '$')?
-        // Inner classes are loaded by the same class loader as the component, but are
-        // not components and are not transformed.
+                try
+                {
+                    // And have a public constructor.
 
-        if (ctClass.getName().contains("$"))
-            return;
+                    CtConstructor ctor = ctClass.getConstructor("()V");
 
-        // Force the creation of the parent class.
+                    if (!Modifier.isPublic(ctor.getModifiers()))
+                        return;
+                }
+                catch (NotFoundException ex)
+                {
+                    return;
+                }
 
-        try
-        {
-            parentClassname = ctClass.getSuperclass().getName();
-        }
-        catch (NotFoundException ex)
-        {
-            throw new RuntimeException(ex);
-        }
+                // Is it an inner class (does the class name contain a '$')?
+                // Inner classes are loaded by the same class loader as the component, but are
+                // not components and are not transformed.
 
-        String classname = ctClass.getName();
+                if (ctClass.getName().contains("$"))
+                    return;
 
-        Logger transformLogger = loggerSource.getLogger("tapestry.transformer." + classname);
-        Logger logger = loggerSource.getLogger(classname);
+                // Force the creation of the parent class.
 
-        // If the parent class is in a controlled package, it will already have been loaded and
-        // transformed (that is driven by the ComponentInstantiatorSource).
+                try
+                {
+                    parentClassname = ctClass.getSuperclass().getName();
+                }
+                catch (NotFoundException ex)
+                {
+                    throw new RuntimeException(ex);
+                }
 
-        InternalClassTransformation parentTransformation = nameToClassTransformation.get(parentClassname);
+                String classname = ctClass.getName();
 
-        // TAPESTRY-2449: Ignore the base class that Groovy can inject
+                Logger transformLogger = loggerSource.getLogger("tapestry.transformer." + classname);
+                Logger logger = loggerSource.getLogger(classname);
 
-        if (parentTransformation == null
-                && !(parentClassname.equals("java.lang.Object") || parentClassname
-                        .equals("groovy.lang.GroovyObjectSupport")))
-        {
-            String suggestedPackageName = buildSuggestedPackageName(classname);
+                // If the parent class is in a controlled package, it will already have been loaded and
+                // transformed (that is driven by the ComponentInstantiatorSource).
 
-            throw new RuntimeException(ServicesMessages.baseClassInWrongPackage(parentClassname, classname,
-                    suggestedPackageName));
-        }
+                InternalClassTransformation parentTransformation = nameToClassTransformation.get(parentClassname);
 
-        // TODO: Check that the name is not already in the map. But I think that can't happen,
-        // because the classloader itself is synchronized.
+                // TAPESTRY-2449: Ignore the base class that Groovy can inject
 
-        Resource baseResource = new ClasspathResource(classname.replace(".", "/") + ".class");
+                if (parentTransformation == null
+                        && !(parentClassname.equals("java.lang.Object") || parentClassname
+                                .equals("groovy.lang.GroovyObjectSupport")))
+                {
+                    String suggestedPackageName = buildSuggestedPackageName(classname);
 
-        ComponentModel parentModel = nameToComponentModel.get(parentClassname);
+                    throw new RuntimeException(ServicesMessages.baseClassInWrongPackage(parentClassname, classname,
+                            suggestedPackageName));
+                }
 
-        MutableComponentModel model = new MutableComponentModelImpl(classname, logger, baseResource, parentModel);
+                // TODO: Check that the name is not already in the map. But I think that can't happen,
+                // because the classloader itself is synchronized.
 
-        InternalClassTransformation transformation = parentTransformation == null ? new InternalClassTransformationImpl(
-                classFactory, ctClass, componentClassCache, model, classSource)
-                : parentTransformation.createChildTransformation(ctClass, model);
+                Resource baseResource = new ClasspathResource(classname.replace(".", "/") + ".class");
 
-        String transformerDescription = null;
+                ComponentModel parentModel = nameToComponentModel.get(parentClassname);
 
-        try
-        {
-            workerChain.transform(transformation, model);
+                MutableComponentModel model = new MutableComponentModelImpl(classname, logger, baseResource,
+                        parentModel);
 
-            transformerDescription = transformation.finish();
-        }
-        catch (Throwable ex)
-        {
-            throw new TransformationException(transformation, ex);
-        }
+                InternalClassTransformation transformation = parentTransformation == null ? new InternalClassTransformationImpl(
+                        classFactory, ctClass, componentClassCache, model, classSource)
+                        : parentTransformation.createChildTransformation(ctClass, model);
 
-        transformLogger.debug(TapestryMarkers.CLASS_TRANSFORMATION, "Finished class transformation: {}",
-                transformerDescription);
+                String transformerDescription = null;
 
-        nameToClassTransformation.put(classname, transformation);
-        nameToComponentModel.put(classname, model);
+                try
+                {
+                    workerChain.transform(transformation, model);
+
+                    transformerDescription = transformation.finish();
+                }
+                catch (Throwable ex)
+                {
+                    throw new TransformationException(transformation, ex);
+                }
+
+                transformLogger.debug(TapestryMarkers.CLASS_TRANSFORMATION, "Finished class transformation: {}",
+                        transformerDescription);
+
+                nameToClassTransformation.put(classname, transformation);
+                nameToComponentModel.put(classname, model);
+            }
+        });
     }
 
     public Instantiator createInstantiator(String componentClassName)
