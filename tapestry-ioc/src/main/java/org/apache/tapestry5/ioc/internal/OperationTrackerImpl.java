@@ -75,8 +75,12 @@ public class OperationTrackerImpl implements OperationTracker
         }
         catch (Error ex)
         {
-            logAndRethrow(ex);
-
+            if (!logged)
+            {
+                log(ex);
+                logged = true;
+            }
+            
             throw ex;
         }
         finally
@@ -94,24 +98,29 @@ public class OperationTrackerImpl implements OperationTracker
     {
         if (!logged)
         {
-
-            logger.error(InternalUtils.toMessage(ex));
-            logger.error("Operations trace:");
-
-            Object[] snapshot = operations.getSnapshot();
-            String[] trace = new String[snapshot.length];
-
-            for (int i = 0; i < snapshot.length; i++)
-            {
-                trace[i] = snapshot[i].toString();
-
-                logger.error(String.format("[%2d] %s", i + 1, trace[i]));
-            }
+            String[] trace = log(ex);
 
             logged = true;
 
             throw new OperationException(ex, trace);
         }
+    }
+
+    private String[] log(Throwable ex)
+    {
+        logger.error(InternalUtils.toMessage(ex));
+        logger.error("Operations trace:");
+
+        Object[] snapshot = operations.getSnapshot();
+        String[] trace = new String[snapshot.length];
+
+        for (int i = 0; i < snapshot.length; i++)
+        {
+            trace[i] = snapshot[i].toString();
+
+            logger.error(String.format("[%2d] %s", i + 1, trace[i]));
+        }
+        return trace;
     }
 
     boolean isEmpty()

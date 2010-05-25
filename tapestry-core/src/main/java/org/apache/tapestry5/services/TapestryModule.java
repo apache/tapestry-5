@@ -588,10 +588,6 @@ public final class TapestryModule
     public static void contributeComponentClassTransformWorker(
             OrderedConfiguration<ComponentClassTransformWorker> configuration,
 
-            ObjectLocator locator,
-
-            InjectionProvider injectionProvider,
-
             MetaWorker metaWorker,
 
             ComponentClassResolver resolver)
@@ -600,7 +596,7 @@ public final class TapestryModule
 
         configuration.add("Meta", metaWorker);
 
-        configuration.add("Inject", new InjectWorker(locator, injectionProvider));
+        configuration.addInstance("Inject", InjectWorker.class);
         configuration.addInstance("InjectService", InjectServiceWorker.class);
 
         configuration.add("MixinAfter", new MixinAfterWorker());

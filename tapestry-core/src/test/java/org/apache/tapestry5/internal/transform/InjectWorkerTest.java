@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.transform;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.internal.QuietOperationTracker;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
@@ -49,7 +50,7 @@ public class InjectWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentClassTransformWorker worker = new InjectWorker(locator, ip);
+        ComponentClassTransformWorker worker = new InjectWorker(locator, ip, new QuietOperationTracker());
 
         worker.transform(ct, model);
 
@@ -75,7 +76,7 @@ public class InjectWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentClassTransformWorker worker = new InjectWorker(locator, ip);
+        ComponentClassTransformWorker worker = new InjectWorker(locator, ip, new QuietOperationTracker());
 
         // Does the work but doesn't claim the field, since there was no match.
 
@@ -106,7 +107,7 @@ public class InjectWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentClassTransformWorker worker = new InjectWorker(locator, ip);
+        ComponentClassTransformWorker worker = new InjectWorker(locator, ip, new QuietOperationTracker());
 
         try
         {
