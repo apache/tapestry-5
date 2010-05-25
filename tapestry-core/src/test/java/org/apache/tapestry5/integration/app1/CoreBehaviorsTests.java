@@ -111,7 +111,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         // mismatched tag.
         clickThru("BadTemplate Page");
 
-        assertTextPresent("org.apache.tapestry5.ioc.internal.util.TapestryException",
+        assertTextPresent("org.apache.tapestry5.ioc.internal.OperationException",
                 "Failure parsing template classpath:org/apache/tapestry5/integration/app1/pages/BadTemplate.tml",
                 "The element type \"t:foobar\" must be terminated by the matching end-tag \"</t:foobar>\"",
                 "classpath:org/apache/tapestry5/integration/app1/pages/BadTemplate.tml, line 6",

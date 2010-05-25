@@ -1,10 +1,10 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,6 +18,7 @@ import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.internal.services.LinkSource;
 import org.apache.tapestry5.internal.services.RequestPageCache;
 import org.apache.tapestry5.ioc.LoggerSource;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
@@ -48,13 +49,12 @@ public class ComponentPageElementResourcesSourceImpl implements ComponentPageEle
 
     private final LoggerSource loggerSource;
 
+    private final OperationTracker tracker;
+
     public ComponentPageElementResourcesSourceImpl(ComponentMessagesSource componentMessagesSource,
-                                                   TypeCoercer typeCoercer,
-                                                   ComponentClassCache componentClassCache,
-                                                   ContextValueEncoder contextValueEncoder, LinkSource linkSource,
-                                                   RequestPageCache requestPageCache,
-                                                   ComponentClassResolver componentClassResolver,
-                                                   LoggerSource loggerSource)
+            TypeCoercer typeCoercer, ComponentClassCache componentClassCache, ContextValueEncoder contextValueEncoder,
+            LinkSource linkSource, RequestPageCache requestPageCache, ComponentClassResolver componentClassResolver,
+            LoggerSource loggerSource, OperationTracker tracker)
     {
         this.componentMessagesSource = componentMessagesSource;
         this.typeCoercer = typeCoercer;
@@ -64,6 +64,7 @@ public class ComponentPageElementResourcesSourceImpl implements ComponentPageEle
         this.requestPageCache = requestPageCache;
         this.componentClassResolver = componentClassResolver;
         this.loggerSource = loggerSource;
+        this.tracker = tracker;
     }
 
     public ComponentPageElementResources get(Locale locale)
@@ -75,9 +76,8 @@ public class ComponentPageElementResourcesSourceImpl implements ComponentPageEle
         if (result == null)
         {
             result = new ComponentPageElementResourcesImpl(locale, componentMessagesSource, typeCoercer,
-                                                           componentClassCache,
-                                                           contextValueEncoder, linkSource, requestPageCache,
-                                                           componentClassResolver, loggerSource);
+                    componentClassCache, contextValueEncoder, linkSource, requestPageCache, componentClassResolver,
+                    loggerSource, tracker);
 
             // Small race condition here, where we may create two instances of the CPER for the same locale,
             // but that's not worth worrying about.

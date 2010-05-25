@@ -1,10 +1,10 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,8 +19,10 @@ import org.apache.tapestry5.Link;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.internal.services.LinkSource;
 import org.apache.tapestry5.internal.services.RequestPageCache;
+import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.model.ComponentModel;
@@ -53,12 +55,12 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
 
     private final LoggerSource loggerSource;
 
+    private final OperationTracker tracker;
+
     public ComponentPageElementResourcesImpl(Locale locale, ComponentMessagesSource componentMessagesSource,
-                                             TypeCoercer typeCoercer,
-                                             ComponentClassCache componentClassCache,
-                                             ContextValueEncoder contextValueEncoder, LinkSource linkSource,
-                                             RequestPageCache requestPageCache,
-                                             ComponentClassResolver componentClassResolver, LoggerSource loggerSource)
+            TypeCoercer typeCoercer, ComponentClassCache componentClassCache, ContextValueEncoder contextValueEncoder,
+            LinkSource linkSource, RequestPageCache requestPageCache, ComponentClassResolver componentClassResolver,
+            LoggerSource loggerSource, OperationTracker tracker)
     {
         this.componentMessagesSource = componentMessagesSource;
         this.locale = locale;
@@ -69,6 +71,7 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
         this.requestPageCache = requestPageCache;
         this.componentClassResolver = componentClassResolver;
         this.loggerSource = loggerSource;
+        this.tracker = tracker;
     }
 
     public Messages getMessages(ComponentModel componentModel)
@@ -87,12 +90,12 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
     }
 
     public Link createComponentEventLink(ComponentResources resources, String eventType, boolean forForm,
-                                         Object... context)
+            Object... context)
     {
         Page page = requestPageCache.get(resources.getPageName());
 
         return linkSource.createComponentEventLink(page, resources.getNestedId(), eventType, forForm,
-                                                   defaulted(context));
+                defaulted(context));
     }
 
     public Link createPageRenderLink(String pageName, boolean override, Object... context)
@@ -121,7 +124,6 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
         return contextValueEncoder.toClient(value);
     }
 
-
     public <T> T toValue(Class<T> requiredType, String clientValue)
     {
         return contextValueEncoder.toValue(requiredType, clientValue);
@@ -130,5 +132,15 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
     private Object[] defaulted(Object[] context)
     {
         return context == null ? EMPTY : context;
+    }
+
+    public <T> T invoke(String description, Invokable<T> operation)
+    {
+        return tracker.invoke(description, operation);
+    }
+
+    public void run(String description, Runnable operation)
+    {
+        tracker.run(description, operation);
     }
 }

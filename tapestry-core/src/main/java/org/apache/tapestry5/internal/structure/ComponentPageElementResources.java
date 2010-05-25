@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.structure;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.ContextValueEncoder;
 import org.slf4j.Logger;
@@ -25,7 +26,7 @@ import org.slf4j.Logger;
  * Provides access to common methods of various services, needed by implementations of {@link ComponentPageElement} and
  * {@link org.apache.tapestry5.internal.InternalComponentResources}.
  */
-public interface ComponentPageElementResources extends ContextValueEncoder
+public interface ComponentPageElementResources extends ContextValueEncoder, OperationTracker
 {
     /**
      * Used to obtain a {@link org.apache.tapestry5.ioc.Messages} instance for a particular component. If the component

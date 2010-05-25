@@ -48,6 +48,7 @@ import org.apache.tapestry5.internal.services.EventImpl;
 import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.internal.util.NotificationEventCallback;
 import org.apache.tapestry5.ioc.BaseLocatable;
+import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
@@ -1064,11 +1065,25 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         };
     }
 
-    public boolean triggerContextEvent(String eventType, EventContext context, ComponentEventCallback callback)
+    public boolean triggerContextEvent(final String eventType, final EventContext context,
+            final ComponentEventCallback callback)
     {
         Defense.notBlank(eventType, "eventType");
         Defense.notNull(context, "context");
 
+        String description = String.format("Triggering event '%s' on %s", eventType, completeId);
+
+        return elementResources.invoke(description, new Invokable<Boolean>()
+        {
+            public Boolean invoke()
+            {
+                return processEventTriggering(eventType, context, callback);
+            }
+        });
+    }
+
+    private boolean processEventTriggering(String eventType, EventContext context, ComponentEventCallback callback)
+    {
         boolean result = false;
 
         ComponentPageElement component = this;
