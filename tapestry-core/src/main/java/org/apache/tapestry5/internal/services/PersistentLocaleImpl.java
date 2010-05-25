@@ -1,10 +1,10 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,17 +14,16 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Locale;
+import java.util.Set;
+
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.services.PersistentLocale;
-
-import java.util.Locale;
-import java.util.Set;
 
 public class PersistentLocaleImpl implements PersistentLocale
 {
@@ -36,8 +35,8 @@ public class PersistentLocaleImpl implements PersistentLocale
 
     public PersistentLocaleImpl(PerthreadManager perThreadManager,
 
-                                @Inject @Symbol(SymbolConstants.SUPPORTED_LOCALES)
-                                String supportedLocales)
+    @Symbol(SymbolConstants.SUPPORTED_LOCALES)
+    String supportedLocales)
     {
         this.perThreadManager = perThreadManager;
         this.supportedLocales = supportedLocales;
@@ -54,13 +53,13 @@ public class PersistentLocaleImpl implements PersistentLocale
 
         if (!localeNames.contains(locale.toString().toLowerCase()))
         {
-            String message = String.format(
-                    "Locale '%s' is not supported by this application. Supported locales are '%s'; this is configured via the %s symbol.",
-                    locale, supportedLocales, SymbolConstants.SUPPORTED_LOCALES);
+            String message = String
+                    .format(
+                            "Locale '%s' is not supported by this application. Supported locales are '%s'; this is configured via the %s symbol.",
+                            locale, supportedLocales, SymbolConstants.SUPPORTED_LOCALES);
 
             throw new IllegalArgumentException(message);
         }
-
 
         perThreadManager.put(this, locale);
     }

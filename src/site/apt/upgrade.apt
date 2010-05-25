@@ -14,6 +14,17 @@ Upgrade Notes
 
 Release 5.2.0
 
+* Service Id Injection
+
+  In prior releases of Tapestry, a constructor parameter of type String was assumed to be the service id.
+  In the many cases where these was not the case (such as using the @Value or @Symbol annotation), the parameter
+  needed to be annotated with the @Inject annotation.
+  
+  Starting in 5.2, this feature is no longer present (this is a <non-backwards compatible change>, but one that
+  affects virtually nobody).  A parameter of type String will be subject to normal
+  injection; you will likely want to use @Value or @Symbol with it, or you will see an error that "No service
+  implements java.lang.String.".
+
 * TranslatorSource
 
   The configuration type for TranslatorSource has changed in an <<incompatible>> way: from

@@ -75,13 +75,10 @@ Standard Injection Processing
 
    When the Inject annotation is <not present> at the point of injection, Tapestry checks to see
    if a resource can be injected.  When the Inject annotation is present, this step is skipped (this is necessary
-   when the object to be injected has a type that conflicts with a resource type, such as String).
+   when the object to be injected has a type that conflicts with a resource type, such as List or Class).
 
    [org.slf4j.Logger]
    The Logger of the service being constructed (or the logger of the Module class being instantiated).
-
-   [String]
-   The service id of the service being constructed.
 
    [{{{../apidocs/org/apache/tapestry5/ioc/ObjectLocator.html}ObjectLocator}}]
    For contribute methods, used to locate additional objects.

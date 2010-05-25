@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,18 +14,22 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.io.IOException;
+
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.EmptyEventContext;
-import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.services.*;
-
-import java.io.IOException;
+import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.ComponentRequestHandler;
+import org.apache.tapestry5.services.Dispatcher;
+import org.apache.tapestry5.services.PageRenderRequestParameters;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Response;
 
 /**
  * Recognizes a request for the application root (i.e., "/") and handles this the same as a render request for the
- * "Start" page.    Support for the Start page is kept for legacy purposes, Index pages are the correct approach.
+ * "Start" page. Support for the Start page is kept for legacy purposes, Index pages are the correct approach.
  */
 public class RootPathDispatcher implements Dispatcher
 {
@@ -41,10 +45,10 @@ public class RootPathDispatcher implements Dispatcher
 
     public RootPathDispatcher(ComponentClassResolver componentClassResolver,
 
-                              ComponentRequestHandler handler,
+    ComponentRequestHandler handler,
 
-                              @Inject @Symbol(SymbolConstants.START_PAGE_NAME)
-                              String startPageName)
+    @Symbol(SymbolConstants.START_PAGE_NAME)
+    String startPageName)
     {
         this.componentClassResolver = componentClassResolver;
         this.handler = handler;

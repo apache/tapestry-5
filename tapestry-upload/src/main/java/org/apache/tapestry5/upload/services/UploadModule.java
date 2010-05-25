@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,6 +14,9 @@
 
 package org.apache.tapestry5.upload.services;
 
+import java.io.File;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.io.FileCleaner;
@@ -22,7 +25,6 @@ import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.annotations.Autobuild;
-import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
@@ -34,9 +36,6 @@ import org.apache.tapestry5.services.LibraryMapping;
 import org.apache.tapestry5.upload.internal.services.MultipartDecoderImpl;
 import org.apache.tapestry5.upload.internal.services.MultipartServletRequestFilter;
 import org.apache.tapestry5.upload.internal.services.UploadExceptionFilter;
-
-import java.io.File;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class UploadModule
 {
@@ -54,9 +53,10 @@ public class UploadModule
     @Scope(ScopeConstants.PERTHREAD)
     public static MultipartDecoder buildMultipartDecoder(PerthreadManager perthreadManager,
 
-                                                         RegistryShutdownHub shutdownHub,
+    RegistryShutdownHub shutdownHub,
 
-                                                         @Autobuild MultipartDecoderImpl multipartDecoder)
+    @Autobuild
+    MultipartDecoderImpl multipartDecoder)
     {
         // This is proabably overkill since the FileCleaner should catch temporary files, but lets
         // be safe.
@@ -79,8 +79,8 @@ public class UploadModule
     /**
      * Contributes a filter, "MultipartFilter" after "IgnoredPaths".
      */
-    public static void contributeHttpServletRequestHandler(OrderedConfiguration<HttpServletRequestFilter> configuration,
-                                                           MultipartDecoder multipartDecoder)
+    public static void contributeHttpServletRequestHandler(
+            OrderedConfiguration<HttpServletRequestFilter> configuration, MultipartDecoder multipartDecoder)
     {
         configuration.add("MultipartFilter", new MultipartServletRequestFilter(multipartDecoder), "after:IgnoredPaths");
     }
@@ -93,19 +93,18 @@ public class UploadModule
     public static void contributeComponentEventRequestHandler(
             OrderedConfiguration<ComponentEventRequestFilter> configuration)
     {
-        configuration.addInstance("UploadException", UploadExceptionFilter.class, "after:Secure",
-                                  "before:Ajax");
+        configuration.addInstance("UploadException", UploadExceptionFilter.class, "after:Secure", "before:Ajax");
     }
 
     /**
-     * The default FileItemFactory used by the MultipartDecoder is {@link org.apache.commons.fileupload.disk.DiskFileItemFactory}.
+     * The default FileItemFactory used by the MultipartDecoder is
+     * {@link org.apache.commons.fileupload.disk.DiskFileItemFactory}.
      */
-    public static FileItemFactory buildDefaultFileItemFactory(
-            @Symbol(UploadSymbols.REPOSITORY_THRESHOLD)
-            int repositoryThreshold,
+    public static FileItemFactory buildDefaultFileItemFactory(@Symbol(UploadSymbols.REPOSITORY_THRESHOLD)
+    int repositoryThreshold,
 
-            @Inject @Symbol(UploadSymbols.REPOSITORY_LOCATION)
-            String repositoryLocation)
+    @Symbol(UploadSymbols.REPOSITORY_LOCATION)
+    String repositoryLocation)
     {
         return new DiskFileItemFactory(repositoryThreshold, new File(repositoryLocation));
     }

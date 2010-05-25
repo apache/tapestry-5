@@ -48,6 +48,7 @@ public class AbstractMethodInvokingInstrumenter
     protected final Class serviceInterface;
 
     protected final String serviceId;
+    
     private final Logger logger;
 
     public AbstractMethodInvokingInstrumenter(
@@ -60,7 +61,6 @@ public class AbstractMethodInvokingInstrumenter
 
         serviceId = resources.getServiceId();
 
-        resourcesDefaults.put(String.class, serviceId);
         resourcesDefaults.put(ObjectLocator.class, resources);
         resourcesDefaults.put(ServiceResources.class, resources);
         logger = resources.getLogger();

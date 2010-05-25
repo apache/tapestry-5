@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -55,8 +55,8 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         replay();
 
-        ObjectCreator sc = new ServiceBuilderMethodInvoker(resources, CREATOR_DESCRIPTION,
-                                                           findMethod(fixture, "build_noargs"));
+        ObjectCreator sc = new ServiceBuilderMethodInvoker(resources, CREATOR_DESCRIPTION, findMethod(fixture,
+                "build_noargs"));
 
         Object actual = sc.createObject();
 
@@ -83,7 +83,6 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         Logger logger = mockLogger();
 
-        fixture.expectedServiceId = SERVICE_ID;
         fixture.expectedServiceInterface = FieService.class;
         fixture.expectedServiceResources = resources;
         fixture.expectedLogger = logger;
@@ -132,8 +131,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         // This simulates what the real stack does when it sees @Value("Injected")
 
-        expect(resources.getObject(eq(String.class), isA(AnnotationProvider.class))).andReturn(
-                "Injected");
+        expect(resources.getObject(eq(String.class), isA(AnnotationProvider.class))).andReturn("Injected");
 
         replay();
 
@@ -166,8 +164,8 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         replay();
 
-        ObjectCreator sc = new ServiceBuilderMethodInvoker(resources, CREATOR_DESCRIPTION,
-                                                           findMethod(fixture, "build_injected"));
+        ObjectCreator sc = new ServiceBuilderMethodInvoker(resources, CREATOR_DESCRIPTION, findMethod(fixture,
+                "build_injected"));
 
         Object actual = sc.createObject();
 
@@ -198,8 +196,8 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         replay();
 
-        ObjectCreator sc = new ServiceBuilderMethodInvoker(resources, CREATOR_DESCRIPTION,
-                                                           findMethod(fixture, "buildWithOrderedConfiguration"));
+        ObjectCreator sc = new ServiceBuilderMethodInvoker(resources, CREATOR_DESCRIPTION, findMethod(fixture,
+                "buildWithOrderedConfiguration"));
 
         Object actual = sc.createObject();
 
@@ -230,8 +228,8 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         replay();
 
-        ObjectCreator sc = new ServiceBuilderMethodInvoker(resources, CREATOR_DESCRIPTION,
-                                                           findMethod(fixture, "buildWithUnorderedConfiguration"));
+        ObjectCreator sc = new ServiceBuilderMethodInvoker(resources, CREATOR_DESCRIPTION, findMethod(fixture,
+                "buildWithUnorderedConfiguration"));
 
         Object actual = sc.createObject();
 
@@ -304,8 +302,8 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(ex.getMessage(), "Error invoking service builder method "
-                    + CREATOR_DESCRIPTION + " (for service 'Fie'): Method failed.");
+            assertEquals(ex.getMessage(), "Error invoking service builder method " + CREATOR_DESCRIPTION
+                    + " (for service 'Fie'): Method failed.");
 
             Throwable cause = ex.getCause();
 
@@ -331,8 +329,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         train_getModuleBuilder(resources, fixture);
 
-        expect(resources.getObject(eq(FoeService.class), isA(AnnotationProvider.class))).andReturn(
-                fixture.expectedFoe);
+        expect(resources.getObject(eq(FoeService.class), isA(AnnotationProvider.class))).andReturn(fixture.expectedFoe);
 
         train_isDebugEnabled(logger, false);
 
@@ -347,8 +344,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
         assertSame(actual, fixture.fie);
     }
 
-    protected final void train_getModuleBuilder(ServiceBuilderResources resources,
-                                                Object moduleInstance)
+    protected final void train_getModuleBuilder(ServiceBuilderResources resources, Object moduleInstance)
     {
         expect(resources.getModuleBuilder()).andReturn(moduleInstance);
     }

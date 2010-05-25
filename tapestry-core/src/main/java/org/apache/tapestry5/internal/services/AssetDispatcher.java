@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
@@ -47,7 +46,6 @@ public class AssetDispatcher implements Dispatcher
 
     public AssetDispatcher(Map<String, AssetRequestHandler> configuration,
 
-    @Inject
     @Symbol(SymbolConstants.APPLICATION_VERSION)
     String applicationVersion)
     {

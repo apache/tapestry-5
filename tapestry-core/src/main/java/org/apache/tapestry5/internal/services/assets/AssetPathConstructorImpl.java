@@ -16,7 +16,6 @@ package org.apache.tapestry5.internal.services.assets;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.services.RequestConstants;
-import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
@@ -29,7 +28,6 @@ public class AssetPathConstructorImpl implements AssetPathConstructor
 
     public AssetPathConstructorImpl(Request request,
 
-    @Inject
     @Symbol(SymbolConstants.APPLICATION_VERSION)
     String applicationVersion)
     {

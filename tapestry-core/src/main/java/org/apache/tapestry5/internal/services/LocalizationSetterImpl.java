@@ -25,7 +25,6 @@ import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.OptionModelImpl;
 import org.apache.tapestry5.internal.SelectModelImpl;
-import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
@@ -59,7 +58,6 @@ public class LocalizationSetterImpl implements LocalizationSetter
 
     ThreadLocale threadLocale,
 
-    @Inject
     @Symbol(SymbolConstants.SUPPORTED_LOCALES)
     String supportedLocaleNames)
     {

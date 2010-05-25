@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 The Apache Software Foundation
+// Copyright 2006, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,18 +14,18 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.structure.Page;
-import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.ExceptionReporter;
 import org.apache.tapestry5.services.RequestExceptionHandler;
 import org.apache.tapestry5.services.Response;
 import org.slf4j.Logger;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * Default implementation of {@link RequestExceptionHandler} that displays the standard ExceptionReport page. The page
@@ -45,7 +45,7 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
 
     public DefaultRequestExceptionHandler(RequestPageCache pageCache, PageResponseRenderer renderer, Logger logger,
 
-                                          @Inject @Symbol(SymbolConstants.EXCEPTION_REPORT_PAGE)
+                                           @Symbol(SymbolConstants.EXCEPTION_REPORT_PAGE)
                                           String pageName,
 
                                           Response response)

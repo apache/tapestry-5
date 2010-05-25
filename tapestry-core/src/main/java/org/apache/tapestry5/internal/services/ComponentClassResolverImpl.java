@@ -14,10 +14,17 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Formatter;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.Invokable;
-import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.ConcurrentBarrier;
@@ -29,9 +36,6 @@ import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.LibraryMapping;
 import org.slf4j.Logger;
-
-import java.util.*;
-import java.util.regex.Pattern;
 
 public class ComponentClassResolverImpl implements ComponentClassResolver, InvalidationListener
 {
@@ -102,11 +106,9 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
     ClassNameLocator classNameLocator,
 
-    @Inject
     @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
     String appRootPackage,
 
-    @Inject
     @Symbol(SymbolConstants.START_PAGE_NAME)
     String startPageName,
 

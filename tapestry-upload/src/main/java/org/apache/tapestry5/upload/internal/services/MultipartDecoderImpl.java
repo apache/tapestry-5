@@ -1,10 +1,10 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,12 +14,18 @@
 
 package org.apache.tapestry5.upload.internal.services;
 
+import java.io.UnsupportedEncodingException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
@@ -27,14 +33,8 @@ import org.apache.tapestry5.upload.services.MultipartDecoder;
 import org.apache.tapestry5.upload.services.UploadSymbols;
 import org.apache.tapestry5.upload.services.UploadedFile;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 /**
- * Implementation of multipart decoder for servlets.  This implementation is perthread scope.
+ * Implementation of multipart decoder for servlets. This implementation is perthread scope.
  */
 public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupListener
 {
@@ -52,16 +52,16 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
 
     public MultipartDecoderImpl(
 
-            FileItemFactory fileItemFactory,
+    FileItemFactory fileItemFactory,
 
-            @Symbol(UploadSymbols.REQUESTSIZE_MAX)
-            long maxRequestSize,
+    @Symbol(UploadSymbols.REQUESTSIZE_MAX)
+    long maxRequestSize,
 
-            @Symbol(UploadSymbols.FILESIZE_MAX)
-            long maxFileSize,
+    @Symbol(UploadSymbols.FILESIZE_MAX)
+    long maxFileSize,
 
-            @Inject @Symbol(SymbolConstants.CHARSET)
-            String requestEncoding)
+    @Symbol(SymbolConstants.CHARSET)
+    String requestEncoding)
     {
         this.fileItemFactory = fileItemFactory;
         this.maxRequestSize = maxRequestSize;
@@ -126,10 +126,7 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
 
     protected HttpServletRequest processFileItems(HttpServletRequest request, List<FileItem> fileItems)
     {
-        if (uploadException == null && fileItems.isEmpty())
-        {
-            return request;
-        }
+        if (uploadException == null && fileItems.isEmpty()) { return request; }
 
         ParametersServletRequestWrapper wrapper = new ParametersServletRequestWrapper(request);
 

@@ -392,7 +392,6 @@ public final class TapestryModule
     @PreventServiceDecoration
     public static Alias buildAlias(Logger logger,
 
-    @Inject
     @Symbol(InternalSymbols.ALIAS_MODE)
     String mode,
 
@@ -939,7 +938,6 @@ public final class TapestryModule
      */
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration, Context context,
 
-    // @Inject not needed because its a long, not a String
             @Symbol(SymbolConstants.FILE_CHECK_INTERVAL)
             @IntermediateType(TimeInterval.class)
             long checkInterval,
@@ -1452,7 +1450,6 @@ public final class TapestryModule
     @Primary
     RequestHandler handler,
 
-    @Inject
     @Symbol(SymbolConstants.CHARSET)
     String applicationCharset,
 
@@ -1930,7 +1927,6 @@ public final class TapestryModule
     @Symbol(SymbolConstants.OMIT_GENERATOR_META)
     final boolean omitGeneratorMeta,
 
-    @Inject
     @Symbol(SymbolConstants.TAPESTRY_VERSION)
     final String tapestryVersion,
 

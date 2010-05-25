@@ -56,11 +56,11 @@ public abstract class AbstractServiceCreator implements ObjectCreator
     public AbstractServiceCreator(ServiceBuilderResources resources, String creatorDescription)
     {
         serviceId = resources.getServiceId();
+
         this.resources = resources;
         this.creatorDescription = creatorDescription;
         logger = resources.getLogger();
 
-        injectionResources.put(String.class, serviceId);
         injectionResources.put(ObjectLocator.class, resources);
         injectionResources.put(ServiceResources.class, resources);
         injectionResources.put(Logger.class, logger);

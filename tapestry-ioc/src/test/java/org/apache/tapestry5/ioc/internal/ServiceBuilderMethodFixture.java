@@ -1,10 +1,10 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,16 +14,15 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.tapestry5.ioc.ServiceResources;
-import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.apache.tapestry5.ioc.annotations.Value;
 import org.slf4j.Logger;
 import org.testng.Assert;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Used by {@link org.apache.tapestry5.ioc.internal.ServiceBuilderMethodInvokerTest}.
@@ -31,8 +30,6 @@ import java.util.List;
 public class ServiceBuilderMethodFixture extends Assert
 {
     FieService fie;
-
-    String expectedServiceId;
 
     ServiceResources expectedServiceResources;
 
@@ -98,10 +95,8 @@ public class ServiceBuilderMethodFixture extends Assert
         throw new RuntimeException("Method failed.");
     }
 
-    public FieService build_args(String serviceId, ServiceResources resources,
-                                 Class serviceInterface, Logger log)
+    public FieService build_args(ServiceResources resources, Class serviceInterface, Logger log)
     {
-        assertEquals(serviceId, expectedServiceId);
         assertSame(resources, expectedServiceResources);
         assertSame(serviceInterface, expectedServiceInterface);
         assertSame(log, expectedLogger);
@@ -109,8 +104,8 @@ public class ServiceBuilderMethodFixture extends Assert
         return fie;
     }
 
-    public FieService build_with_forced_injection(@Inject
-    @Value("Injected")
+    /** Before 5.2, an @Inject was necessary here. Now we're testing that it no longer is necessary. */
+    public FieService build_with_forced_injection(@Value("Injected")
     String string)
     {
         assertEquals(string, expectedString);

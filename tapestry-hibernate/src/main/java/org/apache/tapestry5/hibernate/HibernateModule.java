@@ -26,7 +26,6 @@ import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
-import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
@@ -59,7 +58,6 @@ public class HibernateModule
      */
     public static void contributeHibernateEntityPackageManager(Configuration<String> configuration,
 
-                                                               @Inject
                                                                @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
                                                                String appRootPackage)
     {

@@ -1,10 +1,10 @@
-//  Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,18 +21,17 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-
 public class FieldResourceServiceImpl implements FieldResourceService
 {
     @InjectResource
-    private String serviceId;
+    private ServiceResources resources;
 
     @InjectResource
     private Collection<String> configuration;
 
     public String getServiceId()
     {
-        return serviceId;
+        return resources.getServiceId();
     }
 
     public List<String> getLabels()
