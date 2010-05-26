@@ -19,9 +19,9 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
-import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
+import org.apache.tapestry5.ioc.util.func.AbstractMapper;
 import org.apache.tapestry5.ioc.util.func.F;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
 
@@ -40,9 +40,9 @@ public class ObjectComponentEventResultProcessor implements ComponentEventResult
 
     public void processResultValue(Object value) throws IOException
     {
-        List<String> names = F.map(new Coercion<Class, String>()
+        List<String> names = F.map(new AbstractMapper<Class, String>()
         {
-            public String coerce(Class input)
+            public String map(Class input)
             {
                 return ClassFabUtils.toJavaClassName(input);
             }

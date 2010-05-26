@@ -34,8 +34,9 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.Coercion;
+import org.apache.tapestry5.ioc.util.func.AbstractMapper;
 import org.apache.tapestry5.ioc.util.func.F;
+import org.apache.tapestry5.ioc.util.func.Mapper;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
 /**
@@ -561,13 +562,13 @@ public class TapestryInternalUtils
     }
 
     /**
-     * Common coercion, used primarily with {@link F#map(Coercion, java.util.Collection)}
+     * Common mapper, used primarily with {@link F#map(Mapper, java.util.Collection)}
      * 
      * @since 5.2.0
      */
-    public static Coercion<Asset, StylesheetLink> assetToStylesheetLink = new Coercion<Asset, StylesheetLink>()
+    public static Mapper<Asset, StylesheetLink> assetToStylesheetLink = new AbstractMapper<Asset, StylesheetLink>()
     {
-        public StylesheetLink coerce(Asset input)
+        public StylesheetLink map(Asset input)
         {
             return new StylesheetLink(input);
         };

@@ -21,9 +21,10 @@ import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.services.RequestConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
+import org.apache.tapestry5.ioc.util.func.AbstractMapper;
 import org.apache.tapestry5.ioc.util.func.F;
+import org.apache.tapestry5.ioc.util.func.Mapper;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.javascript.JavascriptStack;
 import org.apache.tapestry5.services.javascript.JavascriptStackSource;
@@ -38,9 +39,9 @@ public class JavascriptStackPathConstructorImpl implements JavascriptStackPathCo
 
     private final boolean combineScripts;
 
-    private final Coercion<Asset, String> toPath = new Coercion<Asset, String>()
+    private final Mapper<Asset, String> toPath = new AbstractMapper<Asset, String>()
     {
-        public String coerce(Asset input)
+        public String map(Asset input)
         {
             return input.toClientURL();
         }

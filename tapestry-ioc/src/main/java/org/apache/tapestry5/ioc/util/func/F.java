@@ -37,10 +37,10 @@ public class F
     /**
      * Functional map (i.e., transform operation) from a Collection&lt;S&gt; to List&lt;T&gt;.
      */
-    public static <S, T> List<T> map(Coercion<S, T> coercion, Collection<S> source)
+    public static <S, T> List<T> map(Mapper<S, T> mapper, Collection<S> source)
     {
         Defense.notNull(source, "source");
-        Defense.notNull(coercion, "coercion");
+        Defense.notNull(mapper, "mapper");
 
         if (source.isEmpty())
             return Collections.emptyList();
@@ -49,7 +49,7 @@ public class F
 
         for (S s : source)
         {
-            T t = coercion.coerce(s);
+            T t = mapper.map(s);
 
             result.add(t);
         }
@@ -57,25 +57,23 @@ public class F
         return result;
     }
 
-    public static <S, T> List<T> map(Coercion<S, T> coercion, S... source)
+    public static <S, T> List<T> map(Mapper<S, T> mapper, S... source)
     {
         Defense.notNull(source, "source");
 
-        return map(coercion, Arrays.asList(source));
+        return map(mapper, Arrays.asList(source));
     }
 
-    public static <S, T1, T2> Coercion<S, T2> combine(final Coercion<S, T1> first, final Coercion<T1, T2> second)
+    public static <S, T> Mapper<S, T> toMapper(final Coercion<S, T> coercion)
     {
-        Defense.notNull(first, "first");
-        Defense.notNull(second, "second");
+        Defense.notNull(coercion, "coercion");
 
-        return new Coercion<S, T2>()
+        return new AbstractMapper<S, T>()
         {
-            public T2 coerce(S input)
-            {
-                T1 intermediate = first.coerce(input);
 
-                return second.coerce(intermediate);
+            public T map(S value)
+            {
+                return coercion.coerce(value);
             }
         };
     }
@@ -86,6 +84,17 @@ public class F
     public static <T> void each(Worker<T> operation, Collection<T> source)
     {
         for (T t : source)
+        {
+            operation.work(t);
+        }
+    }
+
+    /**
+     * Performs an operation on each of the values.
+     */
+    public static <T> void each(Worker<T> operation, T... values)
+    {
+        for (T t : values)
         {
             operation.work(t);
         }
@@ -222,11 +231,11 @@ public class F
         return invert(isNull);
     }
 
-    public static <S, T> Coercion<S, T> always(final T fixedResult)
+    public static <S, T> Mapper<S, T> always(final T fixedResult)
     {
-        return new Coercion<S, T>()
+        return new AbstractMapper<S, T>()
         {
-            public T coerce(S input)
+            public T map(S input)
             {
                 return fixedResult;
             }
@@ -234,8 +243,8 @@ public class F
     }
 
     /**
-     * Coercion factory that combines a Predicate with two coercions; evaluating the predicate selects one of the
-     * two coercions.
+     * Coercion factory that combines a Predicate with two {@link Mapper}s; evaluating the predicate selects one of the
+     * two mappers.
      * 
      * @param predicate
      *            evaluated to selected a coercion
@@ -244,43 +253,43 @@ public class F
      * @param ifRejected
      *            used when predicate evaluates to false
      */
-    public static <S, T> Coercion<S, T> select(final Predicate<? super S> predicate, final Coercion<S, T> ifAccepted,
-            final Coercion<S, T> ifRejected)
+    public static <S, T> Mapper<S, T> select(final Predicate<? super S> predicate, final Mapper<S, T> ifAccepted,
+            final Mapper<S, T> ifRejected)
     {
-        return new Coercion<S, T>()
+        return new AbstractMapper<S, T>()
         {
-            public T coerce(S input)
+            public T map(S input)
             {
-                Coercion<S, T> active = predicate.accept(input) ? ifAccepted : ifRejected;
+                Mapper<S, T> active = predicate.accept(input) ? ifAccepted : ifRejected;
 
-                return active.coerce(input);
+                return active.map(input);
             }
         };
     }
 
     /**
-     * Override of {@link #select(Predicate, Coercion, Coercion)} where rejected values are replaced with null.
+     * Override of {@link #select(Predicate, Mapper, Mapper)} where rejected values are replaced with null.
      */
-    public static <S, T> Coercion<S, T> select(Predicate<? super S> predicate, Coercion<S, T> ifAccepted)
+    public static <S, T> Mapper<S, T> select(Predicate<? super S> predicate, Mapper<S, T> ifAccepted)
     {
         return select(predicate, ifAccepted, (T) null);
     }
 
     /**
-     * Override of {@link #select(Predicate, Coercion)} where rejected values are replaced with a fixed value.
+     * Override of {@link #select(Predicate, Mapper)} where rejected values are replaced with a fixed value.
      */
-    public static <S, T> Coercion<S, T> select(Predicate<? super S> predicate, Coercion<S, T> ifAccepted, T ifRejected)
+    public static <S, T> Mapper<S, T> select(Predicate<? super S> predicate, Mapper<S, T> ifAccepted, T ifRejected)
     {
-        Coercion<S, T> rejectedCoercion = always(ifRejected);
+        Mapper<S, T> rejectedMapper = always(ifRejected);
 
-        return select(predicate, ifAccepted, rejectedCoercion);
+        return select(predicate, ifAccepted, rejectedMapper);
     }
 
-    public static <S> Coercion<S, S> identity()
+    public static <S> Mapper<S, S> identity()
     {
-        return new Coercion<S, S>()
+        return new AbstractMapper<S, S>()
         {
-            public S coerce(S input)
+            public S map(S input)
             {
                 return input;
             }
@@ -288,13 +297,13 @@ public class F
     }
 
     /** Allows Coercion to boolean to be used as a Predicate. */
-    public static <S> Predicate<S> toPredicate(final Coercion<S, Boolean> coercion)
+    public static <S> Predicate<S> toPredicate(final Mapper<S, Boolean> mapper)
     {
         return new Predicate<S>()
         {
             public boolean accept(S object)
             {
-                return coercion.coerce(object);
+                return mapper.map(object);
             };
         };
     }

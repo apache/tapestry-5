@@ -23,9 +23,10 @@ import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
+import org.apache.tapestry5.ioc.util.func.AbstractMapper;
 import org.apache.tapestry5.ioc.util.func.F;
+import org.apache.tapestry5.ioc.util.func.Mapper;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
@@ -48,16 +49,16 @@ public class DateFieldStack implements JavascriptStack
         this.threadLocale = threadLocale;
         this.compactJSON = compactJSON;
 
-        Coercion<String, Asset> pathToAsset = new Coercion<String, Asset>()
+        Mapper<String, Asset> pathToAsset = new AbstractMapper<String, Asset>()
         {
-            public Asset coerce(String path)
+            public Asset map(String path)
             {
                 return assetSource.getExpandedAsset(path);
             }
         };
 
-        Coercion<String, StylesheetLink> pathToStylesheetLink = F.combine(pathToAsset,
-                TapestryInternalUtils.assetToStylesheetLink);
+        Mapper<String, StylesheetLink> pathToStylesheetLink = pathToAsset
+                .combine(TapestryInternalUtils.assetToStylesheetLink);
 
         javascriptStack = F.map(pathToAsset, "${tapestry.datepicker}/js/datepicker.js",
                 "org/apache/tapestry5/corelib/components/datefield.js");

@@ -25,17 +25,17 @@ import org.testng.annotations.Test;
 
 public class FuncTest extends TestBase
 {
-    private Coercion<String, Integer> stringToLength = new Coercion<String, Integer>()
+    private Mapper<String, Integer> stringToLength = new AbstractMapper<String, Integer>()
     {
-        public Integer coerce(String input)
+        public Integer map(String input)
         {
             return input.length();
         }
     };
 
-    private Coercion<Integer, Boolean> toEven = new Coercion<Integer, Boolean>()
+    private Mapper<Integer, Boolean> toEven = new AbstractMapper<Integer, Boolean>()
     {
-        public Boolean coerce(Integer input)
+        public Boolean map(Integer input)
         {
             return evenp.accept(input);
         }
@@ -60,9 +60,9 @@ public class FuncTest extends TestBase
     }
 
     @Test
-    public void combine_coercions()
+    public void combine_mappers()
     {
-        List<Boolean> even = F.map(F.combine(stringToLength, toEven), "Mary", "had", "a", "little", "lamb");
+        List<Boolean> even = F.map(stringToLength.combine(toEven), "Mary", "had", "a", "little", "lamb");
 
         assertListsEquals(even, true, false, false, true, true);
     }
@@ -103,8 +103,6 @@ public class FuncTest extends TestBase
     @Test
     public void combine_workers()
     {
-        List<String> source = Arrays.asList("Mary", "had", "a", "little", "lamb");
-
         final StringBuffer buffer = new StringBuffer();
 
         Worker<String> appendWorker = new AbstractWorker<String>()
@@ -128,9 +126,24 @@ public class FuncTest extends TestBase
             }
         };
 
-        F.each(appendWorker.combine(appendLength), source);
+        F.each(appendWorker.combine(appendLength), "Mary", "had", "a", "little", "lamb");
 
         assertEquals(buffer.toString(), "Mary(4) had(3) a(1) little(6) lamb(4)");
+    }
+
+    @Test
+    public void wrap_coercion_as_mapper()
+    {
+        Coercion<String, String> toUpper = new Coercion<String, String>()
+        {
+            public String coerce(String input)
+            {
+                return input.toUpperCase();
+            }
+        };
+
+        assertListsEquals(F.map(F.toMapper(toUpper), "Mary", "had", "a", "little", "lamb"), "MARY", "HAD", "A",
+                "LITTLE", "LAMB");
     }
 
     @Test
@@ -188,16 +201,16 @@ public class FuncTest extends TestBase
     @Test
     public void select_and_filter()
     {
-        List<String> source = Arrays.asList("Mary", "had", "a", "little", "lamb");
+        Predicate<String> combinedp = F.toPredicate(stringToLength.combine(toEven));
 
-        Predicate<String> combinedp = F.toPredicate(F.combine(stringToLength, toEven));
-        Coercion<String, String> identity = F.identity();
+        Mapper<String, String> identity = F.identity();
         Predicate<String> isNull = F.isNull();
 
         // Converting to null and then filtering out nulls is the hard way to do filter or remove,
         // but exercises the code we want to test.
 
-        List<String> filtered = F.remove(isNull, F.map(F.select(combinedp, identity), source));
+        List<String> filtered = F.remove(isNull, F.map(F.select(combinedp, identity), "Mary", "had", "a", "little",
+                "lamb"));
 
         assertListsEquals(filtered, "Mary", "little", "lamb");
     }

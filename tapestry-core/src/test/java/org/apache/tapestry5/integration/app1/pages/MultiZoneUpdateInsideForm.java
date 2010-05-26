@@ -30,7 +30,7 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Select;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.services.Coercion;
+import org.apache.tapestry5.ioc.util.func.AbstractMapper;
 import org.apache.tapestry5.ioc.util.func.F;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.util.AbstractSelectModel;
@@ -104,9 +104,9 @@ public class MultiZoneUpdateInsideForm
 
         public List<OptionModel> getOptions()
         {
-            return F.map(new Coercion<SelectObj, OptionModel>()
+            return F.map(new AbstractMapper<SelectObj, OptionModel>()
             {
-                public OptionModel coerce(final SelectObj input)
+                public OptionModel map(final SelectObj input)
                 {
                     return new AbstractOptionModel()
                     {
