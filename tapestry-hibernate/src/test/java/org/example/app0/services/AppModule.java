@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,6 +20,7 @@ import org.apache.tapestry5.hibernate.HibernateSymbols;
 import org.apache.tapestry5.hibernate.HibernateTransactionDecorator;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.Match;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 
@@ -39,9 +40,8 @@ public class AppModule
 
     @Match("*DAO")
     public static <T> T decorateTransactionally(HibernateTransactionDecorator decorator, Class<T> serviceInterface,
-                                                T delegate,
-                                                String serviceId)
+            T delegate, ServiceResources resources)
     {
-        return decorator.build(serviceInterface, delegate, serviceId);
+        return decorator.build(serviceInterface, delegate, resources.getServiceId());
     }
 }
