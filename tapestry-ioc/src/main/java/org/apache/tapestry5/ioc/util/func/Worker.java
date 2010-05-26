@@ -31,5 +31,5 @@ public interface Worker<T>
      * Combines this worker with the other worker, forming a new composite worker. In the composite,
      * the value passed first to this worker, then to the other worker.
      */
-    Worker<T> combine(Worker<T> other);
+    Worker<T> combine(Worker<? super T> other);
 }

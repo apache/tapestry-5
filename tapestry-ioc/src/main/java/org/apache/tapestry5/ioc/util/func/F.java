@@ -119,60 +119,20 @@ public class F
         return result;
     }
 
-    /** Inverts a predicate, returning a new predicate. */
-    public static <T> Predicate<T> invert(final Predicate<T> predicate)
-    {
-        Defense.notNull(predicate, "predicate");
-
-        return new Predicate<T>()
-        {
-            public boolean accept(T value)
-            {
-                return !predicate.accept(value);
-            }
-        };
-    }
-
     /**
      * Returns a new list containing only those values of the source list for which the predicate
      * evaluates to false.
      */
     public static <T> List<T> remove(Predicate<? super T> predicate, List<T> source)
     {
-        return filter(invert(predicate), source);
-    }
+        Defense.notNull(predicate, "predicate");
 
-    public static <T> Predicate<T> and(final Predicate<? super T> left, final Predicate<? super T> right)
-    {
-        Defense.notNull(left, "left");
-        Defense.notNull(right, "right");
-
-        return new Predicate<T>()
-        {
-            public boolean accept(T object)
-            {
-                return left.accept(object) && right.accept(object);
-            };
-        };
-    }
-
-    public static <T> Predicate<T> or(final Predicate<? super T> left, final Predicate<? super T> right)
-    {
-        Defense.notNull(left, "left");
-        Defense.notNull(right, "right");
-
-        return new Predicate<T>()
-        {
-            public boolean accept(T object)
-            {
-                return left.accept(object) || right.accept(object);
-            };
-        };
+        return filter(predicate.invert(), source);
     }
 
     public static Predicate<Number> eq(final long value)
     {
-        return new Predicate<Number>()
+        return new AbstractPredicate<Number>()
         {
             public boolean accept(Number object)
             {
@@ -183,12 +143,12 @@ public class F
 
     public static Predicate<Number> neq(long value)
     {
-        return invert(eq(value));
+        return eq(value).invert();
     }
 
     public static Predicate<Number> gt(final long value)
     {
-        return new Predicate<Number>()
+        return new AbstractPredicate<Number>()
         {
             public boolean accept(Number object)
             {
@@ -199,22 +159,22 @@ public class F
 
     public static Predicate<Number> gteq(long value)
     {
-        return or(eq(value), gt(value));
+        return eq(value).or(gt(value));
     }
 
     public static Predicate<Number> lt(long value)
     {
-        return invert(gteq(value));
+        return gteq(value).invert();
     }
 
     public static Predicate<Number> lteq(long value)
     {
-        return invert(gt(value));
+        return gt(value).invert();
     }
 
     public static <T> Predicate<T> isNull()
     {
-        return new Predicate<T>()
+        return new AbstractPredicate<T>()
         {
             public boolean accept(T object)
             {
@@ -227,7 +187,7 @@ public class F
     {
         Predicate<T> isNull = isNull();
 
-        return invert(isNull);
+        return isNull.invert();
     }
 
     public static <S, T> Mapper<S, T> always(final T fixedResult)
@@ -298,7 +258,7 @@ public class F
     /** Allows Coercion to boolean to be used as a Predicate. */
     public static <S> Predicate<S> toPredicate(final Mapper<S, Boolean> mapper)
     {
-        return new Predicate<S>()
+        return new AbstractPredicate<S>()
         {
             public boolean accept(S object)
             {

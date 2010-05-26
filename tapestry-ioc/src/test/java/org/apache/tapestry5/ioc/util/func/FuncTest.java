@@ -40,7 +40,7 @@ public class FuncTest extends TestBase
         }
     };
 
-    private Predicate<Number> evenp = new Predicate<Number>()
+    private Predicate<Number> evenp = new AbstractPredicate<Number>()
     {
         public boolean accept(Number object)
         {
@@ -180,7 +180,7 @@ public class FuncTest extends TestBase
     {
         List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
 
-        List<Integer> output = F.filter(F.and(evenp, F.gt(3)), input);
+        List<Integer> output = F.filter(evenp.and(F.gt(3)), input);
 
         assertListsEquals(output, 4, 6);
     }
@@ -212,5 +212,18 @@ public class FuncTest extends TestBase
                 "lamb"));
 
         assertListsEquals(filtered, "Mary", "little", "lamb");
+    }
+
+    @Test
+    public void null_and_not_null()
+    {
+        Predicate<String> isNull = F.isNull();
+        Predicate<String> isNotNull = F.notNull();
+
+        assertEquals(isNull.accept(null), true);
+        assertEquals(isNotNull.accept(null), false);
+
+        assertEquals(isNull.accept("foo"), false);
+        assertEquals(isNotNull.accept("bar"), true);
     }
 }

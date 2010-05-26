@@ -28,4 +28,10 @@ public interface Predicate<T>
      * @return true to accept, false to reject
      */
     boolean accept(T object);
+
+    Predicate<T> invert();
+
+    Predicate<T> and(Predicate<? super T> right);
+
+    Predicate<T> or(Predicate<? super T> right);
 }

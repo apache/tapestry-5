@@ -14,29 +14,45 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
-import org.apache.tapestry5.ioc.*;
-import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.def.ServiceDef;
-import org.apache.tapestry5.ioc.def.ServiceDef2;
-import org.apache.tapestry5.ioc.internal.QuietOperationTracker;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 import static org.apache.tapestry5.ioc.internal.util.InternalUtils.toList;
-import org.apache.tapestry5.ioc.services.Builtin;
-import org.apache.tapestry5.ioc.services.SymbolSource;
-import org.apache.tapestry5.ioc.test.IOCTestCase;
-import org.apache.tapestry5.ioc.util.func.Predicate;
-import org.easymock.EasyMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.isA;
-import org.easymock.IAnswer;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.Locatable;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.ScopeConstants;
+import org.apache.tapestry5.ioc.ServiceBuilderResources;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.def.ServiceDef2;
+import org.apache.tapestry5.ioc.internal.QuietOperationTracker;
+import org.apache.tapestry5.ioc.services.Builtin;
+import org.apache.tapestry5.ioc.services.SymbolSource;
+import org.apache.tapestry5.ioc.test.IOCTestCase;
+import org.apache.tapestry5.ioc.util.func.AbstractPredicate;
+import org.easymock.EasyMock;
+import org.easymock.IAnswer;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 public class InternalUtilsTest extends IOCTestCase
 {
@@ -648,7 +664,7 @@ public class InternalUtilsTest extends IOCTestCase
     {
         List<String> input = CollectionFactory.newList("Fred", "Barney", "..", ".hidden", "Wilma");
 
-        List<String> output = InternalUtils.matchAndSort(input, new Predicate<String>()
+        List<String> output = InternalUtils.matchAndSort(input, new AbstractPredicate<String>()
         {
             public boolean accept(String object)
             {

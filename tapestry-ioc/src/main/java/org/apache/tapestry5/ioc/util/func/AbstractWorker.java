@@ -16,7 +16,7 @@ package org.apache.tapestry5.ioc.util.func;
 
 public abstract class AbstractWorker<T> implements Worker<T>
 {
-    public Worker<T> combine(final Worker<T> other)
+    public Worker<T> combine(final Worker<? super T> other)
     {
         final Worker<T> first = this;
 

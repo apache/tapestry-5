@@ -17,7 +17,7 @@ package org.apache.tapestry5.internal.transform;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
-import org.apache.tapestry5.ioc.util.func.Predicate;
+import org.apache.tapestry5.ioc.util.func.AbstractPredicate;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
@@ -97,7 +97,7 @@ public class PageLifecycleAnnotationWorker implements ComponentClassTransformWor
 
     private List<TransformMethod> matchLifecycleMethods(final ClassTransformation transformation)
     {
-        return transformation.matchMethods(new Predicate<TransformMethod>()
+        return transformation.matchMethods(new AbstractPredicate<TransformMethod>()
         {
 
             public boolean accept(TransformMethod method)

@@ -40,6 +40,7 @@ import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.ioc.services.MethodSignature;
 import org.apache.tapestry5.ioc.util.BodyBuilder;
+import org.apache.tapestry5.ioc.util.func.AbstractPredicate;
 import org.apache.tapestry5.ioc.util.func.Predicate;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.MutableComponentModel;
@@ -1471,7 +1472,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         failIfFrozen();
 
-        List<TransformField> fields = matchFields(new Predicate<TransformField>()
+        List<TransformField> fields = matchFields(new AbstractPredicate<TransformField>()
         {
             public boolean accept(TransformField object)
             {
@@ -1491,7 +1492,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public List<TransformField> matchFieldsWithAnnotation(final Class<? extends Annotation> annotationClass)
     {
-        return matchFields(new Predicate<TransformField>()
+        return matchFields(new AbstractPredicate<TransformField>()
         {
             public boolean accept(TransformField field)
             {
@@ -1502,7 +1503,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public List<TransformMethodSignature> findMethodsWithAnnotation(final Class<? extends Annotation> annotationClass)
     {
-        List<TransformMethod> methods = matchMethods(new Predicate<TransformMethod>()
+        List<TransformMethod> methods = matchMethods(new AbstractPredicate<TransformMethod>()
         {
             public boolean accept(TransformMethod method)
             {
@@ -1517,7 +1518,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     {
         Defense.notNull(filter, "filter");
 
-        List<TransformMethod> methods = matchMethods(new Predicate<TransformMethod>()
+        List<TransformMethod> methods = matchMethods(new AbstractPredicate<TransformMethod>()
         {
             public boolean accept(TransformMethod object)
             {
@@ -1537,7 +1538,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public List<TransformMethod> matchMethodsWithAnnotation(final Class<? extends Annotation> annotationType)
     {
-        return matchMethods(new Predicate<TransformMethod>()
+        return matchMethods(new AbstractPredicate<TransformMethod>()
         {
             public boolean accept(TransformMethod method)
             {
@@ -1579,7 +1580,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public List<TransformField> matchUnclaimedFields()
     {
-        return matchFields(new Predicate<TransformField>()
+        return matchFields(new AbstractPredicate<TransformField>()
         {
             public boolean accept(TransformField object)
             {

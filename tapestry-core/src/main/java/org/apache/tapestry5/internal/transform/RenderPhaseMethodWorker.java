@@ -32,7 +32,7 @@ import org.apache.tapestry5.annotations.CleanupRender;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.util.func.Predicate;
+import org.apache.tapestry5.ioc.util.func.AbstractPredicate;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.runtime.Event;
 import org.apache.tapestry5.services.ClassTransformation;
@@ -263,7 +263,7 @@ public class RenderPhaseMethodWorker implements ComponentClassTransformWorker
 
     private List<TransformMethod> matchAllMethodsNotOverriddenFromBaseClass(final ClassTransformation transformation)
     {
-        return transformation.matchMethods(new Predicate<TransformMethod>()
+        return transformation.matchMethods(new AbstractPredicate<TransformMethod>()
         {
             public boolean accept(TransformMethod method)
             {

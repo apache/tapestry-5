@@ -22,7 +22,7 @@ import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.services.FieldValueConduit;
-import org.apache.tapestry5.ioc.util.func.Predicate;
+import org.apache.tapestry5.ioc.util.func.AbstractPredicate;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.apache.tapestry5.services.ClassTransformation;
@@ -50,8 +50,7 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
     {
         Map<TransformField, Boolean> fields = new TreeMap<TransformField, Boolean>();
 
-        for (TransformField field : transformation
-                .matchFieldsWithAnnotation(ApplicationState.class))
+        for (TransformField field : transformation.matchFieldsWithAnnotation(ApplicationState.class))
         {
             ApplicationState annotation = field.getAnnotation(ApplicationState.class);
 
@@ -76,8 +75,7 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
     }
 
     @SuppressWarnings("unchecked")
-    private void transform(ClassTransformation transformation, TransformField field,
-            final boolean create)
+    private void transform(ClassTransformation transformation, TransformField field, final boolean create)
     {
         final Class fieldClass = componentClassCache.forName(field.getType());
 
@@ -97,12 +95,11 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
 
         final String expectedName = field.getName() + "Exists";
 
-        List<TransformField> fields = transformation.matchFields(new Predicate<TransformField>()
+        List<TransformField> fields = transformation.matchFields(new AbstractPredicate<TransformField>()
         {
             public boolean accept(TransformField field)
             {
-                return field.getType().equals("boolean")
-                        && field.getName().equalsIgnoreCase(expectedName);
+                return field.getType().equals("boolean") && field.getName().equalsIgnoreCase(expectedName);
             }
         });
 
