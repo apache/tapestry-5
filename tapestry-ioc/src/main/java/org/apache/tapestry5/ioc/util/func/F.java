@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc.internal.util;
+package org.apache.tapestry5.ioc.util.func;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.tapestry5.ioc.Predicate;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.Coercion;
 
 /**
@@ -30,7 +31,7 @@ import org.apache.tapestry5.ioc.services.Coercion;
  * 
  * @since 5.2.0
  */
-public class Func
+public class F
 {
 
     /**

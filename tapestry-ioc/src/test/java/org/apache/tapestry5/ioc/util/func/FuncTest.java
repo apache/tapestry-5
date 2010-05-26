@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc.internal.util;
+package org.apache.tapestry5.ioc.util.func;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,6 +21,8 @@ import java.util.List;
 import org.apache.tapestry5.ioc.Predicate;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.test.TestBase;
+import org.apache.tapestry5.ioc.util.func.F;
+import org.apache.tapestry5.ioc.util.func.Operation;
 import org.testng.annotations.Test;
 
 public class FuncTest extends TestBase
@@ -54,7 +56,7 @@ public class FuncTest extends TestBase
     {
         List<String> source = Arrays.asList("Mary", "had", "a", "little", "lamb");
 
-        List<Integer> lengths = Func.map(stringToLength, source);
+        List<Integer> lengths = F.map(stringToLength, source);
 
         assertListsEquals(lengths, 4, 3, 1, 6, 4);
     }
@@ -62,7 +64,7 @@ public class FuncTest extends TestBase
     @Test
     public void combine_coercions()
     {
-        List<Boolean> even = Func.map(Func.combine(stringToLength, toEven), "Mary", "had", "a", "little", "lamb");
+        List<Boolean> even = F.map(F.combine(stringToLength, toEven), "Mary", "had", "a", "little", "lamb");
 
         assertListsEquals(even, true, false, false, true, true);
     }
@@ -72,7 +74,7 @@ public class FuncTest extends TestBase
     {
         List<String> source = Arrays.asList();
 
-        List<Integer> lengths = Func.map(stringToLength, source);
+        List<Integer> lengths = F.map(stringToLength, source);
 
         assertSame(lengths, Collections.EMPTY_LIST);
     }
@@ -95,7 +97,7 @@ public class FuncTest extends TestBase
             }
         };
 
-        Func.each(op, source);
+        F.each(op, source);
 
         assertEquals(buffer.toString(), "Mary had a little lamb");
     }
@@ -105,7 +107,7 @@ public class FuncTest extends TestBase
     {
         List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
 
-        List<Integer> output = Func.filter(evenp, input);
+        List<Integer> output = F.filter(evenp, input);
 
         assertListsEquals(output, 2, 4, 6);
     }
@@ -115,7 +117,7 @@ public class FuncTest extends TestBase
     {
         List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
 
-        List<Integer> output = Func.remove(evenp, input);
+        List<Integer> output = F.remove(evenp, input);
 
         assertListsEquals(output, 1, 3, 5, 7);
     }
@@ -125,7 +127,7 @@ public class FuncTest extends TestBase
     {
         List<Integer> input = Arrays.asList();
 
-        List<Integer> output = Func.filter(evenp, input);
+        List<Integer> output = F.filter(evenp, input);
 
         assertSame(output, Collections.EMPTY_LIST);
     }
@@ -135,7 +137,7 @@ public class FuncTest extends TestBase
     {
         List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
 
-        List<Integer> output = Func.filter(Func.and(evenp, Func.gt(3)), input);
+        List<Integer> output = F.filter(F.and(evenp, F.gt(3)), input);
 
         assertListsEquals(output, 4, 6);
     }
@@ -145,11 +147,11 @@ public class FuncTest extends TestBase
     {
         List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
 
-        assertEquals(Func.filter(Func.eq(3), input), Arrays.asList(3));
-        assertEquals(Func.filter(Func.neq(3), input), Arrays.asList(1, 2, 4, 5, 6, 7));
-        assertEquals(Func.filter(Func.lt(3), input), Arrays.asList(1, 2));
-        assertEquals(Func.filter(Func.lteq(3), input), Arrays.asList(1, 2, 3));
-        assertEquals(Func.filter(Func.gteq(3), input), Arrays.asList(3, 4, 5, 6, 7));
+        assertEquals(F.filter(F.eq(3), input), Arrays.asList(3));
+        assertEquals(F.filter(F.neq(3), input), Arrays.asList(1, 2, 4, 5, 6, 7));
+        assertEquals(F.filter(F.lt(3), input), Arrays.asList(1, 2));
+        assertEquals(F.filter(F.lteq(3), input), Arrays.asList(1, 2, 3));
+        assertEquals(F.filter(F.gteq(3), input), Arrays.asList(3, 4, 5, 6, 7));
     }
 
     @Test
@@ -157,14 +159,14 @@ public class FuncTest extends TestBase
     {
         List<String> source = Arrays.asList("Mary", "had", "a", "little", "lamb");
 
-        Predicate<String> combinedp = Func.toPredicate(Func.combine(stringToLength, toEven));
-        Coercion<String, String> identity = Func.identity();
-        Predicate<String> isNull = Func.isNull();
+        Predicate<String> combinedp = F.toPredicate(F.combine(stringToLength, toEven));
+        Coercion<String, String> identity = F.identity();
+        Predicate<String> isNull = F.isNull();
 
         // Converting to null and then filtering out nulls is the hard way to do filter or remove,
         // but exercises the code we want to test.
 
-        List<String> filtered = Func.remove(isNull, Func.map(Func.select(combinedp, identity), source));
+        List<String> filtered = F.remove(isNull, F.map(F.select(combinedp, identity), source));
 
         assertListsEquals(filtered, "Mary", "little", "lamb");
     }

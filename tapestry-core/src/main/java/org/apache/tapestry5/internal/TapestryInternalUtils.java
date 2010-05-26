@@ -33,9 +33,9 @@ import org.apache.tapestry5.ioc.Orderable;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.ioc.internal.util.Func;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.Coercion;
+import org.apache.tapestry5.ioc.util.func.F;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
 /**
@@ -561,7 +561,7 @@ public class TapestryInternalUtils
     }
 
     /**
-     * Common coercion, used primarily with {@link Func#map(Coercion, java.util.Collection)}
+     * Common coercion, used primarily with {@link F#map(Coercion, java.util.Collection)}
      * 
      * @since 5.2.0
      */

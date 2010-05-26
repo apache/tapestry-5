@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc.internal.util;
+package org.apache.tapestry5.ioc.util.func;
 
 /**
  * An operational function used with a collection.
  * 
  * @since 5.2.0
- * @see Func#each(Operation, java.util.Collection)
+ * @see F#each(Operation, java.util.Collection)
  */
 public interface Operation<T>
 {

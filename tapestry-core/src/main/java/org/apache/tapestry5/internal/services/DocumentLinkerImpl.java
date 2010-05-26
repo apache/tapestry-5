@@ -21,8 +21,8 @@ import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.dom.Node;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Func;
-import org.apache.tapestry5.ioc.internal.util.Operation;
+import org.apache.tapestry5.ioc.util.func.F;
+import org.apache.tapestry5.ioc.util.func.Operation;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
@@ -244,7 +244,7 @@ public class DocumentLinkerImpl implements DocumentLinker
             }
         };
 
-        Func.each(addScript, scripts);
+        F.each(addScript, scripts);
 
         if (existing != null)
             scriptContainer.moveBefore(existing);

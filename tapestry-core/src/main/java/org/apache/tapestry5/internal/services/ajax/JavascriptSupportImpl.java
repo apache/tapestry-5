@@ -25,10 +25,10 @@ import org.apache.tapestry5.internal.services.DocumentLinker;
 import org.apache.tapestry5.internal.services.javascript.JavascriptStackPathConstructor;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.ioc.internal.util.Func;
 import org.apache.tapestry5.ioc.internal.util.IdAllocator;
-import org.apache.tapestry5.ioc.internal.util.Operation;
 import org.apache.tapestry5.ioc.services.Coercion;
+import org.apache.tapestry5.ioc.util.func.F;
+import org.apache.tapestry5.ioc.util.func.Operation;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
@@ -92,7 +92,7 @@ public class JavascriptSupportImpl implements JavascriptSupport
 
     public void commit()
     {
-        Func.each(new Operation<StylesheetLink>()
+        F.each(new Operation<StylesheetLink>()
         {
             public void op(StylesheetLink value)
             {
@@ -108,8 +108,8 @@ public class JavascriptSupportImpl implements JavascriptSupport
             }
         };
 
-        Func.each(linkLibrary, stackLibraries);
-        Func.each(linkLibrary, otherLibraries);
+        F.each(linkLibrary, stackLibraries);
+        F.each(linkLibrary, otherLibraries);
 
         for (InitializationPriority p : InitializationPriority.values())
         {

@@ -21,9 +21,9 @@ import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.services.RequestConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Func;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
+import org.apache.tapestry5.ioc.util.func.F;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.javascript.JavascriptStack;
 import org.apache.tapestry5.services.javascript.JavascriptStackSource;
@@ -72,7 +72,7 @@ public class JavascriptStackPathConstructorImpl implements JavascriptStackPathCo
 
     private List<String> toPaths(List<Asset> assets)
     {
-        return Func.map(toPath, assets);
+        return F.map(toPath, assets);
     }
 
     private List<String> combinedStackURL(String stackName)

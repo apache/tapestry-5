@@ -23,10 +23,10 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.util.Func;
-import org.apache.tapestry5.ioc.internal.util.Operation;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.services.SymbolSource;
+import org.apache.tapestry5.ioc.util.func.F;
+import org.apache.tapestry5.ioc.util.func.Operation;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ClassTransformation;
@@ -205,7 +205,7 @@ public class ImportWorker implements ComponentClassTransformWorker
 
     private List<Asset> convertPathsToAssets(final Resource baseResource, final Locale locale, String[] assetPaths)
     {
-        return Func.map(new Coercion<String, Asset>()
+        return F.map(new Coercion<String, Asset>()
         {
             public Asset coerce(String assetPath)
             {
@@ -224,7 +224,7 @@ public class ImportWorker implements ComponentClassTransformWorker
             {
                 List<Asset> assets = (List<Asset>) access.read(invocation.getInstance());
 
-                Func.each(operation, assets);
+                F.each(operation, assets);
 
                 invocation.proceed();
             }
