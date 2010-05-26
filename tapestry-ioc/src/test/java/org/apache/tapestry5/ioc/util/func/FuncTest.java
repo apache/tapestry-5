@@ -21,8 +21,6 @@ import java.util.List;
 import org.apache.tapestry5.ioc.Predicate;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.test.TestBase;
-import org.apache.tapestry5.ioc.util.func.F;
-import org.apache.tapestry5.ioc.util.func.Worker;
 import org.testng.annotations.Test;
 
 public class FuncTest extends TestBase
@@ -86,7 +84,7 @@ public class FuncTest extends TestBase
 
         final StringBuffer buffer = new StringBuffer();
 
-        Worker<String> op = new Worker<String>()
+        Worker<String> worker = new AbstractWorker<String>()
         {
             public void work(String value)
             {
@@ -97,9 +95,42 @@ public class FuncTest extends TestBase
             }
         };
 
-        F.each(op, source);
+        F.each(worker, source);
 
         assertEquals(buffer.toString(), "Mary had a little lamb");
+    }
+
+    @Test
+    public void combine_workers()
+    {
+        List<String> source = Arrays.asList("Mary", "had", "a", "little", "lamb");
+
+        final StringBuffer buffer = new StringBuffer();
+
+        Worker<String> appendWorker = new AbstractWorker<String>()
+        {
+            public void work(String value)
+            {
+                if (buffer.length() > 0)
+                    buffer.append(" ");
+
+                buffer.append(value);
+            }
+        };
+
+        Worker<String> appendLength = new AbstractWorker<String>()
+        {
+            public void work(String value)
+            {
+                buffer.append("(");
+                buffer.append(value.length());
+                buffer.append(")");
+            }
+        };
+
+        F.each(appendWorker.combine(appendLength), source);
+
+        assertEquals(buffer.toString(), "Mary(4) had(3) a(1) little(6) lamb(4)");
     }
 
     @Test

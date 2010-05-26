@@ -21,6 +21,7 @@ import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.dom.Node;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.util.func.AbstractWorker;
 import org.apache.tapestry5.ioc.util.func.F;
 import org.apache.tapestry5.ioc.util.func.Worker;
 import org.apache.tapestry5.json.JSONObject;
@@ -236,7 +237,7 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         final Element scriptContainer = container.element("script-container");
 
-        Worker<String> addScript = new Worker<String>()
+        Worker<String> addScript = new AbstractWorker<String>()
         {
             public void work(String scriptURL)
             {

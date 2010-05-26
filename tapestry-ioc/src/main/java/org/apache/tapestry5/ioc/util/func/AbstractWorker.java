@@ -14,22 +14,21 @@
 
 package org.apache.tapestry5.ioc.util.func;
 
-/**
- * An operational function used with a collection.
- * 
- * @since 5.2.0
- * @see F#each(Worker, java.util.Collection)
- */
-public interface Worker<T>
+public abstract class AbstractWorker<T> implements Worker<T>
 {
-    /**
-     * Perform the operation on some object of type T.
-     */
-    void work(T value);
+    public Worker<T> combine(final Worker<T> other)
+    {
+        final Worker<T> first = this;
 
-    /**
-     * Combines this worker with the other worker, forming a new composite worker. In the composite,
-     * the value passed first to this worker, then to the other worker.
-     */
-    Worker<T> combine(Worker<T> other);
+        return new AbstractWorker<T>()
+        {
+            public void work(T value)
+            {
+                first.work(value);
+                other.work(value);
+            }
+
+        };
+    }
+
 }
