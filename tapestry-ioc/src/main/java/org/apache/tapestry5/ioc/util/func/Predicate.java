@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc;
+package org.apache.tapestry5.ioc.util.func;
 
 /**
  * Used when filtering a collection of objects of a given type; the predicate is passed

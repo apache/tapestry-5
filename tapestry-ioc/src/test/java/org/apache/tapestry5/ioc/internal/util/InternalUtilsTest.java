@@ -24,6 +24,7 @@ import static org.apache.tapestry5.ioc.internal.util.InternalUtils.toList;
 import org.apache.tapestry5.ioc.services.Builtin;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
+import org.apache.tapestry5.ioc.util.func.Predicate;
 import org.easymock.EasyMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.isA;

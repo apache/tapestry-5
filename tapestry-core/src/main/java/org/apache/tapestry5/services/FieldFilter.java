@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.services;
 
-import org.apache.tapestry5.ioc.Predicate;
+import org.apache.tapestry5.ioc.util.func.Predicate;
 
 /**
  * Used by {@link ClassTransformation#findFields(FieldFilter)} to identify which fields to keep.

@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.tapestry5.ioc.Predicate;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.test.TestBase;
 import org.testng.annotations.Test;
