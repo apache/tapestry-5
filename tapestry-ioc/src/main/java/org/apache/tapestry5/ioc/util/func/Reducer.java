@@ -15,27 +15,14 @@
 package org.apache.tapestry5.ioc.util.func;
 
 /**
- * Used when filtering a collection of objects of a given type; the predicate is passed
- * each object in turn, and returns true to include the object in the result collection.
- * <p>
- * The {@link F} class includes a number of Predicate factory methods.
+ * A reducer takes an accumulator value and a single value from a collection and computes a new
+ * accumulator value.
+ * <A> type of accumulator
+ * <T> type of collection value
  * 
  * @since 5.2.0
- * @see F#filter(Predicate, java.util.List)
- * @see F#remove(Predicate, java.util.List)
  */
-public interface Predicate<T>
+public interface Reducer<A, T>
 {
-    /**
-     * Examines the object and determines whether to accept or reject it.
-     * 
-     * @return true to accept, false to reject
-     */
-    boolean accept(T object);
-
-    Predicate<T> invert();
-
-    Predicate<T> and(Predicate<? super T> right);
-
-    Predicate<T> or(Predicate<? super T> right);
+    A reduce(A accumulator, T value);
 }

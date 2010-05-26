@@ -190,6 +190,7 @@ public class F
         return isNull.invert();
     }
 
+    /** Returns a Mapper that ignores its input value and always returns a predetermined result. */
     public static <S, T> Mapper<S, T> always(final T fixedResult)
     {
         return new AbstractMapper<S, T>()
@@ -202,7 +203,7 @@ public class F
     }
 
     /**
-     * Coercion factory that combines a Predicate with two {@link Mapper}s; evaluating the predicate selects one of the
+     * Mapper factory that combines a Predicate with two {@link Mapper}s; evaluating the predicate selects one of the
      * two mappers.
      * 
      * @param predicate
@@ -244,6 +245,7 @@ public class F
         return select(predicate, ifAccepted, rejectedMapper);
     }
 
+    /** The identity mapper simply returns the input unchanged. */
     public static <S> Mapper<S, S> identity()
     {
         return new AbstractMapper<S, S>()
@@ -255,7 +257,7 @@ public class F
         };
     }
 
-    /** Allows Coercion to boolean to be used as a Predicate. */
+    /** Allows Mapper that maps to boolean to be used as a Predicate. */
     public static <S> Predicate<S> toPredicate(final Mapper<S, Boolean> mapper)
     {
         return new AbstractPredicate<S>()
@@ -266,4 +268,27 @@ public class F
             };
         };
     }
+
+    public static <A, T> A reduce(Reducer<A, T> reducer, A initial, Collection<T> values)
+    {
+        Defense.notNull(reducer, "reducer");
+        Defense.notNull(values, "values");
+
+        A accumulator = initial;
+
+        for (T value : values)
+        {
+            accumulator = reducer.reduce(accumulator, value);
+        }
+
+        return accumulator;
+    }
+
+    public static Reducer<Integer, Integer> SUM_INTS = new Reducer<Integer, Integer>()
+    {
+        public Integer reduce(Integer accumulator, Integer value)
+        {
+            return accumulator + value;
+        };
+    };
 }

@@ -226,4 +226,12 @@ public class FuncTest extends TestBase
         assertEquals(isNull.accept("foo"), false);
         assertEquals(isNotNull.accept("bar"), true);
     }
+
+    @Test
+    public void reduce()
+    {
+        int total = F.reduce(F.SUM_INTS, 0, F.map(stringToLength, "Mary", "had", "a", "little", "lamb"));
+
+        assertEquals(total, 18);
+    }
 }
