@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
+import javax.management.ObjectName;
 import javax.servlet.http.Cookie;
 
 import org.apache.tapestry5.SymbolConstants;
@@ -36,6 +37,7 @@ import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
+import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
 import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
 import org.slf4j.Logger;
@@ -170,7 +172,9 @@ public class InternalModule
     InvalidationEventHub templatesHub,
 
     @ComponentMessages
-    InvalidationEventHub messagesHub)
+    InvalidationEventHub messagesHub,
+    
+    MBeanSupport managedBeanSupport)
     {
         // This covers invalidations due to changes to classes
 
@@ -188,6 +192,29 @@ public class InternalModule
 
         updateListenerHub.addUpdateListener(service);
 
+        final ObjectName objectName = buildObjectName("org.apache.tapestry5:type=PagePool");
+        
+        managedBeanSupport.register(service, objectName);
+
+        return service;
+    }
+    
+    private ObjectName buildObjectName(String name)
+    {
+        try
+        {
+            return new ObjectName(name);
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public MBeanSupport buildMBeanSupport(RegistryShutdownHub shutdownHub, @Autobuild MBeanSupportImpl service)
+    {
+        shutdownHub.addRegistryShutdownListener(service);
+        
         return service;
     }
 

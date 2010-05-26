@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.annotations.IntermediateType;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -47,7 +48,7 @@ import java.util.Map;
  *
  * @see org.apache.tapestry5.internal.services.PagePoolCache
  */
-public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListener
+public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListener, PagePoolImplMBean
 {
     private final Logger logger;
 
@@ -55,13 +56,13 @@ public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListe
 
     private final ThreadLocale threadLocale;
 
-    private final int softLimit;
+    private int softLimit;
 
-    private final long softWait;
+    private long softWait;
 
-    private final int hardLimit;
+    private int hardLimit;
 
-    private final long activeWindow;
+    private long activeWindow;
 
     private final Map<PageLocator, PagePoolCache> pool = CollectionFactory.newMap();
 
@@ -71,16 +72,16 @@ public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListe
 
                         ThreadLocale threadLocale,
 
-                        @Symbol("tapestry.page-pool.soft-limit")
+                        @Symbol(SymbolConstants.PAGE_POOL_SOFT_LIMIT)
                         int softLimit,
 
-                        @Symbol("tapestry.page-pool.soft-wait") @IntermediateType(TimeInterval.class)
+                        @Symbol(SymbolConstants.PAGE_POOL_SOFT_WAIT) @IntermediateType(TimeInterval.class)
                         long softWait,
 
-                        @Symbol("tapestry.page-pool.hard-limit")
+                        @Symbol(SymbolConstants.PAGE_POOL_HARD_LIMIT)
                         int hardLimit,
 
-                        @Symbol("tapestry.page-pool.active-window") @IntermediateType(TimeInterval.class)
+                        @Symbol(SymbolConstants.PAGE_POOL_ACTIVE_WINDOW) @IntermediateType(TimeInterval.class)
                         long activeWindow)
     {
         this.logger = logger;
@@ -165,4 +166,53 @@ public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListe
             cache.cleanup();
         }
     }
+
+    public int getSoftLimit()
+    {
+        return softLimit;
+    }
+
+    public void setSoftLimit(int softLimit)
+    {
+        this.softLimit = softLimit;
+        
+        objectWasInvalidated();
+    }
+
+    public long getSoftWait()
+    {
+        return softWait;
+    }
+
+    public void setSoftWait(long softWait)
+    {
+        this.softWait = softWait;
+        
+        objectWasInvalidated();
+    }
+
+    public int getHardLimit()
+    {
+        return hardLimit;
+    }
+
+    public void setHardLimit(int hardLimit)
+    {
+        this.hardLimit = hardLimit;
+        
+        objectWasInvalidated();
+    }
+
+    public long getActiveWindow()
+    {
+        return activeWindow;
+    }
+
+    public void setActiveWindow(long activeWindow)
+    {
+        this.activeWindow = activeWindow;
+        
+        objectWasInvalidated();
+    }
+
 }

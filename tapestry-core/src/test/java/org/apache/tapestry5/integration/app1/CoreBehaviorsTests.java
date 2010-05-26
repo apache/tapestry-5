@@ -1488,4 +1488,13 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertText("id=no-override", "[pre-app]");
         assertText("id=override", "[app]");
     }
+    
+    /** TAP5-978 */
+    @Test
+    public void remote_pool_management()
+    {
+        clickThru("Remote Pool Management");
+
+        assertTextPresent("SoftWait: 10");
+    }
 }
