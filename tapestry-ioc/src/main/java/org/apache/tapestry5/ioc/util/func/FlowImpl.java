@@ -17,6 +17,8 @@ package org.apache.tapestry5.ioc.util.func;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+
 class FlowImpl<T> implements Flow<T>
 {
     private final List<T> values;
@@ -56,6 +58,15 @@ class FlowImpl<T> implements Flow<T>
     public List<T> toList()
     {
         return Collections.unmodifiableList(values);
+    }
+
+    public Flow<T> reverse()
+    {
+        List<T> newValues = CollectionFactory.newList(values);
+
+        Collections.reverse(newValues);
+
+        return new FlowImpl<T>(newValues);
     }
 
 }

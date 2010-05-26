@@ -48,4 +48,7 @@ public interface Flow<T>
 
     /** Converts the Flow into an unmodifiable list of values. */
     List<T> toList();
+
+    /** Returns a new flow with the same elements but in reverse order. */
+    Flow<T> reverse();
 }

@@ -65,6 +65,12 @@ public class FuncTest extends TestBase
     }
 
     @Test
+    public void flow_reverse()
+    {
+        assertListsEquals(F.flow(1, 2, 3).reverse().toList(), 3, 2, 1);
+    }
+
+    @Test
     public void combine_mappers()
     {
         List<Boolean> even = F.map(stringToLength.combine(toEven), "Mary", "had", "a", "little", "lamb");
