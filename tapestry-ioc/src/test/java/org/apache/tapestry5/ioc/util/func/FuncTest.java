@@ -59,6 +59,12 @@ public class FuncTest extends TestBase
     }
 
     @Test
+    public void flow_map()
+    {
+        assertListsEquals(F.flow("Mary", "had", "a", "little", "lamb").map(stringToLength).toList(), 4, 3, 1, 6, 4);
+    }
+
+    @Test
     public void combine_mappers()
     {
         List<Boolean> even = F.map(stringToLength.combine(toEven), "Mary", "had", "a", "little", "lamb");
@@ -95,6 +101,29 @@ public class FuncTest extends TestBase
         };
 
         F.each(worker, source);
+
+        assertEquals(buffer.toString(), "Mary had a little lamb");
+    }
+
+    @Test
+    public void flow_each()
+    {
+        Flow<String> flow = F.flow("Mary", "had", "a", "little", "lamb");
+
+        final StringBuffer buffer = new StringBuffer();
+
+        Worker<String> worker = new AbstractWorker<String>()
+        {
+            public void work(String value)
+            {
+                if (buffer.length() > 0)
+                    buffer.append(" ");
+
+                buffer.append(value);
+            }
+        };
+
+        assertSame(flow.each(worker), flow);
 
         assertEquals(buffer.toString(), "Mary had a little lamb");
     }
@@ -156,11 +185,25 @@ public class FuncTest extends TestBase
     }
 
     @Test
+    public void flow_filter()
+    {
+        assertListsEquals(F.flow(1, 2, 3, 4, 5, 6, 7).filter(evenp).toList(), 2, 4, 6);
+    }
+
+    @Test
     public void remove()
     {
         List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
 
         List<Integer> output = F.remove(evenp, input);
+
+        assertListsEquals(output, 1, 3, 5, 7);
+    }
+
+    @Test
+    public void flow_remove()
+    {
+        List<Integer> output = F.flow(1, 2, 3, 4, 5, 6, 7).remove(evenp).toList();
 
         assertListsEquals(output, 1, 3, 5, 7);
     }
@@ -231,6 +274,14 @@ public class FuncTest extends TestBase
     public void reduce()
     {
         int total = F.reduce(F.SUM_INTS, 0, F.map(stringToLength, "Mary", "had", "a", "little", "lamb"));
+
+        assertEquals(total, 18);
+    }
+
+    @Test
+    public void flow_reduce()
+    {
+        int total = F.flow("Mary", "had", "a", "little", "lamb").map(stringToLength).reduce(F.SUM_INTS, 0);
 
         assertEquals(total, 18);
     }

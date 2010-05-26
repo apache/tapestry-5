@@ -80,7 +80,7 @@ public class F
     /**
      * Performs an operation on each element of the source collection.
      */
-    public static <T> void each(Worker<T> operation, Collection<T> source)
+    public static <T> void each(Worker<? super T> operation, Collection<T> source)
     {
         for (T t : source)
         {
@@ -291,4 +291,14 @@ public class F
             return accumulator + value;
         };
     };
+
+    public static <T> Flow<T> flow(List<T> values)
+    {
+        return new FlowImpl<T>(values);
+    }
+
+    public static <T> Flow<T> flow(T... values)
+    {
+        return flow(Arrays.asList(values));
+    }
 }
