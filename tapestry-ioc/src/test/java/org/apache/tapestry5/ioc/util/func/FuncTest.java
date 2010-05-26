@@ -22,7 +22,7 @@ import org.apache.tapestry5.ioc.Predicate;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.test.TestBase;
 import org.apache.tapestry5.ioc.util.func.F;
-import org.apache.tapestry5.ioc.util.func.Operation;
+import org.apache.tapestry5.ioc.util.func.Worker;
 import org.testng.annotations.Test;
 
 public class FuncTest extends TestBase
@@ -86,9 +86,9 @@ public class FuncTest extends TestBase
 
         final StringBuffer buffer = new StringBuffer();
 
-        Operation<String> op = new Operation<String>()
+        Worker<String> op = new Worker<String>()
         {
-            public void op(String value)
+            public void work(String value)
             {
                 if (buffer.length() > 0)
                     buffer.append(" ");

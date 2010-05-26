@@ -22,7 +22,7 @@ import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.dom.Node;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.util.func.F;
-import org.apache.tapestry5.ioc.util.func.Operation;
+import org.apache.tapestry5.ioc.util.func.Worker;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
@@ -236,9 +236,9 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         final Element scriptContainer = container.element("script-container");
 
-        Operation<String> addScript = new Operation<String>()
+        Worker<String> addScript = new Worker<String>()
         {
-            public void op(String scriptURL)
+            public void work(String scriptURL)
             {
                 scriptContainer.element("script", "type", "text/javascript", "src", scriptURL);
             }

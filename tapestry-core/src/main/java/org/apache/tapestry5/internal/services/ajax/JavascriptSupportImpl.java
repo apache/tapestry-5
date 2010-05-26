@@ -28,7 +28,7 @@ import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.IdAllocator;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.util.func.F;
-import org.apache.tapestry5.ioc.util.func.Operation;
+import org.apache.tapestry5.ioc.util.func.Worker;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
@@ -92,17 +92,17 @@ public class JavascriptSupportImpl implements JavascriptSupport
 
     public void commit()
     {
-        F.each(new Operation<StylesheetLink>()
+        F.each(new Worker<StylesheetLink>()
         {
-            public void op(StylesheetLink value)
+            public void work(StylesheetLink value)
             {
                 linker.addStylesheetLink(value);
             }
         }, stylesheetLinks);
 
-        Operation<String> linkLibrary = new Operation<String>()
+        Worker<String> linkLibrary = new Worker<String>()
         {
-            public void op(String value)
+            public void work(String value)
             {
                 linker.addScriptLink(value);
             }

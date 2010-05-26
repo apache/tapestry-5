@@ -26,7 +26,7 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.util.func.F;
-import org.apache.tapestry5.ioc.util.func.Operation;
+import org.apache.tapestry5.ioc.util.func.Worker;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ClassTransformation;
@@ -52,17 +52,17 @@ public class ImportWorker implements ComponentClassTransformWorker
 
     private final AssetSource assetSource;
 
-    private final Operation<Asset> importLibrary = new Operation<Asset>()
+    private final Worker<Asset> importLibrary = new Worker<Asset>()
     {
-        public void op(Asset asset)
+        public void work(Asset asset)
         {
             javascriptSupport.importJavascriptLibrary(asset);
         }
     };
 
-    private final Operation<Asset> importStylesheet = new Operation<Asset>()
+    private final Worker<Asset> importStylesheet = new Worker<Asset>()
     {
-        public void op(Asset asset)
+        public void work(Asset asset)
         {
             javascriptSupport.importStylesheet(asset);
         };
@@ -152,7 +152,7 @@ public class ImportWorker implements ComponentClassTransformWorker
     }
 
     private void decorateMethodWithOperation(ClassTransformation transformation, MutableComponentModel model,
-            TransformMethod method, String[] paths, Operation<Asset> operation)
+            TransformMethod method, String[] paths, Worker<Asset> operation)
     {
         if (paths.length == 0)
             return;
@@ -215,7 +215,7 @@ public class ImportWorker implements ComponentClassTransformWorker
     }
 
     private void addMethodAssetOperationAdvice(TransformMethod method, final FieldAccess access,
-            final Operation<Asset> operation)
+            final Worker<Asset> operation)
     {
         ComponentMethodAdvice advice = new ComponentMethodAdvice()
         {

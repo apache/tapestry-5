@@ -83,11 +83,11 @@ public class F
     /**
      * Performs an operation on each element of the source collection.
      */
-    public static <T> void each(Operation<T> operation, Collection<T> source)
+    public static <T> void each(Worker<T> operation, Collection<T> source)
     {
         for (T t : source)
         {
-            operation.op(t);
+            operation.work(t);
         }
     }
 

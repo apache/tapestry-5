@@ -18,12 +18,12 @@ package org.apache.tapestry5.ioc.util.func;
  * An operational function used with a collection.
  * 
  * @since 5.2.0
- * @see F#each(Operation, java.util.Collection)
+ * @see F#each(Worker, java.util.Collection)
  */
-public interface Operation<T>
+public interface Worker<T>
 {
     /**
      * Perform the operation on some object of type T.
      */
-    void op(T value);
+    void work(T value);
 }
