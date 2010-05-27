@@ -38,7 +38,12 @@ public interface Flow<T>
     /** Removes values where the predicate returns true, returning a new Flow with just the remaining values. */
     Flow<T> remove(Predicate<? super T> predicate);
 
-    /** Applies a reducer to the values of the Flow. */
+    /**
+     * Applies a Reducer to the values of the Flow. The Reducer is passed the initial value
+     * and the first value from the flow. The result is captured as the accumulator and passed
+     * to the Reducer with the next value from the flow, and so on. The final accumulator
+     * value is returned. If the flow is empty, the initial value is returned.
+     */
     <A> A reduce(Reducer<A, T> reducer, A initial);
 
     /**

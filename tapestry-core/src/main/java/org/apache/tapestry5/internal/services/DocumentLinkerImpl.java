@@ -244,7 +244,7 @@ public class DocumentLinkerImpl implements DocumentLinker
             }
         };
 
-        F.each(addScript, scripts);
+        F.flow(scripts).each(addScript);
 
         if (existing != null)
             scriptContainer.moveBefore(existing);

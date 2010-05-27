@@ -687,7 +687,7 @@ public class InternalUtilsTest extends IOCTestCase
             }
         };
 
-        assertListsEquals(F.map(InternalUtils.toMapper(toUpper), "Mary", "had", "a", "little", "lamb"), "MARY", "HAD",
-                "A", "LITTLE", "LAMB");
+        assertListsEquals(F.flow("Mary", "had", "a", "little", "lamb").map(InternalUtils.toMapper(toUpper)).toList(),
+                "MARY", "HAD", "A", "LITTLE", "LAMB");
     }
 }

@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.test.TestBase;
 import org.testng.annotations.Test;
 
@@ -51,8 +52,9 @@ public class FuncTest extends TestBase
     public void map()
     {
         List<String> source = Arrays.asList("Mary", "had", "a", "little", "lamb");
+        Defense.notNull(source, "source");
 
-        List<Integer> lengths = F.map(stringToLength, source);
+        List<Integer> lengths = F.flow(source).map(stringToLength).toList();
 
         assertListsEquals(lengths, 4, 3, 1, 6, 4);
     }
@@ -72,7 +74,7 @@ public class FuncTest extends TestBase
     @Test
     public void combine_mappers()
     {
-        List<Boolean> even = F.map(stringToLength.combine(toEven), "Mary", "had", "a", "little", "lamb");
+        List<Boolean> even = F.flow("Mary", "had", "a", "little", "lamb").map(stringToLength.combine(toEven)).toList();
 
         assertListsEquals(even, true, false, false, true, true);
     }
@@ -81,8 +83,9 @@ public class FuncTest extends TestBase
     public void map_empty_collection_is_the_empty_list()
     {
         List<String> source = Arrays.asList();
+        Defense.notNull(source, "source");
 
-        List<Integer> lengths = F.map(stringToLength, source);
+        List<Integer> lengths = F.flow(source).map(stringToLength).toList();
 
         assertSame(lengths, Collections.EMPTY_LIST);
     }
@@ -105,7 +108,7 @@ public class FuncTest extends TestBase
             }
         };
 
-        F.each(worker, source);
+        F.flow(source).each(worker);
 
         assertEquals(buffer.toString(), "Mary had a little lamb");
     }
@@ -159,7 +162,7 @@ public class FuncTest extends TestBase
             }
         };
 
-        F.each(appendWorker.combine(appendLength), "Mary", "had", "a", "little", "lamb");
+        F.flow("Mary", "had", "a", "little", "lamb").each(appendWorker.combine(appendLength));
 
         assertEquals(buffer.toString(), "Mary(4) had(3) a(1) little(6) lamb(4)");
     }
@@ -169,7 +172,7 @@ public class FuncTest extends TestBase
     {
         List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
 
-        List<Integer> output = F.filter(evenp, input);
+        List<Integer> output = F.flow(input).filter(evenp).toList();
 
         assertListsEquals(output, 2, 4, 6);
     }
@@ -185,7 +188,7 @@ public class FuncTest extends TestBase
     {
         List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
 
-        List<Integer> output = F.remove(evenp, input);
+        List<Integer> output = F.flow(input).remove(evenp).toList();
 
         assertListsEquals(output, 1, 3, 5, 7);
     }
@@ -203,7 +206,7 @@ public class FuncTest extends TestBase
     {
         List<Integer> input = Arrays.asList();
 
-        List<Integer> output = F.filter(evenp, input);
+        List<Integer> output = F.flow(input).filter(evenp).toList();
 
         assertSame(output, Collections.EMPTY_LIST);
     }
@@ -213,7 +216,7 @@ public class FuncTest extends TestBase
     {
         List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
 
-        List<Integer> output = F.filter(evenp.and(F.gt(3)), input);
+        List<Integer> output = F.flow(input).filter(evenp.and(F.gt(3))).toList();
 
         assertListsEquals(output, 4, 6);
     }
@@ -223,11 +226,11 @@ public class FuncTest extends TestBase
     {
         List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
 
-        assertEquals(F.filter(F.eq(3), input), Arrays.asList(3));
-        assertEquals(F.filter(F.neq(3), input), Arrays.asList(1, 2, 4, 5, 6, 7));
-        assertEquals(F.filter(F.lt(3), input), Arrays.asList(1, 2));
-        assertEquals(F.filter(F.lteq(3), input), Arrays.asList(1, 2, 3));
-        assertEquals(F.filter(F.gteq(3), input), Arrays.asList(3, 4, 5, 6, 7));
+        assertEquals(F.flow(input).filter(F.eq(3)).toList(), Arrays.asList(3));
+        assertEquals(F.flow(input).filter(F.neq(3)).toList(), Arrays.asList(1, 2, 4, 5, 6, 7));
+        assertEquals(F.flow(input).filter(F.lt(3)).toList(), Arrays.asList(1, 2));
+        assertEquals(F.flow(input).filter(F.lteq(3)).toList(), Arrays.asList(1, 2, 3));
+        assertEquals(F.flow(input).filter(F.gteq(3)).toList(), Arrays.asList(3, 4, 5, 6, 7));
     }
 
     @Test
@@ -241,8 +244,8 @@ public class FuncTest extends TestBase
         // Converting to null and then filtering out nulls is the hard way to do filter or remove,
         // but exercises the code we want to test.
 
-        List<String> filtered = F.remove(isNull, F.map(F.select(combinedp, identity), "Mary", "had", "a", "little",
-                "lamb"));
+        List<String> filtered = F.flow("Mary", "had", "a", "little", "lamb").map(F.select(combinedp, identity)).remove(
+                isNull).toList();
 
         assertListsEquals(filtered, "Mary", "little", "lamb");
     }
@@ -263,7 +266,7 @@ public class FuncTest extends TestBase
     @Test
     public void reduce()
     {
-        int total = F.reduce(F.SUM_INTS, 0, F.map(stringToLength, "Mary", "had", "a", "little", "lamb"));
+        int total = F.flow(F.flow("Mary", "had", "a", "little", "lamb").map(stringToLength).toList()).reduce(F.SUM_INTS, 0);
 
         assertEquals(total, 18);
     }

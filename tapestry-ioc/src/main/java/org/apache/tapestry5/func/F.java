@@ -14,13 +14,9 @@
 
 package org.apache.tapestry5.func;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-
-import org.apache.tapestry5.ioc.internal.util.Defense;
 
 /**
  * Functional operations on collections with generics support. Tending to use the equivalent names from
@@ -31,89 +27,6 @@ import org.apache.tapestry5.ioc.internal.util.Defense;
  */
 public class F
 {
-    /**
-     * Functional map (i.e., transform operation) from a Collection&lt;S&gt; to List&lt;T&gt;.
-     */
-    public static <S, T> List<T> map(Mapper<S, T> mapper, Collection<S> source)
-    {
-        Defense.notNull(source, "source");
-        Defense.notNull(mapper, "mapper");
-
-        if (source.isEmpty())
-            return Collections.emptyList();
-
-        List<T> result = new ArrayList<T>(source.size());
-
-        for (S s : source)
-        {
-            T t = mapper.map(s);
-
-            result.add(t);
-        }
-
-        return result;
-    }
-
-    public static <S, T> List<T> map(Mapper<S, T> mapper, S... source)
-    {
-        Defense.notNull(source, "source");
-
-        return map(mapper, Arrays.asList(source));
-    }
-
-    /**
-     * Performs an operation on each element of the source collection.
-     */
-    public static <T> void each(Worker<? super T> operation, Collection<T> source)
-    {
-        for (T t : source)
-        {
-            operation.work(t);
-        }
-    }
-
-    /**
-     * Performs an operation on each of the values.
-     */
-    public static <T> void each(Worker<T> operation, T... values)
-    {
-        for (T t : values)
-        {
-            operation.work(t);
-        }
-    }
-
-    /** Returns a new list containing only those elements for which the predicate evaluates to true. */
-    public static <T> List<T> filter(Predicate<? super T> predicate, List<T> source)
-    {
-        Defense.notNull(source, "source");
-        Defense.notNull(predicate, "predicate");
-
-        if (source.isEmpty())
-            return Collections.emptyList();
-
-        List<T> result = new ArrayList<T>(source.size());
-
-        for (T item : source)
-        {
-            if (predicate.accept(item))
-                result.add(item);
-        }
-
-        return result;
-    }
-
-    /**
-     * Returns a new list containing only those values of the source list for which the predicate
-     * evaluates to false.
-     */
-    public static <T> List<T> remove(Predicate<? super T> predicate, List<T> source)
-    {
-        Defense.notNull(predicate, "predicate");
-
-        return filter(predicate.invert(), source);
-    }
-
     public static Predicate<Number> eq(final long value)
     {
         return new Predicate<Number>()
@@ -253,21 +166,6 @@ public class F
         };
     }
 
-    public static <A, T> A reduce(Reducer<A, T> reducer, A initial, Collection<T> values)
-    {
-        Defense.notNull(reducer, "reducer");
-        Defense.notNull(values, "values");
-
-        A accumulator = initial;
-
-        for (T value : values)
-        {
-            accumulator = reducer.reduce(accumulator, value);
-        }
-
-        return accumulator;
-    }
-
     public static Reducer<Integer, Integer> SUM_INTS = new Reducer<Integer, Integer>()
     {
         public Integer reduce(Integer accumulator, Integer value)
@@ -275,6 +173,11 @@ public class F
             return accumulator + value;
         };
     };
+
+    public static <T> Flow<T> flow(Collection<T> values)
+    {
+        return new FlowImpl<T>(values);
+    }
 
     public static <T> Flow<T> flow(List<T> values)
     {

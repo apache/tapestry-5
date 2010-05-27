@@ -92,13 +92,13 @@ public class JavascriptSupportImpl implements JavascriptSupport
 
     public void commit()
     {
-        F.each(new Worker<StylesheetLink>()
+        F.flow(stylesheetLinks).each(new Worker<StylesheetLink>()
         {
             public void work(StylesheetLink value)
             {
                 linker.addStylesheetLink(value);
             }
-        }, stylesheetLinks);
+        });
 
         Worker<String> linkLibrary = new Worker<String>()
         {
@@ -108,8 +108,8 @@ public class JavascriptSupportImpl implements JavascriptSupport
             }
         };
 
-        F.each(linkLibrary, stackLibraries);
-        F.each(linkLibrary, otherLibraries);
+        F.flow(stackLibraries).each(linkLibrary);
+        F.flow(otherLibraries).each(linkLibrary);
 
         for (InitializationPriority p : InitializationPriority.values())
         {

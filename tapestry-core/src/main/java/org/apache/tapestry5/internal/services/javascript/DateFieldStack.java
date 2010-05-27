@@ -59,10 +59,10 @@ public class DateFieldStack implements JavascriptStack
         Mapper<String, StylesheetLink> pathToStylesheetLink = pathToAsset
                 .combine(TapestryInternalUtils.assetToStylesheetLink);
 
-        javascriptStack = F.map(pathToAsset, "${tapestry.datepicker}/js/datepicker.js",
-                "org/apache/tapestry5/corelib/components/datefield.js");
+        javascriptStack = F.flow("${tapestry.datepicker}/js/datepicker.js",
+                "org/apache/tapestry5/corelib/components/datefield.js").map(pathToAsset).toList();
 
-        stylesheetStack = F.map(pathToStylesheetLink, "${tapestry.datepicker}/css/datepicker.css");
+        stylesheetStack = F.flow("${tapestry.datepicker}/css/datepicker.css").map(pathToStylesheetLink).toList();
     }
 
     public String getInitialization()

@@ -14,49 +14,100 @@
 
 package org.apache.tapestry5.func;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 
 class FlowImpl<T> implements Flow<T>
 {
     private final List<T> values;
 
-    public FlowImpl(List<T> values)
+    FlowImpl(Collection<T> values)
+    {
+        this(new ArrayList<T>(values));
+    }
+
+    FlowImpl(List<T> values)
     {
         this.values = values;
     }
 
     public Flow<T> each(Worker<? super T> worker)
     {
-        F.each(worker, values);
+        for (T t : values)
+        {
+            worker.work(t);
+        }
 
         return this;
     }
 
     public Flow<T> filter(Predicate<? super T> predicate)
     {
-        return new FlowImpl<T>(F.filter(predicate, values));
+        Defense.notNull(predicate, "predicate");
+
+        List<T> result = new ArrayList<T>(values.size());
+
+        for (T item : values)
+        {
+            if (predicate.accept(item))
+                result.add(item);
+        }
+
+        return new FlowImpl<T>(result);
     }
 
     public Flow<T> remove(Predicate<? super T> predicate)
     {
-        return new FlowImpl<T>(F.remove(predicate, values));
+        Defense.notNull(predicate, "predicate");
+
+        return filter(predicate.invert());
     }
 
     public <X> Flow<X> map(Mapper<T, X> mapper)
     {
-        return new FlowImpl<X>(F.map(mapper, values));
+        Defense.notNull(mapper, "mapper");
+
+        if (values.isEmpty())
+        {
+            List<X> empty = Collections.emptyList();
+            return new FlowImpl<X>(empty);
+        }
+
+        List<X> newValues = new ArrayList<X>(values.size());
+
+        for (T value : values)
+        {
+            newValues.add(mapper.map(value));
+        }
+
+        return new FlowImpl<X>(newValues);
     }
 
     public <A> A reduce(Reducer<A, T> reducer, A initial)
     {
-        return F.reduce(reducer, initial, values);
+        Defense.notNull(reducer, "reducer");
+
+        A accumulator = initial;
+
+        for (T value : values)
+        {
+            accumulator = reducer.reduce(accumulator, value);
+        }
+
+        return accumulator;
     }
 
+    /** Returns the values in the flow as an unmodifiable List. */
     public List<T> toList()
     {
+        if (values.isEmpty())
+            return Collections.emptyList();
+
         return Collections.unmodifiableList(values);
     }
 

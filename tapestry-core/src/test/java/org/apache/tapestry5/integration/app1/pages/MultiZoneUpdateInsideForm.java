@@ -32,6 +32,7 @@ import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.util.AbstractSelectModel;
 
@@ -104,24 +105,26 @@ public class MultiZoneUpdateInsideForm
 
         public List<OptionModel> getOptions()
         {
-            return F.map(new Mapper<SelectObj, OptionModel>()
-            {
-                public OptionModel map(final SelectObj input)
-                {
-                    return new AbstractOptionModel()
-                    {
-                        public Object getValue()
+            Defense.notNull(options, "source");
+            
+            return F.flow(options).map(new Mapper<SelectObj, OptionModel>()
                         {
-                            return input;
-                        }
-
-                        public String getLabel()
-                        {
-                            return input.getLabel();
-                        }
-                    };
-                }
-            }, options);
+                            public OptionModel map(final SelectObj input)
+                            {
+                                return new AbstractOptionModel()
+                                {
+                                    public Object getValue()
+                                    {
+                                        return input;
+                                    }
+            
+                                    public String getLabel()
+                                    {
+                                        return input.getLabel();
+                                    }
+                                };
+                            }
+                        }).toList();
         }
 
         public String toClient(SelectObj value)

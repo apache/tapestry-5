@@ -40,13 +40,13 @@ public class ObjectComponentEventResultProcessor implements ComponentEventResult
 
     public void processResultValue(Object value) throws IOException
     {
-        List<String> names = F.map(new Mapper<Class, String>()
+        List<String> names = F.flow(configuredClasses).map(new Mapper<Class, String>()
         {
             public String map(Class input)
             {
                 return ClassFabUtils.toJavaClassName(input);
             }
-        }, configuredClasses);
+        }).toList();
 
         String message = String.format(
                 "A component event handler method returned the value %s. Return type %s can not be handled.", value,

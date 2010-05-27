@@ -57,7 +57,8 @@ public class CoreJavascriptStack implements JavascriptStack
 
     public List<StylesheetLink> getStylesheets()
     {
-        return F.map(TapestryInternalUtils.assetToStylesheetLink, clientInfrastructure.getStylesheetStack());
+        return F.flow(clientInfrastructure.getStylesheetStack()).map(TapestryInternalUtils.assetToStylesheetLink)
+                .toList();
     }
 
 }

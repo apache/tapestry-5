@@ -26,6 +26,7 @@ import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.AssetSource;
@@ -205,13 +206,14 @@ public class ImportWorker implements ComponentClassTransformWorker
 
     private List<Asset> convertPathsToAssets(final Resource baseResource, final Locale locale, String[] assetPaths)
     {
-        return F.map(new Mapper<String, Asset>()
+
+        return F.flow(assetPaths).map(new Mapper<String, Asset>()
         {
             public Asset map(String assetPath)
             {
                 return assetSource.getAsset(baseResource, assetPath, locale);
             }
-        }, assetPaths);
+        }).toList();
     }
 
     private void addMethodAssetOperationAdvice(TransformMethod method, final FieldAccess access,
@@ -224,7 +226,7 @@ public class ImportWorker implements ComponentClassTransformWorker
             {
                 List<Asset> assets = (List<Asset>) access.read(invocation.getInstance());
 
-                F.each(operation, assets);
+                F.flow(assets).each(operation);
 
                 invocation.proceed();
             }
