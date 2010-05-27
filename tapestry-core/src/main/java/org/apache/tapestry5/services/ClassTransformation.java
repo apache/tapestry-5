@@ -20,9 +20,9 @@ import java.util.List;
 import javassist.CtBehavior;
 
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.transform.ReadOnlyFieldValueConduit;
 import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.util.func.Predicate;
 import org.slf4j.Logger;
 
 /**

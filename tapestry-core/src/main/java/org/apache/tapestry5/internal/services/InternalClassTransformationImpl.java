@@ -28,6 +28,7 @@ import javassist.expr.ExprEditor;
 import javassist.expr.FieldAccess;
 
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.ioc.internal.services.CtClassSource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -40,8 +41,6 @@ import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.ioc.services.MethodSignature;
 import org.apache.tapestry5.ioc.util.BodyBuilder;
-import org.apache.tapestry5.ioc.util.func.Predicate;
-import org.apache.tapestry5.ioc.util.func.Predicate;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.runtime.Component;

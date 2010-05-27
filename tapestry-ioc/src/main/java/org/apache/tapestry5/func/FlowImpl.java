@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc.util.func;
+package org.apache.tapestry5.func;
 
 import java.util.Collections;
 import java.util.List;

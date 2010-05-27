@@ -28,14 +28,14 @@ import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.OptionModel;
 import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.SelectModel;
+import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Orderable;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.util.func.F;
-import org.apache.tapestry5.ioc.util.func.Mapper;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
 /**

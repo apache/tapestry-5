@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.Locatable;
 import org.apache.tapestry5.ioc.Location;
@@ -48,7 +49,6 @@ import org.apache.tapestry5.ioc.internal.QuietOperationTracker;
 import org.apache.tapestry5.ioc.services.Builtin;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
-import org.apache.tapestry5.ioc.util.func.Predicate;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.testng.annotations.DataProvider;

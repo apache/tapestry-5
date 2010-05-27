@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc.util.func;
+package org.apache.tapestry5.func;
 
 /**
  * Base class used with {@link F#map(Mapper, java.util.Collection)} and {@link Flow#map(Mapper)} to

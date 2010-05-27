@@ -18,11 +18,11 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
-import org.apache.tapestry5.ioc.util.func.Mapper;
-import org.apache.tapestry5.ioc.util.func.F;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
 
 /**

@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.services;
 
-import org.apache.tapestry5.ioc.util.func.Predicate;
+import org.apache.tapestry5.func.Predicate;
 
 /**
  * Used by {@link ClassTransformation#findMethods(MethodFilter)} to accept or reject each method.
