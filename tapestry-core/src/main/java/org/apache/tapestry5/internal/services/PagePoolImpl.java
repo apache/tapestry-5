@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -45,7 +45,7 @@ import java.util.Map;
  * <p/>
  * As an {@link org.apache.tapestry5.services.UpdateListener}, the service will reduce the size of each page's pool by
  * eliminating pages that haven't been used recently.
- *
+ * 
  * @see org.apache.tapestry5.internal.services.PagePoolCache
  */
 public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListener, PagePoolImplMBean
@@ -68,21 +68,23 @@ public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListe
 
     public PagePoolImpl(Logger logger,
 
-                        PageLoader pageLoader,
+    PageLoader pageLoader,
 
-                        ThreadLocale threadLocale,
+    ThreadLocale threadLocale,
 
-                        @Symbol(SymbolConstants.PAGE_POOL_SOFT_LIMIT)
-                        int softLimit,
+    @Symbol(SymbolConstants.PAGE_POOL_SOFT_LIMIT)
+    int softLimit,
 
-                        @Symbol(SymbolConstants.PAGE_POOL_SOFT_WAIT) @IntermediateType(TimeInterval.class)
-                        long softWait,
+    @Symbol(SymbolConstants.PAGE_POOL_SOFT_WAIT)
+    @IntermediateType(TimeInterval.class)
+    long softWait,
 
-                        @Symbol(SymbolConstants.PAGE_POOL_HARD_LIMIT)
-                        int hardLimit,
+    @Symbol(SymbolConstants.PAGE_POOL_HARD_LIMIT)
+    int hardLimit,
 
-                        @Symbol(SymbolConstants.PAGE_POOL_ACTIVE_WINDOW) @IntermediateType(TimeInterval.class)
-                        long activeWindow)
+    @Symbol(SymbolConstants.PAGE_POOL_ACTIVE_WINDOW)
+    @IntermediateType(TimeInterval.class)
+    long activeWindow)
     {
         this.logger = logger;
         this.pageLoader = pageLoader;
@@ -152,7 +154,7 @@ public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListe
      */
     public synchronized void objectWasInvalidated()
     {
-        pool.clear();
+        clear();
     }
 
     /**
@@ -167,6 +169,11 @@ public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListe
         }
     }
 
+    public void clear()
+    {
+        pool.clear();
+    }
+
     public int getSoftLimit()
     {
         return softLimit;
@@ -175,7 +182,7 @@ public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListe
     public void setSoftLimit(int softLimit)
     {
         this.softLimit = softLimit;
-        
+
         objectWasInvalidated();
     }
 
@@ -187,7 +194,7 @@ public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListe
     public void setSoftWait(long softWait)
     {
         this.softWait = softWait;
-        
+
         objectWasInvalidated();
     }
 
@@ -199,7 +206,7 @@ public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListe
     public void setHardLimit(int hardLimit)
     {
         this.hardLimit = hardLimit;
-        
+
         objectWasInvalidated();
     }
 
@@ -211,7 +218,7 @@ public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListe
     public void setActiveWindow(long activeWindow)
     {
         this.activeWindow = activeWindow;
-        
+
         objectWasInvalidated();
     }
 
