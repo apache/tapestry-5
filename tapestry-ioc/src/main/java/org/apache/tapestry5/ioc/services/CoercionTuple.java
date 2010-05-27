@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,13 +18,16 @@ import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
 
 /**
  * An immutable object that represents a mapping from one type to another. This is also the contribution type when
- * building the {@link org.apache.tapestry5.ioc.services.TypeCoercer} service. Wraps a {@link
- * org.apache.tapestry5.ioc.services.Coercion} object that performs the work with additional properties that describe
+ * building the {@link org.apache.tapestry5.ioc.services.TypeCoercer} service. Wraps a
+ * {@link org.apache.tapestry5.ioc.services.Coercion} object that performs the work with additional properties that
+ * describe
  * the input and output types of the coercion, needed when searching for an appropriate coercion (or sequence of
  * coercions).
- *
- * @param <S> source (input) type
- * @param <T> target (output) type
+ * 
+ * @param <S>
+ *            source (input) type
+ * @param <T>
+ *            target (output) type
  */
 public final class CoercionTuple<S, T>
 {
@@ -60,7 +63,8 @@ public final class CoercionTuple<S, T>
 
     private String convert(Class type)
     {
-        if (void.class.equals(type)) return "null";
+        if (void.class.equals(type))
+            return "null";
 
         String name = ClassFabUtils.toJavaClassName(type);
 
@@ -83,15 +87,28 @@ public final class CoercionTuple<S, T>
     }
 
     /**
-     * Internal-use constructor.
-     *
-     * @param sourceType the source (or input) type of the coercion
-     * @param targetType the target (or output) type of the coercion
-     * @param coercion   the object that performs the coercion
-     * @param wrap       if true, the coercion is wrapped to provide a useful toString()
+     * Convenience constructor to help with generics.
+     * 
+     * @since 5.2.0
      */
-    public CoercionTuple(Class<S> sourceType, Class<T> targetType, Coercion<S, T> coercion,
-                         boolean wrap)
+    public static <S, T> CoercionTuple<S, T> create(Class<S> sourceType, Class<T> targetType, Coercion<S, T> coercion)
+    {
+        return new CoercionTuple<S, T>(sourceType, targetType, coercion);
+    }
+
+    /**
+     * Internal-use constructor.
+     * 
+     * @param sourceType
+     *            the source (or input) type of the coercion
+     * @param targetType
+     *            the target (or output) type of the coercion
+     * @param coercion
+     *            the object that performs the coercion
+     * @param wrap
+     *            if true, the coercion is wrapped to provide a useful toString()
+     */
+    public CoercionTuple(Class<S> sourceType, Class<T> targetType, Coercion<S, T> coercion, boolean wrap)
     {
         notNull(sourceType, "sourceType");
         notNull(targetType, "targetType");
