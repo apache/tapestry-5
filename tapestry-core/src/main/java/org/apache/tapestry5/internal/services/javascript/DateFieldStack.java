@@ -24,9 +24,8 @@ import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
-import org.apache.tapestry5.ioc.util.func.AbstractMapper;
-import org.apache.tapestry5.ioc.util.func.F;
 import org.apache.tapestry5.ioc.util.func.Mapper;
+import org.apache.tapestry5.ioc.util.func.F;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
@@ -49,7 +48,7 @@ public class DateFieldStack implements JavascriptStack
         this.threadLocale = threadLocale;
         this.compactJSON = compactJSON;
 
-        Mapper<String, Asset> pathToAsset = new AbstractMapper<String, Asset>()
+        Mapper<String, Asset> pathToAsset = new Mapper<String, Asset>()
         {
             public Asset map(String path)
             {

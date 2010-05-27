@@ -14,14 +14,36 @@
 
 package org.apache.tapestry5.ioc.util.func;
 
-public interface Mapper<S, T>
+/**
+ * Base class used with {@link F#map(Mapper, java.util.Collection)} and {@link Flow#map(Mapper)} to
+ * define how objects
+ * are mapped from one type
+ * to another (or otherwise transformed).
+ * 
+ * @since 5.2.0
+ */
+public abstract class Mapper<S, T>
 {
-    /** Maps a source value to a target value. */
-    T map(S value);
+    /** Implemented in subclasses to map a source value to a target value. */
+    public abstract T map(S value);
 
-    /*
+    /**
      * Combines this mapper (S --&gt;T) with another mapper (T --&gt;X) to form
      * a composite mapper (S --&gt; X).
      */
-    <X> Mapper<S, X> combine(Mapper<T, X> other);
+    public final <X> Mapper<S, X> combine(final Mapper<T, X> other)
+    {
+        final Mapper<S, T> stMapper = this;
+
+        return new Mapper<S, X>()
+        {
+            public X map(S value)
+            {
+
+                T tValue = stMapper.map(value);
+
+                return other.map(tValue);
+            }
+        };
+    }
 }

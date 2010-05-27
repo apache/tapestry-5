@@ -34,7 +34,6 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.util.func.AbstractMapper;
 import org.apache.tapestry5.ioc.util.func.F;
 import org.apache.tapestry5.ioc.util.func.Mapper;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
@@ -566,7 +565,7 @@ public class TapestryInternalUtils
      * 
      * @since 5.2.0
      */
-    public static Mapper<Asset, StylesheetLink> assetToStylesheetLink = new AbstractMapper<Asset, StylesheetLink>()
+    public static Mapper<Asset, StylesheetLink> assetToStylesheetLink = new Mapper<Asset, StylesheetLink>()
     {
         public StylesheetLink map(Asset input)
         {

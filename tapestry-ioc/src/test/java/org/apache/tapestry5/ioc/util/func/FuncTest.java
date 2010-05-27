@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
 
 public class FuncTest extends TestBase
 {
-    private Mapper<String, Integer> stringToLength = new AbstractMapper<String, Integer>()
+    private Mapper<String, Integer> stringToLength = new Mapper<String, Integer>()
     {
         public Integer map(String input)
         {
@@ -32,7 +32,7 @@ public class FuncTest extends TestBase
         }
     };
 
-    private Mapper<Integer, Boolean> toEven = new AbstractMapper<Integer, Boolean>()
+    private Mapper<Integer, Boolean> toEven = new Mapper<Integer, Boolean>()
     {
         public Boolean map(Integer input)
         {

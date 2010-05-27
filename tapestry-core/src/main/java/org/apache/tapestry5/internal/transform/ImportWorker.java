@@ -24,7 +24,7 @@ import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.services.SymbolSource;
-import org.apache.tapestry5.ioc.util.func.AbstractMapper;
+import org.apache.tapestry5.ioc.util.func.Mapper;
 import org.apache.tapestry5.ioc.util.func.AbstractWorker;
 import org.apache.tapestry5.ioc.util.func.F;
 import org.apache.tapestry5.ioc.util.func.Worker;
@@ -206,7 +206,7 @@ public class ImportWorker implements ComponentClassTransformWorker
 
     private List<Asset> convertPathsToAssets(final Resource baseResource, final Locale locale, String[] assetPaths)
     {
-        return F.map(new AbstractMapper<String, Asset>()
+        return F.map(new Mapper<String, Asset>()
         {
             public Asset map(String assetPath)
             {

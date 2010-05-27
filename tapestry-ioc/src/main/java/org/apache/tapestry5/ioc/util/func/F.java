@@ -67,7 +67,7 @@ public class F
     {
         Defense.notNull(coercion, "coercion");
 
-        return new AbstractMapper<S, T>()
+        return new Mapper<S, T>()
         {
 
             public T map(S value)
@@ -193,7 +193,7 @@ public class F
     /** Returns a Mapper that ignores its input value and always returns a predetermined result. */
     public static <S, T> Mapper<S, T> always(final T fixedResult)
     {
-        return new AbstractMapper<S, T>()
+        return new Mapper<S, T>()
         {
             public T map(S input)
             {
@@ -213,10 +213,10 @@ public class F
      * @param ifRejected
      *            used when predicate evaluates to false
      */
-    public static <S, T> Mapper<S, T> select(final Predicate<? super S> predicate, final Mapper<S, T> ifAccepted,
-            final Mapper<S, T> ifRejected)
+    public static <S, T> Mapper<S, T> select(final Predicate<? super S> predicate,
+            final Mapper<S, T> ifAccepted, final Mapper<S, T> ifRejected)
     {
-        return new AbstractMapper<S, T>()
+        return new Mapper<S, T>()
         {
             public T map(S input)
             {
@@ -238,7 +238,8 @@ public class F
     /**
      * Override of {@link #select(Predicate, Mapper)} where rejected values are replaced with a fixed value.
      */
-    public static <S, T> Mapper<S, T> select(Predicate<? super S> predicate, Mapper<S, T> ifAccepted, T ifRejected)
+    public static <S, T> Mapper<S, T> select(Predicate<? super S> predicate, Mapper<S, T> ifAccepted,
+            T ifRejected)
     {
         Mapper<S, T> rejectedMapper = always(ifRejected);
 
@@ -248,7 +249,7 @@ public class F
     /** The identity mapper simply returns the input unchanged. */
     public static <S> Mapper<S, S> identity()
     {
-        return new AbstractMapper<S, S>()
+        return new Mapper<S, S>()
         {
             public S map(S input)
             {
