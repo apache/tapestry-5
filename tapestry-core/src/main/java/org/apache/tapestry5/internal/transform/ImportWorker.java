@@ -24,9 +24,8 @@ import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.services.SymbolSource;
-import org.apache.tapestry5.ioc.util.func.Mapper;
-import org.apache.tapestry5.ioc.util.func.AbstractWorker;
 import org.apache.tapestry5.ioc.util.func.F;
+import org.apache.tapestry5.ioc.util.func.Mapper;
 import org.apache.tapestry5.ioc.util.func.Worker;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.AssetSource;
@@ -53,7 +52,7 @@ public class ImportWorker implements ComponentClassTransformWorker
 
     private final AssetSource assetSource;
 
-    private final Worker<Asset> importLibrary = new AbstractWorker<Asset>()
+    private final Worker<Asset> importLibrary = new Worker<Asset>()
     {
         public void work(Asset asset)
         {
@@ -61,7 +60,7 @@ public class ImportWorker implements ComponentClassTransformWorker
         }
     };
 
-    private final Worker<Asset> importStylesheet = new AbstractWorker<Asset>()
+    private final Worker<Asset> importStylesheet = new Worker<Asset>()
     {
         public void work(Asset asset)
         {

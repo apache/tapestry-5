@@ -27,7 +27,6 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.IdAllocator;
 import org.apache.tapestry5.ioc.services.Coercion;
-import org.apache.tapestry5.ioc.util.func.AbstractWorker;
 import org.apache.tapestry5.ioc.util.func.F;
 import org.apache.tapestry5.ioc.util.func.Worker;
 import org.apache.tapestry5.json.JSONArray;
@@ -93,7 +92,7 @@ public class JavascriptSupportImpl implements JavascriptSupport
 
     public void commit()
     {
-        F.each(new AbstractWorker<StylesheetLink>()
+        F.each(new Worker<StylesheetLink>()
         {
             public void work(StylesheetLink value)
             {
@@ -101,7 +100,7 @@ public class JavascriptSupportImpl implements JavascriptSupport
             }
         }, stylesheetLinks);
 
-        Worker<String> linkLibrary = new AbstractWorker<String>()
+        Worker<String> linkLibrary = new Worker<String>()
         {
             public void work(String value)
             {

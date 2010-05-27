@@ -95,7 +95,7 @@ public class FuncTest extends TestBase
 
         final StringBuffer buffer = new StringBuffer();
 
-        Worker<String> worker = new AbstractWorker<String>()
+        Worker<String> worker = new Worker<String>()
         {
             public void work(String value)
             {
@@ -118,7 +118,7 @@ public class FuncTest extends TestBase
 
         final StringBuffer buffer = new StringBuffer();
 
-        Worker<String> worker = new AbstractWorker<String>()
+        Worker<String> worker = new Worker<String>()
         {
             public void work(String value)
             {
@@ -139,7 +139,7 @@ public class FuncTest extends TestBase
     {
         final StringBuffer buffer = new StringBuffer();
 
-        Worker<String> appendWorker = new AbstractWorker<String>()
+        Worker<String> appendWorker = new Worker<String>()
         {
             public void work(String value)
             {
@@ -150,7 +150,7 @@ public class FuncTest extends TestBase
             }
         };
 
-        Worker<String> appendLength = new AbstractWorker<String>()
+        Worker<String> appendLength = new Worker<String>()
         {
             public void work(String value)
             {

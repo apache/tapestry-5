@@ -20,16 +20,30 @@ package org.apache.tapestry5.ioc.util.func;
  * @since 5.2.0
  * @see F#each(Worker, java.util.Collection)
  */
-public interface Worker<T>
+public abstract class Worker<T>
 {
     /**
      * Perform the operation on some object of type T.
      */
-    void work(T value);
+    public abstract void work(T value);
 
     /**
      * Combines this worker with the other worker, forming a new composite worker. In the composite,
      * the value passed first to this worker, then to the other worker.
      */
-    Worker<T> combine(Worker<? super T> other);
+    public Worker<T> combine(final Worker<? super T> other)
+    {
+        final Worker<T> first = this;
+
+        return new Worker<T>()
+        {
+            public void work(T value)
+            {
+                first.work(value);
+                other.work(value);
+            }
+
+        };
+    }
+
 }
