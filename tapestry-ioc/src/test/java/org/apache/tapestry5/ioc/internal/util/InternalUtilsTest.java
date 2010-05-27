@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.Locatable;
@@ -47,6 +48,7 @@ import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.def.ServiceDef2;
 import org.apache.tapestry5.ioc.internal.QuietOperationTracker;
 import org.apache.tapestry5.ioc.services.Builtin;
+import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.easymock.EasyMock;
@@ -533,8 +535,7 @@ public class InternalUtilsTest extends IOCTestCase
             }
         };
 
-        expect(ol.getObject(eq(SymbolSource.class), isA(AnnotationProvider.class))).andAnswer(
-                answer);
+        expect(ol.getObject(eq(SymbolSource.class), isA(AnnotationProvider.class))).andAnswer(answer);
 
         replay();
 
@@ -673,5 +674,20 @@ public class InternalUtilsTest extends IOCTestCase
         });
 
         assertListsEquals(output, "Barney", "Fred", "Wilma");
+    }
+
+    @Test
+    public void wrap_coercion_as_mapper()
+    {
+        Coercion<String, String> toUpper = new Coercion<String, String>()
+        {
+            public String coerce(String input)
+            {
+                return input.toUpperCase();
+            }
+        };
+
+        assertListsEquals(F.map(InternalUtils.toMapper(toUpper), "Mary", "had", "a", "little", "lamb"), "MARY", "HAD",
+                "A", "LITTLE", "LAMB");
     }
 }

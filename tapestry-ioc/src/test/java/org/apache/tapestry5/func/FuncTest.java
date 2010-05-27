@@ -18,12 +18,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.tapestry5.func.F;
-import org.apache.tapestry5.func.Flow;
-import org.apache.tapestry5.func.Mapper;
-import org.apache.tapestry5.func.Predicate;
-import org.apache.tapestry5.func.Worker;
-import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.test.TestBase;
 import org.testng.annotations.Test;
 
@@ -168,21 +162,6 @@ public class FuncTest extends TestBase
         F.each(appendWorker.combine(appendLength), "Mary", "had", "a", "little", "lamb");
 
         assertEquals(buffer.toString(), "Mary(4) had(3) a(1) little(6) lamb(4)");
-    }
-
-    @Test
-    public void wrap_coercion_as_mapper()
-    {
-        Coercion<String, String> toUpper = new Coercion<String, String>()
-        {
-            public String coerce(String input)
-            {
-                return input.toUpperCase();
-            }
-        };
-
-        assertListsEquals(F.map(F.toMapper(toUpper), "Mary", "had", "a", "little", "lamb"), "MARY", "HAD", "A",
-                "LITTLE", "LAMB");
     }
 
     @Test

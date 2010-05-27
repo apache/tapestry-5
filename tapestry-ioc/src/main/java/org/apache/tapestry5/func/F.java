@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.ioc.services.Coercion;
 
 /**
  * Functional operations on collections with generics support. Tending to use the equivalent names from
@@ -60,20 +59,6 @@ public class F
         Defense.notNull(source, "source");
 
         return map(mapper, Arrays.asList(source));
-    }
-
-    public static <S, T> Mapper<S, T> toMapper(final Coercion<S, T> coercion)
-    {
-        Defense.notNull(coercion, "coercion");
-
-        return new Mapper<S, T>()
-        {
-
-            public T map(S value)
-            {
-                return coercion.coerce(value);
-            }
-        };
     }
 
     /**
