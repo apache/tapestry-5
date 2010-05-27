@@ -48,7 +48,7 @@ import org.apache.tapestry5.ioc.internal.QuietOperationTracker;
 import org.apache.tapestry5.ioc.services.Builtin;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
-import org.apache.tapestry5.ioc.util.func.AbstractPredicate;
+import org.apache.tapestry5.ioc.util.func.Predicate;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.testng.annotations.DataProvider;
@@ -664,7 +664,7 @@ public class InternalUtilsTest extends IOCTestCase
     {
         List<String> input = CollectionFactory.newList("Fred", "Barney", "..", ".hidden", "Wilma");
 
-        List<String> output = InternalUtils.matchAndSort(input, new AbstractPredicate<String>()
+        List<String> output = InternalUtils.matchAndSort(input, new Predicate<String>()
         {
             public boolean accept(String object)
             {

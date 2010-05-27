@@ -20,7 +20,7 @@ import org.apache.tapestry5.annotations.PageReset;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.structure.PageResetListener;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.util.func.AbstractPredicate;
+import org.apache.tapestry5.ioc.util.func.Predicate;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
@@ -132,7 +132,7 @@ public class PageResetAnnotationWorker implements ComponentClassTransformWorker
 
     private List<TransformMethod> matchPageResetMethods(final ClassTransformation transformation)
     {
-        return transformation.matchMethods(new AbstractPredicate<TransformMethod>()
+        return transformation.matchMethods(new Predicate<TransformMethod>()
         {
             public boolean accept(TransformMethod method)
             {

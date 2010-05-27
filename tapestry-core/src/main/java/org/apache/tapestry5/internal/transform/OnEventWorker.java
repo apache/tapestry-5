@@ -25,7 +25,7 @@ import org.apache.tapestry5.annotations.QueryParameter;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.util.func.AbstractPredicate;
+import org.apache.tapestry5.ioc.util.func.Predicate;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.runtime.ComponentEvent;
 import org.apache.tapestry5.services.ClassTransformation;
@@ -177,7 +177,7 @@ public class OnEventWorker implements ComponentClassTransformWorker
 
     private List<TransformMethod> matchEventHandlerMethods(ClassTransformation transformation)
     {
-        return transformation.matchMethods(new AbstractPredicate<TransformMethod>()
+        return transformation.matchMethods(new Predicate<TransformMethod>()
         {
             public boolean accept(TransformMethod method)
             {

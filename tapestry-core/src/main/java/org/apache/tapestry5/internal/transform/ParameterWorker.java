@@ -25,7 +25,7 @@ import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
-import org.apache.tapestry5.ioc.util.func.AbstractPredicate;
+import org.apache.tapestry5.ioc.util.func.Predicate;
 import org.apache.tapestry5.ioc.util.func.Predicate;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.*;
@@ -134,7 +134,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
     private List<TransformField> matchParameterFields(ClassTransformation transformation, final boolean principal)
     {
-        Predicate<TransformField> predicate = new AbstractPredicate<TransformField>()
+        Predicate<TransformField> predicate = new Predicate<TransformField>()
         {
             public boolean accept(TransformField field)
             {
@@ -438,7 +438,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
     {
         final String methodName = "default" + parameterName;
 
-        Predicate<TransformMethod> predicate = new AbstractPredicate<TransformMethod>()
+        Predicate<TransformMethod> predicate = new Predicate<TransformMethod>()
         {
             public boolean accept(TransformMethod method)
             {

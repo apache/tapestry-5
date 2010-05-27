@@ -40,7 +40,7 @@ public class FuncTest extends TestBase
         }
     };
 
-    private Predicate<Number> evenp = new AbstractPredicate<Number>()
+    private Predicate<Number> evenp = new Predicate<Number>()
     {
         public boolean accept(Number object)
         {

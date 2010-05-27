@@ -32,7 +32,6 @@ import org.apache.tapestry5.ioc.services.Coercion;
  */
 public class F
 {
-
     /**
      * Functional map (i.e., transform operation) from a Collection&lt;S&gt; to List&lt;T&gt;.
      */
@@ -132,7 +131,7 @@ public class F
 
     public static Predicate<Number> eq(final long value)
     {
-        return new AbstractPredicate<Number>()
+        return new Predicate<Number>()
         {
             public boolean accept(Number object)
             {
@@ -148,7 +147,7 @@ public class F
 
     public static Predicate<Number> gt(final long value)
     {
-        return new AbstractPredicate<Number>()
+        return new Predicate<Number>()
         {
             public boolean accept(Number object)
             {
@@ -174,7 +173,7 @@ public class F
 
     public static <T> Predicate<T> isNull()
     {
-        return new AbstractPredicate<T>()
+        return new Predicate<T>()
         {
             public boolean accept(T object)
             {
@@ -213,8 +212,8 @@ public class F
      * @param ifRejected
      *            used when predicate evaluates to false
      */
-    public static <S, T> Mapper<S, T> select(final Predicate<? super S> predicate,
-            final Mapper<S, T> ifAccepted, final Mapper<S, T> ifRejected)
+    public static <S, T> Mapper<S, T> select(final Predicate<? super S> predicate, final Mapper<S, T> ifAccepted,
+            final Mapper<S, T> ifRejected)
     {
         return new Mapper<S, T>()
         {
@@ -238,8 +237,7 @@ public class F
     /**
      * Override of {@link #select(Predicate, Mapper)} where rejected values are replaced with a fixed value.
      */
-    public static <S, T> Mapper<S, T> select(Predicate<? super S> predicate, Mapper<S, T> ifAccepted,
-            T ifRejected)
+    public static <S, T> Mapper<S, T> select(Predicate<? super S> predicate, Mapper<S, T> ifAccepted, T ifRejected)
     {
         Mapper<S, T> rejectedMapper = always(ifRejected);
 
@@ -261,7 +259,7 @@ public class F
     /** Allows Mapper that maps to boolean to be used as a Predicate. */
     public static <S> Predicate<S> toPredicate(final Mapper<S, Boolean> mapper)
     {
-        return new AbstractPredicate<S>()
+        return new Predicate<S>()
         {
             public boolean accept(S object)
             {

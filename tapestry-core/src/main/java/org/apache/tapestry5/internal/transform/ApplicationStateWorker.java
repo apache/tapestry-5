@@ -22,7 +22,7 @@ import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.services.FieldValueConduit;
-import org.apache.tapestry5.ioc.util.func.AbstractPredicate;
+import org.apache.tapestry5.ioc.util.func.Predicate;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.apache.tapestry5.services.ClassTransformation;
@@ -95,7 +95,7 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
 
         final String expectedName = field.getName() + "Exists";
 
-        List<TransformField> fields = transformation.matchFields(new AbstractPredicate<TransformField>()
+        List<TransformField> fields = transformation.matchFields(new Predicate<TransformField>()
         {
             public boolean accept(TransformField field)
             {

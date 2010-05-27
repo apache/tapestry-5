@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.ioc.util.func;
 
+import org.apache.tapestry5.ioc.internal.util.Defense;
+
 /**
  * Used when filtering a collection of objects of a given type; the predicate is passed
  * each object in turn, and returns true to include the object in the result collection.
@@ -24,18 +26,66 @@ package org.apache.tapestry5.ioc.util.func;
  * @see F#filter(Predicate, java.util.List)
  * @see F#remove(Predicate, java.util.List)
  */
-public interface Predicate<T>
+public abstract class Predicate<T>
 {
     /**
-     * Examines the object and determines whether to accept or reject it.
-     * 
-     * @return true to accept, false to reject
+     * This method is overridden in subclasses to define which objects the Predicate will accept
+     * and which it will reject.
      */
-    boolean accept(T object);
+    public abstract boolean accept(T object);
 
-    Predicate<T> invert();
+    /**
+     * Combines this Predicate with another compatible Predicate to form a new Predicate, which is returned. The
+     * new Predicate is true only if both of the combined Predicates are true.
+     */
+    public final Predicate<T> and(final Predicate<? super T> other)
+    {
+        Defense.notNull(other, "other");
 
-    Predicate<T> and(Predicate<? super T> right);
+        final Predicate<T> left = this;
 
-    Predicate<T> or(Predicate<? super T> right);
+        return new Predicate<T>()
+        {
+            public boolean accept(T object)
+            {
+                return left.accept(object) && other.accept(object);
+            };
+        };
+    }
+
+    /**
+     * Combines this Predicate with another compatible Predicate to form a new Predicate, which is returned. The
+     * new Predicate is true if either of the combined Predicates are true.
+     */
+    public final Predicate<T> or(final Predicate<? super T> other)
+    {
+        Defense.notNull(other, "other");
+
+        final Predicate<T> left = this;
+
+        return new Predicate<T>()
+        {
+            public boolean accept(T object)
+            {
+                return left.accept(object) || other.accept(object);
+            };
+        };
+    }
+
+    /**
+     * Inverts this Predicate, returning a new Predicate that inverts the value returned from {@link #accept}.
+     */
+    public final Predicate<T> invert()
+    {
+        final Predicate<T> normal = this;
+
+        return new Predicate<T>()
+        {
+            public boolean accept(T object)
+            {
+                return !normal.accept(object);
+            };
+        };
+    }
+
 }
