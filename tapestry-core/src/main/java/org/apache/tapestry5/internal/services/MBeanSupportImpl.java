@@ -61,6 +61,9 @@ public class MBeanSupportImpl implements MBeanSupport, RegistryShutdownListener
     {
         lock.check();
         
+        if (this.server.isRegistered(objectName))
+            return;
+        
         try
         {
             this.server.registerMBean(object, objectName);
@@ -79,13 +82,18 @@ public class MBeanSupportImpl implements MBeanSupport, RegistryShutdownListener
     {
         lock.check();
         
+        doUnregister(objectName);
+    }
+    
+    private void doUnregister(final ObjectName objectName)
+    {
         if (this.server.isRegistered(objectName))
         {
             try
             {
                 this.server.unregisterMBean(objectName);
 
-                this.logger.info(format("Unegistered MBean '%s' from server", objectName));
+                this.logger.info(format("Unregistered MBean '%s' from server", objectName));
                 
                 if(registeredBeans.contains(objectName))
                     registeredBeans.remove(objectName);
@@ -103,7 +111,7 @@ public class MBeanSupportImpl implements MBeanSupport, RegistryShutdownListener
         
         for (final ObjectName name : this.registeredBeans)
         {
-            unregister(name);
+            doUnregister(name);
         }
 
         this.registeredBeans.clear();
