@@ -41,6 +41,8 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
 
     public static class Bean
     {
+        public static Double PI = 3.14;
+        
         @DataType("fred")
         @Validate("field-value-overridden")
         private int value;
