@@ -29,18 +29,33 @@ class FlowImpl<T> implements Flow<T>
 {
     private final T[] values;
 
+    private final int start, count;
+
+    // Guarded by this
+    private Flow<T> rest;
+
     @SuppressWarnings("unchecked")
     FlowImpl(Collection<T> values)
     {
-        this.values = (T[]) values.toArray();
+        this((T[]) values.toArray());
+    }
+
+    FlowImpl(T[] values)
+    {
+        this(values, 0, values.length);
+    }
+
+    FlowImpl(T[] values, int start, int count)
+    {
+        this.values = values;
+        this.start = start;
+        this.count = count;
     }
 
     public Flow<T> each(Worker<? super T> worker)
     {
-        for (T t : values)
-        {
-            worker.work(t);
-        }
+        for (int i = 0; i < count; i++)
+            worker.work(values[start + i]);
 
         return this;
     }
@@ -54,10 +69,12 @@ class FlowImpl<T> implements Flow<T>
 
         List<T> result = new ArrayList<T>(values.length);
 
-        for (T item : values)
+        for (int i = 0; i < count; i++)
         {
-            if (predicate.accept(item))
-                result.add(item);
+            T value = values[start + i];
+
+            if (predicate.accept(value))
+                result.add(value);
         }
 
         return new FlowImpl<T>(result);
@@ -70,6 +87,7 @@ class FlowImpl<T> implements Flow<T>
         return filter(predicate.invert());
     }
 
+    @SuppressWarnings("unchecked")
     public <X> Flow<X> map(Mapper<T, X> mapper)
     {
         Defense.notNull(mapper, "mapper");
@@ -80,11 +98,12 @@ class FlowImpl<T> implements Flow<T>
             return new FlowImpl<X>(empty);
         }
 
-        List<X> newValues = new ArrayList<X>(values.length);
+        X[] newValues = (X[]) new Object[values.length];
 
-        for (T value : values)
+        for (int i = 0; i < count; i++)
         {
-            newValues.add(mapper.map(value));
+            T value = values[start + i];
+            newValues[i] = mapper.map(value);
         }
 
         return new FlowImpl<X>(newValues);
@@ -96,21 +115,22 @@ class FlowImpl<T> implements Flow<T>
 
         A accumulator = initial;
 
-        for (T value : values)
+        for (int i = 0; i < count; i++)
         {
+            T value = values[start + i];
+
             accumulator = reducer.reduce(accumulator, value);
         }
 
         return accumulator;
     }
 
-    /** Returns the values in the flow as an unmodifiable List. */
     public List<T> toList()
     {
         if (isEmpty())
             return Collections.emptyList();
 
-        return Arrays.asList(values);
+        return Arrays.asList(values).subList(start, start + count);
     }
 
     public Flow<T> reverse()
@@ -127,7 +147,7 @@ class FlowImpl<T> implements Flow<T>
 
     public boolean isEmpty()
     {
-        return values.length == 0;
+        return count == 0;
     }
 
     public Flow<T> concat(Flow<? extends T> other)
@@ -145,7 +165,14 @@ class FlowImpl<T> implements Flow<T>
 
     private List<T> copy()
     {
-        return new ArrayList<T>(Arrays.asList(values));
+        List<T> result = new ArrayList<T>(count);
+
+        for (int i = 0; i < count; i++)
+        {
+            result.add(values[start + i]);
+        }
+
+        return result;
     }
 
     public Flow<T> concat(List<? extends T> list)
@@ -190,6 +217,28 @@ class FlowImpl<T> implements Flow<T>
         // Kind of inefficient but it works.
 
         return toList().iterator();
+    }
+
+    public T first()
+    {
+        return isEmpty() ? null : values[start];
+    }
+
+    public synchronized Flow<T> rest()
+    {
+        if (rest == null)
+            rest = buildRest();
+
+        return rest;
+    }
+
+    private Flow<T> buildRest()
+    {
+        // TODO: A special implementation of an empty FlowImpl would be cool.
+        if (isEmpty())
+            return this;
+
+        return new FlowImpl<T>(values, start + 1, count - 1);
     }
 
 }

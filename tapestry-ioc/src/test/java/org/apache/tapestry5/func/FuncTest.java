@@ -407,4 +407,36 @@ public class FuncTest extends TestUtils
 
         assertEquals(total, 16);
     }
+
+    @Test
+    public void first_of_non_empty_flow()
+    {
+        assertEquals(F.flow("Mary", "had", "a", "little", "lamb").first(), "Mary");
+    }
+
+    @Test
+    public void rest_of_non_empty_flow()
+    {
+        assertListsEquals(F.flow("Mary", "had", "a", "little", "lamb").rest().toList(), "had", "a", "little", "lamb");
+    }
+
+    @Test
+    public void flow_rest_is_cached()
+    {
+        Flow<Integer> flow = F.flow(1, 2, 3);
+
+        assertSame(flow.rest(), flow.rest());
+    }
+
+    @Test
+    public void first_of_empty_is_null()
+    {
+        assertNull(F.flow().first());
+    }
+
+    @Test
+    public void rest_of_empty_is_still_empty_and_not_null()
+    {
+        assertTrue(F.flow().rest().isEmpty());
+    }
 }

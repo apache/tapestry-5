@@ -14,14 +14,11 @@
 
 package org.apache.tapestry5.func;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Functional operations on collections with generics support. Tending to use the equivalent names from
- * Clojure. As with Clojure, all these functions return new lists. Unlike Clojure, there's no guarantee
- * that the lists are immutable, and there isn't built-in laziness.
+ * Clojure. As with Clojure, all these functions return new lists.
  * 
  * @since 5.2.0
  */
@@ -174,18 +171,21 @@ public class F
         };
     };
 
+    /**
+     * Extracts the values from the collection to form a {@link Flow}. The Collection
+     * may change after the Flow is created without affecting the Flow.
+     */
     public static <T> Flow<T> flow(Collection<T> values)
     {
         return new FlowImpl<T>(values);
     }
 
-    public static <T> Flow<T> flow(List<T> values)
-    {
-        return new FlowImpl<T>(values);
-    }
-
+    /**
+     * Creates a new Flow from the values. You should not change the values array
+     * after invoking this method (i.e., no defensive copy of the values is made).
+     */
     public static <T> Flow<T> flow(T... values)
     {
-        return flow(Arrays.asList(values));
+        return new FlowImpl<T>(values);
     }
 }

@@ -19,7 +19,8 @@ import java.util.List;
 
 /**
  * A fluent interface for manipulating collections using map, reduce, filter and remove. Flows are
- * immutable; operations create new flows to replace the old ones.
+ * <strong>immutable</strong>; operations create new Flows rather than change the internal state of
+ * an existing Flow. Using Flows allows for a very fluid interface.
  * <p>
  * A future enhancement may be to make flows lazy.
  * 
@@ -32,7 +33,7 @@ public interface Flow<T> extends Iterable<T>
 
     /**
      * Filters values, keeping only values where the predicate is true, returning a new Flow with just
-     * the remaining values.
+     * the retained values.
      */
     Flow<T> filter(Predicate<? super T> predicate);
 
@@ -71,12 +72,27 @@ public interface Flow<T> extends Iterable<T>
     <V extends T> Flow<T> append(V... values);
 
     /**
-     * Sorts this Flow forming a new Flow.
+     * Sorts this Flow, forming a new Flow.
      * 
      * @throws ClassCastException
      *             if type <T> does not extend {@link Comparable}
      */
     Flow<T> sort();
 
+    /**
+     * Sorts this Flow using the comparator, forming a new Flow.
+     */
     Flow<T> sort(Comparator<? super T> comparator);
+
+    /**
+     * Returns the first value in the Flow. Returns null for empty flows, but remember that null is a valid
+     * value within a flow, so use {@link #isEmpty() to determine if a flow is actually empty.
+     */
+    T first();
+
+    /**
+     * Returns a new Flow containing all but the first value in this Flow. If this Flow has only a single item,
+     * or is empty, this will return an empty Flow.
+     */
+    Flow<T> rest();
 }
