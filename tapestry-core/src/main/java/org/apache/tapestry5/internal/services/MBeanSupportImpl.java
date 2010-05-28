@@ -22,10 +22,10 @@ import java.util.Set;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
-import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
 import org.slf4j.Logger;
 
@@ -34,6 +34,8 @@ public class MBeanSupportImpl implements MBeanSupport, RegistryShutdownListener
     private Logger logger;
 
     private MBeanServer server;
+    
+    private final OneShotLock lock = new OneShotLock();
 
     private final Set<ObjectName> registeredBeans = CollectionFactory.newSet();
 
@@ -57,6 +59,8 @@ public class MBeanSupportImpl implements MBeanSupport, RegistryShutdownListener
 
     public void register(final Object object, final ObjectName objectName)
     {
+        lock.check();
+        
         try
         {
             this.server.registerMBean(object, objectName);
@@ -73,6 +77,8 @@ public class MBeanSupportImpl implements MBeanSupport, RegistryShutdownListener
 
     public void unregister(final ObjectName objectName)
     {
+        lock.check();
+        
         if (this.server.isRegistered(objectName))
         {
             try
@@ -80,6 +86,9 @@ public class MBeanSupportImpl implements MBeanSupport, RegistryShutdownListener
                 this.server.unregisterMBean(objectName);
 
                 this.logger.info(format("Unegistered MBean '%s' from server", objectName));
+                
+                if(registeredBeans.contains(objectName))
+                    registeredBeans.remove(objectName);
             }
             catch (final Exception e)
             {
@@ -90,6 +99,8 @@ public class MBeanSupportImpl implements MBeanSupport, RegistryShutdownListener
 
     public void registryDidShutdown()
     {
+        lock.lock();
+        
         for (final ObjectName name : this.registeredBeans)
         {
             unregister(name);

@@ -25,7 +25,7 @@ public class RemotePoolManagement
     {
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         
-        return server.getAttribute(new ObjectName("org.apache.tapestry5:type=PagePool"), "SoftWait");
+        return server.getAttribute(new ObjectName("org.apache.tapestry5:service=PagePool"), "SoftWait");
     }
 
 }

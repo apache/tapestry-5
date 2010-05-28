@@ -192,7 +192,7 @@ public class InternalModule
 
         updateListenerHub.addUpdateListener(service);
 
-        final ObjectName objectName = buildObjectName("org.apache.tapestry5:type=PagePool");
+        final ObjectName objectName = buildObjectName("org.apache.tapestry5:service=PagePool");
         
         managedBeanSupport.register(service, objectName);
 
