@@ -17,6 +17,7 @@ package org.apache.tapestry5.func;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -49,6 +50,9 @@ class FlowImpl<T> implements Flow<T>
     public Flow<T> filter(Predicate<? super T> predicate)
     {
         Defense.notNull(predicate, "predicate");
+
+        if (isEmpty())
+            return this;
 
         List<T> result = new ArrayList<T>(values.size());
 
@@ -135,10 +139,15 @@ class FlowImpl<T> implements Flow<T>
         if (other.isEmpty())
             return this;
 
-        List<T> newValues = new ArrayList<T>(values);
+        List<T> newValues = copy();
         newValues.addAll(other.toList());
 
         return new FlowImpl<T>(newValues);
+    }
+
+    private List<T> copy()
+    {
+        return new ArrayList<T>(values);
     }
 
     public Flow<T> concat(List<? extends T> list)
@@ -149,6 +158,33 @@ class FlowImpl<T> implements Flow<T>
     public <V extends T> Flow<T> append(V... values)
     {
         return concat(F.flow(values));
+    }
+
+    @SuppressWarnings("unchecked")
+    public Flow<T> sort()
+    {
+        if (values.size() < 2)
+            return this;
+
+        List<Comparable> newValues = (List<Comparable>) copy();
+
+        Collections.sort(newValues);
+
+        return new FlowImpl<T>((List<T>) newValues);
+    }
+
+    public Flow<T> sort(Comparator<? super T> comparator)
+    {
+        Defense.notNull(comparator, "comparator");
+
+        if (values.size() < 2)
+            return this;
+
+        List<T> newValues = copy();
+
+        Collections.sort(newValues, comparator);
+
+        return new FlowImpl<T>(newValues);
     }
 
 }

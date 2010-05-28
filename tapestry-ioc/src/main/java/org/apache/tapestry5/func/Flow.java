@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.func;
 
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -66,5 +67,16 @@ public interface Flow<T>
     /** Returns a new Flow with the values in the list appended to this Flow. */
     Flow<T> concat(List<? extends T> list);
 
+    /** Appends any number of type compatible values to the end of this Flow. */
     <V extends T> Flow<T> append(V... values);
+
+    /**
+     * Sorts this Flow forming a new Flow.
+     * 
+     * @throws ClassCastException
+     *             if type <T> does not extend {@link Comparable}
+     */
+    Flow<T> sort();
+
+    Flow<T> sort(Comparator<? super T> comparator);
 }

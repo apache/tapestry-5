@@ -16,13 +16,15 @@ package org.apache.tapestry5.func;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.ioc.test.TestBase;
+import org.apache.tapestry5.ioc.test.TestUtils;
 import org.testng.annotations.Test;
 
-public class FuncTest extends TestBase
+public class FuncTest extends TestUtils
 {
     private Mapper<String, Integer> stringToLength = new Mapper<String, Integer>()
     {
@@ -212,6 +214,14 @@ public class FuncTest extends TestBase
     }
 
     @Test
+    public void filter_empty_list_is_same()
+    {
+        Flow<Integer> flow = F.flow();
+
+        assertSame(flow.filter(evenp), flow);
+    }
+
+    @Test
     public void combine_predicate_with_and()
     {
         List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
@@ -329,5 +339,57 @@ public class FuncTest extends TestBase
         Flow<Integer> updated = first.append(4, 5, 6);
 
         assertListsEquals(updated.toList(), 1, 2, 3, 4, 5, 6);
+    }
+
+    @Test
+    public void sort_comparable_list()
+    {
+        assertListsEquals(F.flow("fred", "barney", "wilma", "betty").sort().toList(), "barney", "betty", "fred",
+                "wilma");
+    }
+
+    @Test
+    public void sort_a_short_list_returns_same()
+    {
+        Flow<String> zero = F.flow();
+
+        Comparator<String> comparator = new Comparator<String>()
+        {
+            public int compare(String o1, String o2)
+            {
+                return o1.length() - o2.length();
+            }
+        };
+
+        assertSame(zero.sort(), zero);
+        assertSame(zero.sort(comparator), zero);
+
+        Flow<String> one = F.flow("Hello");
+
+        assertSame(one.sort(), one);
+        assertSame(one.sort(comparator), one);
+    }
+
+    @Test
+    public void sort_using_explicit_comparator()
+    {
+        Flow<String> flow = F.flow("a", "eeeee", "ccc", "bb", "dddd");
+        Comparator<String> comparator = new Comparator<String>()
+        {
+            public int compare(String o1, String o2)
+            {
+                return o1.length() - o2.length();
+            }
+        };
+
+        assertListsEquals(flow.sort(comparator).toList(), "a", "bb", "ccc", "dddd", "eeeee");
+    }
+
+    @Test(expectedExceptions = ClassCastException.class)
+    public void unable_to_sort_a_flow_of_non_comparables()
+    {
+        Flow<Locale> flow = F.flow(Locale.ENGLISH, Locale.FRANCE);
+
+        flow.sort();
     }
 }
