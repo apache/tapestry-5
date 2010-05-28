@@ -113,11 +113,42 @@ class FlowImpl<T> implements Flow<T>
 
     public Flow<T> reverse()
     {
+        if (values.size() < 2)
+            return this;
+
         List<T> newValues = CollectionFactory.newList(values);
 
         Collections.reverse(newValues);
 
         return new FlowImpl<T>(newValues);
+    }
+
+    public boolean isEmpty()
+    {
+        return values.isEmpty();
+    }
+
+    public Flow<T> concat(Flow<? extends T> other)
+    {
+        Defense.notNull(other, "other");
+
+        if (other.isEmpty())
+            return this;
+
+        List<T> newValues = new ArrayList<T>(values);
+        newValues.addAll(other.toList());
+
+        return new FlowImpl<T>(newValues);
+    }
+
+    public Flow<T> concat(List<? extends T> list)
+    {
+        return concat(F.flow(list));
+    }
+
+    public <V extends T> Flow<T> append(V... values)
+    {
+        return concat(F.flow(values));
     }
 
 }

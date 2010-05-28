@@ -266,7 +266,8 @@ public class FuncTest extends TestBase
     @Test
     public void reduce()
     {
-        int total = F.flow(F.flow("Mary", "had", "a", "little", "lamb").map(stringToLength).toList()).reduce(F.SUM_INTS, 0);
+        int total = F.flow(F.flow("Mary", "had", "a", "little", "lamb").map(stringToLength).toList()).reduce(
+                F.SUM_INTS, 0);
 
         assertEquals(total, 18);
     }
@@ -277,5 +278,56 @@ public class FuncTest extends TestBase
         int total = F.flow("Mary", "had", "a", "little", "lamb").map(stringToLength).reduce(F.SUM_INTS, 0);
 
         assertEquals(total, 18);
+    }
+
+    @Test
+    public void reverse_a_short_list_is_same_object()
+    {
+        Flow<Integer> empty = F.flow();
+
+        assertSame(empty.reverse(), empty);
+
+        Flow<Integer> one = F.flow(1);
+
+        assertSame(one.reverse(), one);
+    }
+
+    @Test
+    public void concat_flows()
+    {
+        Flow<Integer> first = F.flow(1, 2, 3);
+
+        Flow<Integer> updated = first.concat(F.flow(4, 5, 6));
+
+        assertListsEquals(updated.toList(), 1, 2, 3, 4, 5, 6);
+    }
+
+    @Test
+    public void concat_empty_list_is_same()
+    {
+        Flow<Integer> first = F.flow(1, 2, 3);
+        Flow<Integer> empty = F.flow();
+
+        assertSame(first.concat(empty), first);
+    }
+
+    @Test
+    public void concat_list_onto_flow()
+    {
+        Flow<Integer> first = F.flow(1, 2, 3);
+
+        Flow<Integer> updated = first.concat(Arrays.asList(4, 5, 6));
+
+        assertListsEquals(updated.toList(), 1, 2, 3, 4, 5, 6);
+    }
+
+    @Test
+    public void append_values_onto_flow()
+    {
+        Flow<Integer> first = F.flow(1, 2, 3);
+
+        Flow<Integer> updated = first.append(4, 5, 6);
+
+        assertListsEquals(updated.toList(), 1, 2, 3, 4, 5, 6);
     }
 }

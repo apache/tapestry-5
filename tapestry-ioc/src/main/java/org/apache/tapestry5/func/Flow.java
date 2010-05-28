@@ -56,4 +56,15 @@ public interface Flow<T>
 
     /** Returns a new flow with the same elements but in reverse order. */
     Flow<T> reverse();
+
+    /** Returns true if the Flow contains no values. */
+    boolean isEmpty();
+
+    /** Returns a new Flow with the other Flow's elements appended to this Flow's. */
+    Flow<T> concat(Flow<? extends T> other);
+
+    /** Returns a new Flow with the values in the list appended to this Flow. */
+    Flow<T> concat(List<? extends T> list);
+
+    <V extends T> Flow<T> append(V... values);
 }
