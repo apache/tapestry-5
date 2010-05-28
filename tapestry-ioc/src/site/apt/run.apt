@@ -41,6 +41,16 @@ registry.performRegistryStartup();
   {{{../apidocs/org/apache/tapestry5/ioc/annotations/EagerLoad.html}EagerLoad}} annotation are, in fact,
   loaded.
   
+  As of version 5.2 the class
+  {{{../apidocs/org/apache/tapestry5/ioc/RegistryBuilder.html}RegistryBuilder}}
+  has convenience methods to build and start a Registry. The static method 
+  {{{../apidocs/org/apache/tapestry5/ioc/RegistryBuilder.html#buildAndStartupRegistry(java.lang.Class...)}RegistryBuilder.buildAndStartupRegistry(Class...)}} 
+  constructs a registry, adds a number of modules to the registry and performs registry startup. The returned registry is ready to use.
+  
++---+
+Registry registry = RegistryBuilder.buildAndStartupRegistry(AppModule.class, UtilModule.class);
++---+
+  
 Building the Default Registry
 
   The default registry is available by invoking the static method

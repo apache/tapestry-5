@@ -181,4 +181,49 @@ public final class RegistryBuilder
     {
         return logger;
     }
+    
+    /**
+     * Constructs the registry, adds a {@link ModuleDef} and a number of modules (as module classes) to the registry and 
+     * performs registry startup. The returned registry is ready to use. The caller is must not invoke {@link
+     * org.apache.tapestry5.ioc.Registry#performRegistryStartup()}.
+     * 
+     * @param moduleDef {@link ModuleDef} to add 
+     * @param moduleClasses modules (as module classes) to add
+     * 
+     * @return {@link Registry}
+     * 
+     * @since 5.2.0
+     */
+    public static Registry buildAndStartupRegistry(ModuleDef moduleDef, Class... moduleClasses)
+    {
+        RegistryBuilder builder = new RegistryBuilder();
+        
+        if(moduleDef != null)
+            builder.add(moduleDef);
+        
+        builder.add(moduleClasses);
+        
+        Registry registry = builder.build();
+        
+        registry.performRegistryStartup();
+        
+        return registry;
+    }
+    
+    /**
+     * Constructs the registry, adds a number of modules (as module classes) to the registry and 
+     * performs registry startup. The returned registry is ready to use. The caller is must not invoke {@link
+     * org.apache.tapestry5.ioc.Registry#performRegistryStartup()}.
+     * 
+     * @param moduleDef {@link ModuleDef} to add 
+     * @param moduleClasses modules (as module classes) to add
+     * 
+     * @return {@link Registry}
+     * 
+     * @since 5.2.0
+     */
+    public static Registry buildAndStartupRegistry(Class... moduleClasses)
+    {   
+        return buildAndStartupRegistry(null, moduleClasses);
+    }
 }
