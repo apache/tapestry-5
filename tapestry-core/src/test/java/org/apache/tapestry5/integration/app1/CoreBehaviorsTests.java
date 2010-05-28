@@ -541,6 +541,13 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
                 "An unexpected application exception has occurred.",
                 "A component event handler method returned the value 20. Return type java.lang.Integer can not be handled.",
                 "context:ReturnTypes.tml, line 50");
+        goBack();
+        waitForPageToLoad();
+        
+        clickAndWait("link=http error");
+        assertTextPresent(
+                "HTTP ERROR 410",
+                "Oups! Resource disappeared!");
     }
 
     @Test

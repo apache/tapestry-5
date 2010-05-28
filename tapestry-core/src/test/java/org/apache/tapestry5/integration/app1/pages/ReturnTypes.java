@@ -18,10 +18,13 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
+import org.apache.tapestry5.services.HttpError;
 import org.apache.tapestry5.util.TextStreamResponse;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Tests the various event handler method return types.
@@ -76,5 +79,12 @@ public class ReturnTypes
     Object onActionFromURL() throws MalformedURLException
     {
         return new URL("http://google.com");
+    }
+    
+
+
+    Object onActionFromHttpError()
+    {
+        return new HttpError(HttpServletResponse.SC_GONE, "Oups! Resource disappeared!");
     }
 }

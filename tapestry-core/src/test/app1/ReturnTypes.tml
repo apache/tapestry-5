@@ -52,4 +52,11 @@
     </p>
 
 
+    <p>
+        Test
+        <a t:type="ActionLink" t:id="HttpError">http error</a>
+        return values.
+    </p>
+
+
 </html>

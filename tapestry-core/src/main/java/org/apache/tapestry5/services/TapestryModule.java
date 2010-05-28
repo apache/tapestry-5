@@ -1765,6 +1765,14 @@ public final class TapestryModule
             }
         });
 
+        configuration.add(HttpError.class, new ComponentEventResultProcessor<HttpError>()
+        {
+            public void processResultValue(HttpError value) throws IOException
+            {
+                response.sendError(value.getStatusCode(), value.getMessage());
+            }
+        });
+
         configuration.addInstance(String.class, PageNameComponentEventResultProcessor.class);
 
         configuration.addInstance(Class.class, ClassResultProcessor.class);
