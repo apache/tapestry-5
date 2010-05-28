@@ -15,6 +15,7 @@
 package org.apache.tapestry5.func;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,16 +27,12 @@ import org.apache.tapestry5.ioc.internal.util.Defense;
 
 class FlowImpl<T> implements Flow<T>
 {
-    private final List<T> values;
+    private final T[] values;
 
+    @SuppressWarnings("unchecked")
     FlowImpl(Collection<T> values)
     {
-        this(new ArrayList<T>(values));
-    }
-
-    FlowImpl(List<T> values)
-    {
-        this.values = values;
+        this.values = (T[]) values.toArray();
     }
 
     public Flow<T> each(Worker<? super T> worker)
@@ -55,7 +52,7 @@ class FlowImpl<T> implements Flow<T>
         if (isEmpty())
             return this;
 
-        List<T> result = new ArrayList<T>(values.size());
+        List<T> result = new ArrayList<T>(values.length);
 
         for (T item : values)
         {
@@ -77,13 +74,13 @@ class FlowImpl<T> implements Flow<T>
     {
         Defense.notNull(mapper, "mapper");
 
-        if (values.isEmpty())
+        if (isEmpty())
         {
             List<X> empty = Collections.emptyList();
             return new FlowImpl<X>(empty);
         }
 
-        List<X> newValues = new ArrayList<X>(values.size());
+        List<X> newValues = new ArrayList<X>(values.length);
 
         for (T value : values)
         {
@@ -110,15 +107,15 @@ class FlowImpl<T> implements Flow<T>
     /** Returns the values in the flow as an unmodifiable List. */
     public List<T> toList()
     {
-        if (values.isEmpty())
+        if (isEmpty())
             return Collections.emptyList();
 
-        return Collections.unmodifiableList(values);
+        return Arrays.asList(values);
     }
 
     public Flow<T> reverse()
     {
-        if (values.size() < 2)
+        if (values.length < 2)
             return this;
 
         List<T> newValues = CollectionFactory.newList(values);
@@ -130,7 +127,7 @@ class FlowImpl<T> implements Flow<T>
 
     public boolean isEmpty()
     {
-        return values.isEmpty();
+        return values.length == 0;
     }
 
     public Flow<T> concat(Flow<? extends T> other)
@@ -148,7 +145,7 @@ class FlowImpl<T> implements Flow<T>
 
     private List<T> copy()
     {
-        return new ArrayList<T>(values);
+        return new ArrayList<T>(Arrays.asList(values));
     }
 
     public Flow<T> concat(List<? extends T> list)
@@ -164,7 +161,7 @@ class FlowImpl<T> implements Flow<T>
     @SuppressWarnings("unchecked")
     public Flow<T> sort()
     {
-        if (values.size() < 2)
+        if (values.length < 2)
             return this;
 
         List<Comparable> newValues = (List<Comparable>) copy();
@@ -178,7 +175,7 @@ class FlowImpl<T> implements Flow<T>
     {
         Defense.notNull(comparator, "comparator");
 
-        if (values.size() < 2)
+        if (values.length < 2)
             return this;
 
         List<T> newValues = copy();
