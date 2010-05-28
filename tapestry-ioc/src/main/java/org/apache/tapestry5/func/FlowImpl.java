@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -185,6 +186,13 @@ class FlowImpl<T> implements Flow<T>
         Collections.sort(newValues, comparator);
 
         return new FlowImpl<T>(newValues);
+    }
+
+    public Iterator<T> iterator()
+    {
+        // Kind of inefficient but it works.
+
+        return toList().iterator();
     }
 
 }

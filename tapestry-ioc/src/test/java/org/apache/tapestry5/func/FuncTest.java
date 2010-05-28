@@ -392,4 +392,19 @@ public class FuncTest extends TestUtils
 
         flow.sort();
     }
+
+    @Test
+    public void flows_are_iterable()
+    {
+        Flow<Integer> flow = F.flow(1, 3, 5, 7);
+
+        int total = 0;
+
+        for (int i : flow)
+        {
+            total += i;
+        }
+
+        assertEquals(total, 16);
+    }
 }

@@ -25,7 +25,7 @@ import java.util.List;
  * 
  * @since 5.2.0
  */
-public interface Flow<T>
+public interface Flow<T> extends Iterable<T>
 {
     /** Maps a Flow into a new Flow with different type values. */
     <X> Flow<X> map(Mapper<T, X> mapper);
