@@ -110,7 +110,7 @@
         <repository>
             <id>jboss</id>
             <name>JBoss</name>
-            <url>http://repository.jboss.org/maven2</url>
+            <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
         </repository>
     </repositories>
 
