@@ -136,6 +136,11 @@
         </developer>
     </developers>
 
+    <ciManagement>
+	<system>hudson</system>
+	<url>http://hudson.zones.apache.org/hudson/view/Tapestry/</url>
+    </ciManagement>
+
     <mailingLists>
         <mailingList>
             <name>Tapestry User List</name>
@@ -423,7 +428,7 @@
     <distributionManagement>
         <site>
             <id>tapestry</id>
-            <url>scpexe://people.apache.org/www/tapestry.apache.org/tapestry5.1/</url>
+            <url>scpexe://people.apache.org/www/tapestry.apache.org/tapestry5.2-dev/</url>
         </site>
     </distributionManagement>
 
