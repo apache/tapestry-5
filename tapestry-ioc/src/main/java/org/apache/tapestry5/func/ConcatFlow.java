@@ -22,6 +22,7 @@ package org.apache.tapestry5.func;
  */
 class ConcatFlow<T> extends AbstractFlow<T>
 {
+    // All instance variables are guarded by this
     private Flow<T> firstFlow;
 
     private Flow<T> secondFlow;

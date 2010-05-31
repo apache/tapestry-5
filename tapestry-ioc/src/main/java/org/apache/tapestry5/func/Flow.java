@@ -36,6 +36,12 @@ public interface Flow<T> extends Iterable<T>
     <X> Flow<X> map(Mapper<T, X> mapper);
 
     /**
+     * Given a {@link Mapper} that maps a T to a Flow<X>, this method will lazily concatenate
+     * all the output flows into a single Flow<X>.
+     */
+    <X> Flow<X> mapcat(Mapper<T, Flow<X>> mapper);
+
+    /**
      * Filters values, keeping only values where the predicate is true, returning a new Flow with just
      * the retained values.
      */

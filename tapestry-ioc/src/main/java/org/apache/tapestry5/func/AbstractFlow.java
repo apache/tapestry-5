@@ -140,6 +140,22 @@ abstract class AbstractFlow<T> implements Flow<T>
         return accumulator;
     }
 
+    public <X> Flow<X> mapcat(Mapper<T, Flow<X>> mapper)
+    {
+        Flow<Flow<X>> flows = map(mapper);
+
+        if (flows.isEmpty())
+            return F.emptyFlow();
+
+        return flows.rest().reduce(new Reducer<Flow<X>, Flow<X>>()
+        {
+            public Flow<X> reduce(Flow<X> accumulator, Flow<X> value)
+            {
+                return accumulator.concat(value);
+            }
+        }, flows.first());
+    }
+
     public Flow<T> remove(Predicate<? super T> predicate)
     {
         Defense.notNull(predicate, "predicate");

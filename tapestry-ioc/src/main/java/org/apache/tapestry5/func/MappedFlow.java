@@ -24,6 +24,7 @@ class MappedFlow<T, X> extends AbstractFlow<X>
     private final Mapper<T, X> mapper;
 
     // Used to determine first, rest
+    // Guarded by this
     private Flow<T> mappedFlow;
 
     // Guarded by this

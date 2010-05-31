@@ -588,4 +588,36 @@ public class FuncTest extends TestUtils
             }
         }, initial), initial);
     }
+
+    private Mapper<Integer, Flow<Integer>> sequencer = new Mapper<Integer, Flow<Integer>>()
+    {
+
+        public Flow<Integer> map(Integer value)
+        {
+            Flow<Integer> flow = F.flow();
+
+            for (int i = 0; i < value; i++)
+                flow = flow.append(value);
+
+            return flow;
+        }
+    };
+
+    @Test
+    public void mapcat_on_empty_flow_is_empty()
+    {
+        Flow<Integer> flow = F.flow();
+
+        assertSame(flow.mapcat(sequencer), flow);
+
+        assertTrue(filteredEmpty.mapcat(sequencer).isEmpty());
+    }
+
+    @Test
+    public void mapcat()
+    {
+        Flow<Integer> flow = F.flow(3, 1, 2);
+
+        assertListsEquals(flow.mapcat(sequencer).toList(), 3, 3, 3, 1, 2, 2);
+    }
 }

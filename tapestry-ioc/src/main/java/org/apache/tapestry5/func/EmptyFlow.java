@@ -59,10 +59,9 @@ class EmptyFlow<T> extends AbstractFlow<T>
     }
 
     /** Does nothing; returns this empty list (as a Flow<X>). */
-    @SuppressWarnings("unchecked")
     public <X> Flow<X> map(Mapper<T, X> mapper)
     {
-        return (Flow<X>) this;
+        return F.emptyFlow();
     }
 
     /** Does nothing; returns the initial value. */
@@ -100,6 +99,11 @@ class EmptyFlow<T> extends AbstractFlow<T>
     public Flow<T> concat(Flow<? extends T> other)
     {
         return (Flow<T>) other;
+    }
+
+    public <X> Flow<X> mapcat(Mapper<T, Flow<X>> mapper)
+    {
+        return F.emptyFlow();
     }
 
 }
