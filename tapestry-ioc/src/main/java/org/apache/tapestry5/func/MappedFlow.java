@@ -35,6 +35,9 @@ class MappedFlow<T, X> extends AbstractFlow<X>
     // Guarded by this
     private Flow<X> rest;
 
+    // Guarded by this
+    private boolean empty;
+
     public MappedFlow(Mapper<T, X> mapper, Flow<T> mappedFlow)
     {
         this.mapper = mapper;
@@ -48,9 +51,11 @@ class MappedFlow<T, X> extends AbstractFlow<X>
         return first;
     }
 
-    public boolean isEmpty()
+    public synchronized boolean isEmpty()
     {
-        return false;
+        resolve();
+
+        return empty;
     }
 
     public synchronized Flow<X> rest()
@@ -65,16 +70,17 @@ class MappedFlow<T, X> extends AbstractFlow<X>
         if (resolved)
             return;
 
-        // The mappedFlow should never be empty
-
-        first = mapper.map(mappedFlow.first());
-
-        Flow<T> mappedRest = mappedFlow.rest();
-
-        if (mappedRest.isEmpty())
+        if (mappedFlow.isEmpty())
+        {
+            empty = true;
             rest = F.emptyFlow();
+        }
         else
-            rest = new MappedFlow<T, X>(mapper, mappedRest);
+        {
+            first = mapper.map(mappedFlow.first());
+
+            rest = new MappedFlow<T, X>(mapper, mappedFlow.rest());
+        }
 
         mappedFlow = null;
 

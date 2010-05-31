@@ -17,6 +17,7 @@ package org.apache.tapestry5.func;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -26,6 +27,7 @@ import org.testng.annotations.Test;
 
 public class FuncTest extends TestUtils
 {
+
     private Mapper<String, Integer> stringToLength = new Mapper<String, Integer>()
     {
         public Integer map(String input)
@@ -49,6 +51,8 @@ public class FuncTest extends TestUtils
             return object.longValue() % 2 == 0;
         };
     };
+
+    private Flow<Integer> filteredEmpty = F.flow(1, 3, 5, 7).filter(evenp);
 
     @Test
     public void map()
@@ -113,6 +117,35 @@ public class FuncTest extends TestUtils
         F.flow(source).each(worker);
 
         assertEquals(buffer.toString(), "Mary had a little lamb");
+    }
+
+    @Test
+    public void each_on_non_array_flow()
+    {
+        List<String> source = Arrays.asList("Mary", "had", "a", "little", "lamb");
+
+        final StringBuffer buffer = new StringBuffer();
+
+        Worker<String> worker = new Worker<String>()
+        {
+            public void work(String value)
+            {
+                if (buffer.length() > 0)
+                    buffer.append(" ");
+
+                buffer.append(value);
+            }
+        };
+
+        F.flow(source).filter(new Predicate<String>()
+        {
+            public boolean accept(String object)
+            {
+                return object.contains("a");
+            }
+        }).each(worker);
+
+        assertEquals(buffer.toString(), "Mary had a lamb");
     }
 
     @Test
@@ -430,5 +463,129 @@ public class FuncTest extends TestUtils
     public void rest_of_empty_is_still_empty_and_not_null()
     {
         assertTrue(F.flow().rest().isEmpty());
+    }
+
+    @Test
+    public void list_of_empty_flow_is_empty()
+    {
+        assertTrue(filteredEmpty.isEmpty());
+        assertSame(filteredEmpty.toList(), Collections.EMPTY_LIST);
+    }
+
+    @Test
+    public void operations_on_empty_list_yield_empty()
+    {
+        assertSame(filteredEmpty.reverse(), F.EMPTY_FLOW);
+        assertSame(filteredEmpty.sort(), F.EMPTY_FLOW);
+        assertSame(filteredEmpty.sort(new Comparator<Integer>()
+        {
+            public int compare(Integer o1, Integer o2)
+            {
+                unreachable();
+
+                return 0;
+            }
+        }), F.EMPTY_FLOW);
+    }
+
+    @Test
+    public void sort_non_array_flow()
+    {
+        assertListsEquals(filteredEmpty.append(7, 3, 9).sort().toList(), 3, 7, 9);
+    }
+
+    @Test
+    public void reverse_non_array_flow()
+    {
+        assertListsEquals(filteredEmpty.append(1, 2, 3).reverse().toList(), 3, 2, 1);
+    }
+
+    @Test(expectedExceptions = UnsupportedOperationException.class)
+    public void remove_on_flow_iterator_is_not_supported()
+    {
+        Flow<Integer> flow = F.flow(1, 2, 3).filter(evenp);
+
+        Iterator<Integer> it = flow.iterator();
+
+        assertTrue(it.hasNext());
+        assertEquals(it.next(), new Integer(2));
+
+        it.remove();
+    }
+
+    @Test
+    public void sort_with_comparator_on_non_array_flow()
+    {
+        Flow<String> flow = F.flow("Mary", "had", "a", "little", "lamb");
+
+        List<String> result = flow.filter(new Predicate<String>()
+        {
+            public boolean accept(String object)
+            {
+                return object.contains("a");
+            }
+        }).sort(new Comparator<String>()
+        {
+            public int compare(String o1, String o2)
+            {
+                return o1.length() - o2.length();
+
+            };
+        }).toList();
+
+        assertListsEquals(result, "a", "had", "Mary", "lamb");
+    }
+
+    @Test
+    public void map_of_filtered_empty_is_empty()
+    {
+        assertTrue(filteredEmpty.map(new Mapper<Integer, Integer>()
+        {
+            public Integer map(Integer value)
+            {
+                unreachable();
+
+                return value;
+            }
+        }).isEmpty());
+    }
+
+    @Test
+    public void each_on_empty_flow()
+    {
+        Flow<Integer> flow = F.emptyFlow();
+
+        assertSame(flow.each(new Worker<Integer>()
+        {
+            public void work(Integer value)
+            {
+                unreachable();
+            }
+        }), flow);
+    }
+
+    @Test
+    public void remove_on_empty_flow()
+    {
+        Flow<Integer> flow = F.emptyFlow();
+
+        assertSame(flow.remove(evenp), flow);
+    }
+
+    @Test
+    public void reduce_on_empty_flow()
+    {
+        Flow<Integer> flow = F.emptyFlow();
+        Integer initial = 99;
+
+        assertSame(flow.reduce(new Reducer<Integer, Integer>()
+        {
+            public Integer reduce(Integer accumulator, Integer value)
+            {
+                unreachable();
+
+                return null;
+            }
+        }, initial), initial);
     }
 }

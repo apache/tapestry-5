@@ -43,12 +43,9 @@ abstract class AbstractFlow<T> implements Flow<T>
     {
         List<T> result = new ArrayList<T>();
 
-        Flow<T> current = flow;
-
-        while (!current.isEmpty())
+        for (T value : flow)
         {
-            result.add(current.first());
-            current = current.rest();
+            result.add(value);
         }
 
         return result;
@@ -102,11 +99,11 @@ abstract class AbstractFlow<T> implements Flow<T>
     /** Subclasses may override this for efficiency. */
     public Flow<T> each(Worker<? super T> worker)
     {
-        Flow<T> cursor = this;
-        while (!cursor.isEmpty())
+        Defense.notNull(worker, "worker");
+
+        for (T value : this)
         {
-            worker.work(cursor.first());
-            cursor = cursor.rest();
+            worker.work(value);
         }
 
         return this;
@@ -152,16 +149,25 @@ abstract class AbstractFlow<T> implements Flow<T>
 
     public Flow<T> reverse()
     {
+        if (isEmpty())
+            return F.emptyFlow();
+
         return new ArrayFlow<T>(this).reverse();
     }
 
     public Flow<T> sort()
     {
+        if (isEmpty())
+            return F.emptyFlow();
+
         return new ArrayFlow<T>(this).sort();
     }
 
     public Flow<T> sort(Comparator<? super T> comparator)
     {
+        if (isEmpty())
+            return F.emptyFlow();
+
         return new ArrayFlow<T>(this).sort(comparator);
     }
 

@@ -24,7 +24,8 @@ import java.util.Collection;
  */
 public class F
 {
-    private final static Flow<?> EMPTY_FLOW = new EmptyFlow();
+    @SuppressWarnings("unchecked")
+    final static Flow<?> EMPTY_FLOW = new EmptyFlow();
 
     @SuppressWarnings("unchecked")
     static <T> Flow<T> emptyFlow()
