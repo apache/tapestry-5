@@ -44,7 +44,7 @@
             <item name="Release Notes" href="release-notes.html"/>
             <item name="Component Reference" href="tapestry-core/ref/"/>
             <item name="JavaDocs" href="apidocs/"/>
-            <item name="Nightly Docs" href="http://tapestry.formos.com/nightly/tapestry5/"/>
+            <item name="Nightly Docs" href="http://tapestry.apache.org/tapestry5.2-dev/"/>
             <item name="Issues" href="https://issues.apache.org/jira/browse/TAP5"/>
             <item name="FAQ" href="faq/general.html"/>
             <item name="Refcard" href="http://refcardz.dzone.com/refcardz/apache-tapestry-50?oid=hom7545"/>
