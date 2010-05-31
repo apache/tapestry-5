@@ -30,25 +30,25 @@ import org.apache.tapestry5.ioc.internal.util.Defense;
  */
 abstract class AbstractFlow<T> implements Flow<T>
 {
-    private <X> X nyi()
-    {
-        throw new RuntimeException("Not yet implemented.");
-    }
-
     /**
      * Method limited to just AbstractFlow and its subclasses. Forces a resolve of the entire Flow,
      * and results in a mutable list of the values in the flow.
      */
-    List<T> toMutableList()
+    protected List<T> toMutableList()
     {
-        ArrayList<T> result = new ArrayList<T>();
+        return toMutableList(this);
+    }
 
-        Flow<T> cursor = this;
+    protected static <T> List<T> toMutableList(Flow<T> flow)
+    {
+        List<T> result = new ArrayList<T>();
 
-        while (!cursor.isEmpty())
+        Flow<T> current = flow;
+
+        while (!current.isEmpty())
         {
-            result.add(cursor.first());
-            cursor = cursor.rest();
+            result.add(current.first());
+            current = current.rest();
         }
 
         return result;
@@ -152,17 +152,17 @@ abstract class AbstractFlow<T> implements Flow<T>
 
     public Flow<T> reverse()
     {
-        return nyi();
+        return new ArrayFlow<T>(this).reverse();
     }
 
     public Flow<T> sort()
     {
-        return nyi();
+        return new ArrayFlow<T>(this).sort();
     }
 
     public Flow<T> sort(Comparator<? super T> comparator)
     {
-        return nyi();
+        return new ArrayFlow<T>(this).sort(comparator);
     }
 
     public List<T> toList()

@@ -39,6 +39,12 @@ class ArrayFlow<T> extends AbstractFlow<T>
     // Guarded by this
     private Flow<T> rest;
 
+    /** Creates an ArrayFlow from the values in the other flow. */
+    ArrayFlow(Flow<T> flow)
+    {
+        this(toMutableList(flow));
+    }
+
     @SuppressWarnings("unchecked")
     ArrayFlow(Collection<T> values)
     {
@@ -55,8 +61,6 @@ class ArrayFlow<T> extends AbstractFlow<T>
         this.values = values;
         this.start = start;
         this.count = count;
-
-        assert count > 0;
     }
 
     public Flow<T> each(Worker<? super T> worker)
@@ -105,7 +109,7 @@ class ArrayFlow<T> extends AbstractFlow<T>
         return false;
     }
 
-    List<T> toMutableList()
+    protected List<T> toMutableList()
     {
         List<T> result = new ArrayList<T>(count);
 
@@ -146,8 +150,6 @@ class ArrayFlow<T> extends AbstractFlow<T>
 
     public Iterator<T> iterator()
     {
-        // Kind of inefficient but it works.
-
         return toList().iterator();
     }
 
@@ -171,5 +173,4 @@ class ArrayFlow<T> extends AbstractFlow<T>
 
         return new ArrayFlow<T>(values, start + 1, count - 1);
     }
-
 }
