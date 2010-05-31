@@ -24,6 +24,14 @@ import java.util.Collection;
  */
 public class F
 {
+    private final static Flow<?> EMPTY_FLOW = new EmptyFlow();
+
+    @SuppressWarnings("unchecked")
+    static <T> Flow<T> emptyFlow()
+    {
+        return (Flow<T>) EMPTY_FLOW;
+    }
+
     public static Predicate<Number> eq(final long value)
     {
         return new Predicate<Number>()
@@ -177,6 +185,9 @@ public class F
      */
     public static <T> Flow<T> flow(Collection<T> values)
     {
+        if (values.isEmpty())
+            return emptyFlow();
+
         return new ArrayFlow<T>(values);
     }
 
@@ -186,6 +197,9 @@ public class F
      */
     public static <T> Flow<T> flow(T... values)
     {
+        if (values.length == 0)
+            return emptyFlow();
+
         return new ArrayFlow<T>(values);
     }
 }

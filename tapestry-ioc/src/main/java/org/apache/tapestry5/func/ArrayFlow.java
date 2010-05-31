@@ -27,8 +27,10 @@ import org.apache.tapestry5.ioc.internal.util.Defense;
 
 /**
  * Implementation of {@link Flow} based on an internal array of objects.
+ * 
+ * @since 5.2.0
  */
-class ArrayFlow<T> implements Flow<T>
+class ArrayFlow<T> extends AbstractFlow<T>
 {
     private final T[] values;
 
@@ -53,6 +55,8 @@ class ArrayFlow<T> implements Flow<T>
         this.values = values;
         this.start = start;
         this.count = count;
+
+        assert count > 0;
     }
 
     public Flow<T> each(Worker<? super T> worker)
@@ -61,55 +65,6 @@ class ArrayFlow<T> implements Flow<T>
             worker.work(values[start + i]);
 
         return this;
-    }
-
-    public Flow<T> filter(Predicate<? super T> predicate)
-    {
-        Defense.notNull(predicate, "predicate");
-
-        if (isEmpty())
-            return this;
-
-        List<T> result = new ArrayList<T>(values.length);
-
-        for (int i = 0; i < count; i++)
-        {
-            T value = values[start + i];
-
-            if (predicate.accept(value))
-                result.add(value);
-        }
-
-        return new ArrayFlow<T>(result);
-    }
-
-    public Flow<T> remove(Predicate<? super T> predicate)
-    {
-        Defense.notNull(predicate, "predicate");
-
-        return filter(predicate.invert());
-    }
-
-    @SuppressWarnings("unchecked")
-    public <X> Flow<X> map(Mapper<T, X> mapper)
-    {
-        Defense.notNull(mapper, "mapper");
-
-        if (isEmpty())
-        {
-            List<X> empty = Collections.emptyList();
-            return new ArrayFlow<X>(empty);
-        }
-
-        X[] newValues = (X[]) new Object[values.length];
-
-        for (int i = 0; i < count; i++)
-        {
-            T value = values[start + i];
-            newValues[i] = mapper.map(value);
-        }
-
-        return new ArrayFlow<X>(newValues);
     }
 
     public <A> A reduce(Reducer<A, T> reducer, A initial)
@@ -130,9 +85,6 @@ class ArrayFlow<T> implements Flow<T>
 
     public List<T> toList()
     {
-        if (isEmpty())
-            return Collections.emptyList();
-
         return Arrays.asList(values).subList(start, start + count);
     }
 
@@ -150,23 +102,10 @@ class ArrayFlow<T> implements Flow<T>
 
     public boolean isEmpty()
     {
-        return count == 0;
+        return false;
     }
 
-    public Flow<T> concat(Flow<? extends T> other)
-    {
-        Defense.notNull(other, "other");
-
-        if (other.isEmpty())
-            return this;
-
-        List<T> newValues = copy();
-        newValues.addAll(other.toList());
-
-        return new ArrayFlow<T>(newValues);
-    }
-
-    private List<T> copy()
+    List<T> toMutableList()
     {
         List<T> result = new ArrayList<T>(count);
 
@@ -178,23 +117,13 @@ class ArrayFlow<T> implements Flow<T>
         return result;
     }
 
-    public Flow<T> concat(List<? extends T> list)
-    {
-        return concat(F.flow(list));
-    }
-
-    public <V extends T> Flow<T> append(V... values)
-    {
-        return concat(F.flow(values));
-    }
-
     @SuppressWarnings("unchecked")
     public Flow<T> sort()
     {
         if (values.length < 2)
             return this;
 
-        List<Comparable> newValues = (List<Comparable>) copy();
+        List<Comparable> newValues = (List<Comparable>) toMutableList();
 
         Collections.sort(newValues);
 
@@ -208,7 +137,7 @@ class ArrayFlow<T> implements Flow<T>
         if (values.length < 2)
             return this;
 
-        List<T> newValues = copy();
+        List<T> newValues = toMutableList();
 
         Collections.sort(newValues, comparator);
 
@@ -224,7 +153,7 @@ class ArrayFlow<T> implements Flow<T>
 
     public T first()
     {
-        return isEmpty() ? null : values[start];
+        return values[start];
     }
 
     public synchronized Flow<T> rest()
@@ -237,9 +166,8 @@ class ArrayFlow<T> implements Flow<T>
 
     private Flow<T> buildRest()
     {
-        // TODO: A special implementation of an empty FlowImpl would be cool.
-        if (isEmpty())
-            return this;
+        if (count < 2)
+            return F.emptyFlow();
 
         return new ArrayFlow<T>(values, start + 1, count - 1);
     }

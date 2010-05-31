@@ -15,10 +15,10 @@
 package org.apache.tapestry5.func;
 
 /**
- * An operational function used with a collection.
+ * An operational function used with a {@link Flow}.
  * 
  * @since 5.2.0
- * @see F#each(Worker, java.util.Collection)
+ * @see Flow#each(Worker)
  */
 public abstract class Worker<T>
 {
@@ -29,7 +29,7 @@ public abstract class Worker<T>
 
     /**
      * Combines this worker with the other worker, forming a new composite worker. In the composite,
-     * the value passed first to this worker, then to the other worker.
+     * the value from the Flow is passed first to this worker, then to the other worker.
      */
     public Worker<T> combine(final Worker<? super T> other)
     {

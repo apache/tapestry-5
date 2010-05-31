@@ -23,8 +23,8 @@ import org.apache.tapestry5.ioc.internal.util.Defense;
  * The {@link F} class includes a number of Predicate factory methods.
  * 
  * @since 5.2.0
- * @see F#filter(Predicate, java.util.List)
- * @see F#remove(Predicate, java.util.List)
+ * @see Flow#filter(Predicate)
+ * @see Flow#remove(Predicate)
  */
 public abstract class Predicate<T>
 {

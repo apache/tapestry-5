@@ -18,11 +18,15 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * A fluent interface for manipulating collections using map, reduce, filter and remove. Flows are
- * <strong>immutable</strong>; operations create new Flows rather than change the internal state of
- * an existing Flow. Using Flows allows for a very fluid interface.
+ * A Flow is a a functional interface for working with a ordered collection of values.
+ * A given Flow contains only values of a particular type. Standard operations allow for
+ * filtering the Flow, or appending values to the Flow. Since Flows are immutable, all operations
+ * on Flows return new immutable Flows. Flows are thread safe (to the extent that the {@link Mapper}s, {@link Predicate}
+ * s, {@link Worker}s and {@link Reducer}s are).
+ * Flows are <em>lazy</em>: filtering, mapping, and concatenating Flows will do so with no, or a minimum, of evaluation.
+ * However, converting a Flow into a {@link List} will force a realization of the entire Flow.
  * <p>
- * A future enhancement may be to make flows lazy.
+ * Using Flows allows for a very fluid interface.
  * 
  * @since 5.2.0
  */

@@ -214,14 +214,6 @@ public class FuncTest extends TestUtils
     }
 
     @Test
-    public void filter_empty_list_is_same()
-    {
-        Flow<Integer> flow = F.flow();
-
-        assertSame(flow.filter(evenp), flow);
-    }
-
-    @Test
     public void combine_predicate_with_and()
     {
         List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
@@ -313,12 +305,12 @@ public class FuncTest extends TestUtils
     }
 
     @Test
-    public void concat_empty_list_is_same()
+    public void concat_onto_empty_list()
     {
-        Flow<Integer> first = F.flow(1, 2, 3);
         Flow<Integer> empty = F.flow();
+        Flow<Integer> flow = F.flow(1, 2, 3);
 
-        assertSame(first.concat(empty), first);
+        assertSame(empty.concat(flow), flow);
     }
 
     @Test

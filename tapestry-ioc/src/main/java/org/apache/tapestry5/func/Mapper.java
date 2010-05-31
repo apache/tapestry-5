@@ -15,9 +15,8 @@
 package org.apache.tapestry5.func;
 
 /**
- * Base class used with {@link F#map(Mapper, java.util.Collection)} and {@link Flow#map(Mapper)} to
- * define how objects
- * are mapped from one type
+ * Base class used with {@link Flow#map(Mapper)} to
+ * define how Flow values are mapped from one type
  * to another (or otherwise transformed).
  * 
  * @since 5.2.0
