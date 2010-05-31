@@ -25,7 +25,10 @@ import java.util.List;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 
-class FlowImpl<T> implements Flow<T>
+/**
+ * Implementation of {@link Flow} based on an internal array of objects.
+ */
+class ArrayFlow<T> implements Flow<T>
 {
     private final T[] values;
 
@@ -35,17 +38,17 @@ class FlowImpl<T> implements Flow<T>
     private Flow<T> rest;
 
     @SuppressWarnings("unchecked")
-    FlowImpl(Collection<T> values)
+    ArrayFlow(Collection<T> values)
     {
         this((T[]) values.toArray());
     }
 
-    FlowImpl(T[] values)
+    ArrayFlow(T[] values)
     {
         this(values, 0, values.length);
     }
 
-    FlowImpl(T[] values, int start, int count)
+    ArrayFlow(T[] values, int start, int count)
     {
         this.values = values;
         this.start = start;
@@ -77,7 +80,7 @@ class FlowImpl<T> implements Flow<T>
                 result.add(value);
         }
 
-        return new FlowImpl<T>(result);
+        return new ArrayFlow<T>(result);
     }
 
     public Flow<T> remove(Predicate<? super T> predicate)
@@ -95,7 +98,7 @@ class FlowImpl<T> implements Flow<T>
         if (isEmpty())
         {
             List<X> empty = Collections.emptyList();
-            return new FlowImpl<X>(empty);
+            return new ArrayFlow<X>(empty);
         }
 
         X[] newValues = (X[]) new Object[values.length];
@@ -106,7 +109,7 @@ class FlowImpl<T> implements Flow<T>
             newValues[i] = mapper.map(value);
         }
 
-        return new FlowImpl<X>(newValues);
+        return new ArrayFlow<X>(newValues);
     }
 
     public <A> A reduce(Reducer<A, T> reducer, A initial)
@@ -142,7 +145,7 @@ class FlowImpl<T> implements Flow<T>
 
         Collections.reverse(newValues);
 
-        return new FlowImpl<T>(newValues);
+        return new ArrayFlow<T>(newValues);
     }
 
     public boolean isEmpty()
@@ -160,7 +163,7 @@ class FlowImpl<T> implements Flow<T>
         List<T> newValues = copy();
         newValues.addAll(other.toList());
 
-        return new FlowImpl<T>(newValues);
+        return new ArrayFlow<T>(newValues);
     }
 
     private List<T> copy()
@@ -195,7 +198,7 @@ class FlowImpl<T> implements Flow<T>
 
         Collections.sort(newValues);
 
-        return new FlowImpl<T>((List<T>) newValues);
+        return new ArrayFlow<T>((List<T>) newValues);
     }
 
     public Flow<T> sort(Comparator<? super T> comparator)
@@ -209,7 +212,7 @@ class FlowImpl<T> implements Flow<T>
 
         Collections.sort(newValues, comparator);
 
-        return new FlowImpl<T>(newValues);
+        return new ArrayFlow<T>(newValues);
     }
 
     public Iterator<T> iterator()
@@ -238,7 +241,7 @@ class FlowImpl<T> implements Flow<T>
         if (isEmpty())
             return this;
 
-        return new FlowImpl<T>(values, start + 1, count - 1);
+        return new ArrayFlow<T>(values, start + 1, count - 1);
     }
 
 }

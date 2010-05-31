@@ -177,7 +177,7 @@ public class F
      */
     public static <T> Flow<T> flow(Collection<T> values)
     {
-        return new FlowImpl<T>(values);
+        return new ArrayFlow<T>(values);
     }
 
     /**
@@ -186,6 +186,6 @@ public class F
      */
     public static <T> Flow<T> flow(T... values)
     {
-        return new FlowImpl<T>(values);
+        return new ArrayFlow<T>(values);
     }
 }
