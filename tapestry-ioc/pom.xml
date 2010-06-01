@@ -24,6 +24,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.tapestry</groupId>
+            <artifactId>tapestry-func</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
             <groupId>javassist</groupId>
             <artifactId>javassist</artifactId>
             <version>3.9.0.GA</version>
