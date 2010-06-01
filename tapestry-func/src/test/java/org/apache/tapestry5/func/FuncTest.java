@@ -21,11 +21,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.ioc.test.TestUtils;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class FuncTest extends TestUtils
+public class FuncTest extends Assert
 {
 
     private Mapper<String, Integer> stringToLength = new Mapper<String, Integer>()
@@ -54,11 +53,20 @@ public class FuncTest extends TestUtils
 
     private Flow<Integer> filteredEmpty = F.flow(1, 3, 5, 7).filter(evenp);
 
+    private <T> void assertListsEquals(List<T> actual, T... expected)
+    {
+        assertEquals(actual, Arrays.asList(expected));
+    }
+
+    private void unreachable()
+    {
+        throw new RuntimeException("Should not be reachable.");
+    }
+
     @Test
     public void map()
     {
         List<String> source = Arrays.asList("Mary", "had", "a", "little", "lamb");
-        Defense.notNull(source, "source");
 
         List<Integer> lengths = F.flow(source).map(stringToLength).toList();
 
@@ -89,7 +97,6 @@ public class FuncTest extends TestUtils
     public void map_empty_collection_is_the_empty_list()
     {
         List<String> source = Arrays.asList();
-        Defense.notNull(source, "source");
 
         List<Integer> lengths = F.flow(source).map(stringToLength).toList();
 

@@ -22,8 +22,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-
 /**
  * Implementation of {@link Flow} based on an internal array of objects.
  * 
@@ -96,7 +94,9 @@ class ArrayFlow<T> extends AbstractFlow<T>
         if (values.length < 2)
             return this;
 
-        List<T> newValues = CollectionFactory.newList(values);
+        List<T> newValues = new ArrayList<T>();
+
+        newValues.addAll(Arrays.asList(values));
 
         Collections.reverse(newValues);
 
