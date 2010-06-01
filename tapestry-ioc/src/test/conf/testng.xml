@@ -17,11 +17,6 @@
       <package name="org.apache.tapestry5.ioc.util"/>
     </packages>
   </test>
-  <test name="Functional Programming Library">
-    <packages>
-      <package name="org.apache.tapestry5.func"/>
-    </packages>
-  </test>
   <test name="Internals">
     <packages>
       <package name="org.apache.tapestry5.ioc.internal"/>
