@@ -20,8 +20,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.tapestry5.ioc.internal.util.Defense;
-
 /**
  * Abstract base class for implementations of {@link Flow}. Subclasses typically override some methods
  * for either efficiency, or for the concern they embrace.
@@ -99,7 +97,7 @@ abstract class AbstractFlow<T> implements Flow<T>
     /** Subclasses may override this for efficiency. */
     public Flow<T> each(Worker<? super T> worker)
     {
-        Defense.notNull(worker, "worker");
+        assert worker != null;
 
         for (T value : this)
         {
@@ -111,21 +109,21 @@ abstract class AbstractFlow<T> implements Flow<T>
 
     public Flow<T> filter(Predicate<? super T> predicate)
     {
-        Defense.notNull(predicate, "predicate");
+        assert predicate != null;
 
         return new FilteredFlow<T>(predicate, this);
     }
 
     public <X> Flow<X> map(Mapper<T, X> mapper)
     {
-        Defense.notNull(mapper, "mapper");
+        assert mapper != null;
 
         return new MappedFlow<T, X>(mapper, this);
     }
 
     public <A> A reduce(Reducer<A, T> reducer, A initial)
     {
-        Defense.notNull(reducer, "reducer");
+        assert reducer != null;
 
         A accumulator = initial;
 
@@ -158,7 +156,7 @@ abstract class AbstractFlow<T> implements Flow<T>
 
     public Flow<T> remove(Predicate<? super T> predicate)
     {
-        Defense.notNull(predicate, "predicate");
+        assert predicate != null;
 
         return filter(predicate.invert());
     }

@@ -33,6 +33,8 @@ public abstract class Worker<T>
      */
     public Worker<T> combine(final Worker<? super T> other)
     {
+        assert other != null;
+
         final Worker<T> first = this;
 
         return new Worker<T>()

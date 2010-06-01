@@ -126,6 +126,10 @@ public class F
     public static <S, T> Mapper<S, T> select(final Predicate<? super S> predicate, final Mapper<S, T> ifAccepted,
             final Mapper<S, T> ifRejected)
     {
+        assert predicate != null;
+        assert ifAccepted != null;
+        assert ifRejected != null;
+
         return new Mapper<S, T>()
         {
             public T map(S input)
@@ -170,6 +174,8 @@ public class F
     /** Allows a Mapper that maps to boolean to be used as a Predicate. */
     public static <S> Predicate<S> toPredicate(final Mapper<S, Boolean> mapper)
     {
+        assert mapper != null;
+
         return new Predicate<S>()
         {
             public boolean accept(S object)
@@ -193,6 +199,8 @@ public class F
      */
     public static <T> Flow<T> flow(Collection<T> values)
     {
+        assert values != null;
+
         if (values.isEmpty())
             return emptyFlow();
 

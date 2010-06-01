@@ -32,6 +32,8 @@ public abstract class Mapper<S, T>
      */
     public final <X> Mapper<S, X> combine(final Mapper<T, X> other)
     {
+        assert other != null;
+        
         final Mapper<S, T> stMapper = this;
 
         return new Mapper<S, X>()

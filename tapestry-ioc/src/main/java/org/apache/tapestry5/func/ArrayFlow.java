@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 
 /**
  * Implementation of {@link Flow} based on an internal array of objects.
@@ -73,7 +72,7 @@ class ArrayFlow<T> extends AbstractFlow<T>
 
     public <A> A reduce(Reducer<A, T> reducer, A initial)
     {
-        Defense.notNull(reducer, "reducer");
+        assert reducer != null;
 
         A accumulator = initial;
 
@@ -136,7 +135,7 @@ class ArrayFlow<T> extends AbstractFlow<T>
 
     public Flow<T> sort(Comparator<? super T> comparator)
     {
-        Defense.notNull(comparator, "comparator");
+        assert comparator != null;
 
         if (values.length < 2)
             return this;

@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.func;
 
-import org.apache.tapestry5.ioc.internal.util.Defense;
 
 /**
  * Used when filtering a collection of objects of a given type; the predicate is passed
@@ -40,7 +39,7 @@ public abstract class Predicate<T>
      */
     public final Predicate<T> and(final Predicate<? super T> other)
     {
-        Defense.notNull(other, "other");
+        assert other != null;
 
         final Predicate<T> left = this;
 
@@ -59,7 +58,7 @@ public abstract class Predicate<T>
      */
     public final Predicate<T> or(final Predicate<? super T> other)
     {
-        Defense.notNull(other, "other");
+        assert other != null;
 
         final Predicate<T> left = this;
 
