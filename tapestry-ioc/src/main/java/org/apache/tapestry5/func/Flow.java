@@ -22,11 +22,13 @@ import java.util.List;
  * A given Flow contains only values of a particular type. Standard operations allow for
  * filtering the Flow, or appending values to the Flow. Since Flows are immutable, all operations
  * on Flows return new immutable Flows. Flows are thread safe (to the extent that the {@link Mapper}s, {@link Predicate}
- * s, {@link Worker}s and {@link Reducer}s are).
+ * s, {@link Worker}s and {@link Reducer}s applied to the Flow are).
  * Flows are <em>lazy</em>: filtering, mapping, and concatenating Flows will do so with no, or a minimum, of evaluation.
  * However, converting a Flow into a {@link List} will force a realization of the entire Flow.
  * <p>
  * Using Flows allows for a very fluid interface.
+ * <p>
+ * Flows are initially created using {@link F#flow(java.util.Collection)} or {@link F#flow(Object...)}.
  * 
  * @since 5.2.0
  */
@@ -52,37 +54,44 @@ public interface Flow<T> extends Iterable<T>
 
     /**
      * Applies a Reducer to the values of the Flow. The Reducer is passed the initial value
-     * and the first value from the flow. The result is captured as the accumulator and passed
-     * to the Reducer with the next value from the flow, and so on. The final accumulator
+     * and the first value from the Flow. The result is captured as the accumulator and passed
+     * to the Reducer with the next value from the Flow, and so on. The final accumulator
      * value is returned. If the flow is empty, the initial value is returned.
+     * <p>
+     * Reducing is a non-lazy operation; it will fully realize the values of the Flow.
      */
     <A> A reduce(Reducer<A, T> reducer, A initial);
 
     /**
      * Applies the worker to each value in the Flow, then returns the flow for further behaviors.
+     * <p>
+     * Each is a non-lazy operation; it will fully realize the values of the Flow.
      */
     Flow<T> each(Worker<? super T> worker);
 
-    /** Converts the Flow into an unmodifiable list of values. */
+    /**
+     * Converts the Flow into an unmodifiable list of values. This is a non-lazy operation that will fully realize
+     * the values of the Flow.
+     */
     List<T> toList();
 
     /** Returns a new flow with the same elements but in reverse order. */
     Flow<T> reverse();
 
-    /** Returns true if the Flow contains no values. */
+    /** Returns true if the Flow contains no values. This <em>may</em> realize the first value in the Flow. */
     boolean isEmpty();
 
-    /** Returns a new Flow with the other Flow's elements appended to this Flow's. */
+    /** Returns a new Flow with the other Flow's elements appended to this Flow's. This is a lazy operation. */
     Flow<T> concat(Flow<? extends T> other);
 
-    /** Returns a new Flow with the values in the list appended to this Flow. */
+    /** Returns a new Flow with the values in the list appended to this Flow. This is a lazy operation. */
     Flow<T> concat(List<? extends T> list);
 
-    /** Appends any number of type compatible values to the end of this Flow. */
+    /** Appends any number of type compatible values to the end of this Flow. This is a lazy operation. */
     <V extends T> Flow<T> append(V... values);
 
     /**
-     * Sorts this Flow, forming a new Flow.
+     * Sorts this Flow, forming a new Flow. This is a non-lazy operation; it will fully realize the values of the Flow.
      * 
      * @throws ClassCastException
      *             if type <T> does not extend {@link Comparable}
@@ -90,13 +99,15 @@ public interface Flow<T> extends Iterable<T>
     Flow<T> sort();
 
     /**
-     * Sorts this Flow using the comparator, forming a new Flow.
+     * Sorts this Flow using the comparator, forming a new Flow. This is a non-lazy operation; it will fully realize the
+     * values of the Flow.
      */
     Flow<T> sort(Comparator<? super T> comparator);
 
     /**
      * Returns the first value in the Flow. Returns null for empty flows, but remember that null is a valid
-     * value within a flow, so use {@link #isEmpty() to determine if a flow is actually empty.
+     * value within a flow, so use {@link #isEmpty() to determine if a flow is actually empty. The first value can be
+     * realized without realizing the full Flow.
      */
     T first();
 

@@ -17,8 +17,15 @@ package org.apache.tapestry5.func;
 import java.util.Collection;
 
 /**
- * Functional operations on collections with generics support. Tending to use the equivalent names from
- * Clojure. As with Clojure, all these functions return new lists.
+ * Functional operations on collections with generics support. The core interface is {@link Flow} to which operations
+ * and transformations
+ * (in terms of {@link Predicate}s, {@link Mapper}s and {@link Reducer}s) to create new Flows. Flows are initially
+ * created
+ * using {@link #flow(Collection)} and {@link #flow(Object...)}.
+ * <p>
+ * F will be used a bit, thus it has a short name (for those who don't like static imports). It provides a base set of
+ * Predicate, Mapper and Reducer factories. A good development pattern for applications is to provide a similar,
+ * application-specific, set of such factories.
  * 
  * @since 5.2.0
  */
@@ -160,7 +167,7 @@ public class F
         };
     }
 
-    /** Allows Mapper that maps to boolean to be used as a Predicate. */
+    /** Allows a Mapper that maps to boolean to be used as a Predicate. */
     public static <S> Predicate<S> toPredicate(final Mapper<S, Boolean> mapper)
     {
         return new Predicate<S>()
