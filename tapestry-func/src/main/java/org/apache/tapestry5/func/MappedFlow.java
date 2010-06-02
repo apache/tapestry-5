@@ -87,4 +87,15 @@ class MappedFlow<T, X> extends AbstractFlow<X>
 
         resolved = true;
     }
+
+    public synchronized int count()
+    {
+        if (resolved) { 
+            return empty ? 0 : 1 + rest.count(); }
+
+        // Not yet resolved, so mappedFlow is still valid. Mapping never changes the count, thus:
+
+        return mappedFlow.count();
+    }
+
 }

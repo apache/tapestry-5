@@ -106,4 +106,9 @@ class EmptyFlow<T> extends AbstractFlow<T>
         return F.emptyFlow();
     }
 
+    public int count()
+    {
+        return 0;
+    }
+
 }

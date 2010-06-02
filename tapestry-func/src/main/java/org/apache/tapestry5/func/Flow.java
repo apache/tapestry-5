@@ -116,4 +116,10 @@ public interface Flow<T> extends Iterable<T>
      * or is empty, this will return an empty Flow.
      */
     Flow<T> rest();
+
+    /**
+     * Returns the number of values in the Flow. This forces the realization of much of the Flow (i.e., because
+     * each value will need to be passed through any {@link Predicate}s).
+     */
+    int count();
 }

@@ -192,4 +192,10 @@ abstract class AbstractFlow<T> implements Flow<T>
 
         return Collections.unmodifiableList(toMutableList());
     }
+
+    public int count()
+    {
+        return isEmpty() ? 0 : 1 + rest().count();
+    }
+
 }

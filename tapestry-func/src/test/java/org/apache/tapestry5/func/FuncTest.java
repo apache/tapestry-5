@@ -627,4 +627,47 @@ public class FuncTest extends Assert
 
         assertListsEquals(flow.mapcat(sequencer).toList(), 3, 3, 3, 1, 2, 2);
     }
+
+    @Test
+    public void count_of_the_empty_flow_is_zero()
+    {
+        assertEquals(F.flow().count(), 0);
+    }
+
+    @Test
+    public void count_of_array_flow()
+    {
+        assertEquals(F.flow(1, 2, 3).count(), 3);
+    }
+
+    @Test
+    public void count_of_a_mapped_flow_before_and_after_realization()
+    {
+        Flow<Integer> flow = F.flow("Mary", "had", "a", "little", "lamb").map(stringToLength);
+
+        assertEquals(flow.count(), 5);
+
+        assertEquals(flow.first(), (Integer) 4);
+
+        assertEquals(flow.count(), 5);
+    }
+
+    @Test
+    public void count_of_a_filtered_flow()
+    {
+        Flow<String> flow = F.flow("Mary", "had", "a", "little", "lamb");
+
+        assertEquals(flow.filter(F.isNull()).count(), 0);
+        assertEquals(flow.filter(F.notNull()).count(), 5);
+    }
+
+    @Test
+    public void count_of_a_mapped_filtered_empty_flow()
+    {
+        Flow<Integer> flow = F.flow("Mary", "had", "etc.").filter(F.isNull()).map(stringToLength);
+
+        assertTrue(flow.isEmpty());
+        assertEquals(flow.count(), 0);
+    }
+
 }

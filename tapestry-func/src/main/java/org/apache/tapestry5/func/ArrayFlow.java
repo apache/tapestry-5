@@ -172,4 +172,10 @@ class ArrayFlow<T> extends AbstractFlow<T>
 
         return new ArrayFlow<T>(values, start + 1, count - 1);
     }
+
+    public int count()
+    {
+        return count;
+    }
+
 }

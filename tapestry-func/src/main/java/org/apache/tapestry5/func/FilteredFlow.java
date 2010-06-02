@@ -82,7 +82,7 @@ class FilteredFlow<T> extends AbstractFlow<T>
             if (cursor.isEmpty())
             {
                 empty = true;
-                rest = cursor;
+                rest = F.emptyFlow();
                 break;
             }
 
