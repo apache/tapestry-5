@@ -1,10 +1,10 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,9 +14,12 @@
 package org.apache.tapestry5.urlrewriter;
 
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.linktransform.LinkTransformer;
 
 /**
  * Defines an URL rewriting rule. It is executed before any Tapestry request processing is done.
+ * 
+ * @deprecated Use {@link LinkTransformer} instead
  */
 public interface URLRewriterRule
 {
@@ -30,7 +33,7 @@ public interface URLRewriterRule
      *            a {@link org.apache.tapestry5.services.Request}.
      * @return request a {@link org.apache.tapestry5.services.Request}.
      */
-    Request process(Request request,URLRewriteContext context);
+    Request process(Request request, URLRewriteContext context);
 
     RewriteRuleApplicability applicability();
 }

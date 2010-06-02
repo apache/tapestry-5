@@ -1,10 +1,10 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,10 +16,14 @@ package org.apache.tapestry5.urlrewriter;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.services.DelegatingRequest;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.linktransform.LinkTransformer;
 
 /**
  * Class that wraps a {@linkplain Request}. It delegates all methods except ones related to URL
  * rewriting.
+ * 
+ * @deprecated To be removed in 5.3.
+ * @see LinkTransformer
  */
 public class SimpleRequestWrapper extends DelegatingRequest
 {
@@ -40,7 +44,7 @@ public class SimpleRequestWrapper extends DelegatingRequest
      */
     public SimpleRequestWrapper(Request request, String serverName, String path)
     {
-        
+
         super(request);
         Defense.notNull(serverName, "serverName");
         Defense.notNull(path, "path");
@@ -59,10 +63,11 @@ public class SimpleRequestWrapper extends DelegatingRequest
      * @param path
      *            a {@link String}. It cannot be null.
      */
-    public SimpleRequestWrapper(Request request, String path) {
-        
+    public SimpleRequestWrapper(Request request, String path)
+    {
+
         super(request);
-        
+
         Defense.notNull(request, "request");
         final String serverName = request.getServerName();
         Defense.notNull(serverName, "serverName");
@@ -70,9 +75,9 @@ public class SimpleRequestWrapper extends DelegatingRequest
 
         this.serverName = serverName;
         this.path = path;
-        
+
     }
-    
+
     @Override
     public String getPath()
     {

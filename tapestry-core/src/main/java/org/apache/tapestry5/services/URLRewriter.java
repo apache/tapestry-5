@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.services;
 
+import org.apache.tapestry5.services.linktransform.LinkTransformer;
 import org.apache.tapestry5.urlrewriter.URLRewriteContext;
 
 
@@ -22,6 +23,7 @@ import org.apache.tapestry5.urlrewriter.URLRewriteContext;
  *
  *
  * @since 5.1.0.2
+ * @deprecated Use {@link LinkTransformer} instead
  */
 public interface URLRewriter
 {
