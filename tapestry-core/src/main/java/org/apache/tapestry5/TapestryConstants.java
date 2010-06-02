@@ -14,6 +14,10 @@
 
 package org.apache.tapestry5;
 
+import org.apache.tapestry5.internal.structure.PageResetListener;
+import org.apache.tapestry5.runtime.PageLifecycleListener;
+import org.apache.tapestry5.services.ComponentEventLinkEncoder;
+
 /**
  * Constants needed by end-user classes.
  * 
@@ -27,5 +31,21 @@ public class TapestryConstants
      * Template files are well-formed XML files.
      */
     public static final String TEMPLATE_EXTENSION = "tml";
+
+    /**
+     * Name of query parameter that is placed on "loopback" links (page render links for the same
+     * page). This mostly includes the redirects sent after a component event request. Page render
+     * requests
+     * that do <em>not</em> have the LOOPBACK query parameter will trigger a {@linkplain PageResetListener reset
+     * notification} after the initialization event; the
+     * LOOPBACK
+     * prevents this reset notification.
+     * 
+     * @since 5.2.0
+     * @see ComponentEventLinkEncoder#createPageRenderLink(org.apache.tapestry5.services.PageRenderRequestParameters)
+     * @see ComponentEventLinkEncoder#decodePageRenderRequest(org.apache.tapestry5.services.Request)
+     * @see PageResetListener
+     */
+    public static final String PAGE_LOOPBACK_PARAMETER_NAME = "t:lb";
 
 }

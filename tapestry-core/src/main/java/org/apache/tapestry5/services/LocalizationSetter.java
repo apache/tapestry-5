@@ -63,6 +63,15 @@ public interface LocalizationSetter
     List<Locale> getSupportedLocales();
 
     /**
+     * Checks to see if the indicated locale name is a supported locale name (that may have been
+     * incorporated into a request path). This is an important part of
+     * {@linkplain ComponentEventLinkEncoder#decodePageRenderRequest(Request) decoding a request}.
+     * 
+     * @since 5.2.0
+     */
+    boolean isSupportedLocaleName(String localeName);
+
+    /**
      * Returns the supported locales packaged as a model. The label for each locale comes from
      * {@link Locale#getDisplayName(Locale)} (in that locale).
      * 

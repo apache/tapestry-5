@@ -124,7 +124,7 @@ public class LocalizationSetterImpl implements LocalizationSetter
 
     public boolean setLocaleFromLocaleName(String localeName)
     {
-        boolean supported = supportedLocaleNames.contains(localeName);
+        boolean supported = isSupportedLocaleName(localeName);
 
         if (supported)
         {
@@ -161,7 +161,7 @@ public class LocalizationSetterImpl implements LocalizationSetter
 
         while (true)
         {
-            if (supportedLocaleNames.contains(localeName))
+            if (isSupportedLocaleName(localeName))
                 return toLocale(localeName);
 
             localeName = stripTerm(localeName);
@@ -185,17 +185,21 @@ public class LocalizationSetterImpl implements LocalizationSetter
         return supportedLocales;
     }
 
+    public boolean isSupportedLocaleName(String localeName)
+    {
+        return supportedLocaleNames.contains(localeName);
+    }
+
     public SelectModel getSupportedLocalesModel()
     {
         List<OptionModel> options = CollectionFactory.newList();
-        
+
         for (Locale l : supportedLocales)
         {
             options.add(new OptionModelImpl(l.getDisplayName(l), l));
         }
-        
+
         return new SelectModelImpl(null, options);
     }
-    
-    
+
 }

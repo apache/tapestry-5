@@ -18,6 +18,7 @@ import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -125,7 +126,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         Link link = new LinkImpl(builder.toString(), baseURL == null, false, response, optimizer);
 
         if (parameters.isLoopback())
-            link.addParameter(InternalConstants.LOOPBACK, "t");
+            link.addParameter(TapestryConstants.PAGE_LOOPBACK_PARAMETER_NAME, "t");
 
         return link;
     }
@@ -342,7 +343,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
         String canonicalized = componentClassResolver.canonicalizePageName(pageName);
 
-        boolean loopback = request.getParameter(InternalConstants.LOOPBACK) != null;
+        boolean loopback = request.getParameter(TapestryConstants.PAGE_LOOPBACK_PARAMETER_NAME) != null;
 
         return new PageRenderRequestParameters(canonicalized, activationContext, loopback);
     }

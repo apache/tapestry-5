@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.internal;
 
-import org.apache.tapestry5.internal.structure.PageResetListener;
 import org.apache.tapestry5.ioc.util.TimeInterval;
 import org.apache.tapestry5.services.javascript.JavascriptStack;
 
@@ -51,19 +50,6 @@ public final class InternalConstants
      * is encoded into the URL, and the containing page is tacked on as this query parameter.
      */
     public static final String CONTAINER_PAGE_NAME = "t:cp";
-
-    /**
-     * Name of query parameter that is placed on "loopback" links (page render links for the same
-     * page). This mostly includes the redirects sent after a component event request. Page render
-     * requests
-     * that do <em>not</em> have the LOOPBACK query parameter will trigger a {@linkplain PageResetListener reset
-     * notification} after the initialization event; the
-     * LOOPBACK
-     * prevents this reset notification.
-     * 
-     * @since 5.2.0
-     */
-    public static final String LOOPBACK = "t:lb";
 
     public static final String OBJECT_RENDER_DIV_SECTION = "t-env-data-section";
 

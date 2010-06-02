@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,14 +15,15 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.internal.structure.PageResetListener;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 
 /**
  * Used with {@link org.apache.tapestry5.services.PageRenderRequestHandler} and
  * {@link org.apache.tapestry5.services.PageRenderRequestFilter} to define the logical page name and
- * activation context for the
- * request.
+ * activation context for the request.
  */
 public class PageRenderRequestParameters
 {
@@ -30,6 +31,7 @@ public class PageRenderRequestParameters
 
     private final EventContext activationContext;
 
+    /** @since 5.2.0 */
     private final boolean loopback;
 
     /** @deprecated Use {@link #PageRenderRequestParameters(String, EventContext, boolean)  */
@@ -38,8 +40,8 @@ public class PageRenderRequestParameters
         this(logicalPageName, activationContext, false);
     }
 
-    public PageRenderRequestParameters(String logicalPageName, EventContext activationContext,
-            boolean loopback)
+    /** @since 5.2.0 */
+    public PageRenderRequestParameters(String logicalPageName, EventContext activationContext, boolean loopback)
     {
         Defense.notNull(logicalPageName, "logicalPageName");
         Defense.notNull(activationContext, "activationContext");
@@ -50,8 +52,8 @@ public class PageRenderRequestParameters
     }
 
     /**
-     * Returns a {@linkplain ComponentClassResolver#canonicalizePageName(String) canonicalized}
-     * version of the page name.
+     * Returns a {@linkplain ComponentClassResolver#canonicalizePageName(String) canonicalized} version of the page
+     * name.
      */
     public String getLogicalPageName()
     {
@@ -82,6 +84,8 @@ public class PageRenderRequestParameters
      * Is this request a loopback (a request for the same page that rendered it in the first place)?
      * 
      * @since 5.2.0
+     * @see TapestryConstants#PAGE_LOOPBACK_PARAMETER_NAME
+     * @see PageResetListener
      */
     public boolean isLoopback()
     {

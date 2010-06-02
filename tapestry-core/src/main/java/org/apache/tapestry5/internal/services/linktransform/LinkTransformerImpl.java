@@ -18,6 +18,7 @@ import org.apache.tapestry5.Link;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.apache.tapestry5.services.PageRenderRequestParameters;
+import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.linktransform.ComponentEventLinkTransformer;
 import org.apache.tapestry5.services.linktransform.LinkTransformer;
 import org.apache.tapestry5.services.linktransform.PageRenderLinkTransformer;
@@ -41,9 +42,19 @@ public class LinkTransformerImpl implements LinkTransformer
         return or(componentEventLinkTransformer.transformComponentEventLink(defaultLink, parameters), defaultLink);
     }
 
-    public Link tranformPageRenderLink(Link defaultLink, PageRenderRequestParameters parameters)
+    public Link transformPageRenderLink(Link defaultLink, PageRenderRequestParameters parameters)
     {
-        return or(pageRenderLinkTransformer.tranformPageRenderLink(defaultLink, parameters), defaultLink);
+        return or(pageRenderLinkTransformer.transformPageRenderLink(defaultLink, parameters), defaultLink);
+    }
+
+    public ComponentEventRequestParameters decodeComponentEventRequest(Request request)
+    {
+        return componentEventLinkTransformer.decodeComponentEventRequest(request);
+    }
+
+    public PageRenderRequestParameters decodePageRenderRequest(Request request)
+    {
+        return pageRenderLinkTransformer.decodePageRenderRequest(request);
     }
 
     private Link or(Link left, Link right)

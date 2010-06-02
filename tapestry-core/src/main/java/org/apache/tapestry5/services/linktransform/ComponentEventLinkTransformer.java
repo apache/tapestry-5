@@ -15,12 +15,17 @@
 package org.apache.tapestry5.services.linktransform;
 
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.internal.services.ComponentEventDispatcher;
 import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
+import org.apache.tapestry5.services.LocalizationSetter;
+import org.apache.tapestry5.services.Request;
 
 /**
  * Allows for selective replacement of the default {@link Link} used to represent a component event request.
  * This is a service, but also the contribution to the service, as a chain of command.
+ * <p>
+ * This transformer follows the same pattern as {@link PageRenderLinkTransformer}.
  * 
  * @since 5.2.0
  */
@@ -37,4 +42,19 @@ public interface ComponentEventLinkTransformer
      * @return a replacement Link, or null
      */
     Link transformComponentEventLink(Link defaultLink, ComponentEventRequestParameters parameters);
+
+    /**
+     * Attempts to decode the page render request, to perform the opposite action for
+     * {@link #transformComponentEventLink(Link, ComponentEventRequestParameters)}. The transformer
+     * is also responsible for identifying the locale in the request (as part of the path, or as a
+     * query parameter or cookie) and setting the locale for the request.
+     * <p>
+     * This method will be invoked from the {@link ComponentEventDispatcher} and a non-null value returned from this
+     * method will prevent the default {@link ComponentEventLinkEncoder#decodeComponentEventRequest(Request)} method
+     * from being invoked.
+     * 
+     * @return decoded parameters, or null to proceed normally
+     * @see LocalizationSetter#setLocaleFromLocaleName(String)
+     */
+    ComponentEventRequestParameters decodeComponentEventRequest(Request request);
 }

@@ -15,8 +15,8 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.internal.EmptyEventContext;
-import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.ComponentClassResolver;
@@ -213,7 +213,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
     {
         Request request = mockRequest();
 
-        train_getParameter(request, InternalConstants.LOOPBACK, isLoopback ? "t" : null);
+        train_getParameter(request, TapestryConstants.PAGE_LOOPBACK_PARAMETER_NAME, isLoopback ? "t" : null);
 
         return request;
     }

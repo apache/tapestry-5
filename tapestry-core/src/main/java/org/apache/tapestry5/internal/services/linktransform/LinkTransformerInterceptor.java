@@ -47,17 +47,27 @@ public class LinkTransformerInterceptor implements ComponentEventLinkEncoder
 
     public Link createPageRenderLink(PageRenderRequestParameters parameters)
     {
-        return linkTransformer.tranformPageRenderLink(delegate.createPageRenderLink(parameters), parameters);
+        return linkTransformer.transformPageRenderLink(delegate.createPageRenderLink(parameters), parameters);
     }
 
     public ComponentEventRequestParameters decodeComponentEventRequest(Request request)
     {
-        return delegate.decodeComponentEventRequest(request);
+        ComponentEventRequestParameters parameters = linkTransformer.decodeComponentEventRequest(request);
+
+        if (parameters == null)
+            parameters = delegate.decodeComponentEventRequest(request);
+
+        return parameters;
     }
 
     public PageRenderRequestParameters decodePageRenderRequest(Request request)
     {
-        return delegate.decodePageRenderRequest(request);
+        PageRenderRequestParameters parameters = linkTransformer.decodePageRenderRequest(request);
+
+        if (parameters == null)
+            parameters = delegate.decodePageRenderRequest(request);
+
+        return parameters;
     }
 
 }
