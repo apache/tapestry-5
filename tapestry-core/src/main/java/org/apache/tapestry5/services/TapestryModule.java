@@ -80,6 +80,8 @@ import org.apache.tapestry5.internal.services.javascript.CoreJavascriptStack;
 import org.apache.tapestry5.internal.services.javascript.DateFieldStack;
 import org.apache.tapestry5.internal.services.javascript.JavascriptStackPathConstructor;
 import org.apache.tapestry5.internal.services.javascript.JavascriptStackSourceImpl;
+import org.apache.tapestry5.internal.services.linktransform.LinkTransformerImpl;
+import org.apache.tapestry5.internal.services.linktransform.LinkTransformerInterceptor;
 import org.apache.tapestry5.internal.services.messages.PropertiesFileParserImpl;
 import org.apache.tapestry5.internal.services.meta.ContentTypeExtractor;
 import org.apache.tapestry5.internal.services.meta.MetaAnnotationExtractor;
@@ -115,6 +117,10 @@ import org.apache.tapestry5.services.javascript.JavascriptStack;
 import org.apache.tapestry5.services.javascript.JavascriptStackSource;
 import org.apache.tapestry5.services.javascript.JavascriptSupport;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
+import org.apache.tapestry5.services.linktransform.AssetLinkTransformer;
+import org.apache.tapestry5.services.linktransform.ComponentEventLinkTransformer;
+import org.apache.tapestry5.services.linktransform.LinkTransformer;
+import org.apache.tapestry5.services.linktransform.PageRenderLinkTransformer;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 import org.apache.tapestry5.services.messages.PropertiesFileParser;
 import org.apache.tapestry5.services.meta.FixedExtractor;
@@ -381,6 +387,7 @@ public final class TapestryModule
         binder.bind(JavascriptStackSource.class, JavascriptStackSourceImpl.class);
         binder.bind(TranslatorAlternatesSource.class, TranslatorAlternatesSourceImpl.class);
         binder.bind(MetaWorker.class, MetaWorkerImpl.class);
+        binder.bind(LinkTransformer.class, LinkTransformerImpl.class);
     }
 
     // ========================================================================
@@ -2940,5 +2947,52 @@ public final class TapestryModule
         configuration
                 .add("Page", new PageTemplateLocator(contextAssetFactory.getRootResource(), componentClassResolver),
                         "after:Default");
+    }
+
+    /**
+     * Builds {@link AssetLinkTransformer} service as a chain of command.
+     * 
+     * @since 5.2.0
+     */
+    @Marker(Primary.class)
+    public AssetLinkTransformer buildAssetLinkTransformer(List<AssetLinkTransformer> configuration)
+    {
+        return chainBuilder.build(AssetLinkTransformer.class, configuration);
+    }
+
+    /**
+     * Builds {@link ComponentEventLinkTransformer} service as a chain of command.
+     * 
+     * @since 5.2.0
+     */
+    @Marker(Primary.class)
+    public ComponentEventLinkTransformer buildComponentEventLinkTransformer(
+            List<ComponentEventLinkTransformer> configuration)
+    {
+        return chainBuilder.build(ComponentEventLinkTransformer.class, configuration);
+    }
+
+    /**
+     * Builds {@link PageRenderLinkTransformer} service as a chain of command.
+     * 
+     * @since 5.2.0
+     */
+    @Marker(Primary.class)
+    public PageRenderLinkTransformer buildPageRenderLinkTransformer(List<PageRenderLinkTransformer> configuration)
+    {
+        return chainBuilder.build(PageRenderLinkTransformer.class, configuration);
+    }
+
+    /**
+     * Provides the "LinkTransformer" interceptor for the {@link ComponentEventLinkEncoder} service. Other decorations
+     * should come after LinkTransformer.
+     * 
+     * @since 5.2.0
+     */
+    @Match("ComponentEventLinkEncoder")
+    public ComponentEventLinkEncoder decorateLinkTransformer(LinkTransformer linkTransformer,
+            ComponentEventLinkEncoder delegate)
+    {
+        return new LinkTransformerInterceptor(linkTransformer, delegate);
     }
 }
