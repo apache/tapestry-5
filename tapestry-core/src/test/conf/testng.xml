@@ -106,6 +106,16 @@
     </classes>
   </test>
 
+  <test name="LinkTransformer Tests" enabled="true">
+    <parameter name="tapestry.web-app-folder" value="src/test/linktrans"/>
+    <packages>
+      <package name="org.apache.tapestry5.integration.linktrans"/>
+    </packages>
+    <classes>
+      <class name="org.apache.tapestry5.test.SeleniumLauncher"/>
+    </classes>
+  </test>
+
   <test name="PageTester Tests" enabled="true">
     <packages>
       <package name="org.apache.tapestry5.integration.pagetester"/>
