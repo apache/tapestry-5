@@ -15,12 +15,11 @@
 package org.apache.tapestry5.services.linktransform;
 
 /**
- * A facade around {@link AssetLinkTransformer}, {@link ComponentEventLinkTransformer} and
- * {@link PageRenderLinkTransformer}.
+ * A facade around {@link ComponentEventLinkTransformer} and {@link PageRenderLinkTransformer}.
  * 
  * @since 5.2.0
  */
-public interface LinkTransformer extends AssetLinkTransformer, ComponentEventLinkTransformer, PageRenderLinkTransformer
+public interface LinkTransformer extends ComponentEventLinkTransformer, PageRenderLinkTransformer
 {
 
 }

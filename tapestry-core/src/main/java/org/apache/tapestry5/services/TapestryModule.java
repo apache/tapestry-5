@@ -117,7 +117,6 @@ import org.apache.tapestry5.services.javascript.JavascriptStack;
 import org.apache.tapestry5.services.javascript.JavascriptStackSource;
 import org.apache.tapestry5.services.javascript.JavascriptSupport;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
-import org.apache.tapestry5.services.linktransform.AssetLinkTransformer;
 import org.apache.tapestry5.services.linktransform.ComponentEventLinkTransformer;
 import org.apache.tapestry5.services.linktransform.LinkTransformer;
 import org.apache.tapestry5.services.linktransform.PageRenderLinkTransformer;
@@ -2947,17 +2946,6 @@ public final class TapestryModule
         configuration
                 .add("Page", new PageTemplateLocator(contextAssetFactory.getRootResource(), componentClassResolver),
                         "after:Default");
-    }
-
-    /**
-     * Builds {@link AssetLinkTransformer} service as a chain of command.
-     * 
-     * @since 5.2.0
-     */
-    @Marker(Primary.class)
-    public AssetLinkTransformer buildAssetLinkTransformer(List<AssetLinkTransformer> configuration)
-    {
-        return chainBuilder.build(AssetLinkTransformer.class, configuration);
     }
 
     /**

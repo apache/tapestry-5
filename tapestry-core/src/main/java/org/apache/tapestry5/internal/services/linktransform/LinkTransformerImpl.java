@@ -14,37 +14,26 @@
 
 package org.apache.tapestry5.internal.services.linktransform;
 
-import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.apache.tapestry5.services.PageRenderRequestParameters;
-import org.apache.tapestry5.services.linktransform.AssetLinkTransformer;
 import org.apache.tapestry5.services.linktransform.ComponentEventLinkTransformer;
 import org.apache.tapestry5.services.linktransform.LinkTransformer;
 import org.apache.tapestry5.services.linktransform.PageRenderLinkTransformer;
 
 public class LinkTransformerImpl implements LinkTransformer
 {
-    private final AssetLinkTransformer assetLinkTransformer;
-
     private final ComponentEventLinkTransformer componentEventLinkTransformer;
 
     private final PageRenderLinkTransformer pageRenderLinkTransformer;
 
     public LinkTransformerImpl(@Primary
-    AssetLinkTransformer assetLinkTransformer, @Primary
     ComponentEventLinkTransformer componentEventLinkTransformer, @Primary
     PageRenderLinkTransformer pageRenderLinkTransformer)
     {
-        this.assetLinkTransformer = assetLinkTransformer;
         this.componentEventLinkTransformer = componentEventLinkTransformer;
         this.pageRenderLinkTransformer = pageRenderLinkTransformer;
-    }
-
-    public Link transformAssetLink(Link defaultLink, Asset asset, String assetPath)
-    {
-        return or(assetLinkTransformer.transformAssetLink(defaultLink, asset, assetPath), defaultLink);
     }
 
     public Link transformComponentEventLink(Link defaultLink, ComponentEventRequestParameters parameters)
