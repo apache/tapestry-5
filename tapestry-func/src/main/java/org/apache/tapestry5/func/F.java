@@ -100,6 +100,17 @@ public class F
         return isNull.invert();
     }
 
+    public static <T> Mapper<T, String> stringValueOf()
+    {
+        return new Mapper<T, String>()
+        {
+            public String map(T value)
+            {
+                return String.valueOf(value);
+            };
+        };
+    }
+
     /** Returns a Mapper that ignores its input value and always returns a predetermined result. */
     public static <S, T> Mapper<S, T> always(final T fixedResult)
     {

@@ -670,4 +670,12 @@ public class FuncTest extends Assert
         assertEquals(flow.count(), 0);
     }
 
+    @Test
+    public void toString_mapper()
+    {
+        Flow<Integer> flow = F.flow(1, 2, 3);
+
+        assertListsEquals(flow.map(F.<Integer> stringValueOf()).toList(), "1", "2", "3");
+    }
+
 }
