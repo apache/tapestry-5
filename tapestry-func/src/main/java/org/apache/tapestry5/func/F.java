@@ -229,4 +229,31 @@ public class F
 
         return new ArrayFlow<T>(values);
     }
+
+    /**
+     * Creates a lazy Flow that returns integers in the given range. The range starts
+     * with the lower value and counts by 1 up to the upper range (which is not part of
+     * the Flow). If lower equals upper, the Flow is empty. If upper is less than lower,
+     * the Flow counts down instead.
+     * 
+     * @param lower
+     *            start of range (inclusive)
+     * @param upper
+     *            end of range (exclusive)
+     */
+    public static Flow<Integer> range(int lower, int upper)
+    {
+        if (lower == upper)
+            return F.emptyFlow();
+
+        if (lower < upper)
+            return lazy(new LazyRange(lower, upper, 1));
+
+        return lazy(new LazyRange(lower, upper, -1));
+    }
+
+    static <T> Flow<T> lazy(LazyFunction<T> function)
+    {
+        return new LazyFlow<T>(function);
+    }
 }

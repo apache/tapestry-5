@@ -24,7 +24,7 @@ import java.util.Locale;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class FuncTest extends Assert
+public class FuncTest extends FuncAssert
 {
 
     private Mapper<String, Integer> stringToLength = new Mapper<String, Integer>()
@@ -53,16 +53,6 @@ public class FuncTest extends Assert
 
     private Flow<Integer> filteredEmpty = F.flow(1, 3, 5, 7).filter(evenp);
 
-    private <T> void assertListsEquals(List<T> actual, T... expected)
-    {
-        assertEquals(actual, Arrays.asList(expected));
-    }
-
-    private void unreachable()
-    {
-        throw new RuntimeException("Should not be reachable.");
-    }
-
     @Test
     public void map()
     {
@@ -76,13 +66,13 @@ public class FuncTest extends Assert
     @Test
     public void flow_map()
     {
-        assertListsEquals(F.flow("Mary", "had", "a", "little", "lamb").map(stringToLength).toList(), 4, 3, 1, 6, 4);
+        assertFlowValues(F.flow("Mary", "had", "a", "little", "lamb").map(stringToLength), 4, 3, 1, 6, 4);
     }
 
     @Test
     public void flow_reverse()
     {
-        assertListsEquals(F.flow(1, 2, 3).reverse().toList(), 3, 2, 1);
+        assertFlowValues(F.flow(1, 2, 3).reverse(), 3, 2, 1);
     }
 
     @Test
@@ -222,7 +212,7 @@ public class FuncTest extends Assert
     @Test
     public void flow_filter()
     {
-        assertListsEquals(F.flow(1, 2, 3, 4, 5, 6, 7).filter(evenp).toList(), 2, 4, 6);
+        assertFlowValues(F.flow(1, 2, 3, 4, 5, 6, 7).filter(evenp), 2, 4, 6);
     }
 
     @Test
@@ -306,7 +296,7 @@ public class FuncTest extends Assert
     }
 
     @Test
-    public void reduce()
+    public void array_flow_reduce()
     {
         int total = F.flow(F.flow("Mary", "had", "a", "little", "lamb").map(stringToLength).toList()).reduce(
                 F.SUM_INTS, 0);
@@ -315,7 +305,7 @@ public class FuncTest extends Assert
     }
 
     @Test
-    public void flow_reduce()
+    public void general_flow_reduce()
     {
         int total = F.flow("Mary", "had", "a", "little", "lamb").map(stringToLength).reduce(F.SUM_INTS, 0);
 
@@ -341,7 +331,7 @@ public class FuncTest extends Assert
 
         Flow<Integer> updated = first.concat(F.flow(4, 5, 6));
 
-        assertListsEquals(updated.toList(), 1, 2, 3, 4, 5, 6);
+        assertFlowValues(updated, 1, 2, 3, 4, 5, 6);
     }
 
     @Test
@@ -360,7 +350,7 @@ public class FuncTest extends Assert
 
         Flow<Integer> updated = first.concat(Arrays.asList(4, 5, 6));
 
-        assertListsEquals(updated.toList(), 1, 2, 3, 4, 5, 6);
+        assertFlowValues(updated, 1, 2, 3, 4, 5, 6);
     }
 
     @Test
@@ -370,14 +360,13 @@ public class FuncTest extends Assert
 
         Flow<Integer> updated = first.append(4, 5, 6);
 
-        assertListsEquals(updated.toList(), 1, 2, 3, 4, 5, 6);
+        assertFlowValues(updated, 1, 2, 3, 4, 5, 6);
     }
 
     @Test
     public void sort_comparable_list()
     {
-        assertListsEquals(F.flow("fred", "barney", "wilma", "betty").sort().toList(), "barney", "betty", "fred",
-                "wilma");
+        assertFlowValues(F.flow("fred", "barney", "wilma", "betty").sort(), "barney", "betty", "fred", "wilma");
     }
 
     @Test
@@ -414,7 +403,7 @@ public class FuncTest extends Assert
             }
         };
 
-        assertListsEquals(flow.sort(comparator).toList(), "a", "bb", "ccc", "dddd", "eeeee");
+        assertFlowValues(flow.sort(comparator), "a", "bb", "ccc", "dddd", "eeeee");
     }
 
     @Test(expectedExceptions = ClassCastException.class)
@@ -449,7 +438,7 @@ public class FuncTest extends Assert
     @Test
     public void rest_of_non_empty_flow()
     {
-        assertListsEquals(F.flow("Mary", "had", "a", "little", "lamb").rest().toList(), "had", "a", "little", "lamb");
+        assertFlowValues(F.flow("Mary", "had", "a", "little", "lamb").rest(), "had", "a", "little", "lamb");
     }
 
     @Test
@@ -498,13 +487,13 @@ public class FuncTest extends Assert
     @Test
     public void sort_non_array_flow()
     {
-        assertListsEquals(filteredEmpty.append(7, 3, 9).sort().toList(), 3, 7, 9);
+        assertFlowValues(filteredEmpty.append(7, 3, 9).sort(), 3, 7, 9);
     }
 
     @Test
     public void reverse_non_array_flow()
     {
-        assertListsEquals(filteredEmpty.append(1, 2, 3).reverse().toList(), 3, 2, 1);
+        assertFlowValues(filteredEmpty.append(1, 2, 3).reverse(), 3, 2, 1);
     }
 
     @Test(expectedExceptions = UnsupportedOperationException.class)
@@ -625,7 +614,7 @@ public class FuncTest extends Assert
     {
         Flow<Integer> flow = F.flow(3, 1, 2);
 
-        assertListsEquals(flow.mapcat(sequencer).toList(), 3, 3, 3, 1, 2, 2);
+        assertFlowValues(flow.mapcat(sequencer), 3, 3, 3, 1, 2, 2);
     }
 
     @Test
@@ -663,7 +652,7 @@ public class FuncTest extends Assert
     {
         Flow<Integer> flow = F.flow(1, 2, 3);
 
-        assertListsEquals(flow.map(F.<Integer> stringValueOf()).toList(), "1", "2", "3");
+        assertFlowValues(flow.map(F.<Integer> stringValueOf()), "1", "2", "3");
     }
 
     @Test
@@ -671,7 +660,7 @@ public class FuncTest extends Assert
     {
         Flow<Integer> flow = F.flow(1, 3);
 
-        assertListsEquals(flow.concat(flow.filter(evenp)).toList(), 1, 3);
+        assertFlowValues(flow.concat(flow.filter(evenp)), 1, 3);
     }
 
 }

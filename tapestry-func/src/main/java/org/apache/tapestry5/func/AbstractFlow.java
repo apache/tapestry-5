@@ -89,7 +89,7 @@ abstract class AbstractFlow<T> implements Flow<T>
 
     public Flow<T> concat(Flow<? extends T> other)
     {
-        return lazy(new LazyConcat<T>(this, other));
+        return F.lazy(new LazyConcat<T>(this, other));
     }
 
     /** Subclasses may override this for efficiency. */
@@ -109,19 +109,14 @@ abstract class AbstractFlow<T> implements Flow<T>
     {
         assert predicate != null;
 
-        return lazy(new LazyFilter<T>(predicate, this));
-    }
-
-    private static <Y> Flow<Y> lazy(LazyFunction<Y> function)
-    {
-        return new LazyFlow<Y>(function);
+        return F.lazy(new LazyFilter<T>(predicate, this));
     }
 
     public <X> Flow<X> map(Mapper<T, X> mapper)
     {
         assert mapper != null;
 
-        return lazy(new LazyMapper<T, X>(mapper, this));
+        return F.lazy(new LazyMapper<T, X>(mapper, this));
     }
 
     public <A> A reduce(Reducer<A, T> reducer, A initial)
