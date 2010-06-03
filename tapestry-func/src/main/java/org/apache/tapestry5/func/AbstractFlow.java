@@ -89,9 +89,7 @@ abstract class AbstractFlow<T> implements Flow<T>
 
     public Flow<T> concat(Flow<? extends T> other)
     {
-        // Possible optimization is to check for EmptyFlow here (but not isEmpty(),
-        // so as not to prematurely realize values in the Flow).
-        return new ConcatFlow<T>(this, other);
+        return lazy(new LazyConcat<T>(this, other));
     }
 
     /** Subclasses may override this for efficiency. */
@@ -111,14 +109,19 @@ abstract class AbstractFlow<T> implements Flow<T>
     {
         assert predicate != null;
 
-        return new FilteredFlow<T>(predicate, this);
+        return lazy(new LazyFilter<T>(predicate, this));
+    }
+
+    private static <Y> Flow<Y> lazy(LazyFunction<Y> function)
+    {
+        return new LazyFlow<Y>(function);
     }
 
     public <X> Flow<X> map(Mapper<T, X> mapper)
     {
         assert mapper != null;
 
-        return new MappedFlow<T, X>(mapper, this);
+        return lazy(new LazyMapper<T, X>(mapper, this));
     }
 
     public <A> A reduce(Reducer<A, T> reducer, A initial)

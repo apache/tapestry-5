@@ -641,18 +641,6 @@ public class FuncTest extends Assert
     }
 
     @Test
-    public void count_of_a_mapped_flow_before_and_after_realization()
-    {
-        Flow<Integer> flow = F.flow("Mary", "had", "a", "little", "lamb").map(stringToLength);
-
-        assertEquals(flow.count(), 5);
-
-        assertEquals(flow.first(), (Integer) 4);
-
-        assertEquals(flow.count(), 5);
-    }
-
-    @Test
     public void count_of_a_filtered_flow()
     {
         Flow<String> flow = F.flow("Mary", "had", "a", "little", "lamb");
@@ -676,6 +664,14 @@ public class FuncTest extends Assert
         Flow<Integer> flow = F.flow(1, 2, 3);
 
         assertListsEquals(flow.map(F.<Integer> stringValueOf()).toList(), "1", "2", "3");
+    }
+
+    @Test
+    public void concat_empty_list()
+    {
+        Flow<Integer> flow = F.flow(1, 3);
+
+        assertListsEquals(flow.concat(flow.filter(evenp)).toList(), 1, 3);
     }
 
 }
