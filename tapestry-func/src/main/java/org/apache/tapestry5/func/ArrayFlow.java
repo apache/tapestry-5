@@ -186,4 +186,16 @@ class ArrayFlow<T> extends AbstractFlow<T>
         return new ArrayFlow<T>(values, start, Math.min(count, length));
     }
 
+    public Flow<T> drop(int length)
+    {
+        assert length >= 0;
+
+        if (length == 0)
+            return this;
+
+        if (length >= count)
+            return F.emptyFlow();
+
+        return new ArrayFlow<T>(values, start + length, count - length);
+    }
 }

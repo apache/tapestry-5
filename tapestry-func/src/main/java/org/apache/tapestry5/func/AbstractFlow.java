@@ -201,4 +201,13 @@ abstract class AbstractFlow<T> implements Flow<T>
         return F.lazy(new LazyTake<T>(length, this));
     }
 
+    public Flow<T> drop(int length)
+    {
+        assert length >= 0;
+
+        if (length == 0)
+            return this;
+
+        return F.lazy(new LazyDrop<T>(length, this));
+    }
 }

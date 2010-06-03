@@ -18,7 +18,7 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * A Flow is a a functional interface for working with a ordered collection of values.
+ * A Flow is a a functional interface for working with an ordered collection of values.
  * A given Flow contains only values of a particular type. Standard operations allow for
  * filtering the Flow, or appending values to the Flow. Since Flows are immutable, all operations
  * on Flows return new immutable Flows. Flows are thread safe (to the extent that the {@link Mapper}s, {@link Predicate}
@@ -26,11 +26,15 @@ import java.util.List;
  * Flows are <em>lazy</em>: filtering, mapping, and concatenating Flows will do so with no, or a minimum, of evaluation.
  * However, converting a Flow into a {@link List} will force a realization of the entire Flow.
  * <p>
+ * In some cases, a Flow may be an infinite, lazily evaluated sequence. Operations that iterate over all values (such as
+ * {@link #count()} or {@link #reduce(Reducer, Object)}) may become infinite loops.
+ * <p>
  * Using Flows allows for a very fluid interface.
  * <p>
  * Flows are initially created using {@link F#flow(java.util.Collection)} or {@link F#flow(Object...)}.
  * 
  * @since 5.2.0
+ * @see F#lazy(LazyFunction)
  */
 public interface Flow<T> extends Iterable<T>
 {
@@ -131,4 +135,12 @@ public interface Flow<T> extends Iterable<T>
      *            maximum number of values in the Flow
      */
     Flow<T> take(int length);
+
+    /**
+     * Returns a new Flow with the first values omitted.
+     * 
+     * @param length
+     *            number of values to drop
+     */
+    Flow<T> drop(int length);
 }

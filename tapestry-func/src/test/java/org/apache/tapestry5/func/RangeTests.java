@@ -16,7 +16,7 @@ package org.apache.tapestry5.func;
 
 import org.testng.annotations.Test;
 
-public class RangeTests extends FuncAssert
+public class RangeTests extends BaseFuncTest
 {
     @Test
     public void empty_range_if_values_equal()
@@ -43,5 +43,13 @@ public class RangeTests extends FuncAssert
         Flow<Integer> series = F.series(3, 5);
 
         assertFlowValues(series.take(5), 3, 8, 13, 18, 23);
+    }
+
+    @Test
+    public void filtered_series()
+    {
+        Flow<Integer> series = F.series(1, 1);
+
+        assertFlowValues(series.filter(evenp).take(4), 2, 4, 6, 8);
     }
 }

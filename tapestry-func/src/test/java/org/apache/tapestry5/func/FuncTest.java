@@ -21,37 +21,23 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class FuncTest extends FuncAssert
+public class FuncTest extends BaseFuncTest
 {
-
-    private Mapper<String, Integer> stringToLength = new Mapper<String, Integer>()
+    protected Mapper<Integer, Flow<Integer>> sequencer = new Mapper<Integer, Flow<Integer>>()
     {
-        public Integer map(String input)
+
+        public Flow<Integer> map(Integer value)
         {
-            return input.length();
+            Flow<Integer> flow = F.flow();
+
+            for (int i = 0; i < value; i++)
+                flow = flow.append(value);
+
+            return flow;
         }
     };
-
-    private Mapper<Integer, Boolean> toEven = new Mapper<Integer, Boolean>()
-    {
-        public Boolean map(Integer input)
-        {
-            return evenp.accept(input);
-        }
-    };
-
-    private Predicate<Number> evenp = new Predicate<Number>()
-    {
-        public boolean accept(Number object)
-        {
-            return object.longValue() % 2 == 0;
-        };
-    };
-
-    private Flow<Integer> filteredEmpty = F.flow(1, 3, 5, 7).filter(evenp);
 
     @Test
     public void map()
@@ -584,20 +570,6 @@ public class FuncTest extends FuncAssert
             }
         }, initial), initial);
     }
-
-    private Mapper<Integer, Flow<Integer>> sequencer = new Mapper<Integer, Flow<Integer>>()
-    {
-
-        public Flow<Integer> map(Integer value)
-        {
-            Flow<Integer> flow = F.flow();
-
-            for (int i = 0; i < value; i++)
-                flow = flow.append(value);
-
-            return flow;
-        }
-    };
 
     @Test
     public void mapcat_on_empty_flow_is_empty()

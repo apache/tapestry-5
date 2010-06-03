@@ -115,4 +115,9 @@ class EmptyFlow<T> extends AbstractFlow<T>
     {
         return this;
     }
+
+    public Flow<T> drop(int length)
+    {
+        return this;
+    }
 }
