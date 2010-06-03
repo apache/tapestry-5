@@ -17,25 +17,25 @@ package org.apache.tapestry5.func;
 @SuppressWarnings("unchecked")
 class LazyConcat<T> implements LazyFunction<T>
 {
-    private final Flow<T> first, second;
+    private final Flow<T> left, right;
 
     public LazyConcat(Flow<T> first, Flow<? extends T> second)
     {
-        this.first = first;
-        this.second = (Flow<T>) second;
+        this.left = first;
+        this.right = (Flow<T>) second;
     }
 
     public LazyContinuation<T> next()
     {
-        if (first.isEmpty())
+        if (left.isEmpty())
         {
-            if (second.isEmpty())
+            if (right.isEmpty())
                 return null;
 
-            return new LazyContinuation<T>(second.first(), new LazyWalk<T>(second.rest()));
+            return new LazyContinuation<T>(new LazyFirst<T>(right), new LazyWalk<T>(right.rest()));
         }
 
-        return new LazyContinuation<T>(first.first(), new LazyConcat<T>(first.rest(), second));
+        return new LazyContinuation<T>(new LazyFirst<T>(left), new LazyConcat<T>(left.rest(), right));
     }
 
 }

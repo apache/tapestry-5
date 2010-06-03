@@ -31,6 +31,6 @@ class LazyWalk<T> implements LazyFunction<T>
         if (flow.isEmpty())
             return null;
 
-        return new LazyContinuation<T>(flow.first(), new LazyWalk<T>(flow.rest()));
+        return new LazyContinuation<T>(new LazyFirst<T>(flow), new LazyWalk<T>(flow.rest()));
     }
 }

@@ -125,8 +125,27 @@ public class MapperTest extends BaseFuncTest
 
         // Because of laziness, its possible to count all the values in some mapped lists, without
         // ever actually running the mapper to determine the final value.
-        
+
         assertEquals(F.range(1, 100).map(doubler).count(), 99);
         assertEquals(count.get(), 0);
+
+        // Because values are now lazily evaluated as well as flows, we can count the size of a flow
+        // without ever actually calculating (via the mapper) an output value.
+
+        Flow<Integer> flow = F.range(1, 100).map(doubler).concat(F.range(1, 10).map(doubler));
+        assertEquals(flow.count(), 108);
+        assertEquals(count.get(), 0);
+
+        assertFlowValues(flow.take(2), 2, 4);
+        assertEquals(count.get(), 2);
+
+        count.set(0);
+
+        // Isn't this nifty; take-ing from a flow will create a flow that references parts
+        // of the original flow, and previously computed values (2 and 4) are still accessible!
+
+        assertFlowValues(flow.take(3), 2, 4, 6);
+        assertEquals(count.get(), 1);
+
     }
 }

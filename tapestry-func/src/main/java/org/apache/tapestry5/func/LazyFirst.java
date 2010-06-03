@@ -14,24 +14,18 @@
 
 package org.apache.tapestry5.func;
 
-class LazyTake<T> implements LazyFunction<T>
+class LazyFirst<T> implements LazyValue<T>
 {
-    private final int length;
-
     private final Flow<T> flow;
 
-    public LazyTake(int length, Flow<T> flow)
+    public LazyFirst(Flow<T> flow)
     {
-        this.length = length;
         this.flow = flow;
     }
 
-    public LazyContinuation<T> next()
+    public T get()
     {
-        if (flow.isEmpty() || length < 1)
-            return null;
-
-        return new LazyContinuation<T>(new LazyFirst<T>(flow), new LazyTake<T>(length - 1, flow.rest()));
+        return flow.first();
     }
 
 }
