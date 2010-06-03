@@ -32,7 +32,7 @@ class LazyConcat<T> implements LazyFunction<T>
             if (second.isEmpty())
                 return null;
 
-            return new LazyContinuation<T>(second.first(), new LazyIterate<T>(second.rest()));
+            return new LazyContinuation<T>(second.first(), new LazyWalk<T>(second.rest()));
         }
 
         return new LazyContinuation<T>(first.first(), new LazyConcat<T>(first.rest(), second));

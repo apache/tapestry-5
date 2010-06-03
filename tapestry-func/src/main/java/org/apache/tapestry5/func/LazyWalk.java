@@ -15,13 +15,13 @@
 package org.apache.tapestry5.func;
 
 /**
- * Used by {@link LazyConcat} to iterate the second flow.
+ * Used by {@link LazyConcat} to walk down the values of the second flow.
  */
-class LazyIterate<T> implements LazyFunction<T>
+class LazyWalk<T> implements LazyFunction<T>
 {
     private final Flow<T> flow;
 
-    public LazyIterate(Flow<T> flow)
+    public LazyWalk(Flow<T> flow)
     {
         this.flow = flow;
     }
@@ -31,6 +31,6 @@ class LazyIterate<T> implements LazyFunction<T>
         if (flow.isEmpty())
             return null;
 
-        return new LazyContinuation<T>(flow.first(), new LazyIterate<T>(flow.rest()));
+        return new LazyContinuation<T>(flow.first(), new LazyWalk<T>(flow.rest()));
     }
 }
