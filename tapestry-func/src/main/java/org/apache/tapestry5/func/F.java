@@ -271,4 +271,23 @@ public class F
     {
         return lazy(new LazySeries(start, delta));
     }
+
+    /**
+     * Creates a lazy, infinte Flow consisting of the initial value, then the result of passing
+     * the initial value through the Mapper, and so forth, which each step value passed through the mapper
+     * to form the next step value.
+     */
+    public static <T> Flow<T> iterate(final T initial, final Mapper<T, T> mapper)
+    {
+        assert mapper != null;
+
+        return F.lazy(new LazyFunction<T>()
+        {
+
+            public LazyContinuation<T> next()
+            {
+                return new LazyContinuation<T>(initial, new LazyIterate<T>(initial, mapper));
+            }
+        });
+    }
 }

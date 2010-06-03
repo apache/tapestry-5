@@ -52,4 +52,18 @@ public class RangeTests extends BaseFuncTest
 
         assertFlowValues(series.filter(evenp).take(4), 2, 4, 6, 8);
     }
+
+    @Test
+    public void iterate()
+    {
+        Mapper<Integer, Integer> times2 = new Mapper<Integer, Integer>()
+        {
+            public Integer map(Integer value)
+            {
+                return 2 * value;
+            }
+        };
+
+        assertFlowValues(F.iterate(1, times2).take(5), 1, 2, 4, 8, 16);
+    }
 }
