@@ -14,25 +14,20 @@
 
 package org.apache.tapestry5.func;
 
-class LazyMapper<T, X> implements LazyFunction<X>
+class LazyMappedValue<T, X> implements LazyValue<X>
 {
+    private final T input;
+
     private final Mapper<T, X> mapper;
 
-    private final Flow<T> flow;
-
-    public LazyMapper(Mapper<T, X> mapper, Flow<T> flow)
+    public LazyMappedValue(T input, Mapper<T, X> mapper)
     {
+        this.input = input;
         this.mapper = mapper;
-        this.flow = flow;
     }
 
-    public LazyContinuation<X> next()
+    public X get()
     {
-        if (flow.isEmpty())
-            return null;
-
-        return new LazyContinuation<X>(new LazyMappedValue<T, X>(flow.first(), mapper), new LazyMapper<T, X>(mapper,
-                flow.rest()));
+        return mapper.map(input);
     }
-
 }

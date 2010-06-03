@@ -18,15 +18,21 @@ class LazyFlow<T> extends AbstractFlow<T>
 {
     // All instance variables guarded by this
 
-    private boolean resolved;
+    // Retained up until resolve() is called
+    
+    private LazyFunction<T> lazyFunction;
 
+    // Set inside resolve()
     private boolean empty;
 
-    private T first;
+    // Set inside resolve(), used and discarded inside first()
+    private LazyValue<T> lazyFirst;
 
+    // Set inside resolve()
     private Flow<T> rest;
 
-    private LazyFunction<T> lazyFunction;
+    // Set inside first()
+    private T first;
 
     public LazyFlow(LazyFunction<T> lazyFunction)
     {
@@ -36,6 +42,16 @@ class LazyFlow<T> extends AbstractFlow<T>
     public synchronized T first()
     {
         resolve();
+
+        // Immediately after resolving, all we have is the function to call to get
+        // the first object. And once we get that object, we don't need (or want) the
+        // function.
+
+        if (lazyFirst != null)
+        {
+            first = lazyFirst.get();
+            lazyFirst = null;
+        }
 
         return first;
     }
@@ -56,7 +72,7 @@ class LazyFlow<T> extends AbstractFlow<T>
 
     private synchronized void resolve()
     {
-        if (resolved)
+        if (lazyFunction == null)
             return;
 
         LazyContinuation<T> continuation = lazyFunction.next();
@@ -68,13 +84,11 @@ class LazyFlow<T> extends AbstractFlow<T>
         }
         else
         {
-            first = continuation.nextValue();
+            lazyFirst = continuation.nextValue();
 
             rest = new LazyFlow<T>(continuation.nextFunction());
         }
 
-        resolved = true;
-        
         lazyFunction = null;
     }
 }

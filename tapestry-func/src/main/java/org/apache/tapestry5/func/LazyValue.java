@@ -14,25 +14,11 @@
 
 package org.apache.tapestry5.func;
 
-class LazyMapper<T, X> implements LazyFunction<X>
+/**
+ * A function that returns a value, allowing the computation of that value to be deferred as late as possible.
+ */
+public interface LazyValue<T>
 {
-    private final Mapper<T, X> mapper;
-
-    private final Flow<T> flow;
-
-    public LazyMapper(Mapper<T, X> mapper, Flow<T> flow)
-    {
-        this.mapper = mapper;
-        this.flow = flow;
-    }
-
-    public LazyContinuation<X> next()
-    {
-        if (flow.isEmpty())
-            return null;
-
-        return new LazyContinuation<X>(new LazyMappedValue<T, X>(flow.first(), mapper), new LazyMapper<T, X>(mapper,
-                flow.rest()));
-    }
-
+    /** Compute and return the value. */
+    T get();
 }

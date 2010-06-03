@@ -25,35 +25,7 @@ import org.testng.annotations.Test;
 
 public class FuncTest extends BaseFuncTest
 {
-    protected Mapper<Integer, Flow<Integer>> sequencer = new Mapper<Integer, Flow<Integer>>()
-    {
-
-        public Flow<Integer> map(Integer value)
-        {
-            Flow<Integer> flow = F.flow();
-
-            for (int i = 0; i < value; i++)
-                flow = flow.append(value);
-
-            return flow;
-        }
-    };
-
-    @Test
-    public void map()
-    {
-        List<String> source = Arrays.asList("Mary", "had", "a", "little", "lamb");
-
-        List<Integer> lengths = F.flow(source).map(stringToLength).toList();
-
-        assertListsEquals(lengths, 4, 3, 1, 6, 4);
-    }
-
-    @Test
-    public void flow_map()
-    {
-        assertFlowValues(F.flow("Mary", "had", "a", "little", "lamb").map(stringToLength), 4, 3, 1, 6, 4);
-    }
+   
 
     @Test
     public void flow_reverse()
@@ -518,20 +490,7 @@ public class FuncTest extends BaseFuncTest
         assertListsEquals(result, "a", "had", "Mary", "lamb");
     }
 
-    @Test
-    public void map_of_filtered_empty_is_empty()
-    {
-        assertTrue(filteredEmpty.map(new Mapper<Integer, Integer>()
-        {
-            public Integer map(Integer value)
-            {
-                unreachable();
-
-                return value;
-            }
-        }).isEmpty());
-    }
-
+ 
     @Test
     public void each_on_empty_flow()
     {
@@ -571,23 +530,6 @@ public class FuncTest extends BaseFuncTest
         }, initial), initial);
     }
 
-    @Test
-    public void mapcat_on_empty_flow_is_empty()
-    {
-        Flow<Integer> flow = F.flow();
-
-        assertSame(flow.mapcat(sequencer), flow);
-
-        assertTrue(filteredEmpty.mapcat(sequencer).isEmpty());
-    }
-
-    @Test
-    public void mapcat()
-    {
-        Flow<Integer> flow = F.flow(3, 1, 2);
-
-        assertFlowValues(flow.mapcat(sequencer), 3, 3, 3, 1, 2, 2);
-    }
 
     @Test
     public void count_of_the_empty_flow_is_zero()
@@ -610,23 +552,7 @@ public class FuncTest extends BaseFuncTest
         assertEquals(flow.filter(F.notNull()).count(), 5);
     }
 
-    @Test
-    public void count_of_a_mapped_filtered_empty_flow()
-    {
-        Flow<Integer> flow = F.flow("Mary", "had", "etc.").filter(F.isNull()).map(stringToLength);
-
-        assertTrue(flow.isEmpty());
-        assertEquals(flow.count(), 0);
-    }
-
-    @Test
-    public void toString_mapper()
-    {
-        Flow<Integer> flow = F.flow(1, 2, 3);
-
-        assertFlowValues(flow.map(F.<Integer> stringValueOf()), "1", "2", "3");
-    }
-
+ 
     @Test
     public void concat_empty_list()
     {

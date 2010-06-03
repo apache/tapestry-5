@@ -21,18 +21,29 @@ package org.apache.tapestry5.func;
  */
 public class LazyContinuation<T>
 {
-    private final T nextValue;
+    private final LazyValue<T> nextValue;
 
     private final LazyFunction<T> nextFunction;
 
-    public LazyContinuation(T next, LazyFunction<T> nextFunction)
+    public LazyContinuation(T nextValue, LazyFunction<T> nextFunction)
     {
-        this.nextValue = next;
+        this(new StaticValue<T>(nextValue), nextFunction);
+    }
+
+    public LazyContinuation(LazyValue<T> nextValue, LazyFunction<T> nextFunction)
+    {
+        assert nextValue != null;
+        assert nextFunction != null;
+
+        this.nextValue = nextValue;
         this.nextFunction = nextFunction;
     }
 
-    /** Returns the next value computed by the lazy function. */
-    public T nextValue()
+    /**
+     * Returns, indirectly, the next value computed by the lazy function. The LazyValue represents
+     * a deferred computation.
+     */
+    public LazyValue<T> nextValue()
     {
         return nextValue;
     }
