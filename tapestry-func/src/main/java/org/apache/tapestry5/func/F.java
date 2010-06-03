@@ -252,8 +252,13 @@ public class F
         return lazy(new LazyRange(lower, upper, -1));
     }
 
-    static <T> Flow<T> lazy(LazyFunction<T> function)
+    /**
+     * Creates a {@link Flow} from a {@linkplain LazyFunction lazy function}.
+     */
+    public static <T> Flow<T> lazy(LazyFunction<T> function)
     {
+        assert function != null;
+
         return new LazyFlow<T>(function);
     }
 }
