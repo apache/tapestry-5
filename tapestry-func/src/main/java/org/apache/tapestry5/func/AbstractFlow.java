@@ -196,4 +196,9 @@ abstract class AbstractFlow<T> implements Flow<T>
         return isEmpty() ? 0 : 1 + rest().count();
     }
 
+    public Flow<T> take(int length)
+    {
+        return F.lazy(new LazyTake<T>(length, this));
+    }
+
 }

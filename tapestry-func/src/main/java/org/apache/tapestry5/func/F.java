@@ -261,4 +261,14 @@ public class F
 
         return new LazyFlow<T>(function);
     }
+
+    /**
+     * Creates an <em>infinite</em> series of numbers.
+     * <p>
+     * Attempting to get the {@linkplain Flow#count()} of the series will form an infinite loop.
+     */
+    public static Flow<Integer> series(int start, int delta)
+    {
+        return lazy(new LazySeries(start, delta));
+    }
 }

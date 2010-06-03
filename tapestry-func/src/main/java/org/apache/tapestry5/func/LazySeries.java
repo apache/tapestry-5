@@ -14,34 +14,19 @@
 
 package org.apache.tapestry5.func;
 
-import org.testng.annotations.Test;
-
-public class RangeTests extends FuncAssert
+class LazySeries implements LazyFunction<Integer>
 {
-    @Test
-    public void empty_range_if_values_equal()
+    private final int current, delta;
+
+    public LazySeries(int current, int delta)
     {
-        assertTrue(F.range(9, 9).isEmpty());
+        this.current = current;
+        this.delta = delta;
     }
 
-    @Test
-    public void ascending_range()
+    public LazyContinuation<Integer> next()
     {
-
-        assertFlowValues(F.range(5, 8), 5, 6, 7);
+        return new LazyContinuation<Integer>(current, new LazySeries(current + delta, delta));
     }
 
-    @Test
-    public void descending_range()
-    {
-        assertFlowValues(F.range(8, 5), 8, 7, 6);
-    }
-
-    @Test
-    public void series()
-    {
-        Flow<Integer> series = F.series(3, 5);
-
-        assertFlowValues(series.take(5), 3, 8, 13, 18, 23);
-    }
 }

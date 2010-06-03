@@ -122,4 +122,13 @@ public interface Flow<T> extends Iterable<T>
      * each value will need to be passed through any {@link Predicate}s).
      */
     int count();
+
+    /**
+     * Returns a new Flow containing just the first values from
+     * this Flow.
+     * 
+     * @param length
+     *            maximum number of values in the Flow
+     */
+    Flow<T> take(int length);
 }

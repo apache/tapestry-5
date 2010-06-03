@@ -16,32 +16,38 @@ package org.apache.tapestry5.func;
 
 import org.testng.annotations.Test;
 
-public class RangeTests extends FuncAssert
+public class TakeTests extends FuncAssert
 {
     @Test
-    public void empty_range_if_values_equal()
+    public void take_from_empty_list()
     {
-        assertTrue(F.range(9, 9).isEmpty());
+        assertSame(F.flow().take(34), F.EMPTY_FLOW);
     }
 
     @Test
-    public void ascending_range()
+    public void take_from_flow()
     {
+        Predicate<Integer> evenp = new Predicate<Integer>()
+        {
 
-        assertFlowValues(F.range(5, 8), 5, 6, 7);
+            public boolean accept(Integer object)
+            {
+                return object % 2 == 0;
+            }
+        };
+
+        assertFlowValues(F.series(1, 1).remove(evenp).take(2), 1, 3);
     }
 
     @Test
-    public void descending_range()
+    public void take_from_array_flow()
     {
-        assertFlowValues(F.range(8, 5), 8, 7, 6);
-    }
+        Flow<Integer> flow = F.flow(1, 2, 3, 4, 5);
 
-    @Test
-    public void series()
-    {
-        Flow<Integer> series = F.series(3, 5);
+        assertFlowValues(flow.take(2), 1, 2);
 
-        assertFlowValues(series.take(5), 3, 8, 13, 18, 23);
+        assertFlowValues(flow.take(99), 1, 2, 3, 4, 5);
+
+        assertSame(flow.take(0), F.EMPTY_FLOW);
     }
 }
