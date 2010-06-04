@@ -161,10 +161,10 @@ About Snapshots and Releases
   
   A nightly build process on Tapestry's continuous integration server creates new snapshots <every night>.
   
-  Snapshots don't go in the central Maven repository (that's reserved for full releases). Instead, they  go into the Tapestry snapshots repository
-  at {{{http://tapestry.formos.com/maven-snapshot-repository}http://tapestry.formos.com/maven-snapshot-repository}}.
+  Snapshots don't go in the central Maven repository (that's reserved for full releases). Instead, they go into the Apache snapshots repository
+  at {{{http://http://repository.apache.org/snapshots}http://repository.apache.org/snapshots}}.
   
-  To access this repository, you may add <<<-DremoteRepositories=http://tapestry.formos.com/maven-snapshot-repository>>> to the command line when
+  To access this repository, you may add <<<-DremoteRepositories=http://repository.apache.org/snapshots>>> to the command line when
   running Maven.
   
   Your best bet is to use the {{{quickstart/}quickstart Maven archetype}} to create your initial Tapestry project; it generates a full project
