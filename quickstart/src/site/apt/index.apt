@@ -16,16 +16,13 @@ Quickstart Archetype
   
   From the command line, you execute the following command:
 
-  <<<mvn archetype:generate -DarchetypeCatalog=http://tapestry.formos.com/maven-repository>>>
+  <<<mvn archetype:generate -DarchetypeCatalog=http://tapestry.apache.org>>>
 
-  Note: use the URL http://tapestry.formos.com/maven-snapshot-repository if you want to access a snapshot version of the archetype, rather
-  than the most recent released version.
-
-  Maven uses the archetypeCatalog to get a list of available archetypes; in this case, the only option is the Tapestry Quickstart.
+  Maven uses the archetypeCatalog to get a list of available archetypes; in this case, you'll find options for all stable Tapestry versions as well as for the latest snapshot.
   It will then ask you to enter the groupId, artifactId, version, and package.
 
 +---+
-$ mvn archetype:generate -DarchetypeCatalog=http://tapestry.formos.com/maven-snapshot-repository
+$ mvn archetype:generate -DarchetypeCatalog=http://tapestry.apache.org
 [INFO] Scanning for projects...
 [INFO] Searching repository for plugin with prefix: 'archetype'.
 [INFO] ------------------------------------------------------------------------
@@ -42,9 +39,12 @@ $ mvn archetype:generate -DarchetypeCatalog=http://tapestry.formos.com/maven-sna
 [INFO] Generating project in Interactive mode
 [INFO] No archetype defined. Using maven-archetype-quickstart (org.apache.maven.archetypes:maven-archetype-quickstart:1.0)
 Choose archetype:
-1: http://tapestry.formos.com/maven-snapshot-repository -> quickstart (Tapestry 5.1.0.0-SNAPSHOT Quickstart Project)
-Choose a number:  (1): 1
-[INFO] snapshot org.apache.tapestry:quickstart:5.1.0.0-SNAPSHOT: checking for updates from quickstart-repo
+1: http://tapestry.apache.org -> quickstart (Tapestry 5.2.0-SNAPSHOT Quickstart Project)
+2: http://tapestry.apache.org -> quickstart (Tapestry 5.1.0.5 Quickstart Project)
+3: http://tapestry.apache.org -> quickstart (Tapestry 5.0.19 Quickstart Project)
+4: http://tapestry.apache.org -> tapestry-archetype (Tapestry 4.1.6 Archetype)
+Choose a number:  (1/2/3/4): 1
+[INFO] snapshot org.apache.tapestry:quickstart:5.2.0-SNAPSHOT: checking for updates from quickstart-repo
 Define value for groupId: : org.example
 Define value for artifactId: : myapp
 Define value for version:  1.0-SNAPSHOT: :
@@ -146,10 +146,9 @@ PropertyDisplayBlocks: org.apache.tapestry5.corelib.pages.PropertyDisplayBlocks
   
 About Snapshots
 
-  By referencing the application catalog in Tapestry's snapshot repository,
-  http://tapestry.formos.com/maven-snapshot-repository,
+  By referencing the application catalog in http://tapestry.apache.org and choosing the first (SNAPSHOT) option,
   you are directing Maven to download a snapshot version of the quickstart archetype; your application
   will then be dependent on snapshot versions of the JARs. These are rebuilt every night, so you may see
   Maven redownload the Tapestry JARs more often than you'd like. You can edit the generated pom.xml file
-  to switch to a more stable version of Tapestry 5, such as the most recent stable release, 5.0.18.
+  to switch to a more stable version of Tapestry 5, such as the most recent stable release, 5.1.0.5.
   
