@@ -119,6 +119,17 @@ abstract class AbstractFlow<T> implements Flow<T>
         return F.lazy(new LazyMapper<T, X>(mapper, this));
     }
 
+    public <X, Y> Flow<Y> map(Mapper2<T, X, Y> mapper, Flow<? extends X> flow)
+    {
+        assert mapper != null;
+        assert flow != null;
+
+        if (this.isEmpty() || flow.isEmpty())
+            return F.emptyFlow();
+
+        return F.lazy(new LazyMapper2<T, X, Y>(mapper, this, flow));
+    }
+
     public <A> A reduce(Reducer<A, T> reducer, A initial)
     {
         assert reducer != null;
@@ -210,4 +221,5 @@ abstract class AbstractFlow<T> implements Flow<T>
 
         return F.lazy(new LazyDrop<T>(length, this));
     }
+
 }

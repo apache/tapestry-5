@@ -204,6 +204,14 @@ public class F
         };
     };
 
+    public static Mapper2<Integer, Integer, Integer> ADD_INTS = new Mapper2<Integer, Integer, Integer>()
+    {
+        public Integer map(Integer first, Integer second)
+        {
+            return first + second;
+        };
+    };
+
     /**
      * Extracts the values from the collection to form a {@link Flow}. The Collection
      * may change after the Flow is created without affecting the Flow.

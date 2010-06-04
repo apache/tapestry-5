@@ -14,26 +14,14 @@
 
 package org.apache.tapestry5.func;
 
-class LazyMapper<T, X> implements LazyFunction<X>
+/**
+ * A generalization of {@link Mapper} for a two-input function.
+ */
+public abstract class Mapper2<A, B, C>
 {
-    private final Mapper<T, X> mapper;
-
-    private final Flow<T> flow;
-
-    public LazyMapper(Mapper<T, X> mapper, Flow<T> flow)
-    {
-        this.mapper = mapper;
-        this.flow = flow;
-    }
-
-    public LazyContinuation<X> next()
-    {
-        if (flow.isEmpty())
-            return null;
-
-        LazyValue<X> nextValue = new LazyMappedValue<T, X>(flow, mapper);
-
-        return new LazyContinuation<X>(nextValue, new LazyMapper<T, X>(mapper, flow.rest()));
-    }
-
+    /**
+     * Take, as input, two values (from two flows) and return a computed value of
+     * the third type.
+     */
+    public abstract C map(A first, B second);
 }

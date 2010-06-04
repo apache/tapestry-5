@@ -38,8 +38,16 @@ import java.util.List;
  */
 public interface Flow<T> extends Iterable<T>
 {
-    /** Maps a Flow into a new Flow with different type values. */
+    /** Maps a Flow into a new Flow with different type values. Mapping is a lazy operation. */
     <X> Flow<X> map(Mapper<T, X> mapper);
+
+    /**
+     * Combines two Flows using a two-parameter Mapper. Each value of
+     * this Flow, and the corresponding value of the other flow are passed through the Mapper
+     * to provide the values of the output Flow. The length of the result Flow is
+     * the smaller of the lengths of the two input Flows. Mapping is a lazy operation.
+     */
+    <X, Y> Flow<Y> map(Mapper2<T, X, Y> mapper, Flow<? extends X> flow);
 
     /**
      * Given a {@link Mapper} that maps a T to a Flow<X>, this method will lazily concatenate

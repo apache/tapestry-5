@@ -146,6 +146,23 @@ public class MapperTest extends BaseFuncTest
 
         assertFlowValues(flow.take(3), 2, 4, 6);
         assertEquals(count.get(), 1);
+    }
 
+    @Test
+    public void map2_empty_is_the_empty_flow()
+    {
+        Flow<Integer> flow = F.flow(1, 2, 3);
+
+        assertSame(flow.map(F.ADD_INTS, filteredEmpty), F.EMPTY_FLOW);
+        assertSame(filteredEmpty.map(F.ADD_INTS, flow), F.EMPTY_FLOW);
+    }
+
+    @Test
+    public void map2()
+    {
+        Flow<Integer> left = F.range(10, 13);
+        Flow<Integer> right = F.series(20, 2);
+
+        assertFlowValues(left.map(F.ADD_INTS, right), 10 + 20, 11 + 22, 12 + 24);
     }
 }

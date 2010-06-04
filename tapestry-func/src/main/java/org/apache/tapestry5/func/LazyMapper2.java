@@ -14,26 +14,29 @@
 
 package org.apache.tapestry5.func;
 
-class LazyMapper<T, X> implements LazyFunction<X>
+class LazyMapper2<T, X, Y> implements LazyFunction<Y>
 {
-    private final Mapper<T, X> mapper;
+    private final Mapper2<T, X, Y> mapper;
 
-    private final Flow<T> flow;
+    private final Flow<T> left;
 
-    public LazyMapper(Mapper<T, X> mapper, Flow<T> flow)
+    private final Flow<X> right;
+
+    @SuppressWarnings("unchecked")
+    public LazyMapper2(Mapper2<T, X, Y> mapper, Flow<T> left, Flow<? extends X> right)
     {
         this.mapper = mapper;
-        this.flow = flow;
+        this.left = left;
+        this.right = (Flow<X>) right;
     }
 
-    public LazyContinuation<X> next()
+    public LazyContinuation<Y> next()
     {
-        if (flow.isEmpty())
+        if (left.isEmpty() || right.isEmpty())
             return null;
 
-        LazyValue<X> nextValue = new LazyMappedValue<T, X>(flow, mapper);
+        LazyValue<Y> nextValue = new LazyMapped2Value<T, X, Y>(left, right, mapper);
 
-        return new LazyContinuation<X>(nextValue, new LazyMapper<T, X>(mapper, flow.rest()));
+        return new LazyContinuation<Y>(nextValue, new LazyMapper2<T, X, Y>(mapper, left.rest(), right.rest()));
     }
-
 }

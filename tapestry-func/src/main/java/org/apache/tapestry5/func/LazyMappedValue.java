@@ -16,18 +16,18 @@ package org.apache.tapestry5.func;
 
 class LazyMappedValue<T, X> implements LazyValue<X>
 {
-    private final T input;
+    private final Flow<T> flow;
 
     private final Mapper<T, X> mapper;
 
-    public LazyMappedValue(T input, Mapper<T, X> mapper)
+    public LazyMappedValue(Flow<T> input, Mapper<T, X> mapper)
     {
-        this.input = input;
+        this.flow = input;
         this.mapper = mapper;
     }
 
     public X get()
     {
-        return mapper.map(input);
+        return mapper.map(flow.first());
     }
 }
