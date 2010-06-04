@@ -17,7 +17,7 @@ Chapter 2: Your First Tapestry Application
   Our final command line is:
 
 ----
-mvn archetype:generate -DarchetypeCatalog=http://tapestry.formos.com/maven-repository
+mvn archetype:generate -DarchetypeCatalog=http://tapestry.apache.org
 ----
 
   It will then prompt you to pick the archetype - choose quickstart, enter the group id, artifact id, version and package when prompted.
