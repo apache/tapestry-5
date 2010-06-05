@@ -51,6 +51,17 @@
                     </reportSet>
                 </reportSets>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>clirr-maven-plugin</artifactId>
+                <configuration>
+                    <comparisonVersion>5.1.0.5</comparisonVersion>
+                    <excludes>
+                        <exclude>**/internal/**</exclude>
+                        <exclude>**/test/**</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
         </plugins>
     </reporting>
 </project>

@@ -316,6 +316,11 @@
             <tagBase>https://svn.apache.org/repos/asf/tapestry/tapestry5/tags/releases/</tagBase>
           </configuration>
         </plugin>
+        <plugin>
+	    <groupId>org.codehaus.mojo</groupId>
+	    <artifactId>clirr-maven-plugin</artifactId>
+	    <version>2.2.1</version>
+	</plugin>
       </plugins>
     </pluginManagement>
   </build>
