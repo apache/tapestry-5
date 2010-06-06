@@ -4,6 +4,9 @@
 
 Introduction
 
+  <<Alias has been deprecated in 5.2.  Use the ServiceOverride service to accomplish the same
+  goals, easier.>>
+
   Tapestry goes to great lengths so that you can use the 
   {{{inject.html}Inject}} annotation on a field
   and provide no additional data, yet end up with the correct object or service.
