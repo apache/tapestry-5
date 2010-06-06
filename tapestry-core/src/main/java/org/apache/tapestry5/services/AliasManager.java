@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,13 +15,17 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
+import org.apache.tapestry5.ioc.services.ServiceOverride;
 
 import java.util.Map;
 
 /**
- * A thin wrapper around a set of {@link org.apache.tapestry5.services.AliasContribution}s. An {@link
- * org.apache.tapestry5.ioc.ObjectProvider} is contributed to the {@link org.apache.tapestry5.ioc.services.MasterObjectProvider}
- * service, to allow contributed objects to replace other objects (typically, built in services).
+ * A thin wrapper around a set of {@link org.apache.tapestry5.services.AliasContribution}s. An
+ * {@link org.apache.tapestry5.ioc.ObjectProvider} is contributed to the
+ * {@link org.apache.tapestry5.ioc.services.MasterObjectProvider} service, to allow contributed objects to replace other
+ * objects (typically, built in services).
+ * 
+ * @deprecated Use {@link ServiceOverride} instead
  */
 @UsesConfiguration(AliasContribution.class)
 public interface AliasManager
@@ -31,7 +35,7 @@ public interface AliasManager
      * contribution type and a non-null object that implements the type and may identify a mode. Only contributions
      * where the mode is blank or the mode matches the provided mode are returned. Mode specific contributions quietly
      * override non-specific contributions (where the mode is blank).
-     *
+     * 
      * @param mode
      * @return map from contribution type to contribution object
      */

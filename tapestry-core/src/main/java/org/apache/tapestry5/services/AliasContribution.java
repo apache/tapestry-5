@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,11 +16,14 @@ package org.apache.tapestry5.services;
 
 import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.ServiceOverride;
 
 import java.util.Formatter;
 
 /**
  * A contribution into the {@link Alias} or AliasOverride service configuration.
+ * 
+ * @deprecated Use {@link ServiceOverride} instead
  */
 public final class AliasContribution<T>
 {
@@ -92,7 +95,8 @@ public final class AliasContribution<T>
 
         formatter.format("<AliasContribution: %s", contributionType.getName());
 
-        if (InternalUtils.isNonBlank(mode)) formatter.format(" mode:%s", mode);
+        if (InternalUtils.isNonBlank(mode))
+            formatter.format(" mode:%s", mode);
 
         formatter.format(" %s>", object);
 
