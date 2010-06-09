@@ -435,9 +435,7 @@ public class Index
                     new Item("unavailablecomponentdemo", "Report Location of Unavailable Component",
                             "Report Location of Unavailable Component"),
 
-                    new Item("discardafterdemo", "@DiscardAfter Demo", "Demo using @DiscardAfter annotation"),
-                    
-                    new Item("remotepoolmanagement", "Remote Pool Management", "Proves that Page Pool MBean is registered")
+                    new Item("discardafterdemo", "@DiscardAfter Demo", "Demo using @DiscardAfter annotation")
 
             );
 
