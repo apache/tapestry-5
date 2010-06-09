@@ -1,0 +1,28 @@
+<testng-results>
+  <reporter-output>
+  </reporter-output>
+  <suite name="tapestry-jmx">
+    <groups>
+      <group name="integration">
+        <method signature="org.apache.tapestry5.jmx.integration.TapestryJmxIntegrationTests.remote_pool_management()" name="remote_pool_management" class="org.apache.tapestry5.jmx.integration.TapestryJmxIntegrationTests"/>
+      </group>
+    </groups>
+    <test name="org.apache.tapestry5.jmx.integration.TapestryJmxIntegrationTests">
+      <class name="org.apache.tapestry5.jmx.integration.TapestryJmxIntegrationTests">
+        <test-method status="PASS" signature="setup(org.testng.ITestContext)" name="setup" is-config="true" duration-ms="7194" started-at="2010-06-08T00:25:57Z" finished-at="2010-06-08T00:26:05Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[org.testng.TestRunner@1587fb]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="cleanup()" name="cleanup" is-config="true" duration-ms="723" started-at="2010-06-08T00:26:06Z" finished-at="2010-06-08T00:26:07Z">
+        </test-method>
+        <test-method status="PASS" signature="remote_pool_management()" name="remote_pool_management" duration-ms="1485" started-at="2010-06-08T00:26:05Z" finished-at="2010-06-08T00:26:06Z">
+        </test-method>
+      </class>
+    </test>
+  </suite>
+</testng-results>

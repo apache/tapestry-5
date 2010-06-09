@@ -1,0 +1,14 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+    <head>
+        <title>Start Page</title>
+    </head>
+    <body>
+        <h2>Test application for Tapestry JMX integration tests</h2>
+
+        <ul>
+            <li>
+                <t:pagelink page="RemotePoolManagement">Remote Pool Management</t:pagelink>
+            </li>
+        </ul>
+    </body>
+</html>
