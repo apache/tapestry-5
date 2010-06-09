@@ -89,6 +89,7 @@
       <id>drobiazko</id>
       <name>Igor Drobiazko</name>
       <email>drobiazko@apache.org</email>
+      <url>http://tapestry5.de/</url>
       <roles>
         <role>Developer</role>
       </roles>
@@ -179,6 +180,7 @@
         <module>tapestry-webflow</module>
         -->
     <module>tapestry-beanvalidator</module>
+    <module>tapestry-jmx</module>
   </modules>
   <dependencyManagement>
     <dependencies>
