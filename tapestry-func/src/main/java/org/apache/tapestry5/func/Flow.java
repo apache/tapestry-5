@@ -87,6 +87,12 @@ public interface Flow<T> extends Iterable<T>
      */
     List<T> toList();
 
+    /**
+     * Converts the Flow into an array of values (due to type erasure, you have to remind the Flow about the
+     * type).
+     */
+    T[] toArray(Class<T> type);
+
     /** Returns a new flow with the same elements but in reverse order. */
     Flow<T> reverse();
 

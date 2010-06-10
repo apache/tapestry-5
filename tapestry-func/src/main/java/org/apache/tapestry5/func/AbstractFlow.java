@@ -14,7 +14,9 @@
 
 package org.apache.tapestry5.func;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -200,6 +202,18 @@ abstract class AbstractFlow<T> implements Flow<T>
             return Collections.emptyList();
 
         return Collections.unmodifiableList(toMutableList());
+    }
+
+    @SuppressWarnings("unchecked")
+    public T[] toArray(Class<T> type)
+    {
+        assert type != null;
+
+        List<T> list = toMutableList();
+
+        Object array = Array.newInstance(type, list.size());
+
+        return list.toArray((T[]) array);
     }
 
     public int count()

@@ -25,7 +25,6 @@ import org.testng.annotations.Test;
 
 public class FuncTest extends BaseFuncTest
 {
-   
 
     @Test
     public void flow_reverse()
@@ -490,7 +489,6 @@ public class FuncTest extends BaseFuncTest
         assertListsEquals(result, "a", "had", "Mary", "lamb");
     }
 
- 
     @Test
     public void each_on_empty_flow()
     {
@@ -530,7 +528,6 @@ public class FuncTest extends BaseFuncTest
         }, initial), initial);
     }
 
-
     @Test
     public void count_of_the_empty_flow_is_zero()
     {
@@ -552,7 +549,6 @@ public class FuncTest extends BaseFuncTest
         assertEquals(flow.filter(F.notNull()).count(), 5);
     }
 
- 
     @Test
     public void concat_empty_list()
     {
@@ -561,4 +557,12 @@ public class FuncTest extends BaseFuncTest
         assertFlowValues(flow.concat(flow.filter(evenp)), 1, 3);
     }
 
+    @Test
+    public void to_array()
+    {
+        Flow<Integer> flow = F.range(1, 10).drop(2).take(3);
+
+        assertTrue(Arrays.equals(flow.toArray(Integer.class), new Integer[]
+        { 3, 4, 5 }));
+    }
 }
