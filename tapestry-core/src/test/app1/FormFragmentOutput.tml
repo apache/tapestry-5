@@ -10,6 +10,8 @@
         <dd id="email">${subscribe.email}</dd>
         <dt>Code</dt>
         <dd id="code">${subscribe.code}</dd>
+        <dt>Sub</dt>
+        <dd id="sub">${subscribe.sub}</dd>
     </dl>
 
 

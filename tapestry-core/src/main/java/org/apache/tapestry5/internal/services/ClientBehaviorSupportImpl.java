@@ -70,12 +70,23 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
         javascriptSupport.addInitializerCall("linkZone", spec);
     }
 
+    /**
+     * @deprecated Use {@link #addFormFragment(String,boolean,String,String)} instead
+     */
     public void addFormFragment(String clientId, String showFunctionName, String hideFunctionName)
+    {
+        addFormFragment(clientId, false, showFunctionName, hideFunctionName);
+    }
+
+    public void addFormFragment(String clientId, boolean alwaysSubmit, String showFunctionName, String hideFunctionName)
     {
         JSONObject spec = new JSONObject("element", clientId);
 
         addFunction(spec, "show", showFunctionName);
         addFunction(spec, "hide", hideFunctionName);
+
+        if (alwaysSubmit)
+            spec.put("alwaysSubmit", true);
 
         javascriptSupport.addInitializerCall("formFragment", spec);
     }

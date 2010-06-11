@@ -48,7 +48,8 @@ import org.slf4j.Logger;
  * The client-side element will now listen to two new event defined by client-side constants:
  * <dl>
  * <dt>Tapestry.CHANGE_VISIBILITY_EVENT</dt>
- * <dd>Change the visiblity as per the event memo's visibility property. When the visiblity changes, the correct animation is executed.</dd>
+ * <dd>Change the visiblity as per the event memo's visibility property. When the visiblity changes, the correct
+ * animation is executed.</dd>
  * <dt>Tapestry.HIDE_AND_REMOVE_EVENT</dt>
  * <dd>Hides the element, then removes it from the DOM entirely.
  * </dl>
@@ -65,6 +66,16 @@ public class FormFragment implements ClientElement
      */
     @Parameter
     private boolean visible;
+
+    /**
+     * If true, then the fragment submits the values from fields it contains <em>even if</em> the fragment is not
+     * visible.
+     * The default is to omit values from fields when the enclosing fragment is non visible.
+     * 
+     * @since 5.2.0
+     */
+    @Parameter
+    private boolean alwaysSubmit;
 
     /**
      * Name of a function on the client-side Tapestry.ElementEffect object that is invoked to make the fragment visible.
@@ -145,7 +156,7 @@ public class FormFragment implements ClientElement
         if (!visible)
             element.addClassName(CSSClassConstants.INVISIBLE);
 
-        clientBehaviorSupport.addFormFragment(clientId, show, hide);
+        clientBehaviorSupport.addFormFragment(clientId, alwaysSubmit, show, hide);
 
         componentActions = new ComponentActionSink(logger, clientDataEncoder);
 

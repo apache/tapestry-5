@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,9 +18,10 @@ import org.apache.tapestry5.beaneditor.Validate;
 
 public class SubscribeData
 {
-    private String name, email, code;
-
+    // Only really required if visible!
     @Validate("required")
+    private String name, email, code, sub;
+
     public String getName()
     {
         return name;
@@ -31,8 +32,6 @@ public class SubscribeData
         this.name = name;
     }
 
-    // Only really required if visible!
-    @Validate("required")
     public String getEmail()
     {
         return email;
@@ -43,7 +42,6 @@ public class SubscribeData
         this.email = email;
     }
 
-    @Validate("required")
     public String getCode()
     {
         return code;
@@ -53,4 +51,16 @@ public class SubscribeData
     {
         this.code = code;
     }
+
+    public String getSub()
+    {
+        return sub;
+    }
+
+    public void setSub(String sub)
+    {
+        this.sub = sub;
+    }
+    
+    
 }

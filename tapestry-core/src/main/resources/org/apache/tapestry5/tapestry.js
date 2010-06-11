@@ -1137,15 +1137,17 @@ Tapestry.Initializer = {
 			};
 		});
 
-		form.observe(Tapestry.FORM_PREPARE_FOR_SUBMIT_EVENT, function() {
+		if (!spec.alwaysSubmit) {
+			form.observe(Tapestry.FORM_PREPARE_FOR_SUBMIT_EVENT, function() {
 
-			/*
-			 * On a submission, if the fragment is not visible, then disabled
-			 * its form submission data, so that no processing or validation
-			 * occurs on the server.
-			 */
-			hidden.disabled = !element.isDeepVisible();
-		});
+				/*
+				 * On a submission, if the fragment is not visible, then disabled
+				 * its form submission data, so that no processing or validation
+				 * occurs on the server.
+				 */
+				hidden.disabled = !element.isDeepVisible();
+			});
+		}
 	},
 
 	formInjector : function(spec) {

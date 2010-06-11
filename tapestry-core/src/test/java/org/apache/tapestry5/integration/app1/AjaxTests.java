@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,6 +38,9 @@ public class AjaxTests extends TapestryCoreTestCase
 
         type("name", "Fred");
 
+        // Put a value into the sub field, then hide it ...
+        type("sub", "subvalue");
+
         // Really, you can't type in the field because it is not visible, but
         // this checks that invisible fields are not processed.
         type("email", "this field is ignored");
@@ -53,6 +56,8 @@ public class AjaxTests extends TapestryCoreTestCase
         click("subscribeToEmail");
         click("on");
 
+        type("sub", "subvalue");
+
         waitForCondition("selenium.browserbot.getCurrentWindow().$('code').isDeepVisible() == true", PAGE_LOAD_TIMEOUT);
 
         type("name", "Barney");
@@ -61,6 +66,8 @@ public class AjaxTests extends TapestryCoreTestCase
 
         click("off");
 
+        click("subVisible");
+        
         waitForCondition("selenium.browserbot.getCurrentWindow().$('code').isDeepVisible() == false", PAGE_LOAD_TIMEOUT);
 
         clickAndWait(SUBMIT);
@@ -68,6 +75,9 @@ public class AjaxTests extends TapestryCoreTestCase
         assertText("name", "Barney");
         assertText("email", "rubble@bedrock.gov");
         assertText("code", "");
+        
+        // .. but it still gets submitted, thanks to alwyassubmit=true
+        assertText("sub", "subvalue");
     }
 
     @Test
