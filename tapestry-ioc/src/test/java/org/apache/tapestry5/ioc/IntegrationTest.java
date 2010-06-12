@@ -31,6 +31,7 @@ import org.apache.tapestry5.ioc.internal.ExtraPublicConstructorsModule;
 import org.apache.tapestry5.ioc.internal.IOCInternalTestCase;
 import org.apache.tapestry5.ioc.internal.PrivateConstructorModule;
 import org.apache.tapestry5.ioc.internal.UpcaseService;
+import org.apache.tapestry5.ioc.internal.services.StartupModule2;
 import org.apache.tapestry5.ioc.services.Builtin;
 import org.apache.tapestry5.ioc.services.ServiceActivity;
 import org.apache.tapestry5.ioc.services.ServiceActivityScoreboard;
@@ -1433,6 +1434,8 @@ public class IntegrationTest extends IOCInternalTestCase
         NameListHolder2 holder = r.getService("ServiceWithEmptyConfiguration", NameListHolder2.class);
 
         assertEquals(holder.getNames(), Arrays.asList());
+        
+        r.shutdown();
 
     }
 
@@ -1488,5 +1491,24 @@ public class IntegrationTest extends IOCInternalTestCase
         assertSame(service.getLogger(), il.getResources().getLogger());
 
         r.shutdown();
+    }
+    
+    @Test
+    public void startup_inside_module()
+    {
+        Registry r = buildRegistry(StartupModule2.class);
+        
+        assertFalse(StartupModule2.staticStartupInvoked);
+        
+        assertFalse(StartupModule2.instanceStartupInvoked);
+        
+        r.performRegistryStartup();
+
+        assertTrue(StartupModule2.staticStartupInvoked);
+        
+        assertTrue(StartupModule2.instanceStartupInvoked);
+        
+        r.shutdown();
+
     }
 }

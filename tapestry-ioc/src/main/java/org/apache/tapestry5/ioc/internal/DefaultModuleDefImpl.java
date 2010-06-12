@@ -14,29 +14,52 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.*;
-import org.apache.tapestry5.ioc.annotations.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.tapestry5.ioc.AdvisorDef;
+import org.apache.tapestry5.ioc.Configuration;
+import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.MethodAdviceReceiver;
+import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.ScopeConstants;
+import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.ServiceBuilderResources;
+import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.EagerLoad;
+import org.apache.tapestry5.ioc.annotations.Marker;
+import org.apache.tapestry5.ioc.annotations.Match;
+import org.apache.tapestry5.ioc.annotations.Order;
+import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
+import org.apache.tapestry5.ioc.annotations.Scope;
+import org.apache.tapestry5.ioc.annotations.ServiceId;
+import org.apache.tapestry5.ioc.annotations.Startup;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.ContributionDef2;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
-import org.apache.tapestry5.ioc.def.ModuleDef2;
+import org.apache.tapestry5.ioc.def.ModuleDef3;
 import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.def.StartupDef;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.slf4j.Logger;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.*;
 
 /**
  * Starting from the Class for a module, identifies all the services (service builder methods),
  * decorators (service
  * decorator methods) and (not yet implemented) contributions (service contributor methods).
  */
-public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
+public class DefaultModuleDefImpl implements ModuleDef3, ServiceDefAccumulator
 {
     /**
      * The prefix used to identify service builder methods.
@@ -78,6 +101,8 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
     private final Map<String, AdvisorDef> advisorDefs = CollectionFactory.newCaseInsensitiveMap();
 
     private final Set<ContributionDef> contributionDefs = CollectionFactory.newSet();
+    
+    private final Set<StartupDef> startupDefs = CollectionFactory.newSet();
 
     private final Set<Class> defaultMarkers = CollectionFactory.newSet();
 
@@ -232,7 +257,19 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
                 remainingMethods.remove(m);
                 continue;
             }
+
+            if (m.isAnnotationPresent(Startup.class))
+            {
+                addStartupDef(m);
+                remainingMethods.remove(m);
+                continue;
+            }
         }
+    }
+
+    private void addStartupDef(Method method)
+    {
+        startupDefs.add(new StartupDefImpl(method));
     }
 
     private void addContributionDef(Method method)
@@ -476,6 +513,11 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
     public Set<ContributionDef> getContributionDefs()
     {
         return contributionDefs;
+    }
+    
+    public Set<StartupDef> getStartupDefs()
+    {
+        return startupDefs;
     }
 
     public String getLoggerName()

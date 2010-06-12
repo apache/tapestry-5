@@ -30,8 +30,10 @@ import org.apache.tapestry5.ioc.def.DecoratorDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.def.ServiceDef2;
+import org.apache.tapestry5.ioc.def.StartupDef;
 import org.apache.tapestry5.ioc.internal.services.PerthreadManagerImpl;
 import org.apache.tapestry5.ioc.internal.services.RegistryShutdownHubImpl;
+import org.apache.tapestry5.ioc.internal.services.ServiceMessages;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InjectionResources;
@@ -281,8 +283,31 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             proxy.eagerLoadService();
 
         getService("RegistryStartup", Runnable.class).run();
+        
+        invokeStartups();
 
         cleanupThread();
+    }
+    
+    private void invokeStartups()
+    {   
+        for (Module m : moduleToServiceDefs.keySet())
+        {
+            Logger logger = this.loggerSource.getLogger(m.getLoggerName());
+            
+            for (StartupDef sd : m.getStartupDefs())
+            {
+                try
+                {
+                    sd.startup(m, this, this, logger);
+                }
+                catch(RuntimeException e)
+                {
+                    logger.error(ServiceMessages.startupFailure(e));
+                }
+            }
+            
+        }
     }
 
     public Logger getServiceLogger(String serviceId)

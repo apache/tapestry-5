@@ -29,13 +29,37 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.net.URL;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
-import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.AdvisorDef;
+import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.Configuration;
+import org.apache.tapestry5.ioc.Invokable;
+import org.apache.tapestry5.ioc.Locatable;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.ModuleBuilderSource;
+import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.ServiceBuilderResources;
+import org.apache.tapestry5.ioc.ServiceLifecycle;
+import org.apache.tapestry5.ioc.ServiceLifecycle2;
+import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.InjectResource;
 import org.apache.tapestry5.ioc.annotations.InjectService;
@@ -44,9 +68,10 @@ import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.ContributionDef2;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
-import org.apache.tapestry5.ioc.def.ModuleDef2;
+import org.apache.tapestry5.ioc.def.ModuleDef3;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.def.ServiceDef2;
+import org.apache.tapestry5.ioc.def.StartupDef;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.Coercion;
@@ -846,12 +871,12 @@ public class InternalUtils
         };
     }
 
-    public static ModuleDef2 toModuleDef2(final ModuleDef md)
+    public static ModuleDef3 toModuleDef3(final ModuleDef md)
     {
-        if (md instanceof ModuleDef2)
-            return (ModuleDef2) md;
+        if (md instanceof ModuleDef3)
+            return (ModuleDef3) md;
 
-        return new ModuleDef2()
+        return new ModuleDef3()
         {
             public Set<AdvisorDef> getAdvisorDefs()
             {
@@ -886,6 +911,11 @@ public class InternalUtils
             public Set<String> getServiceIds()
             {
                 return md.getServiceIds();
+            }
+
+            public Set<StartupDef> getStartupDefs()
+            {
+                return Collections.emptySet();
             }
         };
     }

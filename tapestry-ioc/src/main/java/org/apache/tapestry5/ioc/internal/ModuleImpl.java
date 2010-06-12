@@ -40,9 +40,10 @@ import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.ContributionDef2;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
-import org.apache.tapestry5.ioc.def.ModuleDef2;
+import org.apache.tapestry5.ioc.def.ModuleDef3;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.def.ServiceDef2;
+import org.apache.tapestry5.ioc.def.StartupDef;
 import org.apache.tapestry5.ioc.internal.services.JustInTimeObjectCreator;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.ConcurrentBarrier;
@@ -63,7 +64,7 @@ public class ModuleImpl implements Module
 
     private final ServiceActivityTracker tracker;
 
-    private final ModuleDef2 moduleDef;
+    private final ModuleDef3 moduleDef;
 
     private final ClassFactory classFactory;
 
@@ -97,7 +98,7 @@ public class ModuleImpl implements Module
     {
         this.registry = registry;
         this.tracker = tracker;
-        this.moduleDef = InternalUtils.toModuleDef2(moduleDef);
+        this.moduleDef = InternalUtils.toModuleDef3(moduleDef);
         this.classFactory = classFactory;
         this.logger = logger;
 
@@ -569,6 +570,11 @@ public class ModuleImpl implements Module
     public String getLoggerName()
     {
         return moduleDef.getLoggerName();
+    }
+    
+    public Set<StartupDef> getStartupDefs()
+    {
+        return moduleDef.getStartupDefs();
     }
 
     @Override
