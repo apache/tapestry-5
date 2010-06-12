@@ -66,6 +66,7 @@
             <item name="tapestry-hibernate" href="tapestry-hibernate/"/>
             <item name="tapestry-hibernate-core" href="tapestry-hibernate-core/"/>
             <item name="tapestry-ioc" href="tapestry-ioc/"/>
+            <item name="tapestry-jmx" href="tapestry-jmx/"/>
             <item name="tapestry-spring" href="tapestry-spring/"/>
             <item name="tapestry-test" href="tapestry-test/"/>
             <item name="tapestry-upload" href="tapestry-upload/"/>

@@ -5,5 +5,5 @@
 Tapestry Functional Flows
 
   Lightweight framework for bringing functional style development to the construction and transformation of collections
-  of objects (known as {{{../javadocs/org/apache/tapestry5/func/Flow.html}Flows}}.
+  of objects (known as {{{../javadocs/org/apache/tapestry5/func/Flow.html}Flows}}).
   
