@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -193,6 +193,7 @@ public abstract class AbstractField implements Field
      * Used by subclasses to create a default binding to a property of the container matching the component id.
      *
      * @return a binding to the property, or null if the container does not have a corresponding property
+     * @deprecated Use {@link ComponentDefaultProvider#defaultBinding(String, ComponentResources)} instead
      */
     protected final Binding createDefaultParameterBinding(String parameterName)
     {
