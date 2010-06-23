@@ -26,7 +26,7 @@ import org.apache.tapestry5.services.ComponentEventResultProcessor;
 import org.apache.tapestry5.services.Response;
 
 /**
- * Implemention of {@link ComponentEventResultProcessor} for {@link org.apache.tapestry5.json.JSONObject}, allowing a
+ * Implementation of {@link ComponentEventResultProcessor} for {@link org.apache.tapestry5.json.JSONObject}, allowing a
  * component event handler to return a JSONObject that will be sent directly to the client as the reply. This is often
  * used with custom components that need a custom JSON response.
  */
