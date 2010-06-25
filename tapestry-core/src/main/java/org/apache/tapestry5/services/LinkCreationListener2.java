@@ -26,8 +26,8 @@ public interface LinkCreationListener2
      *            the newly created link
      * @param parameters
      *            information encoded into the link
+     * @since 5.2.0
      */
-
     void createdPageRenderLink(Link link, PageRenderRequestParameters parameters);
 
     /**
