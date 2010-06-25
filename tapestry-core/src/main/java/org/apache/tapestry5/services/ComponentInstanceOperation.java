@@ -1,4 +1,4 @@
-// Copyright 2008, 2010 The Apache Software Foundation
+// Copyright 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,15 +14,18 @@
 
 package org.apache.tapestry5.services;
 
+import org.apache.tapestry5.runtime.Component;
+
 /**
- * An object that receives control around an "advised" method of a component. The advise can query or even replace
- * method parameters. After invoking {@link org.apache.tapestry5.services.ComponentMethodInvocation#proceed()}, the
- * advice may query and override thrown exceptions or the return value of the invocation.
+ * An operation that requires an instance of a component.
+ * This is a simpler alternative to a {@link ComponentMethodAdvice}.
  * 
- * @see TransformMethod#addAdvice(ComponentMethodAdvice)
- * @see ComponentInstanceOperation
+ * @since 5.2.0
+ * @see TransformMethod#addOperationAfter(ComponentInstanceOperation)
+ * @see TransformMethod#addOperationBefore(ComponentInstanceOperation)
  */
-public interface ComponentMethodAdvice
+public interface ComponentInstanceOperation
 {
-    void advise(ComponentMethodInvocation invocation);
+    /** Called to preform the desired operation on a component instance. */
+    public void invoke(Component instance);
 }

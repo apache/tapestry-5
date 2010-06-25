@@ -55,6 +55,20 @@ public interface TransformMethod extends AnnotationProvider, Comparable<Transfor
     void addAdvice(ComponentMethodAdvice advice);
 
     /**
+     * Adds an operation that will execute before any
+     * further advice or operations. This is converted into
+     * advice that invokes the operation, then invokes {@link ComponentMethodInvocation#proceed()}.
+     */
+    void addOperationBefore(ComponentInstanceOperation operation);
+
+    /**
+     * Adds an operation that will execute after any
+     * further advice or operations. This is converted into
+     * advice that invokes {@link ComponentMethodInvocation#proceed()} before invoking the operation.
+     */
+    void addOperationAfter(ComponentInstanceOperation operation);
+
+    /**
      * Converts a signature to a string used to identify the method; this consists of the
      * {@link TransformMethodSignature#getMediumDescription()} appended with source file information
      * and line number

@@ -184,6 +184,16 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             formatter.format("add advice %s : %s\n\n", sig.getMediumDescription(), advice);
         }
 
+        public void addOperationAfter(ComponentInstanceOperation operation)
+        {
+            addAdvice(toAfterAdvice(operation));
+        }
+
+        public void addOperationBefore(ComponentInstanceOperation operation)
+        {
+            addAdvice(toBeforeAdvice(operation));
+        }
+
         public MethodAccess getAccess()
         {
             failIfFrozen();
@@ -2268,4 +2278,32 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                 "Method ClassTransformation.%s has been deprecated and is no longer functional. "
                         + "Please consult the JavaDoc for a suitable replacement.", methodName));
     }
+
+    private static ComponentMethodAdvice toBeforeAdvice(final ComponentInstanceOperation operation)
+    {
+        return new ComponentMethodAdvice()
+        {
+
+            public void advise(ComponentMethodInvocation invocation)
+            {
+                operation.invoke(invocation.getInstance());
+
+                invocation.proceed();
+            }
+        };
+    }
+
+    private static ComponentMethodAdvice toAfterAdvice(final ComponentInstanceOperation operation)
+    {
+        return new ComponentMethodAdvice()
+        {
+            public void advise(ComponentMethodInvocation invocation)
+            {
+                invocation.proceed();
+
+                operation.invoke(invocation.getInstance());
+            }
+        };
+    }
+
 }
