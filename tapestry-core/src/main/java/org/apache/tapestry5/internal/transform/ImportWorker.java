@@ -29,15 +29,8 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.AssetSource;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.ComponentMethodAdvice;
-import org.apache.tapestry5.services.ComponentMethodInvocation;
-import org.apache.tapestry5.services.FieldAccess;
-import org.apache.tapestry5.services.TransformConstants;
-import org.apache.tapestry5.services.TransformField;
-import org.apache.tapestry5.services.TransformMethod;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.javascript.JavascriptSupport;
 
 /**
@@ -219,19 +212,17 @@ public class ImportWorker implements ComponentClassTransformWorker
     private void addMethodAssetOperationAdvice(TransformMethod method, final FieldAccess access,
             final Worker<Asset> operation)
     {
-        ComponentMethodAdvice advice = new ComponentMethodAdvice()
+        ComponentInstanceOperation advice = new ComponentInstanceOperation()
         {
-            @SuppressWarnings("unchecked")
-            public void advise(ComponentMethodInvocation invocation)
+
+            public void invoke(Component instance)
             {
-                List<Asset> assets = (List<Asset>) access.read(invocation.getInstance());
+                List<Asset> assets = (List<Asset>) access.read(instance);
 
                 F.flow(assets).each(operation);
-
-                invocation.proceed();
             }
         };
 
-        method.addAdvice(advice);
+        method.addOperationBefore(advice);
     }
 }

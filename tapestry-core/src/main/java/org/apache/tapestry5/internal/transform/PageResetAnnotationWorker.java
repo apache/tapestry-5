@@ -22,15 +22,8 @@ import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.structure.PageResetListener;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.ComponentMethodAdvice;
-import org.apache.tapestry5.services.ComponentMethodInvocation;
-import org.apache.tapestry5.services.MethodAccess;
-import org.apache.tapestry5.services.MethodInvocationResult;
-import org.apache.tapestry5.services.TransformConstants;
-import org.apache.tapestry5.services.TransformMethod;
-import org.apache.tapestry5.services.TransformMethodSignature;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.services.*;
 
 /**
  * Implementation of the {@link PageReset} annotation. Makes the component implement {@link PageResetListener}.
@@ -72,23 +65,17 @@ public class PageResetAnnotationWorker implements ComponentClassTransformWorker
     {
         List<MethodAccess> methodAccess = convertToMethodAccess(methods);
 
-        ComponentMethodAdvice advice = createMethodAccessAdvice(methodAccess);
+        ComponentInstanceOperation advice = createMethodAccessAdvice(methodAccess);
 
-        transformation.getOrCreateMethod(CONTAINING_PAGE_DID_RESET).addAdvice(advice);
+        transformation.getOrCreateMethod(CONTAINING_PAGE_DID_RESET).addOperationAfter(advice);
     }
 
-    private ComponentMethodAdvice createMethodAccessAdvice(final List<MethodAccess> methodAccess)
+    private ComponentInstanceOperation createMethodAccessAdvice(final List<MethodAccess> methodAccess)
     {
-        return new ComponentMethodAdvice()
+        return new ComponentInstanceOperation()
         {
-            public void advise(ComponentMethodInvocation invocation)
-            {
-                invocation.proceed();
 
-                invokeResetMethods(invocation.getInstance());
-            }
-
-            private void invokeResetMethods(Object instance)
+            public void invoke(Component instance)
             {
                 for (MethodAccess access : methodAccess)
                 {
