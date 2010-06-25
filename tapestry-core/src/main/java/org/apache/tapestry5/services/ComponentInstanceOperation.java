@@ -26,6 +26,6 @@ import org.apache.tapestry5.runtime.Component;
  */
 public interface ComponentInstanceOperation
 {
-    /** Called to preform the desired operation on a component instance. */
+    /** Called to perform the desired operation on a component instance. */
     public void invoke(Component instance);
 }
