@@ -19,6 +19,7 @@ import org.apache.tapestry5.Link;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.QueryParameterMapped;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
+import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.ComponentEvent;
@@ -82,6 +83,22 @@ public class QueryParameterMappedWorker implements ComponentClassTransformWorker
 
         setValueFromInitializeEventHandler(access, parameterName, encoder, dispatchMethod, model);
         decorateLinks(access, parameterName, encoder, dispatchMethod, model);
+        preallocateName(parameterName, dispatchMethod, model);
+    }
+
+    private void preallocateName(final String parameterName, TransformMethod dispatchMethod, MutableComponentModel model)
+    {
+        EventHandler handler = new EventHandler()
+        {
+            public void invoke(Component component, ComponentEvent event)
+            {
+                IdAllocator idAllocator = event.getEventContext().get(IdAllocator.class, 0);
+
+                idAllocator.allocateId(parameterName);
+            }
+        };
+
+        add(dispatchMethod, model, EventConstants.PREALLOCATE_FORM_CONTROL_NAMES, handler);
     }
 
     @SuppressWarnings("unchecked")
@@ -144,7 +161,7 @@ public class QueryParameterMappedWorker implements ComponentClassTransformWorker
                 {
                     handler.invoke(invocation.getInstance(), event);
                 }
-                
+
                 invocation.proceed();
             }
         });

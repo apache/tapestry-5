@@ -14,28 +14,38 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
+import org.apache.tapestry5.OptionModel;
+import org.apache.tapestry5.PersistenceConstants;
+import org.apache.tapestry5.SelectModel;
+import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.QueryParameterMapped;
+import org.apache.tapestry5.internal.OptionModelImpl;
+import org.apache.tapestry5.internal.SelectModelImpl;
 
 public class QueryParameterMappedDemo
 {
-    
+
+    @Property
+    @Persist(PersistenceConstants.FLASH)
+    private Integer selectedClickCount;
+
     @Property
     private boolean clickCountSet;
-    
+
     @Property
     @QueryParameterMapped
     private Integer clickCount;
 
     @Property
-    @QueryParameterMapped
+    @QueryParameterMapped("status-message")
     private String message;
 
     void onActivate()
     {
         clickCountSet = clickCount != null;
     }
-    
+
     void onActionFromIncrement()
     {
         clickCount = clickCount == null ? 1 : clickCount + 1;
@@ -50,5 +60,14 @@ public class QueryParameterMappedDemo
     {
         clickCount = null;
         message = null;
+    }
+
+    public SelectModel getClickCountModel()
+    {
+        OptionModel one = new OptionModelImpl("one", 1);
+        OptionModel two = new OptionModelImpl("two", 2);
+        OptionModel three = new OptionModelImpl("three", 3);
+
+        return new SelectModelImpl(one, two, three);
     }
 }

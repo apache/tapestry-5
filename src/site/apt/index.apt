@@ -34,6 +34,9 @@ What is Apache Tapestry?
 
 New And Of Note
 
+  * New {{{apidocs/org/apache/tapestry5/annotations/QueryParameterMapped.html}QueryParameterMapped}} annotation to
+    automatically map fields of a page to query parameters.
+  
   * Service <implementation> classes may now be {{{tapestry-ioc/reload.html}live reloaded}}, much like page and component classes. 
 
   * New {{{apidocs/org/apache/tapestry5/annotations/QueryParameter.html}QueryParameter}} annotation for parameters to event handler methods.

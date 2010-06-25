@@ -15,7 +15,9 @@
 package org.apache.tapestry5;
 
 import org.apache.tapestry5.corelib.components.BeanEditForm;
+import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
+import org.apache.tapestry5.services.ComponentSource;
 import org.apache.tapestry5.services.PageRenderRequestParameters;
 
 /**
@@ -209,5 +211,14 @@ public class EventConstants
      * @since 5.2.0
      */
     public static final String DECORATE_COMPONENT_EVENT_LINK = "decoreateComponentEventLink";
+
+    /**
+     * Name of a event triggered by the form component on the {@linkplain ComponentSource#getActivePage() active page}
+     * to allow it to pre-allocate the names of any query parameters that might be used by the page for its own purposes
+     * and should not be allocated to components. An {@link IdAllocator} is passed as the event context.
+     * 
+     * @since 5.2.0
+     */
+    public static final String PREALLOCATE_FORM_CONTROL_NAMES = "preallocateFormControlNames";
 
 }

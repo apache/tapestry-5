@@ -14,29 +14,44 @@
 
 package org.apache.tapestry5.integration.app1;
 
+import org.apache.tapestry5.corelib.components.Submit;
 import org.apache.tapestry5.integration.TapestryCoreTestCase 
 import org.testng.annotations.Test 
 
 class QueryParameterMappedTests extends TapestryCoreTestCase
 {
     @Test
-    void basic_links()
-    {
+    void basic_links() {
         clickThru "@QueryParameterMapped Demo"
         
-        assertText("clickCount", "")
-        assertText("clickCountSet", "false")
-        assertText("message", "")
+        assertText "click-count", ""
+        assertText "click-count-set", "false"
+        assertText "message", ""
         
         clickAndWait "link=increment count"
         
-        assertText("clickCount", "1")
-        assertText("clickCountSet", "true")
+        assertText "click-count", "1"
+        assertText "click-count-set", "true"
         
         clickAndWait "link=set message"
         
-        assertText("clickCount", "1")
-        assertText("clickCountSet", "true")
-        assertText("message", "Link clicked!")        
+        assertText "click-count", "1"
+        assertText "click-count-set", "true"
+        assertText "message", "Link clicked!"        
+    }
+    
+    @Test
+    public void form_components_do_not_conflict_with_mapped_field_names() {
+        
+        clickThru "@QueryParameterMapped Demo"
+        
+        clickAndWait "link=increment count"
+        
+        select "clickCount", "two"
+        
+        clickAndWait SUBMIT
+        
+        assertText "click-count", "1"
+        assertText "selected-click-count", "2"        
     }
 }

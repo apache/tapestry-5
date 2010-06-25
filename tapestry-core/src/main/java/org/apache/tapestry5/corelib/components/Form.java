@@ -363,10 +363,7 @@ public class Form implements ClientElement, FormValidationControl
 
         IdAllocator allocator = new IdAllocator();
 
-        for (String name : TapestryInternalUtils.splitAtCommas(preselectedFormNames))
-        {
-            allocator.allocateId(name);
-        }
+        preallocateNames(allocator);
 
         formSupport = createRenderTimeFormSupport(clientId, actionSink, allocator);
 
@@ -703,5 +700,21 @@ public class Form implements ClientElement, FormValidationControl
     public String getClientId()
     {
         return clientId;
+    }
+
+    @Inject
+    private ComponentSource componentSource;
+
+    private void preallocateNames(IdAllocator idAllocator)
+    {
+        for (String name : TapestryInternalUtils.splitAtCommas(preselectedFormNames))
+        {
+            idAllocator.allocateId(name);
+        }
+
+        ComponentResources activePageResources = componentSource.getActivePage().getComponentResources();
+
+        activePageResources.triggerEvent(EventConstants.PREALLOCATE_FORM_CONTROL_NAMES, new Object[]
+        { idAllocator }, null);
     }
 }
