@@ -23,6 +23,7 @@ import org.apache.tapestry5.internal.services.javascript.JavascriptStackPathCons
 import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSource;
 import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSourceImpl;
 import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Autobuild;
@@ -36,16 +37,7 @@ import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
-import org.apache.tapestry5.services.ComponentClasses;
-import org.apache.tapestry5.services.ComponentLayer;
-import org.apache.tapestry5.services.ComponentMessages;
-import org.apache.tapestry5.services.ComponentTemplates;
-import org.apache.tapestry5.services.Core;
-import org.apache.tapestry5.services.InvalidationEventHub;
-import org.apache.tapestry5.services.LocalizationSetter;
-import org.apache.tapestry5.services.RequestGlobals;
-import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
-import org.apache.tapestry5.services.UpdateListenerHub;
+import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
 import org.slf4j.Logger;
 
@@ -274,5 +266,19 @@ public class InternalModule
         classesInvalidationEventHub.addInvalidationListener(service);
 
         return service;
+    }
+
+    /**
+     * Contributes:
+     * <dl>
+     * <dt>LinkDecoration (instance of {@link LinkDecorationListener})</dt>
+     * <dd>Triggers events for notifications about links</dd>
+     * <dl>
+     * 
+     * @since 5.2.0
+     */
+    public static void contributeLinkSource(OrderedConfiguration<LinkCreationListener2> configuration)
+    {
+        configuration.addInstance("LinkDecoration", LinkDecorationListener.class);
     }
 }

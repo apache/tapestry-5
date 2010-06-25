@@ -15,6 +15,8 @@
 package org.apache.tapestry5;
 
 import org.apache.tapestry5.corelib.components.BeanEditForm;
+import org.apache.tapestry5.services.ComponentEventRequestParameters;
+import org.apache.tapestry5.services.PageRenderRequestParameters;
 
 /**
  * Constant values for common event names fired by Tapestry components.
@@ -80,7 +82,7 @@ public class EventConstants
      * 
      * @see org.apache.tapestry5.corelib.components.Form
      * @deprecated As of 5.2, this event should no longer be used; the Form component now fires a {@link #VALIDATE}
-     *             event.
+     *             event. For compatibility, validateForm will be supported, but may be removed in a future release.
      */
     public static final String VALIDATE_FORM = "validateForm";
 
@@ -178,14 +180,34 @@ public class EventConstants
      * 
      * @SINCE 5.1.0.4
      */
-    public static final String PROVIDE_COMPLETIONS = "providecompletions";
+    public static final String PROVIDE_COMPLETIONS = "provideCompletions";
 
     /**
      * Event triggered by {@link org.apache.tapestry5.corelib.components.Select} component to inform
      * its
      * container that Select's value has changed.
      * 
-     * @since 5.2.0.0
+     * @since 5.2.0
      */
-    public static final String VALUE_CHANGED = "valuechanged";
+    public static final String VALUE_CHANGED = "valueChanged";
+
+    /**
+     * Event triggered during page render link generation. The first context parameter is the {@link Link} object, the
+     * second is the {@link PageRenderRequestParameters} from which the Link
+     * was created. The event is triggered on the actively rendering page.
+     * 
+     * @since 5.2.0
+     */
+    public static final String DECORATE_PAGE_RENDER_LINK = "decoratePageRenderLink";
+
+    /**
+     * Event triggered during component event link generation. The first context parameter is the {@link Link} object,
+     * the second is the {@link ComponentEventRequestParameters} from which the Link
+     * was created. The event is triggered on the actively rendering page, not necessarily the page
+     * containing the component.
+     * 
+     * @since 5.2.0
+     */
+    public static final String DECORATE_COMPONENT_EVENT_LINK = "decoreateComponentEventLink";
+
 }
