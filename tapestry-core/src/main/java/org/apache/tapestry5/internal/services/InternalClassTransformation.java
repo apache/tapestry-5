@@ -15,7 +15,8 @@
 package org.apache.tapestry5.internal.services;
 
 import javassist.CtClass;
-import org.apache.tapestry5.ioc.internal.util.IdAllocator;
+
+import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;

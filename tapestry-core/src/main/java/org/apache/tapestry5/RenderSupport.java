@@ -47,7 +47,7 @@ public interface RenderSupport
      * @param id
      *            the component id from which a unique id will be generated
      * @return a unique id for this rendering of the page
-     * @see org.apache.tapestry5.ioc.internal.util.IdAllocator
+     * @see org.apache.tapestry5.ioc.util.IdAllocator
      * @see JavascriptSupport#allocateClientId(ComponentResources)
      * @deprecated Use {@link JavascriptSupport#allocateClientId(String)} instead
      */

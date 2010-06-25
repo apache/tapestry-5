@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006 The Apache Software Foundation
+// Copyright 2004, 2005, 2006, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc.internal.util;
+package org.apache.tapestry5.ioc.util;
 
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+
+import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

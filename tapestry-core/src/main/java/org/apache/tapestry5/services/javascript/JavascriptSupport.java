@@ -52,7 +52,7 @@ public interface JavascriptSupport
      * @param id
      *            the component id from which a unique id will be generated
      * @return a unique id for this rendering of the page
-     * @see org.apache.tapestry5.ioc.internal.util.IdAllocator
+     * @see org.apache.tapestry5.ioc.util.IdAllocator
      */
     String allocateClientId(String id);
 

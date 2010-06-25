@@ -30,7 +30,7 @@ import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.services.PageRenderQueue;
 import org.apache.tapestry5.internal.services.RequestConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.internal.util.IdAllocator;
+import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ClientBehaviorSupport;
 import org.apache.tapestry5.services.ClientDataEncoder;

@@ -15,9 +15,9 @@
 package org.apache.tapestry5.ioc.internal.services;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.IdAllocator;
 import org.apache.tapestry5.ioc.services.ClassFab;
 import org.apache.tapestry5.ioc.util.BodyBuilder;
+import org.apache.tapestry5.ioc.util.IdAllocator;
 
 import java.lang.reflect.Modifier;
 import java.util.List;

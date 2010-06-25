@@ -24,7 +24,7 @@ import org.apache.tapestry5.corelib.internal.InternalFormSupport;
 import org.apache.tapestry5.internal.util.CaptureResultCallback;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.annotations.Scope;
-import org.apache.tapestry5.ioc.internal.util.IdAllocator;
+import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ClientDataEncoder;
 import org.apache.tapestry5.services.ComponentSource;

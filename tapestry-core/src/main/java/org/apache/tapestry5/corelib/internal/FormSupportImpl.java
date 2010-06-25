@@ -21,7 +21,7 @@ import org.apache.tapestry5.ioc.Locatable;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.ioc.internal.util.IdAllocator;
+import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.services.ClientBehaviorSupport;
 
 import java.util.List;

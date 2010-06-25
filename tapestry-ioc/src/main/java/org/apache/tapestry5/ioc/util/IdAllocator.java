@@ -1,10 +1,10 @@
-// Copyright 2004, 2005, 2006 The Apache Software Foundation
+// Copyright 2004, 2005, 2006, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,13 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc.internal.util;
+package org.apache.tapestry5.ioc.util;
 
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 /**
  * Used to "uniquify" names within a given context. A base name is passed in, and the return value is the base name, or
@@ -60,7 +62,8 @@ public final class IdAllocator
         /**
          * Clones this instance, returning an equivalent but separate copy.
          */
-        @SuppressWarnings({ "CloneDoesntDeclareCloneNotSupportedException" })
+        @SuppressWarnings(
+        { "CloneDoesntDeclareCloneNotSupportedException" })
         @Override
         public NameGenerator clone()
         {
@@ -109,7 +112,8 @@ public final class IdAllocator
     /**
      * Creates a clone of this IdAllocator instance, copying the allocator's namespace and key map.
      */
-    @SuppressWarnings({ "CloneDoesntCallSuperClone" })
+    @SuppressWarnings(
+    { "CloneDoesntCallSuperClone" })
     @Override
     public IdAllocator clone()
     {
@@ -141,7 +145,6 @@ public final class IdAllocator
     /**
      * Allocates the id. Repeated calls for the same name will return "name", "name_0", "name_1", etc.
      */
-
     public String allocateId(String name)
     {
         String key = name + namespace;
@@ -154,12 +157,14 @@ public final class IdAllocator
             g = new NameGenerator(key);
             result = key;
         }
-        else result = g.nextId();
+        else
+            result = g.nextId();
 
         // Handle the degenerate case, where a base name of the form "foo_0" has been
         // requested. Skip over any duplicates thus formed.
 
-        while (generatorMap.containsKey(result)) result = g.nextId();
+        while (generatorMap.containsKey(result))
+            result = g.nextId();
 
         generatorMap.put(result, g);
 
@@ -177,7 +182,6 @@ public final class IdAllocator
     /**
      * Clears the allocator, resetting it to freshly allocated state.
      */
-
     public void clear()
     {
         generatorMap.clear();
