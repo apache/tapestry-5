@@ -1,0 +1,25 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+  <h1>@QueryParameterMapped Demo</h1>
+
+  <dl>
+    <dt>Click count:</dt>
+    <dd id="clickCount">${clickCount}</dd>
+    <dt>Click count set:</dt>
+    <dd id="clickCountSet">${clickCountSet}</dd>
+    <dt>Message:</dt>
+    <dd id="message">${message}</dd>
+  </dl>
+
+  <ul>
+    <li>
+      <t:actionlink t:id="increment">increment count</t:actionlink>
+    </li>
+    <li>
+      <t:actionlink t:id="setMessage">set message</t:actionlink>
+    </li>
+    <li>
+      <t:actionlink t:id="reset">reset</t:actionlink>
+    </li>
+  </ul>
+</html>

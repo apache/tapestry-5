@@ -24,6 +24,7 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import org.apache.tapestry5.internal.transform.OnEventWorker;
 import org.apache.tapestry5.ioc.annotations.UseWith;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.Request;
@@ -31,12 +32,15 @@ import org.apache.tapestry5.services.Request;
 /**
  * Annotation that may be placed on parameters of event handler methods.
  * Annotated parameters will be {@linkplain Request#getParameter(String) extracted from the request},
- * then {@linkplain TypeCoercer coerced} to the type of the parameter. Such parameters are seperate
+ * then {@linkplain TypeCoercer coerced} to the type of the parameter. Such parameters are separate
  * from ordinary context parameters (extracted from the Request path). Typically, this is used when
  * client-side JavaScript adds a query parameter to a request to communicate some information from the client
  * side to the server side.
+ * <p>
+ * Individual fields may also be directly mapped to query parameters using the {@link QueryParameterMapped} annotation.
  * 
  * @since 5.2.0
+ * @see OnEventWorker
  */
 @Target(
 { PARAMETER })

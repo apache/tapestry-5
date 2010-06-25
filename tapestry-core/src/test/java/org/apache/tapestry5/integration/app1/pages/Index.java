@@ -67,6 +67,9 @@ public class Index
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
 
+                    new Item("QueryParameterMappedDemo", "@QueryParameterMapped Demo",
+                            "Use of @QueryParameterMapped to encode page state into query parameters"),
+                            
                     new Item("LibraryMessagesDemo", "Library Messages Demo",
                             "Demo ability to contribute additional message catalog resources to the application global catalog."),
 
