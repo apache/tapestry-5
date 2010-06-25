@@ -18,7 +18,9 @@ import org.apache.tapestry5.runtime.Component;
 
 /**
  * An operation that requires an instance of a component.
- * This is a simpler alternative to a {@link ComponentMethodAdvice}.
+ * This is a simpler alternative to a {@link ComponentMethodAdvice} that avoids
+ * the most common error case: forgetting to invoke {@link ComponentMethodInvocation#proceed()} (which
+ * can be very difficult to track down!).
  * 
  * @since 5.2.0
  * @see TransformMethod#addOperationAfter(ComponentInstanceOperation)
