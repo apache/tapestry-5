@@ -51,6 +51,8 @@ public interface TransformMethod extends AnnotationProvider, Comparable<Transfor
      * 
      * @param advice
      *            to receive control when the method is invoked
+     * @see #addOperationAfter(ComponentInstanceOperation)
+     * @see #addOperationBefore(ComponentInstanceOperation)
      */
     void addAdvice(ComponentMethodAdvice advice);
 
