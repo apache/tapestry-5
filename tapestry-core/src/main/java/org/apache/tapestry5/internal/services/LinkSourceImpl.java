@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
@@ -31,7 +32,7 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
 
     private final ComponentEventLinkEncoder linkEncoder;
 
-    private final List<LinkCreationListener> listeners = CollectionFactory.newThreadSafeList();
+    private final List<LinkCreationListener2> listeners = CollectionFactory.newThreadSafeList();
 
     private final TypeCoercer typeCoercer;
 
@@ -41,10 +42,9 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
 
     private final RequestPageCache pageCache;
 
-    public LinkSourceImpl(PageRenderQueue pageRenderQueue,
-            PageActivationContextCollector contextCollector, TypeCoercer typeCoercer,
-            ComponentClassResolver resolver, ComponentEventLinkEncoder linkEncoder,
-            RequestGlobals requestGlobals, RequestPageCache pageCache)
+    public LinkSourceImpl(PageRenderQueue pageRenderQueue, PageActivationContextCollector contextCollector,
+            TypeCoercer typeCoercer, ComponentClassResolver resolver, ComponentEventLinkEncoder linkEncoder,
+            RequestGlobals requestGlobals, RequestPageCache pageCache, List<LinkCreationListener2> configuration)
     {
         this.pageRenderQueue = pageRenderQueue;
         this.contextCollector = contextCollector;
@@ -53,10 +53,12 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
         this.linkEncoder = linkEncoder;
         this.requestGlobals = requestGlobals;
         this.pageCache = pageCache;
+
+        listeners.addAll(configuration);
     }
 
-    public Link createComponentEventLink(Page page, String nestedId, String eventType,
-            boolean forForm, Object... eventContext)
+    public Link createComponentEventLink(Page page, String nestedId, String eventType, boolean forForm,
+            Object... eventContext)
     {
         Defense.notNull(page, "page");
         Defense.notBlank(eventType, "action");
@@ -69,18 +71,17 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
 
         String activePageName = activePage.getName();
 
-        Object[] pageActivationContext = contextCollector
-                .collectPageActivationContext(activePageName);
+        Object[] pageActivationContext = contextCollector.collectPageActivationContext(activePageName);
 
-        ComponentEventRequestParameters parameters = new ComponentEventRequestParameters(
-                activePageName, page.getName(), toBlank(nestedId), eventType,
-                new ArrayEventContext(typeCoercer, pageActivationContext), new ArrayEventContext(
-                        typeCoercer, eventContext));
+        ComponentEventRequestParameters parameters = new ComponentEventRequestParameters(activePageName,
+                page.getName(), toBlank(nestedId), eventType,
+                new ArrayEventContext(typeCoercer, pageActivationContext), new ArrayEventContext(typeCoercer,
+                        eventContext));
 
         Link link = linkEncoder.createComponentEventLink(parameters, forForm);
 
-        for (LinkCreationListener listener : listeners)
-            listener.createdComponentEventLink(link);
+        for (LinkCreationListener2 listener : listeners)
+            listener.createdComponentEventLink(link, parameters);
 
         return link;
     }
@@ -90,8 +91,7 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
         return input == null ? "" : input;
     }
 
-    public Link createPageRenderLink(String pageName, boolean override,
-            Object... pageActivationContext)
+    public Link createPageRenderLink(String pageName, boolean override, Object... pageActivationContext)
     {
         // Resolve the page name to its canonical format (the best version for URLs). This also
         // validates
@@ -99,19 +99,19 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
 
         String canonical = resolver.canonicalizePageName(pageName);
 
-        Object[] context = (override || pageActivationContext.length != 0) ? pageActivationContext
-                : contextCollector.collectPageActivationContext(canonical);
+        Object[] context = (override || pageActivationContext.length != 0) ? pageActivationContext : contextCollector
+                .collectPageActivationContext(canonical);
 
         boolean loopback = canonical.equals(requestGlobals.getActivePageName())
                 && pageCache.get(pageName).hasResetListeners();
 
-        PageRenderRequestParameters parameters = new PageRenderRequestParameters(canonical,
-                new ArrayEventContext(typeCoercer, context), loopback);
+        PageRenderRequestParameters parameters = new PageRenderRequestParameters(canonical, new ArrayEventContext(
+                typeCoercer, context), loopback);
 
         Link link = linkEncoder.createPageRenderLink(parameters);
 
-        for (LinkCreationListener listener : listeners)
-            listener.createdPageRenderLink(link);
+        for (LinkCreationListener2 listener : listeners)
+            listener.createdPageRenderLink(link, parameters);
 
         return link;
     }
@@ -125,13 +125,18 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
     {
         Defense.notNull(listener, "listener");
 
-        listeners.add(listener);
+        addListener(TapestryInternalUtils.toLinkCreationListener2(listener));
     }
 
     public void removeListener(LinkCreationListener listener)
     {
+        throw new UnsupportedOperationException("Removing listeners from LinkSource is not longer supported.");
+    }
+
+    public void addListener(LinkCreationListener2 listener)
+    {
         Defense.notNull(listener, "listener");
 
-        listeners.remove(listener);
+        listeners.add(listener);
     }
 }

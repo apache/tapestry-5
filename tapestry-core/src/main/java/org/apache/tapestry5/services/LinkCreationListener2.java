@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,13 +16,7 @@ package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.Link;
 
-/**
- * Listener interface for objects that need to be notified about newly created links.
- * 
- * @see org.apache.tapestry5.services.LinkCreationHub
- * @deprecated Use {@link LinkCreationListener2} instead
- */
-public interface LinkCreationListener
+public interface LinkCreationListener2
 {
     /**
      * Invoked when a page link (a link that renders a page) is created. The listener may decide to encode additional
@@ -30,8 +24,11 @@ public interface LinkCreationListener
      * 
      * @param link
      *            the newly created link
+     * @param parameters
+     *            information encoded into the link
      */
-    void createdPageRenderLink(Link link);
+
+    void createdPageRenderLink(Link link, PageRenderRequestParameters parameters);
 
     /**
      * Invoked when an action link (a link that asks a component to perform an action) is created. The listener may
@@ -39,6 +36,8 @@ public interface LinkCreationListener
      * 
      * @param link
      *            the newly created link
+     * @param parameters
+     *            information encoded into the link
      */
-    void createdComponentEventLink(Link link);
+    void createdComponentEventLink(Link link, ComponentEventRequestParameters parameters);
 }

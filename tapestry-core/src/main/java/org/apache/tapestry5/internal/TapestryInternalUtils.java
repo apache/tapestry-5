@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.Asset2;
 import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.Link;
 import org.apache.tapestry5.OptionModel;
 import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.SelectModel;
@@ -36,6 +37,10 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.services.ComponentEventRequestParameters;
+import org.apache.tapestry5.services.LinkCreationListener;
+import org.apache.tapestry5.services.LinkCreationListener2;
+import org.apache.tapestry5.services.PageRenderRequestParameters;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
 /**
@@ -572,4 +577,21 @@ public class TapestryInternalUtils
             return new StylesheetLink(input);
         };
     };
+
+    public static LinkCreationListener2 toLinkCreationListener2(final LinkCreationListener delegate)
+    {
+        return new LinkCreationListener2()
+        {
+
+            public void createdPageRenderLink(Link link, PageRenderRequestParameters parameters)
+            {
+                delegate.createdPageRenderLink(link);
+            }
+
+            public void createdComponentEventLink(Link link, ComponentEventRequestParameters parameters)
+            {
+                delegate.createdComponentEventLink(link);
+            }
+        };
+    }
 }

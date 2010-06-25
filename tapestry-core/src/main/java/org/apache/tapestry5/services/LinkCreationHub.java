@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 package org.apache.tapestry5.services;
 
 /**
- * A service that allows listeners to be registerred to learn about {@link org.apache.tapestry5.Link} creation.
+ * A service that allows listeners to be registered to learn about {@link org.apache.tapestry5.Link} creation.
  */
 public interface LinkCreationHub
 {
@@ -32,4 +32,11 @@ public interface LinkCreationHub
      * @param listener
      */
     void removeListener(LinkCreationListener listener);
+    
+    /**
+     * Adds a listener. If the scope of the listener is per-thread, then it must be removed.
+     *
+     * @param listener
+     */
+    void addListener(LinkCreationListener2 listener); 
 }
