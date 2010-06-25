@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,6 +21,7 @@ import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentSource;
+import org.apache.tapestry5.services.RequestGlobals;
 
 public class ComponentSourceImpl implements ComponentSource
 {
@@ -28,10 +29,13 @@ public class ComponentSourceImpl implements ComponentSource
 
     private final ComponentClassResolver resolver;
 
-    public ComponentSourceImpl(RequestPageCache pageCache, ComponentClassResolver resolver)
+    private final RequestGlobals globals;
+
+    public ComponentSourceImpl(RequestPageCache pageCache, ComponentClassResolver resolver, RequestGlobals globals)
     {
         this.pageCache = pageCache;
         this.resolver = resolver;
+        this.globals = globals;
     }
 
     public Component getComponent(String completeId)
@@ -61,7 +65,6 @@ public class ComponentSourceImpl implements ComponentSource
             nestedId = nestedId.substring(0, dollarx);
         }
 
-
         ComponentPageElement element = page.getComponentElementByNestedId(nestedId);
 
         if (mixinId == null)
@@ -89,4 +92,15 @@ public class ComponentSourceImpl implements ComponentSource
 
         return getPage(pageName);
     }
+
+    public Component getActivePage()
+    {
+        String pageName = globals.getActivePageName();
+
+        if (pageName == null)
+            throw new RuntimeException("The identity of the active page for this request has not yet been established.");
+
+        return getPage(pageName);
+    }
+
 }

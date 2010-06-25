@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,6 +20,7 @@ import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentSource;
+import org.apache.tapestry5.services.RequestGlobals;
 import org.testng.annotations.Test;
 
 public class ComponentSourceImplTest extends InternalBaseTestCase
@@ -42,7 +43,7 @@ public class ComponentSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentSource source = new ComponentSourceImpl(cache, resolver);
+        ComponentSource source = new ComponentSourceImpl(cache, resolver, null);
 
         assertSame(source.getComponent(PAGE_NAME), component);
 
@@ -66,7 +67,7 @@ public class ComponentSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentSource source = new ComponentSourceImpl(cache, resolver);
+        ComponentSource source = new ComponentSourceImpl(cache, resolver, null);
 
         assertSame(source.getComponent(PAGE_NAME + ":" + NESTED_ELEMENT_ID), component);
 
@@ -86,7 +87,7 @@ public class ComponentSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentSource source = new ComponentSourceImpl(cache, resolver);
+        ComponentSource source = new ComponentSourceImpl(cache, resolver, null);
 
         assertSame(source.getPage(PAGE_NAME), component);
 
@@ -108,10 +109,59 @@ public class ComponentSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentSource source = new ComponentSourceImpl(cache, resolver);
+        ComponentSource source = new ComponentSourceImpl(cache, resolver, null);
 
         assertSame(source.getPage(ComponentSourceImplTest.class), component);
 
         verify();
+    }
+
+    @Test
+    public void get_active_page()
+    {
+        RequestPageCache cache = mockRequestPageCache();
+        Page page = mockPage();
+        Component component = mockComponent();
+        ComponentClassResolver resolver = mockComponentClassResolver();
+        RequestGlobals globals = mockRequestGlobals();
+        String pageName = "Active";
+
+        expect(globals.getActivePageName()).andReturn(pageName);
+
+        train_get(cache, pageName, page);
+        train_getRootComponent(page, component);
+
+        replay();
+
+        ComponentSource source = new ComponentSourceImpl(cache, resolver, globals);
+
+        assertSame(source.getActivePage(), component);
+
+        verify();
+    }
+
+    @Test
+    public void get_active_page_before_known()
+    {
+        RequestGlobals globals = mockRequestGlobals();
+
+        expect(globals.getActivePageName()).andReturn(null);
+
+        replay();
+
+        ComponentSource source = new ComponentSourceImpl(null, null, globals);
+
+        try
+        {
+            source.getActivePage();
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertMessageContains(ex, "active page", "not yet been established");
+        }
+
+        verify();
+
     }
 }
