@@ -21,7 +21,7 @@ import java.util.Map;
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.OnEvent;
-import org.apache.tapestry5.annotations.QueryParameter;
+import org.apache.tapestry5.annotations.RequestParameter;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -242,7 +242,7 @@ public class OnEventWorker implements ComponentClassTransformWorker
                 continue;
             }
 
-            QueryParameter parameterAnnotation = method.getParameterAnnotation(i, QueryParameter.class);
+            RequestParameter parameterAnnotation = method.getParameterAnnotation(i, RequestParameter.class);
 
             if (parameterAnnotation != null)
             {

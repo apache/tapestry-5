@@ -18,10 +18,10 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.annotations.QueryParameter;
+import org.apache.tapestry5.annotations.RequestParameter;
 import org.apache.tapestry5.ioc.annotations.Inject;
 
-public class QueryParameterDemo
+public class RequestParameterDemo
 {
     private static final String PARAMETER_NAME = "gnip";
 
@@ -60,13 +60,13 @@ public class QueryParameterDemo
         return resources.createEventLink("frobNullAllowed");
     }
 
-    void onFrob(@QueryParameter(PARAMETER_NAME)
+    void onFrob(@RequestParameter(PARAMETER_NAME)
     int value)
     {
         this.value = value;
     }
 
-    void onFrobNullAllowed(@QueryParameter(value = PARAMETER_NAME, allowBlank = true)
+    void onFrobNullAllowed(@RequestParameter(value = PARAMETER_NAME, allowBlank = true)
     int value)
     {
         this.value = value;

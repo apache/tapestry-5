@@ -48,7 +48,7 @@ import org.apache.tapestry5.services.Request;
 @Documented
 @UseWith(
 { COMPONENT, MIXIN, PAGE })
-public @interface QueryParameter
+public @interface RequestParameter
 {
     /** The name of the query parameter to extract from the request. */
     String value();

@@ -73,7 +73,7 @@ public class ZoneDemo
     }
 
     @Log
-    Object onActionFromSelect(String name, @QueryParameter(QueryParameterConstants.ZONE_ID)
+    Object onActionFromSelect(String name, @RequestParameter(QueryParameterConstants.ZONE_ID)
     String zoneId)
     {
         if (!zoneId.equals("output"))

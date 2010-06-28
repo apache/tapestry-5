@@ -25,7 +25,7 @@ import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.QueryParameter;
+import org.apache.tapestry5.annotations.RequestParameter;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -149,7 +149,7 @@ public class DateField extends AbstractField
      * format acceptable to the JavaScript Date() constructor. Alternately, an "error" key indicates the the input was
      * not formatted correct.
      */
-    JSONObject onParse(@QueryParameter(INPUT_PARAMETER)
+    JSONObject onParse(@RequestParameter(INPUT_PARAMETER)
     String input)
     {
         JSONObject response = new JSONObject();
@@ -173,7 +173,7 @@ public class DateField extends AbstractField
      * milliseconds since the epoch, to the server, which reformats it according to the server side format and returns
      * the result.
      */
-    JSONObject onFormat(@QueryParameter(INPUT_PARAMETER)
+    JSONObject onFormat(@RequestParameter(INPUT_PARAMETER)
     String input)
     {
         JSONObject response = new JSONObject();

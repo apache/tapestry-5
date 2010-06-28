@@ -24,7 +24,7 @@ import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.InjectContainer;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Path;
-import org.apache.tapestry5.annotations.QueryParameter;
+import org.apache.tapestry5.annotations.RequestParameter;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
@@ -171,7 +171,7 @@ public class Autocomplete
         renderSupport.addInit("autocompleter", new JSONArray(id, menuId, link.toAbsoluteURI(), config));
     }
 
-    Object onAutocomplete(@QueryParameter(PARAM_NAME)
+    Object onAutocomplete(@RequestParameter(PARAM_NAME)
     String input)
     {
         final Holder<List> matchesHolder = Holder.create();

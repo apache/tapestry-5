@@ -20,7 +20,7 @@ import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.Mixin;
 import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.QueryParameter;
+import org.apache.tapestry5.annotations.RequestParameter;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.corelib.data.BlankOption;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
@@ -214,7 +214,7 @@ public class Select extends AbstractField
         }
     }
 
-    Object onChange(@QueryParameter(value = "t:selectvalue", allowBlank = true)
+    Object onChange(@RequestParameter(value = "t:selectvalue", allowBlank = true)
     final String selectValue)
     {
         final Object newValue = toValue(selectValue);

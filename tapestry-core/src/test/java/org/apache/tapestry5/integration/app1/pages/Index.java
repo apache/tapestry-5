@@ -86,8 +86,8 @@ public class Index
                     new Item("ReloadDemo", "Reloadable Service Implementation Demo",
                             "Used when manually testing service reloads"),
 
-                    new Item("QueryParameterDemo", "QueryParameter Annotation Demo",
-                            "Use of @QueryParameter annotation on event handler method parameters"),
+                    new Item("RequestParameterDemo", "RequestParameter Annotation Demo",
+                            "Use of @RequestParameter annotation on event handler method parameters"),
 
                     new Item("CancelDemo", "Cancel Demo", "Use of the cancel option with Submit"),
 

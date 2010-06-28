@@ -14,13 +14,13 @@
 
 package org.apache.tapestry5;
 
-import org.apache.tapestry5.annotations.QueryParameter;
+import org.apache.tapestry5.annotations.RequestParameter;
 import org.apache.tapestry5.corelib.components.Zone;
 
 /**
  * Defines constants for common query parameters passed in requests from the client.
  * 
- * @see QueryParameter
+ * @see RequestParameter
  */
 public class QueryParameterConstants
 {

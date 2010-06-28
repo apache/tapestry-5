@@ -50,7 +50,7 @@ import org.apache.tapestry5.services.ValueEncoderSource;
  * related to the {@link Persist} annotation). Invoking {@link ComponentResources#discardPersistentFieldChanges()} will
  * <em>not</em> affect annotated fields, only assigning them back to null will.
  * 
- * @see QueryParameter
+ * @see RequestParameter
  */
 @Target(
 { ElementType.FIELD })

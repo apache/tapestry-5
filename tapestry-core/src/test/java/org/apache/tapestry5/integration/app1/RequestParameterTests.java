@@ -17,12 +17,12 @@ package org.apache.tapestry5.integration.app1;
 import org.apache.tapestry5.integration.TapestryCoreTestCase;
 import org.testng.annotations.Test;
 
-public class QueryParameterTests extends TapestryCoreTestCase
+public class RequestParameterTests extends TapestryCoreTestCase
 {
     @Test
     public void successful_use_of_query_parameter_annotation()
     {
-        clickThru("QueryParameter Annotation Demo", "Working Link");
+        clickThru("RequestParameter Annotation Demo", "Working Link");
 
         assertText("id=current", "97");
     }
@@ -30,30 +30,30 @@ public class QueryParameterTests extends TapestryCoreTestCase
     @Test
     public void null_value_when_not_allowed()
     {
-        clickThru("QueryParameter Annotation Demo", "Null Link");
+        clickThru("RequestParameter Annotation Demo", "Null Link");
 
         assertTextPresent(
-                "Unable process query parameter 'gnip' as parameter #1 of event handler method void onFrob(int) (in class org.apache.tapestry5.integration.app1.pages.QueryParameterDemo)",
+                "Unable process query parameter 'gnip' as parameter #1 of event handler method void onFrob(int) (in class org.apache.tapestry5.integration.app1.pages.RequestParameterDemo)",
                 "The value for query parameter 'gnip' was blank, but a non-blank value is needed.");
     }
 
     @Test
     public void null_for_primitive_when_allowed()
     {
-        clickThru("QueryParameter Annotation Demo", "Null Allowed Link");
+        clickThru("RequestParameter Annotation Demo", "Null Allowed Link");
 
         assertTextPresent(
-                "Unable process query parameter 'gnip' as parameter #1 of event handler method void onFrobNullAllowed(int) (in class org.apache.tapestry5.integration.app1.pages.QueryParameterDemo)",
+                "Unable process query parameter 'gnip' as parameter #1 of event handler method void onFrobNullAllowed(int) (in class org.apache.tapestry5.integration.app1.pages.RequestParameterDemo)",
                 "Query parameter 'gnip' evaluates to null, but the event method parameter is type int, a primitive.");
     }
 
     @Test
     public void type_mismatch_for_method_parameter()
     {
-        clickThru("QueryParameter Annotation Demo", "Broken Link");
+        clickThru("RequestParameter Annotation Demo", "Broken Link");
 
         assertTextPresent(
-                "Unable process query parameter 'gnip' as parameter #1 of event handler method void onFrob(int) (in class org.apache.tapestry5.integration.app1.pages.QueryParameterDemo)",
+                "Unable process query parameter 'gnip' as parameter #1 of event handler method void onFrob(int) (in class org.apache.tapestry5.integration.app1.pages.RequestParameterDemo)",
                 "Coercion of frodo to type java.lang.Integer");
     }
 }

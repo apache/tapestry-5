@@ -1,6 +1,6 @@
 <html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
-  <h1>QueryParameter Annotation Demo</h1>
+  <h1>@RequestParameter Annotation Demo</h1>
 
   <p>
     The current value is:
