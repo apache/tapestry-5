@@ -588,8 +588,8 @@ public final class TapestryModule
      * <dd>Checks for the {@link PageReset} annotation
      * <dt>HeartbeatDeferred
      * <dd>Support for the {@link HeartbeatDeferred} annotation
-     * <dt>QueryParameterMapped
-     * <dd>Support for the {@link QueryParameterMapped} annotation
+     * <dt>ActivationRequestParameter
+     * <dd>Support for the {@link ActivationRequestParameter} annotation
      * </dl>
      */
     public static void contributeComponentClassTransformWorker(
@@ -609,7 +609,7 @@ public final class TapestryModule
         configuration.add("MixinAfter", new MixinAfterWorker());
         configuration.add("Component", new ComponentWorker(resolver));
         configuration.add("Mixin", new MixinWorker(resolver));
-        configuration.addInstance("QueryParameterMapped", QueryParameterMappedWorker.class, "before:OnEvent");
+        configuration.addInstance("ActivationRequestParameter", ActivationRequestParameterWorker.class, "before:OnEvent");
         configuration.addInstance("OnEvent", OnEventWorker.class);
         configuration.add("SupportsInformalParameters", new SupportsInformalParametersWorker());
         configuration.addInstance("InjectPage", InjectPageWorker.class);

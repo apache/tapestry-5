@@ -30,13 +30,11 @@ import org.apache.tapestry5.ioc.annotations.UseWith;
 import org.apache.tapestry5.services.ValueEncoderSource;
 
 /**
- * Marks a field of a page (not a component) as persistent within the URL. The field is mapped
+ * Marks a field of a page (not a component) as persistent within the URL, as with a page activation context. The field
+ * is mapped
  * to a query parameter. When component event or page render links are generated for the page,
  * additional values will be added to the {@link Link} (via the {@link EventConstants#DECORATE_COMPONENT_EVENT_LINK} or
  * {@link EventConstants#DECORATE_PAGE_RENDER_LINK} events).
- * <p>
- * Care must be taken that the query parameter name does not clash with a query parameter name generated for a form
- * field.
  * <p>
  * The field may be of any type; a {@link ValueEncoder} (from the {@link ValueEncoderSource}) will be used to convert
  * between client-side and server-side representations. Null values are not added as query parameters (just non-null).
@@ -46,7 +44,7 @@ import org.apache.tapestry5.services.ValueEncoderSource;
  * <p>
  * This annotation is an alternative to {@link Persist}.
  * <p>
- * Fields annotated with QueryParameterMapped are <em>not</em> considered persistent (its a process parallel to the one
+ * Fields annotated with ActivationRequestParameter are <em>not</em> considered persistent (its a process parallel to the one
  * related to the {@link Persist} annotation). Invoking {@link ComponentResources#discardPersistentFieldChanges()} will
  * <em>not</em> affect annotated fields, only assigning them back to null will.
  * 
@@ -58,7 +56,7 @@ import org.apache.tapestry5.services.ValueEncoderSource;
 @Documented
 @UseWith(
 { PAGE })
-public @interface QueryParameterMapped
+public @interface ActivationRequestParameter
 {
     /** The name of the query parameter, which defaults to the name of the field. */
     String value() default "";

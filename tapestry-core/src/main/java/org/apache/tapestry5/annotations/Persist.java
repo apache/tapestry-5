@@ -40,7 +40,7 @@ import org.apache.tapestry5.ioc.annotations.UseWith;
  *
  * @see org.apache.tapestry5.services.MetaDataLocator
  * @see org.apache.tapestry5.PersistenceConstants
- * @see QueryParameterMapped
+ * @see ActivationRequestParameter
  */
 @Target(FIELD)
 @Documented

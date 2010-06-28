@@ -18,11 +18,11 @@ import org.apache.tapestry5.corelib.components.Submit;
 import org.apache.tapestry5.integration.TapestryCoreTestCase 
 import org.testng.annotations.Test 
 
-class QueryParameterMappedTests extends TapestryCoreTestCase
+class ActivationRequestParameterTests extends TapestryCoreTestCase
 {
     @Test
     void basic_links() {
-        clickThru "@QueryParameterMapped Demo"
+        clickThru "ActivationRequestParameter Annotation Demo"
         
         assertText "click-count", ""
         assertText "click-count-set", "false"
@@ -43,7 +43,7 @@ class QueryParameterMappedTests extends TapestryCoreTestCase
     @Test
     public void form_components_do_not_conflict_with_mapped_field_names() {
         
-        clickThru "@QueryParameterMapped Demo"
+        clickThru "ActivationRequestParameter Annotation Demo"
         
         clickAndWait "link=increment count"
         

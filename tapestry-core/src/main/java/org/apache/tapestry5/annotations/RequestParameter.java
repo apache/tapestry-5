@@ -37,7 +37,7 @@ import org.apache.tapestry5.services.Request;
  * client-side JavaScript adds a query parameter to a request to communicate some information from the client
  * side to the server side.
  * <p>
- * Individual fields may also be directly mapped to query parameters using the {@link QueryParameterMapped} annotation.
+ * Individual fields may also be directly mapped to query parameters using the {@link ActivationRequestParameter} annotation.
  * 
  * @since 5.2.0
  * @see OnEventWorker

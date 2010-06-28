@@ -17,7 +17,7 @@ package org.apache.tapestry5.internal.transform;
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.ValueEncoder;
-import org.apache.tapestry5.annotations.QueryParameterMapped;
+import org.apache.tapestry5.annotations.ActivationRequestParameter;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.model.MutableComponentModel;
@@ -30,10 +30,10 @@ import org.apache.tapestry5.services.*;
  * extract query parameters, and hooks the link decoration events to extract values
  * and add them to the {@link Link}.
  * 
- * @see QueryParameterMapped
+ * @see ActivationRequestParameter
  * @since 5.2.0
  */
-public class QueryParameterMappedWorker implements ComponentClassTransformWorker
+public class ActivationRequestParameterWorker implements ComponentClassTransformWorker
 {
     private final Request request;
 
@@ -46,7 +46,7 @@ public class QueryParameterMappedWorker implements ComponentClassTransformWorker
         void invoke(Component component, ComponentEvent event);
     }
 
-    public QueryParameterMappedWorker(Request request, ComponentClassCache classCache,
+    public ActivationRequestParameterWorker(Request request, ComponentClassCache classCache,
             ValueEncoderSource valueEncoderSource)
     {
         this.request = request;
@@ -56,7 +56,7 @@ public class QueryParameterMappedWorker implements ComponentClassTransformWorker
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {
-        for (TransformField field : transformation.matchFieldsWithAnnotation(QueryParameterMapped.class))
+        for (TransformField field : transformation.matchFieldsWithAnnotation(ActivationRequestParameter.class))
         {
             mapFieldToQueryParameter(field, transformation, model);
         }
@@ -66,7 +66,7 @@ public class QueryParameterMappedWorker implements ComponentClassTransformWorker
     private void mapFieldToQueryParameter(TransformField field, ClassTransformation transformation,
             MutableComponentModel model)
     {
-        QueryParameterMapped annotation = field.getAnnotation(QueryParameterMapped.class);
+        ActivationRequestParameter annotation = field.getAnnotation(ActivationRequestParameter.class);
 
         String parameterName = getParameterName(field, annotation);
 
@@ -169,7 +169,7 @@ public class QueryParameterMappedWorker implements ComponentClassTransformWorker
         model.addEventHandler(eventType);
     }
 
-    private String getParameterName(TransformField field, QueryParameterMapped annotation)
+    private String getParameterName(TransformField field, ActivationRequestParameter annotation)
     {
         if (annotation.value().equals(""))
             return field.getName();

@@ -1,6 +1,6 @@
 <html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
-  <h1>@QueryParameterMapped Demo</h1>
+  <h1>@ActivationRequestParameter Demo</h1>
 
   <dl>
     <dt>Click count:</dt>

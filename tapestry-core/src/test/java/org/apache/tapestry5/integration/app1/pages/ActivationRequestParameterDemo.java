@@ -19,11 +19,11 @@ import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.annotations.QueryParameterMapped;
+import org.apache.tapestry5.annotations.ActivationRequestParameter;
 import org.apache.tapestry5.internal.OptionModelImpl;
 import org.apache.tapestry5.internal.SelectModelImpl;
 
-public class QueryParameterMappedDemo
+public class ActivationRequestParameterDemo
 {
 
     @Property
@@ -34,11 +34,11 @@ public class QueryParameterMappedDemo
     private boolean clickCountSet;
 
     @Property
-    @QueryParameterMapped
+    @ActivationRequestParameter
     private Integer clickCount;
 
     @Property
-    @QueryParameterMapped("status-message")
+    @ActivationRequestParameter("status-message")
     private String message;
 
     void onActivate()
