@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,14 +14,29 @@
 
 package org.apache.tapestry5.integration.app1.pages.music;
 
-
+import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.PageActivationContext;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.integration.app1.data.Track;
+import org.apache.tapestry5.integration.app1.pages.Index;
 
 public class MusicDetails2
 {
     @Property
     @PageActivationContext
     private Track track;
+
+    @InjectPage
+    private Index index;
+
+    Object onActivate()
+    {
+        if (track == null)
+        {
+            index.setAlert("Track not specified in URL.");
+            return index;
+        }
+
+        return null;
+    }
 }

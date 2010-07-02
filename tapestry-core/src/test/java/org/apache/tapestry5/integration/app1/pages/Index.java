@@ -20,7 +20,9 @@ import java.util.List;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -30,6 +32,9 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
  */
 public class Index
 {
+    @Persist(PersistenceConstants.FLASH)
+    private String alert;
+
     public static class Item implements Comparable<Item>
     {
         private final String pageName;
@@ -69,7 +74,7 @@ public class Index
 
                     new Item("ActivationRequestParameterDemo", "ActivationRequestParameter Annotation Demo",
                             "Use of @ActivationRequestParameter to encode page state into query parameters"),
-                            
+
                     new Item("LibraryMessagesDemo", "Library Messages Demo",
                             "Demo ability to contribute additional message catalog resources to the application global catalog."),
 
@@ -480,5 +485,15 @@ public class Index
     public Object onActionFromInstantiatePage()
     {
         return new Music();
+    }
+
+    public void setAlert(String alert)
+    {
+        this.alert = alert;
+    }
+
+    public String getAlert()
+    {
+        return alert;
     }
 }

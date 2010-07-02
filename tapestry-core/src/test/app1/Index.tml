@@ -2,6 +2,13 @@
 
   <h1>Tapestry 5 Integration Application 1</h1>
 
+  <t:if test="alert">
+    <p>
+      Alert:
+      <em id="alert">${alert}</em>
+    </p>
+  </t:if>
+
   <p>${items.size()} standard test pages</p>
 
   <ul>
@@ -19,7 +26,8 @@
     <li>
       <a href="${injectDemoLink}">PageLink via Class Demo</a>
       -- use ComponentResources to generate a link to a page using target
-      page class, not logical page name
+      page class, not logical
+      page name
     </li>
 
     <li>
@@ -101,7 +109,8 @@
     <li>
       <a href="PublishDuplicateNameDemo">Duplicate Published Parameter Name</a>
       -- demo error checking for the same parameter name published from two different
-      embedded components
+      embedded
+      components
     </li>
     <li>
       <a href="EmbeddedComponentTypeConflict">Embedded Component Type Conflict
@@ -147,10 +156,14 @@
       <a href="InvalidComponentTypeDemo">Invalid Component Type</a>
       -- unknown type of component in template
     </li>
-  <li>
-    <a href="NoTypeProvidedDemo">No Component Type Provided</a> --
-    component type not defined.
-  </li>
+    <li>
+      <a href="NoTypeProvidedDemo">No Component Type Provided</a>
+      --
+      component type not defined.
+    </li>
+    <li>
+      <a href="music/details2">Missing page activation context</a>
+    </li>
   </ul>
 
 </html>

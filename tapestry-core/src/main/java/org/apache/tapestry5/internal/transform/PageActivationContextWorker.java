@@ -27,6 +27,7 @@ import org.apache.tapestry5.services.ComponentMethodInvocation;
 import org.apache.tapestry5.services.FieldAccess;
 import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.TransformField;
+import org.apache.tapestry5.services.TransformMethod;
 
 /**
  * Provides the page activation context handlers. This worker must be scheduled before
@@ -39,7 +40,6 @@ public class PageActivationContextWorker implements ComponentClassTransformWorke
 {
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {
-
         List<TransformField> fields = transformation.matchFieldsWithAnnotation(PageActivationContext.class);
 
         // In the future we may add rules for ordering the fields (new attribute on annotation?)
@@ -55,48 +55,42 @@ public class PageActivationContextWorker implements ComponentClassTransformWorke
         }
     }
 
-    private void transformField(ClassTransformation transformation, MutableComponentModel model,
-            final TransformField field)
+    private void transformField(ClassTransformation transformation, MutableComponentModel model, TransformField field)
     {
-        final PageActivationContext annotation = field.getAnnotation(PageActivationContext.class);
+        PageActivationContext annotation = field.getAnnotation(PageActivationContext.class);
 
-        ComponentMethodAdvice advice = createAdvice(field, annotation);
+        TransformMethod dispatchEventMethod = transformation
+                .getOrCreateMethod(TransformConstants.DISPATCH_COMPONENT_EVENT);
 
-        transformation.getOrCreateMethod(TransformConstants.DISPATCH_COMPONENT_EVENT).addAdvice(advice);
+        FieldAccess access = field.getAccess();
 
         if (annotation.activate())
+        {
+            dispatchEventMethod.addAdvice(createActivateAdvice(field.getType(), access));
             model.addEventHandler(EventConstants.ACTIVATE);
+        }
 
         if (annotation.passivate())
+        {
+            dispatchEventMethod.addAdvice(createPassivateAdvice(access));
             model.addEventHandler(EventConstants.PASSIVATE);
+        }
 
         // We don't claim the field, and other workers may even replace it with a FieldValueConduit.
     }
 
-    private ComponentMethodAdvice createAdvice(TransformField field, final PageActivationContext annotation)
+    private static ComponentMethodAdvice createActivateAdvice(final String fieldType, final FieldAccess access)
     {
-        final String fieldType = field.getType();
-        final FieldAccess access = field.getAccess();
-
         return new ComponentMethodAdvice()
         {
             public void advise(ComponentMethodInvocation invocation)
             {
-                invocation.proceed();
-
                 ComponentEvent event = (ComponentEvent) invocation.getParameter(0);
 
                 if (event.isAborted())
                     return;
 
-                handleActivateEvent(event, invocation);
-
-                handlePassivateEvent(event, invocation);
-            }
-
-            private void handleActivateEvent(ComponentEvent event, ComponentMethodInvocation invocation)
-            {
-                if (annotation.activate() && event.matches(EventConstants.ACTIVATE, "", 1))
+                if (event.matches(EventConstants.ACTIVATE, "", 1))
                 {
                     event.setMethodDescription(access.toString());
 
@@ -106,12 +100,24 @@ public class PageActivationContextWorker implements ComponentClassTransformWorke
 
                     invocation.overrideResult(true);
                 }
+
+                invocation.proceed();
             }
+        };
+    }
 
-            private void handlePassivateEvent(ComponentEvent event, ComponentMethodInvocation invocation)
+    private static ComponentMethodAdvice createPassivateAdvice(final FieldAccess access)
+    {
+        return new ComponentMethodAdvice()
+        {
+            public void advise(ComponentMethodInvocation invocation)
             {
+                ComponentEvent event = (ComponentEvent) invocation.getParameter(0);
 
-                if (annotation.passivate() && event.matches(EventConstants.PASSIVATE, "", 0))
+                if (event.isAborted())
+                    return;
+
+                if (event.matches(EventConstants.PASSIVATE, "", 0))
                 {
                     event.setMethodDescription(access.toString());
 
@@ -121,6 +127,8 @@ public class PageActivationContextWorker implements ComponentClassTransformWorke
 
                     invocation.overrideResult(true);
                 }
+
+                invocation.proceed();
             }
         };
     }
