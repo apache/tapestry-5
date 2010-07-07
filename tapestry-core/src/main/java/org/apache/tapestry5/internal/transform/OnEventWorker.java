@@ -149,8 +149,8 @@ public class OnEventWorker implements ComponentClassTransformWorker
 
                 for (EventHandlerMethodInvoker invoker : invokers)
                 {
-                    if (event.matches(invoker.getEventType(), invoker.getComponentId(), invoker
-                            .getMinContextValueCount()))
+                    if (event.matches(invoker.getEventType(), invoker.getComponentId(),
+                            invoker.getMinContextValueCount()))
                     {
                         didInvokeSomeHandler = true;
 
@@ -290,21 +290,19 @@ public class OnEventWorker implements ComponentClassTransformWorker
 
                     if (parameterType.isPrimitive() && value == null)
                         throw new RuntimeException(
-                                String
-                                        .format(
-                                                "Query parameter '%s' evaluates to null, but the event method parameter is type %s, a primitive.",
-                                                parameterName, parameterType.getName()));
+                                String.format(
+                                        "Query parameter '%s' evaluates to null, but the event method parameter is type %s, a primitive.",
+                                        parameterName, parameterType.getName()));
 
                     return value;
                 }
                 catch (Exception ex)
                 {
                     throw new RuntimeException(
-                            String
-                                    .format(
-                                            "Unable process query parameter '%s' as parameter #%d of event handler method %s (in class %s): %s",
-                                            parameterName, parameterIndex + 1, signature, componentClassName,
-                                            InternalUtils.toMessage(ex)), ex);
+                            String.format(
+                                    "Unable process query parameter '%s' as parameter #%d of event handler method %s (in class %s): %s",
+                                    parameterName, parameterIndex + 1, signature, componentClassName,
+                                    InternalUtils.toMessage(ex)), ex);
                 }
             }
         };

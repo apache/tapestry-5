@@ -33,6 +33,7 @@ import org.apache.tapestry5.services.*;
  * @see ActivationRequestParameter
  * @since 5.2.0
  */
+@SuppressWarnings("all")
 public class ActivationRequestParameterWorker implements ComponentClassTransformWorker
 {
     private final Request request;
@@ -40,11 +41,6 @@ public class ActivationRequestParameterWorker implements ComponentClassTransform
     private final ComponentClassCache classCache;
 
     private final ValueEncoderSource valueEncoderSource;
-
-    interface EventHandler
-    {
-        void invoke(Component component, ComponentEvent event);
-    }
 
     public ActivationRequestParameterWorker(Request request, ComponentClassCache classCache,
             ValueEncoderSource valueEncoderSource)
@@ -62,15 +58,12 @@ public class ActivationRequestParameterWorker implements ComponentClassTransform
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void mapFieldToQueryParameter(TransformField field, ClassTransformation transformation,
             MutableComponentModel model)
     {
         ActivationRequestParameter annotation = field.getAnnotation(ActivationRequestParameter.class);
 
         String parameterName = getParameterName(field, annotation);
-
-        TransformMethod dispatchMethod = transformation.getOrCreateMethod(TransformConstants.DISPATCH_COMPONENT_EVENT);
 
         // Assumption: the field type is not one that's loaded by the component class loader, so it's safe
         // to convert to a hard type during class transformation.
@@ -81,16 +74,16 @@ public class ActivationRequestParameterWorker implements ComponentClassTransform
 
         FieldAccess access = field.getAccess();
 
-        setValueFromInitializeEventHandler(access, parameterName, encoder, dispatchMethod, model);
-        decorateLinks(access, parameterName, encoder, dispatchMethod, model);
-        preallocateName(parameterName, dispatchMethod, model);
+        setValueFromInitializeEventHandler(transformation, access, parameterName, encoder);
+        decorateLinks(transformation, access, parameterName, encoder);
+        preallocateName(transformation, parameterName);
     }
 
-    private void preallocateName(final String parameterName, TransformMethod dispatchMethod, MutableComponentModel model)
+    private static void preallocateName(ClassTransformation transformation, final String parameterName)
     {
-        EventHandler handler = new EventHandler()
+        ComponentEventHandler handler = new ComponentEventHandler()
         {
-            public void invoke(Component component, ComponentEvent event)
+            public void handleEvent(Component instance, ComponentEvent event)
             {
                 IdAllocator idAllocator = event.getEventContext().get(IdAllocator.class, 0);
 
@@ -98,16 +91,18 @@ public class ActivationRequestParameterWorker implements ComponentClassTransform
             }
         };
 
-        add(dispatchMethod, model, EventConstants.PREALLOCATE_FORM_CONTROL_NAMES, handler);
+        transformation.addComponentEventHandler(EventConstants.PREALLOCATE_FORM_CONTROL_NAMES, 1,
+                "ActivationRequestParameterWorker preallocate form control name '" + parameterName + "' event handler",
+                handler);
     }
 
-    @SuppressWarnings("unchecked")
-    private void setValueFromInitializeEventHandler(final FieldAccess access, final String parameterName,
-            final ValueEncoder encoder, TransformMethod dispatchMethod, MutableComponentModel model)
+    @SuppressWarnings("all")
+    private void setValueFromInitializeEventHandler(ClassTransformation transformation, final FieldAccess access,
+            final String parameterName, final ValueEncoder encoder)
     {
-        EventHandler handler = new EventHandler()
+        ComponentEventHandler handler = new ComponentEventHandler()
         {
-            public void invoke(Component component, ComponentEvent event)
+            public void handleEvent(Component instance, ComponentEvent event)
             {
                 String clientValue = request.getParameter(parameterName);
 
@@ -116,22 +111,23 @@ public class ActivationRequestParameterWorker implements ComponentClassTransform
 
                 Object value = encoder.toValue(clientValue);
 
-                access.write(component, value);
+                access.write(instance, value);
             }
         };
 
-        add(dispatchMethod, model, EventConstants.ACTIVATE, handler);
+        transformation.addComponentEventHandler(EventConstants.ACTIVATE, 0,
+                "ActivationRequestParameterWorker activate event handler", handler);
     }
 
-    @SuppressWarnings("unchecked")
-    private void decorateLinks(final FieldAccess access, final String parameterName, final ValueEncoder encoder,
-            TransformMethod dispatchMethod, MutableComponentModel model)
+    @SuppressWarnings("all")
+    private static void decorateLinks(ClassTransformation transformation, final FieldAccess access,
+            final String parameterName, final ValueEncoder encoder)
     {
-        EventHandler handler = new EventHandler()
+        ComponentEventHandler handler = new ComponentEventHandler()
         {
-            public void invoke(Component component, ComponentEvent event)
+            public void handleEvent(Component instance, ComponentEvent event)
             {
-                Object value = access.read(component);
+                Object value = access.read(instance);
 
                 if (value == null)
                     return;
@@ -144,29 +140,11 @@ public class ActivationRequestParameterWorker implements ComponentClassTransform
             }
         };
 
-        add(dispatchMethod, model, EventConstants.DECORATE_COMPONENT_EVENT_LINK, handler);
-        add(dispatchMethod, model, EventConstants.DECORATE_PAGE_RENDER_LINK, handler);
-    }
+        transformation.addComponentEventHandler(EventConstants.DECORATE_COMPONENT_EVENT_LINK, 0,
+                "ActivationRequestParameterWorker decorate component event link event handler", handler);
 
-    private void add(TransformMethod dispatchMethod, MutableComponentModel model, final String eventType,
-            final EventHandler handler)
-    {
-        dispatchMethod.addAdvice(new ComponentMethodAdvice()
-        {
-            public void advise(ComponentMethodInvocation invocation)
-            {
-                ComponentEvent event = (ComponentEvent) invocation.getParameter(0);
-
-                if (event.matches(eventType, "", 0))
-                {
-                    handler.invoke(invocation.getInstance(), event);
-                }
-
-                invocation.proceed();
-            }
-        });
-
-        model.addEventHandler(eventType);
+        transformation.addComponentEventHandler(EventConstants.DECORATE_PAGE_RENDER_LINK, 0,
+                "ActivationRequestParameterWorker decorate page render link event handler", handler);
     }
 
     private String getParameterName(TransformField field, ActivationRequestParameter annotation)

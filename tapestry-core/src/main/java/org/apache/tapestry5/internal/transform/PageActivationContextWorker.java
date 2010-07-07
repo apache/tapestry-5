@@ -19,9 +19,11 @@ import java.util.List;
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.annotations.PageActivationContext;
 import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.ComponentEvent;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.ComponentEventHandler;
 import org.apache.tapestry5.services.ComponentMethodAdvice;
 import org.apache.tapestry5.services.ComponentMethodInvocation;
 import org.apache.tapestry5.services.FieldAccess;
@@ -59,76 +61,46 @@ public class PageActivationContextWorker implements ComponentClassTransformWorke
     {
         PageActivationContext annotation = field.getAnnotation(PageActivationContext.class);
 
-        TransformMethod dispatchEventMethod = transformation
-                .getOrCreateMethod(TransformConstants.DISPATCH_COMPONENT_EVENT);
-
         FieldAccess access = field.getAccess();
 
         if (annotation.activate())
         {
-            dispatchEventMethod.addAdvice(createActivateAdvice(field.getType(), access));
-            model.addEventHandler(EventConstants.ACTIVATE);
+            transformation.addComponentEventHandler(EventConstants.ACTIVATE, 1,
+                    "PageActivationContextWorker activate event handler",
+                    createActivationHandler(field.getType(), access));
         }
 
         if (annotation.passivate())
         {
-            dispatchEventMethod.addAdvice(createPassivateAdvice(access));
-            model.addEventHandler(EventConstants.PASSIVATE);
+            transformation.addComponentEventHandler(EventConstants.PASSIVATE, 0,
+                    "PageActivationContextWorker passivate event handler", createPassivateHandler(access));
         }
 
         // We don't claim the field, and other workers may even replace it with a FieldValueConduit.
     }
 
-    private static ComponentMethodAdvice createActivateAdvice(final String fieldType, final FieldAccess access)
+    private static ComponentEventHandler createActivationHandler(final String fieldType, final FieldAccess access)
     {
-        return new ComponentMethodAdvice()
+        return new ComponentEventHandler()
         {
-            public void advise(ComponentMethodInvocation invocation)
+            public void handleEvent(Component instance, ComponentEvent event)
             {
-                ComponentEvent event = (ComponentEvent) invocation.getParameter(0);
+                Object value = event.coerceContext(0, fieldType);
 
-                if (event.isAborted())
-                    return;
-
-                if (event.matches(EventConstants.ACTIVATE, "", 1))
-                {
-                    event.setMethodDescription(access.toString());
-
-                    Object value = event.coerceContext(0, fieldType);
-
-                    access.write(invocation.getInstance(), value);
-
-                    invocation.overrideResult(true);
-                }
-
-                invocation.proceed();
+                access.write(instance, value);
             }
         };
     }
 
-    private static ComponentMethodAdvice createPassivateAdvice(final FieldAccess access)
+    private static ComponentEventHandler createPassivateHandler(final FieldAccess access)
     {
-        return new ComponentMethodAdvice()
+        return new ComponentEventHandler()
         {
-            public void advise(ComponentMethodInvocation invocation)
+            public void handleEvent(Component instance, ComponentEvent event)
             {
-                ComponentEvent event = (ComponentEvent) invocation.getParameter(0);
+                Object value = access.read(instance);
 
-                if (event.isAborted())
-                    return;
-
-                if (event.matches(EventConstants.PASSIVATE, "", 0))
-                {
-                    event.setMethodDescription(access.toString());
-
-                    Object value = access.read(invocation.getInstance());
-
-                    event.storeResult(value);
-
-                    invocation.overrideResult(true);
-                }
-
-                invocation.proceed();
+                event.storeResult(value);
             }
         };
     }

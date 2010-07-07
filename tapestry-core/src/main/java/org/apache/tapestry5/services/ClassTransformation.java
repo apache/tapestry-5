@@ -23,6 +23,9 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.transform.ReadOnlyFieldValueConduit;
 import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.runtime.Event;
 import org.slf4j.Logger;
 
 /**
@@ -616,4 +619,24 @@ public interface ClassTransformation extends AnnotationProvider
      * @return true if a such a method exists
      */
     boolean isDeclaredMethod(TransformMethodSignature signature);
+
+    /**
+     * Adds advice to the {@link Component#dispatchComponentEvent(org.apache.tapestry5.runtime.ComponentEvent)} method.
+     * If the handler is invoked,
+     * the return value of the method will be overriden to true. The invocation will proceeed either way (whether the
+     * handler is invoked or not). Updates {@linkplain MutableComponentModel#addEventHandler(String) the model} to
+     * indicate that there is a handler for the named event.
+     * 
+     * @param eventType
+     *            name of event to be handled
+     * @param minContextValues
+     *            minimum number of event context values required to invoke the method
+     * @param methodDescription
+     *            Text description of what the handler does (used with {@link Event#setMethodDescription(String)})
+     * @param handler
+     *            the handler to invoke
+     * @since 5.2.0
+     */
+    void addComponentEventHandler(String eventType, int minContextValues, String methodDescription,
+            ComponentEventHandler handler);
 }

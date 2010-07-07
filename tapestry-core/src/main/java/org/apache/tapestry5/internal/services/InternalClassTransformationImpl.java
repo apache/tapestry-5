@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -44,6 +44,7 @@ import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.runtime.ComponentEvent;
 import org.apache.tapestry5.services.*;
 import org.slf4j.Logger;
 
@@ -335,8 +336,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             String methodName = newMemberName("access", sig.getMethodName());
 
             TransformMethodSignature accessMethodSignature = new TransformMethodSignature(Modifier.PUBLIC
-                    + Modifier.STATIC, sig.getReturnType(), methodName, parameterTypes.toArray(new String[0]), sig
-                    .getExceptionTypes());
+                    + Modifier.STATIC, sig.getReturnType(), methodName, parameterTypes.toArray(new String[0]),
+                    sig.getExceptionTypes());
 
             boolean isVoid = sig.getReturnType().equals("void");
 
@@ -726,7 +727,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     private final List<Object> constructorArgs;
 
-    private final ComponentModel componentModel;
+    private final MutableComponentModel componentModel;
 
     private final String resourcesFieldName;
 
@@ -758,7 +759,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
      * This is a constructor for a base class.
      */
     public InternalClassTransformationImpl(ClassFactory classFactory, CtClass ctClass,
-            ComponentClassCache componentClassCache, ComponentModel componentModel, CtClassSource classSource)
+            ComponentClassCache componentClassCache, MutableComponentModel componentModel, CtClassSource classSource)
     {
         this.ctClass = ctClass;
         this.componentClassCache = componentClassCache;
@@ -796,7 +797,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
      */
     private InternalClassTransformationImpl(CtClass ctClass, InternalClassTransformation parentTransformation,
             ClassFactory classFactory, CtClassSource classSource, ComponentClassCache componentClassCache,
-            ComponentModel componentModel)
+            MutableComponentModel componentModel)
     {
         this.ctClass = ctClass;
         this.componentClassCache = componentClassCache;
@@ -1877,8 +1878,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             // Replace the constructor body with one that fails. This leaves, as an open question,
             // what to do about any other constructors.
 
-            String body = String.format("throw new RuntimeException(\"%s\");", ServicesMessages
-                    .forbidInstantiateComponentClass(getClassName()));
+            String body = String.format("throw new RuntimeException(\"%s\");",
+                    ServicesMessages.forbidInstantiateComponentClass(getClassName()));
 
             defaultConstructor.setBody(body);
         }
@@ -1911,15 +1912,15 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         // Pass $1 (the InternalComponentResources object) and the constructorArgs (from the AbstractIntantiator
         // base class) into the new component instance's constructor
 
-        cf.addMethod(Modifier.PUBLIC, NEW_INSTANCE_SIGNATURE, String.format("return new %s($1, constructorArgs);",
-                componentClassName));
+        cf.addMethod(Modifier.PUBLIC, NEW_INSTANCE_SIGNATURE,
+                String.format("return new %s($1, constructorArgs);", componentClassName));
 
         Class instantiatorClass = cf.createClass();
 
         try
         {
-            Object instance = instantiatorClass.getConstructors()[0].newInstance(componentModel, String.format(
-                    "Instantiator[%s]", componentClassName), componentConstructorArgs);
+            Object instance = instantiatorClass.getConstructors()[0].newInstance(componentModel,
+                    String.format("Instantiator[%s]", componentClassName), componentConstructorArgs);
 
             return (Instantiator) instance;
         }
@@ -2125,8 +2126,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                 String fieldName = access.getFieldName();
                 CtMethod method = (CtMethod) where;
 
-                formatter.format("Checking field %s %s in method %s(): ", isRead ? "read" : "write", fieldName, method
-                        .getName());
+                formatter.format("Checking field %s %s in method %s(): ", isRead ? "read" : "write", fieldName,
+                        method.getName());
 
                 // Ignore any methods to were added as part of the transformation.
                 // If we reference the field there, we really mean the field.
@@ -2306,4 +2307,41 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         };
     }
 
+    public void addComponentEventHandler(String eventType, int minContextValues, String methodDescription,
+            ComponentEventHandler handler)
+    {
+        Defense.notBlank(eventType, "eventType");
+        Defense.notBlank(methodDescription, "methodDescription");
+        Defense.notNull(handler, "handler");
+
+        componentModel.addEventHandler(eventType);
+
+        getOrCreateMethod(TransformConstants.DISPATCH_COMPONENT_EVENT).addAdvice(
+                createEventHandlerAdvice(eventType, minContextValues, methodDescription, handler));
+
+    }
+
+    private static ComponentMethodAdvice createEventHandlerAdvice(final String eventType, final int minContextValues,
+            final String methodDescription, final ComponentEventHandler handler)
+    {
+        return new ComponentMethodAdvice()
+        {
+            public void advise(ComponentMethodInvocation invocation)
+            {
+                ComponentEvent event = (ComponentEvent) invocation.getParameter(0);
+
+                if (event.matches(eventType, "", minContextValues))
+                {
+                    event.setMethodDescription(methodDescription);
+
+                    handler.handleEvent(invocation.getInstance(), event);
+
+                    invocation.overrideResult(true);
+                }
+
+                if (!event.isAborted())
+                    invocation.proceed();
+            }
+        };
+    }
 }

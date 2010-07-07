@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -64,6 +64,31 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         assertFalse(event.matches("foo", "someId", 0));
 
         verify();
+    }
+
+    /** @since 5.2.0 */
+    @Test
+    public void no_match_one_event_is_aborted()
+    {
+        ComponentEventCallback handler = mockComponentEventHandler();
+        EventContext context = mockEventContext();
+        Logger logger = mockLogger();
+        Object result = new Object();
+
+        train_isDebugEnabled(logger, false);
+
+        train_handleResult(handler, result, true);
+
+        replay();
+
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null, logger);
+
+        event.storeResult(result);
+
+        assertFalse(event.matches("eventType", "someId", 0));
+
+        verify();
+
     }
 
     @Test
@@ -178,7 +203,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         catch (IllegalArgumentException ex)
         {
             assertEquals(ex.getMessage(),
-                         "Method foo.Bar.baz() has more parameters than there are context values for this component event.");
+                    "Method foo.Bar.baz() has more parameters than there are context values for this component event.");
         }
 
         verify();
@@ -334,8 +359,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         }
         catch (IllegalStateException ex)
         {
-            assertEquals(ex.getMessage(), ServicesMessages
-                    .componentEventIsAborted("foo.Bar.biff()"));
+            assertEquals(ex.getMessage(), ServicesMessages.componentEventIsAborted("foo.Bar.biff()"));
         }
 
         verify();
