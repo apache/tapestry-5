@@ -15,6 +15,7 @@
 package org.apache.tapestry5.ioc.test;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -72,12 +73,73 @@ public class TestUtils extends Assert
     {
         int count = Math.min(actual.size(), expected.size());
 
+        try
+        {
+            for (int i = 0; i < count; i++)
+            {
+                assertEquals(actual.get(i), expected.get(i), String.format("Element #%d.", i));
+            }
+
+            assertEquals(actual.size(), expected.size(), "List size.");
+        }
+        catch (AssertionError ae)
+        {
+            showLists(actual, expected);
+
+            throw ae;
+        }
+    }
+
+    protected static <T> void showLists(List<T> actual, List<T> expected)
+    {
+        List<String> actualStrings = toStrings(actual);
+        List<String> expectedStrings = toStrings(expected);
+
+        String format = String.format("%%3d: [%%-%ds] [%%-%ds]\n", maxLength(actualStrings), maxLength(expectedStrings));
+
+        int count = Math.max(actual.size(), expected.size());
+
+        System.out.flush();
+        System.err.flush();
+        
+        System.err.println("List results differ (actual  vs. expected):");
+        
         for (int i = 0; i < count; i++)
         {
-            assertEquals(actual.get(i), expected.get(i), String.format("Element #%d.", i));
+            System.err.printf(format, i, get(actualStrings, i), get(expectedStrings, i));
+        }
+    }
+
+    private static String get(List<String> list, int index)
+    {
+        if (index < list.size())
+            return list.get(index);
+
+        return "";
+    }
+
+    private static int maxLength(List<String> list)
+    {
+        int result = 0;
+
+        for (String s : list)
+        {
+            result = Math.max(result, s.length());
         }
 
-        assertEquals(actual.size(), expected.size(), "List size.");
+        return result;
+    }
+
+    private static <T> List<String> toStrings(List<T> list)
+    {
+        List<String> result = new ArrayList<String>();
+
+        for (T t : list)
+        {
+            result.add(String.valueOf(t));
+        }
+
+        return result;
     }
 
     /**
