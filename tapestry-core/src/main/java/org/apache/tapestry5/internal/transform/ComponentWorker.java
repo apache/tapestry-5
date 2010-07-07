@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import java.lang.reflect.Modifier;
-
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.MixinClasses;
