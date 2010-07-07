@@ -83,7 +83,7 @@ Tapestry IoC Configurations
   
 Naming conventions vs. Annotations
 	
-	If you prefer annotations over naming conventions you can use the {{{apidocs/org/apache/tapestry5/ioc/annotations/Contribute.html}@Contribute}}
+	If you prefer annotations over naming conventions you can use the {{{../apidocs/org/apache/tapestry5/ioc/annotations/Contribute.html}@Contribute}}
 	annotation. As of version 5.2 this annotation that may be placed on a contributor method of a module instead of starting the methods name 
 	with "contribute". The value of the annotation is the type of the service to contribute into. The following example is an alternative for the contribution method above.
 	
@@ -97,7 +97,7 @@ Naming conventions vs. Annotations
 +------+
 
 	If you have several implementations of a service interface, you have to disambiguate the services. For this purpose the 
-	{{{apidocs/org/apache/tapestry5/ioc/annotations/Marker.html}@Marker}} annotation should be placed on the contributor method.
+	{{{../apidocs/org/apache/tapestry5/ioc/annotations/Marker.html}@Marker}} annotation should be placed on the contributor method.
 	
 +------+
   @Contribute(FileServiceDispatcher.class)
@@ -109,7 +109,7 @@ Naming conventions vs. Annotations
   }  
 +------+  
 
-	If the {{{apidocs/org/apache/tapestry5/ioc/annotations/Local.html}@Local}} annotation is present, 
+	If the {{{../apidocs/org/apache/tapestry5/ioc/annotations/Local.html}@Local}} annotation is present, 
 	then contribution is made only to the configuration of a service being constructed in the same module.
 
 +------+
@@ -171,7 +171,7 @@ Configuration Types
   of the service.  
   
   On the contribution side, a service contribution method sees a 
-  {{{apidocs/org/apache/tapestry5/ioc/Configuration.html}Configuration}} object:
+  {{{../apidocs/org/apache/tapestry5/ioc/Configuration.html}Configuration}} object:
   
 +------+
   public static void contributeStartup(Configuration<Runnable> configuration)
@@ -230,7 +230,7 @@ Configuration Types
   
   For our service contribution methods, we must provide a parameter
   of type 
-  {{{apidocs/org/apache/tapestry5/ioc/OrderedConfiguration.html}OrderedConfiguration}}:
+  {{{../apidocs/org/apache/tapestry5/ioc/OrderedConfiguration.html}OrderedConfiguration}}:
  
 +------+
   public static void contributeStartup(OrderedConfiguration<Runnable> configuration)
@@ -266,7 +266,7 @@ Configuration Types
   Neither the key nor the value may be null.
   
   For mapped configurations where the key type is String, a 
-  {{{apidocs/org/apache/tapestry5/ioc/util/CaseInsensitiveMap.html}CaseInsensitiveMap}}
+  {{{../apidocs/org/apache/tapestry5/ioc/util/CaseInsensitiveMap.html}CaseInsensitiveMap}}
   will be  automatically used (and passed to the service builder method), to help ensure that {{{case.html}case insensitivity}} 
   is automatic and pervasive.
 
@@ -283,7 +283,7 @@ Injecting Resources
   other things to be injected.
   
   
-  * {{{apidocs/org/apache/tapestry5/ioc/ObjectLocator.html}ObjectLocator}}:  access to other services visible
+  * {{{../apidocs/org/apache/tapestry5/ioc/ObjectLocator.html}ObjectLocator}}:  access to other services visible
   to the contributing module
 
   * org.slf4j.Logger: the Logger for the service being contributed to
