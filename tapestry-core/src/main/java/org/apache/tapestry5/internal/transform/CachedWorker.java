@@ -22,17 +22,10 @@ import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Cached;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.runtime.PageLifecycleAdapter;
-import org.apache.tapestry5.services.BindingSource;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.ComponentMethodAdvice;
-import org.apache.tapestry5.services.ComponentMethodInvocation;
-import org.apache.tapestry5.services.FieldAccess;
-import org.apache.tapestry5.services.TransformField;
-import org.apache.tapestry5.services.TransformMethod;
-import org.apache.tapestry5.services.TransformMethodSignature;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.services.*;
 
 /**
  * Caches method return values for methods annotated with {@link Cached}.
@@ -40,6 +33,13 @@ import org.apache.tapestry5.services.TransformMethodSignature;
 public class CachedWorker implements ComponentClassTransformWorker
 {
     private final BindingSource bindingSource;
+
+    private final PerthreadManager perThreadManager;
+
+    interface MethodResultCacheFactory
+    {
+        MethodResultCache create(Component instance);
+    }
 
     /**
      * Handles the watching of a binding (usually a property or property expression), invalidating the
@@ -100,9 +100,10 @@ public class CachedWorker implements ComponentClassTransformWorker
         }
     }
 
-    public CachedWorker(BindingSource bindingSource)
+    public CachedWorker(BindingSource bindingSource, PerthreadManager perthreadManager)
     {
         this.bindingSource = bindingSource;
+        this.perThreadManager = perthreadManager;
     }
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
@@ -119,26 +120,43 @@ public class CachedWorker implements ComponentClassTransformWorker
 
     private void adviseMethod(ClassTransformation transformation, TransformMethod method)
     {
-        FieldAccess resultCacheAccess = createMethodResultCacheField(transformation, method);
+        // The key needs to reflect not just the method name, but also the containing
+        // page and component (otherwise, there would be unwanted sharing of cache
+        // between different instances of the same component within or across pages). This
+        // name can't be calculated until page instantiation time.
+
+        FieldAccess keyAccess = createKeyField(transformation, method);
 
         Cached annotation = method.getAnnotation(Cached.class);
 
-        ComponentMethodAdvice advice = createAdvice(resultCacheAccess, annotation.watch());
+        MethodResultCacheFactory factory = createFactory(transformation, annotation.watch(), method);
+
+        ComponentMethodAdvice advice = createAdvice(keyAccess, factory);
 
         method.addAdvice(advice);
     }
 
-    private FieldAccess createMethodResultCacheField(ClassTransformation transformation, TransformMethod method)
+    private FieldAccess createKeyField(ClassTransformation transformation, TransformMethod method)
     {
-        TransformField resultCacheField = transformation.createField(Modifier.PRIVATE, MethodResultCache.class
-                .getName(), "cache$" + method.getName());
+        final String methodId = method.getMethodIdentifier();
 
-        return resultCacheField.getAccess();
+        TransformField field = transformation.createField(Modifier.PROTECTED, String.class.getName(), "cacheKey$"
+                + method.getName());
+
+        field.injectIndirect(new ComponentValueProvider<String>()
+        {
+            public String get(ComponentResources resources)
+            {
+                return String.format("MethodResultCache:%s/%s", resources.getCompleteId(), methodId);
+            }
+        });
+
+        return field.getAccess();
     }
 
-    private ComponentMethodAdvice createAdvice(final FieldAccess resultCacheAccess, final String watch)
+    private ComponentMethodAdvice createAdvice(final FieldAccess keyAccess, final MethodResultCacheFactory factory)
     {
-        ComponentMethodAdvice advice = new ComponentMethodAdvice()
+        return new ComponentMethodAdvice()
         {
             public void advise(ComponentMethodInvocation invocation)
             {
@@ -159,44 +177,67 @@ public class CachedWorker implements ComponentClassTransformWorker
 
             private MethodResultCache getOrCreateCache(ComponentMethodInvocation invocation)
             {
-                MethodResultCache cache = (MethodResultCache) resultCacheAccess.read(invocation.getInstance());
+                Component instance = invocation.getInstance();
+
+                Object key = keyAccess.read(instance);
+
+                MethodResultCache cache = (MethodResultCache) perThreadManager.get(key);
 
                 if (cache == null)
-                    cache = createAndStoreCache(invocation);
+                {
+                    cache = factory.create(instance);
+
+                    perThreadManager.put(key, cache);
+                }
 
                 return cache;
             }
+        };
+    }
 
-            private MethodResultCache createAndStoreCache(ComponentMethodInvocation invocation)
+    private MethodResultCacheFactory createFactory(ClassTransformation transformation, final String watch,
+            TransformMethod method)
+    {
+        if (watch.equals(""))
+            return new MethodResultCacheFactory()
             {
-                final MethodResultCache cache = createMethodResultCache(invocation.getComponentResources());
-
-                invocation.getComponentResources().addPageLifecycleListener(new PageLifecycleAdapter()
+                public MethodResultCache create(Component instance)
                 {
-                    @Override
-                    public void containingPageDidDetach()
+                    return new SimpleMethodResultCache();
+                }
+            };
+
+        // Each component instance will get its own Binding instance. That handles both different locales,
+        // and reuse of a component (with a cached method) within a page or across pages.
+
+        TransformField bindingField = transformation.createField(Modifier.PROTECTED, Binding.class.getName(),
+                "cache$watchBinding$" + method.getName());
+
+        final FieldAccess bindingAccess = bindingField.getAccess();
+
+        transformation.getOrCreateMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE).addAdvice(
+                new ComponentMethodAdvice()
+                {
+                    public void advise(ComponentMethodInvocation invocation)
                     {
-                        cache.reset();
+                        Binding binding = bindingSource.newBinding("@Cached watch", invocation.getComponentResources(),
+                                BindingConstants.PROP, watch);
+
+                        bindingAccess.write(invocation.getInstance(), binding);
+
+                        invocation.proceed();
                     }
                 });
 
-                resultCacheAccess.write(invocation.getInstance(), cache);
-
-                return cache;
-            }
-
-            private SimpleMethodResultCache createMethodResultCache(ComponentResources resources)
+        return new MethodResultCacheFactory()
+        {
+            public MethodResultCache create(Component instance)
             {
-                if (watch.equals(""))
-                    return new SimpleMethodResultCache();
-
-                Binding binding = bindingSource.newBinding("@Cached watch", resources, BindingConstants.PROP, watch);
+                Binding binding = (Binding) bindingAccess.read(instance);
 
                 return new WatchedBindingMethodResultCache(binding);
             }
         };
-
-        return advice;
     }
 
     private void validateMethod(TransformMethod method)
