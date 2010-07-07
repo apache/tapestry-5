@@ -16,11 +16,12 @@ package org.apache.tapestry5.func;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Abstract base class for implementations of {@link Flow}. Subclasses typically override some methods
@@ -234,6 +235,15 @@ abstract class AbstractFlow<T> implements Flow<T>
             return this;
 
         return F.lazy(new LazyDrop<T>(length, this));
+    }
+
+    public Set<T> toSet()
+    {
+        Set<T> set = new HashSet<T>();
+
+        each(F.addToCollection(set));
+
+        return Collections.unmodifiableSet(set);
     }
 
 }

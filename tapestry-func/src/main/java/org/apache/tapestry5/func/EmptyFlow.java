@@ -17,6 +17,7 @@ package org.apache.tapestry5.func;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * An implementation of {@link Flow} for empty flows. This allows for some easy optimizations.
@@ -120,4 +121,11 @@ class EmptyFlow<T> extends AbstractFlow<T>
     {
         return this;
     }
+
+    public Set<T> toSet()
+    {
+        return Collections.emptySet();
+    }
+
+    
 }

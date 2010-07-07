@@ -16,6 +16,7 @@ package org.apache.tapestry5.func;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A Flow is a a functional interface for working with an ordered collection of values.
@@ -86,6 +87,12 @@ public interface Flow<T> extends Iterable<T>
      * the values of the Flow.
      */
     List<T> toList();
+
+    /**
+     * Converts the Flow into an unmodifiable set of values. This is a non-lazy operation that will fully realize
+     * the values of the Flow.
+     */
+    Set<T> toSet();
 
     /**
      * Converts the Flow into an array of values (due to type erasure, you have to remind the Flow about the

@@ -40,6 +40,17 @@ public class F
         return (Flow<T>) EMPTY_FLOW;
     }
 
+    public static <T> Predicate<T> eql(final T value)
+    {
+        return new Predicate<T>()
+        {
+            public boolean accept(T object)
+            {
+                return object.equals(value);
+            };
+        };
+    }
+
     public static Predicate<Number> eq(final long value)
     {
         return new Predicate<Number>()
@@ -297,5 +308,16 @@ public class F
                 return new LazyContinuation<T>(initial, new LazyIterate<T>(initial, mapper));
             }
         });
+    }
+
+    public static <T> Worker<T> addToCollection(final Collection<T> coll)
+    {
+        return new Worker<T>()
+        {
+            public void work(T value)
+            {
+                coll.add(value);
+            }
+        };
     }
 }
