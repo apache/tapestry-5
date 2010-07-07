@@ -18,10 +18,15 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.func.Flow;
+import org.apache.tapestry5.func.Mapper;
+import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.def.ContributionDef;
@@ -172,8 +177,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
                 Module existing = serviceIdToModule.get(serviceId);
 
                 if (existing != null)
-                    throw new RuntimeException(IOCMessages.serviceIdConflict(serviceId, existing
-                            .getServiceDef(serviceId), serviceDef));
+                    throw new RuntimeException(IOCMessages.serviceIdConflict(serviceId,
+                            existing.getServiceDef(serviceId), serviceDef));
 
                 serviceIdToModule.put(serviceId, module);
 
@@ -205,60 +210,75 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
      */
     private void validateContributeDefs(Collection<ModuleDef> moduleDefs)
     {
-        Set<ContributionDef> contributionDefs = CollectionFactory.newSet();
-
         for (ModuleDef module : moduleDefs)
         {
-            contributionDefs.addAll(module.getContributionDefs());
-        }
+            Set<ContributionDef> contributionDefs = module.getContributionDefs();
 
-        for (ContributionDef cd : contributionDefs)
-        {
-            String serviceId = cd.getServiceId();
-
-            ContributionDef2 cd2 = InternalUtils.toContributionDef2(cd);
-
-            if (cd2.getServiceId() != null)
+            for (ContributionDef cd : contributionDefs)
             {
-                if (!serviceIdToModule.containsKey(serviceId)) { throw new IllegalArgumentException(IOCMessages
-                        .contributionForNonexistentService(cd)); }
+                String serviceId = cd.getServiceId();
+
+                ContributionDef2 cd2 = InternalUtils.toContributionDef2(cd);
+
+                if (cd2.getServiceId() != null)
+                {
+                    if (!serviceIdToModule.containsKey(serviceId)) { throw new IllegalArgumentException(
+                            IOCMessages.contributionForNonexistentService(cd)); }
+                }
+                else if (!isContributionForExistentService(module, cd2)) { throw new IllegalArgumentException(
+                        IOCMessages.contributionForUnqualifiedService(cd2)); }
             }
-            else if (!isContributionForExistentService(cd2)) { throw new IllegalArgumentException(IOCMessages
-                    .contributionForUnqualifiedService(cd2)); }
         }
 
     }
 
-    private boolean isContributionForExistentService(ContributionDef2 cd)
+    /**
+     * Invoked when the contribution method didn't follow the naming convention and so doesn't identify
+     * a service by id; instead there was an @Contribute to identify the service interface.
+     */
+    @SuppressWarnings("all")
+    private boolean isContributionForExistentService(ModuleDef moduleDef, final ContributionDef2 cd)
     {
-        Set<Class> markers = CollectionFactory.newSet(cd.getMarkers());
-        markers.remove(Local.class);
+        final Set<Class> contributionMarkers = new HashSet(cd.getMarkers());
 
-        for (Class markerClass : markers)
+        boolean localOnly = contributionMarkers.contains(Local.class);
+
+        Flow<ServiceDef2> serviceDefs = localOnly ? getLocalServiceDefs(moduleDef) : F.flow(allServiceDefs);
+
+        contributionMarkers.retainAll(getMarkerAnnotations());
+        contributionMarkers.remove(Local.class);
+
+        // Match services with the correct interface AND having as markers *all* the marker annotations
+        
+        Flow<ServiceDef2> filtered = serviceDefs.filter(new Predicate<ServiceDef2>()
         {
-            boolean exists = existsServiceDefWithTypeAndMarker(cd.getServiceInterface(), markerClass);
+            public boolean accept(ServiceDef2 object)
+            {
+                return object.getServiceInterface().equals(cd.getServiceInterface());
+            }
+        }.and(new Predicate<ServiceDef2>()
+        {
+            public boolean accept(ServiceDef2 serviceDef)
+            {
+                return serviceDef.getMarkers().containsAll(contributionMarkers);
+            }
+        }));
 
-            if (!exists)
-                return false;
-        }
+        // That's a lot of logic; the good news is it will short-circuit as soon as it finds a single match,
+        // thanks to the laziness inside Flow.
 
-        return true;
+        return !filtered.isEmpty();
     }
 
-    private boolean existsServiceDefWithTypeAndMarker(Class serviceInterface, Class markerClass)
+    private Flow<ServiceDef2> getLocalServiceDefs(final ModuleDef moduleDef)
     {
-        List<ServiceDef2> serviceDefs = markerToServiceDef.get(markerClass);
-
-        if (serviceDefs == null)
-            return false;
-
-        for (ServiceDef2 serviceDef : serviceDefs)
+        return F.flow(moduleDef.getServiceIds()).map(new Mapper<String, ServiceDef2>()
         {
-            if (serviceDef.getServiceInterface() == serviceInterface)
-                return true;
-        }
-
-        return false;
+            public ServiceDef2 map(String value)
+            {
+                return InternalUtils.toServiceDef2(moduleDef.getServiceDef(value));
+            }
+        });
     }
 
     /**
@@ -283,30 +303,30 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             proxy.eagerLoadService();
 
         getService("RegistryStartup", Runnable.class).run();
-        
+
         invokeStartups();
 
         cleanupThread();
     }
-    
+
     private void invokeStartups()
-    {   
+    {
         for (Module m : moduleToServiceDefs.keySet())
         {
             Logger logger = this.loggerSource.getLogger(m.getLoggerName());
-            
+
             for (StartupDef sd : m.getStartupDefs())
             {
                 try
                 {
                     sd.startup(m, this, this, logger);
                 }
-                catch(RuntimeException e)
+                catch (RuntimeException e)
                 {
                     logger.error(ServiceMessages.startupFailure(e));
                 }
             }
-            
+
         }
     }
 
@@ -1011,8 +1031,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             }
         };
 
-        return classFactory.createProxy(interfaceClass, justInTime, String.format("<Autobuild proxy %s(%s)>",
-                implementationClass.getName(), interfaceClass.getName()));
+        return classFactory.createProxy(interfaceClass, justInTime,
+                String.format("<Autobuild proxy %s(%s)>", implementationClass.getName(), interfaceClass.getName()));
     }
 
     private <T> T createReloadingProxy(Class<T> interfaceClass, final Class<? extends T> implementationClass,
@@ -1023,8 +1043,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         getService(UpdateListenerHub.class).addUpdateListener(creator);
 
-        return classFactory.createProxy(interfaceClass, creator, String.format("<Autoreload proxy %s(%s)>",
-                implementationClass.getName(), interfaceClass.getName()));
+        return classFactory.createProxy(interfaceClass, creator,
+                String.format("<Autoreload proxy %s(%s)>", implementationClass.getName(), interfaceClass.getName()));
     }
 
     public Object provideServiceProxy(String serviceId)
@@ -1072,4 +1092,10 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             }
         });
     }
+
+    public Set<Class> getMarkerAnnotations()
+    {
+        return markerToServiceDef.keySet();
+    }
+
 }

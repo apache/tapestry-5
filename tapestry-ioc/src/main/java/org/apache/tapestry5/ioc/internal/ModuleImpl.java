@@ -296,10 +296,9 @@ public class ModuleImpl implements Module
                     {
                         if (lifecycle.requiresProxy())
                             throw new IllegalArgumentException(
-                                    String
-                                            .format(
-                                                    "Service scope '%s' requires a proxy, but the service does not have a service interface (necessary to create a proxy). Provide a service interface or select a different service scope.",
-                                                    def.getServiceScope()));
+                                    String.format(
+                                            "Service scope '%s' requires a proxy, but the service does not have a service interface (necessary to create a proxy). Provide a service interface or select a different service scope.",
+                                            def.getServiceScope()));
 
                         return creator.createObject();
                     }
@@ -443,8 +442,8 @@ public class ModuleImpl implements Module
         {
             insideConstructor = true;
 
-            Object[] parameterValues = InternalUtils.calculateParameters(locator, resources, constructor
-                    .getParameterTypes(), constructor.getGenericParameterTypes(),
+            Object[] parameterValues = InternalUtils.calculateParameters(locator, resources,
+                    constructor.getParameterTypes(), constructor.getGenericParameterTypes(),
                     constructor.getParameterAnnotations(), registry);
 
             Object result = constructor.newInstance(parameterValues);
@@ -527,6 +526,7 @@ public class ModuleImpl implements Module
         }
     }
 
+    @SuppressWarnings("all")
     public Set<ContributionDef2> getContributorDefsForService(ServiceDef serviceDef)
     {
         Set<ContributionDef2> result = CollectionFactory.newSet();
@@ -541,25 +541,39 @@ public class ModuleImpl implements Module
             }
             else
             {
-                Set<Class> markers = CollectionFactory.newSet(def.getMarkers());
+                if (!serviceDef.getServiceInterface().equals(def.getServiceInterface()))
+                    continue;
 
-                if (markers.contains(Local.class))
+                Set<Class> contributionMarkers = CollectionFactory.newSet(def.getMarkers());
+
+                if (contributionMarkers.contains(Local.class))
                 {
-                    if (moduleDef.getServiceDef(serviceDef.getServiceId()) == null)
+                    // If @Local is present, filter out services that aren't in the same module.
+                    // Don't consider @Local to be a marker annotation
+                    // for the later match, however.
+
+                    if (!isLocalServiceDef(serviceDef))
                         continue;
 
-                    markers.remove(Local.class);
+                    contributionMarkers.remove(Local.class);
                 }
 
-                if (serviceDef.getMarkers().equals(markers)
-                        && serviceDef.getServiceInterface() == def.getServiceInterface())
-                {
+                // Filter out any stray annotations that aren't used by some
+                // service, in any module, as a marker annotation.
+
+                contributionMarkers.retainAll(registry.getMarkerAnnotations());
+
+                if (serviceDef.getMarkers().containsAll(contributionMarkers))
                     result.add(def);
-                }
             }
         }
 
         return result;
+    }
+
+    private boolean isLocalServiceDef(ServiceDef serviceDef)
+    {
+        return serviceDefs.containsKey(serviceDef.getServiceId());
     }
 
     public ServiceDef2 getServiceDef(String serviceId)
@@ -571,7 +585,7 @@ public class ModuleImpl implements Module
     {
         return moduleDef.getLoggerName();
     }
-    
+
     public Set<StartupDef> getStartupDefs()
     {
         return moduleDef.getStartupDefs();

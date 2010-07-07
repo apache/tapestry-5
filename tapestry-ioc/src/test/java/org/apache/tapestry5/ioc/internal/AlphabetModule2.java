@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,6 +17,7 @@ package org.apache.tapestry5.ioc.internal;
 import java.util.List;
 
 import org.apache.tapestry5.ioc.BlueMarker;
+import org.apache.tapestry5.ioc.GreenMarker;
 import org.apache.tapestry5.ioc.NameListHolder;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.RedMarker;
@@ -26,7 +27,7 @@ import org.apache.tapestry5.ioc.annotations.Marker;
 
 public class AlphabetModule2
 {
-    @Marker({BlueMarker.class, RedMarker.class})
+    @Marker(GreenMarker.class)
     public NameListHolder buildHebrew(final List<String> configuration)
     {
 
@@ -53,7 +54,7 @@ public class AlphabetModule2
     }
 
     @Contribute(NameListHolder.class)
-    @Marker(BlueMarker.class)
+    @BlueMarker
     public void extendGreekConfiguration(OrderedConfiguration<String> configuration)
     {
         configuration.add("Gamma", "Gamma", "after:Beta");
@@ -61,20 +62,21 @@ public class AlphabetModule2
     }
 
     @Contribute(NameListHolder.class)
-    @Marker({ BlueMarker.class, Local.class })
+    @BlueMarker
+    @Local
     public void contributeXyz(OrderedConfiguration<String> configuration)
     {
         configuration.add("Epsilon", "Epsilon", "after:*");
     }
-    
+
     @Contribute(NameListHolder.class)
-    @Marker({RedMarker.class, BlueMarker.class})
+    @GreenMarker
     public void someMoreHebrewLetters(OrderedConfiguration<String> configuration)
     {
         configuration.add("Dalet", "Dalet", "after:Gimel");
         configuration.add("He", "He", "after:Dalet");
     }
-    
+
     public void contributeHebrew(OrderedConfiguration<String> configuration)
     {
         configuration.add("Vav", "Vav", "after:He");

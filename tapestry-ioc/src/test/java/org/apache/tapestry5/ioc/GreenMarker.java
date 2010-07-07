@@ -14,34 +14,20 @@
 
 package org.apache.tapestry5.ioc;
 
-import java.util.List;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import org.apache.tapestry5.ioc.annotations.Contribute;
-import org.apache.tapestry5.ioc.annotations.Marker;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-public class InvalidContributeDefModule3
+@Target(
+{ PARAMETER, FIELD, METHOD })
+@Retention(RUNTIME)
+@Documented
+public @interface GreenMarker
 {
-    @Marker(BlueMarker.class)
-    public Runnable build(final List<String> configuration)
-    {
 
-        return new Runnable()
-        {
-            public void run()
-            {
-
-            }
-
-        };
-    }
-
-    /**
-     * Its a contribute method, but to a service that does not exist.
-     */
-    @Contribute(NameListHolder.class)
-    @BlueMarker
-    public void provideConfiguration(OrderedConfiguration<String> configuration)
-    {
-
-    }
 }

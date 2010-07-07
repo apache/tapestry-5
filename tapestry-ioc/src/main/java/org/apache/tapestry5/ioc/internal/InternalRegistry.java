@@ -14,15 +14,22 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.Registry;
+import org.apache.tapestry5.ioc.ServiceAdvisor;
+import org.apache.tapestry5.ioc.ServiceDecorator;
+import org.apache.tapestry5.ioc.ServiceLifecycle2;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.services.ClassFab;
 import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
 import org.slf4j.Logger;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Internal view of the module registry, adding additional methods needed by modules.
@@ -148,4 +155,11 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub, Operati
      * @since 5.2.0
      */
     <T> T proxy(Class<T> interfaceClass, Class<? extends T> implementationClass, ObjectLocator locator);
+
+    /**
+     * Returns a Set of Annotation classes that are used as service markers.
+     * 
+     * @since 5.2.0
+     */
+    Set<Class> getMarkerAnnotations();
 }

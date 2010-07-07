@@ -85,7 +85,21 @@ Naming conventions vs. Annotations
 	
 	If you prefer annotations over naming conventions you can use the {{{../apidocs/org/apache/tapestry5/ioc/annotations/Contribute.html}@Contribute}}
 	annotation. As of version 5.2 this annotation that may be placed on a contributor method of a module instead of starting the methods name 
-	with "contribute". The value of the annotation is the type of the service to contribute into. The following example is an alternative for the contribution method above.
+	with "contribute". The value of the annotation is the type of the service to contribute into. 
+	
+	
+  <<Note>>: the primary reasons to use @Contribute and marker annotations is twofold:
+  
+  * There is no longer a linkage between the contribution method name and the service id, which is much more refactoring
+    safe: if you change the service interface name, or the id of the service, your method will still be invoked when
+    using @Contribute.
+    
+  * It makes it much easier for an {{{cookbook/override.html}override}} of the service to get the
+    configuration intended for the original service.
+    
+  [] 	
+	
+	The following example is an alternative for the contribution method above.
 	
 +------+
   @Contribute(FileServiceDispatcher.class)
@@ -97,11 +111,11 @@ Naming conventions vs. Annotations
 +------+
 
 	If you have several implementations of a service interface, you have to disambiguate the services. For this purpose the 
-	{{{../apidocs/org/apache/tapestry5/ioc/annotations/Marker.html}@Marker}} annotation should be placed on the contributor method.
+	marker  annotations should be placed on the contributor method.
 	
 +------+
   @Contribute(FileServiceDispatcher.class)
-  @Marker({Red.class, Blue.class})
+  @Red @Blue
   public static void arbitraryMethodName(MappedConfiguration<String,FileServicer> configuration)
   {
     configuration.add("doc", new WordFileServicer());
@@ -109,12 +123,20 @@ Naming conventions vs. Annotations
   }  
 +------+  
 
-	If the {{{../apidocs/org/apache/tapestry5/ioc/annotations/Local.html}@Local}} annotation is present, 
+  In this example, the method will only be invoked when constructing a service configuration where
+  the service itself has both the Red and Blue marker annotations.  Tapestry knows which annotations
+  are marker annotations, and which marker annotations apply to the service, via
+  the {{{../apidocs/org/apache/tapestry5/ioc/annotations/Marker.html}@Marker}} annotation on the service implementation.
+
+	If the special {{{../apidocs/org/apache/tapestry5/ioc/annotations/Local.html}@Local}} annotation is present, 
 	then contribution is made only to the configuration of a service being constructed in the same module.
+	
+  It is not impossible that the same contribution method will be invoked to contribute to the configuration
+  of multiple different services.
 
 +------+
   @Contribute(FileServiceDispatcher.class)
-  @Marker(Local.class)
+  @Local
   public static void arbitraryMethodName(MappedConfiguration<String,FileServicer> configuration)
   {
     configuration.add("doc", new WordFileServicer());

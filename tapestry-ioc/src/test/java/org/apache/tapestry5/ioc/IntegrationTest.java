@@ -1421,20 +1421,20 @@ public class IntegrationTest extends IOCInternalTestCase
 
         NameListHolder greek = r.getService("Greek", NameListHolder.class);
 
-        assertEquals(greek.getNames(), Arrays.asList("Alpha", "Beta", "Gamma", "Delta"));
+        assertListsEquals(greek.getNames(), "Alpha", "Beta", "Gamma", "Delta");
 
         NameListHolder anotherGreek = r.getService("AnotherGreek", NameListHolder.class);
 
-        assertEquals(anotherGreek.getNames(), Arrays.asList("Alpha", "Beta", "Gamma", "Delta", "Epsilon"));
+        assertListsEquals(anotherGreek.getNames(), "Alpha", "Beta", "Gamma", "Delta", "Epsilon");
 
         NameListHolder hebrew = r.getService("Hebrew", NameListHolder.class);
 
-        assertEquals(hebrew.getNames(), Arrays.asList("Alef", "Bet", "Gimel", "Dalet", "He", "Vav"));
+        assertListsEquals(hebrew.getNames(), "Alef", "Bet", "Gimel", "Dalet", "He", "Vav");
 
         NameListHolder2 holder = r.getService("ServiceWithEmptyConfiguration", NameListHolder2.class);
 
         assertEquals(holder.getNames(), Arrays.asList());
-        
+
         r.shutdown();
 
     }
@@ -1492,22 +1492,22 @@ public class IntegrationTest extends IOCInternalTestCase
 
         r.shutdown();
     }
-    
+
     @Test
     public void startup_inside_module()
     {
         Registry r = buildRegistry(StartupModule2.class);
-        
+
         assertFalse(StartupModule2.staticStartupInvoked);
-        
+
         assertFalse(StartupModule2.instanceStartupInvoked);
-        
+
         r.performRegistryStartup();
 
         assertTrue(StartupModule2.staticStartupInvoked);
-        
+
         assertTrue(StartupModule2.instanceStartupInvoked);
-        
+
         r.shutdown();
 
     }

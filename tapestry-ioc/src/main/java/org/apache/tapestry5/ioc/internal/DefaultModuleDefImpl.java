@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -25,6 +26,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.func.Mapper;
+import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.ioc.AdvisorDef;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
@@ -95,27 +99,23 @@ public class DefaultModuleDefImpl implements ModuleDef3, ServiceDefAccumulator
     /**
      * Keyed on decorator id.
      */
-    private final Map<String, DecoratorDef> decoratorDefs = CollectionFactory
-            .newCaseInsensitiveMap();
+    private final Map<String, DecoratorDef> decoratorDefs = CollectionFactory.newCaseInsensitiveMap();
 
     private final Map<String, AdvisorDef> advisorDefs = CollectionFactory.newCaseInsensitiveMap();
 
     private final Set<ContributionDef> contributionDefs = CollectionFactory.newSet();
-    
+
     private final Set<StartupDef> startupDefs = CollectionFactory.newSet();
 
     private final Set<Class> defaultMarkers = CollectionFactory.newSet();
 
-    private final static Set<Method> OBJECT_METHODS = CollectionFactory.newSet(Object.class
-            .getMethods());
+    private final static Set<Method> OBJECT_METHODS = CollectionFactory.newSet(Object.class.getMethods());
 
     static
     {
         PARAMETER_TYPE_TO_CONFIGURATION_TYPE.put(Configuration.class, ConfigurationType.UNORDERED);
-        PARAMETER_TYPE_TO_CONFIGURATION_TYPE.put(OrderedConfiguration.class,
-                ConfigurationType.ORDERED);
-        PARAMETER_TYPE_TO_CONFIGURATION_TYPE.put(MappedConfiguration.class,
-                ConfigurationType.MAPPED);
+        PARAMETER_TYPE_TO_CONFIGURATION_TYPE.put(OrderedConfiguration.class, ConfigurationType.ORDERED);
+        PARAMETER_TYPE_TO_CONFIGURATION_TYPE.put(MappedConfiguration.class, ConfigurationType.MAPPED);
     }
 
     /**
@@ -151,8 +151,7 @@ public class DefaultModuleDefImpl implements ModuleDef3, ServiceDefAccumulator
         methods.removeAll(OBJECT_METHODS);
         removeSyntheticMethods(methods);
 
-        boolean modulePreventsServiceDecoration = moduleClass
-                .getAnnotation(PreventServiceDecoration.class) != null;
+        boolean modulePreventsServiceDecoration = moduleClass.getAnnotation(PreventServiceDecoration.class) != null;
 
         grind(methods, modulePreventsServiceDecoration);
         bind(methods, modulePreventsServiceDecoration);
@@ -160,9 +159,8 @@ public class DefaultModuleDefImpl implements ModuleDef3, ServiceDefAccumulator
         if (methods.isEmpty())
             return;
 
-        throw new RuntimeException(String.format(
-                "Module class %s contains unrecognized public methods: %s.", moduleClass.getName(),
-                InternalUtils.joinSorted(methods)));
+        throw new RuntimeException(String.format("Module class %s contains unrecognized public methods: %s.",
+                moduleClass.getName(), InternalUtils.joinSorted(methods)));
     }
 
     /**
@@ -171,8 +169,7 @@ public class DefaultModuleDefImpl implements ModuleDef3, ServiceDefAccumulator
     @Override
     public String toString()
     {
-        return String.format("ModuleDef[%s %s]", moduleClass.getName(), InternalUtils
-                .joinSorted(serviceDefs.keySet()));
+        return String.format("ModuleDef[%s %s]", moduleClass.getName(), InternalUtils.joinSorted(serviceDefs.keySet()));
     }
 
     public Class getBuilderClass()
@@ -275,11 +272,10 @@ public class DefaultModuleDefImpl implements ModuleDef3, ServiceDefAccumulator
     private void addContributionDef(Method method)
     {
         Contribute annotation = method.getAnnotation(Contribute.class);
-        		
-        
-        Class serviceInterface = annotation==null?null:annotation.value();
-        
-        String serviceId = annotation!=null?null:stripMethodPrefix(method, CONTRIBUTE_METHOD_NAME_PREFIX);
+
+        Class serviceInterface = annotation == null ? null : annotation.value();
+
+        String serviceId = annotation != null ? null : stripMethodPrefix(method, CONTRIBUTE_METHOD_NAME_PREFIX);
 
         Class returnType = method.getReturnType();
         if (!returnType.equals(void.class))
@@ -289,8 +285,7 @@ public class DefaultModuleDefImpl implements ModuleDef3, ServiceDefAccumulator
 
         for (Class parameterType : method.getParameterTypes())
         {
-            ConfigurationType thisParameter = PARAMETER_TYPE_TO_CONFIGURATION_TYPE
-                    .get(parameterType);
+            ConfigurationType thisParameter = PARAMETER_TYPE_TO_CONFIGURATION_TYPE.get(parameterType);
 
             if (thisParameter != null)
             {
@@ -303,9 +298,8 @@ public class DefaultModuleDefImpl implements ModuleDef3, ServiceDefAccumulator
 
         if (type == null)
             throw new RuntimeException(IOCMessages.noContributionParameter(method));
-        
-        Set<Class> markers = CollectionFactory.newSet();
-        markers.addAll(extractMarkers(method));
+
+        Set<Class> markers = extractContributionMarkers(method);
 
         ContributionDef2 def = new ContributionDefImpl(serviceId, method, classFactory, serviceInterface, markers);
 
@@ -363,8 +357,7 @@ public class DefaultModuleDefImpl implements ModuleDef3, ServiceDefAccumulator
         Class returnType = method.getReturnType();
 
         if (!returnType.equals(void.class))
-            throw new RuntimeException(String.format("Advise method %s does not return void.",
-                    toString(method)));
+            throw new RuntimeException(String.format("Advise method %s does not return void.", toString(method)));
 
         boolean found = false;
 
@@ -379,12 +372,11 @@ public class DefaultModuleDefImpl implements ModuleDef3, ServiceDefAccumulator
         }
 
         if (!found)
-            throw new RuntimeException(String.format(
-                    "Advise method %s must take a parameter of type %s.", toString(method),
-                    MethodAdviceReceiver.class.getName()));
+            throw new RuntimeException(String.format("Advise method %s must take a parameter of type %s.",
+                    toString(method), MethodAdviceReceiver.class.getName()));
 
-        AdvisorDef def = new AdvisorDefImpl(method, extractPatterns(advisorId, method),
-                extractConstraints(method), classFactory, advisorId);
+        AdvisorDef def = new AdvisorDefImpl(method, extractPatterns(advisorId, method), extractConstraints(method),
+                classFactory, advisorId);
 
         advisorDefs.put(advisorId, def);
 
@@ -467,15 +459,15 @@ public class DefaultModuleDefImpl implements ModuleDef3, ServiceDefAccumulator
         };
 
         Set<Class> markers = CollectionFactory.newSet(defaultMarkers);
-        markers.addAll(extractMarkers(method));
+        markers.addAll(extractServiceDefMarkers(method));
 
-        ServiceDefImpl serviceDef = new ServiceDefImpl(returnType, serviceId, markers, scope,
-                eagerLoad, preventDecoration, source);
+        ServiceDefImpl serviceDef = new ServiceDefImpl(returnType, serviceId, markers, scope, eagerLoad,
+                preventDecoration, source);
 
         addServiceDef(serviceDef);
     }
 
-    private Collection<Class> extractMarkers(Method method)
+    private Collection<Class> extractServiceDefMarkers(Method method)
     {
         Marker annotation = method.getAnnotation(Marker.class);
 
@@ -485,6 +477,25 @@ public class DefaultModuleDefImpl implements ModuleDef3, ServiceDefAccumulator
         return CollectionFactory.newList(annotation.value());
     }
 
+    @SuppressWarnings("rawtypes")
+    private Set<Class> extractContributionMarkers(Method method)
+    {
+        return F.flow(method.getAnnotations()).map(new Mapper<Annotation, Class>()
+        {
+            public Class map(Annotation value)
+            {
+                return value.annotationType();
+            };
+        }).filter(new Predicate<Class>()
+        {
+            public boolean accept(Class object)
+            {
+                return !object.equals(Contribute.class);
+
+            }
+        }).toSet();
+    }
+
     public void addServiceDef(ServiceDef serviceDef)
     {
         String serviceId = serviceDef.getServiceId();
@@ -492,8 +503,8 @@ public class DefaultModuleDefImpl implements ModuleDef3, ServiceDefAccumulator
         ServiceDef existing = serviceDefs.get(serviceId);
 
         if (existing != null)
-            throw new RuntimeException(IOCMessages.buildMethodConflict(serviceId, serviceDef
-                    .toString(), existing.toString()));
+            throw new RuntimeException(IOCMessages.buildMethodConflict(serviceId, serviceDef.toString(),
+                    existing.toString()));
 
         serviceDefs.put(serviceId, serviceDef);
     }
@@ -514,7 +525,7 @@ public class DefaultModuleDefImpl implements ModuleDef3, ServiceDefAccumulator
     {
         return contributionDefs;
     }
-    
+
     public Set<StartupDef> getStartupDefs()
     {
         return startupDefs;
@@ -547,8 +558,8 @@ public class DefaultModuleDefImpl implements ModuleDef3, ServiceDefAccumulator
             if (!Modifier.isStatic(bindMethod.getModifiers()))
                 throw new RuntimeException(IOCMessages.bindMethodMustBeStatic(toString(bindMethod)));
 
-            ServiceBinderImpl binder = new ServiceBinderImpl(this, bindMethod, classFactory,
-                    defaultMarkers, modulePreventsServiceDecoration);
+            ServiceBinderImpl binder = new ServiceBinderImpl(this, bindMethod, classFactory, defaultMarkers,
+                    modulePreventsServiceDecoration);
 
             bindMethod.invoke(null, binder);
 

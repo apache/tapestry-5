@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,7 +21,7 @@ import org.apache.tapestry5.ioc.annotations.Marker;
 
 public class InvalidContributeDefModule2
 {
-    @Marker(BlueMarker.class)
+    @Marker(GreenMarker.class)
     public NameListHolder build(final List<String> configuration)
     {
 
@@ -33,14 +33,22 @@ public class InvalidContributeDefModule2
             }
         };
     }
-    
+
+    @Marker(
+    { BlueMarker.class, RedMarker.class })
+    public Runnable buildBlueRedClassSoThatTheyAreMarkerAnnotations()
+    {
+        return null;
+    }
+
     /**
      * Its a contribute method, but to a service that does not exist.
      */
     @Contribute(NameListHolder.class)
-    @Marker({BlueMarker.class,RedMarker.class})
+    @BlueMarker
+    @RedMarker
     public void provideConfiguration(OrderedConfiguration<String> configuration)
     {
-        
+
     }
 }
