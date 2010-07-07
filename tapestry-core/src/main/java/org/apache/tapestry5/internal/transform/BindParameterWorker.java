@@ -50,6 +50,7 @@ public class BindParameterWorker implements ComponentClassTransformWorker
 
         private final Class fieldType;
 
+        // Guarded by this
         private ParameterConduit conduit;
 
         private BoundParameterFieldValueConduit(String containerParameterName,
@@ -67,12 +68,11 @@ public class BindParameterWorker implements ComponentClassTransformWorker
          * methods invoked
          * from the page loaded lifecycle method?
          */
-        private ParameterConduit getParameterConduit()
+        private synchronized ParameterConduit getParameterConduit()
         {
             if (conduit == null)
             {
                 conduit = containerResources.getParameterConduit(containerParameterName);
-
             }
 
             return conduit;
@@ -135,9 +135,10 @@ public class BindParameterWorker implements ComponentClassTransformWorker
                 }
                 catch (Exception ex)
                 {
-                    throw new TapestryException(String.format("Failure binding parameter field '%s' of mixin %s (type %s): %s",
-                            fieldName, resources.getCompleteId(),
-                            resources.getComponentModel().getComponentClassName(), InternalUtils.toMessage(ex)), ex);
+                    throw new TapestryException(String.format(
+                            "Failure binding parameter field '%s' of mixin %s (type %s): %s", fieldName, resources
+                                    .getCompleteId(), resources.getComponentModel().getComponentClassName(),
+                            InternalUtils.toMessage(ex)), ex);
                 }
             }
 
