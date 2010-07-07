@@ -26,21 +26,20 @@ import org.apache.tapestry5.services.TransformMethod;
 
 public class DiscardAfterWorker implements ComponentClassTransformWorker
 {
-    
-    private final ComponentMethodAdvice advice = new ComponentMethodAdvice()
+
+    private static final ComponentMethodAdvice advice = new ComponentMethodAdvice()
     {
 
         public void advise(ComponentMethodInvocation invocation)
         {
             invocation.proceed();
-            
-            if(invocation.isFail())
-                return;
-            
-            ComponentResources resources = invocation.getComponentResources();
-            
-            resources.discardPersistentFieldChanges();
 
+            if (invocation.isFail())
+                return;
+
+            ComponentResources resources = invocation.getComponentResources();
+
+            resources.discardPersistentFieldChanges();
         }
 
     };
@@ -49,12 +48,12 @@ public class DiscardAfterWorker implements ComponentClassTransformWorker
     {
         final List<TransformMethod> methods = transformation.matchMethodsWithAnnotation(DiscardAfter.class);
 
-        if (methods.isEmpty()) 
-            return; 
+        if (methods.isEmpty())
+            return;
 
-        for (final TransformMethod metod : methods)
+        for (final TransformMethod method : methods)
         {
-            metod.addAdvice(advice);
+            method.addAdvice(advice);
         }
 
     }
