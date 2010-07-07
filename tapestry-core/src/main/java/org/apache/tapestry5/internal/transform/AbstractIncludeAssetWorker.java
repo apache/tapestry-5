@@ -68,9 +68,8 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
     {
         List<String> expandedPaths = expandSymbolsInPaths(assetPaths);
 
-        // Since every instance of the component may be in a different locale, every instance
-        // will have a field to store its localized list of assets. There's room to do some
-        // sharing/caching perhaps.
+        // Since every instance of the component will be in a different locale, every instance
+        // will have a field to store its localized list of assets.
 
         FieldAccess access = createFieldForAssets(transformation);
 
