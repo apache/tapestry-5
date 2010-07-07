@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
+import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.slf4j.Logger;
@@ -117,4 +118,23 @@ public class PerthreadManagerImplTest extends IOCTestCase
     //
     // verify();
     // }
+
+    @Test
+    public void per_thread_value()
+    {
+        Object key = new Object();
+        Object value = "Tapestry";
+
+        PerthreadManagerImpl m = new PerthreadManagerImpl(null);
+
+        PerThreadValue<Object> v = m.createValue(key);
+
+        assertNull(m.get(key));
+        assertNull(v.get());
+
+        v.set(value);
+
+        assertSame(m.get(key), value);
+        assertSame(v.get(), value);
+    }
 }

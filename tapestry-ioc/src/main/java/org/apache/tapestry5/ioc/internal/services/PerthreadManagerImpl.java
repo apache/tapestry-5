@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,6 +22,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.DummyLock;
 import org.apache.tapestry5.ioc.internal.util.JDKUtils;
+import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
 import org.slf4j.Logger;
@@ -62,7 +63,7 @@ public class PerthreadManagerImpl implements PerthreadManager
         try
         {
             lock.lock();
-            
+
             return holder.get();
         }
         finally
@@ -118,6 +119,8 @@ public class PerthreadManagerImpl implements PerthreadManager
         try
         {
             lock.lock();
+
+            // Discard the per-thread map of values.
             
             holder.remove();
         }
@@ -127,6 +130,7 @@ public class PerthreadManagerImpl implements PerthreadManager
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void put(Object key, Object value)
     {
         getPerthreadMap().put(key, value);
@@ -136,4 +140,22 @@ public class PerthreadManagerImpl implements PerthreadManager
     {
         return getPerthreadMap().get(key);
     }
+
+    public <T> PerThreadValue<T> createValue(final Object key)
+    {
+        return new PerThreadValue<T>()
+        {
+            @SuppressWarnings("unchecked")
+            public T get()
+            {
+                return (T) PerthreadManagerImpl.this.get(key);
+            }
+
+            public void set(T newValue)
+            {
+                put(key, newValue);
+            }
+        };
+    }
+
 }
