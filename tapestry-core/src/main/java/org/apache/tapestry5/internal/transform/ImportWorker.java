@@ -87,9 +87,9 @@ public class ImportWorker implements ComponentClassTransformWorker
         if (annotation == null)
             return;
 
-        TransformMethod pageDidLoad = transformation.getOrCreateMethod(TransformConstants.SETUP_RENDER_SIGNATURE);
+        TransformMethod setupRender = transformation.getOrCreateMethod(TransformConstants.SETUP_RENDER_SIGNATURE);
 
-        decorateMethod(transformation, model, pageDidLoad, annotation);
+        decorateMethod(transformation, model, setupRender, annotation);
 
         model.addRenderPhase(SetupRender.class);
     }
