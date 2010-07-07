@@ -82,6 +82,7 @@ public interface Environment
      * @param <T>
      * @return access object that can be used to see the current environmental object of the type
      * @since 5.0.19
+     * @deprecated No longer gives a performance advantage due to pool-less pages
      */
     <T> EnvironmentalAccess<T> getAccess(Class<T> type);
 }

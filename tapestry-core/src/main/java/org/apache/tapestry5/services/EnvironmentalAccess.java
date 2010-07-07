@@ -20,6 +20,7 @@ package org.apache.tapestry5.services;
  * @param <T>
  * @see org.apache.tapestry5.services.Environment#getAccess(Class)
  * @since 5.0.19
+ * @deprecated No longer gives a performance advantage due to pool-less pages
  */
 public interface EnvironmentalAccess<T>
 {
