@@ -26,7 +26,6 @@ import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.runtime.Component;
@@ -172,7 +171,7 @@ public class ImportWorker implements ComponentClassTransformWorker
 
     private FieldAccess createFieldForAssets(ClassTransformation transformation)
     {
-        TransformField field = transformation.createField(Modifier.PRIVATE, List.class.getName(), "includedAssets");
+        TransformField field = transformation.createField(Modifier.PROTECTED, List.class.getName(), "includedAssets");
 
         return field.getAccess();
     }
