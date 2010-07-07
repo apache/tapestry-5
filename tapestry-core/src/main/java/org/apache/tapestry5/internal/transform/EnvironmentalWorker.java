@@ -16,27 +16,25 @@ package org.apache.tapestry5.internal.transform;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.ioc.services.Builtin;
-import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.runtime.PageLifecycleAdapter;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.ComponentValueProvider;
 import org.apache.tapestry5.services.Environment;
-import org.apache.tapestry5.services.EnvironmentalAccess;
 import org.apache.tapestry5.services.TransformField;
 
 /**
  * Obtains a value from the {@link Environment} service based on the field type. This is triggered by the presence of
  * the {@link Environmental} annotation.
  */
+@SuppressWarnings("rawtypes")
 public class EnvironmentalWorker implements ComponentClassTransformWorker
 {
     private final Environment environment;
 
-    private final ClassLoader classLoader;
+    private final ComponentClassCache classCache;
 
     @SuppressWarnings("unchecked")
     private final class EnvironmentalConduit extends ReadOnlyFieldValueConduit
@@ -45,41 +43,26 @@ public class EnvironmentalWorker implements ComponentClassTransformWorker
 
         private final boolean required;
 
-        private EnvironmentalAccess access;
-
-        private EnvironmentalConduit(ComponentResources resources, String fieldName,
-                final Class environmentalType, boolean required)
+        private EnvironmentalConduit(ComponentResources resources, String fieldName, final Class environmentalType,
+                boolean required)
         {
             super(resources, fieldName);
 
             this.environmentalType = environmentalType;
             this.required = required;
-
-            resources.addPageLifecycleListener(new PageLifecycleAdapter()
-            {
-                @Override
-                public void containingPageDidDetach()
-                {
-                    access = null;
-                }
-            });
         }
 
         public Object get()
         {
-            if (access == null)
-                access = environment.getAccess(environmentalType);
-
-            return required ? access.peekRequired() : access.peek();
+            return required ? environment.peekRequired(environmentalType) : environment.peek(environmentalType);
         }
     }
 
-    public EnvironmentalWorker(Environment environment, @Builtin
-    ClassFactory servicesLayerClassFactory)
+    public EnvironmentalWorker(Environment environment, ComponentClassCache classCache)
     {
         this.environment = environment;
 
-        classLoader = servicesLayerClassFactory.getClassLoader();
+        this.classCache = classCache;
     }
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
@@ -98,7 +81,7 @@ public class EnvironmentalWorker implements ComponentClassTransformWorker
 
         final String fieldName = field.getName();
 
-        final Class fieldType = toClass(field.getType());
+        final Class fieldType = classCache.forName(field.getType());
 
         final boolean required = annotation.value();
 
@@ -113,15 +96,4 @@ public class EnvironmentalWorker implements ComponentClassTransformWorker
         field.replaceAccess(provider);
     }
 
-    private Class toClass(String typeName)
-    {
-        try
-        {
-            return classLoader.loadClass(typeName);
-        }
-        catch (ClassNotFoundException ex)
-        {
-            throw new RuntimeException(ex);
-        }
-    }
 }
