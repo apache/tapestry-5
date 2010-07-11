@@ -39,6 +39,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
@@ -68,6 +69,12 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     private final ComponentPageElementResources elementResources;
 
+    private final boolean mixin;
+
+    private static final Object[] EMPTY = new Object[0];
+
+    private static final AnnotationProvider NULL_ANNOTATION_PROVIDER = new NullAnnotationProvider();
+
     // Case insensitive map from parameter name to binding
     private Map<String, Binding> bindings;
 
@@ -77,16 +84,11 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     private Messages messages;
 
-    // Case insensitive
-    private Map<String, Object> renderVariables;
-
-    private static final Object[] EMPTY = new Object[0];
-
-    private static final AnnotationProvider NULL_ANNOTATION_PROVIDER = new NullAnnotationProvider();
-
     private boolean informalsComputed;
 
-    private final boolean mixin;
+    private PerThreadValue<Map<String, Object>> renderVariables;
+
+    private Informal firstInformal;
 
     /**
      * We keep a linked list of informal parameters, which saves us the expense of determining which
@@ -127,8 +129,6 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
             writer.attributes(name, valueString);
         }
     }
-
-    private Informal firstInformal;
 
     public InternalComponentResourcesImpl(Page page, ComponentPageElement element,
             ComponentResources containerResources, ComponentPageElementResources elementResources, String completeId,
@@ -357,6 +357,12 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         if (bindings == null)
             return;
 
+        for (Informal i = firstInformal(); i != null; i = i.next)
+            i.write(writer);
+    }
+
+    private synchronized Informal firstInformal()
+    {
         if (!informalsComputed)
         {
             for (Map.Entry<String, Binding> e : getInformalParameterBindings().entrySet())
@@ -367,8 +373,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
             informalsComputed = true;
         }
 
-        for (Informal i = firstInformal; i != null; i = i.next)
-            i.write(writer);
+        return firstInformal;
     }
 
     public Component getContainer()
@@ -394,7 +399,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return element.getLocale();
     }
 
-    public Messages getMessages()
+    public synchronized Messages getMessages()
     {
         if (messages == null)
             messages = elementResources.getMessages(componentModel);
@@ -456,8 +461,24 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return result;
     }
 
+    private synchronized Map<String, Object> getRenderVariables()
+    {
+        if (renderVariables == null)
+            renderVariables = elementResources.createPerThreadValue("tapestry.internal.RenderVariables:"
+                    + getCompleteId());
+
+        Map<String, Object> result = renderVariables.get();
+
+        if (result == null)
+            result = renderVariables.set(CollectionFactory.newCaseInsensitiveMap());
+
+        return result;
+    }
+
     public Object getRenderVariable(String name)
     {
+        Map<String, Object> renderVariables = getRenderVariables();
+
         Object result = InternalUtils.get(renderVariables, name);
 
         if (result == null)
@@ -475,16 +496,14 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         if (!element.isRendering())
             throw new IllegalStateException(StructureMessages.renderVariableSetWhenNotRendering(getCompleteId(), name));
 
-        if (renderVariables == null)
-            renderVariables = CollectionFactory.newCaseInsensitiveMap();
+        Map<String, Object> renderVariables = getRenderVariables();
 
         renderVariables.put(name, value);
     }
 
     public void postRenderCleanup()
     {
-        if (renderVariables != null)
-            renderVariables.clear();
+        getRenderVariables().clear();
     }
 
     public void addPageLifecycleListener(PageLifecycleListener listener)
@@ -502,12 +521,12 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         page.addResetListener(listener);
     }
 
-    public ParameterConduit getParameterConduit(String parameterName)
+    public synchronized ParameterConduit getParameterConduit(String parameterName)
     {
         return InternalUtils.get(conduits, parameterName);
     }
 
-    public void setParameterConduit(String parameterName, ParameterConduit conduit)
+    public synchronized void setParameterConduit(String parameterName, ParameterConduit conduit)
     {
         if (conduits == null)
             conduits = CollectionFactory.newCaseInsensitiveMap();

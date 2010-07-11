@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,15 +21,38 @@ import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.bindings.InternalPropBinding;
 import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.ParameterModel;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 {
+    private PerthreadManager perThreadManager;
+
+    private ComponentPageElementResources elementResources;
+
+    @BeforeClass
+    public void setup()
+    {
+        perThreadManager = getService(PerthreadManager.class);
+        TypeCoercer typeCoercer = getService(TypeCoercer.class);
+
+        elementResources = new ComponentPageElementResourcesImpl(null, null, typeCoercer, null, null, null, null, null,
+                null, null, perThreadManager);
+    }
+
+    @AfterMethod
+    public void cleanup()
+    {
+        perThreadManager.cleanup();
+    }
+
     @Test
     public void render_informal_parameters_no_bindings()
     {
@@ -44,8 +67,8 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, null, null,
-                                                                                  null, ins, false);
+        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null,
+                elementResources, null, null, ins, false);
 
         resources.renderInformalParameters(writer);
 
@@ -69,8 +92,8 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, null, null,
-                                                                                  null, ins, false);
+        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null,
+                elementResources, null, null, ins, false);
 
         resources.bindParameter("fred", binding);
 
@@ -88,9 +111,7 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         MarkupWriter writer = mockMarkupWriter();
         ComponentModel model = mockComponentModel();
         Binding binding = mockBinding();
-        Object rawValue = new Object();
-        String convertedValue = "*converted*";
-        ComponentPageElementResources componentPageElementResources = mockComponentPageElementResources();
+        Object rawValue = new Long(97);
 
         train_getModel(ins, model);
 
@@ -98,15 +119,12 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         train_get(binding, rawValue);
 
-        train_coerce(componentPageElementResources, rawValue, String.class, convertedValue);
-
-        writer.attributes("fred", convertedValue);
+        writer.attributes("fred", "97");
 
         replay();
 
         InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null,
-                                                                                  componentPageElementResources,
-                                                                                  null, null, ins, false);
+                elementResources, "Foo.bar", null, ins, false);
 
         resources.bindParameter("fred", binding);
 
@@ -131,7 +149,8 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentResources resources = new InternalComponentResourcesImpl(null, element, null, null, null, null, ins, false);
+        ComponentResources resources = new InternalComponentResourcesImpl(null, element, null, elementResources, "id",
+                null, ins, false);
 
         resources.storeRenderVariable("myRenderVar", value);
 
@@ -160,8 +179,8 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentResources resources = new InternalComponentResourcesImpl(null, element, null, null, "Foo.bar", null,
-                                                                          ins, false);
+        ComponentResources resources = new InternalComponentResourcesImpl(null, element, null, elementResources,
+                "Foo.bar", null, ins, false);
 
         resources.storeRenderVariable("fred", "FRED");
         resources.storeRenderVariable("barney", "BARNEY");
@@ -173,8 +192,9 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         }
         catch (IllegalArgumentException ex)
         {
-            assertEquals(ex.getMessage(),
-                         "Component Foo.bar does not contain a stored render variable with name 'wilma'.  Stored render variables: barney, fred.");
+            assertEquals(
+                    ex.getMessage(),
+                    "Component Foo.bar does not contain a stored render variable with name 'wilma'.  Stored render variables: barney, fred.");
         }
 
         verify();
@@ -195,8 +215,8 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, null, "Foo.bar",
-                                                                                  null, ins, false);
+        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null,
+                elementResources, "Foo.bar", null, ins, false);
 
         resources.storeRenderVariable("fred", "FRED");
         resources.storeRenderVariable("barney", "BARNEY");
@@ -211,7 +231,7 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         catch (IllegalArgumentException ex)
         {
             assertEquals(ex.getMessage(),
-                         "Component Foo.bar does not contain a stored render variable with name 'fred'.  Stored render variables: (none).");
+                    "Component Foo.bar does not contain a stored render variable with name 'fred'.  Stored render variables: (none).");
         }
 
         verify();
@@ -232,8 +252,7 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         replay();
 
         InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, null, "Foo.bar",
-                                                                                  null, ins, false);
-
+                null, ins, false);
 
         try
         {
@@ -243,7 +262,7 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         catch (IllegalStateException ex)
         {
             assertEquals(ex.getMessage(),
-                         "Component Foo.bar is not rendering, so render variable 'fred' may not be updated.");
+                    "Component Foo.bar is not rendering, so render variable 'fred' may not be updated.");
         }
 
         verify();
@@ -266,13 +285,13 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         replay();
 
         InternalComponentResources resources = new InternalComponentResourcesImpl(page, element, null, null, null,
-                                                                                  null, ins, false);
+                null, ins, false);
 
         resources.addPageLifecycleListener(listener);
 
         verify();
     }
-    
+
     @Test
     public void get_property_name()
     {
@@ -282,21 +301,21 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         ComponentPageElement element = mockComponentPageElement();
         Page page = mockPage();
         Binding binding = mockBinding();
-        
+
         train_getModel(ins, model);
 
         replay();
 
         InternalComponentResources resources = new InternalComponentResourcesImpl(page, element, null, null, null,
-                                                                                  null, ins, false);
-        
+                null, ins, false);
+
         resources.bindParameter("bar", binding);
 
         assertNull(resources.getPropertyName("bar"));
 
         verify();
     }
-    
+
     @Test
     public void get_property_name_internal_prop_binding()
     {
@@ -306,16 +325,16 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         ComponentPageElement element = mockComponentPageElement();
         Page page = mockPage();
         InternalPropBinding binding = newMock(InternalPropBinding.class);
-        
+
         train_getModel(ins, model);
-        
+
         expect(binding.getPropertyName()).andReturn("foo");
 
         replay();
 
         InternalComponentResources resources = new InternalComponentResourcesImpl(page, element, null, null, null,
-                                                                                  null, ins, false);
-        
+                null, ins, false);
+
         resources.bindParameter("bar", binding);
 
         assertEquals(resources.getPropertyName("bar"), "foo");
