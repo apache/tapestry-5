@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,6 +18,8 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.services.PerThreadValue;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.ContextValueEncoder;
 import org.slf4j.Logger;
@@ -32,7 +34,7 @@ public interface ComponentPageElementResources extends ContextValueEncoder, Oper
      * Used to obtain a {@link org.apache.tapestry5.ioc.Messages} instance for a particular component. If the component
      * extends from another component, then its localized properties will merge with its parent's properties (with the
      * subclass overriding the super class on any conflicts).
-     *
+     * 
      * @param componentModel
      * @return the message catalog for the component, in the indicated locale
      * @see org.apache.tapestry5.services.messages.ComponentMessagesSource
@@ -44,11 +46,14 @@ public interface ComponentPageElementResources extends ContextValueEncoder, Oper
      * conversion will be to the equivalent wrapper type. In some cases, the TypeCoercer will need to search for an
      * appropriate coercion, and may even combine existing coercions to form new ones; in those cases, the results of
      * the search are cached.
-     *
-     * @param <S>        source type (input)
-     * @param <T>        target type (output)
+     * 
+     * @param <S>
+     *            source type (input)
+     * @param <T>
+     *            target type (output)
      * @param input
-     * @param targetType defines the target type
+     * @param targetType
+     *            defines the target type
      * @return the coerced value
      * @see org.apache.tapestry5.ioc.services.TypeCoercer
      */
@@ -56,8 +61,9 @@ public interface ComponentPageElementResources extends ContextValueEncoder, Oper
 
     /**
      * Gets the Class instance for then give name.
-     *
-     * @param className fully qualified class name
+     * 
+     * @param className
+     *            fully qualified class name
      * @return the class instance
      * @see org.apache.tapestry5.internal.services.ComponentClassCache
      */
@@ -65,11 +71,15 @@ public interface ComponentPageElementResources extends ContextValueEncoder, Oper
 
     /**
      * Creates a link on behalf of a component.
-     *
-     * @param resources resources for the component
-     * @param eventType type of event to create
-     * @param forForm   true if generating for a form submission
-     * @param context   additional event context associated with the link
+     * 
+     * @param resources
+     *            resources for the component
+     * @param eventType
+     *            type of event to create
+     * @param forForm
+     *            true if generating for a form submission
+     * @param context
+     *            additional event context associated with the link
      * @return the link
      * @since 5.1.0.0
      */
@@ -77,12 +87,15 @@ public interface ComponentPageElementResources extends ContextValueEncoder, Oper
 
     /**
      * Creates a page render request link to render a specific page.
-     *
-     * @param pageName the logical name of the page to link to
-     * @param override if true, the context is used even if empty (normally, the target page is allowed to passivate,
-     *                 providing a context, when the provided context is empty)
-     * @param context  the activation context for the page. If omitted, the activation context is obtained from the
-     *                 target page
+     * 
+     * @param pageName
+     *            the logical name of the page to link to
+     * @param override
+     *            if true, the context is used even if empty (normally, the target page is allowed to passivate,
+     *            providing a context, when the provided context is empty)
+     * @param context
+     *            the activation context for the page. If omitted, the activation context is obtained from the
+     *            target page
      * @return link for a render request to the targetted page
      * @since 5.1.0.0
      */
@@ -91,23 +104,34 @@ public interface ComponentPageElementResources extends ContextValueEncoder, Oper
     /**
      * Creates a page render request link to render a specific page. Using a page class, rather than a page name, is
      * more refactoring safe (in the even the page is renamed or moved).
-     *
-     * @param pageClass identifies the page to link to
-     * @param override  if true, the context is used even if empty (normally, the target page is allowed to passivate,
-     *                  providing a context, when the provided context is empty)
-     * @param context   the activation context for the page. If omitted, the activation context is obtained from the
-     *                  target page
+     * 
+     * @param pageClass
+     *            identifies the page to link to
+     * @param override
+     *            if true, the context is used even if empty (normally, the target page is allowed to passivate,
+     *            providing a context, when the provided context is empty)
+     * @param context
+     *            the activation context for the page. If omitted, the activation context is obtained from the
+     *            target page
      * @return link for a render request to the targetted page
      * @since 5.1
      */
     Link createPageRenderLink(Class pageClass, boolean override, Object... context);
 
     /**
-     * Returns the event logger for the provided component logger.  The event logger is based on the component logger's
+     * Returns the event logger for the provided component logger. The event logger is based on the component logger's
      * name (which matches the component class name) with a "tapestry..events." prefix.
-     *
-     * @param componentLogger provides base name for logger
+     * 
+     * @param componentLogger
+     *            provides base name for logger
      * @return the logger
      */
     Logger getEventLogger(Logger componentLogger);
+
+    /**
+     * Wrapper around {@link PerthreadManager#createValue(Object)}.
+     * 
+     * @since 5.2.0
+     */
+    <T> PerThreadValue<T> createPerThreadValue(Object key);
 }

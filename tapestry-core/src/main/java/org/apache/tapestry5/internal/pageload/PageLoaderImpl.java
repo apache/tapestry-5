@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.util.Stack;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
@@ -45,17 +46,17 @@ import java.util.Map;
 
 /**
  * There's still a lot of room to beef up {@link org.apache.tapestry5.internal.pageload.ComponentAssembler} and
- * {@link org.apache.tapestry5.internal.pageload.EmbeddedComponentAssembler} to perform more static analysis.
+ * {@link org.apache.tapestry5.internal.pageload.EmbeddedComponentAssembler} to perform more static analysis, but
+ * that may no longer be necessary, given Tapestry 5.2's default use of non-pooled pages.
  * <p/>
- * Loading a page involves a recurive process of creating
+ * Loading a page involves a recursive process of creating
  * {@link org.apache.tapestry5.internal.pageload.ComponentAssembler}s: for the root component, then down the tree for
  * each embedded component. A ComponentAssembler is largely a collection of
  * {@link org.apache.tapestry5.internal.pageload.PageAssemblyAction}s. Once created, a ComponentAssembler can quickly
  * assemble any number of component instances. All of the expensive logic, such as fitting template tokens together and
  * matching parameters to bindings, is done as part of the one-time construction of the ComponentAssembler. The end
  * result removes a huge amount of computational redundancy that was present in Tapestry 5.0, but to understand this,
- * you need to split your mind into two phases: construction (of the ComponentAssemblers) and assembly. It's twisted ...
- * and perhaps a bit functional and Monadic.
+ * you need to split your mind into two phases: construction (of the ComponentAssemblers) and assembly.
  * <p/>
  * And truly, <em>This is the Tapestry Heart, This is the Tapestry Soul...</em>
  */
@@ -135,10 +136,12 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
     private final OperationTracker tracker;
 
+    private final PerthreadManager perThreadManager;
+
     public PageLoaderImpl(ComponentInstantiatorSource instantiatorSource, ComponentTemplateSource templateSource,
             PageElementFactory elementFactory, ComponentPageElementResourcesSource resourcesSource,
             ComponentClassResolver componentClassResolver, PersistentFieldManager persistentFieldManager,
-            StringInterner interner, OperationTracker tracker)
+            StringInterner interner, OperationTracker tracker, PerthreadManager perThreadManager)
     {
         this.instantiatorSource = instantiatorSource;
         this.templateSource = templateSource;
@@ -148,6 +151,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         this.persistentFieldManager = persistentFieldManager;
         this.interner = interner;
         this.tracker = tracker;
+        this.perThreadManager = perThreadManager;
     }
 
     public void objectWasInvalidated()
@@ -163,7 +167,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         {
             public Page invoke()
             {
-                Page page = new PageImpl(logicalPageName, locale, persistentFieldManager);
+                Page page = new PageImpl(logicalPageName, locale, persistentFieldManager, perThreadManager);
 
                 ComponentAssembler assembler = getAssembler(pageClassName, locale);
 
@@ -341,8 +345,8 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         // Sanity check: since an extension point defines its own default, it's going to be hard to
         // not find an override, somewhere, for it.
 
-        throw new TapestryException(PageloadMessages.couldNotFindOverride(extensionPointId), extensionPointToken
-                .getLocation(), null);
+        throw new TapestryException(PageloadMessages.couldNotFindOverride(extensionPointId),
+                extensionPointToken.getLocation(), null);
     }
 
     private List<ComponentTemplate> buildOverrideSearch(ComponentAssembler assembler, ComponentTemplate template)
@@ -535,8 +539,8 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
                 ParameterBinder binder = embeddedAssembler.createParameterBinder(parameterName);
 
-                if (binder == null) { throw new TapestryException(PageloadMessages.parameterNotSupported(element
-                        .getCompleteId(), parameterName), token.getLocation(), null); }
+                if (binder == null) { throw new TapestryException(PageloadMessages.parameterNotSupported(
+                        element.getCompleteId(), parameterName), token.getLocation(), null); }
 
                 binder.bind(pageAssembly.createdElement.peek(), binding);
 

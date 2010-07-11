@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,10 +15,13 @@
 package org.apache.tapestry5.internal.structure;
 
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
 import static org.easymock.EasyMock.contains;
 import static org.easymock.EasyMock.same;
 import org.slf4j.Logger;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.util.Locale;
@@ -29,6 +32,20 @@ public class PageImplTest extends InternalBaseTestCase
 
     private static final String LOGICAL_PAGE_NAME = "MyPage";
 
+    private PerthreadManager perThreadManager;
+    
+    @BeforeClass
+    public void setup()
+    {
+        perThreadManager = getService(PerthreadManager.class);
+    }
+    
+    @AfterMethod
+    public void cleanup()
+    {
+        perThreadManager.cleanup();
+    }
+    
     @Test
     public void accessor_methods()
     {
@@ -36,7 +53,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null, perThreadManager);
 
         assertNull(page.getRootElement());
 
@@ -60,7 +77,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(null, locale, null);
+        Page page = new PageImpl(null, locale, null, perThreadManager);
 
         page.addLifecycleListener(listener1);
         page.addLifecycleListener(listener2);
@@ -82,7 +99,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(null, locale, null);
+        Page page = new PageImpl(null, locale, null, perThreadManager);
 
         page.addLifecycleListener(listener);
 
@@ -116,7 +133,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(null, locale, null);
+        Page page = new PageImpl(null, locale, null, perThreadManager);
         page.setRootElement(element);
 
         page.addLifecycleListener(listener1);
@@ -146,7 +163,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(null, locale, null);
+        Page page = new PageImpl(null, locale, null, perThreadManager);
 
         page.addLifecycleListener(listener1);
         page.addLifecycleListener(listener2);
@@ -172,7 +189,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null, perThreadManager);
 
         page.addLifecycleListener(listener1);
         page.addLifecycleListener(listener2);
@@ -189,7 +206,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null, perThreadManager);
 
         page.setRootElement(root);
 

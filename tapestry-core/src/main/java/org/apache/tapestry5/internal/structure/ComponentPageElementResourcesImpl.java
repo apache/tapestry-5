@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.structure;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.internal.services.LinkSource;
 import org.apache.tapestry5.internal.services.RequestPageCache;
@@ -24,6 +25,8 @@ import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.services.PerThreadValue;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.ComponentClassResolver;
@@ -35,8 +38,6 @@ import java.util.Locale;
 
 public class ComponentPageElementResourcesImpl implements ComponentPageElementResources
 {
-    private static final Object[] EMPTY = new Object[0];
-
     private final Locale locale;
 
     private final ComponentMessagesSource componentMessagesSource;
@@ -57,10 +58,12 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
 
     private final OperationTracker tracker;
 
+    private final PerthreadManager perThreadManager;
+
     public ComponentPageElementResourcesImpl(Locale locale, ComponentMessagesSource componentMessagesSource,
             TypeCoercer typeCoercer, ComponentClassCache componentClassCache, ContextValueEncoder contextValueEncoder,
             LinkSource linkSource, RequestPageCache requestPageCache, ComponentClassResolver componentClassResolver,
-            LoggerSource loggerSource, OperationTracker tracker)
+            LoggerSource loggerSource, OperationTracker tracker, PerthreadManager perThreadManager)
     {
         this.componentMessagesSource = componentMessagesSource;
         this.locale = locale;
@@ -72,6 +75,7 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
         this.componentClassResolver = componentClassResolver;
         this.loggerSource = loggerSource;
         this.tracker = tracker;
+        this.perThreadManager = perThreadManager;
     }
 
     public Messages getMessages(ComponentModel componentModel)
@@ -131,7 +135,7 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
 
     private Object[] defaulted(Object[] context)
     {
-        return context == null ? EMPTY : context;
+        return context == null ? InternalConstants.EMPTY_STRING_ARRAY: context;
     }
 
     public <T> T invoke(String description, Invokable<T> operation)
@@ -143,4 +147,10 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
     {
         tracker.run(description, operation);
     }
+
+    public <T> PerThreadValue<T> createPerThreadValue(Object key)
+    {
+        return perThreadManager.createValue(key);
+    }
+
 }

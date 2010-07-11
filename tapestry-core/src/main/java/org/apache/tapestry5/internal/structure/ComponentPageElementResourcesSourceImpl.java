@@ -21,6 +21,7 @@ import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ContextValueEncoder;
@@ -51,10 +52,12 @@ public class ComponentPageElementResourcesSourceImpl implements ComponentPageEle
 
     private final OperationTracker tracker;
 
+    private final PerthreadManager perThreadManager;
+
     public ComponentPageElementResourcesSourceImpl(ComponentMessagesSource componentMessagesSource,
             TypeCoercer typeCoercer, ComponentClassCache componentClassCache, ContextValueEncoder contextValueEncoder,
             LinkSource linkSource, RequestPageCache requestPageCache, ComponentClassResolver componentClassResolver,
-            LoggerSource loggerSource, OperationTracker tracker)
+            LoggerSource loggerSource, OperationTracker tracker, PerthreadManager perThreadManager)
     {
         this.componentMessagesSource = componentMessagesSource;
         this.typeCoercer = typeCoercer;
@@ -65,6 +68,7 @@ public class ComponentPageElementResourcesSourceImpl implements ComponentPageEle
         this.componentClassResolver = componentClassResolver;
         this.loggerSource = loggerSource;
         this.tracker = tracker;
+        this.perThreadManager = perThreadManager;
     }
 
     public ComponentPageElementResources get(Locale locale)
@@ -77,7 +81,7 @@ public class ComponentPageElementResourcesSourceImpl implements ComponentPageEle
         {
             result = new ComponentPageElementResourcesImpl(locale, componentMessagesSource, typeCoercer,
                     componentClassCache, contextValueEncoder, linkSource, requestPageCache, componentClassResolver,
-                    loggerSource, tracker);
+                    loggerSource, tracker, perThreadManager);
 
             // Small race condition here, where we may create two instances of the CPER for the same locale,
             // but that's not worth worrying about.

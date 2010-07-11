@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.structure;
 
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.slf4j.Logger;
@@ -26,8 +27,14 @@ import java.util.Locale;
  * application; end developers who refer to "page" are really referring to the {@link #getRootComponent() root
  * component} of the actual page.
  * <p/>
- * One of the most important aspects of a Page is that it <em>does not</em> have to be coded in a thread-safe manner.
- * Pages are always accessed within a single thread, associated with a single incoming request.
+ * Starting in release 5.2, the nature of pages changed considerably. Pages are no longer pooled instances. Instead,
+ * pages are shared instances (per locale) but all internal <em>mutable</em> state is stored inside
+ * {@link PerthreadManager}. Page construction time is considered to extend past the
+ * {@link PageLifecycleListener#containingPageDidLoad()} lifecycle notification. This is not quite perfect from a
+ * threading point-of-view (arguably, even write-once-read-many fields should be protected by synchronized blocks or
+ * other mechanisms). At best, we can be assured that the entire page construction phase is protected by a single
+ * synchronized block (but not on the page itself). An ideal system would build the page bottom to top so that all
+ * assignments could take place in constructors, assigning to final fields. Maybe some day.
  * <p/>
  * The Page object is never visible to end-user code. The page also exists to provide a kind of service to components
  * embedded (directly or indirectly) within the page.
@@ -71,9 +78,13 @@ public interface Page
      * <p/>
      * A page may be clean or dirty. A page is dirty if its dirty count is greater than zero (meaning that, during the
      * render of the page, some components did not fully render), or if any of its listeners throw an exception from
-     * containingPageDidDetech().
+     * containingPageDidDetach().
      * <p/>
      * The page pool should discard pages that are dirty, rather than store them into the pool.
+     * <p>
+     * Under Tapestry 5.2 and pool-less pages, the result is ignored; all mutable state is expected to be discarded
+     * automatically from the {@link PerthreadManager}. A future release of Tapestry will likely convert this method to
+     * type void.
      * 
      * @return true if the page is "dirty", false otherwise
      * @see org.apache.tapestry5.runtime.PageLifecycleListener#containingPageDidDetach()
@@ -82,11 +93,12 @@ public interface Page
 
     /**
      * Invoked to inform the page that it is attached to the current request. This occurs when a
-     * page is first
-     * referenced within a request. If the page was created from scratch for this request, the call
+     * page is first referenced within a request. If the page was created from scratch for this request, the call
      * to {@link #loaded()} will preceded the call to {@link #attached()}.
+     * <p>
+     * First all listeners have {@link PageLifecycleListener#restoreStateBeforePageAttach()} invoked, followed by
+     * {@link PageLifecycleListener#containingPageDidAttach()}.
      */
-
     void attached();
 
     /**
@@ -94,7 +106,6 @@ public interface Page
      * 
      * @see org.apache.tapestry5.runtime.PageLifecycleListener#containingPageDidLoad()
      */
-
     void loaded();
 
     /**
@@ -157,11 +168,15 @@ public interface Page
      * where a component
      * causes a runtime exception that aborts the render early, leaving the page in an invalid
      * state.
+     * 
+     * @deprecated No longer useful with non-pooled pages, to be removed for efficiency
      */
     void incrementDirtyCount();
 
     /**
      * Called as a component finishes rendering itself.
+     * 
+     * @deprecated No longer useful with non-pooled pages, to be removed for efficiency
      */
     void decrementDirtyCount();
 

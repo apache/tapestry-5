@@ -18,9 +18,12 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.services.PersistentFieldManager;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 
 import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.PerThreadValue;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.services.PersistentFieldBundle;
@@ -43,9 +46,11 @@ public class PageImpl implements Page
 
     private final List<PageResetListener> resetListeners = CollectionFactory.newList();
 
-    private int dirtyCount;
+    private final PerThreadValue<Integer> dirtyCount;
 
     private boolean loadComplete;
+
+    private final OneShotLock lock = new OneShotLock();
 
     /**
      * Obtained from the {@link org.apache.tapestry5.internal.services.PersistentFieldManager} when
@@ -54,11 +59,14 @@ public class PageImpl implements Page
      */
     private PersistentFieldBundle fieldBundle;
 
-    public PageImpl(String name, Locale locale, PersistentFieldManager persistentFieldManager)
+    public PageImpl(String name, Locale locale, PersistentFieldManager persistentFieldManager,
+            PerthreadManager perThreadManager)
     {
         this.name = name;
         this.locale = locale;
         this.persistentFieldManager = persistentFieldManager;
+
+        dirtyCount = perThreadManager.createValue("PageDirtyCount:" + name);
     }
 
     @Override
@@ -93,6 +101,8 @@ public class PageImpl implements Page
 
     public void setRootElement(ComponentPageElement component)
     {
+        lock.check();
+
         rootElement = component;
     }
 
@@ -108,17 +118,21 @@ public class PageImpl implements Page
 
     public void addLifecycleListener(PageLifecycleListener listener)
     {
+        lock.check();
+
         lifecycleListeners.add(listener);
     }
 
     public void removeLifecycleListener(PageLifecycleListener listener)
     {
+        lock.check();
+
         lifecycleListeners.remove(listener);
     }
 
     public boolean detached()
     {
-        boolean result = dirtyCount > 0;
+        boolean result = dirtyCount.exists() ? dirtyCount.get() > 0 : false;
 
         for (PageLifecycleListener listener : lifecycleListeners)
         {
@@ -140,15 +154,19 @@ public class PageImpl implements Page
 
     public void loaded()
     {
+        lock.check();
+
         for (PageLifecycleListener listener : lifecycleListeners)
             listener.containingPageDidLoad();
 
         loadComplete = true;
+        
+        lock.lock();
     }
 
     public void attached()
     {
-        if (dirtyCount != 0)
+        if (dirtyCount.exists() && !dirtyCount.get().equals(0))
             throw new IllegalStateException(StructureMessages.pageIsDirty(this));
 
         for (PageLifecycleListener listener : lifecycleListeners)
@@ -181,7 +199,9 @@ public class PageImpl implements Page
 
     public void decrementDirtyCount()
     {
-        dirtyCount--;
+        int newCount = dirtyCount.get() - 1;
+
+        dirtyCount.set(newCount);
     }
 
     public void discardPersistentFieldChanges()
@@ -191,7 +211,9 @@ public class PageImpl implements Page
 
     public void incrementDirtyCount()
     {
-        dirtyCount++;
+        int newCount = dirtyCount.exists() ? dirtyCount.get() + 1 : 1;
+
+        dirtyCount.set(newCount);
     }
 
     public String getName()
@@ -202,6 +224,8 @@ public class PageImpl implements Page
     public void addResetListener(PageResetListener listener)
     {
         Defense.notNull(listener, "listener");
+        
+        lock.check();
 
         resetListeners.add(listener);
     }

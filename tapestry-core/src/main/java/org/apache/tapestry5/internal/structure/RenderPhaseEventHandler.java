@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,14 +27,21 @@ import org.apache.tapestry5.runtime.RenderQueue;
 /**
  * Used by {@link org.apache.tapestry5.internal.structure.ComponentPageElementImpl} to track the results of invoking the
  * component methods for a render phase event.
- *
+ * 
  * @since 5.0.19
  */
 class RenderPhaseEventHandler implements ComponentEventCallback
 {
+    private final RenderQueue renderQueue;
+
     private boolean result = true;
 
     private List<RenderCommand> commands;
+
+    public RenderPhaseEventHandler(RenderQueue renderQueue)
+    {
+        this.renderQueue = renderQueue;
+    }
 
     boolean getResult()
     {
@@ -43,6 +50,12 @@ class RenderPhaseEventHandler implements ComponentEventCallback
 
     void reset()
     {
+        if (commands != null)
+        {
+            for (RenderCommand command : commands)
+                renderQueue.push(command);
+        }
+
         result = true;
 
         commands = null;
@@ -82,22 +95,16 @@ class RenderPhaseEventHandler implements ComponentEventCallback
             return false;
         }
 
-        throw new RuntimeException(StructureMessages.wrongPhaseResultType(
-                Arrays.asList(Boolean.class.getName(), Renderable.class.getName(), RenderCommand.class.getName())));
+        throw new RuntimeException(StructureMessages.wrongPhaseResultType(Arrays.asList(Boolean.class.getName(),
+                Renderable.class.getName(), RenderCommand.class.getName())));
     }
 
     private void add(RenderCommand command)
     {
-        if (commands == null) commands = CollectionFactory.newList();
+        if (commands == null)
+            commands = CollectionFactory.newList();
 
         commands.add(command);
     }
 
-    public void queueCommands(RenderQueue queue)
-    {
-        if (commands == null) return;
-
-        for (RenderCommand command : commands)
-            queue.push(command);
-    }
 }
