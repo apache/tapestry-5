@@ -1,10 +1,10 @@
-// Copyright 2006, 2009 The Apache Software Foundation
+// Copyright 2006, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,11 +33,16 @@ import org.apache.tapestry5.ioc.annotations.UseWith;
  * different instance of the page where the value is still null.
  * <p/>
  * This annotation should only be used with lazily-evaluated objects that contain no client-specific information.
+ * 
+ * @deprecated This rarely used annotation is likely to cause threading issues starting in Tapestry 5.2 (which no longer
+ *             pools pages
+ *             but uses shared instances with externalized mutable state)
  */
 @Target(FIELD)
 @Retention(RUNTIME)
 @Documented
-@UseWith({COMPONENT,MIXIN,PAGE})
+@UseWith(
+{ COMPONENT, MIXIN, PAGE })
 public @interface Retain
 {
 
