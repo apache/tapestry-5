@@ -21,6 +21,7 @@ import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.services.FieldValueConduit;
+import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.runtime.PageLifecycleAdapter;
@@ -40,17 +41,17 @@ public class PersistWorker implements ComponentClassTransformWorker
 
         private final String name;
 
+        private final PerThreadValue<Object> fieldValue;
+
         private final Object defaultValue;
 
-        private final String key;
-
-        public PersistentFieldConduit(InternalComponentResources resources, String name, Object defaultValue)
+        public PersistentFieldConduit(InternalComponentResources resources, String name,
+                PerThreadValue<Object> fieldValue, Object defaultValue)
         {
             this.resources = resources;
             this.name = name;
+            this.fieldValue = fieldValue;
             this.defaultValue = defaultValue;
-
-            this.key = String.format("PersistWorker:%s/%s", resources.getCompleteId(), name);
 
             resources.addPageLifecycleListener(new PageLifecycleAdapter()
             {
@@ -62,35 +63,25 @@ public class PersistWorker implements ComponentClassTransformWorker
             });
         }
 
-        private PerThreadState getState()
-        {
-            PerThreadState state = (PerThreadState) perThreadManager.get(key);
-
-            if (state == null)
-            {
-                state = new PerThreadState(defaultValue);
-                perThreadManager.put(key, state);
-            }
-
-            return state;
-        }
-
         public Object get()
         {
-            return getState().value;
+            if (!fieldValue.exists())
+                return defaultValue;
+
+            return fieldValue.get();
         }
 
         public void set(Object newValue)
         {
             resources.persistFieldChange(name, newValue);
 
-            getState().value = newValue;
+            fieldValue.set(newValue);
         }
 
         private void restoreStateAtPageAttach()
         {
             if (resources.hasFieldChange(name))
-                getState().value = resources.getFieldChange(name);
+                fieldValue.set(resources.getFieldChange(name));
         }
     }
 
@@ -128,8 +119,10 @@ public class PersistWorker implements ComponentClassTransformWorker
         {
             public FieldValueConduit get(ComponentResources resources)
             {
+                String key = String.format("PersistWorker:%s/%s", resources.getCompleteId(), logicalFieldName);
+
                 return new PersistentFieldConduit((InternalComponentResources) resources, logicalFieldName,
-                        defaultValue);
+                        perThreadManager.createValue(key), defaultValue);
             }
         };
 
