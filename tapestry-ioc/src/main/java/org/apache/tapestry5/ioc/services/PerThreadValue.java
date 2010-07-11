@@ -21,9 +21,12 @@ package org.apache.tapestry5.ioc.services;
  */
 public interface PerThreadValue<T>
 {
+    /** Is a value stored (even null)? */
+    boolean exists();
+    
     /** Reads the current per-thread value, or returns null if no value has been stored. */
     T get();
 
-    /** Sets the current per-thread value. */
-    void set(T newValue);
+    /** Sets the current per-thread value, then returns that value. */
+    T set(T newValue);
 }

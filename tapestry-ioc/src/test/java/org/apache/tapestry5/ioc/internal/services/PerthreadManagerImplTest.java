@@ -129,12 +129,28 @@ public class PerthreadManagerImplTest extends IOCTestCase
 
         PerThreadValue<Object> v = m.createValue(key);
 
+        assertFalse(v.exists());
         assertNull(m.get(key));
         assertNull(v.get());
 
         v.set(value);
 
+        assertTrue(v.exists());
         assertSame(m.get(key), value);
         assertSame(v.get(), value);
+    }
+    
+    @Test
+    public void per_thread_null()
+    {
+        PerthreadManagerImpl m = new PerthreadManagerImpl(null);
+
+        PerThreadValue<Object> v = m.createValue(new Object());
+
+        v.set(null);
+        
+        assertTrue(v.exists());
+        
+        assertNull(v.get());
     }
 }

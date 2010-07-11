@@ -121,7 +121,7 @@ public class PerthreadManagerImpl implements PerthreadManager
             lock.lock();
 
             // Discard the per-thread map of values.
-            
+
             holder.remove();
         }
         finally
@@ -141,6 +141,8 @@ public class PerthreadManagerImpl implements PerthreadManager
         return getPerthreadMap().get(key);
     }
 
+    private static Object NULL_VALUE = new Object();
+
     public <T> PerThreadValue<T> createValue(final Object key)
     {
         return new PerThreadValue<T>()
@@ -148,12 +150,24 @@ public class PerthreadManagerImpl implements PerthreadManager
             @SuppressWarnings("unchecked")
             public T get()
             {
-                return (T) PerthreadManagerImpl.this.get(key);
+                Object storedValue = PerthreadManagerImpl.this.get(key);
+
+                if (storedValue == NULL_VALUE)
+                    return null;
+
+                return (T) storedValue;
             }
 
-            public void set(T newValue)
+            public T set(T newValue)
             {
-                put(key, newValue);
+                put(key, newValue == null ? NULL_VALUE : newValue);
+
+                return newValue;
+            }
+
+            public boolean exists()
+            {
+                return getPerthreadMap().containsKey(key);
             }
         };
     }
