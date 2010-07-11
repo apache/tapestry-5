@@ -25,6 +25,7 @@ import org.apache.tapestry5.internal.bindings.LiteralBinding;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.*;
@@ -53,6 +54,24 @@ public class ParameterWorker implements ComponentClassTransformWorker
             getConduit(invocation, conduitAccess).reset();
 
             invocation.proceed();
+        }
+    }
+
+    /**
+     * Contains the per-thread state about a parameter, as stored (using
+     * a unique key) in the {@link PerthreadManager}. Externalizing such state
+     * is part of Tapestry 5.2's pool-less pages.
+     */
+    private final class ParameterState
+    {
+        boolean cached;
+
+        Object value;
+
+        void reset(Object defaultValue)
+        {
+            cached = false;
+            value = defaultValue;
         }
     }
 
@@ -108,13 +127,16 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
     private final TypeCoercer typeCoercer;
 
+    private final PerthreadManager perThreadManager;
+
     public ParameterWorker(ComponentClassCache classCache, BindingSource bindingSource,
-            ComponentDefaultProvider defaultProvider, TypeCoercer typeCoercer)
+            ComponentDefaultProvider defaultProvider, TypeCoercer typeCoercer, PerthreadManager perThreadManager)
     {
         this.classCache = classCache;
         this.bindingSource = bindingSource;
         this.defaultProvider = defaultProvider;
         this.typeCoercer = typeCoercer;
+        this.perThreadManager = perThreadManager;
     }
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
@@ -198,6 +220,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
         addPageLoadAdvice(transformation, pageLoadAdvice);
     }
 
+    @SuppressWarnings("all")
     private ComponentValueProvider<ParameterConduit> createParameterConduitProvider(final String parameterName,
             final String fieldTypeName, final Parameter annotation)
     {
@@ -207,6 +230,8 @@ public class ParameterWorker implements ComponentClassTransformWorker
             {
                 final InternalComponentResources icr = (InternalComponentResources) resources;
 
+                final String key = String.format("ParameterWorker:%s/%s", resources.getCompleteId(), parameterName);
+
                 final Class fieldType = classCache.forName(fieldTypeName);
 
                 // Rely on some code generation in the component to set the default binding from
@@ -214,9 +239,6 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
                 return new ParameterConduit()
                 {
-                    // Current cached value for the parameter.
-                    private Object value;
-
                     // Default value for parameter, computed *once* at
                     // page load time.
 
@@ -228,15 +250,25 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
                     private boolean invariant = false;
 
-                    // Is the current value of the binding cached in the
-                    // value field?
-                    private boolean cached = false;
-
                     {
                         // Inform the ComponentResources about the parameter conduit, so it can be
                         // shared with mixins.
 
                         icr.setParameterConduit(parameterName, this);
+                    }
+
+                    private ParameterState getState()
+                    {
+                        ParameterState state = (ParameterState) perThreadManager.get(key);
+
+                        if (state == null)
+                        {
+                            state = new ParameterState();
+                            state.value = defaultValue;
+                            perThreadManager.put(key, state);
+                        }
+
+                        return state;
                     }
 
                     private boolean isLoaded()
@@ -246,13 +278,15 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
                     public void set(Object newValue)
                     {
+                        ParameterState state = getState();
+
                         // Assignments before the page is loaded ultimately exist to set the
                         // default value for the field. Often this is from the (original)
                         // constructor method, which is converted to a real method as part of the transformation.
 
                         if (!loaded)
                         {
-                            value = newValue;
+                            state.value = newValue;
                             defaultValue = newValue;
                             return;
                         }
@@ -261,14 +295,14 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
                         writeToBinding(newValue);
 
-                        value = newValue;
+                        state.value = newValue;
 
                         // If caching is enabled for the parameter (the typical case) and the
                         // component is currently rendering, then the result
                         // can be cached in this ParameterConduit (until the component finishes
                         // rendering).
 
-                        cached = annotation.cache() && icr.isRendering();
+                        state.cached = annotation.cache() && icr.isRendering();
                     }
 
                     private Object readFromBinding()
@@ -284,21 +318,19 @@ public class ParameterWorker implements ComponentClassTransformWorker
                         catch (RuntimeException ex)
                         {
                             throw new TapestryException(String.format(
-                                    "Failure reading parameter '%s' of component %s: %s", parameterName, icr
-                                            .getCompleteId(), InternalUtils.toMessage(ex)), parameterBinding, ex);
+                                    "Failure reading parameter '%s' of component %s: %s", parameterName,
+                                    icr.getCompleteId(), InternalUtils.toMessage(ex)), parameterBinding, ex);
                         }
 
                         if (result != null || annotation.allowNull())
                             return result;
 
                         throw new TapestryException(
-                                String
-                                        .format(
-                                                "Parameter '%s' of component %s is bound to null. This parameter is not allowed to be null.",
-                                                parameterName, icr.getCompleteId()), parameterBinding, null);
+                                String.format(
+                                        "Parameter '%s' of component %s is bound to null. This parameter is not allowed to be null.",
+                                        parameterName, icr.getCompleteId()), parameterBinding, null);
                     }
 
-                    @SuppressWarnings("unchecked")
                     private void writeToBinding(Object newValue)
                     {
                         // An unbound parameter acts like a simple field
@@ -316,8 +348,8 @@ public class ParameterWorker implements ComponentClassTransformWorker
                         catch (RuntimeException ex)
                         {
                             throw new TapestryException(String.format(
-                                    "Failure writing parameter '%s' of component %s: %s", parameterName, icr
-                                            .getCompleteId(), InternalUtils.toMessage(ex)), icr, ex);
+                                    "Failure writing parameter '%s' of component %s: %s", parameterName,
+                                    icr.getCompleteId(), InternalUtils.toMessage(ex)), icr, ex);
                         }
                     }
 
@@ -325,8 +357,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
                     {
                         if (!invariant)
                         {
-                            value = defaultValue;
-                            cached = false;
+                            getState().reset(defaultValue);
                         }
                     }
 
@@ -360,7 +391,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
                         invariant = parameterBinding != null && parameterBinding.isInvariant();
 
-                        value = defaultValue;
+                        getState().value = defaultValue;
                     }
 
                     public boolean isBound()
@@ -368,26 +399,29 @@ public class ParameterWorker implements ComponentClassTransformWorker
                         return parameterBinding != null;
                     }
 
-                    @SuppressWarnings("unchecked")
                     public Object get()
                     {
                         if (!isLoaded()) { return defaultValue; }
 
-                        if (cached || !isBound()) { return value; }
+                        ParameterState state = getState();
+
+                        if (state.cached || !isBound()) { return state.value; }
 
                         // Read the parameter's binding and cast it to the
                         // field's type.
 
                         Object result = readFromBinding();
 
-                        // If the value is invariant, we can cache it forever. Otherwise, we
+                        // If the value is invariant, we can cache it until at least the end of the request (before
+                        // 5.2, it would be cached forever in the pooled instance).
+                        // Otherwise, we
                         // we may want to cache it for the remainder of the component render (if the
                         // component is currently rendering).
 
                         if (invariant || (annotation.cache() && icr.isRendering()))
                         {
-                            value = result;
-                            cached = true;
+                            state.value = result;
+                            state.cached = true;
                         }
 
                         return result;
