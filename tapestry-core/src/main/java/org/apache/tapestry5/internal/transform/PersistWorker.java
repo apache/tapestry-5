@@ -34,16 +34,6 @@ import org.apache.tapestry5.services.TransformField;
  */
 public class PersistWorker implements ComponentClassTransformWorker
 {
-    class PerThreadState
-    {
-        Object value;
-
-        PerThreadState(Object defaultValue)
-        {
-            value = defaultValue;
-        }
-    }
-
     class PersistentFieldConduit implements FieldValueConduit
     {
         private final InternalComponentResources resources;
