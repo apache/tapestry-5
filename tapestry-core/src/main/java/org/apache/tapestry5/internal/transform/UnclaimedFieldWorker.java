@@ -20,8 +20,9 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.services.FieldValueConduit;
+import org.apache.tapestry5.ioc.services.PerThreadValue;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.runtime.PageLifecycleAdapter;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.ComponentValueProvider;
@@ -30,57 +31,54 @@ import org.apache.tapestry5.services.TransformField;
 /**
  * Designed to be just about the last worker in the pipeline. Its job is to add cleanup code that restores transient
  * fields back to their initial (null) value. Fields that have been previously {@linkplain TransformField#claim(Object)
- * claimed} are ignored, as are fields that are final.
+ * claimed} are ignored, as are fields that are final.suzy0613
  */
 public final class UnclaimedFieldWorker implements ComponentClassTransformWorker
 {
+    private final PerthreadManager perThreadManager;
+
     private final ComponentClassCache classCache;
 
-    public class UnclaimedFieldConduit implements FieldValueConduit
+    static class UnclaimedFieldConduit implements FieldValueConduit
     {
         private final InternalComponentResources resources;
 
-        private Object fieldValue, fieldDefaultValue;
+        private final PerThreadValue<Object> fieldValue;
 
-        private UnclaimedFieldConduit(InternalComponentResources resources, Object fieldDefaultValue)
+        // Set prior to the containingPageDidLoad lifecycle event
+        private Object fieldDefaultValue;
+
+        private UnclaimedFieldConduit(InternalComponentResources resources, PerThreadValue<Object> fieldValue,
+                Object fieldDefaultValue)
         {
             this.resources = resources;
 
-            this.fieldValue = fieldDefaultValue;
+            this.fieldValue = fieldValue;
             this.fieldDefaultValue = fieldDefaultValue;
-
-            resources.addPageLifecycleListener(new PageLifecycleAdapter()
-            {
-                @Override
-                public void containingPageDidDetach()
-                {
-                    reset();
-                }
-            });
         }
 
         public Object get()
         {
-            return fieldValue;
+            return fieldValue.exists() ? fieldValue.get() : fieldDefaultValue;
         }
 
         public void set(Object newValue)
         {
-            fieldValue = newValue;
+            fieldValue.set(newValue);
 
+            // This catches the case where the instance initializer method sets a value for the field.
+            // That value is captured and used when no specific value has been stored.
+            
             if (!resources.isLoaded())
                 fieldDefaultValue = newValue;
         }
 
-        public void reset()
-        {
-            fieldValue = fieldDefaultValue;
-        }
     }
 
-    public UnclaimedFieldWorker(ComponentClassCache classCache)
+    public UnclaimedFieldWorker(ComponentClassCache classCache, PerthreadManager perThreadManager)
     {
         this.classCache = classCache;
+        this.perThreadManager = perThreadManager;
     }
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
@@ -105,6 +103,7 @@ public final class UnclaimedFieldWorker implements ComponentClassTransformWorker
 
     private ComponentValueProvider<FieldValueConduit> createFieldValueConduitProvider(TransformField field)
     {
+        final String fieldName = field.getName();
         final String fieldType = field.getType();
 
         return new ComponentValueProvider<FieldValueConduit>()
@@ -113,7 +112,10 @@ public final class UnclaimedFieldWorker implements ComponentClassTransformWorker
             {
                 Object fieldDefaultValue = classCache.defaultValueForType(fieldType);
 
-                return new UnclaimedFieldConduit((InternalComponentResources) resources, fieldDefaultValue);
+                String key = String.format("UnclaimedFieldWorker:%s/%s", resources.getCompleteId(), fieldName);
+
+                return new UnclaimedFieldConduit((InternalComponentResources) resources,
+                        perThreadManager.createValue(key), fieldDefaultValue);
             }
         };
     }
