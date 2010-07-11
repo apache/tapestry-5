@@ -21,7 +21,7 @@ import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.services.FieldValueConduit;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.runtime.PageLifecycleAdapter;
 import org.apache.tapestry5.services.ClassTransformation;
@@ -34,6 +34,16 @@ import org.apache.tapestry5.services.TransformField;
  */
 public class PersistWorker implements ComponentClassTransformWorker
 {
+    class PerThreadState
+    {
+        Object value;
+
+        PerThreadState(Object defaultValue)
+        {
+            value = defaultValue;
+        }
+    }
+
     class PersistentFieldConduit implements FieldValueConduit
     {
         private final InternalComponentResources resources;
@@ -42,23 +52,18 @@ public class PersistWorker implements ComponentClassTransformWorker
 
         private final Object defaultValue;
 
-        private Object currentValue;
+        private final String key;
 
         public PersistentFieldConduit(InternalComponentResources resources, String name, Object defaultValue)
         {
             this.resources = resources;
             this.name = name;
-            this.currentValue = defaultValue;
             this.defaultValue = defaultValue;
+
+            this.key = String.format("PersistWorker:%s/%s", resources.getCompleteId(), name);
 
             resources.addPageLifecycleListener(new PageLifecycleAdapter()
             {
-                @Override
-                public void containingPageDidDetach()
-                {
-                    resetToDefaultAtPageDetach();
-                }
-
                 @Override
                 public void restoreStateBeforePageAttach()
                 {
@@ -67,38 +72,46 @@ public class PersistWorker implements ComponentClassTransformWorker
             });
         }
 
+        private PerThreadState getState()
+        {
+            PerThreadState state = (PerThreadState) perThreadManager.get(key);
+
+            if (state == null)
+            {
+                state = new PerThreadState(defaultValue);
+                perThreadManager.put(key, state);
+            }
+
+            return state;
+        }
+
         public Object get()
         {
-            return currentValue;
+            return getState().value;
         }
 
         public void set(Object newValue)
         {
             resources.persistFieldChange(name, newValue);
 
-            currentValue = newValue;
-        }
-
-        private void resetToDefaultAtPageDetach()
-        {
-            currentValue = defaultValue;
+            getState().value = newValue;
         }
 
         private void restoreStateAtPageAttach()
         {
             if (resources.hasFieldChange(name))
-                currentValue = resources.getFieldChange(name);
+                getState().value = resources.getFieldChange(name);
         }
     }
 
-    private final TypeCoercer typeCoercer;
-
     private final ComponentClassCache classCache;
 
-    public PersistWorker(TypeCoercer typeCoercer, ComponentClassCache classCache)
+    private final PerthreadManager perThreadManager;
+
+    public PersistWorker(ComponentClassCache classCache, PerthreadManager perThreadManager)
     {
-        this.typeCoercer = typeCoercer;
         this.classCache = classCache;
+        this.perThreadManager = perThreadManager;
     }
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
@@ -133,7 +146,6 @@ public class PersistWorker implements ComponentClassTransformWorker
         field.replaceAccess(provider);
     }
 
-    @SuppressWarnings("unchecked")
     private Object determineDefaultValueFromFieldType(TransformField field)
     {
         return classCache.defaultValueForType(field.getType());
