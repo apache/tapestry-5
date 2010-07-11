@@ -51,7 +51,7 @@ import org.apache.tapestry5.services.TransformMethodSignature;
  * invokes certain methods (render phase methods) marked with an annotation, or named in a specific
  * way.
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings("all")
 public class RenderPhaseMethodWorker implements ComponentClassTransformWorker
 {
     private final class RenderPhaseMethodAdvice implements ComponentMethodAdvice
