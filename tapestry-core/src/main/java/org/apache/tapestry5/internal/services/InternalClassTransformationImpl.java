@@ -1693,7 +1693,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         Defense.notNull(type, "type");
         Defense.notNull(provider, "provider");
 
-        TransformField field = createField(Modifier.PRIVATE | Modifier.FINAL, type.getName(), suggestedName);
+        TransformField field = createField(Modifier.PROTECTED | Modifier.FINAL, type.getName(), suggestedName);
 
         String argReference = addConstructorArg(providerType, provider);
 

@@ -82,7 +82,7 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
 
     private FieldAccess createFieldForAssets(ClassTransformation transformation)
     {
-        TransformField field = transformation.createField(Modifier.PRIVATE, List.class.getName(), "includedAssets");
+        TransformField field = transformation.createField(Modifier.PROTECTED, List.class.getName(), "includedAssets");
 
         return field.getAccess();
     }
