@@ -144,6 +144,8 @@ public class PageTester
      */
     public void shutdown()
     {
+        registry.cleanupThread();
+        
         registry.shutdown();
     }
 
@@ -210,7 +212,10 @@ public class PageTester
             {
                 throw new RuntimeException(ex);
             }
-
+            finally
+            {
+                registry.cleanupThread();
+            }
         }
 
     }
@@ -290,7 +295,10 @@ public class PageTester
             {
                 throw new RuntimeException(ex);
             }
-
+            finally
+            {
+                registry.cleanupThread();
+            }
         }
 
     }
