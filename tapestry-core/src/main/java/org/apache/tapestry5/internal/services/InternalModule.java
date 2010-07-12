@@ -26,6 +26,7 @@ import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.Autobuild;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Primary;
@@ -110,9 +111,24 @@ public class InternalModule
     }
 
     @Scope(ScopeConstants.PERTHREAD)
-    public static RequestPageCache buildRequestPageCache(@Autobuild
-    RequestPageCacheImpl service, PerthreadManager perthreadManager)
+    public static RequestPageCache buildRequestPageCache(ServiceResources serviceResources,
+            @Symbol(SymbolConstants.PAGE_POOL_ENABLED)
+            boolean pagePoolEnabled, PerthreadManager perthreadManager)
     {
+        if (pagePoolEnabled)
+        {
+
+            RequestPageCacheImpl service = serviceResources.autobuild(RequestPageCacheImpl.class);
+
+            perthreadManager.addThreadCleanupListener(service);
+
+            return service;
+        }
+
+        // Modern, non-pooling
+
+        NonPoolingRequestPageCacheImpl service = serviceResources.autobuild(NonPoolingRequestPageCacheImpl.class);
+
         perthreadManager.addThreadCleanupListener(service);
 
         return service;
@@ -129,8 +145,8 @@ public class InternalModule
 
     ClasspathURLConverter classpathURLConverter)
     {
-        ComponentInstantiatorSourceImpl source = new ComponentInstantiatorSourceImpl(logger, classFactory
-                .getClassLoader(), transformer, internalRequestGlobals, classpathURLConverter);
+        ComponentInstantiatorSourceImpl source = new ComponentInstantiatorSourceImpl(logger,
+                classFactory.getClassLoader(), transformer, internalRequestGlobals, classpathURLConverter);
 
         updateListenerHub.addUpdateListener(source);
 
@@ -188,6 +204,30 @@ public class InternalModule
         // Give the service a chance to clean up its own cache periodically as well
 
         updateListenerHub.addUpdateListener(service);
+
+        return service;
+    }
+
+    public PageSource buildPageSource(@Autobuild
+    PageSourceImpl service,
+
+    @ComponentTemplates
+    InvalidationEventHub templatesHub,
+
+    @ComponentMessages
+    InvalidationEventHub messagesHub)
+    {
+        // This covers invalidations due to changes to classes
+
+        classesInvalidationEventHub.addInvalidationListener(service);
+
+        // This covers invalidation due to changes to message catalogs (properties files)
+
+        messagesHub.addInvalidationListener(service);
+
+        // ... and this covers invalidations due to changes to templates
+
+        templatesHub.addInvalidationListener(service);
 
         return service;
     }

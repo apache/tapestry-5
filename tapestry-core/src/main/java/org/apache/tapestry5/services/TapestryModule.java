@@ -516,8 +516,8 @@ public final class TapestryModule
             configuration.add(folder, new ClasspathAssetRequestHandler(streamer, assetResourceLocator, path));
         }
 
-        configuration.add(RequestConstants.CONTEXT_FOLDER, new ContextAssetRequestHandler(streamer, contextAssetFactory
-                .getRootResource()));
+        configuration.add(RequestConstants.CONTEXT_FOLDER,
+                new ContextAssetRequestHandler(streamer, contextAssetFactory.getRootResource()));
 
         configuration.add(RequestConstants.STACK_FOLDER, stackAssetRequestHandler);
 
@@ -609,7 +609,8 @@ public final class TapestryModule
         configuration.add("MixinAfter", new MixinAfterWorker());
         configuration.add("Component", new ComponentWorker(resolver));
         configuration.add("Mixin", new MixinWorker(resolver));
-        configuration.addInstance("ActivationRequestParameter", ActivationRequestParameterWorker.class, "before:OnEvent");
+        configuration.addInstance("ActivationRequestParameter", ActivationRequestParameterWorker.class,
+                "before:OnEvent");
         configuration.addInstance("OnEvent", OnEventWorker.class);
         configuration.add("SupportsInformalParameters", new SupportsInformalParametersWorker());
         configuration.addInstance("InjectPage", InjectPageWorker.class);
@@ -1333,8 +1334,8 @@ public final class TapestryModule
 
     ClasspathURLConverter classpathURLConverter)
     {
-        ValidationMessagesSourceImpl service = new ValidationMessagesSourceImpl(configuration, classpathAssetFactory
-                .getRootResource(), parser, componentMessagesSource, classpathURLConverter);
+        ValidationMessagesSourceImpl service = new ValidationMessagesSourceImpl(configuration,
+                classpathAssetFactory.getRootResource(), parser, componentMessagesSource, classpathURLConverter);
         updateListenerHub.addUpdateListener(service);
 
         return service;
@@ -1546,8 +1547,8 @@ public final class TapestryModule
             TranslatorAlternatesSource alternatesSource, @ComponentClasses
             InvalidationEventHub hub)
     {
-        TranslatorSourceImpl service = new TranslatorSourceImpl(configuration, alternatesSource
-                .getTranslatorAlternates());
+        TranslatorSourceImpl service = new TranslatorSourceImpl(configuration,
+                alternatesSource.getTranslatorAlternates());
 
         hub.addInvalidationListener(service);
 
@@ -2371,13 +2372,12 @@ public final class TapestryModule
         configuration.add(SymbolConstants.FILE_CHECK_UPDATE_TIMEOUT, "50 ms");
 
         // This should be overridden for particular applications. These are the
-        // locales for
-        // which we have (at least some) localized messages.
+        // locales for which we have (at least some) localized messages.
         configuration.add(SymbolConstants.SUPPORTED_LOCALES,
                 "en,it,es,zh_CN,pt_PT,de,ru,hr,fi_FI,sv_SE,fr_FR,da,pt_BR,ja,el,bg,no_NB");
 
-        configuration.add(SymbolConstants.TAPESTRY_VERSION, VersionUtils
-                .readVersionNumber("META-INF/maven/org.apache.tapestry/tapestry-core/pom.properties"));
+        configuration.add(SymbolConstants.TAPESTRY_VERSION,
+                VersionUtils.readVersionNumber("META-INF/maven/org.apache.tapestry/tapestry-core/pom.properties"));
 
         configuration.add(SymbolConstants.COOKIE_MAX_AGE, "7 d");
 
@@ -2392,6 +2392,7 @@ public final class TapestryModule
         configuration.add(SymbolConstants.PAGE_POOL_SOFT_WAIT, "10 ms");
         configuration.add(SymbolConstants.PAGE_POOL_HARD_LIMIT, "20");
         configuration.add(SymbolConstants.PAGE_POOL_ACTIVE_WINDOW, "10 m");
+        configuration.add(SymbolConstants.PAGE_POOL_ENABLED, "false");
 
         configuration.add(SymbolConstants.SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS, "false");
 
@@ -2434,8 +2435,8 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.CHARSET, "UTF-8");
 
-        configuration.add(SymbolConstants.APPLICATION_CATALOG, String.format("context:WEB-INF/${%s}.properties",
-                InternalSymbols.APP_NAME));
+        configuration.add(SymbolConstants.APPLICATION_CATALOG,
+                String.format("context:WEB-INF/${%s}.properties", InternalSymbols.APP_NAME));
 
         configuration.add(SymbolConstants.EXCEPTION_REPORT_PAGE, "ExceptionReport");
 

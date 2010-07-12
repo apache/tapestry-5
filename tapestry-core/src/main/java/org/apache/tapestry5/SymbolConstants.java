@@ -15,6 +15,7 @@
 package org.apache.tapestry5;
 
 import org.apache.tapestry5.internal.services.AssetDispatcher;
+import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.javascript.JavascriptStack;
 
@@ -312,4 +313,14 @@ public class SymbolConstants
      */
     public static final String COMPACT_JSON = "tapestry.compact-json";
 
+    /**
+     * If "true", then Tapestry 5.1 (and earlier) style page pooling will be used. The default is "false", to
+     * allow full use of page singleton. Enabling page pooling is only necessary if an application (or library)
+     * has created {@linkplain ComponentClassTransformWorker class transformations} that introduce new, mutable
+     * fields into component classes. That's a very rare thing (most created fields contain immutable data).
+     * 
+     * @deprecated To be removed, along with the remnants of page pooling, in Tapestry 5.3.
+     * @since 5.2.0
+     */
+    public static final String PAGE_POOL_ENABLED = "tapestry.page-pool-enabled";
 }

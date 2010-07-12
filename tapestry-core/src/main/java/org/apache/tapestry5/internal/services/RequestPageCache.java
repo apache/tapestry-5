@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,26 +14,34 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.runtime.PageLifecycleListener;
 
 /**
  * Per-thread service that caches page instances for the duration of the request, and is also responsible for tracking
  * the active page (the page which will ultimately render the response).
  * <p/>
- * Since {@link org.apache.tapestry5.internal.structure.Page} is internal, most user-code should use the {@link
- * org.apache.tapestry5.services.ComponentSource} service instead.
+ * Since {@link org.apache.tapestry5.internal.structure.Page} is internal, most user-code should use the
+ * {@link org.apache.tapestry5.services.ComponentSource} service instead.
+ * <p>
+ * Starting in 5.2, page instances are shared (with externalized mutable state), not pooled, but the cache is still
+ * useful for managing the page's {@linkplain PageLifecycleListener lifecycle}. There are now two different
+ * implementation classes for this single service, selected via {@link SymbolConstants#PAGE_POOL_ENABLED}.
  */
 public interface RequestPageCache
 {
     /**
      * Gets the page via its page name, in the current locale. The logical page name is resolved to a class name, which
-     * is used to obtain the page (from the page pool).  Note that under certain circumstances, a page may have multiple
+     * is used to obtain the page (from the page pool). Note that under certain circumstances, a page may have multiple
      * names (even beyond simple case-insensitivity), and RequestPageCache caches correctly.
-     *
-     * @param pageName the name of the page to retrieve (this is the logical page name, not the fully qualified class
-     *                 name)
+     * 
+     * @param pageName
+     *            the name of the page to retrieve (this is the logical page name, not the fully qualified class
+     *            name)
      * @return a page instance reserved for this request
-     * @throws IllegalArgumentException if the name can not be resolved to a page instance
+     * @throws IllegalArgumentException
+     *             if the name can not be resolved to a page instance
      */
     Page get(String pageName);
 }

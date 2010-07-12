@@ -24,6 +24,10 @@
         <param-name>tapestry.app-package</param-name>
         <param-value>org.apache.tapestry5.integration.reload</param-value>
     </context-param>
+    <context-param>
+      <param-name>tapestry.page-pool-enabled</param-name>
+      <param-value>true</param-value>
+    </context-param>
     <filter>
         <filter-name>app</filter-name>
         <filter-class>org.apache.tapestry5.TapestryFilter</filter-class>

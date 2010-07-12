@@ -14,23 +14,21 @@
 
 package org.apache.tapestry5.internal.structure;
 
+import java.util.List;
+import java.util.Locale;
+
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.services.PersistentFieldManager;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.ioc.internal.util.OneShotLock;
-
-import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.services.PersistentFieldBundle;
 import org.slf4j.Logger;
-
-import java.util.List;
-import java.util.Locale;
 
 public class PageImpl implements Page
 {
@@ -57,8 +55,18 @@ public class PageImpl implements Page
      * first needed,
      * discarded at the end of the request.
      */
-    private PersistentFieldBundle fieldBundle;
+    private final PerThreadValue<PersistentFieldBundle> fieldBundle;
 
+    /**
+     * @param name
+     *            canonicalized page name
+     * @param locale
+     *            locale for page and all components
+     * @param persistentFieldManager
+     *            for access to cross-request persistent values
+     * @param perThreadManager
+     *            for managing per-request mutable state
+     */
     public PageImpl(String name, Locale locale, PersistentFieldManager persistentFieldManager,
             PerthreadManager perThreadManager)
     {
@@ -67,6 +75,7 @@ public class PageImpl implements Page
         this.persistentFieldManager = persistentFieldManager;
 
         dirtyCount = perThreadManager.createValue("PageDirtyCount:" + name);
+        fieldBundle = perThreadManager.createValue("PersistentFieldBundle:" + name);
     }
 
     @Override
@@ -77,7 +86,7 @@ public class PageImpl implements Page
 
     public ComponentPageElement getComponentElementByNestedId(String nestedId)
     {
-        notNull(nestedId, "nestedId");
+        Defense.notNull(nestedId, "nestedId");
 
         // TODO: Especially with the addition of all the caseless logic, and with respect to how
         // forms are implemented, it may be worthwhile to cache the key to element mapping. I think
@@ -147,8 +156,6 @@ public class PageImpl implements Page
             }
         }
 
-        fieldBundle = null;
-
         return result;
     }
 
@@ -160,7 +167,7 @@ public class PageImpl implements Page
             listener.containingPageDidLoad();
 
         loadComplete = true;
-        
+
         lock.lock();
     }
 
@@ -191,10 +198,10 @@ public class PageImpl implements Page
 
     public Object getFieldChange(String nestedId, String fieldName)
     {
-        if (fieldBundle == null)
-            fieldBundle = persistentFieldManager.gatherChanges(name);
+        if (!fieldBundle.exists())
+            fieldBundle.set(persistentFieldManager.gatherChanges(name));
 
-        return fieldBundle.getValue(nestedId, fieldName);
+        return fieldBundle.get().getValue(nestedId, fieldName);
     }
 
     public void decrementDirtyCount()
@@ -224,7 +231,7 @@ public class PageImpl implements Page
     public void addResetListener(PageResetListener listener)
     {
         Defense.notNull(listener, "listener");
-        
+
         lock.check();
 
         resetListeners.add(listener);
