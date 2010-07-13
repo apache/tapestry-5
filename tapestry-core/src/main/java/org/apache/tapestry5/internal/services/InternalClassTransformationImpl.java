@@ -433,6 +433,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         String readValueBody, writeValueBody;
 
+        private DelegateFieldAccess delegateFieldAccess;
+
         private org.apache.tapestry5.services.FieldAccess access;
 
         TransformFieldImpl(CtField field, boolean added)
@@ -449,6 +451,16 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             catch (NotFoundException ex)
             {
                 throw new RuntimeException(ex);
+            }
+        }
+
+        void doFinish()
+        {
+            if (delegateFieldAccess != null)
+            {
+                access = createAccess();
+                delegateFieldAccess.delegate = access;
+                delegateFieldAccess = null;
             }
         }
 
@@ -550,18 +562,23 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         {
             failIfFrozen();
 
-            if (access == null)
-                createAccess();
+            if (access != null)
+                return access;
 
-            return access;
+            if (delegateFieldAccess == null)
+            {
+                delegateFieldAccess = new DelegateFieldAccess();
+            }
+
+            return delegateFieldAccess;
         }
 
-        private void createAccess()
+        private org.apache.tapestry5.services.FieldAccess createAccess()
         {
             TransformMethod reader = createReader();
             TransformMethod writer = createWriter();
 
-            access = createFieldAccess(reader, writer);
+            return createFieldAccess(reader, writer);
         }
 
         private org.apache.tapestry5.services.FieldAccess createFieldAccess(TransformMethod reader,
@@ -645,6 +662,16 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         public void replaceAccess(FieldValueConduit conduit)
         {
             String fieldName = addInjectedFieldUncached(FieldValueConduit.class, name + "$conduit", conduit);
+
+            // TODO: If access != null?
+
+            access = toFieldAccess(conduit);
+
+            if (delegateFieldAccess != null)
+            {
+                delegateFieldAccess.delegate = access;
+                delegateFieldAccess = null;
+            }
 
             replaceAccess(getTransformFieldImpl(fieldName));
         }
@@ -1807,6 +1834,14 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     {
         failIfFrozen();
 
+        // Finishing fields may sometimes create new methods, so finish the fields
+        // first.
+
+        for (TransformFieldImpl tfi : fields.values())
+        {
+            tfi.doFinish();
+        }
+
         // doFinish() will sometimes create new methods on the ClassTransformation, yielding
         // a concurrent modification exception, so do a defensive copy.
 
@@ -2341,6 +2376,23 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
                 if (!event.isAborted())
                     invocation.proceed();
+            }
+        };
+    }
+
+    private static org.apache.tapestry5.services.FieldAccess toFieldAccess(final FieldValueConduit conduit)
+    {
+        return new org.apache.tapestry5.services.FieldAccess()
+        {
+
+            public void write(Object instance, Object value)
+            {
+                conduit.set(value);
+            }
+
+            public Object read(Object instance)
+            {
+                return conduit.get();
             }
         };
     }
