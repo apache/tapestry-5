@@ -29,9 +29,8 @@ import org.apache.tapestry5.services.ComponentValueProvider;
 import org.apache.tapestry5.services.TransformField;
 
 /**
- * Designed to be just about the last worker in the pipeline. Its job is to add cleanup code that restores transient
- * fields back to their initial (null) value. Fields that have been previously {@linkplain TransformField#claim(Object)
- * claimed} are ignored, as are fields that are final.suzy0613
+ * Designed to be just about the last worker in the pipeline. Its job is to convert each otherwise unclaimed
+ * field into a value stored in the {@link PerthreadManager}.
  */
 public final class UnclaimedFieldWorker implements ComponentClassTransformWorker
 {
@@ -68,7 +67,7 @@ public final class UnclaimedFieldWorker implements ComponentClassTransformWorker
 
             // This catches the case where the instance initializer method sets a value for the field.
             // That value is captured and used when no specific value has been stored.
-            
+
             if (!resources.isLoaded())
                 fieldDefaultValue = newValue;
         }
