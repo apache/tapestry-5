@@ -19,7 +19,6 @@ import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.DocumentLinker;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 /**
@@ -45,7 +44,7 @@ public final class StylesheetLink
 
     public StylesheetLink(Asset asset, StylesheetOptions options)
     {
-        this(Defense.notNull(asset, "asset").toClientURL(), options);
+        this(asset.toClientURL(), options);
     }
 
     public StylesheetLink(String url)
@@ -55,7 +54,8 @@ public final class StylesheetLink
 
     public StylesheetLink(String url, StylesheetOptions options)
     {
-        this.url = Defense.notBlank(url, "url");
+        assert InternalUtils.isNonBlank(url);
+        this.url = url;
         this.options = options != null ? options : BLANK_OPTIONS;
     }
 

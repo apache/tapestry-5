@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.testng.Assert;
 
@@ -183,8 +182,7 @@ public class TestUtils extends Assert
      */
     public static <T> T set(T object, Object... fieldValues)
     {
-        Defense.notNull(object, "object");
-
+        assert object != null;
         Class objectClass = object.getClass();
 
         for (int i = 0; i < fieldValues.length; i += 2)
@@ -222,9 +220,8 @@ public class TestUtils extends Assert
      */
     public static Object get(Object object, String fieldName)
     {
-        Defense.notNull(object, "object");
-        Defense.notBlank(fieldName, "fieldName");
-
+        assert object != null;
+        assert InternalUtils.isNonBlank(fieldName);
         try
         {
             Field field = findField(object.getClass(), fieldName);

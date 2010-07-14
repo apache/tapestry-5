@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.ioc;
 
-import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 /**
  * A wrapper that allows objects of a target type to be ordered. Each Orderable object is given a unique id and a set of
@@ -38,7 +38,8 @@ public class Orderable<T>
 
     public Orderable(String id, T target, String... constraints)
     {
-        this.id = Defense.notBlank(id, "id");
+        assert InternalUtils.isNonBlank(id);
+        this.id = id;
         this.target = target;
         this.constraints = constraints;
     }

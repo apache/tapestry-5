@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,16 +14,22 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.ObjectCreator;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.*;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Map;
 
+import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.Builtin;
+import org.apache.tapestry5.ioc.services.ClassFab;
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
+import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.MethodIterator;
+import org.apache.tapestry5.ioc.services.MethodSignature;
+import org.apache.tapestry5.ioc.services.ThunkCreator;
+
+@SuppressWarnings("all")
 public class ThunkCreatorImpl implements ThunkCreator
 {
     /**
@@ -48,10 +54,9 @@ public class ThunkCreatorImpl implements ThunkCreator
 
     public <T> T createThunk(Class<T> proxyType, ObjectCreator objectCreator, String description)
     {
-        Defense.notNull(proxyType, "proxyType");
-        Defense.notNull(objectCreator, "objectCreator");
-        Defense.notBlank(description, "description");
-
+        assert proxyType != null;
+        assert objectCreator != null;
+        assert InternalUtils.isNonBlank(description);
         if (!proxyType.isInterface())
             throw new IllegalArgumentException(
                     String.format("Thunks may only be created for interfaces; %s is a class.",

@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.testng.annotations.Test;
  * Tests {@linkplain org.apache.tapestry5.urlrewritter.SimpleRequestWrapper}
  * and {@link DelegatingRequest}.
  */
+@SuppressWarnings("all")
 public class SimpleRequestWrapperTest extends TestBase
 {
 
@@ -169,7 +170,7 @@ public class SimpleRequestWrapperTest extends TestBase
         {
             new SimpleRequestWrapper(request, serverName, path);
         }
-        catch (RuntimeException e) 
+        catch (AssertionError e) 
         {
             exceptionRaised = true;
         }
@@ -188,7 +189,7 @@ public class SimpleRequestWrapperTest extends TestBase
         {
             new SimpleRequestWrapper(request, path);
         }
-        catch (RuntimeException e) 
+        catch (AssertionError e) 
         {
             exceptionRaised = true;
         }

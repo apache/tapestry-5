@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,12 +14,18 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.Link;
-import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.services.Response;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Writer;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.services.Response;
 
 /**
  * Implementation of {@link Response} that wraps around an underlying {@link HttpServletResponse}.
@@ -30,15 +36,13 @@ public class ResponseImpl implements Response
 
     public ResponseImpl(HttpServletResponse response)
     {
-        Defense.notNull(response, "response");
-
+        assert response != null;
         this.response = response;
     }
 
     public PrintWriter getPrintWriter(String contentType) throws IOException
     {
-        Defense.notBlank(contentType, "contentType");
-
+        assert InternalUtils.isNonBlank(contentType);
         OutputStream os = getOutputStream(contentType);
 
         Writer w = new OutputStreamWriter(os, response.getCharacterEncoding());
@@ -63,8 +67,7 @@ public class ResponseImpl implements Response
 
     public void sendRedirect(Link link) throws IOException
     {
-        Defense.notNull(link, "link");
-
+        assert link != null;
         String redirectURL = encodeRedirectURL(link.toRedirectURI());
 
         sendRedirect(redirectURL);
@@ -77,8 +80,7 @@ public class ResponseImpl implements Response
 
     public OutputStream getOutputStream(String contentType) throws IOException
     {
-        Defense.notBlank(contentType, "contentType");
-
+        assert InternalUtils.isNonBlank(contentType);
         response.setContentType(contentType);
 
         return response.getOutputStream();

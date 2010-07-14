@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,13 +15,11 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.util.Stack;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.RenderCommand;
@@ -76,8 +74,7 @@ public class PageRenderQueueImpl implements PageRenderQueue
 
     public void setRenderingPage(Page page)
     {
-        Defense.notNull(page, "page");
-
+        assert page != null;
         this.page = page;
     }
 
@@ -88,8 +85,7 @@ public class PageRenderQueueImpl implements PageRenderQueue
 
     public void initializeForPartialPageRender(RenderCommand rootCommand)
     {
-        Defense.notNull(rootCommand, "rootCommand");
-
+        assert rootCommand != null;
         if (page == null)
             throw new IllegalStateException("Page must be specified before root render command.");
 
@@ -123,8 +119,7 @@ public class PageRenderQueueImpl implements PageRenderQueue
 
     public void addPartialMarkupRendererFilter(PartialMarkupRendererFilter filter)
     {
-        Defense.notNull(filter, "filter");
-
+        assert filter != null;
         filters.push(filter);
     }
 

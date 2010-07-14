@@ -14,16 +14,15 @@
 
 package org.apache.tapestry5.util;
 
+import java.io.Serializable;
+import java.util.List;
+
 import org.apache.tapestry5.OptionGroupModel;
 import org.apache.tapestry5.OptionModel;
 import org.apache.tapestry5.internal.OptionModelImpl;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
-
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * A basic select model for a particular Enum type. The labels for each Enum are drawn from the Enum instance name and
@@ -44,9 +43,8 @@ public final class EnumSelectModel extends AbstractSelectModel implements Serial
 
     public <T extends Enum> EnumSelectModel(Class<T> enumClass, Messages messages, T[] values)
     {
-        notNull(enumClass, "enumClass");
-        notNull(messages, "messages");
-
+        assert enumClass != null;
+        assert messages != null;
         String prefix = enumClass.getSimpleName();
 
         for (T value : values)

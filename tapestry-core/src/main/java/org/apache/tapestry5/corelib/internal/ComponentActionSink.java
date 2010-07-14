@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,15 +14,14 @@
 
 package org.apache.tapestry5.corelib.internal;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+
 import org.apache.tapestry5.ComponentAction;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ClientDataEncoder;
 import org.apache.tapestry5.services.ClientDataSink;
 import org.slf4j.Logger;
-
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 
 /**
  * Used to collection component actions, with the ultimate goal being the creation of a MIME-encoded string of the
@@ -49,8 +48,8 @@ public class ComponentActionSink
 
     public <T> void store(T component, ComponentAction<T> action)
     {
-        Component castComponent = Defense.cast(component, Component.class, "component");
-        Defense.notNull(action, "action");
+        Component castComponent = (Component) component;
+        assert action != null;
 
         String completeId = castComponent.getComponentResources().getCompleteId();
 

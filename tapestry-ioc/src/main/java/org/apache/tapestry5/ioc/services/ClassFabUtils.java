@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,12 +14,8 @@
 
 package org.apache.tapestry5.ioc.services;
 
-import org.apache.tapestry5.ioc.ObjectCreator;
-import org.apache.tapestry5.ioc.internal.util.Defense;
-
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
-
 import static java.lang.String.format;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -29,9 +25,12 @@ import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.tapestry5.ioc.ObjectCreator;
+
 /**
  * Handy method useful when creating new classes using {@link org.apache.tapestry5.ioc.services.ClassFab}.
  */
+@SuppressWarnings("all")
 public final class ClassFabUtils
 {
     private static final AtomicLong UID_GENERATOR = new AtomicLong(System.currentTimeMillis());
@@ -307,7 +306,7 @@ public final class ClassFabUtils
      */
     public static String getPathForClass(Class clazz)
     {
-        Defense.notNull(clazz, "clazz");
+        assert clazz != null;
 
         return getPathForClassNamed(clazz.getName());
     }
@@ -329,7 +328,7 @@ public final class ClassFabUtils
      */
     public static File toFileFromFileProtocolURL(URL url)
     {
-        Defense.notNull(url, "url");
+        assert url != null;
 
         if (!url.getProtocol().equals("file"))
             throw new IllegalArgumentException(String.format("URL %s does not use the 'file' protocol.", url));

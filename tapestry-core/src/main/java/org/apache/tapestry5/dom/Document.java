@@ -14,13 +14,13 @@
 
 package org.apache.tapestry5.dom;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
-
 import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 /**
  * The root node of a DOM.
@@ -59,7 +59,7 @@ public final class Document extends Node
     {
         super(null);
 
-        Defense.notNull(model, "model");
+        assert model != null;
 
         this.model = model;
         this.encoding = encoding;
@@ -81,7 +81,7 @@ public final class Document extends Node
      */
     public Element find(String path)
     {
-        Defense.notBlank(path, "path");
+        assert InternalUtils.isNonBlank(path);
 
         if (rootElement == null)
             return null;

@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.services.UpdateListener;
 import org.apache.tapestry5.services.UpdateListenerHub;
 
@@ -31,8 +30,7 @@ public class UpdateListenerHubImpl implements UpdateListenerHub
 
     public void addUpdateListener(UpdateListener listener)
     {
-        Defense.notNull(listener, "listener");
-
+        assert listener != null;
         listeners.add(new WeakReference<UpdateListener>(listener));
     }
 

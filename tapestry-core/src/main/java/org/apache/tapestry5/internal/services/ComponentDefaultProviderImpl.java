@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,14 +14,25 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.*;
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.FieldTranslator;
+import org.apache.tapestry5.FieldValidator;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.ValidationException;
+import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.bindings.InvariantBinding;
 import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.runtime.Component;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.BindingSource;
+import org.apache.tapestry5.services.ComponentDefaultProvider;
+import org.apache.tapestry5.services.FieldTranslatorSource;
+import org.apache.tapestry5.services.FieldValidatorDefaultSource;
+import org.apache.tapestry5.services.ValueEncoderSource;
 
 public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
 {
@@ -66,8 +77,7 @@ public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
 
     public String defaultLabel(ComponentResources resources)
     {
-        Defense.notNull(resources, "resources");
-
+        assert resources != null;
         String componentId = resources.getId();
         String key = componentId + "-label";
 
@@ -80,9 +90,8 @@ public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
 
     public Binding defaultBinding(String parameterName, ComponentResources resources)
     {
-        Defense.notBlank(parameterName, "parameterName");
-        Defense.notNull(resources, "resources");
-
+        assert InternalUtils.isNonBlank(parameterName);
+        assert resources != null;
         String componentId = resources.getId();
 
         Component container = resources.getContainer();
@@ -106,9 +115,8 @@ public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
     @SuppressWarnings({ "unchecked" })
     public ValueEncoder defaultValueEncoder(String parameterName, ComponentResources resources)
     {
-        Defense.notBlank(parameterName, "parameterName");
-        Defense.notNull(resources, "resources");
-
+        assert InternalUtils.isNonBlank(parameterName);
+        assert resources != null;
         Class parameterType = resources.getBoundType(parameterName);
 
         if (parameterType == null) return null;

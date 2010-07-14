@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,12 +14,11 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.io.IOException;
+
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.structure.Page;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.services.Request;
-
-import java.io.IOException;
 
 /**
  * Alternative implementation, used when {@link org.apache.tapestry5.SymbolConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS}
@@ -36,11 +35,7 @@ public class ImmediateActionRenderResponseGenerator implements ActionRenderRespo
 
     public void generateResponse(Page page) throws IOException
     {
-        Defense.notNull(page, "page");
-
-        // This can happen when the ComponentEventRequestHandlerImpl notices that the response
-        // is not yet committed, and sets up to render a default response for the page containing
-        // the component.
+        assert page != null;
         if (request.getAttribute(InternalConstants.IMMEDIATE_RESPONSE_PAGE_ATTRIBUTE) != null) return;
 
         // We are somewhere in the middle of processing an action request, possibly something

@@ -1,10 +1,10 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,14 +14,13 @@
 
 package org.apache.tapestry5.util;
 
-import org.apache.tapestry5.ContentType;
-import org.apache.tapestry5.StreamResponse;
-import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.services.Response;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.apache.tapestry5.ContentType;
+import org.apache.tapestry5.StreamResponse;
+import org.apache.tapestry5.services.Response;
 
 public class TextStreamResponse implements StreamResponse
 {
@@ -39,22 +38,24 @@ public class TextStreamResponse implements StreamResponse
 
     /**
      * Constructor allowing the content type and character set to the specified.
-     *
-     * @param contentType type of content, often "text/xml"
-     * @param charset     character set of output, usually "UTF-8"
-     * @param text        text to be streamed in the response
+     * 
+     * @param contentType
+     *            type of content, often "text/xml"
+     * @param charset
+     *            character set of output, usually "UTF-8"
+     * @param text
+     *            text to be streamed in the response
      * @see org.apache.tapestry5.SymbolConstants#CHARSET
      */
     public TextStreamResponse(String contentType, String charset, String text)
     {
-        this(new ContentType(Defense.notBlank(contentType, "contentType"),
-                             Defense.notBlank(charset, "charset")), text);
+        this(new ContentType(contentType, charset), text);
     }
 
     public TextStreamResponse(ContentType contentType, String text)
     {
-        Defense.notNull(contentType, "contentType");
-        Defense.notNull(text, "text");
+        assert contentType != null;
+        assert text != null;
 
         this.contentType = contentType;
         this.text = text;
@@ -68,7 +69,7 @@ public class TextStreamResponse implements StreamResponse
     /**
      * Converts the text to a byte array (as per the character set, which is usually "UTF-8"), and returns a stream for
      * that byte array.
-     *
+     * 
      * @return the text as a byte array stram
      * @throws IOException
      */

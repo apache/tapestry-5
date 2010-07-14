@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,8 +15,11 @@ package org.apache.tapestry5.internal.services;
 
 import java.io.IOException;
 
-import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.RequestFilter;
+import org.apache.tapestry5.services.RequestHandler;
+import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.URLRewriter;
 
 /**
  * <code>RequestFilter</code> that applies the URL rewriting rules to requests.
@@ -34,7 +37,7 @@ public class URLRewriterRequestFilter implements RequestFilter
      */
     public URLRewriterRequestFilter(URLRewriter urlRewriter)
     {
-        Defense.notNull(urlRewriter, "urlRewriter");
+        assert urlRewriter != null;
         this.urlRewriter = urlRewriter;
     }
 

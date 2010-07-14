@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,10 +14,22 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import javassist.*;
+import static java.lang.String.format;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newSet;
-import org.apache.tapestry5.ioc.internal.util.Defense;
+
+import java.lang.reflect.Modifier;
+import java.util.Formatter;
+import java.util.Map;
+import java.util.Set;
+
+import javassist.CannotCompileException;
+import javassist.CtClass;
+import javassist.CtConstructor;
+import javassist.CtField;
+import javassist.CtMethod;
+import javassist.NotFoundException;
+
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFab;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
@@ -25,16 +37,11 @@ import org.apache.tapestry5.ioc.services.MethodIterator;
 import org.apache.tapestry5.ioc.services.MethodSignature;
 import org.slf4j.Logger;
 
-import static java.lang.String.format;
-import java.lang.reflect.Modifier;
-import java.util.Formatter;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * Implementation of {@link org.apache.tapestry5.ioc.services.ClassFab}. Hides, as much as possible, the underlying
  * library (Javassist).
  */
+@SuppressWarnings("all")
 public class ClassFabImpl extends AbstractFab implements ClassFab
 {
     private static final Map<Class, String> DEFAULT_RETURN = newMap();
@@ -107,7 +114,8 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
 
             for (int i = 0; i < interfaces.length; i++)
             {
-                if (i > 0) buffer.append(", ");
+                if (i > 0)
+                    buffer.append(", ");
 
                 buffer.append(interfaces[i].getName());
             }
@@ -150,12 +158,10 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
             throw new RuntimeException(ServiceMessages.unableToAddField(name, getCtClass(), ex), ex);
         }
 
-        formatter.format("%s %s %s;\n\n", Modifier.toString(modifiers), ClassFabUtils
-                .toJavaClassName(type), name);
+        formatter.format("%s %s %s;\n\n", Modifier.toString(modifiers), ClassFabUtils.toJavaClassName(type), name);
     }
 
-    public void proxyMethodsToDelegate(Class serviceInterface, String delegateExpression,
-                                       String toString)
+    public void proxyMethodsToDelegate(Class serviceInterface, String delegateExpression, String toString)
     {
         lock.check();
 
@@ -174,7 +180,8 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
             addMethod(Modifier.PUBLIC, sig, body);
         }
 
-        if (!mi.getToString()) addToString(toString);
+        if (!mi.getToString())
+            addToString(toString);
     }
 
     public void addToString(String toString)
@@ -220,8 +227,8 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
 
         // modifiers, return type, name
 
-        formatter.format("%s %s %s", Modifier.toString(modifiers), ClassFabUtils
-                .toJavaClassName(ms.getReturnType()), ms.getName());
+        formatter.format("%s %s %s", Modifier.toString(modifiers), ClassFabUtils.toJavaClassName(ms.getReturnType()),
+                ms.getName());
 
         // parameters, exceptions and body from this:
         addMethodDetailsToDescription(ms.getParameterTypes(), ms.getExceptionTypes(), body);
@@ -245,7 +252,8 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
         if (returnType.isPrimitive())
         {
             value = DEFAULT_RETURN.get(returnType);
-            if (value == null) value = "0";
+            if (value == null)
+                value = "0";
         }
 
         addMethod(Modifier.PUBLIC, signature, "return " + value + ";");
@@ -253,8 +261,7 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
 
     public void addConstructor(Class[] parameterTypes, Class[] exceptions, String body)
     {
-        Defense.notBlank(body, "body");
-
+        assert InternalUtils.isNonBlank(body);
         lock.check();
 
         CtClass[] ctParameters = toCtClasses(parameterTypes);
@@ -288,20 +295,23 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
 
     /**
      * Adds a listing of method (or constructor) parameters and thrown exceptions, and the body, to the description
-     *
-     * @param parameterTypes types of method parameters, or null
-     * @param exceptions     types of throw exceptions, or null
-     * @param body           body of method or constructor
+     * 
+     * @param parameterTypes
+     *            types of method parameters, or null
+     * @param exceptions
+     *            types of throw exceptions, or null
+     * @param body
+     *            body of method or constructor
      */
-    private void addMethodDetailsToDescription(Class[] parameterTypes, Class[] exceptions,
-                                               String body)
+    private void addMethodDetailsToDescription(Class[] parameterTypes, Class[] exceptions, String body)
     {
         description.append("(");
 
         int count = InternalUtils.size(parameterTypes);
         for (int i = 0; i < count; i++)
         {
-            if (i > 0) description.append(", ");
+            if (i > 0)
+                description.append(", ");
 
             description.append(ClassFabUtils.toJavaClassName(parameterTypes[i]));
 

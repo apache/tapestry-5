@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,10 @@
 
 package org.apache.tapestry5.services;
 
-import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
+import java.util.Formatter;
+
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ServiceOverride;
-
-import java.util.Formatter;
 
 /**
  * A contribution into the {@link Alias} or AliasOverride service configuration.
@@ -59,9 +58,12 @@ public final class AliasContribution<T>
 
     public AliasContribution(Class<T> contributionType, String mode, T object)
     {
-        this.contributionType = notNull(contributionType, "contributionClass");
-        this.mode = notNull(mode, "mode");
-        this.object = notNull(object, "object");
+        assert contributionType != null;
+        this.contributionType = contributionType;
+        assert mode != null;
+        this.mode = mode;
+        assert object != null;
+        this.object = object;
     }
 
     /**

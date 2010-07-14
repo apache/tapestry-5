@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,15 +14,18 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.MarkupWriterListener;
-import org.apache.tapestry5.dom.*;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
-
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.List;
+
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.MarkupWriterListener;
+import org.apache.tapestry5.dom.DefaultMarkupModel;
+import org.apache.tapestry5.dom.Document;
+import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.dom.MarkupModel;
+import org.apache.tapestry5.dom.Text;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 public class MarkupWriterImpl implements MarkupWriter
 {
@@ -242,8 +245,7 @@ public class MarkupWriterImpl implements MarkupWriter
 
     public void addListener(MarkupWriterListener listener)
     {
-        Defense.notNull(listener, "listener");
-
+        assert listener != null;
         if (listeners == null) listeners = CollectionFactory.newList();
 
         listeners.add(listener);

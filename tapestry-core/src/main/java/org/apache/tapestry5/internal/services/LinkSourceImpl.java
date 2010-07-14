@@ -14,16 +14,24 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.List;
+
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.ComponentEventLinkEncoder;
+import org.apache.tapestry5.services.ComponentEventRequestParameters;
+import org.apache.tapestry5.services.LinkCreationHub;
+import org.apache.tapestry5.services.LinkCreationListener;
+import org.apache.tapestry5.services.LinkCreationListener2;
+import org.apache.tapestry5.services.PageRenderRequestParameters;
+import org.apache.tapestry5.services.RequestGlobals;
 
-import java.util.List;
-
+@SuppressWarnings("all")
 public class LinkSourceImpl implements LinkSource, LinkCreationHub
 {
     private final PageRenderQueue pageRenderQueue;
@@ -60,8 +68,8 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
     public Link createComponentEventLink(Page page, String nestedId, String eventType, boolean forForm,
             Object... eventContext)
     {
-        Defense.notNull(page, "page");
-        Defense.notBlank(eventType, "action");
+        assert page != null;
+        assert InternalUtils.isNonBlank(eventType);
 
         Page activePage = pageRenderQueue.getRenderingPage();
 
@@ -123,7 +131,7 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
 
     public void addListener(LinkCreationListener listener)
     {
-        Defense.notNull(listener, "listener");
+        assert listener != null;
 
         addListener(TapestryInternalUtils.toLinkCreationListener2(listener));
     }
@@ -135,7 +143,7 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
 
     public void addListener(LinkCreationListener2 listener)
     {
-        Defense.notNull(listener, "listener");
+        assert listener != null;
 
         listeners.add(listener);
     }

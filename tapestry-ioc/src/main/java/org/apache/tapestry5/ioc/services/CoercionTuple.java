@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.ioc.services;
 
-import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
 
 /**
  * An immutable object that represents a mapping from one type to another. This is also the contribution type when
@@ -110,10 +109,9 @@ public final class CoercionTuple<S, T>
      */
     public CoercionTuple(Class<S> sourceType, Class<T> targetType, Coercion<S, T> coercion, boolean wrap)
     {
-        notNull(sourceType, "sourceType");
-        notNull(targetType, "targetType");
-        notNull(coercion, "coercion");
-
+        assert sourceType != null;
+        assert targetType != null;
+        assert coercion != null;
         this.sourceType = sourceType;
         this.targetType = targetType;
         this.coercion = wrap ? new CoercionWrapper<S, T>(coercion) : coercion;

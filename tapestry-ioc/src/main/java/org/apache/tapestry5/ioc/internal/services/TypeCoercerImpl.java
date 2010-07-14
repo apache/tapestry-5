@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InheritanceSearch;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
@@ -32,6 +31,7 @@ import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 
+@SuppressWarnings("all")
 public class TypeCoercerImpl implements TypeCoercer
 {
     // Constructed from the service's configuration.
@@ -135,8 +135,7 @@ public class TypeCoercerImpl implements TypeCoercer
     @SuppressWarnings("unchecked")
     public Object coerce(Object input, Class targetType)
     {
-        Defense.notNull(targetType, "targetType");
-
+        assert targetType != null;
         Class effectiveTargetType = ClassFabUtils.getWrapperType(targetType);
 
         if (effectiveTargetType.isInstance(input))
@@ -148,9 +147,8 @@ public class TypeCoercerImpl implements TypeCoercer
     @SuppressWarnings("unchecked")
     public <S, T> Coercion<S, T> getCoercion(Class<S> sourceType, Class<T> targetType)
     {
-        Defense.notNull(sourceType, "sourceType");
-        Defense.notNull(targetType, "targetType");
-
+        assert sourceType != null;
+        assert targetType != null;
         Class effectiveSourceType = ClassFabUtils.getWrapperType(sourceType);
         Class effectiveTargetType = ClassFabUtils.getWrapperType(targetType);
 
@@ -163,9 +161,8 @@ public class TypeCoercerImpl implements TypeCoercer
     @SuppressWarnings("unchecked")
     public <S, T> String explain(Class<S> sourceType, Class<T> targetType)
     {
-        Defense.notNull(sourceType, "effectiveInputType");
-        Defense.notNull(targetType, "targetType");
-
+        assert sourceType != null;
+        assert targetType != null;
         Class effectiveTargetType = ClassFabUtils.getWrapperType(targetType);
         Class effectiveSourceType = ClassFabUtils.getWrapperType(sourceType);
 

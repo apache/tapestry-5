@@ -1,10 +1,10 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,12 +14,13 @@
 
 package org.apache.tapestry5.services;
 
-import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 /**
  * A contribution to the configuration of the {@link ApplicationStateManager}, identifying the strategy and creator for
  * a particular Session State Object (SSO), identified by the SSO's class.
  */
+@SuppressWarnings("all")
 public final class ApplicationStateContribution
 {
     private final String strategy;
@@ -33,8 +34,7 @@ public final class ApplicationStateContribution
 
     public ApplicationStateContribution(String strategy, ApplicationStateCreator creator)
     {
-        Defense.notBlank(strategy, "strategy");
-
+        assert InternalUtils.isNonBlank(strategy);
         this.strategy = strategy;
         this.creator = creator;
     }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 The Apache Software Foundation
+// Copyright 2006, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,14 +14,13 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.util.AbstractResource;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
-import org.apache.tapestry5.services.Context;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.AbstractResource;
+import org.apache.tapestry5.services.Context;
 
 /**
  * A resource stored with in the web application context.
@@ -35,8 +34,8 @@ public class ContextResource extends AbstractResource
     public ContextResource(Context context, String path)
     {
         super(path);
-
-        notNull(context, "context");
+        
+        assert context != null;
 
         this.context = context;
     }

@@ -33,13 +33,11 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -52,7 +50,6 @@ import org.apache.tapestry5.internal.util.MultiKey;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.internal.NullAnnotationProvider;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.GenericsUtils;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFab;
@@ -1187,9 +1184,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
     public PropertyConduit create(Class rootClass, String expression)
     {
-        Defense.notNull(rootClass, "rootType");
-        Defense.notBlank(expression, "expression");
-
+        assert rootClass != null;
+        assert InternalUtils.isNonBlank(expression);
         Class effectiveClass = toEffectiveClass(rootClass);
 
         MultiKey key = new MultiKey(effectiveClass, expression);

@@ -15,8 +15,6 @@
 package org.apache.tapestry5.internal.services;
 
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry5.ioc.internal.util.Defense.cast;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
 
 import java.util.List;
 import java.util.Locale;
@@ -37,7 +35,7 @@ import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.ValidationMessagesSource;
 import org.apache.tapestry5.validator.ValidatorMacro;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings("all")
 public class FieldValidatorSourceImpl implements FieldValidatorSource
 {
     private final ValidationMessagesSource messagesSource;
@@ -62,9 +60,8 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
 
     public FieldValidator createValidator(Field field, String validatorType, String constraintValue)
     {
-        Component component = cast(field, Component.class, "field");
-        notBlank(validatorType, "validatorType");
-
+        Component component = (Component) field;        
+        assert InternalUtils.isNonBlank(validatorType);
         ComponentResources componentResources = component.getComponentResources();
         String overrideId = componentResources.getId();
         Locale locale = componentResources.getLocale();
@@ -80,8 +77,7 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
     public FieldValidator createValidator(Field field, String validatorType, String constraintValue, String overrideId,
             Messages overrideMessages, Locale locale)
     {
-        notBlank(validatorType, "validatorType");
-
+        assert InternalUtils.isNonBlank(validatorType);
         Validator validator = validators.get(validatorType);
 
         if (validator == null)

@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,14 +14,14 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import java.lang.reflect.Method;
+
 import org.apache.tapestry5.ioc.AdvisorDef;
 import org.apache.tapestry5.ioc.ModuleBuilderSource;
 import org.apache.tapestry5.ioc.ServiceAdvisor;
 import org.apache.tapestry5.ioc.ServiceResources;
-import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
-
-import java.lang.reflect.Method;
 
 public class AdvisorDefImpl extends AbstractServiceInstrumenter implements AdvisorDef
 {
@@ -31,8 +31,9 @@ public class AdvisorDefImpl extends AbstractServiceInstrumenter implements Advis
                           String advisorId)
     {
         super(method, patterns, constraints, classFactory);
+        assert InternalUtils.isNonBlank(advisorId);
 
-        this.advisorId = Defense.notBlank(advisorId, "advisorId");
+        this.advisorId = advisorId;
     }
 
     public ServiceAdvisor createAdvisor(ModuleBuilderSource moduleSource, ServiceResources resources)

@@ -14,10 +14,9 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
-import org.apache.tapestry5.ioc.Resource;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
-
 import java.net.URL;
+
+import org.apache.tapestry5.ioc.Resource;
 
 /**
  * Implementation of {@link Resource} for files on the classpath (as defined by a {@link ClassLoader}).
@@ -40,8 +39,7 @@ public final class ClasspathResource extends AbstractResource
     public ClasspathResource(ClassLoader classLoader, String path)
     {
         super(path);
-
-        notNull(classLoader, "classLoader");
+        assert classLoader != null;
 
         this.classLoader = classLoader;
     }

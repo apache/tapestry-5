@@ -14,13 +14,10 @@
 
 package org.apache.tapestry5.services;
 
-import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
-
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.ioc.services.ClassFabUtils;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 /**
  * A representation of a method signature, which consists of its name, modifiers (primarily,
@@ -46,17 +43,19 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
 
     public TransformMethodSignature(String name)
     {
-        this(Modifier.PUBLIC, "void", name, InternalConstants.EMPTY_STRING_ARRAY,
-                InternalConstants.EMPTY_STRING_ARRAY);
+        this(Modifier.PUBLIC, "void", name, InternalConstants.EMPTY_STRING_ARRAY, InternalConstants.EMPTY_STRING_ARRAY);
     }
 
-    public TransformMethodSignature(int modifiers, String type, String name,
-            String[] parameterTypes, String[] exceptionTypes)
+    public TransformMethodSignature(int modifiers, String type, String name, String[] parameterTypes,
+            String[] exceptionTypes)
     {
+        assert InternalUtils.isNonBlank(name);
+        assert InternalUtils.isNonBlank(type);
+
         this.modifiers = modifiers;
 
-        returnType = notBlank(type, "type");
-        methodName = notBlank(name, "name");
+        returnType = type;
+        methodName = name;
 
         // TODO: Checks that no element within the two arrays
         // is null or blank.
@@ -146,9 +145,8 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
 
         TransformMethodSignature ms = (TransformMethodSignature) other;
 
-        return modifiers == ms.modifiers && returnType.equals(ms.returnType)
-                && methodName.equals(ms.methodName) && matches(parameterTypes, ms.parameterTypes)
-                && matches(exceptionTypes, ms.exceptionTypes);
+        return modifiers == ms.modifiers && returnType.equals(ms.returnType) && methodName.equals(ms.methodName)
+                && matches(parameterTypes, ms.parameterTypes) && matches(exceptionTypes, ms.exceptionTypes);
     }
 
     private boolean matches(String[] values, String[] otherValues)

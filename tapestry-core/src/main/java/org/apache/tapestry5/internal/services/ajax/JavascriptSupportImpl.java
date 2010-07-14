@@ -26,7 +26,7 @@ import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.DocumentLinker;
 import org.apache.tapestry5.internal.services.javascript.JavascriptStackPathConstructor;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONArray;
@@ -127,10 +127,9 @@ public class JavascriptSupportImpl implements JavascriptSupport
 
     private void storeInitializerCall(InitializationPriority priority, String functionName, Object parameter)
     {
-        Defense.notNull(priority, "priority");
-        Defense.notBlank(functionName, "functionName");
-        Defense.notNull(parameter, "parameter");
-
+        assert priority != null;
+        assert parameter != null;
+        assert InternalUtils.isNonBlank(functionName);
         addCoreStackIfNeeded();
 
         JSONObject init = inits.get(priority);
@@ -170,9 +169,8 @@ public class JavascriptSupportImpl implements JavascriptSupport
     public void addScript(InitializationPriority priority, String format, Object... arguments)
     {
         addCoreStackIfNeeded();
-
-        Defense.notNull(priority, "priority");
-        Defense.notBlank(format, "format");
+        assert priority != null;
+        assert InternalUtils.isNonBlank(format);
 
         String newScript = arguments.length == 0 ? format : String.format(format, arguments);
 
@@ -196,8 +194,7 @@ public class JavascriptSupportImpl implements JavascriptSupport
 
     public void importJavascriptLibrary(Asset asset)
     {
-        Defense.notNull(asset, "asset");
-
+        assert asset != null;
         importJavascriptLibrary(asset.toClientURL());
     }
 
@@ -237,17 +234,13 @@ public class JavascriptSupportImpl implements JavascriptSupport
 
     public void importStylesheet(Asset stylesheet)
     {
-        Defense.notNull(stylesheet, "stylesheet");
-
+        assert stylesheet != null;
         importStylesheet(new StylesheetLink(stylesheet));
     }
 
     public void importStylesheet(StylesheetLink stylesheetLink)
     {
-        Defense.notNull(stylesheetLink, "stylesheetLink");
-
-        // Assumes no overlap between stack stylesheets and all other stylesheets
-
+        assert stylesheetLink != null;
         String stylesheetURL = stylesheetLink.getURL();
 
         if (importedStylesheetURLs.contains(stylesheetURL))
@@ -260,8 +253,7 @@ public class JavascriptSupportImpl implements JavascriptSupport
 
     public void importStack(String stackName)
     {
-        Defense.notBlank(stackName, "stackName");
-
+        assert InternalUtils.isNonBlank(stackName);
         addCoreStackIfNeeded();
 
         addAssetsFromStack(stackName);

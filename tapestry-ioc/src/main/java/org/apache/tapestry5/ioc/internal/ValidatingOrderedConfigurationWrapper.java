@@ -19,7 +19,7 @@ import java.util.Map;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.def.ContributionDef;
-import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.Orderer;
 
 /**
@@ -62,8 +62,7 @@ public class ValidatingOrderedConfigurationWrapper<T> extends AbstractConfigurat
 
     public void override(String id, T object, String... constraints)
     {
-        Defense.notBlank(id, "id");
-
+        assert InternalUtils.isNonBlank(id);
         checkValid(object);
 
         OrderedConfigurationOverride<T> existing = overrides.get(id);

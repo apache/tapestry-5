@@ -40,7 +40,6 @@ import org.apache.tapestry5.ioc.internal.services.PerthreadManagerImpl;
 import org.apache.tapestry5.ioc.internal.services.RegistryShutdownHubImpl;
 import org.apache.tapestry5.ioc.internal.services.ServiceMessages;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InjectionResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.MapInjectionResources;
@@ -52,6 +51,7 @@ import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.UpdateListenerHub;
 import org.slf4j.Logger;
 
+@SuppressWarnings("all")
 public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyProvider
 {
     private static final String SYMBOL_SOURCE_SERVICE_ID = "SymbolSource";
@@ -955,8 +955,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     public <T> T autobuild(final Class<T> clazz)
     {
-        Defense.notNull(clazz, "clazz");
-
+        assert clazz != null;
         final Constructor constructor = InternalUtils.findAutobuildConstructor(clazz);
 
         if (constructor == null)
@@ -995,12 +994,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     public <T> T proxy(Class<T> interfaceClass, Class<? extends T> implementationClass, ObjectLocator locator)
     {
-        Defense.notNull(interfaceClass, "interfaceClass");
-        Defense.notNull(implementationClass, "implementationClass");
-
-        // TODO: Check really an interface
-        // TODO: Check impl class extends interfaceClass and is concrete
-
+        assert interfaceClass != null;
+        assert implementationClass != null;
         if (InternalUtils.isLocalFile(implementationClass))
             return createReloadingProxy(interfaceClass, implementationClass, locator);
 

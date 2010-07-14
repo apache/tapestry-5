@@ -14,7 +14,18 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.*;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Set;
+
+import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.ScopeConstants;
+import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.ServiceBindingOptions;
+import org.apache.tapestry5.ioc.ServiceBuilder;
+import org.apache.tapestry5.ioc.ServiceBuilderResources;
 import org.apache.tapestry5.ioc.annotations.EagerLoad;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
@@ -22,17 +33,11 @@ import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.annotations.ServiceId;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Set;
-
+@SuppressWarnings("all")
 public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 {
     private final OneShotLock lock = new OneShotLock();
@@ -194,9 +199,8 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     public <T> ServiceBindingOptions bind(Class<T> serviceInterface, final ServiceBuilder<T> builder)
     {
-        Defense.notNull(serviceInterface, "serviceInterface");
-        Defense.notNull(builder, "builder");
-
+        assert serviceInterface != null;
+        assert builder != null;
         lock.check();
 
         flush();
@@ -230,9 +234,8 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     public <T> ServiceBindingOptions bind(Class<T> serviceInterface, Class<? extends T> serviceImplementation)
     {
-        Defense.notNull(serviceInterface, "serviceInterface");
-        Defense.notNull(serviceImplementation, "serviceImplementation");
-
+        assert serviceInterface != null;
+        assert serviceImplementation != null;
         lock.check();
 
         flush();
@@ -302,8 +305,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     public ServiceBindingOptions withId(String id)
     {
-        Defense.notBlank(id, "id");
-
+        assert InternalUtils.isNonBlank(id);
         lock.check();
 
         serviceId = id;
@@ -313,8 +315,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     public ServiceBindingOptions scope(String scope)
     {
-        Defense.notBlank(scope, "scope");
-
+        assert InternalUtils.isNonBlank(scope);
         lock.check();
 
         this.scope = scope;

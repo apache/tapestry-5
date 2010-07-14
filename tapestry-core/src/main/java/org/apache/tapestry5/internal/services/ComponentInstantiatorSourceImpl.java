@@ -14,7 +14,20 @@
 
 package org.apache.tapestry5.internal.services;
 
-import javassist.*;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Map;
+import java.util.Set;
+
+import javassist.CannotCompileException;
+import javassist.ClassPath;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.Loader;
+import javassist.LoaderClassPath;
+import javassist.NotFoundException;
+import javassist.Translator;
+
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry5.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryClassPool;
@@ -22,18 +35,13 @@ import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry5.ioc.internal.services.CtClassSource;
 import org.apache.tapestry5.ioc.internal.services.CtClassSourceImpl;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.UpdateListener;
 import org.slf4j.Logger;
-
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * A wrapper around a Javassist class loader that allows certain classes to be modified as they are loaded.
@@ -335,10 +343,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     // synchronized may be overkill, but that's ok.
     public synchronized void addPackage(String packageName)
     {
-        Defense.notBlank(packageName, "packageName");
-
-        // TODO: Should we check that packages are not nested?
-
+        assert InternalUtils.isNonBlank(packageName);
         controlledPackageNames.add(packageName);
     }
 

@@ -14,13 +14,12 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Map;
+
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
 import org.apache.tapestry5.services.ComponentClassResolver;
-
-import java.util.Map;
 
 /**
  * This is the original implementation, which is built around the {@link PagePool}.
@@ -43,7 +42,7 @@ public class RequestPageCacheImpl implements RequestPageCache, ThreadCleanupList
 
     public Page get(String pageName)
     {
-        Defense.notNull(pageName, "pageName");
+        assert pageName != null;
 
         String canonicalName = resolver.canonicalizePageName(pageName);
 

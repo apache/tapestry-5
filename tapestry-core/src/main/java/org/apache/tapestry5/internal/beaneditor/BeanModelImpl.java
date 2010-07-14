@@ -25,7 +25,7 @@ import org.apache.tapestry5.internal.services.CoercingPropertyConduitWrapper;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.ioc.util.AvailableValues;
@@ -80,8 +80,7 @@ public class BeanModelImpl<T> implements BeanModel<T>
 
     private void validateNewPropertyName(String propertyName)
     {
-        Defense.notBlank(propertyName, "propertyName");
-
+        assert InternalUtils.isNonBlank(propertyName);
         if (properties.containsKey(propertyName))
             throw new RuntimeException(String.format(
                     "Bean editor model for %s already contains a property model for property '%s'.",
@@ -91,8 +90,7 @@ public class BeanModelImpl<T> implements BeanModel<T>
     public PropertyModel add(RelativePosition position, String existingPropertyName, String propertyName,
             PropertyConduit conduit)
     {
-        Defense.notNull(position, "position");
-
+        assert position != null;
         validateNewPropertyName(propertyName);
 
         // Locate the existing one.

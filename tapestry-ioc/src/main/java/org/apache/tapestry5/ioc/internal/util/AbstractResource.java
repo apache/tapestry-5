@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 The Apache Software Foundation
+// Copyright 2006, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,15 +14,13 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
-import org.apache.tapestry5.ioc.Resource;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Locale;
+
+import org.apache.tapestry5.ioc.Resource;
 
 /**
  * Abstract implementation of {@link Resource}. Subclasses must implement the abstract methods {@link Resource#toURL()}
@@ -34,7 +32,8 @@ public abstract class AbstractResource implements Resource
 
     protected AbstractResource(String path)
     {
-        this.path = notNull(path, "path");
+        assert path != null;
+        this.path = path;
     }
 
     public final String getPath()
@@ -58,8 +57,7 @@ public abstract class AbstractResource implements Resource
 
     public final Resource forFile(String relativePath)
     {
-        Defense.notNull(relativePath, "relativePath");
-
+        assert relativePath != null;
         StringBuilder builder = new StringBuilder(getFolder());
 
         for (String term : relativePath.split("/"))
@@ -109,8 +107,7 @@ public abstract class AbstractResource implements Resource
 
     public final Resource withExtension(String extension)
     {
-        notBlank(extension, "extension");
-
+        assert InternalUtils.isNonBlank(extension);
         int dotx = path.lastIndexOf('.');
 
         if (dotx < 0) return createResource(path + "." + extension);

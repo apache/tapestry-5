@@ -13,7 +13,6 @@
 // limitations under the License.
 package org.apache.tapestry5.urlrewriter;
 
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.services.DelegatingRequest;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.linktransform.LinkTransformer;
@@ -46,9 +45,8 @@ public class SimpleRequestWrapper extends DelegatingRequest
     {
 
         super(request);
-        Defense.notNull(serverName, "serverName");
-        Defense.notNull(path, "path");
-
+        assert serverName != null;
+        assert path != null;
         this.serverName = serverName;
         this.path = path;
 
@@ -65,14 +63,12 @@ public class SimpleRequestWrapper extends DelegatingRequest
      */
     public SimpleRequestWrapper(Request request, String path)
     {
-
         super(request);
+        assert request != null;
 
-        Defense.notNull(request, "request");
+        assert path != null;
+
         final String serverName = request.getServerName();
-        Defense.notNull(serverName, "serverName");
-        Defense.notNull(path, "path");
-
         this.serverName = serverName;
         this.path = path;
 

@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,17 +14,17 @@
 
 package org.apache.tapestry5.corelib.internal;
 
+import java.util.List;
+
 import org.apache.tapestry5.ComponentAction;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.ioc.Locatable;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.services.ClientBehaviorSupport;
-
-import java.util.List;
 
 /**
  * Provides support to components enclosed by a form when the form is rendering (allowing the components to registry
@@ -64,8 +64,8 @@ public class FormSupportImpl implements InternalFormSupport, Locatable
      * Full constructor (specifically constructor for render time).
      */
     public FormSupportImpl(ComponentResources resources, String clientId, ComponentActionSink actionSink,
-                           ClientBehaviorSupport clientBehaviorSupport,
-                           boolean clientValidationEnabled, IdAllocator idAllocator, String formValidationId)
+            ClientBehaviorSupport clientBehaviorSupport, boolean clientValidationEnabled, IdAllocator idAllocator,
+            String formValidationId)
     {
         this.resources = resources;
         this.clientId = clientId;
@@ -105,14 +105,18 @@ public class FormSupportImpl implements InternalFormSupport, Locatable
 
     public void defer(Runnable command)
     {
-        if (commands == null) commands = CollectionFactory.newList();
+        assert command != null;
 
-        commands.add(Defense.notNull(command, "command"));
+        if (commands == null)
+            commands = CollectionFactory.newList();
+
+        commands.add(command);
     }
 
     public void executeDeferred()
     {
-        if (commands == null) return;
+        if (commands == null)
+            return;
 
         for (Runnable r : commands)
             r.run();
@@ -132,7 +136,7 @@ public class FormSupportImpl implements InternalFormSupport, Locatable
 
     public void setEncodingType(String encodingType)
     {
-        Defense.notBlank(encodingType, "encodingType");
+        assert InternalUtils.isNonBlank(encodingType);
 
         if (this.encodingType != null && !this.encodingType.equals(encodingType))
             throw new IllegalStateException(InternalMessages.conflictingEncodingType(this.encodingType, encodingType));

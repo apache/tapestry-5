@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.internal.structure;
 
+import java.util.Locale;
+
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.internal.InternalConstants;
@@ -24,7 +26,6 @@ import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
@@ -33,8 +34,6 @@ import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ContextValueEncoder;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 import org.slf4j.Logger;
-
-import java.util.Locale;
 
 public class ComponentPageElementResourcesImpl implements ComponentPageElementResources
 {
@@ -109,8 +108,7 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
 
     public Link createPageRenderLink(Class pageClass, boolean override, Object... context)
     {
-        Defense.notNull(pageClass, "pageClass");
-
+        assert pageClass != null;
         String pageName = componentClassResolver.resolvePageClassNameToPageName(pageClass.getName());
 
         return linkSource.createPageRenderLink(pageName, override, defaulted(context));

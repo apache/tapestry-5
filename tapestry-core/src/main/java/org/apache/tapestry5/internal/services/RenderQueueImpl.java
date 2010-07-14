@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.TapestryMarkers;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.util.Stack;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
@@ -41,8 +40,7 @@ public class RenderQueueImpl implements RenderQueue
 
     public void push(RenderCommand command)
     {
-        Defense.notNull(command, "command");
-
+        assert command != null;
         queue.push(command);
     }
 
@@ -100,8 +98,7 @@ public class RenderQueueImpl implements RenderQueue
 
     public void startComponent(ComponentResources resources)
     {
-        Defense.notNull(resources, "resources");
-
+        assert resources != null;
         renderingComponents.push(resources);
     }
 

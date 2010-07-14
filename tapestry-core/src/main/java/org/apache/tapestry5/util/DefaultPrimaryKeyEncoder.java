@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 The Apache Software Foundation
+// Copyright 2007, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,15 +14,14 @@
 
 package org.apache.tapestry5.util;
 
-import org.apache.tapestry5.PrimaryKeyEncoder;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
-
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.tapestry5.PrimaryKeyEncoder;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 /**
  * A default, extensible version of {@link org.apache.tapestry5.PrimaryKeyEncoder} that is based on loading known values
@@ -74,9 +73,8 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
      */
     public final void add(K key, V value)
     {
-        Defense.notNull(key, "key");
-        Defense.notNull(value, "value");
-
+        assert key != null;
+        assert value != null;
         V existing = keyToValue.get(key);
         if (existing != null) throw new IllegalArgumentException(PublicUtilMessages.duplicateKey(key, value, existing));
 
@@ -140,8 +138,7 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
      */
     public final K toKey(V value)
     {
-        Defense.notNull(value, "value");
-
+        assert value != null;
         currentKey = valueToKey.get(value);
 
         if (currentKey == null) throw new IllegalArgumentException(PublicUtilMessages.missingValue(value, valueToKey

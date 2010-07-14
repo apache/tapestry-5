@@ -35,7 +35,6 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Orderable;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.apache.tapestry5.services.LinkCreationListener;
@@ -46,6 +45,7 @@ import org.apache.tapestry5.services.javascript.StylesheetLink;
 /**
  * Shared utility methods used by various implementation classes.
  */
+@SuppressWarnings("all")
 public class TapestryInternalUtils
 {
     private static final String SLASH = "/";
@@ -126,8 +126,7 @@ public class TapestryInternalUtils
      */
     public static OptionModel toOptionModel(String input)
     {
-        Defense.notNull(input, "input");
-
+        assert input != null;
         int equalsx = input.indexOf('=');
 
         if (equalsx < 0)
@@ -149,8 +148,7 @@ public class TapestryInternalUtils
      */
     public static List<OptionModel> toOptionModels(String input)
     {
-        Defense.notNull(input, "input");
-
+        assert input != null;
         List<OptionModel> result = CollectionFactory.newList();
 
         for (String term : input.split(","))
@@ -180,8 +178,7 @@ public class TapestryInternalUtils
      */
     public static OptionModel toOptionModel(Map.Entry input)
     {
-        Defense.notNull(input, "input");
-
+        assert input != null;
         String label = input.getValue() != null ? String.valueOf(input.getValue()) : "";
 
         return new OptionModelImpl(label, input.getKey());
@@ -196,8 +193,7 @@ public class TapestryInternalUtils
      */
     public static <K, V> List<OptionModel> toOptionModels(Map<K, V> input)
     {
-        Defense.notNull(input, "input");
-
+        assert input != null;
         List<OptionModel> result = CollectionFactory.newList();
 
         for (Map.Entry entry : input.entrySet())
@@ -241,8 +237,7 @@ public class TapestryInternalUtils
      */
     public static <E> List<OptionModel> toOptionModels(List<E> input)
     {
-        Defense.notNull(input, "input");
-
+        assert input != null;
         List<OptionModel> result = CollectionFactory.newList();
 
         for (E element : input)

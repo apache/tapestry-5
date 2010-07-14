@@ -36,7 +36,6 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.NullAnnotationProvider;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
@@ -51,6 +50,7 @@ import org.slf4j.Logger;
  * resources to the
  * component, including access to its parameters, parameter bindings, and persistent field data.
  */
+@SuppressWarnings("all")
 public class InternalComponentResourcesImpl implements InternalComponentResources
 {
     private final Page page;
@@ -490,9 +490,8 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public void storeRenderVariable(String name, Object value)
     {
-        Defense.notBlank(name, "name");
-        Defense.notNull(value, "value");
-
+        assert InternalUtils.isNonBlank(name);
+        assert value != null;
         if (!element.isRendering())
             throw new IllegalStateException(StructureMessages.renderVariableSetWhenNotRendering(getCompleteId(), name));
 

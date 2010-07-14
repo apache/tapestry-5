@@ -20,7 +20,6 @@ import java.util.Locale;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.services.PersistentFieldManager;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
@@ -86,12 +85,7 @@ public class PageImpl implements Page
 
     public ComponentPageElement getComponentElementByNestedId(String nestedId)
     {
-        Defense.notNull(nestedId, "nestedId");
-
-        // TODO: Especially with the addition of all the caseless logic, and with respect to how
-        // forms are implemented, it may be worthwhile to cache the key to element mapping. I think
-        // we're going to do it a lot!
-
+        assert nestedId != null;
         ComponentPageElement element = rootElement;
 
         if (InternalUtils.isNonBlank(nestedId))
@@ -230,8 +224,7 @@ public class PageImpl implements Page
 
     public void addResetListener(PageResetListener listener)
     {
-        Defense.notNull(listener, "listener");
-
+        assert listener != null;
         lock.check();
 
         resetListeners.add(listener);

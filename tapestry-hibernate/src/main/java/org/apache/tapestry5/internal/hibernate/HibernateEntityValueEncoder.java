@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,8 +14,9 @@
 
 package org.apache.tapestry5.internal.hibernate;
 
+import java.io.Serializable;
+
 import org.apache.tapestry5.ValueEncoder;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.PropertyAdapter;
@@ -24,8 +25,6 @@ import org.hibernate.Session;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
 import org.slf4j.Logger;
-
-import java.io.Serializable;
 
 public final class HibernateEntityValueEncoder<E> implements ValueEncoder<E>
 {
@@ -41,8 +40,8 @@ public final class HibernateEntityValueEncoder<E> implements ValueEncoder<E>
 
     private final Logger logger;
 
-    public HibernateEntityValueEncoder(Class<E> entityClass, PersistentClass persistentClass,
-            Session session, PropertyAccess propertyAccess, TypeCoercer typeCoercer, Logger logger)
+    public HibernateEntityValueEncoder(Class<E> entityClass, PersistentClass persistentClass, Session session,
+            PropertyAccess propertyAccess, TypeCoercer typeCoercer, Logger logger)
     {
         this.entityClass = entityClass;
         this.session = session;
@@ -53,8 +52,7 @@ public final class HibernateEntityValueEncoder<E> implements ValueEncoder<E>
 
         idPropertyName = property.getName();
 
-        propertyAdapter = propertyAccess.getAdapter(this.entityClass).getPropertyAdapter(
-                idPropertyName);
+        propertyAdapter = propertyAccess.getAdapter(this.entityClass).getPropertyAdapter(idPropertyName);
     }
 
     public String toClient(E value)
@@ -65,11 +63,9 @@ public final class HibernateEntityValueEncoder<E> implements ValueEncoder<E>
         Object id = propertyAdapter.get(value);
 
         if (id == null)
-            throw new IllegalStateException(
-                    String
-                            .format(
-                                    "Entity %s has an %s property of null; this probably means that it has not been persisted yet.",
-                                    value, idPropertyName));
+            throw new IllegalStateException(String.format(
+                    "Entity %s has an %s property of null; this probably means that it has not been persisted yet.",
+                    value, idPropertyName));
 
         return typeCoercer.coerce(id, String.class);
     }
@@ -90,12 +86,11 @@ public final class HibernateEntityValueEncoder<E> implements ValueEncoder<E>
         catch (Exception ex)
         {
             throw new RuntimeException(String.format(
-                    "Exception converting '%s' to instance of %s (id type for entity %s): %s",
-                    clientValue, propertyAdapter.getType().getName(), entityClass.getName(),
-                    InternalUtils.toMessage(ex)), ex);
+                    "Exception converting '%s' to instance of %s (id type for entity %s): %s", clientValue,
+                    propertyAdapter.getType().getName(), entityClass.getName(), InternalUtils.toMessage(ex)), ex);
         }
 
-        Serializable ser = Defense.cast(id, Serializable.class, "id");
+        Serializable ser = (Serializable) id;
 
         E result = (E) session.get(entityClass, ser);
 
@@ -103,8 +98,7 @@ public final class HibernateEntityValueEncoder<E> implements ValueEncoder<E>
         {
             // We don't identify the entity type in the message because the logger is based on the
             // entity type.
-            logger.error(String.format(
-                    "Unable to convert client value '%s' into an entity instance.", clientValue));
+            logger.error(String.format("Unable to convert client value '%s' into an entity instance.", clientValue));
         }
 
         return result;

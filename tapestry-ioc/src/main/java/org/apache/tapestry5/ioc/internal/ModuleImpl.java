@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,7 +47,6 @@ import org.apache.tapestry5.ioc.def.StartupDef;
 import org.apache.tapestry5.ioc.internal.services.JustInTimeObjectCreator;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.ConcurrentBarrier;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InjectionResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.MapInjectionResources;
@@ -58,6 +57,7 @@ import org.apache.tapestry5.ioc.services.MethodSignature;
 import org.apache.tapestry5.ioc.services.Status;
 import org.slf4j.Logger;
 
+@SuppressWarnings("all")
 public class ModuleImpl implements Module
 {
     private final InternalRegistry registry;
@@ -114,10 +114,8 @@ public class ModuleImpl implements Module
 
     public <T> T getService(String serviceId, Class<T> serviceInterface)
     {
-        Defense.notBlank(serviceId, "serviceId");
-        Defense.notNull(serviceInterface, "serviceInterface");
-        // module may be null.
-
+        assert InternalUtils.isNonBlank(serviceId);
+        assert serviceInterface != null;
         ServiceDef2 def = getServiceDef(serviceId);
 
         // RegistryImpl should already have checked that the service exists.
@@ -169,8 +167,7 @@ public class ModuleImpl implements Module
     @SuppressWarnings("unchecked")
     public Collection<String> findServiceIdsForInterface(Class serviceInterface)
     {
-        Defense.notNull(serviceInterface, "serviceInterface");
-
+        assert serviceInterface != null;
         Collection<String> result = CollectionFactory.newList();
 
         for (ServiceDef2 def : serviceDefs.values())

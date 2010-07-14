@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,15 +14,20 @@
 
 package org.apache.tapestry5.dom;
 
+import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.util.PrintOutCollector;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.Stack;
-
-import java.io.PrintWriter;
-import java.util.*;
 
 /**
  * An element that will render with a begin tag and attributes, a body, and an end tag. Also acts as a factory for
@@ -117,8 +122,7 @@ public final class Element extends Node
      */
     public Element attribute(String namespace, String name, String value)
     {
-        Defense.notBlank(name, "name");
-
+        assert InternalUtils.isNonBlank(name);
         updateAttribute(namespace, name, value, false);
 
         return this;
@@ -211,8 +215,7 @@ public final class Element extends Node
      */
     public Element element(String name, String... namesAndValues)
     {
-        Defense.notBlank(name, "name");
-
+        assert InternalUtils.isNonBlank(name);
         Element child = newChild(new Element(this, null, name));
 
         child.attributes(namesAndValues);
@@ -229,15 +232,13 @@ public final class Element extends Node
      */
     public Element elementNS(String namespace, String name)
     {
-        Defense.notBlank(name, "name");
-
+        assert InternalUtils.isNonBlank(name);
         return newChild(new Element(this, namespace, name));
     }
 
     public Element elementAt(int index, String name, String... namesAndValues)
     {
-        Defense.notBlank(name, "name");
-
+        assert InternalUtils.isNonBlank(name);
         Element child = new Element(this, null, name);
         child.attributes(namesAndValues);
 
@@ -399,8 +400,7 @@ public final class Element extends Node
      */
     public Element getElementById(String id)
     {
-        Defense.notNull(id, "id");
-
+        assert id != null;
         LinkedList<Element> queue = CollectionFactory.newLinkedList();
 
         queue.add(this);
@@ -434,8 +434,7 @@ public final class Element extends Node
      */
     public Element find(String path)
     {
-        Defense.notBlank(path, "path");
-
+        assert InternalUtils.isNonBlank(path);
         Element search = this;
 
         for (String name : TapestryInternalUtils.splitPath(path))
@@ -564,12 +563,8 @@ public final class Element extends Node
      */
     public Element defineNamespace(String namespace, String namespacePrefix)
     {
-        Defense.notNull(namespace, "namespace");
-        Defense.notNull(namespacePrefix, "namespacePrefix");
-
-        // Don't allow an override of the XML namespace URI, per
-        // http://www.w3.org/TR/2006/REC-xml-names-20060816/#xmlReserved
-
+        assert namespace != null;
+        assert namespacePrefix != null;
         if (namespace.equals(Document.XML_NAMESPACE_URI))
             return this;
 

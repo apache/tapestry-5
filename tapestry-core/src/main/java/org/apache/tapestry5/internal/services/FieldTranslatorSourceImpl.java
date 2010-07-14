@@ -14,8 +14,9 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ComponentResources;
+import java.util.Locale;
 
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.FieldTranslator;
 import org.apache.tapestry5.Translator;
@@ -23,15 +24,13 @@ import org.apache.tapestry5.beaneditor.Translate;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.MessageFormatter;
 import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.FieldTranslatorSource;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.TranslatorSource;
 import org.apache.tapestry5.services.ValidationMessagesSource;
 
-import java.util.Locale;
-
-@SuppressWarnings("unchecked")
+@SuppressWarnings("all")
 public class FieldTranslatorSourceImpl implements FieldTranslatorSource
 {
     private final TranslatorSource translatorSource;
@@ -50,9 +49,8 @@ public class FieldTranslatorSourceImpl implements FieldTranslatorSource
 
     public FieldTranslator createDefaultTranslator(ComponentResources resources, String parameterName)
     {
-        Defense.notNull(resources, "resources");
-        Defense.notBlank(parameterName, "parameterName");
-
+        assert resources != null;
+        assert InternalUtils.isNonBlank(parameterName);
         Field field = (Field) resources.getComponent();
         Class propertyType = resources.getBoundType(parameterName);
 
@@ -63,11 +61,10 @@ public class FieldTranslatorSourceImpl implements FieldTranslatorSource
     public FieldTranslator createDefaultTranslator(Field field, String overrideId, Messages overrideMessages,
             Locale locale, Class propertyType, AnnotationProvider propertyAnnotations)
     {
-        Defense.notNull(field, "field");
-        Defense.notBlank(overrideId, "overrideId");
-        Defense.notNull(overrideMessages, "overrideMessages");
-        Defense.notNull(locale, "locale");
-
+        assert field != null;
+        assert overrideMessages != null;
+        assert locale != null;
+        assert InternalUtils.isNonBlank(overrideId);
         if (propertyType == null)
             return null;
 
@@ -102,9 +99,8 @@ public class FieldTranslatorSourceImpl implements FieldTranslatorSource
 
     public FieldTranslator createTranslator(ComponentResources resources, String translatorName)
     {
-        Defense.notNull(resources, "resources");
-        Defense.notBlank(translatorName, "translatorName");
-
+        assert resources != null;
+        assert InternalUtils.isNonBlank(translatorName);
         Field field = (Field) resources.getComponent();
 
         Translator translator = translatorSource.get(translatorName);

@@ -15,7 +15,6 @@
 package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 public abstract class AbstractConfigurationImpl<T>
@@ -32,7 +31,7 @@ public abstract class AbstractConfigurationImpl<T>
 
     protected T instantiate(Class<? extends T> clazz)
     {
-        Defense.notNull(clazz, "clazz");
+        assert clazz != null;
 
         if (contributionType.isInterface() && InternalUtils.isLocalFile(clazz))
             return locator.proxy(contributionType, clazz);

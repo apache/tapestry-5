@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import java.util.Set;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.model.ComponentModel;
@@ -113,11 +112,8 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     public void addParameter(String name, boolean required, boolean allowNull,
             String defaultBindingPrefix, boolean cached)
     {
-        Defense.notBlank(name, "name");
-        Defense.notBlank(defaultBindingPrefix, "defaultBindingPrefix");
-
-        // TODO: Check for conflict with base model
-
+        assert InternalUtils.isNonBlank(name);
+        assert InternalUtils.isNonBlank(defaultBindingPrefix);
         if (parameters == null)
             parameters = CollectionFactory.newCaseInsensitiveMap();
 
@@ -310,9 +306,8 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
     public void setMeta(String key, String value)
     {
-        Defense.notBlank(key, "key");
-        Defense.notBlank(value, "value");
-
+        assert InternalUtils.isNonBlank(key);
+        assert InternalUtils.isNonBlank(value);
         if (metaData == null)
             metaData = CollectionFactory.newCaseInsensitiveMap();
 
@@ -323,8 +318,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
     public void addRenderPhase(Class renderPhase)
     {
-        Defense.notNull(renderPhase, "renderPhase");
-
+        assert renderPhase != null;
         if (handledRenderPhases == null)
             handledRenderPhases = CollectionFactory.newSet();
 

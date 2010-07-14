@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newStack;
-import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.ioc.util.Stack;
-import org.apache.tapestry5.services.Heartbeat;
 
 import java.util.List;
+
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.util.Stack;
+import org.apache.tapestry5.services.Heartbeat;
 
 public class HeartbeatImpl implements Heartbeat
 {
@@ -35,7 +35,7 @@ public class HeartbeatImpl implements Heartbeat
 
     public void defer(Runnable command)
     {
-        Defense.notNull(command, "command");
+        assert command != null;
 
         stack.peek().add(command);
 

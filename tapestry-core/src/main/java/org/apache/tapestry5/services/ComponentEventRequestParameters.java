@@ -16,7 +16,7 @@ package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 /**
  * Encapsulates all the information that may be provided in a component event request URL.
@@ -30,13 +30,12 @@ public final class ComponentEventRequestParameters
                                            String eventType, EventContext pageActivationContext,
                                            EventContext eventContext)
     {
-        Defense.notBlank(activePageName, "activePageName");
-        Defense.notBlank(containingPageName, "containingPageName");
-        Defense.notNull(nestedComponentId, "nestedComponentId");
-        Defense.notBlank(eventType, "eventType");
-        Defense.notNull(pageActivationContext, "pageActivationContext");
-        Defense.notNull(eventContext, "eventContext");
-
+        assert InternalUtils.isNonBlank(activePageName);
+        assert InternalUtils.isNonBlank(containingPageName);
+        assert nestedComponentId != null;
+        assert InternalUtils.isNonBlank(eventType);
+        assert pageActivationContext != null;
+        assert eventContext != null;
         this.activePageName = activePageName;
         this.containingPageName = containingPageName;
         this.nestedComponentId = nestedComponentId;

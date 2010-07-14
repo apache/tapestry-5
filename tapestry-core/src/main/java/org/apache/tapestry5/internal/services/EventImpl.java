@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentEventCallback;
 import org.apache.tapestry5.TapestryMarkers;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry5.runtime.Event;
 import org.slf4j.Logger;
 
+@SuppressWarnings("all")
 public class EventImpl implements Event
 {
     private boolean aborted;
@@ -38,7 +38,8 @@ public class EventImpl implements Event
      */
     public EventImpl(ComponentEventCallback handler, Logger logger)
     {
-        this.handler = notNull(handler, "handler");
+        assert handler != null;
+        this.handler = handler;
         this.logger = logger;
 
         // TAP5-471: Thousands of calls to isDebugEnabled() do add up

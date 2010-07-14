@@ -159,7 +159,7 @@ public class DOMTest extends InternalBaseTestCase
         assertEquals(d.toString(), readFile("nested_elements.txt"));
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test(expectedExceptions = AssertionError.class)
     public void attribute_names_may_not_be_blank()
     {
         Document d = new Document();

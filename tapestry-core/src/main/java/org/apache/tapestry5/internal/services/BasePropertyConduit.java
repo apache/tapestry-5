@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,13 +19,14 @@ import java.lang.annotation.Annotation;
 import org.apache.tapestry5.internal.InternalPropertyConduit;
 import org.apache.tapestry5.internal.util.IntegerRange;
 import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 
 /**
  * Base class for {@link org.apache.tapestry5.PropertyConduit} instances created by the {@link
  * org.apache.tapestry5.services.PropertyConduitSource}.
  */
+@SuppressWarnings("all")
 public abstract class BasePropertyConduit implements InternalPropertyConduit
 {
     private final Class propertyType;
@@ -41,11 +42,10 @@ public abstract class BasePropertyConduit implements InternalPropertyConduit
     public BasePropertyConduit(Class propertyType, String propertyName, AnnotationProvider annotationProvider, String description,
                                TypeCoercer typeCoercer)
     {
-        Defense.notNull(propertyType, "propertyType");
-        Defense.notNull(annotationProvider, "annotationProvider");
-        Defense.notBlank(description, "description");
-        Defense.notNull(typeCoercer, "typeCoercer");
-
+        assert propertyType != null;
+        assert annotationProvider != null;
+        assert typeCoercer != null;
+        assert InternalUtils.isNonBlank(description);
         this.propertyType = propertyType;
         this.propertyName = propertyName;
         this.annotationProvider = annotationProvider;

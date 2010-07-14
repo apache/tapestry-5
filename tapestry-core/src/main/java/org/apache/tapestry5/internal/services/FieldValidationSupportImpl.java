@@ -1,10 +1,10 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,14 +14,21 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.*;
+import org.apache.tapestry5.ComponentEventCallback;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.FieldTranslator;
+import org.apache.tapestry5.FieldValidationSupport;
+import org.apache.tapestry5.FieldValidator;
+import org.apache.tapestry5.NullFieldStrategy;
+import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.corelib.internal.InternalMessages;
 import org.apache.tapestry5.internal.util.Holder;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.ioc.util.ExceptionUtils;
 
+@SuppressWarnings("all")
 public class FieldValidationSupportImpl implements FieldValidationSupport
 {
     private final TypeCoercer typeCoercer;
@@ -31,14 +38,12 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
         this.typeCoercer = typeCoercer;
     }
 
-    @SuppressWarnings({"unchecked"})
     public String toClient(Object value, ComponentResources componentResources, FieldTranslator<Object> translator,
-                           NullFieldStrategy nullFieldStrategy)
+            NullFieldStrategy nullFieldStrategy)
     {
-        Defense.notNull(componentResources, "componentResources");
-        Defense.notNull(translator, "translator");
-        Defense.notNull(nullFieldStrategy, "nullFieldStrategy");
-
+        assert componentResources != null;
+        assert translator != null;
+        assert nullFieldStrategy != null;
         final Holder<String> resultHolder = Holder.create();
 
         ComponentEventCallback callback = new ComponentEventCallback()
@@ -57,9 +62,11 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
             }
         };
 
-        componentResources.triggerEvent(EventConstants.TO_CLIENT, new Object[] {value}, callback);
+        componentResources.triggerEvent(EventConstants.TO_CLIENT, new Object[]
+        { value }, callback);
 
-        if (resultHolder.hasValue()) return resultHolder.get();
+        if (resultHolder.hasValue())
+            return resultHolder.get();
 
         Object effectiveValue = value;
 
@@ -69,7 +76,8 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
 
             // Don't try to coerce or translate null.
 
-            if (effectiveValue == null) return null;
+            if (effectiveValue == null)
+                return null;
         }
 
         // And now, whether its a value from a bound property, or from the null field strategy,
@@ -81,21 +89,19 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
     }
 
     public Object parseClient(String clientValue, ComponentResources componentResources,
-                              FieldTranslator<Object> translator,
-                              NullFieldStrategy nullFieldStrategy)
-            throws ValidationException
+            FieldTranslator<Object> translator, NullFieldStrategy nullFieldStrategy) throws ValidationException
     {
-        Defense.notNull(componentResources, "componentResources");
-        Defense.notNull(translator, "translator");
-        Defense.notNull(nullFieldStrategy, "nullFieldStrategy");
-
+        assert componentResources != null;
+        assert translator != null;
+        assert nullFieldStrategy != null;
         String effectiveValue = clientValue;
 
         if (InternalUtils.isBlank(effectiveValue))
         {
             effectiveValue = nullFieldStrategy.replaceFromClient();
 
-            if (effectiveValue == null) return null;
+            if (effectiveValue == null)
+                return null;
         }
 
         final Holder<Object> resultHolder = Holder.create();
@@ -111,14 +117,16 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
 
         try
         {
-            componentResources.triggerEvent(EventConstants.PARSE_CLIENT, new Object[] {effectiveValue}, callback);
+            componentResources.triggerEvent(EventConstants.PARSE_CLIENT, new Object[]
+            { effectiveValue }, callback);
         }
         catch (RuntimeException ex)
         {
             rethrowValidationException(ex);
         }
 
-        if (resultHolder.hasValue()) return resultHolder.get();
+        if (resultHolder.hasValue())
+            return resultHolder.get();
 
         return translator.parse(effectiveValue);
     }
@@ -126,31 +134,35 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
     /**
      * Checks for a {@link org.apache.tapestry5.ValidationException} inside the outer exception and throws that,
      * otherwise rethrows the runtime exception.
-     *
-     * @param outerException initially caught exception
-     * @throws ValidationException if found
+     * 
+     * @param outerException
+     *            initially caught exception
+     * @throws ValidationException
+     *             if found
      */
     private void rethrowValidationException(RuntimeException outerException) throws ValidationException
     {
         ValidationException ve = ExceptionUtils.findCause(outerException, ValidationException.class);
 
-        if (ve != null) throw ve;
+        if (ve != null)
+            throw ve;
 
         throw outerException;
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings(
+    { "unchecked" })
     public void validate(Object value, ComponentResources componentResources, FieldValidator validator)
             throws ValidationException
     {
-        Defense.notNull(componentResources, "componentResources");
-        Defense.notNull(validator, "validator");
-
+        assert componentResources != null;
+        assert validator != null;
         validator.validate(value);
 
         try
         {
-            componentResources.triggerEvent(EventConstants.VALIDATE, new Object[] {value}, null);
+            componentResources.triggerEvent(EventConstants.VALIDATE, new Object[]
+            { value }, null);
         }
         catch (RuntimeException ex)
         {

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.FieldFocusPriority;
 import org.apache.tapestry5.RenderSupport;
-import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
@@ -70,7 +70,7 @@ public class RenderSupportImpl implements RenderSupport
     {
         for (Asset asset : scriptAssets)
         {
-            Defense.notNull(asset, "scriptAsset");
+            assert asset != null;
 
             javascriptSupport.importJavascriptLibrary(asset);
         }
@@ -131,9 +131,8 @@ public class RenderSupportImpl implements RenderSupport
 
     public void autofocus(FieldFocusPriority priority, String fieldId)
     {
-        Defense.notNull(priority, "priority");
-        Defense.notBlank(fieldId, "fieldId");
-
+        assert priority != null;
+        assert InternalUtils.isNonBlank(fieldId);
         if (focusFieldId == null || priority.compareTo(focusPriority) > 0)
         {
             this.focusPriority = priority;
@@ -149,8 +148,8 @@ public class RenderSupportImpl implements RenderSupport
      */
     private void addInitFunctionInvocation(String functionName, Object parameters)
     {
-        Defense.notBlank(functionName, "functionName");
-        Defense.notNull(parameters, "parameters");
+        assert InternalUtils.isNonBlank(functionName);
+        assert parameters != null;
 
         JSONArray list = new JSONArray().put(parameters);
         JSONObject wrapper = new JSONObject().put(functionName, list);

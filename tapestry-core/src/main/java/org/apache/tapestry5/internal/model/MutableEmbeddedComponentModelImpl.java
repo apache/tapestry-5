@@ -1,10 +1,10 @@
-// Copyright 2006, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,16 +14,15 @@
 
 package org.apache.tapestry5.internal.model;
 
-import org.apache.tapestry5.ioc.BaseLocatable;
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.model.MutableEmbeddedComponentModel;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.tapestry5.ioc.BaseLocatable;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.model.MutableEmbeddedComponentModel;
 
 public class MutableEmbeddedComponentModelImpl extends BaseLocatable implements MutableEmbeddedComponentModel
 {
@@ -46,10 +45,10 @@ public class MutableEmbeddedComponentModelImpl extends BaseLocatable implements 
      */
     private List<String> mixinClassNames;
 
-    private Map<String,String[]> mixinConstraints;
+    private Map<String, String[]> mixinConstraints;
 
     public MutableEmbeddedComponentModelImpl(String id, String componentType, String componentClassName,
-                                             String declaredClass, boolean inheritInformalParameters, Location location)
+            String declaredClass, boolean inheritInformalParameters, Location location)
     {
         super(location);
 
@@ -69,12 +68,13 @@ public class MutableEmbeddedComponentModelImpl extends BaseLocatable implements 
     public String toString()
     {
         return String.format("EmbeddedComponentModel[id=%s type=%s class=%s inheritInformals=%s]", id, componentType,
-                             componentClassName, inheritInformalParameters);
+                componentClassName, inheritInformalParameters);
     }
 
     public void addParameter(String name, String value)
     {
-        if (parameters == null) parameters = CollectionFactory.newMap();
+        if (parameters == null)
+            parameters = CollectionFactory.newMap();
         else if (parameters.containsKey(name))
             throw new IllegalArgumentException(ModelMessages.duplicateParameterValue(name, id, declaredClass));
 
@@ -103,7 +103,8 @@ public class MutableEmbeddedComponentModelImpl extends BaseLocatable implements 
 
     public List<String> getMixinClassNames()
     {
-        if (mixinClassNames == null) return Collections.emptyList();
+        if (mixinClassNames == null)
+            return Collections.emptyList();
 
         return Collections.unmodifiableList(mixinClassNames);
     }
@@ -117,12 +118,12 @@ public class MutableEmbeddedComponentModelImpl extends BaseLocatable implements 
         }
         else
         {
-            if (mixinClassNames.contains(mixinClassName)) throw new IllegalArgumentException(ModelMessages
-                    .duplicateMixin(mixinClassName, id));
+            if (mixinClassNames.contains(mixinClassName))
+                throw new IllegalArgumentException(ModelMessages.duplicateMixin(mixinClassName, id));
         }
 
         mixinClassNames.add(mixinClassName);
-        mixinConstraints.put(mixinClassName,constraints);
+        mixinConstraints.put(mixinClassName, constraints);
     }
 
     public boolean getInheritInformalParameters()
@@ -132,8 +133,7 @@ public class MutableEmbeddedComponentModelImpl extends BaseLocatable implements 
 
     public void setPublishedParameters(List<String> parameterNames)
     {
-        Defense.notNull(parameterNames, "parameterNames");
-
+        assert parameterNames != null;
         publishedParameters = parameterNames;
     }
 
@@ -144,6 +144,6 @@ public class MutableEmbeddedComponentModelImpl extends BaseLocatable implements 
 
     public String[] getConstraintsForMixin(String mixinClassName)
     {
-        return InternalUtils.get(mixinConstraints,mixinClassName);
+        return InternalUtils.get(mixinConstraints, mixinClassName);
     }
 }

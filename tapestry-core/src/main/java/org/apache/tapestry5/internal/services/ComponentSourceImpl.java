@@ -17,12 +17,13 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
-import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentSource;
 import org.apache.tapestry5.services.RequestGlobals;
 
+@SuppressWarnings("all")
 public class ComponentSourceImpl implements ComponentSource
 {
     private final RequestPageCache pageCache;
@@ -40,7 +41,7 @@ public class ComponentSourceImpl implements ComponentSource
 
     public Component getComponent(String completeId)
     {
-        Defense.notBlank(completeId, "completeId");
+        assert InternalUtils.isNonBlank(completeId);
 
         int colonx = completeId.indexOf(':');
 
@@ -77,7 +78,7 @@ public class ComponentSourceImpl implements ComponentSource
 
     public Component getPage(String pageName)
     {
-        Defense.notNull(pageName, "pageName");
+        assert pageName != null;
 
         Page page = pageCache.get(pageName);
 
@@ -86,7 +87,7 @@ public class ComponentSourceImpl implements ComponentSource
 
     public Component getPage(Class pageClass)
     {
-        Defense.notNull(pageClass, "pageClass");
+        assert pageClass != null;
 
         String pageName = resolver.resolvePageClassNameToPageName(pageClass.getName());
 

@@ -31,7 +31,6 @@ import org.apache.tapestry5.internal.test.TestableRequest;
 import org.apache.tapestry5.internal.test.TestableResponse;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.def.ModuleDef;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.services.ApplicationGlobals;
@@ -48,6 +47,7 @@ import org.slf4j.LoggerFactory;
  * can directly debug
  * into your code in your IDE.
  */
+@SuppressWarnings("all")
 public class PageTester
 {
     private final Logger logger = LoggerFactory.getLogger(PageTester.class);
@@ -57,8 +57,6 @@ public class PageTester
     private final TestableRequest request;
 
     private final TestableResponse response;
-
-    // private final StrategyRegistry<ComponentInvoker> invokerRegistry;
 
     private final RequestHandler requestHandler;
 
@@ -97,15 +95,13 @@ public class PageTester
      * @param moduleClasses
      *            Classes of additional modules to load
      */
-    @SuppressWarnings("unchecked")
     public PageTester(String appPackage, String appName, String contextPath, Class... moduleClasses)
     {
-        Defense.notBlank(appPackage, "appPackage");
-        Defense.notNull(appName, "appName");
-        Defense.notBlank(contextPath, "contextPath");
+        assert InternalUtils.isNonBlank(appPackage);
+        assert appName != null;
+        assert InternalUtils.isNonBlank(contextPath);
 
-        SymbolProvider provider = new SingleKeySymbolProvider(
-                InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, appPackage);
+        SymbolProvider provider = new SingleKeySymbolProvider(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, appPackage);
 
         TapestryAppInitializer initializer = new TapestryAppInitializer(logger, provider, appName,
                 PageTesterModule.TEST_MODE, null);
@@ -145,7 +141,7 @@ public class PageTester
     public void shutdown()
     {
         registry.cleanupThread();
-        
+
         registry.shutdown();
     }
 
@@ -203,8 +199,8 @@ public class PageTester
                 Document result = response.getRenderedDocument();
 
                 if (result == null)
-                    throw new RuntimeException(String.format(
-                            "Render of page '%s' did not result in a Document.", pageName));
+                    throw new RuntimeException(String.format("Render of page '%s' did not result in a Document.",
+                            pageName));
 
                 return result;
             }
@@ -230,7 +226,7 @@ public class PageTester
 
     public Document clickLink(Element linkElement)
     {
-        Defense.notNull(linkElement, "link");
+        assert linkElement != null;
 
         validateElementName(linkElement, "a");
 
@@ -246,9 +242,8 @@ public class PageTester
         String result = element.getAttribute(attributeName);
 
         if (InternalUtils.isBlank(result))
-            throw new RuntimeException(String.format(
-                    "The %s attribute of the <%s> element was blank or missing.", attributeName,
-                    element.getName()));
+            throw new RuntimeException(String.format("The %s attribute of the <%s> element was blank or missing.",
+                    attributeName, element.getName()));
 
         return result;
     }
@@ -256,8 +251,8 @@ public class PageTester
     private void validateElementName(Element element, String expectedElementName)
     {
         if (!element.getName().equalsIgnoreCase(expectedElementName))
-            throw new RuntimeException(String.format("The element must be type '%s', not '%s'.",
-                    expectedElementName, element.getName()));
+            throw new RuntimeException(String.format("The element must be type '%s', not '%s'.", expectedElementName,
+                    element.getName()));
     }
 
     private Document runComponentEventRequest()
@@ -271,9 +266,8 @@ public class PageTester
                 boolean handled = requestHandler.service(request, response);
 
                 if (!handled)
-                    throw new RuntimeException(String
-                            .format("Request for path '%s' was not handled by Tapestry.", request
-                                    .getPath()));
+                    throw new RuntimeException(String.format("Request for path '%s' was not handled by Tapestry.",
+                            request.getPath()));
 
                 Link link = response.getRedirectLink();
 
@@ -286,8 +280,8 @@ public class PageTester
                 Document result = response.getRenderedDocument();
 
                 if (result == null)
-                    throw new RuntimeException(String.format(
-                            "Render request '%s' did not result in a Document.", request.getPath()));
+                    throw new RuntimeException(String.format("Render request '%s' did not result in a Document.",
+                            request.getPath()));
 
                 return result;
             }
@@ -346,8 +340,8 @@ public class PageTester
             return path;
 
         if (!path.startsWith(contextPath))
-            throw new RuntimeException(String.format(
-                    "Path '%s' does not start with context path '%s'.", path, contextPath));
+            throw new RuntimeException(String.format("Path '%s' does not start with context path '%s'.", path,
+                    contextPath));
 
         return path.substring(contextPath.length());
     }
@@ -365,7 +359,7 @@ public class PageTester
      */
     public Document submitForm(Element form, Map<String, String> parameters)
     {
-        Defense.notNull(form, "form");
+        assert form != null;
 
         validateElementName(form, "form");
 
@@ -471,7 +465,7 @@ public class PageTester
      */
     public Document clickSubmit(Element submitButton, Map<String, String> fieldValues)
     {
-        Defense.notNull(submitButton, "submitButton");
+        assert submitButton != null;
 
         assertIsSubmit(submitButton);
 
@@ -523,8 +517,7 @@ public class PageTester
             e = e.getContainer();
         }
 
-        throw new RuntimeException(String.format(
-                "Could not locate an ancestor element of type '%s'.", ancestorName));
+        throw new RuntimeException(String.format("Could not locate an ancestor element of type '%s'.", ancestorName));
 
     }
 

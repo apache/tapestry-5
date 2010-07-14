@@ -16,7 +16,7 @@ package org.apache.tapestry5.services.meta;
 
 import java.lang.annotation.Annotation;
 
-import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.model.MutableComponentModel;
 
 /**
@@ -39,8 +39,10 @@ public class FixedExtractor<T extends Annotation> implements MetaDataExtractor<T
 
     public FixedExtractor(String key, String value)
     {
-        this.key = Defense.notBlank(key, "key");
-        this.value = Defense.notBlank(value, "value");
+        assert InternalUtils.isNonBlank(key);
+        this.key = key;
+        assert InternalUtils.isNonBlank(value);
+        this.value = value;
     }
 
     public void extractMetaData(MutableComponentModel model, T annotation)

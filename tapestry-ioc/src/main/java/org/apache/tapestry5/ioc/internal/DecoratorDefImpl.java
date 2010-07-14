@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,14 +14,14 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import java.lang.reflect.Method;
+
 import org.apache.tapestry5.ioc.ModuleBuilderSource;
 import org.apache.tapestry5.ioc.ServiceDecorator;
 import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
-import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
-
-import java.lang.reflect.Method;
 
 public class DecoratorDefImpl extends AbstractServiceInstrumenter implements DecoratorDef
 {
@@ -32,8 +32,9 @@ public class DecoratorDefImpl extends AbstractServiceInstrumenter implements Dec
     )
     {
         super(decoratorMethod, patterns, constraints, classFactory);
+        assert InternalUtils.isNonBlank(decoratorId);
 
-        this.decoratorId = Defense.notBlank(decoratorId, "decoratorId");
+        this.decoratorId = decoratorId;
 
 
     }

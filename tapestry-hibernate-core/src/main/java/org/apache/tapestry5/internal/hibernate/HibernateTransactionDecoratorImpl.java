@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@ package org.apache.tapestry5.internal.hibernate;
 
 import org.apache.tapestry5.hibernate.HibernateTransactionAdvisor;
 import org.apache.tapestry5.hibernate.HibernateTransactionDecorator;
-import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.AspectDecorator;
 import org.apache.tapestry5.ioc.services.AspectInterceptorBuilder;
 
@@ -34,10 +34,9 @@ public class HibernateTransactionDecoratorImpl implements HibernateTransactionDe
 
     public <T> T build(Class<T> serviceInterface, T delegate, String serviceId)
     {
-        Defense.notNull(serviceInterface, "serviceInterface");
-        Defense.notNull(delegate, "delegate");
-        Defense.notBlank(serviceId, "serviceId");
-
+        assert serviceInterface != null;
+        assert delegate != null;
+        assert InternalUtils.isNonBlank(serviceId);
         String description = String.format("<Hibernate Transaction interceptor for %s(%s)>",
                                            serviceId,
                                            serviceInterface.getName());

@@ -14,21 +14,20 @@
 
 package org.apache.tapestry5.internal.structure;
 
+import java.util.Locale;
+import java.util.Map;
+
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.internal.services.LinkSource;
 import org.apache.tapestry5.internal.services.RequestPageCache;
 import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ContextValueEncoder;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
-
-import java.util.Locale;
-import java.util.Map;
 
 public class ComponentPageElementResourcesSourceImpl implements ComponentPageElementResourcesSource
 {
@@ -73,8 +72,7 @@ public class ComponentPageElementResourcesSourceImpl implements ComponentPageEle
 
     public ComponentPageElementResources get(Locale locale)
     {
-        Defense.notNull(locale, "locale");
-
+        assert locale != null;
         ComponentPageElementResources result = cache.get(locale);
 
         if (result == null)

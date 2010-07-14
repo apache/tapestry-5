@@ -15,7 +15,6 @@
 package org.apache.tapestry5.ioc.internal.util;
 
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -29,37 +28,13 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
-import org.apache.tapestry5.ioc.AdvisorDef;
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.Configuration;
-import org.apache.tapestry5.ioc.Invokable;
-import org.apache.tapestry5.ioc.Locatable;
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.ModuleBuilderSource;
-import org.apache.tapestry5.ioc.ObjectCreator;
-import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
-import org.apache.tapestry5.ioc.ServiceBuilderResources;
-import org.apache.tapestry5.ioc.ServiceLifecycle;
-import org.apache.tapestry5.ioc.ServiceLifecycle2;
-import org.apache.tapestry5.ioc.ServiceResources;
+import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.InjectResource;
 import org.apache.tapestry5.ioc.annotations.InjectService;
@@ -77,11 +52,9 @@ import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.Coercion;
 
 /**
- * Utilities used within various internal implemenations of Tapestry IOC and the rest of the tapestry-core framework.
+ * Utilities used within various internal implementations of Tapestry IOC and the rest of the tapestry-core framework.
  */
-
-@SuppressWarnings(
-{ "JavaDoc", "unchecked" })
+@SuppressWarnings("all")
 public class InternalUtils
 {
     /**
@@ -161,8 +134,7 @@ public class InternalUtils
      */
     public static String stripMemberName(String memberName)
     {
-        Defense.notBlank(memberName, "memberName");
-
+        assert InternalUtils.isNonBlank(memberName);
         Matcher matcher = NAME_PATTERN.matcher(memberName);
 
         if (!matcher.matches())
@@ -271,8 +243,8 @@ public class InternalUtils
             InjectionResources resources, OperationTracker tracker)
     {
 
-        return calculateParameters(locator, resources, constructor.getParameterTypes(), constructor
-                .getGenericParameterTypes(), constructor.getParameterAnnotations(), tracker);
+        return calculateParameters(locator, resources, constructor.getParameterTypes(),
+                constructor.getGenericParameterTypes(), constructor.getParameterAnnotations(), tracker);
     }
 
     public static Object[] calculateParameters(final ObjectLocator locator, final InjectionResources resources,
@@ -670,8 +642,7 @@ public class InternalUtils
      */
     public static String lastTerm(String input)
     {
-        notBlank(input, "input");
-
+        assert InternalUtils.isNonBlank(input);
         int dotx = input.lastIndexOf('.');
 
         if (dotx < 0)
@@ -820,11 +791,10 @@ public class InternalUtils
 
         if (!Modifier.isPublic(constructor.getModifiers()))
             throw new IllegalArgumentException(
-                    String
-                            .format(
-                                    "Constructor %s is not public and may not be used for autobuilding an instance of the class. "
-                                            + "You should make the constructor public, or mark an alternate public constructor with the @Inject annotation.",
-                                    constructor));
+                    String.format(
+                            "Constructor %s is not public and may not be used for autobuilding an instance of the class. "
+                                    + "You should make the constructor public, or mark an alternate public constructor with the @Inject annotation.",
+                            constructor));
     }
 
     public static ServiceDef2 toServiceDef2(final ServiceDef sd)
@@ -949,7 +919,7 @@ public class InternalUtils
     public static <T extends Comparable<T>> List<T> matchAndSort(Collection<? extends T> collection,
             Predicate<T> predicate)
     {
-        Defense.notNull(predicate, "predicate");
+        assert predicate != null;
 
         List<T> result = CollectionFactory.newList();
 
@@ -1034,13 +1004,18 @@ public class InternalUtils
         return classFileURL != null && classFileURL.getProtocol().equals("file");
     }
 
+    /**
+     * Wraps a {@lihk Coercion} as a {@link Mapper}.
+     * 
+     * @since 5.2.0
+     */
     public static <S, T> Mapper<S, T> toMapper(final Coercion<S, T> coercion)
     {
-        Defense.notNull(coercion, "coercion");
-    
+        assert coercion != null;
+
         return new Mapper<S, T>()
         {
-    
+
             public T map(S value)
             {
                 return coercion.coerce(value);

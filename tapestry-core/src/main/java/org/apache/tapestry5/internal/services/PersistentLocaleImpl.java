@@ -21,7 +21,6 @@ import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.services.PersistentLocale;
 
@@ -49,8 +48,7 @@ public class PersistentLocaleImpl implements PersistentLocale
 
     public void set(Locale locale)
     {
-        Defense.notNull(locale, "locale");
-
+        assert locale != null;
         if (!localeNames.contains(locale.toString().toLowerCase()))
         {
             String message = String

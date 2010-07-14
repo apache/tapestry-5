@@ -14,22 +14,44 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.*;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.Block;
+import org.apache.tapestry5.ComponentAction;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.PropertyOverrides;
+import org.apache.tapestry5.RenderSupport;
+import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.corelib.data.GridPagerPosition;
-import org.apache.tapestry5.grid.*;
+import org.apache.tapestry5.grid.ColumnSort;
+import org.apache.tapestry5.grid.GridDataSource;
+import org.apache.tapestry5.grid.GridModel;
+import org.apache.tapestry5.grid.GridSortModel;
+import org.apache.tapestry5.grid.SortConstraint;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry5.internal.bindings.AbstractBinding;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.services.*;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.services.BeanModelSource;
+import org.apache.tapestry5.services.ClientBehaviorSupport;
+import org.apache.tapestry5.services.ComponentDefaultProvider;
+import org.apache.tapestry5.services.ComponentEventResultProcessor;
+import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.Request;
 
 /**
  * A grid presents tabular data. It is a composite component, created in terms of several sub-components. The
@@ -321,8 +343,7 @@ public class Grid implements GridModel
 
         public void updateSort(String columnId)
         {
-            Defense.notBlank(columnId, "columnId");
-
+            assert InternalUtils.isNonBlank(columnId);
             if (columnId.equals(sortColumnId))
             {
                 setSortAscending(!getSortAscending());

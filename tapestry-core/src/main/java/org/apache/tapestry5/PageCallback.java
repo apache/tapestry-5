@@ -18,7 +18,7 @@ import java.io.Serializable;
 
 import org.apache.tapestry5.annotations.ImmutableSessionPersistedObject;
 import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 
 /**
@@ -42,8 +42,10 @@ public class PageCallback implements Serializable
 
     public PageCallback(String pageName, String[] activationContext)
     {
-        this.pageName = Defense.notBlank(pageName, "pageName");
-        this.activationContext = Defense.notNull(activationContext, "activationContext");
+        assert InternalUtils.isNonBlank(pageName);
+        this.pageName = pageName;
+        assert activationContext != null;
+        this.activationContext = activationContext;
     }
 
     public PageCallback(String pageName, EventContext activationContext)

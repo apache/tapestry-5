@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,17 +14,16 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.apache.tapestry5.services.PageRenderRequestParameters;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.URLRewriter;
 import org.apache.tapestry5.urlrewriter.URLRewriteContext;
 import org.apache.tapestry5.urlrewriter.URLRewriterRule;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -47,7 +46,7 @@ public class URLRewriterImpl implements URLRewriter
      */
     public URLRewriterImpl(List<URLRewriterRule> rules)
     {
-        Defense.notNull(rules, "rules");
+        assert rules != null;
         this.incomingRules = new ArrayList<URLRewriterRule>();
         this.outgoingRules = new ArrayList<URLRewriterRule>();
         for(URLRewriterRule rule : rules)

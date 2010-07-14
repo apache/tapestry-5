@@ -1,4 +1,4 @@
-//  Copyright 2008 The Apache Software Foundation
+//  Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.internal.EmptyEventContext;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.URLEventContext;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.ContextPathEncoder;
@@ -53,8 +52,7 @@ public class ContextPathEncoderImpl implements ContextPathEncoder
 
     public String encodeIntoPath(EventContext context)
     {
-        Defense.notNull(context, "context");
-
+        assert context != null;
         int count = context.getCount();
         
         StringBuilder output = new StringBuilder(BUFFER_SIZE);

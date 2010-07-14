@@ -14,20 +14,21 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Locale;
+import java.util.Map;
+
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.internal.AssetConstants;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
 import org.apache.tapestry5.services.AssetFactory;
 import org.apache.tapestry5.services.AssetSource;
 
-import java.util.Locale;
-import java.util.Map;
-
+@SuppressWarnings("all")
 public class AssetSourceImpl implements AssetSource
 {
     private final StrategyRegistry<AssetFactory> registry;
@@ -106,8 +107,7 @@ public class AssetSourceImpl implements AssetSource
 
     private Resource getUnlocalizedResource(Resource baseResource, String path)
     {
-        Defense.notBlank(path, "path");
-
+        assert InternalUtils.isNonBlank(path);
         int colonx = path.indexOf(':');
 
         if (colonx < 0)

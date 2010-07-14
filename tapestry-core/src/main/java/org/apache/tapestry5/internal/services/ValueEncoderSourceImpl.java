@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,16 +14,16 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Map;
+
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
 import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.apache.tapestry5.services.ValueEncoderSource;
 
-import java.util.Map;
-
+@SuppressWarnings("all")
 public class ValueEncoderSourceImpl implements ValueEncoderSource, InvalidationListener
 {
     private final StrategyRegistry<ValueEncoderFactory> registry;
@@ -38,8 +38,7 @@ public class ValueEncoderSourceImpl implements ValueEncoderSource, InvalidationL
     @SuppressWarnings({"unchecked"})
     public <T> ValueEncoder<T> getValueEncoder(Class<T> type)
     {
-        Defense.notNull(type, "type");
-
+        assert type != null;
         ValueEncoder<T> result = cache.get(type);
 
         if (result == null)

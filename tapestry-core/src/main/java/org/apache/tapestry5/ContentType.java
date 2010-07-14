@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,14 +14,13 @@
 
 package org.apache.tapestry5;
 
-import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+
+import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 /**
  * Represents an HTTP content type. Allows to set various elements like the mime type, the character set, and other
@@ -93,8 +92,7 @@ public final class ContentType
      */
     public void setBaseType(String baseType)
     {
-        Defense.notNull(baseType, "baseType");
-
+        assert baseType != null;
         this.baseType = baseType;
     }
 
@@ -111,8 +109,7 @@ public final class ContentType
      */
     public void setSubType(String subType)
     {
-        Defense.notNull(subType, "subType");
-
+        assert subType != null;
         this.subType = subType;
     }
 
@@ -146,8 +143,7 @@ public final class ContentType
      */
     public String getParameter(String key)
     {
-        Defense.notNull(key, "key");
-
+        assert key != null;
         return parameters.get(key);
     }
 
@@ -157,9 +153,8 @@ public final class ContentType
      */
     public void setParameter(String key, String value)
     {
-        Defense.notNull(key, "key");
-        Defense.notNull(value, "value");
-
+        assert key != null;
+        assert value != null;
         parameters.put(key, value);
     }
 

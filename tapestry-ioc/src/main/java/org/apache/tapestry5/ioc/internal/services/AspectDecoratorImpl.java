@@ -18,7 +18,7 @@ import java.lang.reflect.Method;
 
 import org.apache.tapestry5.ioc.MethodAdvice;
 import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
-import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.AspectDecorator;
 import org.apache.tapestry5.ioc.services.AspectInterceptorBuilder;
 import org.apache.tapestry5.ioc.services.Builtin;
@@ -37,8 +37,7 @@ public class AspectDecoratorImpl implements AspectDecorator
 
     public <T> T build(Class<T> serviceInterface, T delegate, MethodAdvice advice, String description)
     {
-        Defense.notNull(advice, "advice");
-
+        assert advice != null;
         AspectInterceptorBuilder<T> builder = createBuilder(serviceInterface, delegate, description);
 
         builder.adviseAllMethods(advice);
@@ -49,13 +48,9 @@ public class AspectDecoratorImpl implements AspectDecorator
     public <T> AspectInterceptorBuilder<T> createBuilder(final Class<T> serviceInterface, final T delegate,
             final String description)
     {
-        Defense.notNull(serviceInterface, "serviceInterface");
-        Defense.notNull(delegate, "delegate");
-        Defense.notBlank(description, "description");
-
-        // Defer creating the real builder until a method gets advised. If no method is advised then
-        // the delegate can be used unchanged.
-
+        assert serviceInterface != null;
+        assert delegate != null;
+        assert InternalUtils.isNonBlank(description);
         return new AspectInterceptorBuilder<T>()
         {
             private AspectInterceptorBuilder<T> builder;

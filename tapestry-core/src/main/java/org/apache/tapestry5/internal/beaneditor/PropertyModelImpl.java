@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,16 +14,17 @@
 
 package org.apache.tapestry5.internal.beaneditor;
 
+import java.lang.annotation.Annotation;
+
 import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 
-import java.lang.annotation.Annotation;
-
+@SuppressWarnings("all")
 public class PropertyModelImpl implements PropertyModel
 {
     private final BeanModel model;
@@ -75,8 +76,7 @@ public class PropertyModelImpl implements PropertyModel
 
     public PropertyModel label(String label)
     {
-        Defense.notBlank(label, "label");
-
+        assert InternalUtils.isNonBlank(label);
         this.label = label;
 
         return this;

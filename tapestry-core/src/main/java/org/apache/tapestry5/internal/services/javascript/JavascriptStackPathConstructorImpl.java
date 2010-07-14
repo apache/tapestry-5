@@ -23,7 +23,6 @@ import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.internal.services.RequestConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.javascript.JavascriptStack;
@@ -73,8 +72,7 @@ public class JavascriptStackPathConstructorImpl implements JavascriptStackPathCo
 
     private List<String> toPaths(List<Asset> assets)
     {
-        Defense.notNull(assets, "source");
-        
+        assert assets != null;
         return F.flow(assets).map(toPath).toList();
     }
 

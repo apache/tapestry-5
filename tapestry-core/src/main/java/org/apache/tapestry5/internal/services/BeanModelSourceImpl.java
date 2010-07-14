@@ -26,10 +26,8 @@ import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
@@ -157,9 +155,8 @@ public class BeanModelSourceImpl implements BeanModelSource
 
     public <T> BeanModel<T> create(Class<T> beanClass, boolean filterReadOnlyProperties, Messages messages)
     {
-        Defense.notNull(beanClass, "beanClass");
-        Defense.notNull(messages, "messages");
-
+        assert beanClass != null;
+        assert messages != null;
         ClassPropertyAdapter adapter = propertyAccess.getAdapter(beanClass);
 
         BeanModel<T> model = new BeanModelImpl<T>(beanClass, propertyConduitSource, typeCoercer, messages, locator);

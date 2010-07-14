@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,13 +14,12 @@
 
 package org.apache.tapestry5.util;
 
-import org.apache.tapestry5.Link;
-import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.services.Response;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.services.Response;
 
 /**
  * Implementation of {@link org.apache.tapestry5.services.Response} that delegates all method invocations to a delegate
@@ -32,8 +31,7 @@ public class ResponseWrapper implements Response
 
     public ResponseWrapper(Response response)
     {
-        Defense.notNull(response, "response");
-
+        assert response != null;
         this.response = response;
     }
 

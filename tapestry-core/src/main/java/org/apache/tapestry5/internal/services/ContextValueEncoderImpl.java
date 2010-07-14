@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ValueEncoder;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.services.ContextValueEncoder;
 import org.apache.tapestry5.services.ValueEncoderSource;
 
+@SuppressWarnings("all")
 public class ContextValueEncoderImpl implements ContextValueEncoder
 {
     private final ValueEncoderSource valueEncoderSource;
@@ -30,7 +30,7 @@ public class ContextValueEncoderImpl implements ContextValueEncoder
 
     public String toClient(Object value)
     {
-        Defense.notNull(value, "value");
+        assert value != null;
 
         ValueEncoder encoder = valueEncoderSource.getValueEncoder(value.getClass());
 
@@ -40,7 +40,7 @@ public class ContextValueEncoderImpl implements ContextValueEncoder
 
     public <T> T toValue(Class<T> requiredType, String clientValue)
     {
-        Defense.notNull(requiredType, "requiredType");
+        assert requiredType != null;
 
         ValueEncoder<T> encoder = valueEncoderSource.getValueEncoder(requiredType);
 

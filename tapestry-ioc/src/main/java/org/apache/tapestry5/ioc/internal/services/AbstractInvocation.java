@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,15 +14,15 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.Invocation;
-import org.apache.tapestry5.ioc.internal.util.Defense;
-
 import java.lang.reflect.Method;
+
+import org.apache.tapestry5.ioc.Invocation;
 
 /**
  * Base class for {@link org.apache.tapestry5.ioc.Invocation}, which is extended with a dynamically generated class
  * generated for each individual class and method.
  */
+@SuppressWarnings("all")
 public abstract class AbstractInvocation implements Invocation
 {
     private final MethodInfo methodInfo;
@@ -81,7 +81,7 @@ public abstract class AbstractInvocation implements Invocation
 
     public <T extends Throwable> T getThrown(Class<T> throwableClass)
     {
-        Defense.notNull(throwableClass, "throwableClass");
+        assert throwableClass != null;
 
         if (throwableClass.isInstance(thrown))
             return throwableClass.cast(thrown);
@@ -91,7 +91,7 @@ public abstract class AbstractInvocation implements Invocation
 
     public void overrideThrown(Exception thrown)
     {
-        Defense.notNull(thrown, "thrown");
+        assert thrown != null;
 
         for (Class t : method.getExceptionTypes())
         {

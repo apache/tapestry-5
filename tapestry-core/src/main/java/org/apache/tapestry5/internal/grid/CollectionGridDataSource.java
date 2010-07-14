@@ -1,10 +1,10 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,29 +14,25 @@
 
 package org.apache.tapestry5.internal.grid;
 
-import org.apache.tapestry5.PropertyConduit;
-import org.apache.tapestry5.grid.ColumnSort;
-import org.apache.tapestry5.grid.GridDataSource;
-import org.apache.tapestry5.grid.SortConstraint;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.grid.ColumnSort;
+import org.apache.tapestry5.grid.GridDataSource;
+import org.apache.tapestry5.grid.SortConstraint;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+
+@SuppressWarnings("all")
 public class CollectionGridDataSource implements GridDataSource
 {
     private final List list;
 
-    @SuppressWarnings("unchecked")
     public CollectionGridDataSource(final Collection collection)
     {
-        Defense.notNull(collection, "collection");
-
-        // Copy the collection so that we can sort it without disturbing the original
-
+        assert collection != null;
         list = CollectionFactory.newList(collection);
     }
 
@@ -51,7 +47,8 @@ public class CollectionGridDataSource implements GridDataSource
         {
             final ColumnSort sort = constraint.getColumnSort();
 
-            if (sort == ColumnSort.UNSORTED) continue;
+            if (sort == ColumnSort.UNSORTED)
+                continue;
 
             final PropertyConduit conduit = constraint.getPropertyModel().getConduit();
 
@@ -61,11 +58,14 @@ public class CollectionGridDataSource implements GridDataSource
                 {
                     // Simplify comparison, and handle case where both are nulls.
 
-                    if (o1 == o2) return 0;
+                    if (o1 == o2)
+                        return 0;
 
-                    if (o2 == null) return 1;
+                    if (o2 == null)
+                        return 1;
 
-                    if (o1 == null) return -1;
+                    if (o1 == null)
+                        return -1;
 
                     return o1.compareTo(o2);
                 }

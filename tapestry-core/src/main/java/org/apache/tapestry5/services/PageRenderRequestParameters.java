@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2010The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.structure.PageResetListener;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 
 /**
  * Used with {@link org.apache.tapestry5.services.PageRenderRequestHandler} and
@@ -43,9 +42,8 @@ public class PageRenderRequestParameters
     /** @since 5.2.0 */
     public PageRenderRequestParameters(String logicalPageName, EventContext activationContext, boolean loopback)
     {
-        Defense.notNull(logicalPageName, "logicalPageName");
-        Defense.notNull(activationContext, "activationContext");
-
+        assert logicalPageName != null;
+        assert activationContext != null;
         this.logicalPageName = logicalPageName;
         this.activationContext = activationContext;
         this.loopback = loopback;

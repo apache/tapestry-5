@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,10 @@
 
 package org.apache.tapestry5.dom;
 
-import org.apache.tapestry5.internal.util.PrintOutCollector;
-import org.apache.tapestry5.ioc.internal.util.Defense;
-
 import java.io.PrintWriter;
 import java.util.Map;
+
+import org.apache.tapestry5.internal.util.PrintOutCollector;
 
 /**
  * A node within the DOM.
@@ -163,7 +162,7 @@ public abstract class Node
 
     private void validateElement(Element element)
     {
-        Defense.notNull(element, "element");
+        assert element != null;
 
         Node search = element;
         while (search != null)

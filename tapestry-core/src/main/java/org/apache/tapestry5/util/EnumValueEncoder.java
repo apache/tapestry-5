@@ -1,10 +1,10 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,11 +15,10 @@
 package org.apache.tapestry5.util;
 
 import org.apache.tapestry5.ValueEncoder;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 /**
- * A value encoder that can be used for aribrary Enum types. The enum name is stored as the client side value.
+ * A value encoder that can be used for arbitrary Enum types. The enum name is stored as the client side value.
  */
 public class EnumValueEncoder<E extends Enum<E>> implements ValueEncoder<E>
 {
@@ -27,22 +26,22 @@ public class EnumValueEncoder<E extends Enum<E>> implements ValueEncoder<E>
 
     public EnumValueEncoder(final Class<E> enumType)
     {
-        notNull(enumType, "enumType");
-
+        assert enumType != null;
         this.enumType = enumType;
     }
 
     public String toClient(E value)
     {
-        if (value == null) return null;
+        if (value == null)
+            return null;
 
         return value.name();
     }
 
-    @SuppressWarnings("unchecked")
     public E toValue(String clientValue)
     {
-        if (InternalUtils.isBlank(clientValue)) return null;
+        if (InternalUtils.isBlank(clientValue))
+            return null;
 
         return Enum.valueOf(enumType, clientValue);
     }

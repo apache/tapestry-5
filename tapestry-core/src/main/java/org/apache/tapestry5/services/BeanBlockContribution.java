@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.corelib.components.Label;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notBlank;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 /**
  * A contribution to the {@link BeanBlockSource} service, defining a page name and block id (within the page) that can
@@ -33,10 +33,9 @@ public final class BeanBlockContribution
 
     public BeanBlockContribution(String dataType, String pageName, String blockId, boolean edit)
     {
-        notBlank(dataType, "datatype");
-        notBlank(pageName, "pageName");
-        notBlank(blockId, "blockId");
-
+        assert InternalUtils.isNonBlank(dataType);
+        assert InternalUtils.isNonBlank(pageName);
+        assert InternalUtils.isNonBlank(blockId);
         this.dataType = dataType;
         this.pageName = pageName;
         this.blockId = blockId;

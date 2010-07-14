@@ -39,7 +39,6 @@ import org.apache.tapestry5.ioc.BaseLocatable;
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.Orderer;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
@@ -1067,9 +1066,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     public boolean triggerContextEvent(final String eventType, final EventContext context,
             final ComponentEventCallback callback)
     {
-        Defense.notBlank(eventType, "eventType");
-        Defense.notNull(context, "context");
-
+        assert InternalUtils.isNonBlank(eventType);
+        assert context != null;
         String description = String.format("Triggering event '%s' on %s", eventType, completeId);
 
         return elementResources.invoke(description, new Invokable<Boolean>()
@@ -1219,8 +1217,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     public Block findBlock(String id)
     {
-        Defense.notBlank(id, "id");
-
+        assert InternalUtils.isNonBlank(id);
         return InternalUtils.get(blocks, id);
     }
 

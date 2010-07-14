@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,14 +14,13 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.Link;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.services.Response;
-
 import java.util.List;
 import java.util.Map;
+
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.services.Response;
 
 public class LinkImpl implements Link
 {
@@ -51,8 +50,7 @@ public class LinkImpl implements Link
 
     public Link copyWithBasePath(String basePath)
     {
-        Defense.notNull(basePath, "basePath");
-
+        assert basePath != null;
         LinkImpl copy = new LinkImpl(basePath, optimizable, forForm, response, optimizer);
 
         copy.anchor = anchor;
@@ -67,9 +65,8 @@ public class LinkImpl implements Link
 
     public void addParameter(String parameterName, String value)
     {
-        Defense.notBlank(parameterName, "parameterName");
-        Defense.notBlank(value, "value");
-
+        assert InternalUtils.isNonBlank(parameterName);
+        assert InternalUtils.isNonBlank(value);
         if (parameters == null)
             parameters = CollectionFactory.newMap();
 
@@ -83,8 +80,7 @@ public class LinkImpl implements Link
 
     public void removeParameter(String parameterName)
     {
-        Defense.notBlank(parameterName, "parameterName");
-
+        assert InternalUtils.isNonBlank(parameterName);
         if (parameters != null)
             parameters.remove(parameterName);
     }

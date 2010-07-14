@@ -14,14 +14,18 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
+import static java.lang.String.format;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtMethod;
+
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.ObjectCreator;
-
-import static java.lang.String.format;
-import static org.apache.tapestry5.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFab;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
@@ -30,13 +34,10 @@ import org.apache.tapestry5.ioc.services.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-
 /**
  * Implementation of {@link org.apache.tapestry5.ioc.services.ClassFactory}.
  */
+@SuppressWarnings("all")
 public class ClassFactoryImpl implements ClassFactory
 {
     private final Logger logger;
@@ -133,7 +134,7 @@ public class ClassFactoryImpl implements ClassFactory
 
     public Location getMethodLocation(Method method)
     {
-        notNull(method, "method");
+        assert method != null;
 
         // TODO: Is it worth caching this? Probably not as it usually is only
         // invoked perhaps at startup and in the event of errors.
@@ -173,7 +174,7 @@ public class ClassFactoryImpl implements ClassFactory
 
     public Location getConstructorLocation(Constructor constructor)
     {
-        notNull(constructor, "constructor");
+        assert constructor != null;
 
         StringBuilder builder = new StringBuilder();
 

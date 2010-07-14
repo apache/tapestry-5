@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.services;
 
-import org.apache.tapestry5.ioc.internal.util.Defense;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 /**
  * Used to configure the {@link ComponentClassResolver}, to allow it to map prefixes to library root packages (the
@@ -41,9 +41,8 @@ public final class LibraryMapping
 
     public LibraryMapping(String pathPrefix, String rootPackage)
     {
-        Defense.notBlank(pathPrefix, "pathPrefix");
-        Defense.notBlank(rootPackage, "rootPackage");
-
+        assert InternalUtils.isNonBlank(pathPrefix);
+        assert InternalUtils.isNonBlank(rootPackage);
         if (pathPrefix.contains("/"))
             throw new RuntimeException(
                     "LibraryMapping path prefixes may no longer contain slashes (as of Tapestry 5.2).");

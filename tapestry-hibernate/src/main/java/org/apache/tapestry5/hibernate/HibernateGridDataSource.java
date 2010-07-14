@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,15 +14,14 @@
 
 package org.apache.tapestry5.hibernate;
 
+import java.util.List;
+
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.grid.SortConstraint;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
-
-import java.util.List;
 
 /**
  * A simple implementation of {@link org.apache.tapestry5.grid.GridDataSource} based on a Hibernate Session and a known
@@ -45,9 +44,8 @@ public class HibernateGridDataSource implements GridDataSource
 
     public HibernateGridDataSource(Session session, Class entityType)
     {
-        Defense.notNull(session, "session");
-        Defense.notNull(entityType, "entityType");
-
+        assert session != null;
+        assert entityType != null;
         this.session = session;
         this.entityType = entityType;
     }
@@ -78,11 +76,7 @@ public class HibernateGridDataSource implements GridDataSource
      */
     public void prepare(int startIndex, int endIndex, List<SortConstraint> sortConstraints)
     {
-        Defense.notNull(sortConstraints, "sortConstraints");
-
-        // We just assume that the property names in the SortContraint match the Hibernate
-        // properties.
-
+        assert sortConstraints != null;
         Criteria crit = session.createCriteria(entityType);
 
         crit.setFirstResult(startIndex).setMaxResults(endIndex - startIndex + 1);

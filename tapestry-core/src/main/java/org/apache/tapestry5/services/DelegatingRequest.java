@@ -17,10 +17,6 @@ package org.apache.tapestry5.services;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Session;
-
 /**
  * Class that wraps an {@linkplain Request}, delegating all its methods.
  * 
@@ -57,7 +53,7 @@ public class DelegatingRequest implements Request
      */
     public void setRequest(Request request)
     {
-        Defense.notNull(request, "request");
+        assert request != null;
         this.request = request;
     }
 

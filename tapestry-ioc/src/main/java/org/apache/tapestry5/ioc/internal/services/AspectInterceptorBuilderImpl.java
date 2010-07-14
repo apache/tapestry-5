@@ -1,10 +1,10 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,12 +14,6 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.MethodAdvice;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
-import org.apache.tapestry5.ioc.internal.util.OneShotLock;
-import org.apache.tapestry5.ioc.services.*;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -27,6 +21,16 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.tapestry5.ioc.MethodAdvice;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.OneShotLock;
+import org.apache.tapestry5.ioc.services.AspectInterceptorBuilder;
+import org.apache.tapestry5.ioc.services.ClassFab;
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
+import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.MethodSignature;
+
+@SuppressWarnings("all")
 public class AspectInterceptorBuilderImpl<T> implements AspectInterceptorBuilder<T>
 {
     private final ClassFactory classFactory;
@@ -54,7 +58,7 @@ public class AspectInterceptorBuilderImpl<T> implements AspectInterceptorBuilder
     private boolean sawToString;
 
     public AspectInterceptorBuilderImpl(ClassFactory classFactory, Class<T> serviceInterface, T delegate,
-                                        String description)
+            String description)
     {
         this.classFactory = classFactory;
         this.serviceInterface = serviceInterface;
@@ -71,8 +75,8 @@ public class AspectInterceptorBuilderImpl<T> implements AspectInterceptorBuilder
 
     public void adviseMethod(Method method, MethodAdvice advice)
     {
-        Defense.notNull(method, "method");
-        Defense.notNull(advice, "advice");
+        assert method != null;
+        assert advice != null;
 
         lock.check();
 
@@ -81,8 +85,8 @@ public class AspectInterceptorBuilderImpl<T> implements AspectInterceptorBuilder
         if (builder == null)
         {
             if (!remainingMethods.contains(method))
-                throw new IllegalArgumentException(
-                        String.format("Method %s is not defined for interface %s.", method, serviceInterface));
+                throw new IllegalArgumentException(String.format("Method %s is not defined for interface %s.", method,
+                        serviceInterface));
 
             // One less method to pass thru to the delegate
 

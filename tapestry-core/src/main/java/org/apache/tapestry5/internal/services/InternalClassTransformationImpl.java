@@ -32,7 +32,6 @@ import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.ioc.internal.services.CtClassSource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.Defense;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFab;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
@@ -51,6 +50,7 @@ import org.slf4j.Logger;
 /**
  * Implementation of the {@link org.apache.tapestry5.internal.services.InternalClassTransformation} interface.
  */
+@SuppressWarnings("all")
 public final class InternalClassTransformationImpl implements InternalClassTransformation
 {
     public static final MethodSignature INVOKE_SIGNATURE = new MethodSignature(MethodInvocationResult.class, "invoke",
@@ -175,7 +175,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         {
             failIfFrozen();
 
-            Defense.notNull(advice, "advice");
+            assert advice != null;
 
             if (builder == null)
                 builder = createBuilder(sig);
@@ -498,7 +498,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         public void claim(Object tag)
         {
-            Defense.notNull(tag, "tag");
+            assert tag != null;
 
             failIfFrozen();
 
@@ -719,7 +719,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         public <T> void injectIndirect(ComponentValueProvider<T> provider)
         {
-            Defense.notNull(provider, "provider");
+            assert provider != null;
 
             failIfFrozen();
 
@@ -1039,7 +1039,9 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     {
         failIfFrozen();
 
-        String memberName = InternalUtils.createMemberName(Defense.notBlank(suggested, "suggested"));
+        assert InternalUtils.isNonBlank(suggested);
+
+        String memberName = InternalUtils.createMemberName(suggested);
 
         return idAllocator.allocateId(memberName);
     }
@@ -1505,7 +1507,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public List<String> findFields(final FieldFilter filter)
     {
-        Defense.notNull(filter, "filter");
+        assert filter != null;
 
         failIfFrozen();
 
@@ -1553,7 +1555,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public List<TransformMethodSignature> findMethods(final MethodFilter filter)
     {
-        Defense.notNull(filter, "filter");
+        assert filter != null;
 
         List<TransformMethod> methods = matchMethods(new Predicate<TransformMethod>()
         {
@@ -1692,7 +1694,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     // Returns String for backwards compatibility reasons
     public String addInjectedField(Class type, String suggestedName, Object value)
     {
-        Defense.notNull(type, "type");
+        assert type != null;
 
         failIfFrozen();
 
@@ -1717,8 +1719,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     public <T> TransformField addIndirectInjectedField(Class<T> type, String suggestedName,
             ComponentValueProvider<T> provider)
     {
-        Defense.notNull(type, "type");
-        Defense.notNull(provider, "provider");
+        assert type != null;
+        assert provider != null;
 
         TransformField field = createField(Modifier.PROTECTED | Modifier.FINAL, type.getName(), suggestedName);
 
@@ -1799,7 +1801,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public boolean isMethod(TransformMethodSignature signature)
     {
-        Defense.notNull(signature, "signature");
+        assert signature != null;
 
         return methods.containsKey(signature);
     }
@@ -2303,7 +2305,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     {
         failIfFrozen();
 
-        Defense.notNull(signature, "signature");
+        assert signature != null;
 
         return methods.containsKey(signature);
     }
@@ -2345,9 +2347,9 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     public void addComponentEventHandler(String eventType, int minContextValues, String methodDescription,
             ComponentEventHandler handler)
     {
-        Defense.notBlank(eventType, "eventType");
-        Defense.notBlank(methodDescription, "methodDescription");
-        Defense.notNull(handler, "handler");
+        assert InternalUtils.isNonBlank(eventType);
+        assert InternalUtils.isNonBlank(methodDescription);
+        assert handler != null;
 
         componentModel.addEventHandler(eventType);
 

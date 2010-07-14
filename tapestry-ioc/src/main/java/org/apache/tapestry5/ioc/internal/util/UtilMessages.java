@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 The Apache Software Foundation
+// Copyright 2006, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,21 +43,6 @@ class UtilMessages
     static String oneShotLock(StackTraceElement element)
     {
         return MESSAGES.format("one-shot-lock", element);
-    }
-
-    static String parameterWasNull(String parameterName)
-    {
-        return MESSAGES.format("parameter-was-null", parameterName);
-    }
-
-    static String parameterWasBlank(String parameterName)
-    {
-        return MESSAGES.format("parameter-was-blank", parameterName);
-    }
-
-    static String badCast(String parameterName, Object parameterValue, Class type)
-    {
-        return MESSAGES.format("bad-cast", parameterName, parameterValue, type.getName());
     }
 
     static String badMarkerAnnotation(Class annotationClass)
