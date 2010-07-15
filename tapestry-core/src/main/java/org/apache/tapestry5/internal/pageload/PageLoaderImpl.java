@@ -18,6 +18,7 @@ import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.bindings.LiteralBinding;
@@ -27,6 +28,7 @@ import org.apache.tapestry5.internal.structure.*;
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
@@ -138,10 +140,14 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
     private final PerthreadManager perThreadManager;
 
+    private final boolean poolingEnabled;
+
     public PageLoaderImpl(ComponentInstantiatorSource instantiatorSource, ComponentTemplateSource templateSource,
             PageElementFactory elementFactory, ComponentPageElementResourcesSource resourcesSource,
             ComponentClassResolver componentClassResolver, PersistentFieldManager persistentFieldManager,
-            StringInterner interner, OperationTracker tracker, PerthreadManager perThreadManager)
+            StringInterner interner, OperationTracker tracker, PerthreadManager perThreadManager,
+            @Symbol(SymbolConstants.PAGE_POOL_ENABLED)
+            boolean poolingEnabled)
     {
         this.instantiatorSource = instantiatorSource;
         this.templateSource = templateSource;
@@ -152,6 +158,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         this.interner = interner;
         this.tracker = tracker;
         this.perThreadManager = perThreadManager;
+        this.poolingEnabled = poolingEnabled;
     }
 
     public void objectWasInvalidated()
@@ -167,7 +174,8 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         {
             public Page invoke()
             {
-                Page page = new PageImpl(logicalPageName, locale, persistentFieldManager, perThreadManager);
+                Page page = new PageImpl(logicalPageName, locale, persistentFieldManager, perThreadManager,
+                        poolingEnabled);
 
                 ComponentAssembler assembler = getAssembler(pageClassName, locale);
 

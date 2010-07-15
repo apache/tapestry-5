@@ -65,15 +65,25 @@ public class PageImpl implements Page
      *            for access to cross-request persistent values
      * @param perThreadManager
      *            for managing per-request mutable state
+     * @param pooled
+     *            if pooling enabled, or is this page a singleton
      */
     public PageImpl(String name, Locale locale, PersistentFieldManager persistentFieldManager,
-            PerthreadManager perThreadManager)
+            PerthreadManager perThreadManager, boolean pooled)
     {
         this.name = name;
         this.locale = locale;
         this.persistentFieldManager = persistentFieldManager;
 
-        dirtyCount = perThreadManager.createValue("PageDirtyCount:" + name);
+        if (pooled)
+        {
+            dirtyCount = perThreadManager.createValue("PageDirtyCount:" + name);
+        }
+        else
+        {
+            dirtyCount = null;
+        }
+
         fieldBundle = perThreadManager.createValue("PersistentFieldBundle:" + name);
     }
 
@@ -135,7 +145,7 @@ public class PageImpl implements Page
 
     public boolean detached()
     {
-        boolean result = dirtyCount.exists() ? dirtyCount.get() > 0 : false;
+        boolean result = dirtyCount != null && dirtyCount.exists() && dirtyCount.get() > 0;
 
         for (PageLifecycleListener listener : lifecycleListeners)
         {
@@ -167,7 +177,7 @@ public class PageImpl implements Page
 
     public void attached()
     {
-        if (dirtyCount.exists() && !dirtyCount.get().equals(0))
+        if (dirtyCount != null && dirtyCount.exists() && !dirtyCount.get().equals(0))
             throw new IllegalStateException(StructureMessages.pageIsDirty(this));
 
         for (PageLifecycleListener listener : lifecycleListeners)
@@ -200,9 +210,12 @@ public class PageImpl implements Page
 
     public void decrementDirtyCount()
     {
-        int newCount = dirtyCount.get() - 1;
+        if (dirtyCount != null)
+        {
+            int newCount = dirtyCount.get() - 1;
 
-        dirtyCount.set(newCount);
+            dirtyCount.set(newCount);
+        }
     }
 
     public void discardPersistentFieldChanges()
@@ -212,9 +225,12 @@ public class PageImpl implements Page
 
     public void incrementDirtyCount()
     {
-        int newCount = dirtyCount.exists() ? dirtyCount.get() + 1 : 1;
+        if (dirtyCount != null)
+        {
+            int newCount = dirtyCount.exists() ? dirtyCount.get() + 1 : 1;
 
-        dirtyCount.set(newCount);
+            dirtyCount.set(newCount);
+        }
     }
 
     public String getName()

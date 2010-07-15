@@ -53,7 +53,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null, perThreadManager);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null, perThreadManager, true);
 
         assertNull(page.getRootElement());
 
@@ -77,7 +77,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(null, locale, null, perThreadManager);
+        Page page = new PageImpl(null, locale, null, perThreadManager, true);
 
         page.addLifecycleListener(listener1);
         page.addLifecycleListener(listener2);
@@ -99,7 +99,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(null, locale, null, perThreadManager);
+        Page page = new PageImpl(null, locale, null, perThreadManager, true);
 
         page.addLifecycleListener(listener);
 
@@ -133,7 +133,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(null, locale, null, perThreadManager);
+        Page page = new PageImpl(null, locale, null, perThreadManager, true);
         page.setRootElement(element);
 
         page.addLifecycleListener(listener1);
@@ -163,7 +163,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(null, locale, null, perThreadManager);
+        Page page = new PageImpl(null, locale, null, perThreadManager, true);
 
         page.addLifecycleListener(listener1);
         page.addLifecycleListener(listener2);
@@ -189,7 +189,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null, perThreadManager);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null, perThreadManager, true);
 
         page.addLifecycleListener(listener1);
         page.addLifecycleListener(listener2);
@@ -206,7 +206,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null, perThreadManager);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null, perThreadManager, true);
 
         page.setRootElement(root);
 
