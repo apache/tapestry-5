@@ -129,9 +129,9 @@ public interface ComponentPageElementResources extends ContextValueEncoder, Oper
     Logger getEventLogger(Logger componentLogger);
 
     /**
-     * Wrapper around {@link PerthreadManager#createValue(Object)}.
+     * Wrapper around {@link PerthreadManager#createValue()}.
      * 
      * @since 5.2.0
      */
-    <T> PerThreadValue<T> createPerThreadValue(Object key);
+    <T> PerThreadValue<T> createPerThreadValue();
 }

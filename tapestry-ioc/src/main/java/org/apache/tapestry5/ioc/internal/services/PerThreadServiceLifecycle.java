@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import java.lang.reflect.Modifier;
  * application, the service decoration process occurs only once. The final calling chain is: Service Proxy --&gt;
  * Decorator(s) --&gt; PerThread Proxy --&gt; (per thread) instance.
  */
+@SuppressWarnings("all")
 public class PerThreadServiceLifecycle implements ServiceLifecycle
 {
     private static final String PER_THREAD_METHOD_NAME = "_perThreadInstance";

@@ -65,10 +65,7 @@ public class PersistWorker implements ComponentClassTransformWorker
 
         public Object get()
         {
-            if (!fieldValue.exists())
-                return defaultValue;
-
-            return fieldValue.get();
+            return fieldValue.get(defaultValue);
         }
 
         public void set(Object newValue)
@@ -119,10 +116,8 @@ public class PersistWorker implements ComponentClassTransformWorker
         {
             public FieldValueConduit get(ComponentResources resources)
             {
-                String key = String.format("PersistWorker:%s/%s", resources.getCompleteId(), logicalFieldName);
-
                 return new PersistentFieldConduit((InternalComponentResources) resources, logicalFieldName,
-                        perThreadManager.createValue(key), defaultValue);
+                        perThreadManager.createValue(), defaultValue);
             }
         };
 

@@ -58,7 +58,7 @@ public final class UnclaimedFieldWorker implements ComponentClassTransformWorker
 
         public Object get()
         {
-            return fieldValue.exists() ? fieldValue.get() : fieldDefaultValue;
+            return fieldValue.get(fieldDefaultValue);
         }
 
         public void set(Object newValue)
@@ -111,10 +111,8 @@ public final class UnclaimedFieldWorker implements ComponentClassTransformWorker
             {
                 Object fieldDefaultValue = classCache.defaultValueForType(fieldType);
 
-                String key = String.format("UnclaimedFieldWorker:%s/%s", resources.getCompleteId(), fieldName);
-
                 return new UnclaimedFieldConduit((InternalComponentResources) resources,
-                        perThreadManager.createValue(key), fieldDefaultValue);
+                        perThreadManager.createValue(), fieldDefaultValue);
             }
         };
     }

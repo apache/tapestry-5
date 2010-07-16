@@ -464,8 +464,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     private synchronized Map<String, Object> getRenderVariables()
     {
         if (renderVariables == null)
-            renderVariables = elementResources.createPerThreadValue("tapestry.internal.RenderVariables:"
-                    + getCompleteId());
+            renderVariables = elementResources.createPerThreadValue();
 
         Map<String, Object> result = renderVariables.get();
 

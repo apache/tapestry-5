@@ -21,12 +21,14 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.DummyLock;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.JDKUtils;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
 import org.slf4j.Logger;
 
+@SuppressWarnings("all")
 public class PerthreadManagerImpl implements PerthreadManager
 {
     private static final String LISTENERS_KEY = "PerthreadManager.listenerList";
@@ -130,7 +132,6 @@ public class PerthreadManagerImpl implements PerthreadManager
         }
     }
 
-    @SuppressWarnings("unchecked")
     public void put(Object key, Object value)
     {
         getPerthreadMap().put(key, value);
@@ -143,19 +144,30 @@ public class PerthreadManagerImpl implements PerthreadManager
 
     private static Object NULL_VALUE = new Object();
 
-    public <T> PerThreadValue<T> createValue(final Object key)
+    <T> PerThreadValue<T> createValue(final Object key)
     {
         return new PerThreadValue<T>()
         {
-            @SuppressWarnings("unchecked")
             public T get()
             {
-                Object storedValue = PerthreadManagerImpl.this.get(key);
+                return get(null);
+            }
 
-                if (storedValue == NULL_VALUE)
-                    return null;
+            public T get(T defaultValue)
+            {
+                Map map = getPerthreadMap();
 
-                return (T) storedValue;
+                if (map.containsKey(key))
+                {
+                    Object storedValue = map.get(key);
+
+                    if (storedValue == NULL_VALUE)
+                        return null;
+
+                    return (T) storedValue;
+                }
+
+                return defaultValue;
             }
 
             public T set(T newValue)
@@ -170,6 +182,11 @@ public class PerthreadManagerImpl implements PerthreadManager
                 return getPerthreadMap().containsKey(key);
             }
         };
+    }
+
+    public <T> PerThreadValue<T> createValue()
+    {
+        return createValue(InternalUtils.nextUUID());
     }
 
 }

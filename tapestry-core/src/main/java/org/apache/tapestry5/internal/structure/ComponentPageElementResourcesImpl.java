@@ -133,7 +133,7 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
 
     private Object[] defaulted(Object[] context)
     {
-        return context == null ? InternalConstants.EMPTY_STRING_ARRAY: context;
+        return context == null ? InternalConstants.EMPTY_STRING_ARRAY : context;
     }
 
     public <T> T invoke(String description, Invokable<T> operation)
@@ -146,9 +146,9 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
         tracker.run(description, operation);
     }
 
-    public <T> PerThreadValue<T> createPerThreadValue(Object key)
+    public <T> PerThreadValue<T> createPerThreadValue()
     {
-        return perThreadManager.createValue(key);
+        return perThreadManager.createValue();
     }
 
 }

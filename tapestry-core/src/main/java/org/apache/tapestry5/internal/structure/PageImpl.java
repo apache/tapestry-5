@@ -77,14 +77,14 @@ public class PageImpl implements Page
 
         if (pooled)
         {
-            dirtyCount = perThreadManager.createValue("PageDirtyCount:" + name);
+            dirtyCount = perThreadManager.createValue();
         }
         else
         {
             dirtyCount = null;
         }
 
-        fieldBundle = perThreadManager.createValue("PersistentFieldBundle:" + name);
+        fieldBundle = perThreadManager.createValue();
     }
 
     @Override
@@ -227,7 +227,7 @@ public class PageImpl implements Page
     {
         if (dirtyCount != null)
         {
-            int newCount = dirtyCount.exists() ? dirtyCount.get() + 1 : 1;
+            int newCount = dirtyCount.get(0) + 1;
 
             dirtyCount.set(newCount);
         }

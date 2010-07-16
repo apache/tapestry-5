@@ -29,6 +29,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -1021,5 +1022,18 @@ public class InternalUtils
                 return coercion.coerce(value);
             }
         };
+    }
+
+    private static final AtomicLong uuidGenerator = new AtomicLong(System.nanoTime());
+
+    /**
+     * Generates a unique value for the current execution of the application. This initial UUID value
+     * is not easily predicatable; subsequent UUIDs are allocated in ascending series.
+     * 
+     * @since 5.2.0
+     */
+    public static long nextUUID()
+    {
+        return uuidGenerator.incrementAndGet();
     }
 }

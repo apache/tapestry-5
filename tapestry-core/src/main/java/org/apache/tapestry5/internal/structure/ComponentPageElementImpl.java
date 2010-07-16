@@ -597,8 +597,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         eventLogger = elementResources.getEventLogger(coreResources.getLogger());
 
-        renderEvent = elementResources.createPerThreadValue("tapestry.internal.RenderEvent:" + completeId);
-        rendering = elementResources.createPerThreadValue("tapestry.internal.Rendering:" + completeId);
+        renderEvent = elementResources.createPerThreadValue();
+        rendering = elementResources.createPerThreadValue();
     }
 
     /**
@@ -1001,7 +1001,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     public boolean isRendering()
     {
-        return rendering.exists() && rendering.get();
+        return rendering.get(false);
     }
 
     /**
@@ -1289,9 +1289,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         if (result != null)
             return result;
 
-        // Create a per-thread value to use until the end of the render. 
+        // Create a per-thread value to use until the end of the render.
         // This assumes that the queue will not change during the current request,
-        // which should be valid. 
+        // which should be valid.
 
         result = new RenderPhaseEvent(new RenderPhaseEventHandler(queue), eventLogger);
 

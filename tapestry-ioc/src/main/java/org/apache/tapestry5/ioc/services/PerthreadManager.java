@@ -46,14 +46,21 @@ public interface PerthreadManager
      * @param key
      *            key used to retrieve object
      * @return corresponding per-thread object, or null
+     * @deprecated use {@link PerthreadManager#createValue()} instead
      */
     Object get(Object key);
 
     /**
      * Stores a value into the per-thread map.
+     * 
+     * @deprecated use {@link PerthreadManager#createValue()} instead
      */
     void put(Object key, Object value);
 
-    /** Creates an object that captures the key, making it easier to get or set per-thread values. */
-    <T> PerThreadValue<T> createValue(Object key);
+    /**
+     * Creates a value using a unique internal key.
+     * 
+     * @since 5.2.0
+     */
+    <T> PerThreadValue<T> createValue();
 }
