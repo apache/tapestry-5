@@ -22,6 +22,7 @@ import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Cached;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.runtime.Component;
@@ -30,6 +31,7 @@ import org.apache.tapestry5.services.*;
 /**
  * Caches method return values for methods annotated with {@link Cached}.
  */
+@SuppressWarnings("all")
 public class CachedWorker implements ComponentClassTransformWorker
 {
     private final BindingSource bindingSource;
@@ -125,36 +127,36 @@ public class CachedWorker implements ComponentClassTransformWorker
         // between different instances of the same component within or across pages). This
         // name can't be calculated until page instantiation time.
 
-        FieldAccess keyAccess = createKeyField(transformation, method);
+        FieldAccess fieldAccess = createPerThreadValueField(transformation, method);
 
         Cached annotation = method.getAnnotation(Cached.class);
 
         MethodResultCacheFactory factory = createFactory(transformation, annotation.watch(), method);
 
-        ComponentMethodAdvice advice = createAdvice(keyAccess, factory);
+        ComponentMethodAdvice advice = createAdvice(fieldAccess, factory);
 
         method.addAdvice(advice);
     }
 
-    private FieldAccess createKeyField(ClassTransformation transformation, TransformMethod method)
+    private FieldAccess createPerThreadValueField(ClassTransformation transformation, TransformMethod method)
     {
-        final String methodId = method.getMethodIdentifier();
+        TransformField field = transformation.createField(Modifier.PROTECTED, PerThreadValue.class.getName(),
+                "perThreadMethodCache$" + method.getName());
 
-        TransformField field = transformation.createField(Modifier.PROTECTED, String.class.getName(), "cacheKey$"
-                + method.getName());
-
-        field.injectIndirect(new ComponentValueProvider<String>()
+        // Each instance of the component will get a new PerThreadValue.
+        field.injectIndirect(new ComponentValueProvider<PerThreadValue<MethodResultCache>>()
         {
-            public String get(ComponentResources resources)
+            public PerThreadValue<MethodResultCache> get(ComponentResources resources)
             {
-                return String.format("MethodResultCache:%s/%s", resources.getCompleteId(), methodId);
+                return perThreadManager.createValue();
             }
         });
 
         return field.getAccess();
     }
 
-    private ComponentMethodAdvice createAdvice(final FieldAccess keyAccess, final MethodResultCacheFactory factory)
+    private ComponentMethodAdvice createAdvice(final FieldAccess perThreadValueAccess,
+            final MethodResultCacheFactory factory)
     {
         return new ComponentMethodAdvice()
         {
@@ -179,18 +181,13 @@ public class CachedWorker implements ComponentClassTransformWorker
             {
                 Component instance = invocation.getInstance();
 
-                Object key = keyAccess.read(instance);
+                PerThreadValue<MethodResultCache> value = (PerThreadValue<MethodResultCache>) perThreadValueAccess
+                        .read(instance);
 
-                MethodResultCache cache = (MethodResultCache) perThreadManager.get(key);
+                if (value.exists())
+                    return value.get();
 
-                if (cache == null)
-                {
-                    cache = factory.create(instance);
-
-                    perThreadManager.put(key, cache);
-                }
-
-                return cache;
+                return value.set(factory.create(instance));
             }
         };
     }
