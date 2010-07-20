@@ -624,7 +624,7 @@ var Tapestry = {
 	remove : function(element) {
 		Tapestry.purge(element);
 
-		element.remove();
+		Element.remove(element);
 	},
 
 	/**
@@ -977,6 +977,25 @@ Tapestry.Initializer = {
 				spec.zoneId, spec.url);
 	},
 
+	linkSubmit : function(spec) {
+
+		Tapestry.replaceElementTagName(spec.clientId, "A");
+		
+		$(spec.clientId).writeAttribute("href", "#");
+				
+		$(spec.clientId).observeAction("click", function(event) {
+
+			var form = $(spec.form);
+
+			if (!spec.validate)
+				form.skipValidation();
+
+			form.setSubmittingElement(this);
+
+			form.performSubmit(event);
+		});
+	},
+	
 	updateZoneOnEvent : function(eventName, element, zoneId, url) {
 		element = $(element);
 

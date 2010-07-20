@@ -23,7 +23,6 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.TrackableComponentEventCallback;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Events;
-import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.SubmitMode;
@@ -41,7 +40,6 @@ import org.apache.tapestry5.services.javascript.JavascriptSupport;
  * .
  */
 @SupportsInformalParameters
-@Import(library = "linksubmit.js")
 @Events(EventConstants.SELECTED + " by default, may be overridden")
 public class LinkSubmit implements ClientElement
 {
