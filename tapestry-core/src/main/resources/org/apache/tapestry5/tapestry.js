@@ -639,11 +639,13 @@ var Tapestry = {
 		if (attrs) {
 			var l = attrs.length, i, name;
 			for (i = 0; i < l; i++) {
-				name = attrs[i].name;
-				/* Looking for onclick, etc. */
-				if (typeof element[name] == 'function') {
-					element[name] = null;
-				}
+                if (attrs[i]) {
+                    name = attrs[i].name;
+                    /* Looking for onclick, etc. */
+                    if (typeof element[name] == 'function') {
+                        element[name] = null;
+                    }
+                }
 			}
 		}
 
