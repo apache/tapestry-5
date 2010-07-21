@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.DummyLock;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -189,4 +190,29 @@ public class PerthreadManagerImpl implements PerthreadManager
         return createValue(InternalUtils.nextUUID());
     }
 
+    public void run(Runnable runnable)
+    {
+        assert runnable != null;
+
+        try
+        {
+            runnable.run();
+        }
+        finally
+        {
+            cleanup();
+        }
+    }
+
+    public <T> T invoke(Invokable<T> invokable)
+    {
+        try
+        {
+            return invokable.invoke();
+        }
+        finally
+        {
+            cleanup();
+        }
+    }
 }

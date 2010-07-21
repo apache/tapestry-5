@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
+import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
@@ -174,5 +175,42 @@ public class PerthreadManagerImplTest extends IOCTestCase
         assertTrue(v.exists());
 
         assertNull(v.get());
+    }
+
+    @Test
+    public void run_performs_cleanup()
+    {
+        final PerthreadManagerImpl m = new PerthreadManagerImpl(null);
+
+        m.run(new Runnable()
+        {
+            public void run()
+            {
+                m.put("foo", "bar");
+            }
+        });
+
+        assertNull(m.get("foo"));
+    }
+
+    @Test
+    public void invoke_performs_cleanup()
+    {
+        final PerthreadManagerImpl m = new PerthreadManagerImpl(null);
+
+        String actual = m.invoke(new Invokable<String>()
+        {
+            public String invoke()
+            {
+                m.put("foo", "bar");
+
+                return "baz";
+            }
+        });
+
+        assertEquals(actual, "baz");
+
+        assertNull(m.get("foo"));
+
     }
 }

@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.ioc.services;
 
+import org.apache.tapestry5.ioc.Invokable;
+
 /**
  * Manages per-thread data, and provides a way for listeners to know when such data should be cleaned up. Typically,
  * data is cleaned up at the end of the request (in a web application). Tapestry IoC has any number of objects that need
@@ -63,4 +65,16 @@ public interface PerthreadManager
      * @since 5.2.0
      */
     <T> PerThreadValue<T> createValue();
+
+    /**
+     * Invokes {@link Runnable#run()}, providing a try...finally to {@linkplain #cleanup() cleanup} after.
+     * 
+     * @since 5.2.0
+     */
+    void run(Runnable runnable);
+
+    /**
+     * Returns the result from the invocation, providing a try...finally to {@linkplain #cleanup() cleanup} after.
+     */
+    <T> T invoke(Invokable<T> invokable);
 }
