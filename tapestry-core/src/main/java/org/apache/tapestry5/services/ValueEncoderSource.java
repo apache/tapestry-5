@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,10 +15,12 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
 /**
  * A source for value encoders based on a property type.
  */
+@UsesMappedConfiguration(key=Class.class, value=ValueEncoderFactory.class)
 public interface ValueEncoderSource
 {
     /**
