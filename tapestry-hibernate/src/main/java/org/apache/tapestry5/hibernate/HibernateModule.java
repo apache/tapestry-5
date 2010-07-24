@@ -94,17 +94,21 @@ public class HibernateModule
         {
             final PersistentClass persistentClass = mappings.next();
             final Class entityClass = persistentClass.getMappedClass();
-
-            ValueEncoderFactory factory = new ValueEncoderFactory()
+            
+            if(entityClass != null)
             {
-                public ValueEncoder create(Class type)
+                ValueEncoderFactory factory = new ValueEncoderFactory()
                 {
-                    return new HibernateEntityValueEncoder(entityClass, persistentClass, session, propertyAccess,
-                                                           typeCoercer, loggerSource.getLogger(entityClass));
-                }
-            };
-
-            configuration.add(entityClass, factory);
+                    public ValueEncoder create(Class type)
+                    {
+                        return new HibernateEntityValueEncoder(entityClass, persistentClass, session, propertyAccess,
+                                                               typeCoercer, loggerSource.getLogger(entityClass));
+                    }
+                };
+    
+                configuration.add(entityClass, factory);
+            
+            }
         }
     }
 
