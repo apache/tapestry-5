@@ -528,6 +528,17 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertTextPresent("Success!");
         goBack();
         waitForPageToLoad();
+        
+        clickAndWait("link=stream page content");
+        assertTextPresent("Tapestry 5 Integration Application 1");
+        goBack();
+        waitForPageToLoad();
+
+        clickAndWait("link=stream page content with context");
+        assertTextPresent("music/Details", "Track Details");
+        assertTextPresent("Bug Juice", "Late Lounge", "Electronica");
+        goBack();
+        waitForPageToLoad();
 
         /*
          * clickAndWait("link=URL");

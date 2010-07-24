@@ -16,9 +16,13 @@ package org.apache.tapestry5.integration.app1.pages;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.integration.app1.data.Track;
+import org.apache.tapestry5.integration.app1.pages.music.MusicDetails;
+import org.apache.tapestry5.integration.app1.services.MusicLibrary;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
 import org.apache.tapestry5.services.HttpError;
+import org.apache.tapestry5.services.StreamPageContent;
 import org.apache.tapestry5.util.TextStreamResponse;
 
 import java.net.MalformedURLException;
@@ -38,6 +42,9 @@ public class ReturnTypes
 
     @Inject
     private ComponentResources resources;
+    
+    @Inject
+    private MusicLibrary library;
 
     Object onActionFromNullReturnValue()
     {
@@ -81,7 +88,18 @@ public class ReturnTypes
         return new URL("http://google.com");
     }
     
-
+    Object onActionFromStreamPageContent()
+    {   
+        return new StreamPageContent(Index.class);
+    }
+    
+    Object onActionFromStreamPageContentWithContext()
+    {
+        Track track = library.getById(294L);
+        
+        return new StreamPageContent(MusicDetails.class, track);
+    }
+    
 
     Object onActionFromHttpError()
     {

@@ -1790,6 +1790,8 @@ public final class TapestryModule
         configuration.add(Component.class, componentInstanceProcessor);
 
         configuration.addInstance(StreamResponse.class, StreamResponseResultProcessor.class);
+
+        configuration.addInstance(StreamPageContent.class, StreamPageContentResultProcessor.class);
     }
 
     /**

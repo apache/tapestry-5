@@ -50,6 +50,18 @@
         <a t:type="ActionLink" t:id="BadReturnValue">bad</a>
         return values.
     </p>
+    
+    <p>
+        Test
+        <a t:type="ActionLink" t:id="StreamPageContent">stream page content</a>
+        return values.
+    </p>
+    
+    <p>
+        Test
+        <a t:type="ActionLink" t:id="StreamPageContentWithContext">stream page content with context</a>
+        return values.
+    </p>
 
 
     <p>
