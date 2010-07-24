@@ -1,0 +1,21 @@
+<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+	<t:form clientValidation="false">
+		<p>
+			<t:errors />
+		</p>
+		<p>
+			<t:label for="color" />
+			:
+			<t:select t:id="color" validate="required" blankOption="always"
+				model="literal:Red,Green,Blue" />
+
+		</p>
+
+		<p>
+			<t:submit value="literal:Submit" />
+		</p>
+	</t:form>
+
+	<p> Selected color: ${color}</p>
+
+</t:border>

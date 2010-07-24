@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -201,6 +201,8 @@ public class Select extends AbstractField
         removePropertyNameFromBeanValidationContext();
 
         resources.renderInformalParameters(writer);
+        
+        decorateInsideField();
 
         // Disabled is via a mixin
 

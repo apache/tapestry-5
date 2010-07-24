@@ -44,7 +44,7 @@ LABEL.t-error {
     color: red;
 }
 
-INPUT.t-error, TEXTAREA.t-error {
+INPUT.t-error, TEXTAREA.t-error, SELECT.t-error {
     border-color: red;
     font-style: italic;
     color: red;

@@ -866,4 +866,25 @@ public class FormTests extends TapestryCoreTestCase
 
         assertText("message", "onSelectedFromCancelLink() invoked.");
     }
+    
+    @Test
+    public void validation_decoration_for_select() throws Exception
+    {
+        clickThru("Select Demo");
+
+        clickAndWait(SUBMIT);
+        assertTextPresent("You must provide a value for Color.");
+
+        // Check on decorations via the default validation decorator:
+
+        assertAttribute("//label[@for='color']/@class", "t-error");
+        assertAttribute("//select[@id='color']/@class", "t-error");
+        assertAttribute("//img[@id='color_icon']/@class", "t-error-icon");
+
+        select("color", "label=Green");
+
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("Selected color: Green");
+    }
 }
