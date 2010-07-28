@@ -15,7 +15,7 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.services.javascript.JSStack;
+import org.apache.tapestry5.services.javascript.JavaScriptStack;
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ import java.util.List;
  * Tapestry's default client-side resources.
  * <p>
  * 
- * @deprecated ClientInfrastructure now exists to define the "core" {@link JSStack}. It may be removed
+ * @deprecated ClientInfrastructure now exists to define the "core" {@link JavaScriptStack}. It may be removed
  *             in the future.
  * @since 5.1.0.2
  */

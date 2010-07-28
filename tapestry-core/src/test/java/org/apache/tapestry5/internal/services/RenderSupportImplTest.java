@@ -22,7 +22,7 @@ import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
-import org.apache.tapestry5.services.javascript.JSSupport;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 import org.apache.tapestry5.services.javascript.StylesheetOptions;
 import org.testng.annotations.Test;
@@ -34,10 +34,10 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     @Test
     public void add_script_link_by_asset()
     {
-        JSSupport js = mockJavascriptSupport();
+        JavaScriptSupport js = mockJavascriptSupport();
         Asset asset = mockAsset();
 
-        js.importJavascriptLibrary(asset);
+        js.importJavaScriptLibrary(asset);
 
         replay();
 
@@ -51,7 +51,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     @Test
     public void add_script_link_by_url()
     {
-        JSSupport jss = mockJavascriptSupport();
+        JavaScriptSupport jss = mockJavascriptSupport();
 
         RenderSupport support = new RenderSupportImpl(null, null, jss);
 
@@ -67,7 +67,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     @Test
     public void add_script()
     {
-        JSSupport js = mockJavascriptSupport();
+        JavaScriptSupport js = mockJavascriptSupport();
 
         js.addScript("doSomething();");
 
@@ -89,13 +89,13 @@ public class RenderSupportImplTest extends InternalBaseTestCase
         Asset asset = mockAsset();
         SymbolSource source = mockSymbolSource();
         AssetSource assetSource = mockAssetSource();
-        JSSupport js = mockJavascriptSupport();
+        JavaScriptSupport js = mockJavascriptSupport();
 
         train_expandSymbols(source, path, expanded);
 
         train_getAsset(assetSource, null, expanded, null, asset);
 
-        js.importJavascriptLibrary(asset);
+        js.importJavaScriptLibrary(asset);
 
         replay();
 
@@ -110,7 +110,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     public void add_stylesheet_link_by_asset()
     {
         String media = "print";
-        JSSupport javascriptSupport = mockJavascriptSupport();
+        JavaScriptSupport javascriptSupport = mockJavascriptSupport();
         Asset asset = mockAsset("foo.css");
 
         javascriptSupport.importStylesheet(new StylesheetLink("foo.css", new StylesheetOptions(media)));
@@ -128,7 +128,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     public void add_stylesheet_link_by_url()
     {
         String media = "print";
-        JSSupport javascriptSupport = mockJavascriptSupport();
+        JavaScriptSupport javascriptSupport = mockJavascriptSupport();
 
         javascriptSupport.importStylesheet(new StylesheetLink(ASSET_URL, new StylesheetOptions(media)));
 
@@ -144,7 +144,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     @Test
     public void add_multiple_string_init_parameters()
     {
-        JSSupport js = mockJavascriptSupport();
+        JavaScriptSupport js = mockJavascriptSupport();
 
         JSONObject spec = new JSONObject().put("foo", new JSONArray().put(new JSONArray("fred", "barney")));
 
@@ -164,7 +164,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     @Test
     public void field_focus()
     {
-        JSSupport js = mockJavascriptSupport();
+        JavaScriptSupport js = mockJavascriptSupport();
 
         js.addInitializerCall("activate", "foo");
 
@@ -182,7 +182,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     @Test
     public void first_focus_field_at_priority_wins()
     {
-        JSSupport js = mockJavascriptSupport();
+        JavaScriptSupport js = mockJavascriptSupport();
 
         js.addInitializerCall("activate", "foo");
 
@@ -201,7 +201,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     @Test
     public void higher_priority_wins_focus()
     {
-        JSSupport js = mockJavascriptSupport();
+        JavaScriptSupport js = mockJavascriptSupport();
 
         js.addInitializerCall("activate", "bar");
 
@@ -222,7 +222,7 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     {
         JSONObject parameter = new JSONObject("clientid", "fred");
 
-        JSSupport js = mockJavascriptSupport();
+        JavaScriptSupport js = mockJavascriptSupport();
 
         js.addInitializerCall("setup", parameter);
 

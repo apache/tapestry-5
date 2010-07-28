@@ -34,7 +34,7 @@ import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ClientBehaviorSupport;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
-import org.apache.tapestry5.services.javascript.JSSupport;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 public class NumericTranslatorSupportImpl implements NumericTranslatorSupport
 {
@@ -44,7 +44,7 @@ public class NumericTranslatorSupportImpl implements NumericTranslatorSupport
 
     private final Request request;
 
-    private final JSSupport javascriptSupport;
+    private final JavaScriptSupport javascriptSupport;
 
     private final ClientBehaviorSupport clientBehaviorSupport;
 
@@ -57,7 +57,7 @@ public class NumericTranslatorSupportImpl implements NumericTranslatorSupport
     private static final String DECIMAL_FORMAT_SYMBOLS_PROVIDED = "tapestry.decimal-format-symbols-provided";
 
     public NumericTranslatorSupportImpl(TypeCoercer typeCoercer, ThreadLocale threadLocale, Request request,
-            JSSupport javascriptSupport, ClientBehaviorSupport clientBehaviorSupport, 
+            JavaScriptSupport javascriptSupport, ClientBehaviorSupport clientBehaviorSupport, 
             @Symbol(SymbolConstants.COMPACT_JSON)
             boolean compactJSON)
     {

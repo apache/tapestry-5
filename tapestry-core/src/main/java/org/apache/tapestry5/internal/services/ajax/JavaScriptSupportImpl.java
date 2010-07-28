@@ -24,7 +24,7 @@ import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.DocumentLinker;
-import org.apache.tapestry5.internal.services.javascript.JSStackPathConstructor;
+import org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathConstructor;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.Coercion;
@@ -32,12 +32,12 @@ import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
-import org.apache.tapestry5.services.javascript.JSStack;
-import org.apache.tapestry5.services.javascript.JSStackSource;
-import org.apache.tapestry5.services.javascript.JSSupport;
+import org.apache.tapestry5.services.javascript.JavaScriptStack;
+import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
-public class JSSupportImpl implements JSSupport
+public class JavaScriptSupportImpl implements JavaScriptSupport
 {
     private final IdAllocator idAllocator;
 
@@ -57,9 +57,9 @@ public class JSSupportImpl implements JSSupport
 
     private final Map<InitializationPriority, JSONObject> inits = CollectionFactory.newMap();
 
-    private final JSStackSource javascriptStackSource;
+    private final JavaScriptStackSource javascriptStackSource;
 
-    private final JSStackPathConstructor stackPathConstructor;
+    private final JavaScriptStackPathConstructor stackPathConstructor;
 
     private static final Coercion<Asset, String> toPath = new Coercion<Asset, String>()
     {
@@ -69,14 +69,14 @@ public class JSSupportImpl implements JSSupport
         }
     };
 
-    public JSSupportImpl(DocumentLinker linker, JSStackSource javascriptStackSource,
-            JSStackPathConstructor stackPathConstructor)
+    public JavaScriptSupportImpl(DocumentLinker linker, JavaScriptStackSource javascriptStackSource,
+            JavaScriptStackPathConstructor stackPathConstructor)
     {
         this(linker, javascriptStackSource, stackPathConstructor, new IdAllocator(), false);
     }
 
-    public JSSupportImpl(DocumentLinker linker, JSStackSource javascriptStackSource,
-            JSStackPathConstructor stackPathConstructor, IdAllocator idAllocator, boolean partialMode)
+    public JavaScriptSupportImpl(DocumentLinker linker, JavaScriptStackSource javascriptStackSource,
+            JavaScriptStackPathConstructor stackPathConstructor, IdAllocator idAllocator, boolean partialMode)
     {
         this.linker = linker;
         this.idAllocator = idAllocator;
@@ -192,7 +192,7 @@ public class JSSupportImpl implements JSSupport
         return idAllocator.allocateId(id);
     }
 
-    public void importJavascriptLibrary(Asset asset)
+    public void importJavaScriptLibrary(Asset asset)
     {
         assert asset != null;
         importJavaScriptLibrary(asset.toClientURL());
@@ -218,7 +218,7 @@ public class JSSupportImpl implements JSSupport
         if (addedStacks.containsKey(stackName))
             return;
 
-        JSStack stack = javascriptStackSource.getStack(stackName);
+        JavaScriptStack stack = javascriptStackSource.getStack(stackName);
 
         stackLibraries.addAll(stackPathConstructor.constructPathsForJavaScriptStack(stackName));
 

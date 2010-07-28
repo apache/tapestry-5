@@ -26,8 +26,8 @@ import java.lang.annotation.Target;
 
 import org.apache.tapestry5.ioc.annotations.UseWith;
 import org.apache.tapestry5.runtime.Component;
-import org.apache.tapestry5.services.javascript.JSStack;
-import org.apache.tapestry5.services.javascript.JSSupport;
+import org.apache.tapestry5.services.javascript.JavaScriptStack;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * Annotations to control the importing of JavaScript stacks and libraries as well as stylesheets. This annotation may
@@ -37,7 +37,7 @@ import org.apache.tapestry5.services.javascript.JSSupport;
  * <p>
  * Assets are localized during the {@link Component#containingPageDidLoad()} lifecycle method.
  * 
- * @see JSSupport
+ * @see JavaScriptSupport
  * @since 5.2.0
  */
 @Target(
@@ -51,8 +51,8 @@ public @interface Import
     /**
      * Javascript Stacks to import. Stacks are imported before individual libraries.
      * 
-     * @see JSStack
-     * @see JSSupport#importStack(String)
+     * @see JavaScriptStack
+     * @see JavaScriptSupport#importStack(String)
      */
     String[] stack() default
     {};
@@ -61,7 +61,7 @@ public @interface Import
      * Javascript libraries to import. Each value is an asset path; symbols in each path are expanded. The library may
      * be localized.
      * 
-     * @see JSSupport#importJavascriptLibrary(org.apache.tapestry5.Asset)
+     * @see JavaScriptSupport#importJavaScriptLibrary(org.apache.tapestry5.Asset)
      */
     String[] library() default
     {};
@@ -70,7 +70,7 @@ public @interface Import
      * Stylesheets to import. Each value is an asset path; symbols in each path are expanded. The stylesheet may be
      * localized. The stylesheet is imported with no options.
      * 
-     * @see JSSupport#importStylesheet(org.apache.tapestry5.Asset,
+     * @see JavaScriptSupport#importStylesheet(org.apache.tapestry5.Asset,
      *      org.apache.tapestry5.services.javascript.StylesheetOptions)
      */
     String[] stylesheet() default

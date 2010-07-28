@@ -37,7 +37,7 @@ import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.apache.tapestry5.services.ValueEncoderSource;
-import org.apache.tapestry5.services.javascript.JSSupport;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.util.EnumSelectModel;
 
 /**
@@ -145,7 +145,7 @@ public class Select extends AbstractField
     private FormSupport formSupport;
 
     @Inject
-    private JSSupport javascriptSupport;
+    private JavaScriptSupport javascriptSupport;
 
     @SuppressWarnings("unused")
     @Mixin

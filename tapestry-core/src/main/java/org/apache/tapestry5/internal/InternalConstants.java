@@ -15,7 +15,7 @@
 package org.apache.tapestry5.internal;
 
 import org.apache.tapestry5.ioc.util.TimeInterval;
-import org.apache.tapestry5.services.javascript.JSStack;
+import org.apache.tapestry5.services.javascript.JavaScriptStack;
 
 public final class InternalConstants
 {
@@ -133,7 +133,7 @@ public final class InternalConstants
     public static final String[] EMPTY_STRING_ARRAY = new String[0];
 
     /**
-     * Name of the core {@link JSStack}, which supplies the basic JavaScript infrastructure
+     * Name of the core {@link JavaScriptStack}, which supplies the basic JavaScript infrastructure
      * on the client.
      * 
      * @since 5.2.0

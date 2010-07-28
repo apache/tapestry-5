@@ -25,12 +25,12 @@ import org.apache.tapestry5.services.EnvironmentalShadowBuilder;
 
 /**
  * An environmental that acts as a replacement for the {@link RenderSupport} environmental, renaming and streamlining
- * the the key methods. JavascriptSupport is very stateful, accumulating JavaScript stacks, libraries and initialization
+ * the the key methods. JavaScriptSupport is very stateful, accumulating JavaScript stacks, libraries and initialization
  * code until the end of the main page render; it then updates the rendered DOM (adding &lt;script&gt; tags to the
  * &lt;head&gt; and &lt;body&gt;) before the document is streamed to the client.
  * <p>
- * JavascriptSupport is normally accessed within a component by using the {@link Environmental} annotation on a
- * component field. In addition, JavascriptSupport may also be accessed as a service (the service
+ * JavaScriptSupport is normally accessed within a component by using the {@link Environmental} annotation on a
+ * component field. In addition, JavaScriptSupport may also be accessed as a service (the service
  * {@linkplain EnvironmentalShadowBuilder internally delegates to the current environmental instance}), which is useful
  * for service-layer objects.
  * <p>
@@ -43,7 +43,7 @@ import org.apache.tapestry5.services.EnvironmentalShadowBuilder;
  * 
  * @since 5.2.0
  */
-public interface JSSupport
+public interface JavaScriptSupport
 {
     /**
      * Allocates a unique id based on the component's id. In some cases, the return value will not precisely match the
@@ -145,7 +145,7 @@ public interface JSSupport
      * 
      * @see IncludeJavaScriptLibrary
      */
-    void importJavascriptLibrary(Asset asset);
+    void importJavaScriptLibrary(Asset asset);
 
     /**
      * A convenience method that wraps the Asset as a {@link StylesheetLink}.
@@ -166,9 +166,9 @@ public interface JSSupport
     void importStylesheet(StylesheetLink stylesheetLink);
 
     /**
-     * Imports a {@link JSStack} by name, a related set of JavaScript libraries and stylesheets.
-     * Stacks are contributions to the {@link JSStackSource} service. When
-     * {@linkplain SymbolConstants#COMBINE_SCRIPTS Javascript aggregation} in enabled, the stack will be represented by
+     * Imports a {@link JavaScriptStack} by name, a related set of JavaScript libraries and stylesheets.
+     * Stacks are contributions to the {@link JavaScriptStackSource} service. When
+     * {@linkplain SymbolConstants#COMBINE_SCRIPTS JavaScript aggregation} in enabled, the stack will be represented by
      * a single virtual URL; otherwise the individual asset URLs of the stack
      * will be added to the document.
      * 

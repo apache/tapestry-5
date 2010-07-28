@@ -35,7 +35,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.javascript.JSSupport;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * Multiple selection component. Generates a UI consisting of two &lt;select&gt; elements configured for multiple
@@ -220,7 +220,7 @@ public class Palette extends AbstractField
      * Used to include scripting code in the rendered page.
      */
     @Environmental
-    private JSSupport javascriptSupport;
+    private JavaScriptSupport javascriptSupport;
 
     @Environmental
     private ValidationTracker tracker;

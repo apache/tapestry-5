@@ -16,7 +16,7 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.corelib.components.FormInjector;
-import org.apache.tapestry5.services.javascript.JSStack;
+import org.apache.tapestry5.services.javascript.JavaScriptStack;
 
 /**
  * Constants used when processing requests from the client web browser.
@@ -38,7 +38,7 @@ public final class RequestConstants
     public static final String CONTEXT_FOLDER = "ctx";
 
     /**
-     * Folder for combined {@link JSStack} JavaScript files. The path consists of the locale (as a folder) and
+     * Folder for combined {@link JavaScriptStack} JavaScript files. The path consists of the locale (as a folder) and
      * the name
      * of the stack (suffixed with ".js").
      * 

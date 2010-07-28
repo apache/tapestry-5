@@ -19,7 +19,7 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.javascript.JSSupport;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * Renders an arbitrary element including informal parameters.
@@ -44,7 +44,7 @@ public class Any implements ClientElement
     private ComponentResources resources;
 
     @Inject
-    private JSSupport javascriptSupport;
+    private JavaScriptSupport javascriptSupport;
 
     String defaultElement()
     {
@@ -89,7 +89,7 @@ public class Any implements ClientElement
         writer.end(); // the element
     }
 
-    void inject(JSSupport javascriptSupport, ComponentResources resources, String element, String clientId)
+    void inject(JavaScriptSupport javascriptSupport, ComponentResources resources, String element, String clientId)
     {
         this.javascriptSupport = javascriptSupport;
         this.resources = resources;

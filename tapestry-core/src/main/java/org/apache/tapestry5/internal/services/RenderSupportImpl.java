@@ -23,7 +23,7 @@ import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
-import org.apache.tapestry5.services.javascript.JSSupport;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 import org.apache.tapestry5.services.javascript.StylesheetOptions;
 
@@ -37,7 +37,7 @@ public class RenderSupportImpl implements RenderSupport
 
     private String focusFieldId;
 
-    private final JSSupport javascriptSupport;
+    private final JavaScriptSupport javascriptSupport;
 
     /**
      * @param symbolSource
@@ -49,7 +49,7 @@ public class RenderSupportImpl implements RenderSupport
      * @param ClientInfrastructure
      *            Identifies which JavaScript libraries and stylesheets are needed in a full page render
      */
-    public RenderSupportImpl(SymbolSource symbolSource, AssetSource assetSource, JSSupport javascriptSupport)
+    public RenderSupportImpl(SymbolSource symbolSource, AssetSource assetSource, JavaScriptSupport javascriptSupport)
     {
         this.symbolSource = symbolSource;
         this.assetSource = assetSource;
@@ -72,7 +72,7 @@ public class RenderSupportImpl implements RenderSupport
         {
             assert asset != null;
 
-            javascriptSupport.importJavascriptLibrary(asset);
+            javascriptSupport.importJavaScriptLibrary(asset);
         }
     }
 

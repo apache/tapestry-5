@@ -29,16 +29,16 @@ import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
-import org.apache.tapestry5.services.javascript.JSStack;
+import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
-public class DateFieldStack implements JSStack
+public class DateFieldStack implements JavaScriptStack
 {
     private final ThreadLocale threadLocale;
 
     private final boolean compactJSON;
 
-    private final List<Asset> javascriptStack;
+    private final List<Asset> javaScriptStack;
 
     private final List<StylesheetLink> stylesheetStack;
 
@@ -59,7 +59,7 @@ public class DateFieldStack implements JSStack
         Mapper<String, StylesheetLink> pathToStylesheetLink = pathToAsset
                 .combine(TapestryInternalUtils.assetToStylesheetLink);
 
-        javascriptStack = F.flow("${tapestry.datepicker}/js/datepicker.js",
+        javaScriptStack = F.flow("${tapestry.datepicker}/js/datepicker.js",
                 "org/apache/tapestry5/corelib/components/datefield.js").map(pathToAsset).toList();
 
         stylesheetStack = F.flow("${tapestry.datepicker}/css/datepicker.css").map(pathToStylesheetLink).toList();
@@ -103,9 +103,9 @@ public class DateFieldStack implements JSStack
         return String.format("Tapestry.DateField.initLocalization(%s);", spec.toString(compactJSON));
     }
 
-    public List<Asset> getJavascriptLibraries()
+    public List<Asset> getJavaScriptLibraries()
     {
-        return javascriptStack;
+        return javaScriptStack;
     }
 
     public List<StylesheetLink> getStylesheets()

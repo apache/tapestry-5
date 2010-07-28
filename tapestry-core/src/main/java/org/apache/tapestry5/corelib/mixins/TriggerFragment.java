@@ -23,7 +23,7 @@ import org.apache.tapestry5.annotations.InjectContainer;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.Heartbeat;
-import org.apache.tapestry5.services.javascript.JSSupport;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * A mixin that can be applied to a {@link org.apache.tapestry5.corelib.components.Checkbox} or
@@ -53,7 +53,7 @@ public class TriggerFragment
     private boolean invert;
 
     @Environmental
-    private JSSupport javascriptSupport;
+    private JavaScriptSupport javascriptSupport;
 
     @HeartbeatDeferred
     void beginRender()

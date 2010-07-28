@@ -32,7 +32,7 @@ import org.apache.tapestry5.services.ClientInfrastructure;
  * A JavaScriptStack can be thought of as a generalization of Tapestry 5.1's {@link ClientInfrastructure}, which exists
  * now to define the "core" Javascript stack.
  * <p>
- * A Javascript assets of a stack may (when {@linkplain SymbolConstants#COMBINE_SCRIPTS enabled}) be exposed to the
+ * A JavaScript assets of a stack may (when {@linkplain SymbolConstants#COMBINE_SCRIPTS enabled}) be exposed to the
  * client as a single URL (identifying the stack by name). The individual assets are combined into a single virtual
  * asset, which is then streamed to the client.
  * <p>
@@ -44,12 +44,12 @@ import org.apache.tapestry5.services.ClientInfrastructure;
  * @since 5.2.0
  * @see ThreadLocale
  */
-public interface JSStack
+public interface JavaScriptStack
 {
     /**
      * Returns a list of <em>localized</em> assets for JavaScript libraries that form the stack.
      */
-    List<Asset> getJavascriptLibraries();
+    List<Asset> getJavaScriptLibraries();
 
     /**
      * Returns a list of <em>localized<m/e> links for stylesheets that form the stack.

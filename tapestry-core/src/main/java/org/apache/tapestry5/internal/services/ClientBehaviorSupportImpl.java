@@ -22,17 +22,17 @@ import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ClientBehaviorSupport;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FormSupport;
-import org.apache.tapestry5.services.javascript.JSSupport;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
 {
-    private final JSSupport javascriptSupport;
+    private final JavaScriptSupport javascriptSupport;
 
     private final Environment environment;
 
     private final JSONObject validations = new JSONObject();
 
-    public ClientBehaviorSupportImpl(JSSupport javascriptSupport, Environment environment)
+    public ClientBehaviorSupportImpl(JavaScriptSupport javascriptSupport, Environment environment)
     {
         this.javascriptSupport = javascriptSupport;
         this.environment = environment;

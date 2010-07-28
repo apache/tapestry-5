@@ -41,7 +41,7 @@ import org.apache.tapestry5.services.Heartbeat;
 import org.apache.tapestry5.services.HiddenFieldLocationRules;
 import org.apache.tapestry5.services.PartialMarkupRenderer;
 import org.apache.tapestry5.services.PartialMarkupRendererFilter;
-import org.apache.tapestry5.services.javascript.JSSupport;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.slf4j.Logger;
 
 /**
@@ -95,7 +95,7 @@ public class FormInjector implements ClientElement
     private String element;
 
     @Environmental
-    private JSSupport javascriptSupport;
+    private JavaScriptSupport javascriptSupport;
 
     @Environmental
     private FormSupport formSupport;

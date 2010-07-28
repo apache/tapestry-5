@@ -42,14 +42,14 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
-import org.apache.tapestry5.services.javascript.JSStack;
-import org.apache.tapestry5.services.javascript.JSStackSource;
+import org.apache.tapestry5.services.javascript.JavaScriptStack;
+import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
 
 public class StackAssetRequestHandler implements AssetRequestHandler, InvalidationListener
 {
     private final ResourceCache resourceCache;
 
-    private final JSStackSource javascriptStackSource;
+    private final JavaScriptStackSource javascriptStackSource;
 
     private final LocalizationSetter localizationSetter;
 
@@ -64,7 +64,7 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
 
     private final Map<String, BytestreamCache> compressedCache = CollectionFactory.newCaseInsensitiveMap();
 
-    public StackAssetRequestHandler(ResourceCache resourceCache, JSStackSource javascriptStackSource,
+    public StackAssetRequestHandler(ResourceCache resourceCache, JavaScriptStackSource javascriptStackSource,
             LocalizationSetter localizationSetter, ResponseCompressionAnalyzer compressionAnalyzer,
 
             @Symbol(SymbolConstants.PRODUCTION_MODE)
@@ -168,8 +168,8 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
     {
         localizationSetter.setNonPeristentLocaleFromLocaleName(localeName);
 
-        JSStack stack = javascriptStackSource.getStack(stackName);
-        List<Asset> libraries = stack.getJavascriptLibraries();
+        JavaScriptStack stack = javascriptStackSource.getStack(stackName);
+        List<Asset> libraries = stack.getJavaScriptLibraries();
 
         return assembleStackContent(libraries);
     }

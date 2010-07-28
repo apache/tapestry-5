@@ -19,7 +19,7 @@ import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.javascript.JSSupport;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 import org.apache.tapestry5.services.javascript.StylesheetOptions;
 
@@ -42,7 +42,7 @@ public class AssetDemo
     private Asset ieOnly;
 
     @Environmental
-    private JSSupport javascriptSupport;
+    private JavaScriptSupport javascriptSupport;
 
     @Import(stylesheet = "context:css/via-import.css")
     void afterRender()

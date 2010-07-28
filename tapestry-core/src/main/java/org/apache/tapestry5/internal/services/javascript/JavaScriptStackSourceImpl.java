@@ -18,21 +18,21 @@ import java.util.Map;
 
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
-import org.apache.tapestry5.services.javascript.JSStack;
-import org.apache.tapestry5.services.javascript.JSStackSource;
+import org.apache.tapestry5.services.javascript.JavaScriptStack;
+import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
 
-public class JSStackSourceImpl implements JSStackSource
+public class JavaScriptStackSourceImpl implements JavaScriptStackSource
 {
-    private final Map<String, JSStack> configuration;
+    private final Map<String, JavaScriptStack> configuration;
 
-    public JSStackSourceImpl(Map<String, JSStack> configuration)
+    public JavaScriptStackSourceImpl(Map<String, JavaScriptStack> configuration)
     {
         this.configuration = configuration;
     }
 
-    public JSStack getStack(String name)
+    public JavaScriptStack getStack(String name)
     {
-        JSStack stack = configuration.get(name);
+        JavaScriptStack stack = configuration.get(name);
 
         if (stack == null)
             throw new UnknownValueException(String.format("No JavascriptStack with name '%s'.", name),

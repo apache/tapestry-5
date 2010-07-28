@@ -20,17 +20,17 @@ import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.javascript.JSSupport;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * Recognizes the {@link org.apache.tapestry5.annotations.IncludeJavaScriptLibrary} annotation, and ensures that
- * {@link JSSupport#importJavascriptLibrary(Asset)} is invoked.
+ * {@link JavaScriptSupport#importJavaScriptLibrary(Asset)} is invoked.
  */
 public class IncludeJavaScriptLibraryWorker extends AbstractIncludeAssetWorker
 {
-    private final JSSupport javascriptSupport;
+    private final JavaScriptSupport javascriptSupport;
 
-    public IncludeJavaScriptLibraryWorker(AssetSource assetSource, JSSupport renderSupport,
+    public IncludeJavaScriptLibraryWorker(AssetSource assetSource, JavaScriptSupport renderSupport,
             SymbolSource symbolSource)
     {
         super(assetSource, symbolSource);
@@ -48,6 +48,6 @@ public class IncludeJavaScriptLibraryWorker extends AbstractIncludeAssetWorker
 
     protected void handleAsset(Asset asset)
     {
-        javascriptSupport.importJavascriptLibrary(asset);
+        javascriptSupport.importJavaScriptLibrary(asset);
     }
 }

@@ -20,7 +20,7 @@ import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.EnvironmentalShadowBuilder;
-import org.apache.tapestry5.services.javascript.JSSupport;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * Provides support to all components that render. This is primarily about generating unique client-side ids (very
@@ -31,7 +31,7 @@ import org.apache.tapestry5.services.javascript.JSSupport;
  * The scripting statements added to this block will be executed, on the client, only once the page has fully loaded.
  * <p>
  * The methods in this interface are largely being replaced with a new environmental interface,
- * {@link JSSupport}.
+ * {@link JavaScriptSupport}.
  * <p>
  * RenderSupport is normally accessed within a component by using the {@link Environmental} annotation on a component
  * field. In addition, RenderSupport may also be accessed as a service (the service
@@ -48,8 +48,8 @@ public interface RenderSupport
      *            the component id from which a unique id will be generated
      * @return a unique id for this rendering of the page
      * @see org.apache.tapestry5.ioc.util.IdAllocator
-     * @see JSSupport#allocateClientId(ComponentResources)
-     * @deprecated Use {@link JSSupport#allocateClientId(String)} instead
+     * @see JavaScriptSupport#allocateClientId(ComponentResources)
+     * @deprecated Use {@link JavaScriptSupport#allocateClientId(String)} instead
      */
     String allocateClientId(String id);
 
@@ -59,7 +59,7 @@ public interface RenderSupport
      * @param resources
      *            of the component which requires an id
      * @return a unique id for this rendering of the page
-     * @deprecated Use {@link JSSupport#allocateClientId(ComponentResources)} instead
+     * @deprecated Use {@link JavaScriptSupport#allocateClientId(ComponentResources)} instead
      */
     String allocateClientId(ComponentResources resources);
 
@@ -70,7 +70,7 @@ public interface RenderSupport
      * 
      * @param scriptAssets
      *            asset to the script to add
-     * @deprecated Use {@link JSSupport#importJavascriptLibrary(Asset)} instead
+     * @deprecated Use {@link JavaScriptSupport#importJavaScriptLibrary(Asset)} instead
      */
     void addScriptLink(Asset... scriptAssets);
 
@@ -80,7 +80,7 @@ public interface RenderSupport
      * 
      * @param scriptURLs
      *            URL strings of scripts
-     * @deprecated Use {@link JSSupport#importJavaScriptLibrary(String)} instead
+     * @deprecated Use {@link JavaScriptSupport#importJavaScriptLibrary(String)} instead
      * @throws RuntimeException
      *             <strong>always</strong> as of 5.2.0
      */
@@ -93,7 +93,7 @@ public interface RenderSupport
      * @param classpaths
      *            array of paths. Symbols in the paths are expanded, then the paths are each converted into an
      *            asset.
-     * @deprecated Use {@link JSSupport#importJavascriptLibrary(Asset)} instead
+     * @deprecated Use {@link JavaScriptSupport#importJavaScriptLibrary(Asset)} instead
      */
     void addClasspathScriptLink(String... classpaths);
 
@@ -125,7 +125,7 @@ public interface RenderSupport
      * 
      * @param script
      *            text to be added to the script block
-     * @deprecated Use {@link JSSupport#addScript(String, Object...)} instead
+     * @deprecated Use {@link JavaScriptSupport#addScript(String, Object...)} instead
      */
     void addScript(String script);
 
@@ -138,7 +138,7 @@ public interface RenderSupport
      *            base string format, to be passed through String.format
      * @param arguments
      *            additional arguments formatted to form the final script
-     * @deprecated Use {@link JSSupport#addScript(String, Object...)} instead
+     * @deprecated Use {@link JavaScriptSupport#addScript(String, Object...)} instead
      */
     void addScript(String format, Object... arguments);
 
@@ -151,7 +151,7 @@ public interface RenderSupport
      * @param parameterList
      *            list of parameters for the method invocation.
      * @see #addScript(String, Object[])
-     * @deprecated Use {@link JSSupport#addInitializerCall(String, JSONObject)} instead (which may require
+     * @deprecated Use {@link JavaScriptSupport#addInitializerCall(String, JSONObject)} instead (which may require
      *             changes to your JavaScript initializer function)
      */
     void addInit(String functionName, JSONArray parameterList);
@@ -164,7 +164,7 @@ public interface RenderSupport
      *            the name of the function (on the client-side Tapestry object) to invoke.
      * @param parameter
      *            the object to pass to the function
-     * @deprecated Use {@link JSSupport#addInitializerCall(String, JSONObject)} instead
+     * @deprecated Use {@link JavaScriptSupport#addInitializerCall(String, JSONObject)} instead
      */
     void addInit(String functionName, JSONObject parameter);
 
@@ -177,9 +177,9 @@ public interface RenderSupport
      * @param functionName
      *            the name of the function (on the client-side Tapestry object) to invoke.
      * @param parameters
-     * @deprecated Use {@link JSSupport#addInitializerCall(String, JSONObject)} instead (which may require
+     * @deprecated Use {@link JavaScriptSupport#addInitializerCall(String, JSONObject)} instead (which may require
      *             changes to your JavaScript initializer function), or (for a single parameter)
-     *             {@link JSSupport#addInitializerCall(String, String)}
+     *             {@link JavaScriptSupport#addInitializerCall(String, String)}
      */
     void addInit(String functionName, String... parameters);
 

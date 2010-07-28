@@ -54,7 +54,7 @@ import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
 import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.javascript.JSSupport;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.slf4j.Logger;
 
 /**
@@ -220,7 +220,7 @@ public class Form implements ClientElement, FormValidationControl
     private Messages messages;
 
     @Environmental
-    private JSSupport javascriptSupport;
+    private JavaScriptSupport javascriptSupport;
 
     @Environmental
     private RenderSupport renderSupport;
