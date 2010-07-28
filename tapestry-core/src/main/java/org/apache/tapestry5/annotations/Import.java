@@ -49,7 +49,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 public @interface Import
 {
     /**
-     * Javascript Stacks to import. Stacks are imported before individual libraries.
+     * JavaScript Stacks to import. Stacks are imported before individual libraries.
      * 
      * @see JavaScriptStack
      * @see JavaScriptSupport#importStack(String)
@@ -58,7 +58,7 @@ public @interface Import
     {};
 
     /**
-     * Javascript libraries to import. Each value is an asset path; symbols in each path are expanded. The library may
+     * JavaScript libraries to import. Each value is an asset path; symbols in each path are expanded. The library may
      * be localized.
      * 
      * @see JavaScriptSupport#importJavaScriptLibrary(org.apache.tapestry5.Asset)

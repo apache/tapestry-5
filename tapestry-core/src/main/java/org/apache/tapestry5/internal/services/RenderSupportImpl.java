@@ -144,7 +144,7 @@ public class RenderSupportImpl implements RenderSupport
      * For the few existing places that use the old variations of addInit(), passing a list of
      * strings or a JSONArray, the end result is a bit inefficient. We end up generating lots
      * of calls to Tapestry.init, with no attempt to aggregate them. Most of the time, the init
-     * occurs with a JSONObject (the "spec") and is handled by JavascriptSupport.
+     * occurs with a JSONObject (the "spec") and is handled by {@link JavaScriptSupport}.
      */
     private void addInitFunctionInvocation(String functionName, Object parameters)
     {

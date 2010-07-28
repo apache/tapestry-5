@@ -1244,7 +1244,7 @@ public abstract class TapestryTestCase extends IOCTestCase
         return newMock(ClientInfrastructure.class);
     }
 
-    protected final JavaScriptSupport mockJavascriptSupport()
+    protected final JavaScriptSupport mockJavaScriptSupport()
     {
         return newMock(JavaScriptSupport.class);
     }

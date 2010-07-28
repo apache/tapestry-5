@@ -36,7 +36,7 @@ public class ClientBehaviorSupportImplTest extends TapestryTestCase
     public void add_links()
     {
         Link link1 = mockLink("/link1");
-        JavaScriptSupport js = mockJavascriptSupport();
+        JavaScriptSupport js = mockJavaScriptSupport();
 
         js.addInitializerCall("linkZone", new JSONObject("linkId", "client1", "zoneId", "zone1", "url", "/link1"));
 
@@ -54,7 +54,7 @@ public class ClientBehaviorSupportImplTest extends TapestryTestCase
     @Test
     public void add_zones()
     {
-        JavaScriptSupport js = mockJavascriptSupport();
+        JavaScriptSupport js = mockJavaScriptSupport();
         Environment environment = mockEnvironment();
 
         expect(environment.peek(FormSupport.class)).andReturn(null).atLeastOnce();
@@ -75,7 +75,7 @@ public class ClientBehaviorSupportImplTest extends TapestryTestCase
     @Test
     public void add_zone_inside_form()
     {
-        JavaScriptSupport js = mockJavascriptSupport();
+        JavaScriptSupport js = mockJavaScriptSupport();
         Environment environment = mockEnvironment();
         FormSupport fs = mockFormSupport();
 
@@ -102,7 +102,7 @@ public class ClientBehaviorSupportImplTest extends TapestryTestCase
     @Test
     public void zones_with_functions()
     {
-        JavaScriptSupport js = mockJavascriptSupport();
+        JavaScriptSupport js = mockJavaScriptSupport();
         Environment environment = mockEnvironment();
 
         expect(environment.peek(FormSupport.class)).andReturn(null).atLeastOnce();
@@ -123,7 +123,7 @@ public class ClientBehaviorSupportImplTest extends TapestryTestCase
     @Test
     public void zone_function_names_are_converted_to_lower_case()
     {
-        JavaScriptSupport js = mockJavascriptSupport();
+        JavaScriptSupport js = mockJavaScriptSupport();
         Environment environment = mockEnvironment();
 
         expect(environment.peek(FormSupport.class)).andReturn(null).atLeastOnce();

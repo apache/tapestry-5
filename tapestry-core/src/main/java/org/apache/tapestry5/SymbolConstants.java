@@ -190,7 +190,7 @@ public class SymbolConstants
     public static final String ENCODE_LOCALE_INTO_PATH = "tapestry.encode-locale-into-path";
 
     /**
-     * If "true" then Javascript files in a {@link JavaScriptStack} will be combined into a single virtual JavaScript
+     * If "true" then JavaScript files in a {@link JavaScriptStack} will be combined into a single virtual JavaScript
      * file. Defaults to "true" in production mode.
      * 
      * @since 5.1.0.2

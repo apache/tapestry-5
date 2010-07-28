@@ -1372,7 +1372,7 @@ public final class TapestryModule
      * 
      * @since 5.2.0
      */
-    public JavaScriptSupport buildJavascriptSupport()
+    public JavaScriptSupport buildJavaScriptSupport()
     {
         return environmentalBuilder.build(JavaScriptSupport.class);
     }
@@ -1975,7 +1975,7 @@ public final class TapestryModule
             }
         };
 
-        MarkupRendererFilter javascriptSupport = new MarkupRendererFilter()
+        MarkupRendererFilter javaScriptSupport = new MarkupRendererFilter()
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
@@ -2076,10 +2076,10 @@ public final class TapestryModule
         };
 
         configuration.add("DocumentLinker", documentLinker);
-        configuration.add("JavascriptSupport", javascriptSupport, "after:DocumentLinker");
-        configuration.add("RenderSupport", renderSupport, "after:JavascriptSupport");
+        configuration.add("JavaScriptSupport", javaScriptSupport, "after:DocumentLinker");
+        configuration.add("RenderSupport", renderSupport, "after:JavaScriptSupport");
         configuration.add("InjectDefaultStyleheet", injectDefaultStylesheet, "after:RenderSupport");
-        configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:JavascriptSupport");
+        configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:JavaScriptSupport");
         configuration.add("Heartbeat", heartbeat, "after:RenderSupport");
         configuration.add("DefaultValidationDecorator", defaultValidationDecorator, "after:Heartbeat");
     }
@@ -2090,7 +2090,7 @@ public final class TapestryModule
      * <dl>
      * <dt>DocumentLinker
      * <dd>Provides {@link org.apache.tapestry5.internal.services.DocumentLinker}
-     * <dt>JavascriptSupport
+     * <dt>JavaScriptSupport
      * <dd>Provides {@link JavaScriptSupport}</dd>
      * <dt>PageRenderSupport</dt>
      * <dd>Provides {@link org.apache.tapestry5.RenderSupport}</dd>
@@ -2226,9 +2226,9 @@ public final class TapestryModule
         };
 
         configuration.add("DocumentLinker", documentLinker);
-        configuration.add("JavascriptSupport", javascriptSupport, "after:DocumentLinker");
-        configuration.add("RenderSupport", renderSupport, "after:JavascriptSupport");
-        configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:JavascriptSupport");
+        configuration.add("JavaScriptSupport", javascriptSupport, "after:DocumentLinker");
+        configuration.add("RenderSupport", renderSupport, "after:JavaScriptSupport");
+        configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:JavaScriptSupport");
         configuration.add("Heartbeat", heartbeat, "after:RenderSupport");
         configuration.add("DefaultValidationDecorator", defaultValidationDecorator, "after:Heartbeat");
     }
@@ -2884,7 +2884,7 @@ public final class TapestryModule
      * 
      * @since 5.2.0
      */
-    public static void contributeJavascriptStackSource(MappedConfiguration<String, JavaScriptStack> configuration)
+    public static void contributeJavaScriptStackSource(MappedConfiguration<String, JavaScriptStack> configuration)
     {
         configuration.addInstance(InternalConstants.CORE_STACK_NAME, CoreJavascriptStack.class);
         configuration.addInstance("core-datefield", DateFieldStack.class);

@@ -28,7 +28,7 @@ import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ClientInfrastructure;
 
 /**
- * The default Javascript Stack consists of Prototype, Scriptaculous & the Tapestry-specific library.
+ * The default JavaScript Stack consists of Prototype, Scriptaculous & the Tapestry-specific library.
  * 
  * @since 5.1.0.2
  */
@@ -40,9 +40,9 @@ public class ClientInfrastructureImpl implements ClientInfrastructure
 
     private final ThreadLocale threadLocale;
 
-    private final List<Asset> javascriptStack, stylesheetStack;
+    private final List<Asset> javaScriptStack, stylesheetStack;
 
-    private final Asset consoleJavascript, consoleStylesheet;
+    private final Asset consoleJavaScript, consoleStylesheet;
 
     private final boolean isBlackbirdEnabled;
 
@@ -74,10 +74,10 @@ public class ClientInfrastructureImpl implements ClientInfrastructure
         this.threadLocale = threadLocale;
         this.isBlackbirdEnabled = isBlackbirdEnabled;
 
-        javascriptStack = convertToAssets(CORE_JAVASCRIPT);
+        javaScriptStack = convertToAssets(CORE_JAVASCRIPT);
         stylesheetStack = convertToAssets(CORE_STYLESHEET);
 
-        consoleJavascript = expand("${tapestry.blackbird}/blackbird.js", "org/apache/tapestry5/tapestry-console.js",
+        consoleJavaScript = expand("${tapestry.blackbird}/blackbird.js", "org/apache/tapestry5/tapestry-console.js",
                 null);
         consoleStylesheet = expand("${tapestry.blackbird}/blackbird.css", "org/apache/tapestry5/tapestry-console.css",
                 null);
@@ -114,7 +114,7 @@ public class ClientInfrastructureImpl implements ClientInfrastructure
         Asset messages = assetSource.getAsset(null, "org/apache/tapestry5/tapestry-messages.js", threadLocale
                 .getLocale());
 
-        return createStack(javascriptStack, messages, consoleJavascript);
+        return createStack(javaScriptStack, messages, consoleJavaScript);
     }
 
     public List<Asset> getStylesheetStack()

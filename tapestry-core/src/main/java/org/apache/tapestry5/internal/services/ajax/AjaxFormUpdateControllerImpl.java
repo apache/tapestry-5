@@ -131,7 +131,7 @@ public class AjaxFormUpdateControllerImpl implements AjaxFormUpdateController
     {
         // Kind of ugly, but the only way to ensure we don't have name collisions on the
         // client side is to force a unique id into each name (as well as each id, but that's
-        // JavascriptSupport's job). It would be nice if we could agree on the uid, but
+        // JavaScriptSupport's job). It would be nice if we could agree on the uid, but
         // not essential.
 
         String uid = Long.toHexString(System.currentTimeMillis());

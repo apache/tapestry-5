@@ -28,7 +28,7 @@ public class AnyTest extends TapestryTestCase
     public void render_simple()
     {
         ComponentResources resources = mockComponentResources();
-        JavaScriptSupport support = mockJavascriptSupport();
+        JavaScriptSupport support = mockJavaScriptSupport();
 
         MarkupWriter writer = new MarkupWriterImpl(new DefaultMarkupModel());
 
@@ -52,7 +52,7 @@ public class AnyTest extends TapestryTestCase
     public void render_with_id()
     {
         ComponentResources resources = mockComponentResources();
-        JavaScriptSupport support = mockJavascriptSupport();
+        JavaScriptSupport support = mockJavaScriptSupport();
 
         MarkupWriter writer = new MarkupWriterImpl(new DefaultMarkupModel());
 
@@ -87,7 +87,7 @@ public class AnyTest extends TapestryTestCase
     public void attempt_to_get_client_id_before_render()
     {
         ComponentResources resources = mockComponentResources();
-        JavaScriptSupport support = mockJavascriptSupport();
+        JavaScriptSupport support = mockJavaScriptSupport();
 
         train_getCompleteId(resources, "Foo/bar.baz");
 

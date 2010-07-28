@@ -144,7 +144,7 @@ public interface RenderSupport
 
     /**
      * Add an initialization call. This method is deprecated and, although it still works, it now generates
-     * very verbose, inefficient client-side Javascript.
+     * very verbose, inefficient client-side JavaScript.
      * 
      * @param functionName
      *            the name of the function (on the client-side Tapestry.Initializer object) to invoke.
@@ -172,7 +172,7 @@ public interface RenderSupport
      * Alternate version of {@link #addInit(String, org.apache.tapestry5.json.JSONArray)} where one or more strings are
      * passed. A single string is added to the initialization call as itself; otherwise, the parameters are combined to
      * form a {@link JSONArray}. This method is deprecated and, although it still works, it now generates
-     * very verbose, inefficient client-side Javascript.
+     * very verbose, inefficient client-side JavaScript.
      * 
      * @param functionName
      *            the name of the function (on the client-side Tapestry object) to invoke.
