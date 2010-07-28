@@ -32,7 +32,7 @@ import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
+import org.apache.tapestry5.services.javascript.JSSupport;
 
 /**
  * Generates a client-side hyperlink that submits the enclosing form. If the link is clicked in the browser, the
@@ -88,7 +88,7 @@ public class LinkSubmit implements ClientElement
     private ComponentResources resources;
 
     @Inject
-    private JavascriptSupport javascriptSupport;
+    private JSSupport javascriptSupport;
 
     @Environmental
     private FormSupport formSupport;

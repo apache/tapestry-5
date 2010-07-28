@@ -18,12 +18,12 @@ import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 
 /**
- * Manages the available {@link JavascriptStack}s, each of which has a unique name.
+ * Manages the available {@link JSStack}s, each of which has a unique name.
  * 
  * @since 5.2.0
  */
-@UsesMappedConfiguration(JavascriptStack.class)
-public interface JavascriptStackSource
+@UsesMappedConfiguration(JSStack.class)
+public interface JSStackSource
 {
     /**
      * Gets a stack by name (ignoring case).
@@ -32,5 +32,5 @@ public interface JavascriptStackSource
      * @throws UnknownValueException
      *             if no such stack
      */
-    JavascriptStack getStack(String name);
+    JSStack getStack(String name);
 }

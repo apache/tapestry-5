@@ -19,7 +19,7 @@ import javax.servlet.http.Cookie;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.pageload.PageLoaderImpl;
 import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateController;
-import org.apache.tapestry5.internal.services.javascript.JavascriptStackPathConstructor;
+import org.apache.tapestry5.internal.services.javascript.JSStackPathConstructor;
 import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSource;
 import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSourceImpl;
 import org.apache.tapestry5.ioc.ObjectLocator;
@@ -90,7 +90,7 @@ public class InternalModule
         binder.bind(ResponseCompressionAnalyzer.class, ResponseCompressionAnalyzerImpl.class);
         binder.bind(ComponentModelSource.class);
         binder.bind(AssetResourceLocator.class);
-        binder.bind(JavascriptStackPathConstructor.class);
+        binder.bind(JSStackPathConstructor.class);
         binder.bind(AjaxFormUpdateController.class);
     }
 

@@ -71,15 +71,15 @@ import org.apache.tapestry5.internal.renderers.ObjectArrayRenderer;
 import org.apache.tapestry5.internal.renderers.RequestRenderer;
 import org.apache.tapestry5.internal.services.*;
 import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateFilter;
-import org.apache.tapestry5.internal.services.ajax.JavascriptSupportImpl;
+import org.apache.tapestry5.internal.services.ajax.JSSupportImpl;
 import org.apache.tapestry5.internal.services.assets.AssetPathConstructorImpl;
 import org.apache.tapestry5.internal.services.assets.ClasspathAssetRequestHandler;
 import org.apache.tapestry5.internal.services.assets.ContextAssetRequestHandler;
 import org.apache.tapestry5.internal.services.assets.StackAssetRequestHandler;
 import org.apache.tapestry5.internal.services.javascript.CoreJavascriptStack;
 import org.apache.tapestry5.internal.services.javascript.DateFieldStack;
-import org.apache.tapestry5.internal.services.javascript.JavascriptStackPathConstructor;
-import org.apache.tapestry5.internal.services.javascript.JavascriptStackSourceImpl;
+import org.apache.tapestry5.internal.services.javascript.JSStackPathConstructor;
+import org.apache.tapestry5.internal.services.javascript.JSStackSourceImpl;
 import org.apache.tapestry5.internal.services.linktransform.LinkTransformerImpl;
 import org.apache.tapestry5.internal.services.linktransform.LinkTransformerInterceptor;
 import org.apache.tapestry5.internal.services.messages.PropertiesFileParserImpl;
@@ -113,9 +113,9 @@ import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.ajax.MultiZoneUpdateEventResultProcessor;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
-import org.apache.tapestry5.services.javascript.JavascriptStack;
-import org.apache.tapestry5.services.javascript.JavascriptStackSource;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
+import org.apache.tapestry5.services.javascript.JSStack;
+import org.apache.tapestry5.services.javascript.JSStackSource;
+import org.apache.tapestry5.services.javascript.JSSupport;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 import org.apache.tapestry5.services.linktransform.ComponentEventLinkTransformer;
 import org.apache.tapestry5.services.linktransform.LinkTransformer;
@@ -383,7 +383,7 @@ public final class TapestryModule
         binder.bind(PageActivator.class, PageActivatorImpl.class);
         binder.bind(Dispatcher.class, AssetDispatcher.class).withId("AssetDispatcher");
         binder.bind(AssetPathConstructor.class, AssetPathConstructorImpl.class);
-        binder.bind(JavascriptStackSource.class, JavascriptStackSourceImpl.class);
+        binder.bind(JSStackSource.class, JSStackSourceImpl.class);
         binder.bind(TranslatorAlternatesSource.class, TranslatorAlternatesSourceImpl.class);
         binder.bind(MetaWorker.class, MetaWorkerImpl.class);
         binder.bind(LinkTransformer.class, LinkTransformerImpl.class);
@@ -490,7 +490,7 @@ public final class TapestryModule
 
     /**
      * Contributes an handler for each mapped classpath alias, as well handlers for context assets
-     * and stack assets (combined {@link JavascriptStack} files).
+     * and stack assets (combined {@link JSStack} files).
      */
     public static void contributeAssetDispatcher(MappedConfiguration<String, AssetRequestHandler> configuration,
 
@@ -1368,13 +1368,13 @@ public final class TapestryModule
     }
 
     /**
-     * Builds a proxy to the current {@link JavascriptSupport} inside this thread's {@link Environment}.
+     * Builds a proxy to the current {@link JSSupport} inside this thread's {@link Environment}.
      * 
      * @since 5.2.0
      */
-    public JavascriptSupport buildJavascriptSupport()
+    public JSSupport buildJavascriptSupport()
     {
-        return environmentalBuilder.build(JavascriptSupport.class);
+        return environmentalBuilder.build(JSSupport.class);
     }
 
     /**
@@ -1920,7 +1920,7 @@ public final class TapestryModule
      * <dt>DocumentLinker</dt>
      * <dd>Provides {@link org.apache.tapestry5.internal.services.DocumentLinker}</dd>
      * <dt>JavascriptSupport</dt>
-     * <dd>Provides {@link JavascriptSupport}</dd>
+     * <dd>Provides {@link JSSupport}</dd>
      * <dt>RenderSupport</dt>
      * <dd>Provides {@link org.apache.tapestry5.RenderSupport}</dd>
      * <dt>InjectDefaultStyleheet</dt>
@@ -1952,9 +1952,9 @@ public final class TapestryModule
 
     final AssetSource assetSource,
 
-    final JavascriptStackSource javascriptStackSource,
+    final JSStackSource javascriptStackSource,
 
-    final JavascriptStackPathConstructor javascriptStackPathConstructor,
+    final JSStackPathConstructor javascriptStackPathConstructor,
 
     @Path("${tapestry.default-stylesheet}")
     final Asset defaultStylesheet)
@@ -1981,14 +1981,14 @@ public final class TapestryModule
             {
                 DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
 
-                JavascriptSupportImpl support = new JavascriptSupportImpl(linker, javascriptStackSource,
+                JSSupportImpl support = new JSSupportImpl(linker, javascriptStackSource,
                         javascriptStackPathConstructor);
 
-                environment.push(JavascriptSupport.class, support);
+                environment.push(JSSupport.class, support);
 
                 renderer.renderMarkup(writer);
 
-                environment.pop(JavascriptSupport.class);
+                environment.pop(JSSupport.class);
 
                 support.commit();
             }
@@ -1998,7 +1998,7 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                JavascriptSupport javascriptSupport = environment.peekRequired(JavascriptSupport.class);
+                JSSupport javascriptSupport = environment.peekRequired(JSSupport.class);
 
                 RenderSupportImpl support = new RenderSupportImpl(symbolSource, assetSource, javascriptSupport);
 
@@ -2028,7 +2028,7 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                JavascriptSupport javascriptSupport = environment.peekRequired(JavascriptSupport.class);
+                JSSupport javascriptSupport = environment.peekRequired(JSSupport.class);
 
                 ClientBehaviorSupportImpl clientBehaviorSupport = new ClientBehaviorSupportImpl(javascriptSupport,
                         environment);
@@ -2091,7 +2091,7 @@ public final class TapestryModule
      * <dt>DocumentLinker
      * <dd>Provides {@link org.apache.tapestry5.internal.services.DocumentLinker}
      * <dt>JavascriptSupport
-     * <dd>Provides {@link JavascriptSupport}</dd>
+     * <dd>Provides {@link JSSupport}</dd>
      * <dt>PageRenderSupport</dt>
      * <dd>Provides {@link org.apache.tapestry5.RenderSupport}</dd>
      * <dt>ClientBehaviorSupport</dt>
@@ -2108,9 +2108,9 @@ public final class TapestryModule
     @Path("${tapestry.spacer-image}")
     final Asset spacerImage,
 
-    final JavascriptStackSource javascriptStackSource,
+    final JSStackSource javascriptStackSource,
 
-    final JavascriptStackPathConstructor javascriptStackPathConstructor,
+    final JSStackPathConstructor javascriptStackPathConstructor,
 
     final SymbolSource symbolSource,
 
@@ -2144,14 +2144,14 @@ public final class TapestryModule
 
                 DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
 
-                JavascriptSupportImpl support = new JavascriptSupportImpl(linker, javascriptStackSource,
+                JSSupportImpl support = new JSSupportImpl(linker, javascriptStackSource,
                         javascriptStackPathConstructor, idAllocator, true);
 
-                environment.push(JavascriptSupport.class, support);
+                environment.push(JSSupport.class, support);
 
                 renderer.renderMarkup(writer, reply);
 
-                environment.pop(JavascriptSupport.class);
+                environment.pop(JSSupport.class);
 
                 support.commit();
             }
@@ -2161,7 +2161,7 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {
-                JavascriptSupport javascriptSupport = environment.peekRequired(JavascriptSupport.class);
+                JSSupport javascriptSupport = environment.peekRequired(JSSupport.class);
 
                 RenderSupportImpl support = new RenderSupportImpl(symbolSource, assetSource, javascriptSupport);
 
@@ -2179,7 +2179,7 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {
-                JavascriptSupport javascriptSupport = environment.peekRequired(JavascriptSupport.class);
+                JSSupport javascriptSupport = environment.peekRequired(JSSupport.class);
 
                 ClientBehaviorSupportImpl support = new ClientBehaviorSupportImpl(javascriptSupport, environment);
 
@@ -2880,11 +2880,11 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes the "core" and "core-datefield" {@link JavascriptStack}s
+     * Contributes the "core" and "core-datefield" {@link JSStack}s
      * 
      * @since 5.2.0
      */
-    public static void contributeJavascriptStackSource(MappedConfiguration<String, JavascriptStack> configuration)
+    public static void contributeJavascriptStackSource(MappedConfiguration<String, JSStack> configuration)
     {
         configuration.addInstance(InternalConstants.CORE_STACK_NAME, CoreJavascriptStack.class);
         configuration.addInstance("core-datefield", DateFieldStack.class);

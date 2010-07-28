@@ -30,7 +30,7 @@ import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.*;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
+import org.apache.tapestry5.services.javascript.JSSupport;
 
 /**
  * Implements the {@link Import} annotation, both at the class and at the method level.
@@ -39,7 +39,7 @@ import org.apache.tapestry5.services.javascript.JavascriptSupport;
  */
 public class ImportWorker implements ComponentClassTransformWorker
 {
-    private final JavascriptSupport javascriptSupport;
+    private final JSSupport javascriptSupport;
 
     private final SymbolSource symbolSource;
 
@@ -61,7 +61,7 @@ public class ImportWorker implements ComponentClassTransformWorker
         };
     };
 
-    public ImportWorker(JavascriptSupport javascriptSupport, SymbolSource symbolSource, AssetSource assetSource)
+    public ImportWorker(JSSupport javascriptSupport, SymbolSource symbolSource, AssetSource assetSource)
     {
         this.javascriptSupport = javascriptSupport;
         this.symbolSource = symbolSource;

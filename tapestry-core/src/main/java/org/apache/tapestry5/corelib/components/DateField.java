@@ -33,7 +33,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
+import org.apache.tapestry5.services.javascript.JSSupport;
 
 /**
  * A component used to collect a provided date from the user using a client-side JavaScript calendar. Non-JavaScript
@@ -92,7 +92,7 @@ public class DateField extends AbstractField
     private Messages messages;
 
     @Environmental
-    private JavascriptSupport support;
+    private JSSupport support;
 
     @Environmental
     private ValidationTracker tracker;

@@ -17,7 +17,7 @@ package org.apache.tapestry5;
 import org.apache.tapestry5.internal.services.AssetDispatcher;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
-import org.apache.tapestry5.services.javascript.JavascriptStack;
+import org.apache.tapestry5.services.javascript.JSStack;
 
 /**
  * Defines the names of symbols used to configure Tapestry.
@@ -190,7 +190,7 @@ public class SymbolConstants
     public static final String ENCODE_LOCALE_INTO_PATH = "tapestry.encode-locale-into-path";
 
     /**
-     * If "true" then Javascript files in a {@link JavascriptStack} will be combined into a single virtual JavaScript
+     * If "true" then Javascript files in a {@link JSStack} will be combined into a single virtual JavaScript
      * file. Defaults to "true" in production mode.
      * 
      * @since 5.1.0.2

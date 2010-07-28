@@ -17,9 +17,9 @@ package org.apache.tapestry5.internal.services.javascript;
 import java.util.List;
 
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.services.javascript.JavascriptStack;
-import org.apache.tapestry5.services.javascript.JavascriptStackSource;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
+import org.apache.tapestry5.services.javascript.JSStack;
+import org.apache.tapestry5.services.javascript.JSStackSource;
+import org.apache.tapestry5.services.javascript.JSSupport;
 
 /**
  * Used to generate a list of asset URL paths for the JavaScript libraries
@@ -27,18 +27,18 @@ import org.apache.tapestry5.services.javascript.JavascriptSupport;
  * aggregation}.
  * 
  * @since 5.2.0
- * @see JavascriptStack
- * @see JavascriptStackSource
- * @see JavascriptSupport
+ * @see JSStack
+ * @see JSStackSource
+ * @see JSSupport
  */
-public interface JavascriptStackPathConstructor
+public interface JSStackPathConstructor
 {
     /**
      * Given a stack, by name, return a list of URL paths for the individual libraqries in the stack.
      * If scripts are combined, this will be a single (combined) URL.
      * 
      * @param stackName
-     *            name of {@link JavascriptStack}
+     *            name of {@link JSStack}
      */
-    List<String> constructPathsForJavascriptStack(String stackName);
+    List<String> constructPathsForJavaScriptStack(String stackName);
 }

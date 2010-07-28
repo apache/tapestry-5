@@ -25,16 +25,16 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
-import org.apache.tapestry5.services.javascript.JavascriptStack;
-import org.apache.tapestry5.services.javascript.JavascriptStackSource;
+import org.apache.tapestry5.services.javascript.JSStack;
+import org.apache.tapestry5.services.javascript.JSStackSource;
 
-public class JavascriptStackPathConstructorImpl implements JavascriptStackPathConstructor
+public class JSStackPathConstructorImpl implements JSStackPathConstructor
 {
     private final ThreadLocale threadLocale;
 
     private final AssetPathConstructor assetPathConstructor;
 
-    private final JavascriptStackSource javascriptStackSource;
+    private final JSStackSource javascriptStackSource;
 
     private final boolean combineScripts;
 
@@ -46,8 +46,8 @@ public class JavascriptStackPathConstructorImpl implements JavascriptStackPathCo
         }
     };
 
-    public JavascriptStackPathConstructorImpl(ThreadLocale threadLocale, AssetPathConstructor assetPathConstructor,
-            JavascriptStackSource javascriptStackSource,
+    public JSStackPathConstructorImpl(ThreadLocale threadLocale, AssetPathConstructor assetPathConstructor,
+            JSStackSource javascriptStackSource,
 
             @Symbol(SymbolConstants.COMBINE_SCRIPTS)
             boolean combineScripts)
@@ -58,9 +58,9 @@ public class JavascriptStackPathConstructorImpl implements JavascriptStackPathCo
         this.combineScripts = combineScripts;
     }
 
-    public List<String> constructPathsForJavascriptStack(String stackName)
+    public List<String> constructPathsForJavaScriptStack(String stackName)
     {
-        JavascriptStack stack = javascriptStackSource.getStack(stackName);
+        JSStack stack = javascriptStackSource.getStack(stackName);
 
         List<Asset> assets = stack.getJavascriptLibraries();
 

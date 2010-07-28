@@ -24,7 +24,7 @@ import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.DocumentLinker;
-import org.apache.tapestry5.internal.services.javascript.JavascriptStackPathConstructor;
+import org.apache.tapestry5.internal.services.javascript.JSStackPathConstructor;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.Coercion;
@@ -32,12 +32,12 @@ import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
-import org.apache.tapestry5.services.javascript.JavascriptStack;
-import org.apache.tapestry5.services.javascript.JavascriptStackSource;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
+import org.apache.tapestry5.services.javascript.JSStack;
+import org.apache.tapestry5.services.javascript.JSStackSource;
+import org.apache.tapestry5.services.javascript.JSSupport;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
-public class JavascriptSupportImpl implements JavascriptSupport
+public class JSSupportImpl implements JSSupport
 {
     private final IdAllocator idAllocator;
 
@@ -57,9 +57,9 @@ public class JavascriptSupportImpl implements JavascriptSupport
 
     private final Map<InitializationPriority, JSONObject> inits = CollectionFactory.newMap();
 
-    private final JavascriptStackSource javascriptStackSource;
+    private final JSStackSource javascriptStackSource;
 
-    private final JavascriptStackPathConstructor stackPathConstructor;
+    private final JSStackPathConstructor stackPathConstructor;
 
     private static final Coercion<Asset, String> toPath = new Coercion<Asset, String>()
     {
@@ -69,14 +69,14 @@ public class JavascriptSupportImpl implements JavascriptSupport
         }
     };
 
-    public JavascriptSupportImpl(DocumentLinker linker, JavascriptStackSource javascriptStackSource,
-            JavascriptStackPathConstructor stackPathConstructor)
+    public JSSupportImpl(DocumentLinker linker, JSStackSource javascriptStackSource,
+            JSStackPathConstructor stackPathConstructor)
     {
         this(linker, javascriptStackSource, stackPathConstructor, new IdAllocator(), false);
     }
 
-    public JavascriptSupportImpl(DocumentLinker linker, JavascriptStackSource javascriptStackSource,
-            JavascriptStackPathConstructor stackPathConstructor, IdAllocator idAllocator, boolean partialMode)
+    public JSSupportImpl(DocumentLinker linker, JSStackSource javascriptStackSource,
+            JSStackPathConstructor stackPathConstructor, IdAllocator idAllocator, boolean partialMode)
     {
         this.linker = linker;
         this.idAllocator = idAllocator;
@@ -195,10 +195,10 @@ public class JavascriptSupportImpl implements JavascriptSupport
     public void importJavascriptLibrary(Asset asset)
     {
         assert asset != null;
-        importJavascriptLibrary(asset.toClientURL());
+        importJavaScriptLibrary(asset.toClientURL());
     }
 
-    public void importJavascriptLibrary(String libraryURL)
+    public void importJavaScriptLibrary(String libraryURL)
     {
         addCoreStackIfNeeded();
 
@@ -218,9 +218,9 @@ public class JavascriptSupportImpl implements JavascriptSupport
         if (addedStacks.containsKey(stackName))
             return;
 
-        JavascriptStack stack = javascriptStackSource.getStack(stackName);
+        JSStack stack = javascriptStackSource.getStack(stackName);
 
-        stackLibraries.addAll(stackPathConstructor.constructPathsForJavascriptStack(stackName));
+        stackLibraries.addAll(stackPathConstructor.constructPathsForJavaScriptStack(stackName));
 
         stylesheetLinks.addAll(stack.getStylesheets());
 

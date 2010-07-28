@@ -18,7 +18,7 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.dom.DefaultMarkupModel;
 import org.apache.tapestry5.internal.services.MarkupWriterImpl;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
+import org.apache.tapestry5.services.javascript.JSSupport;
 import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
@@ -28,7 +28,7 @@ public class AnyTest extends TapestryTestCase
     public void render_simple()
     {
         ComponentResources resources = mockComponentResources();
-        JavascriptSupport support = mockJavascriptSupport();
+        JSSupport support = mockJavascriptSupport();
 
         MarkupWriter writer = new MarkupWriterImpl(new DefaultMarkupModel());
 
@@ -52,7 +52,7 @@ public class AnyTest extends TapestryTestCase
     public void render_with_id()
     {
         ComponentResources resources = mockComponentResources();
-        JavascriptSupport support = mockJavascriptSupport();
+        JSSupport support = mockJavascriptSupport();
 
         MarkupWriter writer = new MarkupWriterImpl(new DefaultMarkupModel());
 
@@ -87,7 +87,7 @@ public class AnyTest extends TapestryTestCase
     public void attempt_to_get_client_id_before_render()
     {
         ComponentResources resources = mockComponentResources();
-        JavascriptSupport support = mockJavascriptSupport();
+        JSSupport support = mockJavascriptSupport();
 
         train_getCompleteId(resources, "Foo/bar.baz");
 

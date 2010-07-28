@@ -29,10 +29,10 @@ import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
-import org.apache.tapestry5.services.javascript.JavascriptStack;
+import org.apache.tapestry5.services.javascript.JSStack;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
-public class DateFieldStack implements JavascriptStack
+public class DateFieldStack implements JSStack
 {
     private final ThreadLocale threadLocale;
 

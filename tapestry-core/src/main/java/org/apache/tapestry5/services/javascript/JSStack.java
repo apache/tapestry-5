@@ -39,12 +39,12 @@ import org.apache.tapestry5.services.ClientInfrastructure;
  * Implementations may need to inject the {@link ThreadLocale} service in order to determine the current locale (if any
  * of the assets are localized). They will generally need to inject they {@link AssetSource} service as well.
  * <p>
- * A planned extension to this interface is to allow for dependencies between JavascriptStacks.
+ * A planned extension to this interface is to allow for dependencies between JavaScriptStacks.
  * 
  * @since 5.2.0
  * @see ThreadLocale
  */
-public interface JavascriptStack
+public interface JSStack
 {
     /**
      * Returns a list of <em>localized</em> assets for JavaScript libraries that form the stack.

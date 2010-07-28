@@ -25,7 +25,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
 import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
+import org.apache.tapestry5.services.javascript.JSSupport;
 
 /**
  * Corresponds to &lt;input type="submit"&gt; or &lt;input type="image"&gt;, a client-side element that can force the
@@ -99,7 +99,7 @@ public class Submit implements ClientElement
     private Request request;
 
     @Inject
-    private JavascriptSupport javascriptSupport;
+    private JSSupport javascriptSupport;
 
     @SuppressWarnings("unchecked")
     @Environmental

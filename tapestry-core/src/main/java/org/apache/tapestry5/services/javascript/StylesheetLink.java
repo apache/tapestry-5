@@ -26,7 +26,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
  * as part of a JSON partial page render response.
  * 
  * @see DocumentLinker
- * @see JavascriptStack
+ * @see JSStack
  * @since 5.2.0
  */
 public final class StylesheetLink

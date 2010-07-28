@@ -21,21 +21,21 @@ import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.DocumentLinker;
-import org.apache.tapestry5.internal.services.javascript.JavascriptStackPathConstructor;
+import org.apache.tapestry5.internal.services.javascript.JSStackPathConstructor;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
-import org.apache.tapestry5.services.javascript.JavascriptStack;
-import org.apache.tapestry5.services.javascript.JavascriptStackSource;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
+import org.apache.tapestry5.services.javascript.JSStack;
+import org.apache.tapestry5.services.javascript.JSStackSource;
+import org.apache.tapestry5.services.javascript.JSSupport;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 import org.apache.tapestry5.services.javascript.StylesheetOptions;
 import org.testng.annotations.Test;
 
-public class JavascriptSupportImplTest extends InternalBaseTestCase
+public class JSSupportImplTest extends InternalBaseTestCase
 {
     @Test
     public void allocate_id_from_resources()
@@ -46,7 +46,7 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupport jss = new JavascriptSupportImpl(null, null, null);
+        JSSupport jss = new JSSupportImpl(null, null, null);
 
         assertEquals(jss.allocateClientId(resources), "tracy");
         assertEquals(jss.allocateClientId(resources), "tracy_0");
@@ -58,7 +58,7 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
     @Test
     public void commit_with_no_javascript()
     {
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(null, null, null);
+        JSSupportImpl jss = new JSSupportImpl(null, null, null);
 
         jss.commit();
     }
@@ -72,7 +72,7 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null, new IdAllocator(), true);
+        JSSupportImpl jss = new JSSupportImpl(linker, null, null, new IdAllocator(), true);
 
         jss.addScript("doSomething();");
 
@@ -85,8 +85,8 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
     public void adding_script_will_add_stack()
     {
         DocumentLinker linker = mockDocumentLinker();
-        JavascriptStackSource stackSource = mockJavascriptStackSource();
-        JavascriptStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
+        JSStackSource stackSource = mockJavascriptStackSource();
+        JSStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
         trainForCoreStack(linker, stackSource, pathConstructor);
 
         linker.addScript(InitializationPriority.IMMEDIATE, "stackInit();");
@@ -94,7 +94,7 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor);
+        JSSupportImpl jss = new JSSupportImpl(linker, stackSource, pathConstructor);
 
         jss.addScript("doSomething();");
 
@@ -103,31 +103,31 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
         verify();
     }
 
-    private void trainForEmptyCoreStack(DocumentLinker linker, JavascriptStackSource stackSource,
-            JavascriptStackPathConstructor pathConstructor)
+    private void trainForEmptyCoreStack(DocumentLinker linker, JSStackSource stackSource,
+            JSStackPathConstructor pathConstructor)
     {
-        JavascriptStack stack = mockJavascriptStack();
+        JSStack stack = mockJavascriptStack();
 
         List<String> libraryPaths = Collections.emptyList();
         List<StylesheetLink> stylesheets = Collections.emptyList();
 
         expect(stackSource.getStack(InternalConstants.CORE_STACK_NAME)).andReturn(stack);
-        expect(pathConstructor.constructPathsForJavascriptStack(InternalConstants.CORE_STACK_NAME)).andReturn(
+        expect(pathConstructor.constructPathsForJavaScriptStack(InternalConstants.CORE_STACK_NAME)).andReturn(
                 libraryPaths);
         expect(stack.getStylesheets()).andReturn(stylesheets);
 
         expect(stack.getInitialization()).andReturn(null);
     }
 
-    private void trainForCoreStack(DocumentLinker linker, JavascriptStackSource stackSource,
-            JavascriptStackPathConstructor pathConstructor)
+    private void trainForCoreStack(DocumentLinker linker, JSStackSource stackSource,
+            JSStackPathConstructor pathConstructor)
     {
-        JavascriptStack stack = mockJavascriptStack();
+        JSStack stack = mockJavascriptStack();
 
         StylesheetLink stylesheetLink = new StylesheetLink("style.css");
 
         expect(stackSource.getStack(InternalConstants.CORE_STACK_NAME)).andReturn(stack);
-        expect(pathConstructor.constructPathsForJavascriptStack(InternalConstants.CORE_STACK_NAME)).andReturn(
+        expect(pathConstructor.constructPathsForJavaScriptStack(InternalConstants.CORE_STACK_NAME)).andReturn(
                 CollectionFactory.newList("stack1.js", "stack2.js"));
         expect(stack.getStylesheets()).andReturn(CollectionFactory.newList(stylesheetLink));
 
@@ -138,34 +138,34 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
         linker.addStylesheetLink(stylesheetLink);
     }
 
-    protected final JavascriptStack mockJavascriptStack()
+    protected final JSStack mockJavascriptStack()
     {
-        return newMock(JavascriptStack.class);
+        return newMock(JSStack.class);
     }
 
-    protected final JavascriptStackPathConstructor mockJavascriptStackPathConstructor()
+    protected final JSStackPathConstructor mockJavascriptStackPathConstructor()
     {
-        return newMock(JavascriptStackPathConstructor.class);
+        return newMock(JSStackPathConstructor.class);
     }
 
-    protected final JavascriptStackSource mockJavascriptStackSource()
+    protected final JSStackSource mockJavascriptStackSource()
     {
-        return newMock(JavascriptStackSource.class);
+        return newMock(JSStackSource.class);
     }
 
     @Test
     public void add_script_passes_thru_to_document_linker()
     {
         DocumentLinker linker = mockDocumentLinker();
-        JavascriptStackSource stackSource = mockJavascriptStackSource();
-        JavascriptStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
+        JSStackSource stackSource = mockJavascriptStackSource();
+        JSStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
         trainForEmptyCoreStack(linker, stackSource, pathConstructor);
 
         linker.addScript(InitializationPriority.IMMEDIATE, "doSomething();");
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor);
+        JSSupportImpl jss = new JSSupportImpl(linker, stackSource, pathConstructor);
 
         jss.addScript(InitializationPriority.IMMEDIATE, "doSomething();");
 
@@ -176,8 +176,8 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
     public void import_library()
     {
         DocumentLinker linker = mockDocumentLinker();
-        JavascriptStackSource stackSource = mockJavascriptStackSource();
-        JavascriptStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
+        JSStackSource stackSource = mockJavascriptStackSource();
+        JSStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
         trainForEmptyCoreStack(linker, stackSource, pathConstructor);
 
         Asset library = mockAsset("mylib.js");
@@ -186,7 +186,7 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor);
+        JSSupportImpl jss = new JSSupportImpl(linker, stackSource, pathConstructor);
 
         jss.importJavascriptLibrary(library);
 
@@ -199,17 +199,17 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
     public void import_stack()
     {
         DocumentLinker linker = mockDocumentLinker();
-        JavascriptStackSource stackSource = mockJavascriptStackSource();
-        JavascriptStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
+        JSStackSource stackSource = mockJavascriptStackSource();
+        JSStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
 
         trainForCoreStack(linker, stackSource, pathConstructor);
 
-        JavascriptStack stack = mockJavascriptStack();
+        JSStack stack = mockJavascriptStack();
 
         StylesheetLink stylesheetLink = new StylesheetLink("stack.css");
 
         expect(stackSource.getStack("custom")).andReturn(stack);
-        expect(pathConstructor.constructPathsForJavascriptStack("custom")).andReturn(
+        expect(pathConstructor.constructPathsForJavaScriptStack("custom")).andReturn(
                 CollectionFactory.newList("stack.js"));
         expect(stack.getStylesheets()).andReturn(CollectionFactory.newList(stylesheetLink));
 
@@ -223,7 +223,7 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor);
+        JSSupportImpl jss = new JSSupportImpl(linker, stackSource, pathConstructor);
 
         jss.importStack("custom");
 
@@ -239,8 +239,8 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
     public void duplicate_imported_libraries_are_filtered()
     {
         DocumentLinker linker = mockDocumentLinker();
-        JavascriptStackSource stackSource = mockJavascriptStackSource();
-        JavascriptStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
+        JSStackSource stackSource = mockJavascriptStackSource();
+        JSStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
         trainForEmptyCoreStack(linker, stackSource, pathConstructor);
 
         Asset library1 = mockAsset("mylib1.js");
@@ -251,7 +251,7 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor);
+        JSSupportImpl jss = new JSSupportImpl(linker, stackSource, pathConstructor);
 
         jss.importJavascriptLibrary(library1);
         jss.importJavascriptLibrary(library2);
@@ -266,8 +266,8 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
     public void initialize_calls_are_aggregated_within_priority()
     {
         DocumentLinker linker = mockDocumentLinker();
-        JavascriptStackSource stackSource = mockJavascriptStackSource();
-        JavascriptStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
+        JSStackSource stackSource = mockJavascriptStackSource();
+        JSStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
         trainForEmptyCoreStack(linker, stackSource, pathConstructor);
 
         JSONObject spec1 = new JSONObject("clientId", "chuck");
@@ -279,7 +279,7 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor);
+        JSSupportImpl jss = new JSSupportImpl(linker, stackSource, pathConstructor);
 
         jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", spec1);
         jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", spec2);
@@ -294,8 +294,8 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
     {
 
         DocumentLinker linker = mockDocumentLinker();
-        JavascriptStackSource stackSource = mockJavascriptStackSource();
-        JavascriptStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
+        JSStackSource stackSource = mockJavascriptStackSource();
+        JSStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
         trainForEmptyCoreStack(linker, stackSource, pathConstructor);
 
         JSONObject aggregated = new JSONObject().put("setup", new JSONArray("chuck", "charley"));
@@ -304,7 +304,7 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor);
+        JSSupportImpl jss = new JSSupportImpl(linker, stackSource, pathConstructor);
 
         jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", "chuck");
         jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", "charley");
@@ -318,8 +318,8 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
     public void default_for_init_string_is_normal_priority()
     {
         DocumentLinker linker = mockDocumentLinker();
-        JavascriptStackSource stackSource = mockJavascriptStackSource();
-        JavascriptStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
+        JSStackSource stackSource = mockJavascriptStackSource();
+        JSStackPathConstructor pathConstructor = mockJavascriptStackPathConstructor();
         trainForEmptyCoreStack(linker, stackSource, pathConstructor);
 
         JSONObject aggregated = new JSONObject().put("setup", new JSONArray().put("chuck"));
@@ -328,7 +328,7 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, stackSource, pathConstructor);
+        JSSupportImpl jss = new JSSupportImpl(linker, stackSource, pathConstructor);
 
         jss.addInitializerCall("setup", "chuck");
 
@@ -348,7 +348,7 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null);
+        JSSupportImpl jss = new JSSupportImpl(linker, null, null);
 
         jss.importStylesheet(stylesheet);
 
@@ -367,7 +367,7 @@ public class JavascriptSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        JavascriptSupportImpl jss = new JavascriptSupportImpl(linker, null, null);
+        JSSupportImpl jss = new JSSupportImpl(linker, null, null);
 
         jss.importStylesheet(new StylesheetLink("style.css", options));
         jss.importStylesheet(new StylesheetLink("style.css", new StylesheetOptions("hologram")));

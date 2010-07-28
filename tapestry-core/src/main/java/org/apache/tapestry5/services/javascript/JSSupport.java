@@ -43,7 +43,7 @@ import org.apache.tapestry5.services.EnvironmentalShadowBuilder;
  * 
  * @since 5.2.0
  */
-public interface JavascriptSupport
+public interface JSSupport
 {
     /**
      * Allocates a unique id based on the component's id. In some cases, the return value will not precisely match the
@@ -166,8 +166,8 @@ public interface JavascriptSupport
     void importStylesheet(StylesheetLink stylesheetLink);
 
     /**
-     * Imports a {@link JavascriptStack} by name, a related set of JavaScript libraries and stylesheets.
-     * Stacks are contributions to the {@link JavascriptStackSource} service. When
+     * Imports a {@link JSStack} by name, a related set of JavaScript libraries and stylesheets.
+     * Stacks are contributions to the {@link JSStackSource} service. When
      * {@linkplain SymbolConstants#COMBINE_SCRIPTS Javascript aggregation} in enabled, the stack will be represented by
      * a single virtual URL; otherwise the individual asset URLs of the stack
      * will be added to the document.
@@ -180,5 +180,5 @@ public interface JavascriptSupport
     /**
      * Import a Javascript library with an arbitrary URL.
      */
-    void importJavascriptLibrary(String libraryURL);
+    void importJavaScriptLibrary(String libraryURL);
 }

@@ -22,7 +22,7 @@ import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.ClientInfrastructure;
-import org.apache.tapestry5.services.javascript.JavascriptStack;
+import org.apache.tapestry5.services.javascript.JSStack;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
 /**
@@ -30,7 +30,7 @@ import org.apache.tapestry5.services.javascript.StylesheetLink;
  * 
  * @since 5.2.0
  */
-public class CoreJavascriptStack implements JavascriptStack
+public class CoreJavascriptStack implements JSStack
 {
     private final ClientInfrastructure clientInfrastructure;
 

@@ -33,7 +33,7 @@ import org.apache.tapestry5.services.ClientDataEncoder;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.HiddenFieldLocationRules;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
+import org.apache.tapestry5.services.javascript.JSSupport;
 import org.slf4j.Logger;
 
 /**
@@ -109,7 +109,7 @@ public class FormFragment implements ClientElement
     private Environment environment;
 
     @Environmental
-    private JavascriptSupport javascriptSupport;
+    private JSSupport javascriptSupport;
 
     @Inject
     private ComponentResources resources;

@@ -33,7 +33,7 @@ import org.apache.tapestry5.services.ComponentMethodInvocation;
 import org.apache.tapestry5.services.FieldAccess;
 import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.TransformField;
-import org.apache.tapestry5.services.javascript.JavascriptSupport;
+import org.apache.tapestry5.services.javascript.JSSupport;
 
 /**
  * Base class for workers that automatically include assets in the page (via methods on
@@ -169,7 +169,7 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
      * Invoked, from the component's setup render phase, for each asset. This method must be
      * threadsafe. Most
      * implementations pass the asset to a particular method of {@link org.apache.tapestry5.RenderSupport} or
-     * {@link JavascriptSupport}.
+     * {@link JSSupport}.
      * 
      * @param asset
      *            to be processed
