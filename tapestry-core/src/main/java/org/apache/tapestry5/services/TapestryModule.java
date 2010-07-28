@@ -76,7 +76,7 @@ import org.apache.tapestry5.internal.services.assets.AssetPathConstructorImpl;
 import org.apache.tapestry5.internal.services.assets.ClasspathAssetRequestHandler;
 import org.apache.tapestry5.internal.services.assets.ContextAssetRequestHandler;
 import org.apache.tapestry5.internal.services.assets.StackAssetRequestHandler;
-import org.apache.tapestry5.internal.services.javascript.CoreJavascriptStack;
+import org.apache.tapestry5.internal.services.javascript.CoreJSStack;
 import org.apache.tapestry5.internal.services.javascript.DateFieldStack;
 import org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathConstructor;
 import org.apache.tapestry5.internal.services.javascript.JavaScriptStackSourceImpl;
@@ -2886,7 +2886,7 @@ public final class TapestryModule
      */
     public static void contributeJavaScriptStackSource(MappedConfiguration<String, JavaScriptStack> configuration)
     {
-        configuration.addInstance(InternalConstants.CORE_STACK_NAME, CoreJavascriptStack.class);
+        configuration.addInstance(InternalConstants.CORE_STACK_NAME, CoreJSStack.class);
         configuration.addInstance("core-datefield", DateFieldStack.class);
     }
 
