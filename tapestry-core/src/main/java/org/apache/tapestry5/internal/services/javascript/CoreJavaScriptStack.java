@@ -30,13 +30,13 @@ import org.apache.tapestry5.services.javascript.StylesheetLink;
  * 
  * @since 5.2.0
  */
-public class CoreJSStack implements JavaScriptStack
+public class CoreJavaScriptStack implements JavaScriptStack
 {
     private final ClientInfrastructure clientInfrastructure;
 
     private final boolean productionMode;
 
-    public CoreJSStack(ClientInfrastructure clientInfrastructure,
+    public CoreJavaScriptStack(ClientInfrastructure clientInfrastructure,
 
     @Symbol(SymbolConstants.PRODUCTION_MODE)
     boolean productionMode)
