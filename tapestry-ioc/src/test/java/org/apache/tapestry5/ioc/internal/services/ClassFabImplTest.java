@@ -14,22 +14,30 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
+import static java.util.Arrays.asList;
+
+import java.io.Serializable;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.DataFormatException;
+
 import javassist.CtClass;
+
 import org.apache.tapestry5.ioc.BaseLocatable;
+import org.apache.tapestry5.ioc.annotations.ServiceId;
 import org.apache.tapestry5.ioc.internal.services.LoggingDecoratorImplTest.ToStringService;
+import org.apache.tapestry5.ioc.internal.services.TestAnnotation.Color;
+import org.apache.tapestry5.ioc.internal.services.TestAnnotation.TestAnnotation2;
 import org.apache.tapestry5.ioc.services.ClassFab;
 import org.apache.tapestry5.ioc.services.MethodSignature;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
-
-import java.io.Serializable;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.DataFormatException;
 
 public class ClassFabImplTest extends IOCTestCase
 {
@@ -49,6 +57,46 @@ public class ClassFabImplTest extends IOCTestCase
     public interface SampleToStringService
     {
         String toString();
+    }
+    
+    public interface AnnotatedService
+    {
+        void doWork(final String value);
+    }
+    
+    @ServiceId(value = "myService")
+    @TestAnnotation(annotationValue={@TestAnnotation2(colors={Color.RED, Color.GREEN})},
+            booleanValue = true, 
+            charValue = 'I', 
+            byteValue = 97, 
+            classValue = AnnotatedServiceImpl.class, 
+            doubleValue = 3.14, 
+            enumValue = Color.RED, 
+            floatValue = 2.718F, 
+            intValue = 123, 
+            longValue = 456L, 
+            shortValue = 3, 
+            stringValue = "foo")
+    public class AnnotatedServiceImpl implements AnnotatedService
+    {
+
+        @TestAnnotation(annotationValue=@TestAnnotation2(colors={Color.BLUE, Color.GREEN}),
+                arrayValue={"barney"},
+                booleanValue = false, 
+                charValue = 'D', 
+                byteValue = 56, 
+                classValue = String.class, 
+                doubleValue = 3.14, 
+                enumValue = Color.BLUE, 
+                floatValue = 2.718F, 
+                intValue = 456, 
+                longValue = 789L, 
+                shortValue = 4, 
+                stringValue = "bar")
+        public void doWork(final String value)
+        {
+
+        }
     }
 
     public ClassFabImplTest()
@@ -424,6 +472,68 @@ public class ClassFabImplTest extends IOCTestCase
         assertEquals(access.get(instance, "int"), 0);
         assertEquals(access.get(instance, "double"), 0.0d);
     }
+    
+
+    @Test
+    public void add_annotation() throws Exception
+    {
+        final ClassFab cf = newClassFab("AnnotatedClass", Object.class);
+
+        cf.addField("_delegate", AnnotatedService.class);
+        cf.addConstructor(new Class[] { AnnotatedService.class }, null, "_delegate = $1;");
+
+        cf.proxyMethodsToDelegate(AnnotatedService.class, "_delegate", "Bla bla");
+        cf.copyClassAnnotationsFromDelegate(AnnotatedServiceImpl.class);
+        cf.copyMethodAnnotationsFromDelegate(AnnotatedService.class, AnnotatedServiceImpl.class);
+
+        final Class targetClass = cf.createClass();
+
+        final TestAnnotation a = (TestAnnotation) targetClass.getAnnotation(TestAnnotation.class);
+
+        assertNotNull(a);
+        
+        TestAnnotation2 a2 = a.annotationValue()[0];
+
+        assertNotNull(a2);
+        assertEquals(asList(a2.colors()), asList(Color.RED, Color.GREEN));
+        
+        assertEquals(asList(a.arrayValue()), asList("foo", "bar"));
+        assertTrue(a.booleanValue());
+        assertEquals(a.byteValue(), 97);
+        assertEquals(a.charValue(), 'I');
+        assertEquals(a.classValue(), AnnotatedServiceImpl.class);
+        assertEquals(a.doubleValue(), 3.14);
+        assertEquals(a.enumValue(), Color.RED);
+        assertEquals(a.floatValue(), 2.718F);
+        assertEquals(a.intValue(), 123);
+        assertEquals(a.longValue(), 456L);
+        assertEquals(a.shortValue(), 3);
+        assertEquals(a.stringValue(), "foo");
+
+        assertNotNull(targetClass.getAnnotation(ServiceId.class));
+        
+        Method method = targetClass.getMethod("doWork", String.class);
+        TestAnnotation methodAnnotation = method.getAnnotation(TestAnnotation.class);
+        
+        assertNotNull(methodAnnotation);
+        
+        a2 = methodAnnotation.annotationValue()[0];
+        
+        assertNotNull(a2);
+        assertEquals(asList(a2.colors()), asList(Color.BLUE, Color.GREEN));
+        assertEquals(Arrays.asList(methodAnnotation.arrayValue()), Arrays.asList("barney"));
+        assertFalse(methodAnnotation.booleanValue());
+        assertEquals(methodAnnotation.byteValue(), 56);
+        assertEquals(methodAnnotation.charValue(), 'D');
+        assertEquals(methodAnnotation.classValue(), String.class);
+        assertEquals(methodAnnotation.doubleValue(), 3.14);
+        assertEquals(methodAnnotation.enumValue(), Color.BLUE);
+        assertEquals(methodAnnotation.floatValue(), 2.718F);
+        assertEquals(methodAnnotation.intValue(), 456);
+        assertEquals(methodAnnotation.longValue(), 789L);
+        assertEquals(methodAnnotation.shortValue(), 4);
+        assertEquals(methodAnnotation.stringValue(), "bar");
+    }  
 
     private void assertContains(String actual, String expectedSubstring)
     {

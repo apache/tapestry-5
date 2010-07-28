@@ -44,7 +44,7 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
 
     private final Module module;
 
-    private final ServiceDef serviceDef;
+    private final InternalServiceDef serviceDef;
 
     private final Logger logger;
 
@@ -57,7 +57,7 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
 
         this.registry = registry;
         this.module = module;
-        this.serviceDef = serviceDef;
+        this.serviceDef = InternalUtils.toInternalServiceDef(serviceDef);
         this.classFactory = classFactory;
         this.logger = logger;
     }
@@ -173,5 +173,10 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
     public OperationTracker getTracker()
     {
         return registry;
+    }
+
+    public Class getImplementationClass()
+    {
+        return serviceDef.getImplementationClass();
     }
 }

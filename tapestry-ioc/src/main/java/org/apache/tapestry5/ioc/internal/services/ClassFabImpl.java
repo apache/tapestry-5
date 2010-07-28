@@ -18,6 +18,8 @@ import static java.lang.String.format;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newSet;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Formatter;
 import java.util.Map;
@@ -29,6 +31,11 @@ import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.CtMethod;
 import javassist.NotFoundException;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.ConstPool;
+import javassist.bytecode.MethodInfo;
+import javassist.bytecode.annotation.MemberValue;
 
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFab;
@@ -336,5 +343,165 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
 
         description.append("\n");
         description.append(body);
+    }
+    
+    public void copyClassAnnotationsFromDelegate(Class delegateClass)
+    {
+        lock.check();
+        
+        for (Annotation annotation : delegateClass.getAnnotations())
+        {
+            try
+            {
+                addAnnotation(annotation);
+            }
+            catch (RuntimeException ex) 
+            {
+                //Annotation processing may cause exceptions thrown by Javassist. 
+                //To provide backward compatibility we have to continue even though copying a particular annotation failed.
+                getLogger().error(String.format("Failed to copy annotation '%s' from '%s'", annotation.annotationType(), delegateClass.getName()));
+            }
+        }   
+    }
+    
+    public void copyMethodAnnotationsFromDelegate(Class serviceInterface, Class delegateClass)
+    {
+        lock.check();
+        
+        for(MethodSignature sig: addedSignatures)
+        {   
+            if(getMethod(sig, serviceInterface) == null)
+                continue;
+            
+            Method method = getMethod(sig, delegateClass);
+            
+            assert method != null;
+            
+            Annotation[] annotations = method.getAnnotations();
+            
+            for (Annotation annotation : annotations)
+            {   
+                try
+                {
+                    addMethodAnnotation(getCtMethod(sig), annotation);   
+                }
+                catch (RuntimeException ex) 
+                {
+                    //Annotation processing may cause exceptions thrown by Javassist. 
+                    //To provide backward compatibility we have to continue even though copying a particular annotation failed.
+                    getLogger().error(String.format("Failed to copy annotation '%s' from method '%s' of class '%s'", 
+                            annotation.annotationType(), method.getName(), delegateClass.getName()));
+                }
+            }
+        }
+    }
+    
+    private CtMethod getCtMethod(MethodSignature sig)
+    {
+        try
+        {
+            return getCtClass().getDeclaredMethod(sig.getName(), toCtClasses(sig.getParameterTypes()));
+        }
+        catch (NotFoundException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    private Method getMethod(MethodSignature sig, Class clazz)
+    {
+        try
+        {
+            return clazz.getMethod(sig.getName(), sig.getParameterTypes());
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+    }
+
+    private void addAnnotation(Annotation annotation)
+    {
+        
+        final ClassFile classFile = getClassFile();
+        
+        AnnotationsAttribute attribute = (AnnotationsAttribute) classFile.getAttribute(AnnotationsAttribute.visibleTag);
+        
+        if (attribute == null)
+        {
+            attribute = new AnnotationsAttribute(getConstPool(), AnnotationsAttribute.visibleTag);
+        }
+        
+        final javassist.bytecode.annotation.Annotation copy = toJavassistAnnotation(annotation);
+        
+        
+        attribute.addAnnotation(copy);
+        
+        classFile.addAttribute(attribute);
+        
+    }
+    
+    private void addMethodAnnotation(final CtMethod ctMethod, final Annotation annotation) {
+
+        MethodInfo methodInfo = ctMethod.getMethodInfo();
+
+        AnnotationsAttribute attribute = (AnnotationsAttribute) methodInfo
+            .getAttribute(AnnotationsAttribute.visibleTag);
+
+        if (attribute == null) {
+            attribute = new AnnotationsAttribute(getConstPool(), AnnotationsAttribute.visibleTag);
+        }
+
+        final javassist.bytecode.annotation.Annotation copy = toJavassistAnnotation(annotation);
+
+        attribute.addAnnotation(copy);
+
+        methodInfo.addAttribute(attribute);
+
+    }
+
+    
+    private ClassFile getClassFile()
+    {
+        return getCtClass().getClassFile();
+    }
+    
+    private ConstPool getConstPool() 
+    {   
+        return getClassFile().getConstPool();
+    }
+    
+    private javassist.bytecode.annotation.Annotation toJavassistAnnotation(final Annotation source)
+    {
+
+        final Class<? extends Annotation> annotationType = source.annotationType();
+
+        final ConstPool constPool = getConstPool();
+
+        final javassist.bytecode.annotation.Annotation copy = new javassist.bytecode.annotation.Annotation(
+                annotationType.getName(), constPool);
+
+        final Method[] methods = annotationType.getDeclaredMethods();
+
+        for (final Method method : methods)
+        {
+            try
+            {
+                CtClass ctType = toCtClass(method.getReturnType());
+                
+                final MemberValue memberValue = javassist.bytecode.annotation.Annotation.createMemberValue(constPool, ctType);
+                final Object value = method.invoke(source);
+
+                memberValue.accept(new AnnotationMemberValueVisitor(constPool, getSource(), value));
+
+                copy.addMemberValue(method.getName(), memberValue);
+            }
+            catch (final Exception e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return copy;
     }
 }

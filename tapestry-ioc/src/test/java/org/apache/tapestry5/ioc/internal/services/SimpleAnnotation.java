@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,27 +11,20 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+package org.apache.tapestry5.ioc.internal.services;
 
-package org.apache.tapestry5.ioc;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import org.apache.tapestry5.ioc.internal.services.SimpleAnnotation;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-/**
- *
- */
-@SimpleAnnotation("StringHolderImpl")
-public class StringHolderImpl implements StringHolder
+@Target({ TYPE, METHOD })
+@Retention(RUNTIME)
+@Documented
+public @interface SimpleAnnotation
 {
-    private String value;
-
-    @SimpleAnnotation("StringHolderImpl#getValue()")
-    public String getValue()
-    {
-        return value;
-    }
-
-    public void setValue(String value)
-    {
-        this.value = value;
-    }
+    String value();
 }

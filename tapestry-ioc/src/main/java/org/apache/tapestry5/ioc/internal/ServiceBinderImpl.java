@@ -104,7 +104,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         Set<Class> markers = CollectionFactory.newSet(defaultMarkers);
         markers.addAll(this.markers);
 
-        ServiceDef serviceDef = new ServiceDefImpl(serviceInterface, serviceId, markers, scope, eagerLoad,
+        ServiceDef serviceDef = new ServiceDefImpl(serviceInterface, serviceImplementation, serviceId, markers, scope, eagerLoad,
                 preventDecoration, source);
 
         accumulator.addServiceDef(serviceDef);

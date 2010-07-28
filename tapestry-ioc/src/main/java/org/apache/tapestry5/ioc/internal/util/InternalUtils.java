@@ -48,6 +48,7 @@ import org.apache.tapestry5.ioc.def.ModuleDef3;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.def.ServiceDef2;
 import org.apache.tapestry5.ioc.def.StartupDef;
+import org.apache.tapestry5.ioc.internal.InternalServiceDef;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.Coercion;
@@ -796,6 +797,55 @@ public class InternalUtils
                             "Constructor %s is not public and may not be used for autobuilding an instance of the class. "
                                     + "You should make the constructor public, or mark an alternate public constructor with the @Inject annotation.",
                             constructor));
+    }
+    
+    public static InternalServiceDef toInternalServiceDef(final ServiceDef sd)
+    {
+        if (sd instanceof InternalServiceDef)
+            return (InternalServiceDef) sd;
+
+        return new InternalServiceDef()
+        {
+            public boolean isPreventDecoration()
+            {
+                return false;
+            }
+
+            public ObjectCreator createServiceCreator(ServiceBuilderResources resources)
+            {
+                return sd.createServiceCreator(resources);
+            }
+
+            public String getServiceId()
+            {
+                return sd.getServiceId();
+            }
+
+            public Set<Class> getMarkers()
+            {
+                return sd.getMarkers();
+            }
+
+            public Class getServiceInterface()
+            {
+                return sd.getServiceInterface();
+            }
+
+            public String getServiceScope()
+            {
+                return sd.getServiceScope();
+            }
+
+            public boolean isEagerLoad()
+            {
+                return sd.isEagerLoad();
+            }
+            
+            public Class getImplementationClass()
+            {
+                return null;
+            }
+        };
     }
 
     public static ServiceDef2 toServiceDef2(final ServiceDef sd)

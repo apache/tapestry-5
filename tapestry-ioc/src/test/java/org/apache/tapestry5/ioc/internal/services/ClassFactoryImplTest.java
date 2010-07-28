@@ -14,7 +14,12 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+
 import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.internal.util.LocationImpl;
 import org.apache.tapestry5.ioc.services.ClassFab;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
@@ -22,10 +27,6 @@ import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.MethodSignature;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.testng.annotations.Test;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 
 public class ClassFactoryImplTest extends IOCTestCase
 {
@@ -169,5 +170,48 @@ public class ClassFactoryImplTest extends IOCTestCase
         ClassFactory factory = new ClassFactoryImpl();
 
         assertSame(factory.importClass(alienClass), clazz);
+    }
+    
+    
+    @Test
+    public void with_annotations() throws Exception
+    {
+        ClassFactory factory = new ClassFactoryImpl();
+
+        TestService proxy = factory.createProxy(TestService.class, TestServiceImpl.class, new ObjectCreator()
+        {
+            public Object createObject()
+            {
+                return new TestServiceImpl();
+            }
+        }, "Proxy<TestService>");
+        
+        Class clazz =  proxy.getClass();
+        
+        SimpleAnnotation annotation = (SimpleAnnotation) clazz.getAnnotation(SimpleAnnotation.class);
+        
+        assertNotNull(annotation);
+        assertEquals(annotation.value(), "TestServiceImpl");
+        
+        Method method = clazz.getMethod("doSomething");
+
+        annotation = method.getAnnotation(SimpleAnnotation.class);
+        assertEquals(annotation.value(), "TestServiceImpl#doSomething");
+    }
+    
+
+    public interface TestService
+    {
+        void doSomething();
+    }
+    
+    @SimpleAnnotation("TestServiceImpl")
+    public class TestServiceImpl implements TestService
+    {
+        @SimpleAnnotation("TestServiceImpl#doSomething")
+        public void doSomething()
+        {
+            
+        }
     }
 }

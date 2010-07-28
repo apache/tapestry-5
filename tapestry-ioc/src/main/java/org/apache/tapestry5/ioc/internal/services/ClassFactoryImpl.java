@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc.internal.services;
 
 import static java.lang.String.format;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -227,6 +228,11 @@ public class ClassFactoryImpl implements ClassFactory
 
     public <T> T createProxy(Class<T> proxyInterface, ObjectCreator delegateCreator, String description)
     {
+        return createProxy(proxyInterface, null, delegateCreator, description);
+    }
+
+    public <T> T createProxy(Class<T> proxyInterface, Class<? extends T> delegateClass, ObjectCreator delegateCreator, String description)
+    {
         ClassFab classFab = newClass(proxyInterface);
 
         classFab.addField("_creator", Modifier.PRIVATE | Modifier.FINAL, ObjectCreator.class);
@@ -239,8 +245,16 @@ public class ClassFactoryImpl implements ClassFactory
         MethodSignature sig = new MethodSignature(proxyInterface, "_delegate", null, null);
 
         classFab.addMethod(Modifier.PRIVATE, sig, body);
-
+        
         classFab.proxyMethodsToDelegate(proxyInterface, "_delegate()", description);
+        
+        if(delegateClass != null)
+        {
+            classFab.copyClassAnnotationsFromDelegate(delegateClass);
+            
+            classFab.copyMethodAnnotationsFromDelegate(proxyInterface, (Class)delegateClass);
+        }
+        
         Class proxyClass = classFab.createClass();
 
         try

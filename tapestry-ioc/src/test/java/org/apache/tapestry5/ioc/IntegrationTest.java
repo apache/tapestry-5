@@ -15,6 +15,7 @@
 package org.apache.tapestry5.ioc;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.PreparedStatement;
@@ -31,6 +32,7 @@ import org.apache.tapestry5.ioc.internal.ExtraPublicConstructorsModule;
 import org.apache.tapestry5.ioc.internal.IOCInternalTestCase;
 import org.apache.tapestry5.ioc.internal.PrivateConstructorModule;
 import org.apache.tapestry5.ioc.internal.UpcaseService;
+import org.apache.tapestry5.ioc.internal.services.SimpleAnnotation;
 import org.apache.tapestry5.ioc.internal.services.StartupModule2;
 import org.apache.tapestry5.ioc.services.Builtin;
 import org.apache.tapestry5.ioc.services.ServiceActivity;
@@ -406,6 +408,26 @@ public class IntegrationTest extends IOCInternalTestCase
         sh.setValue("Foo");
 
         assertEquals(sh.getValue(), "Foo");
+
+        r.shutdown();
+    }
+    
+    @Test
+    public void proxy_annotations() throws Exception
+    {
+        Registry r = buildRegistry(AutobuildModule.class);
+
+        StringHolder sh = r.getService(StringHolder.class);
+        
+        SimpleAnnotation annotation = sh.getClass().getAnnotation(SimpleAnnotation.class);
+        assertNotNull(annotation);
+        assertEquals(annotation.value(), "StringHolderImpl");
+        
+        Method method = sh.getClass().getMethod("getValue");
+        
+        annotation = method.getAnnotation(SimpleAnnotation.class);
+        assertNotNull(annotation);
+        assertEquals(annotation.value(), "StringHolderImpl#getValue()");
 
         r.shutdown();
     }

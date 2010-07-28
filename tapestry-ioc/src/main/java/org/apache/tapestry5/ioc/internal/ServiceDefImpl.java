@@ -14,15 +14,16 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.ObjectCreator;
-import org.apache.tapestry5.ioc.ServiceBuilderResources;
-import org.apache.tapestry5.ioc.def.ServiceDef2;
-
 import java.util.Set;
 
-public class ServiceDefImpl implements ServiceDef2
+import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.ServiceBuilderResources;
+
+public class ServiceDefImpl implements InternalServiceDef
 {
     private final Class serviceInterface;
+    
+    private final Class serviceImplementation;
 
     private final String serviceId;
 
@@ -39,6 +40,7 @@ public class ServiceDefImpl implements ServiceDef2
     /**
      * @param serviceInterface  interface implemented by the service (or the service implementation class, for
      *                          non-proxied services)
+     * @param serviceImplementation service implementation class if exists                
      * @param serviceId         unique id for the service
      * @param markers           set of marker annotation classes (will be retained not copied)
      * @param scope             scope of the service (i.e., {@link org.apache.tapestry5.ioc.ScopeConstants#DEFAULT}).
@@ -46,10 +48,11 @@ public class ServiceDefImpl implements ServiceDef2
      * @param preventDecoration if true, the service may not be decorated
      * @param source            used to create the service implementation when needed
      */
-    ServiceDefImpl(Class serviceInterface, String serviceId, Set<Class> markers, String scope,
+    ServiceDefImpl(Class serviceInterface, Class serviceImplementation, String serviceId, Set<Class> markers, String scope,
                    boolean eagerLoad, boolean preventDecoration, ObjectCreatorSource source)
     {
         this.serviceInterface = serviceInterface;
+        this.serviceImplementation = serviceImplementation;
         this.serviceId = serviceId;
         this.scope = scope;
         this.eagerLoad = eagerLoad;
@@ -98,5 +101,10 @@ public class ServiceDefImpl implements ServiceDef2
     public boolean isPreventDecoration()
     {
         return preventDecoration;
+    }
+
+    public Class getImplementationClass()
+    {
+        return serviceImplementation;
     }
 }

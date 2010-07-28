@@ -461,7 +461,7 @@ public class DefaultModuleDefImpl implements ModuleDef3, ServiceDefAccumulator
         Set<Class> markers = CollectionFactory.newSet(defaultMarkers);
         markers.addAll(extractServiceDefMarkers(method));
 
-        ServiceDefImpl serviceDef = new ServiceDefImpl(returnType, serviceId, markers, scope, eagerLoad,
+        ServiceDefImpl serviceDef = new ServiceDefImpl(returnType, null, serviceId, markers, scope, eagerLoad,
                 preventDecoration, source);
 
         addServiceDef(serviceDef);

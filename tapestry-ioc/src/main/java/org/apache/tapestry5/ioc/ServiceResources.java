@@ -45,4 +45,11 @@ public interface ServiceResources extends ObjectLocator
      * initializing the service.
      */
     OperationTracker getTracker();
+    
+    /**
+     * Returns the service implementation class.
+     * 
+     * @since 5.2.0
+     */
+    Class getImplementationClass();
 }

@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,27 +11,16 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+package org.apache.tapestry5.ioc.internal;
 
-package org.apache.tapestry5.ioc;
+import org.apache.tapestry5.ioc.def.ServiceDef2;
 
-import org.apache.tapestry5.ioc.internal.services.SimpleAnnotation;
-
-/**
- *
- */
-@SimpleAnnotation("StringHolderImpl")
-public class StringHolderImpl implements StringHolder
+public interface InternalServiceDef extends ServiceDef2
 {
-    private String value;
-
-    @SimpleAnnotation("StringHolderImpl#getValue()")
-    public String getValue()
-    {
-        return value;
-    }
-
-    public void setValue(String value)
-    {
-        this.value = value;
-    }
+    /**
+     * Returns the service implementation class.
+     * 
+     * @return implementations class or {@code null}
+     */
+    Class getImplementationClass();
 }

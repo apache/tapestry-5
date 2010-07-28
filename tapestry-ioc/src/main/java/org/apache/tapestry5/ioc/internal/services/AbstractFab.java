@@ -98,5 +98,10 @@ public class AbstractFab
     {
         return source;
     }
+    
+    protected Logger getLogger()
+    {
+        return logger;
+    }
 
 }

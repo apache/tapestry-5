@@ -90,6 +90,25 @@ public interface ClassFab
      * @param toString           fixed value to be returned as the description of the resultant object
      */
     void proxyMethodsToDelegate(Class serviceInterface, String delegateExpression, String toString);
+    
+    /**
+     * Copies annotations from delegate class to the fabricated class. 
+     * 
+     * @param delegateClass class of the delegate
+     * 
+     * @since 5.2.0
+     */
+    void copyClassAnnotationsFromDelegate(Class delegateClass);
+    
+    /**
+     * Copies method annotations from delegate class to the methods of the fabricated class. 
+     * 
+     * @param serviceInterface service interface
+     * @param delegateClass class of the delegate
+     * 
+     * @since 5.2.0
+     */
+    void copyMethodAnnotationsFromDelegate(Class serviceInterface, Class delegateClass);
 
     /**
      * Invoked last to create the class. This will enforce that all abstract methods have been implemented in the

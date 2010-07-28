@@ -95,9 +95,31 @@ public interface ClassFactory
      *            type of proxy
      * @param proxyInterface
      *            proxy interface class
+     * @parame delegateCreator
+     *            creates the delegate
      * @param description
      *            used for the toString() method
      * @since 5.2.0
      */
     <T> T createProxy(Class<T> proxyInterface, ObjectCreator delegateCreator, String description);
+
+    /**
+     * Creates a proxy for an interface. All methods of the interface are delegated through the
+     * object returned from the {@link ObjectCreator} (which is accessed on each method invocation, so it
+     * is responsible for caching of the true delegate). The description will be used for the toString() method
+     * (unless toString() is part of the proxy interface).
+     * 
+     * @param <T>
+     *            type of proxy
+     * @param proxyInterface
+     *            proxy interface class
+     * @parame delegateClass
+     *            delegate class
+     * @parame delegateCreator
+     *            creates the delegate
+     * @param description
+     *            used for the toString() method
+     * @since 5.2.0
+     */
+    <T> T createProxy(Class<T> proxyInterface, Class<? extends T> delegateClass, ObjectCreator delegateCreator, String description);
 }
