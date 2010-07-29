@@ -49,7 +49,9 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 public @interface Import
 {
     /**
-     * JavaScript Stacks to import. Stacks are imported before individual libraries.
+     * JavaScript Stacks to import. Stacks are imported before individual libraries. Note that
+     * stacks themselves may have {@linkplain JavaScriptStack#getStacks() dependencies on other
+     * stacks}.
      * 
      * @see JavaScriptStack
      * @see JavaScriptSupport#importStack(String)

@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services.ajax;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -110,6 +111,7 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
 
         List<String> libraryPaths = Collections.emptyList();
         List<StylesheetLink> stylesheets = Collections.emptyList();
+        List<String> stacks = libraryPaths;
 
         expect(stackSource.getStack(InternalConstants.CORE_STACK_NAME)).andReturn(stack);
         expect(pathConstructor.constructPathsForJavaScriptStack(InternalConstants.CORE_STACK_NAME)).andReturn(
@@ -117,6 +119,8 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
         expect(stack.getStylesheets()).andReturn(stylesheets);
 
         expect(stack.getInitialization()).andReturn(null);
+
+        expect(stack.getStacks()).andReturn(stacks);
     }
 
     private void trainForCoreStack(DocumentLinker linker, JavaScriptStackSource stackSource,
@@ -132,6 +136,9 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
         expect(stack.getStylesheets()).andReturn(CollectionFactory.newList(stylesheetLink));
 
         expect(stack.getInitialization()).andReturn("stackInit();");
+
+        List<String> stacks = Collections.emptyList();
+        expect(stack.getStacks()).andReturn(stacks);
 
         linker.addScriptLink("stack1.js");
         linker.addScriptLink("stack2.js");
@@ -215,6 +222,9 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
 
         expect(stack.getInitialization()).andReturn("customInit();");
 
+        List<String> stacks = Collections.emptyList();
+        expect(stack.getStacks()).andReturn(stacks);
+
         linker.addScriptLink("stack.js");
         linker.addStylesheetLink(stylesheetLink);
 
@@ -229,6 +239,61 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
 
         // Duplicate calls are ignored.
         jss.importStack("Custom");
+
+        jss.commit();
+
+        verify();
+    }
+
+    @Test
+    public void import_stack_with_dependencies()
+    {
+        DocumentLinker linker = mockDocumentLinker();
+        JavaScriptStackSource stackSource = mockJavaScriptStackSource();
+        JavaScriptStackPathConstructor pathConstructor = mockJavaScriptStackPathConstructor();
+
+        trainForCoreStack(linker, stackSource, pathConstructor);
+
+        JavaScriptStack child = mockJavaScriptStack();
+        JavaScriptStack parent = mockJavaScriptStack();
+
+        StylesheetLink parentStylesheetLink = new StylesheetLink("parent.css");
+
+        StylesheetLink childStylesheetLink = new StylesheetLink("child.css");
+
+        expect(stackSource.getStack("child")).andReturn(child);
+
+        expect(child.getStacks()).andReturn(Arrays.asList("parent"));
+
+        expect(stackSource.getStack("parent")).andReturn(parent);
+
+        expect(pathConstructor.constructPathsForJavaScriptStack("parent")).andReturn(Arrays.asList("parent.js"));
+        expect(parent.getStylesheets()).andReturn(Arrays.asList(parentStylesheetLink));
+
+        expect(parent.getInitialization()).andReturn("parentInit();");
+
+        expect(pathConstructor.constructPathsForJavaScriptStack("child")).andReturn(Arrays.asList("child.js"));
+        expect(child.getStylesheets()).andReturn(Arrays.asList(childStylesheetLink));
+
+        expect(child.getInitialization()).andReturn("childInit();");
+
+        expect(parent.getStacks()).andReturn(Collections.<String> emptyList());
+
+        linker.addScriptLink("parent.js");
+        linker.addScriptLink("child.js");
+
+        linker.addStylesheetLink(parentStylesheetLink);
+        linker.addStylesheetLink(childStylesheetLink);
+
+        linker.addScript(InitializationPriority.IMMEDIATE, "stackInit();");
+        linker.addScript(InitializationPriority.IMMEDIATE, "parentInit();");
+        linker.addScript(InitializationPriority.IMMEDIATE, "childInit();");
+
+        replay();
+
+        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor);
+
+        jss.importStack("child");
 
         jss.commit();
 

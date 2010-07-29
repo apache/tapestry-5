@@ -220,6 +220,11 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
         JavaScriptStack stack = javascriptStackSource.getStack(stackName);
 
+        for (String dependentStackname : stack.getStacks())
+        {
+            addAssetsFromStack(dependentStackname);
+        }
+
         stackLibraries.addAll(stackPathConstructor.constructPathsForJavaScriptStack(stackName));
 
         stylesheetLinks.addAll(stack.getStylesheets());

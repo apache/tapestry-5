@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.services.javascript;
 
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -59,8 +60,9 @@ public class DateFieldStack implements JavaScriptStack
         Mapper<String, StylesheetLink> pathToStylesheetLink = pathToAsset
                 .combine(TapestryInternalUtils.assetToStylesheetLink);
 
-        javaScriptStack = F.flow("${tapestry.datepicker}/js/datepicker.js",
-                "org/apache/tapestry5/corelib/components/datefield.js").map(pathToAsset).toList();
+        javaScriptStack = F
+                .flow("${tapestry.datepicker}/js/datepicker.js", "org/apache/tapestry5/corelib/components/datefield.js")
+                .map(pathToAsset).toList();
 
         stylesheetStack = F.flow("${tapestry.datepicker}/css/datepicker.css").map(pathToStylesheetLink).toList();
     }
@@ -113,4 +115,8 @@ public class DateFieldStack implements JavaScriptStack
         return stylesheetStack;
     }
 
+    public List<String> getStacks()
+    {
+        return Collections.emptyList();
+    }
 }

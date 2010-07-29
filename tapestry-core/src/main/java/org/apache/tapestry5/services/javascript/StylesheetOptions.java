@@ -60,7 +60,7 @@ public class StylesheetOptions
     @Override
     public String toString()
     {
-        return String.format("StylesheetOptions[media=%s condition=%s]", media);
+        return String.format("StylesheetOptions[media=%s condition=%s]", media, condition);
     }
 
     @Override

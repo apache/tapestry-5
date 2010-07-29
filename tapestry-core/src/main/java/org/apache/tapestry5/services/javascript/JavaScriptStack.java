@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ClientInfrastructure;
@@ -30,16 +31,15 @@ import org.apache.tapestry5.services.ClientInfrastructure;
  * of the ExtJS or YUI libraries.
  * <p>
  * A JavaScriptStack can be thought of as a generalization of Tapestry 5.1's {@link ClientInfrastructure}, which exists
- * now to define the "core" Javascript stack.
+ * now to define the "core" JavaScript stack.
  * <p>
  * A JavaScript assets of a stack may (when {@linkplain SymbolConstants#COMBINE_SCRIPTS enabled}) be exposed to the
  * client as a single URL (identifying the stack by name). The individual assets are combined into a single virtual
  * asset, which is then streamed to the client.
  * <p>
  * Implementations may need to inject the {@link ThreadLocale} service in order to determine the current locale (if any
- * of the assets are localized). They will generally need to inject they {@link AssetSource} service as well.
- * <p>
- * A planned extension to this interface is to allow for dependencies between JavaScriptStacks.
+ * of the JavaScript library or stylesheet assets are localized). They will generally need to inject the
+ * {@link AssetSource} service as well.
  * 
  * @since 5.2.0
  * @see ThreadLocale
@@ -47,12 +47,19 @@ import org.apache.tapestry5.services.ClientInfrastructure;
 public interface JavaScriptStack
 {
     /**
+     * Returns a list of JavaScriptStack names that this stack depends on. Each stack will be processed before
+     * the current stack (thus a dependency stack's libraries, stylesheets and initialization is emitted before
+     * the dependent stack).
+     */
+    List<String> getStacks();
+
+    /**
      * Returns a list of <em>localized</em> assets for JavaScript libraries that form the stack.
      */
     List<Asset> getJavaScriptLibraries();
 
     /**
-     * Returns a list of <em>localized<m/e> links for stylesheets that form the stack.
+     * Returns a list of <em>localized</em> links for stylesheets that form the stack.
      */
     List<StylesheetLink> getStylesheets();
 

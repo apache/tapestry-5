@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services.javascript;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.tapestry5.Asset;
@@ -59,6 +60,11 @@ public class CoreJavaScriptStack implements JavaScriptStack
     {
         return F.flow(clientInfrastructure.getStylesheetStack()).map(TapestryInternalUtils.assetToStylesheetLink)
                 .toList();
+    }
+
+    public List<String> getStacks()
+    {
+        return Collections.emptyList();
     }
 
 }
