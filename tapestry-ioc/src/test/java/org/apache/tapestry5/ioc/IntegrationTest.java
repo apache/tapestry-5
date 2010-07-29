@@ -38,6 +38,7 @@ import org.apache.tapestry5.ioc.services.Builtin;
 import org.apache.tapestry5.ioc.services.ServiceActivity;
 import org.apache.tapestry5.ioc.services.ServiceActivityScoreboard;
 import org.apache.tapestry5.ioc.services.Status;
+import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.ioc.util.NonmatchingMappedConfigurationOverrideModule;
 import org.easymock.EasyMock;
@@ -411,20 +412,20 @@ public class IntegrationTest extends IOCInternalTestCase
 
         r.shutdown();
     }
-    
+
     @Test
     public void proxy_annotations() throws Exception
     {
         Registry r = buildRegistry(AutobuildModule.class);
 
         StringHolder sh = r.getService(StringHolder.class);
-        
+
         SimpleAnnotation annotation = sh.getClass().getAnnotation(SimpleAnnotation.class);
         assertNotNull(annotation);
         assertEquals(annotation.value(), "StringHolderImpl");
-        
+
         Method method = sh.getClass().getMethod("getValue");
-        
+
         annotation = method.getAnnotation(SimpleAnnotation.class);
         assertNotNull(annotation);
         assertEquals(annotation.value(), "StringHolderImpl#getValue()");
@@ -1531,6 +1532,17 @@ public class IntegrationTest extends IOCInternalTestCase
         assertTrue(StartupModule2.instanceStartupInvoked);
 
         r.shutdown();
+    }
 
+    @Test
+    public void case_ignored_in_service_id_of_contribute_method()
+    {
+        Registry r = buildRegistry(CaseInsensitiveContributeMethodModule.class);
+
+        SymbolSource symbolSource = r.getService(SymbolSource.class);
+
+        assertEquals(symbolSource.valueForSymbol("it"), "works");
+
+        r.shutdown();
     }
 }

@@ -475,8 +475,8 @@ public class ModuleImpl implements Module
         return createProxyInstance(creator, serviceId, serviceInterface, resources.getImplementationClass(), toString);
     }
 
-    private Object createProxyInstance(ObjectCreator creator, String serviceId, Class serviceInterface, Class serviceImplementation,
-            String description)
+    private Object createProxyInstance(ObjectCreator creator, String serviceId, Class serviceInterface,
+            Class serviceImplementation, String description)
     {
         ServiceProxyToken token = SerializationSupport.createToken(serviceId);
 
@@ -508,11 +508,11 @@ public class ModuleImpl implements Module
         classFab.addMethod(Modifier.PRIVATE, sig, body);
 
         classFab.proxyMethodsToDelegate(serviceInterface, "delegate()", description);
-        
-        if(serviceImplementation != null)
+
+        if (serviceImplementation != null)
         {
             classFab.copyClassAnnotationsFromDelegate(serviceImplementation);
-            
+
             classFab.copyMethodAnnotationsFromDelegate(serviceInterface, serviceImplementation);
         }
 
@@ -539,7 +539,7 @@ public class ModuleImpl implements Module
         {
             ContributionDef2 def = InternalUtils.toContributionDef2(next);
 
-            if (serviceDef.getServiceId().equals(def.getServiceId()))
+            if (serviceDef.getServiceId().equalsIgnoreCase(def.getServiceId()))
             {
                 result.add(def);
             }
