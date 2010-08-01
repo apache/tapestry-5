@@ -15,6 +15,8 @@
 package org.apache.tapestry.mojo;
 
 import nu.xom.*;
+
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.Artifact;
@@ -836,7 +838,7 @@ public class ComponentReport extends AbstractMavenReport
         for (String path : paths)
         {
             builder.append(sep);
-            builder.append(path);
+            builder.append(StringEscapeUtils.escapeJava(path));
 
             sep = SystemUtils.PATH_SEPARATOR;
         }
