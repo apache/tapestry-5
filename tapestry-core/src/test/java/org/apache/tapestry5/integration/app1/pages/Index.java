@@ -445,7 +445,10 @@ public class Index
 
                     new Item("discardafterdemo", "@DiscardAfter Demo", "Demo using @DiscardAfter annotation"),
                     
-                    new Item("SelectDemo", "Select Demo", "Validation decoration for Select")
+                    new Item("SelectDemo", "Select Demo", "Validation decoration for Select"),
+                    
+                    new Item("SelectModelFromObjectsAndPropertyNameDemo", "SelectModel from objects and property name", 
+                            "Creating a SelectModel from a list of objects and a label property name")
 
             );
 

@@ -387,6 +387,7 @@ public final class TapestryModule
         binder.bind(TranslatorAlternatesSource.class, TranslatorAlternatesSourceImpl.class);
         binder.bind(MetaWorker.class, MetaWorkerImpl.class);
         binder.bind(LinkTransformer.class, LinkTransformerImpl.class);
+        binder.bind(SelectModelFactory.class, SelectModelFactoryImpl.class);
     }
 
     // ========================================================================

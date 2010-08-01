@@ -887,4 +887,19 @@ public class FormTests extends TapestryCoreTestCase
 
         assertTextPresent("Selected color: Green");
     }
+    
+    /**
+     * TAP5-1098.
+     */
+    @Test
+    public void create_select_model_from_objects_and_property_name() throws Exception
+    {
+        clickThru("SelectModel from objects and property name");
+
+        select("track", "label=The Calling");
+
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("Selected track: The Calling, Synaesthetic");
+    }
 }
