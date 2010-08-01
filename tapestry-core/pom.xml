@@ -16,6 +16,14 @@
     </description>
   <inceptionYear>2006</inceptionYear>
 
+  <properties>
+    <!-- Groovy-Eclipse 2.0.2 uses Groovy 1.7.3, which isn't far off -->
+    <groovy-version>1.7.4</groovy-version>
+    <gmaven-version>1.2</gmaven-version>
+    <!-- Some parts of GMaven vary for each major Groovy version -->
+    <gmaven-provider>1.7</gmaven-provider>
+  </properties>
+  
   <dependencies>
     <dependency>
       <groupId>org.apache.tapestry</groupId>
@@ -58,17 +66,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.codehaus.groovy.maven.runtime</groupId>
-      <artifactId>gmaven-runtime-1.6</artifactId>
-      <version>1.0-rc-5</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
-      <!--  1.7.0 seems to match what the Eclipse Groovy plugin uses -->
-      <version>1.7.0</version>
+      <version>${groovy-version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -90,17 +90,39 @@
     </resources>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.groovy.maven</groupId>
+        <groupId>org.codehaus.gmaven</groupId>
         <artifactId>gmaven-plugin</artifactId>
-        <executions>
+        <version>${gmaven-version}</version>
+        <configuration>
+          <providerSelection>${gmaven-provider}</providerSelection>
+        </configuration>
+		    <executions>
           <execution>
             <goals>
               <!-- generateStubs and compile omitted as no Groovy code in main code base -->
-              <!-- generateTestStubs ommitted as it confused TestNG and/or Surefire -->
+              <!-- generateTestStubs omitted as it confused TestNG and/or Surefire -->
               <goal>testCompile</goal>
             </goals>
           </execution>
         </executions>
+        <dependencies>
+          <dependency>
+            <groupId>org.codehaus.gmaven.runtime</groupId>
+            <artifactId>gmaven-runtime-${gmaven-provider}</artifactId>
+            <version>${gmaven-version}</version>
+            <exclusions>
+              <exclusion>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-all</artifactId>
+              </exclusion>
+            </exclusions>
+          </dependency>
+          <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>${groovy-version}</version>
+          </dependency>
+        </dependencies>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
