@@ -73,7 +73,36 @@ Usage
 
   Searching for Spring beans is threaded into the {{{../tapestry-ioc/injection.html}MasterObjectProvider service}}. The Spring context becomes one
   more place that Tapestry searches when determining the injection for a injected field or method parameter.
+
+* Injecting Tapestry services in Spring beans
+
+  If you have configured Spring to allow annotation based injection, then you will be able to inject Tapestry services into your Spring Beans.
+
+  <<This feature is only available when Spring ApplicationContext is not configured and loaded externally. >>  
   
+  Inside your Spring beans, you may use
+  {{{../apidocs/org/apache/tapestry5/ioc/annotations/Inject.html}Inject}} and 
+  {{{http://static.springsource.org/spring/docs/3.0.x/javadoc-api/org/springframework/beans/factory/annotation/Autowired.html}Autowired}} annotations.
+  Simply add these two annotations on top the field you want to inject in your Spring bean.
+  
++----+
+  @Inject
+  @Autowired
+  private MyService myService;
++----+
+
+  or use @Inject on top of arguments in @Autowired bean constructor methods
+  
++----+
+  private final MyService myService;
+  
+  @Autowired
+  public UserDAOImpl(@Inject MyService myService)
+  {
+    this.myService = myService;
+  }
++----+
+
 * Configuring Spring with Tapestry Symbols
   
   As of version 5.2.0 it is possible to configure individual bean property values from Tapestry symbols. This is accomplished by a BeanFactoryPostProcessors 
