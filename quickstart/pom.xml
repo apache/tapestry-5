@@ -1,4 +1,4 @@
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.tapestry</groupId>
     <artifactId>quickstart</artifactId>
@@ -18,7 +18,7 @@
     <parent>
         <groupId>org.apache.tapestry</groupId>
         <artifactId>tapestry-project</artifactId>
-        <version>5.2.0-SNAPSHOT</version>
+        <version>5.2.0</version>
     </parent>
     <name>Tapestry 5 Quickstart Archetype</name>
     <inceptionYear>2007</inceptionYear>
@@ -63,9 +63,9 @@
                                     <tasks>
                                         <echo>Copying Archetype Catalog to repository</echo>
                                         <copy overwrite="true" todir="/var/www/maven-snapshot-repository">
-                                            <fileset dir="src/main/resources" includes="*catalog.xml"></fileset>
+                                            <fileset dir="src/main/resources" includes="*catalog.xml" />
                                             <filterset>
-                                                <filter token="project.version" value="${project.version}"></filter>
+                                                <filter token="project.version" value="${project.version}" />
                                             </filterset>
                                         </copy>
                                     </tasks>
