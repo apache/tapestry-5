@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.apache.tapestry</groupId>
 	<artifactId>tapestry-jmx</artifactId>
-	<version>5.2.0</version>
+	<version>5.2.1-SNAPSHOT</version>
     <name>Tapestry JMX Support</name>
     <description>
         Provides support for JMX
@@ -11,7 +11,7 @@
 	<parent>
 		<groupId>org.apache.tapestry</groupId>
 		<artifactId>tapestry-project</artifactId>
-		<version>5.2.0</version>
+		<version>5.2.1-SNAPSHOT</version>
 	</parent>
 
 	<url />
