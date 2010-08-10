@@ -54,7 +54,7 @@ public class StaticModule
         };
     }
 
-    public static Runnable decorateBarney(final Object delegate)
+    public static Runnable decorateBarney(final Object delegate, String serviseId)
     {
         return new Runnable()
         {

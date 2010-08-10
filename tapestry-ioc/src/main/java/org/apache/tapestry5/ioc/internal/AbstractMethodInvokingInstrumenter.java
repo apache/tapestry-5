@@ -61,6 +61,7 @@ public class AbstractMethodInvokingInstrumenter
 
         serviceId = resources.getServiceId();
 
+        resourcesDefaults.put(String.class, serviceId);
         resourcesDefaults.put(ObjectLocator.class, resources);
         resourcesDefaults.put(ServiceResources.class, resources);
         logger = resources.getLogger();
