@@ -176,6 +176,6 @@ it can be tricky because there are overlapping third-party dependencies with sli
     </reporting>
     
     <properties>
-        <hibernate-version>3.5.2-Final</hibernate-version>
+        <hibernate-version>3.5.4-Final</hibernate-version>
     </properties>
 </project>
