@@ -680,7 +680,7 @@ public class SeleniumTestCase extends Assert implements Selenium
     {
         delegate.open(url);
     }
-    
+
     public void open(String url, String ignoreResponseCode)
     {
         delegate.open(url, ignoreResponseCode);
@@ -1026,9 +1026,9 @@ public class SeleniumTestCase extends Assert implements Selenium
         }
         catch (AssertionError ex)
         {
-            System.err.printf("%s:\n%s\n\n", ex.getMessage(), getHtmlSource());
+            writeErrorReport();
 
             throw ex;
         }
-    }    
+    }
 }
