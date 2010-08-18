@@ -230,6 +230,11 @@ public class PropertyAdapterImpl implements PropertyAdapter
         return field != null;
     }
 
+    public Field getField()
+    {
+        return field;
+    }
+
     public Class getDeclaringClass()
     {
         return declaringClass;

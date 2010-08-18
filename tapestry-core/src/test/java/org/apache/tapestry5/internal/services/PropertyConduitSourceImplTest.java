@@ -22,6 +22,7 @@ import org.apache.tapestry5.integration.app1.data.IntegerHolder;
 import org.apache.tapestry5.internal.InternalPropertyConduit;
 import org.apache.tapestry5.internal.bindings.PropBindingFactoryTest;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.internal.util.IntegerRange;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry5.ioc.services.ClassFab;
@@ -231,6 +232,228 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         assertSame(conduit.getPropertyType(), String.class);
     }
 
+    public static class One<A, B>
+    {
+        A a;
+        B b;
+
+        public A getA()
+        {
+            return a;
+        }
+
+        public void setA(A a)
+        {
+            this.a = a;
+        }
+
+        public B getB()
+        {
+            return b;
+        }
+
+        public void setB(B b)
+        {
+            this.b = b;
+        }
+    }
+
+    public static class Two<B> extends One<String, B>
+    {
+        String s;
+        B b2;
+
+        public String getS()
+        {
+            return s;
+        }
+
+        public void setS(String s)
+        {
+            this.s = s;
+        }
+
+        public B getB2()
+        {
+            return b2;
+        }
+
+        public void setB2(B b2)
+        {
+            this.b2 = b2;
+        }
+    }
+
+    public static class Three extends Two<Long>
+    {
+        Long x;
+
+        public Long getX()
+        {
+            return x;
+        }
+
+        public void setX(Long x)
+        {
+            this.x = x;
+        }
+    }
+
+    public static class WithParameters<C, T>
+    {
+        private C type1Property; // method access
+        public C type1Field; // field access
+        private T type2Property; // method access
+        public T type2Field; // field access
+
+        private T[] type2ArrayProperty;
+        public T[] type2ArrayField;
+
+        public C getType1Property()
+        {
+            return type1Property;
+        }
+
+        public void setType1Property(C type1Property)
+        {
+            this.type1Property = type1Property;
+        }
+
+        public T getType2Property()
+        {
+            return type2Property;
+        }
+
+        public void setType2Property(T type2Property)
+        {
+            this.type2Property = type2Property;
+        }
+
+        public T[] getType2ArrayProperty()
+        {
+            return type2ArrayProperty;
+        }
+
+        public void setType2ArrayProperty(T[] type2ArrayProperty)
+        {
+            this.type2ArrayProperty = type2ArrayProperty;
+        }
+    }
+
+    public static class RealizedParameters extends WithParameters<Holder<SimpleBean>, Long>
+    {
+    }
+
+    public static class WithGenericProperties
+    {
+        public Holder<SimpleBean> holder = new Holder<SimpleBean>();
+    }
+
+    public static interface GenericInterface<A, B>
+    {
+        A genericA();
+
+        B genericB();
+    }
+
+    public static class WithRealizedGenericInterface implements GenericInterface<String, Long>
+    {
+        String a;
+        Long b;
+
+        public String genericA()
+        {
+            return a;
+        }
+
+        public Long genericB()
+        {
+            return b;
+        }
+    }
+
+    @Test
+    public void generic_properties()
+    {
+        final WithGenericProperties bean = new WithGenericProperties();
+        final String first = "John";
+        final String last = "Doe";
+        final SimpleBean simple = new SimpleBean();
+        simple.setLastName(last);
+        simple.setAge(2);
+        simple.setFirstName(first);
+        bean.holder.put(simple);
+
+        PropertyConduit conduit = source.create(WithGenericProperties.class, "holder.get().firstName");
+        assertSame(conduit.get(bean), first);
+    }
+
+    @Test
+    public void generic_parameterized_base_with_properties()
+    {
+        final String first = "John";
+        final String last = "Doe";
+        final SimpleBean simple = new SimpleBean();
+        simple.setAge(2);
+        simple.setFirstName(first);
+        simple.setLastName(last);
+
+        final RealizedParameters bean = new RealizedParameters();
+        final Holder<SimpleBean> holder = new Holder<SimpleBean>();
+        holder.put(simple);
+        bean.setType1Property(holder);
+        bean.setType2Property(1234L);
+        bean.type1Field = holder;
+        bean.type2Field = 5678L;
+        bean.type2ArrayField = new Long[]
+        { 123L, 456L };
+
+        PropertyConduit conduit = source.create(RealizedParameters.class, "type1property.get().firstName");
+        assertSame(conduit.get(bean), first);
+        conduit.set(bean, "Change");
+        assertSame(conduit.get(bean), "Change");
+        conduit.set(bean, first);
+
+        conduit = source.create(RealizedParameters.class, "type1field.get().firstName");
+        assertSame(conduit.get(bean), first);
+
+        conduit = source.create(RealizedParameters.class, "type2field");
+        assertEquals(conduit.get(bean), bean.type2Field);
+
+        conduit = source.create(RealizedParameters.class, "type2property");
+        assertEquals(conduit.get(bean), bean.getType2Property());
+
+        conduit = source.create(RealizedParameters.class, "type2ArrayField");
+        assertEquals(conduit.get(bean), bean.type2ArrayField);
+
+    }
+
+    @Test
+    public void generic_interface()
+    {
+        final WithRealizedGenericInterface bean = new WithRealizedGenericInterface();
+        bean.a = "Hello";
+        bean.b = 12345L;
+
+        PropertyConduit conduit = source.create(WithRealizedGenericInterface.class, "genericA()");
+        assertSame(conduit.get(bean), "Hello");
+        conduit = source.create(WithRealizedGenericInterface.class, "genericB()");
+        assertEquals(conduit.get(bean), 12345L);
+    }
+
+    @Test
+    public void generic_nested()
+    {
+        Three bean = new Three();
+        bean.setA("hello");
+        bean.setB(123L);
+        bean.setB2(1235L);
+        bean.setX(54321L);
+
+        PropertyConduit conduit = source.create(Three.class, "a");
+        assertSame(conduit.get(bean), "hello");
+    }
+
     @Test
     public void null_root_object()
     {
@@ -380,21 +603,23 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         assertListsEquals(l, new Long(1), new Double(2.0), "Bart");
     }
-    
+
     @Test
     public void arrays_as_method_argument()
     {
         PropertyConduit conduit = source.create(EchoBean.class, "echoArray(storedArray)");
         EchoBean bean = new EchoBean();
 
-        bean.setStoredArray(new Number[][]{ new Integer[] {1, 2}, new Double[] {3.0, 4.0}});
+        bean.setStoredArray(new Number[][]
+        { new Integer[]
+        { 1, 2 }, new Double[]
+        { 3.0, 4.0 } });
 
         Number[][] array = (Number[][]) conduit.get(bean);
 
         assertArraysEqual(array[0], 1, 2);
         assertArraysEqual(array[1], 3.0, 4.0);
     }
-    
 
     @Test
     public void not_operator()
@@ -485,7 +710,9 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         assertEquals(falseConduit.get(bedrock), "Barney");
     }
 
-    /** TAP5-747 */
+    /**
+     * TAP5-747
+     */
     @Test
     public void dereference_result_of_method_invocation()
     {

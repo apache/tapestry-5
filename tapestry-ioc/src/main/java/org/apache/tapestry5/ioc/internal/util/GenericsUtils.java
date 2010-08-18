@@ -14,11 +14,8 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
+import java.lang.reflect.*;
+import java.util.LinkedList;
 
 /**
  * Static methods related to the use of JDK 1.5 generics.
@@ -40,7 +37,9 @@ public class GenericsUtils
      */
     public static Class extractGenericReturnType(Class containingClassType, Method method)
     {
-        return extractGenericType(containingClassType, method.getReturnType(), method.getGenericReturnType());
+        return extractActualTypeAsClass(containingClassType, method.getDeclaringClass(), method.getGenericReturnType(),
+                method.getReturnType());
+
     }
 
     /**
@@ -57,57 +56,164 @@ public class GenericsUtils
      */
     public static Class extractGenericFieldType(Class containingClassType, Field field)
     {
-        return extractGenericType(containingClassType, field.getType(), field.getGenericType());
+        return extractActualTypeAsClass(containingClassType, field.getDeclaringClass(), field.getGenericType(),
+                field.getType());
     }
 
-    private static Class extractGenericType(Class containingClassType, Type defaultType, Type genericType)
+    /**
+     * @param owner
+     *            - type that owns the field
+     * @param field
+     *            - field that is generic
+     * @return Type
+     */
+    public static Type extractActualType(Type owner, Field field)
     {
-        // We can only handle the case where you "lock down" a generic type to a specific type.
+        return extractActualType(owner, field.getDeclaringClass(), field.getGenericType(), field.getType());
+    }
 
-        if (genericType instanceof TypeVariable)
+    /**
+     * @param owner
+     *            - type that owns the field
+     * @param method
+     *            - method with generic return type
+     * @return Type
+     */
+    public static Type extractActualType(Type owner, Method method)
+    {
+        return extractActualType(owner, method.getDeclaringClass(), method.getGenericReturnType(),
+                method.getReturnType());
+    }
+
+    /**
+     * Extracts the Class used as a type argument when declaring a
+     * 
+     * @param containingType
+     *            - the type which the method is being/will be called on
+     * @param declaringClass
+     *            - the class that the method is actually declared in (base class)
+     * @param type
+     *            - the generic type from the field/method being inspected
+     * @param defaultType
+     *            - the default type to return if no parameterized type can be found
+     * @return a Class or ParameterizedType that the field/method can reliably be cast to.
+     * @since 5.2.?
+     */
+    private static Type extractActualType(final Type containingType, final Class declaringClass, final Type type,
+            final Class defaultType)
+    {
+
+        if (type instanceof ParameterizedType) { return type; }
+        if (!(type instanceof TypeVariable))
+            return defaultType;
+
+        TypeVariable typeVariable = (TypeVariable) type;
+
+        if (!declaringClass.isAssignableFrom(asClass(containingType))) { throw new RuntimeException(String.format(
+                "%s must be a subclass of %s", declaringClass.getName(), asClass(containingType).getName())); }
+
+        // First, check to see if we are operating on a parameterized type already.
+        Type extractedType = type;
+        if (containingType instanceof ParameterizedType)
         {
+            final int i = getTypeVariableIndex(asClass(containingType), typeVariable);
+            extractedType = ((ParameterizedType) containingType).getActualTypeArguments()[i];
+            if (extractedType instanceof Class || extractedType instanceof ParameterizedType) { return extractedType; }
+        }
 
-            // An odd name for the method that gives you access to the type parameters
-            // used when implementing this class. When you say Bean<String>, the first
-            // type variable of the generic superclass is class String.
+        // Somewhere between declaringClass and containingClass are the parameter type arguments
+        // We are going to drop down the containingClassType until we find the declaring class.
+        // The class that extends declaringClass will define the ParameterizedType or a new TypeVariable
 
-            Type superType = containingClassType.getGenericSuperclass();
+        final LinkedList<Type> classStack = new LinkedList<Type>();
+        Type cur = containingType;
+        while (cur != null && !asClass(cur).equals(declaringClass))
+        {
+            classStack.add(0, cur);
+            cur = asClass(cur).getSuperclass();
+        }
 
-            if (superType instanceof ParameterizedType)
+        int typeArgumentIndex = getTypeVariableIndex(declaringClass, (TypeVariable) extractedType);
+
+        for (Type descendant : classStack)
+        {
+            final Class descendantClass = asClass(descendant);
+            final ParameterizedType parameterizedType = (ParameterizedType) descendantClass.getGenericSuperclass();
+
+            extractedType = parameterizedType.getActualTypeArguments()[typeArgumentIndex];
+
+            if (extractedType instanceof Class || extractedType instanceof ParameterizedType) { return extractedType; }
+
+            if (extractedType instanceof TypeVariable)
             {
-                ParameterizedType superPType = (ParameterizedType) superType;
-
-                TypeVariable tv = (TypeVariable) genericType;
-
-                String name = tv.getName();
-
-                TypeVariable[] typeVariables = tv.getGenericDeclaration().getTypeParameters();
-
-                for (int i = 0; i < typeVariables.length; i++)
-                {
-                    TypeVariable stv = typeVariables[i];
-
-                    // We're trying to match the name of the type variable that is used as the return type
-                    // of the method. With that name, we find the corresponding index in the
-                    // type declarations. With the index, we check superPType for the Class instance
-                    // that defines it. Generics has lots of other options that we simply can't handle.
-
-                    if (stv.getName().equals(name))
-                    {
-                        Type actualType = superPType.getActualTypeArguments()[i];
-
-                        if (actualType instanceof Class)
-                            return (Class) actualType;
-
-                        break;
-                    }
-                }
-
+                typeArgumentIndex = getTypeVariableIndex(descendantClass, (TypeVariable) extractedType);
+            }
+            else
+            {
+                // I don't know what else this could be?
+                break;
             }
         }
 
-        return (Class) defaultType;
+        return defaultType;
+    }
 
-        // P.S. I wrote this and I barely understand it. Fortunately, I have tests ...
+    /**
+     * Convenience method to get actual type as raw class.
+     * 
+     * @param containingClassType
+     * @param declaringClass
+     * @param type
+     * @param defaultType
+     * @return
+     * @see #extractActualType(Type, Class, Type, Class)
+     */
+    private static Class extractActualTypeAsClass(Class containingClassType, Class<?> declaringClass, Type type,
+            Class<?> defaultType)
+    {
+        final Type actualType = extractActualType(containingClassType, declaringClass, type, defaultType);
+
+        return asClass(actualType);
+    }
+
+    public static Class asClass(Type actualType)
+    {
+        if (actualType instanceof ParameterizedType)
+        {
+            final Type rawType = ((ParameterizedType) actualType).getRawType();
+            if (rawType instanceof Class)
+            {
+                // The sun implementation returns Class<?>, but there is room in the interface for it to be
+                // something else so to be safe ignore whatever "something else" might be.
+                // TODO: consider logging for that day when "something else" causes some confusion
+                return (Class) rawType;
+            }
+        }
+
+        return (Class) actualType;
+    }
+
+    /**
+     * Find the index of the TypeVariable in the classes parameters. The offset can be used on a subclass to find
+     * the actual type.
+     * 
+     * @param clazz
+     *            - the parameterized class
+     * @param typeVar
+     *            - the type variable in question.
+     * @return the index of the type variable in the classes type parameters.
+     */
+    private static int getTypeVariableIndex(Class clazz, TypeVariable typeVar)
+    {
+        // the label from the class (the T in List<T>, the K and V in Map<K,V>, etc)
+        String typeVarName = typeVar.getName();
+        int typeArgumentIndex = 0;
+        final TypeVariable[] typeParameters = clazz.getTypeParameters();
+        for (; typeArgumentIndex < typeParameters.length; typeArgumentIndex++)
+        {
+            if (typeParameters[typeArgumentIndex].getName().equals(typeVarName))
+                break;
+        }
+        return typeArgumentIndex;
     }
 }

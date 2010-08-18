@@ -16,13 +16,14 @@ package org.apache.tapestry5.ioc.services;
 
 import org.apache.tapestry5.ioc.AnnotationProvider;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
  * Provides access to a single property within a class. Acts as an {@link org.apache.tapestry5.ioc.AnnotationProvider};
  * when searching for annotations, the read method (if present) is checked first, followed by the write method, followed
  * by the underlying field (when the property name matches the field name).
- * <p>
+ * <p/>
  * Starting in release 5.2, this property may actually be a public field.
  * 
  * @see org.apache.tapestry5.ioc.services.ClassPropertyAdapter
@@ -108,6 +109,13 @@ public interface PropertyAdapter extends AnnotationProvider
      * @since 5.2
      */
     boolean isField();
+
+    /**
+     * Returns the field if the property is a public field or null if the property is accessed via the read method.
+     * 
+     * @since 5.2
+     */
+    Field getField();
 
     /**
      * The class in which the property (or public field) is defined.
