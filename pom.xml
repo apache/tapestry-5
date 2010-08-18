@@ -147,7 +147,13 @@
   </developers>
   <ciManagement>
     <system>hudson</system>
-    <url>http://hudson.zones.apache.org/hudson/view/Tapestry/</url>
+    <url>http://hudson.apache.org/hudson/view/Tapestry/</url>
+    <notifiers>
+        <notifier>
+	    <type>mail</type>
+	    <address>dev@tapestry.apache.org</address>
+        </notifier>
+    </notifiers>
   </ciManagement>
   <mailingLists>
     <mailingList>
