@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,6 +25,22 @@ public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
 
     private final Set<String> throwableProperties;
 
+    /**
+     * A tuple used to communicate up a lavel both the exception info
+     * and the next exception in the stack.
+     */
+    private class ExceptionData
+    {
+        final ExceptionInfo exceptionInfo;
+        final Throwable cause;
+
+        public ExceptionData(ExceptionInfo exceptionInfo, Throwable cause)
+        {
+            this.exceptionInfo = exceptionInfo;
+            this.cause = cause;
+        }
+    }
+
     public ExceptionAnalyzerImpl(PropertyAccess propertyAccess)
     {
         this.propertyAccess = propertyAccess;
@@ -43,7 +59,9 @@ public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
 
         while (t != null)
         {
-            ExceptionInfo info = extractInfo(t);
+            ExceptionData data = extractData(t);
+
+            ExceptionInfo info = data.exceptionInfo;
 
             if (addsValue(previousInfo, info))
             {
@@ -51,7 +69,7 @@ public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
                 previousInfo = info;
             }
 
-            t = t.getCause();
+            t = data.cause;
         }
 
         return new ExceptionAnalysisImpl(list);
@@ -61,22 +79,26 @@ public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
      * We want to filter out exceptions that do not provide any additional value. Additional value includes: an
      * exception message not present in the containing exception or a property value not present in the containing
      * exception. Also the first exception is always valued and the last exception (with the stack trace) is valued.
-     *
+     * 
      * @param previousInfo
      * @param info
      * @return
      */
     private boolean addsValue(ExceptionInfo previousInfo, ExceptionInfo info)
     {
-        if (previousInfo == null) return true;
+        if (previousInfo == null)
+            return true;
 
-        if (!info.getStackTrace().isEmpty()) return true;
+        if (!info.getStackTrace().isEmpty())
+            return true;
 
-        if (!previousInfo.getMessage().contains(info.getMessage())) return true;
+        if (!previousInfo.getMessage().contains(info.getMessage()))
+            return true;
 
         for (String name : info.getPropertyNames())
         {
-            if (info.getProperty(name).equals(previousInfo.getProperty(name))) continue;
+            if (info.getProperty(name).equals(previousInfo.getProperty(name)))
+                continue;
 
             // Found something new and different at this level.
 
@@ -88,35 +110,55 @@ public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
         return false;
     }
 
-    private ExceptionInfo extractInfo(Throwable t)
+    private ExceptionData extractData(Throwable t)
     {
         Map<String, Object> properties = CollectionFactory.newMap();
 
         ClassPropertyAdapter adapter = propertyAccess.getAdapter(t);
 
+        Throwable cause = null;
+
         for (String name : adapter.getPropertyNames())
         {
-            if (throwableProperties.contains(name)) continue;
+            PropertyAdapter pa = adapter.getPropertyAdapter(name);
 
-            if (!adapter.getPropertyAdapter(name).isRead()) continue;
+            if (!pa.isRead())
+                continue;
 
-            Object value = adapter.get(t, name);
+            if (cause == null && Throwable.class.isAssignableFrom(pa.getType()))
+            {
+                // Ignore the property, but track it as the cause.
+                cause = (Throwable) pa.get(t);
+                continue;
+            }
 
-            if (value == null) continue;
+            // Otherwise, ignore properties defined by the Throwable class
+
+            if (throwableProperties.contains(name))
+                continue;
+
+            Object value = pa.get(t);
+
+            if (value == null)
+                continue;
 
             // An interesting property, let's save it for the analysis.
 
             properties.put(name, value);
         }
 
+        // Provide the stack trace only at the deepest exception.
+
         List<StackTraceElement> stackTrace = Collections.emptyList();
 
         // Usually, I'd use a terniary expression here, but Generics gets in
         // the way here.
 
-        if (t.getCause() == null)
+        if (cause == null)
             stackTrace = Arrays.asList(t.getStackTrace());
 
-        return new ExceptionInfoImpl(t, properties, stackTrace);
+        ExceptionInfo info = new ExceptionInfoImpl(t, properties, stackTrace);
+
+        return new ExceptionData(info, cause);
     }
 }
