@@ -117,6 +117,7 @@
       <copy-licenses module="tapestry-func"/>
       <copy-licenses module="tapestry-jmx"/>
       <copy-licenses module="tapestry-beanvalidator"/>
+      <copy-licenses module="tapestry-json"/>
 
     </target>
 
@@ -165,6 +166,7 @@
             <zipfileset prefix="tapestry-beanvalidator" dir="tapestry-beanvalidator" includes="${sources}"/>
             <zipfileset prefix="tapestry-jmx" dir="tapestry-jmx" includes="${sources}"/>
             <zipfileset prefix="tapestry-func" dir="tapestry-func" includes="${sources}"/>
+            <zipfileset prefix="tapestry-json" dir="tapestry-json" includes="${sources}"/>
         </zip>
 
         <tar destfile="${dists.dir}/tapestry-src-${version}.tar.gz" compression="gzip" longfile="gnu">

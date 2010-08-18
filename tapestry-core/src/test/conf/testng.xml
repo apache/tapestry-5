@@ -27,7 +27,6 @@
     <packages>
       <package name="org.apache.tapestry5.root"/>
       <package name="org.apache.tapestry5.dom"/>
-      <package name="org.apache.tapestry5.json"/>
       <package name="org.apache.tapestry5.runtime"/>
       <package name="org.apache.tapestry5.services"/>
       <package name="org.apache.tapestry5.util"/>

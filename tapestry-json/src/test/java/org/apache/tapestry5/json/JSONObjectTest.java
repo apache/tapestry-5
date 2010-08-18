@@ -19,6 +19,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import org.apache.tapestry5.ioc.test.TestUtils;
 import org.testng.annotations.DataProvider;
@@ -945,5 +946,19 @@ public class JSONObjectTest extends TestUtils
         JSONObject outer = new JSONObject().put("coll", new JSONArray("fred", "barney"));
 
         assertEquals(outer.toCompactString(), "{\"coll\":[\"fred\",\"barney\"]}");
+    }
+
+    @Test
+    public void json_array_is_iterable()
+    {
+        JSONArray array = new JSONArray(1, 2, false);
+
+        Iterator<Object> iterator = array.iterator();
+
+        assertEquals(iterator.next(), 1);
+        assertEquals(iterator.next(), 2);
+        assertEquals(iterator.next(), false);
+
+        assertFalse(iterator.hasNext());
     }
 }

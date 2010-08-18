@@ -30,6 +30,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tapestry</groupId>
+      <artifactId>tapestry-json</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tapestry</groupId>
       <artifactId>tapestry-test</artifactId>
       <!--
         This would be test, but we provide a few base classes that depend on TestNG, which is

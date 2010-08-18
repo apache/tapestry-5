@@ -176,6 +176,7 @@
     </mailingList>
   </mailingLists>
   <modules>
+    <module>tapestry-json</module>
     <module>tapestry-func</module>
     <module>tapestry-test</module>
     <module>tapestry-ioc</module>

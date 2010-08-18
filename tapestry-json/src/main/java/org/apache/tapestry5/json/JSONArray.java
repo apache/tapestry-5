@@ -34,9 +34,9 @@ package org.apache.tapestry5.json;
  * SOFTWARE.
  */
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 /**
  * A JSONArray is an ordered sequence of values. Its external text form is a string wrapped in square brackets with
@@ -73,13 +73,13 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
  * @author JSON.org
  * @version 2
  */
-public final class JSONArray extends JSONCollection
+public final class JSONArray extends JSONCollection implements Iterable<Object>
 {
 
     /**
      * The arrayList where the JSONArray's properties are kept.
      */
-    private final List<Object> list = CollectionFactory.newList();
+    private final List<Object> list = new ArrayList<Object>();
 
     /**
      * Construct an empty JSONArray.
@@ -99,6 +99,11 @@ public final class JSONArray extends JSONCollection
     {
         for (Object value : values)
             put(value);
+    }
+
+    public Iterator<Object> iterator()
+    {
+        return list.iterator();
     }
 
     /**

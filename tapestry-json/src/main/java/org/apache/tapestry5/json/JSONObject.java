@@ -34,12 +34,12 @@ package org.apache.tapestry5.json;
  * SOFTWARE.
  */
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 /**
  * A JSONObject is an unordered collection of name/value pairs. Its external form is a string wrapped in curly braces
@@ -139,7 +139,7 @@ public final class JSONObject extends JSONCollection
     /**
      * The map where the JSONObject's properties are kept.
      */
-    private final Map<String, Object> properties = CollectionFactory.newMap();
+    private final Map<String, Object> properties = new HashMap<String, Object>();
 
     /**
      * It is sometimes more convenient and less ambiguous to have a <code>NULL</code> object than to use Java's
@@ -763,7 +763,7 @@ public final class JSONObject extends JSONCollection
 
         if (!found)
         {
-            List<String> typeNames = CollectionFactory.newList();
+            List<String> typeNames = new ArrayList<String>();
 
             for (Class c : ALLOWED)
             {
@@ -775,8 +775,21 @@ public final class JSONObject extends JSONCollection
                 typeNames.add(name);
             }
 
+            Collections.sort(typeNames);
+
+            StringBuilder joined = new StringBuilder();
+            String sep = "";
+
+            for (String name : typeNames)
+            {
+                joined.append(sep);
+                joined.append(name);
+
+                sep = ", ";
+            }
+
             String message = String.format("JSONObject properties may be one of %s. Type %s is not allowed.",
-                    InternalUtils.joinSorted(typeNames), actual.getName());
+                    joined.toString(), actual.getName());
 
             throw new RuntimeException(message);
         }

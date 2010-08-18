@@ -1,0 +1,8 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Tapestry JSON" annotations="1.5" verbose="2">
+  <test name="Unit Tests" enabled="true">
+    <packages>
+      <package name="org.apache.tapestry5.json"/>
+    </packages>
+  </test>
+</suite>
