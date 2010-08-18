@@ -21,11 +21,14 @@ import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.services.MarkupWriterFactory;
+import org.apache.tapestry5.services.RequestGlobals;
 import org.apache.tapestry5.services.Response;
 import org.slf4j.Logger;
 
 public class PageResponseRendererImpl implements PageResponseRenderer
 {
+    private final RequestGlobals requestGlobals;
+
     private final PageMarkupRenderer markupRenderer;
 
     private final MarkupWriterFactory markupWriterFactory;
@@ -36,9 +39,11 @@ public class PageResponseRendererImpl implements PageResponseRenderer
 
     private final Logger logger;
 
-    public PageResponseRendererImpl(MarkupWriterFactory markupWriterFactory, PageMarkupRenderer markupRenderer,
-            PageContentTypeAnalyzer pageContentTypeAnalyzer, Response response, Logger logger)
+    public PageResponseRendererImpl(RequestGlobals requestGlobals, MarkupWriterFactory markupWriterFactory,
+            PageMarkupRenderer markupRenderer, PageContentTypeAnalyzer pageContentTypeAnalyzer, Response response,
+            Logger logger)
     {
+        this.requestGlobals = requestGlobals;
         this.markupWriterFactory = markupWriterFactory;
         this.markupRenderer = markupRenderer;
         this.pageContentTypeAnalyzer = pageContentTypeAnalyzer;
@@ -49,6 +54,8 @@ public class PageResponseRendererImpl implements PageResponseRenderer
     public void renderPageResponse(Page page) throws IOException
     {
         assert page != null;
+
+        requestGlobals.storeActivePageName(page.getName());
 
         ContentType contentType = pageContentTypeAnalyzer.findContentType(page);
 
