@@ -233,8 +233,8 @@ public class FuncTest extends BaseFuncTest
         // Converting to null and then filtering out nulls is the hard way to do filter or remove,
         // but exercises the code we want to test.
 
-        List<String> filtered = F.flow("Mary", "had", "a", "little", "lamb").map(F.select(combinedp, identity)).remove(
-                isNull).toList();
+        List<String> filtered = F.flow("Mary", "had", "a", "little", "lamb").map(F.select(combinedp, identity))
+                .remove(isNull).toList();
 
         assertListsEquals(filtered, "Mary", "little", "lamb");
     }
@@ -564,5 +564,22 @@ public class FuncTest extends BaseFuncTest
 
         assertTrue(Arrays.equals(flow.toArray(Integer.class), new Integer[]
         { 3, 4, 5 }));
+    }
+
+    @Test
+    public void lazy_flow_from_iterable()
+    {
+        Iterable<Integer> iterable = new Iterable<Integer>()
+        {
+
+            public Iterator<Integer> iterator()
+            {
+                return Arrays.asList(9, 7, 1).iterator();
+            }
+        };
+
+        Flow<Integer> flow = F.flow(iterable);
+
+        assertFlowValues(flow, 9, 7, 1);
     }
 }

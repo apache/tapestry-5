@@ -15,6 +15,7 @@
 package org.apache.tapestry5.func;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Functional operations on collections with generics support. The core interface is {@link Flow} to which operations
@@ -29,9 +30,9 @@ import java.util.Collection;
  * 
  * @since 5.2.0
  */
+@SuppressWarnings("all")
 public class F
 {
-    @SuppressWarnings("unchecked")
     final static Flow<?> EMPTY_FLOW = new EmptyFlow();
 
     @SuppressWarnings("unchecked")
@@ -174,9 +175,9 @@ public class F
     /**
      * Override of {@link #select(Predicate, Mapper)} where rejected values are replaced with a fixed value.
      */
-    public static <S, T> Mapper<S, T> select(Predicate<? super S> predicate, Mapper<S, T> ifAccepted, T ifRejected)
+    public static <S, T> Mapper<S, T> select(Predicate<? super S> predicate, Mapper<S, T> ifAccepted, T ifRejectedValue)
     {
-        Mapper<S, T> rejectedMapper = always(ifRejected);
+        Mapper<S, T> rejectedMapper = always(ifRejectedValue);
 
         return select(predicate, ifAccepted, rejectedMapper);
     }
@@ -247,6 +248,18 @@ public class F
             return emptyFlow();
 
         return new ArrayFlow<T>(values);
+    }
+
+    /**
+     * Creates a lazy Flow from the {@link Iterator} obtained from the iterable. The Flow
+     * will be threadsafe as long as the iterable yields a new Iterator on each invocation <em>and</em> the underlying
+     * iterable object is not modified while the Flow is evaluating. In other words, not extremely threadsafe.
+     */
+    public static <T> Flow<T> flow(Iterable<T> iterable)
+    {
+        assert iterable != null;
+
+        return lazy(new LazyIterator<T>(iterable.iterator()));
     }
 
     /**
