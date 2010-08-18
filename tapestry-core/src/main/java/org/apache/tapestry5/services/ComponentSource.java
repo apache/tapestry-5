@@ -66,9 +66,7 @@ public interface ComponentSource
      * the request.
      * The identity of the active page is not known until the correct {@link Dispatcher} determines this.
      * 
-     * @return the active page
-     * @throws RuntimeException
-     *             if the active page is not yet known
+     * @return the active page, or null if no active page is yet identified
      * @since 5.2.0
      */
     Component getActivePage();

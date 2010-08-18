@@ -151,15 +151,7 @@ public class ComponentSourceImplTest extends InternalBaseTestCase
 
         ComponentSource source = new ComponentSourceImpl(null, null, globals);
 
-        try
-        {
-            source.getActivePage();
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertMessageContains(ex, "active page", "not yet been established");
-        }
+        assertNull(source.getActivePage());
 
         verify();
 

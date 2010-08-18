@@ -98,10 +98,7 @@ public class ComponentSourceImpl implements ComponentSource
     {
         String pageName = globals.getActivePageName();
 
-        if (pageName == null)
-            throw new RuntimeException("The identity of the active page for this request has not yet been established.");
-
-        return getPage(pageName);
+        return pageName == null ? null : getPage(pageName);
     }
 
 }

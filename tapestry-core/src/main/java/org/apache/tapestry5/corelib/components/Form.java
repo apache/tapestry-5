@@ -378,8 +378,8 @@ public class Form implements ClientElement, FormValidationControl
 
         if (autofocus)
         {
-            ValidationDecorator autofocusDecorator = new AutofocusValidationDecorator(environment
-                    .peek(ValidationDecorator.class), activeTracker, renderSupport);
+            ValidationDecorator autofocusDecorator = new AutofocusValidationDecorator(
+                    environment.peek(ValidationDecorator.class), activeTracker, renderSupport);
             environment.push(ValidationDecorator.class, autofocusDecorator);
         }
 
@@ -712,9 +712,27 @@ public class Form implements ClientElement, FormValidationControl
             idAllocator.allocateId(name);
         }
 
-        ComponentResources activePageResources = componentSource.getActivePage().getComponentResources();
+        Component activePage = componentSource.getActivePage();
 
-        activePageResources.triggerEvent(EventConstants.PREALLOCATE_FORM_CONTROL_NAMES, new Object[]
-        { idAllocator }, null);
+        // This is unlikely but may be possible if people override some of the standard
+        // exception reporting logic.
+
+        if (activePage == null)
+            return;
+
+        ComponentResources activePageResources = activePage.getComponentResources();
+
+        try
+        {
+
+            activePageResources.triggerEvent(EventConstants.PREALLOCATE_FORM_CONTROL_NAMES, new Object[]
+            { idAllocator }, null);
+        }
+        catch (RuntimeException ex)
+        {
+            logger.error(
+                    String.format("Unable to obtrain form control names to preallocate: %s",
+                            InternalUtils.toMessage(ex)), ex);
+        }
     }
 }
