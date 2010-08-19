@@ -1,10 +1,10 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,11 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.*;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.RadioContainer;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Mixin;
 import org.apache.tapestry5.annotations.Parameter;
@@ -23,10 +27,11 @@ import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.corelib.mixins.RenderInformals;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
- * A radio button (i.e., &lt;input type="radio"&gt;). Radio buttons <strong>must</strong> operate within a {@link
- * RadioContainer} (normally, the {@link RadioGroup} component).
+ * A radio button (i.e., &lt;input type="radio"&gt;). Radio buttons <strong>must</strong> operate within a
+ * {@link RadioContainer} (normally, the {@link RadioGroup} component).
  * <p/>
  * If the value parameter is not bound, then the default value is a property of the container component whose name
  * matches the Radio component's id.
@@ -70,7 +75,7 @@ public class Radio implements Field
     private DiscardBody discardBody;
 
     @Inject
-    private RenderSupport renderSupport;
+    private JavaScriptSupport jsSupport;
 
     private String clientId;
 
@@ -102,8 +107,8 @@ public class Radio implements Field
     }
 
     /**
-     * Returns true if this component has been expressly disabled (via its disabled parameter), or if the {@link
-     * RadioContainer container} has been disabled.
+     * Returns true if this component has been expressly disabled (via its disabled parameter), or if the
+     * {@link RadioContainer container} has been disabled.
      */
     public boolean isDisabled()
     {
@@ -119,12 +124,13 @@ public class Radio implements Field
     {
         String value = container.toClient(this.value);
 
-        clientId = renderSupport.allocateClientId(resources);
+        clientId = jsSupport.allocateClientId(resources);
         controlName = container.getControlName();
 
         writer.element("input", "type", "radio", "id", clientId, "name", controlName, "value", value);
 
-        if (container.isSelected(this.value)) writer.attributes("checked", "checked");
+        if (container.isSelected(this.value))
+            writer.attributes("checked", "checked");
     }
 
     void afterRender(MarkupWriter writer)

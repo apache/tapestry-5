@@ -14,9 +14,16 @@
 
 package org.apache.tapestry5.annotations;
 
-import java.lang.annotation.*;
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.COMPONENT;
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.MIXIN;
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.PAGE;
 
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 import org.apache.tapestry5.ioc.annotations.UseWith;
 
 /**
@@ -27,8 +34,7 @@ import org.apache.tapestry5.ioc.annotations.UseWith;
  * This saves the work of injecting the asset into a field and injecting the PageRenderSupport environmental service,
  * and invoking the method.
  * <p/>
- * Does not support setting a media type; if that is required. use
- * {@link org.apache.tapestry5.RenderSupport#addStylesheetLink(org.apache.tapestry5.Asset, String)} directly.
+ * Does not support setting a media type; if that is required. use JavascriptSupport.importStylesheet() directly.
  * 
  * @see org.apache.tapestry5.annotations.Path
  * @see org.apache.tapestry5.annotations.IncludeJavaScriptLibrary

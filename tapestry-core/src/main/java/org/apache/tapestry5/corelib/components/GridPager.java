@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ClientBehaviorSupport;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * Generates a series of links used to jump to a particular page index within the overall data set.
@@ -77,7 +78,7 @@ public class GridPager
     private ClientBehaviorSupport clientBehaviorSupport;
 
     @Environmental
-    private RenderSupport renderSupport;
+    private JavaScriptSupport jsSupport;
 
     void beginRender(MarkupWriter writer)
     {
@@ -153,7 +154,7 @@ public class GridPager
 
         if (zone != null)
         {
-            String id = renderSupport.allocateClientId(resources);
+            String id = jsSupport.allocateClientId(resources);
 
             element.attribute("id", id);
 

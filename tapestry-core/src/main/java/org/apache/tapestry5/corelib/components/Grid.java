@@ -52,6 +52,7 @@ import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * A grid presents tabular data. It is a composite component, created in terms of several sub-components. The
@@ -251,11 +252,8 @@ public class Grid implements GridModel
     @Environmental(false)
     private FormSupport formSupport;
 
-    @Inject
-    private Request request;
-
     @Environmental
-    private RenderSupport renderSupport;
+    private JavaScriptSupport jsSupport;
 
     /**
      * Defines where block and label overrides are obtained from. By default, the Grid component provides block
@@ -398,10 +396,9 @@ public class Grid implements GridModel
 
                 if (rowType == null)
                     throw new RuntimeException(
-                            String
-                                    .format(
-                                            "Unable to determine the bean type for rows from %s. You should bind the model parameter explicitly.",
-                                            gridDataSource));
+                            String.format(
+                                    "Unable to determine the bean type for rows from %s. You should bind the model parameter explicitly.",
+                                    gridDataSource));
 
                 // Properties do not have to be read/write
 
@@ -492,7 +489,7 @@ public class Grid implements GridModel
 
         if (inPlace && zone == null)
         {
-            zone = renderSupport.allocateClientId(resources);
+            zone = jsSupport.allocateClientId(resources);
 
             writer.element("div", "id", zone);
 

@@ -1,4 +1,4 @@
-//  Copyright 2008 The Apache Software Foundation
+//  Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ public enum FieldFocusPriority
     IN_ERROR,
 
     /**
-     * Used to allow field focus to be manually overridden; this would be selected in user code and is higher priorty
+     * Used to allow field focus to be manually overridden; this would be selected in user code and is higher priority
      * than {@link #IN_ERROR}.
      *
      * @since 5.1.0.4

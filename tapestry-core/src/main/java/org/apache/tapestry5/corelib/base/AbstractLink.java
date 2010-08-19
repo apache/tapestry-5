@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,6 +20,7 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * Provides base utilities for classes that generate clickable links.
@@ -44,7 +45,7 @@ public abstract class AbstractLink implements ClientElement
     private ComponentResources resources;
 
     @Inject
-    private RenderSupport renderSupport;
+    private JavaScriptSupport jsSupport;
 
     private Link link;
 
@@ -56,11 +57,11 @@ public abstract class AbstractLink implements ClientElement
     {
         String href = link.toURI();
 
-        if (anchor == null) return href;
+        if (anchor == null)
+            return href;
 
         return href + "#" + anchor;
     }
-
 
     @SetupRender
     void resetElementAndClientId()
@@ -70,13 +71,16 @@ public abstract class AbstractLink implements ClientElement
     }
 
     /**
-     * Writes an &lt;a&gt; element with the provided link as the href attribute.  A call to {@link
-     * org.apache.tapestry5.MarkupWriter#end()} is <em>not</em> provided.            Automatically appends an anchor if
-     * the component's anchor parameter is non-null.  Informal parameters are rendered as well.
-     *
-     * @param writer         to write markup to
-     * @param link           the link that will form the href
-     * @param namesAndValues additional attributes to write
+     * Writes an &lt;a&gt; element with the provided link as the href attribute. A call to
+     * {@link org.apache.tapestry5.MarkupWriter#end()} is <em>not</em> provided. Automatically appends an anchor if
+     * the component's anchor parameter is non-null. Informal parameters are rendered as well.
+     * 
+     * @param writer
+     *            to write markup to
+     * @param link
+     *            the link that will form the href
+     * @param namesAndValues
+     *            additional attributes to write
      */
     protected final void writeLink(MarkupWriter writer, Link link, Object... namesAndValues)
     {
@@ -90,10 +94,10 @@ public abstract class AbstractLink implements ClientElement
     }
 
     /**
-     * Returns the most recently rendered {@link org.apache.tapestry5.Link} for this component.  Subclasses calculate
+     * Returns the most recently rendered {@link org.apache.tapestry5.Link} for this component. Subclasses calculate
      * their link value as they render, and the value is valid until the end of the request, or the next time the same
      * component renders itself (if inside a loop).
-     *
+     * 
      * @return the most recent link, or null
      */
     public Link getLink()
@@ -103,18 +107,18 @@ public abstract class AbstractLink implements ClientElement
 
     /**
      * Returns the unique client id for this element. This is valid only after the component has rendered (its start
-     * tag).  A client id is generated the first time this method is invoked, after the link renders its start tag.
+     * tag). A client id is generated the first time this method is invoked, after the link renders its start tag.
      */
     public final String getClientId()
     {
         if (clientId == null)
         {
             if (element == null)
-                throw new IllegalStateException(
-                        String.format("Client id for %s is not available as it did not render yet (or was disabled).",
-                                      resources.getCompleteId()));
+                throw new IllegalStateException(String.format(
+                        "Client id for %s is not available as it did not render yet (or was disabled).",
+                        resources.getCompleteId()));
 
-            clientId = renderSupport.allocateClientId(resources);
+            clientId = jsSupport.allocateClientId(resources);
 
             element.forceAttributes("id", clientId);
         }

@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-Tapestry.Initializer.autocompleter = function(elementId, menuId, url, config)
+Tapestry.Initializer.autocompleter = function(spec)
 {
-    $T(elementId).autocompleter = new Ajax.Autocompleter(elementId, menuId, url, config);
+    $T(spec.elementId).autocompleter = new Ajax.Autocompleter(spec.elementId, spec.menuId, spec.url, spec.config);
 };

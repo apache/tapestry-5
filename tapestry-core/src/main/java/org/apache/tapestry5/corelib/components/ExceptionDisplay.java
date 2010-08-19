@@ -16,20 +16,18 @@ package org.apache.tapestry5.corelib.components;
 
 import java.util.List;
 
-import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Primary;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.ExceptionAnalysis;
 import org.apache.tapestry5.ioc.services.ExceptionAnalyzer;
 import org.apache.tapestry5.ioc.services.ExceptionInfo;
 import org.apache.tapestry5.services.StackTraceElementAnalyzer;
 import org.apache.tapestry5.services.StackTraceElementClassConstants;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * Integral part of the default {@link org.apache.tapestry5.corelib.pages.ExceptionReport} page used to break apart and
@@ -49,10 +47,6 @@ public class ExceptionDisplay
     @Inject
     private ExceptionAnalyzer analyzer;
 
-    @Inject
-    @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
-    private String appPackage;
-
     @Property
     private ExceptionInfo info;
 
@@ -66,7 +60,7 @@ public class ExceptionDisplay
     private List<ExceptionInfo> stack;
 
     @Environmental
-    private RenderSupport renderSupport;
+    private JavaScriptSupport jsSupport;
 
     @Property
     private String toggleId;
@@ -83,7 +77,7 @@ public class ExceptionDisplay
 
         stack = analysis.getExceptionInfos();
 
-        toggleId = renderSupport.allocateClientId("toggleStack");
+        toggleId = jsSupport.allocateClientId("toggleStack");
     }
 
     public boolean getShowPropertyList()
@@ -112,6 +106,6 @@ public class ExceptionDisplay
 
     void afterRender()
     {
-        renderSupport.addScript("Tapestry.stackFrameToggle('%s');", toggleId);
+        jsSupport.addScript("Tapestry.stackFrameToggle('%s');", toggleId);
     }
 }

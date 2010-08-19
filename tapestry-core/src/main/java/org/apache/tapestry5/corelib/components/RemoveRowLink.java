@@ -1,10 +1,10 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,15 +16,15 @@ package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.internal.AjaxFormLoopContext;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * Used inside a {@link org.apache.tapestry5.corelib.components.AjaxFormLoop} to remove the current row from the loop.
- * This fires a server-side  event (from the AjaxFormLoop component); the event context is the object to be removed. On
+ * This fires a server-side event (from the AjaxFormLoop component); the event context is the object to be removed. On
  * the client-side, the element for the row is hidden, then removed altogether.
  */
 @SupportsInformalParameters
@@ -37,23 +37,22 @@ public class RemoveRowLink
     private AjaxFormLoopContext context;
 
     @Environmental
-    private RenderSupport renderSupport;
+    private JavaScriptSupport jsSupport;
 
     void beginRender(MarkupWriter writer)
     {
-        String clientId = renderSupport.allocateClientId(resources);
+        String clientId = jsSupport.allocateClientId(resources);
 
         writer.element("a",
 
-                       "href", "#",
+        "href", "#",
 
-                       "id", clientId);
+        "id", clientId);
 
         resources.renderInformalParameters(writer);
 
         context.addRemoveRowTrigger(clientId);
     }
-
 
     void afterRender(MarkupWriter writer)
     {

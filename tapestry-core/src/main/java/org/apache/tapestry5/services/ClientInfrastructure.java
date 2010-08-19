@@ -14,15 +14,15 @@
 
 package org.apache.tapestry5.services;
 
+import java.util.List;
+
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 
-import java.util.List;
-
 /**
  * Client infrastructure is a base set of JavaScript libraries and CSS stylesheet files, The core JavaScript libraries
- * are added to any page that {@linkplain org.apache.tapestry5.RenderSupport#addScript(String, Object[]) adds JavaScript
- * to the page}. The CSS stylesheet files are added to any page with a root &lt;html&gt; element.
+ * are added to any page that uses the {@link JavaScriptSupport} adds JavaScript
+ * to the page. The CSS stylesheet files are added to any page with a root &lt;html&gt; element.
  * <p/>
  * Tapestry's default JavaScript stack includes Prototype, Scriptaculous, and a Tapestry-specific library. Note that
  * these individual library files will {@linkplain org.apache.tapestry5.SymbolConstants#COMBINE_SCRIPTS be combined into
@@ -36,7 +36,7 @@ import java.util.List;
  * <p>
  * 
  * @deprecated ClientInfrastructure now exists to define the "core" {@link JavaScriptStack}. It may be removed
- *             in the future.
+ *             in the release 5.3.
  * @since 5.1.0.2
  */
 public interface ClientInfrastructure

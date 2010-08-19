@@ -37,6 +37,7 @@ import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
 import org.apache.tapestry5.services.PartialMarkupRenderer;
 import org.apache.tapestry5.services.PartialMarkupRendererFilter;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * A special form of the {@link org.apache.tapestry5.corelib.components.Loop} component that adds Ajax support to
@@ -137,7 +138,7 @@ public class AjaxFormLoop
     private Environment environment;
 
     @Inject
-    private RenderSupport renderSupport;
+    private JavaScriptSupport jsSupport;
 
     private JSONArray addRowTriggers;
 
@@ -185,7 +186,7 @@ public class AjaxFormLoop
             spec.put("fragment", currentFragmentId());
             spec.put("url", asURI);
 
-            renderSupport.addInit("formLoopRemoveLink", spec);
+            jsSupport.addInitializerCall("formLoopRemoveLink", spec);
         }
     };
 
@@ -378,7 +379,7 @@ public class AjaxFormLoop
         spec.put("rowInjector", rowInjector.getClientId());
         spec.put("addRowTriggers", addRowTriggers);
 
-        renderSupport.addInit("ajaxFormLoop", spec);
+        jsSupport.addInitializerCall("ajaxFormLoop", spec);
     }
 
     private void popContext()

@@ -1,10 +1,10 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5;
 
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * Interface for any kind of object (typically, a component) that can provide a {@linkplain #getClientId() client-side
@@ -22,8 +23,8 @@ package org.apache.tapestry5;
  * only accurate just after the component has rendered, and before it renders again.
  * <p/>
  * Some components must be configured to provide a client id. In many cases, the client id matches the component's
- * {@linkplain ComponentResourcesCommon#getId() component id}, typically passed through {@link
- * RenderSupport#allocateClientId(String)} to ensure uniqueness.
+ * {@linkplain ComponentResourcesCommon#getId() component id}, typically passed through
+ * {@link JavaScriptSupport#allocateClientId(String)} to ensure uniqueness.
  */
 public interface ClientElement
 {

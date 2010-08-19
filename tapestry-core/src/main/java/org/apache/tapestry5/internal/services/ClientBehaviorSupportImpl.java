@@ -131,7 +131,7 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
     }
 
     /**
-     * Invoked at the end of rendering to commit (to the {@link org.apache.tapestry5.RenderSupport}) any accumulated
+     * Invoked at the end of rendering to commit (to the {@link JavaScriptSupport}) any accumulated
      * validations.
      */
     public void commit()

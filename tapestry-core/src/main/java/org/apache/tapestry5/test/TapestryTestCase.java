@@ -15,9 +15,7 @@
 package org.apache.tapestry5.test;
 
 import static java.lang.Thread.sleep;
-import static org.apache.tapestry5.internal.test.CodeEq.codeEq;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
-import static org.easymock.EasyMock.eq;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -37,29 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.Asset2;
-import org.apache.tapestry5.Binding;
-import org.apache.tapestry5.Block;
-import org.apache.tapestry5.ClientElement;
-import org.apache.tapestry5.ComponentEventCallback;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.ComponentResourcesCommon;
-import org.apache.tapestry5.Field;
-import org.apache.tapestry5.FieldTranslator;
-import org.apache.tapestry5.FieldValidationSupport;
-import org.apache.tapestry5.FieldValidator;
-import org.apache.tapestry5.Link;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.NullFieldStrategy;
-import org.apache.tapestry5.PropertyConduit;
-import org.apache.tapestry5.PropertyOverrides;
-import org.apache.tapestry5.RenderSupport;
-import org.apache.tapestry5.Translator;
-import org.apache.tapestry5.ValidationDecorator;
-import org.apache.tapestry5.ValidationTracker;
-import org.apache.tapestry5.Validator;
-import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Id;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Path;
@@ -91,6 +67,7 @@ import org.easymock.IAnswer;
  * Base test case that adds a number of convenience factory and training methods for the public interfaces of
  * Tapestry.
  */
+@SuppressWarnings("all")
 public abstract class TapestryTestCase extends IOCTestCase
 {
 
@@ -104,6 +81,7 @@ public abstract class TapestryTestCase extends IOCTestCase
         return new MarkupWriterImpl();
     }
 
+    /** @deprecated May be removed in Tapestry 5.3 */
     protected final void train_getAliasesForMode(AliasManager manager, String mode, Map<Class, Object> configuration)
     {
         expect(manager.getAliasesForMode(mode)).andReturn(configuration);
@@ -323,6 +301,7 @@ public abstract class TapestryTestCase extends IOCTestCase
         return newMock(ValidationConstraintGenerator.class);
     }
 
+    /** @deprecated May be removed in Tapestry 5.3 */
     protected final ValidationMessagesSource mockValidationMessagesSource()
     {
         return newMock(ValidationMessagesSource.class);
@@ -362,12 +341,14 @@ public abstract class TapestryTestCase extends IOCTestCase
         }
     }
 
+    /** @deprecated May be removed in Tapestry 5.3 */
     protected final void train_addField(ClassTransformation transformation, int modifiers, String type,
             String suggestedName, String actualName)
     {
         expect(transformation.addField(modifiers, type, suggestedName)).andReturn(actualName);
     }
 
+    /** @deprecated May be removed in Tapestry 5.3 */
     protected final void train_addInjectedField(ClassTransformation ct, Class type, String suggestedName, Object value,
             String fieldName)
     {
@@ -418,18 +399,21 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(source.getAsset(root, path, locale)).andReturn(asset);
     }
 
+    /** @deprecated May be removed in Tapestry 5.3 */
     protected final void train_findFieldsWithAnnotation(ClassTransformation transformation,
             Class<? extends Annotation> annotationClass, List<String> fieldNames)
     {
         expect(transformation.findFieldsWithAnnotation(annotationClass)).andReturn(fieldNames);
     }
 
+    /** @deprecated May be removed in Tapestry 5.3 */
     protected final void train_findFieldsWithAnnotation(ClassTransformation transformation,
             Class<? extends Annotation> annotationClass, String... fieldNames)
     {
         train_findFieldsWithAnnotation(transformation, annotationClass, Arrays.asList(fieldNames));
     }
 
+    /** @deprecated May be removed in Tapestry 5.3 */
     protected final void train_findMethods(ClassTransformation transformation,
             final TransformMethodSignature... signatures)
     {
@@ -459,12 +443,14 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(transformation.findMethods(EasyMock.isA(MethodFilter.class))).andAnswer(answer);
     }
 
+    /** @deprecated May be removed in Tapestry 5.3 */
     protected final void train_findMethodsWithAnnotation(ClassTransformation tf,
             Class<? extends Annotation> annotationType, List<TransformMethodSignature> sigs)
     {
         expect(tf.findMethodsWithAnnotation(annotationType)).andReturn(sigs);
     }
 
+    /** @deprecated May be removed in Tapestry 5.3 */
     protected final void train_findUnclaimedFields(ClassTransformation transformation, String... fieldNames)
     {
         expect(transformation.findUnclaimedFields()).andReturn(Arrays.asList(fieldNames));
@@ -577,6 +563,7 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(request.getDateHeader(name)).andReturn(value).atLeastOnce();
     }
 
+    /** @deprecated May be removed in Tapestry 5.3 */
     protected final <T extends Annotation> void train_getFieldAnnotation(ClassTransformation transformation,
             String fieldName, Class<T> annotationClass, T annotation)
     {
@@ -588,6 +575,7 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(model.getFieldPersistenceStrategy(fieldName)).andReturn(fieldStrategy).atLeastOnce();
     }
 
+    /** @deprecated May be removed in Tapestry 5.3 */
     protected final void train_getFieldType(ClassTransformation transformation, String fieldName, String type)
     {
         expect(transformation.getFieldType(fieldName)).andReturn(type).atLeastOnce();
@@ -628,6 +616,7 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(model.getMeta(key)).andReturn(value).atLeastOnce();
     }
 
+    /** @deprecated May be removed in Tapestry 5.3 */
     protected final <T extends Annotation> void train_getMethodAnnotation(ClassTransformation ct,
             TransformMethodSignature signature, Class<T> annotationClass, T annotation)
     {
@@ -683,6 +672,7 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(model.getPersistentFieldNames()).andReturn(Arrays.asList(names)).atLeastOnce();
     }
 
+    /** @deprecated May be removed in Tapestry 5.3 */
     protected final void train_getResourcesFieldName(ClassTransformation transformation, String name)
     {
         expect(transformation.getResourcesFieldName()).andReturn(name).atLeastOnce();
@@ -708,6 +698,7 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(model.getSupportsInformalParameters()).andReturn(supports).atLeastOnce();
     }
 
+    /** @deprecated May be removed in Tapestry 5.3 */
     protected final void train_getValidationMessages(ValidationMessagesSource messagesSource, Locale locale,
             Messages messages)
     {
@@ -859,6 +850,7 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(link.toRedirectURI()).andReturn(URI).atLeastOnce();
     }
 
+    /** @deprecated May be removed in Tapestry 5.3 */
     protected final void train_toResourcePath(ClasspathAssetAliasManager manager, String clientURL, String resourcePath)
     {
         expect(manager.toResourcePath(clientURL)).andReturn(resourcePath).atLeastOnce();
@@ -874,6 +866,7 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(annotation.value()).andReturn(value).atLeastOnce();
     }
 
+    /** @deprecated May be removed in Tapestry 5.3 */
     protected final void train_create(BeanModelSource source, Class beanClass, boolean filterReadOnly,
             Messages messages, BeanModel model)
     {
@@ -946,8 +939,8 @@ public abstract class TapestryTestCase extends IOCTestCase
             is = componentClass.getResourceAsStream(file);
 
             if (is == null)
-                throw new RuntimeException(String.format("Class %s does not have a message catalog.", componentClass
-                        .getName()));
+                throw new RuntimeException(String.format("Class %s does not have a message catalog.",
+                        componentClass.getName()));
 
             properties.load(is);
         }
@@ -974,6 +967,7 @@ public abstract class TapestryTestCase extends IOCTestCase
         return newMock(FieldValidationSupport.class);
     }
 
+    /** @deprecated May be removed in Tapestry 5.3 */
     protected final RenderSupport mockRenderSupport()
     {
         return newMock(RenderSupport.class);
@@ -1239,6 +1233,7 @@ public abstract class TapestryTestCase extends IOCTestCase
         return newMock(PageRenderLinkSource.class);
     }
 
+    /** @deprecated May be removed in Tapestry 5.3 */
     protected final ClientInfrastructure mockClientInfrastucture()
     {
         return newMock(ClientInfrastructure.class);

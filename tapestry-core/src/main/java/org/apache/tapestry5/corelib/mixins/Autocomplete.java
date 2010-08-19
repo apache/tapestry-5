@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.List;
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Events;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.InjectContainer;
 import org.apache.tapestry5.annotations.Parameter;
@@ -32,6 +33,7 @@ import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.MarkupWriterFactory;
 import org.apache.tapestry5.services.ResponseRenderer;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.util.TextStreamResponse;
 
 /**
@@ -57,7 +59,7 @@ import org.apache.tapestry5.util.TextStreamResponse;
  * }
  * </pre>
  */
-@IncludeJavaScriptLibrary(
+@Import(library =
 { "${tapestry.scriptaculous}/controls.js", "autocomplete.js" })
 @Events(EventConstants.PROVIDE_COMPLETIONS)
 public class Autocomplete
@@ -76,7 +78,7 @@ public class Autocomplete
     private ComponentResources resources;
 
     @Environmental
-    private RenderSupport renderSupport;
+    private JavaScriptSupport jsSupport;
 
     @Inject
     private TypeCoercer coercer;
@@ -168,7 +170,10 @@ public class Autocomplete
         // Let subclasses do more.
         configure(config);
 
-        renderSupport.addInit("autocompleter", new JSONArray(id, menuId, link.toAbsoluteURI(), config));
+        JSONObject spec = new JSONObject("elementId", id, "menuId", menuId, "url", link.toAbsoluteURI()).put("config",
+                config);
+
+        jsSupport.addInitializerCall("autocompleter", spec);
     }
 
     Object onAutocomplete(@RequestParameter(PARAM_NAME)

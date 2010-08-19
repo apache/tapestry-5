@@ -1,10 +1,10 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,12 +23,14 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
- * Used to record a page property as a value into the form. The value is {@linkplain
- * org.apache.tapestry5.ValueEncoder#toClient(Object) encoded} when rendered, then decoded when the form is submitted,
+ * Used to record a page property as a value into the form. The value is
+ * {@linkplain org.apache.tapestry5.ValueEncoder#toClient(Object) encoded} when rendered, then decoded when the form is
+ * submitted,
  * and the value parameter updated.
- *
+ * 
  * @since 5.1.0.2
  */
 @SupportsInformalParameters
@@ -57,7 +59,7 @@ public class Hidden implements ClientElement
     private FormSupport formSupport;
 
     @Environmental
-    private RenderSupport renderSupport;
+    private JavaScriptSupport jsSupport;
 
     @Inject
     private ComponentResources resources;
@@ -67,7 +69,6 @@ public class Hidden implements ClientElement
 
     @Inject
     private Request request;
-
 
     ValueEncoder defaultEncoder()
     {
@@ -102,10 +103,7 @@ public class Hidden implements ClientElement
 
         String encoded = encoder.toClient(value);
 
-        hiddenInputElement = writer.element("input",
-                       "type", "hidden",
-                       "name", controlName,
-                       "value", encoded);
+        hiddenInputElement = writer.element("input", "type", "hidden", "name", controlName, "value", encoded);
 
         resources.renderInformalParameters(writer);
 
@@ -113,7 +111,6 @@ public class Hidden implements ClientElement
 
         return false;
     }
-
 
     private void processSubmission(String controlName)
     {
@@ -128,7 +125,7 @@ public class Hidden implements ClientElement
     {
         if (clientId == null)
         {
-            clientId = renderSupport.allocateClientId(resources);
+            clientId = jsSupport.allocateClientId(resources);
             hiddenInputElement.forceAttributes("id", clientId);
         }
 

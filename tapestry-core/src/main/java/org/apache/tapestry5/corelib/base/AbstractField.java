@@ -26,6 +26,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 import java.io.Serializable;
 
@@ -122,7 +123,7 @@ public abstract class AbstractField implements Field
     private FormSupport formSupport;
 
     @Environmental
-    private RenderSupport renderSupport;
+    private JavaScriptSupport jsSupport;
 
     @Inject
     private ComponentResources resources;
@@ -154,7 +155,7 @@ public abstract class AbstractField implements Field
 
         if (formSupport == null) throw new RuntimeException(InternalMessages.formFieldOutsideForm(getLabel()));
 
-        assignedClientId = renderSupport.allocateClientId(id);
+        assignedClientId = jsSupport.allocateClientId(id);
         String controlName = formSupport.allocateControlName(id);
 
         formSupport.storeAndExecute(this, new Setup(controlName));

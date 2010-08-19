@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,17 +14,27 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.*;
+import java.io.IOException;
+
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.Block;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.TrackableComponentEventCallback;
 import org.apache.tapestry5.ajax.MultiZoneUpdate;
-import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Events;
+import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.dom.Element;
-import org.apache.tapestry5.internal.services.ComponentResultProcessorWrapper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.ComponentEventResultProcessor;
-
-import java.io.IOException;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * A component used to implement the <a
@@ -66,7 +76,7 @@ public class ProgressiveDisplay
     private ComponentResources resources;
 
     @Environmental
-    private RenderSupport renderSupport;
+    private JavaScriptSupport jsSupport;
 
     @SuppressWarnings("unchecked")
     @Environmental
@@ -84,7 +94,7 @@ public class ProgressiveDisplay
 
     Block beginRender(MarkupWriter writer)
     {
-        String clientId = renderSupport.allocateClientId(resources);
+        String clientId = jsSupport.allocateClientId(resources);
         String elementName = resources.getElementName("div");
 
         Element e = writer.element(elementName, "id", clientId);
@@ -103,7 +113,7 @@ public class ProgressiveDisplay
         spec.put("element", clientId);
         spec.put("url", link.toAbsoluteURI());
 
-        renderSupport.addInit("progressiveDisplay", spec);
+        jsSupport.addInitializerCall("progressiveDisplay", spec);
 
         return initial;
     }
