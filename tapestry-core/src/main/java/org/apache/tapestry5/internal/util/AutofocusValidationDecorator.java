@@ -1,10 +1,10 @@
-//  Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,11 @@
 
 package org.apache.tapestry5.internal.util;
 
-import org.apache.tapestry5.*;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.FieldFocusPriority;
+import org.apache.tapestry5.ValidationDecorator;
+import org.apache.tapestry5.ValidationTracker;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * Used by {@link org.apache.tapestry5.corelib.components.Form} to determine which fields will be focused and a what
@@ -24,14 +28,14 @@ public class AutofocusValidationDecorator extends ValidationDecoratorWrapper
 {
     private final ValidationTracker tracker;
 
-    private final RenderSupport renderSupport;
+    private final JavaScriptSupport jsSupport;
 
     public AutofocusValidationDecorator(ValidationDecorator delegate, ValidationTracker tracker,
-                                        RenderSupport renderSupport)
+            JavaScriptSupport javascriptSupport)
     {
         super(delegate);
         this.tracker = tracker;
-        this.renderSupport = renderSupport;
+        this.jsSupport = javascriptSupport;
     }
 
     @Override
@@ -41,15 +45,17 @@ public class AutofocusValidationDecorator extends ValidationDecoratorWrapper
 
         if (!field.isDisabled())
         {
-            renderSupport.autofocus(getPriority(field), field.getClientId());
+            jsSupport.autofocus(getPriority(field), field.getClientId());
         }
     }
 
     private FieldFocusPriority getPriority(Field field)
     {
-        if (tracker.inError(field)) return FieldFocusPriority.IN_ERROR;
+        if (tracker.inError(field))
+            return FieldFocusPriority.IN_ERROR;
 
-        if (field.isRequired()) return FieldFocusPriority.REQUIRED;
+        if (field.isRequired())
+            return FieldFocusPriority.REQUIRED;
 
         return FieldFocusPriority.OPTIONAL;
     }

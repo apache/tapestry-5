@@ -1,10 +1,10 @@
-//  Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,11 @@
 
 package org.apache.tapestry5.internal.util;
 
-import org.apache.tapestry5.*;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.FieldFocusPriority;
+import org.apache.tapestry5.ValidationDecorator;
+import org.apache.tapestry5.ValidationTracker;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
@@ -26,7 +30,7 @@ public class AutofocusValidationDecoratorTest extends TapestryTestCase
         Field field = mockField();
         ValidationDecorator delegate = mockValidationDecorator();
         ValidationTracker tracker = mockValidationTracker();
-        RenderSupport renderSupport = mockRenderSupport();
+        JavaScriptSupport jsSupport = mockJavaScriptSupport();
 
         delegate.insideField(field);
 
@@ -34,7 +38,7 @@ public class AutofocusValidationDecoratorTest extends TapestryTestCase
 
         replay();
 
-        ValidationDecorator decorator = new AutofocusValidationDecorator(delegate, tracker, renderSupport);
+        ValidationDecorator decorator = new AutofocusValidationDecorator(delegate, tracker, jsSupport);
 
         decorator.insideField(field);
 
@@ -47,7 +51,7 @@ public class AutofocusValidationDecoratorTest extends TapestryTestCase
         Field field = mockField();
         ValidationDecorator delegate = mockValidationDecorator();
         ValidationTracker tracker = mockValidationTracker();
-        RenderSupport renderSupport = mockRenderSupport();
+        JavaScriptSupport jsSupport = mockJavaScriptSupport();
 
         delegate.insideField(field);
 
@@ -56,11 +60,11 @@ public class AutofocusValidationDecoratorTest extends TapestryTestCase
 
         train_getClientId(field, "foo");
 
-        renderSupport.autofocus(FieldFocusPriority.IN_ERROR, "foo");
+        jsSupport.autofocus(FieldFocusPriority.IN_ERROR, "foo");
 
         replay();
 
-        ValidationDecorator decorator = new AutofocusValidationDecorator(delegate, tracker, renderSupport);
+        ValidationDecorator decorator = new AutofocusValidationDecorator(delegate, tracker, jsSupport);
 
         decorator.insideField(field);
 
@@ -73,7 +77,7 @@ public class AutofocusValidationDecoratorTest extends TapestryTestCase
         Field field = mockField();
         ValidationDecorator delegate = mockValidationDecorator();
         ValidationTracker tracker = mockValidationTracker();
-        RenderSupport renderSupport = mockRenderSupport();
+        JavaScriptSupport jsSupport = mockJavaScriptSupport();
 
         delegate.insideField(field);
 
@@ -84,11 +88,11 @@ public class AutofocusValidationDecoratorTest extends TapestryTestCase
 
         train_getClientId(field, "foo");
 
-        renderSupport.autofocus(FieldFocusPriority.REQUIRED, "foo");
+        jsSupport.autofocus(FieldFocusPriority.REQUIRED, "foo");
 
         replay();
 
-        ValidationDecorator decorator = new AutofocusValidationDecorator(delegate, tracker, renderSupport);
+        ValidationDecorator decorator = new AutofocusValidationDecorator(delegate, tracker, jsSupport);
 
         decorator.insideField(field);
 
@@ -101,7 +105,7 @@ public class AutofocusValidationDecoratorTest extends TapestryTestCase
         Field field = mockField();
         ValidationDecorator delegate = mockValidationDecorator();
         ValidationTracker tracker = mockValidationTracker();
-        RenderSupport renderSupport = mockRenderSupport();
+        JavaScriptSupport jsSupport = mockJavaScriptSupport();
 
         delegate.insideField(field);
 
@@ -112,11 +116,11 @@ public class AutofocusValidationDecoratorTest extends TapestryTestCase
 
         train_getClientId(field, "foo");
 
-        renderSupport.autofocus(FieldFocusPriority.OPTIONAL, "foo");
+        jsSupport.autofocus(FieldFocusPriority.OPTIONAL, "foo");
 
         replay();
 
-        ValidationDecorator decorator = new AutofocusValidationDecorator(delegate, tracker, renderSupport);
+        ValidationDecorator decorator = new AutofocusValidationDecorator(delegate, tracker, jsSupport);
 
         decorator.insideField(field);
 

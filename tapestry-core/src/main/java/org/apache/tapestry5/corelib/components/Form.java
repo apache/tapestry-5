@@ -223,7 +223,7 @@ public class Form implements ClientElement, FormValidationControl
     private JavaScriptSupport javascriptSupport;
 
     @Environmental
-    private RenderSupport renderSupport;
+    private JavaScriptSupport jsSupport;
 
     @Inject
     private Request request;
@@ -379,7 +379,7 @@ public class Form implements ClientElement, FormValidationControl
         if (autofocus)
         {
             ValidationDecorator autofocusDecorator = new AutofocusValidationDecorator(
-                    environment.peek(ValidationDecorator.class), activeTracker, renderSupport);
+                    environment.peek(ValidationDecorator.class), activeTracker, jsSupport);
             environment.push(ValidationDecorator.class, autofocusDecorator);
         }
 
