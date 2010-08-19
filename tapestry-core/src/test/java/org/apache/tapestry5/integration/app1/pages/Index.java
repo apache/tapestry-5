@@ -72,6 +72,8 @@ public class Index
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
 
+                    new Item("PublicFieldAccessDemo", "Public Field Access Demo", "Demonstrates TAP5-1222 fix"),
+
                     new Item("ActivationRequestParameterDemo", "ActivationRequestParameter Annotation Demo",
                             "Use of @ActivationRequestParameter to encode page state into query parameters"),
 
@@ -444,10 +446,10 @@ public class Index
                             "Report Location of Unavailable Component"),
 
                     new Item("discardafterdemo", "@DiscardAfter Demo", "Demo using @DiscardAfter annotation"),
-                    
+
                     new Item("SelectDemo", "Select Demo", "Validation decoration for Select"),
-                    
-                    new Item("SelectModelFromObjectsAndPropertyNameDemo", "SelectModel from objects and property name", 
+
+                    new Item("SelectModelFromObjectsAndPropertyNameDemo", "SelectModel from objects and property name",
                             "Creating a SelectModel from a list of objects and a label property name")
 
             );

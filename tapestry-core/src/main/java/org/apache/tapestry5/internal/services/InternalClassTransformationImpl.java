@@ -2159,6 +2159,12 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                 if (where instanceof CtConstructor)
                     return;
 
+                // It may be access to a public field of a data object somewhere and
+                // that's ignored TAP5-1222
+
+                if (!access.getClassName().equals(getClassName()))
+                    return;
+
                 boolean isRead = access.isReader();
                 String fieldName = access.getFieldName();
                 CtMethod method = (CtMethod) where;
