@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.FieldFocusPriority;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.internal.InternalConstants;
@@ -61,6 +62,10 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
     private final JavaScriptStackPathConstructor stackPathConstructor;
 
+    private FieldFocusPriority focusPriority;
+
+    private String focusFieldId;
+
     private static final Coercion<Asset, String> toPath = new Coercion<Asset, String>()
     {
         public String coerce(Asset input)
@@ -92,6 +97,9 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
     public void commit()
     {
+        if (focusFieldId != null)
+            addInitializerCall("activate", focusFieldId);
+
         F.flow(stylesheetLinks).each(new Worker<StylesheetLink>()
         {
             public void work(StylesheetLink value)
@@ -262,6 +270,18 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         addCoreStackIfNeeded();
 
         addAssetsFromStack(stackName);
+    }
+
+    public void autofocus(FieldFocusPriority priority, String fieldId)
+    {
+        assert priority != null;
+        assert InternalUtils.isNonBlank(fieldId);
+
+        if (focusFieldId == null || priority.compareTo(focusPriority) > 0)
+        {
+            this.focusPriority = priority;
+            focusFieldId = fieldId;
+        }
     }
 
 }

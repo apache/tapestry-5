@@ -2008,8 +2008,6 @@ public final class TapestryModule
                 renderer.renderMarkup(writer);
 
                 environment.pop(RenderSupport.class);
-
-                support.commit();
             }
         };
 
@@ -2169,8 +2167,6 @@ public final class TapestryModule
                 environment.push(RenderSupport.class, support);
 
                 renderer.renderMarkup(writer, reply);
-
-                support.commit();
 
                 environment.pop(RenderSupport.class);
             }

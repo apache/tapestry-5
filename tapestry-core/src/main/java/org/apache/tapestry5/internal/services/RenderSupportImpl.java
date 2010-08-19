@@ -33,11 +33,11 @@ public class RenderSupportImpl implements RenderSupport
 
     private final AssetSource assetSource;
 
-    private FieldFocusPriority focusPriority;
-
-    private String focusFieldId;
-
     private final JavaScriptSupport javascriptSupport;
+
+    // As of 5.2.1, RenderSupportImpl doesn't have any internal mutable state and could be converted
+    // to a service (using the service proxy to the JSS)
+    // instead of an Environmental. But we'll just delete it in 5.3.
 
     /**
      * @param symbolSource
@@ -46,8 +46,6 @@ public class RenderSupportImpl implements RenderSupport
      *            Used to convert classpath scripts to {@link org.apache.tapestry5.Asset}s
      * @param javascriptSupport
      *            Used to add JavaScript libraries and blocks of initialization JavaScript to the rendered page
-     * @param ClientInfrastructure
-     *            Identifies which JavaScript libraries and stylesheets are needed in a full page render
      */
     public RenderSupportImpl(SymbolSource symbolSource, AssetSource assetSource, JavaScriptSupport javascriptSupport)
     {
@@ -131,13 +129,7 @@ public class RenderSupportImpl implements RenderSupport
 
     public void autofocus(FieldFocusPriority priority, String fieldId)
     {
-        assert priority != null;
-        assert InternalUtils.isNonBlank(fieldId);
-        if (focusFieldId == null || priority.compareTo(focusPriority) > 0)
-        {
-            this.focusPriority = priority;
-            focusFieldId = fieldId;
-        }
+        javascriptSupport.autofocus(priority, fieldId);
     }
 
     /**
@@ -155,15 +147,6 @@ public class RenderSupportImpl implements RenderSupport
         JSONObject wrapper = new JSONObject().put(functionName, list);
 
         addScript("Tapestry.init(%s);", wrapper);
-    }
-
-    /**
-     * Commit any outstanding changes.
-     */
-    public void commit()
-    {
-        if (focusFieldId != null)
-            javascriptSupport.addInitializerCall("activate", focusFieldId);
     }
 
     public void addStylesheetLink(Asset stylesheet, String media)

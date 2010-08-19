@@ -16,6 +16,7 @@ package org.apache.tapestry5.services.javascript;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.FieldFocusPriority;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Environmental;
@@ -181,4 +182,17 @@ public interface JavaScriptSupport
      * Import a Javascript library with an arbitrary URL.
      */
     void importJavaScriptLibrary(String libraryURL);
+
+    /**
+     * Invoked to set focus on a rendered field. Takes into account priority, meaning that a field with errors will take
+     * precedence over a merely required field, and over a field that is optional. The value
+     * {@link org.apache.tapestry5.FieldFocusPriority#OVERRIDE} can be used to force a particular field to receive
+     * focus.
+     * 
+     * @param priority
+     *            focus is set only if the provided priority is greater than the current priority
+     * @param fieldId
+     *            id of client-side element to take focus
+     */
+    void autofocus(FieldFocusPriority priority, String fieldId);
 }

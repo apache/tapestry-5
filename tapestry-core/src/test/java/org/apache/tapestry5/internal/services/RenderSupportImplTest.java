@@ -156,64 +156,6 @@ public class RenderSupportImplTest extends InternalBaseTestCase
 
         support.addInit("foo", "fred", "barney");
 
-        support.commit();
-
-        verify();
-    }
-
-    @Test
-    public void field_focus()
-    {
-        JavaScriptSupport js = mockJavaScriptSupport();
-
-        js.addInitializerCall("activate", "foo");
-
-        replay();
-
-        RenderSupportImpl support = new RenderSupportImpl(null, null, js);
-
-        support.autofocus(FieldFocusPriority.OPTIONAL, "foo");
-
-        support.commit();
-
-        verify();
-    }
-
-    @Test
-    public void first_focus_field_at_priority_wins()
-    {
-        JavaScriptSupport js = mockJavaScriptSupport();
-
-        js.addInitializerCall("activate", "foo");
-
-        replay();
-
-        RenderSupportImpl support = new RenderSupportImpl(null, null, js);
-
-        support.autofocus(FieldFocusPriority.OPTIONAL, "foo");
-        support.autofocus(FieldFocusPriority.OPTIONAL, "bar");
-
-        support.commit();
-
-        verify();
-    }
-
-    @Test
-    public void higher_priority_wins_focus()
-    {
-        JavaScriptSupport js = mockJavaScriptSupport();
-
-        js.addInitializerCall("activate", "bar");
-
-        replay();
-
-        RenderSupportImpl support = new RenderSupportImpl(null, null, js);
-
-        support.autofocus(FieldFocusPriority.OPTIONAL, "foo");
-        support.autofocus(FieldFocusPriority.REQUIRED, "bar");
-
-        support.commit();
-
         verify();
     }
 
@@ -231,6 +173,22 @@ public class RenderSupportImplTest extends InternalBaseTestCase
         RenderSupportImpl support = new RenderSupportImpl(null, null, js);
 
         support.addInit("setup", parameter);
+
+        verify();
+    }
+
+    @Test
+    public void autofocus_pass_thru_to_javascriptsupport()
+    {
+        JavaScriptSupport js = mockJavaScriptSupport();
+
+        js.autofocus(FieldFocusPriority.OVERRIDE, "fred");
+
+        replay();
+
+        RenderSupportImpl support = new RenderSupportImpl(null, null, js);
+
+        support.autofocus(FieldFocusPriority.OVERRIDE, "fred");
 
         verify();
     }
