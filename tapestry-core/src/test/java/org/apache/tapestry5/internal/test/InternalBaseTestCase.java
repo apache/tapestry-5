@@ -31,10 +31,6 @@ import org.apache.tapestry5.ComponentResourcesCommon;
 import org.apache.tapestry5.ContentType;
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.internal.InternalComponentResources;
-import org.apache.tapestry5.internal.InternalSymbols;
-import org.apache.tapestry5.internal.SingleKeySymbolProvider;
-import org.apache.tapestry5.internal.SyntheticModuleDef;
-import org.apache.tapestry5.internal.SyntheticSymbolSourceContributionDef;
 import org.apache.tapestry5.internal.parser.ComponentTemplate;
 import org.apache.tapestry5.internal.parser.TemplateToken;
 import org.apache.tapestry5.internal.services.*;
@@ -46,14 +42,11 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;
 import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.def.ContributionDef;
-import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.internal.InternalRegistry;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
 import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.PropertyAdapter;
-import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
 import org.apache.tapestry5.model.MutableComponentModel;
@@ -91,19 +84,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
 
         builder.add(TapestryModule.class);
 
-        // A synthetic module to ensure that the tapestry.alias-mode is set correctly.
-
-        SymbolProvider provider = new SingleKeySymbolProvider(InternalSymbols.ALIAS_MODE, "servlet");
-        ContributionDef contribution = new SyntheticSymbolSourceContributionDef("AliasMode", provider,
-                "before:ApplicationDefaults");
-
-        ModuleDef module = new SyntheticModuleDef(contribution);
-
-        builder.add(module);
-
         registry = builder.build();
-
-        // registry.getService(Alias.class).setMode("servlet");
 
         registry.performRegistryStartup();
     }

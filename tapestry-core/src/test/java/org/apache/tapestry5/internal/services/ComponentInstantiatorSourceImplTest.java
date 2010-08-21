@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,19 +14,29 @@
 
 package org.apache.tapestry5.internal.services;
 
-import javassist.*;
-import org.apache.tapestry5.internal.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.net.URLConnection;
+import java.util.UUID;
+
+import javassist.CannotCompileException;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtMethod;
+import javassist.CtNewMethod;
+import javassist.LoaderClassPath;
+import javassist.NotFoundException;
+
+import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.transform.pages.BasicComponent;
-import org.apache.tapestry5.internal.transform.pages.BasicSubComponent;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;
-import org.apache.tapestry5.ioc.def.ContributionDef;
-import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
-import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.TapestryModule;
 import org.apache.tapestry5.services.UpdateListenerHub;
@@ -34,13 +44,6 @@ import org.slf4j.Logger;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.URLConnection;
-import java.util.UUID;
 
 /**
  * Tests for {@link org.apache.tapestry5.internal.services.ComponentInstantiatorSourceImpl}. Several of these tests are
@@ -222,17 +225,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         builder.add(TapestryModule.class);
 
-        SymbolProvider provider = new SingleKeySymbolProvider(InternalSymbols.ALIAS_MODE, "servlet");
-        ContributionDef contribution = new SyntheticSymbolSourceContributionDef("AliasMode", provider,
-                                                                                "before:ApplicationDefaults");
-
-        ModuleDef module = new SyntheticModuleDef(contribution);
-
-        builder.add(module);
-
         registry = builder.build();
-
-        // registry.getService("Alias", Alias.class).setMode("servlet");
 
         source = registry.getService(ComponentInstantiatorSource.class);
         access = registry.getService(PropertyAccess.class);

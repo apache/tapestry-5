@@ -2457,6 +2457,8 @@ public final class TapestryModule
         configuration.add(SymbolConstants.BLACKBIRD_ENABLED, "false");
 
         configuration.add(InternalSymbols.PRE_SELECTED_FORM_NAMES, "reset,submit,select,id,method,action,onsubmit");
+        
+        configuration.add(InternalSymbols.ALIAS_MODE, "servlet");
     }
 
     /**
