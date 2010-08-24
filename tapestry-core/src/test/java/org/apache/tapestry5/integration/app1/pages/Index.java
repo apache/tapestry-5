@@ -450,7 +450,11 @@ public class Index
                     new Item("SelectDemo", "Select Demo", "Validation decoration for Select"),
 
                     new Item("SelectModelFromObjectsAndPropertyNameDemo", "SelectModel from objects and property name",
-                            "Creating a SelectModel from a list of objects and a label property name")
+                            "Creating a SelectModel from a list of objects and a label property name"),
+                            
+                    new Item("DecoratePageRenderLinkDemo", "Decorate Page Render Link Demo", "Decorating page render links"),
+                    
+                    new Item("DecorateComponentEventLinkDemo", "Decorate Component Event Link Demo", "Decorating event links")
 
             );
 

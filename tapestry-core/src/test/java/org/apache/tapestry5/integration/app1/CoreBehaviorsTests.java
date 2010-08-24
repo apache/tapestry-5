@@ -1506,4 +1506,26 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertText("id=no-override", "[pre-app]");
         assertText("id=override", "[app]");
     }
+    
+    /** TAP5-1254 */
+    @Test
+    public void decorate_page_render_link()
+    {
+        clickThru("Decorate Page Render Link Demo");
+
+        clickAndWait("link=refresh");
+        
+        assertTextPresent("Page Render Link Decorated: true");
+    }
+    
+    /** TAP5-1254 */
+    @Test
+    public void decorate_component_event_link()
+    {
+        clickThru("Decorate Component Event Link Demo");
+
+        clickAndWait("link=refresh");
+        
+        assertTextPresent("Component Event Link Decorated: true");
+    }
 }

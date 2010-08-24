@@ -210,7 +210,7 @@ public class EventConstants
      * 
      * @since 5.2.0
      */
-    public static final String DECORATE_COMPONENT_EVENT_LINK = "decoreateComponentEventLink";
+    public static final String DECORATE_COMPONENT_EVENT_LINK = "decorateComponentEventLink";
 
     /**
      * Name of a event triggered by the form component on the {@linkplain ComponentSource#getActivePage() active page}
