@@ -80,6 +80,13 @@ public class ErrorReporterImpl implements ErrorReporter
         {
             // Ignore.
         }
+
+        File capture = new File(dir, baseFileName + "-screen-capture.png");
+
+        System.err.println("Writing current page screenshot to: " + capture);
+
+        commandProcessor.doCommand("captureEntirePageScreenshot", new String[]
+	    { capture.getAbsolutePath(), "" });
     }
 
 }
