@@ -45,43 +45,4 @@
         </extensions>
     </build>
 
-    <profiles>
-        <profile>
-            <id>ci</id>
-            <build>
-                <plugins>
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.2</version>
-                        <executions>
-                            <execution>
-                                <phase>deploy</phase>
-                                <configuration>
-
-                                    <tasks>
-                                        <echo>Copying Archetype Catalog to repository</echo>
-                                        <copy overwrite="true" todir="/var/www/maven-snapshot-repository">
-                                            <fileset dir="src/main/resources" includes="*catalog.xml" />
-                                            <filterset>
-                                                <filter token="project.version" value="${project.version}" />
-                                            </filterset>
-                                        </copy>
-                                    </tasks>
-
-                                </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
 </project>
