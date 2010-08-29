@@ -1444,6 +1444,10 @@ Tapestry.FormEventManager = Class.create( {
 	setSubmittingElement : function(element) {
 
 		if (!this.submitHidden) {
+			// skip if this is not a tapestry controlled form
+			if (this.form.getInputs("hidden", "t:formdata").size() == 0)
+				return;
+			
 			var hiddens = this.form.getInputs("hidden", "t:submit");
 
 			if (hiddens.size() == 0) {
