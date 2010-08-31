@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ public class ResourceStreamerImplTest extends InternalBaseTestCase
 
         replay();
 
-        Response response = new ResponseImpl(hsResponse);
+        Response response = new ResponseImpl(hsRequest, hsResponse);
         ResourceStreamer streamer = getService(ResourceStreamer.class);
         RequestGlobals globals = getService(RequestGlobals.class);
 

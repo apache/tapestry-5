@@ -114,8 +114,8 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
         // Prevent the upstream code from compressing when we don't want to.
 
-        request.setAttribute(InternalConstants.SUPPRESS_COMPRESSION, true);
-
+        response.disableCompression();
+        
         StreamableResource streamble = resourceCache.getStreamableResource(resource);
 
         long lastModified = streamble.getLastModified();

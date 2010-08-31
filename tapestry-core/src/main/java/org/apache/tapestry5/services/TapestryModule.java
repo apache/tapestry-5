@@ -257,7 +257,7 @@ public final class TapestryModule
             requestGlobals.storeServletRequestResponse(servletRequest, servletResponse);
 
             Request request = new RequestImpl(servletRequest, applicationCharset, analyzer);
-            Response response = new ResponseImpl(servletResponse);
+            Response response = new ResponseImpl(servletRequest, servletResponse);
 
             // TAP5-257: Make sure that the "initial guess" for request/response
             // is available, even if

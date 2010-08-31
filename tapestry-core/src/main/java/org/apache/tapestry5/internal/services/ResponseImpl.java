@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,9 +21,11 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.Response;
 
@@ -32,11 +34,16 @@ import org.apache.tapestry5.services.Response;
  */
 public class ResponseImpl implements Response
 {
+    private final HttpServletRequest request;
+
     private final HttpServletResponse response;
 
-    public ResponseImpl(HttpServletResponse response)
+    public ResponseImpl(HttpServletRequest request, HttpServletResponse response)
     {
+        assert request != null;
         assert response != null;
+
+        this.request = request;
         this.response = response;
     }
 
@@ -114,5 +121,10 @@ public class ResponseImpl implements Response
     public boolean isCommitted()
     {
         return response.isCommitted();
+    }
+
+    public void disableCompression()
+    {
+        request.setAttribute(InternalConstants.SUPPRESS_COMPRESSION, true);
     }
 }

@@ -1,10 +1,10 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,33 +14,27 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.StreamResponse;
-import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.services.ComponentEventResultProcessor;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Response;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.tapestry5.StreamResponse;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.services.ComponentEventResultProcessor;
+import org.apache.tapestry5.services.Response;
+
 public class StreamResponseResultProcessor implements ComponentEventResultProcessor<StreamResponse>
 {
-    private final Request request;
-
     private final Response response;
 
-    public StreamResponseResultProcessor(Request request, Response response)
+    public StreamResponseResultProcessor(Response response)
     {
         this.response = response;
-        this.request = request;
     }
 
-    public void processResultValue(StreamResponse streamResponse)
-            throws IOException
+    public void processResultValue(StreamResponse streamResponse) throws IOException
     {
         OutputStream os = null;
         InputStream is = null;
@@ -49,7 +43,7 @@ public class StreamResponseResultProcessor implements ComponentEventResultProces
         // if they want to compress the result, they can add their own GZIPOutputStream to
         // their pipeline.
 
-        request.setAttribute(InternalConstants.SUPPRESS_COMPRESSION, true);
+        response.disableCompression();
 
         streamResponse.prepareResponse(response);
 

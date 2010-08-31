@@ -162,7 +162,7 @@ public interface Request
      * 
      * @return a string specifying the name of the method with which this request was made
      */
-    public String getMethod();
+    String getMethod();
 
     /**
      * Returns the Internet Protocol (IP) port number of the interface
@@ -171,5 +171,5 @@ public interface Request
      * @return an integer specifying the port number
      * @since 5.2.0
      */
-    public int getLocalPort();
+    int getLocalPort();
 }
