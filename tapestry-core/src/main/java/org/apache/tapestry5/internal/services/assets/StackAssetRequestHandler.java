@@ -92,8 +92,6 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
         if (productionMode)
             response.setDateHeader("Expires", lastModified + InternalConstants.TEN_YEARS);
 
-        response.disableCompression();
-
         response.setContentLength(cachedStream.size());
 
         if (compress)
