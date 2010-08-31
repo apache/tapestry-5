@@ -637,8 +637,8 @@ var Tapestry = {
 		/* Adapted from http://javascript.crockford.com/memory/leak.html */
 		var attrs = element.attributes;
 		if (attrs) {
-			var l = attrs.length, i, name;
-			for (i = 0; i < l; i++) {
+			var i, name;
+			for (i = attrs.length - 1; i >=0; i--) {
                 if (attrs[i]) {
                     name = attrs[i].name;
                     /* Looking for onclick, etc. */
