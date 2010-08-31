@@ -18,5 +18,8 @@
  */
 Tapestry.Initializer.injectedUpload = function(element)
 {
-    $(element).form.enctype = "multipart/form-data";
+	var form = $(element).form;
+	  
+    form.enctype = "multipart/form-data";
+    form.encoding = "multipart/form-data"; 
 }
