@@ -226,13 +226,8 @@ public class ReloadTest extends TestBase
 
         CtClass ctClass = pool.makeClass(CLASS);
 
+        ctClass.setModifiers(Modifier.ABSTRACT | Modifier.PUBLIC);
         ctClass.addInterface(pool.get(ReloadableService.class.getName()));
-
-        CtMethod method = new CtMethod(pool.get("java.lang.String"), "getStatus", null, ctClass);
-
-        method.setBody("return \"unreachable\";");
-
-        ctClass.addMethod(method);
 
         CtConstructor constructor = new CtConstructor(new CtClass[0], ctClass);
 
