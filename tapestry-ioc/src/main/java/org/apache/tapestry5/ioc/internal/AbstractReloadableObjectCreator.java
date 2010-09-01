@@ -68,8 +68,6 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
 
     private final String implementationClassName;
 
-    private final String packageName;
-
     private final String classFilePath;
 
     private final Logger logger;
@@ -78,13 +76,15 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
 
     private final URLChangeTracker changeTracker = new URLChangeTracker();
 
+    /**
+     * The set of class names that should be loaded by the class loader. This is necessary to support
+     * reloading the class when a base class changes, and to properly support access to protected methods.
+     */
+    private final Set<String> classesToLoad = CollectionFactory.newSet();
+
     private Object instance;
 
-    private File classFile;
-
     private boolean firstTime = true;
-
-    private final Set<String> classesToLoad = CollectionFactory.newSet();
 
     protected AbstractReloadableObjectCreator(ClassLoader baseClassLoader, String implementationClassName,
             Logger logger, OperationTracker tracker)
@@ -94,16 +94,7 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
         this.logger = logger;
         this.tracker = tracker;
 
-        packageName = toPackageName(implementationClassName);
-
         classFilePath = ClassFabUtils.getPathForClassNamed(implementationClassName);
-    }
-
-    private String toPackageName(String name)
-    {
-        int dotx = name.lastIndexOf('.');
-
-        return dotx < 0 ? "" : name.substring(0, dotx);
     }
 
     public synchronized void checkForUpdates()
@@ -119,7 +110,6 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
                     implementationClassName));
 
         instance = null;
-        classFile = null;
         changeTracker.clear();
     }
 
@@ -137,8 +127,6 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
         {
             public Object invoke()
             {
-                updateTrackingInfo();
-
                 Class reloadedClass = reloadImplementationClass();
 
                 return createInstance(reloadedClass);
@@ -201,18 +189,6 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
         return result;
     }
 
-    private void updateTrackingInfo()
-    {
-        URL url = baseClassLoader.getResource(classFilePath);
-
-        if (url == null)
-            throw new RuntimeException(String.format(
-                    "Unable to reload class %s as it has been deleted. You may need to restart the application.",
-                    implementationClassName));
-
-        classFile = ClassFabUtils.toFileFromFileProtocolURL(url);
-    }
-
     private boolean shouldLoadClassNamed(String name)
     {
         return classesToLoad.contains(name);
@@ -250,7 +226,6 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
             add(nc.getName());
         }
 
-
         ctClass.instrument(new ExprEditor()
         {
             public void edit(ConstructorCall c) throws CannotCompileException
@@ -278,6 +253,9 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
 
     private void trackClassFileChanges(String className)
     {
+        if (isInnerClassName(className))
+            return;
+
         String path = ClassFabUtils.getPathForClassNamed(className);
 
         URL url = baseClassLoader.getResource(path);
@@ -285,6 +263,11 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
         // This does nothing unless the URL is non-null and file protocol
 
         changeTracker.add(url);
+    }
+
+    private boolean isInnerClassName(String className)
+    {
+        return className.indexOf('$') >= 0;
     }
 
     /** Is the class an inner class of some other class already marked to be loaded by the special class loader? */

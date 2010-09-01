@@ -167,7 +167,7 @@ public class ReloadTest extends IOCTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(ex, "Unable to reload", CLASS, "deleted");
+            assertMessageContains(ex, "Unable to reload", CLASS);
         }
 
         registry.shutdown();
