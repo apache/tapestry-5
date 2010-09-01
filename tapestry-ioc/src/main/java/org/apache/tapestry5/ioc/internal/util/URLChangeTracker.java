@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
+import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 
@@ -38,6 +39,19 @@ public class URLChangeTracker
     private final boolean granularitySeconds;
 
     private final ClasspathURLConverter classpathURLConverter;
+
+    private static final ClasspathURLConverter DEFAULT_CONVERTER = new ClasspathURLConverterImpl();
+
+    /**
+     * Creates a tracker using the default (does nothing) URL converter, with default (millisecond)
+     * granularity.
+     * 
+     * @since 5.2.1
+     */
+    public URLChangeTracker()
+    {
+        this(DEFAULT_CONVERTER);
+    }
 
     /**
      * Creates a new URL change tracker with millisecond-level granularity.

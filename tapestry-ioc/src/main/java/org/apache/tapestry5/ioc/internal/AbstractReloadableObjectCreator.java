@@ -39,6 +39,7 @@ import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryClassPool;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.services.UpdateListener;
 import org.slf4j.Logger;
@@ -46,9 +47,9 @@ import org.slf4j.Logger;
 @SuppressWarnings("all")
 public abstract class AbstractReloadableObjectCreator implements ObjectCreator, UpdateListener, Translator
 {
-    private class XLoader extends Loader
+    private class InternalLoader extends Loader
     {
-        public XLoader(ClassLoader parent, ClassPool pool)
+        public InternalLoader(ClassLoader parent, ClassPool pool)
         {
             super(parent, pool);
         }
@@ -75,11 +76,11 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
 
     private final OperationTracker tracker;
 
+    private final URLChangeTracker changeTracker = new URLChangeTracker();
+
     private Object instance;
 
     private File classFile;
-
-    private long lastModifiedTimestamp = 0;
 
     private boolean firstTime = true;
 
@@ -96,7 +97,6 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
         packageName = toPackageName(implementationClassName);
 
         classFilePath = ClassFabUtils.getPathForClassNamed(implementationClassName);
-
     }
 
     private String toPackageName(String name)
@@ -111,7 +111,7 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
         if (instance == null)
             return;
 
-        if (classFile.lastModified() == lastModifiedTimestamp)
+        if (!changeTracker.containsChanges())
             return;
 
         if (logger.isDebugEnabled())
@@ -120,7 +120,7 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
 
         instance = null;
         classFile = null;
-        lastModifiedTimestamp = 0;
+        changeTracker.clear();
     }
 
     public synchronized Object createObject()
@@ -163,7 +163,7 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
 
         ClassLoader threadDeadlockBuffer = new URLClassLoader(new URL[0], baseClassLoader);
 
-        Loader loader = new XLoader(threadDeadlockBuffer, pool);
+        Loader loader = new InternalLoader(threadDeadlockBuffer, pool);
 
         ClassPath path = new LoaderClassPath(loader);
 
@@ -211,13 +211,6 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
                     implementationClassName));
 
         classFile = ClassFabUtils.toFileFromFileProtocolURL(url);
-
-        lastModifiedTimestamp = classFile.lastModified();
-    }
-
-    public long getLastModifiedTimestamp()
-    {
-        return lastModifiedTimestamp;
     }
 
     private boolean shouldLoadClassNamed(String name)
@@ -230,7 +223,6 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
         if (classesToLoad.contains(className))
             return;
 
-        // System.err.printf("Adding %s\n", className);
         logger.debug(String.format("Marking class %s to be (re-)loaded", className));
 
         classesToLoad.add(className);
@@ -265,33 +257,6 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
                     add(cn);
             }
 
-            public void edit(FieldAccess f) throws CannotCompileException
-            {
-
-            }
-
-            public void edit(MethodCall m) throws CannotCompileException
-            {
-                // String invokedMethodClassName = m.getClassName();
-                //
-                // if (classesToLoad.contains(invokedMethodClassName))
-                // return;
-                //
-                // try
-                // {
-                // CtMethod method = m.getMethod();
-                //
-                // if (!Modifier.isPublic(method.getModifiers()))
-                // return;
-                //
-                // add(invokedMethodClassName);
-                // }
-                // catch (NotFoundException ex)
-                // {
-                // throw new RuntimeException(ex);
-                // }
-            }
-
             public void edit(NewExpr e) throws CannotCompileException
             {
                 String newInstanceClassName = e.getClassName();
@@ -305,7 +270,20 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
 
         });
 
+        trackClassFileChanges(className);
+
         logger.debug(String.format("  END Analyzing %s", className));
+    }
+
+    private void trackClassFileChanges(String className)
+    {
+        String path = ClassFabUtils.getPathForClassNamed(className);
+
+        URL url = baseClassLoader.getResource(path);
+
+        // This does nothing unless the URL is non-null and file protocol
+
+        changeTracker.add(url);
     }
 
     /** Is the class an inner class of some other class already marked to be loaded by the special class loader? */
@@ -316,6 +294,7 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
         return dollarx < 0 ? false : classesToLoad.contains(className.substring(0, dollarx));
     }
 
+    /** Does nothing. */
     public void start(ClassPool pool) throws NotFoundException, CannotCompileException
     {
 

@@ -21,10 +21,11 @@ import org.apache.tapestry5.ioc.ServiceBuilderResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 /**
- * Returns an {@link ObjectCreator} for lazily instantiation a given implementation class (with dependencies).
- * Once an instance is instantiated, it is cached ... until the underlying .class file changes, at which point
- * the class is reloaded and a new instance instantiated.
+ * Returns an {@link ObjectCreator} for lazily instantiating a given implementation class (with dependencies).
+ * Once an instance is instantiated, it is cached ... until any underlying .class file changes, at which point
+ * the class (and its class dependencies, such as base classes) are reloaded and a new instance instantiated.
  */
+@SuppressWarnings("all")
 public class ReloadableServiceImplementationObjectCreator extends AbstractReloadableObjectCreator
 {
     private final ServiceBuilderResources resources;
@@ -45,8 +46,8 @@ public class ReloadableServiceImplementationObjectCreator extends AbstractReload
             throw new RuntimeException(String.format(
                     "Service implementation class %s does not have a suitable public constructor.", clazz.getName()));
 
-        ObjectCreator constructorServiceCreator = new ConstructorServiceCreator(resources, String.format(
-                "%s (last modified %tc)", constructor, getLastModifiedTimestamp()), constructor);
+        ObjectCreator constructorServiceCreator = new ConstructorServiceCreator(resources, constructor.toString(),
+                constructor);
 
         return constructorServiceCreator.createObject();
     }
