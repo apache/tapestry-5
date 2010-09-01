@@ -24,6 +24,7 @@ import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtMethod;
 
+import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.apache.tapestry5.ioc.test.TestBase;
 import org.apache.tapestry5.services.UpdateListenerHub;
 import org.testng.annotations.BeforeClass;
@@ -36,7 +37,7 @@ import com.example.ReloadableService;
  * Test the ability to perform live class reloading of a service implementation.
  */
 @SuppressWarnings("unchecked")
-public class ReloadTest extends TestBase
+public class ReloadTest extends IOCTestCase
 {
     private static final String PACKAGE = "com.example";
 
@@ -47,6 +48,8 @@ public class ReloadTest extends TestBase
     private ClassLoader classLoader;
 
     public static boolean eagerLoadServiceWasInstantiated;
+
+    private File classFile;
 
     @BeforeClass
     public void setup() throws Exception
@@ -63,6 +66,8 @@ public class ReloadTest extends TestBase
 
         classLoader = new URLClassLoader(new URL[]
         { classesURL }, Thread.currentThread().getContextClassLoader());
+
+        classFile = new File(classesDir, "com/example/ReloadableServiceImpl.class");
     }
 
     @Test
@@ -82,9 +87,7 @@ public class ReloadTest extends TestBase
 
         fireUpdateCheck(registry);
 
-        // Sleep long enough that the Java millisecond clock advances.
-
-        Thread.currentThread().sleep(1500);
+        touch(classFile);
 
         createImplementationClass("updated");
 
@@ -109,8 +112,6 @@ public class ReloadTest extends TestBase
         ReloadableService reloadable = registry.getService(ReloadableService.class);
 
         assertEquals(reloadable.getStatus(), "before delete");
-
-        File classFile = new File(classesDir, "com/example/ReloadableServiceImpl.class");
 
         assertTrue(classFile.exists(), "The class file must exist.");
 
@@ -144,7 +145,7 @@ public class ReloadTest extends TestBase
 
         assertEquals(reloadable.getStatus(), "initial proxy");
 
-        Thread.currentThread().sleep(1500);
+        touch(classFile);
 
         createImplementationClass("updated proxy");
 
@@ -178,9 +179,9 @@ public class ReloadTest extends TestBase
 
         ReloadableService reloadable = registry.getService(ReloadableService.class);
 
-        createInvalidImplentationClass();
+        touch(classFile);
 
-        Thread.currentThread().sleep(1500);
+        createInvalidImplentationClass();
 
         fireUpdateCheck(registry);
 
@@ -243,7 +244,6 @@ public class ReloadTest extends TestBase
     @Test
     public void eager_load_service_with_proxy()
     {
-
         eagerLoadServiceWasInstantiated = false;
 
         Registry r = new RegistryBuilder().add(EagerProxyReloadModule.class).build();

@@ -14,14 +14,10 @@
 
 package org.apache.tapestry5.test;
 
-import static java.lang.Thread.sleep;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.util.Arrays;
@@ -315,30 +311,6 @@ public abstract class TapestryTestCase extends IOCTestCase
     protected final Validator mockValidator()
     {
         return newMock(Validator.class);
-    }
-
-    /**
-     * Writes a change to a file.
-     */
-    protected final void touch(File f) throws Exception
-    {
-        long startModified = f.lastModified();
-
-        while (true)
-        {
-            OutputStream o = new FileOutputStream(f);
-            o.write(0);
-            o.close();
-
-            long newModified = f.lastModified();
-
-            if (newModified != startModified)
-                return;
-
-            // Sleep 1/20 second and try again
-
-            sleep(50);
-        }
     }
 
     /** @deprecated May be removed in Tapestry 5.3 */

@@ -1,10 +1,10 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,20 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.util;
-
-import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
-import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
-import org.apache.tapestry5.test.TapestryTestCase;
-import org.testng.annotations.Test;
+package org.apache.tapestry5.ioc.internal.util;
 
 import java.io.File;
 import java.net.URL;
 
-public class URLChangeTrackerTest extends TapestryTestCase
+import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
+import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
+import org.apache.tapestry5.ioc.test.IOCTestCase;
+import org.apache.tapestry5.ioc.test.TestBase;
+import org.testng.annotations.Test;
+
+public class URLChangeTrackerTest extends IOCTestCase
 {
     private final ClasspathURLConverter converter = new ClasspathURLConverterImpl();
-    
+
     @Test
     public void contains_change_when_empty()
     {
@@ -102,7 +103,8 @@ public class URLChangeTrackerTest extends TapestryTestCase
         {
             File.createTempFile("changetracker1", ".tmp");
 
-            if (dir.lastModified() != timestamp) break;
+            if (dir.lastModified() != timestamp)
+                break;
 
             // Sometime Java need a moment to catch up in terms of
             // file system changes. Sleep for a few milliseconds

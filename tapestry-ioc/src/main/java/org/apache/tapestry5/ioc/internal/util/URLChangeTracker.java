@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,9 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.util;
+package org.apache.tapestry5.ioc.internal.util;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 
@@ -37,56 +36,63 @@ public class URLChangeTracker
     private final Map<File, Long> fileToTimestamp = CollectionFactory.newConcurrentMap();
 
     private final boolean granularitySeconds;
-    
-    private final ClasspathURLConverter classpathURLConverter; 
+
+    private final ClasspathURLConverter classpathURLConverter;
 
     /**
      * Creates a new URL change tracker with millisecond-level granularity.
      * 
-     * @param classpathURLConverter used to convert URLs from one protocol to another
+     * @param classpathURLConverter
+     *            used to convert URLs from one protocol to another
      */
     public URLChangeTracker(ClasspathURLConverter classpathURLConverter)
     {
         this(classpathURLConverter, false);
-        
+
     }
 
     /**
      * Creates a new URL change tracker, using either millisecond-level granularity or second-level granularity.
-     *
-     * @param classpathURLConverter used to convert URLs from one protocol to another
-     * @param granularitySeconds whether or not to use second granularity (as opposed to millisecond granularity)
+     * 
+     * @param classpathURLConverter
+     *            used to convert URLs from one protocol to another
+     * @param granularitySeconds
+     *            whether or not to use second granularity (as opposed to millisecond granularity)
      */
     public URLChangeTracker(ClasspathURLConverter classpathURLConverter, boolean granularitySeconds)
     {
         this.granularitySeconds = granularitySeconds;
-        
+
         this.classpathURLConverter = classpathURLConverter;
     }
 
     /**
      * Stores a new URL into the tracker, or returns the previous time stamp for a previously added URL. Filters out all
      * non-file URLs.
-     *
-     * @param url of the resource to add, or null if not known
+     * 
+     * @param url
+     *            of the resource to add, or null if not known
      * @return the current timestamp for the URL (possibly rounded off for granularity reasons), or 0 if the URL is
      *         null
      */
     public long add(URL url)
     {
-        if (url == null) return 0;
-        
+        if (url == null)
+            return 0;
+
         URL converted = classpathURLConverter.convert(url);
 
-        if (!converted.getProtocol().equals("file")) return timestampForNonFileURL(converted);
+        if (!converted.getProtocol().equals("file"))
+            return timestampForNonFileURL(converted);
 
         File resourceFile = ClassFabUtils.toFileFromFileProtocolURL(converted);
 
-        if (fileToTimestamp.containsKey(resourceFile)) return fileToTimestamp.get(resourceFile);
+        if (fileToTimestamp.containsKey(resourceFile))
+            return fileToTimestamp.get(resourceFile);
 
         long timestamp = readTimestamp(resourceFile);
 
-        // A quick and imperfect fix for TAPESTRY-1918.  When a file
+        // A quick and imperfect fix for TAPESTRY-1918. When a file
         // is added, add the directory containing the file as well.
 
         fileToTimestamp.put(resourceFile, timestamp);
@@ -98,7 +104,6 @@ public class URLChangeTracker
             long dirTimestamp = readTimestamp(dir);
             fileToTimestamp.put(dir, dirTimestamp);
         }
-
 
         return timestamp;
     }
@@ -143,7 +148,8 @@ public class URLChangeTracker
             long newTimestamp = readTimestamp(entry.getKey());
             long current = entry.getValue();
 
-            if (current == newTimestamp) continue;
+            if (current == newTimestamp)
+                continue;
 
             result = true;
             entry.setValue(newTimestamp);
@@ -157,7 +163,8 @@ public class URLChangeTracker
      */
     private long readTimestamp(File file)
     {
-        if (!file.exists()) return FILE_DOES_NOT_EXIST_TIMESTAMP;
+        if (!file.exists())
+            return FILE_DOES_NOT_EXIST_TIMESTAMP;
 
         return applyGranularity(file.lastModified());
     }
@@ -169,7 +176,8 @@ public class URLChangeTracker
         // are only accurate to one second. The extra level of detail creates false positives
         // for changes, and undermines HTTP response caching in the client.
 
-        if (granularitySeconds) return timestamp - (timestamp % 1000);
+        if (granularitySeconds)
+            return timestamp - (timestamp % 1000);
 
         return timestamp;
     }

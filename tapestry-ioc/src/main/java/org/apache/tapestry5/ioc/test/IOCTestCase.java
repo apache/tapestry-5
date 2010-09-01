@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,9 +22,13 @@ import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.services.*;
 
+import static java.lang.Thread.sleep;
 import static org.easymock.EasyMock.isA;
 import org.slf4j.Logger;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -52,11 +56,12 @@ public class IOCTestCase extends TestBase
     {
         for (Method method : clazz.getMethods())
         {
-            if (method.getName().equals(methodName)) return method;
+            if (method.getName().equals(methodName))
+                return method;
         }
 
-        throw new IllegalArgumentException(
-                String.format("Class %s does not provide a method named '%s'.", clazz.getName(), methodName));
+        throw new IllegalArgumentException(String.format("Class %s does not provide a method named '%s'.",
+                clazz.getName(), methodName));
     }
 
     protected final Method findMethod(Object subject, String methodName)
@@ -295,7 +300,7 @@ public class IOCTestCase extends TestBase
     }
 
     protected final <T> void train_getService(ObjectLocator locator, String serviceId, Class<T> serviceInterface,
-                                              T service)
+            T service)
     {
         expect(locator.getService(serviceId, serviceInterface)).andReturn(service);
     }
@@ -341,7 +346,7 @@ public class IOCTestCase extends TestBase
     }
 
     protected final <T> void train_provide(ObjectProvider provider, Class<T> objectType,
-                                           AnnotationProvider annotationProvider, ObjectLocator locator, T object)
+            AnnotationProvider annotationProvider, ObjectLocator locator, T object)
     {
         expect(provider.provide(objectType, annotationProvider, locator)).andReturn(object);
     }
@@ -352,7 +357,7 @@ public class IOCTestCase extends TestBase
     }
 
     protected final <T extends Annotation> void train_getAnnotation(AnnotationProvider annotationProvider,
-                                                                    Class<T> annotationClass, T annotation)
+            Class<T> annotationClass, T annotation)
     {
         expect(annotationProvider.getAnnotation(annotationClass)).andReturn(annotation);
     }
@@ -428,5 +433,31 @@ public class IOCTestCase extends TestBase
     protected final void train_valueForSymbol(SymbolSource symbolSource, String symbolName, String value)
     {
         expect(symbolSource.valueForSymbol(symbolName)).andReturn(value).atLeastOnce();
+    }
+
+    /**
+     * Writes a change to a file. The contents of the file are lost. May repeatedly modify
+     * the file, and does not return until the last modified time for the file actually changes (how long that takes
+     * is JDK, OS and file system dependent).
+     */
+    protected final void touch(File f) throws Exception
+    {
+        long startModified = f.lastModified();
+
+        while (true)
+        {
+            OutputStream o = new FileOutputStream(f);
+            o.write(0);
+            o.close();
+
+            long newModified = f.lastModified();
+
+            if (newModified != startModified)
+                return;
+
+            // Sleep 1/20 second and try again
+
+            sleep(50);
+        }
     }
 }

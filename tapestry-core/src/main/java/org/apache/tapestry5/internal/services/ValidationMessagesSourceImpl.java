@@ -14,11 +14,11 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.MessageFormatter;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.services.UpdateListener;
 import org.apache.tapestry5.services.ValidationMessagesSource;
