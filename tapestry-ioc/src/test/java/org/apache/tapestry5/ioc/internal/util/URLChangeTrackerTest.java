@@ -20,7 +20,6 @@ import java.net.URL;
 import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
-import org.apache.tapestry5.ioc.test.TestBase;
 import org.testng.annotations.Test;
 
 public class URLChangeTrackerTest extends IOCTestCase

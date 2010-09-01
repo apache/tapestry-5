@@ -15,17 +15,20 @@
 package org.apache.tapestry5.ioc;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
 
+import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtMethod;
+import javassist.NotFoundException;
 
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
-import org.apache.tapestry5.ioc.test.TestBase;
 import org.apache.tapestry5.services.UpdateListenerHub;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -42,6 +45,8 @@ public class ReloadTest extends IOCTestCase
     private static final String PACKAGE = "com.example";
 
     private static final String CLASS = PACKAGE + ".ReloadableServiceImpl";
+
+    private static final String BASE_CLASS = PACKAGE + ".BaseReloadableServiceImpl";
 
     private File classesDir;
 
@@ -100,6 +105,42 @@ public class ReloadTest extends IOCTestCase
         assertEquals(reloadable.getStatus(), "updated");
 
         registry.shutdown();
+    }
+
+    @Test
+    public void reload_a_base_class() throws Exception
+    {
+        createImplementationClass(BASE_CLASS, "initial from base");
+
+        ClassPool pool = new ClassPool(null);
+
+        pool.appendSystemPath();
+        pool.appendClassPath(classesDir.getAbsolutePath());
+
+        CtClass ctClass = pool.makeClass(CLASS);
+
+        ctClass.setSuperclass(pool.get(BASE_CLASS));
+
+        ctClass.writeFile(classesDir.getAbsolutePath());
+
+        Registry registry = createRegistry();
+
+        ReloadableService reloadable = registry.getService(ReloadableService.class);
+
+        fireUpdateCheck(registry);
+
+        assertEquals(reloadable.getStatus(), "initial from base");
+
+        touch(new File(classesDir, ClassFabUtils.getPathForClassNamed(BASE_CLASS)));
+
+        createImplementationClass(BASE_CLASS, "updated from base");
+
+        fireUpdateCheck(registry);
+
+        assertEquals(reloadable.getStatus(), "updated from base");
+
+        registry.shutdown();
+
     }
 
     @Test
@@ -202,11 +243,17 @@ public class ReloadTest extends IOCTestCase
 
     private void createImplementationClass(String status) throws Exception
     {
+        createImplementationClass(CLASS, status);
+    }
+
+    private void createImplementationClass(String className, String status) throws NotFoundException,
+            CannotCompileException, IOException
+    {
         ClassPool pool = new ClassPool(null);
 
         pool.appendSystemPath();
 
-        CtClass ctClass = pool.makeClass(CLASS);
+        CtClass ctClass = pool.makeClass(className);
 
         ctClass.addInterface(pool.get(ReloadableService.class.getName()));
 
