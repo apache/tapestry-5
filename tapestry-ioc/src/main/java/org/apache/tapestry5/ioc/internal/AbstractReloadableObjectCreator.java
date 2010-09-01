@@ -177,18 +177,6 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
         }
     }
 
-    private URL getURLForClass(String className) throws ClassNotFoundException
-    {
-        String path = ClassFabUtils.getPathForClassNamed(className);
-
-        URL result = baseClassLoader.getResource(path);
-
-        if (result == null)
-            throw new ClassNotFoundException(String.format("Unable to locate URL for class %s.", className));
-
-        return result;
-    }
-
     private boolean shouldLoadClassNamed(String name)
     {
         return classesToLoad.contains(name);
@@ -260,22 +248,13 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
 
         URL url = baseClassLoader.getResource(path);
 
-        // This does nothing unless the URL is non-null and file protocol
-
-        changeTracker.add(url);
+        if (url != null && url.getProtocol().equals("file"))
+            changeTracker.add(url);
     }
 
     private boolean isInnerClassName(String className)
     {
         return className.indexOf('$') >= 0;
-    }
-
-    /** Is the class an inner class of some other class already marked to be loaded by the special class loader? */
-    private boolean isInnerClass(String className)
-    {
-        int dollarx = className.indexOf("$");
-
-        return dollarx < 0 ? false : classesToLoad.contains(className.substring(0, dollarx));
     }
 
     /** Does nothing. */

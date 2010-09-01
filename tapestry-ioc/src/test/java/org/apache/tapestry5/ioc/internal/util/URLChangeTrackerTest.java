@@ -177,7 +177,7 @@ public class URLChangeTrackerTest extends IOCTestCase
     @Test
     public void second_level_granularity() throws Exception
     {
-        URLChangeTracker t = new URLChangeTracker(converter, true);
+        URLChangeTracker t = new URLChangeTracker(converter, true, true);
 
         File f = File.createTempFile("changetracker0", ".tmp");
         URL url = f.toURL();

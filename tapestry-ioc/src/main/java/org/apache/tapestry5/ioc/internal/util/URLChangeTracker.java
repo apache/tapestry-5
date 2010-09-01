@@ -38,23 +38,25 @@ public class URLChangeTracker
 
     private final boolean granularitySeconds;
 
+    private final boolean trackFolderChanges;
+
     private final ClasspathURLConverter classpathURLConverter;
 
-    private static final ClasspathURLConverter DEFAULT_CONVERTER = new ClasspathURLConverterImpl();
+    public static final ClasspathURLConverter DEFAULT_CONVERTER = new ClasspathURLConverterImpl();
 
     /**
      * Creates a tracker using the default (does nothing) URL converter, with default (millisecond)
-     * granularity.
+     * granularity and folder tracking disabled.
      * 
      * @since 5.2.1
      */
     public URLChangeTracker()
     {
-        this(DEFAULT_CONVERTER);
+        this(DEFAULT_CONVERTER, false, false);
     }
 
     /**
-     * Creates a new URL change tracker with millisecond-level granularity.
+     * Creates a new URL change tracker with millisecond-level granularity and folder checking enabled.
      * 
      * @param classpathURLConverter
      *            used to convert URLs from one protocol to another
@@ -66,7 +68,8 @@ public class URLChangeTracker
     }
 
     /**
-     * Creates a new URL change tracker, using either millisecond-level granularity or second-level granularity.
+     * Creates a new URL change tracker, using either millisecond-level granularity or second-level granularity and
+     * folder checking enabled.
      * 
      * @param classpathURLConverter
      *            used to convert URLs from one protocol to another
@@ -75,9 +78,27 @@ public class URLChangeTracker
      */
     public URLChangeTracker(ClasspathURLConverter classpathURLConverter, boolean granularitySeconds)
     {
-        this.granularitySeconds = granularitySeconds;
+        this(classpathURLConverter, granularitySeconds, true);
+    }
 
+    /**
+     * Creates a new URL change tracker, using either millisecond-level granularity or second-level granularity.
+     * 
+     * @param classpathURLConverter
+     *            used to convert URLs from one protocol to another
+     * @param granularitySeconds
+     *            whether or not to use second granularity (as opposed to millisecond granularity)
+     * @param trackFolderChanges
+     *            if true, then adding a file URL will also track the folder containing the file (this
+     *            is useful when concerned about additions to a folder)
+     * @since 5.2.1
+     */
+    public URLChangeTracker(ClasspathURLConverter classpathURLConverter, boolean granularitySeconds,
+            boolean trackFolderChanges)
+    {
+        this.granularitySeconds = granularitySeconds;
         this.classpathURLConverter = classpathURLConverter;
+        this.trackFolderChanges = trackFolderChanges;
     }
 
     /**
@@ -111,12 +132,15 @@ public class URLChangeTracker
 
         fileToTimestamp.put(resourceFile, timestamp);
 
-        File dir = resourceFile.getParentFile();
-
-        if (!fileToTimestamp.containsKey(dir))
+        if (trackFolderChanges)
         {
-            long dirTimestamp = readTimestamp(dir);
-            fileToTimestamp.put(dir, dirTimestamp);
+            File dir = resourceFile.getParentFile();
+
+            if (!fileToTimestamp.containsKey(dir))
+            {
+                long dirTimestamp = readTimestamp(dir);
+                fileToTimestamp.put(dir, dirTimestamp);
+            }
         }
 
         return timestamp;
