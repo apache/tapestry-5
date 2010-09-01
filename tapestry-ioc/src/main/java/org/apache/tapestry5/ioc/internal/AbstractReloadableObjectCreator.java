@@ -250,17 +250,6 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
             add(nc.getName());
         }
 
-        // CtClass[] interfaces = ctClass.getInterfaces();
-        //
-        // for (CtClass i : interfaces)
-        // {
-        // String interfaceName = i.getName();
-        //
-        // if (isInnerClass(interfaceName))
-        // {
-        // add(interfaceName);
-        // }
-        // }
 
         ctClass.instrument(new ExprEditor()
         {
