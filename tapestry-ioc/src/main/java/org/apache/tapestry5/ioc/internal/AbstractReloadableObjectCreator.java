@@ -19,43 +19,46 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLClassLoader;
+import java.security.ProtectionDomain;
+
+import javassist.CannotCompileException;
+import javassist.ClassPath;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.Loader;
+import javassist.LoaderClassPath;
+import javassist.NotFoundException;
+import javassist.Translator;
 
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.internal.services.ClassFactoryClassPool;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.services.UpdateListener;
 import org.slf4j.Logger;
 
-public abstract class AbstractReloadableObjectCreator implements ObjectCreator, UpdateListener
+@SuppressWarnings("all")
+public abstract class AbstractReloadableObjectCreator implements ObjectCreator, UpdateListener, Translator
 {
+    private final ProtectionDomain domain = getClass().getProtectionDomain();
 
-    private class ReloadingClassLoader extends ClassLoader
+    private class XLoader extends Loader
     {
-        private ReloadingClassLoader(ClassLoader parent)
+        public XLoader(ClassLoader parent, ClassPool pool)
         {
-            super(parent);
+            super(parent, pool);
         }
 
         @Override
-        public Class<?> loadClass(String name) throws ClassNotFoundException
+        protected Class findClass(String name) throws ClassNotFoundException
         {
-            if (isReloadingClass(name))
-            {
-                byte[] classData = readClassData(name);
+            if (shouldLoadClassNamed(name))
+                return super.findClass(name);
 
-                return defineClass(name, classData, 0, classData.length);
-            }
-
-            return super.loadClass(name);
-        }
-
-        private boolean isReloadingClass(String name)
-        {
-            // This class loader exists to reload the implementation class and any inner classes of the
-            // implementation class.
-            return name.equals(implementationClassName) || name.startsWith(implementationClassName + "$");
+            return null; // Force delegation to parent class loader
         }
     }
 
@@ -142,17 +145,33 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
         if (logger.isDebugEnabled())
             logger.debug(String.format("%s class %s.", firstTime ? "Loading" : "Reloading", implementationClassName));
 
-        ClassLoader reloadingClassLoader = new ReloadingClassLoader(baseClassLoader);
+        ClassFactoryClassPool pool = new ClassFactoryClassPool(baseClassLoader);
+
+        // For TAPESTRY-2561, we're introducing a class loader between the parent (i.e., the
+        // context class loader), and the component class loader, to try and prevent the deadlocks
+        // that we've been seeing.
+
+        ClassLoader threadDeadlockBuffer = new URLClassLoader(new URL[0], baseClassLoader);
+
+        Loader loader = new XLoader(threadDeadlockBuffer, pool);
+
+        ClassPath path = new LoaderClassPath(loader);
+
+        pool.appendClassPath(path);
 
         try
         {
-            Class result = reloadingClassLoader.loadClass(implementationClassName);
+            loader.addTranslator(pool, this);
+
+            CtClass implCtClass = pool.get(implementationClassName);
+
+            Class result = pool.toClass(implCtClass, loader, domain);
 
             firstTime = false;
 
             return result;
         }
-        catch (ClassNotFoundException ex)
+        catch (Throwable ex)
         {
             throw new RuntimeException(String.format("Unable to %s class %s: %s", firstTime ? "load" : "reload",
                     implementationClassName, InternalUtils.toMessage(ex)), ex);
@@ -227,4 +246,20 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
     {
         return lastModifiedTimestamp;
     }
+
+    private boolean shouldLoadClassNamed(String name)
+    {
+        return name.equals(implementationClassName) || name.startsWith(implementationClassName + "$");
+    }
+
+    public void onLoad(ClassPool pool, String className) throws NotFoundException, CannotCompileException
+    {
+
+    }
+
+    public void start(ClassPool pool) throws NotFoundException, CannotCompileException
+    {
+
+    }
+
 }
