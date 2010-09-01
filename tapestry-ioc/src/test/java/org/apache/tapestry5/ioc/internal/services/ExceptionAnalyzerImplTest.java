@@ -179,4 +179,37 @@ public class ExceptionAnalyzerImplTest extends IOCInternalTestCase
         assertEquals(ei.getProperty("code"), "0099");
     }
 
+    @SuppressWarnings("all")
+    public static class SelfCausedException extends RuntimeException
+    {
+        public SelfCausedException(String message)
+        {
+            super(message);
+        }
+
+        public Throwable getCause()
+        {
+            return this;
+        }
+    }
+
+    @Test
+    public void exception_that_is_its_own_cause()
+    {
+        String message = "Hey! We've Got Not Tomatoes!";
+
+        Throwable t = new SelfCausedException(message);
+
+        ExceptionAnalysis ea = analyzer.analyze(t);
+
+        assertEquals(ea.getExceptionInfos().size(), 1);
+
+        ExceptionInfo ei = ea.getExceptionInfos().get(0);
+
+        assertEquals(ei.getClassName(), SelfCausedException.class.getName());
+        assertEquals(ei.getMessage(), message);
+
+        assertTrue(ei.getPropertyNames().isEmpty());
+        assertFalse(ei.getStackTrace().isEmpty());
+    }
 }

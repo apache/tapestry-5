@@ -128,7 +128,13 @@ public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
             if (cause == null && Throwable.class.isAssignableFrom(pa.getType()))
             {
                 // Ignore the property, but track it as the cause.
-                cause = (Throwable) pa.get(t);
+
+                Throwable nestedException = (Throwable) pa.get(t);
+
+                // Handle the case where an exception is its own cause (avoid endless loop!)
+                if (t != nestedException)
+                    cause = nestedException;
+
                 continue;
             }
 
