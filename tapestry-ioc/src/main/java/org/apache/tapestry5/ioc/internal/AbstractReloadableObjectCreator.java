@@ -232,7 +232,35 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
     {
         logger.debug(String.format("BEGIN Analyzing %s", className));
 
+        analyze(pool, className);
+
+        trackClassFileChanges(className);
+
+        logger.debug(String.format("  END Analyzing %s", className));
+    }
+
+    private void analyze(ClassPool pool, String className) throws NotFoundException, CannotCompileException
+    {
         CtClass ctClass = pool.get(className);
+
+        CtClass[] nestedClasses = ctClass.getNestedClasses();
+
+        for (CtClass nc : nestedClasses)
+        {
+            add(nc.getName());
+        }
+
+        // CtClass[] interfaces = ctClass.getInterfaces();
+        //
+        // for (CtClass i : interfaces)
+        // {
+        // String interfaceName = i.getName();
+        //
+        // if (isInnerClass(interfaceName))
+        // {
+        // add(interfaceName);
+        // }
+        // }
 
         ctClass.instrument(new ExprEditor()
         {
@@ -256,23 +284,7 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
                 if (url != null && url.getProtocol().equals("file"))
                     add(cn);
             }
-
-            public void edit(NewExpr e) throws CannotCompileException
-            {
-                String newInstanceClassName = e.getClassName();
-
-                if (classesToLoad.contains(newInstanceClassName))
-                    return;
-
-                if (isInnerClass(newInstanceClassName))
-                    add(newInstanceClassName);
-            }
-
         });
-
-        trackClassFileChanges(className);
-
-        logger.debug(String.format("  END Analyzing %s", className));
     }
 
     private void trackClassFileChanges(String className)
