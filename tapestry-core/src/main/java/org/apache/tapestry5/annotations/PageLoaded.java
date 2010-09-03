@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 The Apache Software Foundation
+// Copyright 2007, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use tis file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.apache.tapestry5.ioc.annotations.UseWith;
 
 /**
  * Method annotation used for methods that should be invoked once the page is fully loaded. This is useful for one-time
- * component initializations that can't be done at instantance initialzation time, such as refrerences to embedded
+ * component initializations that can't be done at instance initialization time, such as references to embedded
  * components or blocks.
  * <p/>
  * PageLoaded methods should take no parameters and return void. They must either have this annotation, or be named

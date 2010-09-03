@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 The Apache Software Foundation
+// Copyright 2007, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,6 +30,9 @@ import org.apache.tapestry5.ioc.annotations.UseWith;
  * <p/>
  * PageAttached methods should take no parameters and return void. They must either have this annotation, or be named
  * "pageAttached".
+ * <p/>
+ * To be clear: methods with this annotation (or name) are still invoked even in Tapestry 5.2, which does away with
+ * the page pool.
  *
  * @see PageDetached
  */
