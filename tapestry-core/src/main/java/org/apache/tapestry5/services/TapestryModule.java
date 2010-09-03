@@ -2077,9 +2077,9 @@ public final class TapestryModule
         configuration.add("DocumentLinker", documentLinker);
         configuration.add("JavaScriptSupport", javaScriptSupport, "after:DocumentLinker");
         configuration.add("RenderSupport", renderSupport, "after:JavaScriptSupport");
-        configuration.add("InjectDefaultStyleheet", injectDefaultStylesheet, "after:RenderSupport");
+        configuration.add("InjectDefaultStyleheet", injectDefaultStylesheet, "after:JavaScriptSupport");
         configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:JavaScriptSupport");
-        configuration.add("Heartbeat", heartbeat, "after:RenderSupport");
+        configuration.add("Heartbeat", heartbeat, "after:ClientBehaviorSupport");
         configuration.add("DefaultValidationDecorator", defaultValidationDecorator, "after:Heartbeat");
     }
 
@@ -2226,7 +2226,7 @@ public final class TapestryModule
         configuration.add("JavaScriptSupport", javascriptSupport, "after:DocumentLinker");
         configuration.add("RenderSupport", renderSupport, "after:JavaScriptSupport");
         configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:JavaScriptSupport");
-        configuration.add("Heartbeat", heartbeat, "after:RenderSupport");
+        configuration.add("Heartbeat", heartbeat, "after:ClientBehaviorSupport");
         configuration.add("DefaultValidationDecorator", defaultValidationDecorator, "after:Heartbeat");
     }
 
