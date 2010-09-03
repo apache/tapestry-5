@@ -84,7 +84,7 @@ public interface ObjectLocator
 
     /**
      * Autobuilds a class by finding the public constructor with the most parameters. Services and other resources or
-     * dependencies will be injected into the parameters of the constructor and private field marked with the
+     * dependencies will be injected into the parameters of the constructor and into private fields marked with the
      * {@link Inject} annotation. There are two cases: constructing a service implementation, and constructing
      * an arbitrary object. In the former case, many <em>service resources</em> are also available for injection, not
      * just dependencies or objects provided via
