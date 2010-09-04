@@ -6,7 +6,7 @@
             <artifactId>quickstart</artifactId>
             <version>@project.version@</version>
             <repository>http://repository.apache.org/snapshots</repository>
-            <description>Tapestry @project.version@ Quickstart Project</description>
+            <description>Tapestry 5 Quickstart Project</description>
         </archetype>
     </archetypes>
 </archetype-catalog>
