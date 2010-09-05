@@ -30,7 +30,6 @@ public class LinkImplTest extends InternalBaseTestCase
     @Test
     public void simple_redirect()
     {
-        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         Response response = mockResponse();
 
         String URI = "/base/context/" + RAW_PATH;
@@ -39,7 +38,7 @@ public class LinkImplTest extends InternalBaseTestCase
 
         replay();
 
-        Link link = new LinkImpl(URI, true, false, response, optimizer);
+        Link link = new LinkImpl(URI, false, response);
 
         assertEquals(link.toRedirectURI(), ENCODED);
 
@@ -49,15 +48,15 @@ public class LinkImplTest extends InternalBaseTestCase
     @Test
     public void to_string_same_as_to_uri()
     {
-        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         Response response = mockResponse();
 
-        train_optimizePath(optimizer, "/bar/" + RAW_PATH, OPTIMIZED);
-        train_encodeURL(response, OPTIMIZED, ENCODED);
+        String url = "/bar/" + RAW_PATH;
+
+        train_encodeURL(response, url, ENCODED);
 
         replay();
 
-        Link link = new LinkImpl("/bar/" + RAW_PATH, true, false, response, optimizer);
+        Link link = new LinkImpl(url, false, response);
 
         assertEquals(link.toString(), ENCODED);
 
@@ -67,12 +66,11 @@ public class LinkImplTest extends InternalBaseTestCase
     @Test
     public void retrieve_parameter_values()
     {
-        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         Response response = mockResponse();
 
         replay();
 
-        Link link = new LinkImpl("/foo/bar", true, false, response, optimizer);
+        Link link = new LinkImpl("/foo/bar", false, response);
 
         link.addParameter("fred", "flintstone");
 
@@ -84,15 +82,15 @@ public class LinkImplTest extends InternalBaseTestCase
     @Test
     public void url_with_anchor()
     {
-        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         Response response = mockResponse();
 
-        train_optimizePath(optimizer, "/foo/bar", OPTIMIZED);
-        train_encodeURL(response, OPTIMIZED, ENCODED);
+        String url = "/foo/bar";
+
+        train_encodeURL(response, url, ENCODED);
 
         replay();
 
-        Link link = new LinkImpl("/foo/bar", true, false, response, optimizer);
+        Link link = new LinkImpl(url, false, response);
         link.setAnchor("wilma");
 
         assertSame(link.getAnchor(), "wilma");
@@ -105,14 +103,13 @@ public class LinkImplTest extends InternalBaseTestCase
     @Test
     public void force_absolute_uri()
     {
-        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         Response response = mockResponse();
 
         train_encodeURL(response, "/ctx/foo", ENCODED);
 
         replay();
 
-        Link link = new LinkImpl("/ctx/foo", true, false, response, optimizer);
+        Link link = new LinkImpl("/ctx/foo", false, response);
 
         assertEquals(link.toAbsoluteURI(), ENCODED);
 
@@ -122,7 +119,6 @@ public class LinkImplTest extends InternalBaseTestCase
     @Test
     public void to_uri_with_added_parameters_and_on_construction_uri()
     {
-        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         Response response = mockResponse();
 
         String expectedURI = "/ctx/foo?foo=bar&baz=barney";
@@ -130,7 +126,7 @@ public class LinkImplTest extends InternalBaseTestCase
 
         replay();
 
-        Link link = new LinkImpl("/ctx/foo?foo=bar", false, false, response, optimizer);
+        Link link = new LinkImpl("/ctx/foo?foo=bar", false, response);
         link.addParameter("baz", "barney");
 
         assertEquals(link.toURI(), expectedURI);
@@ -141,7 +137,6 @@ public class LinkImplTest extends InternalBaseTestCase
     @Test
     public void new_base_uri()
     {
-        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         Response response = mockResponse();
 
         String expectedURI = "/ctx/baz?baz=barney";
@@ -149,7 +144,7 @@ public class LinkImplTest extends InternalBaseTestCase
 
         replay();
 
-        Link link = new LinkImpl("/ctx/foo", false, false, response, optimizer);
+        Link link = new LinkImpl("/ctx/foo", false, response);
         link.addParameter("baz", "barney");
         link.setAnchor("jacob");
 
@@ -163,7 +158,7 @@ public class LinkImplTest extends InternalBaseTestCase
     @Test
     public void remove_parameter()
     {
-        Link link = new LinkImpl("/baseURI", false, false, null, null);
+        Link link = new LinkImpl("/baseURI", false, null);
 
         link.addParameter("fred", "flintstone");
         link.addParameter("barney", "rubble");

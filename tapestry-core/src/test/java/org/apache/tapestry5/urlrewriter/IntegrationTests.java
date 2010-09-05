@@ -69,9 +69,9 @@ public class IntegrationTests extends TapestryCoreTestCase
     public void test_url_rewriter_using_context() throws InterruptedException
     {
         open("/RewriteWithContext");
-        assertAttribute("//a[@class='page']/@href","rpage/2sseccusetirwer");
-        assertAttribute("//a[@class='event']/@href", "cevent/txetnochtiwetirwer:kcilc");
-        assertAttribute("//a[@class='action']/@href","cevent/txetnochtiwetirwer.knilgnitcaeht");
+        assertAttribute("//a[@class='page']/@href","/rpage/2sseccusetirwer");
+        assertAttribute("//a[@class='event']/@href", "/cevent/txetnochtiwetirwer:kcilc");
+        assertAttribute("//a[@class='action']/@href","/cevent/txetnochtiwetirwer.knilgnitcaeht");
 
         open("/RewriteWithContext");
         clickAndWait("//a[@class='page']");

@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -45,7 +45,7 @@ public class StreamPageContentResultProcessor implements ComponentEventResultPro
 
     @Inject
     private TypeCoercer typeCoercer;
-    
+
     @Inject
     private Request request;
 
@@ -57,21 +57,9 @@ public class StreamPageContentResultProcessor implements ComponentEventResultPro
 
         final String pageName = this.resolver.resolvePageClassNameToPageName(pageClass.getName());
 
-        final EventContext context = activationContext == null ? new EmptyEventContext()
-                : new ArrayEventContext(this.typeCoercer, activationContext);
-        
-        Object generatingRederedPage = request.getAttribute(InternalConstants.GENERATING_RENDERED_PAGE);
+        final EventContext context = activationContext == null ? new EmptyEventContext() : new ArrayEventContext(
+                this.typeCoercer, activationContext);
 
-        try
-        {
-            // This is needed otherwise PageMarkupRendererImpl would clear the environment
-            request.setAttribute(InternalConstants.GENERATING_RENDERED_PAGE, true);
-            
-            this.handler.handle(new PageRenderRequestParameters(pageName, context, false));
-        }
-        finally
-        {
-            request.setAttribute(InternalConstants.GENERATING_RENDERED_PAGE, generatingRederedPage);
-        }
+        this.handler.handle(new PageRenderRequestParameters(pageName, context, false));
     }
 }

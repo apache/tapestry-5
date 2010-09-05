@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,6 +14,10 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.Link;
@@ -22,11 +26,15 @@ import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.services.*;
-
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.ComponentEventLinkEncoder;
+import org.apache.tapestry5.services.ComponentEventRequestParameters;
+import org.apache.tapestry5.services.ContextPathEncoder;
+import org.apache.tapestry5.services.LocalizationSetter;
+import org.apache.tapestry5.services.PageRenderRequestParameters;
+import org.apache.tapestry5.services.PersistentLocale;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Response;
 
 public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 {
@@ -41,8 +49,6 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
     private final Response response;
 
     private final RequestSecurityManager requestSecurityManager;
-
-    private final RequestPathOptimizer optimizer;
 
     private final PersistentLocale persistentLocale;
 
@@ -80,10 +86,8 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
     private static final int CONTEXT = 11;
 
     public ComponentEventLinkEncoderImpl(ComponentClassResolver componentClassResolver,
-            ContextPathEncoder contextPathEncoder, LocalizationSetter localizationSetter,
-            Request request, Response response, RequestSecurityManager requestSecurityManager,
-            RequestPathOptimizer optimizer, PersistentLocale persistentLocale,
-
+            ContextPathEncoder contextPathEncoder, LocalizationSetter localizationSetter, Request request,
+            Response response, RequestSecurityManager requestSecurityManager, PersistentLocale persistentLocale,
             @Symbol(SymbolConstants.ENCODE_LOCALE_INTO_PATH)
             boolean encodeLocaleIntoPath)
     {
@@ -93,7 +97,6 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         this.request = request;
         this.response = response;
         this.requestSecurityManager = requestSecurityManager;
-        this.optimizer = optimizer;
         this.persistentLocale = persistentLocale;
         this.encodeLocaleIntoPath = encodeLocaleIntoPath;
     }
@@ -123,7 +126,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
         appendContext(encodedPageName.length() > 0, parameters.getActivationContext(), builder);
 
-        Link link = new LinkImpl(builder.toString(), baseURL == null, false, response, optimizer);
+        Link link = new LinkImpl(builder.toString(), false, response);
 
         if (parameters.isLoopback())
             link.addParameter(TapestryConstants.PAGE_LOOPBACK_PARAMETER_NAME, "t");
@@ -197,8 +200,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
         appendContext(true, parameters.getEventContext(), builder);
 
-        Link result = new LinkImpl(builder.toString(), baseURL == null, forForm, response,
-                optimizer);
+        Link result = new LinkImpl(builder.toString(), forForm, response);
 
         EventContext pageActivationContext = parameters.getPageActivationContext();
 
@@ -216,8 +218,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         // need to differentiate that.
 
         if (!containingPageName.equalsIgnoreCase(activePageName))
-            result.addParameter(InternalConstants.CONTAINER_PAGE_NAME,
-                    encodePageName(containingPageName));
+            result.addParameter(InternalConstants.CONTAINER_PAGE_NAME, encodePageName(containingPageName));
 
         return result;
     }
@@ -270,8 +271,8 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         else
             containingPageName = componentClassResolver.canonicalizePageName(containingPageName);
 
-        return new ComponentEventRequestParameters(activePageName, containingPageName,
-                nestedComponentId, eventType, activationContext, eventContext);
+        return new ComponentEventRequestParameters(activePageName, containingPageName, nestedComponentId, eventType,
+                activationContext, eventContext);
     }
 
     public PageRenderRequestParameters decodePageRenderRequest(Request request)
@@ -316,8 +317,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
             String pageName = extendedName.substring(0, slashx);
             String pageActivationContext = atEnd ? "" : extendedName.substring(slashx + 1);
 
-            PageRenderRequestParameters parameters = checkIfPage(request, pageName,
-                    pageActivationContext);
+            PageRenderRequestParameters parameters = checkIfPage(request, pageName, pageActivationContext);
 
             if (parameters != null)
                 return parameters;
@@ -333,8 +333,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         return checkIfPage(request, "", extendedName);
     }
 
-    private PageRenderRequestParameters checkIfPage(Request request, String pageName,
-            String pageActivationContext)
+    private PageRenderRequestParameters checkIfPage(Request request, String pageName, String pageActivationContext)
     {
         if (!componentClassResolver.isPageName(pageName))
             return null;

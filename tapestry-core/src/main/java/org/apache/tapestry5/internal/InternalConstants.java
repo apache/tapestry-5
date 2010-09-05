@@ -80,13 +80,6 @@ public final class InternalConstants
     public static final String IMMEDIATE_RESPONSE_PAGE_ATTRIBUTE = "tapestry.immediate-response-page";
 
     /**
-     * Request attribute that forces {@link org.apache.tapestry5.internal.services.RequestPathOptimizer} to use not
-     * optimize URLs (this is necessitated by {@link org.apache.tapestry5.services.PageDocumentGenerator}). Any non-null
-     * value will force the URLs to be non-optimized.
-     */
-    public static final String GENERATING_RENDERED_PAGE = "tapestry.generating-rendered-page";
-
-    /**
      * Required MIME type for JSON responses. If this MIME type is not used, the client-side
      * Prototype code will not
      * recognize the response as JSON, and the Ajax.Response.responseJSON property will be null.

@@ -82,7 +82,6 @@ public class InternalModule
         binder.bind(PageRenderQueue.class, PageRenderQueueImpl.class);
         binder.bind(AjaxPartialResponseRenderer.class, AjaxPartialResponseRendererImpl.class);
         binder.bind(PageContentTypeAnalyzer.class, PageContentTypeAnalyzerImpl.class);
-        binder.bind(RequestPathOptimizer.class, RequestPathOptimizerImpl.class);
         binder.bind(ComponentPageElementResourcesSource.class, ComponentPageElementResourcesSourceImpl.class);
         binder.bind(RequestSecurityManager.class, RequestSecurityManagerImpl.class);
         binder.bind(InternalRequestGlobals.class, InternalRequestGlobalsImpl.class);

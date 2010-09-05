@@ -28,30 +28,24 @@ public class LinkImpl implements Link
 
     private final String basePath;
 
-    private final boolean optimizable;
-
     private final boolean forForm;
 
     private final Response response;
 
-    private final RequestPathOptimizer optimizer;
-
     private String anchor;
 
-    public LinkImpl(String basePath, boolean optimizable, boolean forForm, Response response,
-            RequestPathOptimizer optimizer)
+    public LinkImpl(String basePath, boolean forForm, Response response)
     {
         this.basePath = basePath;
-        this.optimizable = optimizable;
         this.forForm = forForm;
         this.response = response;
-        this.optimizer = optimizer;
     }
 
     public Link copyWithBasePath(String basePath)
     {
         assert basePath != null;
-        LinkImpl copy = new LinkImpl(basePath, optimizable, forForm, response, optimizer);
+
+        LinkImpl copy = new LinkImpl(basePath, forForm, response);
 
         copy.anchor = anchor;
 
@@ -107,7 +101,7 @@ public class LinkImpl implements Link
 
     public String toAbsoluteURI()
     {
-        return appendAnchor(response.encodeURL(buildURI()));
+        return toURI();
     }
 
     public String toRedirectURI()
@@ -117,12 +111,7 @@ public class LinkImpl implements Link
 
     public String toURI()
     {
-        String path = buildURI();
-
-        if (optimizable)
-            path = optimizer.optimizePath(path);
-
-        return appendAnchor(response.encodeURL(path));
+        return appendAnchor(response.encodeURL(buildURI()));
     }
 
     private String appendAnchor(String path)
