@@ -55,7 +55,7 @@ Tapestry.DateField = Class.create({
         }
 
 
-        var value = $F(this.field);
+        var value = $F(this.field).escapeHTML();
 
         if (value == "")
         {

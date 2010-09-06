@@ -1267,6 +1267,19 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait("link=english");
     }
+    
+    @Test
+    public void xss_datefield()
+    {
+        start("DateField Demo", "clear", "english");
+
+        type("asteroidImpact", "<script>alert('T5 is great'); </script>");
+
+        click("id=asteroidImpact-trigger");
+        
+        assertBubbleMessage("asteroidImpact", "Unparseable date: \"<script>alert('T5 is great'); </script>\"");
+
+    }
 
     /**
      * This also checks that the date type is displayed correctly by BeanDisplay and Grid.
