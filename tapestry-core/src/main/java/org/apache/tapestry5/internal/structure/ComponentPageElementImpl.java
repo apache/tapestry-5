@@ -567,6 +567,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     private void initializeRenderPhases()
     {
+        if (renderPhasesInitalized)
+            return;
+
         setupRenderPhase = new SetupRenderPhase();
         beginRenderPhase = new BeginRenderPhase();
         beforeRenderTemplatePhase = new BeforeRenderTemplatePhase();
@@ -799,6 +802,11 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     public void enqueueBeforeRenderBody(RenderQueue queue)
     {
+        // TAP5-1100: In certain Ajax cases, a component may be asked to render its body
+        // that has never rendered itself (and thus, never called initializeRenderPhases). Subtle.
+
+        initializeRenderPhases();
+
         // If no body, then no beforeRenderBody or afterRenderBody
 
         if (bodyBlock != null)
@@ -976,8 +984,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         // We assume that by the time we start to render, the structure (i.e., mixins) is nailed down.
         // We could add a lock, but that seems wasteful.
 
-        if (!renderPhasesInitalized)
-            initializeRenderPhases();
+        initializeRenderPhases();
 
         // TODO: An error if the render flag is already set (recursive rendering not
         // allowed or advisable).
