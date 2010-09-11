@@ -253,7 +253,7 @@ public class ZoneTests extends TapestryCoreTestCase
 
         select("selectValue1", "3 pre ajax");
 
-        waitForElementToAppear("select1ValueZone");
+        waitForElementToAppear("select2ValueZone");
 
         select("//div[@id='select2ValueZone']//select", "4 post ajax");
     }
