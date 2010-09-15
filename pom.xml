@@ -210,7 +210,7 @@
       <dependency>
         <groupId>org.easymock</groupId>
         <artifactId>easymock</artifactId>
-        <version>2.5.2</version>
+        <version>3.0</version>
         <scope>test</scope>
       </dependency>
       <!-- Now, artifacts created by Tapestry sub-projects. -->
