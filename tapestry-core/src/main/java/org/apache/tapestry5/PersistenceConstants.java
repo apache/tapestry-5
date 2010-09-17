@@ -1,10 +1,10 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +16,7 @@ package org.apache.tapestry5;
 
 /**
  * Constants for persistent field strategies.
- *
+ * 
  * @see org.apache.tapestry5.annotations.Persist#value()
  */
 public class PersistenceConstants
@@ -32,7 +32,8 @@ public class PersistenceConstants
     public static final String CLIENT = "client";
 
     /**
-     * The page field persistence strategy that stores data in the session until the next request.
+     * A that stores data in the session, but only until the next request. This is often
+     * used for confirmation messages presented to the user.
      */
     public static final String FLASH = "flash";
 }

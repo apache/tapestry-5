@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.annotations;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.annotations.UseWith;
 import org.apache.tapestry5.ioc.annotations.AnnotationUseContext;
 
@@ -25,6 +26,9 @@ import java.lang.annotation.Target;
 
 /**
  * A marker annotation that indicates that the page in question may only be accessed via HTTPS.
+ * <p>
+ * Normally, this annotation is ignored in development mode and only used in production mode. This can be changed
+ * via the {@link SymbolConstants#SECURE_ENABLED} configuration symbol. 
  *
  * @see org.apache.tapestry5.MetaDataConstants#SECURE_PAGE
  */
