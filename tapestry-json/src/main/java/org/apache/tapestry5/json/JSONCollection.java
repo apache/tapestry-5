@@ -80,11 +80,27 @@ public abstract class JSONCollection
     }
 
     /**
+     * Prints the JSONObject to the write (compactly or not).
+     * 
+     * @param writer
+     *            to write content to
+     * @param compact
+     *            if true, then write compactly, if false, write with pretty printing
+     * @since 5.2.1
+     */
+    public void print(PrintWriter writer, boolean compact)
+    {
+        JSONPrintSession session = compact ? new CompactSession(writer) : new PrettyPrintSession(writer);
+
+        print(session);
+    }
+
+    /**
      * Prints the JSONObject to the writer compactly (with no extra whitespace).
      */
     public void print(PrintWriter writer)
     {
-        print(new CompactSession(writer));
+        print(writer, true);
     }
 
     /**
@@ -92,7 +108,7 @@ public abstract class JSONCollection
      */
     public void prettyPrint(PrintWriter writer)
     {
-        print(new PrettyPrintSession(writer));
+        print(writer, false);
     }
 
     /**

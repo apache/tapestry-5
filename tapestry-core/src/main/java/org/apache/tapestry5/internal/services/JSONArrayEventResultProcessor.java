@@ -28,15 +28,22 @@ import org.apache.tapestry5.services.Response;
 public class JSONArrayEventResultProcessor implements ComponentEventResultProcessor<JSONArray>
 {
     private final Response response;
+
     private final String outputEncoding;
+
+    private final boolean compactJSON;
 
     public JSONArrayEventResultProcessor(Response response,
 
     @Symbol(SymbolConstants.CHARSET)
-    String outputEncoding)
+    String outputEncoding,
+
+    @Symbol(SymbolConstants.COMPACT_JSON)
+    boolean compactJSON)
     {
         this.response = response;
         this.outputEncoding = outputEncoding;
+        this.compactJSON = compactJSON;
     }
 
     public void processResultValue(JSONArray value) throws IOException
@@ -45,8 +52,8 @@ public class JSONArrayEventResultProcessor implements ComponentEventResultProces
 
         PrintWriter pw = response.getPrintWriter(contentType.toString());
 
-        pw.print(value.toString());
+        value.print(pw, compactJSON);
 
-        pw.flush();
+        pw.close();
     }
 }

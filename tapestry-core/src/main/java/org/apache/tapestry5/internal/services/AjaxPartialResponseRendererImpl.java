@@ -86,10 +86,7 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
 
         PrintWriter pw = response.getPrintWriter(contentType.toString());
 
-        if (compactJSON)
-            reply.print(pw);
-        else
-            reply.prettyPrint(pw);
+        reply.print(pw, compactJSON);
 
         pw.close();
     }

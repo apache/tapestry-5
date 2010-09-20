@@ -2457,7 +2457,7 @@ public final class TapestryModule
         configuration.add(SymbolConstants.BLACKBIRD_ENABLED, "false");
 
         configuration.add(InternalSymbols.PRE_SELECTED_FORM_NAMES, "reset,submit,select,id,method,action,onsubmit");
-        
+
         configuration.add(InternalSymbols.ALIAS_MODE, "servlet");
     }
 
@@ -2721,7 +2721,6 @@ public final class TapestryModule
      * <li>image/jpeg</li>
      * <li>image/gif</li>
      * <li>image/png</li>
-     * <li>application/json (see https://issues.apache.org/jira/browse/TAP5-469)</li>
      * <li>application/x-shockwave-flash</li>
      * </ul>
      * 
@@ -2732,7 +2731,6 @@ public final class TapestryModule
         configuration.add("image/jpeg");
         configuration.add("image/gif");
         configuration.add("image/png");
-        configuration.add("application/json");
         configuration.add("application/x-shockwave-flash");
     }
 

@@ -36,13 +36,19 @@ public class JSONObjectEventResultProcessor implements ComponentEventResultProce
 
     private final String outputEncoding;
 
+    private final boolean compactJSON;
+
     public JSONObjectEventResultProcessor(Response response,
 
     @Symbol(SymbolConstants.CHARSET)
-    String outputEncoding)
+    String outputEncoding,
+
+    @Symbol(SymbolConstants.COMPACT_JSON)
+    boolean compactJSON)
     {
         this.response = response;
         this.outputEncoding = outputEncoding;
+        this.compactJSON = compactJSON;
     }
 
     public void processResultValue(JSONObject value) throws IOException
@@ -51,8 +57,8 @@ public class JSONObjectEventResultProcessor implements ComponentEventResultProce
 
         PrintWriter pw = response.getPrintWriter(contentType.toString());
 
-        pw.print(value.toString());
+        value.print(pw, compactJSON);
 
-        pw.flush();
+        pw.close();
     }
 }

@@ -40,7 +40,7 @@ public class JSONArrayEventResultProcessorTest extends InternalBaseTestCase
 
         JSONArray array = new JSONArray("   [ \"fred\", \"barney\" \n\n]");
 
-        JSONArrayEventResultProcessor p = new JSONArrayEventResultProcessor(response, encoding);
+        JSONArrayEventResultProcessor p = new JSONArrayEventResultProcessor(response, encoding, false);
 
         p.processResultValue(array);
 
