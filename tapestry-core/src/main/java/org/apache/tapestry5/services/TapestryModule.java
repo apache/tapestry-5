@@ -611,7 +611,7 @@ public final class TapestryModule
         configuration.add("Component", new ComponentWorker(resolver));
         configuration.add("Mixin", new MixinWorker(resolver));
         configuration.addInstance("ActivationRequestParameter", ActivationRequestParameterWorker.class,
-                "before:OnEvent");
+                "after:OnEvent");
         configuration.addInstance("OnEvent", OnEventWorker.class);
         configuration.add("SupportsInformalParameters", new SupportsInformalParametersWorker());
         configuration.addInstance("InjectPage", InjectPageWorker.class);
@@ -671,7 +671,7 @@ public final class TapestryModule
 
         configuration.addInstance("UnclaimedField", UnclaimedFieldWorker.class, "after:*");
 
-        configuration.add("PageActivationContext", new PageActivationContextWorker(), "before:OnEvent");
+        configuration.add("PageActivationContext", new PageActivationContextWorker(), "after:OnEvent");
 
         configuration.addInstance("SessionAttribute", SessionAttributeWorker.class);
 

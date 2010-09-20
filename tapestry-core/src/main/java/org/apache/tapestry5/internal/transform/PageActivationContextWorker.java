@@ -24,12 +24,8 @@ import org.apache.tapestry5.runtime.ComponentEvent;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.ComponentEventHandler;
-import org.apache.tapestry5.services.ComponentMethodAdvice;
-import org.apache.tapestry5.services.ComponentMethodInvocation;
 import org.apache.tapestry5.services.FieldAccess;
-import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.TransformField;
-import org.apache.tapestry5.services.TransformMethod;
 
 /**
  * Provides the page activation context handlers. This worker must be scheduled before

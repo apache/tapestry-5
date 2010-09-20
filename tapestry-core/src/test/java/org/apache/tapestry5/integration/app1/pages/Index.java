@@ -72,6 +72,9 @@ public class Index
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
 
+                    new Item("PACAnnotationDemo", "PageActivationContext Demo",
+                            "Shows that @PageActivationContext fields are set before calls to the activate event handler."),
+
                     new Item("PublicFieldAccessDemo", "Public Field Access Demo", "Demonstrates TAP5-1222 fix"),
 
                     new Item("ActivationRequestParameterDemo", "ActivationRequestParameter Annotation Demo",
@@ -451,10 +454,12 @@ public class Index
 
                     new Item("SelectModelFromObjectsAndPropertyNameDemo", "SelectModel from objects and property name",
                             "Creating a SelectModel from a list of objects and a label property name"),
-                            
-                    new Item("DecoratePageRenderLinkDemo", "Decorate Page Render Link Demo", "Decorating page render links"),
-                    
-                    new Item("DecorateComponentEventLinkDemo", "Decorate Component Event Link Demo", "Decorating event links")
+
+                    new Item("DecoratePageRenderLinkDemo", "Decorate Page Render Link Demo",
+                            "Decorating page render links"),
+
+                    new Item("DecorateComponentEventLinkDemo", "Decorate Component Event Link Demo",
+                            "Decorating event links")
 
             );
 

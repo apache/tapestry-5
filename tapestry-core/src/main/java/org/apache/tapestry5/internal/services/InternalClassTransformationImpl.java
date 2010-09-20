@@ -2371,19 +2371,22 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         {
             public void advise(ComponentMethodInvocation invocation)
             {
+                // Invoke the super-class implementation first.
+                
+                invocation.proceed();
+                
                 ComponentEvent event = (ComponentEvent) invocation.getParameter(0);
 
-                if (event.matches(eventType, "", minContextValues))
+                if (!event.isAborted() && event.matches(eventType, "", minContextValues))
                 {
                     event.setMethodDescription(methodDescription);
 
                     handler.handleEvent(invocation.getInstance(), event);
 
+                    // Ensure that the caller knows that some event handler method
+                    // was invoked.
                     invocation.overrideResult(true);
                 }
-
-                if (!event.isAborted())
-                    invocation.proceed();
             }
         };
     }

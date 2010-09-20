@@ -623,9 +623,10 @@ public interface ClassTransformation extends AnnotationProvider
     /**
      * Adds advice to the {@link Component#dispatchComponentEvent(org.apache.tapestry5.runtime.ComponentEvent)} method.
      * If the handler is invoked,
-     * the return value of the method will be overriden to true. The invocation will proceeed either way (whether the
-     * handler is invoked or not). Updates {@linkplain MutableComponentModel#addEventHandler(String) the model} to
-     * indicate that there is a handler for the named event.
+     * the return value of the method will be overriden to true. Updates
+     * {@linkplain MutableComponentModel#addEventHandler(String) the model} to
+     * indicate that there is a handler for the named event. Existing handlers, or super-class handlers,
+     * are invoked <em>first</em>.
      * 
      * @param eventType
      *            name of event to be handled
