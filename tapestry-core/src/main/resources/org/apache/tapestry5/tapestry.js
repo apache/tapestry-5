@@ -1794,17 +1794,15 @@ Tapestry.ZoneManager = Class.create( {
 	processReply : function(reply) {
 		Tapestry.loadScriptsInReply(reply, function() {
 			/*
-			 * In a multi-zone update, the reply.content may be blank or
-			 * missing.
+			 * In a multi-zone update, the reply.content may be missing, 
+			 * in which case, leave the curent content in place. TAP5-1177
 			 */
-
-			reply.content && this.show(reply.content);
+			reply.content != undefined && this.show(reply.content);
 
 			/*
 			 * zones is an object of zone ids and zone content that will be
 			 * present in a multi-zone update response.
 			 */
-
 			Object.keys(reply.zones).each(function(zoneId) {
 				var manager = Tapestry.findZoneManagerForZone(zoneId);
 

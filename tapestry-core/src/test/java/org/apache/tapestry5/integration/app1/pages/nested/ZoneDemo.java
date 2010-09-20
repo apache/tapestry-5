@@ -43,7 +43,7 @@ public class ZoneDemo
     { "Fred & Wilma", "Mr. <Roboto>", "Grim Fandango", "Registration", "Vote" };
 
     @Inject
-    private Block registrationForm, registrationOutput, voteForm, voteOutput;
+    private Block registrationForm, registrationOutput, voteForm, voteOutput, empty;
 
     @Property
     private String vote;
@@ -155,6 +155,11 @@ public class ZoneDemo
     Object onActionFromSecureRedirect()
     {
         return securePage;
+    }
+    
+    Object onActionFromBlankUpdate()
+    {
+        return empty;
     }
 
     void afterRender()
