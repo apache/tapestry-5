@@ -71,6 +71,9 @@
     <li>
       <t:actionlink t:id="blankUpdate" zone="output">Blank the zone</t:actionlink>
     </li>
+    <li>
+      <t:actionlink t:id="poorlyFormattedFail" zone="output">Poorly formatted server-side failure</t:actionlink>
+    </li>
   </ul>
 
   <t:block id="empty"/>

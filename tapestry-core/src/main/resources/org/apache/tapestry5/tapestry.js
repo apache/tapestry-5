@@ -368,8 +368,10 @@ var Tapestry = {
 	 * Default function for handling Ajax-related failures.
 	 */
 	ajaxFailureHandler : function(response) {
-		var message = response.getHeader("X-Tapestry-ErrorMessage");
+		var rawMessage = response.getHeader("X-Tapestry-ErrorMessage");
 
+		var message = unescape(rawMessage).escapeHTML();
+		
 		Tapestry.error(Tapestry.Messages.communicationFailed + message);
 
 		Tapestry.debug(Tapestry.Messages.ajaxFailure + message, response);

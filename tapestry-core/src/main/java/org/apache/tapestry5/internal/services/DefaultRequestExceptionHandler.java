@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -45,10 +46,10 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
 
     public DefaultRequestExceptionHandler(RequestPageCache pageCache, PageResponseRenderer renderer, Logger logger,
 
-                                           @Symbol(SymbolConstants.EXCEPTION_REPORT_PAGE)
-                                          String pageName,
+    @Symbol(SymbolConstants.EXCEPTION_REPORT_PAGE)
+    String pageName,
 
-                                          Response response)
+    Response response)
     {
         this.pageCache = pageCache;
         this.renderer = renderer;
@@ -64,7 +65,14 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
         // TAP5-233: Make sure the client knows that an error occurred.
 
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        response.setHeader("X-Tapestry-ErrorMessage", InternalUtils.toMessage(exception));
+
+        String rawMessage = InternalUtils.toMessage(exception);
+
+        // Encode it compatibly with the JavaScript escape() function.
+
+        String encoded = URLEncoder.encode(rawMessage, "UTF-8").replace("+", "%20");
+
+        response.setHeader("X-Tapestry-ErrorMessage", encoded);
 
         Page page = pageCache.get(pageName);
 

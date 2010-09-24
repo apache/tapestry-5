@@ -95,6 +95,11 @@ public class ZoneDemo
         throw new RuntimeException("Server-side exception.");
     }
 
+    void onActionFromPoorlyFormattedFail()
+    {
+        throw new RuntimeException("Failure &\n\n<Stuff>!");
+    }
+    
     Object onSuccessFromRegistrationForm()
     {
         return registrationOutput;
