@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.services.javascript;
 
+import java.util.List;
+
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 
@@ -33,4 +35,11 @@ public interface JavaScriptStackSource
      *             if no such stack
      */
     JavaScriptStack getStack(String name);
+
+    /**
+     * Returns the names of all stacks, in sorted order.
+     * 
+     * @since 5.2.1
+     */
+    List<String> getStackNames();
 }

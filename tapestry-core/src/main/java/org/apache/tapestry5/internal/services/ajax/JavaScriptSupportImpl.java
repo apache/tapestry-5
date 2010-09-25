@@ -28,7 +28,6 @@ import org.apache.tapestry5.internal.services.DocumentLinker;
 import org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathConstructor;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
@@ -65,14 +64,6 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     private FieldFocusPriority focusPriority;
 
     private String focusFieldId;
-
-    private static final Coercion<Asset, String> toPath = new Coercion<Asset, String>()
-    {
-        public String coerce(Asset input)
-        {
-            return input.toClientURL();
-        }
-    };
 
     public JavaScriptSupportImpl(DocumentLinker linker, JavaScriptStackSource javascriptStackSource,
             JavaScriptStackPathConstructor stackPathConstructor)
@@ -203,6 +194,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     public void importJavaScriptLibrary(Asset asset)
     {
         assert asset != null;
+
         importJavaScriptLibrary(asset.toClientURL());
     }
 
@@ -210,10 +202,47 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     {
         addCoreStackIfNeeded();
 
+        String stackName = findStackForLibrary(libraryURL);
+
+        if (stackName != null)
+        {
+            importStack(stackName);
+            return;
+        }
+
         if (otherLibraries.contains(libraryURL))
             return;
 
         otherLibraries.add(libraryURL);
+    }
+
+    private Map<String, String> libraryURLToStackName;
+
+    /**
+     * Locates the name of the stack that includes the library URL. Returns the stack,
+     * or null if the library is free-standing.
+     */
+    private String findStackForLibrary(String libraryURL)
+    {
+        return getLibraryURLToStackName().get(libraryURL);
+    }
+
+    private Map<String, String> getLibraryURLToStackName()
+    {
+        if (libraryURLToStackName == null)
+        {
+            libraryURLToStackName = CollectionFactory.newMap();
+
+            for (String stackName : javascriptStackSource.getStackNames())
+            {
+                for (Asset library : javascriptStackSource.getStack(stackName).getJavaScriptLibraries())
+                {
+                    libraryURLToStackName.put(library.toClientURL(), stackName);
+                }
+            }
+        }
+
+        return libraryURLToStackName;
     }
 
     private void addCoreStackIfNeeded()

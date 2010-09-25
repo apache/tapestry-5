@@ -14,8 +14,10 @@
 
 package org.apache.tapestry5.internal.services.javascript;
 
+import java.util.List;
 import java.util.Map;
 
+import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
@@ -41,4 +43,8 @@ public class JavaScriptStackSourceImpl implements JavaScriptStackSource
         return stack;
     }
 
+    public List<String> getStackNames()
+    {
+        return F.flow(configuration.keySet()).sort().toList();
+    }
 }

@@ -20,10 +20,8 @@ import java.util.List;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.FieldFocusPriority;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.DocumentLinker;
-import org.apache.tapestry5.internal.services.RenderSupportImpl;
 import org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathConstructor;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -111,18 +109,14 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
     {
         JavaScriptStack stack = mockJavaScriptStack();
 
-        List<String> libraryPaths = Collections.emptyList();
-        List<StylesheetLink> stylesheets = Collections.emptyList();
-        List<String> stacks = libraryPaths;
-
         expect(stackSource.getStack(InternalConstants.CORE_STACK_NAME)).andReturn(stack);
         expect(pathConstructor.constructPathsForJavaScriptStack(InternalConstants.CORE_STACK_NAME)).andReturn(
-                libraryPaths);
-        expect(stack.getStylesheets()).andReturn(stylesheets);
+                Collections.<String> emptyList());
+        expect(stack.getStylesheets()).andReturn(Collections.<StylesheetLink> emptyList());
 
         expect(stack.getInitialization()).andReturn(null);
 
-        expect(stack.getStacks()).andReturn(stacks);
+        expect(stack.getStacks()).andReturn(Collections.<String> emptyList());
     }
 
     private void trainForCoreStack(DocumentLinker linker, JavaScriptStackSource stackSource,
@@ -139,8 +133,7 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
 
         expect(stack.getInitialization()).andReturn("stackInit();");
 
-        List<String> stacks = Collections.emptyList();
-        expect(stack.getStacks()).andReturn(stacks);
+        expect(stack.getStacks()).andReturn(Collections.<String> emptyList());
 
         linker.addScriptLink("stack1.js");
         linker.addScriptLink("stack2.js");
@@ -189,6 +182,8 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
         JavaScriptStackPathConstructor pathConstructor = mockJavaScriptStackPathConstructor();
         trainForEmptyCoreStack(linker, stackSource, pathConstructor);
 
+        trainForNoStackNames(stackSource);
+
         Asset library = mockAsset("mylib.js");
 
         linker.addScriptLink("mylib.js");
@@ -202,6 +197,51 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
         jss.commit();
 
         verify();
+    }
+
+    @Test
+    public void import_library_from_stack_imports_the_stack()
+    {
+        DocumentLinker linker = mockDocumentLinker();
+        JavaScriptStackSource stackSource = mockJavaScriptStackSource();
+        JavaScriptStackPathConstructor pathConstructor = mockJavaScriptStackPathConstructor();
+        trainForEmptyCoreStack(linker, stackSource, pathConstructor);
+
+        Asset library1 = mockAsset("mylib1.js");
+        Asset library2 = mockAsset("mylib2.js");
+
+        JavaScriptStack mystack = mockJavaScriptStack();
+
+        expect(stackSource.getStackNames()).andReturn(Arrays.asList("mystack"));
+        expect(stackSource.getStack("mystack")).andReturn(mystack).atLeastOnce();
+
+        expect(mystack.getStacks()).andReturn(Collections.<String> emptyList());
+        expect(mystack.getJavaScriptLibraries()).andReturn(Arrays.asList(library1, library2));
+
+        expect(pathConstructor.constructPathsForJavaScriptStack("mystack")).andReturn(
+                Arrays.asList("stacks/mystack.js"));
+        expect(mystack.getStylesheets()).andReturn(Collections.<StylesheetLink> emptyList());
+
+        expect(mystack.getInitialization()).andReturn(null);
+
+        linker.addScriptLink("stacks/mystack.js");
+
+        replay();
+
+        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor);
+
+        jss.importJavaScriptLibrary(library1);
+
+        jss.commit();
+
+        verify();
+    }
+
+    private void trainForNoStackNames(JavaScriptStackSource stackSource)
+    {
+        // This is slightly odd, as it would normally return "core" at a minimum, but we test for that separately.
+
+        expect(stackSource.getStackNames()).andReturn(Collections.<String> emptyList());
     }
 
     @Test
@@ -309,6 +349,8 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
         JavaScriptStackSource stackSource = mockJavaScriptStackSource();
         JavaScriptStackPathConstructor pathConstructor = mockJavaScriptStackPathConstructor();
         trainForEmptyCoreStack(linker, stackSource, pathConstructor);
+
+        trainForNoStackNames(stackSource);
 
         Asset library1 = mockAsset("mylib1.js");
         Asset library2 = mockAsset("mylib2.js");
