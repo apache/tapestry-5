@@ -271,7 +271,6 @@ public class Form implements ClientElement, FormValidationControl
         // Save the form element for later, in case we want to write an encoding type attribute.
 
         form = writer.element("form",
-                              "name", name,
                               "id", name,
                               "method", "post",
                               "action", link);
