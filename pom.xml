@@ -30,9 +30,9 @@
     <url>http://www.apache.org</url>
   </organization>
   <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/tags/releases/releases/5.2.1</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/tags/releases/releases/5.2.1</developerConnection>
-    <url>http://svn.apache.org/viewvc/tapestry/tapestry5/tags/releases/releases/5.2.1</url>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/tags/releases/5.2.1</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/tags/releases/5.2.1</developerConnection>
+    <url>http://svn.apache.org/viewvc/tapestry/tapestry5/tags/releases/5.2.1</url>
   </scm>
   <developers>
     <developer>
