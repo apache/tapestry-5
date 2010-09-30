@@ -95,11 +95,6 @@
             <item name="Wiki HowTos" href="http://wiki.apache.org/tapestry/Tapestry5HowTos"/>
         </menu>
 
-        <menu name="Developer Info">
-            <item name="Bible" href="dev/bible.html"/>
-        </menu>
-
-
         <menu ref="reports"/>
 
     </body>
