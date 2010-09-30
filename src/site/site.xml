@@ -46,7 +46,6 @@
             <item name="JavaDocs" href="apidocs/"/>
             <item name="Nightly Docs" href="http://tapestry.apache.org/tapestry5.2-dev/"/>
             <item name="Issues" href="https://issues.apache.org/jira/browse/TAP5"/>
-            <item name="FAQ" href="faq/general.html"/>
             <item name="Refcard" href="http://refcardz.dzone.com/refcardz/apache-tapestry-50?oid=hom7545"/>
             <item name="Howard's Blog" href="http://tapestryjava.blogspot.com/"/>
         </menu>
@@ -67,63 +66,14 @@
             <item name="tapestry-hibernate-core" href="tapestry-hibernate-core/"/>
             <item name="tapestry-ioc" href="tapestry-ioc/"/>
             <item name="tapestry-jmx" href="tapestry-jmx/"/>
+            <item name="tapestry-json" href="tapestry-json/"/>
             <item name="tapestry-spring" href="tapestry-spring/"/>
             <item name="tapestry-test" href="tapestry-test/"/>
             <item name="tapestry-upload" href="tapestry-upload/"/>
-            <!-- This will be coming back in 5.2
-            <item name="tapestry-webflow" href="tapestry-webflow/"/>
-            -->
         </menu>
 
         <menu name="Tapestry Tutorials">
             <item name="Tutorial #1" href="tutorial1/"/>
-        </menu>
-
-        <menu name="User Guide">
-            <item name="Ajax &amp; JavaScript" href="guide/ajax.html"/>
-            <item name="Aliases" href="guide/alias.html"/>
-            <item name="Assets" href="guide/assets.html"/>
-            <item name="BeanEditForm Guide" href="guide/beaneditform.html"/>
-            <item name="Class Reloading" href="guide/reload.html"/>
-            <item name="Component Classes" href="guide/component-classes.html"/>
-            <item name="Component Events" href="guide/event.html"/>
-            <item name="Component Mixins" href="guide/mixins.html"/>
-            <item name="Component Parameters" href="guide/parameters.html"/>
-            <item name="Component Rendering" href="guide/rendering.html"/>
-            <item name="Component Templates" href="guide/templates.html"/>
-            <item name="Configuration" href="guide/conf.html"/>
-            <item name="Content Type and Markup" href="guide/content-type.html"/>
-            <item name="CSS" href="guide/css.html"/>
-            <item name="DOM" href="guide/dom.html"/>
-            <item name="Environmental Services" href="guide/env.html"/>
-            <item name="HTTPS" href="guide/secure.html"/>
-            <item name="Injection" href="guide/inject.html"/>
-            <item name="Input Validation" href="guide/validation.html"/>
-            <item name="Layout Component" href="guide/layout.html"/>
-            <item name="Localization" href="guide/localization.html"/>
-            <item name="Logging" href="guide/logging.html"/>
-            <item name="Page Lifecycle" href="guide/lifecycle.html"/>
-            <item name="Page Navigation" href="guide/pagenav.html"/>
-            <item name="Persistent Page Data" href="guide/persist.html"/>
-            <item name="Persistent State" href="guide/appstate.html"/>
-            <item name="Property Expressions" href="guide/propexp.html"/>
-            <item name="Project Layout" href="guide/project-layout.html"/>
-            <item name="Request Processing" href="guide/request.html"/>
-            <item name="Response Compression" href="guide/compress.html"/>
-            <item name="Service Status" href="guide/servicestatus.html"/>
-            <item name="Integration Testing" href="guide/testing.html"/>
-            <item name="Type Coercion" href="guide/coercion.html"/>
-            <item name="Unit testing pages/components" href="guide/unit-testing-pages.html"/>
-            <item name="URL rewriting" href="guide/url-rewriting.html"/>
-        </menu>
-
-        <menu name="Tapestry Cookbook">
-            <item name="Introduction" href="cookbook/"/>
-            <item name="Default Parameter" href="cookbook/defaultparameter.html"/>
-            <item name="Exception Reporting" href="cookbook/exceptions.html"/>
-            <item name="Supporting Informal Parameters" href="cookbook/informals.html"/>
-            <item name="Component Libraries" href="cookbook/lib.html"/>
-            <item name="Switching Cases" href="cookbook/switch.html"/>
         </menu>
 
         <menu name="Tapestry 5 Maven Support">
@@ -146,8 +96,6 @@
         </menu>
 
         <menu name="Developer Info">
-            <item name="Environment" href="dev/env.html"/>
-            <item name="Release Checklist" href="dev/checklist.html"/>
             <item name="Bible" href="dev/bible.html"/>
         </menu>
 
