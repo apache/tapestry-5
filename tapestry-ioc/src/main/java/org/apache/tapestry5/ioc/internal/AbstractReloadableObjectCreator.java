@@ -36,6 +36,7 @@ import javassist.expr.NewExpr;
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.ReloadAware;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryClassPool;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -109,8 +110,23 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
             logger.debug(String.format("Implementation class %s has changed and will be reloaded on next use.",
                     implementationClassName));
 
-        instance = null;
         changeTracker.clear();
+
+        boolean reloadNow = informInstanceOfReload();
+
+        instance = reloadNow ? createInstance() : null;
+    }
+
+    private boolean informInstanceOfReload()
+    {
+        if (instance instanceof ReloadAware)
+        {
+            ReloadAware ra = (ReloadAware) instance;
+
+            return ra.shutdownImplementationForReload();
+        }
+
+        return false;
     }
 
     public synchronized Object createObject()

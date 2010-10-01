@@ -33,6 +33,9 @@ import org.apache.tapestry5.services.UpdateListenerHub;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.example.Counter;
+import com.example.CounterImpl;
+import com.example.ReloadAwareModule;
 import com.example.ReloadModule;
 import com.example.ReloadableService;
 
@@ -193,7 +196,7 @@ public class ReloadTest extends IOCTestCase
         fireUpdateCheck(registry);
 
         assertEquals(reloadable.getStatus(), "updated proxy");
-        
+
         touch(classFile);
 
         createImplementationClass("re-updated proxy");
@@ -201,7 +204,7 @@ public class ReloadTest extends IOCTestCase
         fireUpdateCheck(registry);
 
         assertEquals(reloadable.getStatus(), "re-updated proxy");
-        
+
         registry.shutdown();
     }
 
@@ -308,4 +311,41 @@ public class ReloadTest extends IOCTestCase
         assertTrue(eagerLoadServiceWasInstantiated);
     }
 
+    @Test
+    public void reload_aware() throws Exception
+    {
+        Registry r = buildRegistry(ReloadAwareModule.class);
+
+        assertEquals(ReloadAwareModule.counterInstantiations, 0);
+        assertEquals(ReloadAwareModule.counterReloads, 0);
+
+        Counter counter = r.proxy(Counter.class, CounterImpl.class);
+
+        assertEquals(ReloadAwareModule.counterInstantiations, 0);
+
+        assertEquals(counter.increment(), 1);
+        assertEquals(counter.increment(), 2);
+
+        assertEquals(ReloadAwareModule.counterInstantiations, 1);
+
+        URL classURL = CounterImpl.class.getResource("CounterImpl.class");
+
+        File classFile = new File(classURL.toURI());
+
+        touch(classFile);
+
+        assertEquals(ReloadAwareModule.counterInstantiations, 1);
+        assertEquals(ReloadAwareModule.counterReloads, 0);
+
+        fireUpdateCheck(r);
+
+        assertEquals(ReloadAwareModule.counterInstantiations, 2);
+        assertEquals(ReloadAwareModule.counterReloads, 1);
+
+        // Check that internal state has reset
+
+        assertEquals(counter.increment(), 1);
+
+        r.shutdown();
+    }
 }

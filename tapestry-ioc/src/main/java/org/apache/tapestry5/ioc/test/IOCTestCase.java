@@ -436,8 +436,8 @@ public class IOCTestCase extends TestBase
     }
 
     /**
-     * Writes a change to a file. The contents of the file are lost. May repeatedly modify
-     * the file, and does not return until the last modified time for the file actually changes (how long that takes
+     * Touches the file, changing the last modified time to the current time.
+     * Does not return until the last modified time for the file actually changes (how long that takes
      * is JDK, OS and file system dependent).
      */
     protected final void touch(File f) throws Exception
@@ -446,9 +446,7 @@ public class IOCTestCase extends TestBase
 
         while (true)
         {
-            OutputStream o = new FileOutputStream(f);
-            o.write(0);
-            o.close();
+            f.setLastModified(System.currentTimeMillis());
 
             long newModified = f.lastModified();
 
