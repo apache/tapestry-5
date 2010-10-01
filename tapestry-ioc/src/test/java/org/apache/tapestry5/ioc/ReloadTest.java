@@ -193,7 +193,15 @@ public class ReloadTest extends IOCTestCase
         fireUpdateCheck(registry);
 
         assertEquals(reloadable.getStatus(), "updated proxy");
+        
+        touch(classFile);
 
+        createImplementationClass("re-updated proxy");
+
+        fireUpdateCheck(registry);
+
+        assertEquals(reloadable.getStatus(), "re-updated proxy");
+        
         registry.shutdown();
     }
 
