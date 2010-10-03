@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.internal.services;
 
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newSet;
+
 import java.util.List;
 import java.util.Locale;
 
@@ -21,6 +23,7 @@ import org.apache.tapestry5.OptionModel;
 import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
+import org.apache.tapestry5.ioc.test.TestBase;
 import org.apache.tapestry5.services.LocalizationSetter;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.apache.tapestry5.services.Request;
@@ -93,6 +96,26 @@ public class LocalizationSetterImplTest extends InternalBaseTestCase
         LocalizationSetter setter = new LocalizationSetterImpl(null, null, null, "en,fr");
 
         assertListsEquals(setter.getSupportedLocales(), Locale.ENGLISH, Locale.FRENCH);
+    }
+    
+    @Test
+    public void get_selected_locale_names()
+    {
+        LocalizationSetter setter = new LocalizationSetterImpl(null, null, null, "en,fr");
+        
+        Object localeNames = TestBase.get(setter, "supportedLocaleNames");
+
+        assertTrue(newSet("en", "fr").equals(localeNames));
+    }
+    
+    @Test
+    public void get_selected_locale_names_with_whitespaces()
+    {
+        LocalizationSetter setter = new LocalizationSetterImpl(null, null, null, "en, fr,  de");
+        
+        Object localeNames = TestBase.get(setter, "supportedLocaleNames");
+
+        assertTrue(newSet("en", "fr", "de").equals(localeNames));
     }
 
     @Test

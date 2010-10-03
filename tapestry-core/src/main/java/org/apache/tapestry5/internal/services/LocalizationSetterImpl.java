@@ -25,6 +25,7 @@ import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.OptionModelImpl;
 import org.apache.tapestry5.internal.SelectModelImpl;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
@@ -59,23 +60,26 @@ public class LocalizationSetterImpl implements LocalizationSetter
     ThreadLocale threadLocale,
 
     @Symbol(SymbolConstants.SUPPORTED_LOCALES)
-    String supportedLocaleNames)
+    String localeNames)
     {
         this.request = request;
 
         this.persistentLocale = persistentLocale;
         this.threadLocale = threadLocale;
 
-        String[] names = supportedLocaleNames.split(",");
+        this.supportedLocaleNames = CollectionFactory.newSet();
+        
+        for (String name : TapestryInternalUtils.splitAtCommas(localeNames))
+        {
+            supportedLocaleNames.add(name.toLowerCase());
+        }
 
-        this.supportedLocaleNames = CollectionFactory.newSet(names);
-
-        supportedLocales = parseNames(names);
+        supportedLocales = parseNames(supportedLocaleNames);
 
         defaultLocale = supportedLocales.get(0);
     }
 
-    private List<Locale> parseNames(String[] localeNames)
+    private List<Locale> parseNames(Set<String> localeNames)
     {
         List<Locale> list = CollectionFactory.newList();
 
