@@ -69,17 +69,19 @@ public class LocalizationSetterImpl implements LocalizationSetter
 
         this.supportedLocaleNames = CollectionFactory.newSet();
         
-        for (String name : TapestryInternalUtils.splitAtCommas(localeNames))
+        String[] names = TapestryInternalUtils.splitAtCommas(localeNames);
+        
+        for (String name : names)
         {
             supportedLocaleNames.add(name.toLowerCase());
         }
 
-        supportedLocales = parseNames(supportedLocaleNames);
+        supportedLocales = parseNames(names);
 
         defaultLocale = supportedLocales.get(0);
     }
 
-    private List<Locale> parseNames(Set<String> localeNames)
+    private List<Locale> parseNames(String[] localeNames)
     {
         List<Locale> list = CollectionFactory.newList();
 
