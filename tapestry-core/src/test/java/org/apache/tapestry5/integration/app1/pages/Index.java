@@ -459,7 +459,9 @@ public class Index
                             "Decorating page render links"),
 
                     new Item("DecorateComponentEventLinkDemo", "Decorate Component Event Link Demo",
-                            "Decorating event links")
+                            "Decorating event links"),
+
+                    new Item("ValidatorMacroDemo", "Validator Macro Demo", "Using validator macros")
 
             );
 

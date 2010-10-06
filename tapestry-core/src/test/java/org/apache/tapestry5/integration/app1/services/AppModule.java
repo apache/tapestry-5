@@ -72,6 +72,12 @@ public class AppModule
         binder.bind(Reloadable.class);
         binder.bind(MessageAccess.class);
     }
+    
+    public static void contributeValidatorMacro(MappedConfiguration<String,String> configuration)
+    {
+    	configuration.add("password", "required,lengthBetweenTwoAndThree");
+    	configuration.add("lengthBetweenTwoAndThree", "minlength=2,maxlength=3");
+    }
 
     public void contributeAlias(Configuration<AliasContribution> configuration)
     {

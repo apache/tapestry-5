@@ -77,6 +77,26 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
     public FieldValidator createValidator(Field field, String validatorType, String constraintValue, String overrideId,
             Messages overrideMessages, Locale locale)
     {
+    	
+    	ValidatorSpecification originalSpec = new ValidatorSpecification(validatorType, constraintValue);
+    	
+    	List<ValidatorSpecification> specs = expandMacros(newList(originalSpec));
+    	
+    	List<FieldValidator> fieldValidators = CollectionFactory.newList();
+    	
+    	for (ValidatorSpecification spec : specs) {
+			fieldValidators.add(createValidator(field, spec, overrideId, overrideMessages, locale));
+		}
+    	
+    	return new CompositeFieldValidator(fieldValidators);
+    }
+    
+    private FieldValidator createValidator(Field field, ValidatorSpecification spec, String overrideId,
+            Messages overrideMessages, Locale locale)
+    {
+    	
+    	String validatorType = spec.getValidatorType();
+    	
         assert InternalUtils.isNonBlank(validatorType);
         Validator validator = validators.get(validatorType);
 
@@ -89,7 +109,7 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
 
         String formValidationid = formSupport.getFormValidationId();
 
-        Object coercedConstraintValue = computeConstraintValue(validatorType, validator, constraintValue,
+        Object coercedConstraintValue = computeConstraintValue(validatorType, validator, spec.getConstraintValue(),
                 formValidationid, overrideId, overrideMessages);
 
         MessageFormatter formatter = findMessageFormatter(formValidationid, overrideId, overrideMessages, locale,

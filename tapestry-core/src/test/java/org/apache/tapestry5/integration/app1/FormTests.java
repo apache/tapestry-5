@@ -902,4 +902,39 @@ public class FormTests extends TapestryCoreTestCase
 
         assertTextPresent("Selected track: The Calling, Synaesthetic");
     }
+    
+    @Test
+    public void validation_macro() throws Exception
+    {
+        clickThru("Validator Macro Demo");
+
+        clickAndWait(SUBMIT);
+        
+        assertTextPresent("You must provide a value for Password.");
+        assertTextPresent("You must provide a value for Password2.");
+
+        type("password", "abcdefg");
+        type("password2", "x");
+
+        clickAndWait(SUBMIT);
+        
+        assertTextPresent("You may provide at most 3 characters for Password.");
+        assertTextPresent("You must provide at least 2 characters for Password2.");
+        
+        type("password", "a");
+        type("password2", "wxyz");
+
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("You must provide at least 2 characters for Password.");
+        assertTextPresent("You may provide at most 3 characters for Password2.");
+        
+        type("password", "ab");
+        type("password2", "xyz");
+
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("Password: ab");
+        assertTextPresent("Password2: xyz");
+    }
 }
