@@ -173,6 +173,11 @@ public class TapestryBeanValidationIntegrationTests extends AbstractIntegrationT
     	click(SUBMIT);
     	
     	assertBubbleMessage("loginName", "Login Name must match \"[a-zA-Z]+\"");
+    	
+    	type("loginName", "abc");
+    	click(SUBMIT);
+    	
+    	assertBubbleMessage("loginName", "You must provide at least 5 characters for Login Name.");
     }
     
     protected final void assertBubbleMessage(String fieldId, String expected)

@@ -60,5 +60,5 @@ Tapestry.Validator.size = function(field, message, spec)
 
 Tapestry.Validator.pattern = function(field, message, spec)
 {
-	Tapestry.Validator.regexp(field, message, spec.pattern);
+	Tapestry.Validator.regexp(field, message, spec.regexp);
 };
