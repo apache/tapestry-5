@@ -610,8 +610,8 @@ public final class TapestryModule
         configuration.add("MixinAfter", new MixinAfterWorker());
         configuration.add("Component", new ComponentWorker(resolver));
         configuration.add("Mixin", new MixinWorker(resolver));
-        configuration.addInstance("ActivationRequestParameter", ActivationRequestParameterWorker.class,
-                "after:OnEvent");
+        configuration
+                .addInstance("ActivationRequestParameter", ActivationRequestParameterWorker.class, "after:OnEvent");
         configuration.addInstance("OnEvent", OnEventWorker.class);
         configuration.add("SupportsInformalParameters", new SupportsInformalParametersWorker());
         configuration.addInstance("InjectPage", InjectPageWorker.class);
@@ -722,7 +722,8 @@ public final class TapestryModule
         configuration.add(Calendar.class, "calendar");
     }
 
-    public static void contributeBeanBlockSource(Configuration<BeanBlockContribution> configuration)
+    @Contribute(BeanBlockSource.class)
+    public static void provideDefaultBeanBlocks(Configuration<BeanBlockContribution> configuration)
     {
         addEditBlock(configuration, "text");
         addEditBlock(configuration, "number");
@@ -752,7 +753,7 @@ public final class TapestryModule
 
     private static void addEditBlock(Configuration<BeanBlockContribution> configuration, String dataType, String blockId)
     {
-        configuration.add(new BeanBlockContribution(dataType, "PropertyEditBlocks", blockId, true));
+        configuration.add(new EditBlockContribution(dataType, "PropertyEditBlocks", blockId));
     }
 
     private static void addDisplayBlock(Configuration<BeanBlockContribution> configuration, String dataType)
@@ -763,7 +764,7 @@ public final class TapestryModule
     private static void addDisplayBlock(Configuration<BeanBlockContribution> configuration, String dataType,
             String blockId)
     {
-        configuration.add(new BeanBlockContribution(dataType, "PropertyDisplayBlocks", blockId, false));
+        configuration.add(new DisplayBlockContribution(dataType, "PropertyDisplayBlocks", blockId));
     }
 
     /**

@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,7 +21,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
  * A contribution to the {@link BeanBlockSource} service, defining a page name and block id (within the page) that can
  * edit or display a particular type of property.
  */
-public final class BeanBlockContribution
+public class BeanBlockContribution
 {
     private final String dataType;
 
@@ -31,6 +31,11 @@ public final class BeanBlockContribution
 
     private final boolean edit;
 
+    /**
+     * @deprecated Use {@link DisplayBlockContribution#DisplayBlockContribution(String, String, String)} or
+     *             {@link EditBlockContribution#EditorBlockContribution(String, String, String)} instead. To be
+     *             removed after Tapestry 5.2.
+     */
     public BeanBlockContribution(String dataType, String pageName, String blockId, boolean edit)
     {
         assert InternalUtils.isNonBlank(dataType);
@@ -45,7 +50,7 @@ public final class BeanBlockContribution
     /**
      * The type of data for which the indicated block will provide an editor or displayer for.
      */
-    public String getDataType()
+    public final String getDataType()
     {
         return dataType;
     }
@@ -53,7 +58,7 @@ public final class BeanBlockContribution
     /**
      * The id of the block within the page.
      */
-    public String getBlockId()
+    public final String getBlockId()
     {
         return blockId;
     }
@@ -63,7 +68,7 @@ public final class BeanBlockContribution
      * component (or set of field components). If false, the block is used to display the value of the property, usually
      * by applying some kind of formatting to the raw value.
      */
-    public boolean isEdit()
+    public final boolean isEdit()
     {
         return edit;
     }
@@ -71,7 +76,7 @@ public final class BeanBlockContribution
     /**
      * The logical name of the page containing the block.
      */
-    public String getPageName()
+    public final String getPageName()
     {
         return pageName;
     }
