@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,27 +17,36 @@ package org.apache.tapestry5.ioc.services;
 import static org.apache.tapestry5.ioc.OrderConstraintBuilder.after;
 import static org.apache.tapestry5.ioc.OrderConstraintBuilder.before;
 
-import org.apache.tapestry5.IOCSymbols;
+import java.io.File;
+import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.tapestry5.ioc.*;
-import org.apache.tapestry5.ioc.annotations.*;
+import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.IntermediateType;
+import org.apache.tapestry5.ioc.annotations.Local;
+import org.apache.tapestry5.ioc.annotations.Marker;
+import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.services.*;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.TimeInterval;
 import org.apache.tapestry5.services.UpdateListenerHub;
 
-import java.io.File;
-import java.lang.reflect.Array;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.*;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 /**
  * Defines the base set of services for the Tapestry IOC container.
  */
+@SuppressWarnings("all")
 @Marker(Builtin.class)
 public final class TapestryIOCModule
 {
@@ -98,29 +107,37 @@ public final class TapestryIOCModule
     /**
      * Contributes the "perthread" scope.
      */
-    public static void contributeServiceLifecycleSource(MappedConfiguration<String, ServiceLifecycle> configuration)
+    @Contribute(ServiceLifecycleSource.class)
+    public static void providePerthreadScope(MappedConfiguration<String, ServiceLifecycle> configuration)
     {
         configuration.addInstance(ScopeConstants.PERTHREAD, PerThreadServiceLifecycle.class);
     }
 
     /**
-     * <dl> <dt>AnnotationBasedContributions</dt> <dd>Empty placeholder used to seperate annotation-based ObjectProvider
-     * contributions (which come before) from non-annotation based (ServiceOverride here, Alias in tapestry-core) which
-     * come after. </dd> <dt>Value</dt> <dd>Supports the {@link org.apache.tapestry5.ioc.annotations.Value}
-     * annotation</dd> <dt>Symbol</dt> <dd>Supports the {@link org.apache.tapestry5.ioc.annotations.Symbol}
-     * annotations</dd> <dt>Autobuild</dt> <dd>Supports the {@link org.apache.tapestry5.ioc.annotations.Autobuild}
-     * annotation</dd> <dt>ServiceOverride</dt> <dd>Allows simple service overrides via the {@link
-     * org.apache.tapestry5.ioc.services.ServiceOverride} service (and its configuration)</dl>
+     * <dl>
+     * <dt>AnnotationBasedContributions</dt>
+     * <dd>Empty placeholder used to seperate annotation-based ObjectProvider contributions (which come before) from
+     * non-annotation based (ServiceOverride here, Alias in tapestry-core) which come after.</dd>
+     * <dt>Value</dt>
+     * <dd>Supports the {@link org.apache.tapestry5.ioc.annotations.Value} annotation</dd>
+     * <dt>Symbol</dt>
+     * <dd>Supports the {@link org.apache.tapestry5.ioc.annotations.Symbol} annotations</dd>
+     * <dt>Autobuild</dt>
+     * <dd>Supports the {@link org.apache.tapestry5.ioc.annotations.Autobuild} annotation</dd>
+     * <dt>ServiceOverride</dt>
+     * <dd>Allows simple service overrides via the {@link org.apache.tapestry5.ioc.services.ServiceOverride} service
+     * (and its configuration)
+     * </dl>
      */
-    public static void contributeMasterObjectProvider(OrderedConfiguration<ObjectProvider> configuration,
-                                                      @Local final ServiceOverride serviceOverride)
+    @Contribute(MasterObjectProvider.class)
+    public static void setupObjectProviders(OrderedConfiguration<ObjectProvider> configuration, @Local
+    final ServiceOverride serviceOverride)
     {
         configuration.add("AnnotationBasedContributions", null);
 
         configuration.addInstance("Value", ValueObjectProvider.class, before("AnnotationBasedContributions").build());
         configuration.addInstance("Symbol", SymbolObjectProvider.class, before("AnnotationBasedContributions").build());
         configuration.add("Autobuild", new AutobuildObjectProvider(), before("AnnotationBasedContributions").build());
-
 
         ObjectProvider wrapper = new ObjectProvider()
         {
@@ -134,20 +151,39 @@ public final class TapestryIOCModule
     }
 
     /**
-     * Contributes a set of standard type coercions to the {@link TypeCoercer} service: <ul> <li>Object to String</li>
-     * <li>String to Double</li> <li>String to BigDecimal</li> <li>BigDecimal to Double</li> <li>Double to
-     * BigDecimal</li> <li>String to BigInteger</li> <li>BigInteger to Long</li> <li>String to Long</li> <li>Long to
-     * Byte</li> <li>Long to Short</li> <li>Long to Integer</li> <li>Double to Long</li> <li>Double to Float</li>
-     * <li>Float to Double</li> <li>Long to Double</li> <li>String to Boolean ("false" is always false, other non-blank
-     * strings are true)</li> <li>Long to Boolean (true if long value is non zero)</li> <li>Null to Boolean (always
-     * false)</li> <li>Collection to Boolean (false if empty)</li> <li>Object[] to List</li> <li>primitive[] to
-     * List</li> <li>Object to List (by wrapping as a singleton list)</li>  <li>String to File</li> <li>String to {@link
-     * org.apache.tapestry5.ioc.util.TimeInterval}</li> <li>{@link org.apache.tapestry5.ioc.util.TimeInterval} to
-     * Long</li> <li>Object to Object[] (wrapping the object as an array)</li> <li>Collection to Object[] (via the
-     * toArray() method)</ul>
+     * Contributes a set of standard type coercions to the {@link TypeCoercer} service:
+     * <ul>
+     * <li>Object to String</li>
+     * <li>String to Double</li>
+     * <li>String to BigDecimal</li>
+     * <li>BigDecimal to Double</li>
+     * <li>Double to BigDecimal</li>
+     * <li>String to BigInteger</li>
+     * <li>BigInteger to Long</li>
+     * <li>String to Long</li>
+     * <li>Long to Byte</li>
+     * <li>Long to Short</li>
+     * <li>Long to Integer</li>
+     * <li>Double to Long</li>
+     * <li>Double to Float</li>
+     * <li>Float to Double</li>
+     * <li>Long to Double</li>
+     * <li>String to Boolean ("false" is always false, other non-blank strings are true)</li>
+     * <li>Long to Boolean (true if long value is non zero)</li>
+     * <li>Null to Boolean (always false)</li>
+     * <li>Collection to Boolean (false if empty)</li>
+     * <li>Object[] to List</li>
+     * <li>primitive[] to List</li>
+     * <li>Object to List (by wrapping as a singleton list)</li>
+     * <li>String to File</li>
+     * <li>String to {@link org.apache.tapestry5.ioc.util.TimeInterval}</li>
+     * <li>{@link org.apache.tapestry5.ioc.util.TimeInterval} to Long</li>
+     * <li>Object to Object[] (wrapping the object as an array)</li>
+     * <li>Collection to Object[] (via the toArray() method)
+     * </ul>
      */
-    @SuppressWarnings("unchecked")
-    public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration)
+    @Contribute(TypeCoercer.class)
+    public static void provideBasicTypeCoercions(Configuration<CoercionTuple> configuration)
     {
         add(configuration, Object.class, String.class, new Coercion<Object, String>()
         {
@@ -254,7 +290,8 @@ public final class TapestryIOCModule
             {
                 String trimmed = input == null ? "" : input.trim();
 
-                if (trimmed.equalsIgnoreCase("false") || trimmed.length() == 0) return false;
+                if (trimmed.equalsIgnoreCase("false") || trimmed.length() == 0)
+                    return false;
 
                 // Any non-blank string but "false"
 
@@ -277,7 +314,6 @@ public final class TapestryIOCModule
                 return false;
             }
         });
-
 
         add(configuration, Collection.class, Boolean.class, new Coercion<Collection, Boolean>()
         {
@@ -362,7 +398,8 @@ public final class TapestryIOCModule
         {
             public Object[] coerce(Object input)
             {
-                return new Object[] { input };
+                return new Object[]
+                { input };
             }
         });
 
@@ -375,51 +412,52 @@ public final class TapestryIOCModule
         });
     }
 
-    private static <S, T> void add(Configuration<CoercionTuple> configuration, Class<S> sourceType, Class<T> targetType,
-                                   Coercion<S, T> coercion)
+    private static <S, T> void add(Configuration<CoercionTuple> configuration, Class<S> sourceType,
+            Class<T> targetType, Coercion<S, T> coercion)
     {
         CoercionTuple<S, T> tuple = new CoercionTuple<S, T>(sourceType, targetType, coercion);
 
         configuration.add(tuple);
     }
 
-    public static void contributeSymbolSource(OrderedConfiguration<SymbolProvider> configuration,
-                                              @ApplicationDefaults SymbolProvider applicationDefaults,
+    @Contribute(SymbolSource.class)
+    public static void setupStandardSymbolProviders(OrderedConfiguration<SymbolProvider> configuration,
+            @ApplicationDefaults
+            SymbolProvider applicationDefaults,
 
-                                              @FactoryDefaults SymbolProvider factoryDefaults)
+            @FactoryDefaults
+            SymbolProvider factoryDefaults)
     {
         configuration.add("SystemProperties", new SystemPropertiesSymbolProvider(), "before:*");
         configuration.add("ApplicationDefaults", applicationDefaults, "after:SystemProperties");
         configuration.add("FactoryDefaults", factoryDefaults, "after:ApplicationDefaults");
     }
 
-    public static ParallelExecutor buildDeferredExecution(
-            @Symbol(IOCSymbols.THREAD_POOL_CORE_SIZE)
-            int coreSize,
+    public static ParallelExecutor buildDeferredExecution(@Symbol(IOCSymbols.THREAD_POOL_CORE_SIZE)
+    int coreSize,
 
-            @Symbol(IOCSymbols.THREAD_POOL_MAX_SIZE)
-            int maxSize,
+    @Symbol(IOCSymbols.THREAD_POOL_MAX_SIZE)
+    int maxSize,
 
-            @Symbol(IOCSymbols.THREAD_POOL_KEEP_ALIVE)
-            @IntermediateType(TimeInterval.class)
-            int keepAliveMillis,
+    @Symbol(IOCSymbols.THREAD_POOL_KEEP_ALIVE)
+    @IntermediateType(TimeInterval.class)
+    int keepAliveMillis,
 
-            @Symbol(IOCSymbols.THREAD_POOL_ENABLED)
-            boolean threadPoolEnabled,
+    @Symbol(IOCSymbols.THREAD_POOL_ENABLED)
+    boolean threadPoolEnabled,
 
-            PerthreadManager perthreadManager,
+    PerthreadManager perthreadManager,
 
-            RegistryShutdownHub shutdownHub,
+    RegistryShutdownHub shutdownHub,
 
-            ThunkCreator thunkCreator)
+    ThunkCreator thunkCreator)
     {
 
         if (!threadPoolEnabled)
             return new NonParallelExecutor();
 
-        final ThreadPoolExecutor executorService = new ThreadPoolExecutor(coreSize, maxSize,
-                                                                          keepAliveMillis, TimeUnit.MILLISECONDS,
-                                                                          new LinkedBlockingQueue());
+        final ThreadPoolExecutor executorService = new ThreadPoolExecutor(coreSize, maxSize, keepAliveMillis,
+                TimeUnit.MILLISECONDS, new LinkedBlockingQueue());
 
         shutdownHub.addRegistryShutdownListener(new RegistryShutdownListener()
         {
@@ -432,7 +470,9 @@ public final class TapestryIOCModule
         return new ParallelExecutorImpl(executorService, thunkCreator, perthreadManager);
     }
 
-    public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
+    @Contribute(SymbolProvider.class)
+    @FactoryDefaults
+    public static void setupDefaultSymbols(MappedConfiguration<String, String> configuration)
     {
         configuration.add(IOCSymbols.THREAD_POOL_CORE_SIZE, "3");
         configuration.add(IOCSymbols.THREAD_POOL_MAX_SIZE, "20");

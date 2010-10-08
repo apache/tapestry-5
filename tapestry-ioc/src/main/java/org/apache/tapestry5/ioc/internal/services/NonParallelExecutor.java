@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
- * Implementation of {@link ParallelExecutor} used when {@linkplain org.apache.tapestry5.IOCSymbols#THREAD_POOL_ENABLED
+ * Implementation of {@link ParallelExecutor} used when {@linkplain org.apache.tapestry5.ioc.IOCSymbols#THREAD_POOL_ENABLED
  * the thread pool is disabled}.
  *
  * @since 5.1.0.3

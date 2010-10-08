@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -54,11 +52,15 @@ import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.Coercion;
 
 /**
- * Utilities used within various internal implementations of Tapestry IOC and the rest of the tapestry-core framework.
+ * Utilities used within various internal implementations of the tapestry-ioc module.
  */
 @SuppressWarnings("all")
 public class InternalUtils
 {
+    /** @since 5.2.2 */
+    public static final boolean SERVICE_CLASS_RELOADING_ENABLED = Boolean.parseBoolean(System.getProperty(
+            IOCConstants.SERVICE_CLASS_RELOADING_ENABLED, "true"));
+
     /**
      * Leading punctuation on member names that is stripped off to form a property name or new member name.
      */
@@ -158,7 +160,7 @@ public class InternalUtils
      */
     public static List<String> toList(Enumeration e)
     {
-        List<String> result = newList();
+        List<String> result = CollectionFactory.newList();
 
         while (e.hasMoreElements())
         {
@@ -481,7 +483,7 @@ public class InternalUtils
         if (elements == null || elements.isEmpty())
             return "(none)";
 
-        List<String> list = newList();
+        List<String> list = CollectionFactory.newList();
 
         for (Object o : elements)
             list.add(String.valueOf(o));
@@ -559,7 +561,7 @@ public class InternalUtils
         if (map == null)
             return Collections.emptyList();
 
-        List<String> keys = newList();
+        List<String> keys = CollectionFactory.newList();
 
         for (Object o : map.keySet())
             keys.add(String.valueOf(o));
@@ -705,7 +707,7 @@ public class InternalUtils
 
     /**
      * Adds a value to a specially organized map where the values are lists of objects. This somewhat simulates a map
-     * that allows mutiple values for the same key.
+     * that allows multiple values for the same key.
      * 
      * @param map
      *            to store value into
@@ -724,7 +726,7 @@ public class InternalUtils
 
         if (list == null)
         {
-            list = newList();
+            list = CollectionFactory.newList();
             map.put(key, list);
         }
 
@@ -798,7 +800,7 @@ public class InternalUtils
                                     + "You should make the constructor public, or mark an alternate public constructor with the @Inject annotation.",
                             constructor));
     }
-    
+
     public static InternalServiceDef toInternalServiceDef(final ServiceDef sd)
     {
         if (sd instanceof InternalServiceDef)
@@ -840,7 +842,7 @@ public class InternalUtils
             {
                 return sd.isEagerLoad();
             }
-            
+
             public Class getImplementationClass()
             {
                 return null;
@@ -1078,7 +1080,7 @@ public class InternalUtils
 
     /**
      * Generates a unique value for the current execution of the application. This initial UUID value
-     * is not easily predicatable; subsequent UUIDs are allocated in ascending series.
+     * is not easily predictable; subsequent UUIDs are allocated in ascending series.
      * 
      * @since 5.2.0
      */
@@ -1086,4 +1088,5 @@ public class InternalUtils
     {
         return uuidGenerator.incrementAndGet();
     }
+
 }

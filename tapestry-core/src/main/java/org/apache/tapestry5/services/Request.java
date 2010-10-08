@@ -29,7 +29,7 @@ public interface Request
 {
     /**
      * Gets the {@link Session}. If create is false and the session has not be created previously, returns null. Also,
-     * if the session is invalided and create is false, returns null.
+     * if the session is invalidated and create is false, returns null.
      * 
      * @param create
      *            true to force the creation of the session

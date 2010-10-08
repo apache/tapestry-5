@@ -127,7 +127,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     private ObjectCreatorSource createObjectCreatorSourceFromImplementationClass()
     {
-        if (!preventReloading && isProxiable() && reloadableScope() && InternalUtils.isLocalFile(serviceImplementation))
+        if (InternalUtils.SERVICE_CLASS_RELOADING_ENABLED && !preventReloading && isProxiable() && reloadableScope() && InternalUtils.isLocalFile(serviceImplementation))
             return createReloadableConstructorBasedObjectCreatorSource();
 
         return createStandardConstructorBasedObjectCreatorSource();

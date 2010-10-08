@@ -996,7 +996,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     {
         assert interfaceClass != null;
         assert implementationClass != null;
-        if (InternalUtils.isLocalFile(implementationClass))
+        
+        if (InternalUtils.SERVICE_CLASS_RELOADING_ENABLED && InternalUtils.isLocalFile(implementationClass))
             return createReloadingProxy(interfaceClass, implementationClass, locator);
 
         return createNonReloadingProxy(interfaceClass, implementationClass, locator);
