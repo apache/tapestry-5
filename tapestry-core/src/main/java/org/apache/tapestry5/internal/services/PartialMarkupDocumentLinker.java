@@ -28,8 +28,6 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
 
     private final JSONArray stylesheets = new JSONArray();
 
-    private final Map<InitializationPriority, StringBuilder> priorityToScript = CollectionFactory.newMap();
-
     private final Map<InitializationPriority, JSONObject> priorityToInits = CollectionFactory.newMap();
 
     public void addScriptLink(String scriptURL)
@@ -50,16 +48,8 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
 
     public void addScript(InitializationPriority priority, String script)
     {
-        StringBuilder builder = priorityToScript.get(priority);
-
-        if (builder == null)
-        {
-            builder = new StringBuilder();
-            priorityToScript.put(priority, builder);
-        }
-
-        builder.append(script);
-        builder.append("\n");
+        throw new UnsupportedOperationException(
+                "DocumentLinker.addScript() is not implemented for partial page renders.");
     }
 
     public void setInitialization(InitializationPriority priority, JSONObject initialization)
@@ -81,24 +71,15 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
         if (stylesheets.length() > 0)
             reply.put("stylesheets", stylesheets);
 
-        StringBuilder master = new StringBuilder();
         JSONArray inits = new JSONArray();
 
         for (InitializationPriority p : InitializationPriority.values())
         {
-            StringBuilder builder = priorityToScript.get(p);
-
-            if (builder != null)
-                master.append(builder);
-
             JSONObject init = priorityToInits.get(p);
 
             if (init != null)
                 inits.put(init);
         }
-
-        if (master.length() > 0)
-            reply.put("script", master.toString());
 
         if (inits.length() > 0)
             reply.put("inits", inits);

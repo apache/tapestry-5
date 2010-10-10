@@ -24,36 +24,14 @@ import org.testng.annotations.Test;
 
 public class PartialMarkupDocumentLinkerTest extends Assert
 {
-    @Test
+    @Test(expectedExceptions = UnsupportedOperationException.class)
     public void script()
     {
         PartialMarkupDocumentLinker linker = new PartialMarkupDocumentLinker();
 
         linker.addScript(InitializationPriority.NORMAL, "foo();");
-        linker.addScript(InitializationPriority.NORMAL, "bar();");
 
-        JSONObject reply = new JSONObject();
-
-        linker.commit(reply);
-
-        assertEquals(reply.get("script"), "foo();\nbar();\n");
-    }
-
-    @Test
-    public void script_with_priorty()
-    {
-        PartialMarkupDocumentLinker linker = new PartialMarkupDocumentLinker();
-
-        linker.addScript(InitializationPriority.LATE, "late();");
-        linker.addScript(InitializationPriority.NORMAL, "normal();");
-        linker.addScript(InitializationPriority.IMMEDIATE, "immediate();");
-        linker.addScript(InitializationPriority.EARLY, "early();");
-
-        JSONObject reply = new JSONObject();
-
-        linker.commit(reply);
-
-        assertEquals(reply.get("script"), "immediate();\nearly();\nnormal();\nlate();\n");
+        throw new IllegalStateException("Unreachable code.");
     }
 
     @Test

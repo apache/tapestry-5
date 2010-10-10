@@ -61,6 +61,8 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
     private final JavaScriptStackPathConstructor stackPathConstructor;
 
+    private final boolean partialMode;
+
     private FieldFocusPriority focusPriority;
 
     private String focusFieldId;
@@ -71,6 +73,24 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         this(linker, javascriptStackSource, stackPathConstructor, new IdAllocator(), false);
     }
 
+    /**
+     * @param linker
+     *            responsible for assembling all the information gathered by JavaScriptSupport and
+     *            attaching it to the Document (for a full page render) or to the JSON response (in a partial render)
+     * @param javascriptStackSource
+     *            source of information about {@link JavaScriptStack}s, used when handling the import
+     *            of libraries and stacks (often, to handle transitive dependencies)
+     * @param stackPathConstructor
+     *            encapsulates the knowledge of how to represent a stack (which may be converted
+     *            from a series of JavaScript libraries into a single virtual JavaScript library)
+     * @param idAllocator
+     *            used when allocating unique ids (it is usually pre-initialized in an Ajax request to ensure
+     *            that newly allocated ids do not conflict with previous renders and partial updates)
+     * @param partialMode
+     *            if true, then the JSS configures itself for a partial page render (part of an Ajax request)
+     *            which automatically assumes the "core" library has been added (to the original page render)
+     *            and makes other minor changes to behavior.
+     */
     public JavaScriptSupportImpl(DocumentLinker linker, JavaScriptStackSource javascriptStackSource,
             JavaScriptStackPathConstructor stackPathConstructor, IdAllocator idAllocator, boolean partialMode)
     {
@@ -78,6 +98,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         this.idAllocator = idAllocator;
         this.javascriptStackSource = javascriptStackSource;
         this.stackPathConstructor = stackPathConstructor;
+        this.partialMode = partialMode;
 
         // In partial mode, assume that the infrastructure stack is already present
         // (from the original page render).
@@ -167,13 +188,21 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
     public void addScript(InitializationPriority priority, String format, Object... arguments)
     {
-        addCoreStackIfNeeded();
         assert priority != null;
         assert InternalUtils.isNonBlank(format);
 
+        addCoreStackIfNeeded();
+
         String newScript = arguments.length == 0 ? format : String.format(format, arguments);
 
-        linker.addScript(priority, newScript);
+        if (partialMode)
+        {
+            addInitializerCall(priority, "evalScript", newScript);
+        }
+        else
+        {
+            linker.addScript(priority, newScript);
+        }
     }
 
     public void addScript(String format, Object... arguments)
@@ -266,12 +295,12 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
         stylesheetLinks.addAll(stack.getStylesheets());
 
+        addedStacks.put(stackName, true);
+
         String initialization = stack.getInitialization();
 
         if (initialization != null)
-            linker.addScript(InitializationPriority.IMMEDIATE, initialization);
-
-        addedStacks.put(stackName, true);
+            addScript(InitializationPriority.IMMEDIATE, initialization);
     }
 
     public void importStylesheet(Asset stylesheet)

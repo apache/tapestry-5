@@ -89,6 +89,11 @@ var Tapestry = {
 	/** Time, in seconds, that console messages are visible. */
 	CONSOLE_DURATION : 10,
 
+	/** CSS Class added to a <form> element that directs Tapestry to prevent normal
+	 *  (HTTP POST) form submission, in favor of Ajax (XmlHttpRequest) submission.
+	 */
+	PREVENT_SUBMISSION : "t-prevent-submission",
+	
 	/** Initially, false, set to true once the page is fully loaded. */
 	pageLoaded : false,
 
@@ -153,7 +158,7 @@ var Tapestry = {
 
 	},
 
-	/*
+	/**
 	 * Adds a callback function that will be invoked when the DOM is loaded
 	 * (which occurs *before* window.onload, which has to wait for images and
 	 * such to load first. This simply observes the dom:loaded event on the
@@ -297,8 +302,9 @@ var Tapestry = {
 	 * <dl>
 	 * <dt>redirectURL</dt>
 	 * <dd>URL to redirect to (in which case, the callback is not invoked)</dd>
-	 * <dt>scripts</dt>
-	 * <dd>Array of strings (URIs of scripts)</dd>
+	 * <dt>inits</dt>
+	 * <dd>Defines a set of calls to Tapestry.init() to perform initialization after the DOM
+	 * has been updated.</dd>
 	 * <dt>stylesheets</dt>
 	 * <dd>Array of hashes, each hash has key href and optional key media</dd>
 	 * 
@@ -325,34 +331,31 @@ var Tapestry = {
 			/* Let the caller do its thing first (i.e., modify the DOM). */
 			callback.call(this);
 
-			Tapestry.executeReplyScripts(reply.script, reply.inits);
+			/* And handle the scripts after the DOM is updated. */
+			Tapestry.executeInits(reply.inits);
 		});
 	},
 
 	/**
-	 * Called from Tapestry.loadScriptsInReply to load the script block and any
+	 * Called from Tapestry.loadScriptsInReply to load  any
 	 * initializations from the Ajax partial page render response. Calls
-	 * Tapestry.onDomLoadedCallback() last.
+	 * Tapestry.onDomLoadedCallback() last. This logic must be deferred
+	 * until after the DOM is fully updated, as initialization often
+	 * refer to DOM elements.
 	 * 
-	 * @param scriptBlock
-	 *            block of JavaScript to evaluate (may be null)
 	 * @param initializations
 	 *            array of parameters to pass to Tapestry.init(), one invocation
 	 *            per element (may be null)
 	 */
-	executeReplyScripts : function(scriptBlock, initializations) {
+	executeInits : function(initializations) {
 
-		if (scriptBlock)
-			eval(scriptBlock);
-
-		if (initializations)
-			$A(initializations).each(function(spec) {
-				Tapestry.init(spec);
-			});
+		$A(initializations).each(function(spec) {
+			Tapestry.init(spec);
+		});
 
 		Tapestry.onDomLoadedCallback();
-
 	},
+	
 
 	/**
 	 * Default function for handling a communication error during an Ajax
@@ -917,6 +920,13 @@ Tapestry.Initializer = {
 		$(id).activate();
 	},
 
+	/**
+	 * evalScript is a synonym for the JavaScript eval function. It is used
+	 * in Ajax requests to handle any setup code that does not
+	 * fit into a standard Tapestry.Initializer call.
+	 */
+	evalScript : eval,
+	
 	ajaxFormLoop : function(spec) {
 		var rowInjector = $(spec.rowInjector);
 
@@ -1012,8 +1022,8 @@ Tapestry.Initializer = {
 
 		if (element.tagName == "FORM") {
 
-			element.getFormEventManager().preventSubmission = true;
-
+			element.addClassName(Tapestry.PREVENT_SUBMISSION);
+			
 			/*
 			 * After the form is validated and prepared, this code will process
 			 * the form submission via an Ajax call. The original submit event
@@ -1477,7 +1487,7 @@ Tapestry.FormEventManager = Class.create( {
 
 	handleSubmit : function(domevent) {
 
-		/**
+		/*
 		 * Necessary because we set the onsubmit property of the form, rather
 		 * than observing the event. But that's because we want to specfically
 		 * overwrite any other handlers.
@@ -1527,7 +1537,7 @@ Tapestry.FormEventManager = Class.create( {
 		 * via Ajax.Request.
 		 */
 
-		if (this.preventSubmission) {
+		if (this.form.hasClassName(Tapestry.PREVENT_SUBMISSION)) {
 			domevent.stop();
 
 			/*
@@ -2081,9 +2091,9 @@ Tapestry.ScriptManager = {
  * In the spirit of $(), $T() exists to access a hash of extra data about an
  * element. In release 5.1 and prior, a hash attached to the element by Tapestry
  * was returned. In 5.2, Prototype's storage object is returned, which is less
- * like to cause memory leaks in IE.
+ * likely to cause memory leaks in IE.
  * 
- * @deprecated With no specific replacement
+ * @deprecated With no specific replacement. To be removed after Tapestry 5.2.
  * @param element
  *            an element instance or element id
  * @return object Prototype storage object for the element

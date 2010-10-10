@@ -65,11 +65,12 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void no_stack_or_dom_loading_callback_in_partial_mode()
+    public void partial_mode_add_script()
     {
         DocumentLinker linker = mockDocumentLinker();
 
-        linker.addScript(InitializationPriority.NORMAL, "doSomething();");
+        linker.setInitialization(InitializationPriority.NORMAL, new JSONObject(
+                "{ 'evalScript' : [ 'doSomething();' ] }"));
 
         replay();
 
