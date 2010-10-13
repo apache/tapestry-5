@@ -1022,6 +1022,8 @@ Tapestry.Initializer = {
 
 		if (element.tagName == "FORM") {
 
+			// Create the FEM if necessary.
+			element.getFormEventManager();
 			element.addClassName(Tapestry.PREVENT_SUBMISSION);
 			
 			/*
