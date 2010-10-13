@@ -1,10 +1,10 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -113,6 +113,25 @@ public class PropertyShadowBuilderImplTest extends IOCTestCase
     }
 
     @Test
+    public void property_is_null()
+    {
+        FooHolder holder = new FooHolder();
+
+        Foo shadow = builder.build(holder, "foo", Foo.class);
+
+        try
+        {
+            shadow.foo();
+            unreachable();
+        }
+        catch (NullPointerException ex)
+        {
+            assertEquals(ex.getMessage(),
+                    "Unable to delegate method invocation to property 'foo' of [FooHolder], because the property is null.");
+        }
+    }
+
+    @Test
     public void property_does_not_exist()
     {
         FooHolder holder = new FooHolder();
@@ -124,8 +143,7 @@ public class PropertyShadowBuilderImplTest extends IOCTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(ex.getMessage(),
-                         "Class " + CLASS_NAME + "$FooHolder does not contain a property named 'bar'.");
+            assertEquals(ex.getMessage(), "Class " + CLASS_NAME + "$FooHolder does not contain a property named 'bar'.");
         }
     }
 
@@ -141,8 +159,8 @@ public class PropertyShadowBuilderImplTest extends IOCTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(ex.getMessage(),
-                         "Property 'count' of class " + CLASS_NAME + "$FooHolder is of type int, which is not assignable to type java.util.Map.");
+            assertEquals(ex.getMessage(), "Property 'count' of class " + CLASS_NAME
+                    + "$FooHolder is of type int, which is not assignable to type java.util.Map.");
         }
     }
 
@@ -158,8 +176,8 @@ public class PropertyShadowBuilderImplTest extends IOCTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(ex.getMessage(),
-                         "Class " + CLASS_NAME + "$FooHolder does not provide an accessor ('getter') method for property 'writeOnly'.");
+            assertEquals(ex.getMessage(), "Class " + CLASS_NAME
+                    + "$FooHolder does not provide an accessor ('getter') method for property 'writeOnly'.");
         }
     }
 }
