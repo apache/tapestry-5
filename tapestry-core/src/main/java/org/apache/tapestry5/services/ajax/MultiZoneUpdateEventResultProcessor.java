@@ -14,18 +14,16 @@
 
 package org.apache.tapestry5.services.ajax;
 
-import org.apache.tapestry5.MarkupWriter;
+import java.io.IOException;
+import java.util.Map;
+
 import org.apache.tapestry5.ajax.MultiZoneUpdate;
 import org.apache.tapestry5.internal.services.PageRenderQueue;
 import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateController;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.runtime.RenderCommand;
-import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
-
-import java.io.IOException;
-import java.util.Map;
 
 /**
  * Handler for {@link org.apache.tapestry5.ajax.MultiZoneUpdate} responses from a component event handler method. Works
@@ -56,14 +54,7 @@ public class MultiZoneUpdateEventResultProcessor implements ComponentEventResult
 
     public void processResultValue(final MultiZoneUpdate value) throws IOException
     {
-        // There has to be at least a single command in the queue to force a render.
-        queue.initializeForPartialPageRender(new RenderCommand()
-        {
-            public void render(MarkupWriter writer, RenderQueue queue)
-            {
-            }
-        });
-
+        queue.forcePartialRenderInitialized();
         queue.addPartialMarkupRendererFilter(new SetupZonesFilter());
 
         Map<String, Object> map = value.getZoneToRenderMap();

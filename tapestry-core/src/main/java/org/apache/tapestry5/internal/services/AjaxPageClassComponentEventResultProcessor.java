@@ -1,4 +1,4 @@
-//  Copyright 2008 The Apache Software Foundation
+//  Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import java.io.IOException;
  * @see org.apache.tapestry5.services.ComponentSource
  * @see org.apache.tapestry5.internal.services.AjaxPageNameComponentEventResultProcessor
  */
+@SuppressWarnings("all")
 public class AjaxPageClassComponentEventResultProcessor implements ComponentEventResultProcessor<Class>
 {
     private final ComponentSource componentSource;

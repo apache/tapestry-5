@@ -1818,8 +1818,14 @@ public final class TapestryModule
      * <dt>{@link org.apache.tapestry5.ajax.MultiZoneUpdate}</dt>
      * <dd>Sends a single JSON response to update the content of multiple zones
      * </dl>
+     * <p>
+     * In most cases, when you want to support a new type, you should convert it to one of the built-in supported types
+     * (such as {@link RenderCommand}. You can then inject the master AjaxComponentEventResultProcessor (use the
+     * {@link Ajax} marker annotation) and delegate to it.
      */
-    public static void contributeAjaxComponentEventResultProcessor(
+    @Contribute(ComponentEventResultProcessor.class)
+    @Ajax
+    public static void provideBaseAjaxComponentEventResultProcessors(
             MappedConfiguration<Class, ComponentEventResultProcessor> configuration)
     {
         configuration.addInstance(RenderCommand.class, RenderCommandComponentEventResultProcessor.class);

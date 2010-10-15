@@ -89,8 +89,13 @@ public class SingleZonePartialRendererFilter implements PartialMarkupRendererFil
 
         RenderCommand existing = queue.getRootRenderCommand();
 
-        queue.initializeForPartialPageRender(new CombinedRenderCommand(existing, forZone));
+        queue.initializeForPartialPageRender(mergeRenderCommands(existing, forZone));
 
         renderer.renderMarkup(writer, reply);
+    }
+
+    private RenderCommand mergeRenderCommands(RenderCommand existingCommand, RenderCommand newCommand)
+    {
+        return existingCommand == null ? newCommand : new CombinedRenderCommand(existingCommand, newCommand);
     }
 }

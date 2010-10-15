@@ -1,4 +1,4 @@
-//  Copyright 2008 The Apache Software Foundation
+//  Copyright 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.io.IOException;
 /**
  * Handles {@link org.apache.tapestry5.Link} result types by building a JSON response with key "redirectURL".
  */
+@SuppressWarnings("all")
 public class AjaxLinkComponentEventResultProcessor implements ComponentEventResultProcessor<Link>
 {
     private final ComponentEventResultProcessor masterProcessor;

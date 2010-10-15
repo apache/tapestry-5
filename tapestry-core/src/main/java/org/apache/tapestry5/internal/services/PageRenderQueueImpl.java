@@ -41,6 +41,8 @@ public class PageRenderQueueImpl implements PageRenderQueue
 
     private RenderCommand rootCommand;
 
+    private boolean partialRenderInitialized;
+
     private final Stack<PartialMarkupRendererFilter> filters = CollectionFactory.newStack();
 
     private static class Bridge implements PartialMarkupRenderer
@@ -80,16 +82,24 @@ public class PageRenderQueueImpl implements PageRenderQueue
 
     public boolean isPartialRenderInitialized()
     {
-        return rootCommand != null;
+        return partialRenderInitialized;
+    }
+
+    public void forcePartialRenderInitialized()
+    {
+        partialRenderInitialized = true;
     }
 
     public void initializeForPartialPageRender(RenderCommand rootCommand)
     {
         assert rootCommand != null;
+
         if (page == null)
             throw new IllegalStateException("Page must be specified before root render command.");
 
         this.rootCommand = rootCommand;
+
+        partialRenderInitialized = true;
     }
 
     public RenderCommand getRootRenderCommand()
@@ -120,6 +130,7 @@ public class PageRenderQueueImpl implements PageRenderQueue
     public void addPartialMarkupRendererFilter(PartialMarkupRendererFilter filter)
     {
         assert filter != null;
+
         filters.push(filter);
     }
 

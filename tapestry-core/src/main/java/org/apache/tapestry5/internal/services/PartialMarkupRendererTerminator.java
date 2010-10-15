@@ -1,4 +1,4 @@
-// Copyright 2009 Apache Software Foundation
+// Copyright 2009, 2010 Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.PartialMarkupRenderer;
 
@@ -37,17 +36,14 @@ public class PartialMarkupRendererTerminator implements PartialMarkupRenderer
 
     public void renderMarkup(MarkupWriter writer, JSONObject reply)
     {
-        // The partial will quite often contain multiple elements (or just a block of plain text),
-        // so those must be enclosed in a root element.
+        // Ensure that whatever renders will do so inside a root element.
+        // Omitting this causes NPEs when rendering individual zones
+        // of a MultiZoneUpdate
 
-        Element root = writer.element("ajax-partial");
+        writer.element("partial-render-root-element");
 
         renderQueue.renderPartial(writer, reply);
 
         writer.end();
-
-        String content = root.getChildMarkup().trim();
-
-        reply.put("content", content);
     }
 }

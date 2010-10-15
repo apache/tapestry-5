@@ -14,13 +14,16 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateController;
-import org.apache.tapestry5.runtime.RenderCommand;
-import org.apache.tapestry5.runtime.RenderQueue;
-import org.apache.tapestry5.services.ComponentEventResultProcessor;
-
 import java.io.IOException;
+
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateController;
+import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.runtime.RenderCommand;
+import org.apache.tapestry5.services.ComponentEventResultProcessor;
+import org.apache.tapestry5.services.PartialMarkupRenderer;
+import org.apache.tapestry5.services.PartialMarkupRendererFilter;
 
 /**
  * Processor for objects that implement {@link RenderCommand} (such as
@@ -28,27 +31,12 @@ import java.io.IOException;
  * 
  * @see AjaxPartialResponseRenderer#renderPartialPageMarkup()
  */
-public class RenderCommandComponentEventResultProcessor implements ComponentEventResultProcessor<RenderCommand>
+public class RenderCommandComponentEventResultProcessor implements ComponentEventResultProcessor<RenderCommand>,
+        PartialMarkupRendererFilter
 {
     private final PageRenderQueue pageRenderQueue;
 
     private final AjaxFormUpdateController ajaxFormUpdateController;
-
-    private final RenderCommand setup = new RenderCommand()
-    {
-        public void render(MarkupWriter writer, RenderQueue queue)
-        {
-            ajaxFormUpdateController.setupBeforePartialZoneRender(writer);
-        }
-    };
-
-    private final RenderCommand cleanup = new RenderCommand()
-    {
-        public void render(MarkupWriter writer, RenderQueue queue)
-        {
-            ajaxFormUpdateController.cleanupAfterPartialZoneRender();
-        }
-    };
 
     public RenderCommandComponentEventResultProcessor(PageRenderQueue pageRenderQueue,
             AjaxFormUpdateController ajaxFormUpdateController)
@@ -59,16 +47,35 @@ public class RenderCommandComponentEventResultProcessor implements ComponentEven
 
     public void processResultValue(final RenderCommand value) throws IOException
     {
-        RenderCommand wrapper = new RenderCommand()
-        {
-            public void render(MarkupWriter writer, RenderQueue queue)
-            {
-                queue.push(cleanup);
-                queue.push(value);
-                queue.push(setup);
-            }
-        };
+        pageRenderQueue.addPartialMarkupRendererFilter(this);
+        pageRenderQueue.initializeForPartialPageRender(value);
+    }
 
-        pageRenderQueue.initializeForPartialPageRender(wrapper);
+    /**
+     * As a filter, this class does three things:
+     * <ul>
+     * <li>It creates an outer element to capture the partial page content that will be rendered</li>
+     * <li>It does setup and cleanup with the {@link AjaxFormUpdateController}</li>
+     * <li>It extracts the child markup and stuff it into the reply's "content" property.</li>
+     * </ul>
+     */
+    public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
+    {
+        // The partial will quite often contain multiple elements (or just a block of plain text),
+        // so those must be enclosed in a root element.
+
+        Element root = writer.element("ajax-partial");
+
+        ajaxFormUpdateController.setupBeforePartialZoneRender(writer);
+
+        renderer.renderMarkup(writer, reply);
+
+        ajaxFormUpdateController.cleanupAfterPartialZoneRender();
+
+        writer.end();
+
+        String content = root.getChildMarkup().trim();
+
+        reply.put("content", content);
     }
 }
