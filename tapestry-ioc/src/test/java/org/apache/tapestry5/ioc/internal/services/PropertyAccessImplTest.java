@@ -233,6 +233,56 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     {
     }
 
+    public static interface BeanInterface
+    {
+        String getValue();
+
+        void setValue(String v);
+
+        String getOtherValue();
+
+        void setOtherValue(String v);
+
+        int getIntValue(); // read-only
+    }
+
+    public static abstract class AbstractBean implements BeanInterface
+    {
+        // abstract class implements method from interface
+        private String other;
+        public String getOtherValue()
+        {
+            return other;
+        }
+
+        public void setOtherValue(String v)
+        {
+            other = v;
+        }
+    }
+
+    public static class ConcreteBean extends AbstractBean
+    {
+        private String value;
+        private int intValue;
+
+        public ConcreteBean(int intValue) {
+            this.intValue = intValue;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String v) {
+            value = v;
+        }
+
+        public int getIntValue() {
+            return intValue;
+        }
+    }
+
     @Test
     public void simple_read_access()
     {
@@ -654,6 +704,41 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
 
         assertEquals(pa.get(bean), "wilma");
     }
+
+    @Test
+    public void access_property_from_unimplemented_interface_in_abstract_base_class()
+    {
+        AbstractBean bean = new ConcreteBean(33);
+
+        PropertyAdapter valueAdapter = access.getAdapter(AbstractBean.class).getPropertyAdapter("value");
+
+        assertNotNull(valueAdapter);
+        assertFalse(valueAdapter.isField());
+
+        valueAdapter.set(bean, "Hello");
+
+        assertSame(valueAdapter.get(bean), "Hello");
+        assertSame(bean.getValue(), "Hello");
+
+        PropertyAdapter otherValueAdapter = access.getAdapter(AbstractBean.class).getPropertyAdapter("otherValue");
+
+        assertNotNull(otherValueAdapter);
+        assertFalse(otherValueAdapter.isField());
+
+        otherValueAdapter.set(bean, "Other Value");
+
+        assertSame(otherValueAdapter.get(bean), "Other Value");
+        assertSame(bean.getOtherValue(), "Other Value");
+
+        PropertyAdapter intValueAdapter = access.getAdapter(AbstractBean.class).getPropertyAdapter("intvalue");
+        assertNotNull(intValueAdapter);
+
+        assertEquals(intValueAdapter.get(bean), 33);
+
+        assertTrue(intValueAdapter.isRead());
+        assertFalse(intValueAdapter.isUpdate());
+    }
+
 
     @Test
     public void generic_field_is_recognized()

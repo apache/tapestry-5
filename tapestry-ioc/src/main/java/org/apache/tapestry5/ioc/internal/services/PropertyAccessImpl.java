@@ -90,7 +90,8 @@ public class PropertyAccessImpl implements PropertyAccess
 
             addAll(descriptors, info.getPropertyDescriptors());
 
-            if (forClass.isInterface())
+            // TAP5-921 - Introspector misses interface methods not implemented in an abstract class
+            if (forClass.isInterface() || Modifier.isAbstract(forClass.getModifiers()) )
                 addPropertiesFromExtendedInterfaces(forClass, descriptors);
 
             addPropertiesFromScala(forClass, descriptors);
@@ -122,6 +123,8 @@ public class PropertyAccessImpl implements PropertyAccess
 
             BeanInfo info = Introspector.getBeanInfo(c);
 
+            // Duplicates occur and are filtered out in ClassPropertyAdapter which stores
+            // a property name to descriptor map.
             addAll(descriptors, info.getPropertyDescriptors());
             addAll(queue, c.getInterfaces());
         }
