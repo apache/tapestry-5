@@ -378,6 +378,27 @@ public class DOMTest extends InternalBaseTestCase
         assertEquals(root.toString(), "<fred hi=\"bit\"/>");
     }
 
+    /**
+     * TAP5-708
+     */
+    @Test
+    public void namespace_element_force_attributes_overrides_existing() 
+    {
+        Document d = new Document(new XMLMarkupModel());
+
+        Element root = d.newRootElement("fredns", "fred");
+
+        root.attributes("hi", "ho", "gnip", "gnop");
+
+        assertEquals(root.toString(), "<fred gnip=\"gnop\" hi=\"ho\" xmlns=\"fredns\"/>");
+
+        root.forceAttributes("hi", "bit", "gnip", null);
+
+        assertEquals(root.toString(), "<fred hi=\"bit\" xmlns=\"fredns\"/>");
+    }
+
+
+
     @Test
     public void raw_output()
     {
@@ -460,6 +481,25 @@ public class DOMTest extends InternalBaseTestCase
         assertSame(root.addClassName("barney", "wilma"), root);
 
         assertEquals(root.toString(), "<div class=\"fred barney wilma\"/>");
+    }
+
+    /**
+     * TAP5-804
+     */
+    @Test
+    public void namespace_add_class_name()
+    {
+        Document document = new Document(new DefaultMarkupModel());
+
+        Element element = document.newRootElement("fredns", "e");
+
+        element.attribute("class", "a");
+
+        assertEquals(element.toString(), "<e class=\"a\" xmlns=\"fredns\"></e>");
+
+        element.addClassName("b");
+
+        assertEquals(element.toString(), "<e class=\"a b\" xmlns=\"fredns\"></e>");
     }
 
     @Test

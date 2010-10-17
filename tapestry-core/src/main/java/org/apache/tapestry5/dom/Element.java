@@ -191,8 +191,26 @@ public final class Element extends Node
     /**
      * Forces changes to a number of attributes. The new attributes <em>overwrite</em> previous values. Overriding an
      * attribute's value to null will remove the attribute entirely.
+     *
+     * @param namesAndValues alternating attribute names and attribute values
+     * @return this element
      */
     public Element forceAttributes(String... namesAndValues)
+    {
+        return forceAttributesNS(null, namesAndValues);
+    }
+
+    /**
+     * Forces changes to a number of attributes in the global namespace. The new attributes <em>overwrite</em> previous
+     * values. Overriding attribute's value to null will remove the attribute entirely.
+     * TAP5-708: don't use element namespace for attributes
+     *
+     * @param namespace the namespace or null
+     * @param namesAndValues alternating attribute name and value
+     * @return this element
+     *
+     */
+    public Element forceAttributesNS(String namespace, String... namesAndValues)
     {
         int i = 0;
 
