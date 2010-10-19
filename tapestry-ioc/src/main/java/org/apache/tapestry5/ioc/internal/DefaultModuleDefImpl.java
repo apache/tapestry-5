@@ -50,9 +50,8 @@ import org.apache.tapestry5.ioc.annotations.Startup;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.ContributionDef2;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
-import org.apache.tapestry5.ioc.def.ModuleDef3;
+import org.apache.tapestry5.ioc.def.ModuleDef2;
 import org.apache.tapestry5.ioc.def.ServiceDef;
-import org.apache.tapestry5.ioc.def.StartupDef;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
@@ -63,7 +62,7 @@ import org.slf4j.Logger;
  * decorators (service
  * decorator methods) and (not yet implemented) contributions (service contributor methods).
  */
-public class DefaultModuleDefImpl implements ModuleDef3, ServiceDefAccumulator
+public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 {
     /**
      * The prefix used to identify service builder methods.
@@ -104,8 +103,6 @@ public class DefaultModuleDefImpl implements ModuleDef3, ServiceDefAccumulator
     private final Map<String, AdvisorDef> advisorDefs = CollectionFactory.newCaseInsensitiveMap();
 
     private final Set<ContributionDef> contributionDefs = CollectionFactory.newSet();
-
-    private final Set<StartupDef> startupDefs = CollectionFactory.newSet();
 
     private final Set<Class> defaultMarkers = CollectionFactory.newSet();
 
@@ -266,7 +263,11 @@ public class DefaultModuleDefImpl implements ModuleDef3, ServiceDefAccumulator
 
     private void addStartupDef(Method method)
     {
-        startupDefs.add(new StartupDefImpl(method));
+        Set<Class> markers = Collections.emptySet();
+        
+        ContributionDef2 def = new ContributionDefImpl("RegistryStartup", method, classFactory, Runnable.class, markers);
+        
+        contributionDefs.add(def);
     }
 
     private void addContributionDef(Method method)
@@ -524,11 +525,6 @@ public class DefaultModuleDefImpl implements ModuleDef3, ServiceDefAccumulator
     public Set<ContributionDef> getContributionDefs()
     {
         return contributionDefs;
-    }
-
-    public Set<StartupDef> getStartupDefs()
-    {
-        return startupDefs;
     }
 
     public String getLoggerName()

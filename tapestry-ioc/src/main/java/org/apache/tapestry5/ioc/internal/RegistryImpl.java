@@ -27,7 +27,26 @@ import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Flow;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
-import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.AdvisorDef;
+import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.Configuration;
+import org.apache.tapestry5.ioc.IOCConstants;
+import org.apache.tapestry5.ioc.Invokable;
+import org.apache.tapestry5.ioc.LoggerSource;
+import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.ObjectProvider;
+import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.Registry;
+import org.apache.tapestry5.ioc.ScopeConstants;
+import org.apache.tapestry5.ioc.ServiceAdvisor;
+import org.apache.tapestry5.ioc.ServiceBuilderResources;
+import org.apache.tapestry5.ioc.ServiceDecorator;
+import org.apache.tapestry5.ioc.ServiceLifecycle;
+import org.apache.tapestry5.ioc.ServiceLifecycle2;
+import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.ContributionDef2;
@@ -35,17 +54,26 @@ import org.apache.tapestry5.ioc.def.DecoratorDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.def.ServiceDef2;
-import org.apache.tapestry5.ioc.def.StartupDef;
 import org.apache.tapestry5.ioc.internal.services.PerthreadManagerImpl;
 import org.apache.tapestry5.ioc.internal.services.RegistryShutdownHubImpl;
-import org.apache.tapestry5.ioc.internal.services.ServiceMessages;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InjectionResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.MapInjectionResources;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.apache.tapestry5.ioc.internal.util.Orderer;
-import org.apache.tapestry5.ioc.services.*;
+import org.apache.tapestry5.ioc.services.Builtin;
+import org.apache.tapestry5.ioc.services.ClassFab;
+import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.MasterObjectProvider;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
+import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
+import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
+import org.apache.tapestry5.ioc.services.ServiceActivityScoreboard;
+import org.apache.tapestry5.ioc.services.ServiceLifecycleSource;
+import org.apache.tapestry5.ioc.services.Status;
+import org.apache.tapestry5.ioc.services.SymbolSource;
+import org.apache.tapestry5.ioc.services.TapestryIOCModule;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.UpdateListenerHub;
@@ -304,30 +332,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         getService("RegistryStartup", Runnable.class).run();
 
-        invokeStartups();
-
         cleanupThread();
-    }
-
-    private void invokeStartups()
-    {
-        for (Module m : moduleToServiceDefs.keySet())
-        {
-            Logger logger = this.loggerSource.getLogger(m.getLoggerName());
-
-            for (StartupDef sd : m.getStartupDefs())
-            {
-                try
-                {
-                    sd.startup(m, this, this, logger);
-                }
-                catch (RuntimeException e)
-                {
-                    logger.error(ServiceMessages.startupFailure(e));
-                }
-            }
-
-        }
     }
 
     public Logger getServiceLogger(String serviceId)

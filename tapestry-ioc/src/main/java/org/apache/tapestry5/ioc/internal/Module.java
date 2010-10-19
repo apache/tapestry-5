@@ -23,7 +23,6 @@ import org.apache.tapestry5.ioc.def.ContributionDef2;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.def.ServiceDef2;
-import org.apache.tapestry5.ioc.def.StartupDef;
 
 /**
  * A module within the Tapestry IoC registry. Each Module is constructed around a corresponding module builder instance;
@@ -98,9 +97,4 @@ public interface Module extends ModuleBuilderSource
      * @return module logger name
      */
     String getLoggerName();
-    
-    /**
-     * Returns all the {@link StartupDef}s defined in the module.
-     */
-    Set<StartupDef> getStartupDefs();
 }
