@@ -112,36 +112,13 @@ public class SeleniumTestCase extends Assert implements Selenium
      * This method will be invoked in <em>each</em> subclass, but is set up to only startup the servers once (it checks
      * the {@link ITestContext} to see if the necessary keys are already present).
      * 
-     * @param webAppFolder
-     * @param contextPath
-     * @param port
-     * @param browserStartCommand
      * @param testContext
      *            Used to share objects between the launcher and the test suites
      * @throws Exception
      */
-    @Parameters(
-    { TapestryTestConstants.WEB_APP_FOLDER_PARAMETER, TapestryTestConstants.CONTEXT_PATH_PARAMETER,
-            TapestryTestConstants.PORT_PARAMETER, TapestryTestConstants.SSL_PORT_PARAMETER,
-            TapestryTestConstants.BROWSER_START_COMMAND_PARAMETER })
     @BeforeTest(dependsOnGroups =
     { "beforeStartup" })
-    public void testStartup(
-
-    @Optional("src/main/webapp")
-    String webAppFolder,
-
-    @Optional("")
-    String contextPath,
-
-    @Optional("9090")
-    int port,
-
-    @Optional("8443")
-    int sslPort,
-
-    @Optional("*firefox")
-    String browserStartCommand, final ITestContext testContext, XmlTest xmlTest) throws Exception
+    public void testStartup(final ITestContext testContext, XmlTest xmlTest) throws Exception
     {
         // This is not actually necessary, because TestNG will only invoke this method once
         // even when multiple test cases within the test extend from SeleniumTestCase. TestNG
@@ -154,19 +131,14 @@ public class SeleniumTestCase extends Assert implements Selenium
         // updated value via a parameter, but still passes the original (coming from testng.xml or the default).
         // Seems like a TestNG bug.
 
-        Map<String, String> testParameters = xmlTest.getParameters();
+        // Map<String, String> testParameters = xmlTest.getParameters();
 
-        if (testParameters.containsKey(TapestryTestConstants.WEB_APP_FOLDER_PARAMETER))
-            webAppFolder = testParameters.get(TapestryTestConstants.WEB_APP_FOLDER_PARAMETER);
-
-        if (testParameters.containsKey(TapestryTestConstants.CONTEXT_PATH_PARAMETER))
-            contextPath = testParameters.get(TapestryTestConstants.CONTEXT_PATH_PARAMETER);
-
-        if (testParameters.containsKey(TapestryTestConstants.PORT_PARAMETER))
-            port = Integer.parseInt(testParameters.get(TapestryTestConstants.PORT_PARAMETER));
-
-        if (testParameters.containsKey(TapestryTestConstants.BROWSER_START_COMMAND_PARAMETER))
-            browserStartCommand = testParameters.get(TapestryTestConstants.BROWSER_START_COMMAND_PARAMETER);
+        String webAppFolder = getParameter(xmlTest, TapestryTestConstants.WEB_APP_FOLDER_PARAMETER, "src/main/webapp");
+        String contextPath = getParameter(xmlTest, TapestryTestConstants.CONTEXT_PATH_PARAMETER, "");
+        int port = Integer.parseInt(getParameter(xmlTest, TapestryTestConstants.PORT_PARAMETER, "9090"));
+        int sslPort = Integer.parseInt(getParameter(xmlTest, TapestryTestConstants.SSL_PORT_PARAMETER, "8443"));
+        String browserStartCommand = getParameter(xmlTest, TapestryTestConstants.BROWSER_START_COMMAND_PARAMETER,
+                "*firefox");
 
         final Runnable stopWebServer = launchWebServer(webAppFolder, contextPath, port, sslPort);
 
@@ -214,6 +186,13 @@ public class SeleniumTestCase extends Assert implements Selenium
                 }
             }
         });
+    }
+
+    private final String getParameter(XmlTest xmlTest, String key, String defaultValue)
+    {
+        String value = xmlTest.getParameter(key);
+
+        return value != null ? value : defaultValue;
     }
 
     /**
