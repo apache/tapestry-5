@@ -20,6 +20,7 @@ import java.util.Map;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.services.ContextPathEncoder;
 import org.apache.tapestry5.services.Response;
 
 public class LinkImpl implements Link
@@ -32,20 +33,23 @@ public class LinkImpl implements Link
 
     private final Response response;
 
+    private final ContextPathEncoder contextPathEncoder;
+
     private String anchor;
 
-    public LinkImpl(String basePath, boolean forForm, Response response)
+    public LinkImpl(String basePath, boolean forForm, Response response, ContextPathEncoder contextPathEncoder)
     {
         this.basePath = basePath;
         this.forForm = forForm;
         this.response = response;
+        this.contextPathEncoder = contextPathEncoder;
     }
 
     public Link copyWithBasePath(String basePath)
     {
         assert basePath != null;
 
-        LinkImpl copy = new LinkImpl(basePath, forForm, response);
+        LinkImpl copy = new LinkImpl(basePath, forForm, response, contextPathEncoder);
 
         copy.anchor = anchor;
 
@@ -162,4 +166,12 @@ public class LinkImpl implements Link
 
         return builder.toString();
     }
+
+    public Link addParameterValue(String parameterName, Object value)
+    {
+        addParameter(parameterName, contextPathEncoder.encodeValue(value));
+
+        return this;
+    }
+
 }

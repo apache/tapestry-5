@@ -126,7 +126,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
         appendContext(encodedPageName.length() > 0, parameters.getActivationContext(), builder);
 
-        Link link = new LinkImpl(builder.toString(), false, response);
+        Link link = new LinkImpl(builder.toString(), false, response, contextPathEncoder);
 
         if (parameters.isLoopback())
             link.addParameter(TapestryConstants.PAGE_LOOPBACK_PARAMETER_NAME, "t");
@@ -200,7 +200,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
         appendContext(true, parameters.getEventContext(), builder);
 
-        Link result = new LinkImpl(builder.toString(), forForm, response);
+        Link result = new LinkImpl(builder.toString(), forForm, response, contextPathEncoder);
 
         EventContext pageActivationContext = parameters.getPageActivationContext();
 

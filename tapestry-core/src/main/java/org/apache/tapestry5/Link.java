@@ -17,6 +17,7 @@ package org.apache.tapestry5;
 import java.util.List;
 
 import org.apache.commons.codec.net.URLCodec;
+import org.apache.tapestry5.services.ContextPathEncoder;
 
 /**
  * A link is the Tapestry representation of a URL or URI that triggers dynamic behavior. This link is in three parts: a
@@ -41,7 +42,7 @@ public interface Link
      * Returns the value of a specifically named query parameter, or <tt>null</tt> if no such query parameter is stored
      * in the link.
      * 
-     * @return the value of the named parameter
+     * @return the string value of the named parameter
      */
     String getParameterValue(String name);
 
@@ -57,6 +58,15 @@ public interface Link
      *             if the link already has a parameter with the given name
      */
     void addParameter(String parameterName, String value);
+
+    /**
+     * Adds a parameter value as a value object; the value object is converted to a string via
+     * {@link ContextPathEncoder#encodeValue(Object)} and the result is added via {@link #addParameter(String, String)}.
+     * The Link object is returned for further configuration.
+     * 
+     * @since 5.2.2
+     */
+    Link addParameterValue(String parameterName, Object value);
 
     /**
      * Removes a parameter value, which is occasionally useful when transforming a parameter into a portion of

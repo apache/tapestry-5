@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.services.ContextPathEncoder;
 import org.apache.tapestry5.services.Response;
 import org.testng.annotations.Test;
 
@@ -38,7 +39,7 @@ public class LinkImplTest extends InternalBaseTestCase
 
         replay();
 
-        Link link = new LinkImpl(URI, false, response);
+        Link link = new LinkImpl(URI, false, response, null);
 
         assertEquals(link.toRedirectURI(), ENCODED);
 
@@ -56,7 +57,7 @@ public class LinkImplTest extends InternalBaseTestCase
 
         replay();
 
-        Link link = new LinkImpl(url, false, response);
+        Link link = new LinkImpl(url, false, response, null);
 
         assertEquals(link.toString(), ENCODED);
 
@@ -70,7 +71,7 @@ public class LinkImplTest extends InternalBaseTestCase
 
         replay();
 
-        Link link = new LinkImpl("/foo/bar", false, response);
+        Link link = new LinkImpl("/foo/bar", false, response, null);
 
         link.addParameter("fred", "flintstone");
 
@@ -90,7 +91,7 @@ public class LinkImplTest extends InternalBaseTestCase
 
         replay();
 
-        Link link = new LinkImpl(url, false, response);
+        Link link = new LinkImpl(url, false, response, null);
         link.setAnchor("wilma");
 
         assertSame(link.getAnchor(), "wilma");
@@ -109,7 +110,7 @@ public class LinkImplTest extends InternalBaseTestCase
 
         replay();
 
-        Link link = new LinkImpl("/ctx/foo", false, response);
+        Link link = new LinkImpl("/ctx/foo", false, response, null);
 
         assertEquals(link.toAbsoluteURI(), ENCODED);
 
@@ -126,8 +127,30 @@ public class LinkImplTest extends InternalBaseTestCase
 
         replay();
 
-        Link link = new LinkImpl("/ctx/foo?foo=bar", false, response);
+        Link link = new LinkImpl("/ctx/foo?foo=bar", false, response, null);
         link.addParameter("baz", "barney");
+
+        assertEquals(link.toURI(), expectedURI);
+
+        verify();
+    }
+
+    @Test
+    public void add_parameter_value()
+    {
+        Response response = mockResponse();
+        ContextPathEncoder encoder = newMock(ContextPathEncoder.class);
+
+        expect(encoder.encodeValue("plain")).andReturn("encoded");
+
+        String expectedURI = "/ctx/foo?bar=encoded";
+        train_encodeURL(response, expectedURI, expectedURI);
+
+        replay();
+
+        Link link = new LinkImpl("/ctx/foo", false, response, encoder);
+
+        assertSame(link.addParameterValue("bar", "plain"), link);
 
         assertEquals(link.toURI(), expectedURI);
 
@@ -144,7 +167,7 @@ public class LinkImplTest extends InternalBaseTestCase
 
         replay();
 
-        Link link = new LinkImpl("/ctx/foo", false, response);
+        Link link = new LinkImpl("/ctx/foo", false, response, null);
         link.addParameter("baz", "barney");
         link.setAnchor("jacob");
 
@@ -158,7 +181,7 @@ public class LinkImplTest extends InternalBaseTestCase
     @Test
     public void remove_parameter()
     {
-        Link link = new LinkImpl("/baseURI", false, null);
+        Link link = new LinkImpl("/baseURI", false, null, null);
 
         link.addParameter("fred", "flintstone");
         link.addParameter("barney", "rubble");
