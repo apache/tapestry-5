@@ -31,12 +31,6 @@
             <artifactId>easymock</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.easymock</groupId>
-            <artifactId>easymockclassextension</artifactId>
-            <version>2.2.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.14</version>
@@ -72,21 +66,6 @@ it can be tricky because there are overlapping third-party dependencies with sli
             <groupId>geronimo-spec</groupId>
             <artifactId>geronimo-spec-jta</artifactId>
             <version>1.0-M1</version>
-        </dependency>
-
-        <!-- The annotation should be compatible with the 3.2.2.ga release of the
-      core package. -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-annotations</artifactId>
-            <version>${hibernate-version}</version>
-            <exclusions>
-                <!-- Make sure we use the version defined by tapestry-ioc. -->
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -176,6 +155,6 @@ it can be tricky because there are overlapping third-party dependencies with sli
     </reporting>
     
     <properties>
-        <hibernate-version>3.5.4-Final</hibernate-version>
+        <hibernate-version>3.6.0.Final</hibernate-version>
     </properties>
 </project>

@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,22 +37,19 @@ import java.util.List;
 
 public class HibernateSessionSourceImplTest extends IOCTestCase
 {
-    private final Logger log = LoggerFactory
-            .getLogger("tapestry.hibernate.HibernateSessionSourceTest");
+    private final Logger log = LoggerFactory.getLogger("tapestry.hibernate.HibernateSessionSourceTest");
 
     @Test
     public void startup_without_packages()
     {
-        Collection<String> packageNames = CollectionFactory.newList(
-                "org.example.myapp.entities",
+        Collection<String> packageNames = CollectionFactory.newList("org.example.myapp.entities",
                 "org.example.app0.entities");
         HibernateEntityPackageManager packageManager = newMock(HibernateEntityPackageManager.class);
         TestBase.expect(packageManager.getPackageNames()).andReturn(packageNames);
 
-        List<HibernateConfigurer> filters = Arrays.asList(
-                new DefaultHibernateConfigurer(true),
-                new PackageNameHibernateConfigurer(packageManager,
-                                                   new ClassNameLocatorImpl(new ClasspathURLConverterImpl())));
+        List<HibernateConfigurer> filters = Arrays.asList(new DefaultHibernateConfigurer(true),
+                new PackageNameHibernateConfigurer(packageManager, new ClassNameLocatorImpl(
+                        new ClasspathURLConverterImpl())));
 
         replay();
         HibernateSessionSource source = new HibernateSessionSourceImpl(log, filters);
@@ -78,22 +75,12 @@ public class HibernateSessionSourceImplTest extends IOCTestCase
                 configuration.configure();
             }
         };
-        HibernateSessionSource source = new HibernateSessionSourceImpl(log, Arrays
-                .asList(configurer));
+        HibernateSessionSource source = new HibernateSessionSourceImpl(log, Arrays.asList(configurer));
 
         Configuration config = source.getConfiguration();
         Assert.assertNotNull(config);
         Assert.assertEquals("bar", config.getProperty("foo"));
 
-        // configuration should be immutable
-        try
-        {
-            config.setProperty("hibernate.dialect", "foo");
-            Assert.fail("did not throw");
-        }
-        catch (UnsupportedOperationException e)
-        {
-            Assert.assertTrue(e.getMessage().contains("immutable"));
-        }
+        // Configuration was immutable in 5.1, but Hibernate 3.6.0.Final made that impossible
     }
 }

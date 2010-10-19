@@ -24,11 +24,6 @@ public class HibernateCoreMessages
 {
     private static final Messages MESSAGES = MessagesImpl.forClass(HibernateCoreMessages.class);
 
-    public static String configurationImmutable()
-    {
-        return MESSAGES.get("configuration-immutable");
-    }
-
     public static String startupTiming(long toConfigure, long overall)
     {
         return MESSAGES.format("startup-timing", toConfigure, overall);

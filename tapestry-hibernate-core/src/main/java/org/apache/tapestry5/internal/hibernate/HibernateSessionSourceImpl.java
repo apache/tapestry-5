@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.internal.hibernate;
 
+import java.util.List;
+
 import org.apache.tapestry5.hibernate.HibernateConfigurer;
 import org.apache.tapestry5.hibernate.HibernateSessionSource;
 import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
@@ -22,8 +24,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.slf4j.Logger;
-
-import java.util.List;
 
 public class HibernateSessionSourceImpl implements HibernateSessionSource, RegistryShutdownListener
 {
@@ -35,7 +35,7 @@ public class HibernateSessionSourceImpl implements HibernateSessionSource, Regis
     {
         long startTime = System.currentTimeMillis();
 
-        Configuration configuration = new AnnotationConfiguration();
+        configuration = new AnnotationConfiguration();
 
         for (HibernateConfigurer configurer : hibernateConfigurers)
             configurer.configure(configuration);
@@ -43,17 +43,12 @@ public class HibernateSessionSourceImpl implements HibernateSessionSource, Regis
         long configurationComplete = System.currentTimeMillis();
 
         sessionFactory = configuration.buildSessionFactory();
-        this.configuration = new ImmutableConfiguration(configuration);
 
         long factoryCreated = System.currentTimeMillis();
 
-        logger.info(HibernateCoreMessages.startupTiming(
-                configurationComplete - startTime,
-                factoryCreated - startTime));
+        logger.info(HibernateCoreMessages.startupTiming(configurationComplete - startTime, factoryCreated - startTime));
 
-        logger
-                .info(HibernateCoreMessages.entityCatalog(sessionFactory.getAllClassMetadata()
-                        .keySet()));
+        logger.info(HibernateCoreMessages.entityCatalog(sessionFactory.getAllClassMetadata().keySet()));
     }
 
     public Session create()
