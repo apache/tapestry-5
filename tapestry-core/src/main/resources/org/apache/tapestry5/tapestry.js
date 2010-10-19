@@ -89,11 +89,13 @@ var Tapestry = {
 	/** Time, in seconds, that console messages are visible. */
 	CONSOLE_DURATION : 10,
 
-	/** CSS Class added to a <form> element that directs Tapestry to prevent normal
-	 *  (HTTP POST) form submission, in favor of Ajax (XmlHttpRequest) submission.
+	/**
+	 * CSS Class added to a <form> element that directs Tapestry to prevent
+	 * normal (HTTP POST) form submission, in favor of Ajax (XmlHttpRequest)
+	 * submission.
 	 */
 	PREVENT_SUBMISSION : "t-prevent-submission",
-	
+
 	/** Initially, false, set to true once the page is fully loaded. */
 	pageLoaded : false,
 
@@ -303,8 +305,8 @@ var Tapestry = {
 	 * <dt>redirectURL</dt>
 	 * <dd>URL to redirect to (in which case, the callback is not invoked)</dd>
 	 * <dt>inits</dt>
-	 * <dd>Defines a set of calls to Tapestry.init() to perform initialization after the DOM
-	 * has been updated.</dd>
+	 * <dd>Defines a set of calls to Tapestry.init() to perform initialization
+	 * after the DOM has been updated.</dd>
 	 * <dt>stylesheets</dt>
 	 * <dd>Array of hashes, each hash has key href and optional key media</dd>
 	 * 
@@ -337,11 +339,11 @@ var Tapestry = {
 	},
 
 	/**
-	 * Called from Tapestry.loadScriptsInReply to load  any
-	 * initializations from the Ajax partial page render response. Calls
-	 * Tapestry.onDomLoadedCallback() last. This logic must be deferred
-	 * until after the DOM is fully updated, as initialization often
-	 * refer to DOM elements.
+	 * Called from Tapestry.loadScriptsInReply to load any initializations from
+	 * the Ajax partial page render response. Calls
+	 * Tapestry.onDomLoadedCallback() last. This logic must be deferred until
+	 * after the DOM is fully updated, as initialization often refer to DOM
+	 * elements.
 	 * 
 	 * @param initializations
 	 *            array of parameters to pass to Tapestry.init(), one invocation
@@ -355,7 +357,6 @@ var Tapestry = {
 
 		Tapestry.onDomLoadedCallback();
 	},
-	
 
 	/**
 	 * Default function for handling a communication error during an Ajax
@@ -374,7 +375,7 @@ var Tapestry = {
 		var rawMessage = response.getHeader("X-Tapestry-ErrorMessage");
 
 		var message = unescape(rawMessage).escapeHTML();
-		
+
 		Tapestry.error(Tapestry.Messages.communicationFailed + message);
 
 		Tapestry.debug(Tapestry.Messages.ajaxFailure + message, response);
@@ -643,14 +644,14 @@ var Tapestry = {
 		var attrs = element.attributes;
 		if (attrs) {
 			var i, name;
-			for (i = attrs.length - 1; i >=0; i--) {
-                if (attrs[i]) {
-                    name = attrs[i].name;
-                    /* Looking for onclick, etc. */
-                    if (typeof element[name] == 'function') {
-                        element[name] = null;
-                    }
-                }
+			for (i = attrs.length - 1; i >= 0; i--) {
+				if (attrs[i]) {
+					name = attrs[i].name;
+					/* Looking for onclick, etc. */
+					if (typeof element[name] == 'function') {
+						element[name] = null;
+					}
+				}
 			}
 		}
 
@@ -921,12 +922,12 @@ Tapestry.Initializer = {
 	},
 
 	/**
-	 * evalScript is a synonym for the JavaScript eval function. It is used
-	 * in Ajax requests to handle any setup code that does not
-	 * fit into a standard Tapestry.Initializer call.
+	 * evalScript is a synonym for the JavaScript eval function. It is used in
+	 * Ajax requests to handle any setup code that does not fit into a standard
+	 * Tapestry.Initializer call.
 	 */
 	evalScript : eval,
-	
+
 	ajaxFormLoop : function(spec) {
 		var rowInjector = $(spec.rowInjector);
 
@@ -992,9 +993,9 @@ Tapestry.Initializer = {
 	linkSubmit : function(spec) {
 
 		Tapestry.replaceElementTagName(spec.clientId, "A");
-		
+
 		$(spec.clientId).writeAttribute("href", "#");
-				
+
 		$(spec.clientId).observeAction("click", function(event) {
 
 			var form = $(spec.form);
@@ -1007,25 +1008,56 @@ Tapestry.Initializer = {
 			form.performSubmit(event);
 		});
 	},
-	
+
+	/**
+	 * Used by other initializers to connect an element (either a link or a
+	 * form) to a zone.
+	 * 
+	 * @param eventName
+	 *            the event on the element to observe
+	 * @param element
+	 *            the element to observe for events
+	 * @param zoneId
+	 *            identified a Zone by its clientId. Alternately, the special
+	 *            value '^' indicates that the Zone is a container of the
+	 *            element (the first container with the 't-zone' CSS class).
+	 * @param url
+	 *            The request URL to be triggered when the event is observed.
+	 *            Ultimately, a partial page update JSON response will be passed
+	 *            to the Zone's ZoneManager.
+	 */
 	updateZoneOnEvent : function(eventName, element, zoneId, url) {
 		element = $(element);
 
 		$T(element).zoneUpdater = true;
+
+		var zoneElement = zoneId == '^' ? $(element).up('.t-zone') : $(zoneId);
+
+		if (!zoneElement) {
+			Tapestry
+					.error(
+							"Could not find zone element '#{zoneId}' to update on #{eventName} of element '#{elementId}",
+							{
+								zoneId : zoneId,
+								eventName : eventName,
+								elementId : element.id
+							});
+			return;
+		}
 
 		/*
 		 * Update the element with the id of zone div. This may be changed
 		 * dynamically on the client side.
 		 */
 
-		$T(element).zoneId = zoneId;
+		$T(element).zoneId = zoneElement.id;
 
 		if (element.tagName == "FORM") {
 
 			// Create the FEM if necessary.
 			element.getFormEventManager();
 			element.addClassName(Tapestry.PREVENT_SUBMISSION);
-			
+
 			/*
 			 * After the form is validated and prepared, this code will process
 			 * the form submission via an Ajax call. The original submit event
@@ -1086,52 +1118,78 @@ Tapestry.Initializer = {
 	 * of validation specs. Each validation spec is a 2 or 3 element array.
 	 */
 	validate : function(masterSpec) {
-		$H(masterSpec).each(function(pair) {
+		$H(masterSpec)
+				.each(
+						function(pair) {
 
-			var field = $(pair.key);
+							var field = $(pair.key);
 
-			/* Force the creation of the form and field event managers. */
+							/*
+							 * Force the creation of the form and field event
+							 * managers.
+							 */
 
-			$(field.form).getFormEventManager();
-			$(field).getFieldEventManager();
+							$(field.form).getFormEventManager();
+							$(field).getFieldEventManager();
 
-			$A(pair.value).each(function(spec) {
-				/*
-				 * Each pair value is an array of specs, each spec is a 2 or 3
-				 * element array. validator function name, message, optional
-				 * constraint
-				 */
+							$A(pair.value)
+									.each(
+											function(spec) {
+												/*
+												 * Each pair value is an array
+												 * of specs, each spec is a 2 or
+												 * 3 element array. validator
+												 * function name, message,
+												 * optional constraint
+												 */
 
-				var name = spec[0];
-				var message = spec[1];
-				var constraint = spec[2];
+												var name = spec[0];
+												var message = spec[1];
+												var constraint = spec[2];
 
-				var vfunc = Tapestry.Validator[name];
+												var vfunc = Tapestry.Validator[name];
 
-				if (vfunc == undefined) {
-					Tapestry.error(Tapestry.Messages.missingValidator, {
-						name : name,
-						fieldName : field.id
-					});
-					return;
-				}
+												if (vfunc == undefined) {
+													Tapestry
+															.error(
+																	Tapestry.Messages.missingValidator,
+																	{
+																		name : name,
+																		fieldName : field.id
+																	});
+													return;
+												}
 
-				/*
-				 * Pass the extended field, the provided message, and the
-				 * constraint object to the Tapestry.Validator function, so that
-				 * it can, typically, invoke field.addValidator().
-				 */
-				try {
-					vfunc.call(this, field, message, constraint);
-				} catch (e) {
-					Tapestry.error(Tapestry.Messages.invocationException, {
-						fname : "Tapestry.Validator." + functionName,
-						params : Object.toJSON([ field.id, message, constraint ]),
-						exception : e
-					});
-				}
-			});
-		});
+												/*
+												 * Pass the extended field, the
+												 * provided message, and the
+												 * constraint object to the
+												 * Tapestry.Validator function,
+												 * so that it can, typically,
+												 * invoke field.addValidator().
+												 */
+												try {
+													vfunc
+															.call(this, field,
+																	message,
+																	constraint);
+												} catch (e) {
+													Tapestry
+															.error(
+																	Tapestry.Messages.invocationException,
+																	{
+																		fname : "Tapestry.Validator."
+																				+ functionName,
+																		params : Object
+																				.toJSON( [
+																						field.id,
+																						message,
+																						constraint ]),
+																		exception : e
+																	});
+												}
+											});
+						});
 	},
 
 	zone : function(spec) {
@@ -1176,9 +1234,9 @@ Tapestry.Initializer = {
 			form.observe(Tapestry.FORM_PREPARE_FOR_SUBMIT_EVENT, function() {
 
 				/*
-				 * On a submission, if the fragment is not visible, then disabled
-				 * its form submission data, so that no processing or validation
-				 * occurs on the server.
+				 * On a submission, if the fragment is not visible, then
+				 * disabled its form submission data, so that no processing or
+				 * validation occurs on the server.
 				 */
 				hidden.disabled = !element.isDeepVisible();
 			});
@@ -1461,7 +1519,7 @@ Tapestry.FormEventManager = Class.create( {
 			// skip if this is not a tapestry controlled form
 			if (this.form.getInputs("hidden", "t:formdata").size() == 0)
 				return;
-			
+
 			var hiddens = this.form.getInputs("hidden", "t:submit");
 
 			if (hiddens.size() == 0) {
@@ -1808,8 +1866,8 @@ Tapestry.ZoneManager = Class.create( {
 	processReply : function(reply) {
 		Tapestry.loadScriptsInReply(reply, function() {
 			/*
-			 * In a multi-zone update, the reply.content may be missing, 
-			 * in which case, leave the curent content in place. TAP5-1177
+			 * In a multi-zone update, the reply.content may be missing, in
+			 * which case, leave the curent content in place. TAP5-1177
 			 */
 			reply.content != undefined && this.show(reply.content);
 

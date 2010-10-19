@@ -16,7 +16,7 @@
   <t:block id="registrationForm">
 
 
-    <t:beaneditform t:id="registrationForm" object="registration" zone="output" add="roles">
+    <t:beaneditform t:id="registrationForm" object="registration" zone="^" add="roles">
 
       <t:parameter name="roles">
         <t:palette selected="registration.roles" encoder="encoder" model="literal:guest,user,admin"/>
@@ -37,7 +37,7 @@
   </t:block>
 
   <t:block id="voteForm">
-    <t:form t:id="vote" zone="output">
+    <t:form t:id="vote" zone="^">
       Vote:
       <input type="submit" name="abstain" value="Abstain"/>
       <t:submit t:id="voteYes" value="Yes"/>
@@ -72,7 +72,8 @@
       <t:actionlink t:id="blankUpdate" zone="output">Blank the zone</t:actionlink>
     </li>
     <li>
-      <t:actionlink t:id="poorlyFormattedFail" zone="output">Poorly formatted server-side failure</t:actionlink>
+      <t:actionlink t:id="poorlyFormattedFail" zone="output">Poorly formatted server-side
+        failure</t:actionlink>
     </li>
   </ul>
 
