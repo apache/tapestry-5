@@ -16,7 +16,6 @@ package org.apache.tapestry5.test;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import java.util.Map;
 
 import org.openqa.selenium.server.RemoteControlConfiguration;
 import org.openqa.selenium.server.SeleniumServer;
@@ -28,8 +27,6 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
 import org.testng.xml.XmlTest;
 
 import com.thoughtworks.selenium.CommandProcessor;
@@ -153,18 +150,21 @@ public class SeleniumTestCase extends Assert implements Selenium
 
         String baseURL = String.format("http://localhost:%d%s/", port, contextPath);
 
-        CommandProcessor cp = new HttpCommandProcessor("localhost", RemoteControlConfiguration.DEFAULT_PORT,
+        CommandProcessor httpCommandProcessor = new HttpCommandProcessor("localhost", RemoteControlConfiguration.DEFAULT_PORT,
                 browserStartCommand, baseURL);
 
-        ErrorReporter errorReporter = new ErrorReporterImpl(cp, testContext);
+        ErrorReporter errorReporter = new ErrorReporterImpl(httpCommandProcessor, testContext);
 
-        final Selenium selenium = new DefaultSelenium(new ErrorReportingCommandProcessor(cp, errorReporter));
+        ErrorReportingCommandProcessor commandProcessor = new ErrorReportingCommandProcessor(httpCommandProcessor, errorReporter);
+
+        final Selenium selenium = new DefaultSelenium(commandProcessor);
 
         selenium.start();
 
         testContext.setAttribute(TapestryTestConstants.BASE_URL_ATTRIBUTE, baseURL);
         testContext.setAttribute(TapestryTestConstants.SELENIUM_ATTRIBUTE, selenium);
         testContext.setAttribute(TapestryTestConstants.ERROR_REPORTER_ATTRIBUTE, errorReporter);
+        testContext.setAttribute(TapestryTestConstants.COMMAND_PROCESSOR_ATTRIBUTE, commandProcessor);
 
         testContext.setAttribute(TapestryTestConstants.SHUTDOWN_ATTRIBUTE, new Runnable()
         {
@@ -182,6 +182,7 @@ public class SeleniumTestCase extends Assert implements Selenium
                     testContext.removeAttribute(TapestryTestConstants.BASE_URL_ATTRIBUTE);
                     testContext.removeAttribute(TapestryTestConstants.SELENIUM_ATTRIBUTE);
                     testContext.removeAttribute(TapestryTestConstants.ERROR_REPORTER_ATTRIBUTE);
+                    testContext.removeAttribute(TapestryTestConstants.COMMAND_PROCESSOR_ATTRIBUTE);
                     testContext.removeAttribute(TapestryTestConstants.SHUTDOWN_ATTRIBUTE);
                 }
             }

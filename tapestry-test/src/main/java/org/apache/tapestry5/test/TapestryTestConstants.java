@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import org.testng.ITestContext;
 import org.testng.xml.XmlTest;
 
+import com.thoughtworks.selenium.CommandProcessor;
 import com.thoughtworks.selenium.Selenium;
 
 public class TapestryTestConstants
@@ -64,6 +65,15 @@ public class TapestryTestConstants
      * @since 5.2.2
      */
     public static final String SHUTDOWN_ATTRIBUTE = "tapestry.shutdown";
+
+    /**
+     * The {@link ITestContext} attribute holding an instance of {@link CommandProcessor}, with
+     * enhanced exception reporting control. This allows tests that wish to, to bypass the {@link Selenium} interface
+     * and execute commands directly on the Selenium RC server.
+     * 
+     * @since 5.2.0
+     */
+    public static final String COMMAND_PROCESSOR_ATTRIBUTE = "tapestry.command-processor";
 
     /**
      * {@link ITestContext} attribute holding the application's base URL.
