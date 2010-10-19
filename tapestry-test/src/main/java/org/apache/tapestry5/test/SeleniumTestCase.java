@@ -14,20 +14,33 @@
 
 package org.apache.tapestry5.test;
 
+import java.io.File;
 import java.lang.reflect.Method;
+import java.util.Map;
 
+import org.openqa.selenium.server.RemoteControlConfiguration;
+import org.openqa.selenium.server.SeleniumServer;
 import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
+import org.testng.xml.XmlTest;
 
+import com.thoughtworks.selenium.CommandProcessor;
+import com.thoughtworks.selenium.DefaultSelenium;
+import com.thoughtworks.selenium.HttpCommandProcessor;
 import com.thoughtworks.selenium.Selenium;
 
 /**
  * Base class for creating Selenium-based integration test cases. This class implements all the
- * methods of {@link Selenium} and delegates to an instance (setup once per test by {@link SeleniumLauncher}).
+ * methods of {@link Selenium} and delegates to an instance (setup once per test by
+ * {@link #testStartup(String, String, int, int, String, ITestContext, XmlTest)}.
  * 
  * @since 5.2.0
  */
@@ -38,9 +51,6 @@ public class SeleniumTestCase extends Assert implements Selenium
      */
     public static final String PAGE_LOAD_TIMEOUT = "15000";
 
-    /**
-     * Provided by {@link SeleniumLauncher}.
-     */
     private Selenium delegate;
 
     private String baseURL;
@@ -48,6 +58,211 @@ public class SeleniumTestCase extends Assert implements Selenium
     private ErrorReporter errorReporter;
 
     private ITestContext testContext;
+
+    /**
+     * Starts up the servers for the entire test (i.e., for multiple TestCases). By placing &lt;parameter&gt; elements
+     * inside the appropriate &lt;test&gt; (of your testng.xml configuration
+     * file), you can change the configuration or behavior of the servers. It is common to have two
+     * or more identical tests that differ only in terms of the <code>tapestry.browser-start-command</code> parameter,
+     * to run tests against multiple browsers.
+     * <table>
+     * <tr>
+     * <th>Parameter</th>
+     * <th>Name</th>
+     * <th>Default</th>
+     * <th>Description</th>
+     * </tr>
+     * <tr>
+     * <td>webAppFolder</td>
+     * <td>tapestry.web-app-folder</td>
+     * <td>src/main/webapp</td>
+     * <td>Location of web application context</td>
+     * </tr>
+     * <tr>
+     * <td>contextPath</td>
+     * <td>tapestry.context-path</td>
+     * <td><em>empty string</em></td>
+     * <td>Context path (defaults to root). As elsewhere, the context path should be blank, or start with a slash (but
+     * not end with one).</td>
+     * </tr>
+     * <tr>
+     * <td>port</td>
+     * <td>tapestry.port</td>
+     * <td>9090</td>
+     * <td>Port number for web server to listen to</td>
+     * </tr>
+     * <tr>
+     * <td>sslPort</td>
+     * <td>tapestry.ssl-port</td>
+     * <td>8443</td>
+     * <td>Port number for web server to listen to for secure requests</td>
+     * </tr>
+     * <tr>
+     * <td>browserStartCommand</td>
+     * <td>tapestry.browser-start-command</td>
+     * <td>*firefox</td>
+     * <td>Command string used to launch the browser, as defined by Selenium</td>
+     * </tr>
+     * </table>
+     * <p>
+     * Tests in the <em>beforeStartup</em> group will be run before the start of Selenium. This can be used to
+     * programmatically override the above parameter values. For an example see
+     * {@link org.apache.tapestry5.integration.reload.ReloadTests#beforeStartup}.
+     * <p>
+     * This method will be invoked in <em>each</em> subclass, but is set up to only startup the servers once (it checks
+     * the {@link ITestContext} to see if the necessary keys are already present).
+     * 
+     * @param webAppFolder
+     * @param contextPath
+     * @param port
+     * @param browserStartCommand
+     * @param testContext
+     *            Used to share objects between the launcher and the test suites
+     * @throws Exception
+     */
+    @Parameters(
+    { TapestryTestConstants.WEB_APP_FOLDER_PARAMETER, TapestryTestConstants.CONTEXT_PATH_PARAMETER,
+            TapestryTestConstants.PORT_PARAMETER, TapestryTestConstants.SSL_PORT_PARAMETER,
+            TapestryTestConstants.BROWSER_START_COMMAND_PARAMETER })
+    @BeforeTest(dependsOnGroups =
+    { "beforeStartup" })
+    public void testStartup(
+
+    @Optional("src/main/webapp")
+    String webAppFolder,
+
+    @Optional("")
+    String contextPath,
+
+    @Optional("9090")
+    int port,
+
+    @Optional("8443")
+    int sslPort,
+
+    @Optional("*firefox")
+    String browserStartCommand, final ITestContext testContext, XmlTest xmlTest) throws Exception
+    {
+        // This is not actually necessary, because TestNG will only invoke this method once
+        // even when multiple test cases within the test extend from SeleniumTestCase. TestNG
+        // just invokes it on the "first" TestCase instance it has test methods for.
+
+        if (testContext.getAttribute(TapestryTestConstants.SHUTDOWN_ATTRIBUTE) != null)
+            return;
+
+        // If a parameter is overridden in another test method, TestNG won't pass the
+        // updated value via a parameter, but still passes the original (coming from testng.xml or the default).
+        // Seems like a TestNG bug.
+
+        Map<String, String> testParameters = xmlTest.getParameters();
+
+        if (testParameters.containsKey(TapestryTestConstants.WEB_APP_FOLDER_PARAMETER))
+            webAppFolder = testParameters.get(TapestryTestConstants.WEB_APP_FOLDER_PARAMETER);
+
+        if (testParameters.containsKey(TapestryTestConstants.CONTEXT_PATH_PARAMETER))
+            contextPath = testParameters.get(TapestryTestConstants.CONTEXT_PATH_PARAMETER);
+
+        if (testParameters.containsKey(TapestryTestConstants.PORT_PARAMETER))
+            port = Integer.parseInt(testParameters.get(TapestryTestConstants.PORT_PARAMETER));
+
+        if (testParameters.containsKey(TapestryTestConstants.BROWSER_START_COMMAND_PARAMETER))
+            browserStartCommand = testParameters.get(TapestryTestConstants.BROWSER_START_COMMAND_PARAMETER);
+
+        final Runnable stopWebServer = launchWebServer(webAppFolder, contextPath, port, sslPort);
+
+        final SeleniumServer seleniumServer = new SeleniumServer();
+
+        File ffProfileTemplate = new File(TapestryTestConstants.MODULE_BASE_DIR, "src/test/conf/ff_profile_template");
+
+        if (ffProfileTemplate.isDirectory())
+            seleniumServer.getConfiguration().setFirefoxProfileTemplate(ffProfileTemplate);
+
+        seleniumServer.start();
+
+        String baseURL = String.format("http://localhost:%d%s/", port, contextPath);
+
+        CommandProcessor cp = new HttpCommandProcessor("localhost", RemoteControlConfiguration.DEFAULT_PORT,
+                browserStartCommand, baseURL);
+
+        ErrorReporter errorReporter = new ErrorReporterImpl(cp, testContext);
+
+        final Selenium selenium = new DefaultSelenium(new ErrorReportingCommandProcessor(cp, errorReporter));
+
+        selenium.start();
+
+        testContext.setAttribute(TapestryTestConstants.BASE_URL_ATTRIBUTE, baseURL);
+        testContext.setAttribute(TapestryTestConstants.SELENIUM_ATTRIBUTE, selenium);
+        testContext.setAttribute(TapestryTestConstants.ERROR_REPORTER_ATTRIBUTE, errorReporter);
+
+        testContext.setAttribute(TapestryTestConstants.SHUTDOWN_ATTRIBUTE, new Runnable()
+        {
+            public void run()
+            {
+                try
+                {
+                    selenium.stop();
+                    seleniumServer.stop();
+                    stopWebServer.run();
+                }
+                finally
+                {
+
+                    testContext.removeAttribute(TapestryTestConstants.BASE_URL_ATTRIBUTE);
+                    testContext.removeAttribute(TapestryTestConstants.SELENIUM_ATTRIBUTE);
+                    testContext.removeAttribute(TapestryTestConstants.ERROR_REPORTER_ATTRIBUTE);
+                    testContext.removeAttribute(TapestryTestConstants.SHUTDOWN_ATTRIBUTE);
+                }
+            }
+        });
+    }
+
+    /**
+     * Like {@link #testStartup(String, String, int, int, String, ITestContext, XmlTest)}, this may
+     * be called multiple times against multiple instances, but only does work the first time.
+     */
+    @AfterTest
+    public void testShutdown(ITestContext context)
+    {
+        // Likewise, this method should only be invoked once.
+        Runnable r = (Runnable) context.getAttribute(TapestryTestConstants.SHUTDOWN_ATTRIBUTE);
+
+        // This test is still useful, however, because testStartup() may not have completed properly,
+        // and the runnable is the last thing it puts into the test context.
+
+        if (r != null)
+            r.run();
+    }
+
+    /**
+     * Invoked from {@link #testStartup(String, String, int, String, ITestContext)} to launch the web
+     * server to be
+     * tested. The return value is a Runnable that will shut down the launched server at the end of
+     * the test (it is coded this way so that the default Jetty web server can be more easily
+     * replaced).
+     * 
+     * @param webAppFolder
+     *            path to the web application context
+     * @param contextPath
+     *            the path the context is mapped to, usually the empty string
+     * @param port
+     *            the port number the server should handle
+     * @param sslPort
+     *            the port number on which the server should handle secure requests
+     * @return Runnable used to shut down the server
+     * @throws Exception
+     */
+    protected Runnable launchWebServer(String webAppFolder, String contextPath, int port, int sslPort) throws Exception
+    {
+        final Jetty7Runner runner = new Jetty7Runner(webAppFolder, contextPath, port, sslPort);
+
+        return new Runnable()
+        {
+            public void run()
+            {
+                runner.stop();
+            }
+        };
+    }
 
     @BeforeClass
     public void setup(ITestContext context)

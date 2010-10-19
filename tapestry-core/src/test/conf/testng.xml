@@ -1,18 +1,14 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-  <!--
-    Copyright 2008, 2009 The Apache Software Foundation Licensed under the Apache License, Version
-    2.0 (the "License"); you may not use this file except in compliance with the License. You may
-    obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by
-    applicable law or agreed to in writing, software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
-    the License for the specific language governing permissions and limitations under the License.
-  -->
+<!-- Copyright 2008, 2009 The Apache Software Foundation Licensed under the Apache License, Version 2.0 
+  (the "License"); you may not use this file except in compliance with the License. You may obtain a copy 
+  of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed 
+  to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
+  OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing 
+  permissions and limitations under the License. -->
 
-  <!--
-    The suite may no longer be run in parallel, because of some tricky issues related to locking of
-    class loaders. Running in parallel causes thread deadlocks, when unmanaged tests run at the same
-    time as Selenium-based integration tests. See TAPESTRY-2561.
-  -->
+<!-- The suite may no longer be run in parallel, because of some tricky issues related to locking of 
+  class loaders. Running in parallel causes thread deadlocks, when unmanaged tests run at the same time 
+  as Selenium-based integration tests. See TAPESTRY-2561. -->
 <suite name="Tapestry Core" annotations="1.5" verbose="2">
   <test name="Component Unit Tests" enabled="true">
     <packages>
@@ -51,16 +47,13 @@
     </packages>
   </test>
 
-  <!--    We break these out by which of the test applications they apply to. We have a bunch. -->
+  <!-- We break these out by which of the test applications they apply to. We have a bunch. -->
   <test name="Core Integration Tests" enabled="true">
     <parameter name="tapestry.web-app-folder" value="src/test/app1"/>
 
     <packages>
       <package name="org.apache.tapestry5.integration.app1"/>
     </packages>
-    <classes>
-      <class name="org.apache.tapestry5.test.SeleniumLauncher"/>
-    </classes>
   </test>
 
   <test name="Additional Integration Tests" enabled="true">
@@ -69,9 +62,6 @@
     <packages>
       <package name="org.apache.tapestry5.integration.app3"/>
     </packages>
-    <classes>
-      <class name="org.apache.tapestry5.test.SeleniumLauncher"/>
-    </classes>
   </test>
 
   <test name="Immediate Mode Integration Tests" enabled="true">
@@ -80,9 +70,6 @@
     <packages>
       <package name="org.apache.tapestry5.integration.app4"/>
     </packages>
-    <classes>
-      <class name="org.apache.tapestry5.test.SeleniumLauncher"/>
-    </classes>
   </test>
 
   <test name="URL Rewriter Tests" enabled="true">
@@ -91,18 +78,12 @@
     <packages>
       <package name="org.apache.tapestry5.urlrewriter"/>
     </packages>
-    <classes>
-      <class name="org.apache.tapestry5.test.SeleniumLauncher"/>
-    </classes>
   </test>
 
   <test name="Live Reload Tests" enabled="true">
     <packages>
       <package name="org.apache.tapestry5.integration.reload"/>
     </packages>
-    <classes>
-      <class name="org.apache.tapestry5.test.SeleniumLauncher"/>
-    </classes>
   </test>
 
   <test name="LinkTransformer Tests" enabled="true">
@@ -110,9 +91,6 @@
     <packages>
       <package name="org.apache.tapestry5.integration.linktrans"/>
     </packages>
-    <classes>
-      <class name="org.apache.tapestry5.test.SeleniumLauncher"/>
-    </classes>
   </test>
 
   <test name="PageTester Tests" enabled="true">
