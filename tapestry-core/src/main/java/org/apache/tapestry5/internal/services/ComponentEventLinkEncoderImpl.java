@@ -26,15 +26,7 @@ import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.services.ComponentClassResolver;
-import org.apache.tapestry5.services.ComponentEventLinkEncoder;
-import org.apache.tapestry5.services.ComponentEventRequestParameters;
-import org.apache.tapestry5.services.ContextPathEncoder;
-import org.apache.tapestry5.services.LocalizationSetter;
-import org.apache.tapestry5.services.PageRenderRequestParameters;
-import org.apache.tapestry5.services.PersistentLocale;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.*;
 
 public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 {
@@ -49,6 +41,8 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
     private final Response response;
 
     private final RequestSecurityManager requestSecurityManager;
+
+    private final BaseURLSource baseURLSource;
 
     private final PersistentLocale persistentLocale;
 
@@ -87,8 +81,8 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
     public ComponentEventLinkEncoderImpl(ComponentClassResolver componentClassResolver,
             ContextPathEncoder contextPathEncoder, LocalizationSetter localizationSetter, Request request,
-            Response response, RequestSecurityManager requestSecurityManager, PersistentLocale persistentLocale,
-            @Symbol(SymbolConstants.ENCODE_LOCALE_INTO_PATH)
+            Response response, RequestSecurityManager requestSecurityManager, BaseURLSource baseURLSource,
+            PersistentLocale persistentLocale, @Symbol(SymbolConstants.ENCODE_LOCALE_INTO_PATH)
             boolean encodeLocaleIntoPath)
     {
         this.componentClassResolver = componentClassResolver;
@@ -97,6 +91,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         this.request = request;
         this.response = response;
         this.requestSecurityManager = requestSecurityManager;
+        this.baseURLSource = baseURLSource;
         this.persistentLocale = persistentLocale;
         this.encodeLocaleIntoPath = encodeLocaleIntoPath;
     }
@@ -108,11 +103,6 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         // Build up the absolute URI.
 
         String activePageName = parameters.getLogicalPageName();
-
-        String baseURL = requestSecurityManager.getBaseURL(activePageName);
-
-        if (baseURL != null)
-            builder.append(baseURL);
 
         builder.append(request.getContextPath());
 
@@ -126,7 +116,8 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
         appendContext(encodedPageName.length() > 0, parameters.getActivationContext(), builder);
 
-        Link link = new LinkImpl(builder.toString(), false, response, contextPathEncoder);
+        Link link = new LinkImpl(builder.toString(), false, requestSecurityManager.checkPageSecurity(activePageName),
+                response, contextPathEncoder, baseURLSource);
 
         if (parameters.isLoopback())
             link.addParameter(TapestryConstants.PAGE_LOOPBACK_PARAMETER_NAME, "t");
@@ -174,11 +165,6 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         String nestedComponentId = parameters.getNestedComponentId();
         boolean hasComponentId = InternalUtils.isNonBlank(nestedComponentId);
 
-        String baseURL = requestSecurityManager.getBaseURL(activePageName);
-
-        if (baseURL != null)
-            builder.append(baseURL);
-
         builder.append(request.getContextPath());
 
         encodeLocale(builder);
@@ -200,7 +186,8 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
         appendContext(true, parameters.getEventContext(), builder);
 
-        Link result = new LinkImpl(builder.toString(), forForm, response, contextPathEncoder);
+        Link result = new LinkImpl(builder.toString(), forForm,
+                requestSecurityManager.checkPageSecurity(activePageName), response, contextPathEncoder, baseURLSource);
 
         EventContext pageActivationContext = parameters.getPageActivationContext();
 

@@ -55,6 +55,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 @SupportsInformalParameters
 @IncludeJavaScriptLibrary("ProgressiveDisplay.js")
 @Events(EventConstants.PROGRESSIVE_DISPLAY)
+@SuppressWarnings("all")
 public class ProgressiveDisplay
 {
     /**
@@ -78,7 +79,6 @@ public class ProgressiveDisplay
     @Environmental
     private JavaScriptSupport jsSupport;
 
-    @SuppressWarnings("unchecked")
     @Environmental
     private TrackableComponentEventCallback eventCallback;
 
@@ -111,7 +111,7 @@ public class ProgressiveDisplay
             spec.put("update", update.toLowerCase());
 
         spec.put("element", clientId);
-        spec.put("url", link.toAbsoluteURI());
+        spec.put("url", link.toURI());
 
         jsSupport.addInitializerCall("progressiveDisplay", spec);
 

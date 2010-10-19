@@ -20,6 +20,7 @@ import java.util.Map;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.ContextPathEncoder;
 import org.apache.tapestry5.services.Response;
 
@@ -31,25 +32,32 @@ public class LinkImpl implements Link
 
     private final boolean forForm;
 
+    private LinkSecurity defaultSecurity;
+
     private final Response response;
 
     private final ContextPathEncoder contextPathEncoder;
 
+    private final BaseURLSource baseURLSource;
+
     private String anchor;
 
-    public LinkImpl(String basePath, boolean forForm, Response response, ContextPathEncoder contextPathEncoder)
+    public LinkImpl(String basePath, boolean forForm, LinkSecurity defaultSecurity, Response response,
+            ContextPathEncoder contextPathEncoder, BaseURLSource baseURLSource)
     {
+        assert basePath != null;
+
         this.basePath = basePath;
         this.forForm = forForm;
+        this.defaultSecurity = defaultSecurity;
         this.response = response;
         this.contextPathEncoder = contextPathEncoder;
+        this.baseURLSource = baseURLSource;
     }
 
     public Link copyWithBasePath(String basePath)
     {
-        assert basePath != null;
-
-        LinkImpl copy = new LinkImpl(basePath, forForm, response, contextPathEncoder);
+        LinkImpl copy = new LinkImpl(basePath, forForm, defaultSecurity, response, contextPathEncoder, baseURLSource);
 
         copy.anchor = anchor;
 
@@ -105,22 +113,32 @@ public class LinkImpl implements Link
 
     public String toAbsoluteURI()
     {
-        return toURI();
+        return buildAnchoredURI(defaultSecurity.promote());
+    }
+
+    public String toAbsoluteURI(boolean secure)
+    {
+        return buildAnchoredURI(secure ? LinkSecurity.FORCE_SECURE : LinkSecurity.FORCE_INSECURE);
     }
 
     public String toRedirectURI()
     {
-        return appendAnchor(response.encodeRedirectURL(buildURI()));
+        return appendAnchor(response.encodeRedirectURL(buildURI(defaultSecurity)));
     }
 
     public String toURI()
     {
-        return appendAnchor(response.encodeURL(buildURI()));
+        return buildAnchoredURI(defaultSecurity);
     }
 
     private String appendAnchor(String path)
     {
         return InternalUtils.isBlank(anchor) ? path : path + "#" + anchor;
+    }
+
+    private String buildAnchoredURI(LinkSecurity security)
+    {
+        return appendAnchor(response.encodeURL(buildURI(security)));
     }
 
     /**
@@ -137,31 +155,50 @@ public class LinkImpl implements Link
      * 
      * @return absoluteURI appended with query parameters
      */
-    private String buildURI()
+    private String buildURI(LinkSecurity security)
     {
-        if (forForm || parameters == null)
+
+        if (!security.isAbsolute() && (forForm || parameters == null))
             return basePath;
 
         StringBuilder builder = new StringBuilder(basePath.length() * 2);
 
+        switch (security)
+        {
+            case FORCE_SECURE:
+                builder.append(baseURLSource.getBaseURL(true));
+                break;
+            case FORCE_INSECURE:
+                builder.append(baseURLSource.getBaseURL(false));
+                break;
+            default:
+        }
+
+        // The base URL (from BaseURLSource) does not end with a slash.
+        // The basePath does (the context path begins with a slash or is blank, then there's
+        // always a slash before the local name or page name.
+
         builder.append(basePath);
 
-        String sep = basePath.contains("?") ? "&" : "?";
-
-        for (String name : getParameterNames())
+        if (!forForm)
         {
-            String value = parameters.get(name);
+            String sep = basePath.contains("?") ? "&" : "?";
 
-            builder.append(sep);
+            for (String name : getParameterNames())
+            {
+                String value = parameters.get(name);
 
-            // We assume that the name is URL safe and that the value will already have been URL
-            // encoded if it is not known to be URL safe.
+                builder.append(sep);
 
-            builder.append(name);
-            builder.append("=");
-            builder.append(value);
+                // We assume that the name is URL safe and that the value will already have been URL
+                // encoded if it is not known to be URL safe.
 
-            sep = "&";
+                builder.append(name);
+                builder.append("=");
+                builder.append(value);
+
+                sep = "&";
+            }
         }
 
         return builder.toString();

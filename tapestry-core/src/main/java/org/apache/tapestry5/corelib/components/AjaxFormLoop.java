@@ -179,7 +179,7 @@ public class AjaxFormLoop
         {
             Link link = resources.createEventLink("triggerRemoveRow", toClientValue());
 
-            String asURI = link.toAbsoluteURI();
+            String asURI = link.toURI();
 
             JSONObject spec = new JSONObject();
             spec.put("link", clientId);

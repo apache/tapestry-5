@@ -65,7 +65,7 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
 
     public void linkZone(String linkId, String elementId, Link eventLink)
     {
-        JSONObject spec = new JSONObject("linkId", linkId, "zoneId", elementId, "url", eventLink.toAbsoluteURI());
+        JSONObject spec = new JSONObject("linkId", linkId, "zoneId", elementId, "url", eventLink.toURI());
 
         javascriptSupport.addInitializerCall("linkZone", spec);
     }
@@ -93,7 +93,7 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
 
     public void addFormInjector(String clientId, Link link, InsertPosition insertPosition, String showFunctionName)
     {
-        JSONObject spec = new JSONObject("element", clientId, "url", link.toAbsoluteURI());
+        JSONObject spec = new JSONObject("element", clientId, "url", link.toURI());
 
         if (insertPosition == InsertPosition.BELOW)
             spec.put("below", true);

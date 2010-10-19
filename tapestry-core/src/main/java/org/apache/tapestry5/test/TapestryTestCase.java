@@ -1229,7 +1229,7 @@ public abstract class TapestryTestCase extends IOCTestCase
     {
         Link link = mockLink();
 
-        expect(link.toAbsoluteURI()).andReturn(absoluteURI).atLeastOnce();
+        expect(link.toURI()).andReturn(absoluteURI).atLeastOnce();
 
         return link;
     }

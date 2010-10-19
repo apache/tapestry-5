@@ -55,7 +55,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         Response response = mockResponse();
         ContextPathEncoder contextPathEncoder = getService(ContextPathEncoder.class);
 
-        expect(manager.getBaseURL("MyPage")).andReturn(null);
+        expect(manager.checkPageSecurity("MyPage")).andReturn(LinkSecurity.INSECURE);
         train_getContextPath(request, "/myapp");
 
         train_encodeURL(response, "/myapp/mypage", "MAGIC");
@@ -63,13 +63,13 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null, contextPathEncoder, null, request,
-                response, manager, null, false);
+                response, manager, null, null, false);
 
         PageRenderRequestParameters parameters = new PageRenderRequestParameters("MyPage", new EmptyEventContext());
 
         Link link = encoder.createPageRenderLink(parameters);
 
-        assertEquals(link.toAbsoluteURI(), "MAGIC");
+        assertEquals(link.toURI(), "MAGIC");
 
         verify();
     }
@@ -82,7 +82,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         Response response = mockResponse();
         ContextPathEncoder contextPathEncoder = getService(ContextPathEncoder.class);
 
-        expect(manager.getBaseURL("admin/Index")).andReturn(null);
+        expect(manager.checkPageSecurity("admin/Index")).andReturn(LinkSecurity.INSECURE);
         train_getContextPath(request, "");
 
         train_encodeURL(response, "/admin/abc", "MAGIC");
@@ -90,14 +90,14 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null, contextPathEncoder, null, request,
-                response, manager, null, false);
+                response, manager, null, null, false);
 
         PageRenderRequestParameters parameters = new PageRenderRequestParameters("admin/Index", new ArrayEventContext(
                 typeCoercer, "abc"));
 
         Link link = encoder.createPageRenderLink(parameters);
 
-        assertEquals(link.toAbsoluteURI(), "MAGIC");
+        assertEquals(link.toURI(), "MAGIC");
 
         verify();
     }
@@ -110,7 +110,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         Response response = mockResponse();
         ContextPathEncoder contextPathEncoder = getService(ContextPathEncoder.class);
 
-        expect(manager.getBaseURL("Index")).andReturn(null);
+        expect(manager.checkPageSecurity("Index")).andReturn(LinkSecurity.INSECURE);
         train_getContextPath(request, "");
 
         train_encodeURL(response, "/", "MAGIC");
@@ -118,13 +118,13 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null, contextPathEncoder, null, request,
-                response, manager, null, false);
+                response, manager, null, null, false);
 
         PageRenderRequestParameters parameters = new PageRenderRequestParameters("Index", new EmptyEventContext());
 
         Link link = encoder.createPageRenderLink(parameters);
 
-        assertEquals(link.toAbsoluteURI(), "MAGIC");
+        assertEquals(link.toURI(), "MAGIC");
 
         verify();
     }
@@ -146,7 +146,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                request, response, null, null, true);
+                request, response, null, null, null, true);
 
         PageRenderRequestParameters parameters = linkEncoder.decodePageRenderRequest(request);
 
@@ -171,7 +171,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                request, response, null, null, true);
+                request, response, null, null, null, true);
 
         PageRenderRequestParameters parameters = linkEncoder.decodePageRenderRequest(request);
 
@@ -197,7 +197,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                request, response, null, null, true);
+                request, response, null, null, null, true);
 
         PageRenderRequestParameters parameters = linkEncoder.decodePageRenderRequest(request);
 
@@ -238,7 +238,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                request, null, null, null, true);
+                request, null, null, null, null, true);
 
         PageRenderRequestParameters parameters = linkEncoder.decodePageRenderRequest(request);
 
@@ -279,7 +279,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                request, null, null, null, true);
+                request, null, null, null, null, true);
 
         PageRenderRequestParameters parameters = linkEncoder.decodePageRenderRequest(request);
 
@@ -324,7 +324,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                request, null, null, null, true);
+                request, null, null, null, null, true);
 
         PageRenderRequestParameters parameters = linkEncoder.decodePageRenderRequest(request);
 

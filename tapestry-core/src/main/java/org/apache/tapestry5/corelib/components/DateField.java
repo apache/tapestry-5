@@ -244,8 +244,8 @@ public class DateField extends AbstractField
         JSONObject spec = new JSONObject();
 
         spec.put("field", clientId);
-        spec.put("parseURL", resources.createEventLink("parse").toAbsoluteURI());
-        spec.put("formatURL", resources.createEventLink("format").toAbsoluteURI());
+        spec.put("parseURL", resources.createEventLink("parse").toURI());
+        spec.put("formatURL", resources.createEventLink("format").toURI());
 
         support.addInitializerCall("dateField", spec);
     }

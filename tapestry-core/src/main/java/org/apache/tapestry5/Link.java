@@ -17,7 +17,9 @@ package org.apache.tapestry5;
 import java.util.List;
 
 import org.apache.commons.codec.net.URLCodec;
+import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.ContextPathEncoder;
+import org.apache.tapestry5.services.Request;
 
 /**
  * A link is the Tapestry representation of a URL or URI that triggers dynamic behavior. This link is in three parts: a
@@ -121,10 +123,23 @@ public interface Link
     void setAnchor(String anchor);
 
     /**
-     * Returns the same value as {@link #toURI()}.
+     * Returns the absolute URL, which includes the scheme, hostname and possibly port (as per
+     * {@link BaseURLSource#getBaseURL(boolean)}).
+     * By default, the scheme is chosen to match the current {@linkplain Request#isSecure() requests security}.
+     * <p>
+     * Note: the semantics of this method changed between Tapestry 5.1 and 5.2. Most code should use toString() or
+     * {@link #toURI()} (which are equivalent) instead.
      * 
-     * @deprecated in 5.2 (which removed request path optimization), to be removed in 5.3
-     * @return the complete URI (not abbreviated relative to the current request path)
+     * @return the complete, qualified URL, including query parameters.
      */
     String toAbsoluteURI();
+
+    /**
+     * Returns either the secure or insecure URL, with complete scheme, hostname and possibly port (as per
+     * {@link BaseURLSource#getBaseURL(boolean)}).
+     * 
+     * @since 5.2.2
+     * @return the complete, qualified URL, including query parameters.
+     */
+    String toAbsoluteURI(boolean secure);
 }

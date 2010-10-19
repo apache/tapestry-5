@@ -170,7 +170,7 @@ public class Autocomplete
         // Let subclasses do more.
         configure(config);
 
-        JSONObject spec = new JSONObject("elementId", id, "menuId", menuId, "url", link.toAbsoluteURI()).put("config",
+        JSONObject spec = new JSONObject("elementId", id, "menuId", menuId, "url", link.toURI()).put("config",
                 config);
 
         jsSupport.addInitializerCall("autocompleter", spec);

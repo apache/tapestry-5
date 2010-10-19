@@ -50,7 +50,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         Dispatcher dispatcher = new ComponentEventDispatcher(null,
                 new ComponentEventLinkEncoderImpl(null, contextPathEncoder, null, request,
-                        response, null, null, true));
+                        response, null, null, null, true));
 
         assertFalse(dispatcher.dispatch(request, response));
 
@@ -160,7 +160,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         Dispatcher dispatcher = new ComponentEventDispatcher(handler,
                 new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls, request,
-                        response, null, null, true));
+                        response, null, null, null, true));
 
         assertTrue(dispatcher.dispatch(request, response));
 
@@ -200,7 +200,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         Dispatcher dispatcher = new ComponentEventDispatcher(handler,
                 new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls, request,
-                        response, null, null, true));
+                        response, null, null, null, true));
 
         assertTrue(dispatcher.dispatch(request, response));
 
@@ -224,7 +224,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         Dispatcher dispatcher = new ComponentEventDispatcher(null,
                 new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls, request,
-                        response, null, null, true));
+                        response, null, null, null, true));
 
         assertFalse(dispatcher.dispatch(request, response));
 
@@ -262,7 +262,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         Dispatcher dispatcher = new ComponentEventDispatcher(handler,
                 new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, localizationSetter,
-                        request, response, null, null, true));
+                        request, response, null, null, null, true));
 
         assertTrue(dispatcher.dispatch(request, response));
 

@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,7 +20,6 @@ import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MetaDataConstants;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.ComponentEventLinkEncoder;
 import org.apache.tapestry5.services.ComponentEventRequestParameters;
 import org.apache.tapestry5.services.MetaDataLocator;
@@ -36,42 +35,36 @@ public class RequestSecurityManagerImpl implements RequestSecurityManager
 
     private final MetaDataLocator locator;
 
-    private final BaseURLSource baseURLSource;
-
     private final boolean securityEnabled;
-    
+
     private final ComponentEventLinkEncoder componentEventLinkEncoder;
 
-    public RequestSecurityManagerImpl(Request request, Response response, ComponentEventLinkEncoder componentEventLinkEncoder,
-                                      MetaDataLocator locator, BaseURLSource baseURLSource,
-
-                                      @Symbol(SymbolConstants.SECURE_ENABLED)
-                                      boolean securityEnabled)
+    public RequestSecurityManagerImpl(Request request, Response response,
+            ComponentEventLinkEncoder componentEventLinkEncoder, MetaDataLocator locator, @Symbol(SymbolConstants.SECURE_ENABLED)
+            boolean securityEnabled)
     {
         this.request = request;
         this.response = response;
         this.componentEventLinkEncoder = componentEventLinkEncoder;
         this.locator = locator;
-        this.baseURLSource = baseURLSource;
         this.securityEnabled = securityEnabled;
     }
-    
+
     public boolean checkForInsecureComponentEventRequest(ComponentEventRequestParameters parameters) throws IOException
     {
         if (!needsRedirect(parameters.getActivePageName()))
             return false;
 
         // Page is secure but request is not, so redirect.
-        // We can safely ignore the forForm parameter since secure form requests are alway done from
+        // We can safely ignore the forForm parameter since secure form requests are always done from
         // an already secured page
 
         Link link = componentEventLinkEncoder.createComponentEventLink(parameters, false);
-        
+
         response.sendRedirect(link);
-        
+
         return true;
     }
-    
 
     public boolean checkForInsecurePageRenderRequest(PageRenderRequestParameters parameters) throws IOException
     {
@@ -86,17 +79,20 @@ public class RequestSecurityManagerImpl implements RequestSecurityManager
 
         return true;
     }
-    
+
     private boolean needsRedirect(String pageName)
     {
-        if (!securityEnabled) return false;
+        if (!securityEnabled)
+            return false;
 
         // We don't (at this time) redirect from secure to insecure, just from insecure to secure.
 
-        if (request.isSecure()) return false;
-        
-        if (!isSecure(pageName)) return false;
-        
+        if (request.isSecure())
+            return false;
+
+        if (!isSecure(pageName))
+            return false;
+
         return true;
     }
 
@@ -105,14 +101,18 @@ public class RequestSecurityManagerImpl implements RequestSecurityManager
         return locator.findMeta(MetaDataConstants.SECURE_PAGE, pageName, Boolean.class);
     }
 
-    public String getBaseURL(String pageName)
+    public LinkSecurity checkPageSecurity(String pageName)
     {
-        if (!securityEnabled) return null;
+        if (!securityEnabled)
+            return LinkSecurity.INSECURE;
 
         boolean securePage = isSecure(pageName);
 
-        if (securePage == request.isSecure()) return null;
+        if (request.isSecure() == securePage)
+            return securePage ? LinkSecurity.SECURE : LinkSecurity.INSECURE;
 
-        return baseURLSource.getBaseURL(securePage);
+        // Return a value that will, ultimately, force an absolute URL.
+
+        return securePage ? LinkSecurity.FORCE_SECURE : LinkSecurity.FORCE_INSECURE;
     }
 }
