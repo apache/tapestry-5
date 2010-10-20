@@ -57,11 +57,23 @@ public final class StringToEnumCoercion<T extends Enum> implements Coercion<Stri
         T result = stringToEnum.get(input);
 
         if (result == null)
-            throw new UnknownValueException(PublicUtilMessages
-                    .missingEnumValue(input, enumClass, stringToEnum.keySet()), new AvailableValues(enumClass.getName()
-                    + " enum constants", stringToEnum));
+            throw new UnknownValueException(
+                    PublicUtilMessages.missingEnumValue(input, enumClass, stringToEnum.keySet()), new AvailableValues(
+                            enumClass.getName() + " enum constants", stringToEnum));
 
         return result;
+    }
+
+    /**
+     * Allows an alias value (alternate) string to reference a value.
+     * 
+     * @since 5.2.2
+     */
+    public StringToEnumCoercion<T> addAlias(String alias, T value)
+    {
+        stringToEnum.put(alias, value);
+
+        return this;
     }
 
     public static <T extends Enum> StringToEnumCoercion<T> create(Class<T> enumClass)
