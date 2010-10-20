@@ -55,6 +55,7 @@
             <item name="From Tapestry 4" href="upgrade4.html"/>
             <item name="Upgrade Notes (5.0)" href="upgrade5.0.html"/>
             <item name="Release Notes (5.0)" href="release-notes-5.0.html"/>
+            <item name="Release Notes (5.1)" href="release-notes-5.1.html"/>
         </menu>
 
         <menu name="Tapestry 5 Modules">
