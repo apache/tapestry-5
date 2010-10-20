@@ -191,6 +191,16 @@ public class Form implements ClientElement, FormValidationControl
     private String zone;
 
     /**
+     * If true, then the Form's action will be secure (using an absolute URL with the HTTPs scheme) regardless
+     * of whether the containing page itself is secure or not. This parameter does nothing
+     * when {@linkplain SymbolConstants#SECURE_ENABLED security is disabled} (which is often
+     * the case in development mode). This only affects how the Form's action attribute is rendered, there is
+     * not (currently) a check that the form is actually submitted securely.
+     */
+    @Parameter
+    private boolean secure;
+
+    /**
      * Prefix value used when searching for validation messages and constraints.
      * The default is the Form component's
      * id. This is overridden by {@link org.apache.tapestry5.corelib.components.BeanEditForm}.
@@ -237,6 +247,10 @@ public class Form implements ClientElement, FormValidationControl
 
     @Persist(PersistenceConstants.FLASH)
     private ValidationTracker defaultTracker;
+
+    @Inject
+    @Symbol(SymbolConstants.SECURE_ENABLED)
+    private boolean secureEnabled;
 
     private InternalFormSupport formSupport;
 
@@ -354,6 +368,8 @@ public class Form implements ClientElement, FormValidationControl
     {
         Link link = resources.createFormEventLink(EventConstants.ACTION, context);
 
+        String actionURL = secure && secureEnabled ? link.toAbsoluteURI(true) : link.toURI();
+
         actionSink = new ComponentActionSink(logger, clientDataEncoder);
 
         clientId = javascriptSupport.allocateClientId(resources);
@@ -394,7 +410,7 @@ public class Form implements ClientElement, FormValidationControl
         // Save the form element for later, in case we want to write an encoding
         // type attribute.
 
-        form = writer.element("form", "id", clientId, "method", "post", "action", link);
+        form = writer.element("form", "id", clientId, "method", "post", "action", actionURL);
 
         if ((zone != null || clientValidation) && !request.isXHR())
             writer.attributes("onsubmit", MarkupConstants.WAIT_FOR_PAGE);
