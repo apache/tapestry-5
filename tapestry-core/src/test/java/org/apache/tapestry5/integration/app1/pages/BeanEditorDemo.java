@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.beaneditor.Validate;
+import org.apache.tapestry5.corelib.ClientValidation;
 import org.apache.tapestry5.corelib.components.BeanEditForm;
 import org.apache.tapestry5.integration.app1.data.RegistrationData;
 
@@ -29,7 +30,7 @@ public class BeanEditorDemo
     private String message;
 
     @Component(id = "registrationData", parameters =
-    { "clientValidation=clientValidation" })
+    { "clientValidation=prop:clientValidation" })
     private BeanEditForm form;
 
     @ApplicationState
@@ -51,9 +52,9 @@ public class BeanEditorDemo
         form.clearErrors();
     }
 
-    public boolean getClientValidation()
+    public ClientValidation getClientValidation()
     {
-        return false;
+        return ClientValidation.NONE;
     }
 
     public String getPageTitle()

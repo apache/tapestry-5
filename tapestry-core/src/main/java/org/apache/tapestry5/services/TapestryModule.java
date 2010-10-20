@@ -40,6 +40,7 @@ import org.apache.tapestry5.ajax.MultiZoneUpdate;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.annotations.ContentType;
 import org.apache.tapestry5.beaneditor.Validate;
+import org.apache.tapestry5.corelib.ClientValidation;
 import org.apache.tapestry5.corelib.LoopFormState;
 import org.apache.tapestry5.corelib.SubmitMode;
 import org.apache.tapestry5.corelib.data.BlankOption;
@@ -1217,8 +1218,18 @@ public final class TapestryModule
                 return calendar;
             }
         }));
+
+        // Add support for "true" and "false", for compatibility with Tapestry 5.1 and earlier.
+        // These aliases may be removed in some later release.
+
+        StringToEnumCoercion<ClientValidation> stringToClientValidationCoercion = StringToEnumCoercion
+                .create(ClientValidation.class).addAlias("true", ClientValidation.BLUR)
+                .addAlias("false", ClientValidation.NONE);
+
+        configuration.add(CoercionTuple.create(String.class, ClientValidation.class, stringToClientValidationCoercion));
     }
 
+    @SuppressWarnings("rawtypes")
     private static <T extends Enum> void add(Configuration<CoercionTuple> configuration, Class<T> enumType)
     {
         configuration.add(CoercionTuple.create(String.class, enumType, StringToEnumCoercion.create(enumType)));

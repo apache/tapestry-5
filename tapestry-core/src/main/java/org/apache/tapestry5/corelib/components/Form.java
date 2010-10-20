@@ -27,6 +27,7 @@ import org.apache.tapestry5.annotations.Mixin;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.corelib.ClientValidation;
 import org.apache.tapestry5.corelib.internal.ComponentActionSink;
 import org.apache.tapestry5.corelib.internal.FormSupportImpl;
 import org.apache.tapestry5.corelib.internal.InternalFormSupport;
@@ -46,6 +47,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.ioc.util.IdAllocator;
+import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ClientBehaviorSupport;
 import org.apache.tapestry5.services.ClientDataEncoder;
@@ -54,6 +56,7 @@ import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.slf4j.Logger;
 
@@ -160,16 +163,11 @@ public class Form implements ClientElement, FormValidationControl
     private boolean clientLogicDefaultEnabled;
 
     /**
-     * If true (the default) then client validation is enabled for the form, and
-     * the default set of JavaScript libraries
-     * (Prototype, Scriptaculous and the Tapestry library) will be added to the
-     * rendered page, and the form will
-     * register itself for validation. This may be turned off when client
-     * validation is not desired; for example, when
-     * many validations are used that do not operate on the client side at all.
+     * Controls when client validation occurs on the client, if at all. Defaults to {@link ClientValidation#BLUR}.
      */
-    @Parameter
-    private boolean clientValidation = clientLogicDefaultEnabled;
+    @Parameter(allowNull = false, defaultPrefix = BindingConstants.LITERAL)
+    private ClientValidation clientValidation = clientLogicDefaultEnabled ? ClientValidation.BLUR
+            : ClientValidation.NONE;
 
     /**
      * If true (the default), then the JavaScript will be added to position the
@@ -383,6 +381,8 @@ public class Form implements ClientElement, FormValidationControl
 
         formSupport = createRenderTimeFormSupport(clientId, actionSink, allocator);
 
+        addJavaScriptInitialization();
+
         if (zone != null)
             linkFormToZone(link);
 
@@ -412,7 +412,7 @@ public class Form implements ClientElement, FormValidationControl
 
         form = writer.element("form", "id", clientId, "method", "post", "action", actionURL);
 
-        if ((zone != null || clientValidation) && !request.isXHR())
+        if ((zone != null || clientValidation != ClientValidation.NONE) && !request.isXHR())
             writer.attributes("onsubmit", MarkupConstants.WAIT_FOR_PAGE);
 
         resources.renderInformalParameters(writer);
@@ -430,6 +430,16 @@ public class Form implements ClientElement, FormValidationControl
         writer.end(); // div
 
         environment.peek(Heartbeat.class).begin();
+    }
+
+    private void addJavaScriptInitialization()
+    {
+        JSONObject validateSpec = new JSONObject().put("blur", clientValidation == ClientValidation.BLUR).put("submit",
+                clientValidation != ClientValidation.NONE);
+
+        JSONObject spec = new JSONObject("formId", clientId).put("validate", validateSpec);
+
+        javascriptSupport.addInitializerCall(InitializationPriority.EARLY, "formEventManager", spec);
     }
 
     @HeartbeatDeferred
@@ -460,8 +470,8 @@ public class Form implements ClientElement, FormValidationControl
     InternalFormSupport createRenderTimeFormSupport(String clientId, ComponentActionSink actionSink,
             IdAllocator allocator)
     {
-        return new FormSupportImpl(resources, clientId, actionSink, clientBehaviorSupport, clientValidation, allocator,
-                validationId);
+        return new FormSupportImpl(resources, clientId, actionSink, clientBehaviorSupport,
+                clientValidation != ClientValidation.NONE, allocator, validationId);
     }
 
     void afterRender(MarkupWriter writer)

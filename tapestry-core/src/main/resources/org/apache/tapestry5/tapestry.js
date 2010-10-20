@@ -1,16 +1,17 @@
-// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/* Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http:*www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 var Tapestry = {
 
@@ -745,100 +746,115 @@ Element.addMethods( {
 	}
 });
 
-Element.addMethods('FORM', {
-	/**
-	 * Gets or creates the Tapestry.FormEventManager for the form.
-	 * 
-	 * @param form
-	 *            form element
-	 */
-	getFormEventManager : function(form) {
-		form = $(form);
-		var t = $T(form);
+Element
+		.addMethods(
+				'FORM',
+				{
+					/**
+					 * Gets the Tapestry.FormEventManager for the form.
+					 * 
+					 * @param form
+					 *            form element
+					 */
+					getFormEventManager : function(form) {
+						form = $(form);
 
-		var manager = t.formEventManager;
+						var manager = $T(form).formEventManager;
 
-		if (manager == undefined) {
-			manager = new Tapestry.FormEventManager(form);
-			t.formEventManager = manager;
-		}
+						if (manager == undefined) {
 
-		return manager;
-	},
+							throw "No Tapestry.FormEventManager object has been created for form '#{id}'."
+									.interpolate(form);
+						}
 
-	/**
-	 * Identifies in the form what is the cause of the submission. The element's
-	 * id is stored into the t:submit hidden field (created as needed).
-	 * 
-	 * @param form
-	 *            to update
-	 * @param element
-	 *            id or element that is the cause of the submit (a Submit or
-	 *            LinkSubmit)
-	 */
-	setSubmittingElement : function(form, element) {
-		form.getFormEventManager().setSubmittingElement(element);
-	},
+						return manager;
+					},
 
-	/** Turns off client validation for the next submission of the form. */
-	skipValidation : function(form) {
-		$T(form).skipValidation = true;
-	},
+					/**
+					 * Identifies in the form what is the cause of the
+					 * submission. The element's id is stored into the t:submit
+					 * hidden field (created as needed).
+					 * 
+					 * @param form
+					 *            to update
+					 * @param element
+					 *            id or element that is the cause of the submit
+					 *            (a Submit or LinkSubmit)
+					 */
+					setSubmittingElement : function(form, element) {
+						form.getFormEventManager()
+								.setSubmittingElement(element);
+					},
 
-	/**
-	 * Programmatically perform a submit, invling the onsubmit event handler (if
-	 * present) before calling form.submit().
-	 */
-	performSubmit : function(form, event) {
-		if (form.onsubmit == undefined
-				|| form.onsubmit.call(window.document, event)) {
-			form.submit();
-		}
-	},
+					/**
+					 * Turns off client validation for the next submission of
+					 * the form.
+					 */
+					skipValidation : function(form) {
+						$T(form).skipValidation = true;
+					},
 
-	/**
-	 * Sends an Ajax request to the Form's action. This encapsulates a few
-	 * things, such as a default onFailure handler, and working around
-	 * bugs/features in Prototype concerning how submit buttons are processed.
-	 * 
-	 * @param form
-	 *            used to define the data to be sent in the request
-	 * @param options
-	 *            standard Prototype Ajax Options
-	 * @return Ajax.Request the Ajax.Request created for the request
-	 */
-	sendAjaxRequest : function(form, url, options) {
-		form = $(form);
+					/**
+					 * Programmatically perform a submit, invoking the onsubmit
+					 * event handler (if present) before calling form.submit().
+					 */
+					performSubmit : function(form, event) {
+						if (form.onsubmit == undefined
+								|| form.onsubmit.call(window.document, event)) {
+							form.submit();
+						}
+					},
 
-		/*
-		 * Generally, options should not be null or missing, because otherwise
-		 * there's no way to provide any callbacks!
-		 */
-		options = Object.clone(options || {});
+					/**
+					 * Sends an Ajax request to the Form's action. This
+					 * encapsulates a few things, such as a default onFailure
+					 * handler, and working around bugs/features in Prototype
+					 * concerning how submit buttons are processed.
+					 * 
+					 * @param form
+					 *            used to define the data to be sent in the
+					 *            request
+					 * @param options
+					 *            standard Prototype Ajax Options
+					 * @return Ajax.Request the Ajax.Request created for the
+					 *         request
+					 */
+					sendAjaxRequest : function(form, url, options) {
+						form = $(form);
 
-		/*
-		 * Find the elements, skipping over any submit buttons. This works
-		 * around bugs in Prototype 1.6.0.2.
-		 */
-		var elements = form.getElements().reject(function(e) {
-			return e.tagName == "INPUT" && e.type == "submit";
-		});
+						/*
+						 * Generally, options should not be null or missing,
+						 * because otherwise there's no way to provide any
+						 * callbacks!
+						 */
+						options = Object.clone(options || {});
 
-		var hash = Form.serializeElements(elements, true);
+						/*
+						 * Find the elements, skipping over any submit buttons.
+						 * This works around bugs in Prototype 1.6.0.2.
+						 */
+						var elements = form.getElements().reject(function(e) {
+							return e.tagName == "INPUT" && e.type == "submit";
+						});
 
-		/*
-		 * Copy the parameters in, overwriting field values, because Prototype
-		 * 1.6.0.2 does not.
-		 */
-		Object.extend(hash, options.parameters);
+						var hash = Form.serializeElements(elements, true);
 
-		options.parameters = hash;
+						/*
+						 * Copy the parameters in, overwriting field values,
+						 * because Prototype 1.6.0.2 does not.
+						 */
+						Object.extend(hash, options.parameters);
 
-		/* Ajax.Request will convert the hash into a query string and post it. */
+						options.parameters = hash;
 
-		return Tapestry.ajaxRequest(url, options);
-	}
-});
+						/*
+						 * Ajax.Request will convert the hash into a query
+						 * string and post it.
+						 */
+
+						return Tapestry.ajaxRequest(url, options);
+					}
+				});
 
 Element.addMethods( [ 'INPUT', 'SELECT', 'TEXTAREA' ], {
 	/**
@@ -1055,7 +1071,6 @@ Tapestry.Initializer = {
 		if (element.tagName == "FORM") {
 
 			// Create the FEM if necessary.
-			element.getFormEventManager();
 			element.addClassName(Tapestry.PREVENT_SUBMISSION);
 
 			/*
@@ -1114,6 +1129,18 @@ Tapestry.Initializer = {
 	},
 
 	/**
+	 * Sets up a Tapestry.FormEventManager for the form, and enables events for
+	 * validations. This is executed with InitializationPriority.EARLY, to
+	 * ensure that the FormEventManager exists vefore any validations are added
+	 * for fields within the Form.
+	 * 
+	 * @since 5.2.2
+	 */
+	formEventManager : function(spec) {
+		$T(spec.formId).formEventManager = new Tapestry.FormEventManager(spec);
+	},
+
+	/**
 	 * Keys in the masterSpec are ids of field control elements. Value is a list
 	 * of validation specs. Each validation spec is a 2 or 3 element array.
 	 */
@@ -1125,11 +1152,9 @@ Tapestry.Initializer = {
 							var field = $(pair.key);
 
 							/*
-							 * Force the creation of the form and field event
-							 * managers.
+							 * Force the creation of the field event manager.
 							 */
 
-							$(field.form).getFormEventManager();
 							$(field).getFieldEventManager();
 
 							$A(pair.value)
@@ -1202,8 +1227,6 @@ Tapestry.Initializer = {
 
 		var hidden = $(spec.element + "-hidden");
 		var form = $(hidden.form);
-
-		form.getFormEventManager();
 
 		function runAnimation(makeVisible) {
 			var effect = makeVisible ? Tapestry.ElementEffect[spec.show]
@@ -1499,8 +1522,10 @@ Tapestry.ErrorPopup = Class.create( {
 
 Tapestry.FormEventManager = Class.create( {
 
-	initialize : function(form) {
-		this.form = $(form);
+	initialize : function(spec) {
+		this.form = $(spec.formId);
+		this.validateOnBlur = spec.validate.blur;
+		this.validateOnSubmit = spec.validate.submit;
 
 		this.form.onsubmit = this.handleSubmit.bindAsEventListener(this);
 	},
@@ -1629,20 +1654,27 @@ Tapestry.FieldEventManager = Class.create( {
 
 		this.translator = Prototype.K;
 
-		document.observe(Tapestry.FOCUS_CHANGE_EVENT, function(event) {
-			/*
-			 * If changing focus *within the same form* then perform validation.
-			 * Note that Tapestry.currentFocusField does not change until after
-			 * the FOCUS_CHANGE_EVENT notification.
-			 */
-			if (Tapestry.currentFocusField == this.field
-					&& this.field.form == event.memo.form)
-				this.validateInput();
+		var fem = $(this.field.form).getFormEventManager();
 
-		}.bindAsEventListener(this));
+		if (fem.validateOnBlur) {
 
-		$(this.field.form).observe(Tapestry.FORM_VALIDATE_FIELDS_EVENT,
-				this.validateInput.bindAsEventListener(this));
+			document.observe(Tapestry.FOCUS_CHANGE_EVENT, function(event) {
+				/*
+				 * If changing focus *within the same form* then perform
+				 * validation. Note that Tapestry.currentFocusField does not
+				 * change until after the FOCUS_CHANGE_EVENT notification.
+				 */
+				if (Tapestry.currentFocusField == this.field
+						&& this.field.form == event.memo.form)
+					this.validateInput();
+
+			}.bindAsEventListener(this));
+		}
+
+		if (fem.validateOnSubmit) {
+			$(this.field.form).observe(Tapestry.FORM_VALIDATE_FIELDS_EVENT,
+					this.validateInput.bindAsEventListener(this));
+		}
 	},
 
 	/**

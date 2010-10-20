@@ -14,13 +14,15 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
+import org.apache.tapestry5.corelib.ClientValidation;
+
 public class ValidBeanEditorDemo extends BeanEditorDemo
 {
 
     @Override
-    public boolean getClientValidation()
+    public ClientValidation getClientValidation()
     {
-        return true;
+        return ClientValidation.BLUR;
     }
 
     @Override
@@ -32,9 +34,9 @@ public class ValidBeanEditorDemo extends BeanEditorDemo
     Object onCanceledFromRegistrationData()
     {
         setMessage("Form was cancelled.");
-        
+
         clearErrors();
-        
+
         return this;
     }
 }
