@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.apache.tapestry5.ioc.AdvisorDef;
 import org.apache.tapestry5.ioc.Invokable;
+import org.apache.tapestry5.ioc.Markable;
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.OperationTracker;
@@ -143,7 +144,7 @@ public class ModuleImpl implements Module
 
         for (DecoratorDef def : moduleDef.getDecoratorDefs())
         {
-            if (def.matches(serviceDef))
+            if (def.matches(serviceDef) || markerMatched(serviceDef, InternalUtils.toDecoratorDef2(def)))
                 result.add(def);
         }
 
@@ -156,7 +157,7 @@ public class ModuleImpl implements Module
 
         for (AdvisorDef def : moduleDef.getAdvisorDefs())
         {
-            if (def.matches(serviceDef))
+            if (def.matches(serviceDef) || markerMatched(serviceDef, InternalUtils.toAdvisorDef2(def)))
                 result.add(def);
         }
 
@@ -544,34 +545,41 @@ public class ModuleImpl implements Module
             }
             else
             {
-                if (!serviceDef.getServiceInterface().equals(def.getServiceInterface()))
-                    continue;
-
-                Set<Class> contributionMarkers = CollectionFactory.newSet(def.getMarkers());
-
-                if (contributionMarkers.contains(Local.class))
+                if(markerMatched(serviceDef, def))
                 {
-                    // If @Local is present, filter out services that aren't in the same module.
-                    // Don't consider @Local to be a marker annotation
-                    // for the later match, however.
-
-                    if (!isLocalServiceDef(serviceDef))
-                        continue;
-
-                    contributionMarkers.remove(Local.class);
-                }
-
-                // Filter out any stray annotations that aren't used by some
-                // service, in any module, as a marker annotation.
-
-                contributionMarkers.retainAll(registry.getMarkerAnnotations());
-
-                if (serviceDef.getMarkers().containsAll(contributionMarkers))
                     result.add(def);
+                }
             }
         }
 
         return result;
+    }
+   
+    private boolean markerMatched(ServiceDef serviceDef, Markable markable)
+    {
+        if (!serviceDef.getServiceInterface().equals(markable.getServiceInterface()))
+            return false;;
+
+        Set<Class> contributionMarkers = CollectionFactory.newSet(markable.getMarkers());
+
+        if (contributionMarkers.contains(Local.class))
+        {
+            // If @Local is present, filter out services that aren't in the same module.
+            // Don't consider @Local to be a marker annotation
+            // for the later match, however.
+
+            if (!isLocalServiceDef(serviceDef))
+                return false;
+
+            contributionMarkers.remove(Local.class);
+        }
+
+        // Filter out any stray annotations that aren't used by some
+        // service, in any module, as a marker annotation.
+
+        contributionMarkers.retainAll(registry.getMarkerAnnotations());
+
+        return serviceDef.getMarkers().containsAll(contributionMarkers);
     }
 
     private boolean isLocalServiceDef(ServiceDef serviceDef)

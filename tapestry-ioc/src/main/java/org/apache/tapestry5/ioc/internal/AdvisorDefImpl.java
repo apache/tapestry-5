@@ -15,22 +15,23 @@
 package org.apache.tapestry5.ioc.internal;
 
 import java.lang.reflect.Method;
+import java.util.Set;
 
-import org.apache.tapestry5.ioc.AdvisorDef;
+import org.apache.tapestry5.ioc.AdvisorDef2;
 import org.apache.tapestry5.ioc.ModuleBuilderSource;
 import org.apache.tapestry5.ioc.ServiceAdvisor;
 import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 
-public class AdvisorDefImpl extends AbstractServiceInstrumenter implements AdvisorDef
+public class AdvisorDefImpl extends AbstractServiceInstrumenter implements AdvisorDef2
 {
     private final String advisorId;
 
     public AdvisorDefImpl(Method method, String[] patterns, String[] constraints, ClassFactory classFactory,
-                          String advisorId)
+                          String advisorId, Class serviceInterface, Set<Class> markers)
     {
-        super(method, patterns, constraints, classFactory);
+        super(method, patterns, constraints, serviceInterface, markers, classFactory);
         assert InternalUtils.isNonBlank(advisorId);
 
         this.advisorId = advisorId;

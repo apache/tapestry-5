@@ -13,8 +13,7 @@
 // limitations under the License.
 package org.apache.tapestry5.ioc.def;
 
-import java.util.Set;
-
+import org.apache.tapestry5.ioc.Markable;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 
 /**
@@ -26,22 +25,7 @@ import org.apache.tapestry5.ioc.annotations.Contribute;
  * 
  * @since 5.2.0
  */
-public interface ContributionDef2 extends ContributionDef
+public interface ContributionDef2 extends ContributionDef, Markable
 {
-    /**
-     * Returns an optional set of <em>marker annotation</em>. Marker annotations are used to disambiguate services; the
-     * combination of a marker annotation and a service type is expected to be unique. Note that it is not possible
-     * to identify which annotations are markers and which are not when this set is contructed, so it may include
-     * non-marker annotations.
-     * 
-     * @see ServiceDef#getMarkers()
-     */
-    Set<Class> getMarkers();
-
-    /**
-     * Returns the service interface associated with the service to contribute into.
-     * 
-     * @see ServiceDef#getServiceInterface()
-     */
-    Class getServiceInterface();
+	
 }

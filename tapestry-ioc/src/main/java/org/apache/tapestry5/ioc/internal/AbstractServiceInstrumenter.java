@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc.internal;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.tapestry5.ioc.IdMatcher;
 import org.apache.tapestry5.ioc.def.ServiceDef;
@@ -39,10 +40,16 @@ public class AbstractServiceInstrumenter
     protected final String[] constraints;
 
     protected final ClassFactory classFactory;
+   
+    private final Set<Class> markers;
+   
+    private final Class serviceInterface;
 
-    public AbstractServiceInstrumenter(Method method, String[] patterns, String[] constraints, ClassFactory classFactory)
+    public AbstractServiceInstrumenter(Method method, String[] patterns, String[] constraints, Class serviceInterface, Set<Class> markers, ClassFactory classFactory)
     {
         this.method = method;
+        this.serviceInterface = serviceInterface;
+        this.markers = markers;
         this.classFactory = classFactory;
 
         assert patterns != null;
@@ -79,5 +86,15 @@ public class AbstractServiceInstrumenter
         String serviceId = serviceDef.getServiceId();
 
         return idMatcher.matches(serviceId);
+    }
+
+    public Set<Class> getMarkers()
+    {
+        return markers;
+    }
+
+    public Class getServiceInterface()
+    {
+        return serviceInterface;
     }
 }

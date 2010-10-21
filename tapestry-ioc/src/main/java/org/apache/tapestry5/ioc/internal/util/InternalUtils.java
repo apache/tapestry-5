@@ -43,6 +43,7 @@ import java.util.regex.Pattern;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.ioc.AdvisorDef;
+import org.apache.tapestry5.ioc.AdvisorDef2;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.IOCConstants;
@@ -55,7 +56,9 @@ import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.ServiceAdvisor;
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
+import org.apache.tapestry5.ioc.ServiceDecorator;
 import org.apache.tapestry5.ioc.ServiceLifecycle;
 import org.apache.tapestry5.ioc.ServiceLifecycle2;
 import org.apache.tapestry5.ioc.ServiceResources;
@@ -66,6 +69,7 @@ import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.ContributionDef2;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
+import org.apache.tapestry5.ioc.def.DecoratorDef2;
 import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.def.ModuleDef2;
 import org.apache.tapestry5.ioc.def.ServiceDef;
@@ -1050,6 +1054,94 @@ public class InternalUtils
                 return contribution.getServiceId();
             }
 
+        };
+    }
+   
+    /**
+     * @since 5.2.2
+     */
+    public static AdvisorDef2 toAdvisorDef2(final AdvisorDef advisor)
+    {
+        if (advisor instanceof AdvisorDef2)
+            return (AdvisorDef2) advisor;
+       
+        return new AdvisorDef2()
+        {
+
+            public ServiceAdvisor createAdvisor(ModuleBuilderSource moduleSource, ServiceResources resources)
+            {
+                return advisor.createAdvisor(moduleSource, resources);
+            }
+
+            public String getAdvisorId()
+            {
+                return advisor.getAdvisorId();
+            }
+
+            public String[] getConstraints()
+            {
+                return advisor.getConstraints();
+            }
+
+            public boolean matches(ServiceDef serviceDef)
+            {
+                return advisor.matches(serviceDef);
+            }
+
+            public Set<Class> getMarkers()
+            {
+                return Collections.emptySet();
+            }
+
+            public Class getServiceInterface()
+            {
+                return null;
+            }
+           
+        };
+    }
+   
+    /**
+     * @since 5.2.2
+     */
+    public static DecoratorDef2 toDecoratorDef2(final DecoratorDef decorator)
+    {
+        if (decorator instanceof DecoratorDef2)
+            return (DecoratorDef2) decorator;
+       
+        return new DecoratorDef2()
+        {
+
+            public ServiceDecorator createDecorator(ModuleBuilderSource moduleSource, ServiceResources resources)
+            {
+                return decorator.createDecorator(moduleSource, resources);
+            }
+
+            public String[] getConstraints()
+            {
+                return decorator.getConstraints();
+            }
+
+            public String getDecoratorId()
+            {
+                return decorator.getDecoratorId();
+            }
+
+            public boolean matches(ServiceDef serviceDef)
+            {
+                return decorator.matches(serviceDef);
+            }
+
+            public Set<Class> getMarkers()
+            {
+                return Collections.emptySet();
+            }
+
+            public Class getServiceInterface()
+            {
+                return null;
+            }
+           
         };
     }
 

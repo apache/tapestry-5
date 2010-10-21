@@ -77,6 +77,7 @@ public class ModuleImplTest extends IOCInternalTestCase
         expect(rawDefs.iterator()).andReturn(Arrays.asList(def1, def2).iterator());
 
         train_matches(def1, serviceDef, false);
+        expect(serviceDef.getServiceInterface()).andReturn(Runnable.class);
         train_matches(def2, serviceDef, true);
 
         replay();

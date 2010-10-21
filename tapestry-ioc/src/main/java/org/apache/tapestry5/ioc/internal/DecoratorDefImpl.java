@@ -15,23 +15,24 @@
 package org.apache.tapestry5.ioc.internal;
 
 import java.lang.reflect.Method;
+import java.util.Set;
 
 import org.apache.tapestry5.ioc.ModuleBuilderSource;
 import org.apache.tapestry5.ioc.ServiceDecorator;
 import org.apache.tapestry5.ioc.ServiceResources;
-import org.apache.tapestry5.ioc.def.DecoratorDef;
+import org.apache.tapestry5.ioc.def.DecoratorDef2;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 
-public class DecoratorDefImpl extends AbstractServiceInstrumenter implements DecoratorDef
+public class DecoratorDefImpl extends AbstractServiceInstrumenter implements DecoratorDef2
 {
     private final String decoratorId;
 
     public DecoratorDefImpl(Method decoratorMethod, String[] patterns, String[] constraints, ClassFactory classFactory,
-                            String decoratorId
+                            String decoratorId, Class serviceInterface, Set<Class> markers
     )
     {
-        super(decoratorMethod, patterns, constraints, classFactory);
+        super(decoratorMethod, patterns, constraints, serviceInterface, markers, classFactory);
         assert InternalUtils.isNonBlank(decoratorId);
 
         this.decoratorId = decoratorId;

@@ -25,8 +25,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.tapestry5.ioc.internal.AdviseByMarkerModule;
 import org.apache.tapestry5.ioc.internal.AlphabetModule;
 import org.apache.tapestry5.ioc.internal.AlphabetModule2;
+import org.apache.tapestry5.ioc.internal.DecorateByMarkerModule;
 import org.apache.tapestry5.ioc.internal.ExceptionInConstructorModule;
 import org.apache.tapestry5.ioc.internal.ExtraPublicConstructorsModule;
 import org.apache.tapestry5.ioc.internal.IOCInternalTestCase;
@@ -1514,6 +1516,58 @@ public class IntegrationTest extends IOCInternalTestCase
         assertSame(service.getLogger(), il.getResources().getLogger());
 
         r.shutdown();
+    }
+   
+    @Test
+    public void advise_by_annotation()
+    {
+        Registry r = buildRegistry(GreeterModule2.class, AdviseByMarkerModule.class);
+
+        Greeter green = r.getService("GreenGreeter", Greeter.class);
+
+        assertEquals(green.getGreeting(), "gamma[beta[alpha[Green]]]");
+
+        r.shutdown();
+
+    }
+   
+    @Test
+    public void advise_by_locale_annotation()
+    {
+        Registry r = buildRegistry(GreeterModule2.class, AdviseByMarkerModule.class);
+       
+        Greeter red = r.getService("RedGreeter", Greeter.class);
+
+        assertEquals(red.getGreeting(), "delta[Red]");
+
+        r.shutdown();
+
+    }
+   
+    @Test
+    public void decorate_by_annotation()
+    {
+        Registry r = buildRegistry(GreeterModule2.class, DecorateByMarkerModule.class);
+
+        Greeter green = r.getService("GreenGreeter", Greeter.class);
+
+        assertEquals(green.getGreeting(), "Decorated by foo[Decorated by baz[Decorated by bar[Green]]]");
+
+        r.shutdown();
+
+    }
+   
+    @Test
+    public void decorate_by_locale_annotation()
+    {
+        Registry r = buildRegistry(GreeterModule2.class, DecorateByMarkerModule.class);
+       
+        Greeter red = r.getService("RedGreeter", Greeter.class);
+
+        assertEquals(red.getGreeting(), "Decorated by barney[Red]");
+
+        r.shutdown();
+
     }
 
     @Test

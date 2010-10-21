@@ -38,7 +38,9 @@ import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
+import org.apache.tapestry5.ioc.annotations.Advise;
 import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.Decorate;
 import org.apache.tapestry5.ioc.annotations.EagerLoad;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Match;
@@ -231,7 +233,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
                 continue;
             }
 
-            if (name.startsWith(DECORATE_METHOD_NAME_PREFIX))
+            if (name.startsWith(DECORATE_METHOD_NAME_PREFIX) || m.isAnnotationPresent(Decorate.class))
             {
                 addDecoratorDef(m);
                 remainingMethods.remove(m);
@@ -245,7 +247,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
                 continue;
             }
 
-            if (name.startsWith(ADVISE_METHOD_NAME_PREFIX))
+            if (name.startsWith(ADVISE_METHOD_NAME_PREFIX) || m.isAnnotationPresent(Advise.class))
             {
                 addAdvisorDef(m);
                 remainingMethods.remove(m);
@@ -300,7 +302,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
         if (type == null)
             throw new RuntimeException(IOCMessages.noContributionParameter(method));
 
-        Set<Class> markers = extractContributionMarkers(method);
+        Set<Class> markers = extractMarkers(method, Contribute.class);
 
         ContributionDef2 def = new ContributionDefImpl(serviceId, method, classFactory, serviceInterface, markers);
 
@@ -309,9 +311,13 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
     private void addDecoratorDef(Method method)
     {
+        Decorate annotation = method.getAnnotation(Decorate.class);
+       
+        Class serviceInterface = annotation == null ? null : annotation.serviceInterface();
+       
         // TODO: methods just named "decorate"
 
-        String decoratorId = stripMethodPrefix(method, DECORATE_METHOD_NAME_PREFIX);
+        String decoratorId = annotation == null? stripMethodPrefix(method, DECORATE_METHOD_NAME_PREFIX) : extractId(serviceInterface, annotation.id());
 
         // TODO: Check for duplicates
 
@@ -319,15 +325,20 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
         if (returnType.isPrimitive() || returnType.isArray())
             throw new RuntimeException(IOCMessages.decoratorMethodWrongReturnType(method));
+       
+        Set<Class> markers = extractMarkers(method, Decorate.class);
 
-        DecoratorDef def = new DecoratorDefImpl(method, extractPatterns(decoratorId, method),
-                extractConstraints(method), classFactory, decoratorId);
+        DecoratorDef def = new DecoratorDefImpl(method, extractPatterns(annotation, decoratorId, method),
+                extractConstraints(method), classFactory, decoratorId, serviceInterface, markers);
 
         decoratorDefs.put(decoratorId, def);
     }
 
-    private String[] extractPatterns(String id, Method method)
+    private <T extends Annotation> String[] extractPatterns(T annotation, String id, Method method)
     {
+        if(annotation != null)
+            return new String[]{};
+       
         Match match = method.getAnnotation(Match.class);
 
         if (match == null)
@@ -349,9 +360,13 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
     private void addAdvisorDef(Method method)
     {
+        Advise annotation = method.getAnnotation(Advise.class);
+       
+        Class serviceInterface = annotation == null ? null : annotation.serviceInterface();
+       
         // TODO: methods just named "decorate"
 
-        String advisorId = stripMethodPrefix(method, ADVISE_METHOD_NAME_PREFIX);
+        String advisorId = annotation == null ? stripMethodPrefix(method, ADVISE_METHOD_NAME_PREFIX) : extractId(serviceInterface, annotation.id());
 
         // TODO: Check for duplicates
 
@@ -375,31 +390,24 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
         if (!found)
             throw new RuntimeException(String.format("Advise method %s must take a parameter of type %s.",
                     toString(method), MethodAdviceReceiver.class.getName()));
-
-        AdvisorDef def = new AdvisorDefImpl(method, extractPatterns(advisorId, method), extractConstraints(method),
-                classFactory, advisorId);
+       
+        Set<Class> markers = extractMarkers(method, Advise.class);
+       
+        AdvisorDef def = new AdvisorDefImpl(method, extractPatterns(annotation, advisorId, method), extractConstraints(method),
+                classFactory, advisorId, serviceInterface, markers);
 
         advisorDefs.put(advisorId, def);
 
+    }
+    
+    private String extractId(Class serviceInterface, String id)
+    {
+    	return InternalUtils.isBlank(id) ? serviceInterface.getSimpleName() : id;
     }
 
     private String toString(Method method)
     {
         return InternalUtils.asString(method, classFactory);
-    }
-
-    private boolean methodContainsObjectParameter(Method method)
-    {
-        for (Class parameterType : method.getParameterTypes())
-        {
-            // TODO: But what if the type Object parameter has an injection?
-            // We should skip it and look for a different parameter.
-
-            if (parameterType.equals(Object.class))
-                return true;
-        }
-
-        return false;
     }
 
     private String stripMethodPrefix(Method method, String prefix)
@@ -479,7 +487,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
     }
 
     @SuppressWarnings("rawtypes")
-    private Set<Class> extractContributionMarkers(Method method)
+    private Set<Class> extractMarkers(Method method, final Class annotationClassToSkip)
     {
         return F.flow(method.getAnnotations()).map(new Mapper<Annotation, Class>()
         {
@@ -491,7 +499,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
         {
             public boolean accept(Class object)
             {
-                return !object.equals(Contribute.class);
+                return !object.equals(annotationClassToSkip);
 
             }
         }).toSet();
