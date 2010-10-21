@@ -61,9 +61,4 @@ public class FormValidationDemo
 		return new StringValueEncoder();
 	}
 	
-	public boolean getClientValidationEnabled()
-	{
-		return false;
-	}
-	
 }
