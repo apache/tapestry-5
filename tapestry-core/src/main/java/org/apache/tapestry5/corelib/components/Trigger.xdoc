@@ -40,11 +40,14 @@ public class TriggerDemo
 {
     
     @Environmental
-    private RenderSupport renderSupport;
+    private JavaScriptSupport jsSupport;
+    
+    @Inject @Path("context:js/scripts.js")
+    private Asset scripts;
     
     public void onAddAdditionalScriptLinks()
     {
-        renderSupport.addScriptLink("scripts.js");
+       jsSupport.importJavaScriptLibrary(scripts);
     }
     
     public void onProvideAdditionalMarkup(MarkupWriter writer)

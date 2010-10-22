@@ -30,18 +30,18 @@ public class GridColumns
     . . .
 
     @Component(parameters = {"event=sort", "context=columnModel.id"})
-    private EventLink _sort, _sort2;
+    private EventLink sort, sort2;
 
     void onSort(String columnId)
     {
-        if (columnId.equals(_sortColumnId))
+        if (columnId.equals(sortColumnId))
         {
-            _sortAscending = !_sortAscending;
+            sortAscending = !sortAscending;
         }
         else
         {
-            _sortColumnId = columnId;
-            _sortAscending = true;
+            sortColumnId = columnId;
+            sortAscending = true;
         }
     }
 

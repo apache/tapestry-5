@@ -90,29 +90,18 @@ public enum SpecialHandling
                 <source><![CDATA[
 public class OrderHandling
 {
+    @Property
     @Persist
-    private List<SpecialHandling> _handling;
+    private List<SpecialHandling> handling;
 
     @Inject
-    private Messages _messages;
+    private Messages messages;
 
-    private final ValueEncoder<SpecialHandling> _encoder = new EnumValueEncoder(SpecialHandling.class);
+    @Property
+    private final ValueEncoder<SpecialHandling> encoder = new EnumValueEncoder(SpecialHandling.class);
 
-    private final SelectModel _model = new EnumSelectModel(SpecialHandling.class, _messages);
-
-    public List<SpecialHandling> getHandling()
-    {
-        return _handling;
-    }
-
-    public void setHandling(List<SpecialHandling> handling)
-    {
-        _handling = handling;
-    }
-
-    public ValueEncoder<SpecialHandling> getEncoder() { return _encoder; }
-
-    public SelectModel getModel() { return _model; }
+    @Property
+    private final SelectModel model = new EnumSelectModel(SpecialHandling.class, messages);
 }]]></source>
 
                 <p>

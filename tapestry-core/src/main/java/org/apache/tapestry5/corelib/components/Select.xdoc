@@ -55,17 +55,15 @@
 <source><![CDATA[
 public class SelectColor
 {
-  private String _color;
-
   @Validate("required")
-  public String getColor() { return _color; }
+  public String color;
 
-  public void setColor(String color) { _color = color; }
 }]]></source>
 
     <p>
-        Placing the @Validate annotation on the field indicates that it is required.  This prevents the
-        select component from including a blank option for the field (though this can be overridden).
+        Placing the @Validate annotation on the field supplies the default validation for this field, here
+        it indicates that color is required.  This prevents the
+        Select component from including a blank option for the field (though this behavior too can be overridden).
         Without the @Validate, it would be possible for the user to select a blank value, and null would
         be assigned to the color property of SelectColor.  This might be appropriate for a search form, but
         not for an edit form.
@@ -129,13 +127,11 @@ public class Payment
 {
     . . .
 
+    @Property
     @Persist
-    private CardType _type;
-
     @Validate("required")
-    public CardType getType() { return _type; }
+    private CardType type;
 
-    public void setType(CardType type) { _type = type; }
 
     . . .
 }]]></source>
@@ -188,7 +184,7 @@ public enum CarMaker
 				The Select component 'carMaker' of the page SelectZoneDemo shows all available car makers. 
 				When a user selects a car maker, another Select component for selecting available models of the make should appear.
 				This can be accomplished by the parameter <em>zone</em> of the Select component 'carMaker'. When <em>zone</em> parameter is bound 
-				every change of the Select's value causes an ajax request. In this case the Select component publishes the event <em>valuechanged</em> which can 
+				every change of the Select's value causes an Ajax request. In this case the Select component publishes the event <em>valuechanged</em> which can 
 				be used to provide the <em>model</em> for the second Select component.
        	                <source><![CDATA[                                                                   
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
@@ -198,20 +194,16 @@ public enum CarMaker
       </p>
       <p>
          <t:select t:id="carMaker" validate="required"
-                   model="makeModel" zone="modelZone" encoder="makeEncoder" />
+                   zone="modelZone" />
       </p>
       
-      <t:zone t:id="modelZone">
+      <t:zone t:id="modelZone" id="modelZone">
          <t:if test="carMaker">
-            <t:delegate to="modelBlock" />
+           <p>
+              <t:select t:id="carModel" model="availableModels" validate="required"/>
+           </p>
          </t:if>
       </t:zone>
-      
-      <t:block id="modelBlock">
-         <p>
-            <t:select t:id="carModel" model="availableModels" validate="required"/>
-         </p>
-      </t:block>
       
       <p>
          <t:submit value="literal:Submit" />
@@ -238,20 +230,19 @@ public class SelectZoneDemo
    @Property
    @Persist
    private String carModel;
-   
-   @Inject
-   @Property
-   private Block modelBlock;
+
+   @InjectComponent
+   private Zone modelZone;
    
    @Property
    @Persist
    private List<String> availableModels;
     
-    public Object onValueChanged(final CarMaker maker) 
+    public Object onValueChanged(CarMaker maker) 
     {
        availableModels = findAvailableModels(maker);
        
-       return this.modelBlock;
+       return modelZone.getBody();
     }
     
     public List<String> findAvailableModels(final CarMaker maker) 
@@ -267,19 +258,16 @@ public class SelectZoneDemo
          default:
             return Arrays.asList();
        }
-    }
-    
-    public SelectModel getMakeModel()
-    {
-       return new EnumSelectModel(CarMaker.class, this.messages);
-    }
-    
-    public ValueEncoder<CarMaker> getMakeEncoder() 
-    {
-       return new EnumValueEncoder<CarMaker>(CarMaker.class);
-    }
-
+    }    
 }]]></source>
+
+
+<p>
+The Select component is very smart for enum types; it can automatically create a SelectModel for a given Enum, and a default
+ValueEncoder.  Likewise, it can turn an array or List into a SelectModel automatically.  This streamlines the use of the Select
+in many situations ... but because the model and encode parameters are still present, allows you to override its behavior
+when needed.
+</p>
 
 			</subsection>
         

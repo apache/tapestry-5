@@ -13,13 +13,9 @@
                 <source><![CDATA[
 public class Account
 {
-    private long id;
+    public long id;
 
-    private String userName;
-
-    // etc., etc., ...
-
-    // Getters and setters omitted ...
+    public String userName;
     
 }]]></source>
             </subsection>
@@ -106,21 +102,13 @@ public class ViewAccount
                 you may need to include a company id as well as the account id. You can
                 build an object array to contain both values:
             </p>
-            <p>You can do this in a template using the following syntax</p>
+            <p>You can do this in a template using the following syntax:</p>
             <source><![CDATA[
-<t:actionlink t:id="foo" context="[account.companyId,account.id]">test foo</t:actionlink>
+<t:actionlink t:id="delete" context="[account.companyId, account.id]">delete ${company.name} / ${account.id}</t:actionlink>
 
-            ]]>
-            </source>
-			<p>
-			Alternatively, you can provide a getter which returns an object array.
-			</p>
+            ]]>        </source>
+            
             <source><![CDATA[
-    public Object[] getAccountContext()
-    {
-        return new Object[] { account.companyId, account.id };
-    }
-
     Object onActionFromDelete(long companyId, long accountId)
     {
         accountDAO.delete(companyId, accountId);
@@ -128,6 +116,15 @@ public class ViewAccount
         accountsSummaryPage.setMessage(String.format("Account #%d has been deleted.", accountId));
 
         return accountsSummaryPage;
+    }]]></source>            
+            
+			<p>
+			Alternatively, you can provide a getter which returns an object array.
+			</p>
+            <source><![CDATA[
+    public Object[] getAccountContext()
+    {
+        return new Object[] { account.companyId, account.id };
     }]]></source>
 
             <p>
@@ -139,10 +136,9 @@ public class ViewAccount
         </p>]]></source>
 
             <p>
-                This highlights the use of the component class: any complicated processing should be offloaded
-                out of the template and into the class.
-            </p>
-
+  This pattern was more common in early versions of Tapestry; the older versions of the property
+  expression language did not have the ability to create an array on the fly.
+</p>
         </section>
 
     </body>

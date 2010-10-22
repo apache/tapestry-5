@@ -42,7 +42,7 @@
         <section name="Notes">
 
             <p>
-                Tapestry has many builtin coercions to boolean:
+                Tapestry has many built in coercions to boolean:
             </p>
 
             <dl>

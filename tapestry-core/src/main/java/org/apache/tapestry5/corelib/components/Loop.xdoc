@@ -162,15 +162,15 @@ public class EditOrder
     private OrderDAO orderDAO;
 
     @Property
-    private final PrimaryKeyEncoder<Long,LineItem> encoder = new PrimaryKeyEncoder<Long,LineItem>()
+    private final ValueEncoder<LineItem> encoder = new ValueEncoder<LineItem>()
     {
-        public Long toKey(LineItem value) { return value.getId(); }
+        public String toClient(LineItem value) { return String.valueOf(value.getId()); }
 
-        public void prepareForKeys(List<Long> keys) { }
-
-        public LineItem toValue(Long key)
+        public LineItem toValue(String clientValue)
         {
-            return orderDAO.getLineItem(key);
+            long id = Long.parseLong(clientValue);
+            
+            return orderDAO.getLineItem(id);
         }
     };
 
@@ -189,7 +189,7 @@ public class EditOrder
                 <p>
                     Here, we expect the OrderDAO service to do most of the work,
                     and we create a wrapper around it, in the form of the
-                    PrimeryKeyEncoder instance.
+                    ValueEncoder instance.
                 </p>
 
                 <p>
@@ -198,12 +198,6 @@ public class EditOrder
                     between the render request and the form submission, as well as how the orderId
                     property gets set in the first place.
                 </p>
-
-                <p>
-                    Accounting for those situations would largely be encapsulated inside
-                    the PrimeryKeyEncoder instance.
-                </p>
-
 
             </subsection>
 

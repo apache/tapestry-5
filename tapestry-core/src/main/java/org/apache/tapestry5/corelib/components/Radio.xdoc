@@ -103,12 +103,9 @@ public class Payment
 {
     . . .
 
+    @Property
     @Persist
-    private CardType _type;
-
-    public CardType getType() { return _type; }
-
-    public void setType(CardType type) { _type = type; }
+    private CardType type;
 
     public CardType getMasterCard() { return CardType.MASTER_CARD; }
 

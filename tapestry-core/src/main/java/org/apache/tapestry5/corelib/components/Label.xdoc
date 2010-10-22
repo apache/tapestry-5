@@ -34,7 +34,7 @@
         <section name="Notes">
 
             <p>
-                The Label component is very important for user accessiblity. A user will be able to click
+                The Label component is very important for user accessibility. A user will be able to click
                 on the label to move the cursor into the corresponding field.
             </p>
 

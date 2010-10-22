@@ -133,7 +133,7 @@
                     <li>prepareForSubmit</li>
                     <li>prepare</li>
                     <li>validate</li>
-                    <li>validateForm</li>
+                    <li>validateForm <em>(deprecated)</em></li>
                     <li>failure
                         <em>or</em>
                         success
@@ -158,7 +158,7 @@
                 <p>
                     It is considered a best practice to give explicit ids to
                     Form components, and form control element components.
-                    These ids propogate down to the client side as
+                    These ids propagate down to the client side as
                     element names and/or ids, and eventually show up
                     as query parameters when the form is submitted.
                 </p>

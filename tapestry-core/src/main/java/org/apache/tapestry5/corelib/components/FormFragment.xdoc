@@ -49,7 +49,7 @@
     <body>
         <h1>Order Address</h1>
 
-        <t:form>
+        <t:form t:id="order">
 
             <t:errors/>
 
@@ -102,43 +102,21 @@
                 <source><![CDATA[
 public class OrderAddress
 {
+    @Property
     @Persist
-    private ShippingAddress _billingAddress;
+    private ShippingAddress billingAddress;
 
+    @Property
     @Persist
-    private ShippingAddress _shippingAddress;
+    private ShippingAddress shippingAddress;
 
+    @Property
     @Persist
-    private boolean _separateShipTo;
+    private boolean separateShipTo;
 
-    public ShippingAddress getBillingAddress()
+    Object onSuccessFromOrder()
     {
-        return _billingAddress;
-    }
-
-    public void setBillingAddress(ShippingAddress billingAddress)
-    {
-        _billingAddress = billingAddress;
-    }
-
-    public ShippingAddress getShippingAddress()
-    {
-        return _shippingAddress;
-    }
-
-    public void setShippingAddress(ShippingAddress shippingAddress)
-    {
-        _shippingAddress = shippingAddress;
-    }
-
-    public boolean isSeparateShipTo()
-    {
-        return _separateShipTo;
-    }
-
-    public void setSeparateShipTo(boolean separateShipTo)
-    {
-        _separateShipTo = separateShipTo;
+      ...
     }
 }]]></source>
             </subsection>

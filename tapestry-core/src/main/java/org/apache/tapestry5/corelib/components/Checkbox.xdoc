@@ -31,7 +31,7 @@
                 <p>
                     Normally, we should bind the value parameter explicitly; here the component's id, "showAll",
                     matches against a property of the page and the value parameter is automatically bound
-                    as a convienience.
+                    as a convenience.
                 </p>
 
                 <p>
@@ -59,24 +59,22 @@
                 <source><![CDATA[
 public class ViewAccount
 {
+    @Property
     @Persist
-    private boolean _showAll;
+    private boolean showAll;
 
     @Inject
-    private AccountDAO _accountDAO;
+    private AccountDAO accountDAO;
 
-    public boolean isShowAll() { return _showAll; }
-
-    public void setShowAll(boolean showAll) { _showAll = showAll; }
 
     public List<Account> getAccounts()
     {
-        return _showAll ? _accountDAO.getAllAccounts() : _accountDAO.getActiveAccounts();
+        return showAll ? accountDAO.getAllAccounts() : accountDAO.getActiveAccounts();
     }
 }]]></source>
 
                 <p>
-                    The component updates the _showAll field, and that's used to determine which
+                    The component updates the showAll field, and that's used to determine which
                     set of accounts should be provided to the Grid component. As always in Tapestry, you
                     must be careful to mark fields persistent if they need to hold their value between
                     the action request (the form submission) and the render request.

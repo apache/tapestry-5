@@ -184,7 +184,7 @@ public class Phone
 
         <h2>Phones</h2>
 
-        <div t:type="ajaxformloop" t:id="phones" source="person.phones" encoder="phoneEncoder" value="phone">
+        <div t:type="ajaxformloop" t:id="phones" source="person.phones" value="phone">
           <t:select t:id="type" value="phone.type"/>
           <t:textfield t:id="number" value="phone.number"/>
 
@@ -205,8 +205,8 @@ public class Phone
 </html>]]></source>
 
                 <p>
-                    Here we're editting the direct properties of the Person object and adding a section below to allow
-                    the phones for the person to be editted. The AjaxFormLoop looks much like a Loop component here,
+                    Here we're editing the direct properties of the Person object and adding a section below to allow
+                    the phones for the person to be edited. The AjaxFormLoop looks much like a Loop component here,
                     except we must provide a PrimaryKeyEncoder object.
                 </p>
 
@@ -248,26 +248,6 @@ public class Edit
   @Inject
   private Session session;
 
-  public PrimaryKeyEncoder<Long, Phone> getPhoneEncoder()
-  {
-    return new PrimaryKeyEncoder<Long, Phone>()
-    {
-      public Long toKey(Phone value)
-      {
-        return value.getId();
-      }
-
-      public void prepareForKeys(List<Long> keys)
-      {
-      }
-
-      public Phone toValue(Long key)
-      {
-        return (Phone) session.get(Phone.class, key);
-      }
-    };
-  }
-
   @CommitAfter
   public Object onSuccess()
   {
@@ -307,9 +287,11 @@ public class Edit
             </p>
 
             <p>
-                The minimal implementation of a PrimaryKeyEncoder is also shown; this one is customized for
-                Phone instances, and knows how to extract primary keys (the id property) and convert
-                primary keys back into objects. This could easily be rolled out as a Tapestry IoC service.
+            AjaxFormLoop has to determine how to store an id for each editable row (remember that the client
+            side can only really store strings, not full Java objects); in some cases you will
+            have to bind the encoder parameter to a ValueEncoder object that is specific for your data type.
+            However, this is not necessary for any Hibernate entities, as Tapestry automatically provides
+            th ValueEncoder.
             </p>
 
         </section>

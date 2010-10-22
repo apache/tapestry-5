@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.apache.tapestry5.Renderable;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.BeanBlockSource;
 import org.apache.tapestry5.services.PropertyOutputContext;
 
 import java.text.DateFormat;
@@ -26,6 +27,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * Contains blocks for displaying basic property types; the blocks are contributed to the
+ * {@link BeanBlockSource} service.
+ */
 public class PropertyDisplayBlocks
 {
     @Environmental

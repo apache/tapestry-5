@@ -39,29 +39,28 @@
 public class EditUser
 {
     @Inject
-    private UserDAO _userDAO;
+    private UserDAO userDAO;
 
+    @Property
     @Persist
-    private User _user;
+    private User user;
 
-    private boolean _deleteUser;
+    private boolean deleteUser;
 
-    void onSelectedFromDelete() { _deleteUser = true; }
+    void onSelectedFromDelete() { deleteUser = true; }
 
     Object onSuccess()
     {
-        if (_deleteUser)
-            _userDAO.delete(user.getId());
+        if (deleteUser)
+            userDAO.delete(user.getId());
         else
-            _userDAO.update(user);
+            userDAO.update(user);
 
         return UserList.class;
     }
-
-    public void setUser(User user) { _user = user; }
-
-    public User getUser() { return _user; }
 }]]></source>
+
+
             </subsection>
 
         </section>

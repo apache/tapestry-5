@@ -89,14 +89,14 @@ public class User
 
                 <p>
                     Nominally, we should have to bind the object parameter of the BeanEditForm component. However, as
-                    a convienience, Tapestry has defaulted the object parameter
+                    a convenience, Tapestry has defaulted the object parameter
                     based on the component id. This works because the CreateUser class
                     includes a property named "user", which matches the BeanEditForm component's id.
 
                 </p>
 
                 <p>
-                    When the object to be editted is not a direct property of the page,
+                    When the object to be edited is not a direct property of the page,
                     it will be necessary to bind the object parameter explicitly. For example,
                     <code>object="registration.address"</code>
                     to create or edit the address

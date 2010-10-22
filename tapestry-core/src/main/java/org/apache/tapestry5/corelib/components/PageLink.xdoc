@@ -45,19 +45,19 @@
                 <source><![CDATA[
 public class ViewUser
 {
-    private User _user;
+    private User user;
 
     @Inject
-    private UserDAO _userDAO;
+    private UserDAO userDAO;
 
     public User getUser()
     {
-        return _user;
+        return user;
     }
 
     void onActivate(long userId)
     {
-        _user = _userDAO.findById(userId);
+        user = userDAO.findById(userId);
     }
 }
             ]]></source>
