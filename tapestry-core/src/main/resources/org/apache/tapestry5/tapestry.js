@@ -405,7 +405,7 @@ var Tapestry = {
 			});
 		}
 
-		var successHandler = options.onSuccess;
+		var successHandler = options.onSuccess || Prototype.emptyFunction;
 
 		var finalOptions = $H( {
 			onException : Tapestry.ajaxExceptionHandler,
