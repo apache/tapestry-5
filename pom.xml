@@ -182,6 +182,8 @@
     <module>tapestry-ioc</module>
     <module>tapestry-annotations</module>
     <module>tapestry-core</module>
+    <module>tapestry-beanvalidator</module>
+    <module>tapestry-jmx</module>
     <!-- Integrations -->
     <module>tapestry-spring</module>
     <module>tapestry-hibernate-core</module>
@@ -193,11 +195,6 @@
     <module>tapestry-component-report</module>
     <!-- Tutorials -->
     <module>tapestry-tutorial1</module>
-    <!-- Temporarily removed until 5.2
-        <module>tapestry-webflow</module>
-        -->
-    <module>tapestry-beanvalidator</module>
-    <module>tapestry-jmx</module>
   </modules>
   <dependencyManagement>
     <dependencies>

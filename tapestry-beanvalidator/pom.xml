@@ -2,7 +2,6 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.apache.tapestry</groupId>
 	<artifactId>tapestry-beanvalidator</artifactId>
-	<version>5.2.3-SNAPSHOT</version>
     <name>Tapestry/JSR-303 Integration Library</name>
     <description>
         Provides support for bean validation
@@ -16,26 +15,29 @@
 
 	<url />
 	<dependencies>
-
+        <!-- For some reason, Maven 2.2.1 keeps reverting to the 1.5.6 version. -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+        
 		<dependency>
 			<groupId>org.apache.tapestry</groupId>
 			<artifactId>tapestry-core</artifactId>
 			<type>jar</type>
-			<optional>false</optional>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
 			<type>jar</type>
 			<scope>provided</scope>
-			<optional>false</optional>
 		</dependency>
 		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
 			<version>1.0.0.GA</version>
 			<type>jar</type>
-			<optional>false</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -43,19 +45,16 @@
 			<version>4.0.0.GA</version>
 			<type>jar</type>
 			<scope>test</scope>
-			<optional>false</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tapestry</groupId>
 			<artifactId>tapestry-test</artifactId>
 			<type>jar</type>
-			<optional>false</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.easymock</groupId>
 			<artifactId>easymock</artifactId>
 			<type>jar</type>
-			<optional>false</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.easymock</groupId>
@@ -63,7 +62,6 @@
 			<version>2.2.2</version>
 			<type>jar</type>
 			<scope>test</scope>
-			<optional>false</optional>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
@@ -71,7 +69,6 @@
 			<version>1.2.14</version>
 			<type>jar</type>
 			<scope>test</scope>
-			<optional>false</optional>
 		</dependency>
 	</dependencies>
 	

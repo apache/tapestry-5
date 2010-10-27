@@ -38,7 +38,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.5.2</version>
+            <version>1.6.1</version>
         </dependency>
 
         <!-- SLF4J now supports earlier versions of Log4J more cleanly, but still nice to include
@@ -53,7 +53,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.5.2</version>
+            <version>1.6.1</version>
         </dependency>
 
 
