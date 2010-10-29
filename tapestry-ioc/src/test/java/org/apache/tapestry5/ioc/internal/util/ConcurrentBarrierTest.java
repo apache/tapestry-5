@@ -114,7 +114,8 @@ public class ConcurrentBarrierTest extends TestBase
         {
             public void run()
             {
-                target.tryIncrementCounter();
+                boolean good = false;
+                while (!good) good = target.tryIncrementCounter();
             }
         };
 
@@ -129,7 +130,8 @@ public class ConcurrentBarrierTest extends TestBase
             public void run()
             {
                 // Gets a write lock, then a read lock.
-                target.tryIncrementCounterHard();
+                boolean good = false;
+                while (!good) good = target.tryIncrementCounterHard();
             }
         };
 
@@ -144,8 +146,8 @@ public class ConcurrentBarrierTest extends TestBase
             public void run()
             {
                 // A read lock method that upgrades to a write lock
-
-                target.tryIncrementIfNonNegative();
+                boolean good = false;
+                while (!good) good = target.tryIncrementIfNonNegative();
             }
         };
 
@@ -162,7 +164,7 @@ public class ConcurrentBarrierTest extends TestBase
             {
                 // A read lock method that upgrades to a write lock
 
-                target.tryIncrementIfNonNegative();
+                assertEquals(target.tryIncrementIfNonNegative(), false);
             }
         };
 

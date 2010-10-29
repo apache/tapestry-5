@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.tapestry5.ioc.Invokable;
 
 import java.util.concurrent.TimeUnit;
@@ -111,9 +113,9 @@ public class ConcurrentTarget
         });
     }
 
-    public void tryIncrementCounter()
+    public boolean tryIncrementCounter()
     {
-        barrier.tryWithWrite(new Runnable()
+        return barrier.tryWithWrite(new Runnable()
         {
             public void run()
             {
@@ -122,9 +124,9 @@ public class ConcurrentTarget
         }, 20, TimeUnit.MILLISECONDS);
     }
 
-    public void tryIncrementCounterHard()
+    public boolean tryIncrementCounterHard()
     {
-        barrier.tryWithWrite(new Runnable()
+        return barrier.tryWithWrite(new Runnable()
         {
             public void run()
             {
@@ -133,16 +135,18 @@ public class ConcurrentTarget
         }, 20, TimeUnit.MILLISECONDS);
     }
 
-    public void tryIncrementIfNonNegative()
+    public boolean tryIncrementIfNonNegative()
     {
+        final List<Boolean> result = new ArrayList<Boolean>();
         barrier.withRead(new Runnable()
         {
             public void run()
             {
                 if (counter >= 0)
-                    tryIncrementCounter();
+                    result.add(tryIncrementCounter());
             }
         });
+        return result.get(0);
     }
 
 
