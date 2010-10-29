@@ -232,9 +232,7 @@ public class DocumentLinkerImpl implements DocumentLinker
      */
     protected void addScriptLinksForIncludedScripts(Element container, List<String> scripts)
     {
-        Element existing = findExistingElement(container, "script");
-
-        final Element scriptContainer = container.element("script-container");
+        final Element scriptContainer = container.elementAt(0, "script-container");
 
         Worker<String> addScript = new Worker<String>()
         {
@@ -245,9 +243,6 @@ public class DocumentLinkerImpl implements DocumentLinker
         };
 
         F.flow(scripts).each(addScript);
-
-        if (existing != null)
-            scriptContainer.moveBefore(existing);
 
         scriptContainer.pop();
     }
@@ -280,16 +275,11 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         Element head = findOrCreateElement(root, "head", true);
 
-        Element existing = findExistingElement(head, "link");
-
         // Create a temporary container element.
-        Element container = head.element("stylesheet-link-container");
+        Element container = head.elementAt(0, "stylesheet-link-container");
 
         for (int i = 0; i < count; i++)
             stylesheets.get(i).add(container);
-
-        if (existing != null)
-            container.moveBefore(existing);
 
         container.pop();
     }
