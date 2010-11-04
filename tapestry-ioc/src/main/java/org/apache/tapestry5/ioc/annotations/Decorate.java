@@ -41,5 +41,5 @@ public @interface Decorate
     /**
      * Id of the decorator.
      */
-    String id();
+    String id() default "";
 }

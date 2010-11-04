@@ -30,7 +30,7 @@ import org.apache.tapestry5.ioc.services.AspectInterceptorBuilder;
 public class DecorateByMarkerModule
 {
    
-    @Decorate(serviceInterface=Greeter.class, id="foo")
+    @Decorate(serviceInterface=Greeter.class)
     @GreenMarker
     public static <T> T greeter(ServiceResources resources, T delegate, AspectDecorator aspectDecorator)
     {
@@ -39,7 +39,7 @@ public class DecorateByMarkerModule
    
     @Decorate(serviceInterface=Greeter.class, id="bar")
     @GreenMarker
-    @Order("after:foo")
+    @Order("after:Greeter")
     public static <T> T greeter2(ServiceResources resources, T delegate, AspectDecorator aspectDecorator)
     {
         return doDecorate("bar", resources, delegate, aspectDecorator);
@@ -47,7 +47,7 @@ public class DecorateByMarkerModule
    
     @Decorate(serviceInterface=Greeter.class, id="baz")
     @GreenMarker
-    @Order({"after:foo", "before:bar"})
+    @Order({"after:Greeter", "before:bar"})
     public static <T> T greeter3(ServiceResources resources, T delegate, AspectDecorator aspectDecorator)
     {
         return doDecorate("baz", resources, delegate, aspectDecorator);
