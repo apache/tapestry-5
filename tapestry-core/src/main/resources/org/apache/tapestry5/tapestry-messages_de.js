@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ Tapestry.Messages = {
 
     missingZone :   "Ajax Zone '#{id}' konnte für ein dynamisches Update nicht gefunden werden.",
 
-    noZoneManager :   "Ajax Zone '#{id}' ist nicht mit einem Tapestry.ZoneManager Objekt verknüpft." ,
+    noZoneManager :   "Element '#{id}' ist nicht mit einem Tapestry.ZoneManager Objekt verknüpft." ,
 
     pathDoesNotStartWithSlash : "Der externe Pfad #{path} beginnt nicht mit einem führenden '/'.",
 

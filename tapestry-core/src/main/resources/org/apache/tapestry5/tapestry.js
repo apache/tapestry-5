@@ -473,14 +473,14 @@ var Tapestry = {
 	findZoneManagerForZone : function(zoneElement) {
 		var element = $(zoneElement);
 
-		if (!zoneElement) {
+		if (!element) {
 			Tapestry.error(Tapestry.Messages.missingZone, {
 				id : zoneElement
 			});
 			return null;
 		}
 
-		var manager = $T(zoneElement).zoneManager;
+		var manager = $T(element).zoneManager;
 
 		if (!manager) {
 			Tapestry.error(Tapestry.Messages.noZoneManager, element);

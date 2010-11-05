@@ -75,9 +75,30 @@
       <t:actionlink t:id="poorlyFormattedFail" zone="output">Poorly formatted server-side
         failure</t:actionlink>
     </li>
+    <li>
+      <t:actionlink t:id="badZone" zone="output">
+        MultiZone update with unknown id
+      </t:actionlink>
+    </li>
+    <li>
+      <t:actionlink t:id="nonZoneUpdate" zone="output">
+        MultiZone update with id of non-Zone
+        element
+      </t:actionlink>
+    </li>
   </ul>
 
+  <div id="notAZone"/>
+
   <t:block id="empty"/>
+
+  <t:block id="forUnknownZone">
+    <p>Content for the unknown zone.</p>
+  </t:block>
+
+  <t:block id="forNotAZone">
+    <p>Content for zone update for a non-Zone element.</p>
+  </t:block>
 
   <div id="zone-update-message"/>
 

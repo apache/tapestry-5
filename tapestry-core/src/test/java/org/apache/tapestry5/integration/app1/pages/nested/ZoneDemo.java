@@ -18,6 +18,7 @@ import org.apache.tapestry5.Block;
 import org.apache.tapestry5.QueryParameterConstants;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.ajax.MultiZoneUpdate;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.corelib.components.BeanEditForm;
 import org.apache.tapestry5.corelib.components.Zone;
@@ -43,7 +44,7 @@ public class ZoneDemo
     { "Fred & Wilma", "Mr. <Roboto>", "Grim Fandango", "Registration", "Vote" };
 
     @Inject
-    private Block registrationForm, registrationOutput, voteForm, voteOutput, empty;
+    private Block registrationForm, registrationOutput, voteForm, voteOutput, empty, forUnknownZone, forNotAZone;
 
     @Property
     private String vote;
@@ -99,7 +100,7 @@ public class ZoneDemo
     {
         throw new RuntimeException("Failure &\n\n<Stuff>!");
     }
-    
+
     Object onSuccessFromRegistrationForm()
     {
         return registrationOutput;
@@ -161,7 +162,7 @@ public class ZoneDemo
     {
         return securePage;
     }
-    
+
     Object onActionFromBlankUpdate()
     {
         return empty;
@@ -173,5 +174,15 @@ public class ZoneDemo
                 .addScript(
                         "$('%s').observe(Tapestry.ZONE_UPDATED_EVENT, function() { $('zone-update-message').update('Zone updated.'); });",
                         output.getClientId());
+    }
+
+    Object onActionFromBadZone()
+    {
+        return new MultiZoneUpdate("unknownZone", forUnknownZone);
+    }
+
+    Object onActionFromNonZoneUpdate()
+    {
+        return new MultiZoneUpdate("notAZone", forNotAZone);
     }
 }
