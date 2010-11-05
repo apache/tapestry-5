@@ -16,6 +16,7 @@ package org.apache.tapestry5.ajax;
 
 import java.util.Map;
 
+import org.apache.tapestry5.ClientBodyElement;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
@@ -52,6 +53,18 @@ public class MultiZoneUpdate
         this.zoneId = zoneId;
         this.renderer = renderer;
         this.parent = parent;
+    }
+
+    /**
+     * Adds the zone (represented by the {@link ClientBodyElement}) to the update.
+     * 
+     * @since 5.2.3
+     */
+    public MultiZoneUpdate add(ClientBodyElement zone)
+    {
+        assert zone != null;
+
+        return add(zone.getClientId(), zone.getBody());
     }
 
     /**

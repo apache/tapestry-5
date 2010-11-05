@@ -17,7 +17,7 @@ package org.apache.tapestry5.corelib.components;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.CSSClassConstants;
-import org.apache.tapestry5.ClientElement;
+import org.apache.tapestry5.ClientBodyElement;
 import org.apache.tapestry5.ComponentAction;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
@@ -80,7 +80,7 @@ import org.slf4j.Logger;
  * Tapestry.ZONE_UPDATED_EVENT can be used to listen to the event.
  */
 @SupportsInformalParameters
-public class Zone implements ClientElement
+public class Zone implements ClientBodyElement
 {
     /**
      * Name of a function on the client-side Tapestry.ElementEffect object that is invoked to make the Zone's
@@ -231,7 +231,7 @@ public class Zone implements ClientElement
      * The client id of the Zone; this is set when the Zone renders and will either be the value bound to the id
      * parameter, or an allocated unique id. When the id parameter is bound, this value is always accurate.
      * When the id parameter is not bound, the clientId is set during the {@linkplain BeginRender begin render phase}
-     * and will be null or innacurate before then.
+     * and will be null or inaccurate before then.
      * 
      * @return client-side element id
      */

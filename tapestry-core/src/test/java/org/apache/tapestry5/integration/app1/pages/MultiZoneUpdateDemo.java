@@ -1,10 +1,10 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,18 +14,27 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
+import java.util.Date;
+
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.ajax.MultiZoneUpdate;
+import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.internal.services.StringValueEncoder;
 import org.apache.tapestry5.ioc.annotations.Inject;
-
-import java.util.Date;
 
 public class MultiZoneUpdateDemo
 {
     @Inject
     private Block fredBlock, barneyBlock;
+
+    @Property
+    private String wilmaMessage = "Wilma Flintstone";
+
+    @InjectComponent
+    private Zone wilmaZone;
 
     public Date getNow()
     {
@@ -34,12 +43,16 @@ public class MultiZoneUpdateDemo
 
     Object onActionFromUpdate()
     {
-        return new MultiZoneUpdate("fred", fredBlock).add("barney", barneyBlock).add("dino", "His dog, Dino.");
+        wilmaMessage = "His Wife, Wilma.";
+
+        return new MultiZoneUpdate("fred", fredBlock).add("barney", barneyBlock).add("dino", "His dog, Dino.")
+                .add(wilmaZone);
     }
 
     public String[] getOptions()
     {
-        return new String[] { "Red", "Green", "Blue" };
+        return new String[]
+        { "Red", "Green", "Blue" };
     }
 
     public ValueEncoder getEncoder()

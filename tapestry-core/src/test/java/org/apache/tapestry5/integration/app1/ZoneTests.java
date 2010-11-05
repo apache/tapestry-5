@@ -110,12 +110,15 @@ public class ZoneTests extends TapestryCoreTestCase
 
         String now = getText("now");
 
+        assertText("wilma", "Wilma Flintstone");
+
         click("update");
 
         waitForElementToAppear("fredName");
 
         assertText("fredName", "Fred Flintstone");
         assertText("dino", "His dog, Dino.");
+        assertText("wilma", "His Wife, Wilma.");
 
         // Ideally, we'd add checks that the JavaScript for the Palette in the
         // Barney Zone was
