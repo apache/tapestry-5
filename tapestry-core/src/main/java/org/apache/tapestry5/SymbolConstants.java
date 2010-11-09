@@ -43,6 +43,8 @@ public class SymbolConstants
 
     /**
      * Symbol which may be set to "true" to force the use of absolute URIs (not relative URIs) exclusively.
+     * 
+     * @deprecated To be removed after Tapestry 5.2. URLs are now always absolute, since Tapestry 5.2.1.
      */
     public static final String FORCE_ABSOLUTE_URIS = "tapestry.force-absolute-uris";
 
