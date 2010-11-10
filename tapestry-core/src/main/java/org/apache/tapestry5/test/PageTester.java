@@ -175,6 +175,29 @@ public class PageTester
      */
     public Document renderPage(String pageName)
     {
+        
+        renderPageAndReturnResponse(pageName);
+        
+        Document result = response.getRenderedDocument();
+
+        if (result == null)
+            throw new RuntimeException(String.format("Render of page '%s' did not result in a Document.",
+                    pageName));
+        
+        return result;
+
+    }
+    
+    /**
+     * Renders a page specified by its name and returns the response.
+     * 
+     * @since 5.2.3
+     * 
+     * @param pageName The name of the page to be rendered.
+     * @return The response object to assert against
+     */
+    public TestableResponse renderPageAndReturnResponse(String pageName)
+    {
         request.clear().setPath("/" + pageName);
 
         while (true)
@@ -196,13 +219,8 @@ public class PageTester
                     continue;
                 }
 
-                Document result = response.getRenderedDocument();
+                return response;
 
-                if (result == null)
-                    throw new RuntimeException(String.format("Render of page '%s' did not result in a Document.",
-                            pageName));
-
-                return result;
             }
             catch (IOException ex)
             {
@@ -223,8 +241,23 @@ public class PageTester
      *            The Link object to be "clicked" on.
      * @return The DOM created. Typically you will assert against it.
      */
-
     public Document clickLink(Element linkElement)
+    {
+        clickLinkAndReturnResponse(linkElement);
+
+        return getDocumentFromResponse();
+    }
+    
+    /**
+     * Simulates a click on a link.
+     * 
+     * @since 5.2.3
+     * 
+     * @param linkElement
+     *            The Link object to be "clicked" on.
+     * @return The response object to assert against
+     */
+    public TestableResponse clickLinkAndReturnResponse(Element linkElement)
     {
         assert linkElement != null;
 
@@ -254,8 +287,18 @@ public class PageTester
             throw new RuntimeException(String.format("The element must be type '%s', not '%s'.", expectedElementName,
                     element.getName()));
     }
-
-    private Document runComponentEventRequest()
+    
+    private Document getDocumentFromResponse()
+    {
+        Document result = response.getRenderedDocument();
+        
+        if (result == null)
+            throw new RuntimeException(String.format("Render request '%s' did not result in a Document.", request.getPath()));
+    
+        return result;
+    }
+    
+    private TestableResponse runComponentEventRequest()
     {
         while (true)
         {
@@ -276,14 +319,8 @@ public class PageTester
                     setupRequestFromLink(link);
                     continue;
                 }
-
-                Document result = response.getRenderedDocument();
-
-                if (result == null)
-                    throw new RuntimeException(String.format("Render request '%s' did not result in a Document.",
-                            request.getPath()));
-
-                return result;
+                
+                return response;
             }
             catch (IOException ex)
             {
@@ -358,6 +395,26 @@ public class PageTester
      * @return The DOM created. Typically you will assert against it.
      */
     public Document submitForm(Element form, Map<String, String> parameters)
+    {
+        submitFormAndReturnResponse(form, parameters);
+
+        return getDocumentFromResponse();
+    }
+    
+    /**
+     * Simulates a submission of the form specified. The caller can specify values for the form
+     * fields, which act as
+     * overrides on the values stored inside the elements.
+     * 
+     * @since 5.2.3
+     * 
+     * @param form
+     *            the form to be submitted.
+     * @param parameters
+     *            the query parameter name/value pairs
+     * @return The response object to assert against.
+     */
+    public TestableResponse submitFormAndReturnResponse(Element form, Map<String, String> parameters)
     {
         assert form != null;
 
@@ -464,6 +521,26 @@ public class PageTester
      * @return The DOM created. Typically you will assert against it.
      */
     public Document clickSubmit(Element submitButton, Map<String, String> fieldValues)
+    {
+        clickSubmitAndReturnResponse(submitButton, fieldValues);
+
+        return getDocumentFromResponse();
+    }
+    
+    /**
+     * Simulates a submission of the form by clicking the specified submit button. The caller can
+     * specify values for the
+     * form fields.
+     * 
+     * @since 5.2.3
+     * 
+     * @param submitButton
+     *            the submit button to be clicked.
+     * @param fieldValues
+     *            the field values keyed on field names.
+     * @return The response object to assert against.
+     */
+    public TestableResponse clickSubmitAndReturnResponse(Element submitButton, Map<String, String> fieldValues)
     {
         assert submitButton != null;
 

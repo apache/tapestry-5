@@ -39,4 +39,47 @@ public interface TestableResponse extends Response
      * Clears internal state, in preparation for the next test.
      */
     void clear();
+    
+    /**
+     * Returns the named header.
+     * 
+     * @since 5.2.3
+     */
+    Object getHeader(String name);
+    
+    /**
+     * Returns the redirect URL.
+     * 
+     * @since 5.2.3
+     */
+    String getRedirectURL();
+    
+    /**
+     * Returns the status code for this response.
+     * 
+     * @since 5.2.3
+     */
+    int getStatus();
+    
+    /**
+     * Returns the error message, if available.
+     * 
+     * @since 5.2.3
+     */
+    String getErrorMessage();
+    
+    /**
+     * Returns the the MIME content type for the output.
+     * 
+     * @since 5.2.3
+     */
+    String getContentType();
+    
+    /**
+     * Returns the content of the {@link javax.servlet.ServletOutputStream} as string.
+     * 
+     * @since 5.2.3
+     */
+    String getOutput();
+
 }
