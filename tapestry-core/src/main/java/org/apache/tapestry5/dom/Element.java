@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.util.PrintOutCollector;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -410,15 +411,56 @@ public final class Element extends Node
     }
 
     /**
-     * Tries to find an element under this element (including itself) whose id is specified. Performs a width-first
+     * Tries to find an element under this element (including itself) whose id is specified.
+     * Performs a width-first
      * search of the document tree.
-     *
-     * @param id the value of the id attribute of the element being looked for
+     * 
+     * @param id
+     *            the value of the id attribute of the element being looked for
      * @return the element if found. null if not found.
      */
-    public Element getElementById(String id)
+    public Element getElementById(final String id)
+    {   
+        return getElementByAttributeValue("id", id);
+    }
+    
+    /**
+     * Tries to find an element under this element (including itself) whose given attribute has a given value.
+     * 
+     * @since 5.2.3
+     * 
+     * @param attributeName the name of the attribute of the element being looked for
+     * @param attributeValue
+     *            the value of the attribute of the element being looked for
+     * @return the element if found. null if not found.
+     */
+    public Element getElementByAttributeValue(final String attributeName, final String attributeValue)
     {
-        assert id != null;
+        assert attributeName != null;
+        assert attributeValue != null;
+        
+        return getElement(new Predicate<Element>()
+        {
+
+            @Override
+            public boolean accept(Element e)
+            {
+                String elementId = e.getAttribute(attributeName);
+                return attributeValue.equals(elementId);
+            }
+        });
+    }
+
+    /**
+     * Tries to find an element under this element (including itself) accepted by the given predicate.
+     * 
+     * @since 5.2.3
+     * 
+     * @param predicate Predicate to accept the element
+     * @return the element if found. null if not found.
+     */
+    public Element getElement(Predicate<Element> predicate)
+    {
         LinkedList<Element> queue = CollectionFactory.newLinkedList();
 
         queue.add(this);
@@ -427,9 +469,7 @@ public final class Element extends Node
         {
             Element e = queue.removeFirst();
 
-            String elementId = e.getAttribute("id");
-
-            if (id.equals(elementId)) return e;
+            if (predicate.accept(e)) return e;
 
             for (Element child : e.childElements())
             {
