@@ -45,6 +45,12 @@ public class MultiZoneUpdate
         this(zoneId, renderer, null);
     }
 
+    /** Alternate constructor that takes a ClientBodyElement (typically, a {@link Zone}). */
+    public MultiZoneUpdate(ClientBodyElement zone)
+    {
+        this(zone.getClientId(), zone.getBody());
+    }
+
     private MultiZoneUpdate(String zoneId, Object renderer, MultiZoneUpdate parent)
     {
         assert renderer != null;
