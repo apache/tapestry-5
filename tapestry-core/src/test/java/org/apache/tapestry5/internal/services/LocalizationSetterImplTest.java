@@ -205,4 +205,28 @@ public class LocalizationSetterImplTest extends InternalBaseTestCase
         verify();
 
     }
+   
+    @Test
+    public void is_supported_locale_name()
+    {
+        PersistentLocale pl = mockPersistentLocale();
+        ThreadLocale tl = mockThreadLocale();
+        Request request = mockRequest();
+
+
+        replay();
+
+        LocalizationSetterImpl setter = new LocalizationSetterImpl(request, pl, tl, "de, de_DE, de_CH,en");
+
+        assertTrue(setter.isSupportedLocaleName("de"));
+        assertTrue(setter.isSupportedLocaleName("de_de"));
+        assertTrue(setter.isSupportedLocaleName("de_de"));
+        assertTrue(setter.isSupportedLocaleName("de_DE"));
+        assertTrue(setter.isSupportedLocaleName("de_ch"));
+        assertTrue(setter.isSupportedLocaleName("de_CH"));
+        assertTrue(setter.isSupportedLocaleName("en"));
+
+        verify();
+
+    }
 }

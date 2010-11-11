@@ -193,7 +193,7 @@ public class LocalizationSetterImpl implements LocalizationSetter
 
     public boolean isSupportedLocaleName(String localeName)
     {
-        return supportedLocaleNames.contains(localeName);
+        return supportedLocaleNames.contains(localeName.toLowerCase());
     }
 
     public SelectModel getSupportedLocalesModel()
