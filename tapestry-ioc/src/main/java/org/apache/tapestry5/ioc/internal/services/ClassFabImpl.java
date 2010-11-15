@@ -22,6 +22,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Formatter;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,8 +36,10 @@ import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.ConstPool;
 import javassist.bytecode.MethodInfo;
+import javassist.bytecode.ParameterAnnotationsAttribute;
 import javassist.bytecode.annotation.MemberValue;
 
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFab;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
@@ -377,13 +380,15 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
             
             assert method != null;
             
+            CtMethod ctMethod = getCtMethod(sig);
+            
             Annotation[] annotations = method.getAnnotations();
             
             for (Annotation annotation : annotations)
             {   
                 try
                 {
-                    addMethodAnnotation(getCtMethod(sig), annotation);   
+                    addMethodAnnotation(ctMethod, annotation);   
                 }
                 catch (RuntimeException ex) 
                 {
@@ -392,6 +397,18 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
                     getLogger().error(String.format("Failed to copy annotation '%s' from method '%s' of class '%s'", 
                             annotation.annotationType(), method.getName(), delegateClass.getName()));
                 }
+            }
+            
+            try
+            {
+            	addMethodParameterAnnotation(ctMethod, method.getParameterAnnotations());
+            }
+            catch (RuntimeException ex) 
+            {
+                //Annotation processing may cause exceptions thrown by Javassist. 
+                //To provide backward compatibility we have to continue even though copying a particular annotation failed.
+                getLogger().error(String.format("Failed to copy parameter annotations from method '%s' of class '%s'", 
+                		method.getName(), delegateClass.getName()));
             }
         }
     }
@@ -460,6 +477,39 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
 
     }
 
+    private void addMethodParameterAnnotation(final CtMethod ctMethod, final Annotation[][] parameterAnnotations) {
+
+        MethodInfo methodInfo = ctMethod.getMethodInfo();
+
+        ParameterAnnotationsAttribute attribute = (ParameterAnnotationsAttribute) methodInfo
+            .getAttribute(ParameterAnnotationsAttribute.visibleTag);
+
+        if (attribute == null) {
+            attribute = new ParameterAnnotationsAttribute(getConstPool(), ParameterAnnotationsAttribute.visibleTag);
+        }
+        
+        List<javassist.bytecode.annotation.Annotation[]> result = CollectionFactory.newList();
+        
+        for (Annotation[] next : parameterAnnotations) 
+        {
+        	List<javassist.bytecode.annotation.Annotation> list = CollectionFactory.newList();
+        	
+			for (Annotation annotation : next) 
+			{
+		        final javassist.bytecode.annotation.Annotation copy = toJavassistAnnotation(annotation);
+		        
+		        list.add(copy);
+			}
+			
+			result.add(list.toArray(new javassist.bytecode.annotation.Annotation[]{}));
+		}
+        
+        javassist.bytecode.annotation.Annotation[][] annotations = result.toArray(new javassist.bytecode.annotation.Annotation[][]{});
+        
+        attribute.setAnnotations(annotations);
+        
+        methodInfo.addAttribute(attribute);
+    }
     
     private ClassFile getClassFile()
     {

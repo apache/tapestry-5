@@ -14,9 +14,15 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static java.util.Arrays.asList;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -61,7 +67,7 @@ public class ClassFabImplTest extends IOCTestCase
     
     public interface AnnotatedService
     {
-        void doWork(final String value);
+        void doWork(final String value, final String anotherValue);
     }
     
     @ServiceId(value = "myService")
@@ -93,10 +99,28 @@ public class ClassFabImplTest extends IOCTestCase
                 longValue = 789L, 
                 shortValue = 4, 
                 stringValue = "bar")
-        public void doWork(final String value)
+        public void doWork(
+        		@TestMethodParameterAnnotation("baz") @TestMethodParameterAnnotation2("foo") final String value, 
+        		@TestMethodParameterAnnotation("barney") final String anotherValue)
         {
 
         }
+    }
+    
+    @Target(PARAMETER )
+    @Retention(RUNTIME)
+    @Documented
+    public @interface TestMethodParameterAnnotation
+    {
+        String value();
+    }
+    
+    @Target(PARAMETER )
+    @Retention(RUNTIME)
+    @Documented
+    public @interface TestMethodParameterAnnotation2
+    {
+        String value();
     }
 
     public ClassFabImplTest()
@@ -512,7 +536,7 @@ public class ClassFabImplTest extends IOCTestCase
 
         assertNotNull(targetClass.getAnnotation(ServiceId.class));
         
-        Method method = targetClass.getMethod("doWork", String.class);
+        Method method = targetClass.getMethod("doWork", String.class, String.class);
         TestAnnotation methodAnnotation = method.getAnnotation(TestAnnotation.class);
         
         assertNotNull(methodAnnotation);
@@ -533,6 +557,30 @@ public class ClassFabImplTest extends IOCTestCase
         assertEquals(methodAnnotation.longValue(), 789L);
         assertEquals(methodAnnotation.shortValue(), 4);
         assertEquals(methodAnnotation.stringValue(), "bar");
+        
+        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+        
+        assertEquals(parameterAnnotations.length, 2);
+        
+        Annotation[] firstParameterAnnotations = parameterAnnotations[0];
+        
+        assertEquals(firstParameterAnnotations.length, 2);
+        
+        TestMethodParameterAnnotation first = (TestMethodParameterAnnotation) firstParameterAnnotations[0];
+        
+        assertEquals(first.value(), "baz");
+        
+        TestMethodParameterAnnotation2 second = (TestMethodParameterAnnotation2) firstParameterAnnotations[1];
+        
+        assertEquals(second.value(), "foo");
+        
+        Annotation[] secondParameterAnnotation = parameterAnnotations[1];
+        
+        assertEquals(secondParameterAnnotation.length, 1);
+        
+        first = (TestMethodParameterAnnotation) secondParameterAnnotation[0];
+        
+        assertEquals(first.value(), "barney");
     }  
 
     private void assertContains(String actual, String expectedSubstring)
