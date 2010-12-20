@@ -356,6 +356,8 @@ public class Index
                             "Actions can exist on pages other than the active page, via Blocks."),
 
                     new Item("unlessdemo", "Unless Demo", "use of the Unless component"),
+                    
+                    new Item("delegateinline", "Inline Delegate", "Using the delegate component to create inline components"),
 
                     new Item("MagicValueEncoder", "Magic ValueEncoder Demo",
                             "Automatic creation of ValueEncoder using the TypeCoercer"),

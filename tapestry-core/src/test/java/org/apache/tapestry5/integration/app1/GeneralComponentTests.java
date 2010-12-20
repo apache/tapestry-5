@@ -81,4 +81,16 @@ public class GeneralComponentTests extends TapestryCoreTestCase
 
         assertText("//td[@class='t-location-content t-location-current']", "<t:unavailablecomponent/>");
     }
+    
+    /** TAP5-1378 */
+    @Test public void using_delegate_for_inline_components() {
+    	clickThru("Inline Delegate");
+    	
+    	// no params
+    	assertText("block1", "block 1");
+    	
+    	// multiple renders w/ multiple parameters
+    	assertText("xpath=(//p[@class='superhero'])[1]", "Steve Rogers");
+    	assertText("xpath=(//p[@class='superhero'])[2]", "Bruce Banner");
+    }
 }
