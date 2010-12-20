@@ -43,6 +43,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.Orderer;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
+import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.model.ComponentModel;
@@ -54,6 +55,7 @@ import org.apache.tapestry5.runtime.Event;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
+import org.apache.tapestry5.services.Request;
 import org.slf4j.Logger;
 
 /**
@@ -236,6 +238,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         protected void invokeComponent(Component component, MarkupWriter writer, Event event)
         {
+        	if (isRenderTracingEnabled())
+        		writer.comment("BEGIN " + component.getComponentResources().getCompleteId() + " (" + getLocation() + ")");
+        			
             component.beginRender(writer, event);
         }
 
@@ -410,6 +415,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         protected void invokeComponent(Component component, MarkupWriter writer, Event event)
         {
             component.afterRender(writer, event);
+            
+        	if (isRenderTracingEnabled())
+        		writer.comment("END " + component.getComponentResources().getCompleteId());
         }
 
         public void render(final MarkupWriter writer, RenderQueue queue)
@@ -543,6 +551,12 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     private final PerThreadValue<RenderPhaseEvent> renderEvent;
 
     private final PerThreadValue<Boolean> rendering;
+    
+    // should be okay since it's a shadow service object
+    private final Request request;
+    private final SymbolSource symbolSource;
+	private final boolean productionMode;
+	private final boolean componentTracingEnabled;
 
     // We know that, at the very least, there will be an element to force the component to render
     // its body, so there's no reason to wait to initialize the list.
@@ -576,7 +590,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
      */
     ComponentPageElementImpl(Page page, ComponentPageElement container, String id, String nestedId, String completeId,
             String elementName, Instantiator instantiator, Location location,
-            ComponentPageElementResources elementResources)
+            ComponentPageElementResources elementResources, Request request, SymbolSource symbolSource)
     {
         super(location);
 
@@ -587,7 +601,13 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         this.completeId = completeId;
         this.elementName = elementName;
         this.elementResources = elementResources;
-
+        this.request = request;
+        this.symbolSource = symbolSource;
+        
+        // evaluate this once because it gets referenced a lot during rendering
+        this.productionMode = "true".equals(symbolSource.valueForSymbol(SymbolConstants.PRODUCTION_MODE));
+        this.componentTracingEnabled = "true".equals(symbolSource.valueForSymbol(SymbolConstants.COMPONENT_RENDER_TRACING_ENABLED));
+        
         ComponentResources containerResources = container == null ? null : container.getComponentResources();
 
         coreResources = new InternalComponentResourcesImpl(this.page, this, containerResources, this.elementResources,
@@ -604,9 +624,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     /**
      * Constructor for the root component of a page.
      */
-    public ComponentPageElementImpl(Page page, Instantiator instantiator, ComponentPageElementResources elementResources)
+    public ComponentPageElementImpl(Page page, Instantiator instantiator, ComponentPageElementResources elementResources, Request request, SymbolSource symbolSource)
     {
-        this(page, null, null, null, page.getName(), null, instantiator, null, elementResources);
+        this(page, null, null, null, page.getName(), null, instantiator, null, elementResources, request, symbolSource);
     }
 
     private void initializeRenderPhases()
@@ -665,7 +685,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             Instantiator instantiator, Location location)
     {
         ComponentPageElementImpl child = new ComponentPageElementImpl(page, this, id, nestedId, completeId,
-                elementName, instantiator, location, elementResources);
+                elementName, instantiator, location, elementResources, request, symbolSource);
 
         addEmbeddedElement(child);
 
@@ -1299,4 +1319,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         return result;
     }
+    
+	boolean isRenderTracingEnabled() {
+		return !productionMode && (componentTracingEnabled || "true".equals(request.getParameter("t:component-trace")));
+	}
 }

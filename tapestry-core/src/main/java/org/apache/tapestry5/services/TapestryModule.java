@@ -2477,6 +2477,7 @@ public final class TapestryModule
         configuration.add(InternalSymbols.PRE_SELECTED_FORM_NAMES, "reset,submit,select,id,method,action,onsubmit");
 
         configuration.add(InternalSymbols.ALIAS_MODE, "servlet");
+        configuration.add(SymbolConstants.COMPONENT_RENDER_TRACING_ENABLED, "false");
     }
 
     /**

@@ -25,11 +25,13 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.Request;
 
 import java.util.List;
 import java.util.Locale;
@@ -54,14 +56,18 @@ class ComponentAssemblerImpl implements ComponentAssembler
     private final IdAllocator allocator = new IdAllocator();
 
     private final OperationTracker tracker;
+    
+    private final Request request;
+    
+    private final SymbolSource symbolSource;
 
     private Map<String, String> publishedParameterToEmbeddedId;
 
     private Map<String, EmbeddedComponentAssembler> embeddedIdToAssembler;
-
+    
     public ComponentAssemblerImpl(ComponentAssemblerSource assemblerSource,
             ComponentInstantiatorSource instantiatorSource, ComponentClassResolver componentClassResolver,
-            Instantiator instantiator, ComponentPageElementResources resources, Locale locale, OperationTracker tracker)
+            Instantiator instantiator, ComponentPageElementResources resources, Locale locale, OperationTracker tracker, Request request, SymbolSource symbolSource)
     {
         this.assemblerSource = assemblerSource;
         this.instantiatorSource = instantiatorSource;
@@ -70,6 +76,8 @@ class ComponentAssemblerImpl implements ComponentAssembler
         this.resources = resources;
         this.locale = locale;
         this.tracker = tracker;
+        this.request = request;
+        this.symbolSource = symbolSource;
     }
 
     public ComponentPageElement assembleRootComponent(final Page page)
@@ -90,7 +98,7 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
         try
         {
-            ComponentPageElement newElement = new ComponentPageElementImpl(pageAssembly.page, instantiator, resources);
+            ComponentPageElement newElement = new ComponentPageElementImpl(pageAssembly.page, instantiator, resources, request, symbolSource);
 
             pageAssembly.componentName.push(new ComponentName(pageAssembly.page.getName()));
 

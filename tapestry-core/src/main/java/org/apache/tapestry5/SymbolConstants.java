@@ -325,4 +325,13 @@ public class SymbolConstants
      * @since 5.2.0
      */
     public static final String PAGE_POOL_ENABLED = "tapestry.page-pool-enabled";
+    
+    /**
+     * If "true" and {@link #PRODUCTION_MODE} is off, comments will be rendered before and after the rendering of any component
+     * allowing more visibility into which components rendered which markup. Defaults to "false". Component render tracing may be
+     * enabled per-request by the presence of a request parameter "t:component-trace" with a value of "true".
+     * 
+     * @since 5.2.5
+     */
+    public static final String COMPONENT_RENDER_TRACING_ENABLED = "tapestry.component-render-tracing-enabled";
 }

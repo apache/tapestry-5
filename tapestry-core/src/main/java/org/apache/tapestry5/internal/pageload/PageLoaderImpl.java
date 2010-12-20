@@ -33,6 +33,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
+import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.util.Stack;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
@@ -40,6 +41,7 @@ import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.InvalidationListener;
+import org.apache.tapestry5.services.Request;
 
 import java.util.Collections;
 import java.util.List;
@@ -139,13 +141,17 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
     private final OperationTracker tracker;
 
     private final PerthreadManager perThreadManager;
+    
+    private final Request request;
+    
+    private final SymbolSource symbolSource;
 
     private final boolean poolingEnabled;
 
     public PageLoaderImpl(ComponentInstantiatorSource instantiatorSource, ComponentTemplateSource templateSource,
             PageElementFactory elementFactory, ComponentPageElementResourcesSource resourcesSource,
             ComponentClassResolver componentClassResolver, PersistentFieldManager persistentFieldManager,
-            StringInterner interner, OperationTracker tracker, PerthreadManager perThreadManager,
+            StringInterner interner, OperationTracker tracker, PerthreadManager perThreadManager, Request request, SymbolSource symbolSource,
             @Symbol(SymbolConstants.PAGE_POOL_ENABLED)
             boolean poolingEnabled)
     {
@@ -159,6 +165,8 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         this.tracker = tracker;
         this.perThreadManager = perThreadManager;
         this.poolingEnabled = poolingEnabled;
+        this.request = request;
+        this.symbolSource = symbolSource;
     }
 
     public void objectWasInvalidated()
@@ -228,7 +236,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
                 ComponentPageElementResources resources = resourcesSource.get(locale);
 
                 ComponentAssembler assembler = new ComponentAssemblerImpl(PageLoaderImpl.this, instantiatorSource,
-                        componentClassResolver, instantiator, resources, locale, tracker);
+                        componentClassResolver, instantiator, resources, locale, tracker, request, symbolSource);
 
                 // "Program" the assembler by adding actions to it. The actions interact with a
                 // PageAssembly object (a fresh one for each new page being created).
