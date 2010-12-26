@@ -41,7 +41,7 @@ import java.util.List;
  */
 @SupportsInformalParameters
 @Events(EventConstants.SYNCHRONIZE_VALUES)
-public class Loop
+public class Loop<T>
 {
     /**
      * Setup command for non-volatile rendering.
@@ -209,7 +209,7 @@ public class Loop
      * container whose name matches the Loop cmponent's id.
      */
     @Parameter(required = true, principal = true, autoconnect = true)
-    private Iterable<?> source;
+    private Iterable<T> source;
 
     /**
      * Optional value converter; if provided (or defaulted) and inside a form and not volatile, then each iterated value
@@ -217,7 +217,7 @@ public class Loop
      * the value parameter.
      */
     @Parameter
-    private ValueEncoder<Object> encoder;
+    private ValueEncoder<T> encoder;
 
     /**
      * If true and the Loop is enclosed by a Form, then the normal state saving logic is turned off. Defaults to false,
@@ -253,7 +253,7 @@ public class Loop
      * The current value, set before the component renders its body.
      */
     @Parameter(principal = true)
-    private Object value;
+    private T value;
 
     /**
      * The index into the source items.
@@ -267,7 +267,7 @@ public class Loop
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private Block empty;
 
-    private Iterator<?> iterator;
+    private Iterator<T> iterator;
 
     @Environmental
     private Heartbeat heartbeat;
@@ -286,7 +286,7 @@ public class Loop
      * Objects that have been recovered via {@link org.apache.tapestry5.ValueEncoder#toValue(String)} during the
      * processing of the loop. These are sent to the container via an event.
      */
-    private List<Object> synchonizedValues;
+    private List<T> synchonizedValues;
 
 
     LoopFormState defaultFormState()
@@ -439,7 +439,7 @@ public class Loop
     /**
      * Restores state previously stored by the Loop into a Form.
      */
-    private void restoreState(Object storedValue)
+    private void restoreState(T storedValue)
     {
         value = storedValue;
 
@@ -454,7 +454,7 @@ public class Loop
         // We assume that if an encoder is available when we rendered, that one will be available
         // when the form is submitted.
 
-        Object restoredValue = encoder.toValue(clientValue);
+        T restoredValue = encoder.toValue(clientValue);
 
         restoreState(restoredValue);
 
@@ -475,17 +475,17 @@ public class Loop
 
     // For testing:
 
-    int getIndex()
+    public int getIndex()
     {
         return index;
     }
 
-    Object getValue()
+    public T getValue()
     {
         return value;
     }
 
-    void setSource(Iterable<?> source)
+    void setSource(Iterable<T> source)
     {
         this.source = source;
     }

@@ -33,7 +33,7 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
 
     private final int modifiers;
 
-    private final String returnType, methodName;
+    private final String returnType, methodName, signature;
 
     private final String[] parameterTypes, exceptionTypes;
 
@@ -47,12 +47,22 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
     }
 
     public TransformMethodSignature(int modifiers, String type, String name, String[] parameterTypes,
+                String[] exceptionTypes)
+    {
+        this(modifiers, type, null, name, parameterTypes, exceptionTypes);
+    }
+
+    /**
+     * @since 5.3.0
+     */
+    public TransformMethodSignature(int modifiers, String type, String signature, String name, String[] parameterTypes,
             String[] exceptionTypes)
     {
         assert InternalUtils.isNonBlank(name);
         assert InternalUtils.isNonBlank(type);
 
         this.modifiers = modifiers;
+        this.signature = signature;
 
         returnType = type;
         methodName = name;
@@ -89,12 +99,16 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
 
     /**
      * Returns the set of modifier flags for this method.
-     * 
+     *
      * @see java.lang.reflect.Modifier
      */
     public int getModifiers()
     {
         return modifiers;
+    }
+
+    public String getSignature() {
+        return signature;
     }
 
     /**
@@ -237,7 +251,7 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
      * Returns a shortened form of the string representation of the method. It lists just the name
      * of the method and the
      * types of any parameters, omitting return type, exceptions and modifiers.
-     * 
+     *
      * @return
      */
     public String getMediumDescription()

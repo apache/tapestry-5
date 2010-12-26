@@ -151,6 +151,8 @@ public class Index
 
                     new Item("EmptyLoopDemo", "Empty Loop Demo", "Use of empty parameter with the Loop component."),
 
+                    new Item("GenericLoopDemo", "Generic Loop Demo", "Use of generic parameters with the Loop component."),
+
                     new Item("BlankPasswordDemo", "Blank Password Demo",
                             "Show that a blank value in a PasswordField does not update the server side value."),
 

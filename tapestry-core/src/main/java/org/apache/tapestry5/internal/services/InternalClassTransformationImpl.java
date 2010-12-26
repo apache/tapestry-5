@@ -24,6 +24,9 @@ import java.util.Map;
 import java.util.Set;
 
 import javassist.*;
+import javassist.bytecode.FieldInfo;
+import javassist.bytecode.MethodInfo;
+import javassist.bytecode.SignatureAttribute;
 import javassist.expr.ExprEditor;
 import javassist.expr.FieldAccess;
 
@@ -325,7 +328,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
          * The static method takes the same parameters as the main method, but takes
          * an instance object first. Invoking the static method turns into an invocation
          * of the proper method of the instance object.
-         * 
+         *
          * @return the name of the created static access method
          */
         private String createStaticAccessMethodForNonPublicMethod()
@@ -423,7 +426,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         private final CtClass fieldType;
 
-        private final String name, type;
+        private final String name, type, signature;
 
         private boolean added;
 
@@ -446,6 +449,12 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             try
             {
                 fieldType = field.getType();
+
+                final FieldInfo fieldInfo = field.getFieldInfo2();
+                SignatureAttribute sig = (SignatureAttribute) fieldInfo.getAttribute(SignatureAttribute.tag);
+                // This contains the generic type information
+                signature = sig != null ? sig.getSignature() : null;
+
                 type = fieldType.getName();
             }
             catch (NotFoundException ex)
@@ -484,6 +493,11 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         public String getType()
         {
             return type;
+        }
+
+        public String getSignature()
+        {
+            return signature;
         }
 
         public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
@@ -954,7 +968,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
      * Searches an array of objects (that are really annotations instances) to find one that is of
      * the correct type,
      * which is returned.
-     * 
+     *
      * @param <T>
      * @param annotationClass
      *            the annotation to search for
@@ -1080,7 +1094,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
      * degenerate cases that are not covered properly: these are related to base interfaces that may
      * be implemented by
      * base classes.
-     * 
+     *
      * @param ctInterface
      * @throws NotFoundException
      */
@@ -1243,7 +1257,12 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
             method.setBody(methodBody);
             method.setExceptionTypes(exceptions);
-
+            String sig = signature.getSignature();
+            if (sig != null)
+            {
+                final MethodInfo methodInfo = method.getMethodInfo();
+                methodInfo.addAttribute(new SignatureAttribute(methodInfo.getConstPool(), sig));
+            }
             ctClass.addMethod(method);
 
             result = recordMethod(method, addAsNew);
@@ -1594,7 +1613,10 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             String[] parameters = toTypeNames(method.getParameterTypes());
             String[] exceptions = toTypeNames(method.getExceptionTypes());
 
-            return new TransformMethodSignature(method.getModifiers(), type, method.getName(), parameters, exceptions);
+            final SignatureAttribute attribute = (SignatureAttribute)method.getMethodInfo().getAttribute(SignatureAttribute.tag);
+            String sig = attribute != null ? attribute.getSignature() : null;
+
+            return new TransformMethodSignature(method.getModifiers(), type, sig, method.getName(), parameters, exceptions);
         }
         catch (NotFoundException ex)
         {
@@ -1809,7 +1831,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     /**
      * Adds a parameter to the constructor for the class; the parameter is used to initialize the
      * value for a field.
-     * 
+     *
      * @param fieldName
      *            name of field to inject
      * @param fieldType
@@ -2261,7 +2283,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     /**
      * Adds a new constructor argument to the transformed constructor.
-     * 
+     *
      * @param parameterType
      *            type of parameter
      * @param value
@@ -2372,9 +2394,9 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             public void advise(ComponentMethodInvocation invocation)
             {
                 // Invoke the super-class implementation first.
-                
+
                 invocation.proceed();
-                
+
                 ComponentEvent event = (ComponentEvent) invocation.getParameter(0);
 
                 if (!event.isAborted() && event.matches(eventType, "", minContextValues))

@@ -44,6 +44,29 @@ public class LoopTests extends TapestryCoreTestCase
         test_loop_inside_form("ToDo List (Volatile)");
     }
 
+    @Test
+    public void generic_loop()
+    {
+        clickThru("Generic Loop Demo");
+        String[] strings = {"1", "3", "5", "7", "11"};
+        for ( int i = 0; i< strings.length; ++i)
+        {
+            assertText("int_" + i, strings[i]);
+        }
+
+        strings = new String[] {"John Doe", "Jane Dover", "James Jackson"};
+        for ( int i = 0; i< strings.length; ++i)
+        {
+            assertText("person_" + i, strings[i]);
+        }
+
+        strings = new String[] {"DOG:6:Dakota", "CAT:3:Jill", "CAT:3:Jack"};
+        for (int i = 0; i< strings.length; ++i)
+        {
+            assertText("inherited_" + i, strings[i]);
+        }
+    }
+
     private void test_loop_inside_form(String linkLabel)
     {
         clickThru(linkLabel);
