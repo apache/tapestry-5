@@ -546,7 +546,7 @@ public class FuncTest extends BaseFuncTest
         Flow<String> flow = F.flow("Mary", "had", "a", "little", "lamb");
 
         assertEquals(flow.filter(F.isNull()).count(), 0);
-        assertEquals(flow.filter(F.notNull()).count(), 5);
+        assertEquals(flow.removeNulls().count(), 5);
     }
 
     @Test

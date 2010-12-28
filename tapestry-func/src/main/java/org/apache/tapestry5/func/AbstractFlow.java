@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Abstract base class for implementations of {@link Flow}. Subclasses typically override some methods
- * for either efficiency, or for the concern they embrace.
+ * Abstract base class for implementations of {@link Flow}. Subclasses typically override some
+ * methods for either efficiency, or for the concern they embrace.
  * 
  * @since 5.2.0
  */
@@ -244,6 +244,20 @@ abstract class AbstractFlow<T> implements Flow<T>
         each(F.addToCollection(set));
 
         return Collections.unmodifiableSet(set);
+    }
+
+    public <X> ZippedFlow<T, X> zipWith(Flow<X> otherFlow)
+    {
+        assert otherFlow != null;
+
+        Flow<Tuple<T, X>> tupleFlow = F.lazy(new LazyZip<T, X>(this, otherFlow));
+
+        return ZippedFlowImpl.create(tupleFlow);
+    }
+
+    public Flow<T> removeNulls()
+    {
+        return remove(F.isNull());
     }
 
 }

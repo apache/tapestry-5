@@ -127,5 +127,9 @@ class EmptyFlow<T> extends AbstractFlow<T>
         return Collections.emptySet();
     }
 
-    
+    @Override
+    public Flow<T> removeNulls()
+    {
+        return this;
+    }
 }

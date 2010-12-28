@@ -14,19 +14,20 @@
 
 package org.apache.tapestry5.func;
 
-/**
- * A reducer takes an accumulator value and a single value from a collection and computes a new
- * accumulator value.
- * <A> type of accumulator
- * <T> type of collection value
- * 
- * @since 5.2.0
- */
-public interface Reducer<A, T>
+public class LazyZipValue<A, B> implements LazyValue<Tuple<A, B>>
 {
-    /**
-     * Run a computation using the current value of the accumulator and a value (from a Flow),
-     * and return the new accumulator.
-     */
-    A reduce(A accumulator, T value);
+    private final Flow<A> aFlow;
+
+    private final Flow<B> bFlow;
+
+    public LazyZipValue(Flow<A> aFlow, Flow<B> bFlow)
+    {
+        this.aFlow = aFlow;
+        this.bFlow = bFlow;
+    }
+
+    public Tuple<A, B> get()
+    {
+        return new Tuple<A, B>(aFlow.first(), bFlow.first());
+    }
 }

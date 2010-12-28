@@ -18,15 +18,17 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * Functional operations on collections with generics support. The core interface is {@link Flow} to which operations
+ * Functional operations on collections with generics support. The core interface is {@link Flow} to
+ * which operations
  * and transformations
- * (in terms of {@link Predicate}s, {@link Mapper}s and {@link Reducer}s) to create new Flows. Flows are initially
+ * (in terms of {@link Predicate}s, {@link Mapper}s and {@link Reducer}s) to create new Flows. Flows
+ * are initially
  * created
  * using {@link #flow(Collection)} and {@link #flow(Object...)}.
  * <p>
- * F will be used a bit, thus it has a short name (for those who don't like static imports). It provides a base set of
- * Predicate, Mapper and Reducer factories. A good development pattern for applications is to provide a similar,
- * application-specific, set of such factories.
+ * F will be used a bit, thus it has a short name (for those who don't like static imports). It
+ * provides a base set of Predicate, Mapper and Reducer factories. A good development pattern for
+ * applications is to provide a similar, application-specific, set of such factories.
  * 
  * @since 5.2.0
  */
@@ -41,6 +43,9 @@ public class F
         return (Flow<T>) EMPTY_FLOW;
     }
 
+    /**
+     * A Predicate factory for equality against a specified value.
+     */
     public static <T> Predicate<T> eql(final T value)
     {
         return new Predicate<T>()
@@ -52,6 +57,10 @@ public class F
         };
     }
 
+    /**
+     * A Predicate factory for comparison of a Number against a fixed value; true
+     * if the Number equals the value.
+     */
     public static Predicate<Number> eq(final long value)
     {
         return new Predicate<Number>()
@@ -63,11 +72,19 @@ public class F
         };
     }
 
+    /**
+     * A Predicate factory for comparison of a Number against a fixed value; true
+     * if the Number does not equal the value.
+     */
     public static Predicate<Number> neq(long value)
     {
         return eq(value).invert();
     }
 
+    /**
+     * A Predicate factory for comparison of a Number against a fixed value; true
+     * if the number is greater than the value.
+     */
     public static Predicate<Number> gt(final long value)
     {
         return new Predicate<Number>()
@@ -79,21 +96,36 @@ public class F
         };
     }
 
+    /**
+     * A Predicate factory for comparison of a Number against a fixed value; true
+     * if the Number is greater than or equal to the value.
+     */
     public static Predicate<Number> gteq(long value)
     {
         return eq(value).or(gt(value));
     }
 
+    /**
+     * A Predicate factory for comparison of a Number against a fixed value; true
+     * if the Number is less than the value.
+     */
     public static Predicate<Number> lt(long value)
     {
         return gteq(value).invert();
     }
 
+    /**
+     * A Predicate factory for comparison of a Number against a fixed value; true
+     * if the Number is less than or equal to the value.
+     */
     public static Predicate<Number> lteq(long value)
     {
         return gt(value).invert();
     }
 
+    /**
+     * A Predicate factory; returns true if the value from the Flow is null.
+     */
     public static <T> Predicate<T> isNull()
     {
         return new Predicate<T>()
@@ -105,6 +137,9 @@ public class F
         };
     }
 
+    /**
+     * A Predicate factory; returns true if the value from the Flow is not null.
+     */
     public static <T> Predicate<T> notNull()
     {
         Predicate<T> isNull = isNull();
@@ -112,6 +147,10 @@ public class F
         return isNull.invert();
     }
 
+    /**
+     * A Mapper factory that gets the string value of the flow value using
+     * {@link String#valueOf(Object)}.
+     */
     public static <T> Mapper<T, String> stringValueOf()
     {
         return new Mapper<T, String>()
@@ -123,7 +162,10 @@ public class F
         };
     }
 
-    /** Returns a Mapper that ignores its input value and always returns a predetermined result. */
+    /**
+     * A Mapper factory; the returned Mapper ignores its input value and always returns a
+     * predetermined result.
+     */
     public static <S, T> Mapper<S, T> always(final T fixedResult)
     {
         return new Mapper<S, T>()
@@ -136,8 +178,8 @@ public class F
     }
 
     /**
-     * Mapper factory that combines a Predicate with two {@link Mapper}s; evaluating the predicate selects one of the
-     * two mappers.
+     * A Mapper factory that combines a Predicate with two {@link Mapper}s; evaluating the predicate
+     * selects one of the two mappers.
      * 
      * @param predicate
      *            evaluated to selected a coercion
@@ -165,7 +207,8 @@ public class F
     }
 
     /**
-     * Override of {@link #select(Predicate, Mapper, Mapper)} where rejected values are replaced with null.
+     * Override of {@link #select(Predicate, Mapper, Mapper)} where rejected values are replaced
+     * with null.
      */
     public static <S, T> Mapper<S, T> select(Predicate<? super S> predicate, Mapper<S, T> ifAccepted)
     {
@@ -173,7 +216,8 @@ public class F
     }
 
     /**
-     * Override of {@link #select(Predicate, Mapper)} where rejected values are replaced with a fixed value.
+     * Override of {@link #select(Predicate, Mapper)} where rejected values are replaced with a
+     * fixed value.
      */
     public static <S, T> Mapper<S, T> select(Predicate<? super S> predicate, Mapper<S, T> ifAccepted, T ifRejectedValue)
     {
@@ -182,7 +226,7 @@ public class F
         return select(predicate, ifAccepted, rejectedMapper);
     }
 
-    /** The identity mapper simply returns the input unchanged. */
+    /** A Mapper factory; the Mapper returns the the flow value unchanged. */
     public static <S> Mapper<S, S> identity()
     {
         return new Mapper<S, S>()
@@ -208,6 +252,9 @@ public class F
         };
     }
 
+    /**
+     * A Reducer that operates on a Flow of Integers and is used to sum the values.
+     */
     public static Reducer<Integer, Integer> SUM_INTS = new Reducer<Integer, Integer>()
     {
         public Integer reduce(Integer accumulator, Integer value)
@@ -216,6 +263,10 @@ public class F
         };
     };
 
+    /**
+     * A two-input Mapper used to add the values from two Flows of Integers into a Flow of Integer
+     * sums.
+     */
     public static Mapper2<Integer, Integer, Integer> ADD_INTS = new Mapper2<Integer, Integer, Integer>()
     {
         public Integer map(Integer first, Integer second)
@@ -252,8 +303,9 @@ public class F
 
     /**
      * Creates a lazy Flow from the {@link Iterator} obtained from the iterable. The Flow
-     * will be threadsafe as long as the iterable yields a new Iterator on each invocation <em>and</em> the underlying
-     * iterable object is not modified while the Flow is evaluating. In other words, not extremely threadsafe.
+     * will be threadsafe as long as the iterable yields a new Iterator on each invocation
+     * <em>and</em> the underlying iterable object is not modified while the Flow is evaluating.
+     * In other words, not extremely threadsafe.
      */
     public static <T> Flow<T> flow(Iterable<T> iterable)
     {
@@ -306,7 +358,8 @@ public class F
 
     /**
      * Creates a lazy, infinte Flow consisting of the initial value, then the result of passing
-     * the initial value through the Mapper, and so forth, which each step value passed through the mapper
+     * the initial value through the Mapper, and so forth, which each step value passed through the
+     * mapper
      * to form the next step value.
      */
     public static <T> Flow<T> iterate(final T initial, final Mapper<T, T> mapper)
@@ -323,6 +376,9 @@ public class F
         });
     }
 
+    /**
+     * A Worker factory; the returnedWorker adds the values to a provided collection.
+     */
     public static <T> Worker<T> addToCollection(final Collection<T> coll)
     {
         return new Worker<T>()
