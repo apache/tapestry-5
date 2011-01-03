@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
 // limitations under the License.
 
 package org.apache.tapestry5.func;
-
 
 /**
  * Used when filtering a collection of objects of a given type; the predicate is passed
@@ -30,12 +29,15 @@ public abstract class Predicate<T>
     /**
      * This method is overridden in subclasses to define which objects the Predicate will accept
      * and which it will reject.
+     * 
+     * @param element
+     *            the element from the flow to be evaluated by the Predicate
      */
-    public abstract boolean accept(T object);
+    public abstract boolean accept(T element);
 
     /**
-     * Combines this Predicate with another compatible Predicate to form a new Predicate, which is returned. The
-     * new Predicate is true only if both of the combined Predicates are true.
+     * Combines this Predicate with another compatible Predicate to form a new Predicate, which is
+     * returned. The new Predicate is true only if both of the combined Predicates are true.
      */
     public final Predicate<T> and(final Predicate<? super T> other)
     {
@@ -53,7 +55,8 @@ public abstract class Predicate<T>
     }
 
     /**
-     * Combines this Predicate with another compatible Predicate to form a new Predicate, which is returned. The
+     * Combines this Predicate with another compatible Predicate to form a new Predicate, which is
+     * returned. The
      * new Predicate is true if either of the combined Predicates are true.
      */
     public final Predicate<T> or(final Predicate<? super T> other)
@@ -72,7 +75,8 @@ public abstract class Predicate<T>
     }
 
     /**
-     * Inverts this Predicate, returning a new Predicate that inverts the value returned from {@link #accept}.
+     * Inverts this Predicate, returning a new Predicate that inverts the value returned from
+     * {@link #accept}.
      */
     public final Predicate<T> invert()
     {

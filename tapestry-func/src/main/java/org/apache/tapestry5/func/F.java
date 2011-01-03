@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -44,81 +44,92 @@ public class F
     }
 
     /**
-     * A Predicate factory for equality against a specified value.
+     * A Predicate factory for equality of q Comparable element from a flow against a specified
+     * value.
      */
     public static <T> Predicate<T> eql(final T value)
     {
         return new Predicate<T>()
         {
-            public boolean accept(T object)
+            public boolean accept(T element)
             {
-                return object.equals(value);
+                return element.equals(value);
             };
         };
     }
 
     /**
-     * A Predicate factory for comparison of a Number against a fixed value; true
-     * if the Number equals the value.
+     * A Predicate factory for comparison of a Comparable element from a flow against a fixed value.
      */
-    public static Predicate<Number> eq(final long value)
+    public static <T extends Comparable<T>> Predicate<T> eq(final T value)
     {
-        return new Predicate<Number>()
+        return new Predicate<T>()
         {
-            public boolean accept(Number object)
+            public boolean accept(T element)
             {
-                return object.longValue() == value;
+                return element.compareTo(value) == 0;
             }
         };
     }
 
     /**
-     * A Predicate factory for comparison of a Number against a fixed value; true
-     * if the Number does not equal the value.
+     * A Predicate factory for comparison of a Comparable element against a fixed value.
      */
-    public static Predicate<Number> neq(long value)
+    public static <T extends Comparable<T>> Predicate<T> neq(final T value)
     {
-        return eq(value).invert();
-    }
-
-    /**
-     * A Predicate factory for comparison of a Number against a fixed value; true
-     * if the number is greater than the value.
-     */
-    public static Predicate<Number> gt(final long value)
-    {
-        return new Predicate<Number>()
+        return new Predicate<T>()
         {
-            public boolean accept(Number object)
+            public boolean accept(T object)
             {
-                return object.longValue() > value;
+                return object.compareTo(value) != 0;
             }
         };
     }
 
     /**
-     * A Predicate factory for comparison of a Number against a fixed value; true
-     * if the Number is greater than or equal to the value.
+     * A Predicate factory for comparison of a Comparable against a fixed value; true
+     * if the flow element is greater than the provided value.
      */
-    public static Predicate<Number> gteq(long value)
+    public static <T extends Comparable<T>> Predicate<T> gt(final T value)
     {
-        return eq(value).or(gt(value));
+        return new Predicate<T>()
+        {
+            public boolean accept(T element)
+            {
+                return element.compareTo(value) > 0;
+            }
+        };
     }
 
     /**
-     * A Predicate factory for comparison of a Number against a fixed value; true
-     * if the Number is less than the value.
+     * A Predicate factory for comparison of a Comparable against a fixed value; true
+     * if the flow element is greater than or equal to the value.
      */
-    public static Predicate<Number> lt(long value)
+    public static <T extends Comparable<T>> Predicate<T> gteq(final T value)
+    {
+        return new Predicate<T>()
+        {
+            public boolean accept(T element)
+            {
+                return element.compareTo(value) >= 0;
+            }
+        };
+    }
+
+    /**
+     * A Predicate factory for comparison of a Comparable against a fixed value; true
+     * if the element is less than the value.
+     */
+    public static <T extends Comparable<T>> Predicate<T> lt(T value)
     {
         return gteq(value).invert();
     }
 
     /**
-     * A Predicate factory for comparison of a Number against a fixed value; true
-     * if the Number is less than or equal to the value.
+     * A Predicate factory for comparison of a Comprable element against a fixed value; true
+     * if the element is less than or equal to the value.
      */
-    public static Predicate<Number> lteq(long value)
+    public static <T extends Comparable<T>> Predicate<T> lteq(T value)
     {
         return gt(value).invert();
     }
@@ -130,9 +141,9 @@ public class F
     {
         return new Predicate<T>()
         {
-            public boolean accept(T object)
+            public boolean accept(T element)
             {
-                return object == null;
+                return element == null;
             }
         };
     }

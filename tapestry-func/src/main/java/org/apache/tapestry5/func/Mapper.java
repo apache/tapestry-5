@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,11 +20,18 @@ package org.apache.tapestry5.func;
  * to another (or otherwise transformed).
  * 
  * @since 5.2.0
+ * @param <S>
+ *            type of source flow
+ * @param <T>
+ *            type of target (output) flow
  */
 public abstract class Mapper<S, T>
 {
-    /** Implemented in subclasses to map a source value to a target value. */
-    public abstract T map(S value);
+    /**
+     * Implemented in subclasses to map an element from the source flow to an element of the target
+     * flow.
+     */
+    public abstract T map(S element);
 
     /**
      * Combines this mapper (S --&gt;T) with another mapper (T --&gt;X) to form
@@ -33,17 +40,16 @@ public abstract class Mapper<S, T>
     public final <X> Mapper<S, X> combine(final Mapper<T, X> other)
     {
         assert other != null;
-        
+
         final Mapper<S, T> stMapper = this;
 
         return new Mapper<S, X>()
         {
-            public X map(S value)
+            public X map(S element)
             {
+                T tElement = stMapper.map(element);
 
-                T tValue = stMapper.map(value);
-
-                return other.map(tValue);
+                return other.map(tElement);
             }
         };
     }

@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -205,9 +205,29 @@ public class FuncTest extends BaseFuncTest
     {
         List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
 
-        List<Integer> output = F.flow(input).filter(evenp.and(F.gt(3))).toList();
+        List<Integer> output = F.flow(input).filter(F.gt(2).and(F.lt(5))).toList();
 
-        assertListsEquals(output, 4, 6);
+        assertListsEquals(output, 3, 4);
+    }
+
+    @Test
+    public void combine_predicate_with_or()
+    {
+        List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
+
+        List<Integer> output = F.flow(input).filter(F.lt(3).or(F.gt(5))).toList();
+
+        assertListsEquals(output, 1, 2, 6, 7);
+    }
+
+    @Test
+    public void eql_predicate()
+    {
+        List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
+
+        List<Integer> output = F.flow(input).filter(F.eql(4)).toList();
+
+        assertListsEquals(output, 4);
     }
 
     @Test
