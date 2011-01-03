@@ -202,8 +202,6 @@
     <module>quickstart</module>
     <!-- And the Maven plugin. -->
     <module>tapestry-component-report</module>
-    <!-- Tutorials -->
-    <module>tapestry-tutorial1</module>
   </modules>
   <dependencyManagement>
     <dependencies>
