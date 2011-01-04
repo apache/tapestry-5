@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -142,8 +142,6 @@ import org.slf4j.Logger;
 /**
  * The root module for Tapestry.
  */
-@SuppressWarnings(
-{ "JavaDoc" })
 @Marker(Core.class)
 @SubModule(InternalModule.class)
 public final class TapestryModule
@@ -355,7 +353,6 @@ public final class TapestryModule
         binder.bind(ContextValueEncoder.class, ContextValueEncoderImpl.class);
         binder.bind(BaseURLSource.class, BaseURLSourceImpl.class);
         binder.bind(BeanBlockOverrideSource.class, BeanBlockOverrideSourceImpl.class);
-        binder.bind(AliasManager.class, AliasManagerImpl.class).withId("AliasOverrides");
         binder.bind(HiddenFieldLocationRules.class, HiddenFieldLocationRulesImpl.class);
         binder.bind(PageDocumentGenerator.class, PageDocumentGeneratorImpl.class);
         binder.bind(ResponseRenderer.class, ResponseRendererImpl.class);
@@ -396,22 +393,6 @@ public final class TapestryModule
     // Service Builder Methods (static)
     //
     // ========================================================================
-
-    @PreventServiceDecoration
-    public static Alias buildAlias(Logger logger,
-
-    @Symbol(InternalSymbols.ALIAS_MODE)
-    String mode,
-
-    @InjectService("AliasOverrides")
-    AliasManager overridesManager,
-
-    Collection<AliasContribution> configuration)
-    {
-        AliasManager manager = new AliasManagerImpl(logger, configuration);
-
-        return new AliasImpl(manager, mode, overridesManager);
-    }
 
     // ========================================================================
     //
@@ -543,26 +524,31 @@ public final class TapestryModule
      * <dt>Persist</dt>
      * <dd>Allows fields to store their their value persistently between requests</dd>
      * <dt>Parameter</dt>
-     * <dd>Identifies parameters based on the {@link org.apache.tapestry5.annotations.Parameter} annotation</dd>
+     * <dd>Identifies parameters based on the {@link org.apache.tapestry5.annotations.Parameter}
+     * annotation</dd>
      * <dt>Component</dt>
-     * <dd>Defines embedded components based on the {@link org.apache.tapestry5.annotations.Component} annotation</dd>
+     * <dd>Defines embedded components based on the
+     * {@link org.apache.tapestry5.annotations.Component} annotation</dd>
      * <dt>Mixin</dt>
      * <dd>Adds a mixin as part of a component's implementation</dd>
      * <dt>Environment</dt>
-     * <dd>Allows fields to contain values extracted from the {@link org.apache.tapestry5.services.Environment} service</dd>
+     * <dd>Allows fields to contain values extracted from the
+     * {@link org.apache.tapestry5.services.Environment} service</dd>
      * <dt>Inject</dt>
-     * <dd>Used with the {@link org.apache.tapestry5.ioc.annotations.Inject} annotation, when a value is supplied</dd>
+     * <dd>Used with the {@link org.apache.tapestry5.ioc.annotations.Inject} annotation, when a
+     * value is supplied</dd>
      * <dt>InjectService</dt>
      * <dd>Handles the {@link org.apache.tapestry5.ioc.annotations.InjectService} annotation</dd>
      * <dt>InjectPage</dt>
-     * <dd>Adds code to allow access to other pages via the {@link org.apache.tapestry5.annotations.InjectPage} field
-     * annotation</dd>
+     * <dd>Adds code to allow access to other pages via the
+     * {@link org.apache.tapestry5.annotations.InjectPage} field annotation</dd>
      * <dt>InjectBlock</dt>
      * <dd>Allows a block from the template to be injected into a field</dd>
      * <dt>IncludeStylesheet</dt>
      * <dd>Supports the {@link org.apache.tapestry5.annotations.IncludeStylesheet} annotation</dd>
      * <dt>IncludeJavaScriptLibrary</dt>
-     * <dd>Supports the {@link org.apache.tapestry5.annotations.IncludeJavaScriptLibrary} annotation</dd>
+     * <dd>Supports the {@link org.apache.tapestry5.annotations.IncludeJavaScriptLibrary} annotation
+     * </dd>
      * <dt>Import</dt>
      * <dd>Supports the {@link Import} annotation</dd>
      * <dt>SupportsInformalParameters</dt>
@@ -578,10 +564,12 @@ public final class TapestryModule
      * <dt>RenderPhase</dt>
      * <dd>Link in render phaes methods</dd>
      * <dt>InvokePostRenderCleanupOnResources</dt>
-     * <dd>Makes sure {@link org.apache.tapestry5.internal.InternalComponentResources#postRenderCleanup()} is invoked
-     * after a component finishes rendering</dd>
+     * <dd>Makes sure
+     * {@link org.apache.tapestry5.internal.InternalComponentResources#postRenderCleanup()} is
+     * invoked after a component finishes rendering</dd>
      * <dt>GenerateAccessors</dt>
-     * <dd>Generates accessor methods if {@link org.apache.tapestry5.annotations.Property} annotation is present</dd>
+     * <dd>Generates accessor methods if {@link org.apache.tapestry5.annotations.Property}
+     * annotation is present</dd>
      * <dt>Cached</dt>
      * <dd>Checks for the {@link org.apache.tapestry5.annotations.Cached} annotation</dd>
      * <dt>Log</dt>
@@ -805,10 +793,11 @@ public final class TapestryModule
      * <dt>CommonResources</dt>
      * <dd>access to properties of resources (log, messages, etc.)</dd>
      * <dt>Asset</dt>
-     * <dd>injection of assets (triggered via {@link Path} annotation), with the path relative to the component class</dd>
+     * <dd>injection of assets (triggered via {@link Path} annotation), with the path relative to
+     * the component class</dd>
      * <dt>Service</dt>
-     * <dd>ordered last, for use when Inject is present and nothing else works, matches field type against Tapestry IoC
-     * services</dd>
+     * <dd>ordered last, for use when Inject is present and nothing else works, matches field type
+     * against Tapestry IoC services</dd>
      * </dl>
      */
     public static void contributeInjectionProvider(OrderedConfiguration<InjectionProvider> configuration,
@@ -843,9 +832,6 @@ public final class TapestryModule
     /**
      * Contributes two object providers:
      * <dl>
-     * <dt>Alias</dt>
-     * <dd>Searches by type among {@linkplain AliasContribution
-     * contributions} to the {@link Alias} service</dd>
      * <dt>Asset
      * <dt>
      * <dd>Checks for the {@link Path} annotation, and injects an {@link Asset}</dd>
@@ -857,32 +843,11 @@ public final class TapestryModule
      */
     public static void contributeMasterObjectProvider(OrderedConfiguration<ObjectProvider> configuration,
 
-    @Local
-    final Alias alias,
-
     @InjectService("AssetObjectProvider")
     ObjectProvider assetObjectProvider,
 
     ObjectLocator locator)
     {
-        // There's a nasty web of dependencies related to Alias; this wrapper
-        // class lets us defer instantiating the Alias service implementation just long enough
-        // to defuse those dependencies. The @Local annotation prevents a recursive call through
-        // the MasterObjectProvider to resolve the Alias service itself; that is
-        // MasterObjectProvider gets built using this proxy, then the proxy will trigger the
-        // construction of AliasImpl (which itself needs MasterObjectProvider to resolve some
-        // dependencies).
-
-        ObjectProvider wrapper = new ObjectProvider()
-        {
-            public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator)
-            {
-                return alias.getObjectProvider().provide(objectType, annotationProvider, locator);
-            }
-        };
-
-        configuration.add("Alias", wrapper, "after:ServiceOverride");
-
         configuration.add("Asset", assetObjectProvider, "before:AnnotationBasedContributions");
 
         configuration.add("Service", new ServiceAnnotationObjectProvider(), "before:AnnotationBasedContributions");
@@ -895,11 +860,11 @@ public final class TapestryModule
     /**
      * <dl>
      * <dt>StoreIntoGlobals</dt>
-     * <dd>Stores the request and response into {@link org.apache.tapestry5.services.RequestGlobals} at the start of the
-     * pipeline</dd>
+     * <dd>Stores the request and response into {@link org.apache.tapestry5.services.RequestGlobals}
+     * at the start of the pipeline</dd>
      * <dt>IgnoredPaths</dt>
-     * <dd>Identifies requests that are known (via the IgnoredPathsFilter service's configuration) to be mapped to other
-     * applications</dd>
+     * <dd>Identifies requests that are known (via the IgnoredPathsFilter service's configuration)
+     * to be mapped to other applications</dd>
      * <dt>GZip</dt>
      * <dd>Handles GZIP compression of response streams (if supported by client)</dd>
      */
@@ -936,17 +901,18 @@ public final class TapestryModule
      * Continues a number of filters into the RequestHandler service:
      * <dl>
      * <dt>StaticFiles</dt>
-     * <dd>Checks to see if the request is for an actual file, if so, returns true to let the servlet container process
-     * the request</dd>
+     * <dd>Checks to see if the request is for an actual file, if so, returns true to let the
+     * servlet container process the request</dd>
      * <dt>CheckForUpdates</dt>
-     * <dd>Periodically fires events that checks to see if the file system sources for any cached data has changed (see
-     * {@link org.apache.tapestry5.internal.services.CheckForUpdatesFilter}).
+     * <dd>Periodically fires events that checks to see if the file system sources for any cached
+     * data has changed (see {@link org.apache.tapestry5.internal.services.CheckForUpdatesFilter}).
      * <dt>ErrorFilter</dt>
-     * <dd>Catches request errors and lets the {@link org.apache.tapestry5.services.RequestExceptionHandler} handle them
-     * </dd>
+     * <dd>Catches request errors and lets the
+     * {@link org.apache.tapestry5.services.RequestExceptionHandler} handle them</dd>
      * <dt>StoreIntoGlobals</dt>
-     * <dd>Stores the request and response into the {@link org.apache.tapestry5.services.RequestGlobals} service (this
-     * is repeated at the end of the pipeline, in case any filter substitutes the request or response).
+     * <dd>Stores the request and response into the
+     * {@link org.apache.tapestry5.services.RequestGlobals} service (this is repeated at the end of
+     * the pipeline, in case any filter substitutes the request or response).
      * </dl>
      */
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration, Context context,
@@ -1311,9 +1277,9 @@ public final class TapestryModule
      * the chain is responsible for ordinary
      * property names (and property paths).
      * <p/>
-     * This mechanism has been replaced in 5.1 with a more sophisticated parser based on ANTLR. See <a
-     * href="https://issues.apache.org/jira/browse/TAP5-79">TAP5-79</a> for details. There are no longer any built-in
-     * contributions to the configuration.
+     * This mechanism has been replaced in 5.1 with a more sophisticated parser based on ANTLR. See
+     * <a href="https://issues.apache.org/jira/browse/TAP5-79">TAP5-79</a> for details. There are no
+     * longer any built-in contributions to the configuration.
      * 
      * @param configuration
      *            contributions of special factories for some constants, each
@@ -1381,7 +1347,8 @@ public final class TapestryModule
     }
 
     /**
-     * Builds a proxy to the current {@link JavaScriptSupport} inside this thread's {@link Environment}.
+     * Builds a proxy to the current {@link JavaScriptSupport} inside this thread's
+     * {@link Environment}.
      * 
      * @since 5.2.0
      */
@@ -1391,7 +1358,8 @@ public final class TapestryModule
     }
 
     /**
-     * Builds a proxy to the current {@link org.apache.tapestry5.services.ClientBehaviorSupport} inside this
+     * Builds a proxy to the current {@link org.apache.tapestry5.services.ClientBehaviorSupport}
+     * inside this
      * thread's {@link org.apache.tapestry5.services.Environment}.
      * 
      * @since 5.1.0.1
@@ -1449,7 +1417,8 @@ public final class TapestryModule
     }
 
     /**
-     * Initializes the application, using a pipeline of {@link org.apache.tapestry5.services.ApplicationInitializer}s.
+     * Initializes the application, using a pipeline of
+     * {@link org.apache.tapestry5.services.ApplicationInitializer}s.
      */
     @Marker(Primary.class)
     public ApplicationInitializer buildApplicationInitializer(Logger logger,
@@ -1651,7 +1620,8 @@ public final class TapestryModule
 
     /**
      * The MarkupRenderer service is used to render a full page as markup.
-     * Supports an ordered configuration of {@link org.apache.tapestry5.services.MarkupRendererFilter}s.
+     * Supports an ordered configuration of
+     * {@link org.apache.tapestry5.services.MarkupRendererFilter}s.
      */
     public MarkupRenderer buildMarkupRenderer(Logger logger, @Autobuild
     MarkupRendererTerminator terminator, List<MarkupRendererFilter> configuration)
@@ -1663,10 +1633,11 @@ public final class TapestryModule
     /**
      * A wrapper around {@link org.apache.tapestry5.internal.services.PageRenderQueue} used for
      * partial page renders.
-     * Supports an ordered configuration of {@link org.apache.tapestry5.services.PartialMarkupRendererFilter}s.
+     * Supports an ordered configuration of
+     * {@link org.apache.tapestry5.services.PartialMarkupRendererFilter}s.
      * 
-     * @see #contributePartialMarkupRenderer(org.apache.tapestry5.ioc.OrderedConfiguration, org.apache.tapestry5.Asset,
-     *      org.apache.tapestry5.ioc.services.SymbolSource, AssetSource)
+     * @see #contributePartialMarkupRenderer(org.apache.tapestry5.ioc.OrderedConfiguration,
+     *      org.apache.tapestry5.Asset, org.apache.tapestry5.ioc.services.SymbolSource, AssetSource)
      */
     public PartialMarkupRenderer buildPartialMarkupRenderer(Logger logger,
             List<PartialMarkupRendererFilter> configuration, @Autobuild
@@ -1703,7 +1674,8 @@ public final class TapestryModule
     /**
      * Builds the action request handler for Ajax requests, based on a
      * {@linkplain org.apache.tapestry5.ioc.services.PipelineBuilder
-     * pipeline} around {@link org.apache.tapestry5.internal.services.AjaxComponentEventRequestHandler} . Filters on
+     * pipeline} around
+     * {@link org.apache.tapestry5.internal.services.AjaxComponentEventRequestHandler} . Filters on
      * the
      * request handler are supported here as well.
      */
@@ -1755,11 +1727,11 @@ public final class TapestryModule
      * <dt>String</dt>
      * <dd>Sends a page render redirect</dd>
      * <dt>Class</dt>
-     * <dd>Interpreted as the class name of a page, sends a page render render redirect (this is more refactoring safe
-     * than the page name)</dd>
+     * <dd>Interpreted as the class name of a page, sends a page render render redirect (this is
+     * more refactoring safe than the page name)</dd>
      * <dt>{@link Component}</dt>
-     * <dd>A page's root component (though a non-root component will work, but will generate a warning). A direct to the
-     * containing page is sent.</dd>
+     * <dd>A page's root component (though a non-root component will work, but will generate a
+     * warning). A direct to the containing page is sent.</dd>
      * <dt>{@link org.apache.tapestry5.StreamResponse}</dt>
      * <dd>The stream response is sent as the actual reply.</dd>
      * <dt>URL</dt>
@@ -1815,13 +1787,16 @@ public final class TapestryModule
      * <dt>{@link RenderCommand}</dt>
      * <dd>Typically, a {@link org.apache.tapestry5.Block}</dd>
      * <dt>{@link org.apache.tapestry5.annotations.Component}</dt>
-     * <dd>Renders the component and its body (unless its a page, in which case a redirect JSON response is sent)</dd>
-     * <dt>{@link org.apache.tapestry5.json.JSONObject} or {@link org.apache.tapestry5.json.JSONArray}</dt>
+     * <dd>Renders the component and its body (unless its a page, in which case a redirect JSON
+     * response is sent)</dd>
+     * <dt>{@link org.apache.tapestry5.json.JSONObject} or
+     * {@link org.apache.tapestry5.json.JSONArray}</dt>
      * <dd>The JSONObject is returned as a text/javascript response</dd>
      * <dt>{@link org.apache.tapestry5.StreamResponse}</dt>
      * <dd>The stream response is sent as the actual response</dd>
      * <dt>String</dt>
-     * <dd>Interprets the value as a logical page name and sends a client response to redirect to that page</dd>
+     * <dd>Interprets the value as a logical page name and sends a client response to redirect to
+     * that page</dd>
      * <dt>{@link org.apache.tapestry5.Link}</dt>
      * <dd>Sends a JSON response to redirect to the link</dd>
      * <dt>{@link Class}</dt>
@@ -1830,9 +1805,10 @@ public final class TapestryModule
      * <dd>Sends a single JSON response to update the content of multiple zones
      * </dl>
      * <p>
-     * In most cases, when you want to support a new type, you should convert it to one of the built-in supported types
-     * (such as {@link RenderCommand}. You can then inject the master AjaxComponentEventResultProcessor (use the
-     * {@link Ajax} marker annotation) and delegate to it.
+     * In most cases, when you want to support a new type, you should convert it to one of the
+     * built-in supported types (such as {@link RenderCommand}. You can then inject the master
+     * AjaxComponentEventResultProcessor (use the {@link Ajax} marker annotation) and delegate to
+     * it.
      */
     @Contribute(ComponentEventResultProcessor.class)
     @Ajax
@@ -1860,8 +1836,8 @@ public final class TapestryModule
      * <dt>Asset</dt>
      * <dd>Provides access to assets (context, classpath and virtual) via {@link AssetDispatcher}</dd>
      * <dt>PageRender</dt>
-     * <dd>Identifies the {@link org.apache.tapestry5.services.PageRenderRequestParameters} and forwards onto
-     * {@link PageRenderRequestHandler}</dd>
+     * <dd>Identifies the {@link org.apache.tapestry5.services.PageRenderRequestParameters} and
+     * forwards onto {@link PageRenderRequestHandler}</dd>
      * <dt>ComponentEvent</dt>
      * <dd>Identifies the {@link ComponentEventRequestParameters} and forwards onto the
      * {@link ComponentEventRequestHandler}</dd>
@@ -1892,9 +1868,9 @@ public final class TapestryModule
 
     /**
      * Contributes a default object renderer for type Object, plus specialized
-     * renderers for {@link org.apache.tapestry5.services.Request}, {@link org.apache.tapestry5.ioc.Location},
-     * {@link org.apache.tapestry5.ComponentResources}, {@link org.apache.tapestry5.EventContext},
-     * {@link AvailableValues},
+     * renderers for {@link org.apache.tapestry5.services.Request},
+     * {@link org.apache.tapestry5.ioc.Location}, {@link org.apache.tapestry5.ComponentResources},
+     * {@link org.apache.tapestry5.EventContext}, {@link AvailableValues},
      * List, and Object[].
      */
     @SuppressWarnings("unchecked")
@@ -1931,8 +1907,8 @@ public final class TapestryModule
     }
 
     /**
-     * Adds page render filters, each of which provides an {@link org.apache.tapestry5.annotations.Environmental}
-     * service. Filters
+     * Adds page render filters, each of which provides an
+     * {@link org.apache.tapestry5.annotations.Environmental} service. Filters
      * often provide {@link org.apache.tapestry5.annotations.Environmental} services needed by
      * components as they render.
      * <dl>
@@ -2280,6 +2256,7 @@ public final class TapestryModule
         configuration.add("Default", "org/apache/tapestry5/internal/ValidationMessages", "before:*");
     }
 
+    @SuppressWarnings("rawtypes")
     public static ValueEncoderSource buildValueEncoderSource(Map<Class, ValueEncoderFactory> configuration,
             @ComponentClasses
             InvalidationEventHub hub)
@@ -2299,7 +2276,7 @@ public final class TapestryModule
      * <li>Enum
      * </ul>
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("all")
     public static void contributeValueEncoderSource(MappedConfiguration<Class, ValueEncoderFactory> configuration)
     {
         configuration.addInstance(Object.class, TypeCoercedValueEncoderFactory.class);
@@ -2424,16 +2401,11 @@ public final class TapestryModule
         configuration.add(SymbolConstants.FORM_CLIENT_LOGIC_ENABLED, "true");
 
         // This is designed to make it easy to keep synchronized with
-        // script.aculo.ous. As we
-        // support a new version, we create a new folder, and update the path
-        // entry. We can then
-        // delete the old version folder (or keep it around). This should be
-        // more manageable than
-        // overwriting the local copy with updates (it's too easy for files
-        // deleted between scriptaculous
-        // releases to be accidentally left lying around). There's also a
-        // ClasspathAliasManager
-        // contribution based on the path.
+        // script.aculo.ous. As we support a new version, we create a new folder, and update the
+        // path entry. We can then delete the old version folder (or keep it around). This should
+        // be more manageable than overwriting the local copy with updates (it's too easy for
+        // files deleted between scriptaculous releases to be accidentally left lying around).
+        // There's also a ClasspathAliasManager contribution based on the path.
 
         configuration.add(SymbolConstants.SCRIPTACULOUS, "classpath:${tapestry.scriptaculous.path}");
         configuration.add("tapestry.scriptaculous.path", "org/apache/tapestry5/scriptaculous_1_8_2");
@@ -2476,7 +2448,6 @@ public final class TapestryModule
 
         configuration.add(InternalSymbols.PRE_SELECTED_FORM_NAMES, "reset,submit,select,id,method,action,onsubmit");
 
-        configuration.add(InternalSymbols.ALIAS_MODE, "servlet");
         configuration.add(SymbolConstants.COMPONENT_RENDER_TRACING_ENABLED, "false");
     }
 
@@ -2509,7 +2480,8 @@ public final class TapestryModule
     }
 
     /**
-     * Adds a listener to the {@link org.apache.tapestry5.internal.services.ComponentInstantiatorSource} that clears the
+     * Adds a listener to the
+     * {@link org.apache.tapestry5.internal.services.ComponentInstantiatorSource} that clears the
      * {@link PropertyAccess} and {@link TypeCoercer} caches on
      * a class loader invalidation. In addition, forces the
      * realization of {@link ComponentClassResolver} at startup.
@@ -2560,11 +2532,12 @@ public final class TapestryModule
      * Contributes filters:
      * <dl>
      * <dt>Ajax</dt>
-     * <dd>Determines if the request is Ajax oriented, and redirects to an alternative handler if so</dd>
+     * <dd>Determines if the request is Ajax oriented, and redirects to an alternative handler if so
+     * </dd>
      * <dt>ImmediateRender</dt>
      * <dd>When {@linkplain SymbolConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS
-     * immediate action response rendering} is enabled, generates the markup response (instead of a page redirect
-     * response, which is the normal behavior)</dd>
+     * immediate action response rendering} is enabled, generates the markup response (instead of a
+     * page redirect response, which is the normal behavior)</dd>
      * <dt>Secure</dt>
      * <dd>Sends a redirect if an non-secure request accesses a secure page</dd>
      * </dl>
@@ -2915,7 +2888,8 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes "AppCatalog" as the Resource defined by {@link SymbolConstants#APPLICATION_CATALOG}.
+     * Contributes "AppCatalog" as the Resource defined by
+     * {@link SymbolConstants#APPLICATION_CATALOG}.
      * 
      * @since 5.2.0
      */
@@ -2994,7 +2968,8 @@ public final class TapestryModule
     }
 
     /**
-     * Provides the "LinkTransformer" interceptor for the {@link ComponentEventLinkEncoder} service. Other decorations
+     * Provides the "LinkTransformer" interceptor for the {@link ComponentEventLinkEncoder} service.
+     * Other decorations
      * should come after LinkTransformer.
      * 
      * @since 5.2.0

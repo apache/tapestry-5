@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,10 +36,11 @@ import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Value;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.services.AliasContribution;
+import org.apache.tapestry5.ioc.services.ServiceOverride;
 import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.Request;
@@ -55,7 +56,8 @@ import org.slf4j.Logger;
 public class AppModule
 {
     /**
-     * Used to disambiguate services in this module from services in other modules that share the same service
+     * Used to disambiguate services in this module from services in other modules that share the
+     * same service
      * interface.
      */
     @Target(
@@ -72,14 +74,15 @@ public class AppModule
         binder.bind(Reloadable.class);
         binder.bind(MessageAccess.class);
     }
-    
-    public static void contributeValidatorMacro(MappedConfiguration<String,String> configuration)
+
+    public static void contributeValidatorMacro(MappedConfiguration<String, String> configuration)
     {
-    	configuration.add("password", "required,lengthBetweenTwoAndThree");
-    	configuration.add("lengthBetweenTwoAndThree", "minlength=2,maxlength=3");
+        configuration.add("password", "required,lengthBetweenTwoAndThree");
+        configuration.add("lengthBetweenTwoAndThree", "minlength=2,maxlength=3");
     }
 
-    public void contributeAlias(Configuration<AliasContribution> configuration)
+    @Contribute(ServiceOverride.class)
+    public void setupCustomBaseURLSource(MappedConfiguration<Class, Object> configuration)
     {
         BaseURLSource source = new BaseURLSource()
         {
@@ -95,7 +98,7 @@ public class AppModule
             }
         };
 
-        configuration.add(AliasContribution.create(BaseURLSource.class, source));
+        configuration.add(BaseURLSource.class, source);
     }
 
     @Marker(Local.class)

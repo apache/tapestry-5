@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -60,7 +60,8 @@ import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 
 /**
- * Base test case that adds a number of convenience factory and training methods for the public interfaces of
+ * Base test case that adds a number of convenience factory and training methods for the public
+ * interfaces of
  * Tapestry.
  */
 @SuppressWarnings("all")
@@ -68,19 +69,15 @@ public abstract class TapestryTestCase extends IOCTestCase
 {
 
     /**
-     * Creates a new markup writer instance (not a markup writer mock). Output can be directed at the writer, which uses
-     * the default (HTML) markup model. The writer's toString() value represents all the collected markup in the
+     * Creates a new markup writer instance (not a markup writer mock). Output can be directed at
+     * the writer, which uses
+     * the default (HTML) markup model. The writer's toString() value represents all the collected
+     * markup in the
      * writer.
      */
     protected final MarkupWriter createMarkupWriter()
     {
         return new MarkupWriterImpl();
-    }
-
-    /** @deprecated May be removed in Tapestry 5.3 */
-    protected final void train_getAliasesForMode(AliasManager manager, String mode, Map<Class, Object> configuration)
-    {
-        expect(manager.getAliasesForMode(mode)).andReturn(configuration);
     }
 
     protected final ApplicationStateCreator mockApplicationStateCreator()
@@ -891,8 +888,10 @@ public abstract class TapestryTestCase extends IOCTestCase
     }
 
     /**
-     * Provides access to component messages, suitable for testing. Reads the associated .properties file for the class
-     * (NOT any localization of it). Only the messages directly in the .properties file is available.
+     * Provides access to component messages, suitable for testing. Reads the associated .properties
+     * file for the class
+     * (NOT any localization of it). Only the messages directly in the .properties file is
+     * available.
      * 
      * @param componentClass
      *            component class whose messages are needed *
