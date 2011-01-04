@@ -86,14 +86,16 @@ public interface Flow<T> extends FlowOperations<T, Flow<T>>
 
     /**
      * Zips this Flow together with another flow to form a Flow of {@link Tuple}s. The resulting
-     * flow is the length of the shorter of the two input flows.
+     * flow is the length of the shorter of the two input flows. Zipping flows together is a lazy
+     * operation.
      * <p>
      * The elements of this flow become the {@linkplain Tuple#first} value in each Tuple, the
      * elements of the other flow become the {@linkplain Tuple#second} value in each Tuple.
      * 
-     * @param <B>
+     * @param <X>
+     *            type of element stored in the other flow
      * @param otherFlow
-     *            contains values to match with values in this flow
+     *            contains elements to match with elements in this flow
      * @return flow of tuples combining values from this flow with values form the other flow
      * @since 5.3.0
      */

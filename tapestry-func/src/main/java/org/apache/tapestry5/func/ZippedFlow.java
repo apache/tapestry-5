@@ -27,25 +27,28 @@ public interface ZippedFlow<A, B> extends FlowOperations<Tuple<A, B>, ZippedFlow
 {
     /**
      * Mapping for zipped flows; a mapper is used to map tuples of this zipped flow into new tuples
-     * with a new type, forming the resulting zipped flow.
+     * with a new type, forming the resulting zipped flow. This is a lazy operation.
      */
     <X, Y> ZippedFlow<X, Y> mapTuples(Mapper<Tuple<A, B>, Tuple<X, Y>> mapper);
 
     /**
      * A ZippedFlow is a Flow of Tuples; this inverts that, splitting each Tuple into
-     * a Flow of values, then assembling the result as a Tuple of two values.
+     * a Flow of elements, then assembling the result as a Tuple of two values. This is a lazy
+     * operation.
      * 
      * @return two flows of unzipped Tuples
      */
     Tuple<Flow<A>, Flow<B>> unzip();
 
     /**
-     * Returns a flow of the first values of the tuples of the zipped flow.
+     * Returns a flow of the first values of the tuples of the zipped flow. This is a lazy
+     * operation.
      */
     Flow<A> firsts();
 
     /**
-     * Returns a flow of the second values of the tuples of the zipped flow.
+     * Returns a flow of the second values of the tuples of the zipped flow. This is a lazy
+     * operation.
      */
     Flow<B> seconds();
 }
