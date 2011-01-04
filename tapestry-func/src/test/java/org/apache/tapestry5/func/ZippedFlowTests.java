@@ -29,6 +29,30 @@ public class ZippedFlowTests extends BaseFuncTest
 
     ZippedFlow<Integer, String> zipped = numbers.zipWith(names);
 
+    @Test
+    public void filter_on_first()
+    {
+        assertFlowValues(zipped.filterOnFirst(F.eql(3)).seconds(), "wilma");
+    }
+
+    @Test
+    public void remove_on_first()
+    {
+        assertFlowValues(zipped.removeOnFirst(F.neq(2)).seconds(), "barney");
+    }
+
+    @Test
+    public void filter_on_second()
+    {
+        assertFlowValues(zipped.filterOnSecond(F.startsWith("b")).seconds(), "barney");
+    }
+
+    @Test
+    public void remove_on_second()
+    {
+        assertFlowValues(zipped.removeOnSecond(F.startsWith("b")).seconds(), "fred", "wilma");
+    }
+
     @SuppressWarnings("unchecked")
     @Test
     public void zip_flows_together()

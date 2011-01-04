@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * The single implementation of {@link ZippedFlow}, that operates by wrapping around an ordinary
- * {@link Flow} of the {@link Tuples} of the zipped flow. In the future, we may create an
+ * The single implementation of {@link ZippedFlow}, that operates by wrapping around an ordinary {@link Flow} of the
+ * {@link Tuples} of the zipped flow. In the future, we may create an
  * EmptyZippedFlow implementation as well.
  * 
  * @param <A>
@@ -141,7 +141,6 @@ class ZippedFlowImpl<A, B> implements ZippedFlow<A, B>
     {
         return tupleFlow.map(new Mapper<Tuple<A, B>, A>()
         {
-
             @Override
             public A map(Tuple<A, B> value)
             {
@@ -159,13 +158,54 @@ class ZippedFlowImpl<A, B> implements ZippedFlow<A, B>
     {
         return tupleFlow.map(new Mapper<Tuple<A, B>, B>()
         {
-
             @Override
             public B map(Tuple<A, B> value)
             {
                 return value.second;
             }
         });
+    }
+
+    public ZippedFlow<A, B> filterOnFirst(final Predicate<? super A> predicate)
+    {
+        assert predicate != null;
+
+        return filter(new Predicate<Tuple<A, B>>()
+        {
+            @Override
+            public boolean accept(Tuple<A, B> element)
+            {
+                return predicate.accept(element.first);
+            }
+        });
+    }
+
+    public ZippedFlow<A, B> filterOnSecond(final Predicate<? super B> predicate)
+    {
+        assert predicate != null;
+
+        return filter(new Predicate<Tuple<A, B>>()
+        {
+            @Override
+            public boolean accept(Tuple<A, B> element)
+            {
+                return predicate.accept(element.second);
+            }
+        });
+    }
+
+    public ZippedFlow<A, B> removeOnFirst(Predicate<? super A> predicate)
+    {
+        assert predicate != null;
+
+        return filterOnFirst(predicate.invert());
+    }
+
+    public ZippedFlow<A, B> removeOnSecond(Predicate<? super B> predicate)
+    {
+        assert predicate != null;
+
+        return filterOnSecond(predicate.invert());
     }
 
 }

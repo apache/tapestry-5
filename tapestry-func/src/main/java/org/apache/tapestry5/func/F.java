@@ -26,9 +26,9 @@ import java.util.Iterator;
  * created
  * using {@link #flow(Collection)} and {@link #flow(Object...)}.
  * <p>
- * F will be used a bit, thus it has a short name (for those who don't like static imports). It
- * provides a base set of Predicate, Mapper and Reducer factories. A good development pattern for
- * applications is to provide a similar, application-specific, set of such factories.
+ * F will be used a bit, thus it has a short name (for those who don't like static imports). It provides a base set of
+ * Predicate, Mapper and Reducer factories. A good development pattern for applications is to provide a similar,
+ * application-specific, set of such factories.
  * 
  * @since 5.2.0
  */
@@ -159,8 +159,7 @@ public class F
     }
 
     /**
-     * A Mapper factory that gets the string value of the flow value using
-     * {@link String#valueOf(Object)}.
+     * A Mapper factory that gets the string value of the flow value using {@link String#valueOf(Object)}.
      */
     public static <T> Mapper<T, String> stringValueOf()
     {
@@ -314,8 +313,8 @@ public class F
 
     /**
      * Creates a lazy Flow from the {@link Iterator} obtained from the iterable. The Flow
-     * will be threadsafe as long as the iterable yields a new Iterator on each invocation
-     * <em>and</em> the underlying iterable object is not modified while the Flow is evaluating.
+     * will be threadsafe as long as the iterable yields a new Iterator on each invocation <em>and</em> the underlying
+     * iterable object is not modified while the Flow is evaluating.
      * In other words, not extremely threadsafe.
      */
     public static <T> Flow<T> flow(Iterable<T> iterable)
@@ -400,4 +399,72 @@ public class F
             }
         };
     }
+
+    /**
+     * A Predicate factory for matching String elements with a given prefix.
+     * 
+     * @since 5.3.0
+     */
+    public static Predicate<String> startsWith(String prefix)
+    {
+        return startsWith(prefix, false);
+    }
+
+    /**
+     * As {@link #startsWith(String)}, but ignores case.
+     * 
+     * @since 5.3.0
+     */
+    public static Predicate<String> startsWithIgnoringCase(String prefix)
+    {
+        return startsWith(prefix, true);
+    }
+
+    /** @since 5.3.0 */
+    private static Predicate<String> startsWith(final String prefix, final boolean ignoreCase)
+    {
+        return new Predicate<String>()
+        {
+            @Override
+            public boolean accept(String element)
+            {
+                return element.regionMatches(ignoreCase, 0, prefix, 0, prefix.length());
+            }
+        };
+    }
+
+    /**
+     * A Predicate factory for matching String elements with a given suffix.
+     * 
+     * @since 5.3.0
+     */
+    public static Predicate<String> endsWith(String suffix)
+    {
+        return endsWith(suffix, false);
+    }
+
+    /**
+     * As with {@link #endsWith(String)} but ignores case.
+     * 
+     * @since 5.3.0
+     */
+    public static Predicate<String> endsWithIgnoringCase(String suffix)
+    {
+        return endsWith(suffix, true);
+    }
+
+    /** @since 5.3.0 */
+    private static Predicate<String> endsWith(final String suffix, final boolean ignoreCase)
+    {
+        return new Predicate<String>()
+        {
+            @Override
+            public boolean accept(String element)
+            {
+                return element
+                        .regionMatches(ignoreCase, element.length() - suffix.length(), suffix, 0, suffix.length());
+            }
+        };
+    }
+
 }

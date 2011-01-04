@@ -16,8 +16,7 @@ package org.apache.tapestry5.func;
 
 /**
  * The result of the {@link Flow#zipWith(Flow)} method, a Flow of combined {@link Tuple} values
- * (that can be deconstructed, eventually, using {@link #unzip()}). Each operation of {@link Flow}
- * has a corresponding implementation here, on the Tuple values.
+ * (that can be deconstructed, eventually, using {@link #unzip()}).
  * 
  * @param <A>
  * @param <B>
@@ -51,4 +50,28 @@ public interface ZippedFlow<A, B> extends FlowOperations<Tuple<A, B>, ZippedFlow
      * operation.
      */
     Flow<B> seconds();
+
+    /**
+     * Filters the tuples in the zipped flow by applying a predicate to the first value in each tuple.
+     * This is a lazy operation.
+     */
+    ZippedFlow<A, B> filterOnFirst(Predicate<? super A> predicate);
+
+    /**
+     * Filters the tuples in the zipped flow by applying a predicate to the second value in each tuple. This
+     * is a lazy operations.
+     */
+    ZippedFlow<A, B> filterOnSecond(Predicate<? super B> predicate);
+
+    /**
+     * Removes tuples from the zipped flow by applying a predicate to the first value in each tuple.
+     * This is a lazy operation.
+     */
+    ZippedFlow<A, B> removeOnFirst(Predicate<? super A> predicate);
+
+    /**
+     * Removes tuples from the zipped flow by applying a predicate to the second value in each tuple. This
+     * is a lazy operations.
+     */
+    ZippedFlow<A, B> removeOnSecond(Predicate<? super B> predicate);
 }
