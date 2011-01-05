@@ -180,6 +180,25 @@ public class TapestryBeanValidationIntegrationTests extends AbstractIntegrationT
     	assertBubbleMessage("loginName", "You must provide at least 5 characters for Login Name.");
     }
     
+    /*
+     * Ensures TAP5-1393 is fixed.
+     */
+    @Test
+    public void form_on_prepare() throws Exception
+    {
+    	start("OnPrepare Demo");
+    	
+    	clickAndWait(SUBMIT);
+    	
+        assertTextPresent("Login Name may not be null", "Secret Password may not be null");
+        
+        type("loginName", "igor");
+    	
+    	clickAndWait(SUBMIT);
+    	
+        assertTextPresent("Login Name size must be between 7 and 10", "Login Name must match \"[0-9]+\"");
+    }
+    
     protected final void assertBubbleMessage(String fieldId, String expected)
     {
         String popupId = fieldId + ":errorpopup";

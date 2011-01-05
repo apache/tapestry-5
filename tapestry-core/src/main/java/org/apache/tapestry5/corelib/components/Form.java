@@ -390,7 +390,6 @@ public class Form implements ClientElement, FormValidationControl
 
         environment.push(FormSupport.class, formSupport);
         environment.push(ValidationTracker.class, activeTracker);
-        environment.push(BeanValidationContext.class, new BeanValidationContextImpl(validate));
 
         if (autofocus)
         {
@@ -406,6 +405,9 @@ public class Form implements ClientElement, FormValidationControl
         resources.triggerEvent(EventConstants.PREPARE_FOR_RENDER, context, null);
 
         resources.triggerEvent(EventConstants.PREPARE, context, null);
+        
+        // Push BeanValidationContext only after the container had a chance to prepare 
+        environment.push(BeanValidationContext.class, new BeanValidationContextImpl(validate));
 
         // Save the form element for later, in case we want to write an encoding
         // type attribute.
@@ -519,7 +521,6 @@ public class Form implements ClientElement, FormValidationControl
 
         environment.push(ValidationTracker.class, activeTracker);
         environment.push(FormSupport.class, formSupport);
-        environment.push(BeanValidationContext.class, new BeanValidationContextImpl(validate));
 
         Heartbeat heartbeat = new HeartbeatImpl();
 
@@ -535,6 +536,9 @@ public class Form implements ClientElement, FormValidationControl
                 return true;
 
             resources.triggerContextEvent(EventConstants.PREPARE, context, eventCallback);
+            
+
+            environment.push(BeanValidationContext.class, new BeanValidationContextImpl(validate));
 
             if (eventCallback.isAborted())
                 return true;
