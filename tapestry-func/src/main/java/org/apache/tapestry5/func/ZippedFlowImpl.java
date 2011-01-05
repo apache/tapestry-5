@@ -15,8 +15,10 @@
 package org.apache.tapestry5.func;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -208,4 +210,19 @@ class ZippedFlowImpl<A, B> implements ZippedFlow<A, B>
         return filterOnSecond(predicate.invert());
     }
 
+    public Map<A, B> toMap()
+    {
+        final Map<A, B> result = new HashMap<A, B>();
+
+        tupleFlow.each(new Worker<Tuple<A, B>>()
+        {
+            @Override
+            public void work(Tuple<A, B> value)
+            {
+                result.put(value.first, value.second);
+            }
+        });
+
+        return result;
+    }
 }

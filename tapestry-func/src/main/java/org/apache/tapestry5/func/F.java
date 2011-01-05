@@ -16,6 +16,8 @@ package org.apache.tapestry5.func;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Functional operations on collections with generics support. The core interface is {@link Flow} to
@@ -322,6 +324,35 @@ public class F
         assert iterable != null;
 
         return lazy(new LazyIterator<T>(iterable.iterator()));
+    }
+
+    /**
+     * Creates a ZippedFlow from the provided map; the order of the tuples in the ZippedFlow is defined
+     * by the iteration order of the map entries.
+     * 
+     * @param <A>
+     *            type of key and first tuple value
+     * @param <B>
+     *            type of value and second tuple value
+     * @param map
+     *            source of tuples
+     * @return zipped flow created from map
+     * @since 5.3.0
+     */
+    public static <A, B> ZippedFlow<A, B> zippedFlow(Map<A, B> map)
+    {
+        assert map != null;
+
+        Flow<Tuple<A, B>> tuples = F.flow(map.entrySet()).map(new Mapper<Map.Entry<A, B>, Tuple<A, B>>()
+        {
+            @Override
+            public Tuple<A, B> map(Entry<A, B> element)
+            {
+                return Tuple.create(element.getKey(), element.getValue());
+            }
+        });
+
+        return ZippedFlowImpl.create(tuples);
     }
 
     /**

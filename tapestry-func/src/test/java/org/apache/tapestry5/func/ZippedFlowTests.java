@@ -15,7 +15,10 @@
 package org.apache.tapestry5.func;
 
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang.StringUtils;
@@ -28,6 +31,36 @@ public class ZippedFlowTests extends BaseFuncTest
     Flow<String> names = F.flow("fred", "barney", "wilma", "betty");
 
     ZippedFlow<Integer, String> zipped = numbers.zipWith(names);
+
+    @Test
+    public void zipped_flow_to_map()
+    {
+        Map<Integer, String> map = zipped.toMap();
+
+        assertEquals(map.size(), 3);
+        assertEquals(map.get(2), "barney");
+    }
+
+    @Test
+    public void map_to_zipped_flow()
+    {
+        Map<Integer, String> map = new HashMap<Integer, String>();
+        map.put(1, "fred");
+        map.put(2, "barney");
+
+        ZippedFlow<Integer, String> zipped = F.zippedFlow(map);
+
+        ZippedFlow<Integer, String> sorted = zipped.sort(new Comparator<Tuple<Integer, String>>()
+        {
+            public int compare(Tuple<Integer, String> o1, Tuple<Integer, String> o2)
+            {
+                return o1.second.compareTo(o2.second);
+            }
+        });
+
+        assertFlowValues(sorted.firsts(), 2, 1);
+        assertFlowValues(sorted.seconds(), "barney", "fred");
+    }
 
     @Test
     public void filter_on_first()

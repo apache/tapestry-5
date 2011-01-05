@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.func;
 
+import java.util.Map;
+
 /**
  * The result of the {@link Flow#zipWith(Flow)} method, a Flow of combined {@link Tuple} values
  * (that can be deconstructed, eventually, using {@link #unzip()}).
@@ -74,4 +76,10 @@ public interface ZippedFlow<A, B> extends FlowOperations<Tuple<A, B>, ZippedFlow
      * is a lazy operations.
      */
     ZippedFlow<A, B> removeOnSecond(Predicate<? super B> predicate);
+
+    /**
+     * Constructs a HashMap by converting the tuples of the zipped flow into keys (first tuple value) and values (second
+     * tuple value).
+     */
+    Map<A, B> toMap();
 }
