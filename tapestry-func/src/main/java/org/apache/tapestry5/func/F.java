@@ -15,6 +15,7 @@
 package org.apache.tapestry5.func;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -498,4 +499,38 @@ public class F
         };
     }
 
+    /**
+     * Creates a Comparator for the Tuples of a {@link ZippedFlow} that sorts the Tuple elements based on the first
+     * value in the Tuple.
+     * 
+     * @since 5.3.0
+     */
+    public static <A extends Comparable, B> Comparator<Tuple<A, B>> orderByFirst()
+    {
+        return new Comparator<Tuple<A, B>>()
+        {
+
+            public int compare(Tuple<A, B> o1, Tuple<A, B> o2)
+            {
+                return o1.first.compareTo(o2.first);
+            }
+        };
+    }
+
+    /**
+     * Creates a Comparator for the Tuples of a {@link ZippedFlow} that sorts the Tuple elements based on the first
+     * value in the Tuple.
+     * 
+     * @since 5.3.0
+     */
+    public static <A, B extends Comparable> Comparator<Tuple<A, B>> orderBySecond()
+    {
+        return new Comparator<Tuple<A, B>>()
+        {
+            public int compare(Tuple<A, B> o1, Tuple<A, B> o2)
+            {
+                return o1.second.compareTo(o2.second);
+            }
+        };
+    }
 }

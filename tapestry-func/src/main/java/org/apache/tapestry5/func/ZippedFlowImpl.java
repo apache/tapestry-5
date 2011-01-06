@@ -104,7 +104,7 @@ class ZippedFlowImpl<A, B> implements ZippedFlow<A, B>
         return tupleFlow.count();
     }
 
-    public ZippedFlow<A, B> sort(Comparator<? super Tuple<A, B>> comparator)
+    public ZippedFlow<A, B> sort(Comparator<Tuple<A, B>> comparator)
     {
         return create(tupleFlow.sort(comparator));
     }

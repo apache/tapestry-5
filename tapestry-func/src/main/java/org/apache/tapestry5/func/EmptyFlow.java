@@ -84,7 +84,7 @@ class EmptyFlow<T> extends AbstractFlow<T>
     }
 
     /** Does nothing; returns this empty list. */
-    public Flow<T> sort(Comparator<? super T> comparator)
+    public Flow<T> sort(Comparator<T> comparator)
     {
         return this;
     }

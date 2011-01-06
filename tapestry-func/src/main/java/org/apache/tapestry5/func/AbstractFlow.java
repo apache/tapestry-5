@@ -189,7 +189,7 @@ abstract class AbstractFlow<T> implements Flow<T>
         return new ArrayFlow<T>(this).sort();
     }
 
-    public Flow<T> sort(Comparator<? super T> comparator)
+    public Flow<T> sort(Comparator<T> comparator)
     {
         if (isEmpty())
             return F.emptyFlow();

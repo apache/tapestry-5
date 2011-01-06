@@ -133,7 +133,7 @@ class ArrayFlow<T> extends AbstractFlow<T>
         return new ArrayFlow<T>((List<T>) newValues);
     }
 
-    public Flow<T> sort(Comparator<? super T> comparator)
+    public Flow<T> sort(Comparator<T> comparator)
     {
         assert comparator != null;
 

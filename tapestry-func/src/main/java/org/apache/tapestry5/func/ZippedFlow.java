@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@ package org.apache.tapestry5.func;
 import java.util.Map;
 
 /**
- * The result of the {@link Flow#zipWith(Flow)} method, a Flow of combined {@link Tuple} values
- * (that can be deconstructed, eventually, using {@link #unzip()}).
+ * The result of the {@link Flow#zipWith(Flow)} method (or created from a Map via {@link F#zippedFlow(Map)}), a Flow of
+ * combined {@link Tuple} values (that can be deconstructed, eventually, using {@link #unzip()}).
  * 
  * @param <A>
  * @param <B>

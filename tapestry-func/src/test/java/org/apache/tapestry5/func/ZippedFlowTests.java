@@ -50,16 +50,15 @@ public class ZippedFlowTests extends BaseFuncTest
 
         ZippedFlow<Integer, String> zipped = F.zippedFlow(map);
 
-        ZippedFlow<Integer, String> sorted = zipped.sort(new Comparator<Tuple<Integer, String>>()
-        {
-            public int compare(Tuple<Integer, String> o1, Tuple<Integer, String> o2)
-            {
-                return o1.second.compareTo(o2.second);
-            }
-        });
+        ZippedFlow<Integer, String> sorted = zipped.sort(F.<Integer, String> orderBySecond());
 
         assertFlowValues(sorted.firsts(), 2, 1);
         assertFlowValues(sorted.seconds(), "barney", "fred");
+
+        sorted = zipped.sort(F.<Integer, String> orderByFirst());
+
+        assertFlowValues(sorted.firsts(), 1, 2);
+        assertFlowValues(sorted.seconds(), "fred", "barney");
     }
 
     @Test

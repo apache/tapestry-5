@@ -74,13 +74,12 @@ public interface FlowOperations<T, FT> extends Iterable<T>
 
     /**
      * Sorts this flow using the comparator, forming a new flow. This is a non-lazy operation; it
-     * will fully realize the values of the Flow.
+     * will fully realize the elements of the Flow.
      */
-    FT sort(Comparator<? super T> comparator);
+    FT sort(Comparator<T> comparator);
 
     /**
-     * Returns a new flow containing just the first values from
-     * this Flow.
+     * Returns a new flow containing just the first elements from this Flow.
      * 
      * @param length
      *            maximum number of values in the Flow
@@ -88,7 +87,7 @@ public interface FlowOperations<T, FT> extends Iterable<T>
     FT take(int length);
 
     /**
-     * Returns a new flow with the first values omitted.
+     * Returns a new flow with the first elements omitted.
      * 
      * @param length
      *            number of values to drop
@@ -96,7 +95,7 @@ public interface FlowOperations<T, FT> extends Iterable<T>
     FT drop(int length);
 
     /**
-     * Returns a new Flow with the values in the list appended to this Flow. This is a lazy
+     * Returns a new Flow with the elements in the list appended to this Flow. This is a lazy
      * operation.
      */
     FT concat(List<? extends T> list);
