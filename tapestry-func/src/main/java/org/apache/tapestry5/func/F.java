@@ -125,7 +125,7 @@ public class F
      */
     public static <T extends Comparable<T>> Predicate<T> lt(T value)
     {
-        return gteq(value).invert();
+        return not(gteq(value));
     }
 
     /**
@@ -134,7 +134,7 @@ public class F
      */
     public static <T extends Comparable<T>> Predicate<T> lteq(T value)
     {
-        return gt(value).invert();
+        return not(gt(value));
     }
 
     /**
@@ -156,9 +156,7 @@ public class F
      */
     public static <T> Predicate<T> notNull()
     {
-        Predicate<T> isNull = isNull();
-
-        return isNull.invert();
+        return not(isNull());
     }
 
     /**
@@ -346,7 +344,6 @@ public class F
 
         Flow<Tuple<A, B>> tuples = F.flow(map.entrySet()).map(new Mapper<Map.Entry<A, B>, Tuple<A, B>>()
         {
-            @Override
             public Tuple<A, B> map(Entry<A, B> element)
             {
                 return Tuple.create(element.getKey(), element.getValue());
@@ -457,7 +454,6 @@ public class F
     {
         return new Predicate<String>()
         {
-            @Override
             public boolean accept(String element)
             {
                 return element.regionMatches(ignoreCase, 0, prefix, 0, prefix.length());
@@ -490,7 +486,6 @@ public class F
     {
         return new Predicate<String>()
         {
-            @Override
             public boolean accept(String element)
             {
                 return element
@@ -533,4 +528,132 @@ public class F
             }
         };
     }
+
+    /**
+     * Inverts a predicate.
+     * 
+     * @param <T>
+     * @param delegate
+     *            the predicate to invert
+     * @return a new predicate that is inverse to the existing predicate
+     * @since 5.3.0
+     */
+    public static <T> Predicate<T> not(final Predicate<? super T> delegate)
+    {
+        assert delegate != null;
+
+        return new Predicate<T>()
+        {
+            public boolean accept(T element)
+            {
+                return !delegate.accept(element);
+            }
+        };
+    }
+
+    /**
+     * Combines two mappers into a composite mapping from type A to type C via type B.
+     * 
+     * @param <A>
+     * @param <B>
+     * @param <C>
+     * @param abMapper
+     *            maps from A to B
+     * @param bcMapper
+     *            maps from B to C
+     * @return mapper from A to C
+     */
+    public static <A, B, C> Mapper<A, C> combine(final Mapper<A, B> abMapper, final Mapper<B, C> bcMapper)
+    {
+        assert abMapper != null;
+        assert bcMapper != null;
+
+        return new Mapper<A, C>()
+        {
+
+            public C map(A aElement)
+            {
+                B bElement = abMapper.map(aElement);
+
+                return bcMapper.map(bElement);
+            }
+
+        };
+    }
+
+    /**
+     * Combines any number of delegates as a logical and operation. Evaluation terminates
+     * with the first delegate predicate that returns false.
+     * 
+     * @param <T>
+     * @param delegates
+     *            to evaluate
+     * @return combined delegate
+     * @since 5.3.0
+     */
+    public static <T> Predicate<T> and(final Predicate<? super T>... delegates)
+    {
+        return new Predicate<T>()
+        {
+            public boolean accept(T element)
+            {
+                for (Predicate<? super T> delegate : delegates)
+                {
+                    if (!delegate.accept(element))
+                        return false;
+                }
+
+                return true;
+            }
+        };
+    }
+
+    /**
+     * Combines any number of delegates as a logical or operation. Evaluation terminates
+     * with the first delegate predicate that returns true.
+     * 
+     * @param <T>
+     * @param delegates
+     *            to evaluate
+     * @return combined delegate
+     * @since 5.3.0
+     */
+    public static <T> Predicate<T> or(final Predicate<? super T>... delegates)
+    {
+        return new Predicate<T>()
+        {
+            public boolean accept(T element)
+            {
+                for (Predicate<? super T> delegate : delegates)
+                {
+                    if (delegate.accept(element))
+                        return true;
+                }
+
+                return false;
+            }
+        };
+    }
+
+    /**
+     * Combines several compatible workers together into a composite.
+     * 
+     * @since 5.3.0
+     */
+    public static <T> Worker<T> combine(final Worker<? super T>... delegates)
+    {
+        assert delegates.length > 0;
+
+        return new Worker<T>()
+        {
+            public void work(T value)
+            {
+                for (Worker<? super T> delegate : delegates)
+                {
+                    delegate.work(value);
+                }
+            }
+        };
+    }
+
 }

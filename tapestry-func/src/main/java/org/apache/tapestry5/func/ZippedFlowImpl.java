@@ -143,7 +143,6 @@ class ZippedFlowImpl<A, B> implements ZippedFlow<A, B>
     {
         return tupleFlow.map(new Mapper<Tuple<A, B>, A>()
         {
-            @Override
             public A map(Tuple<A, B> value)
             {
                 return value.first;
@@ -160,7 +159,6 @@ class ZippedFlowImpl<A, B> implements ZippedFlow<A, B>
     {
         return tupleFlow.map(new Mapper<Tuple<A, B>, B>()
         {
-            @Override
             public B map(Tuple<A, B> value)
             {
                 return value.second;
@@ -174,7 +172,6 @@ class ZippedFlowImpl<A, B> implements ZippedFlow<A, B>
 
         return filter(new Predicate<Tuple<A, B>>()
         {
-            @Override
             public boolean accept(Tuple<A, B> element)
             {
                 return predicate.accept(element.first);
@@ -188,7 +185,6 @@ class ZippedFlowImpl<A, B> implements ZippedFlow<A, B>
 
         return filter(new Predicate<Tuple<A, B>>()
         {
-            @Override
             public boolean accept(Tuple<A, B> element)
             {
                 return predicate.accept(element.second);
@@ -200,14 +196,14 @@ class ZippedFlowImpl<A, B> implements ZippedFlow<A, B>
     {
         assert predicate != null;
 
-        return filterOnFirst(predicate.invert());
+        return filterOnFirst(F.not(predicate));
     }
 
     public ZippedFlow<A, B> removeOnSecond(Predicate<? super B> predicate)
     {
         assert predicate != null;
 
-        return filterOnSecond(predicate.invert());
+        return filterOnSecond(F.not(predicate));
     }
 
     public Map<A, B> toMap()
@@ -216,7 +212,6 @@ class ZippedFlowImpl<A, B> implements ZippedFlow<A, B>
 
         tupleFlow.each(new Worker<Tuple<A, B>>()
         {
-            @Override
             public void work(Tuple<A, B> value)
             {
                 result.put(value.first, value.second);

@@ -35,7 +35,8 @@ public class FuncTest extends BaseFuncTest
     @Test
     public void combine_mappers()
     {
-        List<Boolean> even = F.flow("Mary", "had", "a", "little", "lamb").map(stringToLength.combine(toEven)).toList();
+        List<Boolean> even = F.flow("Mary", "had", "a", "little", "lamb").map(F.combine(stringToLength, toEven))
+                .toList();
 
         assertListsEquals(even, true, false, false, true, true);
     }
@@ -151,7 +152,7 @@ public class FuncTest extends BaseFuncTest
             }
         };
 
-        F.flow("Mary", "had", "a", "little", "lamb").each(appendWorker.combine(appendLength));
+        F.flow("Mary", "had", "a", "little", "lamb").each(F.combine(appendWorker, appendLength));
 
         assertEquals(buffer.toString(), "Mary(4) had(3) a(1) little(6) lamb(4)");
     }
@@ -205,7 +206,7 @@ public class FuncTest extends BaseFuncTest
     {
         List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
 
-        List<Integer> output = F.flow(input).filter(F.gt(2).and(F.lt(5))).toList();
+        List<Integer> output = F.flow(input).filter(F.and(F.gt(2), F.lt(5))).toList();
 
         assertListsEquals(output, 3, 4);
     }
@@ -215,7 +216,7 @@ public class FuncTest extends BaseFuncTest
     {
         List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
 
-        List<Integer> output = F.flow(input).filter(F.lt(3).or(F.gt(5))).toList();
+        List<Integer> output = F.flow(input).filter(F.or(F.lt(3), F.gt(5))).toList();
 
         assertListsEquals(output, 1, 2, 6, 7);
     }
@@ -245,7 +246,7 @@ public class FuncTest extends BaseFuncTest
     @Test
     public void select_and_filter()
     {
-        Predicate<String> combinedp = F.toPredicate(stringToLength.combine(toEven));
+        Predicate<String> combinedp = F.toPredicate(F.combine(stringToLength, toEven));
 
         Mapper<String, String> identity = F.identity();
         Predicate<String> isNull = F.isNull();

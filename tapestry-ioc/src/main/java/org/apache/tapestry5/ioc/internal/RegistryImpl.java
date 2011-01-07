@@ -277,14 +277,14 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         contributionMarkers.remove(Local.class);
 
         // Match services with the correct interface AND having as markers *all* the marker annotations
-        
-        Flow<ServiceDef2> filtered = serviceDefs.filter(new Predicate<ServiceDef2>()
+
+        Flow<ServiceDef2> filtered = serviceDefs.filter(F.and(new Predicate<ServiceDef2>()
         {
             public boolean accept(ServiceDef2 object)
             {
                 return object.getServiceInterface().equals(cd.getServiceInterface());
             }
-        }.and(new Predicate<ServiceDef2>()
+        }, new Predicate<ServiceDef2>()
         {
             public boolean accept(ServiceDef2 serviceDef)
             {
@@ -1001,7 +1001,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     {
         assert interfaceClass != null;
         assert implementationClass != null;
-        
+
         if (InternalUtils.SERVICE_CLASS_RELOADING_ENABLED && InternalUtils.isLocalFile(implementationClass))
             return createReloadingProxy(interfaceClass, implementationClass, locator);
 

@@ -15,9 +15,10 @@
 package org.apache.tapestry5.func;
 
 /**
- * Base class used with {@link Flow#map(Mapper)} to
- * define how Flow values are mapped from one type
+ * Interface for operation {@link Flow#map(Mapper)} to define how Flow elements are mapped from one type
  * to another (or otherwise transformed).
+ * <p>
+ * This changed in 5.3 from an abstract base class to an interface.
  * 
  * @since 5.2.0
  * @param <S>
@@ -25,32 +26,11 @@ package org.apache.tapestry5.func;
  * @param <T>
  *            type of target (output) flow
  */
-public abstract class Mapper<S, T>
+public interface Mapper<S, T>
 {
     /**
      * Implemented in subclasses to map an element from the source flow to an element of the target
      * flow.
      */
-    public abstract T map(S element);
-
-    /**
-     * Combines this mapper (S --&gt;T) with another mapper (T --&gt;X) to form
-     * a composite mapper (S --&gt; X).
-     */
-    public final <X> Mapper<S, X> combine(final Mapper<T, X> other)
-    {
-        assert other != null;
-
-        final Mapper<S, T> stMapper = this;
-
-        return new Mapper<S, X>()
-        {
-            public X map(S element)
-            {
-                T tElement = stMapper.map(element);
-
-                return other.map(tElement);
-            }
-        };
-    }
+    T map(S element);
 }
