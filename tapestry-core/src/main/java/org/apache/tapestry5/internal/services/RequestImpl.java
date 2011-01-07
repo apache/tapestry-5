@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,7 +43,9 @@ public class RequestImpl implements Request
 
     private boolean encodingSet;
 
-    private Session session;
+    HttpSession hsession;
+
+    Session session;
 
     public RequestImpl(HttpServletRequest request, String requestEncoding, SessionPersistedObjectAnalyzer analyzer)
     {
@@ -103,18 +105,28 @@ public class RequestImpl implements Request
 
     public Session getSession(boolean create)
     {
+        if (session != null)
+        {
+            // The easy case is when the session was invalidated through the Tapestry Session
+            // object. The hard case is when the HttpSession was invalidated outside of Tapestry,
+            // in which case, request.getSession() will return a new HttpSession instance (or null)
+
+            if (session.isInvalidated() || hsession != request.getSession(false))
+            {
+                session = null;
+                hsession = null;
+            }
+        }
+
         if (session == null)
         {
-            HttpSession hsession = request.getSession(create);
+            hsession = request.getSession(create);
 
             if (hsession != null)
             {
                 session = new SessionImpl(hsession, analyzer);
             }
         }
-
-        if (!create && session != null && session.isInvalidated())
-            return null;
 
         return session;
     }
