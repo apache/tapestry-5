@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -184,6 +184,12 @@ public class RequestImpl implements Request
     public int getLocalPort()
     {
         return request.getLocalPort();
+    }
+
+    /** @since 5.2.5 */
+    public int getServerPort()
+    {
+        return request.getServerPort();
     }
 
 }

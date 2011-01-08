@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -172,4 +172,15 @@ public interface Request
      * @since 5.2.0
      */
     int getLocalPort();
+
+    /**
+     * Returns the port number to which the request was sent.
+     * It is the value of the part after ":" in the <code>Host</code> header, if any, or the server port where the
+     * client connection
+     * was accepted on.
+     * 
+     * @return an integer specifying the port number
+     * @since 5.2.5
+     */
+    int getServerPort();
 }
