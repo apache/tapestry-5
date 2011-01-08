@@ -198,4 +198,10 @@ public class RequestImpl implements Request
         return request.getLocalPort();
     }
 
+    /** @since 5.2.5 */
+    public int getServerPort()
+    {
+        return request.getServerPort();
+    }
+
 }
