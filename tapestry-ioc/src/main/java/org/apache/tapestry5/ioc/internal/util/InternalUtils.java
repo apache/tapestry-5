@@ -40,6 +40,10 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Named;
+
+import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.func.Flow;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.ioc.AdvisorDef;
@@ -245,6 +249,14 @@ public class InternalUtils
 
             return locator.getService(serviceId, injectionType);
         }
+        
+        
+        Named named = provider.getAnnotation(Named.class);
+        
+        if(named != null)
+        {
+        	return locator.getService(named.value(), injectionType);
+        }
 
         // In the absence of @InjectService, try some autowiring. First, does the
         // parameter type match one of the resources (the parameter defaults)?
@@ -378,6 +390,22 @@ public class InternalUtils
 
                             inject(object, f, value);
 
+                            return;
+                        }
+
+                        if (ap.getAnnotation(javax.inject.Inject.class) != null)
+                        {
+                        	Named named = ap.getAnnotation(Named.class);
+                        	
+                        	if(named == null)
+                        	{
+                        		inject(object, f, locator.getObject(fieldType, ap));
+                        	}
+                        	else
+                        	{   
+                        		inject(object, f, locator.getService(named.value(), fieldType));
+                        	}
+                        	
                             return;
                         }
 
@@ -717,6 +745,21 @@ public class InternalUtils
             if (c.getAnnotation(Inject.class) != null)
                 return c;
         }
+        
+        Constructor standardConstructor = findConstructorByAnnotation(constructors, Inject.class);
+        Constructor javaxConstructor = findConstructorByAnnotation(constructors, javax.inject.Inject.class);
+        
+        if(standardConstructor != null && javaxConstructor != null)
+        	throw new IllegalArgumentException(
+        			String.format("Too many autobuilt constructors found. Please use either '@%s' or '@%s' annotation to mark a constructor for autobuilding.", 
+        						Inject.class.getName(), javax.inject.Inject.class.getName())); 
+        
+        if(standardConstructor != null) 
+        	return standardConstructor;
+        
+        if(javaxConstructor != null)
+        	return javaxConstructor;
+        
 
         // Choose a constructor with the most parameters.
 
@@ -731,6 +774,17 @@ public class InternalUtils
         Arrays.sort(constructors, comparator);
 
         return constructors[0];
+    }
+    
+    private static <T extends Annotation> Constructor findConstructorByAnnotation(Constructor[] constructors, Class<T> annotationClass)
+    {
+        for (Constructor c : constructors)
+        {
+            if (c.getAnnotation(annotationClass) != null)
+                return c;
+        }
+        
+        return null;
     }
 
     /**

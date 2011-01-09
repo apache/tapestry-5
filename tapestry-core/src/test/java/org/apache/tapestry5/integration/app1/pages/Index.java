@@ -465,7 +465,9 @@ public class Index
                     new Item("DecorateComponentEventLinkDemo", "Decorate Component Event Link Demo",
                             "Decorating event links"),
 
-                    new Item("ValidatorMacroDemo", "Validator Macro Demo", "Using validator macros")
+                    new Item("ValidatorMacroDemo", "Validator Macro Demo", "Using validator macros"),
+
+                    new Item("AtInjectDemo", "@javax.inject.Inject Demo", "Using @javax.inject.Inject for injection")
 
             );
 

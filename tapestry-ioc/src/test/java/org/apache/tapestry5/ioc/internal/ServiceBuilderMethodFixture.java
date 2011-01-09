@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Named;
+
 import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.apache.tapestry5.ioc.annotations.Value;
@@ -76,6 +78,16 @@ public class ServiceBuilderMethodFixture extends Assert
     }
 
     public FieService build_injected(@InjectService("Foe")
+    FoeService foe)
+    {
+        assertSame(expectedFoe, foe);
+
+        return fie;
+    }
+    
+
+
+    public FieService build_named_injected(@Named("Foe")
     FoeService foe)
     {
         assertSame(expectedFoe, foe);

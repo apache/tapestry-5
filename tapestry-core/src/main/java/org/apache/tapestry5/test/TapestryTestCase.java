@@ -37,6 +37,7 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.PropertyModel;
+import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.services.MapMessages;
 import org.apache.tapestry5.internal.services.MarkupWriterImpl;
 import org.apache.tapestry5.ioc.AnnotationProvider;
@@ -366,6 +367,21 @@ public abstract class TapestryTestCase extends IOCTestCase
     protected final void train_getAsset(AssetSource source, Resource root, String path, Locale locale, Asset asset)
     {
         expect(source.getAsset(root, path, locale)).andReturn(asset);
+    }
+    
+    protected final void train_matchFields(ClassTransformation transformation, TransformField field)
+    {
+    	expect(transformation.matchFields(EasyMock.isA(Predicate.class))).andReturn(Arrays.asList(field));
+    }
+    
+    protected final void train_getName(TransformField field, String name)
+    {
+    	expect(field.getName()).andReturn(name);
+    }
+    
+    protected final <T extends Annotation> void train_getAnnotation(TransformField field, Class<T> annotationClass, T anotation)
+    {
+    	expect(field.getAnnotation(annotationClass)).andReturn(anotation);
     }
 
     /** @deprecated May be removed in Tapestry 5.3 */
@@ -1114,6 +1130,11 @@ public abstract class TapestryTestCase extends IOCTestCase
     protected final void train_getType(Translator translator, Class type)
     {
         expect(translator.getType()).andReturn(type).atLeastOnce();
+    }
+    
+    protected final void train_getType(TransformField field, String type)
+    {
+        expect(field.getType()).andReturn(type).atLeastOnce();
     }
 
     protected final void train_createDefaultTranslator(FieldTranslatorSource source, ComponentResources resources,

@@ -16,6 +16,8 @@ package org.apache.tapestry5.ioc.internal;
 
 import java.lang.reflect.Method;
 
+import javax.inject.Named;
+
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ModuleBuilderSource;
@@ -87,6 +89,31 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
 
         verify();
     }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void unordered_collection_with_named_service_lookup()
+    {
+        Configuration configuration = mockConfiguration();
+        ServiceResources resources = mockServiceResources(tracker);
+        UpcaseService service = mockUpcaseService();
+        Logger logger = mockLogger();
+
+        train_getLogger(resources, logger);
+        train_getService(resources, "zip.Zap", UpcaseService.class, service);
+        train_getServiceId(resources, "Bif");
+
+        configuration.add(service);
+
+        replay();
+
+        Method m = findMethod("contributeUnorderedParameterNamedServiceLookup");
+        ContributionDef def = new ContributionDefImpl("foo.Bar", m, null, null, null);
+
+        def.contribute(this, resources, configuration);
+
+        verify();
+    }
 
     @Test
     public void unordered_collection_with_incorrect_configuration_parameter()
@@ -150,6 +177,32 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
 
     @SuppressWarnings("unchecked")
     @Test
+    public void ordered_collection_with_named_service_lookup()
+    {
+        OrderedConfiguration configuration = mockOrderedConfiguration();
+        ServiceResources resources = mockServiceResources(tracker);
+        UpcaseService service = mockUpcaseService();
+        Logger logger = mockLogger();
+
+        train_getLogger(resources, logger);
+
+        train_getService(resources, "zip.Zap", UpcaseService.class, service);
+        train_getServiceId(resources, "Bif");
+
+        configuration.add("fred", service);
+
+        replay();
+
+        Method m = findMethod("contributeOrderedParameterNamedServiceLookup");
+        ContributionDef def = new ContributionDefImpl("foo.Bar", m, null, null, null);
+
+        def.contribute(this, resources, configuration);
+
+        verify();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
     public void mapped_collection_with_service_lookup()
     {
         MappedConfiguration configuration = mockMappedConfiguration();
@@ -167,6 +220,32 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         replay();
 
         Method m = findMethod("contributeMappedParameter");
+        ContributionDef def = new ContributionDefImpl("foo.Bar", m, null, null, null);
+
+        def.contribute(this, resources, configuration);
+
+        verify();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void mapped_collection_with_named_service_lookup()
+    {
+        MappedConfiguration configuration = mockMappedConfiguration();
+        ServiceResources resources = mockServiceResources(tracker);
+        UpcaseService service = mockUpcaseService();
+        Logger logger = mockLogger();
+
+        train_getLogger(resources, logger);
+
+        train_getService(resources, "zip.Zap", UpcaseService.class, service);
+        train_getServiceId(resources, "Bif");
+
+        configuration.add("upcase", service);
+
+        replay();
+
+        Method m = findMethod("contributeMappedParameterNamedServiceLookup");
         ContributionDef def = new ContributionDefImpl("foo.Bar", m, null, null, null);
 
         def.contribute(this, resources, configuration);
@@ -192,6 +271,13 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         configuration.add(service);
     }
 
+    public void contributeUnorderedParameterNamedServiceLookup(Configuration<UpcaseService> configuration,
+                                             @Named("zip.Zap")
+                                             UpcaseService service)
+    {
+        configuration.add(service);
+    }
+
     public void contributeOrderedParameter(OrderedConfiguration<UpcaseService> configuration,
                                            @InjectService("zip.Zap")
                                            UpcaseService service)
@@ -199,8 +285,22 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         configuration.add("fred", service);
     }
 
+    public void contributeOrderedParameterNamedServiceLookup(OrderedConfiguration<UpcaseService> configuration,
+                                           @Named("zip.Zap")
+                                           UpcaseService service)
+    {
+        configuration.add("fred", service);
+    }
+
     public void contributeMappedParameter(MappedConfiguration<String, UpcaseService> configuration,
                                           @InjectService("zip.Zap")
+                                          UpcaseService service)
+    {
+        configuration.add("upcase", service);
+    }
+
+    public void contributeMappedParameterNamedServiceLookup(MappedConfiguration<String, UpcaseService> configuration,
+                                          @Named("zip.Zap")
                                           UpcaseService service)
     {
         configuration.add("upcase", service);

@@ -455,6 +455,30 @@ public class InternalUtilsTest extends IOCTestCase
         assertEquals(c.getParameterTypes().length, 1);
         assertEquals(c.getParameterTypes()[0], String.class);
     }
+    
+    @Test
+    public void constructor_with_javax_inject_annotation()
+    {
+        Constructor c = InternalUtils.findAutobuildConstructor(JavaxInjectBean.class);
+
+        assertEquals(c.getParameterTypes().length, 1);
+        assertEquals(c.getParameterTypes()[0], String.class);
+    }
+    
+    @Test
+    public void too_many_autobuild_constructors()
+    {
+    	try
+    	{
+    		InternalUtils.findAutobuildConstructor(TooManyAutobuildConstructorsBean.class);
+    	}
+        catch (IllegalArgumentException ex)
+        {
+            assertEquals(
+                    ex.getMessage(),
+                    "Too many autobuilt constructors found. Please use either '@org.apache.tapestry5.ioc.annotations' or '@javax.inject.Inject' annotation to mark a constructor for autobuilding.");
+        }
+    }
 
     @Test
     public void validate_constructor_class_not_public()
@@ -508,6 +532,60 @@ public class InternalUtilsTest extends IOCTestCase
         InternalUtils.injectIntoFields(target, ol, null, tracker);
 
         assertSame(target.getFred(), fred);
+
+        verify();
+    }
+    
+    @Test
+    public void javax_inject_named_annotation_on_field()
+    {
+        ObjectLocator ol = mockObjectLocator();
+        FieldInjectionViaJavaxNamed target = new FieldInjectionViaJavaxNamed();
+        Runnable fred = mockRunnable();
+
+        train_getService(ol, "BarneyService", Runnable.class, fred);
+
+        replay();
+
+        InternalUtils.injectIntoFields(target, ol, null, tracker);
+
+        assertSame(target.getFred(), fred);
+
+        verify();
+    }
+    
+
+    
+    @Test
+    public void javax_inject_annotation_on_field()
+    {
+        ObjectLocator ol = mockObjectLocator();
+        FieldInjectionViaInject target = new FieldInjectionViaInject();
+        final SymbolSource ss = mockSymbolSource();
+
+        IAnswer answer = new IAnswer()
+        {
+            public Object answer() throws Throwable
+            {
+                Object[] args = EasyMock.getCurrentArguments();
+
+                AnnotationProvider ap = (AnnotationProvider) args[1];
+
+                // Verify that annotations on the field are accessible.
+
+                assertNotNull(ap.getAnnotation(Builtin.class));
+
+                return ss;
+            }
+        };
+
+        expect(ol.getObject(eq(SymbolSource.class), isA(AnnotationProvider.class))).andAnswer(answer);
+
+        replay();
+
+        InternalUtils.injectIntoFields(target, ol, null, tracker);
+
+        assertSame(target.getSymbolSource(), ss);
 
         verify();
     }

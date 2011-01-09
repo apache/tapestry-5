@@ -595,6 +595,7 @@ public final class TapestryModule
 
         configuration.addInstance("Inject", InjectWorker.class);
         configuration.addInstance("InjectService", InjectServiceWorker.class);
+        configuration.addInstance("InjectNamed", InjectNamedWorker.class);
 
         configuration.add("MixinAfter", new MixinAfterWorker());
         configuration.add("Component", new ComponentWorker(resolver));
