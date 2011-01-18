@@ -220,8 +220,10 @@ var Tapestry = {
 		 * When a submit element is clicked, record the name of the element into
 		 * the associated form. This is necessary for some Ajax processing, see
 		 * TAPESTRY-2324.
+		 *
+		 * TAP5-1418: Added "type=image" so that they set the submitting element correctly.
 		 */
-		$$("INPUT[type=submit]").each(function(element) {
+		$$("INPUT[type=submit]","INPUT[type=image]").each(function(element) {
 			var t = $T(element);
 
 			if (!t.trackingClicks) {
