@@ -23,7 +23,7 @@ import org.eclipse.jetty.webapp.WebAppContext;
 /**
  * Launches an instance of Jetty7.
  */
-public class Jetty7Runner
+public class Jetty7Runner implements ServletContainerRunner
 {
     private final Server jettyServer;
 
