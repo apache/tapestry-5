@@ -67,6 +67,17 @@
       <organizationUrl>http://ifactory.com</organizationUrl>
     </developer>
     <developer>
+      <id>kaosko</id>
+      <name>Kalle Korhonen</name>
+      <email>kaosko@apache.org</email>
+      <url>http://tynamo.org</url>
+      <organization>Apache Software Foundation</organization>
+      <timezone>-8</timezone>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+    <developer>
       <id>kmenard</id>
       <name>Kevin Menard</name>
       <email>kmenard@servprise.com</email>
