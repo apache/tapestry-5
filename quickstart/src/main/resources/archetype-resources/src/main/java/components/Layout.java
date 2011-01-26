@@ -8,7 +8,7 @@ import org.apache.tapestry5.BindingConstants;
 /**
  * Layout component for pages of application ${artifactId}.
  */
-@IncludeStylesheet("context:layout/layout.css")
+@Import(stylesheet = "context:layout/layout.css")
 public class Layout
 {
     /** The page title, for the <title> element and the <h1> element. */
