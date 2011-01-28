@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -420,15 +420,9 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
      */
     private void addServiceDef(final Method method, boolean modulePreventsServiceDecoration)
     {
-        ServiceId serviceIdAnnotation = method.getAnnotation(ServiceId.class);
+        String serviceId = InternalUtils.getServiceId(method);
 
-        String serviceId;
-
-        if (serviceIdAnnotation != null)
-        {
-            serviceId = serviceIdAnnotation.value();
-        }
-        else
+        if(serviceId == null)
         {
             serviceId = stripMethodPrefix(method, BUILD_METHOD_NAME_PREFIX);
         }

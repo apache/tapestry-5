@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -70,6 +71,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.InjectResource;
 import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
+import org.apache.tapestry5.ioc.annotations.ServiceId;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.ContributionDef2;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
@@ -1252,6 +1254,39 @@ public class InternalUtils
     public static long nextUUID()
     {
         return uuidGenerator.incrementAndGet();
+    }
+    
+    /**
+     * Extracts the service id from the passed annotated element. First the {@link ServiceId} annotation is checked.
+     * If present, its value is returned. Otherwise {@link Named} annotation is checked. If present, its value is returned.
+     * If neither of the annotations is present, <code>null</code> value is returned
+     *  
+     * @param annotated annotated element to get annotations from
+     * 
+     * @since 5.3.0
+     */
+    public static String getServiceId(AnnotatedElement annotated)
+    {	
+        ServiceId serviceIdAnnotation = annotated.getAnnotation(ServiceId.class);
+
+        if (serviceIdAnnotation != null)
+        {
+            return serviceIdAnnotation.value();
+        }
+        
+        Named namedAnnotation = annotated.getAnnotation(Named.class);
+        
+        if(namedAnnotation != null)
+        {
+        	 String value = namedAnnotation.value();
+        	 
+        	 if(InternalUtils.isNonBlank(value))
+        	 {
+        		 return value;
+        	 }
+        }
+        
+        return null;
     }
 
 }
