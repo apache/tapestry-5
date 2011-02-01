@@ -8,7 +8,7 @@
   <name>Tapestry 5 Project</name>
   <description>Master project for the modules of Tapestry 5.</description>
   <inceptionYear>2006</inceptionYear>
-  <url>http://tapestry.apache.org/tapestry5.1/</url>
+  <url>http://tapestry.apache.org/</url>
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
