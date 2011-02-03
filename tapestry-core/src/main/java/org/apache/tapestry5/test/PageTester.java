@@ -119,9 +119,12 @@ public class PageTester
 
         globals.storeContext(new PageTesterContext(contextPath));
 
+        registry.performRegistryStartup();
+
         requestHandler = registry.getService("RequestHandler", RequestHandler.class);
 
         request.setLocale(Locale.ENGLISH);
+        initializer.announceStartup();
     }
 
     /**
