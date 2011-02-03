@@ -109,8 +109,9 @@ public class MBeanSupportImpl implements MBeanSupport, RegistryShutdownListener
     public void registryDidShutdown()
     {
         lock.lock();
-        
-        for (final ObjectName name : this.registeredBeans)
+        // store into new data structure so we can remove them from registered beans
+        ObjectName[] objects = registeredBeans.toArray(new ObjectName[registeredBeans.size()]);
+        for (final ObjectName name : objects)
         {
             doUnregister(name);
         }
