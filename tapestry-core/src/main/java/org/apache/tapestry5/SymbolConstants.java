@@ -340,7 +340,7 @@ public class SymbolConstants
      * in which case system will use request.getServerName(). Not the same as environment variable HOSTNAME, but you can also 
      * contribute "$HOSTNAME" as the value to make it the same as the environment variable HOSTNAME.
      * 
-     * @since 5.2.5
+     * @since 5.3.0
      */
     public static final String HOSTNAME = "tapestry.hostname";
 
@@ -348,7 +348,7 @@ public class SymbolConstants
      * The hostport that application should use when constructing an absolute URL. The default is "0", i.e. use the port value from
      * the request.
      * 
-     * @since 5.2.5
+     * @since 5.3.0
      */
     public static final String HOSTPORT = "tapestry.hostport";
     
@@ -356,7 +356,7 @@ public class SymbolConstants
      * The secure (https) hostport that application should use when constructing an absolute URL. The default is "0", i.e. use 
      * the value from the request.
      * 
-     * @since 5.2.5
+     * @since 5.3.0
      */
     public static final String HOSTPORT_SECURE = "tapestry.hostport-secure";
 }
