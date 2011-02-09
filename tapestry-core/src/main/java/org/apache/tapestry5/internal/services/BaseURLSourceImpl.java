@@ -14,26 +14,44 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.Request;
 
 public class BaseURLSourceImpl implements BaseURLSource
 {
     private final Request request;
+    
+    private String hostname;
+    private int hostPort;
+    private int secureHostPort;
 
-    public BaseURLSourceImpl(Request request)
+    public BaseURLSourceImpl(Request request, @Inject @Symbol(SymbolConstants.HOSTNAME) String hostname,
+	    @Symbol(SymbolConstants.HOSTPORT) int hostPort, @Symbol(SymbolConstants.HOSTPORT_SECURE) int secureHostPort)
     {
         this.request = request;
+        this.hostname = hostname;
+        this.hostPort = hostPort;
+        this.secureHostPort = secureHostPort;
     }
 
     public String getBaseURL(boolean secure)
     {
-        int port = request.getServerPort();
+        int port = secure ? secureHostPort : hostPort;
+        String portSuffix = "";
 
-        int schemeDefaultPort = request.isSecure() ? 443 : 80;
-
-        String portSuffix = port == schemeDefaultPort ? "" : ":" + port;
-
-        return String.format("%s://%s%s", secure ? "https" : "http", request.getServerName(), portSuffix);
+        if (port <= 0) { 
+            port = request.getServerPort();
+            int schemeDefaultPort = request.isSecure() ? 443 : 80;
+            portSuffix = port == schemeDefaultPort ? "" : ":" + port;
+        }
+        else if (secure && port != 443) portSuffix = ":" + port;
+        else if (port != 80) portSuffix = ":" + port;
+        
+        String hostname = "".equals(this.hostname) ? request.getServerName() : this.hostname.startsWith("$") ? System.getenv(this.hostname.substring(1)) : this.hostname;
+        
+        return String.format("%s://%s%s", secure ? "https" : "http", hostname, portSuffix);
     }
 }

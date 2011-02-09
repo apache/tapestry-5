@@ -334,4 +334,29 @@ public class SymbolConstants
      * @since 5.2.5
      */
     public static final String COMPONENT_RENDER_TRACING_ENABLED = "tapestry.component-render-tracing-enabled";
+    
+    /**
+     * The hostname that application should use when constructing an absolute URL. The default is "", i.e. an empty string,
+     * in which case system will use request.getServerName(). Not the same as environment variable HOSTNAME, but you can also 
+     * contribute "$HOSTNAME" as the value to make it the same as the environment variable HOSTNAME.
+     * 
+     * @since 5.2.5
+     */
+    public static final String HOSTNAME = "tapestry.hostname";
+
+    /**
+     * The hostport that application should use when constructing an absolute URL. The default is "0", i.e. use the port value from
+     * the request.
+     * 
+     * @since 5.2.5
+     */
+    public static final String HOSTPORT = "tapestry.hostport";
+    
+    /**
+     * The secure (https) hostport that application should use when constructing an absolute URL. The default is "0", i.e. use 
+     * the value from the request.
+     * 
+     * @since 5.2.5
+     */
+    public static final String HOSTPORT_SECURE = "tapestry.hostport-secure";
 }

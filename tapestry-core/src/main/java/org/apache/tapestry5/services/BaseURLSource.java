@@ -24,7 +24,17 @@ import org.apache.tapestry5.ioc.services.ServiceOverride;
  * necessary to do a bit more, since <code>getServerName()</code> will often be the name of the internal server (not
  * visible to the client web browser), and a hard-coded name of a server that <em>is</em> visible to the web browser
  * is needed. Further, in testing, non-default ports are often used. In those cases, an overriding contribution to the
- * {@link ServiceOverride} service will allow a custom implementation to supercede the default version.
+ * {@link ServiceOverride} service will allow a custom implementation to supercede the default version. You may also
+ * contribute application specific values for the following {@link org.apache.tapestry5.SymbolConstants}:
+ * {@link org.apache.tapestry5.SymbolConstants#HOSTNAME}, {@link org.apache.tapestry5.SymbolConstants#HOSTPORT} and 
+ * {@link org.apache.tapestry5.SymbolConstants#HOSTPORT_SECURE} to alter the behavior of the default BaseURLSource 
+ * implementation. The default values for the SymbolConstants require {@link org.apache.tapestry5.services.Request} 
+ * context to be available. If you contribute specific values for the specified SymbolConstants, it's safe to use 
+ * the default implementation of this service outside of request context, for example in a batch job. For 
+ * {@link org.apache.tapestry5.SymbolConstants#HOSTNAME}, a value starting with a dollar sign ($) will be resolved 
+ * using {@link java.langSystem#getEnv()} - contributing "$HOSTNAME" for {@link org.apache.tapestry5.SymbolConstants#HOSTNAME}
+ * is the most sensible choice for a dynamic value that doesn't use 
+ * {@link org.apache.tapestry5.services.Request#getServerName()}.
  */
 public interface BaseURLSource
 {

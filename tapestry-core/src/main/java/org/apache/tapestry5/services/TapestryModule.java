@@ -2450,6 +2450,11 @@ public final class TapestryModule
         configuration.add(InternalSymbols.PRE_SELECTED_FORM_NAMES, "reset,submit,select,id,method,action,onsubmit");
 
         configuration.add(SymbolConstants.COMPONENT_RENDER_TRACING_ENABLED, "false");
+        
+        // The default values denote "use values from request"
+        configuration.add(SymbolConstants.HOSTNAME, "");
+        configuration.add(SymbolConstants.HOSTPORT, "0");
+        configuration.add(SymbolConstants.HOSTPORT_SECURE, "0");
     }
 
     /**
