@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.integration.app1.components;
 
-import org.apache.tapestry5.annotations.IncludeStylesheet;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.Builtin;
 import org.apache.tapestry5.ioc.services.ClassFactory;
@@ -22,10 +22,11 @@ import org.apache.tapestry5.services.ComponentLayer;
 import org.apache.tapestry5.services.Request;
 
 /**
- * Here's a component with a template, including a t:body element.   Really should rename this to "Layout" as that's the
+ * Here's a component with a template, including a t:body element. Really should rename this to "Layout" as that's the
  * T5 naming.
  */
-@IncludeStylesheet({ "context:layout/style.css", "context:css/app.css" })
+@Import(stylesheet =
+{ "context:layout/style.css", "context:css/app.css" })
 public class Border
 {
     @Inject

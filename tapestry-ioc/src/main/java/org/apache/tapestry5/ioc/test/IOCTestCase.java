@@ -419,11 +419,6 @@ public class IOCTestCase extends TestBase
         expect(locator.autobuild(beanClass)).andReturn(instance);
     }
 
-    protected final void train_get(PerthreadManager manager, String key, Object object)
-    {
-        expect(manager.get(key)).andReturn(object);
-    }
-
     protected final PerthreadManager mockPerthreadManager()
     {
         return newMock(PerthreadManager.class);

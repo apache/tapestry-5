@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,14 +21,15 @@ import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.services.PersistentLocale;
 
 public class PersistentLocaleImpl implements PersistentLocale
 {
-    private final PerthreadManager perThreadManager;
-
     private final String supportedLocales;
+
+    private final PerThreadValue<Locale> localeValue;
 
     private final Set<String> localeNames = CollectionFactory.newSet();
 
@@ -37,8 +38,9 @@ public class PersistentLocaleImpl implements PersistentLocale
     @Symbol(SymbolConstants.SUPPORTED_LOCALES)
     String supportedLocales)
     {
-        this.perThreadManager = perThreadManager;
         this.supportedLocales = supportedLocales;
+
+        localeValue = perThreadManager.createValue();
 
         for (String name : TapestryInternalUtils.splitAtCommas(supportedLocales))
         {
@@ -49,26 +51,26 @@ public class PersistentLocaleImpl implements PersistentLocale
     public void set(Locale locale)
     {
         assert locale != null;
+        
         if (!localeNames.contains(locale.toString().toLowerCase()))
         {
             String message = String
-                    .format(
-                            "Locale '%s' is not supported by this application. Supported locales are '%s'; this is configured via the %s symbol.",
+                    .format("Locale '%s' is not supported by this application. Supported locales are '%s'; this is configured via the %s symbol.",
                             locale, supportedLocales, SymbolConstants.SUPPORTED_LOCALES);
 
             throw new IllegalArgumentException(message);
         }
 
-        perThreadManager.put(this, locale);
+        localeValue.set(locale);
     }
 
     public Locale get()
     {
-        return (Locale) perThreadManager.get(this);
+        return localeValue.get();
     }
 
     public boolean isSet()
     {
-        return get() != null;
+        return localeValue.exists();
     }
 }

@@ -1,0 +1,14 @@
+description="Central module for Tapestry, containing all core services and components"
+
+dependencies {
+  compile project(':tapestry-ioc')
+  compile project(':tapestry-json')
+
+  testCompile project(':tapestry-test')
+
+  compile "commons-codec:commons-codec:1.3"
+  compile "javax.servlet:servlet-api:2.4"
+
+  compile "org.antlr:antlr-runtime:3.3", { transitive = false }
+
+}

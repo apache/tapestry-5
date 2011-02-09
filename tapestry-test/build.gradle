@@ -1,0 +1,17 @@
+description = "Utilities for unit and integration testing of Tapestry applications"
+
+dependencies {
+  compile "org.seleniumhq.selenium.server:selenium-server:1.0.3:standalone@jar"
+  compile "jetty:org.mortbay.jetty:5.1.12"
+    
+  compile "org.testng:testng:$testngVersion"
+    
+  compile "org.eclipse.jetty:jetty-server:$jettyVersion"
+  compile "org.eclipse.jetty:jetty-jndi:$jettyVersion"
+  compile "org.eclipse.jetty:jetty-plus:$jettyVersion"
+  compile "org.eclipse.jetty:jetty-webapp:$jettyVersion"
+  
+  compile "org.apache.tomcat:catalina:$tomcatVersion"
+  compile "org.apache.tomcat:coyote:$tomcatVersion"
+  
+}

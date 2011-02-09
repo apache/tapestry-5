@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,10 +15,7 @@
 package org.apache.tapestry5.internal.transform;
 
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
-import org.apache.tapestry5.annotations.ApplicationState;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
@@ -48,29 +45,13 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {
-        Map<TransformField, Boolean> fields = new TreeMap<TransformField, Boolean>();
-
-        for (TransformField field : transformation.matchFieldsWithAnnotation(ApplicationState.class))
-        {
-            ApplicationState annotation = field.getAnnotation(ApplicationState.class);
-
-            fields.put(field, annotation.create());
-
-            field.claim(annotation);
-        }
-
         for (TransformField field : transformation.matchFieldsWithAnnotation(SessionState.class))
         {
             SessionState annotation = field.getAnnotation(SessionState.class);
 
-            fields.put(field, annotation.create());
+            transform(transformation, field, annotation.create());
 
             field.claim(annotation);
-        }
-
-        for (Map.Entry<TransformField, Boolean> e : fields.entrySet())
-        {
-            transform(transformation, e.getKey(), e.getValue());
         }
     }
 

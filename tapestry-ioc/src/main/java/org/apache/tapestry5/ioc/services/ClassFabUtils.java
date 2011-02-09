@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,18 +14,14 @@
 
 package org.apache.tapestry5.ioc.services;
 
-import static java.lang.String.format;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
-
 import java.io.File;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 /**
  * Handy method useful when creating new classes using {@link org.apache.tapestry5.ioc.services.ClassFab}.
@@ -109,8 +105,8 @@ public final class ClassFabUtils
         }
     }
 
-    private static final Map<String, PrimitiveInfo> PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO = newMap();
-    private static final Map<Class, PrimitiveInfo> WRAPPER_TYPE_TO_PRIMITIVE_INFO = newMap();
+    private static final Map<String, PrimitiveInfo> PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO = CollectionFactory.newMap();
+    private static final Map<Class, PrimitiveInfo> WRAPPER_TYPE_TO_PRIMITIVE_INFO = CollectionFactory.newMap();
 
     static
     {
@@ -248,54 +244,6 @@ public final class ClassFabUtils
             return "[" + getTypeCode(type.getComponentType());
 
         return "L" + type.getName().replace('.', '/') + ";";
-    }
-
-    /**
-     * Creates a proxy for a given service interface around an {@link org.apache.tapestry5.ioc.ObjectCreator} that can
-     * provide (on demand) an object (implementing the service interface) to delegate to. The ObjectCreator will be
-     * invoked on every method invocation (if it is caching, that should be internal to its implementation).
-     * 
-     * @param <T>
-     * @param classFab
-     *            used to create the new class
-     * @param serviceInterface
-     *            the interface the proxy will implement
-     * @param creator
-     *            the createor which will provide an instance of the interface
-     * @param description
-     *            description to be returned from the proxy's toString() method
-     * @return the instantiated proxy object
-     * @deprecated Use {@link ClassFactory#createProxy(Class, ObjectCreator, String)} instead
-     */
-    public static <T> T createObjectCreatorProxy(ClassFab classFab, Class<T> serviceInterface, ObjectCreator creator,
-            String description)
-    {
-        classFab.addField("_creator", Modifier.PRIVATE | Modifier.FINAL, ObjectCreator.class);
-
-        classFab.addConstructor(new Class[]
-        { ObjectCreator.class }, null, "_creator = $1;");
-
-        String body = format("return (%s) _creator.createObject();", serviceInterface.getName());
-
-        MethodSignature sig = new MethodSignature(serviceInterface, "_delegate", null, null);
-
-        classFab.addMethod(Modifier.PRIVATE, sig, body);
-
-        classFab.proxyMethodsToDelegate(serviceInterface, "_delegate()", description);
-        Class proxyClass = classFab.createClass();
-
-        try
-        {
-            Object proxy = proxyClass.getConstructors()[0].newInstance(creator);
-
-            return serviceInterface.cast(proxy);
-        }
-        catch (Exception ex)
-        {
-            // This should never happen, so we won't go to a lot of trouble
-            // reporting it.
-            throw new RuntimeException(ex.getMessage(), ex);
-        }
     }
 
     /**

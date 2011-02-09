@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,12 +14,21 @@
 
 package org.apache.tapestry5.integration.app1.pages.nested;
 
+import java.util.Date;
+
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.QueryParameterConstants;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.ajax.MultiZoneUpdate;
-import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.annotations.Log;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.RequestParameter;
+import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.corelib.components.BeanEditForm;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.integration.app1.data.RegistrationData;
@@ -28,8 +37,6 @@ import org.apache.tapestry5.internal.services.StringValueEncoder;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
 
-import java.util.Date;
-
 public class ZoneDemo
 {
     @Component(id = "registrationForm")
@@ -37,7 +44,7 @@ public class ZoneDemo
 
     private String name;
 
-    @ApplicationState
+    @SessionState
     private RegistrationData registration;
 
     private static final String[] NAMES =

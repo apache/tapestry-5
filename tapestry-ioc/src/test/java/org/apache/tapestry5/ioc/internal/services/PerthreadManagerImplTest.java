@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -131,13 +131,11 @@ public class PerthreadManagerImplTest extends IOCTestCase
         PerThreadValue<Object> v = m.createValue(key);
 
         assertFalse(v.exists());
-        assertNull(m.get(key));
         assertNull(v.get());
 
         v.set(value);
 
         assertTrue(v.exists());
-        assertSame(m.get(key), value);
         assertSame(v.get(), value);
     }
 
@@ -182,15 +180,17 @@ public class PerthreadManagerImplTest extends IOCTestCase
     {
         final PerthreadManagerImpl m = new PerthreadManagerImpl(null);
 
+        final PerThreadValue<String> v = m.createValue();
+
         m.run(new Runnable()
         {
             public void run()
             {
-                m.put("foo", "bar");
+                v.set("bar");
             }
         });
 
-        assertNull(m.get("foo"));
+        assertNull(v.get());
     }
 
     @Test
@@ -198,11 +198,13 @@ public class PerthreadManagerImplTest extends IOCTestCase
     {
         final PerthreadManagerImpl m = new PerthreadManagerImpl(null);
 
+        final PerThreadValue<String> v = m.createValue();
+
         String actual = m.invoke(new Invokable<String>()
         {
             public String invoke()
             {
-                m.put("foo", "bar");
+                v.set("bar");
 
                 return "baz";
             }
@@ -210,7 +212,7 @@ public class PerthreadManagerImplTest extends IOCTestCase
 
         assertEquals(actual, "baz");
 
-        assertNull(m.get("foo"));
+        assertNull(v.get());
 
     }
 }

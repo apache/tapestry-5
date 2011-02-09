@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.integration.app1.data.DateHolder;
 import org.apache.tapestry5.integration.app1.data.ToDoItem;
 import org.apache.tapestry5.integration.app1.data.Track;
 import org.apache.tapestry5.internal.services.GenericValueEncoderFactory;

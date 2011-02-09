@@ -11,7 +11,7 @@
                 <th> Title </th>
                 <th> Reorder </th>
             </tr>
-            <tr t:type="Loop" source="items" value="item" encoder="encoder">
+            <tr t:type="Loop" source="items" value="item" encoder="toDoItemEncoder">
                 <td>
                     <input t:type="TextField" t:id="title" value="item.title" size="30"
                         validate="required"/>

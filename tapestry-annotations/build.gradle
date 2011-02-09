@@ -1,0 +1,10 @@
+description = "Annotations used with Tapestry applications"
+
+// To avoid conflict with the Tapestry 4 tapestry-annotations, so both may be used at the same time
+baseName = 'tapestry5-annotations'
+
+configure(install.repositories.mavenInstaller) {
+  pom.project { 
+    artifactId baseName
+  }
+}

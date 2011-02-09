@@ -1,0 +1,8 @@
+description = "Repackaged, improved (and tested) version of code originally from json.org"
+
+dependencies {
+
+  testCompile project(':tapestry-test')
+  testCompile project(':tapestry-ioc')
+
+}
