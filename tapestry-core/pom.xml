@@ -134,6 +134,7 @@
             </goals>
             <configuration>
               <sourceDirectory>src/main/antlr</sourceDirectory>
+              <outputDirectory>target/generated-sources/antlr</outputDirectory>              
             </configuration>
           </execution>
         </executions>
