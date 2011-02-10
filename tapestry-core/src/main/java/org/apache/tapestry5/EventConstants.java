@@ -78,17 +78,6 @@ public class EventConstants
     public static final String SUBMIT = "submit";
 
     /**
-     * Event type for a notification to perform validation of submitted data. This allows a listener
-     * to perform
-     * cross-field validation. This occurs before the {@link #SUCCESS} or {@link #FAILURE} notification.
-     * 
-     * @see org.apache.tapestry5.corelib.components.Form
-     * @deprecated As of 5.2, this event should no longer be used; the Form component now fires a {@link #VALIDATE}
-     *             event. For compatibility, validateForm will be supported, but may be removed in a future release.
-     */
-    public static final String VALIDATE_FORM = "validateForm";
-
-    /**
      * Event type associated with clicking the cancel button inside a {@link BeanEditForm}.
      * 
      * @since 5.2.0
