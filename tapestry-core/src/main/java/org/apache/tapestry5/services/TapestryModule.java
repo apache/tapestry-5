@@ -1387,32 +1387,6 @@ public final class TapestryModule
         return chainBuilder.build(BindingFactory.class, configuration);
     }
 
-    /**
-     * Builds the source of {@link Messages} containing validation messages. The
-     * contributions are paths to message
-     * bundles (resource paths within the classpath); the default contribution
-     * is "org/apache/tapestry5/internal/ValidationMessages".
-     */
-    public ValidationMessagesSource buildValidationMessagesSource(List<String> configuration,
-
-    UpdateListenerHub updateListenerHub,
-
-    @ClasspathProvider
-    AssetFactory classpathAssetFactory,
-
-    PropertiesFileParser parser,
-
-    ComponentMessagesSource componentMessagesSource,
-
-    ClasspathURLConverter classpathURLConverter)
-    {
-        ValidationMessagesSourceImpl service = new ValidationMessagesSourceImpl(configuration,
-                classpathAssetFactory.getRootResource(), parser, componentMessagesSource, classpathURLConverter);
-        updateListenerHub.addUpdateListener(service);
-
-        return service;
-    }
-
     public static MetaDataLocator buildMetaDataLocator(@Autobuild
     MetaDataLocatorImpl service, @ComponentClasses
     InvalidationEventHub hub)
@@ -2330,15 +2304,6 @@ public final class TapestryModule
         configuration.add(PersistenceConstants.CLIENT, clientStrategy);
     }
 
-    /**
-     * Contributes org/apache/tapestry5/internal/ValidationMessages as
-     * "Default", ordered first.
-     */
-    public void contributeValidationMessagesSource(OrderedConfiguration<String> configuration)
-    {
-        configuration.add("Default", "org/apache/tapestry5/internal/ValidationMessages", "before:*");
-    }
-
     @SuppressWarnings("rawtypes")
     public static ValueEncoderSource buildValueEncoderSource(Map<Class, ValueEncoderFactory> configuration,
             @ComponentClasses
@@ -2532,7 +2497,7 @@ public final class TapestryModule
         configuration.add(InternalSymbols.PRE_SELECTED_FORM_NAMES, "reset,submit,select,id,method,action,onsubmit");
 
         configuration.add(SymbolConstants.COMPONENT_RENDER_TRACING_ENABLED, "false");
-        
+
         // The default values denote "use values from request"
         configuration.add(SymbolConstants.HOSTNAME, "");
         configuration.add(SymbolConstants.HOSTPORT, "0");
@@ -2972,13 +2937,23 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes "AppCatalog" as the Resource defined by {@link SymbolConstants#APPLICATION_CATALOG}.
+     * Contributes:
+     * <dl>
+     * <dt>AppCatalog</dt>
+     * <dd>The Resource defined by {@link SymbolConstants#APPLICATION_CATALOG}</dd>
+     * <dt>ValidationMessages</dt>
+     * <dd>Messages used by validators (before:AppCatalog)</dd>
+     * <dt>
      * 
      * @since 5.2.0
      */
-    public static void contributeComponentMessagesSource(@Symbol(SymbolConstants.APPLICATION_CATALOG)
-    Resource applicationCatalog, OrderedConfiguration<Resource> configuration)
+    public static void contributeComponentMessagesSource(AssetSource assetSource,
+            @Symbol(SymbolConstants.APPLICATION_CATALOG)
+            Resource applicationCatalog, OrderedConfiguration<Resource> configuration)
     {
+        configuration.add("ValidationMessages",
+                assetSource.resourceForPath("org/apache/tapestry5/internal/ValidationMessages.properties"),
+                "before:AppCatalog");
         configuration.add("AppCatalog", applicationCatalog);
     }
 

@@ -1,4 +1,4 @@
-// Copyright 2008, 2010 The Apache Software Foundation
+// Copyright 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,14 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.*;
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.FieldTranslator;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.Translator;
 import org.apache.tapestry5.beaneditor.Translate;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.AnnotationProvider;
@@ -24,11 +31,7 @@ import org.apache.tapestry5.root.FieldComponent;
 import org.apache.tapestry5.services.FieldTranslatorSource;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.TranslatorSource;
-import org.apache.tapestry5.services.ValidationMessagesSource;
 import org.testng.annotations.Test;
-
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * Fills in some gaps that are not currently tested by the integration tests.
@@ -117,10 +120,9 @@ public class FieldTranslatorSourceImplTest extends InternalBaseTestCase
         Locale locale = Locale.ENGLISH;
         Class propertyType = Map.class;
         TranslatorSource ts = mockTranslatorSource();
-        ValidationMessagesSource vms = mockValidationMessagesSource();
         FormSupport fs = mockFormSupport();
         Translator translator = mockTranslator("maptrans", Map.class);
-        Messages validationMessages = mockMessages();
+        Messages globalMessages = mockMessages();
         MessageFormatter formatter = mockMessageFormatter();
         MarkupWriter writer = mockMarkupWriter();
         String label = "Field Label";
@@ -133,10 +135,8 @@ public class FieldTranslatorSourceImplTest extends InternalBaseTestCase
 
         train_contains(messages, "myform-myfield-maptrans-message", false);
         train_contains(messages, "myfield-maptrans-message", false);
-        train_getValidationMessages(vms, locale, validationMessages);
-
         train_getMessageKey(translator, "mykey");
-        train_getMessageFormatter(validationMessages, "mykey", formatter);
+        train_getMessageFormatter(globalMessages, "mykey", formatter);
         train_getLabel(field, label);
         train_format(formatter, message, label);
 
@@ -144,7 +144,7 @@ public class FieldTranslatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldTranslatorSource source = new FieldTranslatorSourceImpl(ts, vms, fs);
+        FieldTranslatorSource source = new FieldTranslatorSourceImpl(ts, globalMessages, fs);
 
         FieldTranslator ft = source.createDefaultTranslator(field, "myfield", messages, locale, propertyType, ap);
 
@@ -163,7 +163,6 @@ public class FieldTranslatorSourceImplTest extends InternalBaseTestCase
         Locale locale = Locale.ENGLISH;
         Class propertyType = Map.class;
         TranslatorSource ts = mockTranslatorSource();
-        ValidationMessagesSource vms = mockValidationMessagesSource();
         FormSupport fs = mockFormSupport();
         Translator translator = mockTranslator("maptrans", Map.class);
         MessageFormatter formatter = mockMessageFormatter();
@@ -187,7 +186,7 @@ public class FieldTranslatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldTranslatorSource source = new FieldTranslatorSourceImpl(ts, vms, fs);
+        FieldTranslatorSource source = new FieldTranslatorSourceImpl(ts, null, fs);
 
         FieldTranslator ft = source.createDefaultTranslator(field, "myfield", messages, locale, propertyType, ap);
 
@@ -206,7 +205,6 @@ public class FieldTranslatorSourceImplTest extends InternalBaseTestCase
         Locale locale = Locale.ENGLISH;
         Class propertyType = Map.class;
         TranslatorSource ts = mockTranslatorSource();
-        ValidationMessagesSource vms = mockValidationMessagesSource();
         FormSupport fs = mockFormSupport();
         Translator translator = mockTranslator("maptrans", Map.class);
         MessageFormatter formatter = mockMessageFormatter();
@@ -229,7 +227,7 @@ public class FieldTranslatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldTranslatorSource source = new FieldTranslatorSourceImpl(ts, vms, fs);
+        FieldTranslatorSource source = new FieldTranslatorSourceImpl(ts, null, fs);
 
         FieldTranslator ft = source.createDefaultTranslator(field, "myfield", messages, locale, propertyType, ap);
 
@@ -246,12 +244,10 @@ public class FieldTranslatorSourceImplTest extends InternalBaseTestCase
         ComponentResources resources = mockComponentResources();
         FieldComponent field = mockFieldComponent();
         Messages messages = mockMessages();
-        Locale locale = Locale.ENGLISH;
         TranslatorSource ts = mockTranslatorSource();
-        ValidationMessagesSource vms = mockValidationMessagesSource();
         FormSupport fs = mockFormSupport();
         Translator translator = mockTranslator("map", Map.class);
-        Messages validationMessages = mockMessages();
+        Messages globalMessages = mockMessages();
         MessageFormatter formatter = mockMessageFormatter();
         MarkupWriter writer = mockMarkupWriter();
         String label = "My Label";
@@ -260,7 +256,6 @@ public class FieldTranslatorSourceImplTest extends InternalBaseTestCase
         train_getComponent(resources, field);
         train_getId(resources, "myfield");
         train_getContainerMessages(resources, messages);
-        train_getLocale(resources, locale);
 
         train_get(ts, "map", translator);
 
@@ -268,10 +263,8 @@ public class FieldTranslatorSourceImplTest extends InternalBaseTestCase
 
         train_contains(messages, "myform-myfield-map-message", false);
         train_contains(messages, "myfield-map-message", false);
-        train_getValidationMessages(vms, locale, validationMessages);
-
         train_getMessageKey(translator, "mykey");
-        train_getMessageFormatter(validationMessages, "mykey", formatter);
+        train_getMessageFormatter(globalMessages, "mykey", formatter);
 
         train_getLabel(field, label);
         train_format(formatter, message, label);
@@ -280,7 +273,7 @@ public class FieldTranslatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldTranslatorSource source = new FieldTranslatorSourceImpl(ts, vms, fs);
+        FieldTranslatorSource source = new FieldTranslatorSourceImpl(ts, globalMessages, fs);
 
         FieldTranslator ft = source.createTranslator(resources, "map");
 

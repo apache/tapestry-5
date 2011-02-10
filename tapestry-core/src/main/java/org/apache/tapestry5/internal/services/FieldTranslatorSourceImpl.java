@@ -1,4 +1,4 @@
-// Copyright 2008, 2010 The Apache Software Foundation
+// Copyright 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,22 +28,21 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.FieldTranslatorSource;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.TranslatorSource;
-import org.apache.tapestry5.services.ValidationMessagesSource;
 
 @SuppressWarnings("all")
 public class FieldTranslatorSourceImpl implements FieldTranslatorSource
 {
     private final TranslatorSource translatorSource;
 
-    private final ValidationMessagesSource validationMessagesSource;
+    private final Messages globalMessages;
 
     private final FormSupport formSupport;
 
-    public FieldTranslatorSourceImpl(TranslatorSource translatorSource,
-            ValidationMessagesSource validationMessagesSource, FormSupport formSupport)
+    public FieldTranslatorSourceImpl(TranslatorSource translatorSource, Messages globalMessages,
+            FormSupport formSupport)
     {
         this.translatorSource = translatorSource;
-        this.validationMessagesSource = validationMessagesSource;
+        this.globalMessages = globalMessages;
         this.formSupport = formSupport;
     }
 
@@ -54,8 +53,8 @@ public class FieldTranslatorSourceImpl implements FieldTranslatorSource
         Field field = (Field) resources.getComponent();
         Class propertyType = resources.getBoundType(parameterName);
 
-        return createDefaultTranslator(field, resources.getId(), resources.getContainerMessages(), resources
-                .getLocale(), propertyType, resources.getAnnotationProvider(parameterName));
+        return createDefaultTranslator(field, resources.getId(), resources.getContainerMessages(),
+                null, propertyType, resources.getAnnotationProvider(parameterName));
     }
 
     public FieldTranslator createDefaultTranslator(Field field, String overrideId, Messages overrideMessages,
@@ -63,7 +62,6 @@ public class FieldTranslatorSourceImpl implements FieldTranslatorSource
     {
         assert field != null;
         assert overrideMessages != null;
-        assert locale != null;
         assert InternalUtils.isNonBlank(overrideId);
         if (propertyType == null)
             return null;
@@ -92,7 +90,7 @@ public class FieldTranslatorSourceImpl implements FieldTranslatorSource
     public FieldTranslator createTranslator(Field field, String overrideId, Messages overrideMessages, Locale locale,
             Translator translator)
     {
-        MessageFormatter formatter = findFormatter(overrideId, overrideMessages, locale, translator);
+        MessageFormatter formatter = findFormatter(overrideId, overrideMessages, translator);
 
         return new FieldTranslatorImpl(field, translator, formatter, formSupport);
     }
@@ -105,12 +103,10 @@ public class FieldTranslatorSourceImpl implements FieldTranslatorSource
 
         Translator translator = translatorSource.get(translatorName);
 
-        return createTranslator(field, resources.getId(), resources.getContainerMessages(), resources.getLocale(),
-                translator);
+        return createTranslator(field, resources.getId(), resources.getContainerMessages(), null, translator);
     }
 
-    private MessageFormatter findFormatter(String overrideId, Messages overrideMessages, Locale locale,
-            Translator translator)
+    private MessageFormatter findFormatter(String overrideId, Messages overrideMessages, Translator translator)
     {
         // TAP5-228: Try to distinguish message overrides by form id and overrideId (i.e., property name) first.
 
@@ -130,8 +126,6 @@ public class FieldTranslatorSourceImpl implements FieldTranslatorSource
 
         // Otherwise, use the built-in validation message appropriate to this validator.
 
-        Messages validationMessages = validationMessagesSource.getValidationMessages(locale);
-
-        return validationMessages.getFormatter(translator.getMessageKey());
+        return globalMessages.getFormatter(translator.getMessageKey());
     }
 }

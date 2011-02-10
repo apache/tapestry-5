@@ -1,4 +1,4 @@
-//  Copyright 2008 The Apache Software Foundation
+//  Copyright 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ public interface FieldTranslatorSource
      * @param field               for which a translator is needed
      * @param overrideId          id used when looking in the overrideMessages for a message override
      * @param overrideMessages    location to look for overriding messages
-     * @param locale              to localize validation messages to
+     * @param locale              no longer used in 5.3, may be null
      * @param propertyType        type of property editted by the field, used to select the Translator
      * @param propertyAnnotations annotations on the property (not currently used)
      * @return the field translator, or null
@@ -57,6 +57,7 @@ public interface FieldTranslatorSource
 
     /**
      * Wraps a {@link org.apache.tapestry5.Translator} as a FieldTranslator.
+     * @param locale no longer used in 5.3, may be null
      */
     FieldTranslator createTranslator(Field field, String overrideId, Messages overrideMessages, Locale locale,
                                      Translator translator);

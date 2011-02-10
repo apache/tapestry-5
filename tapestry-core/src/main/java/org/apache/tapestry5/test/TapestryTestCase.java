@@ -295,12 +295,6 @@ public abstract class TapestryTestCase extends IOCTestCase
         return newMock(ValidationConstraintGenerator.class);
     }
 
-    /** @deprecated May be removed in Tapestry 5.3 */
-    protected final ValidationMessagesSource mockValidationMessagesSource()
-    {
-        return newMock(ValidationMessagesSource.class);
-    }
-
     protected final ValidationTracker mockValidationTracker()
     {
         return newMock(ValidationTracker.class);
@@ -681,13 +675,6 @@ public abstract class TapestryTestCase extends IOCTestCase
     protected final void train_getSupportsInformalParameters(ComponentModel model, boolean supports)
     {
         expect(model.getSupportsInformalParameters()).andReturn(supports).atLeastOnce();
-    }
-
-    /** @deprecated May be removed in Tapestry 5.3 */
-    protected final void train_getValidationMessages(ValidationMessagesSource messagesSource, Locale locale,
-            Messages messages)
-    {
-        expect(messagesSource.getValidationMessages(locale)).andReturn(messages).atLeastOnce();
     }
 
     protected final void train_getValueType(Validator validator, Class valueType)
