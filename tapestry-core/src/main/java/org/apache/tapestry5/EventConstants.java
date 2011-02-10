@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -147,10 +147,9 @@ public class EventConstants
 
     /**
      * Event triggered by {@link org.apache.tapestry5.corelib.components.AjaxFormLoop} to inform the
-     * container that a
-     * new row has been requested. The return value from the event handler must be the newly created
+     * container that a new row has been requested. The return value from the event handler must be the newly created
      * object, which must
-     * also be visible in the {@link org.apache.tapestry5.PrimaryKeyEncoder encoder parameter}.
+     * also be visible in the {@link encoder parameter}.
      */
     public static final String ADD_ROW = "addRow";
 

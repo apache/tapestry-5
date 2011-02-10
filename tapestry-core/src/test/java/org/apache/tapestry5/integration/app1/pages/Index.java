@@ -157,7 +157,7 @@ public class Index
                             "Show that a blank value in a PasswordField does not update the server side value."),
 
                     new Item("GridFormEncoderDemo", "Grid Form Encoder Demo",
-                            "Grid inside a Form using the PrimaryKeyEncoder option"),
+                            "Grid inside a Form using the ValueEncoder option"),
 
                     new Item("DateFieldAjaxFormLoop", "DateField inside AjaxFormLoop",
                             "Show that DateField component works correctly inside AjaxFormLoop"),
