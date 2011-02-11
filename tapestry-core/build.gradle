@@ -1,5 +1,11 @@
 description="Central module for Tapestry, containing all core services and components"
 
+antlrOutput = "$buildDir/generated-sources/antlr"
+
+configurations {
+  antlr3
+} 
+
 dependencies {
   compile project(':tapestry-ioc')
   compile project(':tapestry-json')
@@ -9,6 +15,21 @@ dependencies {
   compile "commons-codec:commons-codec:1.3"
   compile "javax.servlet:servlet-api:2.4"
 
+  // Transitive will bring in the unwanted string template library as well
   compile "org.antlr:antlr-runtime:3.3", { transitive = false }
 
+  // Antlr3 tool path used with the antlr3 task
+  antlr3 "org.antlr:antlr:3.3"
 }
+
+// This may spin out as a plugin once we've got the details down pat
+
+task generateGrammarSource(
+  description: "Generates Java sources from Antlr3 grammars."
+) << {
+  logger.info "GENERATE GRAMMAR SOURCE"
+  
+  mkdir(antlrOutput)
+}
+
+compileJava.dependsOn generateGrammarSource
