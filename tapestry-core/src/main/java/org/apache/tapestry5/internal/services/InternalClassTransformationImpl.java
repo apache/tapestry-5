@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -707,7 +707,22 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             // this does nothing. but for primitive types, it will unwrap
             // the wrapper type back to a primitive.
 
-            addNewMethod(readSig, String.format("return ($r) ((%s) %s.get());", cast, conduitFieldName));
+            BodyBuilder builder = new BodyBuilder();
+
+            builder.begin();
+
+            builder.addln("%s result = ($r) ((%s) %s.get());", type, cast, conduitFieldName);
+
+            if (developmentMode)
+            {
+                builder.addln("%s = result;", name);
+            }
+
+            builder.addln("return result;");
+
+            builder.end();
+
+            addNewMethod(readSig, builder.toString());
 
             replaceReadAccess(readMethodName);
 
@@ -717,7 +732,18 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                     new String[]
                     { type }, null);
 
-            addNewMethod(writeSig, String.format("%s.set(($w) $1);", conduitFieldName));
+            builder.clear().begin();
+
+            if (developmentMode)
+            {
+                builder.addln("%s = $1;", name);
+            }
+
+            builder.addln("%s.set(($w) $1);", conduitFieldName);
+
+            builder.end();
+
+            addNewMethod(writeSig, builder.toString());
 
             replaceWriteAccess(writeMethodName);
         }
@@ -782,6 +808,11 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     private final CtClassSource classSource;
 
+    // In development mode, extra logic is inserted to "shadow" fields (that have been replaced with a FieldConduit).
+    // The "live" value is stored into the field any time it is read or updated, to assist with debugging.
+    // https://issues.apache.org/jira/browse/TAP5-1208
+    private final boolean developmentMode;
+
     // If true, then during finish, it is necessary to search for field replacements
     // (field reads or writes replaces with method calls).
     private boolean fieldAccessReplaced;
@@ -800,11 +831,13 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
      * This is a constructor for a base class.
      */
     public InternalClassTransformationImpl(ClassFactory classFactory, CtClass ctClass,
-            ComponentClassCache componentClassCache, MutableComponentModel componentModel, CtClassSource classSource)
+            ComponentClassCache componentClassCache, MutableComponentModel componentModel, CtClassSource classSource,
+            boolean developmentMode)
     {
         this.ctClass = ctClass;
         this.componentClassCache = componentClassCache;
         this.classSource = classSource;
+        this.developmentMode = developmentMode;
         classPool = this.ctClass.getClassPool();
         this.classFactory = classFactory;
         parentTransformation = null;
@@ -835,10 +868,13 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     /**
      * Constructor for a component sub-class.
+     * 
+     * @param developmentMode
+     *            TODO
      */
     private InternalClassTransformationImpl(CtClass ctClass, InternalClassTransformation parentTransformation,
             ClassFactory classFactory, CtClassSource classSource, ComponentClassCache componentClassCache,
-            MutableComponentModel componentModel)
+            MutableComponentModel componentModel, boolean developmentMode)
     {
         this.ctClass = ctClass;
         this.componentClassCache = componentClassCache;
@@ -848,6 +884,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         logger = componentModel.getLogger();
         this.parentTransformation = parentTransformation;
         this.componentModel = componentModel;
+        this.developmentMode = developmentMode;
 
         providerType = toCtClass(ComponentValueProvider.class);
 
@@ -869,7 +906,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     public InternalClassTransformation createChildTransformation(CtClass childClass, MutableComponentModel childModel)
     {
         return new InternalClassTransformationImpl(childClass, this, classFactory, classSource, componentClassCache,
-                childModel);
+                childModel, developmentMode);
     }
 
     private void freeze()

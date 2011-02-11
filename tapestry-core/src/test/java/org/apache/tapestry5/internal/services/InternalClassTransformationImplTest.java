@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,7 +41,17 @@ import org.apache.tapestry5.internal.model.MutableComponentModelImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.transform.InheritedAnnotation;
 import org.apache.tapestry5.internal.transform.TestPackageAwareLoader;
-import org.apache.tapestry5.internal.transform.pages.*;
+import org.apache.tapestry5.internal.transform.pages.AbstractFoo;
+import org.apache.tapestry5.internal.transform.pages.BarImpl;
+import org.apache.tapestry5.internal.transform.pages.ChildClassInheritsAnnotation;
+import org.apache.tapestry5.internal.transform.pages.ClaimedFields;
+import org.apache.tapestry5.internal.transform.pages.EventHandlerTarget;
+import org.apache.tapestry5.internal.transform.pages.FieldAccessBean;
+import org.apache.tapestry5.internal.transform.pages.MethodAccessSubject;
+import org.apache.tapestry5.internal.transform.pages.MethodIdentifier;
+import org.apache.tapestry5.internal.transform.pages.ParentClass;
+import org.apache.tapestry5.internal.transform.pages.ReadOnlyBean;
+import org.apache.tapestry5.internal.transform.pages.TargetObject;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryClassPool;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry5.ioc.internal.services.CtClassSourceImpl;
@@ -134,7 +144,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         replay();
 
         InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory, targetObjectCtClass,
-                new ComponentClassCacheImpl(classFactory, null), model, classSource);
+                new ComponentClassCacheImpl(classFactory, null), model, classSource, false);
 
         worker.transform(ct, model);
 
@@ -223,7 +233,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         MutableComponentModel model = stubMutableComponentModel(logger);
 
-        return new InternalClassTransformationImpl(classFactory, ctClass, null, model, null);
+        return new InternalClassTransformationImpl(classFactory, ctClass, null, model, null, false);
     }
 
     private MutableComponentModel stubMutableComponentModel(Logger logger)
@@ -722,7 +732,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         replay();
 
         InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory, targetObjectCtClass, null,
-                model, null);
+                model, null, false);
 
         // Default behavior is to add an injected field for the InternalComponentResources object,
         // so we'll just check that.
@@ -751,7 +761,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         CtClass targetObjectCtClass = findCtClass(ReadOnlyBean.class);
 
         InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory, targetObjectCtClass, null,
-                model, null);
+                model, null, false);
 
         ct.makeReadOnly("_value");
 
@@ -788,7 +798,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         CtClass targetObjectCtClass = findCtClass(ReadOnlyBean.class);
 
         InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory, targetObjectCtClass, null,
-                model, null);
+                model, null, false);
 
         ct.injectField("_value", "Tapestry");
 
@@ -831,7 +841,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         CtClass targetObjectCtClass = findCtClass(FieldAccessBean.class);
 
         InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory, targetObjectCtClass, null,
-                model, null);
+                model, null, false);
 
         replaceAccessToField(ct, "foo");
         replaceAccessToField(ct, "bar");

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.NotFoundException;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.TapestryMarkers;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.model.MutableComponentModelImpl;
@@ -28,6 +29,7 @@ import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.Primary;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.services.CtClassSource;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -62,6 +64,8 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
     private final ComponentClassCache componentClassCache;
 
+    private final boolean developmentMode;
+
     private final OperationTracker tracker;
 
     private final String[] SUBPACKAGES =
@@ -87,6 +91,9 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
     ComponentClassCache componentClassCache,
 
+    @Symbol(SymbolConstants.PRODUCTION_MODE)
+    boolean productionMode,
+
     OperationTracker tracker)
     {
         this.workerChain = workerChain;
@@ -94,6 +101,7 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
         this.classFactory = classFactory;
         this.componentClassCache = componentClassCache;
         this.classSource = classSource;
+        this.developmentMode = !productionMode;
         this.tracker = tracker;
     }
 
@@ -184,7 +192,7 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
                         parentModel);
 
                 InternalClassTransformation transformation = parentTransformation == null ? new InternalClassTransformationImpl(
-                        classFactory, ctClass, componentClassCache, model, classSource)
+                        classFactory, ctClass, componentClassCache, model, classSource, developmentMode)
                         : parentTransformation.createChildTransformation(ctClass, model);
 
                 String transformerDescription = null;

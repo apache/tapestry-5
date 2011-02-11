@@ -1,10 +1,10 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -61,7 +61,7 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
     @BeforeMethod
     public void setup_classpool()
     {
-        //  _classPool = new ClassPool();
+        // _classPool = new ClassPool();
 
         classFactoryClassPool = new ClassFactoryClassPool(contextClassLoader);
 
@@ -113,7 +113,7 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
         replay();
 
         InternalClassTransformation transformation = new InternalClassTransformationImpl(classFactory, ctClass, null,
-                                                                                         model, null);
+                model, null, false);
         new ApplicationStateWorker(manager, cache).transform(transformation, model);
 
         verify();
@@ -159,7 +159,6 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
         verify();
     }
 
-
     @Test
     public void read_field_with_create_disabled() throws Exception
     {
@@ -180,7 +179,7 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
         replay();
 
         InternalClassTransformation transformation = new InternalClassTransformationImpl(classFactory, ctClass, null,
-                                                                                         model, null);
+                model, null, false);
         new ApplicationStateWorker(manager, cache).transform(transformation, model);
 
         verify();
@@ -200,7 +199,6 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
         assertNull(access.get(component, "bean"));
 
         verify();
-
 
         Object aso = new SimpleASO();
 
