@@ -183,6 +183,66 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         verify();
     }
+    
+    @Test
+    public void start_page_in_subfolder()
+    {
+        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
+        ClassNameLocator locator = newClassNameLocator();
+        Logger logger = compliantLogger();
+
+        train_for_app_packages(source);
+
+        String className = APP_ROOT_PACKAGE + ".pages.sub.HomePage";
+
+        train_locateComponentClassNames(locator, APP_ROOT_PACKAGE + ".pages", className);
+
+        replay();
+
+        List<LibraryMapping> mappings = Arrays.asList();
+
+        ComponentClassResolver resolver = new ComponentClassResolverImpl(logger, source, locator, APP_ROOT_PACKAGE,
+                "HomePage", mappings);
+
+        assertEquals(resolver.canonicalizePageName("sub/HomePage"), "sub/HomePage");
+        assertEquals(resolver.canonicalizePageName("sub"), "sub/HomePage");
+        assertTrue(resolver.isPageName("sub/HomePage"));
+
+        verify();
+    }
+    
+    /**
+     * TAP5-1444
+     */
+    @Test
+    public void index_page_precedence()
+    {
+        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
+        ClassNameLocator locator = newClassNameLocator();
+        Logger logger = compliantLogger();
+
+        train_for_app_packages(source);
+
+        String[] classNames = { APP_ROOT_PACKAGE + ".pages.sub.HomePage", APP_ROOT_PACKAGE + ".pages.sub.SubIndex" };
+
+        train_locateComponentClassNames(locator, APP_ROOT_PACKAGE + ".pages", classNames);
+
+        replay();
+        
+        List<LibraryMapping> mappings = Arrays.asList();
+
+        ComponentClassResolver resolver = new ComponentClassResolverImpl(logger, source, locator, APP_ROOT_PACKAGE,
+                "HomePage", mappings);
+
+        assertTrue(resolver.isPageName("sub/HomePage"));
+        assertTrue(resolver.isPageName("sub/subIndex"));
+        assertEquals(resolver.resolvePageNameToClassName("sub/HomePage"), APP_ROOT_PACKAGE + ".pages.sub.HomePage");
+        assertEquals(resolver.resolvePageNameToClassName("sub/SubIndex"), APP_ROOT_PACKAGE + ".pages.sub.SubIndex");
+        assertEquals(resolver.resolvePageNameToClassName("sub/Index"), APP_ROOT_PACKAGE + ".pages.sub.SubIndex");
+        assertEquals(resolver.resolvePageNameToClassName("sub"), APP_ROOT_PACKAGE + ".pages.sub.SubIndex");
+
+        verify();
+    }
 
     @Test
     public void page_name_in_subfolder()
@@ -901,5 +961,27 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
                     "Package names for library folder 'fred' (org.demo.app.sub, org.example.app.main) can not be reduced to a common base package (of at least two terms).");
         }
 
+    }
+    
+    @Test
+    public void ignore_start_page_outside_root()
+    {
+        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
+        ClassNameLocator locator = newClassNameLocator();
+        Logger logger = compliantLogger();
+
+        train_for_app_packages(source);
+
+        String[] classNames = new String[] { APP_ROOT_PACKAGE + ".pages.exam.ExamIndex", APP_ROOT_PACKAGE + ".pages.exam.StartExam" };
+
+        train_locateComponentClassNames(locator, APP_ROOT_PACKAGE + ".pages", classNames);
+
+        replay();
+
+        ComponentClassResolver resolver = create(logger, source, locator);
+
+        assertEquals(resolver.resolvePageNameToClassName("exam"), classNames[0]);
+
+        verify();
     }
 }

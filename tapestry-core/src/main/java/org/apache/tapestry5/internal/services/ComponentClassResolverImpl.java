@@ -322,9 +322,13 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
                     String reducedName = lastSlashx < 0 ? "" : logicalName.substring(0, lastSlashx);
 
                     // Make the super-stripped name another alias to the class.
-
-                    logicalNameToClassName.put(reducedName, name);
-                    pageNameToCanonicalPageName.put(reducedName, logicalName);
+                    // TAP5-1444: Everything else but a start page has precedence
+                    
+                    if (!(lastTerm.equalsIgnoreCase(startPageName) && logicalNameToClassName.containsKey(reducedName)))
+                    {
+                        logicalNameToClassName.put(reducedName, name);
+                        pageNameToCanonicalPageName.put(reducedName, logicalName);
+                    }
                 }
 
                 pageClassNameToLogicalName.put(name, logicalName);
