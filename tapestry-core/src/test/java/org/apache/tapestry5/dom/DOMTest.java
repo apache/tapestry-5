@@ -435,7 +435,7 @@ public class DOMTest extends InternalBaseTestCase
         Document d = new Document(new XMLMarkupModel());
         d.newRootElement("prime");
         d.dtd("prime", null, null);
-        assertEquals(d.toString(), "<?xml version=\"1.0\"?>\n<prime/>");
+        assertEquals(d.toString(), "<?xml version=\"1.0\"?>\n<!DOCTYPE prime><prime/>");
         d.dtd("prime", "-//TF", null);
         assertEquals(d.toString(), "<?xml version=\"1.0\"?>\n<!DOCTYPE prime PUBLIC \"-//TF\"><prime/>");
 
