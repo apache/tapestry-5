@@ -52,5 +52,10 @@ public class DTD
         {
             writer.printf("<!DOCTYPE %s SYSTEM \"%s\">", name, systemId);
         }
+        else
+        {
+            writer.printf("<!DOCTYPE %s>", name);
+        }
+
     }
 }
