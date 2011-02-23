@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -79,7 +80,7 @@ public class ComponentReportTest extends Assert
         try
         {
             initializeMojo(report, ComponentReport.class,
-                           "rootPackage", "org.apache.tapestry5.corelib",
+                           "rootPackages", Arrays.asList("org.apache.tapestry5.corelib"),
                            "apidocs", "apidocs",
                            "tapestryJavadoc", tapestryDoc,
                            "generatedDocsDirectory", tempFolder
@@ -179,7 +180,8 @@ public class ComponentReportTest extends Assert
                 "When it renders, it fires a org.apache.tapestry5.EventConstants#PREPARE_FOR_RENDER\n" +
                         " notification, followed by a org.apache.tapestry5.EventConstants#PREPARE",
                 false,
-                "5.1.0.0"
+                "5.1.0.0",
+                false
         );
 
         ParameterDescription paramDesc = new ParameterDescription(
@@ -187,7 +189,7 @@ public class ComponentReportTest extends Assert
                 "Prefix value used when searching for validation messages and constraints. " +
                         "The default is the Form component's\n" +
                         " id. This is overriden by org.apache.tapestry5.corelib.components.BeanEditForm.",
-                        "5.1.0.0"
+                        "5.1.0.0", false
         );
         classDesc.getParameters().put(paramDesc.getName(), paramDesc);
 

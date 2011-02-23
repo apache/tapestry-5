@@ -79,11 +79,13 @@ public class ParametersDoclet extends Doclet
 
             if (!found) return;
 
-            Map<String, String> annotationValues = findAnnotation(classDoc, "SupportsInformalParameters");
+            Map<String, String> annotationValues = findTapestryAnnotation(classDoc, "SupportsInformalParameters");
+            
+            boolean deprecated = isDeprecated(classDoc);
 
-            println("<class name='%s' super-class='%s'  supports-informal-parameters='%s' since='%s'>",
+            println("<class name='%s' super-class='%s'  supports-informal-parameters='%s' since='%s' deprecated='%s'>",
                     classDoc.qualifiedTypeName(),
-                    classDoc.superclass().qualifiedTypeName(), annotationValues != null, getSinceTagValue(classDoc));
+                    classDoc.superclass().qualifiedTypeName(), annotationValues != null, getSinceTagValue(classDoc), deprecated);
             print("<description>");
             printDescription(classDoc);
             println("</description>", classDoc.commentText());
@@ -94,7 +96,7 @@ public class ParametersDoclet extends Doclet
 
                 if (!fd.isPrivate()) continue;
 
-                Map<String, String> parameterAnnotationsValues = findAnnotation(fd, "Parameter");
+                Map<String, String> parameterAnnotationsValues = findTapestryAnnotation(fd, "Parameter");
 
                 if (parameterAnnotationsValues != null)
                 {
@@ -103,7 +105,7 @@ public class ParametersDoclet extends Doclet
                     continue;
                 }
 
-                Map<String, String> componentAnnotationValues = findAnnotation(fd, "Component");
+                Map<String, String> componentAnnotationValues = findTapestryAnnotation(fd, "Component");
 
                 if (componentAnnotationValues != null)
                 {
@@ -118,6 +120,11 @@ public class ParametersDoclet extends Doclet
 
 
             println("</class>");
+        }
+        
+        private boolean isDeprecated(ProgramElementDoc classDoc)
+        {
+        	return (findAnnotation(classDoc, "java.lang.Deprecated") != null) || (0 < classDoc.tags("deprecated").length);
         }
 
         private void emitEvents(ClassDoc classDoc)
@@ -175,10 +182,10 @@ public class ParametersDoclet extends Doclet
             if (name == null) name = fd.name().replaceAll("^[$_]*", "");
 
             print("<parameter name='%s' type='%s' default='%s' required='%s' cache='%s' " +
-                    "default-prefix='%s' since='%s'>",
+                    "default-prefix='%s' since='%s' deprecated='%s'>",
                   name, fd.type().qualifiedTypeName(), get(parameterAnnotationValues, "value", ""),
                   get(parameterAnnotationValues, "required", "false"), get(parameterAnnotationValues, "cache", "true"),
-                  get(parameterAnnotationValues, "defaultPrefix", "prop"), getSinceTagValue(fd));
+                  get(parameterAnnotationValues, "defaultPrefix", "prop"), getSinceTagValue(fd), isDeprecated(fd));
 
             // Body of a parameter is the comment text.
 
@@ -189,9 +196,14 @@ public class ParametersDoclet extends Doclet
 
         private String getSinceTagValue(Doc doc)
         {
-            Tag[] sinceTags = doc.tags("since");
+            return getTagValue(doc, "since");
+        }
+        
+        private String getTagValue(Doc doc, String tagName)
+        {
+            Tag[] tags = doc.tags(tagName);
 
-            return 0 < sinceTags.length ? sinceTags[0].text() : "";
+            return 0 < tags.length ? tags[0].text() : "";
         }
 
         private String get(Map<String, String> map, String key, String defaultValue)
@@ -200,13 +212,17 @@ public class ParametersDoclet extends Doclet
 
             return defaultValue;
         }
-
-        private Map<String, String> findAnnotation(ProgramElementDoc doc, String name)
+        
+        private Map<String, String> findTapestryAnnotation(ProgramElementDoc doc, String name)
+       {
+           return findAnnotation(doc, "org.apache.tapestry5.annotations." + name);
+       }
+ 
+         private Map<String, String> findAnnotation(ProgramElementDoc doc, String name)
         {
             for (AnnotationDesc annotation : doc.annotations())
             {
-                if (annotation.annotationType().qualifiedTypeName().equals(
-                        "org.apache.tapestry5.annotations." + name))
+                if (annotation.annotationType().qualifiedTypeName().equals(name))
                 {
                     Map<String, String> result = new HashMap<String, String>();
 

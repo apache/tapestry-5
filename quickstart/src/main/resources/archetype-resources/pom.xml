@@ -85,7 +85,9 @@ of testing facilities designed for use with TestNG (http://testng.org/), so it's
                 <artifactId>tapestry-component-report</artifactId>
                 <version>${D}{tapestry-release-version}</version>
                 <configuration>
-                    <rootPackage>${package}</rootPackage>
+                    <rootPackages>
+                    	<rootPackage>${package}</rootPackage>
+                    </rootPackages>
                 </configuration>
             </plugin>
         </plugins>

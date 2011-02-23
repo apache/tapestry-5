@@ -117,7 +117,9 @@
                 <artifactId>tapestry-component-report</artifactId>
                 <version>${project.version}</version>
                 <configuration>
-                    <rootPackage>org.apache.tapestry5.upload</rootPackage>
+                	<rootPackages>
+                    	<rootPackage>org.apache.tapestry5.upload</rootPackage>
+                	</rootPackages>
                     <apidocs>../apidocs</apidocs>
                     <tapestryJavadoc>../apidocs</tapestryJavadoc>
                 </configuration>

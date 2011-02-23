@@ -33,10 +33,12 @@ public class ParameterDescription
     private final String description;
     
     private final String since;
+    
+    private final boolean deprecated;
 
     public ParameterDescription(String name, String type, String defaultValue,
                                 String defaultPrefix, boolean required, boolean allowNull, boolean cache,
-                                String description, String since)
+                                String description, String since, boolean deprecated)
     {
         this.name = name;
         this.type = type;
@@ -47,6 +49,7 @@ public class ParameterDescription
         this.cache = cache;
         this.description = description;
         this.since = since;
+        this.deprecated = deprecated;
     }
 
     public boolean getCache()
@@ -92,5 +95,9 @@ public class ParameterDescription
 	public String getSince() 
 	{
 		return since;
+	}
+
+	public boolean isDeprecated() {
+		return deprecated;
 	}
 }

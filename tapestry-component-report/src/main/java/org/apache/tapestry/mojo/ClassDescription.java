@@ -35,15 +35,18 @@ public class ClassDescription
     private final Map<String, String> events = CollectionFactory.newCaseInsensitiveMap();
 
     private final String since;
+    
+    private final boolean deprecated;
 
-    public ClassDescription(String className, String superClassName, String description,
-                            boolean supportsInformalParameters, String since)
+	public ClassDescription(String className, String superClassName, String description,
+                            boolean supportsInformalParameters, String since, boolean deprecated)
     {
         this.className = className;
         this.superClassName = superClassName;
         this.description = description;
         this.supportsInformalParameters = supportsInformalParameters;
         this.since = since;
+        this.deprecated = deprecated;
     }
 
     public String getClassName()
@@ -75,6 +78,11 @@ public class ClassDescription
     {
         return since;
     }
+    
+    public boolean isDeprecated() 
+    {
+		return deprecated;
+	}
 
     /**
      * Case insensitive map, keyed on parameter name, value is class name of component from which the parameter is
