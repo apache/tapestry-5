@@ -597,13 +597,9 @@ public final class TapestryModule
     @Autobuild
     StackAssetRequestHandler stackAssetRequestHandler,
 
-    ResourceCache resourceCache,
-
     ClasspathAssetAliasManager classpathAssetAliasManager, ResourceStreamer streamer,
             AssetResourceLocator assetResourceLocator)
     {
-        resourceCache.addInvalidationListener(stackAssetRequestHandler);
-
         Map<String, String> mappings = classpathAssetAliasManager.getMappings();
 
         for (String folder : mappings.keySet())
@@ -1347,12 +1343,12 @@ public final class TapestryModule
     }
 
     @Marker(ClasspathProvider.class)
-    public AssetFactory buildClasspathAssetFactory(ResourceCache resourceCache,
+    public AssetFactory buildClasspathAssetFactory(ResourceDigestManager resourceDigestManager,
             ClasspathAssetAliasManager aliasManager, AssetPathConverter converter)
     {
-        ClasspathAssetFactory factory = new ClasspathAssetFactory(resourceCache, aliasManager, converter);
+        ClasspathAssetFactory factory = new ClasspathAssetFactory(resourceDigestManager, aliasManager, converter);
 
-        resourceCache.addInvalidationListener(factory);
+        resourceDigestManager.addInvalidationListener(factory);
 
         return factory;
     }

@@ -40,12 +40,16 @@ public class StreamableResourceSourceImpl implements StreamableResourceSource
 
     private final CompressionAnalyzer compressionAnalyzer;
 
+    private final ResourceChangeTracker resourceChangeTracker;
+
     public StreamableResourceSourceImpl(Map<String, ResourceTransformer> configuration,
-            ContentTypeAnalyzer contentTypeAnalyzer, CompressionAnalyzer compressionAnalyzer)
+            ContentTypeAnalyzer contentTypeAnalyzer, CompressionAnalyzer compressionAnalyzer,
+            ResourceChangeTracker resourceChangeTracker)
     {
         this.configuration = configuration;
         this.contentTypeAnalyzer = contentTypeAnalyzer;
         this.compressionAnalyzer = compressionAnalyzer;
+        this.resourceChangeTracker = resourceChangeTracker;
     }
 
     public StreamableResource getStreamableResource(Resource baseResource, Set<StreamableResourceFeature> features)
@@ -78,8 +82,10 @@ public class StreamableResourceSourceImpl implements StreamableResourceSource
 
         boolean compressable = compressionAnalyzer.isCompressable(contentType);
 
+        long lastModified = resourceChangeTracker.trackResource(baseResource);
+
         return new StreamableResourceImpl(contentType, compressable ? CompressionStatus.COMPRESSABLE
-                : CompressionStatus.NOT_COMPRESSABLE, bytestreamCache);
+                : CompressionStatus.NOT_COMPRESSABLE, lastModified, bytestreamCache);
     }
 
     private BytestreamCache readStream(InputStream stream) throws IOException

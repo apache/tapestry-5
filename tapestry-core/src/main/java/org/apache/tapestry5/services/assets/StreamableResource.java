@@ -43,4 +43,10 @@ public interface StreamableResource
      * the output stream.
      */
     void streamTo(OutputStream os) throws IOException;
+
+    /**
+     * Returns the time the resource was last modified, with accuracy to one second (so as to match
+     * the HTTP request/response date headers.
+     */
+    long getLastModified();
 }

@@ -28,14 +28,13 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.services.assets.CompressionStatus;
+import org.apache.tapestry5.services.assets.StreamableResource;
 import org.apache.tapestry5.services.assets.StreamableResourceFeature;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
 
 public class ResourceStreamerImpl implements ResourceStreamer
 {
     static final String IF_MODIFIED_SINCE_HEADER = "If-Modified-Since";
-
-    private final ResourceCache resourceCache;
 
     private final Request request;
 
@@ -53,8 +52,6 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
     StreamableResourceSource streamableResourceSource,
 
-    ResourceCache resourceCache,
-
     ResponseCompressionAnalyzer analyzer,
 
     @Symbol(SymbolConstants.PRODUCTION_MODE)
@@ -64,7 +61,6 @@ public class ResourceStreamerImpl implements ResourceStreamer
         this.response = response;
         this.streamableResourceSource = streamableResourceSource;
 
-        this.resourceCache = resourceCache;
         this.analyzer = analyzer;
         this.productionMode = productionMode;
     }
@@ -79,7 +75,12 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
         long ifModifiedSince = 0;
 
-        long modified = resourceCache.getTimeModified(resource);
+        Set<StreamableResourceFeature> features = analyzer.isGZipSupported() ? StreamableResourceFeature.ALL
+                : StreamableResourceFeature.NO_COMPRESSION;
+
+        StreamableResource streamable = streamableResourceSource.getStreamableResource(resource, features);
+
+        long lastModified = streamable.getLastModified();
 
         try
         {
@@ -94,27 +95,16 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
         if (ifModifiedSince > 0)
         {
-            if (ifModifiedSince >= modified)
+            if (ifModifiedSince >= lastModified)
             {
                 response.sendError(HttpServletResponse.SC_NOT_MODIFIED, "");
                 return;
             }
         }
 
-        Set<StreamableResourceFeature> features = analyzer.isGZipSupported() ? StreamableResourceFeature.ALL
-                : StreamableResourceFeature.NO_COMPRESSION;
-
-        org.apache.tapestry5.services.assets.StreamableResource streamable = streamableResourceSource
-                .getStreamableResource(resource, features);
-
         // Prevent the upstream code from compressing when we don't want to.
 
         response.disableCompression();
-
-        // TODO: This may be broken, as we want the lastModified with only 1 second precision, which is
-        // as much as can be expressed via the HTTP header.
-
-        long lastModified = modified;
 
         response.setDateHeader("Last-Modified", lastModified);
 

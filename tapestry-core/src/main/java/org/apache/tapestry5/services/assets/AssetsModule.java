@@ -64,7 +64,15 @@ public class AssetsModule
             @Symbol(SymbolConstants.GZIP_COMPRESSION_ENABLED)
             boolean gzipEnabled, ResourceChangeTracker tracker)
     {
-        return gzipEnabled ? new SRSCompressedCachingInterceptor(tracker, delegate) : null;
+        if (!gzipEnabled)
+            return null;
+
+        SRSCompressedCachingInterceptor interceptor = new SRSCompressedCachingInterceptor(tracker,
+                delegate);
+
+        tracker.addInvalidationListener(interceptor);
+
+        return interceptor;
     }
 
     @Decorate(id = "Cache", serviceInterface = StreamableResourceSource.class)
@@ -72,7 +80,11 @@ public class AssetsModule
     public StreamableResourceSource enableUncompressedCaching(StreamableResourceSource delegate,
             ResourceChangeTracker tracker)
     {
-        return new SRSCachingInterceptor(tracker, delegate);
+        SRSCachingInterceptor interceptor = new SRSCachingInterceptor(tracker, delegate);
+
+        tracker.addInvalidationListener(interceptor);
+
+        return interceptor;
     }
 
     /**

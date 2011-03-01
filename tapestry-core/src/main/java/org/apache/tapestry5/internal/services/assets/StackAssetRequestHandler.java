@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import java.util.zip.GZIPOutputStream;
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.internal.services.ResourceCache;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -119,7 +118,7 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
         return true;
     }
 
-    /** Notified by the {@link ResourceCache} when resource files change; the internal caches are cleared. */
+    /** Notified by the {@link ResourceChangeTracker} when (any) resource files change; the internal caches are cleared. */
     public synchronized void objectWasInvalidated()
     {
         uncompressedCache.clear();

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-public class ResourceCacheImplTest extends InternalBaseTestCase
+public class ResourceDigestManagerTest extends InternalBaseTestCase
 {
     private static final String PATH = "foo/Bar.gif";
 
@@ -67,7 +67,7 @@ public class ResourceCacheImplTest extends InternalBaseTestCase
 
         replay();
 
-        ResourceCacheImpl cache = new ResourceCacheImpl(generator, resourceChangeTracker);
+        ResourceDigestManagerImpl cache = new ResourceDigestManagerImpl(generator, resourceChangeTracker);
 
         assertEquals(cache.requiresDigest(r), false);
         assertEquals(cache.getTimeModified(r), lastUpdated);
@@ -90,10 +90,10 @@ public class ResourceCacheImplTest extends InternalBaseTestCase
 
         replay();
 
-        ResourceCacheImpl cache = new ResourceCacheImpl(generator, null);
+        ResourceDigestManagerImpl cache = new ResourceDigestManagerImpl(generator, null);
 
         assertEquals(cache.requiresDigest(r), true);
-        assertEquals(cache.getTimeModified(r), ResourceCacheImpl.MISSING_RESOURCE_TIME_MODIFIED);
+        assertEquals(cache.getTimeModified(r), ResourceDigestManagerImpl.MISSING_RESOURCE_TIME_MODIFIED);
         assertEquals(cache.getDigest(r), null);
 
         verify();
@@ -119,7 +119,7 @@ public class ResourceCacheImplTest extends InternalBaseTestCase
 
         replay();
 
-        ResourceCacheImpl cache = new ResourceCacheImpl(generator, resourceChangeTracker);
+        ResourceDigestManagerImpl cache = new ResourceDigestManagerImpl(generator, resourceChangeTracker);
 
         assertEquals(cache.requiresDigest(r), true);
         assertEquals(cache.getTimeModified(r), lastUpdated);
@@ -149,7 +149,7 @@ public class ResourceCacheImplTest extends InternalBaseTestCase
 
         replay();
 
-        ResourceCacheImpl cache = new ResourceCacheImpl(generator, resourceChangeTracker);
+        ResourceDigestManagerImpl cache = new ResourceDigestManagerImpl(generator, resourceChangeTracker);
         cache.listenForInvalidations();
         cache.addInvalidationListener(listener);
 

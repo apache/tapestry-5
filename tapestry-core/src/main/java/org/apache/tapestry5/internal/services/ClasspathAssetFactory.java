@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,13 +27,13 @@ import java.util.Map;
 
 /**
  * Generates Assets for files on the classpath. Caches generated client URLs internally, and clears that cache when
- * notified to do so by the {@link ResourceCache}.
+ * notified to do so by the {@link ResourceDigestManager}.
  *
  * @see AssetDispatcher
  */
 public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
 {
-    private final ResourceCache cache;
+    private final ResourceDigestManager digestManager;
 
     private final ClasspathAssetAliasManager aliasManager;
 
@@ -45,10 +45,10 @@ public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
 
     private final boolean invariant;
 
-    public ClasspathAssetFactory(ResourceCache cache, ClasspathAssetAliasManager aliasManager,
+    public ClasspathAssetFactory(ResourceDigestManager digestManager, ClasspathAssetAliasManager aliasManager,
                                  AssetPathConverter converter)
     {
-        this.cache = cache;
+        this.digestManager = digestManager;
         this.aliasManager = aliasManager;
         this.converter = converter;
 
@@ -78,7 +78,7 @@ public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
 
     private String buildDefaultPath(Resource resource)
     {
-        boolean requiresDigest = cache.requiresDigest(resource);
+        boolean requiresDigest = digestManager.requiresDigest(resource);
 
         String path = resource.getPath();
 
@@ -88,7 +88,7 @@ public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
 
             int lastdotx = path.lastIndexOf('.');
 
-            path = path.substring(0, lastdotx + 1) + cache.getDigest(resource) + path.substring(lastdotx);
+            path = path.substring(0, lastdotx + 1) + digestManager.getDigest(resource) + path.substring(lastdotx);
         }
 
         return aliasManager.toClientURL(path);

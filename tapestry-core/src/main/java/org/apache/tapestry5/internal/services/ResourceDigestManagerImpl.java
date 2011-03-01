@@ -24,7 +24,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.ResourceDigestGenerator;
 
-public class ResourceCacheImpl implements ResourceCache, InvalidationListener
+public class ResourceDigestManagerImpl implements ResourceDigestManager, InvalidationListener
 {
     private final ResourceDigestGenerator digestGenerator;
 
@@ -54,7 +54,8 @@ public class ResourceCacheImpl implements ResourceCache, InvalidationListener
         }
     }
 
-    public ResourceCacheImpl(ResourceDigestGenerator digestGenerator, ResourceChangeTracker resourceChangeTracker)
+    public ResourceDigestManagerImpl(ResourceDigestGenerator digestGenerator,
+            ResourceChangeTracker resourceChangeTracker)
     {
         this.digestGenerator = digestGenerator;
         this.resourceChangeTracker = resourceChangeTracker;

@@ -101,7 +101,7 @@ public class InternalModule
         binder.bind(AssetResourceLocator.class);
         binder.bind(JavaScriptStackPathConstructor.class);
         binder.bind(AjaxFormUpdateController.class);
-        binder.bind(ResourceCache.class, ResourceCacheImpl.class);
+        binder.bind(ResourceDigestManager.class, ResourceDigestManagerImpl.class);
     }
 
     /**

@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,15 +24,15 @@ import org.apache.tapestry5.services.Response;
 
 public class AssetResourceLocatorImpl implements AssetResourceLocator
 {
-    private final ResourceCache resourceCache;
+    private final ResourceDigestManager digestManager;
 
     private final Response response;
 
     private final AssetSource assetSource;
 
-    public AssetResourceLocatorImpl(ResourceCache resourceCache, Response response, AssetSource assetSource)
+    public AssetResourceLocatorImpl(ResourceDigestManager digestManager, Response response, AssetSource assetSource)
     {
-        this.resourceCache = resourceCache;
+        this.digestManager = digestManager;
         this.response = response;
         this.assetSource = assetSource;
     }
@@ -41,14 +41,14 @@ public class AssetResourceLocatorImpl implements AssetResourceLocator
     {
         Resource resource = assetSource.resourceForPath(path);
 
-        if (!resourceCache.requiresDigest(resource))
+        if (!digestManager.requiresDigest(resource))
             return resource;
 
         return validateChecksumOfClasspathResource(resource);
     }
 
     /**
-     * Validates the checksome encoded into the resource, and returns the true resource (with the checksum
+     * Validates the checksum encoded into the resource, and returns the true resource (with the checksum
      * portion removed from the file name).
      */
     private Resource validateChecksumOfClasspathResource(Resource resource) throws IOException
@@ -77,7 +77,7 @@ public class AssetResourceLocatorImpl implements AssetResourceLocator
 
                 result = resource.forFile(realFile);
 
-                String actualDigest = resourceCache.getDigest(result);
+                String actualDigest = digestManager.getDigest(result);
 
                 valid = requestDigest.equals(actualDigest);
             }

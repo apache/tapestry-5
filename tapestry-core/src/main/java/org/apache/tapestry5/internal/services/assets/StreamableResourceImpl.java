@@ -26,12 +26,16 @@ public class StreamableResourceImpl implements StreamableResource
 
     private final CompressionStatus compression;
 
+    private final long lastModified;
+
     private final BytestreamCache bytestreamCache;
 
-    public StreamableResourceImpl(String contentType, CompressionStatus compression, BytestreamCache bytestreamCache)
+    public StreamableResourceImpl(String contentType, CompressionStatus compression, long lastModified,
+            BytestreamCache bytestreamCache)
     {
         this.contentType = contentType;
         this.compression = compression;
+        this.lastModified = lastModified;
         this.bytestreamCache = bytestreamCache;
     }
 
@@ -50,6 +54,11 @@ public class StreamableResourceImpl implements StreamableResource
         return bytestreamCache.size();
     }
 
+    public long getLastModified()
+    {
+        return lastModified;
+    }
+
     public void streamTo(OutputStream os) throws IOException
     {
         bytestreamCache.writeTo(os);
@@ -58,6 +67,7 @@ public class StreamableResourceImpl implements StreamableResource
     @Override
     public String toString()
     {
-        return String.format("StreamableResource<%s %s size: %d>", contentType, compression.name(), getSize());
+        return String.format("StreamableResource<%s %s lastModified: %tc size: %d>", contentType, compression.name(),
+                lastModified, getSize());
     }
 }

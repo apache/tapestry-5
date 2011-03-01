@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,13 +29,13 @@ public class ClasspathAssetFactoryTest extends InternalBaseTestCase
     @Test
     public void asset_client_URL_is_cached()
     {
-        ResourceCache cache = mockResourceCache();
+        ResourceDigestManager digestManager = mockResourceResourceDigestManager();
 
         Resource r = new ClasspathResource("foo/Bar.txt");
 
         ClasspathAssetAliasManager aliasManager = mockClasspathAssetAliasManager();
 
-        train_requiresDigest(cache, r, false);
+        train_requiresDigest(digestManager, r, false);
 
         String expectedClientURL = "/context/asset/foo/Bar.txt";
 
@@ -43,8 +43,7 @@ public class ClasspathAssetFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        ClasspathAssetFactory factory = new ClasspathAssetFactory(cache, aliasManager,
-                                                                  converter);
+        ClasspathAssetFactory factory = new ClasspathAssetFactory(digestManager, aliasManager, converter);
 
         Asset asset = factory.createAsset(r);
 
@@ -57,7 +56,7 @@ public class ClasspathAssetFactoryTest extends InternalBaseTestCase
         verify();
 
         // Now, to test cache clearing:
-        train_requiresDigest(cache, r, false);
+        train_requiresDigest(digestManager, r, false);
 
         train_toClientURL(aliasManager, "foo/Bar.txt", expectedClientURL);
 
@@ -73,12 +72,12 @@ public class ClasspathAssetFactoryTest extends InternalBaseTestCase
     @Test
     public void simple_asset_client_URL()
     {
-        ResourceCache cache = mockResourceCache();
+        ResourceDigestManager digestManager = mockResourceResourceDigestManager();
         ClasspathAssetAliasManager aliasManager = mockClasspathAssetAliasManager();
 
         Resource r = new ClasspathResource("foo/Bar.txt");
 
-        train_requiresDigest(cache, r, false);
+        train_requiresDigest(digestManager, r, false);
 
         String expectedClientURL = "/context/asset/foo/Bar.txt";
 
@@ -86,7 +85,7 @@ public class ClasspathAssetFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        AssetFactory factory = new ClasspathAssetFactory(cache, aliasManager, new IdentityAssetPathConverter());
+        AssetFactory factory = new ClasspathAssetFactory(digestManager, aliasManager, new IdentityAssetPathConverter());
 
         Asset asset = factory.createAsset(r);
 
@@ -100,14 +99,14 @@ public class ClasspathAssetFactoryTest extends InternalBaseTestCase
     @Test
     public void protected_asset_client_URL()
     {
-        ResourceCache cache = mockResourceCache();
+        ResourceDigestManager digestManager = mockResourceResourceDigestManager();
         ClasspathAssetAliasManager aliasManager = mockClasspathAssetAliasManager();
 
         Resource r = new ClasspathResource("foo/Bar.txt");
 
-        train_requiresDigest(cache, r, true);
+        train_requiresDigest(digestManager, r, true);
 
-        expect(cache.getDigest(r)).andReturn("ABC123");
+        expect(digestManager.getDigest(r)).andReturn("ABC123");
 
         String expectedClientURL = "/context/asset/foo/Bar.ABC123.txt";
 
@@ -115,7 +114,7 @@ public class ClasspathAssetFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        AssetFactory factory = new ClasspathAssetFactory(cache, aliasManager, new IdentityAssetPathConverter());
+        AssetFactory factory = new ClasspathAssetFactory(digestManager, aliasManager, new IdentityAssetPathConverter());
 
         Asset asset = factory.createAsset(r);
 

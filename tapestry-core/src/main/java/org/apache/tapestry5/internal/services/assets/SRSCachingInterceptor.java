@@ -43,13 +43,6 @@ public class SRSCachingInterceptor implements StreamableResourceSource, Invalida
         this.delegate = delegate;
     }
 
-    // See Brian's thread safety book for why it's better for this logic to be outside the constructor
-    @PostInjection
-    public void registerAsInvalidationListener()
-    {
-        tracker.addInvalidationListener(this);
-    }
-
     public StreamableResource getStreamableResource(Resource baseResource, Set<StreamableResourceFeature> features)
             throws IOException
     {
