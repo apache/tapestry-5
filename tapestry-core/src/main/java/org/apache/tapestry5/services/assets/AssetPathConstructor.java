@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 package org.apache.tapestry5.services.assets;
 
 /**
- * Encapslates the logic or creating the path portion of an asset URL, including
+ * Encapsulates the logic or creating the path portion of an asset URL, including
  * the application version.
  * 
  * @since 5.2.0
