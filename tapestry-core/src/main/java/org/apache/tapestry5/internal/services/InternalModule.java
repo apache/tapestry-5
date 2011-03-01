@@ -38,7 +38,17 @@ import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.ComponentClasses;
+import org.apache.tapestry5.services.ComponentLayer;
+import org.apache.tapestry5.services.ComponentMessages;
+import org.apache.tapestry5.services.ComponentTemplates;
+import org.apache.tapestry5.services.Core;
+import org.apache.tapestry5.services.InvalidationEventHub;
+import org.apache.tapestry5.services.LinkCreationListener2;
+import org.apache.tapestry5.services.LocalizationSetter;
+import org.apache.tapestry5.services.RequestGlobals;
+import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
+import org.apache.tapestry5.services.UpdateListenerHub;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
 import org.slf4j.Logger;
 
@@ -91,6 +101,7 @@ public class InternalModule
         binder.bind(AssetResourceLocator.class);
         binder.bind(JavaScriptStackPathConstructor.class);
         binder.bind(AjaxFormUpdateController.class);
+        binder.bind(ResourceCache.class, ResourceCacheImpl.class);
     }
 
     /**
@@ -261,14 +272,6 @@ public class InternalModule
                 requestGlobals.getHTTPServletResponse().addCookie(cookie);
             }
         };
-    }
-
-    public ResourceCache buildResourceCache(@Autobuild
-    ResourceCacheImpl service)
-    {
-        updateListenerHub.addUpdateListener(service);
-
-        return service;
     }
 
     public ComponentTemplateSource buildComponentTemplateSource(TemplateParser parser, @Primary

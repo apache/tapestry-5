@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,25 +14,39 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
-import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
-import org.apache.tapestry5.services.InvalidationListener;
-import org.apache.tapestry5.services.ResourceDigestGenerator;
-import org.testng.annotations.Test;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+
+import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
+import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.services.InvalidationListener;
+import org.apache.tapestry5.services.ResourceDigestGenerator;
+import org.apache.tapestry5.services.UpdateListenerHub;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 public class ResourceCacheImplTest extends InternalBaseTestCase
 {
     private static final String PATH = "foo/Bar.gif";
 
     private static final String DIGEST = "abc123";
-    
-    private final ClasspathURLConverter converter = new ClasspathURLConverterImpl();
+
+    private ResourceChangeTracker resourceChangeTracker;
+
+    @BeforeClass
+    public void setup()
+    {
+        resourceChangeTracker = getService(ResourceChangeTracker.class);
+    }
+
+    @AfterClass
+    public void cleanup()
+    {
+        resourceChangeTracker = null;
+    }
 
     @Test
     public void properties_for_simple_resource() throws Exception
@@ -53,7 +67,7 @@ public class ResourceCacheImplTest extends InternalBaseTestCase
 
         replay();
 
-        ResourceCacheImpl cache = new ResourceCacheImpl(generator, converter);
+        ResourceCacheImpl cache = new ResourceCacheImpl(generator, resourceChangeTracker);
 
         assertEquals(cache.requiresDigest(r), false);
         assertEquals(cache.getTimeModified(r), lastUpdated);
@@ -76,7 +90,7 @@ public class ResourceCacheImplTest extends InternalBaseTestCase
 
         replay();
 
-        ResourceCacheImpl cache = new ResourceCacheImpl(generator, converter);
+        ResourceCacheImpl cache = new ResourceCacheImpl(generator, null);
 
         assertEquals(cache.requiresDigest(r), true);
         assertEquals(cache.getTimeModified(r), ResourceCacheImpl.MISSING_RESOURCE_TIME_MODIFIED);
@@ -105,7 +119,7 @@ public class ResourceCacheImplTest extends InternalBaseTestCase
 
         replay();
 
-        ResourceCacheImpl cache = new ResourceCacheImpl(generator, converter);
+        ResourceCacheImpl cache = new ResourceCacheImpl(generator, resourceChangeTracker);
 
         assertEquals(cache.requiresDigest(r), true);
         assertEquals(cache.getTimeModified(r), lastUpdated);
@@ -117,6 +131,7 @@ public class ResourceCacheImplTest extends InternalBaseTestCase
     @Test
     public void caching_and_invalidation() throws Exception
     {
+        // Alas, mixing and matching live code with mocks
         ResourceDigestGenerator generator = mockResourceDigestGenerator();
         InvalidationListener listener = mockInvalidationListener();
         File f = createTestFile();
@@ -134,16 +149,16 @@ public class ResourceCacheImplTest extends InternalBaseTestCase
 
         replay();
 
-        ResourceCacheImpl cache = new ResourceCacheImpl(generator, converter);
+        ResourceCacheImpl cache = new ResourceCacheImpl(generator, resourceChangeTracker);
+        cache.listenForInvalidations();
         cache.addInvalidationListener(listener);
 
         assertEquals(cache.requiresDigest(r), true);
         assertEquals(cache.getTimeModified(r), lastUpdated);
         assertEquals(cache.getDigest(r), DIGEST);
 
-        // No updates yet.
-
-        cache.checkForUpdates();
+        // No updates yet
+        getService(UpdateListenerHub.class).fireCheckForUpdates();
 
         verify();
 
@@ -164,7 +179,7 @@ public class ResourceCacheImplTest extends InternalBaseTestCase
 
         replay();
 
-        cache.checkForUpdates();
+        getService(UpdateListenerHub.class).fireCheckForUpdates();
 
         assertEquals(cache.requiresDigest(r), true);
         assertEquals(cache.getTimeModified(r), lastUpdated);

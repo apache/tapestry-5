@@ -16,7 +16,6 @@ package org.apache.tapestry5.internal.services.assets;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -29,10 +28,9 @@ import java.util.zip.GZIPOutputStream;
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.ResourceCache;
-import org.apache.tapestry5.internal.services.StreamableResource;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.json.JSONArray;
@@ -42,12 +40,15 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
+import org.apache.tapestry5.services.assets.StreamableResource;
+import org.apache.tapestry5.services.assets.StreamableResourceFeature;
+import org.apache.tapestry5.services.assets.StreamableResourceSource;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
 
 public class StackAssetRequestHandler implements AssetRequestHandler, InvalidationListener
 {
-    private final ResourceCache resourceCache;
+    private final StreamableResourceSource streamableResourceSource;
 
     private final JavaScriptStackSource javascriptStackSource;
 
@@ -64,17 +65,24 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
 
     private final Map<String, BytestreamCache> compressedCache = CollectionFactory.newCaseInsensitiveMap();
 
-    public StackAssetRequestHandler(ResourceCache resourceCache, JavaScriptStackSource javascriptStackSource,
-            LocalizationSetter localizationSetter, ResponseCompressionAnalyzer compressionAnalyzer,
+    public StackAssetRequestHandler(StreamableResourceSource streamableResourceSource,
+            JavaScriptStackSource javascriptStackSource, LocalizationSetter localizationSetter,
+            ResponseCompressionAnalyzer compressionAnalyzer,
 
             @Symbol(SymbolConstants.PRODUCTION_MODE)
             boolean productionMode)
     {
-        this.resourceCache = resourceCache;
+        this.streamableResourceSource = streamableResourceSource;
         this.javascriptStackSource = javascriptStackSource;
         this.localizationSetter = localizationSetter;
         this.compressionAnalyzer = compressionAnalyzer;
         this.productionMode = productionMode;
+    }
+
+    @PostInjection
+    public void listenToInvalidations(ResourceChangeTracker resourceChangeTracker)
+    {
+        resourceChangeTracker.addInvalidationListener(this);
     }
 
     public boolean handleAssetRequest(Request request, Response response, String extraPath) throws IOException
@@ -91,6 +99,8 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
 
         if (productionMode)
             response.setDateHeader("Expires", lastModified + InternalConstants.TEN_YEARS);
+
+        response.disableCompression();
 
         response.setContentLength(cachedStream.size());
 
@@ -201,11 +211,10 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
     {
         Resource resource = library.getResource();
 
-        StreamableResource streamable = resourceCache.getStreamableResource(resource);
+        StreamableResource streamable = streamableResourceSource.getStreamableResource(resource,
+                StreamableResourceFeature.NONE);
 
-        InputStream inputStream = streamable.getStream(false);
-
-        TapestryInternalUtils.copy(inputStream, outputStream);
+        streamable.streamTo(outputStream);
     }
 
     private BytestreamCache compressStream(BytestreamCache uncompressed) throws IOException

@@ -226,6 +226,7 @@ import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.ajax.MultiZoneUpdateEventResultProcessor;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
+import org.apache.tapestry5.services.assets.AssetsModule;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
@@ -255,7 +256,8 @@ import org.slf4j.Logger;
  * The root module for Tapestry.
  */
 @Marker(Core.class)
-@SubModule(InternalModule.class)
+@SubModule(
+{ InternalModule.class, AssetsModule.class })
 public final class TapestryModule
 {
     private final PipelineBuilder pipelineBuilder;
@@ -288,7 +290,7 @@ public final class TapestryModule
      * these service are defined by the module itself, that's ok because
      * services are always lazy proxies). This isn't
      * about efficiency (it may be slightly more efficient, but not in any
-     * noticable way), it's about eliminating the
+     * noticeable way), it's about eliminating the
      * need to keep injecting these dependencies into individual service builder
      * and contribution methods.
      */
@@ -332,7 +334,7 @@ public final class TapestryModule
 
     // A bunch of classes "promoted" from inline inner class to nested classes,
     // just so that the stack trace would be more readable. Most of these
-    // are teminators for pipeline services.
+    // are terminators for pipeline services.
 
     /**
      * @since 5.1.0.0
@@ -2505,34 +2507,6 @@ public final class TapestryModule
     }
 
     /**
-     * Adds content types:
-     * <dl>
-     * <dt>css</dt>
-     * <dd>text/css</dd>
-     * <dt>js</dt>
-     * <dd>text/javascript</dd>
-     * <dt>jpg, jpeg</dt>
-     * <dd>image/jpeg</dd>
-     * <dt>gif</dt>
-     * <dd>image/gif</dd>
-     * <dt>png</dt>
-     * <dd>image/png</dd>
-     * <dt>swf</dt>
-     * <dd>application/x-shockwave-flash</dd>
-     * </dl>
-     */
-    public void contributeResourceStreamer(MappedConfiguration<String, String> configuration)
-    {
-        configuration.add("css", "text/css");
-        configuration.add("js", "text/javascript");
-        configuration.add("gif", "image/gif");
-        configuration.add("jpg", "image/jpeg");
-        configuration.add("jpeg", "image/jpeg");
-        configuration.add("png", "image/png");
-        configuration.add("swf", "application/x-shockwave-flash");
-    }
-
-    /**
      * Adds a listener to the {@link org.apache.tapestry5.internal.services.ComponentInstantiatorSource} that clears the
      * {@link PropertyAccess} and {@link TypeCoercer} caches on
      * a class loader invalidation. In addition, forces the
@@ -2753,26 +2727,6 @@ public final class TapestryModule
         configuration.add(Boolean.class, immutable);
 
         configuration.add(OptimizedSessionPersistedObject.class, new OptimizedSessionPersistedObjectAnalyzer());
-    }
-
-    /**
-     * Contributions are content types that do not benefit from compression. Adds
-     * the following content types:
-     * <ul>
-     * <li>image/jpeg</li>
-     * <li>image/gif</li>
-     * <li>image/png</li>
-     * <li>application/x-shockwave-flash</li>
-     * </ul>
-     * 
-     * @since 5.1.0.0
-     */
-    public static void contributeResponseCompressionAnalyzer(Configuration<String> configuration)
-    {
-        configuration.add("image/jpeg");
-        configuration.add("image/gif");
-        configuration.add("image/png");
-        configuration.add("application/x-shockwave-flash");
     }
 
     /**
