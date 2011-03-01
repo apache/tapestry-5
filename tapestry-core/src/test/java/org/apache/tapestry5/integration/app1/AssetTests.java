@@ -1,10 +1,10 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,10 +33,9 @@ public class AssetTests extends TapestryCoreTestCase
     {
         return new Object[][]
         {
-                { "icon", "src/test/app1/images/tapestry_banner.gif" },
-                { "button",
-                        "src/test/resources/org/apache/tapestry5/integration/app1/pages/nested/tapestry-button.png" },
-                { "viaContext", "src/test/app1/images/asf_logo_wide.gif" } };
+        { "icon", "src/test/app1/images/tapestry_banner.gif" },
+        { "button", "src/test/resources/org/apache/tapestry5/integration/app1/pages/nested/tapestry-button.png" },
+        { "viaContext", "src/test/app1/images/asf_logo_wide.gif" } };
     }
 
     @Test(dataProvider = "asset_data")
@@ -57,17 +56,13 @@ public class AssetTests extends TapestryCoreTestCase
 
     private void compareDownloadedAsset(String assetURL, String localPath) throws Exception
     {
-        System.out.printf("compare %s to %s\n", assetURL, localPath);
-
         // Strip off the leading slash
-        
+
         URL url = new URL(getBaseURL() + assetURL.substring(1));
 
         byte[] downloaded = readContent(url);
 
         File local = new File(TapestryTestConstants.MODULE_BASE_DIR, localPath);
-
-        System.out.printf("Remote URL %s, Local file: %s\n", url, local);
 
         byte[] actual = readContent(local.toURL());
 

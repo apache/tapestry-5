@@ -22,7 +22,7 @@
     Relative asset via asset: binding
     </p>
 
-  <img src="${asset:../smiley.png}"/>
+  <img id="relative" src="${asset:../smiley.png}"/>
 
 
   <p>
@@ -46,4 +46,13 @@
   <div class="via-import">
     This text should be red.
     </div>
+
+
+  <p>
+    Properties file URL:
+    <a id="propurl" href="${properties}">
+      ${properties}
+    </a>
+  </p>
+
 </html>

@@ -47,6 +47,7 @@ import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.RequestFilter;
 import org.apache.tapestry5.services.RequestHandler;
+import org.apache.tapestry5.services.ResourceDigestGenerator;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.slf4j.Logger;
@@ -288,5 +289,11 @@ public class AppModule
     Resource preappResource, OrderedConfiguration<Resource> configuration)
     {
         configuration.add("PreApp", preappResource, "before:AppCatalog");
+    }
+
+    @Contribute(ResourceDigestGenerator.class)
+    public static void protectPropertiesFiles(Configuration<String> configuration)
+    {
+        configuration.add("properties");
     }
 }
