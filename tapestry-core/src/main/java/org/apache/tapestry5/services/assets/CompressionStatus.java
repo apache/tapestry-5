@@ -35,7 +35,7 @@ public enum CompressionStatus
     COMPRESSED,
 
     /**
-     * The content is not compressable. This is usually the case for image content types, where the structure
+     * The content is not compressable. This is usually the case for image content types, where the native format
      * of the content already includes compression.
      */
     NOT_COMPRESSABLE;

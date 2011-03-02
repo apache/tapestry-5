@@ -16,14 +16,12 @@ package org.apache.tapestry5.internal.services.assets;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.assets.StreamableResource;
-import org.apache.tapestry5.services.assets.StreamableResourceFeature;
+import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
 
 /**
@@ -43,17 +41,17 @@ public class SRSCachingInterceptor implements StreamableResourceSource, Invalida
         this.delegate = delegate;
     }
 
-    public StreamableResource getStreamableResource(Resource baseResource, Set<StreamableResourceFeature> features)
+    public StreamableResource getStreamableResource(Resource baseResource, StreamableResourceProcessing processing)
             throws IOException
     {
-        if (!features.contains(StreamableResourceFeature.CACHING))
-            return delegate.getStreamableResource(baseResource, features);
+        if (processing != StreamableResourceProcessing.FOR_AGGREGATION)
+            return delegate.getStreamableResource(baseResource, processing);
 
         StreamableResource result = cache.get(baseResource);
 
         if (result == null)
         {
-            result = delegate.getStreamableResource(baseResource, features);
+            result = delegate.getStreamableResource(baseResource, processing);
 
             if (isCacheable(result))
             {

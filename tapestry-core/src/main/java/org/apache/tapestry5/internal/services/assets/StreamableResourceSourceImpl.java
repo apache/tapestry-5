@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.Resource;
@@ -29,7 +28,7 @@ import org.apache.tapestry5.services.assets.CompressionStatus;
 import org.apache.tapestry5.services.assets.ContentTypeAnalyzer;
 import org.apache.tapestry5.services.assets.ResourceTransformer;
 import org.apache.tapestry5.services.assets.StreamableResource;
-import org.apache.tapestry5.services.assets.StreamableResourceFeature;
+import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
 
 public class StreamableResourceSourceImpl implements StreamableResourceSource
@@ -52,7 +51,7 @@ public class StreamableResourceSourceImpl implements StreamableResourceSource
         this.resourceChangeTracker = resourceChangeTracker;
     }
 
-    public StreamableResource getStreamableResource(Resource baseResource, Set<StreamableResourceFeature> features)
+    public StreamableResource getStreamableResource(Resource baseResource, StreamableResourceProcessing processing)
             throws IOException
     {
         assert baseResource != null;

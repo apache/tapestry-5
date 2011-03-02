@@ -15,7 +15,6 @@
 package org.apache.tapestry5.services.assets;
 
 import java.io.IOException;
-import java.util.Set;
 
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.Primary;
@@ -23,9 +22,8 @@ import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
 /**
  * Converts {@link Resource}s into {@link StreamableResource}s, and may be responsible for
- * {@linkplain ResourceTransformer transforming} resources based on file extension. Only
- * the {@link Primary} service has a configuration; the alternate {@link ExtendedProcessing} service
- * adds caching, compression, and minimization.
+ * {@linkplain ResourceTransformer transforming} resources based on file extension. In addition,
+ * service decorators added to the service may provide additional processing (compression, minimization, and caching).
  * 
  * @since 5.3.0
  */
@@ -38,12 +36,12 @@ public interface StreamableResourceSource
      * 
      * @param baseResource
      *            the resource to convert
-     * @param features
-     *            a set of features desired for the resource, normally {@link StreamableResourceFeature#ALL}
+     * @param processing
+     *            defines additional processing after the resource has been read and possibly transformed
      * @return the contents of the Resource, possibly transformed, in a streamable format.
      * @throws IOException
      *             if the resource does not exist or a URL for the content is not available
      */
-    StreamableResource getStreamableResource(Resource baseResource, Set<StreamableResourceFeature> features)
+    StreamableResource getStreamableResource(Resource baseResource, StreamableResourceProcessing processing)
             throws IOException;
 }

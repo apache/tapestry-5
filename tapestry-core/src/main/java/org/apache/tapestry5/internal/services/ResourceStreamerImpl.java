@@ -29,7 +29,7 @@ import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.services.assets.CompressionStatus;
 import org.apache.tapestry5.services.assets.StreamableResource;
-import org.apache.tapestry5.services.assets.StreamableResourceFeature;
+import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
 
 public class ResourceStreamerImpl implements ResourceStreamer
@@ -75,10 +75,10 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
         long ifModifiedSince = 0;
 
-        Set<StreamableResourceFeature> features = analyzer.isGZipSupported() ? StreamableResourceFeature.ALL
-                : StreamableResourceFeature.NO_COMPRESSION;
+        StreamableResourceProcessing processing = analyzer.isGZipSupported() ? StreamableResourceProcessing.COMPRESSION_ENABLED
+                : StreamableResourceProcessing.COMPRESSION_DISABLED;
 
-        StreamableResource streamable = streamableResourceSource.getStreamableResource(resource, features);
+        StreamableResource streamable = streamableResourceSource.getStreamableResource(resource, processing);
 
         long lastModified = streamable.getLastModified();
 

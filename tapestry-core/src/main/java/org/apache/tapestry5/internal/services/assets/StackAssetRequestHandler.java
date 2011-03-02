@@ -40,7 +40,7 @@ import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
 import org.apache.tapestry5.services.assets.StreamableResource;
-import org.apache.tapestry5.services.assets.StreamableResourceFeature;
+import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
@@ -106,7 +106,7 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
         if (compress)
             response.setHeader(InternalConstants.CONTENT_ENCODING_HEADER, InternalConstants.GZIP_CONTENT_ENCODING);
 
-        // CSS support is problematic, because of relative URLs inside the CSS files. For the
+        // CSS aggregation is problematic, because of relative URLs inside the CSS files. For the
         // moment, only JavaScript is supported.
 
         OutputStream output = response.getOutputStream("text/javascript");
@@ -211,7 +211,7 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
         Resource resource = library.getResource();
 
         StreamableResource streamable = streamableResourceSource.getStreamableResource(resource,
-                StreamableResourceFeature.NONE);
+                StreamableResourceProcessing.FOR_AGGREGATION);
 
         streamable.streamTo(outputStream);
     }

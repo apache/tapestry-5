@@ -17,13 +17,12 @@ package org.apache.tapestry5.internal.services.assets;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.services.assets.CompressionStatus;
 import org.apache.tapestry5.services.assets.StreamableResource;
-import org.apache.tapestry5.services.assets.StreamableResourceFeature;
+import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
 
 public class SRSCompressingInterceptor implements StreamableResourceSource
@@ -38,19 +37,21 @@ public class SRSCompressingInterceptor implements StreamableResourceSource
         this.delegate = delegate;
     }
 
-    public StreamableResource getStreamableResource(Resource baseResource, Set<StreamableResourceFeature> features)
+    public StreamableResource getStreamableResource(Resource baseResource, StreamableResourceProcessing processing)
             throws IOException
     {
-        StreamableResource streamable = delegate.getStreamableResource(baseResource, features);
+        StreamableResource streamable = delegate.getStreamableResource(baseResource, processing);
 
-        if (streamable.getCompression() == CompressionStatus.COMPRESSABLE
-                && features.contains(StreamableResourceFeature.GZIP_COMPRESSION)) { return compress(streamable); }
+        if (processing == StreamableResourceProcessing.COMPRESSION_ENABLED) { return compress(streamable); }
 
         return streamable;
     }
 
     private StreamableResource compress(StreamableResource uncompressed) throws IOException
     {
+        if (uncompressed.getCompression() != CompressionStatus.COMPRESSABLE)
+            return uncompressed;
+
         int size = uncompressed.getSize();
 
         // Because of GZIP overhead, streams below a certain point actually get larger when compressed so
