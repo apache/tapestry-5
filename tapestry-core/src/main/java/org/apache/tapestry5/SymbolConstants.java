@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 package org.apache.tapestry5;
 
 import org.apache.tapestry5.internal.services.AssetDispatcher;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.assets.ResourceMinimizer;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
@@ -106,15 +105,6 @@ public class SymbolConstants
      * This is used by the default exception report handler service.
      */
     public static final String EXCEPTION_REPORT_PAGE = "tapestry.exception-report-page";
-
-    /**
-     * If true, then links for external JavaScript libraries are placed at the top of the document (just inside the
-     * &lt;body&gt; element). If false, the default, then the libraries are placed at the bottom of the document.
-     * Per-page initialization always goes at the bottom.
-     * 
-     * @deprecated since 5.1.0.1; scripts are now always at the top (see TAP5-544)
-     */
-    public static final String SCRIPTS_AT_TOP = "tapestry.script-at-top";
 
     /**
      * Identifies the default persistence strategy for all pages that do not provide an override (using this value as
