@@ -73,14 +73,19 @@ public class ResourceStreamerImpl implements ResourceStreamer
             return;
         }
 
-        long ifModifiedSince = 0;
-
         StreamableResourceProcessing processing = analyzer.isGZipSupported() ? StreamableResourceProcessing.COMPRESSION_ENABLED
                 : StreamableResourceProcessing.COMPRESSION_DISABLED;
 
         StreamableResource streamable = streamableResourceSource.getStreamableResource(resource, processing);
 
+        streamResource(streamable);
+    }
+
+    public void streamResource(StreamableResource streamable) throws IOException
+    {
         long lastModified = streamable.getLastModified();
+
+        long ifModifiedSince = 0;
 
         try
         {

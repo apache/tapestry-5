@@ -17,6 +17,7 @@ package org.apache.tapestry5;
 import org.apache.tapestry5.internal.services.AssetDispatcher;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
+import org.apache.tapestry5.services.assets.ResourceMinimizer;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 
 /**
@@ -325,19 +326,23 @@ public class SymbolConstants
      * @since 5.2.0
      */
     public static final String PAGE_POOL_ENABLED = "tapestry.page-pool-enabled";
-    
+
     /**
-     * If "true" and {@link #PRODUCTION_MODE} is off, comments will be rendered before and after the rendering of any component
-     * allowing more visibility into which components rendered which markup. Defaults to "false". Component render tracing may be
+     * If "true" and {@link #PRODUCTION_MODE} is off, comments will be rendered before and after the rendering of any
+     * component
+     * allowing more visibility into which components rendered which markup. Defaults to "false". Component render
+     * tracing may be
      * enabled per-request by the presence of a request parameter "t:component-trace" with a value of "true".
      * 
      * @since 5.2.5
      */
     public static final String COMPONENT_RENDER_TRACING_ENABLED = "tapestry.component-render-tracing-enabled";
-    
+
     /**
-     * The hostname that application should use when constructing an absolute URL. The default is "", i.e. an empty string,
-     * in which case system will use request.getServerName(). Not the same as environment variable HOSTNAME, but you can also 
+     * The hostname that application should use when constructing an absolute URL. The default is "", i.e. an empty
+     * string,
+     * in which case system will use request.getServerName(). Not the same as environment variable HOSTNAME, but you can
+     * also
      * contribute "$HOSTNAME" as the value to make it the same as the environment variable HOSTNAME.
      * 
      * @since 5.3.0
@@ -345,18 +350,32 @@ public class SymbolConstants
     public static final String HOSTNAME = "tapestry.hostname";
 
     /**
-     * The hostport that application should use when constructing an absolute URL. The default is "0", i.e. use the port value from
+     * The hostport that application should use when constructing an absolute URL. The default is "0", i.e. use the port
+     * value from
      * the request.
      * 
      * @since 5.3.0
      */
     public static final String HOSTPORT = "tapestry.hostport";
-    
+
     /**
-     * The secure (https) hostport that application should use when constructing an absolute URL. The default is "0", i.e. use 
+     * The secure (https) hostport that application should use when constructing an absolute URL. The default is "0",
+     * i.e. use
      * the value from the request.
      * 
      * @since 5.3.0
      */
     public static final String HOSTPORT_SECURE = "tapestry.hostport-secure";
+
+    /**
+     * If "true", then resources (individually or when aggregated into stacks) will be minimized via the
+     * {@link ResourceMinimizer} service. If "false", then minification is disabled. Tracks production mode
+     * (minification is normally disabled in development mode).
+     * <p>
+     * Note that Tapestry's default implementation of {@link ResourceMinimizer} does nothing; minification is provided
+     * by add-on libraries.
+     * 
+     * @since 5.3.0
+     */
+    public static final String MINIFICATION_ENABLED = "tapestry.enable-minification";
 }

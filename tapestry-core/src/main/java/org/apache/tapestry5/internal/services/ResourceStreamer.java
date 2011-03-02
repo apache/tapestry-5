@@ -19,6 +19,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.services.assets.StreamableResource;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
 
 /**
@@ -37,4 +38,13 @@ public interface ResourceStreamer
      * @see StreamableResourceSource
      */
     void streamResource(Resource resource) throws IOException;
+
+    /**
+     * Streams a resource that has been assembled elsewhere.
+     * 
+     * @param resource
+     * @throws IOException
+     * @since 5.3.0
+     */
+    void streamResource(StreamableResource resource) throws IOException;
 }

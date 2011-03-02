@@ -2470,10 +2470,8 @@ public final class TapestryModule
         configuration.add(SymbolConstants.APPLICATION_VERSION, Long.toHexString(random.nextLong()));
 
         configuration.add(SymbolConstants.OMIT_GENERATOR_META, "false");
-        configuration.add(SymbolConstants.GZIP_COMPRESSION_ENABLED, "true");
 
         configuration.add(SymbolConstants.SECURE_ENABLED, SymbolConstants.PRODUCTION_MODE_VALUE);
-        configuration.add(SymbolConstants.COMBINE_SCRIPTS, SymbolConstants.PRODUCTION_MODE_VALUE);
         configuration.add(SymbolConstants.COMPACT_JSON, SymbolConstants.PRODUCTION_MODE_VALUE);
 
         configuration.add(SymbolConstants.ENCODE_LOCALE_INTO_PATH, "true");

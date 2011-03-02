@@ -17,11 +17,13 @@ package org.apache.tapestry5.services.assets;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.services.assets.CompressionAnalyzerImpl;
 import org.apache.tapestry5.internal.services.assets.ContentTypeAnalyzerImpl;
+import org.apache.tapestry5.internal.services.assets.DefaultResourceMinimizer;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTrackerImpl;
 import org.apache.tapestry5.internal.services.assets.SRSCachingInterceptor;
 import org.apache.tapestry5.internal.services.assets.SRSCompressedCachingInterceptor;
 import org.apache.tapestry5.internal.services.assets.SRSCompressingInterceptor;
+import org.apache.tapestry5.internal.services.assets.SRSMinimizingInterceptor;
 import org.apache.tapestry5.internal.services.assets.StreamableResourceSourceImpl;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
@@ -30,6 +32,8 @@ import org.apache.tapestry5.ioc.annotations.Decorate;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Order;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.services.FactoryDefaults;
+import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.services.Core;
 
 /**
@@ -44,6 +48,16 @@ public class AssetsModule
         binder.bind(CompressionAnalyzer.class, CompressionAnalyzerImpl.class);
         binder.bind(ContentTypeAnalyzer.class, ContentTypeAnalyzerImpl.class);
         binder.bind(ResourceChangeTracker.class, ResourceChangeTrackerImpl.class);
+        binder.bind(ResourceMinimizer.class, DefaultResourceMinimizer.class);
+    }
+
+    @Contribute(SymbolProvider.class)
+    @FactoryDefaults
+    public static void setupSymbols(MappedConfiguration<String, String> configuration)
+    {
+        configuration.add(SymbolConstants.MINIFICATION_ENABLED, SymbolConstants.PRODUCTION_MODE_VALUE);
+        configuration.add(SymbolConstants.GZIP_COMPRESSION_ENABLED, "true");
+        configuration.add(SymbolConstants.COMBINE_SCRIPTS, SymbolConstants.PRODUCTION_MODE_VALUE);
     }
 
     // The use of decorators is to allow third-parties to get their own extensions
@@ -67,8 +81,7 @@ public class AssetsModule
         if (!gzipEnabled)
             return null;
 
-        SRSCompressedCachingInterceptor interceptor = new SRSCompressedCachingInterceptor(tracker,
-                delegate);
+        SRSCompressedCachingInterceptor interceptor = new SRSCompressedCachingInterceptor(tracker, delegate);
 
         tracker.addInvalidationListener(interceptor);
 
@@ -85,6 +98,18 @@ public class AssetsModule
         tracker.addInvalidationListener(interceptor);
 
         return interceptor;
+    }
+
+    @Decorate(id = "Minification", serviceInterface = StreamableResourceSource.class)
+    @Order("after:Cache")
+    public StreamableResourceSource enableMinification(StreamableResourceSource delegate, ResourceMinimizer minimizer,
+            @Symbol(SymbolConstants.MINIFICATION_ENABLED)
+            boolean enabled)
+    {
+        if (enabled)
+            return new SRSMinimizingInterceptor(delegate, minimizer);
+
+        return null;
     }
 
     /**

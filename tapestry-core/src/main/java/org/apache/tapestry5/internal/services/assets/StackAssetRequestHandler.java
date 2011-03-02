@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,7 +28,7 @@ import java.util.zip.GZIPOutputStream;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.internal.services.ResourceStreamer;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -39,6 +40,8 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
+import org.apache.tapestry5.services.assets.CompressionStatus;
+import org.apache.tapestry5.services.assets.ResourceMinimizer;
 import org.apache.tapestry5.services.assets.StreamableResource;
 import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
@@ -47,6 +50,8 @@ import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
 
 public class StackAssetRequestHandler implements AssetRequestHandler, InvalidationListener
 {
+    private static final String JAVASCRIPT_CONTENT_TYPE = "text/javascript";
+
     private final StreamableResourceSource streamableResourceSource;
 
     private final JavaScriptStackSource javascriptStackSource;
@@ -55,27 +60,34 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
 
     private final ResponseCompressionAnalyzer compressionAnalyzer;
 
-    private final boolean productionMode;
+    private final ResourceStreamer resourceStreamer;
 
     private final Pattern pathPattern = Pattern.compile("^(.+)/(.+)\\.js$");
 
     // Two caches, keyed on extra path. Both are accessed only from synchronized blocks.
-    private final Map<String, BytestreamCache> uncompressedCache = CollectionFactory.newCaseInsensitiveMap();
+    private final Map<String, StreamableResource> uncompressedCache = CollectionFactory.newCaseInsensitiveMap();
 
-    private final Map<String, BytestreamCache> compressedCache = CollectionFactory.newCaseInsensitiveMap();
+    private final Map<String, StreamableResource> compressedCache = CollectionFactory.newCaseInsensitiveMap();
+
+    private final ResourceMinimizer resourceMinimizer;
+
+    private final boolean minificationEnabled;
 
     public StackAssetRequestHandler(StreamableResourceSource streamableResourceSource,
             JavaScriptStackSource javascriptStackSource, LocalizationSetter localizationSetter,
-            ResponseCompressionAnalyzer compressionAnalyzer,
+            ResponseCompressionAnalyzer compressionAnalyzer, ResourceStreamer resourceStreamer,
+            ResourceMinimizer resourceMinimizer,
 
-            @Symbol(SymbolConstants.PRODUCTION_MODE)
-            boolean productionMode)
+            @Symbol(SymbolConstants.MINIFICATION_ENABLED)
+            boolean minificationEnabled)
     {
         this.streamableResourceSource = streamableResourceSource;
         this.javascriptStackSource = javascriptStackSource;
         this.localizationSetter = localizationSetter;
         this.compressionAnalyzer = compressionAnalyzer;
-        this.productionMode = productionMode;
+        this.resourceStreamer = resourceStreamer;
+        this.resourceMinimizer = resourceMinimizer;
+        this.minificationEnabled = minificationEnabled;
     }
 
     @PostInjection
@@ -88,32 +100,9 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
     {
         boolean compress = compressionAnalyzer.isGZipSupported();
 
-        BytestreamCache cachedStream = getStream(extraPath, compress);
+        StreamableResource resource = getResource(extraPath, compress);
 
-        // The whole point of this is to force the client to aggressively cache the combined, virtual
-        // stack asset.
-
-        long lastModified = System.currentTimeMillis();
-        response.setDateHeader("Last-Modified", lastModified);
-
-        if (productionMode)
-            response.setDateHeader("Expires", lastModified + InternalConstants.TEN_YEARS);
-
-        response.disableCompression();
-
-        response.setContentLength(cachedStream.size());
-
-        if (compress)
-            response.setHeader(InternalConstants.CONTENT_ENCODING_HEADER, InternalConstants.GZIP_CONTENT_ENCODING);
-
-        // CSS aggregation is problematic, because of relative URLs inside the CSS files. For the
-        // moment, only JavaScript is supported.
-
-        OutputStream output = response.getOutputStream("text/javascript");
-
-        cachedStream.writeTo(output);
-
-        output.close();
+        resourceStreamer.streamResource(resource);
 
         return true;
     }
@@ -125,18 +114,18 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
         compressedCache.clear();
     }
 
-    private BytestreamCache getStream(String extraPath, boolean compressed) throws IOException
+    private StreamableResource getResource(String extraPath, boolean compressed) throws IOException
     {
-        return compressed ? getCompressedStream(extraPath) : getUncompressedStream(extraPath);
+        return compressed ? getCompressedResource(extraPath) : getUncompressedResource(extraPath);
     }
 
-    private synchronized BytestreamCache getCompressedStream(String extraPath) throws IOException
+    private synchronized StreamableResource getCompressedResource(String extraPath) throws IOException
     {
-        BytestreamCache result = compressedCache.get(extraPath);
+        StreamableResource result = compressedCache.get(extraPath);
 
         if (result == null)
         {
-            BytestreamCache uncompressed = getUncompressedStream(extraPath);
+            StreamableResource uncompressed = getUncompressedResource(extraPath);
             result = compressStream(uncompressed);
             compressedCache.put(extraPath, result);
         }
@@ -144,9 +133,9 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
         return result;
     }
 
-    private synchronized BytestreamCache getUncompressedStream(String extraPath) throws IOException
+    private synchronized StreamableResource getUncompressedResource(String extraPath) throws IOException
     {
-        BytestreamCache result = uncompressedCache.get(extraPath);
+        StreamableResource result = uncompressedCache.get(extraPath);
 
         if (result == null)
         {
@@ -157,7 +146,7 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
         return result;
     }
 
-    private BytestreamCache assembleStackContent(String extraPath) throws IOException
+    private StreamableResource assembleStackContent(String extraPath) throws IOException
     {
         Matcher matcher = pathPattern.matcher(extraPath);
 
@@ -170,21 +159,24 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
         return assembleStackContent(localeName, stackName);
     }
 
-    private BytestreamCache assembleStackContent(String localeName, String stackName) throws IOException
+    private StreamableResource assembleStackContent(String localeName, String stackName) throws IOException
     {
         localizationSetter.setNonPeristentLocaleFromLocaleName(localeName);
 
         JavaScriptStack stack = javascriptStackSource.getStack(stackName);
         List<Asset> libraries = stack.getJavaScriptLibraries();
 
-        return assembleStackContent(libraries);
+        StreamableResource stackContent = assembleStackContent(libraries);
+
+        return minificationEnabled ? resourceMinimizer.minimize(stackContent) : stackContent;
     }
 
-    private BytestreamCache assembleStackContent(List<Asset> libraries) throws IOException
+    private StreamableResource assembleStackContent(List<Asset> libraries) throws IOException
     {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         OutputStreamWriter osw = new OutputStreamWriter(stream, "UTF-8");
         PrintWriter writer = new PrintWriter(osw, true);
+        long lastModified = 0;
 
         JSONArray paths = new JSONArray();
 
@@ -196,36 +188,36 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
 
             writer.format("\n/* %s */;\n", path);
 
-            streamLibraryContent(library, stream);
+            Resource resource = library.getResource();
+
+            StreamableResource streamable = streamableResourceSource.getStreamableResource(resource,
+                    StreamableResourceProcessing.FOR_AGGREGATION);
+
+            streamable.streamTo(stream);
+
+            lastModified = Math.max(lastModified, streamable.getLastModified());
         }
 
         writer.format("\n;/**/\nTapestry.markScriptLibrariesLoaded(%s);\n", paths);
 
         writer.close();
 
-        return new BytestreamCache(stream);
+        return new StreamableResourceImpl(JAVASCRIPT_CONTENT_TYPE, CompressionStatus.COMPRESSABLE, lastModified,
+                new BytestreamCache(stream));
     }
 
-    private void streamLibraryContent(Asset library, OutputStream outputStream) throws IOException
-    {
-        Resource resource = library.getResource();
-
-        StreamableResource streamable = streamableResourceSource.getStreamableResource(resource,
-                StreamableResourceProcessing.FOR_AGGREGATION);
-
-        streamable.streamTo(outputStream);
-    }
-
-    private BytestreamCache compressStream(BytestreamCache uncompressed) throws IOException
+    private StreamableResource compressStream(StreamableResource uncompressed) throws IOException
     {
         ByteArrayOutputStream compressed = new ByteArrayOutputStream();
-        OutputStream compressor = new GZIPOutputStream(compressed);
+        OutputStream compressor = new BufferedOutputStream(new GZIPOutputStream(compressed));
 
-        uncompressed.writeTo(compressor);
+        uncompressed.streamTo(compressor);
 
         compressor.close();
 
-        return new BytestreamCache(compressed);
-    }
+        BytestreamCache cache = new BytestreamCache(compressed);
 
+        return new StreamableResourceImpl(JAVASCRIPT_CONTENT_TYPE, CompressionStatus.COMPRESSED,
+                uncompressed.getLastModified(), cache);
+    }
 }
