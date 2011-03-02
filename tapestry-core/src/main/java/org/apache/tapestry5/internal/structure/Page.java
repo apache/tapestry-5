@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -162,23 +162,6 @@ public interface Page
      * @return the value, or null if no value is stored
      */
     Object getFieldChange(String nestedId, String fieldName);
-
-    /**
-     * Called as a component initially starts to render itself. This is used to check for the cases
-     * where a component
-     * causes a runtime exception that aborts the render early, leaving the page in an invalid
-     * state.
-     * 
-     * @deprecated No longer useful with non-pooled pages, to be removed for efficiency
-     */
-    void incrementDirtyCount();
-
-    /**
-     * Called as a component finishes rendering itself.
-     * 
-     * @deprecated No longer useful with non-pooled pages, to be removed for efficiency
-     */
-    void decrementDirtyCount();
 
     /**
      * Discards all persistent field changes for the page containing the component. Changes are

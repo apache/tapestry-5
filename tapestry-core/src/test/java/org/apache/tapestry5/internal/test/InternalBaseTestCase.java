@@ -179,11 +179,6 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         expect(loader.loadPage(pageName, locale)).andReturn(page);
     }
 
-    protected final PagePool mockPagePool()
-    {
-        return newMock(PagePool.class);
-    }
-
     protected RenderQueue mockRenderQueue()
     {
         return newMock(RenderQueue.class);

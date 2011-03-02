@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,19 +33,19 @@ public class PageImplTest extends InternalBaseTestCase
     private static final String LOGICAL_PAGE_NAME = "MyPage";
 
     private PerthreadManager perThreadManager;
-    
+
     @BeforeClass
     public void setup()
     {
         perThreadManager = getService(PerthreadManager.class);
     }
-    
+
     @AfterMethod
     public void cleanup()
     {
         perThreadManager.cleanup();
     }
-    
+
     @Test
     public void accessor_methods()
     {
@@ -53,7 +53,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null, perThreadManager, true);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null, perThreadManager);
 
         assertNull(page.getRootElement());
 
@@ -77,35 +77,12 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(null, locale, null, perThreadManager, true);
+        Page page = new PageImpl(null, locale, null, perThreadManager);
 
         page.addLifecycleListener(listener1);
         page.addLifecycleListener(listener2);
 
         assertFalse(page.detached());
-
-        verify();
-    }
-
-    /**
-     * Also checks that listeners are invoked, even if the page is dirty.
-     */
-    @Test
-    public void detach_dirty_if_dirty_count_non_zero()
-    {
-        PageLifecycleListener listener = newPageLifecycle();
-
-        listener.containingPageDidDetach();
-
-        replay();
-
-        Page page = new PageImpl(null, locale, null, perThreadManager, true);
-
-        page.addLifecycleListener(listener);
-
-        page.incrementDirtyCount();
-
-        assertTrue(page.detached());
 
         verify();
     }
@@ -133,7 +110,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(null, locale, null, perThreadManager, true);
+        Page page = new PageImpl(null, locale, null, perThreadManager);
         page.setRootElement(element);
 
         page.addLifecycleListener(listener1);
@@ -163,7 +140,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(null, locale, null, perThreadManager, true);
+        Page page = new PageImpl(null, locale, null, perThreadManager);
 
         page.addLifecycleListener(listener1);
         page.addLifecycleListener(listener2);
@@ -189,7 +166,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null, perThreadManager, true);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null, perThreadManager);
 
         page.addLifecycleListener(listener1);
         page.addLifecycleListener(listener2);
@@ -206,7 +183,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null, perThreadManager, true);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null, perThreadManager);
 
         page.setRootElement(root);
 

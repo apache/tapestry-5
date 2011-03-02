@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,8 +43,6 @@ public class PageImpl implements Page
 
     private final List<PageResetListener> resetListeners = CollectionFactory.newList();
 
-    private final PerThreadValue<Integer> dirtyCount;
-
     private boolean loadComplete;
 
     private final OneShotLock lock = new OneShotLock();
@@ -65,24 +63,13 @@ public class PageImpl implements Page
      *            for access to cross-request persistent values
      * @param perThreadManager
      *            for managing per-request mutable state
-     * @param pooled
-     *            if pooling enabled, or is this page a singleton
      */
     public PageImpl(String name, Locale locale, PersistentFieldManager persistentFieldManager,
-            PerthreadManager perThreadManager, boolean pooled)
+            PerthreadManager perThreadManager)
     {
         this.name = name;
         this.locale = locale;
         this.persistentFieldManager = persistentFieldManager;
-
-        if (pooled)
-        {
-            dirtyCount = perThreadManager.createValue();
-        }
-        else
-        {
-            dirtyCount = null;
-        }
 
         fieldBundle = perThreadManager.createValue();
     }
@@ -145,7 +132,7 @@ public class PageImpl implements Page
 
     public boolean detached()
     {
-        boolean result = dirtyCount != null && dirtyCount.exists() && dirtyCount.get() > 0;
+        boolean result = false;
 
         for (PageLifecycleListener listener : lifecycleListeners)
         {
@@ -177,9 +164,6 @@ public class PageImpl implements Page
 
     public void attached()
     {
-        if (dirtyCount != null && dirtyCount.exists() && !dirtyCount.get().equals(0))
-            throw new IllegalStateException(StructureMessages.pageIsDirty(this));
-
         for (PageLifecycleListener listener : lifecycleListeners)
             listener.restoreStateBeforePageAttach();
 
@@ -208,29 +192,9 @@ public class PageImpl implements Page
         return fieldBundle.get().getValue(nestedId, fieldName);
     }
 
-    public void decrementDirtyCount()
-    {
-        if (dirtyCount != null)
-        {
-            int newCount = dirtyCount.get() - 1;
-
-            dirtyCount.set(newCount);
-        }
-    }
-
     public void discardPersistentFieldChanges()
     {
         persistentFieldManager.discardChanges(name);
-    }
-
-    public void incrementDirtyCount()
-    {
-        if (dirtyCount != null)
-        {
-            int newCount = dirtyCount.get(0) + 1;
-
-            dirtyCount.set(newCount);
-        }
     }
 
     public String getName()

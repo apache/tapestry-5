@@ -64,11 +64,6 @@ final class StructureMessages
         return MESSAGES.format("unbalanced-elements", componentId);
     }
 
-    static String pageIsDirty(Page page)
-    {
-        return MESSAGES.format("page-is-dirty", page);
-    }
-
     static String duplicateChildComponent(ComponentPageElement container, String childId)
     {
         return MESSAGES.format("duplicate-child-component", container.getCompleteId(), childId);

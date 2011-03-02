@@ -2416,12 +2416,6 @@ public final class TapestryModule
         configuration.add(SymbolConstants.DEFAULT_STYLESHEET, "classpath:/org/apache/tapestry5/default.css");
         configuration.add("tapestry.spacer-image", "classpath:/org/apache/tapestry5/spacer.gif");
 
-        configuration.add(SymbolConstants.PAGE_POOL_SOFT_LIMIT, "5");
-        configuration.add(SymbolConstants.PAGE_POOL_SOFT_WAIT, "10 ms");
-        configuration.add(SymbolConstants.PAGE_POOL_HARD_LIMIT, "20");
-        configuration.add(SymbolConstants.PAGE_POOL_ACTIVE_WINDOW, "10 m");
-        configuration.add(SymbolConstants.PAGE_POOL_ENABLED, "false");
-
         configuration.add(SymbolConstants.SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS, "false");
 
         configuration.add(SymbolConstants.FORCE_ABSOLUTE_URIS, "false");

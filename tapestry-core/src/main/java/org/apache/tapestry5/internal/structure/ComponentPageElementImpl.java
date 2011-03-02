@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -238,9 +238,10 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         protected void invokeComponent(Component component, MarkupWriter writer, Event event)
         {
-        	if (isRenderTracingEnabled())
-        		writer.comment("BEGIN " + component.getComponentResources().getCompleteId() + " (" + getLocation() + ")");
-        			
+            if (isRenderTracingEnabled())
+                writer.comment("BEGIN " + component.getComponentResources().getCompleteId() + " (" + getLocation()
+                        + ")");
+
             component.beginRender(writer, event);
         }
 
@@ -415,9 +416,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         protected void invokeComponent(Component component, MarkupWriter writer, Event event)
         {
             component.afterRender(writer, event);
-            
-        	if (isRenderTracingEnabled())
-        		writer.comment("END " + component.getComponentResources().getCompleteId());
+
+            if (isRenderTracingEnabled())
+                writer.comment("END " + component.getComponentResources().getCompleteId());
         }
 
         public void render(final MarkupWriter writer, RenderQueue queue)
@@ -485,12 +486,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             invoke(false, POST_RENDER_CLEANUP);
 
             queue.endComponent();
-
-            // Now and only now the component is done rendering and fully cleaned up. Decrement
-            // the page's dirty count. If the entire render goes well, then the page will be
-            // clean and can be stored into the pool for later reuse.
-
-            page.decrementDirtyCount();
         }
 
         @Override
@@ -551,12 +546,12 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     private final PerThreadValue<RenderPhaseEvent> renderEvent;
 
     private final PerThreadValue<Boolean> rendering;
-    
+
     // should be okay since it's a shadow service object
     private final Request request;
     private final SymbolSource symbolSource;
-	private final boolean productionMode;
-	private final boolean componentTracingEnabled;
+    private final boolean productionMode;
+    private final boolean componentTracingEnabled;
 
     // We know that, at the very least, there will be an element to force the component to render
     // its body, so there's no reason to wait to initialize the list.
@@ -603,11 +598,12 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         this.elementResources = elementResources;
         this.request = request;
         this.symbolSource = symbolSource;
-        
+
         // evaluate this once because it gets referenced a lot during rendering
         this.productionMode = "true".equals(symbolSource.valueForSymbol(SymbolConstants.PRODUCTION_MODE));
-        this.componentTracingEnabled = "true".equals(symbolSource.valueForSymbol(SymbolConstants.COMPONENT_RENDER_TRACING_ENABLED));
-        
+        this.componentTracingEnabled = "true".equals(symbolSource
+                .valueForSymbol(SymbolConstants.COMPONENT_RENDER_TRACING_ENABLED));
+
         ComponentResources containerResources = container == null ? null : container.getComponentResources();
 
         coreResources = new InternalComponentResourcesImpl(this.page, this, containerResources, this.elementResources,
@@ -624,7 +620,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     /**
      * Constructor for the root component of a page.
      */
-    public ComponentPageElementImpl(Page page, Instantiator instantiator, ComponentPageElementResources elementResources, Request request, SymbolSource symbolSource)
+    public ComponentPageElementImpl(Page page, Instantiator instantiator,
+            ComponentPageElementResources elementResources, Request request, SymbolSource symbolSource)
     {
         this(page, null, null, null, page.getName(), null, instantiator, null, elementResources, request, symbolSource);
     }
@@ -1040,10 +1037,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         // TODO: An error if the render flag is already set (recursive rendering not
         // allowed or advisable).
 
-        // Once we start rendering, the page is considered dirty, until we cleanup post render.
-
-        page.incrementDirtyCount();
-
         // TODO: Check for recursive rendering.
 
         rendering.set(true);
@@ -1319,8 +1312,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         return result;
     }
-    
-	boolean isRenderTracingEnabled() {
-		return !productionMode && (componentTracingEnabled || "true".equals(request.getParameter("t:component-trace")));
-	}
+
+    boolean isRenderTracingEnabled()
+    {
+        return !productionMode && (componentTracingEnabled || "true".equals(request.getParameter("t:component-trace")));
+    }
 }

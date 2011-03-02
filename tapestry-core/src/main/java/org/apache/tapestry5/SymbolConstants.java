@@ -230,57 +230,6 @@ public class SymbolConstants
     public static final String DEFAULT_STYLESHEET = "tapestry.default-stylesheet";
 
     /**
-     * The number of pages in the page pool (for a given page name / locale combination) before which Tapestry will
-     * start to wait for existing pages to be made available.
-     * Under this limit of pages, Tapestry will simply create a new page instance if no existing instance is readily
-     * available.
-     * Once the soft limit is reached, Tapestry will wait a short period of time (the soft wait interval) to see if an
-     * existing page
-     * instance is made available. It will then create a new page instance (unless the hard limit has been reached).
-     * The default is 5 page instances. Remember that page pooling is done separately for each page (and localization of
-     * the page).
-     * 
-     * @since 5.2.0
-     */
-    public static final String PAGE_POOL_SOFT_LIMIT = "tapestry.page-pool.soft-limit";
-
-    /**
-     * The absolute maximum number of page instances (for a particular page name / locale combination) that Tapestry
-     * will create at any time.
-     * If this number is reached, then requests will fail because a page instance is not available ... this can happen
-     * as part of a denial of service attack.
-     * For this value to have any meaning, it should be lower than the number of threads that the servlet container is
-     * configured to use when processing requests.
-     * The default is 20 page instances.
-     * 
-     * @deprecated The hard limit will be removed in a later release of Tapestry, as the maximum number of instance
-     *             is easily controlled by limiting the number of request handling threads in the servlet container.
-     * @since 5.2.0
-     */
-    public static final String PAGE_POOL_HARD_LIMIT = "tapestry.page-pool.hard-limit";
-
-    /**
-     * The time interval that Tapestry will wait for a page instance to become available before deciding whether to
-     * create an entirely new page instance.
-     * The default is "10 ms".
-     * 
-     * @since 5.2.0
-     */
-    public static final String PAGE_POOL_SOFT_WAIT = "tapestry.page-pool.soft-wait";
-
-    /**
-     * The time interval that an instantiated page instance may be cached before being removed. As pages are returned to
-     * the pool, they are time stamped.
-     * Periodically (as per the file check interval), the pool is scanned for page instances that have not been used
-     * recently; those that are outside the
-     * active window are discarded. This is used to free up unnecessary page instances after a request surge. The
-     * default is "10 m" (10 minutes).
-     * 
-     * @since 5.2.0
-     */
-    public static final String PAGE_POOL_ACTIVE_WINDOW = "tapestry.page-pool.active-window";
-
-    /**
      * The Asset path to the embedded copy of script.aculo.us packaged with Tapestry.
      * 
      * @since 5.2.0
@@ -315,17 +264,6 @@ public class SymbolConstants
      * @since 5.2.0
      */
     public static final String COMPACT_JSON = "tapestry.compact-json";
-
-    /**
-     * If "true", then Tapestry 5.1 (and earlier) style page pooling will be used. The default is "false", to
-     * allow full use of page singleton. Enabling page pooling is only necessary if an application (or library)
-     * has created {@linkplain ComponentClassTransformWorker class transformations} that introduce new, mutable
-     * fields into component classes. That's a very rare thing (most created fields contain immutable data).
-     * 
-     * @deprecated To be removed, along with the remnants of page pooling, in Tapestry 5.3.
-     * @since 5.2.0
-     */
-    public static final String PAGE_POOL_ENABLED = "tapestry.page-pool-enabled";
 
     /**
      * If "true" and {@link #PRODUCTION_MODE} is off, comments will be rendered before and after the rendering of any
