@@ -43,13 +43,6 @@ public class SymbolConstants
     public static final String PRODUCTION_MODE_VALUE = String.format("${%s}", PRODUCTION_MODE);
 
     /**
-     * Symbol which may be set to "true" to force the use of absolute URIs (not relative URIs) exclusively.
-     * 
-     * @deprecated To be removed after Tapestry 5.2. URLs are now always absolute, since Tapestry 5.2.1.
-     */
-    public static final String FORCE_ABSOLUTE_URIS = "tapestry.force-absolute-uris";
-
-    /**
      * If set to "true", then action requests will render a page markup response immediately, rather than sending a
      * redirect to render the response. "Action request" is an outdated term for "component event request" (i.e., most
      * links and all form submissions).

@@ -2418,8 +2418,6 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS, "false");
 
-        configuration.add(SymbolConstants.FORCE_ABSOLUTE_URIS, "false");
-
         configuration.add(SymbolConstants.PRODUCTION_MODE, "true");
 
         configuration.add(SymbolConstants.COMPRESS_WHITESPACE, "true");
