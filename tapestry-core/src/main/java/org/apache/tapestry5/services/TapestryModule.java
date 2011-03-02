@@ -200,7 +200,6 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.Builtin;
 import org.apache.tapestry5.ioc.services.ChainBuilder;
 import org.apache.tapestry5.ioc.services.ClassFactory;
-import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.services.CoercionTuple;
 import org.apache.tapestry5.ioc.services.LazyAdvisor;
@@ -489,7 +488,6 @@ public final class TapestryModule
         binder.bind(ComponentEventLinkEncoder.class, ComponentEventLinkEncoderImpl.class);
         binder.bind(PageRenderLinkSource.class, PageRenderLinkSourceImpl.class);
         binder.bind(ClientInfrastructure.class, ClientInfrastructureImpl.class);
-        binder.bind(URLRewriter.class, URLRewriterImpl.class);
         binder.bind(ValidatorMacro.class, ValidatorMacroImpl.class);
         binder.bind(PropertiesFileParser.class, PropertiesFileParserImpl.class);
         binder.bind(PageActivator.class, PageActivatorImpl.class);
@@ -1008,6 +1006,8 @@ public final class TapestryModule
      * <dt>StoreIntoGlobals</dt>
      * <dd>Stores the request and response into the {@link org.apache.tapestry5.services.RequestGlobals} service (this
      * is repeated at the end of the pipeline, in case any filter substitutes the request or response).
+     * <dt>EndOfRequest</dt>
+     * <dd>Notifies internal services that the request has ended</dd>
      * </dl>
      */
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration, Context context,
@@ -1020,9 +1020,7 @@ public final class TapestryModule
     @IntermediateType(TimeInterval.class)
     long updateTimeout,
 
-    UpdateListenerHub updateListenerHub,
-
-    URLRewriter urlRewriter)
+    UpdateListenerHub updateListenerHub)
     {
         RequestFilter staticFilesFilter = new StaticFilesFilter(context);
 
@@ -1053,16 +1051,6 @@ public final class TapestryModule
 
         configuration.add("CheckForUpdates",
                 new CheckForUpdatesFilter(updateListenerHub, checkInterval, updateTimeout), "before:*");
-
-        // we just need the URLRewriterRequestFilter if we have URL rewriter
-        // rules, of course.
-        if (urlRewriter.hasRequestRules())
-        {
-
-            URLRewriterRequestFilter urlRewriterRequestFilter = new URLRewriterRequestFilter(urlRewriter);
-            configuration.add("URLRewriter", urlRewriterRequestFilter, "before:StaticFiles");
-
-        }
 
         configuration.add("StaticFiles", staticFilesFilter);
 
@@ -2799,20 +2787,6 @@ public final class TapestryModule
     public void contributeComponentRequestHandler(OrderedConfiguration<ComponentRequestFilter> configuration)
     {
         configuration.addInstance("InitializeActivePageName", InitializeActivePageName.class);
-    }
-
-    /**
-     * @throws Exception
-     * @since 5.1.0.2
-     */
-    public static ComponentEventLinkEncoder decorateComponentEventLinkEncoder(ComponentEventLinkEncoder encoder,
-            URLRewriter urlRewriter, Request request, Response response)
-    {
-        // no rules, no link rewriting.
-        if (!urlRewriter.hasLinkRules())
-            return null;
-
-        return new URLRewriterLinkEncoderInterceptor(urlRewriter, request, encoder);
     }
 
     /**

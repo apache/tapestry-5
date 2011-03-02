@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,13 +14,12 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.integration.app5.pages.Index;
+import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.integration.app3.pages.Index;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.PageRenderLinkSource;
-import org.apache.tapestry5.Link;
-import org.apache.tapestry5.EventContext;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.testng.annotations.Test;
 
 public class PageRenderLinkSourceImplTest extends InternalBaseTestCase
