@@ -1,10 +1,10 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,15 +16,30 @@ package org.example.testapp.services;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.annotations.Decorate;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.jmx.JmxModule;
+import org.apache.tapestry5.jmx.MBeanSupport;
 
 @SubModule(JmxModule.class)
 public class AppModule
 {
+    public static void bind(ServiceBinder binder)
+    {
+        binder.bind(Sample.class);
+    }
+
     public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
     {
         configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
-        configuration.add(SymbolConstants.PAGE_POOL_ENABLED, "true");
+    }
+
+    @Decorate(serviceInterface = Sample.class)
+    public static Sample enableJMXForSample(Sample service, MBeanSupport managedBeanSupport)
+    {
+        managedBeanSupport.register(service, "org.example.testapp.services:service=Sample");
+
+        return service;
     }
 }

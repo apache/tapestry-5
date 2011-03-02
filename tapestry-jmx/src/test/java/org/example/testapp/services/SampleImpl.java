@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,18 +11,16 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.apache.tapestry5.jmx;
 
-import org.apache.tapestry5.internal.jmx.MBeanSupportImpl;
-import org.apache.tapestry5.ioc.ServiceBinder;
+package org.example.testapp.services;
 
-/**
- * Module for JMX services.
- */
-public class JmxModule
+import org.apache.tapestry5.ioc.annotations.EagerLoad;
+
+@EagerLoad
+public class SampleImpl implements Sample, SampleImplMBean
 {
-    public static void bind(ServiceBinder binder)
+    public int getSampleValue()
     {
-        binder.bind(MBeanSupport.class, MBeanSupportImpl.class);
+        return 42;
     }
 }

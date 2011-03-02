@@ -1,7 +1,10 @@
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
   <h1>Remote Pool Management Demo</h1>
-  
-  <p>SoftWait: ${softWait}</p>
+
+  <p>
+    Sample value:
+    <span id="sample-value">${sampleValue}</span>
+  </p>
 
 </html>

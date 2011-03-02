@@ -13,25 +13,20 @@
 // limitations under the License.
 package org.apache.tapestry5.jmx.integration;
 
-import org.apache.tapestry5.test.AbstractIntegrationTestSuite;
+import org.apache.tapestry5.test.SeleniumTestCase;
 import org.testng.annotations.Test;
 
 @Test(sequential = true, groups = "integration")
-public class TapestryJmxIntegrationTests extends AbstractIntegrationTestSuite
+public class TapestryJmxIntegrationTests extends SeleniumTestCase
 {
-
-    public TapestryJmxIntegrationTests()
-    {
-        super("src/test/webapp");
-    }
-
     /** TAP5-978 */
     @Test
     public void remote_pool_management()
     {
+        openBaseURL();
 
-        start("Remote Pool Management");
+        clickAndWait("link=Remote Pool Management");
 
-        assertTextPresent("SoftWait: 10");
+        assertText("sample-value", "42");
     }
 }
