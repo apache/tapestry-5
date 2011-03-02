@@ -45,6 +45,8 @@ public class SymbolConstants
      * If set to "true", then action requests will render a page markup response immediately, rather than sending a
      * redirect to render the response. "Action request" is an outdated term for "component event request" (i.e., most
      * links and all form submissions).
+     * 
+     * @deprecated In 5.3, to be removed (along with the support it implies) in 5.4
      */
     public static final String SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS = "tapestry.suppress-redirect-from-action-requests";
 
