@@ -237,6 +237,7 @@ public class SymbolConstants
      * The Asset path of the default javascript (tapestry.js) automatically injected into every rendered HTML page.
      * 
      * @since 5.2.0
+     * @deprecated Deprecated in 5.3; not used since 5.1, replaced with the core {@link JavaScriptStack}.
      */
     public static final String DEFAULT_JAVASCRIPT = "tapestry.default-javascript";
 
