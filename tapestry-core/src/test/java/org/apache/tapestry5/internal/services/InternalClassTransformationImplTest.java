@@ -37,6 +37,7 @@ import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Retain;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.model.MutableComponentModelImpl;
@@ -67,7 +68,6 @@ import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.ComponentMethodAdvice;
 import org.apache.tapestry5.services.ComponentMethodInvocation;
 import org.apache.tapestry5.services.MethodAccess;
-import org.apache.tapestry5.services.MethodFilter;
 import org.apache.tapestry5.services.MethodInvocationResult;
 import org.apache.tapestry5.services.TransformField;
 import org.apache.tapestry5.services.TransformMethod;
@@ -371,13 +371,21 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         ClassTransformation ct = createClassTransformation(ClaimedFields.class, logger);
 
-        List<String> unclaimed = ct.findUnclaimedFields();
+        Mapper<TransformField, String> toName = new Mapper<TransformField, String>()
+        {
+            public String map(TransformField element)
+            {
+                return element.getName();
+            }
+        };
+
+        List<String> unclaimed = F.flow(ct.matchUnclaimedFields()).map(toName).toList();
 
         assertEquals(unclaimed, asList("_field1", "_field4", "_zzfield"));
 
         ct.getField("_field4").claim("Fred");
 
-        unclaimed = ct.findUnclaimedFields();
+        unclaimed = F.flow(ct.matchUnclaimedFields()).map(toName).toList();
 
         assertEquals(unclaimed, asList("_field1", "_zzfield"));
 
@@ -407,7 +415,13 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         ct.createField(Modifier.PRIVATE, "int", "newField");
 
-        List<String> unclaimed = ct.findUnclaimedFields();
+        List<String> unclaimed = F.flow(ct.matchUnclaimedFields()).map(new Mapper<TransformField, String>()
+        {
+            public String map(TransformField element)
+            {
+                return element.getName();
+            }
+        }).toList();
 
         assertEquals(unclaimed, asList("_field1", "_field4", "_zzfield"));
 

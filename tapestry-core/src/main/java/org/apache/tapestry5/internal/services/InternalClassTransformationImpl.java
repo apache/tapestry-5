@@ -1616,11 +1616,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return result;
     }
 
-    public List<String> findUnclaimedFields()
-    {
-        return toFieldNames(matchUnclaimedFields());
-    }
-
     public List<TransformField> matchUnclaimedFields()
     {
         return matchFields(new Predicate<TransformField>()
@@ -2218,30 +2213,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         constructorArgs.add(value);
 
         return ClassFabUtils.castReference(String.format("$2[%d]", index), parameterType.getName());
-    }
-
-    private static List<TransformMethodSignature> toMethodSignatures(List<TransformMethod> input)
-    {
-        List<TransformMethodSignature> result = CollectionFactory.newList();
-
-        for (TransformMethod m : input)
-        {
-            result.add(m.getSignature());
-        }
-
-        return result;
-    }
-
-    private static List<String> toFieldNames(List<TransformField> fields)
-    {
-        List<String> result = CollectionFactory.newList();
-
-        for (TransformField f : fields)
-        {
-            result.add(f.getName());
-        }
-
-        return result;
     }
 
     private ComponentMethodInvocationBuilder createBuilder(TransformMethodSignature signature)

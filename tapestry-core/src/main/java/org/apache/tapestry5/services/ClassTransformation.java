@@ -17,11 +17,8 @@ package org.apache.tapestry5.services;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
-import javassist.CtBehavior;
-
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.func.Predicate;
-import org.apache.tapestry5.internal.transform.ReadOnlyFieldValueConduit;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.runtime.Component;
@@ -140,14 +137,6 @@ public interface ClassTransformation extends AnnotationProvider
      * @since 5.2.0
      */
     TransformField getField(String fieldName);
-
-    /**
-     * Finds any declared <em>instance</em> fields that have not been claimed (via {@link #claimField(String, Object)})
-     * and have not been added , and returns the names of those fields. May return an empty array.
-     * 
-     * @deprecated Use {@link #matchUnclaimedFields()} instead
-     */
-    List<String> findUnclaimedFields();
 
     /**
      * Matches all fields that are not claimed. This may include static fields and final fields, but will not
