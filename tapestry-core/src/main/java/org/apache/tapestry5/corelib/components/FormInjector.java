@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -58,16 +58,6 @@ import org.slf4j.Logger;
 public class FormInjector implements ClientElement
 {
     public static final String INJECT_EVENT = "inject";
-
-    /**
-     * @deprecated Use {@link RequestConstants#FORM_CLIENTID_PARAMETER} instead
-     */
-    public static final String FORM_CLIENTID_PARAMETER = RequestConstants.FORM_CLIENTID_PARAMETER;
-
-    /**
-     * @deprecated Use {@link RequestConstants#FORM_COMPONENTID_PARAMETER} instead
-     */
-    public static final String FORM_COMPONENTID_PARAMETER = RequestConstants.FORM_COMPONENTID_PARAMETER;
 
     /**
      * The context for the link (optional parameter). This list of values will be converted into strings and included in
