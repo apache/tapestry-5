@@ -405,7 +405,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         ClassTransformation ct = createClassTransformation(ClaimedFields.class, logger);
 
-        ct.addField(Modifier.PRIVATE, "int", "newField");
+        ct.createField(Modifier.PRIVATE, "int", "newField");
 
         List<String> unclaimed = ct.findUnclaimedFields();
 
