@@ -1644,11 +1644,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return fields.containsKey(fieldName);
     }
 
-    public int getFieldModifiers(String fieldName)
-    {
-        return getField(fieldName).getModifiers();
-    }
-
     public TransformField createField(int modifiers, String type, String suggestedName)
     {
         failIfFrozen();

@@ -327,8 +327,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         ClassTransformation ct = createClassTransformation(CheckFieldType.class, logger);
 
-        assertEquals(ct.getFieldModifiers("_privateField"), Modifier.PRIVATE);
-        assertEquals(ct.getFieldModifiers("_map"), Modifier.PRIVATE + Modifier.FINAL);
+        assertEquals(ct.getField("_privateField").getModifiers(), Modifier.PRIVATE);
+        assertEquals(ct.getField("_map").getModifiers(), Modifier.PRIVATE + Modifier.FINAL);
     }
 
     @Test

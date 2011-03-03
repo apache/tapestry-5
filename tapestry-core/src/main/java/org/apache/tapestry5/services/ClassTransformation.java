@@ -280,13 +280,6 @@ public interface ClassTransformation extends AnnotationProvider
     Logger getLogger();
 
     /**
-     * Returns the modifiers for the named field.
-     * 
-     * @deprecated Use {@link TransformField#getModifiers()} instead
-     */
-    int getFieldModifiers(String fieldName);
-
-    /**
      * Returns true if this transformation represents a root class (one that extends directly from
      * Object), or false if this transformation is an sub-class of another transformed class.
      * 
