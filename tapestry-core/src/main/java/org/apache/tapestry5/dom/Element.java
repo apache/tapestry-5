@@ -382,12 +382,6 @@ public final class Element extends Node
         if (hasChildren)
             writeChildMarkup(document, writer, localNamespacePrefixToURI);
 
-        // Dangerous -- perhaps it should be an error for a tag of type OMIT to even have children!
-        // We'll certainly be writing out unbalanced markup in that case.
-
-        if (style == EndTagStyle.OMIT)
-            return;
-
         if (hasChildren || style == EndTagStyle.REQUIRE)
         {
             // TAP5-471: Avoid use of printf().
