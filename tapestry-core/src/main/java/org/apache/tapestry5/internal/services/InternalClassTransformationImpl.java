@@ -1016,7 +1016,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             // Groovy injects a public field named metaClass. We ignore it, and add it as a claimed
             // field to prevent any of the workers from seeing it.
 
-            if (name.equals("metaClass") && getFieldType(name).equals("groovy.lang.MetaClass"))
+            if (name.equals("metaClass") && getField(name).getType().equals("groovy.lang.MetaClass"))
             {
                 tfi.claim("Ignored");
                 continue;
@@ -1662,11 +1662,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                 return !(tmi.added || tmi.isClaimed());
             }
         });
-    }
-
-    public String getFieldType(String fieldName)
-    {
-        return getField(fieldName).getType();
     }
 
     public boolean isField(String fieldName)

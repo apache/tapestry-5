@@ -159,17 +159,6 @@ public interface ClassTransformation extends AnnotationProvider
     List<TransformField> matchUnclaimedFields();
 
     /**
-     * Obtains the type of a declared instance field.
-     * 
-     * @param fieldName
-     * @return the type of the field, as a string
-     * @throws RuntimeException
-     *             if the fieldName does not correspond to a declared instance field
-     * @deprecated Use {@link TransformField#getType()} instead
-     */
-    String getFieldType(String fieldName);
-
-    /**
      * Returns true if the indicated name is a private instance field.
      * 
      * @param fieldName
