@@ -1249,11 +1249,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return false;
     }
 
-    public void addMethod(TransformMethodSignature signature, String methodBody)
-    {
-        removed("addMethod(TransformMethodSignature,String)");
-    }
-
     public TransformMethod addNewMethod(TransformMethodSignature signature, String methodBody)
     {
         return addOrReplaceMethod(signature, methodBody, true);
@@ -1342,11 +1337,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return result;
     }
 
-    public void addTransformedMethod(TransformMethodSignature signature, String methodBody)
-    {
-        removed("addTransformedMethod(TransformMethodSignature,String)");
-    }
-
     private CtClass[] buildCtClassList(String[] typeNames)
     {
         CtClass[] result = new CtClass[typeNames.length];
@@ -1367,16 +1357,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         {
             throw new RuntimeException(ex);
         }
-    }
-
-    public void extendMethod(TransformMethodSignature methodSignature, String methodBody)
-    {
-        removed("extendMethod(TransformMethodSignature, String)");
-    }
-
-    public void extendExistingMethod(TransformMethodSignature methodSignature, String methodBody)
-    {
-        removed("extendExistingMethod(TransformMethodSignature, String)");
     }
 
     public void copyMethod(TransformMethodSignature sourceMethod, int modifiers, String newMethodName)
@@ -1419,16 +1399,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         // will be transformed.
 
         formatter.format("\n%s renamed to %s\n\n", sourceMethod, newMethodName);
-    }
-
-    public void addCatch(TransformMethodSignature methodSignature, String exceptionType, String body)
-    {
-        removed("addCatch(TransformMethodSignature, String, String)");
-    }
-
-    public void prefixMethod(TransformMethodSignature methodSignature, String methodBody)
-    {
-        removed("prefixMethod(TransformMethodSignature, String)");
     }
 
     private void addMethodToDescription(String operation, TransformMethodSignature methodSignature, String methodBody)
@@ -2104,11 +2074,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return builder.toString();
     }
 
-    public void removeField(String fieldName)
-    {
-        removed("removeField(String)");
-    }
-
     public void replaceReadAccess(String fieldName, String methodName)
     {
         getTransformFieldImpl(fieldName).replaceReadAccess(methodName);
@@ -2239,11 +2204,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return logger;
     }
 
-    public void extendConstructor(String statement)
-    {
-        removed("extendConstructor(String)");
-    }
-
     void addToConstructor(String statement)
     {
         constructor.append(statement);
@@ -2315,13 +2275,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         assert signature != null;
 
         return methods.containsKey(signature);
-    }
-
-    private void removed(String methodName)
-    {
-        throw new RuntimeException(String.format(
-                "Method ClassTransformation.%s has been deprecated and is no longer functional. "
-                        + "Please consult the JavaDoc for a suitable replacement.", methodName));
     }
 
     private static ComponentMethodAdvice toBeforeAdvice(final ComponentInstanceOperation operation)

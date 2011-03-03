@@ -237,68 +237,6 @@ public interface ClassTransformation extends AnnotationProvider
     void addImplementedInterface(Class interfaceClass);
 
     /**
-     * Extends an existing method. The provided method body is inserted at the end of the existing
-     * method (i.e. {@link javassist.CtBehavior#insertAfter(java.lang.String)}). To access or change
-     * the return value, use the <code>$_</code> pseudo variable.
-     * <p/>
-     * The method may be declared in the class, or may be inherited from a super-class. For inherited methods, a method
-     * body is added that first invokes the super implementation. Use
-     * {@link #addMethod(TransformMethodSignature, String)} when it is necessary to control when the super-class method
-     * is invoked.
-     * <p/>
-     * The extended method is considered <em>new</em>. New methods <em>are not</em> scanned for
-     * {@linkplain #removeField(String)} removed}, {@linkplain #replaceReadAccess(String, String)} read replaced}, or
-     * {@linkplain #replaceWriteAccess(String, String) write replaced} fields. Generally that's what you want!
-     * 
-     * @param methodSignature
-     *            the signature of the method to extend
-     * @param methodBody
-     *            the body of code
-     * @throws org.apache.tapestry5.internal.services.MethodCompileException
-     *             if the provided Javassist method body can not be compiled
-     * @deprecated Use {@link TransformMethod#addAdvice(ComponentMethodAdvice)} instead. This method is non-functional
-     *             as of Tapestry 5.2.
-     */
-    void extendMethod(TransformMethodSignature methodSignature, String methodBody);
-
-    /**
-     * Like {@link #extendMethod(TransformMethodSignature, String)}, but the extension does not mark
-     * the method as new,
-     * and field changes <em>will</em> be processed. Note: at some point, this is not longer true; extend and
-     * extendMethod work identically.
-     * 
-     * @param methodSignature
-     *            signature of the method to extend
-     * @param methodBody
-     *            the body of code
-     * @throws org.apache.tapestry5.internal.services.MethodCompileException
-     *             if the provided method body can not be compiled
-     * @see #prefixMethod(TransformMethodSignature, String)
-     * @deprecated Use {@link TransformMethod#addAdvice(ComponentMethodAdvice) instead}. This method is non-functional
-     *             as of Tapestry 5.2.
-     */
-    void extendExistingMethod(TransformMethodSignature methodSignature, String methodBody);
-
-    /**
-     * Inserts code at the beginning of a method body (i.e. {@link CtBehavior#insertBefore(String)}.
-     * <p/>
-     * The method may be declared in the class, or may be inherited from a super-class. For inherited methods, a method
-     * is added that first invokes the super implementation. Use {@link #addMethod(TransformMethodSignature, String)}
-     * when it is necessary to control when the super-class method is invoked.
-     * <p/>
-     * Like {@link #extendExistingMethod(TransformMethodSignature, String)}, this method is generally used to "wrap" an
-     * existing method adding additional functionality such as caching or transaction support.
-     * 
-     * @param methodSignature
-     * @param methodBody
-     * @throws org.apache.tapestry5.internal.services.MethodCompileException
-     *             if the provided method body can not be compiled
-     * @deprecated Use {@link TransformMethod#addAdvice(ComponentMethodAdvice)} instead. This method is non-functional
-     *             as of Tapestry 5.2.
-     */
-    void prefixMethod(TransformMethodSignature methodSignature, String methodBody);
-
-    /**
      * Returns the name of a field that provides the {@link org.apache.tapestry5.ComponentResources} for the transformed
      * component. This will be a protected field, accessible to the class and subclasses.
      * 
@@ -307,39 +245,6 @@ public interface ClassTransformation extends AnnotationProvider
      *             as passed to {@link ComponentValueProvider#get(ComponentResources)} instead
      */
     String getResourcesFieldName();
-
-    /**
-     * Adds a new method to the transformed class. Replaces any existing method declared for the
-     * class. When overriding
-     * a super-class method, you should use {@link #extendMethod(TransformMethodSignature, String)},
-     * or you should
-     * remember to invoke the super class implemetation explicitly. Use this method to control when
-     * the super-class
-     * implementation is invoked.
-     * 
-     * @deprecated Use {@link #getOrCreateMethod(TransformMethodSignature)} instead. This method is non-functional as of
-     *             Tapestry 5.2.
-     */
-    void addMethod(TransformMethodSignature signature, String methodBody);
-
-    /**
-     * As with {@link #addMethod(TransformMethodSignature, String)}, but field references inside the
-     * method <em>will</em> be transformed, and the method <em>must not already exist</em>.
-     * 
-     * @deprecated Use {@link #getOrCreateMethod(TransformMethodSignature)} instead. This method is non-functional as of
-     *             Tapestry 5.2.
-     */
-    void addTransformedMethod(TransformMethodSignature methodSignature, String methodBody);
-
-    /**
-     * Adds a statement to the constructor. The statement is added as is, though a newline is added.
-     * 
-     * @param statement
-     *            the statement to add, which should end with a semicolon
-     * @deprecated Use methods that create or inject fields (directly or indirectly)
-     * @see ComponentValueProvider
-     */
-    void extendConstructor(String statement);
 
     /**
      * Replaces all read-references to the specified field with invocations of the specified method
@@ -361,18 +266,6 @@ public interface ClassTransformation extends AnnotationProvider
      * @deprecated Use {@link TransformField#replaceAccess(ComponentValueProvider) instead
      */
     void replaceWriteAccess(String fieldName, String methodName);
-
-    /**
-     * Removes a field entirely; this is useful for fields that are replaced entirely by computed
-     * values.
-     * 
-     * @param fieldName
-     *            the name of the field to remove
-     * @see #replaceReadAccess(String, String)
-     * @see #replaceWriteAccess(String, String)
-     * @deprecated This method is non-functional as of Tapestry 5.2
-     */
-    void removeField(String fieldName);
 
     /**
      * Converts a type name into a corresponding class (possibly, a transformed class). Primitive
@@ -413,22 +306,6 @@ public interface ClassTransformation extends AnnotationProvider
      * @return true if root class, false if sub-class
      */
     boolean isRootTransformation();
-
-    /**
-     * Adds a catch block to the method. The body should end with a return or a throw. The special
-     * Javassist variable
-     * $e is the exception instance.
-     * 
-     * @param methodSignature
-     *            method to be extended.
-     * @param exceptionType
-     *            fully qualified class name of exception
-     * @param body
-     *            code to execute
-     * @deprecated Use {@link TransformMethod#addAdvice(ComponentMethodAdvice)} instead. This method is non-functional
-     *             as of Tapestry 5.2.
-     */
-    void addCatch(TransformMethodSignature methodSignature, String exceptionType, String body);
 
     /**
      * Adds method advice for the indicated method.
