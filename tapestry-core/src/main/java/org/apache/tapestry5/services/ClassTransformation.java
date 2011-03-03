@@ -308,13 +308,6 @@ public interface ClassTransformation extends AnnotationProvider
     boolean isRootTransformation();
 
     /**
-     * Adds method advice for the indicated method.
-     * 
-     * @deprecated Use {@link TransformMethod#addAdvice(ComponentMethodAdvice)} instead
-     */
-    void advise(TransformMethodSignature methodSignature, ComponentMethodAdvice advice);
-
-    /**
      * Returns true if the method is an override of a method from the parent class.
      * 
      * @param methodSignature

@@ -1774,11 +1774,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return null;
     }
 
-    public void advise(TransformMethodSignature methodSignature, ComponentMethodAdvice advice)
-    {
-        getOrCreateMethod(methodSignature).addAdvice(advice);
-    }
-
     public boolean isMethodOverride(TransformMethodSignature methodSignature)
     {
         if (!isMethod(methodSignature))
