@@ -40,16 +40,22 @@ import org.apache.tapestry5.services.Heartbeat;
 
 /**
  * Basic looping class; loops over a number of items (provided by its source parameter), rendering its body for each
- * one. It turns out that gettting the component to <em>not</em> store its state in the Form is very tricky and, in
- * fact, a series of commands for starting and ending heartbeats, and advancing through the iterator, are still stored.
- * For a non-volatile Loop inside the form, the Loop stores a series of commands that start and end heartbeats and store
- * state (either as full objects when there the encoder parameter is not bound, or as client-side objects when there is
- * an encoder). For a Loop that doesn't need to be aware of the enclosing Form (if any), the formState parameter should
- * be bound to 'none'.
+ * one. When a Loop is inside a {@link Form}, it records quite a bit of state into the Form to coordinate access
+ * to the same (or equivalent) objects during the form submission as during the render. This is controlled by
+ * the formState parameter (of type {@link LoopFormState}) and can be 'none' (nothing stored into the form), 'values'
+ * (which stores the individual values looped over, or via a {@link ValueEncoder}, just the value's ids), and
+ * 'iteration' (which just stores indexes to the values within the source parameter, which means that the source
+ * parameter will be accessed during the form submission).
+ * <p>
+ * For a non-volatile Loop inside the form, the Loop stores a series of commands that start and end
+ * {@linkplain Heartbeat heartbeats}, and stores state for each value in the source parameter (either as full objects
+ * when the encoder parameter is not bound, or as client-side objects when there is an encoder). For a Loop that doesn't
+ * need to be aware of the enclosing Form (if any), the formState parameter should be bound to 'none'.
  * <p/>
  * When the Loop is used inside a Form, it will generate an
  * {@link org.apache.tapestry5.EventConstants#SYNCHRONIZE_VALUES} event to inform its container what values were
- * submitted and in what order.
+ * submitted and in what order; this can allow the container to pre-load the values in a single batch form external
+ * storage, if that is appropriate.
  */
 @SupportsInformalParameters
 @Events(EventConstants.SYNCHRONIZE_VALUES)
