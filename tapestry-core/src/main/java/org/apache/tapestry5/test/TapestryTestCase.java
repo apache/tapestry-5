@@ -822,12 +822,6 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(link.toRedirectURI()).andReturn(URI).atLeastOnce();
     }
 
-    /** @deprecated May be removed in Tapestry 5.3 */
-    protected final void train_toResourcePath(ClasspathAssetAliasManager manager, String clientURL, String resourcePath)
-    {
-        expect(manager.toResourcePath(clientURL)).andReturn(resourcePath).atLeastOnce();
-    }
-
     protected final void train_value(Id annotation, String value)
     {
         expect(annotation.value()).andReturn(value).atLeastOnce();

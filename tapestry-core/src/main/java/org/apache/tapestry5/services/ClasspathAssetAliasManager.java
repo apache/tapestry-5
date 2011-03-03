@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -52,14 +52,6 @@ public interface ClasspathAssetAliasManager
      * @return URL ready to send to the client
      */
     String toClientURL(String resourcePath);
-
-    /**
-     * Reverses {@link #toClientURL(String)}, stripping off the asset prefix, and re-expanding any aliased folders back
-     * to complete folders.
-     * 
-     * @deprecated No longer used as of Tapestry 5.2, may be removed in a later release.
-     */
-    String toResourcePath(String clientURL);
 
     /**
      * Returns the mappings used by the service: the keys are the folder aliases (i.e, "corelib")
