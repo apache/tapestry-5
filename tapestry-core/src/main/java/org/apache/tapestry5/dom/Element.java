@@ -92,16 +92,6 @@ public final class Element extends Node
     }
 
     /**
-     * Returns the containing element for this element. This will be null for the root element of a document.
-     * 
-     * @deprecated since 5.1.0.1, use {@link Node#getContainer()} instead
-     */
-    public Element getParent()
-    {
-        return container;
-    }
-
-    /**
      * Adds an attribute to the element, but only if the attribute name does not already exist.
      * 
      * @param name
