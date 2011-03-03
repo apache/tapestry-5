@@ -16,18 +16,24 @@ package org.apache.tapestry5.services.assets;
 
 import java.io.IOException;
 
+import org.apache.tapestry5.ioc.annotations.Primary;
+import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
+
 /**
  * Certain kinds of resources can be minimized: this primarily refers to JavaScript and CSS, both of which contain
  * whitespace, comments and other features that can be reduced.
+ * <p>
+ * The service configuration maps a MIME content type (e.g., "text/javascript") to an appropriate implementation of this
+ * interface. The master service has the @{@link Primary} marker interface.
  * 
  * @since 5.3.0
  */
+@UsesMappedConfiguration(ResourceMinimizer.class)
 public interface ResourceMinimizer
 {
     /**
      * Checks the {@linkplain StreamableResource#getContentType() content type} of the resource and applies an
-     * appropriate
-     * minimization to it if possible.
+     * appropriate minimization to it if possible.
      * 
      * @param resource
      *            to minimize

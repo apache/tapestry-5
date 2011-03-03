@@ -15,18 +15,32 @@
 package org.apache.tapestry5.internal.services.assets;
 
 import java.io.IOException;
+import java.util.Map;
 
+import org.apache.tapestry5.ioc.annotations.Marker;
+import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.services.assets.ResourceMinimizer;
 import org.apache.tapestry5.services.assets.StreamableResource;
 
 /**
- * Default implementation that simply returns the resource unchanged.
+ * Implementation that delegates, via its configuration, to a real implementation based on the content type of the
+ * resource.
  */
-public class DefaultResourceMinimizer implements ResourceMinimizer
+@Marker(Primary.class)
+public class MasterResourceMinimizer implements ResourceMinimizer
 {
+    private final Map<String, ResourceMinimizer> configuration;
+
+    public MasterResourceMinimizer(Map<String, ResourceMinimizer> configuration)
+    {
+        this.configuration = configuration;
+    }
+
     /** Does nothing; an override of this service can be installed to provide minimization. */
     public StreamableResource minimize(StreamableResource resource) throws IOException
     {
-        return resource;
+        ResourceMinimizer minimizer = configuration.get(resource.getContentType());
+
+        return minimizer == null ? resource : minimizer.minimize(resource);
     }
 }

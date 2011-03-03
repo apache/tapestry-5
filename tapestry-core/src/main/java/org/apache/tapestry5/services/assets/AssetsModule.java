@@ -17,7 +17,7 @@ package org.apache.tapestry5.services.assets;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.services.assets.CompressionAnalyzerImpl;
 import org.apache.tapestry5.internal.services.assets.ContentTypeAnalyzerImpl;
-import org.apache.tapestry5.internal.services.assets.DefaultResourceMinimizer;
+import org.apache.tapestry5.internal.services.assets.MasterResourceMinimizer;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTrackerImpl;
 import org.apache.tapestry5.internal.services.assets.SRSCachingInterceptor;
@@ -48,7 +48,7 @@ public class AssetsModule
         binder.bind(CompressionAnalyzer.class, CompressionAnalyzerImpl.class);
         binder.bind(ContentTypeAnalyzer.class, ContentTypeAnalyzerImpl.class);
         binder.bind(ResourceChangeTracker.class, ResourceChangeTrackerImpl.class);
-        binder.bind(ResourceMinimizer.class, DefaultResourceMinimizer.class);
+        binder.bind(ResourceMinimizer.class, MasterResourceMinimizer.class);
     }
 
     @Contribute(SymbolProvider.class)
