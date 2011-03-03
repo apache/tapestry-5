@@ -308,16 +308,6 @@ public interface ClassTransformation extends AnnotationProvider
     boolean isRootTransformation();
 
     /**
-     * Returns true if the method is an override of a method from the parent class.
-     * 
-     * @param methodSignature
-     *            signature of method to check
-     * @return true if the parent class contains a method with the name signature
-     * @deprecated Use {@link TransformMethod#isOverride()} instead
-     */
-    boolean isMethodOverride(TransformMethodSignature methodSignature);
-
-    /**
      * Locates and returns the method if declared in this class; If not,
      * the method is added to the class. If the method is an override
      * of a base class method, then the method will delegate to the base

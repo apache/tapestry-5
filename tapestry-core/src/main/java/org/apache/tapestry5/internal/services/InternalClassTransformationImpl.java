@@ -1774,15 +1774,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return null;
     }
 
-    public boolean isMethodOverride(TransformMethodSignature methodSignature)
-    {
-        if (!isMethod(methodSignature))
-            throw new IllegalArgumentException(String.format("Method %s is not implemented by transformed class %s.",
-                    methodSignature, getClassName()));
-
-        return getOrCreateMethod(methodSignature).isOverride();
-    }
-
     public InternalClassTransformation getParentTransformation()
     {
         return parentTransformation;
