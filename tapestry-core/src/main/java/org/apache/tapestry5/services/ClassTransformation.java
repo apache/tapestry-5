@@ -237,16 +237,6 @@ public interface ClassTransformation extends AnnotationProvider
     void addImplementedInterface(Class interfaceClass);
 
     /**
-     * Returns the name of a field that provides the {@link org.apache.tapestry5.ComponentResources} for the transformed
-     * component. This will be a protected field, accessible to the class and subclasses.
-     * 
-     * @return name of field
-     * @deprecated Obtain the resources from {@link ComponentMethodInvocation#getComponentResources()} or
-     *             as passed to {@link ComponentValueProvider#get(ComponentResources)} instead
-     */
-    String getResourcesFieldName();
-
-    /**
      * Replaces all read-references to the specified field with invocations of the specified method
      * name. Replacements
      * do not occur in methods added via {@link #addMethod(TransformMethodSignature, String)} or

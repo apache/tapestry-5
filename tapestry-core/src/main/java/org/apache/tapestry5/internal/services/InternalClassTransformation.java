@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,10 +16,13 @@ package org.apache.tapestry5.internal.services;
 
 import javassist.CtClass;
 
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.ComponentMethodInvocation;
+import org.apache.tapestry5.services.ComponentValueProvider;
 import org.apache.tapestry5.services.TransformMethod;
 import org.apache.tapestry5.services.TransformMethodSignature;
 
@@ -99,4 +102,12 @@ public interface InternalClassTransformation extends ClassTransformation
      * @return true if implemented
      */
     boolean isMethod(TransformMethodSignature signature);
+
+    /**
+     * Returns the name of a field that provides the {@link org.apache.tapestry5.ComponentResources} for the transformed
+     * component. This will be a protected field, accessible to the class and subclasses.
+     * 
+     * @return name of field
+     */
+    String getResourcesFieldName();
 }
