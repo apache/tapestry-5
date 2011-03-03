@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,18 +14,29 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.*;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.Block;
+import org.apache.tapestry5.ComponentAction;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.annotations.AfterRender;
+import org.apache.tapestry5.annotations.BeginRender;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Events;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.SetupRender;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.LoopFormState;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
-
-import java.io.Serializable;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Basic looping class; loops over a number of items (provided by its source parameter), rendering its body for each
@@ -36,8 +47,9 @@ import java.util.List;
  * an encoder). For a Loop that doesn't need to be aware of the enclosing Form (if any), the formState parameter should
  * be bound to 'none'.
  * <p/>
- * When the Loop is used inside a Form, it will generate an {@link org.apache.tapestry5.EventConstants#SYNCHRONIZE_VALUES}
- * event to inform its container what values were submitted and in what order.
+ * When the Loop is used inside a Form, it will generate an
+ * {@link org.apache.tapestry5.EventConstants#SYNCHRONIZE_VALUES} event to inform its container what values were
+ * submitted and in what order.
  */
 @SupportsInformalParameters
 @Events(EventConstants.SYNCHRONIZE_VALUES)
@@ -220,24 +232,12 @@ public class Loop<T>
     private ValueEncoder<T> encoder;
 
     /**
-     * If true and the Loop is enclosed by a Form, then the normal state saving logic is turned off. Defaults to false,
-     * enabling state saving logic within Forms. With the addition of the formState parameter, volatile simply sets a
-     * default for formState is formState is not specified.
-     *
-     * @deprecated in release 5.1.0.4, use the formState parameter instead.
-     */
-    @Parameter(name = "volatile", principal = true)
-    @Deprecated
-    private boolean volatileState;
-
-    /**
-     * Controls what information, if any, is encoded into an enclosing Form. The default value for this is set by the
-     * deprecated volatile parameter. The normal default is {@link org.apache.tapestry5.corelib.LoopFormState#VALUES},
-     * but changes to {@link org.apache.tapestry5.corelib.LoopFormState#ITERATION} if volatile is true. This parameter
+     * Controls what information, if any, is encoded into an enclosing Form. The default value
+     * is {@link org.apache.tapestry5.corelib.LoopFormState#VALUES}. This parameter
      * is only used if the component is enclosed by a Form.
      */
     @Parameter(allowNull = false, defaultPrefix = BindingConstants.LITERAL)
-    private LoopFormState formState;
+    private LoopFormState formState = LoopFormState.VALUES;
 
     @Environmental(false)
     private FormSupport formSupport;
@@ -262,7 +262,7 @@ public class Loop<T>
     private int index;
 
     /**
-     * A Block to render instead of the loop when the source is empty.  The default is to render nothing.
+     * A Block to render instead of the loop when the source is empty. The default is to render nothing.
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private Block empty;
@@ -288,10 +288,9 @@ public class Loop<T>
      */
     private List<T> synchonizedValues;
 
-
     LoopFormState defaultFormState()
     {
-        return volatileState ? LoopFormState.ITERATION : LoopFormState.VALUES;
+        return LoopFormState.VALUES;
     }
 
     String defaultElement()
@@ -313,7 +312,6 @@ public class Loop<T>
 
         boolean insideForm = formSupport != null;
 
-
         storeValuesInForm = insideForm && formState == LoopFormState.VALUES;
         storeIncrementsInForm = insideForm && formState == LoopFormState.ITERATION;
 
@@ -328,8 +326,10 @@ public class Loop<T>
 
         if (insideForm && hasContent)
         {
-            if (storeValuesInForm) formSupport.store(this, RESET_INDEX);
-            if (storeIncrementsInForm) formSupport.store(this, SETUP_FOR_VOLATILE);
+            if (storeValuesInForm)
+                formSupport.store(this, RESET_INDEX);
+            if (storeIncrementsInForm)
+                formSupport.store(this, SETUP_FOR_VOLATILE);
         }
 
         cleanupBlock = hasContent ? null : empty;
@@ -338,7 +338,6 @@ public class Loop<T>
 
         return hasContent;
     }
-
 
     /**
      * Returns the empty block, or null, after the render has finished. It will only be the empty block (which itself
@@ -412,7 +411,8 @@ public class Loop<T>
     @AfterRender
     boolean after(MarkupWriter writer)
     {
-        if (element != null) writer.end();
+        if (element != null)
+            writer.end();
 
         endHeartbeat();
 

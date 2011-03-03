@@ -1,7 +1,7 @@
 <dl class="t-beandisplay" xml:space="default"
     xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
-    <t:loop t:source="model.propertyNames" t:volatile="true" t:value="propertyName">
+    <t:loop t:source="model.propertyNames" formState="ITERATION" t:value="propertyName">
 
         <dt class="${propertyClass}">${propertyModel.label}</dt>
 
