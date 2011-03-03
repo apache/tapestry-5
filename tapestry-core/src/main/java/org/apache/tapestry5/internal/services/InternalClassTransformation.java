@@ -23,6 +23,7 @@ import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.ComponentMethodInvocation;
 import org.apache.tapestry5.services.ComponentValueProvider;
+import org.apache.tapestry5.services.TransformField;
 import org.apache.tapestry5.services.TransformMethod;
 import org.apache.tapestry5.services.TransformMethodSignature;
 
@@ -110,4 +111,21 @@ public interface InternalClassTransformation extends ClassTransformation
      * @return name of field
      */
     String getResourcesFieldName();
+
+    /**
+     * Replaces all read-references to the specified field with invocations of the specified method
+     * name. Replacements
+     * do not occur in methods added via {@link #addMethod(TransformMethodSignature, String)} or
+     * {@link #extendMethod(TransformMethodSignature, String)}.
+     */
+    void replaceReadAccess(String fieldName, String methodName);
+
+    /**
+     * Replaces all write accesses to the specified field with invocations of the specified method
+     * name. The method
+     * should take a single parameter of the same type as the field. Replacements do not occur in
+     * methods added via {@link #addMethod(TransformMethodSignature, String)} or
+     * {@link #extendMethod(TransformMethodSignature, String)}.
+     */
+    void replaceWriteAccess(String fieldName, String methodName);
 }

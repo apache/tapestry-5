@@ -237,27 +237,6 @@ public interface ClassTransformation extends AnnotationProvider
     void addImplementedInterface(Class interfaceClass);
 
     /**
-     * Replaces all read-references to the specified field with invocations of the specified method
-     * name. Replacements
-     * do not occur in methods added via {@link #addMethod(TransformMethodSignature, String)} or
-     * {@link #extendMethod(TransformMethodSignature, String)}.
-     * 
-     * @deprecated Use {@link TransformField#replaceAccess(ComponentValueProvider) instead
-     */
-    void replaceReadAccess(String fieldName, String methodName);
-
-    /**
-     * Replaces all write accesses to the specified field with invocations of the specified method
-     * name. The method
-     * should take a single parameter of the same type as the field. Replacements do not occur in
-     * methods added via {@link #addMethod(TransformMethodSignature, String)} or
-     * {@link #extendMethod(TransformMethodSignature, String)}.
-     * 
-     * @deprecated Use {@link TransformField#replaceAccess(ComponentValueProvider) instead
-     */
-    void replaceWriteAccess(String fieldName, String methodName);
-
-    /**
      * Converts a type name into a corresponding class (possibly, a transformed class). Primitive
      * type names are returned as wrapper types.
      */
