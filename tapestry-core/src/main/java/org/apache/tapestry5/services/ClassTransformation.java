@@ -91,43 +91,12 @@ public interface ClassTransformation extends AnnotationProvider
     String newMemberName(String prefix, String baseName);
 
     /**
-     * Generates a list of the names of declared instance fields that have the indicated annotation.
-     * Non-private and
-     * static fields are ignored. Only the names of private instance fields are returned.
-     * 
-     * @deprecated Use {@link #matchFieldsWithAnnotation(Class)} instead
-     */
-    List<String> findFieldsWithAnnotation(Class<? extends Annotation> annotationClass);
-
-    /**
      * Returns a sorted list of declared instance fields with the indicated annotation. Non-private
      * and static fields are ignored.
      * 
      * @since 5.2.0
      */
     List<TransformField> matchFieldsWithAnnotation(Class<? extends Annotation> annotationClass);
-
-    /**
-     * Finds all methods defined in the class that are marked with the provided annotation.
-     * 
-     * @param annotationClass
-     * @return a list of method signature (which may be empty) in ascending order
-     * @see #findMethods(MethodFilter)
-     * @deprecated Use {@link #matchMethodsWithAnnotation(Class)} instead
-     */
-    List<TransformMethodSignature> findMethodsWithAnnotation(Class<? extends Annotation> annotationClass);
-
-    /**
-     * Finds all methods matched by the provided filter.
-     * 
-     * @param filter
-     *            Passed each method signature, it may include or exclude each potential
-     * @return a list of matching method signatures (which may be empty) in ascending order (by
-     *         method name), but
-     *         descending order (by parameter count) within overrides of a single method name.
-     * @deprecated Use {@link #matchMethods(Predicate)} instead
-     */
-    List<TransformMethodSignature> findMethods(MethodFilter filter);
 
     /**
      * Finds all methods matched by the provided predicate.
@@ -150,17 +119,6 @@ public interface ClassTransformation extends AnnotationProvider
     List<TransformMethod> matchMethodsWithAnnotation(Class<? extends Annotation> annotationType);
 
     /**
-     * Finds all unclaimed fields matched by the provided filter. Only considers private instance
-     * fields.
-     * 
-     * @param filter
-     *            passed each field name and field type
-     * @return the names of all matched fields, in ascending order
-     * @deprecated Use {@link #matchFields(Predicate)} instead
-     */
-    List<String> findFields(FieldFilter filter);
-
-    /**
      * Finds all unclaimed fields matched by the provided predicate. Only considers instance fields.
      * Added, removed and claimed fields are excluded.
      * 
@@ -170,22 +128,6 @@ public interface ClassTransformation extends AnnotationProvider
      * @since 5.2.0
      */
     List<TransformField> matchFields(Predicate<TransformField> predicate);
-
-    /**
-     * Finds an annotation on a declared instance field.
-     * 
-     * @param <T>
-     *            constrains parameter and return value to Annotation types
-     * @param fieldName
-     *            the name of the field, which must exist
-     * @param annotationClass
-     *            the type of annotation to access
-     * @return the annotation if present, or null otherwise
-     * @throws IllegalArgumentException
-     *             if the fieldName does not correspond to a declared field
-     * @deprecated Use {@link TransformField#getAnnotation(Class)} instead
-     */
-    <T extends Annotation> T getFieldAnnotation(String fieldName, Class<T> annotationClass);
 
     /**
      * Locates a declared field by its field name. The field must exist.
@@ -198,56 +140,6 @@ public interface ClassTransformation extends AnnotationProvider
      * @since 5.2.0
      */
     TransformField getField(String fieldName);
-
-    /**
-     * Finds an annotation on a declared method.
-     * 
-     * @param <T>
-     *            constrains parameter and return value to Annotation types
-     * @param method
-     *            the method signature to search
-     * @param annotationClass
-     *            the type of annotation to access
-     * @return the annotation if present, or null otherwise
-     * @throws IllegalArgumentException
-     *             if the method signature does not correspond to a declared method
-     * @deprecated Use {@link TransformMethod#getAnnotation(Class)} instead
-     */
-    <T extends Annotation> T getMethodAnnotation(TransformMethodSignature method, Class<T> annotationClass);
-
-    /**
-     * Claims a field so as to ensure that only a single annotation is applied to any single field.
-     * When a
-     * transformation occurs (driven by a field annotation), the field is claimed (using the
-     * annotation object as the
-     * tag). If a field has multiple conflicting annotations, this will be discovered when the code
-     * attempts to claim
-     * the field a second time.
-     * 
-     * @param fieldName
-     *            the name of the field that is being claimed
-     * @param tag
-     *            a non-null object that represents why the field is being tagged (this is typically
-     *            a specific
-     *            annotation on the field)
-     * @throws IllegalArgumentException
-     *             if the fieldName does not correspond to a declared instance field
-     * @throws IllegalStateException
-     *             if the field is already claimed for some other tag
-     * @deprecated Use {@link TransformField#claim(Object)} instead
-     */
-    void claimField(String fieldName, Object tag);
-
-    /**
-     * Changes the field to be read only. Any existing code that changes the field will cause a
-     * runtime exception.
-     * 
-     * @param fieldName
-     *            name of field to so change
-     * @deprecated Use {@link TransformField#replaceAccess(TransformField)} instead
-     * @see ReadOnlyFieldValueConduit
-     */
-    void makeReadOnly(String fieldName);
 
     /**
      * Finds any declared <em>instance</em> fields that have not been claimed (via {@link #claimField(String, Object)})

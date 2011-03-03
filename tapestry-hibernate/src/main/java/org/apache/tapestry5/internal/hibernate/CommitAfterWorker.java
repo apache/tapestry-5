@@ -1,10 +1,10 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,8 +21,8 @@ import org.apache.tapestry5.services.*;
 
 /**
  * Searches for methods that have the {@link org.apache.tapestry5.hibernate.annotations.CommitAfter} annotation and adds
- * logic around the method to commit or abort the transaction.  The commit/abort logic is the same as for the {@link
- * org.apache.tapestry5.hibernate.HibernateTransactionDecorator} service.
+ * logic around the method to commit or abort the transaction. The commit/abort logic is the same as for the
+ * {@link org.apache.tapestry5.hibernate.HibernateTransactionDecorator} service.
  */
 public class CommitAfterWorker implements ComponentClassTransformWorker
 {
@@ -56,9 +56,9 @@ public class CommitAfterWorker implements ComponentClassTransformWorker
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {
-        for (TransformMethodSignature sig : transformation.findMethodsWithAnnotation(CommitAfter.class))
+        for (TransformMethod method : transformation.matchMethodsWithAnnotation(CommitAfter.class))
         {
-            transformation.advise(sig, advice);
+            method.addAdvice(advice);
         }
     }
 }

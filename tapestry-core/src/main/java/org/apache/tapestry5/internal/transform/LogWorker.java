@@ -1,10 +1,10 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -39,9 +39,10 @@ public class LogWorker implements ComponentClassTransformWorker
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {
-        List<TransformMethodSignature> signatures = transformation.findMethodsWithAnnotation(Log.class);
+        List<TransformMethod> methods = transformation.matchMethodsWithAnnotation(Log.class);
 
-        if (signatures.isEmpty()) return;
+        if (methods.isEmpty())
+            return;
 
         // Re-use the logging advice from LoggingDecorator
         final MethodAdvice loggingAdvice = new LoggingAdvice(model.getLogger(), exceptionTracker);
@@ -55,7 +56,9 @@ public class LogWorker implements ComponentClassTransformWorker
             }
         };
 
-        for (TransformMethodSignature signature : signatures)
-            transformation.advise(signature, advice);
+        for (TransformMethod method : methods)
+        {
+            method.addAdvice(advice);
+        }
     }
 }

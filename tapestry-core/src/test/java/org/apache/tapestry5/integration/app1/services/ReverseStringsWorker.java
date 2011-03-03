@@ -1,10 +1,10 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -41,10 +41,8 @@ public class ReverseStringsWorker implements ComponentClassTransformWorker
                 {
                     Exception thrown = invocation.getThrown(Exception.class);
 
-                    invocation.overrideResult(
-                            String.format("Invocation of method %s() failed with %s.",
-                                          invocation.getMethodName(),
-                                          thrown.getClass().getName()));
+                    invocation.overrideResult(String.format("Invocation of method %s() failed with %s.",
+                            invocation.getMethodName(), thrown.getClass().getName()));
 
                     return;
                 }
@@ -71,9 +69,9 @@ public class ReverseStringsWorker implements ComponentClassTransformWorker
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {
-        for (TransformMethodSignature sig : transformation.findMethodsWithAnnotation(ReverseStrings.class))
+        for (TransformMethod method : transformation.matchMethodsWithAnnotation(ReverseStrings.class))
         {
-            transformation.advise(sig, advice);
+            method.addAdvice(advice);
         }
     }
 }

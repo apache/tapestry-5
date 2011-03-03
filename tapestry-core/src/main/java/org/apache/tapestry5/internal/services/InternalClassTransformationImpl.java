@@ -23,7 +23,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javassist.*;
+import javassist.CannotCompileException;
+import javassist.ClassPool;
+import javassist.CtBehavior;
+import javassist.CtClass;
+import javassist.CtConstructor;
+import javassist.CtField;
+import javassist.CtMember;
+import javassist.CtMethod;
+import javassist.CtNewConstructor;
+import javassist.CtNewMethod;
+import javassist.NotFoundException;
 import javassist.bytecode.FieldInfo;
 import javassist.bytecode.MethodInfo;
 import javassist.bytecode.SignatureAttribute;
@@ -47,7 +57,18 @@ import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.ComponentEvent;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.ComponentEventHandler;
+import org.apache.tapestry5.services.ComponentInstanceOperation;
+import org.apache.tapestry5.services.ComponentMethodAdvice;
+import org.apache.tapestry5.services.ComponentMethodInvocation;
+import org.apache.tapestry5.services.ComponentValueProvider;
+import org.apache.tapestry5.services.MethodAccess;
+import org.apache.tapestry5.services.MethodInvocationResult;
+import org.apache.tapestry5.services.TransformConstants;
+import org.apache.tapestry5.services.TransformField;
+import org.apache.tapestry5.services.TransformMethod;
+import org.apache.tapestry5.services.TransformMethodSignature;
+import org.apache.tapestry5.services.TransformUtils;
 import org.slf4j.Logger;
 
 /**
@@ -328,7 +349,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
          * The static method takes the same parameters as the main method, but takes
          * an instance object first. Invoking the static method turns into an invocation
          * of the proper method of the instance object.
-         *
+         * 
          * @return the name of the created static access method
          */
         private String createStaticAccessMethodForNonPublicMethod()
@@ -534,6 +555,23 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         public int getModifiers()
         {
             return field.getModifiers();
+        }
+
+        private void makeReadOnly()
+        {
+            String methodName = newMemberName("write", name);
+
+            TransformMethodSignature sig = new TransformMethodSignature(Modifier.PRIVATE, "void", methodName,
+                    new String[]
+                    { type }, null);
+
+            String message = ServicesMessages.readOnlyField(getClassName(), name);
+
+            String body = String.format("throw new java.lang.RuntimeException(\"%s\");", message);
+
+            addNewMethod(sig, body);
+
+            replaceWriteAccess(methodName);
         }
 
         void replaceReadAccess(String methodName)
@@ -754,7 +792,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
             addInjectToConstructor(name, fieldType, value);
 
-            makeReadOnly(name);
+            makeReadOnly();
         }
 
         public <T> void injectIndirect(ComponentValueProvider<T> provider)
@@ -767,7 +805,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
             addToConstructor(String.format("  %s = (%s) (%s).get(%s);", name, type, argReference, resourcesFieldName));
 
-            makeReadOnly(name);
+            makeReadOnly();
         }
 
     }
@@ -991,21 +1029,11 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             throw new RuntimeException(ServicesMessages.nonPrivateFields(getClassName(), names));
     }
 
-    public <T extends Annotation> T getFieldAnnotation(String fieldName, Class<T> annotationClass)
-    {
-        return getField(fieldName).getAnnotation(annotationClass);
-    }
-
-    public <T extends Annotation> T getMethodAnnotation(TransformMethodSignature signature, Class<T> annotationClass)
-    {
-        return getOrCreateMethod(signature).getAnnotation(annotationClass);
-    }
-
     /**
      * Searches an array of objects (that are really annotations instances) to find one that is of
      * the correct type,
      * which is returned.
-     *
+     * 
      * @param <T>
      * @param annotationClass
      *            the annotation to search for
@@ -1131,7 +1159,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
      * degenerate cases that are not covered properly: these are related to base interfaces that may
      * be implemented by
      * base classes.
-     *
+     * 
      * @param ctInterface
      * @throws NotFoundException
      */
@@ -1219,11 +1247,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         }
 
         return false;
-    }
-
-    public void claimField(String fieldName, Object tag)
-    {
-        getField(fieldName).claim(tag);
     }
 
     public void addMethod(TransformMethodSignature signature, String methodBody)
@@ -1556,28 +1579,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return true;
     }
 
-    public List<String> findFieldsWithAnnotation(final Class<? extends Annotation> annotationClass)
-    {
-        return toFieldNames(matchFieldsWithAnnotation(annotationClass));
-    }
-
-    public List<String> findFields(final FieldFilter filter)
-    {
-        assert filter != null;
-
-        failIfFrozen();
-
-        List<TransformField> fields = matchFields(new Predicate<TransformField>()
-        {
-            public boolean accept(TransformField object)
-            {
-                return filter.accept(object.getName(), object.getType());
-            }
-        });
-
-        return toFieldNames(fields);
-    }
-
     public List<TransformField> matchFields(Predicate<TransformField> predicate)
     {
         failIfFrozen();
@@ -1594,34 +1595,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                 return field.getAnnotation(annotationClass) != null;
             }
         });
-    }
-
-    public List<TransformMethodSignature> findMethodsWithAnnotation(final Class<? extends Annotation> annotationClass)
-    {
-        List<TransformMethod> methods = matchMethods(new Predicate<TransformMethod>()
-        {
-            public boolean accept(TransformMethod method)
-            {
-                return method.getAnnotation(annotationClass) != null;
-            };
-        });
-
-        return toMethodSignatures(methods);
-    }
-
-    public List<TransformMethodSignature> findMethods(final MethodFilter filter)
-    {
-        assert filter != null;
-
-        List<TransformMethod> methods = matchMethods(new Predicate<TransformMethod>()
-        {
-            public boolean accept(TransformMethod object)
-            {
-                return filter.accept(object.getSignature());
-            };
-        });
-
-        return toMethodSignatures(methods);
     }
 
     public List<TransformMethod> matchMethods(Predicate<TransformMethod> predicate)
@@ -1650,10 +1623,12 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             String[] parameters = toTypeNames(method.getParameterTypes());
             String[] exceptions = toTypeNames(method.getExceptionTypes());
 
-            final SignatureAttribute attribute = (SignatureAttribute)method.getMethodInfo().getAttribute(SignatureAttribute.tag);
+            final SignatureAttribute attribute = (SignatureAttribute) method.getMethodInfo().getAttribute(
+                    SignatureAttribute.tag);
             String sig = attribute != null ? attribute.getSignature() : null;
 
-            return new TransformMethodSignature(method.getModifiers(), type, sig, method.getName(), parameters, exceptions);
+            return new TransformMethodSignature(method.getModifiers(), type, sig, method.getName(), parameters,
+                    exceptions);
         }
         catch (NotFoundException ex)
         {
@@ -1868,7 +1843,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     /**
      * Adds a parameter to the constructor for the class; the parameter is used to initialize the
      * value for a field.
-     *
+     * 
      * @param fieldName
      *            name of field to inject
      * @param fieldType
@@ -2144,24 +2119,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return builder.toString();
     }
 
-    public void makeReadOnly(String fieldName)
-    {
-        String methodName = newMemberName("write", fieldName);
-
-        String fieldType = getFieldType(fieldName);
-
-        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PRIVATE, "void", methodName, new String[]
-        { fieldType }, null);
-
-        String message = ServicesMessages.readOnlyField(getClassName(), fieldName);
-
-        String body = String.format("throw new java.lang.RuntimeException(\"%s\");", message);
-
-        addNewMethod(sig, body);
-
-        replaceWriteAccess(fieldName, methodName);
-    }
-
     public void removeField(String fieldName)
     {
         removed("removeField(String)");
@@ -2320,7 +2277,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     /**
      * Adds a new constructor argument to the transformed constructor.
-     *
+     * 
      * @param parameterType
      *            type of parameter
      * @param value

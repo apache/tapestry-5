@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,10 +14,13 @@
 
 package org.apache.tapestry5.internal.transform;
 
+import java.util.List;
+
 import org.apache.tapestry5.annotations.Retain;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.TransformField;
 
 /**
  * Identifies fields with the {@link org.apache.tapestry5.annotations.Retain} annotation, and "claims" them so that no
@@ -29,14 +32,16 @@ public final class RetainWorker implements ComponentClassTransformWorker
      * Claims each field with the {@link org.apache.tapestry5.annotations.Retain} annotation, claiming it using the
      * annotation as the tag.
      */
+    @SuppressWarnings("deprecation")
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {
-        for (String fieldName : transformation.findFieldsWithAnnotation(Retain.class))
-        {
-            Retain annotation = transformation.getFieldAnnotation(fieldName, Retain.class);
+        List<TransformField> fields = transformation.matchFieldsWithAnnotation(Retain.class);
 
-            transformation.claimField(fieldName, annotation);
+        for (TransformField field : fields)
+        {
+            Retain annotation = field.getAnnotation(Retain.class);
+
+            field.claim(annotation);
         }
     }
-
 }
