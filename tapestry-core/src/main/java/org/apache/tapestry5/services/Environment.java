@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 The Apache Software Foundation
+// Copyright 2006, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -72,17 +72,4 @@ public interface Environment
      * Clears all stacks; used when initializing the Environment before a render.
      */
     void clear();
-
-    /**
-     * For some type, returns a temporary access object for the type. The access object is efficient because it ties
-     * directly to the thread's instance of the Environment service, it also caches the current value. <p>The access
-     * object must be discarded at the end of the request (it will be unusable at that point anyway).
-     *
-     * @param type type of environmental object
-     * @param <T>
-     * @return access object that can be used to see the current environmental object of the type
-     * @since 5.0.19
-     * @deprecated No longer gives a performance advantage due to pool-less pages
-     */
-    <T> EnvironmentalAccess<T> getAccess(Class<T> type);
 }
