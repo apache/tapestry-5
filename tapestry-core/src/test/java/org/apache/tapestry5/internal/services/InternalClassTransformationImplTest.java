@@ -803,7 +803,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory, targetObjectCtClass, null,
                 model, null, false);
 
-        ct.injectField("_value", "Tapestry");
+        ct.getField("_value").inject("Tapestry");
 
         ct.finish();
 

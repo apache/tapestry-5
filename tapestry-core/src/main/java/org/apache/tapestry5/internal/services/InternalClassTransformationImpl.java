@@ -894,7 +894,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         addImplementedInterface(Component.class);
 
-        resourcesFieldName = createField((Modifier.PROTECTED | Modifier.FINAL), InternalComponentResources.class.getName(), "resources").getName();
+        resourcesFieldName = createField((Modifier.PROTECTED | Modifier.FINAL),
+                InternalComponentResources.class.getName(), "resources").getName();
 
         addToConstructor(String.format("  %s = $1;", resourcesFieldName));
 
@@ -1843,11 +1844,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     private void addInjectToConstructor(String fieldName, CtClass fieldType, Object value)
     {
         addToConstructor(String.format("  %s = %s;", fieldName, addConstructorArg(fieldType, value)));
-    }
-
-    public void injectField(String fieldName, Object value)
-    {
-        getField(fieldName).inject(value);
     }
 
     private CtClass convertNameToCtType(String type) throws NotFoundException

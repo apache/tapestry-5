@@ -220,20 +220,6 @@ public interface ClassTransformation extends AnnotationProvider
     <T> TransformField addIndirectInjectedField(Class<T> type, String suggestedName, ComponentValueProvider<T> provider);
 
     /**
-     * Converts an <em>existing</em> field into a read only field whose value is the provided
-     * value. This is used
-     * when converting an
-     * existing field into a read-only injected value.
-     * 
-     * @param fieldName
-     *            name of field to convert
-     * @param value
-     *            the value provided by the field
-     * @deprecated Use {@link TransformField#inject(Object)} instead
-     */
-    void injectField(String fieldName, Object value);
-
-    /**
      * Transforms the class to implement the indicated interface. If the class (or its super class)
      * does not already
      * implement the interface, then the interface is added, and default implementations of any
