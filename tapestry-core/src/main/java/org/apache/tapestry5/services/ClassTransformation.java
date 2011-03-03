@@ -287,19 +287,6 @@ public interface ClassTransformation extends AnnotationProvider
     int getFieldModifiers(String fieldName);
 
     /**
-     * Converts a signature to a string used to identify the method; this consists of the
-     * {@link TransformMethodSignature#getMediumDescription()} appended with source file information
-     * and line number
-     * information (when available).
-     * 
-     * @param signature
-     * @return a string that identifies the class, method name, types of parameters, source file and
-     *         source line number
-     * @deprecated Use {@link TransformMethod#getMethodIdentifier()} instead
-     */
-    String getMethodIdentifier(TransformMethodSignature signature);
-
-    /**
      * Returns true if this transformation represents a root class (one that extends directly from
      * Object), or false if this transformation is an sub-class of another transformed class.
      * 

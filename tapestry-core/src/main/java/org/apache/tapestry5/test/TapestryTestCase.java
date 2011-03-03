@@ -566,12 +566,6 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(model.getMeta(key)).andReturn(value).atLeastOnce();
     }
 
-    protected final void train_getMethodIdentifier(ClassTransformation transformation,
-            TransformMethodSignature signature, String id)
-    {
-        expect(transformation.getMethodIdentifier(signature)).andReturn(id);
-    }
-
     protected final void train_getOutputStream(HttpServletResponse response, ServletOutputStream stream)
     {
         try
