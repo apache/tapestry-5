@@ -619,9 +619,13 @@ public final class TapestryModule
         return packageName.replace('.', '/');
     }
 
-    public static void contributeComponentClassResolver(Configuration<LibraryMapping> configuration)
+    @Contribute(ComponentClassResolver.class)
+    public static void setupCoreAndAppLibraries(Configuration<LibraryMapping> configuration,
+            @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
+            String appRootPackage)
     {
         configuration.add(new LibraryMapping("core", "org.apache.tapestry5.corelib"));
+        configuration.add(new LibraryMapping("", appRootPackage));
     }
 
     /**

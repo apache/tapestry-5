@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,8 +46,6 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     private final ComponentInstantiatorSource componentInstantiatorSource;
 
     private final ClassNameLocator classNameLocator;
-
-    private final String appRootPackage;
 
     private final String startPageName;
 
@@ -106,9 +104,6 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
     ClassNameLocator classNameLocator,
 
-    @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
-    String appRootPackage,
-
     @Symbol(SymbolConstants.START_PAGE_NAME)
     String startPageName,
 
@@ -118,10 +113,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         this.componentInstantiatorSource = componentInstantiatorSource;
         this.classNameLocator = classNameLocator;
 
-        this.appRootPackage = appRootPackage;
         this.startPageName = startPageName;
-
-        addPackagesToInstantiatorSource(this.appRootPackage);
 
         for (LibraryMapping mapping : mappings)
         {
@@ -209,8 +201,6 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         mixinToClassName.clear();
         pageClassNameToLogicalName.clear();
         pageNameToCanonicalPageName.clear();
-
-        rebuild("", appRootPackage);
 
         for (String prefix : mappings.keySet())
         {

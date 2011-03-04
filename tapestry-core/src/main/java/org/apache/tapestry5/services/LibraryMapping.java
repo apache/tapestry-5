@@ -1,4 +1,4 @@
-// Copyright 2006, 2010 The Apache Software Foundation
+// Copyright 2006, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,23 +37,41 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
  */
 public final class LibraryMapping
 {
-    private final String pathPrefix, rootPackage;
+    private final String virtualFolderName, rootPackage;
 
-    public LibraryMapping(String pathPrefix, String rootPackage)
+    /**
+     * Maps a virtual folder to a package that contains sub-packages for components, pages, etc. The special pathPrefix
+     * "" (the empty string) identifies the application. Tapestry defines a special pathPrefix, "core", for the core
+     * components.
+     * <p>
+     * Note that it <em>is</em> allowed to contribute mutiple LibraryMappings with the same prefix to the
+     * {@link ComponentClassResolver}, and the results are merged (though conflicts, where the same simple name appears
+     * under multiple root packages, is not currently checked for).
+     * 
+     * @param virtualFolderName
+     *            identifies the virtual folder "containing" the pages and components of the library. Prior to Tapestry
+     *            5.2, the name could include a slash, but this is now expressly forbidden.
+     * @param rootPackage
+     *            The root package to search.
+     */
+    public LibraryMapping(String virtualFolderName, String rootPackage)
     {
-        assert InternalUtils.isNonBlank(pathPrefix);
         assert InternalUtils.isNonBlank(rootPackage);
-        if (pathPrefix.contains("/"))
+        
+        if (virtualFolderName.contains("/"))
             throw new RuntimeException(
                     "LibraryMapping path prefixes may no longer contain slashes (as of Tapestry 5.2).");
 
-        this.pathPrefix = pathPrefix;
+        this.virtualFolderName = virtualFolderName;
         this.rootPackage = rootPackage;
     }
 
+    /**
+     * Returns the virtual folder name (the odd name of this method reflects the evolution of the framework).
+     */
     public String getPathPrefix()
     {
-        return pathPrefix;
+        return virtualFolderName;
     }
 
     public String getRootPackage()
@@ -64,6 +82,6 @@ public final class LibraryMapping
     @Override
     public String toString()
     {
-        return String.format("LibraryMapping[%s, %s]", pathPrefix, rootPackage);
+        return String.format("LibraryMapping[%s, %s]", virtualFolderName, rootPackage);
     }
 }

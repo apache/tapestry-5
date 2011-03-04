@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ClassNameLocator;
@@ -34,6 +35,9 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 {
     private static final String APP_ROOT_PACKAGE = "org.example.app";
 
+    private static final List<LibraryMapping> APP_ROOT_PACKAGE_MAPPINGS = Arrays.asList(new LibraryMapping("",
+            APP_ROOT_PACKAGE));
+
     private static final String CORE_PREFIX = "core";
 
     private static final String CORE_ROOT_PACKAGE = "org.apache.tapestry5.corelib";
@@ -45,9 +49,9 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     private ComponentClassResolverImpl create(Logger logger, ComponentInstantiatorSource source,
             ClassNameLocator locator, LibraryMapping... mappings)
     {
-        List<LibraryMapping> list = Arrays.asList(mappings);
+        List<LibraryMapping> full = F.flow(APP_ROOT_PACKAGE_MAPPINGS).concat(F.flow(mappings)).toList();
 
-        return new ComponentClassResolverImpl(logger, source, locator, APP_ROOT_PACKAGE, "Start", list);
+        return new ComponentClassResolverImpl(logger, source, locator, "Start", full);
     }
 
     private Logger compliantLogger()
@@ -172,10 +176,8 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         replay();
 
-        List<LibraryMapping> mappings = Arrays.asList();
-
-        ComponentClassResolver resolver = new ComponentClassResolverImpl(logger, source, locator, APP_ROOT_PACKAGE,
-                "HomePage", mappings);
+        ComponentClassResolver resolver = new ComponentClassResolverImpl(logger, source, locator, "HomePage",
+                APP_ROOT_PACKAGE_MAPPINGS);
 
         assertEquals(resolver.canonicalizePageName("HomePage"), "HomePage");
         assertEquals(resolver.canonicalizePageName(""), "HomePage");
@@ -183,7 +185,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         verify();
     }
-    
+
     @Test
     public void start_page_in_subfolder()
     {
@@ -199,10 +201,8 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         replay();
 
-        List<LibraryMapping> mappings = Arrays.asList();
-
-        ComponentClassResolver resolver = new ComponentClassResolverImpl(logger, source, locator, APP_ROOT_PACKAGE,
-                "HomePage", mappings);
+        ComponentClassResolver resolver = new ComponentClassResolverImpl(logger, source, locator, "HomePage",
+                APP_ROOT_PACKAGE_MAPPINGS);
 
         assertEquals(resolver.canonicalizePageName("sub/HomePage"), "sub/HomePage");
         assertEquals(resolver.canonicalizePageName("sub"), "sub/HomePage");
@@ -210,7 +210,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         verify();
     }
-    
+
     /**
      * TAP5-1444
      */
@@ -223,16 +223,16 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         train_for_app_packages(source);
 
-        String[] classNames = { APP_ROOT_PACKAGE + ".pages.sub.HomePage", APP_ROOT_PACKAGE + ".pages.sub.SubIndex" };
+        String[] classNames =
+        { APP_ROOT_PACKAGE + ".pages.sub.HomePage", APP_ROOT_PACKAGE + ".pages.sub.SubIndex" };
 
         train_locateComponentClassNames(locator, APP_ROOT_PACKAGE + ".pages", classNames);
 
         replay();
-        
-        List<LibraryMapping> mappings = Arrays.asList();
 
-        ComponentClassResolver resolver = new ComponentClassResolverImpl(logger, source, locator, APP_ROOT_PACKAGE,
-                "HomePage", mappings);
+        List<LibraryMapping> mappings = APP_ROOT_PACKAGE_MAPPINGS;
+
+        ComponentClassResolver resolver = new ComponentClassResolverImpl(logger, source, locator, "HomePage", mappings);
 
         assertTrue(resolver.isPageName("sub/HomePage"));
         assertTrue(resolver.isPageName("sub/subIndex"));
@@ -962,7 +962,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         }
 
     }
-    
+
     @Test
     public void ignore_start_page_outside_root()
     {
@@ -972,7 +972,8 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         train_for_app_packages(source);
 
-        String[] classNames = new String[] { APP_ROOT_PACKAGE + ".pages.exam.ExamIndex", APP_ROOT_PACKAGE + ".pages.exam.StartExam" };
+        String[] classNames = new String[]
+        { APP_ROOT_PACKAGE + ".pages.exam.ExamIndex", APP_ROOT_PACKAGE + ".pages.exam.StartExam" };
 
         train_locateComponentClassNames(locator, APP_ROOT_PACKAGE + ".pages", classNames);
 
