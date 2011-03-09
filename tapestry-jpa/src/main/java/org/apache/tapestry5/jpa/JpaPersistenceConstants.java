@@ -14,22 +14,14 @@
 
 package org.apache.tapestry5.jpa;
 
-public class JpaSymbols
+import org.apache.tapestry5.PersistenceConstants;
+
+public class JpaPersistenceConstants
 {
-    public static final String PROVIDE_ENTITY_VALUE_ENCODERS = "tapestry.jpa.provide-entity-value-encoders";
-
     /**
-     * If "true", then JPA will be started up at application launch, rather than lazily.
-     * 
-     * @since 5.3.0
+     * If the field's value is a persistent JPA entity, its type and primary key is stored in the
+     * {@link org.apache.tapestry5.services.Session}. Otherwise,
+     * the value is stored as per {@link PersistenceConstants#SESSION}.
      */
-    public static final String EARLY_START_UP = "tapestry.jpa.early-startup";
-
-    /**
-     * If true, then "entity" persistence strategy is used to store JPA entities as
-     * {@code Session State Objects}.
-     * 
-     * @since 5.3.0
-     */
-    public static final String ENTITY_SESSION_STATE_PERSISTENCE_STRATEGY_ENABLED = "tapestry.jpa.entity-session-state-persistence-strategy-enabled";
+    public static final String ENTITY = "entity";
 }

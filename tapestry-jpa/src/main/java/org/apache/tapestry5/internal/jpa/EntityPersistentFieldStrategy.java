@@ -14,17 +14,8 @@
 
 package org.apache.tapestry5.internal.jpa;
 
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.Metamodel;
-
 import org.apache.tapestry5.internal.services.AbstractSessionPersistentFieldStrategy;
 import org.apache.tapestry5.jpa.EntityManagerManager;
-import org.apache.tapestry5.jpa.JpaConstants;
 import org.apache.tapestry5.services.Request;
 
 /**
@@ -45,18 +36,7 @@ public class EntityPersistentFieldStrategy extends AbstractSessionPersistentFiel
     @Override
     protected Object convertApplicationValueToPersisted(final Object newValue)
     {
-        final EntityManager em = getEntityManagerFactory(newValue);
-
-        final EntityManagerFactory emf = em.getEntityManagerFactory();
-
-        final Map<String, Object> properties = emf.getProperties();
-
-        final String persistenceUnitName = (String) properties
-                .get(JpaConstants.PERSISTENCE_UNIT_NAME);
-
-        final Object id = emf.getPersistenceUnitUtil().getIdentifier(newValue);
-
-        return new PersistedEntity(newValue.getClass(), id, persistenceUnitName);
+        return JpaInternalUtils.convertApplicationValueToPersisted(entityManagerManager, newValue);
     }
 
     @Override
@@ -65,32 +45,5 @@ public class EntityPersistentFieldStrategy extends AbstractSessionPersistentFiel
         final PersistedEntity persisted = (PersistedEntity) persistedValue;
 
         return persisted.restore(entityManagerManager);
-    }
-
-    private EntityManager getEntityManagerFactory(final Object entity)
-    {
-        final Map<String, EntityManager> entityManagers = entityManagerManager.getEntityManagers();
-
-        for (final EntityManager em : entityManagers.values())
-        {
-            final EntityManagerFactory emf = em.getEntityManagerFactory();
-
-            final Metamodel metamodel = emf.getMetamodel();
-
-            final Set<EntityType<?>> entities = metamodel.getEntities();
-
-            for (final EntityType<?> entityType : entities)
-            {
-                if (entityType.getJavaType() == entity.getClass())
-                {
-                    if (em.contains(entity)) { return em; }
-                }
-            }
-        }
-
-        throw new IllegalArgumentException(
-                String.format(
-                        "Failed persisting an entity in the session. The entity '%s' does not belong to any of the existing persistence contexts.",
-                        entity));
     }
 }

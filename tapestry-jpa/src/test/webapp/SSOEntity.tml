@@ -1,0 +1,10 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+<body>
+	<p>entity name: <span id="name">${user?.firstName}</span></p>
+	<p>persisted entity class name: <span id="persistedEntityClassName">${persistedEntityClassName}</span></p>
+	<p><t:eventlink event="persistEntity">persist entity</t:eventlink></p>
+	<p><t:eventlink event="setToNull">set to null</t:eventlink></p>
+	<p><t:eventlink event="setToTransient">set to transient</t:eventlink></p>
+	<p><t:eventlink event="delete">delete</t:eventlink></p>
+</body>
+</html>

@@ -23,6 +23,7 @@ import javax.persistence.spi.PersistenceUnitInfo;
 
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.internal.jpa.CommitAfterWorker;
+import org.apache.tapestry5.internal.jpa.EntityApplicationStatePersistenceStrategy;
 import org.apache.tapestry5.internal.jpa.EntityManagerManagerImpl;
 import org.apache.tapestry5.internal.jpa.EntityManagerObjectProvider;
 import org.apache.tapestry5.internal.jpa.EntityManagerSourceImpl;
@@ -46,6 +47,10 @@ import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.services.ApplicationStateContribution;
+import org.apache.tapestry5.services.ApplicationStateManager;
+import org.apache.tapestry5.services.ApplicationStatePersistenceStrategy;
+import org.apache.tapestry5.services.ApplicationStatePersistenceStrategySource;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.PersistentFieldStrategy;
 import org.apache.tapestry5.services.ValueEncoderFactory;
@@ -82,7 +87,16 @@ public class JpaModule
     public static void provideEntityPersistentFieldStrategies(
             final MappedConfiguration<String, PersistentFieldStrategy> configuration)
     {
-        configuration.addInstance("entity", EntityPersistentFieldStrategy.class);
+        configuration.addInstance(JpaPersistenceConstants.ENTITY,
+                EntityPersistentFieldStrategy.class);
+    }
+
+    @Contribute(ApplicationStatePersistenceStrategySource.class)
+    public void provideApplicationStatePersistenceStrategies(
+            final MappedConfiguration<String, ApplicationStatePersistenceStrategy> configuration)
+    {
+        configuration.addInstance(JpaPersistenceConstants.ENTITY,
+                EntityApplicationStatePersistenceStrategy.class);
     }
 
     @Contribute(ComponentClassTransformWorker.class)
@@ -115,6 +129,7 @@ public class JpaModule
     {
         configuration.add(JpaSymbols.PROVIDE_ENTITY_VALUE_ENCODERS, "true");
         configuration.add(JpaSymbols.EARLY_START_UP, "true");
+        configuration.add(JpaSymbols.ENTITY_SESSION_STATE_PERSISTENCE_STRATEGY_ENABLED, "true");
     }
 
     @Contribute(ValueEncoderSource.class)
@@ -153,6 +168,34 @@ public class JpaModule
                 };
 
                 configuration.add(clazz, factory);
+            }
+        }
+    }
+
+    @Contribute(ApplicationStateManager.class)
+    public static void provideApplicationStateContributions(
+            final MappedConfiguration<Class, ApplicationStateContribution> configuration,
+            final EntityManagerSource entityManagerSource,
+            @Symbol(JpaSymbols.PROVIDE_ENTITY_VALUE_ENCODERS)
+            final boolean entitySessionStatePersistenceStrategyEnabled)
+    {
+
+        if (!entitySessionStatePersistenceStrategyEnabled)
+            return;
+
+        for (final PersistenceUnitInfo info : entityManagerSource.getPersistenceUnitInfos())
+        {
+            final EntityManagerFactory emf = entityManagerSource.getEntityManagerFactory(info
+                    .getPersistenceUnitName());
+
+            for (final String className : info.getManagedClassNames())
+            {
+                final Metamodel metamodel = emf.getMetamodel();
+
+                final Class<?> clazz = loadClass(info, className);
+
+                configuration.add(clazz, new ApplicationStateContribution(
+                        JpaPersistenceConstants.ENTITY));
             }
         }
     }

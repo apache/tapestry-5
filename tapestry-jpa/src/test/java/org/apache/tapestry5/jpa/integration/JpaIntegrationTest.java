@@ -14,7 +14,9 @@
 
 package org.apache.tapestry5.jpa.integration;
 
+import org.apache.tapestry5.internal.jpa.PersistedEntity;
 import org.apache.tapestry5.test.SeleniumTestCase;
+import org.example.app.entities.User;
 import org.testng.annotations.Test;
 
 public class JpaIntegrationTest extends SeleniumTestCase
@@ -61,5 +63,37 @@ public class JpaIntegrationTest extends SeleniumTestCase
         // transient objects cannot be persisted
         clickAndWait("link=set to transient");
         assertTextPresent("Failed persisting an entity in the session.");
+    }
+
+    @Test
+    public void sso_entities()
+    {
+        open("/ssoentity");
+        assertEquals(getText("//span[@id='name']").length(), 0);
+        assertText("//span[@id='persistedEntityClassName']", User.class.getName());
+
+        clickAndWait("link=persist entity");
+        assertText("//span[@id='name']", "name");
+        assertText("//span[@id='persistedEntityClassName']", PersistedEntity.class.getName());
+
+        // can set back to null
+        clickAndWait("link=set to null");
+        assertEquals(getText("//span[@id='name']").length(), 0);
+        assertText("//span[@id='persistedEntityClassName']", User.class.getName());
+
+        clickAndWait("link=persist entity");
+        assertText("//span[@id='name']", "name");
+        assertText("//span[@id='persistedEntityClassName']", PersistedEntity.class.getName());
+
+        clickAndWait("link=delete");
+        assertEquals(getText("//span[@id='name']").length(), 0);
+        assertText("//span[@id='persistedEntityClassName']", User.class.getName());
+
+        clickAndWait("link=persist entity");
+        assertText("//span[@id='name']", "name");
+        assertText("//span[@id='persistedEntityClassName']", PersistedEntity.class.getName());
+
+        clickAndWait("link=set to transient");
+        assertText("//span[@id='persistedEntityClassName']", User.class.getName());
     }
 }
