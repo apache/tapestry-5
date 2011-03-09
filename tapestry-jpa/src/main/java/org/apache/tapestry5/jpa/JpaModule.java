@@ -37,6 +37,7 @@ import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Scope;
+import org.apache.tapestry5.ioc.annotations.Startup;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.FactoryDefaults;
 import org.apache.tapestry5.ioc.services.MasterObjectProvider;
@@ -113,6 +114,7 @@ public class JpaModule
             final MappedConfiguration<String, String> configuration)
     {
         configuration.add(JpaSymbols.PROVIDE_ENTITY_VALUE_ENCODERS, "true");
+        configuration.add(JpaSymbols.EARLY_START_UP, "true");
     }
 
     @Contribute(ValueEncoderSource.class)
@@ -134,7 +136,6 @@ public class JpaModule
 
             for (final String className : info.getManagedClassNames())
             {
-
                 final Metamodel metamodel = emf.getMetamodel();
 
                 final Class<?> clazz = loadClass(info, className);
@@ -154,6 +155,21 @@ public class JpaModule
                 configuration.add(clazz, factory);
             }
         }
+    }
+
+    @Startup
+    public static void startupEarly(final EntityManagerSource entityManagerSource,
+            @Symbol(JpaSymbols.EARLY_START_UP)
+            final boolean earlyStartup)
+    {
+        if (!earlyStartup)
+            return;
+
+        for (final PersistenceUnitInfo info : entityManagerSource.getPersistenceUnitInfos())
+        {
+            entityManagerSource.create(info.getPersistenceUnitName());
+        }
+
     }
 
     private static Class loadClass(final PersistenceUnitInfo info, final String className)

@@ -17,4 +17,9 @@ package org.apache.tapestry5.jpa;
 public class JpaSymbols
 {
     public static final String PROVIDE_ENTITY_VALUE_ENCODERS = "tapestry.jpa.provide-entity-value-encoders";
+
+    /**
+     * If "true", then JPA will be started up at application launch, rather than lazily.
+     */
+    public static final String EARLY_START_UP = "tapestry.jpa.early-startup";
 }
