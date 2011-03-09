@@ -43,6 +43,7 @@ import javassist.expr.FieldAccess;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.InternalComponentResources;
+import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.internal.services.CtClassSource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -202,7 +203,12 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             assert advice != null;
 
             if (builder == null)
-                builder = createBuilder(sig);
+                builder = createBuilder(sig, new AnnotationProvider() {
+					
+					public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
+						return TransformMethodImpl.this.getAnnotation(annotationClass);
+					}
+				});
 
             builder.addAdvice(advice);
 
@@ -2215,9 +2221,9 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return ClassFabUtils.castReference(String.format("$2[%d]", index), parameterType.getName());
     }
 
-    private ComponentMethodInvocationBuilder createBuilder(TransformMethodSignature signature)
+    private ComponentMethodInvocationBuilder createBuilder(TransformMethodSignature signature, AnnotationProvider annotationProvider)
     {
-        return new ComponentMethodInvocationBuilder(this, componentClassCache, signature, classSource);
+        return new ComponentMethodInvocationBuilder(this, componentClassCache, signature, classSource, annotationProvider);
     }
 
     public boolean isDeclaredMethod(TransformMethodSignature signature)

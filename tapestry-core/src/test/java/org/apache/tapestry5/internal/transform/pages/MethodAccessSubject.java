@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.transform.pages;
 import java.sql.SQLException;
 
 import org.apache.tapestry5.internal.services.InternalClassTransformationImplTest;
+import org.apache.tapestry5.ioc.annotations.Startup;
 
 /**
  * Used by {@link InternalClassTransformationImplTest} for a number of tests related to
@@ -68,5 +69,11 @@ public class MethodAccessSubject
             builder.append(input);
 
         return builder.toString();
+    }
+    
+    @Startup
+    public void annotatedMethod()
+    {
+    	
     }
 }

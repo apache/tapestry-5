@@ -23,6 +23,7 @@ import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.CtMethod;
 
+import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.internal.services.CtClassSource;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.util.BodyBuilder;
@@ -65,13 +66,13 @@ class ComponentMethodInvocationBuilder
 
     public ComponentMethodInvocationBuilder(InternalClassTransformation transformation,
             ComponentClassCache componentClassCache, TransformMethodSignature advisedMethod,
-            CtClassSource classSource)
+            CtClassSource classSource, AnnotationProvider annotationProvider)
     {
         this.transformation = transformation;
         this.advisedMethod = advisedMethod;
         this.classSource = classSource;
 
-        info = new ComponentMethodInvocationInfo(advisedMethod, componentClassCache);
+        info = new ComponentMethodInvocationInfo(advisedMethod, componentClassCache, annotationProvider);
 
         invocationClassName = this.transformation.getClassName() + "$"
                 + this.advisedMethod.getMethodName() + "$invocation_" + nextUID();

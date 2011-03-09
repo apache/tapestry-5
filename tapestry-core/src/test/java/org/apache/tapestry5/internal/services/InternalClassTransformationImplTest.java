@@ -55,6 +55,8 @@ import org.apache.tapestry5.internal.transform.pages.MethodIdentifier;
 import org.apache.tapestry5.internal.transform.pages.ParentClass;
 import org.apache.tapestry5.internal.transform.pages.ReadOnlyBean;
 import org.apache.tapestry5.internal.transform.pages.TargetObject;
+import org.apache.tapestry5.internal.util.Holder;
+import org.apache.tapestry5.ioc.annotations.Startup;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryClassPool;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry5.ioc.internal.services.CtClassSourceImpl;
@@ -631,6 +633,55 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         r.run();
 
         assertEquals(access.get(r, "marker"), "publicVoidThrowsException");
+    }
+    
+    @Test
+    public void access_to_method_annotations() throws Exception
+    {
+    	final Holder<Startup> annotationHolder = Holder.create();
+    	
+        Object instance = transform(MethodAccessSubject.class, new ComponentClassTransformWorker()
+        {
+            public void transform(ClassTransformation transformation, MutableComponentModel model)
+            {
+                transformation.addImplementedInterface(Runnable.class);
+
+                TransformMethodSignature targetMethodSignature = new TransformMethodSignature(Modifier.PUBLIC, "void",
+                        "annotatedMethod", null, null);
+                
+                TransformMethod targetMethod = transformation.getOrCreateMethod(targetMethodSignature);
+                
+                targetMethod.addAdvice(new ComponentMethodAdvice()
+                {
+                	public void advise(ComponentMethodInvocation invocation) 
+                	{
+                		Startup annotation = invocation.getMethodAnnotation(Startup.class);
+
+                		annotationHolder.put(annotation);
+                		
+                	}
+                });
+
+                final MethodAccess targetAccess = targetMethod.getAccess();
+
+                transformation.getOrCreateMethod(RUN).addAdvice(new ComponentMethodAdvice()
+                {
+                    public void advise(ComponentMethodInvocation invocation)
+                    {
+                    	 targetAccess.invoke(invocation.getInstance());
+        
+                    }
+                });
+            }
+        });
+
+        Runnable r = (Runnable) instance;
+        
+        assertNull(annotationHolder.get());
+
+        r.run();
+
+		assertNotNull(annotationHolder.get());
     }
 
     public interface ProcessInteger
