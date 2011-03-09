@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ public interface TransformField extends AnnotationProvider, Comparable<Transform
     void claim(Object tag);
 
     /**
-     * Replaces read and write field access with a conduit. The field will be deleted.
+     * Replaces read and write field access with a conduit.
      * 
      * @param conduitProvider
      *            provides the actual conduit at class instantiation time
@@ -63,7 +63,7 @@ public interface TransformField extends AnnotationProvider, Comparable<Transform
     void replaceAccess(ComponentValueProvider<FieldValueConduit> conduitProvider);
 
     /**
-     * Replaces read and write field access with a conduit. The field itself will be deleted.
+     * Replaces read and write field access with a conduit.
      * 
      * @param conduitField
      *            identifies the field containing (via injection) an instance of {@link FieldValueConduit}
@@ -71,8 +71,7 @@ public interface TransformField extends AnnotationProvider, Comparable<Transform
     void replaceAccess(TransformField conduitField);
 
     /**
-     * Replaces read and write field access with a conduit. A new field is created for the conduit instance,
-     * and the original field is deleted.
+     * Replaces read and write field access with a conduit. A new field is created for the conduit instance.
      * 
      * @param conduit
      *            used to replace read and write access to the field
