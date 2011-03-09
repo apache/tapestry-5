@@ -20,12 +20,11 @@ import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
-import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
+import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
@@ -65,7 +64,7 @@ public class MBeanSupportImpl implements MBeanSupport, RegistryShutdownListener
         this.server = server;
     }
 
-    @PostConstruct
+    @PostInjection
     public void listenForShutdown(RegistryShutdownHub hub)
     {
         hub.addRegistryShutdownListener(this);
