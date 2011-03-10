@@ -96,4 +96,42 @@ public class JpaIntegrationTest extends SeleniumTestCase
         clickAndWait("link=set to transient");
         assertText("//span[@id='persistedEntityClassName']", User.class.getName());
     }
+
+    @Test
+    public void grid()
+    {
+        open("/griddemo");
+
+        clickAndWait("link=setup");
+
+        clickAndWait("link=First Name");
+
+        assertText("//td[@class='firstName t-sort-column-ascending']", "Joe_1");
+
+        clickAndWait("link=First Name");
+
+        assertText("//td[@class='firstName t-sort-column-descending']", "Joe_9");
+    }
+
+    public void commit_after_on_component_methods()
+    {
+        open("/");
+
+        clickAndWait("link=CommitAfter Demo");
+
+        assertText("name", "Diane");
+
+        clickAndWait("link=change name");
+
+        assertText("name", "Frank");
+
+        clickAndWait("link=runtime exception");
+
+        assertText("name", "Frank");
+
+        clickAndWait("link=checked exception");
+
+        assertText("name", "Troy");
+
+    }
 }

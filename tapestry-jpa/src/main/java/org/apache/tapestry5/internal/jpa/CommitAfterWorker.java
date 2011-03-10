@@ -14,10 +14,6 @@
 
 package org.apache.tapestry5.internal.jpa;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceUnit;
-
 import org.apache.tapestry5.jpa.CommitAfter;
 import org.apache.tapestry5.jpa.EntityManagerManager;
 import org.apache.tapestry5.model.MutableComponentModel;
@@ -29,66 +25,11 @@ import org.apache.tapestry5.services.TransformMethod;
 
 public class CommitAfterWorker implements ComponentClassTransformWorker
 {
-    private final EntityManagerManager manager;
-
-    private final ComponentMethodAdvice advice = new ComponentMethodAdvice()
-    {
-        public void advise(final ComponentMethodInvocation invocation)
-        {
-
-            final EntityTransaction transaction = getTransaction(invocation);
-
-            if (transaction != null && !transaction.isActive())
-            {
-                transaction.begin();
-            }
-
-            try
-            {
-                invocation.proceed();
-
-                // Success or checked exception:
-
-                if (transaction != null && transaction.isActive())
-                {
-                    transaction.commit();
-                }
-            }
-            catch (final RuntimeException e)
-            {
-                if (transaction != null && transaction.isActive())
-                {
-                    transaction.rollback();
-                }
-
-                throw e;
-            }
-        }
-
-        private EntityTransaction getTransaction(final ComponentMethodInvocation invocation)
-        {
-
-            final PersistenceUnit persistenceUnit = invocation
-                    .getMethodAnnotation(PersistenceUnit.class);
-
-            if (persistenceUnit == null)
-                return null;
-
-            final String unitName = persistenceUnit.unitName();
-
-            if (unitName == null)
-                return null;
-
-            final EntityManager em = manager.getEntityManager(unitName);
-
-            return em.getTransaction();
-        }
-
-    };
+    private final CommitAfterMethodAdvice advice;
 
     public CommitAfterWorker(final EntityManagerManager manager)
     {
-        this.manager = manager;
+        advice = new CommitAfterMethodAdvice(manager);
     }
 
     public void transform(final ClassTransformation transformation,
@@ -97,7 +38,15 @@ public class CommitAfterWorker implements ComponentClassTransformWorker
         for (final TransformMethod method : transformation
                 .matchMethodsWithAnnotation(CommitAfter.class))
         {
-            method.addAdvice(advice);
+            method.addAdvice(new ComponentMethodAdvice()
+            {
+
+                public void advise(final ComponentMethodInvocation invocation)
+                {
+                    advice.advise(invocation);
+
+                }
+            });
         }
     }
 }

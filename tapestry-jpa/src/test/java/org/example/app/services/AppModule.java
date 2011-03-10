@@ -16,12 +16,15 @@ package org.example.app.services;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.MethodAdviceReceiver;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.Match;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.ioc.services.ApplicationDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.jpa.JpaModule;
+import org.apache.tapestry5.jpa.JpaTransactionAdvisor;
 import org.example.app.services.impl.UserDAOImpl;
 
 @SubModule(JpaModule.class)
@@ -39,5 +42,12 @@ public class AppModule
             final MappedConfiguration<String, String> configuration)
     {
         configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
+    }
+
+    @Match("*DAO")
+    public static void adviseTransactionally(final JpaTransactionAdvisor advisor,
+            final MethodAdviceReceiver receiver)
+    {
+        advisor.addTransactionCommitAdvice(receiver);
     }
 }

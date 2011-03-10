@@ -60,6 +60,7 @@ public class EntityApplicationStatePersistenceStrategy extends
     public <T> void set(final Class<T> ssoClass, final T sso)
     {
         final String key = buildKey(ssoClass);
+
         Object entity;
 
         if (sso != null)

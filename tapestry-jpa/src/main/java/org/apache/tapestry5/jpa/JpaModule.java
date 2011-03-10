@@ -28,6 +28,7 @@ import org.apache.tapestry5.internal.jpa.EntityManagerManagerImpl;
 import org.apache.tapestry5.internal.jpa.EntityManagerObjectProvider;
 import org.apache.tapestry5.internal.jpa.EntityManagerSourceImpl;
 import org.apache.tapestry5.internal.jpa.EntityPersistentFieldStrategy;
+import org.apache.tapestry5.internal.jpa.JpaTransactionAdvisorImpl;
 import org.apache.tapestry5.internal.jpa.JpaValueEncoder;
 import org.apache.tapestry5.internal.jpa.PersistenceUnitWorker;
 import org.apache.tapestry5.internal.services.PersistentFieldManager;
@@ -36,6 +37,7 @@ import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ObjectProvider;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ScopeConstants;
+import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.annotations.Startup;
@@ -59,6 +61,11 @@ import org.slf4j.Logger;
 
 public class JpaModule
 {
+    public static void bind(final ServiceBinder binder)
+    {
+        binder.bind(JpaTransactionAdvisor.class, JpaTransactionAdvisorImpl.class);
+    }
+
     public static EntityManagerSource buildEntityManagerSource(final Logger logger,
             final Map<String, PersistenceUnitConfigurer> configuration,
             final RegistryShutdownHub hub)

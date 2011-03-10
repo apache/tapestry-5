@@ -15,15 +15,11 @@ package org.example.app.pages;
 
 import java.util.List;
 
-import javax.persistence.PersistenceUnit;
-
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.jpa.CommitAfter;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Session;
-import org.example.app.AppConstants;
 import org.example.app.entities.User;
 import org.example.app.services.UserDAO;
 
@@ -39,8 +35,6 @@ public class SSOEntity
     @Inject
     private Request request;
 
-    @CommitAfter
-    @PersistenceUnit(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
     void onPersistEntity()
     {
         final User user = new User();
@@ -61,8 +55,6 @@ public class SSOEntity
         user = new User();
     }
 
-    @CommitAfter
-    @PersistenceUnit(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
     void onDelete()
     {
         final List<User> users = userDAO.findAll();
