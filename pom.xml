@@ -209,6 +209,7 @@
     <module>tapestry-hibernate-core</module>
     <module>tapestry-hibernate</module>
     <module>tapestry-upload</module>
+    <module>tapestry-jpa</module>
     <!-- Now we're getting into the archetypes. -->
     <module>quickstart</module>
     <!-- And the Maven plugin. -->
