@@ -25,7 +25,7 @@
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>javax.persistence</artifactId>
-			<version>2.0.2</version>
+			<version>2.0.3</version>
 		</dependency>
 
 
@@ -54,7 +54,7 @@
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>org.eclipse.persistence.jpa</artifactId>
-			<version>2.1.1</version>
+			<version>2.2.0</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -129,4 +129,17 @@
 			</plugin>
 		</plugins>
 	</reporting>
+	
+		<repositories>
+		<repository>
+			<id>mirrors.ibiblio.org</id>
+			<url>http://mirrors.ibiblio.org/pub/mirrors/eclipse/rt/eclipselink/maven.repo</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 </project>
