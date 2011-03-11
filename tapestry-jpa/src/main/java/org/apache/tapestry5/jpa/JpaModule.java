@@ -70,11 +70,11 @@ public class JpaModule
             final Map<String, PersistenceUnitConfigurer> configuration,
             final RegistryShutdownHub hub)
     {
-        final EntityManagerSourceImpl hss = new EntityManagerSourceImpl(logger, configuration);
+        final EntityManagerSourceImpl ems = new EntityManagerSourceImpl(logger, configuration);
 
-        hub.addRegistryShutdownListener(hss);
+        hub.addRegistryShutdownListener(ems);
 
-        return hss;
+        return ems;
     }
 
     @Scope(ScopeConstants.PERTHREAD)
@@ -192,13 +192,8 @@ public class JpaModule
 
         for (final PersistenceUnitInfo info : entityManagerSource.getPersistenceUnitInfos())
         {
-            final EntityManagerFactory emf = entityManagerSource.getEntityManagerFactory(info
-                    .getPersistenceUnitName());
-
             for (final String className : info.getManagedClassNames())
             {
-                final Metamodel metamodel = emf.getMetamodel();
-
                 final Class<?> clazz = loadClass(info, className);
 
                 configuration.add(clazz, new ApplicationStateContribution(

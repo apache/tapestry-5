@@ -22,8 +22,8 @@ import javax.persistence.criteria.Root;
 
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.jpa.CommitAfter;
 import org.apache.tapestry5.jpa.JpaGridDataSource;
+import org.apache.tapestry5.jpa.annotations.CommitAfter;
 import org.example.app.AppConstants;
 import org.example.app.entities.User;
 import org.example.app.services.UserDAO;

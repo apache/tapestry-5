@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.jpa;
 
-import org.apache.tapestry5.internal.jpa.TapestryPersistenceUnitInfo;
 
 public interface PersistenceUnitConfigurer
 {

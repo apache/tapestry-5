@@ -34,6 +34,7 @@ import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
 import org.apache.tapestry5.jpa.EntityManagerSource;
 import org.apache.tapestry5.jpa.JpaConstants;
 import org.apache.tapestry5.jpa.PersistenceUnitConfigurer;
+import org.apache.tapestry5.jpa.TapestryPersistenceUnitInfo;
 import org.slf4j.Logger;
 
 public class EntityManagerSourceImpl implements EntityManagerSource, RegistryShutdownListener

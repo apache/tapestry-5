@@ -24,11 +24,12 @@ import java.util.Properties;
 import javax.persistence.SharedCacheMode;
 import javax.persistence.ValidationMode;
 import javax.persistence.spi.ClassTransformer;
-import javax.persistence.spi.PersistenceUnitInfo;
 import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.DataSource;
 
-public class TapestryPersistenceUnitInfo implements PersistenceUnitInfo
+import org.apache.tapestry5.jpa.TapestryPersistenceUnitInfo;
+
+public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
 {
     private String persistenceUnitName;
 
@@ -143,6 +144,11 @@ public class TapestryPersistenceUnitInfo implements PersistenceUnitInfo
     public void addManagedClassName(final String className)
     {
         managedClassNames.add(className);
+    }
+
+    public void addManagedClass(final Class<?> clazz)
+    {
+        addManagedClassName(clazz.getName());
     }
 
     /**

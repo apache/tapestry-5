@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.jpa.TapestryPersistenceUnitInfo;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;

@@ -17,9 +17,9 @@ package org.apache.tapestry5.internal.jpa;
 import java.lang.reflect.Method;
 
 import org.apache.tapestry5.ioc.MethodAdviceReceiver;
-import org.apache.tapestry5.jpa.CommitAfter;
 import org.apache.tapestry5.jpa.EntityManagerManager;
 import org.apache.tapestry5.jpa.JpaTransactionAdvisor;
+import org.apache.tapestry5.jpa.annotations.CommitAfter;
 
 public class JpaTransactionAdvisorImpl implements JpaTransactionAdvisor
 {

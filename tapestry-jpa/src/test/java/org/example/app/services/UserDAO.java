@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.persistence.PersistenceUnit;
 
-import org.apache.tapestry5.jpa.CommitAfter;
+import org.apache.tapestry5.jpa.annotations.CommitAfter;
 import org.example.app.AppConstants;
 import org.example.app.entities.User;
 

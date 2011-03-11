@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.internal.jpa;
 
-import org.apache.tapestry5.jpa.CommitAfter;
 import org.apache.tapestry5.jpa.EntityManagerManager;
+import org.apache.tapestry5.jpa.annotations.CommitAfter;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;

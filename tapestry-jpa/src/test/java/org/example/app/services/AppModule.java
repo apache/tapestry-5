@@ -23,8 +23,13 @@ import org.apache.tapestry5.ioc.annotations.Match;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.ioc.services.ApplicationDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
+import org.apache.tapestry5.jpa.EntityManagerSource;
 import org.apache.tapestry5.jpa.JpaModule;
 import org.apache.tapestry5.jpa.JpaTransactionAdvisor;
+import org.apache.tapestry5.jpa.PersistenceUnitConfigurer;
+import org.apache.tapestry5.jpa.TapestryPersistenceUnitInfo;
+import org.example.app.AppConstants;
+import org.example.app.entities.User;
 import org.example.app.services.impl.UserDAOImpl;
 
 @SubModule(JpaModule.class)
@@ -42,6 +47,21 @@ public class AppModule
             final MappedConfiguration<String, String> configuration)
     {
         configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
+    }
+
+    @Contribute(EntityManagerSource.class)
+    public static void configurePersistenceUnitInfos(
+            final MappedConfiguration<String, PersistenceUnitConfigurer> configuration)
+    {
+        final PersistenceUnitConfigurer configurer = new PersistenceUnitConfigurer()
+        {
+            public void configure(final TapestryPersistenceUnitInfo unitInfo)
+            {
+                unitInfo.addManagedClass(User.class);
+            }
+        };
+        configuration.add(AppConstants.TEST_PERSISTENCE_UNIT, configurer);
+
     }
 
     @Match("*DAO")

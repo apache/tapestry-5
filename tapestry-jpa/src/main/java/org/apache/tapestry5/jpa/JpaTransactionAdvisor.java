@@ -19,7 +19,7 @@ import org.apache.tapestry5.ioc.MethodAdviceReceiver;
 /**
  * Service that can create an interceptor that wraps around a service implementation. After invoking
  * service methods
- * marked by {@link org.apache.tapestry5.jpa.CommitAfter} the current transaction is committed.
+ * marked by {@link org.apache.tapestry5.jpa.annotations.CommitAfter} the current transaction is committed.
  * Declared exceptions will also {@linkplain javax.persistence.EntityTransaction#commit() commit the
  * transaction}; runtime exceptions will {@linkplain javax.persistence.EntityTransaction#rollback()
  * roll back the transaction}.
@@ -29,7 +29,7 @@ import org.apache.tapestry5.ioc.MethodAdviceReceiver;
 public interface JpaTransactionAdvisor
 {
     /**
-     * Identifies any methods with the {@link org.apache.tapestry5.jpa.CommitAfter} annotation and
+     * Identifies any methods with the {@link org.apache.tapestry5.jpa.annotations.CommitAfter} annotation and
      * applies the transaction logic to those methods.
      * 
      * @param receiver

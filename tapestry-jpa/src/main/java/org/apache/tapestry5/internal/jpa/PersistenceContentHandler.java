@@ -7,6 +7,7 @@ import javax.persistence.ValidationMode;
 import javax.persistence.spi.PersistenceUnitTransactionType;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.jpa.TapestryPersistenceUnitInfo;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
@@ -67,7 +68,7 @@ public class PersistenceContentHandler implements ContentHandler
         {
             if (ELEMENT_PERSISTENCE_UNIT.equals(localName))
             {
-                persistenceUnitInfo = new TapestryPersistenceUnitInfo();
+                persistenceUnitInfo = new PersistenceUnitInfoImpl();
                 persistenceUnitInfo.setPersistenceUnitName(atts.getValue(ATTRIBUTE_NAME));
                 persistenceUnitInfo
                         .setPersistenceXMLSchemaVersion(atts.getValue(ATTRIBUTE_VERSION));
