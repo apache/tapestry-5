@@ -1,10 +1,10 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -54,13 +54,17 @@ public class SelectTest extends InternalBaseTestCase
 
         replay();
 
-
         select.setModel(new SelectModelImpl(null, null));
         select.setValidationTracker(tracker);
 
         select.options(null);
 
         verify();
+    }
+
+    private String fix(Object input)
+    {
+        return input.toString().replaceAll("\r\n", "\n");
     }
 
     private String read(String file) throws Exception
@@ -75,14 +79,15 @@ public class SelectTest extends InternalBaseTestCase
         {
             int length = reader.read(buffer);
 
-            if (length < 0) break;
+            if (length < 0)
+                break;
 
             builder.append(buffer, 0, length);
         }
 
         reader.close();
 
-        return builder.toString();
+        return fix(builder);
     }
 
     @Test
@@ -90,15 +95,13 @@ public class SelectTest extends InternalBaseTestCase
     {
         ValidationTracker tracker = mockValidationTracker();
 
-        List<OptionModel> options = TapestryInternalUtils
-                .toOptionModels("fred=Fred Flintstone,barney=Barney Rubble");
+        List<OptionModel> options = TapestryInternalUtils.toOptionModels("fred=Fred Flintstone,barney=Barney Rubble");
 
         Select select = new Select();
 
         train_getInput(tracker, select, null);
 
         replay();
-
 
         select.setModel(new SelectModelImpl(null, options));
         select.setValueEncoder(new StringValueEncoder());
@@ -123,15 +126,13 @@ public class SelectTest extends InternalBaseTestCase
     {
         ValidationTracker tracker = mockValidationTracker();
 
-        List<OptionModel> options = TapestryInternalUtils
-                .toOptionModels("fred=Fred Flintstone,barney=Barney Rubble");
+        List<OptionModel> options = TapestryInternalUtils.toOptionModels("fred=Fred Flintstone,barney=Barney Rubble");
 
         Select select = new Select();
 
         train_getInput(tracker, select, null);
 
         replay();
-
 
         select.setModel(new SelectModelImpl(null, options));
         select.setValueEncoder(new StringValueEncoder());
@@ -157,15 +158,13 @@ public class SelectTest extends InternalBaseTestCase
     {
         ValidationTracker tracker = mockValidationTracker();
 
-        List<OptionModel> options = TapestryInternalUtils
-                .toOptionModels("fred=Fred Flintstone,barney=Barney Rubble");
+        List<OptionModel> options = TapestryInternalUtils.toOptionModels("fred=Fred Flintstone,barney=Barney Rubble");
 
         Select select = new Select();
 
         train_getInput(tracker, select, "fred");
 
         replay();
-
 
         select.setModel(new SelectModelImpl(null, options));
         select.setValueEncoder(new StringValueEncoder());
@@ -195,15 +194,14 @@ public class SelectTest extends InternalBaseTestCase
 
         // Extra cast needed for Sun compiler, not Eclipse compiler.
 
-        List<OptionModel> options = Arrays.asList(
-                (OptionModel) new OptionModelImpl("Fred", "fred")
-                {
-                    @Override
-                    public Map<String, String> getAttributes()
-                    {
-                        return Collections.singletonMap("class", "pixie");
-                    }
-                });
+        List<OptionModel> options = Arrays.asList((OptionModel) new OptionModelImpl("Fred", "fred")
+        {
+            @Override
+            public Map<String, String> getAttributes()
+            {
+                return Collections.singletonMap("class", "pixie");
+            }
+        });
 
         Select select = new Select();
 
@@ -236,21 +234,20 @@ public class SelectTest extends InternalBaseTestCase
 
         // Extra cast needed for Sun compiler, not Eclipse compiler.
 
-        List<OptionModel> options = Arrays.asList(
-                (OptionModel) new OptionModelImpl("Fred", "fred")
-                {
-                    @Override
-                    public boolean isDisabled()
-                    {
-                        return true;
-                    }
+        List<OptionModel> options = Arrays.asList((OptionModel) new OptionModelImpl("Fred", "fred")
+        {
+            @Override
+            public boolean isDisabled()
+            {
+                return true;
+            }
 
-                    @Override
-                    public Map<String, String> getAttributes()
-                    {
-                        return Collections.singletonMap("class", "pixie");
-                    }
-                });
+            @Override
+            public Map<String, String> getAttributes()
+            {
+                return Collections.singletonMap("class", "pixie");
+            }
+        });
 
         Select select = new Select();
 
@@ -282,9 +279,9 @@ public class SelectTest extends InternalBaseTestCase
         ValidationTracker tracker = mockValidationTracker();
 
         OptionGroupModel husbands = new OptionGroupModelImpl("Husbands", false,
-                                                             TapestryInternalUtils.toOptionModels("Fred,Barney"));
-        OptionGroupModel wives = new OptionGroupModelImpl("Wives", true, TapestryInternalUtils
-                .toOptionModels("Wilma,Betty"));
+                TapestryInternalUtils.toOptionModels("Fred,Barney"));
+        OptionGroupModel wives = new OptionGroupModelImpl("Wives", true,
+                TapestryInternalUtils.toOptionModels("Wilma,Betty"));
         List<OptionGroupModel> groupModels = CollectionFactory.newList(husbands, wives);
 
         Select select = new Select();
@@ -317,7 +314,7 @@ public class SelectTest extends InternalBaseTestCase
         ValidationTracker tracker = mockValidationTracker();
 
         OptionGroupModel husbands = new OptionGroupModelImpl("Husbands", false,
-                                                             TapestryInternalUtils.toOptionModels("Fred,Barney"));
+                TapestryInternalUtils.toOptionModels("Fred,Barney"));
 
         Select select = new Select();
 
@@ -325,8 +322,8 @@ public class SelectTest extends InternalBaseTestCase
 
         replay();
 
-        select.setModel(new SelectModelImpl(Collections.singletonList(husbands),
-                                            TapestryInternalUtils.toOptionModels("Wilma,Betty")));
+        select.setModel(new SelectModelImpl(Collections.singletonList(husbands), TapestryInternalUtils
+                .toOptionModels("Wilma,Betty")));
         select.setValueEncoder(new StringValueEncoder());
         select.setValue("Fred");
         select.setValidationTracker(tracker);
@@ -352,8 +349,7 @@ public class SelectTest extends InternalBaseTestCase
         Map<String, String> attributes = Collections.singletonMap("class", "pixie");
 
         OptionGroupModel husbands = new OptionGroupModelImpl("Husbands", false,
-                                                             TapestryInternalUtils.toOptionModels("Fred,Barney"),
-                                                             attributes);
+                TapestryInternalUtils.toOptionModels("Fred,Barney"), attributes);
 
         Select select = new Select();
 
