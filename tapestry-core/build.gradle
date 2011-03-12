@@ -1,19 +1,23 @@
 description="Central module for Tapestry, containing all core services and components"
 
+antlrSource = "src/main/antlr"
 antlrOutput = "$buildDir/generated-sources/antlr"
 
 configurations {
   antlr3
 } 
 
+sourceSets.main.java.srcDir antlrOutput
+
 dependencies {
   compile project(':tapestry-ioc')
   compile project(':tapestry-json')
-
-  testCompile project(':tapestry-test')
+  
+  // Should be "provided" as per Maven POM
+  compile project(":tapestry-test")
+  compile "javax.servlet:servlet-api:2.4"
 
   compile "commons-codec:commons-codec:1.3"
-  compile "javax.servlet:servlet-api:2.4"
 
   // Transitive will bring in the unwanted string template library as well
   compile "org.antlr:antlr-runtime:3.3", { transitive = false }
@@ -27,9 +31,17 @@ dependencies {
 task generateGrammarSource(
   description: "Generates Java sources from Antlr3 grammars."
 ) << {
-  logger.info "GENERATE GRAMMAR SOURCE"
+  // Seems that you have to use error for it to show up normally.
+  logger.error "GENERATE GRAMMAR SOURCE for $project.name"
   
   mkdir(antlrOutput)
+  
+  def grammars = fileTree(antlrSource).include("**/*.g")
+    
+  ant.java(classname: 'org.antlr.Tool', fork: true, classpath: "${configurations.antlr3.asPath}") {
+     arg(line: "-o ${antlrOutput}/org/apache/tapestry5/internal/antlr")
+     arg(line: grammars.files.join(" "))
+  }
 }
 
 compileJava.dependsOn generateGrammarSource
