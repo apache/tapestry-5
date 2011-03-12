@@ -36,6 +36,8 @@ task generateGrammarSource(
   
   mkdir(antlrOutput)
   
+  // Might have a problem here if the current directory has a space in its name
+  
   def grammars = fileTree(antlrSource).include("**/*.g")
     
   ant.java(classname: 'org.antlr.Tool', fork: true, classpath: "${configurations.antlr3.asPath}") {
