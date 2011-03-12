@@ -44,6 +44,10 @@ subprojects {
         useTestNG()
         
         options.suites("src/test/conf/testng.xml")
+        
+        maxHeapSize = "400M"
+        
+        jvmArgs("-XX:MaxPermSize=512m")        
     }
     
     task sourcesJar(type: Jar, dependsOn:classes) {
