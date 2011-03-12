@@ -28,12 +28,11 @@ dependencies {
 
 // This may spin out as a plugin once we've got the details down pat
 
-task generateGrammarSource(
-  description: "Generates Java sources from Antlr3 grammars."
-) << {
-  // Seems that you have to use error for it to show up normally.
-  logger.error "GENERATE GRAMMAR SOURCE for $project.name"
-  
+task generateGrammarSource {
+  description = "Generates Java sources from Antlr3 grammars."
+  inputs.dir file(antlrSource)
+  outputs.dir file(antlrOutput)
+} << {
   mkdir(antlrOutput)
   
   // Might have a problem here if the current directory has a space in its name
