@@ -12,21 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.jpa.integration.app2;
+package org.example.app1.services;
 
-import org.apache.tapestry5.test.SeleniumTestCase;
-import org.testng.annotations.Test;
+import java.util.List;
 
-public class SimpleEntityManagerIntegrationTest extends SeleniumTestCase
+import javax.persistence.PersistenceUnit;
+
+import org.apache.tapestry5.jpa.annotations.CommitAfter;
+import org.example.app1.AppConstants;
+import org.example.app1.entities.User;
+
+public interface UserDAO
 {
+    @CommitAfter
+    @PersistenceUnit(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
+    void add(User user);
 
-    @Test
-    public void persist_entities()
-    {
-        open("/persistitem");
-        assertEquals(getText("//span[@id='name']").length(), 0);
+    List<User> findAll();
 
-        clickAndWait("link=create item");
-        assertText("//span[@id='name']", "name");
-    }
+    @CommitAfter
+    @PersistenceUnit(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
+    void delete(User... users);
+
+    void deleteAll();
 }

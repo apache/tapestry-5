@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.example.app.services;
+package org.example.app1.services;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.MappedConfiguration;
@@ -28,9 +28,9 @@ import org.apache.tapestry5.jpa.JpaModule;
 import org.apache.tapestry5.jpa.JpaTransactionAdvisor;
 import org.apache.tapestry5.jpa.PersistenceUnitConfigurer;
 import org.apache.tapestry5.jpa.TapestryPersistenceUnitInfo;
-import org.example.app.AppConstants;
-import org.example.app.entities.User;
-import org.example.app.services.impl.UserDAOImpl;
+import org.example.app1.AppConstants;
+import org.example.app1.entities.User;
+import org.example.app1.services.impl.UserDAOImpl;
 
 @SubModule(JpaModule.class)
 public class AppModule

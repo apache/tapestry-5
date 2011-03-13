@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package org.example.app.pages;
+package org.example.app1.pages;
 
 import java.util.List;
 
@@ -20,8 +20,8 @@ import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Session;
-import org.example.app.entities.User;
-import org.example.app.services.UserDAO;
+import org.example.app1.entities.User;
+import org.example.app1.services.UserDAO;
 
 public class SSOEntity
 {

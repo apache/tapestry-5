@@ -22,7 +22,7 @@
     <display-name>Tapestry-JPA Integration Test Application</display-name>
     <context-param>
         <param-name>tapestry.app-package</param-name>
-        <param-value>org.example.app</param-value>
+        <param-value>org.example.app1</param-value>
     </context-param>
     <filter>
         <filter-name>app</filter-name>

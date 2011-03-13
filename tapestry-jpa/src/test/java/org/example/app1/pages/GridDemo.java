@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.example.app.pages;
+package org.example.app1.pages;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceUnit;
@@ -24,9 +24,9 @@ import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.jpa.JpaGridDataSource;
 import org.apache.tapestry5.jpa.annotations.CommitAfter;
-import org.example.app.AppConstants;
-import org.example.app.entities.User;
-import org.example.app.services.UserDAO;
+import org.example.app1.AppConstants;
+import org.example.app1.entities.User;
+import org.example.app1.services.UserDAO;
 
 public class GridDemo
 {

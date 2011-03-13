@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.jpa.integration;
+package org.apache.tapestry5.jpa.integration.app1;
 
 import org.apache.tapestry5.internal.jpa.PersistedEntity;
 import org.apache.tapestry5.test.SeleniumTestCase;
-import org.example.app.entities.User;
+import org.example.app1.entities.User;
 import org.testng.annotations.Test;
 
 public class JpaIntegrationTest extends SeleniumTestCase

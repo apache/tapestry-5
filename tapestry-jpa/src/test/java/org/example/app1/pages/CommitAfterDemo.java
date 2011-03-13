@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.example.app.pages;
+package org.example.app1.pages;
 
 import java.sql.SQLException;
 
 import javax.persistence.PersistenceUnit;
 
 import org.apache.tapestry5.jpa.annotations.CommitAfter;
-import org.example.app.AppConstants;
-import org.example.app.entities.User;
+import org.example.app1.AppConstants;
+import org.example.app1.entities.User;
 
 /**
  * Demos the CommitAfter annotation on component methods.

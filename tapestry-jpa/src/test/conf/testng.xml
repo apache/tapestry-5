@@ -10,13 +10,13 @@
 <suite name="Tapestry JPA" parallel="false" thread-count="10"
 	annotations="1.5" verbose="2">
 	<test name="Tapestry JPA Integration Tests" enabled="true">
-		<parameter name="tapestry.web-app-folder" value="src/test/webapp" />
+		<parameter name="tapestry.web-app-folder" value="src/test/app1" />
 		<packages>
-			<package name="org.apache.tapestry5.jpa.integration" />
+			<package name="org.apache.tapestry5.jpa.integration.app1" />
 		</packages>
 	</test>
 
-	<test name="Tapestry JPA Simple EntityManager Integration Tests" enabled="true">
+	<test name="Single Persistence Unit Integration Tests" enabled="true">
 		<parameter name="tapestry.web-app-folder" value="src/test/app2" />
 		<packages>
 			<package name="org.apache.tapestry5.jpa.integration.app2" />

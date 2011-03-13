@@ -12,9 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.example.app;
+package org.apache.tapestry5.jpa.integration.app2;
 
-public class AppConstants
+import org.apache.tapestry5.test.SeleniumTestCase;
+import org.testng.annotations.Test;
+
+public class SinglePersistenceUnitIntegrationTest extends SeleniumTestCase
 {
-    public static final String TEST_PERSISTENCE_UNIT = "TestUnit";
+
+    @Test
+    public void persist_entities()
+    {
+        open("/persistitem");
+        assertEquals(getText("//span[@id='name']").length(), 0);
+
+        clickAndWait("link=create item");
+        assertText("//span[@id='name']", "name");
+    }
 }

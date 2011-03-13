@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.example.app.services.impl;
+package org.example.app1.services.impl;
 
 import java.util.List;
 
@@ -20,8 +20,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceUnit;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.example.app.entities.User;
-import org.example.app.services.UserDAO;
+import org.example.app1.entities.User;
+import org.example.app1.services.UserDAO;
 
 public class UserDAOImpl implements UserDAO
 {

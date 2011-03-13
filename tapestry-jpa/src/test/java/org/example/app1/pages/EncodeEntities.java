@@ -12,63 +12,55 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.example.app.pages;
+package org.example.app1.pages;
 
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceUnit;
 
-import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.jpa.annotations.CommitAfter;
-import org.example.app.AppConstants;
-import org.example.app.entities.User;
+import org.example.app1.AppConstants;
+import org.example.app1.entities.User;
+import org.example.app1.services.UserDAO;
 
-public class PersistEntity
+public class EncodeEntities
 {
     @PersistenceUnit(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
     private EntityManager entityManager;
 
-    @Persist("entity")
+    @Inject
+    private UserDAO userDAO;
+
+    @SuppressWarnings("unused")
     @Property
     private User user;
 
     @CommitAfter
     @PersistenceUnit(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
-    void onCreateEntity()
+    void onCreate()
     {
         final User user = new User();
         user.setFirstName("name");
 
         entityManager.persist(user);
+    }
 
+    @SuppressWarnings("unchecked")
+    User onPassivate()
+    {
+        // Use ordering so that we get the most recently inserted users first.
+        final List<User> users = userDAO.findAll();
+        if (users.isEmpty())
+            return null;
+
+        return users.get(0);
+    }
+
+    void onActivate(final User user)
+    {
         this.user = user;
-    }
-
-    void onChangeName()
-    {
-        user.setFirstName("name2");
-
-        // No commit, so no real change.
-    }
-
-    void onSetToTransient()
-    {
-        user = new User();
-    }
-
-    void onSetToNull()
-    {
-        user = null;
-    }
-
-    @CommitAfter
-    @PersistenceUnit(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
-    void onDelete()
-    {
-        final List<User> users = entityManager.createQuery("select u from User u").getResultList();
-
-        entityManager.remove(users.get(0));
     }
 }
