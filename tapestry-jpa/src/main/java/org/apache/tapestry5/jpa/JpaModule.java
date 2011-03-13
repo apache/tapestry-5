@@ -222,7 +222,7 @@ public class JpaModule
     public static void provideApplicationStateContributions(
             final MappedConfiguration<Class, ApplicationStateContribution> configuration,
             final EntityManagerSource entityManagerSource,
-            @Symbol(JpaSymbols.PROVIDE_ENTITY_VALUE_ENCODERS)
+            @Symbol(JpaSymbols.ENTITY_SESSION_STATE_PERSISTENCE_STRATEGY_ENABLED)
             final boolean entitySessionStatePersistenceStrategyEnabled)
     {
 
