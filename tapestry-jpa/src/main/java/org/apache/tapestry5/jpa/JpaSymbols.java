@@ -14,6 +14,11 @@
 
 package org.apache.tapestry5.jpa;
 
+/**
+ * Configuration symbols, for use with contributions to {@link org.apache.tapestry5.ioc.services.ApplicationDefaults}.
+ *
+ * @since 5.3.0
+ */
 public class JpaSymbols
 {
     public static final String PROVIDE_ENTITY_VALUE_ENCODERS = "tapestry.jpa.provide-entity-value-encoders";
@@ -32,4 +37,12 @@ public class JpaSymbols
      * @since 5.3.0
      */
     public static final String ENTITY_SESSION_STATE_PERSISTENCE_STRATEGY_ENABLED = "tapestry.jpa.entity-session-state-persistence-strategy-enabled";
+    
+    /**
+     * The location of the persistence configuration file, located on the classpath. This
+     * will normally be <code>/META-INF/persistence.xml</code>.
+     * 
+     * @since 5.3.0
+     */
+    public static final String PERSISTENCE_DESCRIPTOR = "tapestry.jpa.persistence-descriptor";
 }

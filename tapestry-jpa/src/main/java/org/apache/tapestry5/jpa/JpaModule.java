@@ -36,6 +36,7 @@ import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ObjectProvider;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
@@ -66,11 +67,13 @@ public class JpaModule
         binder.bind(JpaTransactionAdvisor.class, JpaTransactionAdvisorImpl.class);
     }
 
-    public static EntityManagerSource buildEntityManagerSource(final Logger logger,
+    public static EntityManagerSource buildEntityManagerSource(final Logger logger, 
+            @Symbol(JpaSymbols.PERSISTENCE_DESCRIPTOR)
+            Resource persistenceDescriptor,
             final Map<String, PersistenceUnitConfigurer> configuration,
             final RegistryShutdownHub hub)
     {
-        final EntityManagerSourceImpl ems = new EntityManagerSourceImpl(logger, configuration);
+        final EntityManagerSourceImpl ems = new EntityManagerSourceImpl(logger, persistenceDescriptor, configuration);
 
         hub.addRegistryShutdownListener(ems);
 
@@ -137,6 +140,7 @@ public class JpaModule
         configuration.add(JpaSymbols.PROVIDE_ENTITY_VALUE_ENCODERS, "true");
         configuration.add(JpaSymbols.EARLY_START_UP, "true");
         configuration.add(JpaSymbols.ENTITY_SESSION_STATE_PERSISTENCE_STRATEGY_ENABLED, "true");
+        configuration.add(JpaSymbols.PERSISTENCE_DESCRIPTOR, "/META-INF/persistence.xml");
     }
 
     @Contribute(ValueEncoderSource.class)

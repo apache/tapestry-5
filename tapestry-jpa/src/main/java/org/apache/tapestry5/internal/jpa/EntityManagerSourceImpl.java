@@ -28,6 +28,7 @@ import javax.persistence.spi.PersistenceProviderResolver;
 import javax.persistence.spi.PersistenceProviderResolverHolder;
 import javax.persistence.spi.PersistenceUnitInfo;
 
+import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
@@ -46,7 +47,7 @@ public class EntityManagerSourceImpl implements EntityManagerSource, RegistryShu
 
     private final List<TapestryPersistenceUnitInfo> persistenceUnitInfos;
 
-    public EntityManagerSourceImpl(final Logger logger,
+    public EntityManagerSourceImpl(final Logger logger, final Resource persistenceDescriptor,
             final Map<String, PersistenceUnitConfigurer> configuration)
     {
         super();
@@ -54,11 +55,15 @@ public class EntityManagerSourceImpl implements EntityManagerSource, RegistryShu
 
         final PersistenceParser parser = new PersistenceParser();
 
-        final InputStream inputStream = PersistenceParser.class
-                .getResourceAsStream("/META-INF/persistence.xml");
+        InputStream inputStream = null;
         try
         {
+            inputStream = persistenceDescriptor.openStream();
             persistenceUnitInfos = parser.parse(inputStream);
+        }
+        catch(Exception e)
+        {
+            throw new RuntimeException(e);
         }
         finally
         {
