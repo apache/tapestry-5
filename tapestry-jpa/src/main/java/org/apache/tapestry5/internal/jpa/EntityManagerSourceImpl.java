@@ -47,7 +47,7 @@ public class EntityManagerSourceImpl implements EntityManagerSource, RegistryShu
 
     private final List<TapestryPersistenceUnitInfo> persistenceUnitInfos;
 
-    public EntityManagerSourceImpl(final Logger logger, final Resource persistenceDescriptor,
+    public EntityManagerSourceImpl(final Logger logger, final Resource persistenceDescriptor, PersistenceUnitConfigurer packageNamePersistenceUnitConfigurer, 
             final Map<String, PersistenceUnitConfigurer> configuration)
     {
         super();
@@ -70,6 +70,9 @@ public class EntityManagerSourceImpl implements EntityManagerSource, RegistryShu
             InternalUtils.close(inputStream);
         }
 
+        if(persistenceUnitInfos.size() == 1)
+            packageNamePersistenceUnitConfigurer.configure(persistenceUnitInfos.get(0));
+            
         for (final TapestryPersistenceUnitInfo info : persistenceUnitInfos)
         {
             final PersistenceUnitConfigurer configurer = configuration.get(info

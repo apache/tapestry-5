@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.jpa;
 
+import java.util.Collection;
 import java.util.Map;
 
 import javax.persistence.EntityManagerFactory;
@@ -22,6 +23,7 @@ import javax.persistence.metamodel.Metamodel;
 import javax.persistence.spi.PersistenceUnitInfo;
 
 import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.jpa.CommitAfterWorker;
 import org.apache.tapestry5.internal.jpa.EntityApplicationStatePersistenceStrategy;
 import org.apache.tapestry5.internal.jpa.EntityManagerManagerImpl;
@@ -30,8 +32,10 @@ import org.apache.tapestry5.internal.jpa.EntityManagerSourceImpl;
 import org.apache.tapestry5.internal.jpa.EntityPersistentFieldStrategy;
 import org.apache.tapestry5.internal.jpa.JpaTransactionAdvisorImpl;
 import org.apache.tapestry5.internal.jpa.JpaValueEncoder;
+import org.apache.tapestry5.internal.jpa.PackageNamePersistenceUnitConfigurer;
 import org.apache.tapestry5.internal.jpa.PersistenceUnitWorker;
 import org.apache.tapestry5.internal.services.PersistentFieldManager;
+import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ObjectProvider;
@@ -40,6 +44,7 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.annotations.Startup;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -65,19 +70,40 @@ public class JpaModule
     public static void bind(final ServiceBinder binder)
     {
         binder.bind(JpaTransactionAdvisor.class, JpaTransactionAdvisorImpl.class);
+        binder.bind(PersistenceUnitConfigurer.class, PackageNamePersistenceUnitConfigurer.class).withId("PackageNamePersistenceUnitConfigurer");
     }
 
-    public static EntityManagerSource buildEntityManagerSource(final Logger logger, 
+    public static EntityManagerSource buildEntityManagerSource(
+            final Logger logger,
+            
             @Symbol(JpaSymbols.PERSISTENCE_DESCRIPTOR)
             Resource persistenceDescriptor,
+            
+            @Local
+            PersistenceUnitConfigurer persistenceUnitConfigurer,
+            
             final Map<String, PersistenceUnitConfigurer> configuration,
+            
             final RegistryShutdownHub hub)
     {
-        final EntityManagerSourceImpl ems = new EntityManagerSourceImpl(logger, persistenceDescriptor, configuration);
+        final EntityManagerSourceImpl ems = new EntityManagerSourceImpl(logger,
+                persistenceDescriptor, persistenceUnitConfigurer, configuration);
 
         hub.addRegistryShutdownListener(ems);
 
         return ems;
+    }
+
+    public static JpaEntityPackageManager buildJpaEntityPackageManager(
+            final Collection<String> packageNames)
+    {
+        return new JpaEntityPackageManager()
+        {
+            public Collection<String> getPackageNames()
+            {
+                return packageNames;
+            }
+        };
     }
 
     @Scope(ScopeConstants.PERTHREAD)
@@ -91,6 +117,15 @@ public class JpaModule
         perthreadManager.addThreadCleanupListener(service);
 
         return service;
+    }
+
+    @Contribute(JpaEntityPackageManager.class)
+    public static void provideEntityPackages(Configuration<String> configuration,
+
+    @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
+    String appRootPackage)
+    {
+        configuration.add(appRootPackage + ".entities");
     }
 
     @Contribute(PersistentFieldManager.class)
