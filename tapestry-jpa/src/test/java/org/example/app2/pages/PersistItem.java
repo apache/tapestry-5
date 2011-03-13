@@ -24,7 +24,7 @@ import org.example.app2.entities.Item;
 
 public class PersistItem
 {
-    @PersistenceUnit(unitName = "App2PersistenceUnit")
+    @PersistenceUnit
     private EntityManager entityManager;
 
     @Persist("entity")
@@ -32,7 +32,6 @@ public class PersistItem
     private Item item;
 
     @CommitAfter
-    @PersistenceUnit(unitName = "App2PersistenceUnit")
     void onCreateEntity()
     {
         final Item item = new Item();

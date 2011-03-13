@@ -20,7 +20,6 @@ import javax.persistence.PersistenceUnit;
 
 import org.apache.tapestry5.ioc.Invocation;
 import org.apache.tapestry5.ioc.MethodAdvice;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.jpa.EntityManagerManager;
 
 public class CommitAfterMethodAdvice implements MethodAdvice
@@ -68,19 +67,13 @@ public class CommitAfterMethodAdvice implements MethodAdvice
 
     private EntityTransaction getTransaction(final Invocation invocation)
     {
-
         final PersistenceUnit persistenceUnit = invocation
                 .getMethodAnnotation(PersistenceUnit.class);
 
-        if (persistenceUnit == null)
+        EntityManager em = JpaInternalUtils.getEntityManager(manager, persistenceUnit);
+
+        if (em == null)
             return null;
-
-        final String unitName = persistenceUnit.unitName();
-
-        if (InternalUtils.isBlank(unitName))
-            return null;
-
-        final EntityManager em = manager.getEntityManager(unitName);
 
         return em.getTransaction();
     }

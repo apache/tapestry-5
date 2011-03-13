@@ -19,9 +19,11 @@ import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
 
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.jpa.EntityManagerManager;
 import org.apache.tapestry5.jpa.JpaConstants;
 
@@ -70,5 +72,21 @@ public class JpaInternalUtils
                 String.format(
                         "Failed persisting an entity in the session. The entity '%s' does not belong to any of the existing persistence contexts.",
                         entity));
+    }
+
+    public static EntityManager getEntityManager(EntityManagerManager entityManagerManager,
+            PersistenceUnit annotation)
+    {        
+        String unitName = annotation == null? null: annotation.unitName();
+
+        if (InternalUtils.isNonBlank(unitName))
+            return entityManagerManager.getEntityManager(unitName);
+
+        Map<String, EntityManager> entityManagers = entityManagerManager.getEntityManagers();
+
+        if (entityManagers.size() == 1)
+            return entityManagers.values().iterator().next();
+
+        return null;
     }
 }

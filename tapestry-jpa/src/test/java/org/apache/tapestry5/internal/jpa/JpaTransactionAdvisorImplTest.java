@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.jpa;
 
 import java.sql.SQLException;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -22,6 +23,7 @@ import javax.persistence.PersistenceUnit;
 
 import org.apache.tapestry5.ioc.IOCUtilities;
 import org.apache.tapestry5.ioc.Registry;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.AspectDecorator;
 import org.apache.tapestry5.ioc.services.AspectInterceptorBuilder;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
@@ -81,11 +83,68 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
     }
 
     @Test
+    public void persistence_unit_name_missing()
+    {
+        final VoidService delegate = newMock(VoidService.class);
+        final EntityManagerManager manager = newMock(EntityManagerManager.class);
+        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(manager);
+        Map<String, EntityManager> managers = CollectionFactory.newMap();
+        managers.put("A", newMock(EntityManager.class));
+        managers.put("B", newMock(EntityManager.class));
+
+        final AspectInterceptorBuilder<VoidService> builder = aspectDecorator.createBuilder(
+                VoidService.class, delegate, "foo.Bar");
+
+        advisor.addTransactionCommitAdvice(builder);
+
+        final VoidService interceptor = builder.build();
+        
+        expect(manager.getEntityManagers()).andReturn(managers);
+
+        delegate.persistenceUnitNameMissing();
+
+        replay();
+        interceptor.persistenceUnitNameMissing();
+        verify();
+    }
+    
+    @Test
+    public void persistence_unit_name_missing_single_unit_configured()
+    {
+        final VoidService delegate = newMock(VoidService.class);
+        final EntityManagerManager manager = newMock(EntityManagerManager.class);
+        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(manager);
+        final EntityTransaction transaction = newMock(EntityTransaction.class);
+        EntityManager em = newMock(EntityManager.class);
+        Map<String, EntityManager> managers = CollectionFactory.newMap();
+        managers.put("A", em);
+
+        final AspectInterceptorBuilder<VoidService> builder = aspectDecorator.createBuilder(
+                VoidService.class, delegate, "foo.Bar");
+
+        advisor.addTransactionCommitAdvice(builder);
+
+        final VoidService interceptor = builder.build();
+        
+        expect(manager.getEntityManagers()).andReturn(managers);
+        train_getTransaction(em, transaction, true);
+        delegate.persistenceUnitNameMissing();
+        train_commitActiveTransaction(transaction);
+
+        replay();
+        interceptor.persistenceUnitNameMissing();
+        verify();
+    }
+
+    @Test
     public void persistence_unit_missing()
     {
         final VoidService delegate = newMock(VoidService.class);
         final EntityManagerManager manager = newMock(EntityManagerManager.class);
         final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(manager);
+        Map<String, EntityManager> managers = CollectionFactory.newMap();
+        managers.put("A", newMock(EntityManager.class));
+        managers.put("B", newMock(EntityManager.class));
 
         final AspectInterceptorBuilder<VoidService> builder = aspectDecorator.createBuilder(
                 VoidService.class, delegate, "foo.Bar");
@@ -94,19 +153,24 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
 
         final VoidService interceptor = builder.build();
 
+        expect(manager.getEntityManagers()).andReturn(managers);
         delegate.persistenceUnitMissing();
 
         replay();
         interceptor.persistenceUnitMissing();
         verify();
     }
-
+    
     @Test
-    public void persistence_unit_name_missing()
+    public void persistence_unit_missing_single_unit_configured()
     {
         final VoidService delegate = newMock(VoidService.class);
         final EntityManagerManager manager = newMock(EntityManagerManager.class);
-        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(manager);
+        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(manager);        
+        final EntityTransaction transaction = newMock(EntityTransaction.class);
+        EntityManager em = newMock(EntityManager.class);
+        Map<String, EntityManager> managers = CollectionFactory.newMap();
+        managers.put("A", em);
 
         final AspectInterceptorBuilder<VoidService> builder = aspectDecorator.createBuilder(
                 VoidService.class, delegate, "foo.Bar");
@@ -115,10 +179,13 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
 
         final VoidService interceptor = builder.build();
 
-        delegate.persistenceUnitNameMissing();
+        expect(manager.getEntityManagers()).andReturn(managers);
+        train_getTransaction(em, transaction, true);
+        delegate.persistenceUnitMissing();
+        train_commitActiveTransaction(transaction);
 
         replay();
-        interceptor.persistenceUnitNameMissing();
+        interceptor.persistenceUnitMissing();
         verify();
     }
 
@@ -341,6 +408,13 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
             final boolean isActive)
     {
         expect(manager.getEntityManager(UNIT_NAME)).andReturn(entityManager);
+        train_getTransaction(entityManager, transaction, isActive);
+    }
+    
+    private void train_getTransaction(
+            final EntityManager entityManager, final EntityTransaction transaction,
+            final boolean isActive)
+    {
         expect(entityManager.getTransaction()).andReturn(transaction);
         expect(transaction.isActive()).andReturn(isActive);
     }
@@ -404,10 +478,10 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
 
         @CommitAfter
         @PersistenceUnit
-        void persistenceUnitMissing();
+        void persistenceUnitNameMissing();
 
         @CommitAfter
-        void persistenceUnitNameMissing();
+        void persistenceUnitMissing();
 
         @CommitAfter
         @PersistenceUnit(unitName = UNIT_NAME)

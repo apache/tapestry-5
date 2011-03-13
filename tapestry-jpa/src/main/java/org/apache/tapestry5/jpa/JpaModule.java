@@ -70,21 +70,21 @@ public class JpaModule
     public static void bind(final ServiceBinder binder)
     {
         binder.bind(JpaTransactionAdvisor.class, JpaTransactionAdvisorImpl.class);
-        binder.bind(PersistenceUnitConfigurer.class, PackageNamePersistenceUnitConfigurer.class).withId("PackageNamePersistenceUnitConfigurer");
+        binder.bind(PersistenceUnitConfigurer.class, PackageNamePersistenceUnitConfigurer.class)
+                .withId("PackageNamePersistenceUnitConfigurer");
     }
 
-    public static EntityManagerSource buildEntityManagerSource(
-            final Logger logger,
-            
-            @Symbol(JpaSymbols.PERSISTENCE_DESCRIPTOR)
-            Resource persistenceDescriptor,
-            
-            @Local
-            PersistenceUnitConfigurer persistenceUnitConfigurer,
-            
-            final Map<String, PersistenceUnitConfigurer> configuration,
-            
-            final RegistryShutdownHub hub)
+    public static EntityManagerSource buildEntityManagerSource(final Logger logger,
+
+    @Symbol(JpaSymbols.PERSISTENCE_DESCRIPTOR)
+    Resource persistenceDescriptor,
+
+    @Local
+    PersistenceUnitConfigurer persistenceUnitConfigurer,
+
+    final Map<String, PersistenceUnitConfigurer> configuration,
+
+    final RegistryShutdownHub hub)
     {
         final EntityManagerSourceImpl ems = new EntityManagerSourceImpl(logger,
                 persistenceDescriptor, persistenceUnitConfigurer, configuration);
@@ -242,17 +242,14 @@ public class JpaModule
     }
 
     @Startup
-    public static void startupEarly(final EntityManagerSource entityManagerSource,
+    public static void startupEarly(final EntityManagerManager entityManagerManager,
             @Symbol(JpaSymbols.EARLY_START_UP)
             final boolean earlyStartup)
     {
         if (!earlyStartup)
             return;
 
-        for (final PersistenceUnitInfo info : entityManagerSource.getPersistenceUnitInfos())
-        {
-            entityManagerSource.create(info.getPersistenceUnitName());
-        }
+        entityManagerManager.getEntityManagers();
 
     }
 

@@ -52,13 +52,7 @@ public class PersistenceUnitWorker implements ComponentClassTransformWorker
 
                 public Object get()
                 {
-
-                    final String unitName = annotation.unitName();
-
-                    if (unitName != null)
-                        return entityManagerManager.getEntityManager(unitName);
-
-                    return null;
+                    return JpaInternalUtils.getEntityManager(entityManagerManager, annotation);
                 }
 
                 public void set(final Object newValue)

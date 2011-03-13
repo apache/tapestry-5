@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.persistence.EntityManager;
+import javax.persistence.spi.PersistenceUnitInfo;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
@@ -55,7 +56,17 @@ public class EntityManagerManagerImpl implements EntityManagerManager, ThreadCle
      */
     public Map<String, EntityManager> getEntityManagers()
     {
+        createAllEntityManagers();
+        
         return Collections.unmodifiableMap(entityManagers);
+    }
+
+    private void createAllEntityManagers()
+    {
+        for (final PersistenceUnitInfo info : entityManagerSource.getPersistenceUnitInfos())
+        {
+            getOrCreateEntityManager(info.getPersistenceUnitName());
+        }
     }
 
     private EntityManager getOrCreateEntityManager(final String persistenceUnitName)
