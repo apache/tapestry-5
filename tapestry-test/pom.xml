@@ -69,7 +69,12 @@
         <version>6.0.30</version>
         <scope>compile</scope>
     </dependency>
-
+    <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>dbcp</artifactId>
+        <version>6.0.30</version>
+        <scope>compile</scope>
+    </dependency>
   </dependencies>
   <build>
     <plugins>

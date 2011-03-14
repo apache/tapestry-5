@@ -69,6 +69,11 @@ public class Tomcat6Runner implements ServletContainerRunner
         wrapper.setServletClass(DefaultServlet.class.getName());
         context.addChild(wrapper);
         context.addServletMapping("/", name);
+        
+        File contextConfigFile = new File(webappFolder, "META-INF/context.xml");
+        
+        if(contextConfigFile.exists())
+            context.setConfigFile(contextConfigFile.getAbsolutePath());
 
         context.setLoader(new WebappLoader(this.getClass().getClassLoader()));
 
