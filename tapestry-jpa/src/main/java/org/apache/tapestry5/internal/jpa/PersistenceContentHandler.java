@@ -16,9 +16,13 @@ package org.apache.tapestry5.internal.jpa;
 
 import java.util.List;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.persistence.SharedCacheMode;
 import javax.persistence.ValidationMode;
 import javax.persistence.spi.PersistenceUnitTransactionType;
+import javax.sql.DataSource;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.jpa.TapestryPersistenceUnitInfo;
@@ -129,6 +133,10 @@ public class PersistenceContentHandler implements ContentHandler
             {
                 persistenceUnitInfo.setValidationMode(toEnum(ValidationMode.class, string));
             }
+            else if (ELEMENT_NON_JTA_DATA_SOURCE.equals(localName))
+            {
+                persistenceUnitInfo.setNonJtaDataSource(lookupDataSource(string));
+            }
             else if (ELEMENT_PERSISTENCE_UNIT.equals(localName))
             {
                 if (persistenceUnitInfo != null)
@@ -171,5 +179,23 @@ public class PersistenceContentHandler implements ContentHandler
     private <T extends Enum<T>> T toEnum(final Class<T> enumType, final String value)
     {
         return Enum.valueOf(enumType, value);
+    }
+
+    private DataSource lookupDataSource(final String name)
+    {
+        try
+        {
+            //TODO: Create InitialContext with environment properties?
+            final Context initContext = new InitialContext();
+
+            final Context envContext = (Context) initContext.lookup("java:comp/env");
+
+            return (DataSource) envContext.lookup(name);
+        }
+        catch (final NamingException e)
+        {
+            throw new RuntimeException(e);
+        }
+
     }
 }

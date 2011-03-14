@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+	version="2.0">
+
+	<persistence-unit name="JndiDataSourcePersistenceUnit" transaction-type="RESOURCE_LOCAL">
+		<non-jta-data-source>jdbc/JPATest</non-jta-data-source>
+		<properties>
+			<property name="eclipselink.ddl-generation" value="create-tables"/>
+			<property name="eclipselink.logging.level" value="fine"/>
+		</properties>
+	</persistence-unit>
+
+</persistence>

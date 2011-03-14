@@ -23,6 +23,14 @@
 		</packages>
 	</test>
 
+	<test name="JNDI DataSource Integration Tests" enabled="true">
+		<parameter name="tapestry.web-app-folder" value="src/test/app3" />
+		<parameter name="tapestry.servlet-container" value="tomcat6" />
+		<packages>
+			<package name="org.apache.tapestry5.jpa.integration.app3" />
+		</packages>
+	</test>
+
 	<test name="Tapestry JPA Unit Tests" enabled="true">
 		<packages>
 			<package name="org.apache.tapestry5.internal.jpa" />
