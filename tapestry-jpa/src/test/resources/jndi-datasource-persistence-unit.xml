@@ -4,6 +4,7 @@
 
 	<persistence-unit name="JndiDataSourcePersistenceUnit" transaction-type="RESOURCE_LOCAL">
 		<non-jta-data-source>jdbc/JPATest</non-jta-data-source>
+		<mapping-file>mappings.xml</mapping-file>
 		<properties>
 			<property name="eclipselink.ddl-generation" value="create-tables"/>
 			<property name="eclipselink.logging.level" value="fine"/>

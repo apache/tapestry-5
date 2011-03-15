@@ -41,11 +41,15 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
 
     private DataSource nonJtaDataSource;
 
+    private DataSource jtaDataSource;
+
     private ValidationMode validationMode;
 
     private SharedCacheMode sharedCacheMode;
 
     private final List<String> managedClassNames = new ArrayList<String>();
+
+    private final List<String> mappingFilesNames = new ArrayList<String>();
 
     private final Properties properties = new Properties();
 
@@ -57,6 +61,9 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
         return persistenceUnitName;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setPersistenceUnitName(final String persistenceUnitName)
     {
         this.persistenceUnitName = persistenceUnitName;
@@ -70,6 +77,9 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
         return persistenceProviderClassName;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setPersistenceProviderClassName(final String persistenceProviderClassName)
     {
         this.persistenceProviderClassName = persistenceProviderClassName;
@@ -83,6 +93,9 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
         return transactionType;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setTransactionType(final PersistenceUnitTransactionType transactionType)
     {
         this.transactionType = transactionType;
@@ -93,7 +106,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
      */
     public DataSource getJtaDataSource()
     {
-        return null;
+        return jtaDataSource;
     }
 
     /**
@@ -104,6 +117,9 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
         return nonJtaDataSource;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setNonJtaDataSource(final DataSource nonJtaDataSource)
     {
         this.nonJtaDataSource = nonJtaDataSource;
@@ -112,9 +128,26 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
+    public void setJtaDataSource(final DataSource jtaDataSource)
+    {
+        this.jtaDataSource = jtaDataSource;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public List<String> getMappingFileNames()
     {
-        return Arrays.asList();
+        return Collections.unmodifiableList(mappingFilesNames);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void addMappingFileName(final String fileName)
+    {
+        mappingFilesNames.add(fileName);
+
     }
 
     /**
@@ -141,11 +174,17 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
         return Collections.unmodifiableList(managedClassNames);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void addManagedClassName(final String className)
     {
         managedClassNames.add(className);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void addManagedClass(final Class<?> clazz)
     {
         addManagedClassName(clazz.getName());
@@ -167,6 +206,9 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
         return sharedCacheMode;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setSharedCacheMode(final SharedCacheMode cacheMode)
     {
         sharedCacheMode = cacheMode;
@@ -180,6 +222,9 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
         return validationMode;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setValidationMode(final ValidationMode validationMode)
     {
         this.validationMode = validationMode;
@@ -201,6 +246,9 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
         return persistenceXMLSchemaVersion;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setPersistenceXMLSchemaVersion(final String version)
     {
         persistenceXMLSchemaVersion = version;

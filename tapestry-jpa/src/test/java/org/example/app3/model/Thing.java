@@ -12,27 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.example.app3.entities;
+package org.example.app3.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-
-@Entity
 public class Thing
 {
-    @Id
-    @GeneratedValue
     private Long id;
 
     private String name;
-    
+
     public Long getId()
     {
         return id;
     }
 
-    public void setId(Long id)
+    public void setId(final Long id)
     {
         this.id = id;
     }
@@ -42,7 +35,7 @@ public class Thing
         return name;
     }
 
-    public void setName(String name)
+    public void setName(final String name)
     {
         this.name = name;
     }

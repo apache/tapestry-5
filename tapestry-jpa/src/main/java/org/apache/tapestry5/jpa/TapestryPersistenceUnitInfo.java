@@ -30,6 +30,8 @@ public interface TapestryPersistenceUnitInfo extends PersistenceUnitInfo
 
     void setNonJtaDataSource(DataSource nonJtaDataSource);
 
+    void setJtaDataSource(DataSource jtaDataSource);
+
     void addManagedClassName(String className);
 
     void addManagedClass(Class<?> clazz);
@@ -39,4 +41,6 @@ public interface TapestryPersistenceUnitInfo extends PersistenceUnitInfo
     void setValidationMode(ValidationMode validationMode);
 
     void setPersistenceXMLSchemaVersion(String version);
+
+    void addMappingFileName(String string);
 }

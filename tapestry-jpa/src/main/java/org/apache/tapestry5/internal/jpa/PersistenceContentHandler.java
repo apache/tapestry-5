@@ -133,9 +133,17 @@ public class PersistenceContentHandler implements ContentHandler
             {
                 persistenceUnitInfo.setValidationMode(toEnum(ValidationMode.class, string));
             }
+            else if (ELEMENT_MAPPING_FILE.equals(localName))
+            {
+                persistenceUnitInfo.addMappingFileName(string);
+            }
             else if (ELEMENT_NON_JTA_DATA_SOURCE.equals(localName))
             {
                 persistenceUnitInfo.setNonJtaDataSource(lookupDataSource(string));
+            }
+            else if (ELEMENT_JTA_DATA_SOURCE.equals(localName))
+            {
+                persistenceUnitInfo.setJtaDataSource(lookupDataSource(string));
             }
             else if (ELEMENT_PERSISTENCE_UNIT.equals(localName))
             {
@@ -185,7 +193,7 @@ public class PersistenceContentHandler implements ContentHandler
     {
         try
         {
-            //TODO: Create InitialContext with environment properties?
+            // TODO: Create InitialContext with environment properties?
             final Context initContext = new InitialContext();
 
             final Context envContext = (Context) initContext.lookup("java:comp/env");

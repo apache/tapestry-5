@@ -21,7 +21,7 @@ import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.jpa.JpaPersistenceConstants;
 import org.apache.tapestry5.jpa.annotations.CommitAfter;
-import org.example.app3.entities.Thing;
+import org.example.app3.model.Thing;
 
 public class PersistThing
 {
