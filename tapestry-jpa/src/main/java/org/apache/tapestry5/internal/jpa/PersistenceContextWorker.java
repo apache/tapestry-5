@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.jpa;
 
-import javax.persistence.PersistenceUnit;
+import javax.persistence.PersistenceContext;
 
 import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.jpa.EntityManagerManager;
@@ -23,11 +23,11 @@ import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.TransformField;
 
-public class PersistenceUnitWorker implements ComponentClassTransformWorker
+public class PersistenceContextWorker implements ComponentClassTransformWorker
 {
     private final EntityManagerManager entityManagerManager;
 
-    public PersistenceUnitWorker(final EntityManagerManager entityManagerManager)
+    public PersistenceContextWorker(final EntityManagerManager entityManagerManager)
     {
         super();
         this.entityManagerManager = entityManagerManager;
@@ -41,9 +41,9 @@ public class PersistenceUnitWorker implements ComponentClassTransformWorker
     {
 
         for (final TransformField field : transformation
-                .matchFieldsWithAnnotation(PersistenceUnit.class))
+                .matchFieldsWithAnnotation(PersistenceContext.class))
         {
-            final PersistenceUnit annotation = field.getAnnotation(PersistenceUnit.class);
+            final PersistenceContext annotation = field.getAnnotation(PersistenceContext.class);
 
             field.claim(annotation);
 

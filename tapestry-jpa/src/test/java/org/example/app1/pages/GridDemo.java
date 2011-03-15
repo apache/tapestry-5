@@ -15,7 +15,7 @@
 package org.example.app1.pages;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceUnit;
+import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -30,7 +30,7 @@ import org.example.app1.services.UserDAO;
 
 public class GridDemo
 {
-    @PersistenceUnit(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
+    @PersistenceContext(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
     private EntityManager entityManager;
 
     @Inject
@@ -50,7 +50,7 @@ public class GridDemo
     }
 
     @CommitAfter
-    @PersistenceUnit(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
+    @PersistenceContext(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
     void onActionFromSetup()
     {
         userDAO.deleteAll();

@@ -19,7 +19,7 @@ import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
+import javax.persistence.PersistenceContext;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
 
@@ -75,7 +75,7 @@ public class JpaInternalUtils
     }
 
     public static EntityManager getEntityManager(EntityManagerManager entityManagerManager,
-            PersistenceUnit annotation)
+            PersistenceContext annotation)
     {        
         String unitName = annotation == null? null: annotation.unitName();
 

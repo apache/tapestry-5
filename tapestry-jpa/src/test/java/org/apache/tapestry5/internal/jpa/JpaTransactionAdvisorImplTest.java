@@ -19,7 +19,7 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceUnit;
+import javax.persistence.PersistenceContext;
 
 import org.apache.tapestry5.ioc.IOCUtilities;
 import org.apache.tapestry5.ioc.Registry;
@@ -462,11 +462,11 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
     public interface ReturnTypeService
     {
         @CommitAfter
-        @PersistenceUnit(unitName = UNIT_NAME)
+        @PersistenceContext(unitName = UNIT_NAME)
         String returnTypeMethod();
 
         @CommitAfter
-        @PersistenceUnit(unitName = UNIT_NAME)
+        @PersistenceContext(unitName = UNIT_NAME)
         int returnTypeMethodWithParam(int first, int second);
 
         String toString();
@@ -477,25 +477,25 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         void undecorated();
 
         @CommitAfter
-        @PersistenceUnit
+        @PersistenceContext
         void persistenceUnitNameMissing();
 
         @CommitAfter
         void persistenceUnitMissing();
 
         @CommitAfter
-        @PersistenceUnit(unitName = UNIT_NAME)
+        @PersistenceContext(unitName = UNIT_NAME)
         void voidMethod();
 
         @CommitAfter
-        @PersistenceUnit(unitName = UNIT_NAME)
+        @PersistenceContext(unitName = UNIT_NAME)
         void voidMethodWithParam(long id);
     }
 
     public interface Performer
     {
         @CommitAfter
-        @PersistenceUnit(unitName = UNIT_NAME)
+        @PersistenceContext(unitName = UNIT_NAME)
         void perform() throws SQLException;
     }
 }

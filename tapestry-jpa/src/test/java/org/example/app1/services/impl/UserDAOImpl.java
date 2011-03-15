@@ -17,16 +17,17 @@ package org.example.app1.services.impl;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceUnit;
+import javax.persistence.PersistenceContext;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.example.app1.AppConstants;
 import org.example.app1.entities.User;
 import org.example.app1.services.UserDAO;
 
 public class UserDAOImpl implements UserDAO
 {
     @Inject
-    @PersistenceUnit(unitName = "TestUnit")
+    @PersistenceContext(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
     private EntityManager entityManager;
 
     public void add(final User user)

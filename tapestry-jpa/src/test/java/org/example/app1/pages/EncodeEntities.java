@@ -17,7 +17,7 @@ package org.example.app1.pages;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceUnit;
+import javax.persistence.PersistenceContext;
 
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -28,7 +28,7 @@ import org.example.app1.services.UserDAO;
 
 public class EncodeEntities
 {
-    @PersistenceUnit(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
+    @PersistenceContext(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
     private EntityManager entityManager;
 
     @Inject
@@ -39,7 +39,7 @@ public class EncodeEntities
     private User user;
 
     @CommitAfter
-    @PersistenceUnit(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
+    @PersistenceContext(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
     void onCreate()
     {
         final User user = new User();

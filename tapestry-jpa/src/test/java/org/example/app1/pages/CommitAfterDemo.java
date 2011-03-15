@@ -16,7 +16,7 @@ package org.example.app1.pages;
 
 import java.sql.SQLException;
 
-import javax.persistence.PersistenceUnit;
+import javax.persistence.PersistenceContext;
 
 import org.apache.tapestry5.jpa.annotations.CommitAfter;
 import org.example.app1.AppConstants;
@@ -50,14 +50,14 @@ public class CommitAfterDemo
     }
 
     @CommitAfter
-    @PersistenceUnit(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
+    @PersistenceContext(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
     void onChangeName()
     {
         user.setFirstName("Frank");
     }
 
     @CommitAfter
-    @PersistenceUnit(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
+    @PersistenceContext(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
     void doChangeNameWithRuntimeException()
     {
         user.setFirstName("Bill");
@@ -78,7 +78,7 @@ public class CommitAfterDemo
     }
 
     @CommitAfter
-    @PersistenceUnit(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
+    @PersistenceContext(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
     void doChangeNameWithCheckedException() throws SQLException
 
     {

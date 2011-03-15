@@ -15,7 +15,7 @@
 package org.apache.tapestry5.internal.jpa;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceUnit;
+import javax.persistence.PersistenceContext;
 
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.ObjectCreator;
@@ -58,10 +58,10 @@ public class EntityManagerObjectProvider implements ObjectProvider
                     final EntityManagerManager entityManagerManager = objectLocator
                             .getService(EntityManagerManager.class);
 
-                    final PersistenceUnit persistenceUnit = annotationProvider
-                            .getAnnotation(PersistenceUnit.class);
+                    final PersistenceContext annotation = annotationProvider
+                            .getAnnotation(PersistenceContext.class);
 
-                    return JpaInternalUtils.getEntityManager(entityManagerManager, persistenceUnit);
+                    return JpaInternalUtils.getEntityManager(entityManagerManager, annotation);
                 }
             }, "<EntityManagerProxy>");
         }

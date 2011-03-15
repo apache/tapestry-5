@@ -17,7 +17,7 @@ package org.example.app1.pages;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceUnit;
+import javax.persistence.PersistenceContext;
 
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -28,7 +28,7 @@ import org.example.app1.entities.User;
 
 public class PersistEntity
 {
-    @PersistenceUnit(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
+    @PersistenceContext(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
     private EntityManager entityManager;
 
     @Persist(JpaPersistenceConstants.ENTITY)
@@ -36,7 +36,7 @@ public class PersistEntity
     private User user;
 
     @CommitAfter
-    @PersistenceUnit(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
+    @PersistenceContext(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
     void onCreateEntity()
     {
         final User user = new User();
@@ -65,7 +65,7 @@ public class PersistEntity
     }
 
     @CommitAfter
-    @PersistenceUnit(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
+    @PersistenceContext(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
     void onDelete()
     {
         final List<User> users = entityManager.createQuery("select u from User u").getResultList();

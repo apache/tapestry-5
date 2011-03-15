@@ -33,7 +33,7 @@ import org.apache.tapestry5.internal.jpa.EntityPersistentFieldStrategy;
 import org.apache.tapestry5.internal.jpa.JpaTransactionAdvisorImpl;
 import org.apache.tapestry5.internal.jpa.JpaValueEncoder;
 import org.apache.tapestry5.internal.jpa.PackageNamePersistenceUnitConfigurer;
-import org.apache.tapestry5.internal.jpa.PersistenceUnitWorker;
+import org.apache.tapestry5.internal.jpa.PersistenceContextWorker;
 import org.apache.tapestry5.internal.services.PersistentFieldManager;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.LoggerSource;
@@ -164,7 +164,7 @@ public class JpaModule
     public static void perovideComponentClassTransformWorker(
             final OrderedConfiguration<ComponentClassTransformWorker> configuration)
     {
-        configuration.addInstance("PersistenceUnit", PersistenceUnitWorker.class, "after:Property");
+        configuration.addInstance("PersistenceContext", PersistenceContextWorker.class, "after:Property");
     }
 
     @Contribute(SymbolProvider.class)

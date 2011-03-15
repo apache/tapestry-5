@@ -15,7 +15,7 @@
 package org.example.app3.pages;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceUnit;
+import javax.persistence.PersistenceContext;
 
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
@@ -25,7 +25,7 @@ import org.example.app3.model.Thing;
 
 public class PersistThing
 {
-    @PersistenceUnit
+    @PersistenceContext
     private EntityManager entityManager;
 
     @Persist(JpaPersistenceConstants.ENTITY)

@@ -16,7 +16,7 @@ package org.example.app1.services;
 
 import java.util.List;
 
-import javax.persistence.PersistenceUnit;
+import javax.persistence.PersistenceContext;
 
 import org.apache.tapestry5.jpa.annotations.CommitAfter;
 import org.example.app1.AppConstants;
@@ -25,13 +25,13 @@ import org.example.app1.entities.User;
 public interface UserDAO
 {
     @CommitAfter
-    @PersistenceUnit(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
+    @PersistenceContext(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
     void add(User user);
 
     List<User> findAll();
 
     @CommitAfter
-    @PersistenceUnit(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
+    @PersistenceContext(unitName = AppConstants.TEST_PERSISTENCE_UNIT)
     void delete(User... users);
 
     void deleteAll();
