@@ -61,15 +61,7 @@ public class EntityManagerObjectProvider implements ObjectProvider
                     final PersistenceUnit persistenceUnit = annotationProvider
                             .getAnnotation(PersistenceUnit.class);
 
-                    if (persistenceUnit == null)
-                        return null;
-
-                    final String unitName = persistenceUnit.unitName();
-
-                    if (unitName == null)
-                        return null;
-
-                    return entityManagerManager.getEntityManager(unitName);
+                    return JpaInternalUtils.getEntityManager(entityManagerManager, persistenceUnit);
                 }
             }, "<EntityManagerProxy>");
         }
