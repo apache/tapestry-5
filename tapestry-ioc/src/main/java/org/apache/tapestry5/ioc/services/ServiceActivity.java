@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.ioc.services;
 
+import java.util.Set;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 
 /**
@@ -42,4 +43,9 @@ public interface ServiceActivity
      * Indicates the lifecycle status of the service.
      */
     Status getStatus();
+
+    /**
+     * The markers on this service
+     */
+    Set<Class> getMarkers();
 }

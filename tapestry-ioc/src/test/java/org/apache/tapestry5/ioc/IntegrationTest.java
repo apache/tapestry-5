@@ -866,16 +866,67 @@ public class IntegrationTest extends IOCInternalTestCase
             if (serviceId.equals("ClassFactory"))
                 assertEquals(a.getStatus(), Status.BUILTIN);
 
-            if (serviceId.equals("RedGreeter1"))
+            if (serviceId.equals("RedGreeter1")) {
                 assertEquals(a.getStatus(), Status.DEFINED);
+                assertEquals(a.getMarkers().contains(BlueMarker.class), false);
+                assertEquals(a.getMarkers().contains(RedMarker.class), true);
+            }
 
             if (serviceId.equals("TypeCoercer"))
                 assertEquals(a.getStatus(), Status.REAL);
 
-            if (serviceId.equals("BlueGreeter"))
+            if (serviceId.equals("BlueGreeter")) {
+                assertEquals(a.getStatus(), Status.VIRTUAL);
+                assertEquals(a.getMarkers().contains(BlueMarker.class), true);
+                assertEquals(a.getMarkers().contains(RedMarker.class), false);
+            }
+        }
+
+        r.shutdown();
+    }
+
+    @Test
+    public void service_activity_scoreboard_perthread() throws InterruptedException
+    {
+        final Registry r = buildRegistry(GreeterModule.class, PerThreadModule.class);
+
+        ServiceActivityScoreboard scoreboard = r.getService(ServiceActivityScoreboard.class);
+
+        // Force the state of a few services.
+
+        final StringHolder holder = r.getService(StringHolder.class);
+
+        Runnable runnable = new Runnable()
+        {
+            public void run()
+            {
+                holder.setValue("barney");
+                assertEquals(holder.getValue(), "barney");
+
+                r.cleanupThread();
+            }
+        };
+
+        Thread t = new Thread(runnable);
+
+        t.start();
+        t.join();
+
+        // Now get the activity list and poke around.
+
+        List<ServiceActivity> serviceActivity = scoreboard.getServiceActivity();
+
+        assertTrue(serviceActivity.size() > 0);
+
+        for (ServiceActivity a : serviceActivity)
+        {
+            String serviceId = a.getServiceId();
+
+            if (serviceId.equals("StringHolder"))
                 assertEquals(a.getStatus(), Status.VIRTUAL);
         }
 
+        r.cleanupThread();
         r.shutdown();
     }
 

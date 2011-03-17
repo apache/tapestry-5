@@ -163,15 +163,15 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         operationTracker = new PerThreadOperationTracker(loggerSource.getLogger(Registry.class));
 
-        final ServiceActivityTrackerImpl scoreboardAndTracker = new ServiceActivityTrackerImpl();
-
-        tracker = scoreboardAndTracker;
-
         this.classFactory = classFactory;
 
         Logger logger = loggerForBuiltinService(PERTHREAD_MANAGER_SERVICE_ID);
 
         perthreadManager = new PerthreadManagerImpl(logger);
+
+        final ServiceActivityTrackerImpl scoreboardAndTracker = new ServiceActivityTrackerImpl(perthreadManager);
+
+        tracker = scoreboardAndTracker;
 
         logger = loggerForBuiltinService(REGISTRY_SHUTDOWN_HUB_SERVICE_ID);
 
