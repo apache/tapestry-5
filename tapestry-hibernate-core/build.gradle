@@ -22,3 +22,9 @@ dependencies {
   
   testRuntime "org.hsqldb:hsqldb:1.8.0.10"
 }
+
+jar {
+    manifest {
+        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.hibernate.HibernateCoreModule'
+    }
+}
