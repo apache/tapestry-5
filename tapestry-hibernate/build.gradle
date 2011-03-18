@@ -1,0 +1,16 @@
+description = "Provides support for simple CRUD applications built on top of Tapestry and Hibernate"
+
+dependencies {
+  compile project(':tapestry-core')
+  compile project(':tapestry-hibernate-core')
+
+  testCompile project(':tapestry-test')
+  
+  testRuntime "org.hsqldb:hsqldb:1.8.0.10"
+}
+
+jar {
+    manifest {
+        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.hibernate.HibernateModule'
+    }
+}
