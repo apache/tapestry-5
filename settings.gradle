@@ -1,5 +1,5 @@
 include "tapestry-annotations", "tapestry-test", "tapestry-func", "tapestry-ioc", "tapestry-json", "tapestry-core"
-include "tapestry-hibernate-core", "tapestry-hibernate"
-// TODO: tapestry-jmx, tapestry-upload, tapestry-spring, tapestry-beanvalidator
+include "tapestry-hibernate-core", "tapestry-hibernate", "tapestry-jmx"
+// TODO: , tapestry-upload, tapestry-spring, tapestry-beanvalidator
 // TODO (LATER): tapestry-component-report, quickstart
 
