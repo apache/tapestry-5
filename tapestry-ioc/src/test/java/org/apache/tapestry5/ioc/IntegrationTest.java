@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -866,7 +866,8 @@ public class IntegrationTest extends IOCInternalTestCase
             if (serviceId.equals("ClassFactory"))
                 assertEquals(a.getStatus(), Status.BUILTIN);
 
-            if (serviceId.equals("RedGreeter1")) {
+            if (serviceId.equals("RedGreeter1"))
+            {
                 assertEquals(a.getStatus(), Status.DEFINED);
                 assertEquals(a.getMarkers().contains(BlueMarker.class), false);
                 assertEquals(a.getMarkers().contains(RedMarker.class), true);
@@ -875,7 +876,8 @@ public class IntegrationTest extends IOCInternalTestCase
             if (serviceId.equals("TypeCoercer"))
                 assertEquals(a.getStatus(), Status.REAL);
 
-            if (serviceId.equals("BlueGreeter")) {
+            if (serviceId.equals("BlueGreeter"))
+            {
                 assertEquals(a.getStatus(), Status.VIRTUAL);
                 assertEquals(a.getMarkers().contains(BlueMarker.class), true);
                 assertEquals(a.getMarkers().contains(RedMarker.class), false);
@@ -1568,7 +1570,7 @@ public class IntegrationTest extends IOCInternalTestCase
 
         r.shutdown();
     }
-   
+
     @Test
     public void advise_by_annotation()
     {
@@ -1581,12 +1583,12 @@ public class IntegrationTest extends IOCInternalTestCase
         r.shutdown();
 
     }
-   
+
     @Test
     public void advise_by_locale_annotation()
     {
         Registry r = buildRegistry(GreeterModule2.class, AdviseByMarkerModule.class);
-       
+
         Greeter red = r.getService("RedGreeter", Greeter.class);
 
         assertEquals(red.getGreeting(), "delta[Red]");
@@ -1594,7 +1596,7 @@ public class IntegrationTest extends IOCInternalTestCase
         r.shutdown();
 
     }
-   
+
     @Test
     public void decorate_by_annotation()
     {
@@ -1607,12 +1609,12 @@ public class IntegrationTest extends IOCInternalTestCase
         r.shutdown();
 
     }
-   
+
     @Test
     public void decorate_by_locale_annotation()
     {
         Registry r = buildRegistry(GreeterModule2.class, DecorateByMarkerModule.class);
-       
+
         Greeter red = r.getService("RedGreeter", Greeter.class);
 
         assertEquals(red.getGreeting(), "Decorated by barney[Red]");
@@ -1649,5 +1651,17 @@ public class IntegrationTest extends IOCInternalTestCase
         assertEquals(symbolSource.valueForSymbol("it"), "works");
 
         r.shutdown();
+    }
+
+    @Test
+    public void contributed_values_may_be_coerced_to_correct_type()
+    {
+        Registry r = buildRegistry(ContributedValueCoercionModule.class);
+
+        SymbolSource source = r.getService(SymbolSource.class);
+
+        assertEquals(source.valueForSymbol("bool-true"), "true");
+        assertEquals(source.valueForSymbol("bool-false"), "false");
+        assertEquals(source.valueForSymbol("num-12345"), "12345");
     }
 }

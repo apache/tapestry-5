@@ -2394,7 +2394,7 @@ public final class TapestryModule
     /**
      * Contributes factory defaults that may be overridden.
      */
-    public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
+    public static void contributeFactoryDefaults(MappedConfiguration<String, Object> configuration)
     {
         // Remember this is request-to-request time, presumably it'll take the
         // developer more than
@@ -2420,15 +2420,15 @@ public final class TapestryModule
         configuration.add(SymbolConstants.DEFAULT_STYLESHEET, "classpath:/org/apache/tapestry5/default.css");
         configuration.add("tapestry.spacer-image", "classpath:/org/apache/tapestry5/spacer.gif");
 
-        configuration.add(SymbolConstants.SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS, "false");
+        configuration.add(SymbolConstants.SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS, false);
 
-        configuration.add(SymbolConstants.PRODUCTION_MODE, "true");
+        configuration.add(SymbolConstants.PRODUCTION_MODE, true);
 
-        configuration.add(SymbolConstants.COMPRESS_WHITESPACE, "true");
+        configuration.add(SymbolConstants.COMPRESS_WHITESPACE, true);
 
-        configuration.add(MetaDataConstants.SECURE_PAGE, "false");
+        configuration.add(MetaDataConstants.SECURE_PAGE, false);
 
-        configuration.add(SymbolConstants.FORM_CLIENT_LOGIC_ENABLED, "true");
+        configuration.add(SymbolConstants.FORM_CLIENT_LOGIC_ENABLED, true);
 
         // This is designed to make it easy to keep synchronized with
         // script.aculo.ous. As we support a new version, we create a new folder, and update the
@@ -2459,29 +2459,29 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.EXCEPTION_REPORT_PAGE, "ExceptionReport");
 
-        configuration.add(SymbolConstants.MIN_GZIP_SIZE, "100");
+        configuration.add(SymbolConstants.MIN_GZIP_SIZE, 100);
 
         Random random = new Random(System.currentTimeMillis());
 
         configuration.add(SymbolConstants.APPLICATION_VERSION, Long.toHexString(random.nextLong()));
 
-        configuration.add(SymbolConstants.OMIT_GENERATOR_META, "false");
+        configuration.add(SymbolConstants.OMIT_GENERATOR_META, false);
 
         configuration.add(SymbolConstants.SECURE_ENABLED, SymbolConstants.PRODUCTION_MODE_VALUE);
         configuration.add(SymbolConstants.COMPACT_JSON, SymbolConstants.PRODUCTION_MODE_VALUE);
 
-        configuration.add(SymbolConstants.ENCODE_LOCALE_INTO_PATH, "true");
+        configuration.add(SymbolConstants.ENCODE_LOCALE_INTO_PATH, true);
 
-        configuration.add(SymbolConstants.BLACKBIRD_ENABLED, "false");
+        configuration.add(SymbolConstants.BLACKBIRD_ENABLED, false);
 
         configuration.add(InternalSymbols.PRE_SELECTED_FORM_NAMES, "reset,submit,select,id,method,action,onsubmit");
 
-        configuration.add(SymbolConstants.COMPONENT_RENDER_TRACING_ENABLED, "false");
+        configuration.add(SymbolConstants.COMPONENT_RENDER_TRACING_ENABLED, false);
 
         // The default values denote "use values from request"
         configuration.add(SymbolConstants.HOSTNAME, "");
-        configuration.add(SymbolConstants.HOSTPORT, "0");
-        configuration.add(SymbolConstants.HOSTPORT_SECURE, "0");
+        configuration.add(SymbolConstants.HOSTPORT, 0);
+        configuration.add(SymbolConstants.HOSTPORT_SECURE, 0);
     }
 
     /**

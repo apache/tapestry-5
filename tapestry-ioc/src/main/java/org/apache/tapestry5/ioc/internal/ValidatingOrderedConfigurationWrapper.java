@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,6 +31,8 @@ import org.apache.tapestry5.ioc.internal.util.Orderer;
 public class ValidatingOrderedConfigurationWrapper<T> extends AbstractConfigurationImpl<T> implements
         OrderedConfiguration<T>
 {
+    private final TypeCoercerProxy typeCoercer;
+
     private final Orderer<T> orderer;
 
     private final String serviceId;
@@ -41,10 +43,12 @@ public class ValidatingOrderedConfigurationWrapper<T> extends AbstractConfigurat
 
     private final ContributionDef contribDef;
 
-    public ValidatingOrderedConfigurationWrapper(Class<T> expectedType, ObjectLocator locator, Orderer<T> orderer,
-            Map<String, OrderedConfigurationOverride<T>> overrides, ContributionDef contribDef, String serviceId)
+    public ValidatingOrderedConfigurationWrapper(Class<T> expectedType, ObjectLocator locator,
+            TypeCoercerProxy typeCoercer, Orderer<T> orderer, Map<String, OrderedConfigurationOverride<T>> overrides,
+            ContributionDef contribDef, String serviceId)
     {
         super(expectedType, locator);
+        this.typeCoercer = typeCoercer;
 
         this.orderer = orderer;
         this.overrides = overrides;
@@ -55,15 +59,16 @@ public class ValidatingOrderedConfigurationWrapper<T> extends AbstractConfigurat
 
     public void add(String id, T object, String... constraints)
     {
-        checkValid(object);
+        T coerced = object == null ? null : typeCoercer.coerce(object, expectedType);
 
-        orderer.add(id, object, constraints);
+        orderer.add(id, coerced, constraints);
     }
 
     public void override(String id, T object, String... constraints)
     {
         assert InternalUtils.isNonBlank(id);
-        checkValid(object);
+
+        T coerced = object == null ? null : typeCoercer.coerce(object, expectedType);
 
         OrderedConfigurationOverride<T> existing = overrides.get(id);
 
@@ -71,7 +76,7 @@ public class ValidatingOrderedConfigurationWrapper<T> extends AbstractConfigurat
             throw new IllegalArgumentException(String.format("Contribution '%s' has already been overridden (by %s).",
                     id, existing.getContribDef()));
 
-        overrides.put(id, new OrderedConfigurationOverride<T>(orderer, id, object, constraints, contribDef));
+        overrides.put(id, new OrderedConfigurationOverride<T>(orderer, id, coerced, constraints, contribDef));
     }
 
     public void addInstance(String id, Class<? extends T> clazz, String... constraints)
@@ -82,14 +87,5 @@ public class ValidatingOrderedConfigurationWrapper<T> extends AbstractConfigurat
     public void overrideInstance(String id, Class<? extends T> clazz, String... constraints)
     {
         override(id, instantiate(clazz), constraints);
-    }
-
-    private void checkValid(T object)
-    {
-        if (object == null || expectedType.isInstance(object))
-            return;
-
-        throw new IllegalArgumentException(IOCMessages.contributionWrongValueType(serviceId, object.getClass(),
-                expectedType));
     }
 }

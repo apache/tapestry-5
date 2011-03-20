@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,6 +39,8 @@ import org.apache.tapestry5.ioc.def.ContributionDef;
 public class ValidatingMappedConfigurationWrapper<K, V> extends AbstractConfigurationImpl<V> implements
         MappedConfiguration<K, V>
 {
+    private final TypeCoercerProxy typeCoercer;
+
     private final Map<K, V> map;
 
     private final Map<K, MappedConfigurationOverride<K, V>> overrides;
@@ -53,12 +55,14 @@ public class ValidatingMappedConfigurationWrapper<K, V> extends AbstractConfigur
 
     private final Map<K, ContributionDef> keyToContributor;
 
-    public ValidatingMappedConfigurationWrapper(Class<V> expectedValueType, ObjectLocator locator, Map<K, V> map,
-            Map<K, MappedConfigurationOverride<K, V>> overrides, String serviceId, ContributionDef contributionDef,
-            Class<K> expectedKeyType, Map<K, ContributionDef> keyToContributor)
+    public ValidatingMappedConfigurationWrapper(Class<V> expectedValueType, ObjectLocator locator,
+            TypeCoercerProxy typeCoercer, Map<K, V> map, Map<K, MappedConfigurationOverride<K, V>> overrides,
+            String serviceId, ContributionDef contributionDef, Class<K> expectedKeyType,
+            Map<K, ContributionDef> keyToContributor)
     {
         super(expectedValueType, locator);
 
+        this.typeCoercer = typeCoercer;
         this.map = map;
         this.overrides = overrides;
         this.serviceId = serviceId;
@@ -75,14 +79,14 @@ public class ValidatingMappedConfigurationWrapper<K, V> extends AbstractConfigur
         if (value == null)
             throw new NullPointerException(IOCMessages.contributionWasNull(serviceId));
 
-        validateValue(value);
+        V coerced = typeCoercer.coerce(value, expectedValueType);
 
         ContributionDef existing = keyToContributor.get(key);
 
         if (existing != null)
             throw new IllegalArgumentException(IOCMessages.contributionDuplicateKey(serviceId, existing));
 
-        map.put(key, value);
+        map.put(key, coerced);
 
         // Remember that this key is provided by this contribution, when looking
         // for future conflicts.
@@ -90,17 +94,13 @@ public class ValidatingMappedConfigurationWrapper<K, V> extends AbstractConfigur
         keyToContributor.put(key, contributionDef);
     }
 
-    private void validateValue(V value)
-    {
-        if (!expectedValueType.isInstance(value))
-            throw new IllegalArgumentException(IOCMessages.contributionWrongValueType(serviceId, value.getClass(),
-                    expectedValueType));
-    }
-
     private void validateKey(K key)
     {
         if (key == null)
             throw new NullPointerException(IOCMessages.contributionKeyWasNull(serviceId));
+
+        // Key types don't get coerced; not worth the effort, keys are almost always String or Class
+        // anyway.
 
         if (!expectedKeyType.isInstance(key))
             throw new IllegalArgumentException(IOCMessages.contributionWrongKeyType(serviceId, key.getClass(),
@@ -116,8 +116,7 @@ public class ValidatingMappedConfigurationWrapper<K, V> extends AbstractConfigur
     {
         validateKey(key);
 
-        if (value != null)
-            validateValue(value);
+        V coerced = value == null ? null : typeCoercer.coerce(value, expectedValueType);
 
         MappedConfigurationOverride<K, V> existing = overrides.get(key);
 
@@ -125,7 +124,7 @@ public class ValidatingMappedConfigurationWrapper<K, V> extends AbstractConfigur
             throw new IllegalArgumentException(String.format(
                     "Contribution key %s has already been overridden (by %s).", key, existing.getContribDef()));
 
-        overrides.put(key, new MappedConfigurationOverride<K, V>(contributionDef, map, key, value));
+        overrides.put(key, new MappedConfigurationOverride<K, V>(contributionDef, map, key, coerced));
     }
 
     public void overrideInstance(K key, Class<? extends V> clazz)

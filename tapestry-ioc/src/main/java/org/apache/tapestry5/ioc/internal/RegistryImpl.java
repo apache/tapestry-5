@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -74,6 +74,7 @@ import org.apache.tapestry5.ioc.services.ServiceLifecycleSource;
 import org.apache.tapestry5.ioc.services.Status;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.services.TapestryIOCModule;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.UpdateListenerHub;
@@ -146,6 +147,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     private final Set<ServiceDef2> allServiceDefs = CollectionFactory.newSet();
 
     private final OperationTracker operationTracker;
+
+    private final TypeCoercerProxy typeCoercerProxy = new TypeCoercerProxyImpl(this);
 
     /**
      * Constructs the registry from a set of module definitions and other resources.
@@ -566,7 +569,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         for (final ContributionDef def : contributions)
         {
             final MappedConfiguration<K, V> validating = new ValidatingMappedConfigurationWrapper<K, V>(valueType,
-                    resources, map, overrides, serviceId, def, keyClass, keyToContribution);
+                    resources, typeCoercerProxy, map, overrides, serviceId, def, keyClass, keyToContribution);
 
             String description = IOCMessages.invokingMethod(def);
 
@@ -600,8 +603,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         for (final ContributionDef def : contributions)
         {
-            final Configuration<T> validating = new ValidatingConfigurationWrapper<T>(valueType, resources, collection,
-                    serviceId);
+            final Configuration<T> validating = new ValidatingConfigurationWrapper<T>(valueType, resources,
+                    typeCoercerProxy, collection, serviceId);
 
             String description = IOCMessages.invokingMethod(def);
 
@@ -636,7 +639,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         for (final ContributionDef def : contributions)
         {
             final OrderedConfiguration<T> validating = new ValidatingOrderedConfigurationWrapper<T>(valueType,
-                    resources, orderer, overrides, def, serviceId);
+                    resources, typeCoercerProxy, orderer, overrides, def, serviceId);
 
             String description = IOCMessages.invokingMethod(def);
 
@@ -1098,5 +1101,4 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     {
         return markerToServiceDef.keySet();
     }
-
 }
