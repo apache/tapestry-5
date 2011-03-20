@@ -13,9 +13,8 @@ dependencies {
   compile project(':tapestry-ioc')
   compile project(':tapestry-json')
   
-  // Should be "provided" as per Maven POM
-  compile project(":tapestry-test")
-  compile "javax.servlet:servlet-api:2.4"
+  provided project(":tapestry-test")
+  provided "javax.servlet:servlet-api:$servletAPIVersion"
 
   compile "commons-codec:commons-codec:1.3"
 

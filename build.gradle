@@ -8,6 +8,7 @@ jettyVersion = '7.0.0.v20091005'
 tomcatVersion = '6.0.30'
 testngVersion = '5.14.9'
 easymockVersion = '3.0'
+servletAPIVersion = '2.4'
 
 subprojects {
     apply plugin: 'java'
@@ -31,9 +32,19 @@ subprojects {
     }
     
     configurations {
+		provided
         deployerJars
     }
+
+    // See http://jira.codehaus.org/browse/GRADLE-784
     
+    sourceSets {
+      main { 
+        compileClasspath += configurations.provided 
+      }
+    }
+    
+
     dependencies {
         groovy "org.codehaus.groovy:groovy-all:1.7.4"
         
