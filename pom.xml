@@ -328,6 +328,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-release-plugin</artifactId>
+          <version>2.1</version>
           <configuration>
             <tagBase>https://svn.apache.org/repos/asf/tapestry/tapestry5/tags/releases/</tagBase>
             <mavenExecutorId>forked-path</mavenExecutorId>
