@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,9 +32,9 @@ import org.slf4j.Logger;
 @SuppressWarnings("all")
 public class PerthreadManagerImpl implements PerthreadManager
 {
-    private final Lock lock;
+    private static final String LISTENERS_KEY = "PerthreadManager.listenerList";
 
-    private final PerThreadValue<List<ThreadCleanupListener>> listenersValue;
+    private final Lock lock;
 
     private static class MapHolder extends ThreadLocal<Map>
     {
@@ -59,8 +59,6 @@ public class PerthreadManagerImpl implements PerthreadManager
         this.logger = logger;
 
         lock = useSynchronization ? new ReentrantLock() : new DummyLock();
-
-        listenersValue = createValue();
     }
 
     private Map getPerthreadMap()
@@ -79,12 +77,12 @@ public class PerthreadManagerImpl implements PerthreadManager
 
     private List<ThreadCleanupListener> getListeners()
     {
-        List<ThreadCleanupListener> result = listenersValue.get();
+        List<ThreadCleanupListener> result = (List<ThreadCleanupListener>) get(LISTENERS_KEY);
 
         if (result == null)
         {
             result = CollectionFactory.newList();
-            listenersValue.set(result);
+            put(LISTENERS_KEY, result);
         }
 
         return result;
@@ -103,7 +101,7 @@ public class PerthreadManagerImpl implements PerthreadManager
     {
         List<ThreadCleanupListener> listeners = getListeners();
 
-        listenersValue.set(null);
+        put(LISTENERS_KEY, null);
 
         for (ThreadCleanupListener listener : listeners)
         {
@@ -118,16 +116,14 @@ public class PerthreadManagerImpl implements PerthreadManager
         }
 
         // Listeners should not re-add themselves or store any per-thread state
-        // here, it will be lost.
+        // here,
+        // it will be lost.
 
         try
         {
             lock.lock();
 
-            // Discard the per-thread map of values, including the key that stores
-            // the listeners. This means that if a listener attempts to register
-            // new listeners, the new listeners will not be triggered and will be
-            // released to the GC.
+            // Discard the per-thread map of values.
 
             holder.remove();
         }
@@ -135,6 +131,16 @@ public class PerthreadManagerImpl implements PerthreadManager
         {
             lock.unlock();
         }
+    }
+
+    public void put(Object key, Object value)
+    {
+        getPerthreadMap().put(key, value);
+    }
+
+    public Object get(Object key)
+    {
+        return getPerthreadMap().get(key);
     }
 
     private static Object NULL_VALUE = new Object();
@@ -167,7 +173,7 @@ public class PerthreadManagerImpl implements PerthreadManager
 
             public T set(T newValue)
             {
-                getPerthreadMap().put(key, newValue == null ? NULL_VALUE : newValue);
+                put(key, newValue == null ? NULL_VALUE : newValue);
 
                 return newValue;
             }

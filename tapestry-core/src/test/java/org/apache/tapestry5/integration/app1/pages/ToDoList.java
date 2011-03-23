@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-// http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,58 +14,31 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
-import java.util.List;
-
-import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.PrimaryKeyEncoder;
 import org.apache.tapestry5.annotations.Component;
-import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Form;
-import org.apache.tapestry5.func.F;
-import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.integration.app1.data.ToDoItem;
 import org.apache.tapestry5.integration.app1.services.ToDoDatabase;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.util.DefaultPrimaryKeyEncoder;
+
+import java.util.List;
 
 public class ToDoList
 {
-    @Property
     @Inject
     private ToDoDatabase database;
 
-    private List<ToDoItem> items;
-
     private ToDoItem item;
+
+    private DefaultPrimaryKeyEncoder<Long, ToDoItem> encoder;
 
     @Component
     private Form form;
 
-    public ValueEncoder<ToDoItem> getToDoItemEncoder()
-    {
-        return new ValueEncoder<ToDoItem>()
-        {
-            public ToDoItem toValue(String clientValue)
-            {
-                final long id = Long.parseLong(clientValue);
-
-                return F.flow(items).filter(new Predicate<ToDoItem>()
-                {
-                    public boolean accept(ToDoItem element)
-                    {
-                        return element.getId() == id;
-                    }
-                }).first();
-            }
-
-            public String toClient(ToDoItem value)
-            {
-                return String.valueOf(value.getId());
-            }
-        };
-    }
-
     public List<ToDoItem> getItems()
     {
-        return items;
+        return encoder.getValues();
     }
 
     public ToDoItem getItem()
@@ -78,16 +51,33 @@ public class ToDoList
         this.item = item;
     }
 
+    public ToDoDatabase getDatabase()
+    {
+        return database;
+    }
+
+    public PrimaryKeyEncoder getEncoder()
+    {
+        return encoder;
+    }
+
     void onPrepare()
     {
-        items = database.findAll();
+        List<ToDoItem> items = database.findAll();
+
+        encoder = new DefaultPrimaryKeyEncoder<Long, ToDoItem>(long.class);
+
+        for (ToDoItem item : items)
+        {
+            encoder.add(item.getId(), item);
+        }
     }
 
     void onSuccess()
     {
         int order = 0;
 
-        for (ToDoItem item : items)
+        for (ToDoItem item : encoder.getValues())
         {
             item.setOrder(order++);
             database.update(item);
@@ -100,7 +90,7 @@ public class ToDoList
         {
             ToDoItem item = new ToDoItem();
             item.setTitle("<New To Do>");
-            item.setOrder(items.size());
+            item.setOrder(encoder.getValues().size());
 
             database.add(item);
         }

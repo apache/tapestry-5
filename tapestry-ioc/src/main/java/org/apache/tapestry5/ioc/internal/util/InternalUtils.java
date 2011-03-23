@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -41,10 +40,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.inject.Named;
-
-import org.apache.tapestry5.func.F;
-import org.apache.tapestry5.func.Flow;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.ioc.AdvisorDef;
@@ -71,7 +66,6 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.InjectResource;
 import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
-import org.apache.tapestry5.ioc.annotations.ServiceId;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.ContributionDef2;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
@@ -251,14 +245,6 @@ public class InternalUtils
 
             return locator.getService(serviceId, injectionType);
         }
-        
-        
-        Named named = provider.getAnnotation(Named.class);
-        
-        if(named != null)
-        {
-        	return locator.getService(named.value(), injectionType);
-        }
 
         // In the absence of @InjectService, try some autowiring. First, does the
         // parameter type match one of the resources (the parameter defaults)?
@@ -392,22 +378,6 @@ public class InternalUtils
 
                             inject(object, f, value);
 
-                            return;
-                        }
-
-                        if (ap.getAnnotation(javax.inject.Inject.class) != null)
-                        {
-                        	Named named = ap.getAnnotation(Named.class);
-                        	
-                        	if(named == null)
-                        	{
-                        		inject(object, f, locator.getObject(fieldType, ap));
-                        	}
-                        	else
-                        	{   
-                        		inject(object, f, locator.getService(named.value(), fieldType));
-                        	}
-                        	
                             return;
                         }
 
@@ -747,21 +717,6 @@ public class InternalUtils
             if (c.getAnnotation(Inject.class) != null)
                 return c;
         }
-        
-        Constructor standardConstructor = findConstructorByAnnotation(constructors, Inject.class);
-        Constructor javaxConstructor = findConstructorByAnnotation(constructors, javax.inject.Inject.class);
-        
-        if(standardConstructor != null && javaxConstructor != null)
-        	throw new IllegalArgumentException(
-        			String.format("Too many autobuilt constructors found. Please use either '@%s' or '@%s' annotation to mark a constructor for autobuilding.", 
-        						Inject.class.getName(), javax.inject.Inject.class.getName())); 
-        
-        if(standardConstructor != null) 
-        	return standardConstructor;
-        
-        if(javaxConstructor != null)
-        	return javaxConstructor;
-        
 
         // Choose a constructor with the most parameters.
 
@@ -776,17 +731,6 @@ public class InternalUtils
         Arrays.sort(constructors, comparator);
 
         return constructors[0];
-    }
-    
-    private static <T extends Annotation> Constructor findConstructorByAnnotation(Constructor[] constructors, Class<T> annotationClass)
-    {
-        for (Constructor c : constructors)
-        {
-            if (c.getAnnotation(annotationClass) != null)
-                return c;
-        }
-        
-        return null;
     }
 
     /**
@@ -1254,39 +1198,6 @@ public class InternalUtils
     public static long nextUUID()
     {
         return uuidGenerator.incrementAndGet();
-    }
-    
-    /**
-     * Extracts the service id from the passed annotated element. First the {@link ServiceId} annotation is checked.
-     * If present, its value is returned. Otherwise {@link Named} annotation is checked. If present, its value is returned.
-     * If neither of the annotations is present, <code>null</code> value is returned
-     *  
-     * @param annotated annotated element to get annotations from
-     * 
-     * @since 5.3.0
-     */
-    public static String getServiceId(AnnotatedElement annotated)
-    {	
-        ServiceId serviceIdAnnotation = annotated.getAnnotation(ServiceId.class);
-
-        if (serviceIdAnnotation != null)
-        {
-            return serviceIdAnnotation.value();
-        }
-        
-        Named namedAnnotation = annotated.getAnnotation(Named.class);
-        
-        if(namedAnnotation != null)
-        {
-        	 String value = namedAnnotation.value();
-        	 
-        	 if(InternalUtils.isNonBlank(value))
-        	 {
-        		 return value;
-        	 }
-        }
-        
-        return null;
     }
 
 }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ public interface TypeCoercer
      * appropriate coercion, and may even combine existing coercions to form new ones; in those cases, the results of
      * the search are cached.
      * <p/>
+     * <p/>
      * The TypeCoercer also caches the results of a coercion search.
      * 
      * @param <S>
@@ -40,8 +41,6 @@ public interface TypeCoercer
      * @param targetType
      *            defines the target type
      * @return the coerced value
-     * @throws RuntimeException
-     *             if the input can not be coerced
      */
     <S, T> T coerce(S input, Class<T> targetType);
 
@@ -67,7 +66,7 @@ public interface TypeCoercer
 
     /**
      * Used primarily inside test suites, this method performs the same steps as {@link #coerce(Object, Class)}, but
-     * returns a string describing the series of coercions, such as "Object --&gt; String --&gt; Long --&gt; Integer".
+     * returns a string describing the series of coercision, such as "Object --&gt; String --&gt; Long --&gt; Integer".
      * 
      * @param <S>
      *            source type (input)

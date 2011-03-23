@@ -37,7 +37,7 @@ import com.thoughtworks.selenium.Selenium;
 /**
  * Base class for creating Selenium-based integration test cases. This class implements all the
  * methods of {@link Selenium} and delegates to an instance (setup once per test by
- * {@link #testStartup(org.testng.ITestContext, org.testng.xml.XmlTest)}.
+ * {@link #testStartup(String, String, int, int, String, ITestContext, XmlTest)}.
  * 
  * @since 5.2.0
  */
@@ -47,8 +47,6 @@ public class SeleniumTestCase extends Assert implements Selenium
      * 15 seconds
      */
     public static final String PAGE_LOAD_TIMEOUT = "15000";
-    public static final String TOMCAT_6 = "tomcat6";
-    public static final String JETTY_7 = "jetty7";
 
     private Selenium delegate;
 
@@ -70,12 +68,6 @@ public class SeleniumTestCase extends Assert implements Selenium
      * <th>Name</th>
      * <th>Default</th>
      * <th>Description</th>
-     * </tr>
-     * <tr>
-     * <td>container</td>
-     * <td>tapestry.servlet-container</td>
-     * <td>JETTY_7</td>
-     * <td>The Servlet container to use for the tests. Currently {@link #JETTY_7} or {@link #TOMCAT_6}</td>
      * </tr>
      * <tr>
      * <td>webAppFolder</td>
@@ -139,14 +131,13 @@ public class SeleniumTestCase extends Assert implements Selenium
         // Map<String, String> testParameters = xmlTest.getParameters();
 
         String webAppFolder = getParameter(xmlTest, TapestryTestConstants.WEB_APP_FOLDER_PARAMETER, "src/main/webapp");
-        String container = getParameter(xmlTest, TapestryTestConstants.SERVLET_CONTAINER_PARAMETER, JETTY_7);
         String contextPath = getParameter(xmlTest, TapestryTestConstants.CONTEXT_PATH_PARAMETER, "");
         int port = Integer.parseInt(getParameter(xmlTest, TapestryTestConstants.PORT_PARAMETER, "9090"));
         int sslPort = Integer.parseInt(getParameter(xmlTest, TapestryTestConstants.SSL_PORT_PARAMETER, "8443"));
         String browserStartCommand = getParameter(xmlTest, TapestryTestConstants.BROWSER_START_COMMAND_PARAMETER,
                 "*firefox");
 
-        final Runnable stopWebServer = launchWebServer(container, webAppFolder, contextPath, port, sslPort);
+        final Runnable stopWebServer = launchWebServer(webAppFolder, contextPath, port, sslPort);
 
         final SeleniumServer seleniumServer = new SeleniumServer();
 
@@ -206,7 +197,7 @@ public class SeleniumTestCase extends Assert implements Selenium
     }
 
     /**
-     * Like {@link #testStartup(org.testng.ITestContext, org.testng.xml.XmlTest)} , this may
+     * Like {@link #testStartup(String, String, int, int, String, ITestContext, XmlTest)}, this may
      * be called multiple times against multiple instances, but only does work the first time.
      */
     @AfterTest
@@ -223,7 +214,7 @@ public class SeleniumTestCase extends Assert implements Selenium
     }
 
     /**
-     * Invoked from {@link #testStartup(org.testng.ITestContext, org.testng.xml.XmlTest)} to launch the web
+     * Invoked from {@link #testStartup(String, String, int, String, ITestContext)} to launch the web
      * server to be
      * tested. The return value is a Runnable that will shut down the launched server at the end of
      * the test (it is coded this way so that the default Jetty web server can be more easily
@@ -242,18 +233,7 @@ public class SeleniumTestCase extends Assert implements Selenium
      */
     protected Runnable launchWebServer(String webAppFolder, String contextPath, int port, int sslPort) throws Exception
     {
-        return launchWebServer(TOMCAT_6, webAppFolder, contextPath, port, sslPort);
-    }
-
-    protected Runnable launchWebServer(String container, String webAppFolder, String contextPath, int port, int sslPort) throws Exception
-    {
-        final ServletContainerRunner runner;
-        if ( TOMCAT_6.equals(container) )
-            runner = new Tomcat6Runner(webAppFolder, contextPath, port, sslPort);
-        else if (JETTY_7.equals(container) )
-            runner = new Jetty7Runner(webAppFolder, contextPath, port, sslPort);
-        else
-            throw new RuntimeException("Unknown servlet container: " + container);
+        final Jetty7Runner runner = new Jetty7Runner(webAppFolder, contextPath, port, sslPort);
 
         return new Runnable()
         {

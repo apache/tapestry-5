@@ -29,7 +29,6 @@ public class TapestryTestConstants
      * The current working directory (i.e., property "user.dir").
      */
     public static final String CURRENT_DIR_PATH = System.getProperty("user.dir");
-
     /**
      * The Surefire plugin sets basedir but DOES NOT change the current working directory. When
      * building across modules, basedir changes for each module, but user.dir does not. This value should be used when
@@ -46,7 +45,7 @@ public class TapestryTestConstants
     /**
      * {@link ITestContext} attribute holding an instance of {@link Selenium}.
      * 
-     * @see SeleniumTestCase#testStartup(org.testng.ITestContext, org.testng.xml.XmlTest)
+     * @see SeleniumLauncher#startup(String, String, int, String, ITestContext)
      * @since 5.2.0
      */
     public static final String SELENIUM_ATTRIBUTE = "tapestry.selenium";
@@ -54,7 +53,7 @@ public class TapestryTestConstants
     /**
      * {@link ITestContext} attribute holding an instance of {@link ErrorReporter}.
      * 
-     * @see SeleniumTestCase#testStartup(org.testng.ITestContext, org.testng.xml.XmlTest)
+     * @see SeleniumLauncher#startup(String, String, int, String, ITestContext)
      * @since 5.2.0
      */
     public static final String ERROR_REPORTER_ATTRIBUTE = "tapestry.error-reporter";
@@ -78,6 +77,8 @@ public class TapestryTestConstants
 
     /**
      * {@link ITestContext} attribute holding the application's base URL.
+     * 
+     * @see SeleniumLauncher#startup(String, String, int, String, ITestContext)
      * @since 5.2.0
      */
     public static final String BASE_URL_ATTRIBUTE = "tapestry.base-url";
@@ -113,10 +114,4 @@ public class TapestryTestConstants
      * {@link XmlTest} parameter holding the browser command to pass to Selenium.
      */
     public static final String BROWSER_START_COMMAND_PARAMETER = "tapestry.browser-start-command";
-
-    /**
-     * {@link XmlTest} parameter holding the servlet container to run for the integration tests.
-     * @since 5.3.0
-     */
-    public static final String SERVLET_CONTAINER_PARAMETER = "tapestry.servlet-container";
 }

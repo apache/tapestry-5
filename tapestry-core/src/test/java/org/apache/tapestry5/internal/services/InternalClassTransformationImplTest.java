@@ -36,9 +36,6 @@ import org.apache.tapestry5.annotations.Meta;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.Retain;
 import org.apache.tapestry5.annotations.SetupRender;
-import org.apache.tapestry5.func.F;
-import org.apache.tapestry5.func.Mapper;
-import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.model.MutableComponentModelImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
@@ -55,8 +52,6 @@ import org.apache.tapestry5.internal.transform.pages.MethodIdentifier;
 import org.apache.tapestry5.internal.transform.pages.ParentClass;
 import org.apache.tapestry5.internal.transform.pages.ReadOnlyBean;
 import org.apache.tapestry5.internal.transform.pages.TargetObject;
-import org.apache.tapestry5.internal.util.Holder;
-import org.apache.tapestry5.ioc.annotations.Startup;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryClassPool;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry5.ioc.internal.services.CtClassSourceImpl;
@@ -70,8 +65,8 @@ import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.ComponentMethodAdvice;
 import org.apache.tapestry5.services.ComponentMethodInvocation;
 import org.apache.tapestry5.services.MethodAccess;
+import org.apache.tapestry5.services.MethodFilter;
 import org.apache.tapestry5.services.MethodInvocationResult;
-import org.apache.tapestry5.services.TransformField;
 import org.apache.tapestry5.services.TransformMethod;
 import org.apache.tapestry5.services.TransformMethodSignature;
 import org.slf4j.Logger;
@@ -247,7 +242,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void get_unknown_field() throws Exception
+    public void find_annotation_on_unknown_field() throws Exception
     {
         Logger logger = mockLogger();
 
@@ -257,7 +252,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         try
         {
-            ct.getField("unknownField");
+            ct.getFieldAnnotation("unknownField", Retain.class);
             unreachable();
         }
         catch (RuntimeException ex)
@@ -270,7 +265,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void get_field_annotation() throws Exception
+    public void find_field_annotation() throws Exception
     {
         Logger logger = mockLogger();
 
@@ -278,7 +273,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         ClassTransformation ct = createClassTransformation(ParentClass.class, logger);
 
-        Retain retain = ct.getField("_annotatedField").getAnnotation(Retain.class);
+        Retain retain = ct.getFieldAnnotation("_annotatedField", Retain.class);
 
         assertNotNull(retain);
 
@@ -295,16 +290,16 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         ClassTransformation ct = createClassTransformation(ParentClass.class, logger);
 
         // Field with annotation, but not that annotation
-        assertNull(ct.getField("_annotatedField").getAnnotation(Override.class));
+        assertNull(ct.getFieldAnnotation("_annotatedField", Override.class));
 
         // Field with no annotation
-        assertNull(ct.getField("_parentField").getAnnotation(Override.class));
+        assertNull(ct.getFieldAnnotation("_parentField", Override.class));
 
         verify();
     }
 
     @Test
-    public void match_fields_with_annotation() throws Exception
+    public void find_fields_with_annotation() throws Exception
     {
         Logger logger = mockLogger();
 
@@ -312,10 +307,10 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         ClassTransformation ct = createClassTransformation(ParentClass.class, logger);
 
-        List<TransformField> fields = ct.matchFieldsWithAnnotation(Retain.class);
+        List<String> fields = ct.findFieldsWithAnnotation(Retain.class);
 
         assertEquals(fields.size(), 1);
-        assertEquals(fields.get(0).getName(), "_annotatedField");
+        assertEquals(fields.get(0), "_annotatedField");
 
         verify();
     }
@@ -329,8 +324,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         ClassTransformation ct = createClassTransformation(CheckFieldType.class, logger);
 
-        assertEquals(ct.getField("_privateField").getModifiers(), Modifier.PRIVATE);
-        assertEquals(ct.getField("_map").getModifiers(), Modifier.PRIVATE + Modifier.FINAL);
+        assertEquals(ct.getFieldModifiers("_privateField"), Modifier.PRIVATE);
+        assertEquals(ct.getFieldModifiers("_map"), Modifier.PRIVATE + Modifier.FINAL);
     }
 
     @Test
@@ -357,7 +352,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         ClassTransformation ct = createClassTransformation(ParentClass.class, logger);
 
-        List<TransformField> fields = ct.matchFieldsWithAnnotation(Documented.class);
+        List<String> fields = ct.findFieldsWithAnnotation(Documented.class);
 
         assertTrue(fields.isEmpty());
 
@@ -373,27 +368,19 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         ClassTransformation ct = createClassTransformation(ClaimedFields.class, logger);
 
-        Mapper<TransformField, String> toName = new Mapper<TransformField, String>()
-        {
-            public String map(TransformField element)
-            {
-                return element.getName();
-            }
-        };
-
-        List<String> unclaimed = F.flow(ct.matchUnclaimedFields()).map(toName).toList();
+        List<String> unclaimed = ct.findUnclaimedFields();
 
         assertEquals(unclaimed, asList("_field1", "_field4", "_zzfield"));
 
-        ct.getField("_field4").claim("Fred");
+        ct.claimField("_field4", "Fred");
 
-        unclaimed = F.flow(ct.matchUnclaimedFields()).map(toName).toList();
+        unclaimed = ct.findUnclaimedFields();
 
         assertEquals(unclaimed, asList("_field1", "_zzfield"));
 
         try
         {
-            ct.getField("_field4").claim("Barney");
+            ct.claimField("_field4", "Barney");
             unreachable();
         }
         catch (RuntimeException ex)
@@ -415,15 +402,9 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         ClassTransformation ct = createClassTransformation(ClaimedFields.class, logger);
 
-        ct.createField(Modifier.PRIVATE, "int", "newField");
+        ct.addField(Modifier.PRIVATE, "int", "newField");
 
-        List<String> unclaimed = F.flow(ct.matchUnclaimedFields()).map(new Mapper<TransformField, String>()
-        {
-            public String map(TransformField element)
-            {
-                return element.getName();
-            }
-        }).toList();
+        List<String> unclaimed = ct.findUnclaimedFields();
 
         assertEquals(unclaimed, asList("_field1", "_field4", "_zzfield"));
 
@@ -634,55 +615,6 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         assertEquals(access.get(r, "marker"), "publicVoidThrowsException");
     }
-    
-    @Test
-    public void access_to_method_annotations() throws Exception
-    {
-    	final Holder<Startup> annotationHolder = Holder.create();
-    	
-        Object instance = transform(MethodAccessSubject.class, new ComponentClassTransformWorker()
-        {
-            public void transform(ClassTransformation transformation, MutableComponentModel model)
-            {
-                transformation.addImplementedInterface(Runnable.class);
-
-                TransformMethodSignature targetMethodSignature = new TransformMethodSignature(Modifier.PUBLIC, "void",
-                        "annotatedMethod", null, null);
-                
-                TransformMethod targetMethod = transformation.getOrCreateMethod(targetMethodSignature);
-                
-                targetMethod.addAdvice(new ComponentMethodAdvice()
-                {
-                	public void advise(ComponentMethodInvocation invocation) 
-                	{
-                		Startup annotation = invocation.getMethodAnnotation(Startup.class);
-
-                		annotationHolder.put(annotation);
-                		
-                	}
-                });
-
-                final MethodAccess targetAccess = targetMethod.getAccess();
-
-                transformation.getOrCreateMethod(RUN).addAdvice(new ComponentMethodAdvice()
-                {
-                    public void advise(ComponentMethodInvocation invocation)
-                    {
-                    	 targetAccess.invoke(invocation.getInstance());
-        
-                    }
-                });
-            }
-        });
-
-        Runnable r = (Runnable) instance;
-        
-        assertNull(annotationHolder.get());
-
-        r.run();
-
-		assertNotNull(annotationHolder.get());
-    }
 
     public interface ProcessInteger
     {
@@ -771,8 +703,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
                         // Don't even bother with proceed() this time, which is OK (but
                         // somewhat rare).
 
-                        MethodInvocationResult result = targetMethodAccess.invoke(invocation.getInstance(),
-                                invocation.getParameter(0), invocation.getParameter(1));
+                        MethodInvocationResult result = targetMethodAccess.invoke(invocation.getInstance(), invocation
+                                .getParameter(0), invocation.getParameter(1));
 
                         invocation.overrideResult(result.getReturnValue());
                     }
@@ -831,7 +763,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory, targetObjectCtClass, null,
                 model, null, false);
 
-        ct.getField("_value").inject("Read-Only Value");
+        ct.makeReadOnly("_value");
 
         ct.finish();
 
@@ -868,7 +800,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory, targetObjectCtClass, null,
                 model, null, false);
 
-        ct.getField("_value").inject("Tapestry");
+        ct.injectField("_value", "Tapestry");
 
         ct.finish();
 
@@ -978,7 +910,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void match_methods_with_annotation() throws Exception
+    public void find_methods_with_annotation() throws Exception
     {
         Logger logger = mockLogger();
 
@@ -986,27 +918,27 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         ClassTransformation ct = createClassTransformation(AnnotatedPage.class, logger);
 
-        List<TransformMethod> l = ct.matchMethodsWithAnnotation(SetupRender.class);
+        List<TransformMethodSignature> l = ct.findMethodsWithAnnotation(SetupRender.class);
 
         // Check order
 
         assertEquals(l.size(), 2);
-        assertEquals(l.get(0).getSignature().toString(), "void beforeRender()");
-        assertEquals(l.get(1).getSignature().toString(), "boolean earlyRender(org.apache.tapestry5.MarkupWriter)");
+        assertEquals(l.get(0).toString(), "void beforeRender()");
+        assertEquals(l.get(1).toString(), "boolean earlyRender(org.apache.tapestry5.MarkupWriter)");
 
         // Check up on cacheing
 
-        assertEquals(ct.matchMethodsWithAnnotation(SetupRender.class), l);
+        assertEquals(ct.findMethodsWithAnnotation(SetupRender.class), l);
 
         // Check up on no match.
 
-        assertTrue(ct.matchMethodsWithAnnotation(Deprecated.class).isEmpty());
+        assertTrue(ct.findFieldsWithAnnotation(Deprecated.class).isEmpty());
 
         verify();
     }
 
     @Test
-    public void match_methods_using_predicate() throws Exception
+    public void find_methods_using_filter() throws Exception
     {
         Logger logger = mockLogger();
 
@@ -1016,29 +948,29 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         // Duplicates, somewhat less efficiently, the logic in find_methods_with_annotation().
 
-        Predicate<TransformMethod> predicate = new Predicate<TransformMethod>()
+        MethodFilter filter = new MethodFilter()
         {
-            public boolean accept(TransformMethod element)
+            public boolean accept(TransformMethodSignature signature)
             {
-                return element.getAnnotation(SetupRender.class) != null;
+                return ct.getMethodAnnotation(signature, SetupRender.class) != null;
             }
         };
 
-        List<TransformMethod> l = ct.matchMethods(predicate);
+        List<TransformMethodSignature> l = ct.findMethods(filter);
 
         // Check order
 
         assertEquals(l.size(), 2);
-        assertEquals(l.get(0).getSignature().toString(), "void beforeRender()");
-        assertEquals(l.get(1).getSignature().toString(), "boolean earlyRender(org.apache.tapestry5.MarkupWriter)");
+        assertEquals(l.get(0).toString(), "void beforeRender()");
+        assertEquals(l.get(1).toString(), "boolean earlyRender(org.apache.tapestry5.MarkupWriter)");
 
         // Check up on cacheing
 
-        assertEquals(ct.matchMethodsWithAnnotation(SetupRender.class), l);
+        assertEquals(ct.findMethodsWithAnnotation(SetupRender.class), l);
 
         // Check up on no match.
 
-        assertTrue(ct.matchMethodsWithAnnotation(Deprecated.class).isEmpty());
+        assertTrue(ct.findFieldsWithAnnotation(Deprecated.class).isEmpty());
 
         verify();
     }
@@ -1103,7 +1035,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         ClassTransformation ct = createClassTransformation(EventHandlerTarget.class, logger);
 
-        OnEvent annotation = ct.getOrCreateMethod(new TransformMethodSignature("handler")).getAnnotation(OnEvent.class);
+        OnEvent annotation = ct.getMethodAnnotation(new TransformMethodSignature("handler"), OnEvent.class);
 
         // Check that the attributes of the annotation match the expectation.
 
@@ -1130,12 +1062,14 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         ClassTransformation ct = createClassTransformation(MethodIdentifier.class, logger);
 
-        List<TransformMethod> methods = ct.matchMethodsWithAnnotation(OnEvent.class);
+        List<TransformMethodSignature> sigs = ct.findMethodsWithAnnotation(OnEvent.class);
 
-        assertEquals(methods.size(), 1);
+        assertEquals(sigs.size(), 1);
+
+        TransformMethodSignature sig = sigs.get(0);
 
         assertEquals(
-                methods.get(0).getMethodIdentifier(),
+                ct.getMethodIdentifier(sig),
                 "org.apache.tapestry5.internal.transform.pages.MethodIdentifier.makeWaves(java.lang.String, int[]) (at MethodIdentifier.java:24)");
 
         verify();
@@ -1148,18 +1082,53 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         replay();
 
+        MethodFilter filter = new MethodFilter()
+        {
+            public boolean accept(TransformMethodSignature signature)
+            {
+                return true;
+            }
+        };
+
         ClassTransformation ct = createClassTransformation(SimpleBean.class, logger);
 
-        List<TransformMethod> methods = ct.matchMethods(F.<TransformMethod> notNull());
+        List<TransformMethodSignature> methods = ct.findMethods(filter);
 
         assertFalse(methods.isEmpty());
 
-        for (TransformMethod method : methods)
+        for (TransformMethodSignature sig : methods)
         {
-            assertFalse(method.isOverride());
+            assertFalse(ct.isMethodOverride(sig));
         }
 
         verify();
+    }
+
+    @Test
+    public void check_for_method_override_on_non_declared_method() throws Exception
+    {
+        Logger logger = mockLogger();
+
+        replay();
+
+        ClassTransformation ct = createClassTransformation(SimpleBean.class, logger);
+
+        TransformMethodSignature sig = new TransformMethodSignature("methodDoesNotExist");
+
+        try
+        {
+            ct.isMethodOverride(sig);
+            unreachable();
+        }
+        catch (IllegalArgumentException ex)
+        {
+            assertEquals(
+                    ex.getMessage(),
+                    "Method public void methodDoesNotExist() is not implemented by transformed class org.apache.tapestry5.internal.services.SimpleBean.");
+        }
+
+        verify();
+
     }
 
     @Test
@@ -1178,11 +1147,11 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         ClassTransformation childTransform = parentTransform.createChildTransformation(childClass,
                 stubMutableComponentModel(logger));
 
-        assertFalse(childTransform.getOrCreateMethod(new TransformMethodSignature("notOverridden")).isOverride());
+        assertFalse(childTransform.isMethodOverride(new TransformMethodSignature("notOverridden")));
 
-        assertTrue(childTransform.getOrCreateMethod(
-                new TransformMethodSignature(Modifier.PUBLIC, "void", "setAge", new String[]
-                { "int" }, null)).isOverride());
+        assertTrue(childTransform.isMethodOverride(new TransformMethodSignature(Modifier.PUBLIC, "void", "setAge",
+                new String[]
+                { "int" }, null)));
     }
 
 }

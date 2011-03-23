@@ -173,31 +173,6 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         assertText("viaInjectService", "1722 tracks in music library");
     }
-    
-    @Test
-    public void atinjection() throws Exception
-    {
-        clickThru("@javax.inject.Inject Demo");
-
-        // is a test for a named @Inject:
-        assertTextPresent("<Proxy for Request(org.apache.tapestry5.services.Request)>");
-
-        // is a test for an anonymous @Inject and
-        // ComponentResourcesInjectionProvider
-        assertTextPresent("ComponentResources[AtInjectDemo]");
-
-        // Another test, DefaultInjectionProvider
-        assertTextPresent("<Proxy for BindingSource(org.apache.tapestry5.services.BindingSource)>");
-
-        assertTextPresent("Injected Symbol: Symbol contributed to ApplicationDefaults");
-
-        // Prove that injection using a marker annotation (to match against a
-        // marked service) works.
-
-        assertTextPresent("Injection via Marker: Bonjour!");
-
-        assertTextPresent("Injection via @Named: 1722 tracks in music library");
-    }
 
     @Test
     public void instance_mixin()

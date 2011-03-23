@@ -31,7 +31,7 @@ import org.apache.tapestry5.services.TransformMethodSignature;
  * Provides the getter and setter methods. The methods are added as "existing", meaning that field access to them will
  * be transformed as necessary by other annotations. This worker needs to be scheduled before any worker that might
  * delete a field.
- *
+ * 
  * @see org.apache.tapestry5.annotations.Property
  */
 public class PropertyWorker implements ComponentClassTransformWorker
@@ -86,10 +86,8 @@ public class PropertyWorker implements ComponentClassTransformWorker
 
     private void addGetter(ClassTransformation transformation, TransformField field, String propertyName)
     {
-        final String methodSignature = field.getSignature() != null ? "()" + field.getSignature() : null;
-        TransformMethodSignature getter =
-                new TransformMethodSignature(Modifier.PUBLIC, field.getType(), methodSignature,
-                        "get" + propertyName, null, null);
+        TransformMethodSignature getter = new TransformMethodSignature(Modifier.PUBLIC, field.getType(), "get"
+                + propertyName, null, null);
 
         ensureNotOverride(transformation, getter);
 

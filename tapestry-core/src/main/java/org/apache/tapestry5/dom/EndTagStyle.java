@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2011 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,14 @@ package org.apache.tapestry5.dom;
  */
 public enum EndTagStyle
 {
+
+    /**
+     * Omit the end tag. Examples for HTML include the input, br and img elements.
+     *
+     * @deprecated Tapestry always renders well formed XML markup (even when a DOCTYPE  is not present, or the content
+     *             type is traditional text/html).
+     */
+    OMIT,
     /**
      * Require an end tag always. This is the default for most elements in HTML.
      */

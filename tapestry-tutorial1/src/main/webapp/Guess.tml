@@ -1,0 +1,15 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>Guess A Number</title>
+    </head>
+    <body>
+
+        <p>Make a guess between one and ten:</p>
+
+        <p>${message}</p>
+
+        <t:loop source="1..10" value="guess" xml:space="preserve">
+            <t:actionlink t:id="link" context="guess">${guess}</t:actionlink>
+        </t:loop>
+    </body>
+</html>

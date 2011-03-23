@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-// http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -58,9 +58,10 @@ public abstract class AbstractField implements Field
 
     @Environmental
     private ValidationDecorator decorator;
-
+    
     @Inject
     private Environment environment;
+
 
     static class Setup implements ComponentAction<AbstractField>, Serializable
     {
@@ -152,8 +153,7 @@ public abstract class AbstractField implements Field
         // exceptions, including a form that renders inside a loop, or a form inside a component
         // that is used multiple times.
 
-        if (formSupport == null)
-            throw new RuntimeException(InternalMessages.formFieldOutsideForm(getLabel()));
+        if (formSupport == null) throw new RuntimeException(InternalMessages.formFieldOutsideForm(getLabel()));
 
         assignedClientId = jsSupport.allocateClientId(id);
         String controlName = formSupport.allocateControlName(id);
@@ -187,17 +187,26 @@ public abstract class AbstractField implements Field
 
     private void processSubmission()
     {
-        if (!disabled)
-            processSubmission(controlName);
+        if (!disabled) processSubmission(controlName);
+    }
+
+    /**
+     * Used by subclasses to create a default binding to a property of the container matching the component id.
+     *
+     * @return a binding to the property, or null if the container does not have a corresponding property
+     * @deprecated Use {@link ComponentDefaultProvider#defaultBinding(String, ComponentResources)} instead
+     */
+    protected final Binding createDefaultParameterBinding(String parameterName)
+    {
+        return defaultProvider.defaultBinding(parameterName, resources);
     }
 
     /**
      * Method implemented by subclasses to actually do the work of processing the submission of the form. The element's
-     * elementName property will already have been set. This method is only invoked if the field is <strong>not
-     * {@link #isDisabled() disabled}</strong>.
-     * 
-     * @param elementName
-     *            the name of the element (used to find the correct parameter in the request)
+     * elementName property will already have been set. This method is only invoked if the field is <strong>not {@link
+     * #isDisabled() disabled}</strong>.
+     *
+     * @param elementName the name of the element (used to find the correct parameter in the request)
      */
     protected abstract void processSubmission(String elementName);
 
@@ -245,30 +254,28 @@ public abstract class AbstractField implements Field
     {
         return false;
     }
-
+    
     protected void putPropertyNameIntoBeanValidationContext(String parameterName)
     {
-        String propertyName = ((InternalComponentResources) resources).getPropertyName(parameterName);
-
+        String propertyName = ((InternalComponentResources)resources).getPropertyName(parameterName);
+        
         BeanValidationContext beanValidationContext = environment.peek(BeanValidationContext.class);
+        
+        if(beanValidationContext == null) return;
 
-        if (beanValidationContext == null)
-            return;
-
-        // If field is inside BeanEditForm, then property is already set
-        if (beanValidationContext.getCurrentProperty() == null)
+        //If field is inside BeanEditForm, then property is already set
+        if(beanValidationContext.getCurrentProperty()==null)
         {
-            beanValidationContext.setCurrentProperty(propertyName);
+        	beanValidationContext.setCurrentProperty(propertyName);
         }
     }
-
+    
     protected void removePropertyNameFromBeanValidationContext()
-    {
-        BeanValidationContext beanValidationContext = environment.peek(BeanValidationContext.class);
-
-        if (beanValidationContext == null)
-            return;
-
-        beanValidationContext.setCurrentProperty(null);
+    {   
+    	BeanValidationContext beanValidationContext = environment.peek(BeanValidationContext.class);
+    	
+    	if(beanValidationContext == null) return;
+    	
+    	beanValidationContext.setCurrentProperty(null);
     }
 }

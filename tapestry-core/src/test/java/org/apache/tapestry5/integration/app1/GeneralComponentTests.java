@@ -14,9 +14,6 @@
 
 package org.apache.tapestry5.integration.app1;
 
-import java.net.URL;
-
-import org.apache.commons.io.IOUtils;
 import org.apache.tapestry5.integration.TapestryCoreTestCase;
 import org.testng.annotations.Test;
 
@@ -83,31 +80,5 @@ public class GeneralComponentTests extends TapestryCoreTestCase
         clickThru("Report Location of Unavailable Component");
 
         assertText("//td[@class='t-location-content t-location-current']", "<t:unavailablecomponent/>");
-    }
-    
-    /** TAP5-1378 */
-    @Test public void using_delegate_for_inline_components() {
-    	clickThru("Inline Delegate");
-    	
-    	// no params
-    	assertText("block1", "block 1");
-    	
-    	// multiple renders w/ multiple parameters
-    	assertText("xpath=(//p[@class='superhero'])[1]", "Steve Rogers");
-    	assertText("xpath=(//p[@class='superhero'])[2]", "Bruce Banner");
-    }
-    
-    /** TAP5-742 */
-    @Test public void component_tracing_comments() throws Exception {
-    	String contents = IOUtils.toString(new URL(getBaseURL()).openStream());
-    	
-    	// off by default
-    	assertFalse(contents.contains("Index:loop"));
-    	assertFalse(contents.contains("Index:pagelink"));
-    	
-    	// enable with a query parameter
-    	contents = IOUtils.toString(new URL(getBaseURL() + "?t:component-trace=true").openStream());
-    	assertTrue(contents.contains("Index:loop"));
-    	assertTrue(contents.contains("Index:pagelink"));
     }
 }

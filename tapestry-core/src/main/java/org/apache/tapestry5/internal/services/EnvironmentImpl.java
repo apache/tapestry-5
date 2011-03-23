@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2011` The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-// http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,14 +14,15 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
 import org.apache.tapestry5.services.Environment;
+import org.apache.tapestry5.services.EnvironmentalAccess;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A non-threadsafe implementation (expects to use the "perthread" service lifecyle).
@@ -33,6 +34,8 @@ public class EnvironmentImpl implements Environment, ThreadCleanupListener
     // types.
 
     private final Map<Class, LinkedList> typeToStack = CollectionFactory.newMap();
+
+    private final Map<Class, EnvironmentalAccessImpl> typeToAccess = CollectionFactory.newMap();
 
     private final OneShotLock lock = new OneShotLock();
 
@@ -70,8 +73,7 @@ public class EnvironmentImpl implements Environment, ThreadCleanupListener
             {
                 LinkedList list = e.getValue();
 
-                if (list != null && !list.isEmpty())
-                    types.add(e.getKey());
+                if (list != null && !list.isEmpty()) types.add(e.getKey());
             }
 
             throw new RuntimeException(ServicesMessages.missingFromEnvironment(type, types));
@@ -84,6 +86,8 @@ public class EnvironmentImpl implements Environment, ThreadCleanupListener
     {
         LinkedList<T> stack = stackFor(type);
 
+        invalidate(type);
+
         return stack.removeFirst();
     }
 
@@ -95,6 +99,8 @@ public class EnvironmentImpl implements Environment, ThreadCleanupListener
 
         stack.addFirst(instance);
 
+        invalidate(type);
+
         return result;
     }
 
@@ -103,10 +109,37 @@ public class EnvironmentImpl implements Environment, ThreadCleanupListener
         lock.check();
 
         typeToStack.clear();
+
+        for (EnvironmentalAccessImpl closure : typeToAccess.values())
+        {
+            closure.invalidate();
+        }
+    }
+
+    public <T> EnvironmentalAccess<T> getAccess(Class<T> type)
+    {
+        lock.check();
+
+        EnvironmentalAccessImpl access = typeToAccess.get(type);
+
+        if (access == null)
+        {
+            access = new EnvironmentalAccessImpl(this, type);
+            typeToAccess.put(type, access);
+        }
+
+        return access;
     }
 
     public void threadDidCleanup()
     {
         lock.lock();
+    }
+
+    void invalidate(Class type)
+    {
+        EnvironmentalAccessImpl access = typeToAccess.get(type);
+
+        if (access != null) access.invalidate();
     }
 }

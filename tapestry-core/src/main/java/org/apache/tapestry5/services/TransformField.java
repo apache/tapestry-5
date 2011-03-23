@@ -23,7 +23,7 @@ import org.apache.tapestry5.ioc.services.FieldValueConduit;
  * A field defined by (or created within) a {@link ClassTransformation},
  * allowing the details of the field to be
  * accessed or modified.
- *
+ * 
  * @since 5.2.0
  */
 public interface TransformField extends AnnotationProvider, Comparable<TransformField>
@@ -41,19 +41,11 @@ public interface TransformField extends AnnotationProvider, Comparable<Transform
     String getType();
 
     /**
-     * Returns the fields fully qualified generic type, or null if not defined.
-     * (in Java source syntax, i.e., "()Ljava/util/List<Ljava/lang/String;>;"
-     *
-     * @since 5.3.0
-     */
-    String getSignature();
-
-    /**
      * Claims the field so as to ensure that only a single annotation is applied to any single field.
      * When a transformation occurs (driven by a field annotation), the field is claimed (using the
      * annotation object as the tag). If a field has multiple conflicting annotations, this will be discovered when
      * the code attempts to claim the field a second time.
-     *
+     * 
      * @param tag
      *            a non-null object that represents why the field is being tagged (this is typically
      *            a specific annotation on the field)
@@ -63,7 +55,7 @@ public interface TransformField extends AnnotationProvider, Comparable<Transform
     void claim(Object tag);
 
     /**
-     * Replaces read and write field access with a conduit. 
+     * Replaces read and write field access with a conduit.
      * 
      * @param conduitProvider
      *            provides the actual conduit at class instantiation time
@@ -71,7 +63,7 @@ public interface TransformField extends AnnotationProvider, Comparable<Transform
     void replaceAccess(ComponentValueProvider<FieldValueConduit> conduitProvider);
 
     /**
-     * Replaces read and write field access with a conduit. 
+     * Replaces read and write field access with a conduit.
      * 
      * @param conduitField
      *            identifies the field containing (via injection) an instance of {@link FieldValueConduit}
@@ -88,7 +80,7 @@ public interface TransformField extends AnnotationProvider, Comparable<Transform
 
     /**
      * Returns the modifiers for the field.
-     *
+     * 
      * @see Field#getModifiers()
      */
     int getModifiers();
@@ -96,7 +88,7 @@ public interface TransformField extends AnnotationProvider, Comparable<Transform
     /**
      * Converts this field into a read only field whose value is the provided
      * value. This is used when converting an existing field into a read-only injected value.
-     *
+     * 
      * @param value
      *            the value provided by the field
      */
@@ -106,7 +98,7 @@ public interface TransformField extends AnnotationProvider, Comparable<Transform
      * Like {@link #inject(Object)}, except that the value to be injected is obtained
      * from a {@link ComponentValueProvider}. It is assumed that the provider will return an object
      * assignable to the field.
-     *
+     * 
      * @param <T>
      *            type of field
      * @param provider

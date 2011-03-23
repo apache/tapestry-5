@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,24 +25,10 @@ import org.apache.tapestry5.internal.bindings.LiteralBinding;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
-import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.BindingSource;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.ComponentDefaultProvider;
-import org.apache.tapestry5.services.ComponentMethodAdvice;
-import org.apache.tapestry5.services.ComponentMethodInvocation;
-import org.apache.tapestry5.services.ComponentValueProvider;
-import org.apache.tapestry5.services.FieldAccess;
-import org.apache.tapestry5.services.MethodAccess;
-import org.apache.tapestry5.services.MethodInvocationResult;
-import org.apache.tapestry5.services.TransformConstants;
-import org.apache.tapestry5.services.TransformField;
-import org.apache.tapestry5.services.TransformMethod;
-import org.apache.tapestry5.services.TransformMethodSignature;
+import org.apache.tapestry5.services.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -244,9 +230,9 @@ public class ParameterWorker implements ComponentClassTransformWorker
             {
                 final InternalComponentResources icr = (InternalComponentResources) resources;
 
-                final Class fieldType = classCache.forName(fieldTypeName);
+                final String key = String.format("ParameterWorker:%s/%s", resources.getCompleteId(), parameterName);
 
-                final PerThreadValue<ParameterState> stateValue = perThreadManager.createValue();
+                final Class fieldType = classCache.forName(fieldTypeName);
 
                 // Rely on some code generation in the component to set the default binding from
                 // the field, or from a default method.
@@ -273,13 +259,13 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
                     private ParameterState getState()
                     {
-                        ParameterState state = stateValue.get();
+                        ParameterState state = (ParameterState) perThreadManager.get(key);
 
                         if (state == null)
                         {
                             state = new ParameterState();
                             state.value = defaultValue;
-                            stateValue.set(state);
+                            perThreadManager.put(key, state);
                         }
 
                         return state;

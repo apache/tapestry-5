@@ -21,9 +21,6 @@
             <li>
                 <t:pagelink page="ClientValidationDemo">Client Validation Demo</t:pagelink>
             </li>
-            <li>
-                <t:pagelink page="OnPrepareDemo">OnPrepare Demo</t:pagelink>
-            </li>
         </ul>
     </body>
 </html>

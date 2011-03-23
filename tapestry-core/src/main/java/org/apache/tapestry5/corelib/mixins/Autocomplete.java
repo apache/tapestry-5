@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,19 +17,11 @@ package org.apache.tapestry5.corelib.mixins;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.CSSClassConstants;
-import org.apache.tapestry5.ComponentEventCallback;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.ContentType;
-import org.apache.tapestry5.EventConstants;
-import org.apache.tapestry5.Field;
-import org.apache.tapestry5.Link;
-import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.Import;
+import org.apache.tapestry5.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry5.annotations.InjectContainer;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Path;
@@ -37,6 +29,7 @@ import org.apache.tapestry5.annotations.RequestParameter;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.MarkupWriterFactory;
 import org.apache.tapestry5.services.ResponseRenderer;

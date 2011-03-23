@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -179,6 +179,11 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         expect(loader.loadPage(pageName, locale)).andReturn(page);
     }
 
+    protected final PagePool mockPagePool()
+    {
+        return newMock(PagePool.class);
+    }
+
     protected RenderQueue mockRenderQueue()
     {
         return newMock(RenderQueue.class);
@@ -346,19 +351,24 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         expect(page.getRootComponent()).andReturn(component).atLeastOnce();
     }
 
-    protected final ResourceDigestManager mockResourceResourceDigestManager()
+    protected final ResourceCache mockResourceCache()
     {
-        return newMock(ResourceDigestManager.class);
+        return newMock(ResourceCache.class);
     }
 
-    protected final void train_requiresDigest(ResourceDigestManager manager, Resource resource, boolean requiresChecksum)
+    protected final void train_requiresDigest(ResourceCache cache, Resource resource, boolean requiresChecksum)
     {
-        expect(manager.requiresDigest(resource)).andReturn(requiresChecksum);
+        expect(cache.requiresDigest(resource)).andReturn(requiresChecksum);
     }
 
     protected final InvalidationListener mockInvalidationListener()
     {
         return newMock(InvalidationListener.class);
+    }
+
+    protected final void train_getTimeModified(ResourceCache cache, Resource resource, long timeModified)
+    {
+        expect(cache.getTimeModified(resource)).andReturn(timeModified).atLeastOnce();
     }
 
     protected final ResourceStreamer mockResourceStreamer()

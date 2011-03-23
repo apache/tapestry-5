@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.apache.tapestry</groupId>
 	<artifactId>tapestry-jmx</artifactId>
-	<version>5.3.0-SNAPSHOT</version>
+	<version>5.2.5</version>
     <name>Tapestry JMX Support</name>
     <description>
         Provides support for JMX
@@ -11,7 +11,7 @@
 	<parent>
 		<groupId>org.apache.tapestry</groupId>
 		<artifactId>tapestry-project</artifactId>
-		<version>5.3.0-SNAPSHOT</version>
+		<version>5.2.5</version>
 	</parent>
 
 	<url />
@@ -41,9 +41,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                  <argLine>-Dtapestry.service-reloading-enabled=false</argLine>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

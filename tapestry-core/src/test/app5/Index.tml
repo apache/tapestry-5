@@ -1,0 +1,24 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>Index</title>
+    </head>
+    <body>
+        <h1>Index</h1>
+        <p>
+        	<a href="#" t:type="PageLink" t:page="urlrewritesuccess" t:context="literal:login"
+        		class="subdomain">
+        		Link to subdomain (must be rewritten)
+        	</a>
+        </p>
+        <p>
+        	<a href="#" t:type="PageLink" t:page="index" class="self">
+        		Link to self (must not be rewritten)
+        	</a>
+        </p>
+        <p>
+        	<a href="#" t:type="PageLink" t:page="dummy" class="dummy">
+        		Link to dummy
+        	</a>
+        </p>
+    </body>
+</html>

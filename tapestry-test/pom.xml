@@ -9,7 +9,7 @@
   <parent>
     <groupId>org.apache.tapestry</groupId>
     <artifactId>tapestry-project</artifactId>
-    <version>5.3.0-SNAPSHOT</version>
+    <version>5.2.5</version>
   </parent>
 
   <dependencies>
@@ -55,25 +55,6 @@
       <artifactId>org.mortbay.jetty</artifactId>
       <version>5.1.12</version>
       <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-        <groupId>org.apache.tomcat</groupId>
-        <artifactId>catalina</artifactId>
-        <version>6.0.30</version>
-        <scope>compile</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.apache.tomcat</groupId>
-        <artifactId>coyote</artifactId>
-        <version>6.0.30</version>
-        <scope>compile</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.apache.tomcat</groupId>
-        <artifactId>dbcp</artifactId>
-        <version>6.0.30</version>
-        <scope>compile</scope>
     </dependency>
   </dependencies>
   <build>

@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-// http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -128,12 +128,8 @@ public class RequestImplTest extends InternalBaseTestCase
     @DataProvider
     public Object[][] xhr_inputs()
     {
-        return new Object[][]
-        {
-        { null, false },
-        { "", false },
-        { "some other value", false },
-        { "XMLHttpRequest", true } };
+        return new Object[][] { { null, false }, { "", false }, { "some other value", false },
+                { "XMLHttpRequest", true } };
     }
 
     @Test
@@ -199,35 +195,28 @@ public class RequestImplTest extends InternalBaseTestCase
     public void get_session_returns_null_if_invalid()
     {
         HttpServletRequest sr = mockHttpServletRequest();
-        HttpSession hsession1 = mockHttpSession();
-        HttpSession hsession2 = mockHttpSession();
+        HttpSession hsession = mockHttpSession();
 
-        train_getSession(sr, true, hsession1);
+        train_getSession(sr, true, hsession);
+
+        hsession.invalidate();
 
         replay();
 
         Request request = new RequestImpl(sr, CHARSET, null);
 
-        Session session1 = request.getSession(true);
+        Session session = request.getSession(true);
 
-        verify();
+        session.invalidate();
 
-        hsession1.invalidate();
+        assertNull(request.getSession(false));
 
-        train_getSession(sr, false, hsession2);
-        train_getSession(sr, true, hsession2);
+        assertSame(request.getSession(true), session);
 
-        replay();
-
-        session1.invalidate();
-
-        Session session2 = request.getSession(true);
-
-        assertNotSame(session2, session1);
-        assertSame(request.getSession(true), session2);
-
-        verify();
+        verify(); 
     }
+
+
 
     protected final void train_getPathInfo(HttpServletRequest request, String pathInfo)
     {

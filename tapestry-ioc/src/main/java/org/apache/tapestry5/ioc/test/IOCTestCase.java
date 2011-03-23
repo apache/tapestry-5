@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,47 +14,25 @@
 
 package org.apache.tapestry5.ioc.test;
 
-import static java.lang.Thread.sleep;
-import static org.easymock.EasyMock.isA;
-
-import java.io.File;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.util.Locale;
-
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.Configuration;
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.LoggerSource;
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.MessageFormatter;
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.ObjectCreator;
-import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.ObjectProvider;
-import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
-import org.apache.tapestry5.ioc.Registry;
-import org.apache.tapestry5.ioc.RegistryBuilder;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.ServiceBuilderResources;
-import org.apache.tapestry5.ioc.ServiceDecorator;
-import org.apache.tapestry5.ioc.ServiceResources;
+import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.IntermediateType;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.def.ServiceDef;
-import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
-import org.apache.tapestry5.ioc.services.MasterObjectProvider;
-import org.apache.tapestry5.ioc.services.PerthreadManager;
-import org.apache.tapestry5.ioc.services.PropertyAccess;
-import org.apache.tapestry5.ioc.services.PropertyAdapter;
-import org.apache.tapestry5.ioc.services.SymbolSource;
-import org.apache.tapestry5.ioc.services.ThreadLocale;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.ioc.services.*;
+
+import static java.lang.Thread.sleep;
+import static org.easymock.EasyMock.isA;
 import org.slf4j.Logger;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.util.Locale;
 
 /**
  * Add factory and trainer methods for the public interfaces of Tapestry IOC.
@@ -419,6 +397,11 @@ public class IOCTestCase extends TestBase
         expect(locator.autobuild(beanClass)).andReturn(instance);
     }
 
+    protected final void train_get(PerthreadManager manager, String key, Object object)
+    {
+        expect(manager.get(key)).andReturn(object);
+    }
+
     protected final PerthreadManager mockPerthreadManager()
     {
         return newMock(PerthreadManager.class);
@@ -461,8 +444,6 @@ public class IOCTestCase extends TestBase
     {
         long startModified = f.lastModified();
 
-        int index = 0;
-
         while (true)
         {
             f.setLastModified(System.currentTimeMillis());
@@ -472,11 +453,9 @@ public class IOCTestCase extends TestBase
             if (newModified != startModified)
                 return;
 
-            // Sleep an ever increasing amount, to ensure that the filesystem
-            // catches the change to the file. The Ubuntu CI Server appears
-            // to need longer waits.
+            // Sleep 1/20 second and try again
 
-            sleep(50 * (2 ^ index++));
+            sleep(50);
         }
     }
 }

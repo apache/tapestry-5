@@ -14,13 +14,11 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.services.ComponentMethodAdvice;
 import org.apache.tapestry5.services.TransformMethodSignature;
 
-import java.lang.annotation.Annotation;
 import java.util.List;
 
 /**
@@ -36,16 +34,12 @@ public class ComponentMethodInvocationInfo
     private final List<ComponentMethodAdvice> advice = CollectionFactory.newList();
 
     private Class effectiveResultType;
-    
-    private AnnotationProvider annotationProvider;
 
     public ComponentMethodInvocationInfo(TransformMethodSignature methodSignature,
-                                         ComponentClassCache componentClassCache,
-                                         AnnotationProvider annotationProvider)
+                                         ComponentClassCache componentClassCache)
     {
         this.methodSignature = methodSignature;
         this.componentClassCache = componentClassCache;
-        this.annotationProvider = annotationProvider;
     }
 
     public String getMethodName()
@@ -117,10 +111,5 @@ public class ComponentMethodInvocationInfo
     public Class getExceptionType(int index)
     {
         return componentClassCache.forName(methodSignature.getExceptionTypes()[index]);
-    }
-    
-    public <T extends Annotation> T getAnnotation(Class<T> annotationClass) 
-    {
-    	return annotationProvider.getAnnotation(annotationClass);
     }
 }

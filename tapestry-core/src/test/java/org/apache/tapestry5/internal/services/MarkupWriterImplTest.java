@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -304,7 +304,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
 
         Element child = w.elementNS("barneyns", "child");
 
-        assertSame(child.getContainer(), root);
+        assertSame(child.getParent(), root);
 
         w.end(); // child
         w.end(); // root

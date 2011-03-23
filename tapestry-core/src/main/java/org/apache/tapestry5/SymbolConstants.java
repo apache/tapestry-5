@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
 package org.apache.tapestry5;
 
 import org.apache.tapestry5.internal.services.AssetDispatcher;
+import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
-import org.apache.tapestry5.services.assets.ResourceMinimizer;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 
 /**
@@ -42,11 +42,16 @@ public class SymbolConstants
     public static final String PRODUCTION_MODE_VALUE = String.format("${%s}", PRODUCTION_MODE);
 
     /**
+     * Symbol which may be set to "true" to force the use of absolute URIs (not relative URIs) exclusively.
+     * 
+     * @deprecated To be removed after Tapestry 5.2. URLs are now always absolute, since Tapestry 5.2.1.
+     */
+    public static final String FORCE_ABSOLUTE_URIS = "tapestry.force-absolute-uris";
+
+    /**
      * If set to "true", then action requests will render a page markup response immediately, rather than sending a
      * redirect to render the response. "Action request" is an outdated term for "component event request" (i.e., most
      * links and all form submissions).
-     * 
-     * @deprecated In 5.3, to be removed (along with the support it implies) in 5.4
      */
     public static final String SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS = "tapestry.suppress-redirect-from-action-requests";
 
@@ -107,6 +112,15 @@ public class SymbolConstants
      * This is used by the default exception report handler service.
      */
     public static final String EXCEPTION_REPORT_PAGE = "tapestry.exception-report-page";
+
+    /**
+     * If true, then links for external JavaScript libraries are placed at the top of the document (just inside the
+     * &lt;body&gt; element). If false, the default, then the libraries are placed at the bottom of the document.
+     * Per-page initialization always goes at the bottom.
+     * 
+     * @deprecated since 5.1.0.1; scripts are now always at the top (see TAP5-544)
+     */
+    public static final String SCRIPTS_AT_TOP = "tapestry.script-at-top";
 
     /**
      * Identifies the default persistence strategy for all pages that do not provide an override (using this value as
@@ -215,6 +229,57 @@ public class SymbolConstants
     public static final String DEFAULT_STYLESHEET = "tapestry.default-stylesheet";
 
     /**
+     * The number of pages in the page pool (for a given page name / locale combination) before which Tapestry will
+     * start to wait for existing pages to be made available.
+     * Under this limit of pages, Tapestry will simply create a new page instance if no existing instance is readily
+     * available.
+     * Once the soft limit is reached, Tapestry will wait a short period of time (the soft wait interval) to see if an
+     * existing page
+     * instance is made available. It will then create a new page instance (unless the hard limit has been reached).
+     * The default is 5 page instances. Remember that page pooling is done separately for each page (and localization of
+     * the page).
+     * 
+     * @since 5.2.0
+     */
+    public static final String PAGE_POOL_SOFT_LIMIT = "tapestry.page-pool.soft-limit";
+
+    /**
+     * The absolute maximum number of page instances (for a particular page name / locale combination) that Tapestry
+     * will create at any time.
+     * If this number is reached, then requests will fail because a page instance is not available ... this can happen
+     * as part of a denial of service attack.
+     * For this value to have any meaning, it should be lower than the number of threads that the servlet container is
+     * configured to use when processing requests.
+     * The default is 20 page instances.
+     * 
+     * @deprecated The hard limit will be removed in a later release of Tapestry, as the maximum number of instance
+     *             is easily controlled by limiting the number of request handling threads in the servlet container.
+     * @since 5.2.0
+     */
+    public static final String PAGE_POOL_HARD_LIMIT = "tapestry.page-pool.hard-limit";
+
+    /**
+     * The time interval that Tapestry will wait for a page instance to become available before deciding whether to
+     * create an entirely new page instance.
+     * The default is "10 ms".
+     * 
+     * @since 5.2.0
+     */
+    public static final String PAGE_POOL_SOFT_WAIT = "tapestry.page-pool.soft-wait";
+
+    /**
+     * The time interval that an instantiated page instance may be cached before being removed. As pages are returned to
+     * the pool, they are time stamped.
+     * Periodically (as per the file check interval), the pool is scanned for page instances that have not been used
+     * recently; those that are outside the
+     * active window are discarded. This is used to free up unnecessary page instances after a request surge. The
+     * default is "10 m" (10 minutes).
+     * 
+     * @since 5.2.0
+     */
+    public static final String PAGE_POOL_ACTIVE_WINDOW = "tapestry.page-pool.active-window";
+
+    /**
      * The Asset path to the embedded copy of script.aculo.us packaged with Tapestry.
      * 
      * @since 5.2.0
@@ -239,7 +304,6 @@ public class SymbolConstants
      * The Asset path of the default javascript (tapestry.js) automatically injected into every rendered HTML page.
      * 
      * @since 5.2.0
-     * @deprecated Deprecated in 5.3; not used since 5.1, replaced with the core {@link JavaScriptStack}.
      */
     public static final String DEFAULT_JAVASCRIPT = "tapestry.default-javascript";
 
@@ -252,54 +316,13 @@ public class SymbolConstants
     public static final String COMPACT_JSON = "tapestry.compact-json";
 
     /**
-     * If "true" and {@link #PRODUCTION_MODE} is off, comments will be rendered before and after the rendering of any
-     * component
-     * allowing more visibility into which components rendered which markup. Defaults to "false". Component render
-     * tracing may be
-     * enabled per-request by the presence of a request parameter "t:component-trace" with a value of "true".
+     * If "true", then Tapestry 5.1 (and earlier) style page pooling will be used. The default is "false", to
+     * allow full use of page singleton. Enabling page pooling is only necessary if an application (or library)
+     * has created {@linkplain ComponentClassTransformWorker class transformations} that introduce new, mutable
+     * fields into component classes. That's a very rare thing (most created fields contain immutable data).
      * 
-     * @since 5.2.5
+     * @deprecated To be removed, along with the remnants of page pooling, in Tapestry 5.3.
+     * @since 5.2.0
      */
-    public static final String COMPONENT_RENDER_TRACING_ENABLED = "tapestry.component-render-tracing-enabled";
-
-    /**
-     * The hostname that application should use when constructing an absolute URL. The default is "", i.e. an empty
-     * string,
-     * in which case system will use request.getServerName(). Not the same as environment variable HOSTNAME, but you can
-     * also
-     * contribute "$HOSTNAME" as the value to make it the same as the environment variable HOSTNAME.
-     * 
-     * @since 5.3.0
-     */
-    public static final String HOSTNAME = "tapestry.hostname";
-
-    /**
-     * The hostport that application should use when constructing an absolute URL. The default is "0", i.e. use the port
-     * value from
-     * the request.
-     * 
-     * @since 5.3.0
-     */
-    public static final String HOSTPORT = "tapestry.hostport";
-
-    /**
-     * The secure (https) hostport that application should use when constructing an absolute URL. The default is "0",
-     * i.e. use
-     * the value from the request.
-     * 
-     * @since 5.3.0
-     */
-    public static final String HOSTPORT_SECURE = "tapestry.hostport-secure";
-
-    /**
-     * If "true", then resources (individually or when aggregated into stacks) will be minimized via the
-     * {@link ResourceMinimizer} service. If "false", then minification is disabled. Tracks production mode
-     * (minification is normally disabled in development mode).
-     * <p>
-     * Note that Tapestry's default implementation of {@link ResourceMinimizer} does nothing; minification is provided
-     * by add-on libraries.
-     * 
-     * @since 5.3.0
-     */
-    public static final String MINIFICATION_ENABLED = "tapestry.enable-minification";
+    public static final String PAGE_POOL_ENABLED = "tapestry.page-pool-enabled";
 }

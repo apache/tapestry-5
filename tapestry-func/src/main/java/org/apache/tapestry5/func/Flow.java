@@ -14,39 +14,38 @@
 
 package org.apache.tapestry5.func;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 /**
- * A flow is a a functional interface for working with an ordered collection of elements.
- * A given Flow contains only elements of a particular type. Standard operations allow for
- * filtering the flow, or appending elements to the Flow. Since flows are immutable, all operations
- * on flows return new immutable flows. Flows are thread safe (to the extent that the {@link Mapper}
- * , {@link Predicate}, {@link Worker} and {@link Reducer} objects applied to the flow are).
- * Flows are <em>lazy</em>: filtering, mapping, and concatenating flows will do so with no, or a
- * minimum, of evaluation. However, converting a Flow into a {@link List} (or other collection) will
- * force a realization of the entire flow.
+ * A Flow is a a functional interface for working with an ordered collection of values.
+ * A given Flow contains only values of a particular type. Standard operations allow for
+ * filtering the Flow, or appending values to the Flow. Since Flows are immutable, all operations
+ * on Flows return new immutable Flows. Flows are thread safe (to the extent that the {@link Mapper}s, {@link Predicate}
+ * s, {@link Worker}s and {@link Reducer}s applied to the Flow are).
+ * Flows are <em>lazy</em>: filtering, mapping, and concatenating Flows will do so with no, or a minimum, of evaluation.
+ * However, converting a Flow into a {@link List} will force a realization of the entire Flow.
  * <p>
- * In some cases, a flow may be an infinite, lazily evaluated sequence. Operations that iterate over
- * all elements (such as {@link #count()} or {@link #reduce(Reducer, Object)}) may become infinite
- * loops.
+ * In some cases, a Flow may be an infinite, lazily evaluated sequence. Operations that iterate over all values (such as
+ * {@link #count()} or {@link #reduce(Reducer, Object)}) may become infinite loops.
  * <p>
- * Using flows allows for a very fluid interface.
+ * Using Flows allows for a very fluid interface.
  * <p>
- * Flows are initially created using {@link F#flow(java.util.Collection)}, {@link F#flow(Object...)}
- * or {@link F#flow(Iterable)}.
+ * Flows are initially created using {@link F#flow(java.util.Collection)} or {@link F#flow(Object...)}.
  * 
  * @since 5.2.0
  * @see F#lazy(LazyFunction)
  */
-public interface Flow<T> extends FlowOperations<T, Flow<T>>
+public interface Flow<T> extends Iterable<T>
 {
     /** Maps a Flow into a new Flow with different type values. Mapping is a lazy operation. */
     <X> Flow<X> map(Mapper<T, X> mapper);
 
     /**
-     * Combines two Flows using a two-parameter Mapper. Each element of
-     * this Flow, and the corresponding element of the other flow are passed through the Mapper
-     * to provide the elements of the output Flow. The length of the result Flow is
+     * Combines two Flows using a two-parameter Mapper. Each value of
+     * this Flow, and the corresponding value of the other flow are passed through the Mapper
+     * to provide the values of the output Flow. The length of the result Flow is
      * the smaller of the lengths of the two input Flows. Mapping is a lazy operation.
      */
     <X, Y> Flow<Y> map(Mapper2<T, X, Y> mapper, Flow<? extends X> flow);
@@ -58,26 +57,66 @@ public interface Flow<T> extends FlowOperations<T, Flow<T>>
     <X> Flow<X> mapcat(Mapper<T, Flow<X>> mapper);
 
     /**
-     * Converts the Flow into an array of values (due to type erasure, you have to remind the Flow
-     * about the type).
+     * Filters values, keeping only values where the predicate is true, returning a new Flow with just
+     * the retained values.
+     */
+    Flow<T> filter(Predicate<? super T> predicate);
+
+    /** Removes values where the predicate returns true, returning a new Flow with just the remaining values. */
+    Flow<T> remove(Predicate<? super T> predicate);
+
+    /**
+     * Applies a Reducer to the values of the Flow. The Reducer is passed the initial value
+     * and the first value from the Flow. The result is captured as the accumulator and passed
+     * to the Reducer with the next value from the Flow, and so on. The final accumulator
+     * value is returned. If the flow is empty, the initial value is returned.
+     * <p>
+     * Reducing is a non-lazy operation; it will fully realize the values of the Flow.
+     */
+    <A> A reduce(Reducer<A, T> reducer, A initial);
+
+    /**
+     * Applies the worker to each value in the Flow, then returns the flow for further behaviors.
+     * <p>
+     * Each is a non-lazy operation; it will fully realize the values of the Flow.
+     */
+    Flow<T> each(Worker<? super T> worker);
+
+    /**
+     * Converts the Flow into an unmodifiable list of values. This is a non-lazy operation that will fully realize
+     * the values of the Flow.
+     */
+    List<T> toList();
+
+    /**
+     * Converts the Flow into an unmodifiable set of values. This is a non-lazy operation that will fully realize
+     * the values of the Flow.
+     */
+    Set<T> toSet();
+
+    /**
+     * Converts the Flow into an array of values (due to type erasure, you have to remind the Flow about the
+     * type).
      */
     T[] toArray(Class<T> type);
 
-    /**
-     * Returns a new Flow with the other Flow's elements appended to this Flow's. This is a lazy
-     * operation.
-     */
+    /** Returns a new flow with the same elements but in reverse order. */
+    Flow<T> reverse();
+
+    /** Returns true if the Flow contains no values. This <em>may</em> realize the first value in the Flow. */
+    boolean isEmpty();
+
+    /** Returns a new Flow with the other Flow's elements appended to this Flow's. This is a lazy operation. */
     Flow<T> concat(Flow<? extends T> other);
 
-    /**
-     * Appends any number of type compatible values to the end of this Flow. This is a lazy
-     * operation.
-     */
+    /** Returns a new Flow with the values in the list appended to this Flow. This is a lazy operation. */
+    Flow<T> concat(List<? extends T> list);
+
+    /** Appends any number of type compatible values to the end of this Flow. This is a lazy operation. */
     <V extends T> Flow<T> append(V... values);
 
     /**
-     * Sorts this Flow, forming a new Flow. This is a non-lazy operation; it will fully realize the
-     * values of the Flow.
+     * Sorts this Flow, forming a new Flow. This is a non-lazy operation; it will fully realize the values of the Flow.
      * 
      * @throws ClassCastException
      *             if type <T> does not extend {@link Comparable}
@@ -85,19 +124,44 @@ public interface Flow<T> extends FlowOperations<T, Flow<T>>
     Flow<T> sort();
 
     /**
-     * Zips this Flow together with another flow to form a Flow of {@link Tuple}s. The resulting
-     * flow is the length of the shorter of the two input flows. Zipping flows together is a lazy
-     * operation.
-     * <p>
-     * The elements of this flow become the {@linkplain Tuple#first} value in each Tuple, the
-     * elements of the other flow become the {@linkplain Tuple#second} value in each Tuple.
-     * 
-     * @param <X>
-     *            type of element stored in the other flow
-     * @param otherFlow
-     *            contains elements to match with elements in this flow
-     * @return flow of tuples combining values from this flow with values form the other flow
-     * @since 5.3.0
+     * Sorts this Flow using the comparator, forming a new Flow. This is a non-lazy operation; it will fully realize the
+     * values of the Flow.
      */
-    <X> ZippedFlow<T, X> zipWith(Flow<X> otherFlow);
+    Flow<T> sort(Comparator<? super T> comparator);
+
+    /**
+     * Returns the first value in the Flow. Returns null for empty flows, but remember that null is a valid
+     * value within a flow, so use {@link #isEmpty() to determine if a flow is actually empty. The first value can be
+     * realized without realizing the full Flow.
+     */
+    T first();
+
+    /**
+     * Returns a new Flow containing all but the first value in this Flow. If this Flow has only a single item,
+     * or is empty, this will return an empty Flow.
+     */
+    Flow<T> rest();
+
+    /**
+     * Returns the number of values in the Flow. This forces the realization of much of the Flow (i.e., because
+     * each value will need to be passed through any {@link Predicate}s).
+     */
+    int count();
+
+    /**
+     * Returns a new Flow containing just the first values from
+     * this Flow.
+     * 
+     * @param length
+     *            maximum number of values in the Flow
+     */
+    Flow<T> take(int length);
+
+    /**
+     * Returns a new Flow with the first values omitted.
+     * 
+     * @param length
+     *            number of values to drop
+     */
+    Flow<T> drop(int length);
 }

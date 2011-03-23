@@ -18,7 +18,6 @@ import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Path;
-import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
@@ -30,20 +29,13 @@ import org.apache.tapestry5.services.javascript.StylesheetOptions;
  */
 public class AssetDemo
 {
-    @Property
     @Inject
     @Path("context:images/tapestry_banner.gif")
     private Asset icon;
 
-    @Property
     @Inject
     @Path("tapestry-button.png")
     private Asset button;
-
-    @Property
-    @Inject
-    @Path("AssetDemo.properties")
-    private Asset properties;
 
     @Inject
     @Path("context:css/ie-only.css")
@@ -56,5 +48,15 @@ public class AssetDemo
     void afterRender()
     {
         javascriptSupport.importStylesheet(new StylesheetLink(ieOnly, new StylesheetOptions(null, "IE")));
+    }
+
+    public Asset getIcon()
+    {
+        return icon;
+    }
+
+    public Asset getButton()
+    {
+        return button;
     }
 }

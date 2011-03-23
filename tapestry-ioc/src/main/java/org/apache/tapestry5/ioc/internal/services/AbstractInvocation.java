@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 import org.apache.tapestry5.ioc.Invocation;
@@ -127,11 +126,6 @@ public abstract class AbstractInvocation implements Invocation
         }
 
         methodInfo.getAdvice(adviceIndex++).advise(this);
-    }
-    
-    public <T extends Annotation> T getMethodAnnotation(Class<T> annotationClass) 
-    {
-    	return method.getAnnotation(annotationClass);
     }
 
     /**

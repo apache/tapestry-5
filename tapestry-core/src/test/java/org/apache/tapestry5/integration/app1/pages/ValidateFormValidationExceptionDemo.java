@@ -1,4 +1,4 @@
-//  Copyright 2008, 2011 The Apache Software Foundation
+//  Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ public class ValidateFormValidationExceptionDemo
     @Persist
     private String event;
 
-    void onValidateFromForm() throws ValidationException
+    void onValidateFormFromForm() throws ValidationException
     {
         throw new ValidationException("From event handler method.");
     }

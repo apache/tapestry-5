@@ -172,6 +172,12 @@ final class IOCMessages
         return MESSAGES.format("contribution-key-was-null", serviceId);
     }
 
+    static String contributionWrongValueType(String serviceId, Class actualClass,
+                                             Class expectedClass)
+    {
+        return MESSAGES.format("contribution-wrong-value-type", serviceId, actualClass
+                .getName(), expectedClass.getName());
+    }
 
     static String contributionWrongKeyType(String serviceId, Class actualClass,
                                            Class expectedClass)

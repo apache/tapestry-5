@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,44 +35,10 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.Block;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.EventContext;
-import org.apache.tapestry5.Field;
-import org.apache.tapestry5.FieldValidationSupport;
-import org.apache.tapestry5.FieldValidator;
-import org.apache.tapestry5.Link;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.MetaDataConstants;
-import org.apache.tapestry5.NullFieldStrategy;
-import org.apache.tapestry5.OptimizedSessionPersistedObject;
-import org.apache.tapestry5.PersistenceConstants;
-import org.apache.tapestry5.PropertyOverrides;
-import org.apache.tapestry5.RenderSupport;
-import org.apache.tapestry5.Renderable;
-import org.apache.tapestry5.SelectModel;
-import org.apache.tapestry5.StreamResponse;
-import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.TapestryConstants;
-import org.apache.tapestry5.Translator;
-import org.apache.tapestry5.ValidationDecorator;
-import org.apache.tapestry5.Validator;
-import org.apache.tapestry5.VersionUtils;
+import org.apache.tapestry5.*;
 import org.apache.tapestry5.ajax.MultiZoneUpdate;
-import org.apache.tapestry5.annotations.ActivationRequestParameter;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.annotations.ContentType;
-import org.apache.tapestry5.annotations.HeartbeatDeferred;
-import org.apache.tapestry5.annotations.Import;
-import org.apache.tapestry5.annotations.Meta;
-import org.apache.tapestry5.annotations.PageAttached;
-import org.apache.tapestry5.annotations.PageDetached;
-import org.apache.tapestry5.annotations.PageLoaded;
-import org.apache.tapestry5.annotations.PageReset;
-import org.apache.tapestry5.annotations.Path;
-import org.apache.tapestry5.annotations.Secure;
-import org.apache.tapestry5.annotations.Service;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.corelib.ClientValidation;
 import org.apache.tapestry5.corelib.LoopFormState;
@@ -93,18 +59,7 @@ import org.apache.tapestry5.internal.beaneditor.EnvironmentMessages;
 import org.apache.tapestry5.internal.beaneditor.MessagesConstraintGenerator;
 import org.apache.tapestry5.internal.beaneditor.PrimitiveFieldConstraintGenerator;
 import org.apache.tapestry5.internal.beaneditor.ValidateAnnotationConstraintGenerator;
-import org.apache.tapestry5.internal.bindings.AssetBindingFactory;
-import org.apache.tapestry5.internal.bindings.BlockBindingFactory;
-import org.apache.tapestry5.internal.bindings.ComponentBindingFactory;
-import org.apache.tapestry5.internal.bindings.ContextBindingFactory;
-import org.apache.tapestry5.internal.bindings.LiteralBindingFactory;
-import org.apache.tapestry5.internal.bindings.MessageBindingFactory;
-import org.apache.tapestry5.internal.bindings.NullFieldStrategyBindingFactory;
-import org.apache.tapestry5.internal.bindings.PropBindingFactory;
-import org.apache.tapestry5.internal.bindings.RenderVariableBindingFactory;
-import org.apache.tapestry5.internal.bindings.SymbolBindingFactory;
-import org.apache.tapestry5.internal.bindings.TranslateBindingFactory;
-import org.apache.tapestry5.internal.bindings.ValidateBindingFactory;
+import org.apache.tapestry5.internal.bindings.*;
 import org.apache.tapestry5.internal.grid.CollectionGridDataSource;
 import org.apache.tapestry5.internal.grid.NullDataSource;
 import org.apache.tapestry5.internal.gzip.GZipFilter;
@@ -134,84 +89,18 @@ import org.apache.tapestry5.internal.services.meta.MetaAnnotationExtractor;
 import org.apache.tapestry5.internal.services.meta.MetaWorkerImpl;
 import org.apache.tapestry5.internal.services.templates.DefaultTemplateLocator;
 import org.apache.tapestry5.internal.services.templates.PageTemplateLocator;
-import org.apache.tapestry5.internal.transform.ActivationRequestParameterWorker;
-import org.apache.tapestry5.internal.transform.ApplicationStateWorker;
-import org.apache.tapestry5.internal.transform.BindParameterWorker;
-import org.apache.tapestry5.internal.transform.CachedWorker;
-import org.apache.tapestry5.internal.transform.ComponentWorker;
-import org.apache.tapestry5.internal.transform.DiscardAfterWorker;
-import org.apache.tapestry5.internal.transform.EnvironmentalWorker;
-import org.apache.tapestry5.internal.transform.HeartbeatDeferredWorker;
-import org.apache.tapestry5.internal.transform.ImportWorker;
-import org.apache.tapestry5.internal.transform.InjectComponentWorker;
-import org.apache.tapestry5.internal.transform.InjectContainerWorker;
-import org.apache.tapestry5.internal.transform.InjectNamedWorker;
-import org.apache.tapestry5.internal.transform.InjectPageWorker;
-import org.apache.tapestry5.internal.transform.InjectServiceWorker;
-import org.apache.tapestry5.internal.transform.InjectWorker;
-import org.apache.tapestry5.internal.transform.InvokePostRenderCleanupOnResourcesWorker;
-import org.apache.tapestry5.internal.transform.LogWorker;
-import org.apache.tapestry5.internal.transform.MixinAfterWorker;
-import org.apache.tapestry5.internal.transform.MixinWorker;
-import org.apache.tapestry5.internal.transform.OnEventWorker;
-import org.apache.tapestry5.internal.transform.PageActivationContextWorker;
-import org.apache.tapestry5.internal.transform.PageLifecycleAnnotationWorker;
-import org.apache.tapestry5.internal.transform.PageResetAnnotationWorker;
-import org.apache.tapestry5.internal.transform.ParameterWorker;
-import org.apache.tapestry5.internal.transform.PersistWorker;
-import org.apache.tapestry5.internal.transform.PropertyWorker;
-import org.apache.tapestry5.internal.transform.RenderCommandWorker;
-import org.apache.tapestry5.internal.transform.RenderPhaseMethodWorker;
-import org.apache.tapestry5.internal.transform.RetainWorker;
-import org.apache.tapestry5.internal.transform.SessionAttributeWorker;
-import org.apache.tapestry5.internal.transform.SupportsInformalParametersWorker;
-import org.apache.tapestry5.internal.transform.UnclaimedFieldWorker;
+import org.apache.tapestry5.internal.transform.*;
 import org.apache.tapestry5.internal.translator.NumericTranslator;
 import org.apache.tapestry5.internal.translator.NumericTranslatorSupport;
 import org.apache.tapestry5.internal.translator.StringTranslator;
+import org.apache.tapestry5.internal.util.PrimaryKeyEncoder2ValueEncoder;
 import org.apache.tapestry5.internal.util.RenderableAsBlock;
 import org.apache.tapestry5.internal.util.StringRenderable;
 import org.apache.tapestry5.internal.validator.ValidatorMacroImpl;
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.Configuration;
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.MethodAdviceReceiver;
-import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.ObjectProvider;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.ScopeConstants;
-import org.apache.tapestry5.ioc.ServiceBinder;
-import org.apache.tapestry5.ioc.annotations.Autobuild;
-import org.apache.tapestry5.ioc.annotations.Contribute;
-import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.InjectService;
-import org.apache.tapestry5.ioc.annotations.IntermediateType;
-import org.apache.tapestry5.ioc.annotations.Local;
-import org.apache.tapestry5.ioc.annotations.Marker;
-import org.apache.tapestry5.ioc.annotations.Match;
-import org.apache.tapestry5.ioc.annotations.Primary;
-import org.apache.tapestry5.ioc.annotations.Scope;
-import org.apache.tapestry5.ioc.annotations.SubModule;
-import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.annotations.*;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.Builtin;
-import org.apache.tapestry5.ioc.services.ChainBuilder;
-import org.apache.tapestry5.ioc.services.ClassFactory;
-import org.apache.tapestry5.ioc.services.Coercion;
-import org.apache.tapestry5.ioc.services.CoercionTuple;
-import org.apache.tapestry5.ioc.services.LazyAdvisor;
-import org.apache.tapestry5.ioc.services.MasterObjectProvider;
-import org.apache.tapestry5.ioc.services.PerthreadManager;
-import org.apache.tapestry5.ioc.services.PipelineBuilder;
-import org.apache.tapestry5.ioc.services.PropertyAccess;
-import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
-import org.apache.tapestry5.ioc.services.StrategyBuilder;
-import org.apache.tapestry5.ioc.services.SymbolSource;
-import org.apache.tapestry5.ioc.services.ThreadLocale;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.ioc.services.*;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
@@ -225,7 +114,6 @@ import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.ajax.MultiZoneUpdateEventResultProcessor;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
-import org.apache.tapestry5.services.assets.AssetsModule;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
@@ -254,9 +142,10 @@ import org.slf4j.Logger;
 /**
  * The root module for Tapestry.
  */
+@SuppressWarnings(
+{ "JavaDoc" })
 @Marker(Core.class)
-@SubModule(
-{ InternalModule.class, AssetsModule.class })
+@SubModule(InternalModule.class)
 public final class TapestryModule
 {
     private final PipelineBuilder pipelineBuilder;
@@ -289,7 +178,7 @@ public final class TapestryModule
      * these service are defined by the module itself, that's ok because
      * services are always lazy proxies). This isn't
      * about efficiency (it may be slightly more efficient, but not in any
-     * noticeable way), it's about eliminating the
+     * noticable way), it's about eliminating the
      * need to keep injecting these dependencies into individual service builder
      * and contribution methods.
      */
@@ -333,7 +222,7 @@ public final class TapestryModule
 
     // A bunch of classes "promoted" from inline inner class to nested classes,
     // just so that the stack trace would be more readable. Most of these
-    // are terminators for pipeline services.
+    // are teminators for pipeline services.
 
     /**
      * @since 5.1.0.0
@@ -466,6 +355,7 @@ public final class TapestryModule
         binder.bind(ContextValueEncoder.class, ContextValueEncoderImpl.class);
         binder.bind(BaseURLSource.class, BaseURLSourceImpl.class);
         binder.bind(BeanBlockOverrideSource.class, BeanBlockOverrideSourceImpl.class);
+        binder.bind(AliasManager.class, AliasManagerImpl.class).withId("AliasOverrides");
         binder.bind(HiddenFieldLocationRules.class, HiddenFieldLocationRulesImpl.class);
         binder.bind(PageDocumentGenerator.class, PageDocumentGeneratorImpl.class);
         binder.bind(ResponseRenderer.class, ResponseRendererImpl.class);
@@ -488,6 +378,7 @@ public final class TapestryModule
         binder.bind(ComponentEventLinkEncoder.class, ComponentEventLinkEncoderImpl.class);
         binder.bind(PageRenderLinkSource.class, PageRenderLinkSourceImpl.class);
         binder.bind(ClientInfrastructure.class, ClientInfrastructureImpl.class);
+        binder.bind(URLRewriter.class, URLRewriterImpl.class);
         binder.bind(ValidatorMacro.class, ValidatorMacroImpl.class);
         binder.bind(PropertiesFileParser.class, PropertiesFileParserImpl.class);
         binder.bind(PageActivator.class, PageActivatorImpl.class);
@@ -505,6 +396,22 @@ public final class TapestryModule
     // Service Builder Methods (static)
     //
     // ========================================================================
+
+    @PreventServiceDecoration
+    public static Alias buildAlias(Logger logger,
+
+    @Symbol(InternalSymbols.ALIAS_MODE)
+    String mode,
+
+    @InjectService("AliasOverrides")
+    AliasManager overridesManager,
+
+    Collection<AliasContribution> configuration)
+    {
+        AliasManager manager = new AliasManagerImpl(logger, configuration);
+
+        return new AliasImpl(manager, mode, overridesManager);
+    }
 
     // ========================================================================
     //
@@ -595,9 +502,13 @@ public final class TapestryModule
     @Autobuild
     StackAssetRequestHandler stackAssetRequestHandler,
 
+    ResourceCache resourceCache,
+
     ClasspathAssetAliasManager classpathAssetAliasManager, ResourceStreamer streamer,
             AssetResourceLocator assetResourceLocator)
     {
+        resourceCache.addInvalidationListener(stackAssetRequestHandler);
+
         Map<String, String> mappings = classpathAssetAliasManager.getMappings();
 
         for (String folder : mappings.keySet())
@@ -619,13 +530,9 @@ public final class TapestryModule
         return packageName.replace('.', '/');
     }
 
-    @Contribute(ComponentClassResolver.class)
-    public static void setupCoreAndAppLibraries(Configuration<LibraryMapping> configuration,
-            @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
-            String appRootPackage)
+    public static void contributeComponentClassResolver(Configuration<LibraryMapping> configuration)
     {
         configuration.add(new LibraryMapping("core", "org.apache.tapestry5.corelib"));
-        configuration.add(new LibraryMapping("", appRootPackage));
     }
 
     /**
@@ -652,6 +559,10 @@ public final class TapestryModule
      * annotation</dd>
      * <dt>InjectBlock</dt>
      * <dd>Allows a block from the template to be injected into a field</dd>
+     * <dt>IncludeStylesheet</dt>
+     * <dd>Supports the {@link org.apache.tapestry5.annotations.IncludeStylesheet} annotation</dd>
+     * <dt>IncludeJavaScriptLibrary</dt>
+     * <dd>Supports the {@link org.apache.tapestry5.annotations.IncludeJavaScriptLibrary} annotation</dd>
      * <dt>Import</dt>
      * <dd>Supports the {@link Import} annotation</dd>
      * <dt>SupportsInformalParameters</dt>
@@ -696,7 +607,6 @@ public final class TapestryModule
 
         configuration.addInstance("Inject", InjectWorker.class);
         configuration.addInstance("InjectService", InjectServiceWorker.class);
-        configuration.addInstance("InjectNamed", InjectNamedWorker.class);
 
         configuration.add("MixinAfter", new MixinAfterWorker());
         configuration.add("Component", new ComponentWorker(resolver));
@@ -738,6 +648,9 @@ public final class TapestryModule
 
         configuration.addInstance("DiscardAfter", DiscardAfterWorker.class);
 
+        configuration.addInstance("IncludeStylesheet", IncludeStylesheetWorker.class, "after:SetupRender");
+        configuration
+                .addInstance("IncludeJavaScriptLibrary", IncludeJavaScriptLibraryWorker.class, "after:SetupRender");
         configuration.addInstance("Import", ImportWorker.class, "after:SetupRender");
 
         configuration.add("InvokePostRenderCleanupOnResources", new InvokePostRenderCleanupOnResourcesWorker());
@@ -930,6 +843,9 @@ public final class TapestryModule
     /**
      * Contributes two object providers:
      * <dl>
+     * <dt>Alias</dt>
+     * <dd>Searches by type among {@linkplain AliasContribution
+     * contributions} to the {@link Alias} service</dd>
      * <dt>Asset
      * <dt>
      * <dd>Checks for the {@link Path} annotation, and injects an {@link Asset}</dd>
@@ -941,11 +857,32 @@ public final class TapestryModule
      */
     public static void contributeMasterObjectProvider(OrderedConfiguration<ObjectProvider> configuration,
 
+    @Local
+    final Alias alias,
+
     @InjectService("AssetObjectProvider")
     ObjectProvider assetObjectProvider,
 
     ObjectLocator locator)
     {
+        // There's a nasty web of dependencies related to Alias; this wrapper
+        // class lets us defer instantiating the Alias service implementation just long enough
+        // to defuse those dependencies. The @Local annotation prevents a recursive call through
+        // the MasterObjectProvider to resolve the Alias service itself; that is
+        // MasterObjectProvider gets built using this proxy, then the proxy will trigger the
+        // construction of AliasImpl (which itself needs MasterObjectProvider to resolve some
+        // dependencies).
+
+        ObjectProvider wrapper = new ObjectProvider()
+        {
+            public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator)
+            {
+                return alias.getObjectProvider().provide(objectType, annotationProvider, locator);
+            }
+        };
+
+        configuration.add("Alias", wrapper, "after:ServiceOverride");
+
         configuration.add("Asset", assetObjectProvider, "before:AnnotationBasedContributions");
 
         configuration.add("Service", new ServiceAnnotationObjectProvider(), "before:AnnotationBasedContributions");
@@ -1010,8 +947,6 @@ public final class TapestryModule
      * <dt>StoreIntoGlobals</dt>
      * <dd>Stores the request and response into the {@link org.apache.tapestry5.services.RequestGlobals} service (this
      * is repeated at the end of the pipeline, in case any filter substitutes the request or response).
-     * <dt>EndOfRequest</dt>
-     * <dd>Notifies internal services that the request has ended</dd>
      * </dl>
      */
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration, Context context,
@@ -1024,7 +959,9 @@ public final class TapestryModule
     @IntermediateType(TimeInterval.class)
     long updateTimeout,
 
-    UpdateListenerHub updateListenerHub)
+    UpdateListenerHub updateListenerHub,
+
+    URLRewriter urlRewriter)
     {
         RequestFilter staticFilesFilter = new StaticFilesFilter(context);
 
@@ -1055,6 +992,16 @@ public final class TapestryModule
 
         configuration.add("CheckForUpdates",
                 new CheckForUpdatesFilter(updateListenerHub, checkInterval, updateTimeout), "before:*");
+
+        // we just need the URLRewriterRequestFilter if we have URL rewriter
+        // rules, of course.
+        if (urlRewriter.hasRequestRules())
+        {
+
+            URLRewriterRequestFilter urlRewriterRequestFilter = new URLRewriterRequestFilter(urlRewriter);
+            configuration.add("URLRewriter", urlRewriterRequestFilter, "before:StaticFiles");
+
+        }
 
         configuration.add("StaticFiles", staticFilesFilter);
 
@@ -1114,6 +1061,7 @@ public final class TapestryModule
      * <li>String to {@link Renderable}
      * <li>{@link Renderable} to {@link Block}
      * <li>String to {@link DateFormat}
+     * <li>{@link PrimaryKeyEncoder} to {@link ValueEncoder}
      * <li>String to {@link Resource} (via {@link AssetSource#resourceForPath(String)})
      * <li>{@link Renderable} to {@link RenderCommand}</li>
      * <li>String to {@link LoopFormState}</li>
@@ -1258,6 +1206,9 @@ public final class TapestryModule
                     }
                 }));
 
+        configuration.add(CoercionTuple.create(PrimaryKeyEncoder.class, ValueEncoder.class,
+                new PrimaryKeyEncoder2ValueEncoder(coercer)));
+
         configuration.add(CoercionTuple.create(Date.class, Calendar.class, new Coercion<Date, Calendar>()
         {
             public Calendar coerce(Date input)
@@ -1335,12 +1286,12 @@ public final class TapestryModule
     }
 
     @Marker(ClasspathProvider.class)
-    public AssetFactory buildClasspathAssetFactory(ResourceDigestManager resourceDigestManager,
+    public AssetFactory buildClasspathAssetFactory(ResourceCache resourceCache,
             ClasspathAssetAliasManager aliasManager, AssetPathConverter converter)
     {
-        ClasspathAssetFactory factory = new ClasspathAssetFactory(resourceDigestManager, aliasManager, converter);
+        ClasspathAssetFactory factory = new ClasspathAssetFactory(resourceCache, aliasManager, converter);
 
-        resourceDigestManager.addInvalidationListener(factory);
+        resourceCache.addInvalidationListener(factory);
 
         return factory;
     }
@@ -1375,6 +1326,32 @@ public final class TapestryModule
         configuration.add(service);
 
         return chainBuilder.build(BindingFactory.class, configuration);
+    }
+
+    /**
+     * Builds the source of {@link Messages} containing validation messages. The
+     * contributions are paths to message
+     * bundles (resource paths within the classpath); the default contribution
+     * is "org/apache/tapestry5/internal/ValidationMessages".
+     */
+    public ValidationMessagesSource buildValidationMessagesSource(List<String> configuration,
+
+    UpdateListenerHub updateListenerHub,
+
+    @ClasspathProvider
+    AssetFactory classpathAssetFactory,
+
+    PropertiesFileParser parser,
+
+    ComponentMessagesSource componentMessagesSource,
+
+    ClasspathURLConverter classpathURLConverter)
+    {
+        ValidationMessagesSourceImpl service = new ValidationMessagesSourceImpl(configuration,
+                classpathAssetFactory.getRootResource(), parser, componentMessagesSource, classpathURLConverter);
+        updateListenerHub.addUpdateListener(service);
+
+        return service;
     }
 
     public static MetaDataLocator buildMetaDataLocator(@Autobuild
@@ -2294,7 +2271,15 @@ public final class TapestryModule
         configuration.add(PersistenceConstants.CLIENT, clientStrategy);
     }
 
-    @SuppressWarnings("rawtypes")
+    /**
+     * Contributes org/apache/tapestry5/internal/ValidationMessages as
+     * "Default", ordered first.
+     */
+    public void contributeValidationMessagesSource(OrderedConfiguration<String> configuration)
+    {
+        configuration.add("Default", "org/apache/tapestry5/internal/ValidationMessages", "before:*");
+    }
+
     public static ValueEncoderSource buildValueEncoderSource(Map<Class, ValueEncoderFactory> configuration,
             @ComponentClasses
             InvalidationEventHub hub)
@@ -2314,7 +2299,7 @@ public final class TapestryModule
      * <li>Enum
      * </ul>
      */
-    @SuppressWarnings("all")
+    @SuppressWarnings("unchecked")
     public static void contributeValueEncoderSource(MappedConfiguration<Class, ValueEncoderFactory> configuration)
     {
         configuration.addInstance(Object.class, TypeCoercedValueEncoderFactory.class);
@@ -2394,7 +2379,7 @@ public final class TapestryModule
     /**
      * Contributes factory defaults that may be overridden.
      */
-    public static void contributeFactoryDefaults(MappedConfiguration<String, Object> configuration)
+    public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
     {
         // Remember this is request-to-request time, presumably it'll take the
         // developer more than
@@ -2420,22 +2405,35 @@ public final class TapestryModule
         configuration.add(SymbolConstants.DEFAULT_STYLESHEET, "classpath:/org/apache/tapestry5/default.css");
         configuration.add("tapestry.spacer-image", "classpath:/org/apache/tapestry5/spacer.gif");
 
-        configuration.add(SymbolConstants.SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS, false);
+        configuration.add(SymbolConstants.PAGE_POOL_SOFT_LIMIT, "5");
+        configuration.add(SymbolConstants.PAGE_POOL_SOFT_WAIT, "10 ms");
+        configuration.add(SymbolConstants.PAGE_POOL_HARD_LIMIT, "20");
+        configuration.add(SymbolConstants.PAGE_POOL_ACTIVE_WINDOW, "10 m");
+        configuration.add(SymbolConstants.PAGE_POOL_ENABLED, "false");
 
-        configuration.add(SymbolConstants.PRODUCTION_MODE, true);
+        configuration.add(SymbolConstants.SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS, "false");
 
-        configuration.add(SymbolConstants.COMPRESS_WHITESPACE, true);
+        configuration.add(SymbolConstants.FORCE_ABSOLUTE_URIS, "false");
 
-        configuration.add(MetaDataConstants.SECURE_PAGE, false);
+        configuration.add(SymbolConstants.PRODUCTION_MODE, "true");
 
-        configuration.add(SymbolConstants.FORM_CLIENT_LOGIC_ENABLED, true);
+        configuration.add(SymbolConstants.COMPRESS_WHITESPACE, "true");
+
+        configuration.add(MetaDataConstants.SECURE_PAGE, "false");
+
+        configuration.add(SymbolConstants.FORM_CLIENT_LOGIC_ENABLED, "true");
 
         // This is designed to make it easy to keep synchronized with
-        // script.aculo.ous. As we support a new version, we create a new folder, and update the
-        // path entry. We can then delete the old version folder (or keep it around). This should
-        // be more manageable than overwriting the local copy with updates (it's too easy for
-        // files deleted between scriptaculous releases to be accidentally left lying around).
-        // There's also a ClasspathAliasManager contribution based on the path.
+        // script.aculo.ous. As we
+        // support a new version, we create a new folder, and update the path
+        // entry. We can then
+        // delete the old version folder (or keep it around). This should be
+        // more manageable than
+        // overwriting the local copy with updates (it's too easy for files
+        // deleted between scriptaculous
+        // releases to be accidentally left lying around). There's also a
+        // ClasspathAliasManager
+        // contribution based on the path.
 
         configuration.add(SymbolConstants.SCRIPTACULOUS, "classpath:${tapestry.scriptaculous.path}");
         configuration.add("tapestry.scriptaculous.path", "org/apache/tapestry5/scriptaculous_1_8_2");
@@ -2459,29 +2457,54 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.EXCEPTION_REPORT_PAGE, "ExceptionReport");
 
-        configuration.add(SymbolConstants.MIN_GZIP_SIZE, 100);
+        configuration.add(SymbolConstants.MIN_GZIP_SIZE, "100");
 
         Random random = new Random(System.currentTimeMillis());
 
         configuration.add(SymbolConstants.APPLICATION_VERSION, Long.toHexString(random.nextLong()));
 
-        configuration.add(SymbolConstants.OMIT_GENERATOR_META, false);
+        configuration.add(SymbolConstants.OMIT_GENERATOR_META, "false");
+        configuration.add(SymbolConstants.GZIP_COMPRESSION_ENABLED, "true");
 
         configuration.add(SymbolConstants.SECURE_ENABLED, SymbolConstants.PRODUCTION_MODE_VALUE);
+        configuration.add(SymbolConstants.COMBINE_SCRIPTS, SymbolConstants.PRODUCTION_MODE_VALUE);
         configuration.add(SymbolConstants.COMPACT_JSON, SymbolConstants.PRODUCTION_MODE_VALUE);
 
-        configuration.add(SymbolConstants.ENCODE_LOCALE_INTO_PATH, true);
+        configuration.add(SymbolConstants.ENCODE_LOCALE_INTO_PATH, "true");
 
-        configuration.add(SymbolConstants.BLACKBIRD_ENABLED, false);
+        configuration.add(SymbolConstants.BLACKBIRD_ENABLED, "false");
 
         configuration.add(InternalSymbols.PRE_SELECTED_FORM_NAMES, "reset,submit,select,id,method,action,onsubmit");
 
-        configuration.add(SymbolConstants.COMPONENT_RENDER_TRACING_ENABLED, false);
+        configuration.add(InternalSymbols.ALIAS_MODE, "servlet");
+    }
 
-        // The default values denote "use values from request"
-        configuration.add(SymbolConstants.HOSTNAME, "");
-        configuration.add(SymbolConstants.HOSTPORT, 0);
-        configuration.add(SymbolConstants.HOSTPORT_SECURE, 0);
+    /**
+     * Adds content types:
+     * <dl>
+     * <dt>css</dt>
+     * <dd>text/css</dd>
+     * <dt>js</dt>
+     * <dd>text/javascript</dd>
+     * <dt>jpg, jpeg</dt>
+     * <dd>image/jpeg</dd>
+     * <dt>gif</dt>
+     * <dd>image/gif</dd>
+     * <dt>png</dt>
+     * <dd>image/png</dd>
+     * <dt>swf</dt>
+     * <dd>application/x-shockwave-flash</dd>
+     * </dl>
+     */
+    public void contributeResourceStreamer(MappedConfiguration<String, String> configuration)
+    {
+        configuration.add("css", "text/css");
+        configuration.add("js", "text/javascript");
+        configuration.add("gif", "image/gif");
+        configuration.add("jpg", "image/jpeg");
+        configuration.add("jpeg", "image/jpeg");
+        configuration.add("png", "image/png");
+        configuration.add("swf", "application/x-shockwave-flash");
     }
 
     /**
@@ -2683,7 +2706,8 @@ public final class TapestryModule
      * Identifies String, Number and Boolean as immutable objects, a catch-all
      * handler for Object (that understands
      * the {@link org.apache.tapestry5.annotations.ImmutableSessionPersistedObject} annotation),
-     * and a handler for {@link org.apache.tapestry5.OptimizedSessionPersistedObject}.
+     * and handlers for {@link org.apache.tapestry5.OptimizedSessionPersistedObject} and
+     * {@link org.apache.tapestry5.OptimizedApplicationStateObject}.
      * 
      * @since 5.1.0.0
      */
@@ -2705,6 +2729,27 @@ public final class TapestryModule
         configuration.add(Boolean.class, immutable);
 
         configuration.add(OptimizedSessionPersistedObject.class, new OptimizedSessionPersistedObjectAnalyzer());
+        configuration.add(OptimizedApplicationStateObject.class, new OptimizedApplicationStateObjectAnalyzer());
+    }
+
+    /**
+     * Contributions are content types that do not benefit from compression. Adds
+     * the following content types:
+     * <ul>
+     * <li>image/jpeg</li>
+     * <li>image/gif</li>
+     * <li>image/png</li>
+     * <li>application/x-shockwave-flash</li>
+     * </ul>
+     * 
+     * @since 5.1.0.0
+     */
+    public static void contributeResponseCompressionAnalyzer(Configuration<String> configuration)
+    {
+        configuration.add("image/jpeg");
+        configuration.add("image/gif");
+        configuration.add("image/png");
+        configuration.add("application/x-shockwave-flash");
     }
 
     /**
@@ -2784,6 +2829,20 @@ public final class TapestryModule
     }
 
     /**
+     * @throws Exception
+     * @since 5.1.0.2
+     */
+    public static ComponentEventLinkEncoder decorateComponentEventLinkEncoder(ComponentEventLinkEncoder encoder,
+            URLRewriter urlRewriter, Request request, Response response)
+    {
+        // no rules, no link rewriting.
+        if (!urlRewriter.hasLinkRules())
+            return null;
+
+        return new URLRewriterLinkEncoderInterceptor(urlRewriter, request, encoder);
+    }
+
+    /**
      * Decorate FieldValidatorDefaultSource to setup the EnvironmentMessages
      * object and place it in the environment.
      * Although this could have been implemented directly in the default
@@ -2855,23 +2914,13 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes:
-     * <dl>
-     * <dt>AppCatalog</dt>
-     * <dd>The Resource defined by {@link SymbolConstants#APPLICATION_CATALOG}</dd>
-     * <dt>ValidationMessages</dt>
-     * <dd>Messages used by validators (before:AppCatalog)</dd>
-     * <dt>
+     * Contributes "AppCatalog" as the Resource defined by {@link SymbolConstants#APPLICATION_CATALOG}.
      * 
      * @since 5.2.0
      */
-    public static void contributeComponentMessagesSource(AssetSource assetSource,
-            @Symbol(SymbolConstants.APPLICATION_CATALOG)
-            Resource applicationCatalog, OrderedConfiguration<Resource> configuration)
+    public static void contributeComponentMessagesSource(@Symbol(SymbolConstants.APPLICATION_CATALOG)
+    Resource applicationCatalog, OrderedConfiguration<Resource> configuration)
     {
-        configuration.add("ValidationMessages",
-                assetSource.resourceForPath("org/apache/tapestry5/internal/ValidationMessages.properties"),
-                "before:AppCatalog");
         configuration.add("AppCatalog", applicationCatalog);
     }
 
@@ -2944,8 +2993,7 @@ public final class TapestryModule
     }
 
     /**
-     * Provides the "LinkTransformer" interceptor for the {@link ComponentEventLinkEncoder} service.
-     * Other decorations
+     * Provides the "LinkTransformer" interceptor for the {@link ComponentEventLinkEncoder} service. Other decorations
      * should come after LinkTransformer.
      * 
      * @since 5.2.0

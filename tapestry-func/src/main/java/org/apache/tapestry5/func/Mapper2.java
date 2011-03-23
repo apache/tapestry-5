@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,14 +16,12 @@ package org.apache.tapestry5.func;
 
 /**
  * A generalization of {@link Mapper} for a two-input function.
- * <p>
- * This was converted from to an interface from an abstract base class in 5.3.
  */
-public interface Mapper2<A, B, C>
+public abstract class Mapper2<A, B, C>
 {
     /**
      * Take, as input, two values (from two flows) and return a computed value of
      * the third type.
      */
-    C map(A first, B second);
+    public abstract C map(A first, B second);
 }

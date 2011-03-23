@@ -14,12 +14,6 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
-
-import javax.inject.Named;
-
-import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -31,7 +25,7 @@ import org.apache.tapestry5.services.TransformField;
 
 /**
  * Performs injection triggered by any field annotated with the {@link org.apache.tapestry5.ioc.annotations.Inject}
- * annotation or the {@link javax.inject.Inject} annotation.
+ * annotation.
  * <p/>
  * The implementation of this worker mostly delegates to a chain of command of
  * {@link org.apache.tapestry5.services.InjectionProvider}s.
@@ -55,24 +49,18 @@ public class InjectWorker implements ComponentClassTransformWorker
 
     public final void transform(final ClassTransformation transformation, final MutableComponentModel model)
     {
-    	List<TransformField> fields = matchFields(transformation);
-    	
-        for (final TransformField field : fields)
+        for (final String fieldName : transformation.findFieldsWithAnnotation(Inject.class))
         {
-        	final String fieldName = field.getName();
-        	
             tracker.run("Injecting field " + fieldName, new Runnable()
             {
                 public void run()
                 {
 
-                    Inject inject = field.getAnnotation(Inject.class);
-                    
-                    Annotation annotation = inject == null? field.getAnnotation(javax.inject.Inject.class): inject;
+                    Inject annotation = transformation.getFieldAnnotation(fieldName, Inject.class);
 
                     try
                     {
-                        String fieldType = field.getType();
+                        String fieldType = transformation.getFieldType(fieldName);
 
                         Class type = transformation.toClass(fieldType);
 
@@ -80,7 +68,7 @@ public class InjectWorker implements ComponentClassTransformWorker
                                 model);
 
                         if (success)
-                            field.claim(annotation);
+                            transformation.claimField(fieldName, annotation);
                     }
                     catch (RuntimeException ex)
                     {
@@ -90,18 +78,5 @@ public class InjectWorker implements ComponentClassTransformWorker
                 }
             });
         }
-    }
-    
-    private List<TransformField> matchFields(final ClassTransformation transformation)
-    {	
-    	Predicate<TransformField> predicate = new Predicate<TransformField>()
-    	{
-			public boolean accept(TransformField field) 
-			{
-				return field.getAnnotation(Inject.class) != null 
-						|| (field.getAnnotation(javax.inject.Inject.class) != null && field.getAnnotation(Named.class) == null);
-			}
-		};
-    	return transformation.matchFields(predicate);
     }
 }

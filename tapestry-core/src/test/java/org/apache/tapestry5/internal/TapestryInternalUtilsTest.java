@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-// http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -57,6 +57,7 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
         beanModelSource = null;
     }
 
+
     @Test(dataProvider = "to_user_presentable_data")
     public void to_user_presentable(String input, String expected)
     {
@@ -66,12 +67,8 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
     @DataProvider
     public Object[][] to_user_presentable_data()
     {
-        return new Object[][]
-        {
-        { "hello", "Hello" },
-        { "userId", "User Id" },
-        { "useHTML", "Use HTML" },
-        { "underscored_name", "Underscored Name" }, };
+        return new Object[][] { { "hello", "Hello" }, { "userId", "User Id" }, { "useHTML", "Use HTML" },
+                { "underscored_name", "Underscored Name" }, };
     }
 
     @Test
@@ -268,9 +265,9 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
     {
         assertEquals(TapestryInternalUtils.extractIdFromPropertyExpression("simpleName"), "simpleName");
         assertEquals(TapestryInternalUtils.extractIdFromPropertyExpression("complex.name().withStuff"),
-                "complexnamewithStuff");
+                     "complexnamewithStuff");
         assertEquals(TapestryInternalUtils.extractIdFromPropertyExpression("number99.withABullet"),
-                "number99withABullet");
+                     "number99withABullet");
     }
 
     @Test
@@ -380,16 +377,15 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
     public Object[][] split_at_commas_data()
     {
         return new Object[][]
-        {
-        { "foo", new String[]
-        { "foo" } },
-        { "foo, bar", new String[]
-        { "foo", "bar" } },
-        { "  foo, \nbar\t\t", new String[]
-        { "foo", "bar" } },
-        { "", new String[0] },
-        { null, new String[0] } };
+                {
+                        { "foo", new String[] { "foo" } },
+                        { "foo, bar", new String[] { "foo", "bar" } },
+                        { "  foo, \nbar\t\t", new String[] { "foo", "bar" } },
+                        { "", new String[0] },
+                        { null, new String[0] }
+                };
     }
+
 
     @Test(dataProvider = "split_at_commas_data")
     public void split_at_commas(String input, String[] output)
@@ -401,11 +397,11 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
     @DataProvider
     public Object[][] to_base64_data()
     {
-        return new Object[][]
-        {
-        { 0L, "AA" },
-        { 1L, "AQ" },
-        { 0xab54a98ceb1f0ad2L, "q1SpjOsfCtI" } };
+        return new Object[][] {
+                { 0L, "AA" },
+                { 1L, "AQ" },
+                { 0xab54a98ceb1f0ad2L, "q1SpjOsfCtI" }
+        };
     }
 
     @Test
@@ -443,46 +439,41 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
 
         verify();
     }
-
+    
+    
     @Test
     public void to_internal_property_conduit_no_wrapper_needed()
     {
-        InternalPropertyConduit conduit2 = newMock(InternalPropertyConduit.class);
-
-        assertSame(TapestryInternalUtils.toInternalPropertyConduit(conduit2), conduit2);
+    	InternalPropertyConduit conduit2 = newMock(InternalPropertyConduit.class);
+    	
+    	assertSame(TapestryInternalUtils.toInternalPropertyConduit(conduit2), conduit2);
     }
-
+    
     @Test
     public void to_internal_property_conduit_wrapper()
     {
-        PropertyConduit conduit = mockPropertyConduit();
-
-        Integer result = 123;
-        Width width = newMock(Width.class);
-
-        expect(conduit.get("")).andReturn(result);
-        expect(conduit.getAnnotation(Width.class)).andReturn(width);
-        expect(conduit.getPropertyType()).andReturn(Integer.class);
-        conduit.set("", 345);
-
-        replay();
-
-        InternalPropertyConduit conduit2 = TapestryInternalUtils.toInternalPropertyConduit(conduit);
-
-        assertNull(conduit2.getPropertyName());
-
-        assertSame(conduit2.get(""), result);
-        assertSame(conduit2.getAnnotation(Width.class), width);
-        assertSame(conduit2.getPropertyType(), Integer.class);
-        conduit2.set("", 345);
-
-        verify();
-    }
-
-    @Test
-    public void toFileSuffix_tests()
-    {
-        assertEquals(TapestryInternalUtils.toFileSuffix("foo.tar.gz"), "gz");
-        assertEquals(TapestryInternalUtils.toFileSuffix("just-a-file"), "");
+    	PropertyConduit conduit = mockPropertyConduit();
+    	
+    	Integer result = 123;
+    	Width width = newMock(Width.class);
+    	
+    	
+    	expect(conduit.get("")).andReturn(result);
+    	expect(conduit.getAnnotation(Width.class)).andReturn(width);
+    	expect(conduit.getPropertyType()).andReturn(Integer.class);
+    	conduit.set("", 345);
+    	
+    	replay();
+    	
+    	InternalPropertyConduit conduit2 = TapestryInternalUtils.toInternalPropertyConduit(conduit);
+    	
+    	assertNull(conduit2.getPropertyName());
+    	
+    	assertSame(conduit2.get(""), result);
+    	assertSame(conduit2.getAnnotation(Width.class), width);
+    	assertSame(conduit2.getPropertyType(), Integer.class);
+    	conduit2.set("", 345);
+    	
+    	verify();
     }
 }

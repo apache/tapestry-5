@@ -1,0 +1,541 @@
+ ---
+ Implementing the Hi/Lo Guessing Game
+ ---
+ 
+Chapter 3: Implementing the Hi/Lo Guessing Game
+
+  Let's start building the Hi/Lo Guessing game. 
+  
+  In the game, the computer selects a number between 1 and 10.  You try and guess the number, clicking links.
+  At the end, the computer tells you how many guesses you required.
+  
+  We'll build it in small pieces, using the kind of iterative development
+  that Tapestry makes so easy.
+  
+[hilo-flow.png] Page flow for Hi/Lo Game
+
+  Our page flow is very simple, consisting of three pages: Start, Guess and GameOver.  The Start page introduces the application and includes
+  a link to start guessing.  The Guess page presents the user with ten links, plus feedback such as "too low" or "too high".  
+  The GameOver page tells the user how many guesses they took.
+  
+  Let's get to work on the Index page and template.
+  
+  <<src/main/webapp/Index.tml:>>
+  
+----
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+  <head>
+    <title>tutorial1 Start Page</title>
+  </head>
+  <body>
+
+    <h1>Hi/Lo Guess</h1>
+
+    <p>I'm thinking of a number between one and ten ... </p>
+
+    <p>
+      <t:actionlink>Start guessing</t:actionlink>
+    </p>
+
+  </body>
+</html>
+----
+
+  Here we've taken the template created by the quickstart archetype and changed it around to fit our needs. The ActionLink
+  component will create a link that will trigger a method inside our Java class.  You can launch the application to try it out:
+  
+[hilo-start.png] Start page with Hi/Lo Game link
+
+  However, clicking the link doesn't do anything yet.  We haven't told Tapestry what to do when the link gets clicked.
+  
+  Let's fix that. We'll change the Start class so that it will react when the link is clicked ... but what should it do?
+  Well, to start the guessing process, we need to come up with a random number (between one and ten).  We need to tell
+  the Guess page about that number, and we need to make sure the Guess page is started up to display the response.
+  
+  First, the Guess page.  Just to get started, we'll create a Guess page without much guessing: it'll just show us the 
+  target number, the number we're supposed to be guessing.
+  
+  <<src/main/webapp/Guess.tml:>>
+  
+----
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+  <head>
+    <title>Guess A Number</title>
+  </head>
+  <body>
+
+    <h1>The target number is ${target}.</h1>
+
+  </body>
+</html>
+----
+
+  On the Java side, the Guess page needs to have a target property:
+  
+----
+package org.apache.tapestry5.tutorial.pages;
+
+public class Guess
+{
+  private int target;
+
+  Object initialize(int target)
+  {
+    this.target = target;
+
+    return this;
+  }
+}
+----
+
+  The key method here is initialize():  It is invoked to tell the Guess page what the target number is.  Notice that the
+   method is package private, not public;
+  it is only expected to be invoked from the Index page (as we'll see in a moment), so there's no need to make it public.  Later we'll see that
+  there's more initialization to be done
+  than just storing a value into the target instance variable (which is why we don't simply name the method setTarget() ).
+
+  Now we can move back to the Index page.  What we want is to have the ActionLink component invoke a method on the Index page. We can then generate
+  a random target number. We'll tell the Guess page what the target number is and then make sure that it is  the Guess page, and not the
+  Index page,
+  that renders the response into the user's web browser.  That's actually quite a few concepts to take in all at once.
+  
+  Let's start with the code, and break it down:
+  
+  <<src/main/java/org/apache/tapestry5/tutorial/pages/Index.java>>
+
+----
+package org.apache.tapestry5.tutorial.pages;
+
+import java.util.Random;
+
+import org.apache.tapestry5.annotations.InjectPage;
+
+public class Start
+{
+  private final Random random = new Random();
+
+  @InjectPage
+  private Guess guess;
+
+  Object onAction()
+  {
+    int target = random.nextInt(10) + 1;
+
+    return guess.initialize(target);
+  }
+}
+----
+  
+  What we're talking about here is <communication> of information from the Index page to the Guess page.  In traditional servlet development, this is done
+  in a bizarre way ... storing attributes into the shared HttpSession object.  Of course, for that to work, both (or all) parties have to agree on the type
+  of object stored, and the well-known name used to access the attribute.  That's the source of a large number of bugs.  It's also not very object oriented ... state
+  is something that should be <inside> objects (and private), not <outside> objects (and public).
+  
+  The Tapestry way is very object oriented: everything is done in terms of objects and methods and properties of those objects.
+  
+  This communication starts with the connection between the two pages:  in this case, the
+  {{{../apidocs/org/apache/tapestry5/annotations/InjectPage.html}InjectPage}} annotation allows another page in the application
+  to be injected into the Index page.
+
+  Injection can be a somewhat nebulous concept.  In terms of Tapestry, it means that some cooperating object needed by one class is provided to it.  The other
+  object is often referred to as a "dependency"; in this case, the Index page <depends on> the Guess page to be fully functional, and an instance of the Guess
+  page is made available as the guess instance variable.  The Index page doesn't, and can't, <create> the Guess page, it can only
+  advertise, to Tapestry, that it needs the Guess page.  Tapestry will take care of the rest.
+    
+  Let's see what we do with this injected page.  It's used inside onAction().  You might guess that this method is invoked when the link ("Start guessing") is clicked.  But
+  why?
+  
+  This is a strong example of <convention over configuration>. Tapestry has a naming convention for certain methods:  "on<EventType>[From<ComponentId>]".  Here, the event type 
+  is "action" and the component id is not even specified. This translates to "when the action event is fired from any component, invoke this method".
+  
+  "The action event?"  This underlines a bit about how Tapestry processes requests. When you click a link generated by the ActionLink component, Tapestry is able
+  to identify the underlying component inside the request: it knows that the component is on the Index page, and it knows the component within the page.  Here we didn't give
+  the ActionLink component a specific id, so Tapestry supplied one.  An "action" event is triggered inside the ActionLink component, and that event bubbles
+  up to the page, where the onAction() method acts as an <event handler method>.
+  
+  So ... ActionLink component --> action request --> onAction() event handler method.
+  
+  Event handler methods don't have to be public; they are usually package private (as in this example).  Also, it isn't an error if a request never matches
+  an event handler. Before we added the onAction() event handler, that's exactly what happened; the request passed through without any event handler
+  match, and Tapestry simply re-rendered the Start page.
+  
+  What can you do inside an event handler method?  Any kind of business logic you like; Tapestry doesn't care.  Here we're using a random number generator
+  to set the target number to guess.
+  
+  We also use the injected Guess page; we invoke the initialize() method to tell it about the number the user is trying to guess.
+  
+  The <return value> of an event handler method is very important; the value returned informs Tapestry about what page will render the response to the client.
+  By returning the injected Guess page, we're telling Tapestry that the Guess page should be the one to render the response.
+
+  This idiom: having the Guess page provide an initialize() method and return itself, is very common in Tapestry. It allows the event handler method to be
+  very succinct; it's as if the event handler method says "initialize the Guess page and render it to the client".
+  
+  Again, this is a big difference between Tapestry and servlets (or Struts). Tapestry tightly binds the controller (the Java class) to the template.
+  Using JSPs, you would have extra configuration to select a view (usually by a logical name, such as "success") to a "view" (a JSP).  Tapestry cuts through
+  all that cruft for you. Objects communicate with, and defer to, other objects and all the templates and rendering machinery comes along for free.
+  
+  In later chapters, we'll see other possibilities besides returning a page instance from an event handler method.
+  
+  For the moment, make sure all the changes are saved, and click the "Start guessing" link.
+  
+[hilo-exception.png] Exception on the Guess page
+
+  This may not quite be what you were expecting ... but it is a useful digression into one of Tapestry's most important features: <<feedback>>.
+  
+  Something was wrong with the Guess page, and Tapestry has reported the error to you so that you can make a correction.
+  
+  Here, the root problem was that we didn't define a getTarget() method in the Guess class.  Ooops.  Deep inside Tapestry, a RuntmeException was thrown to explain this.
+  
+  As often happens in frameworks, that RuntimeException was caught and rethrown wrapped inside a new exception, the TapestryException. This added a bit more detail to the exception
+  message, and linked the exception to a <location>.  Since the error occurred inside a component template, Tapestry is able to display that portion of the
+  template, highlighting the line in error.
+  
+  If you scroll down, you'll see that after the stack trace, Tapestry provides a wealth of information about the current request, including headers and query parameters.
+  It also displays information stored in the HttpSession (if the session exists), and other information that may be of use.  
+  
+  Of course, in a production application,
+  this information can be hidden!
+  
+  Let's fix this problem, by adding the following to the Guess class:
+  
+---
+  public int getTarget()
+  {
+    return target;
+  }
+---
+
+* Persisting data between requests
+
+  That fixes the problem, but introduces another:
+  
+[hilo-guess-v1.png] Hi/Lo Guess Page
+
+  Why is the target number zero?  Didn't we set it to a random value between 1 and 10?
+  
+  At issue here is the how Tapestry organizes requests. Tapestry has two main types
+  of requests: <<action>> requests and <<render>> requests. Render requests
+  are easy, the URL includes just the page name, and that page is rendered out.
+  
+  Action requests are more complicated; the URL will include the name of the page
+  and the id of the component within the page, and perhaps the type of event.
+  
+  After your event handler method is executed, Tapestry determine what page will
+  render the response; as we've seen, that is based on the return value of
+  the event handler method.
+  
+  Tapestry doesn't, however, render the response directly, the way most servlet
+  applications would; instead it sends a <redirect URL> to the client web browser.
+  The URL is a render request URL for the page that will render the response.
+  
+  You may have seen this before.  It is commonly called the <redirect after post pattern>. Most often,
+  it is associated with form submissions (and as we'll see in later chapters, a form submission <is>
+  another type of action request). 
+  
+  So why does that affect the target value?  At the end of any request (action or render), Tapestry
+  will "clean house", resetting any instance variables back to their initial, default values (usually, null 
+  or zero). 
+  
+  This cleaning is very necessary to the basic way Tapestry operates: pages are expensive entities to
+  create; too expensive to create fresh each request, and too large and complicated to store in the HttpSession.
+  Tapestry <pools> pages, using and reusing them in request after request.  
+  
+  For the duration of a single request from a single user, a <page instance> is <bound> to the request.
+  It is only accessible to the one request. Other requests may be bound to other instances of the same page.
+  The same page instance will be used for request after request. 
+  
+  So, inside the action request, the code inside the onAction() event handler method <did> call the
+  initialize() method, and a value between 1 and 10 was stored in the target instance variable. But
+  at the end of that request, the value was lost, and in the subsequent render request for the Guess page,
+  the value was zero.
+  
+  Fortunately, it is very easy to transcend this behavior.  We'll use an annotation, {{{../apidocs/org/apache/tapestry5/annotations/Persist.html}Persist}},
+  on the instance variable:
+  
+----
+  @Persist
+  private int target;
+----
+
+  Now we can use the browser back button to return to the Start page, and click the link again.
+ 
+[hilo-number.png] The target number
+  
+  One of the nice things about this approach, the use of redirects, is that hitting the refresh button
+  does <not> choose a new target number.  It simply redraws the Guess page with the 
+  target number previously selected. In many servlet applications, the URL would be for the action "choose a random number"
+  and refreshing would re-execute that action.
+  
+* Creating guessable links
+
+  Now it's time to start the game in earnest.  We don't want to just tell the user what the target number is,
+  we want to make them guess, and we want to track how many attempts they take.
+  
+  What we want is to create 10 links, and combine those links with logic on the server side, an event handler method,
+  that can interpret what value the user selected.
+  
+  Let's start with those links.  We're going to use a new component, Loop, to loop
+  over a set of values:
+  
+  <<src/main/webapp/Guess.tml:>>
+  
+---
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+  <head>
+    <title>Guess A Number</title>
+  </head>
+  <body>
+
+  <p>Make a guess between one and ten:</p>
+  
+    <t:loop source="1..10" value="guess" xml:space="preserve">
+      <t:actionlink t:id="link" context="guess">${guess}</t:actionlink>
+    </t:loop>
+
+  </body>
+</html>
+---
+
+  The Loop component's source attribute identifies the values to loop over.
+  Often this is a list or array, but here the special
+  special syntax, "1..10" means iterate over the numbers between 1 and 10, inclusive.
+
+  What about the <<<xml:space="preserve">>> attribute?  Normally, Tapestry is pretty draconian
+  about stripping out unnecessary whitespace from the template.  Most whitespace (spaces, tabs,
+  newlines, etc.) is reduced to a single space.  This can help a lot with reducing the size
+  of the output and with making complex nested layouts easier to read ... but occasionally, as here,
+  the whitespace is needed to keep the numbers from running together.  <<<xml:space="preserve">>>
+  turns on full whitespace retention for the element.
+
+  The value attribute gets assigned the current item from the loop.  We'll use
+  a property of the Guess page as a kind of scratchpad for this purpose.  We could manually
+  write a getter and a setter method as we did before, or we can let Tapestry generate those
+  accessors:
+  
+---
+  @Property
+  private int guess;
+---
+
+  Tapestry will automatically create the methods needed so that the guess property (it's smart
+  about stripping off leading underscores) is accessible in the template.
+
+  The context parameter of the ActionLink is how we get extra information into
+  the action request URL. The context can be a single value, or an array or
+  list of values.  The values are converted to strings and tacked onto the action
+  request URL.  The end result is <<<http://localhost:8080/tutorial1/guess.link/4>>>.  
+  
+  What is "guess.link"?  That's the name of the page, "guess", and the id of the component 
+  ("link", as explicitly set with the t:id attribute).        Remember this is an action link:
+  as soon as the user clicks the click, it is replaced with a render link such
+  as <<<http://localhost:8080/tutorial1/guess>>>.
+  
+  Now, to handle those guesses. We're going to add an event handler method that gets
+  invoked when a link is clicked.  We're also going to add a new property, message, to
+  store the message that says "too high" or "too low".
+  
+---
+  @Persist
+  @Property
+  private String message;
+
+  String onActionFromLink(int guess)
+  {
+    if (guess == target) return "GameOver";
+
+    if (guess < target)
+      message = String.format("%d is too low.", guess);
+    else
+      message = String.format("%d is too high.", guess);
+
+    return null;
+  }
+---  
+
+
+  Here's the big news: Tapestry will convert the number from the URL back into
+  an integer automatically, so that it can pass it in to the onActionFromLink() event handler method as a
+  method parameter.
+  We can then compare the guess from the user to the secret target number.
+
+  Notice how Tapestry adapts to the return value.  Here it may be null ... Tapestry interprets that
+  as "stay on the same page".  You may also return a string ("GameOver"); Tapestry interprets <that>
+  as the name of the page to render the response.
+  
+
+  We need to update the Guess page to actually display the message; this is done by adding the following:
+  
+---
+  <p>${message}</p>
+---
+
+  This is truly bare bones and, when message is null, will output an empty \<p\> element.  A real application
+  would dress this up a bit more (using CSS and the like to make it prettier).
+  
+  
+  We do need a basic GameOver page.
+  
+  <<src/main/webapp/GameOver.tml:>>
+
+---
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+  <head>
+    <title>Game Over!</title>
+  </head>
+  <body>
+
+    <h1>Game Over</h1>
+
+    <p> You guessed the secret number!  </p>
+
+
+  </body>
+</html>
+---
+
+  <<src/main/java/org/apache/tapestry5/tutorial/pages/GameOver.java:>>
+
+---
+package org.apache.tapestry5.tutorial.pages;
+
+public class GameOver
+{
+
+}
+---
+
+  With this in place, we can make guesses, and get feedback from the application:
+  
+[hilo-feedback.png] Feedback from the game
+
+* Counting the number of guesses
+
+ It would be nice to provide some feedback about how many guesses the
+ user took to find the number.  That's easy enough to do.
+ 
+ First we update Guess to store the number of guesses:
+ 
+---
+  @Persist
+  @Property
+  private int count;
+---
+
+  Next we modified initialize() to ensure that count is set to 0.  This is a safety
+  precaution in case we add logic to play the game again.
+  
+---
+  Object initialize(int target)
+  {
+    this.target = target;
+    this.count = 0;
+
+    return this;
+  }
+--- 
+
+  We have a couple of changes to make to the event handler method.  We want
+  to communicate to the GameOver page the guess count; so we'll inject the
+  GameOver page so we can initialize it.
+  
+---
+  Object onActionFromLink(int guess)
+  {
+    count++;
+
+    if (guess == target) return gameOver.initialize(count);
+
+    if (guess < target)
+      message = String.format("%d is too low.", guess);
+    else
+      message = String.format("%d is too high.", guess);
+
+    return null;
+  }
+---
+
+  So, we update the count before comparing and, instead of returning the
+  name of the GameOver page, we return the configured instance.
+  
+  Lastly, we need to make some changes to the GameOver class.
+  
+  <<src/main/java/org/apache/tapestry5/tutorial/GameOver.java:>>
+  
+---
+package org.apache.tapestry5.tutorial.pages;
+
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.Property;
+
+public class GameOver
+{
+  @Persist
+  @Property
+  private int count;
+
+  Object initialize(int count)
+  {
+    this.count = count;
+
+    return this;
+  }
+}
+---
+  
+  <<src/main/webapp/GameOver.tml:>>
+  
+---
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+  <head>
+    <title>Game Over!</title>
+  </head>
+  <body>
+
+    <h1>Game Over</h1>
+
+    <p> You guessed the secret number in ${count} guesses!  </p>
+
+
+  </body>
+</html>
+---
+
+* Parting thoughts
+
+  What we've gone after here is the Tapestry way: pages as classes that store
+  internal state and communicate with each other. We've also seen the Tapestry
+  development pattern: lots of simple small steps that leverage Tapestry's ability to
+  reload templates and classes on the fly.
+  
+  We've also seen how Tapestry stores data for us, sometimes in the session
+  (via the @Persist annotation) and sometimes in the URL.
+  
+  Our code is wonderfully free of anything related to HTTP or the Java Servlet API.
+  We're coding using real objects, with their own instance variables and internal state.
+  
+  Our application is still pretty simple; here's a few challenges:
+  
+  * Add a restart link to the GameOver page to allow a new game to start. Can you refactor the application
+  so that the code for the random number selection occurs in only one place?
+  
+  * As we guess, we're identifying ranges of valid and invalid numbers.  Can you only show valid
+   guesses to the user?
+   
+  * What would it take to change the the game to choose a number between 1 and 20? Between 1 and 100?
+  
+  * What about setting an upper-limit on the number of guesses allowed?
+  
+  [] 
+
+===
+  
+  {{{forms.html}Continue on to Chapter 4: Tapestry and Forms}}
+ 
+
+  
+  
+    
+  
+  
+  
+  

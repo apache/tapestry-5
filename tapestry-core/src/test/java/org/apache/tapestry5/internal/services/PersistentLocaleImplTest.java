@@ -1,10 +1,10 @@
-// Copyright 2009, 2011 The Apache Software Foundation
+// Copyright 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-// http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ioc.internal.services.PerthreadManagerImpl;
 import org.apache.tapestry5.ioc.test.TestBase;
 import org.apache.tapestry5.services.PersistentLocale;
 import org.testng.annotations.Test;
@@ -29,7 +28,7 @@ public class PersistentLocaleImplTest extends TestBase
     @Test
     public void set_to_unsupported_locale()
     {
-        PersistentLocale pl = new PersistentLocaleImpl(new PerthreadManagerImpl(null), "en,fr");
+        PersistentLocale pl = new PersistentLocaleImpl(null, "en,fr");
 
         try
         {
@@ -38,9 +37,8 @@ public class PersistentLocaleImplTest extends TestBase
         }
         catch (IllegalArgumentException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Locale 'zh' is not supported by this application. Supported locales are 'en,fr'; this is configured via the tapestry.supported-locales symbol.");
+            assertEquals(ex.getMessage(),
+                         "Locale 'zh' is not supported by this application. Supported locales are 'en,fr'; this is configured via the tapestry.supported-locales symbol.");
         }
 
     }

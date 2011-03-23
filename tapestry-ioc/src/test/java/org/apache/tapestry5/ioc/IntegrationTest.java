@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -867,68 +867,15 @@ public class IntegrationTest extends IOCInternalTestCase
                 assertEquals(a.getStatus(), Status.BUILTIN);
 
             if (serviceId.equals("RedGreeter1"))
-            {
                 assertEquals(a.getStatus(), Status.DEFINED);
-                assertEquals(a.getMarkers().contains(BlueMarker.class), false);
-                assertEquals(a.getMarkers().contains(RedMarker.class), true);
-            }
 
             if (serviceId.equals("TypeCoercer"))
                 assertEquals(a.getStatus(), Status.REAL);
 
             if (serviceId.equals("BlueGreeter"))
-            {
-                assertEquals(a.getStatus(), Status.VIRTUAL);
-                assertEquals(a.getMarkers().contains(BlueMarker.class), true);
-                assertEquals(a.getMarkers().contains(RedMarker.class), false);
-            }
-        }
-
-        r.shutdown();
-    }
-
-    @Test
-    public void service_activity_scoreboard_perthread() throws InterruptedException
-    {
-        final Registry r = buildRegistry(GreeterModule.class, PerThreadModule.class);
-
-        ServiceActivityScoreboard scoreboard = r.getService(ServiceActivityScoreboard.class);
-
-        // Force the state of a few services.
-
-        final StringHolder holder = r.getService(StringHolder.class);
-
-        Runnable runnable = new Runnable()
-        {
-            public void run()
-            {
-                holder.setValue("barney");
-                assertEquals(holder.getValue(), "barney");
-
-                r.cleanupThread();
-            }
-        };
-
-        Thread t = new Thread(runnable);
-
-        t.start();
-        t.join();
-
-        // Now get the activity list and poke around.
-
-        List<ServiceActivity> serviceActivity = scoreboard.getServiceActivity();
-
-        assertTrue(serviceActivity.size() > 0);
-
-        for (ServiceActivity a : serviceActivity)
-        {
-            String serviceId = a.getServiceId();
-
-            if (serviceId.equals("StringHolder"))
                 assertEquals(a.getStatus(), Status.VIRTUAL);
         }
 
-        r.cleanupThread();
         r.shutdown();
     }
 
@@ -1570,7 +1517,7 @@ public class IntegrationTest extends IOCInternalTestCase
 
         r.shutdown();
     }
-
+   
     @Test
     public void advise_by_annotation()
     {
@@ -1583,12 +1530,12 @@ public class IntegrationTest extends IOCInternalTestCase
         r.shutdown();
 
     }
-
+   
     @Test
     public void advise_by_locale_annotation()
     {
         Registry r = buildRegistry(GreeterModule2.class, AdviseByMarkerModule.class);
-
+       
         Greeter red = r.getService("RedGreeter", Greeter.class);
 
         assertEquals(red.getGreeting(), "delta[Red]");
@@ -1596,7 +1543,7 @@ public class IntegrationTest extends IOCInternalTestCase
         r.shutdown();
 
     }
-
+   
     @Test
     public void decorate_by_annotation()
     {
@@ -1609,12 +1556,12 @@ public class IntegrationTest extends IOCInternalTestCase
         r.shutdown();
 
     }
-
+   
     @Test
     public void decorate_by_locale_annotation()
     {
         Registry r = buildRegistry(GreeterModule2.class, DecorateByMarkerModule.class);
-
+       
         Greeter red = r.getService("RedGreeter", Greeter.class);
 
         assertEquals(red.getGreeting(), "Decorated by barney[Red]");
@@ -1651,17 +1598,5 @@ public class IntegrationTest extends IOCInternalTestCase
         assertEquals(symbolSource.valueForSymbol("it"), "works");
 
         r.shutdown();
-    }
-
-    @Test
-    public void contributed_values_may_be_coerced_to_correct_type()
-    {
-        Registry r = buildRegistry(ContributedValueCoercionModule.class);
-
-        SymbolSource source = r.getService(SymbolSource.class);
-
-        assertEquals(source.valueForSymbol("bool-true"), "true");
-        assertEquals(source.valueForSymbol("bool-false"), "false");
-        assertEquals(source.valueForSymbol("num-12345"), "12345");
     }
 }

@@ -23,121 +23,110 @@ import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.InjectionProvider;
 import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.TransformField;
 import org.testng.annotations.Test;
 
-public class InjectWorkerTest extends InternalBaseTestCase {
-	private static final String REQUEST_CLASS_NAME = Request.class.getName();
+public class InjectWorkerTest extends InternalBaseTestCase
+{
+    private static final String REQUEST_CLASS_NAME = Request.class.getName();
 
-	@Test
-	public void anonymous_injection() {
-		ObjectLocator locator = mockObjectLocator();
-		InjectionProvider ip = newMock(InjectionProvider.class);
-		Inject annotation = newInject();
-		ClassTransformation ct = mockClassTransformation();
-		MutableComponentModel model = mockMutableComponentModel();
-		TransformField field = newMock(TransformField.class);
+    @Test
+    public void anonymous_injection()
+    {
+        ObjectLocator locator = mockObjectLocator();
+        InjectionProvider ip = newMock(InjectionProvider.class);
+        Inject annotation = newInject();
+        ClassTransformation ct = mockClassTransformation();
+        MutableComponentModel model = mockMutableComponentModel();
 
-		train_matchFields(ct, field);
+        train_findFieldsWithAnnotation(ct, Inject.class, "myfield");
+        train_getFieldAnnotation(ct, "myfield", Inject.class, annotation);
 
-		train_getName(field, "myfield");
+        train_getFieldType(ct, "myfield", REQUEST_CLASS_NAME);
+        train_toClass(ct, REQUEST_CLASS_NAME, Request.class);
 
-		train_getAnnotation(field, Inject.class, annotation);
+        train_provideInjection(ip, "myfield", Request.class, locator, ct, model, true);
 
-		train_getType(field, REQUEST_CLASS_NAME);
-		train_toClass(ct, REQUEST_CLASS_NAME, Request.class);
+        ct.claimField("myfield", annotation);
 
-		train_provideInjection(ip, "myfield", Request.class, locator, ct,
-				model, true);
+        replay();
 
-		field.claim(annotation);
+        ComponentClassTransformWorker worker = new InjectWorker(locator, ip, new QuietOperationTracker());
 
-		replay();
+        worker.transform(ct, model);
 
-		ComponentClassTransformWorker worker = new InjectWorker(locator, ip,
-				new QuietOperationTracker());
+        verify();
+    }
 
-		worker.transform(ct, model);
+    @Test
+    public void anonymous_injection_not_provided()
+    {
+        ObjectLocator locator = mockObjectLocator();
+        InjectionProvider ip = newMock(InjectionProvider.class);
+        Inject annotation = newInject();
+        ClassTransformation ct = mockClassTransformation();
+        MutableComponentModel model = mockMutableComponentModel();
 
-		verify();
-	}
+        train_findFieldsWithAnnotation(ct, Inject.class, "myfield");
+        train_getFieldAnnotation(ct, "myfield", Inject.class, annotation);
 
-	@Test
-	public void anonymous_injection_not_provided() {
-		ObjectLocator locator = mockObjectLocator();
-		InjectionProvider ip = newMock(InjectionProvider.class);
-		Inject annotation = newInject();
-		ClassTransformation ct = mockClassTransformation();
-		MutableComponentModel model = mockMutableComponentModel();
-		TransformField field = newMock(TransformField.class);
+        train_getFieldType(ct, "myfield", REQUEST_CLASS_NAME);
+        train_toClass(ct, REQUEST_CLASS_NAME, Request.class);
 
-		train_matchFields(ct, field);
+        train_provideInjection(ip, "myfield", Request.class, locator, ct, model, false);
 
-		train_getName(field, "myfield");
+        replay();
 
-		train_getAnnotation(field, Inject.class, annotation);
+        ComponentClassTransformWorker worker = new InjectWorker(locator, ip, new QuietOperationTracker());
 
-		train_getType(field, REQUEST_CLASS_NAME);
-		train_toClass(ct, REQUEST_CLASS_NAME, Request.class);
+        // Does the work but doesn't claim the field, since there was no match.
 
-		train_provideInjection(ip, "myfield", Request.class, locator, ct,
-				model, false);
+        worker.transform(ct, model);
 
-		replay();
+        verify();
+    }
 
-		ComponentClassTransformWorker worker = new InjectWorker(locator, ip,
-				new QuietOperationTracker());
+    @Test
+    public void injection_provider_threw_exception()
+    {
+        ObjectLocator locator = mockObjectLocator();
+        InjectionProvider ip = newMock(InjectionProvider.class);
+        Inject annotation = newInject();
+        ClassTransformation ct = mockClassTransformation();
+        MutableComponentModel model = mockMutableComponentModel();
+        RuntimeException failure = new RuntimeException("Oops.");
 
-		// Does the work but doesn't claim the field, since there was no match.
+        train_findFieldsWithAnnotation(ct, Inject.class, "myfield");
+        train_getFieldAnnotation(ct, "myfield", Inject.class, annotation);
 
-		worker.transform(ct, model);
+        train_getFieldType(ct, "myfield", REQUEST_CLASS_NAME);
+        train_toClass(ct, REQUEST_CLASS_NAME, Request.class);
 
-		verify();
-	}
+        expect(ip.provideInjection("myfield", Request.class, locator, ct, model)).andThrow(failure);
 
-	@Test
-	public void injection_provider_threw_exception() {
-		ObjectLocator locator = mockObjectLocator();
-		InjectionProvider ip = newMock(InjectionProvider.class);
-		Inject annotation = newInject();
-		ClassTransformation ct = mockClassTransformation();
-		MutableComponentModel model = mockMutableComponentModel();
-		TransformField field = newMock(TransformField.class);
-		RuntimeException failure = new RuntimeException("Oops.");
+        train_getClassName(ct, "foo.bar.Baz");
 
-		train_matchFields(ct, field);
+        replay();
 
-		train_getName(field, "myfield");
+        ComponentClassTransformWorker worker = new InjectWorker(locator, ip, new QuietOperationTracker());
 
-		train_getAnnotation(field, Inject.class, annotation);
+        try
+        {
+            worker.transform(ct, model);
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertEquals(
+                    ex.getMessage(),
+                    "Error obtaining injected value for field foo.bar.Baz.myfield: Oops.");
+            assertSame(ex.getCause(), failure);
+        }
 
-		train_getType(field, REQUEST_CLASS_NAME);
-		train_toClass(ct, REQUEST_CLASS_NAME, Request.class);
+        verify();
+    }
 
-		expect(
-				ip.provideInjection("myfield", Request.class, locator, ct,
-						model)).andThrow(failure);
-
-		train_getClassName(ct, "foo.bar.Baz");
-
-		replay();
-
-		ComponentClassTransformWorker worker = new InjectWorker(locator, ip,
-				new QuietOperationTracker());
-
-		try {
-			worker.transform(ct, model);
-			unreachable();
-		} catch (RuntimeException ex) {
-			assertEquals(ex.getMessage(),
-					"Error obtaining injected value for field foo.bar.Baz.myfield: Oops.");
-			assertSame(ex.getCause(), failure);
-		}
-
-		verify();
-	}
-
-	protected final Inject newInject() {
-		return newMock(Inject.class);
-	}
+    protected final Inject newInject()
+    {
+        return newMock(Inject.class);
+    }
 }

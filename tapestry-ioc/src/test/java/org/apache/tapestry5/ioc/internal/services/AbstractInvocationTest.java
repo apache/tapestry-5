@@ -52,7 +52,6 @@ public class AbstractInvocationTest extends TestBase
 
     interface Subject
     {
-    	@SimpleAnnotation("test")
         void go() throws SQLException;
 
         int count() throws SQLException;
@@ -136,16 +135,5 @@ public class AbstractInvocationTest extends TestBase
 
         assertEquals(iv.getParameterCount(), 1);
         assertSame(iv.getParameterType(0), Runnable.class);
-    }
-    
-    @Test
-    public void get_method_annotation() throws Exception
-    {
-        Invocation iv = new TestInvocation(Subject.class.getMethod("go"));
-        
-        SimpleAnnotation annotation = iv.getMethodAnnotation(SimpleAnnotation.class);
-
-        assertNotNull(annotation);
-        assertEquals(annotation.value(), "test");
     }
 }

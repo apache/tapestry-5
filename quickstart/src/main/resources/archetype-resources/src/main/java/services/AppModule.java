@@ -51,14 +51,6 @@ public class AppModule
         // header. If existing assets are changed, the version number should also
         // change, to force the browser to download new versions.
         configuration.add(SymbolConstants.APPLICATION_VERSION, "${version}");
-
-        // This is desirable in development, but again, is usually turned off
-        // by the time the application gets to production. The Blackbird console
-        // is very functionaly, but may be intimidating to users (who should not see
-        // it unless there are Ajax-oriented programming bugs). Regardless, when disabled
-        // a simple floating, fading message is displayed at the top of the page.
-
-        configuration.add(SymbolConstants.BLACKBIRD_ENABLED, "true"); 
     }
     
 

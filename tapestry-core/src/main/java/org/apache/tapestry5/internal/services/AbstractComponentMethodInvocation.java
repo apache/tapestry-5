@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.lang.annotation.Annotation;
-
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ComponentMethodAdvice;
@@ -146,10 +144,5 @@ public abstract class AbstractComponentMethodInvocation implements ComponentMeth
 
         result = newResult;
         thrown = null;
-    }
-    
-    public <T extends Annotation> T getMethodAnnotation(Class<T> annotationClass) 
-    {
-    	return info.getAnnotation(annotationClass);
     }
 }

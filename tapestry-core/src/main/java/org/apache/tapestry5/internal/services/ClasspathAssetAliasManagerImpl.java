@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -110,9 +110,25 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
         // is too useful to pass up.
 
         throw new UnknownValueException(
-                String.format(
-                        "Unable to create a client URL for classpath resource %s: The resource path was not within an aliased path.",
-                        resourcePath), new AvailableValues("Aliased paths", aliasToPathPrefix.values()));
+                String
+                        .format(
+                                "Unable to create a client URL for classpath resource %s: The resource path was not within an aliased path.",
+                                resourcePath), new AvailableValues("Aliased paths", aliasToPathPrefix.values()));
+    }
+
+    public String toResourcePath(String clientURL)
+    {
+        // Include the slash in the base path
+
+        String basePath = clientURL.substring(RequestConstants.ASSET_PATH_PREFIX.length());
+
+        for (String alias : sortedAliases)
+        {
+            if (basePath.startsWith(alias)) { return aliasToPathPrefix.get(alias) + "/"
+                    + basePath.substring(alias.length() + 1); }
+        }
+
+        return basePath;
     }
 
     public Map<String, String> getMappings()

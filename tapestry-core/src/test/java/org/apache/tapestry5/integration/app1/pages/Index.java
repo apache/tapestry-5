@@ -151,13 +151,11 @@ public class Index
 
                     new Item("EmptyLoopDemo", "Empty Loop Demo", "Use of empty parameter with the Loop component."),
 
-                    new Item("GenericLoopDemo", "Generic Loop Demo", "Use of generic parameters with the Loop component."),
-
                     new Item("BlankPasswordDemo", "Blank Password Demo",
                             "Show that a blank value in a PasswordField does not update the server side value."),
 
                     new Item("GridFormEncoderDemo", "Grid Form Encoder Demo",
-                            "Grid inside a Form using the ValueEncoder option"),
+                            "Grid inside a Form using the PrimaryKeyEncoder option"),
 
                     new Item("DateFieldAjaxFormLoop", "DateField inside AjaxFormLoop",
                             "Show that DateField component works correctly inside AjaxFormLoop"),
@@ -358,8 +356,6 @@ public class Index
                             "Actions can exist on pages other than the active page, via Blocks."),
 
                     new Item("unlessdemo", "Unless Demo", "use of the Unless component"),
-                    
-                    new Item("delegateinline", "Inline Delegate", "Using the delegate component to create inline components"),
 
                     new Item("MagicValueEncoder", "Magic ValueEncoder Demo",
                             "Automatic creation of ValueEncoder using the TypeCoercer"),
@@ -465,9 +461,7 @@ public class Index
                     new Item("DecorateComponentEventLinkDemo", "Decorate Component Event Link Demo",
                             "Decorating event links"),
 
-                    new Item("ValidatorMacroDemo", "Validator Macro Demo", "Using validator macros"),
-
-                    new Item("AtInjectDemo", "@javax.inject.Inject Demo", "Using @javax.inject.Inject for injection")
+                    new Item("ValidatorMacroDemo", "Validator Macro Demo", "Using validator macros")
 
             );
 

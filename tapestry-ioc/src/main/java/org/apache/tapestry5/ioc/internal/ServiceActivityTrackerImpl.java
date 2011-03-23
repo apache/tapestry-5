@@ -22,11 +22,7 @@ import org.apache.tapestry5.ioc.services.Status;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
-import org.apache.tapestry5.ioc.ScopeConstants;
-import org.apache.tapestry5.ioc.services.PerThreadValue;
-import org.apache.tapestry5.ioc.services.PerthreadManager;
 
 public class ServiceActivityTrackerImpl implements ServiceActivityScoreboard,
         ServiceActivityTracker
@@ -37,19 +33,10 @@ public class ServiceActivityTrackerImpl implements ServiceActivityScoreboard,
 
         private Status status;
 
-        private final PerThreadValue<Status> perThreadStatus;
-
-        public MutableServiceActivity(ServiceDef serviceDef, PerthreadManager perthreadManager, Status status)
+        public MutableServiceActivity(ServiceDef serviceDef, Status status)
         {
             this.serviceDef = serviceDef;
-            if (serviceDef.getServiceScope().equals(ScopeConstants.PERTHREAD)) {
-                perThreadStatus = perthreadManager.createValue();
-                perThreadStatus.set(status);
-                this.status = status; // this is now the default status
-            } else {
-                perThreadStatus = null;
-                this.status = status;
-            }
+            this.status = status;
         }
 
         public String getServiceId()
@@ -67,33 +54,17 @@ public class ServiceActivityTrackerImpl implements ServiceActivityScoreboard,
             return serviceDef.getServiceScope();
         }
 
-        public Set<Class> getMarkers()
-        {
-            return serviceDef.getMarkers();
-        }
-
         // Mutable properties must be synchronized
 
         public synchronized Status getStatus()
         {
-            if (perThreadStatus != null) {
-                if (!perThreadStatus.exists()) perThreadStatus.set(status);
-                return perThreadStatus.get();
-            }
-            else return status;
+            return status;
         }
 
         synchronized void setStatus(Status status)
         {
-            if (perThreadStatus != null) perThreadStatus.set(status);
-            else this.status = status;
+            this.status = status;
         }
-    }
-
-    private final PerthreadManager perthreadManager;
-
-    public ServiceActivityTrackerImpl(PerthreadManager perthreadManager) {
-        this.perthreadManager = perthreadManager;
     }
 
     /**
@@ -130,7 +101,7 @@ public class ServiceActivityTrackerImpl implements ServiceActivityScoreboard,
     public synchronized void define(ServiceDef serviceDef, Status initialStatus)
     {
         serviceIdToServiceStatus.put(serviceDef.getServiceId(), new MutableServiceActivity(
-                serviceDef, perthreadManager, initialStatus));
+                serviceDef, initialStatus));
     }
 
     public synchronized void setStatus(String serviceId, Status status)

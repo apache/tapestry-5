@@ -85,9 +85,7 @@ of testing facilities designed for use with TestNG (http://testng.org/), so it's
                 <artifactId>tapestry-component-report</artifactId>
                 <version>${D}{tapestry-release-version}</version>
                 <configuration>
-                    <rootPackages>
-                    	<rootPackage>${package}</rootPackage>
-                    </rootPackages>
+                    <rootPackage>${package}</rootPackage>
                 </configuration>
             </plugin>
         </plugins>
@@ -114,6 +112,6 @@ of a Tapestry Maven plugin is not required.   -->
     </pluginRepositories>
 
     <properties>
-        <tapestry-release-version>5.3.0-SNAPSHOT</tapestry-release-version>
+        <tapestry-release-version>5.2.5</tapestry-release-version>
     </properties>
 </project>

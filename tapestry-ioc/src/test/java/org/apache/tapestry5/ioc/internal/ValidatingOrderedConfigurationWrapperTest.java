@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-// http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,36 +23,31 @@ import org.testng.annotations.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-@SuppressWarnings(
-{ "rawtypes", "unchecked" })
 public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCase
 {
     @Test
     public void valid_type_long_form()
     {
         Runnable contribution = mockRunnable();
-        Runnable coerced = mockRunnable();
         Runnable pre = mockRunnable();
         Runnable post = mockRunnable();
         Logger logger = mockLogger();
         Orderer<Runnable> orderer = new Orderer<Runnable>(logger);
-        TypeCoercerProxy tc = mockTypeCoercerProxy();
 
-        expect(tc.coerce(contribution, Runnable.class)).andReturn(coerced);
 
         orderer.add("pre", pre);
         orderer.add("post", post);
 
         replay();
 
-        OrderedConfiguration<Runnable> wrapper = new ValidatingOrderedConfigurationWrapper<Runnable>(Runnable.class,
-                null, tc, orderer, null, null, "Service");
+        OrderedConfiguration<Runnable> wrapper = new ValidatingOrderedConfigurationWrapper<Runnable>(
+                Runnable.class, null, orderer, null, null, "Service");
 
         wrapper.add("id", contribution, "after:pre", "before:post");
 
         verify();
 
-        assertListsEquals(orderer.getOrdered(), pre, coerced, post);
+        assertListsEquals(orderer.getOrdered(), pre, contribution, post);
     }
 
     @Test
@@ -64,19 +59,16 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
         Map post = new HashMap();
         HashMap contribution = new HashMap();
         ObjectLocator locator = mockObjectLocator();
-        TypeCoercerProxy tc = mockTypeCoercerProxy();
 
         train_autobuild(locator, HashMap.class, contribution);
-
-        expect(tc.coerce(contribution, Map.class)).andReturn(contribution);
 
         orderer.add("pre", pre);
         orderer.add("post", post);
 
         replay();
 
-        OrderedConfiguration<Map> wrapper = new ValidatingOrderedConfigurationWrapper<Map>(Map.class, locator, tc,
-                orderer, null, null, "Service");
+        OrderedConfiguration<Map> wrapper = new ValidatingOrderedConfigurationWrapper<Map>(
+                Map.class, locator, orderer, null, null, "Service");
 
         wrapper.addInstance("id", HashMap.class, "after:pre", "before:post");
 
@@ -93,8 +85,8 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
 
         replay();
 
-        OrderedConfiguration<Runnable> wrapper = new ValidatingOrderedConfigurationWrapper<Runnable>(Runnable.class,
-                null, null, orderer, null, null, "Service");
+        OrderedConfiguration<Runnable> wrapper = new ValidatingOrderedConfigurationWrapper<Runnable>(
+                Runnable.class, null, orderer, null, null, "Service");
 
         wrapper.add("id", null);
 
@@ -103,4 +95,29 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
         assertTrue(orderer.getOrdered().isEmpty());
     }
 
+    @SuppressWarnings("unchecked")
+    @Test
+    public void incorrect_contribution_type_is_passed_through_as_null()
+    {
+        Logger logger = mockLogger();
+        Orderer<Runnable> orderer = new Orderer<Runnable>(logger);
+
+        replay();
+
+        OrderedConfiguration wrapper = new ValidatingOrderedConfigurationWrapper(Runnable.class, null, orderer, null,
+                                                                                 null, "Service");
+
+        try
+        {
+            wrapper.add("id", "string");
+            unreachable();
+        }
+        catch (IllegalArgumentException ex)
+        {
+            assertEquals(ex.getMessage(),
+                         "Service contribution (to service 'Service') was an instance of java.lang.String, which is not assignable to the configuration type java.lang.Runnable.");
+        }
+
+        verify();
+    }
 }

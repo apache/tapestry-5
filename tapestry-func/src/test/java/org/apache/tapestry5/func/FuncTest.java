@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,8 +35,7 @@ public class FuncTest extends BaseFuncTest
     @Test
     public void combine_mappers()
     {
-        List<Boolean> even = F.flow("Mary", "had", "a", "little", "lamb").map(F.combine(stringToLength, toEven))
-                .toList();
+        List<Boolean> even = F.flow("Mary", "had", "a", "little", "lamb").map(stringToLength.combine(toEven)).toList();
 
         assertListsEquals(even, true, false, false, true, true);
     }
@@ -152,7 +151,7 @@ public class FuncTest extends BaseFuncTest
             }
         };
 
-        F.flow("Mary", "had", "a", "little", "lamb").each(F.combine(appendWorker, appendLength));
+        F.flow("Mary", "had", "a", "little", "lamb").each(appendWorker.combine(appendLength));
 
         assertEquals(buffer.toString(), "Mary(4) had(3) a(1) little(6) lamb(4)");
     }
@@ -206,29 +205,9 @@ public class FuncTest extends BaseFuncTest
     {
         List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
 
-        List<Integer> output = F.flow(input).filter(F.and(F.gt(2), F.lt(5))).toList();
+        List<Integer> output = F.flow(input).filter(evenp.and(F.gt(3))).toList();
 
-        assertListsEquals(output, 3, 4);
-    }
-
-    @Test
-    public void combine_predicate_with_or()
-    {
-        List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
-
-        List<Integer> output = F.flow(input).filter(F.or(F.lt(3), F.gt(5))).toList();
-
-        assertListsEquals(output, 1, 2, 6, 7);
-    }
-
-    @Test
-    public void eql_predicate()
-    {
-        List<Integer> input = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
-
-        List<Integer> output = F.flow(input).filter(F.eql(4)).toList();
-
-        assertListsEquals(output, 4);
+        assertListsEquals(output, 4, 6);
     }
 
     @Test
@@ -246,7 +225,7 @@ public class FuncTest extends BaseFuncTest
     @Test
     public void select_and_filter()
     {
-        Predicate<String> combinedp = F.toPredicate(F.combine(stringToLength, toEven));
+        Predicate<String> combinedp = F.toPredicate(stringToLength.combine(toEven));
 
         Mapper<String, String> identity = F.identity();
         Predicate<String> isNull = F.isNull();
@@ -567,7 +546,7 @@ public class FuncTest extends BaseFuncTest
         Flow<String> flow = F.flow("Mary", "had", "a", "little", "lamb");
 
         assertEquals(flow.filter(F.isNull()).count(), 0);
-        assertEquals(flow.removeNulls().count(), 5);
+        assertEquals(flow.filter(F.notNull()).count(), 5);
     }
 
     @Test

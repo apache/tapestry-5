@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -209,7 +209,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
     {
         Document document = new Document(new XMLMarkupModel());
 
-        document.newRootElement("html").element("head").comment(" existing head ").getContainer().element("body").text(
+        document.newRootElement("html").element("head").comment(" existing head ").getParent().element("body").text(
                 "body content");
 
         DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);

@@ -43,9 +43,7 @@ public class RequestImpl implements Request
 
     private boolean encodingSet;
 
-    HttpSession hsession;
-
-    Session session;
+    private Session session;
 
     public RequestImpl(HttpServletRequest request, String requestEncoding, SessionPersistedObjectAnalyzer analyzer)
     {
@@ -105,28 +103,18 @@ public class RequestImpl implements Request
 
     public Session getSession(boolean create)
     {
-        if (session != null)
-        {
-            // The easy case is when the session was invalidated through the Tapestry Session
-            // object. The hard case is when the HttpSession was invalidated outside of Tapestry,
-            // in which case, request.getSession() will return a new HttpSession instance (or null)
-
-            if (session.isInvalidated() || hsession != request.getSession(false))
-            {
-                session = null;
-                hsession = null;
-            }
-        }
-
         if (session == null)
         {
-            hsession = request.getSession(create);
+            HttpSession hsession = request.getSession(create);
 
             if (hsession != null)
             {
                 session = new SessionImpl(hsession, analyzer);
             }
         }
+
+        if (!create && session != null && session.isInvalidated())
+            return null;
 
         return session;
     }

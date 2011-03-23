@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-// http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc.internal;
 
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.tapestry5.ioc.MappedConfiguration;
@@ -24,8 +25,6 @@ import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.testng.annotations.Test;
 
-@SuppressWarnings(
-{ "rawtypes", "unchecked" })
 public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCase
 {
     private static final String SERVICE_ID = "Baz";
@@ -37,47 +36,16 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         Map<Class, ContributionDef> keyToContribution = newMap();
         ObjectLocator locator = mockObjectLocator();
         Map<Class, Runnable> map = CollectionFactory.newMap();
-        TypeCoercerProxy tc = mockTypeCoercerProxy();
 
         Class key = Integer.class;
         Runnable value = mockRunnable();
-
-        expect(tc.coerce(value, Runnable.class)).andReturn(value);
 
         replay();
 
         MappedConfiguration<Class, Runnable> wrapper = new ValidatingMappedConfigurationWrapper<Class, Runnable>(
-                Runnable.class, locator, tc, map, null, SERVICE_ID, def, Class.class, keyToContribution);
+                Runnable.class, locator, map, null, SERVICE_ID, def, Class.class, keyToContribution);
 
         wrapper.add(key, value);
-
-        verify();
-
-        assertSame(map.get(key), value);
-        assertSame(keyToContribution.get(Integer.class), def);
-    }
-
-    @Test
-    public void coerced_value()
-    {
-        ContributionDef def = mockContributionDef();
-        Map<Class, ContributionDef> keyToContribution = newMap();
-        ObjectLocator locator = mockObjectLocator();
-        Map<Class, Runnable> map = CollectionFactory.newMap();
-        TypeCoercerProxy tc = mockTypeCoercerProxy();
-        String contributedValue = "coerceme";
-
-        Class key = Integer.class;
-        Runnable value = mockRunnable();
-
-        expect(tc.coerce(contributedValue, Runnable.class)).andReturn(value);
-
-        replay();
-
-        MappedConfiguration<Class, Object> wrapper = new ValidatingMappedConfigurationWrapper(Runnable.class, locator,
-                tc, map, null, SERVICE_ID, def, Class.class, keyToContribution);
-
-        wrapper.add(key, contributedValue);
 
         verify();
 
@@ -93,19 +61,16 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         Map<Class, ContributionDef> keyToContribution = newMap();
         ObjectLocator locator = mockObjectLocator();
         Map<Class, Runnable> map = CollectionFactory.newMap();
-        TypeCoercerProxy tc = mockTypeCoercerProxy();
 
         keyToContribution.put(Integer.class, def1);
 
         Class key = Integer.class;
         Runnable value = mockRunnable();
 
-        expect(tc.coerce(value, Runnable.class)).andReturn(value);
-
         replay();
 
         MappedConfiguration<Class, Runnable> wrapper = new ValidatingMappedConfigurationWrapper<Class, Runnable>(
-                Runnable.class, locator, tc, map, null, SERVICE_ID, def2, Class.class, keyToContribution);
+                Runnable.class, locator, map, null, SERVICE_ID, def2, Class.class, keyToContribution);
 
         try
         {
@@ -114,7 +79,8 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         }
         catch (IllegalArgumentException ex)
         {
-            assertMessageContains(ex, "Service contribution (to service 'Baz') conflicts with existing contribution");
+            assertMessageContains(ex,
+                                  "Service contribution (to service 'Baz') conflicts with existing contribution");
         }
 
         verify();
@@ -135,7 +101,7 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         replay();
 
         MappedConfiguration<Class, Runnable> wrapper = new ValidatingMappedConfigurationWrapper<Class, Runnable>(
-                Runnable.class, locator, null, map, null, SERVICE_ID, def, Class.class, keyToContribution);
+                Runnable.class, locator, map, null, SERVICE_ID, def, Class.class, keyToContribution);
 
         try
         {
@@ -164,8 +130,9 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
 
         replay();
 
-        MappedConfiguration wrapper = new ValidatingMappedConfigurationWrapper(Runnable.class, locator, null, map,
-                null, SERVICE_ID, def, Class.class, keyToContribution);
+        MappedConfiguration wrapper = new ValidatingMappedConfigurationWrapper(Runnable.class, locator, map, null,
+                                                                               SERVICE_ID, def,
+                                                                               Class.class, keyToContribution);
 
         try
         {
@@ -174,9 +141,40 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         }
         catch (IllegalArgumentException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Key for service contribution (to service 'Baz') was an instance of java.lang.String, but the expected key type was java.lang.Class.");
+            assertEquals(ex.getMessage(),
+                         "Key for service contribution (to service 'Baz') was an instance of java.lang.String, but the expected key type was java.lang.Class.");
+        }
+
+        verify();
+
+        assertTrue(map.isEmpty());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void wrong_value_type()
+    {
+        ContributionDef def = newContributionDef("contributionPlaceholder1");
+        Map<?, ContributionDef> keyToContribution = CollectionFactory.newMap();
+        ObjectLocator locator = mockObjectLocator();
+        Map<Class, Runnable> map = CollectionFactory.newMap();
+
+
+        replay();
+
+        MappedConfiguration wrapper = new ValidatingMappedConfigurationWrapper(Runnable.class, locator, map, null,
+                                                                               SERVICE_ID, def,
+                                                                               Class.class, keyToContribution);
+
+        try
+        {
+            wrapper.add(List.class, "do something");
+            unreachable();
+        }
+        catch (IllegalArgumentException ex)
+        {
+            assertEquals(ex.getMessage(),
+                         "Service contribution (to service 'Baz') was an instance of java.lang.String, which is not assignable to the configuration type java.lang.Runnable.");
         }
 
         verify();
@@ -195,7 +193,7 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         replay();
 
         MappedConfiguration<Class, Runnable> wrapper = new ValidatingMappedConfigurationWrapper<Class, Runnable>(
-                Runnable.class, locator, null, map, null, SERVICE_ID, def, Class.class, keyToContribution);
+                Runnable.class, locator, map, null, SERVICE_ID, def, Class.class, keyToContribution);
 
         try
         {

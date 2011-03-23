@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -78,6 +78,17 @@ public class EventConstants
     public static final String SUBMIT = "submit";
 
     /**
+     * Event type for a notification to perform validation of submitted data. This allows a listener
+     * to perform
+     * cross-field validation. This occurs before the {@link #SUCCESS} or {@link #FAILURE} notification.
+     * 
+     * @see org.apache.tapestry5.corelib.components.Form
+     * @deprecated As of 5.2, this event should no longer be used; the Form component now fires a {@link #VALIDATE}
+     *             event. For compatibility, validateForm will be supported, but may be removed in a future release.
+     */
+    public static final String VALIDATE_FORM = "validateForm";
+
+    /**
      * Event type associated with clicking the cancel button inside a {@link BeanEditForm}.
      * 
      * @since 5.2.0
@@ -136,9 +147,10 @@ public class EventConstants
 
     /**
      * Event triggered by {@link org.apache.tapestry5.corelib.components.AjaxFormLoop} to inform the
-     * container that a new row has been requested. The return value from the event handler must be the newly created
+     * container that a
+     * new row has been requested. The return value from the event handler must be the newly created
      * object, which must
-     * also be visible in the {@link encoder parameter}.
+     * also be visible in the {@link org.apache.tapestry5.PrimaryKeyEncoder encoder parameter}.
      */
     public static final String ADD_ROW = "addRow";
 

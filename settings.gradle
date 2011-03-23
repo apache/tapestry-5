@@ -1,5 +1,0 @@
-include "tapestry-annotations", "tapestry-test", "tapestry-func", "tapestry-ioc", "tapestry-json", "tapestry-core"
-include "tapestry-hibernate-core", "tapestry-hibernate", "tapestry-jmx", "tapestry-upload", "tapestry-spring"
-include "tapestry-beanvalidator"
-// TODO (LATER): tapestry-component-report, quickstart
-

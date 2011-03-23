@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-// http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,23 +14,8 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.Block;
-import org.apache.tapestry5.ComponentAction;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.EventConstants;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.ValueEncoder;
-import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.BeginRender;
-import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.Events;
-import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.SetupRender;
-import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.corelib.LoopFormState;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -38,28 +23,25 @@ import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
 
+import java.io.Serializable;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * Basic looping class; loops over a number of items (provided by its source parameter), rendering its body for each
- * one. When a Loop is inside a {@link Form}, it records quite a bit of state into the Form to coordinate access
- * to the same (or equivalent) objects during the form submission as during the render. This is controlled by
- * the formState parameter (of type {@link LoopFormState}) and can be 'none' (nothing stored into the form), 'values'
- * (which stores the individual values looped over, or via a {@link ValueEncoder}, just the value's ids), and
- * 'iteration' (which just stores indexes to the values within the source parameter, which means that the source
- * parameter will be accessed during the form submission).
- * <p>
- * For a non-volatile Loop inside the form, the Loop stores a series of commands that start and end
- * {@linkplain Heartbeat heartbeats}, and stores state for each value in the source parameter (either as full objects
- * when the encoder parameter is not bound, or as client-side objects when there is an encoder). For a Loop that doesn't
- * need to be aware of the enclosing Form (if any), the formState parameter should be bound to 'none'.
+ * one. It turns out that gettting the component to <em>not</em> store its state in the Form is very tricky and, in
+ * fact, a series of commands for starting and ending heartbeats, and advancing through the iterator, are still stored.
+ * For a non-volatile Loop inside the form, the Loop stores a series of commands that start and end heartbeats and store
+ * state (either as full objects when there the encoder parameter is not bound, or as client-side objects when there is
+ * an encoder). For a Loop that doesn't need to be aware of the enclosing Form (if any), the formState parameter should
+ * be bound to 'none'.
  * <p/>
- * When the Loop is used inside a Form, it will generate an
- * {@link org.apache.tapestry5.EventConstants#SYNCHRONIZE_VALUES} event to inform its container what values were
- * submitted and in what order; this can allow the container to pre-load the values in a single batch form external
- * storage, if that is appropriate.
+ * When the Loop is used inside a Form, it will generate an {@link org.apache.tapestry5.EventConstants#SYNCHRONIZE_VALUES}
+ * event to inform its container what values were submitted and in what order.
  */
 @SupportsInformalParameters
 @Events(EventConstants.SYNCHRONIZE_VALUES)
-public class Loop<T>
+public class Loop
 {
     /**
      * Setup command for non-volatile rendering.
@@ -167,7 +149,7 @@ public class Loop<T>
     }
 
     /**
-     * Restores the value using a stored primary key via {@link ValueEncoder#toValue(String)}.
+     * Restores the value using a stored primary key via {@link PrimaryKeyEncoder#toValue(Serializable)}.
      */
     static class RestoreStateFromStoredClientValue implements ComponentAction<Loop>
     {
@@ -227,7 +209,7 @@ public class Loop<T>
      * container whose name matches the Loop cmponent's id.
      */
     @Parameter(required = true, principal = true, autoconnect = true)
-    private Iterable<T> source;
+    private Iterable<?> source;
 
     /**
      * Optional value converter; if provided (or defaulted) and inside a form and not volatile, then each iterated value
@@ -235,15 +217,27 @@ public class Loop<T>
      * the value parameter.
      */
     @Parameter
-    private ValueEncoder<T> encoder;
+    private ValueEncoder<Object> encoder;
 
     /**
-     * Controls what information, if any, is encoded into an enclosing Form. The default value
-     * is {@link org.apache.tapestry5.corelib.LoopFormState#VALUES}. This parameter
+     * If true and the Loop is enclosed by a Form, then the normal state saving logic is turned off. Defaults to false,
+     * enabling state saving logic within Forms. With the addition of the formState parameter, volatile simply sets a
+     * default for formState is formState is not specified.
+     *
+     * @deprecated in release 5.1.0.4, use the formState parameter instead.
+     */
+    @Parameter(name = "volatile", principal = true)
+    @Deprecated
+    private boolean volatileState;
+
+    /**
+     * Controls what information, if any, is encoded into an enclosing Form. The default value for this is set by the
+     * deprecated volatile parameter. The normal default is {@link org.apache.tapestry5.corelib.LoopFormState#VALUES},
+     * but changes to {@link org.apache.tapestry5.corelib.LoopFormState#ITERATION} if volatile is true. This parameter
      * is only used if the component is enclosed by a Form.
      */
     @Parameter(allowNull = false, defaultPrefix = BindingConstants.LITERAL)
-    private LoopFormState formState = LoopFormState.VALUES;
+    private LoopFormState formState;
 
     @Environmental(false)
     private FormSupport formSupport;
@@ -259,7 +253,7 @@ public class Loop<T>
      * The current value, set before the component renders its body.
      */
     @Parameter(principal = true)
-    private T value;
+    private Object value;
 
     /**
      * The index into the source items.
@@ -268,12 +262,12 @@ public class Loop<T>
     private int index;
 
     /**
-     * A Block to render instead of the loop when the source is empty. The default is to render nothing.
+     * A Block to render instead of the loop when the source is empty.  The default is to render nothing.
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private Block empty;
 
-    private Iterator<T> iterator;
+    private Iterator<?> iterator;
 
     @Environmental
     private Heartbeat heartbeat;
@@ -292,11 +286,12 @@ public class Loop<T>
      * Objects that have been recovered via {@link org.apache.tapestry5.ValueEncoder#toValue(String)} during the
      * processing of the loop. These are sent to the container via an event.
      */
-    private List<T> synchonizedValues;
+    private List<Object> synchonizedValues;
+
 
     LoopFormState defaultFormState()
     {
-        return LoopFormState.VALUES;
+        return volatileState ? LoopFormState.ITERATION : LoopFormState.VALUES;
     }
 
     String defaultElement()
@@ -318,6 +313,7 @@ public class Loop<T>
 
         boolean insideForm = formSupport != null;
 
+
         storeValuesInForm = insideForm && formState == LoopFormState.VALUES;
         storeIncrementsInForm = insideForm && formState == LoopFormState.ITERATION;
 
@@ -332,10 +328,8 @@ public class Loop<T>
 
         if (insideForm && hasContent)
         {
-            if (storeValuesInForm)
-                formSupport.store(this, RESET_INDEX);
-            if (storeIncrementsInForm)
-                formSupport.store(this, SETUP_FOR_VOLATILE);
+            if (storeValuesInForm) formSupport.store(this, RESET_INDEX);
+            if (storeIncrementsInForm) formSupport.store(this, SETUP_FOR_VOLATILE);
         }
 
         cleanupBlock = hasContent ? null : empty;
@@ -344,6 +338,7 @@ public class Loop<T>
 
         return hasContent;
     }
+
 
     /**
      * Returns the empty block, or null, after the render has finished. It will only be the empty block (which itself
@@ -417,8 +412,7 @@ public class Loop<T>
     @AfterRender
     boolean after(MarkupWriter writer)
     {
-        if (element != null)
-            writer.end();
+        if (element != null) writer.end();
 
         endHeartbeat();
 
@@ -445,7 +439,7 @@ public class Loop<T>
     /**
      * Restores state previously stored by the Loop into a Form.
      */
-    private void restoreState(T storedValue)
+    private void restoreState(Object storedValue)
     {
         value = storedValue;
 
@@ -460,7 +454,7 @@ public class Loop<T>
         // We assume that if an encoder is available when we rendered, that one will be available
         // when the form is submitted.
 
-        T restoredValue = encoder.toValue(clientValue);
+        Object restoredValue = encoder.toValue(clientValue);
 
         restoreState(restoredValue);
 
@@ -481,17 +475,17 @@ public class Loop<T>
 
     // For testing:
 
-    public int getIndex()
+    int getIndex()
     {
         return index;
     }
 
-    public T getValue()
+    Object getValue()
     {
         return value;
     }
 
-    void setSource(Iterable<T> source)
+    void setSource(Iterable<?> source)
     {
         this.source = source;
     }

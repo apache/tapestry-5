@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -124,4 +124,26 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
         { "org/apache/tapestry5/Foo.bar", "tapestry/Foo.bar" }, };
     }
 
+    @Test(dataProvider = "to_resource_path_data")
+    public void to_resource_path(String clientURL, String expectedResourcePath)
+    {
+        ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(null, configuration());
+
+        assertEquals(manager.toResourcePath(clientURL), expectedResourcePath);
+    }
+
+    @DataProvider
+    public Object[][] to_resource_path_data()
+    {
+        Object[][] data = to_client_url_data();
+
+        for (Object[] pair : data)
+        {
+            Object buffer = pair[0];
+            pair[0] = RequestConstants.ASSET_PATH_PREFIX + pair[1];
+            pair[1] = buffer;
+        }
+
+        return data;
+    }
 }

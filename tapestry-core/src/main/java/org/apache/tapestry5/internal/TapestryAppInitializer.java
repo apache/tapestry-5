@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-// http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -38,7 +38,6 @@ import java.util.List;
  * The application module is identified as <em>package</em>.services.<em>appName</em>Module, where
  * <em>package</em> and the <em>appName</em> are specified by the caller.
  */
-@SuppressWarnings("rawtypes")
 public class TapestryAppInitializer
 {
     private final Logger logger;
@@ -47,43 +46,31 @@ public class TapestryAppInitializer
 
     private final String appName;
 
+    private final String aliasMode;
+
     private final long startTime;
 
     private final RegistryBuilder builder = new RegistryBuilder();
 
     private long registryCreatedTime;
-
     private Registry registry;
 
     /**
      * @param logger
      *            logger for output confirmation
-     * @param appPackage
-     *            root package name to search for pages and components
+     * @param appProvider
+     *            provides symbols for the application (normally, from the ServletContext init
+     *            parameters)
      * @param appName
      *            the name of the application (i.e., the name of the application servlet)
      * @param aliasMode
-     *            ignored (was used in 5.2)
-     * @deprecated Use {@link #TapestryAppInitializer(Logger,String,String)} instead. To be removed
-     *             in 5.4.
+     *            the mode, used by the {@link org.apache.tapestry5.services.Alias} service,
+     *            normally "servlet"
      */
     public TapestryAppInitializer(Logger logger, String appPackage, String appName, String aliasMode)
     {
-        this(logger, appPackage, appName);
-    }
-
-    /**
-     * @param logger
-     *            logger for output confirmation
-     * @param appPackage
-     *            root package name to search for pages and components
-     * @param appName
-     *            the name of the application (i.e., the name of the application servlet)
-     */
-    public TapestryAppInitializer(Logger logger, String appPackage, String appName)
-    {
-        this(logger, new SingleKeySymbolProvider(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, appPackage), appName,
-                null);
+        this(logger, new SingleKeySymbolProvider(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM,
+                appPackage), appName, aliasMode, null);
     }
 
     /**
@@ -95,19 +82,16 @@ public class TapestryAppInitializer
      * @param appName
      *            the name of the application (i.e., the name of the application servlet)
      * @param aliasMode
-     *            ignored (was used in 5.2 and earlier)
-     * @param executionModes
-     *            an optional, comma-separated list of execution modes, each of which is used
-     *            to find a list of additional module classes to load (key
-     *            <code>tapestry.<em>name</em>-modules</code> in appProvider, i.e., the servlet
-     *            context)
-     * @deprecated Use {@link #TapestryAppInitializer(Logger,SymbolProvider,String,String)} instead.
-     *             To be removed in 5.4.
+     *            the mode, used by the {@link org.apache.tapestry5.services.Alias} service,
+     *            normally "servlet"
+     * @deprecated Use
+     *             {@link #TapestryAppInitializer(Logger, SymbolProvider, String, String, String)}
+     *             instead
      */
-    public TapestryAppInitializer(Logger logger, SymbolProvider appProvider, String appName, String aliasMode,
-            String executionModes)
+    public TapestryAppInitializer(Logger logger, SymbolProvider appProvider, String appName,
+            String aliasMode)
     {
-        this(logger, appProvider, appName, executionModes);
+        this(logger, appProvider, appName, aliasMode, null);
     }
 
     /**
@@ -118,24 +102,31 @@ public class TapestryAppInitializer
      *            parameters)
      * @param appName
      *            the name of the application (i.e., the name of the application servlet)
+     * @param aliasMode
+     *            the mode, used by the {@link org.apache.tapestry5.services.Alias} service,
+     *            normally "servlet"
      * @param executionModes
-     *            an optional, comma-separated list of execution modes, each of which is used
+     *            an optional, comma-seperated list of execution modes, each of which is used
      *            to find a list of additional module classes to load (key
      *            <code>tapestry.<em>name</em>-modules</code> in appProvider, i.e., the servlet
      *            context)
      */
-    public TapestryAppInitializer(Logger logger, SymbolProvider appProvider, String appName, String executionModes)
+    public TapestryAppInitializer(Logger logger, SymbolProvider appProvider, String appName,
+            String aliasMode, String executionModes)
     {
         this.logger = logger;
         this.appProvider = appProvider;
 
-        String appPackage = appProvider.valueForSymbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM);
+        String appPackage = appProvider
+                .valueForSymbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM);
 
         this.appName = appName;
+        this.aliasMode = aliasMode;
 
         startTime = System.currentTimeMillis();
 
-        if (!Boolean.parseBoolean(appProvider.valueForSymbol(InternalConstants.DISABLE_DEFAULT_MODULES_PARAM)))
+        if (!Boolean.parseBoolean(appProvider
+                .valueForSymbol(InternalConstants.DISABLE_DEFAULT_MODULES_PARAM)))
         {
             IOCUtilities.addDefaultModules(builder);
         }
@@ -144,13 +135,13 @@ public class TapestryAppInitializer
 
         addModules(TapestryModule.class);
 
-        String className = appPackage + ".services." + InternalUtils.capitalize(this.appName) + "Module";
+        String className = appPackage + ".services." + InternalUtils.capitalize(this.appName)
+                + "Module";
 
         try
         {
             // This class is possibly loaded by a parent class loader of the application class
-            // loader. The context class loader should have the appropriate view to the module
-            // class,
+            // loader. The context class loader should have the appropriate view to the module class,
             // if any.
 
             Class moduleClass = Thread.currentThread().getContextClassLoader().loadClass(className);
@@ -198,15 +189,22 @@ public class TapestryAppInitializer
     private void addSyntheticSymbolSourceModule(String appPackage)
     {
         ContributionDef appPathContribution = new SyntheticSymbolSourceContributionDef("AppPath",
-                new SingleKeySymbolProvider(InternalSymbols.APP_PACKAGE_PATH, appPackage.replace('.', '/')));
+                new SingleKeySymbolProvider(InternalSymbols.APP_PACKAGE_PATH, appPackage.replace(
+                        '.', '/')));
 
-        ContributionDef symbolSourceContribution = new SyntheticSymbolSourceContributionDef("ServletContext",
-                appProvider, "before:ApplicationDefaults");
+        ContributionDef symbolSourceContribution = new SyntheticSymbolSourceContributionDef(
+                "ServletContext", appProvider, "before:ApplicationDefaults");
+
+        ContributionDef aliasModeContribution = new SyntheticSymbolSourceContributionDef(
+                "AliasMode", new SingleKeySymbolProvider(InternalSymbols.ALIAS_MODE, aliasMode),
+                "before:ServletContext");
 
         ContributionDef appNameContribution = new SyntheticSymbolSourceContributionDef("AppName",
-                new SingleKeySymbolProvider(InternalSymbols.APP_NAME, appName), "before:ServletContext");
+                new SingleKeySymbolProvider(InternalSymbols.APP_NAME, appName),
+                "before:ServletContext");
 
-        builder.add(new SyntheticModuleDef(symbolSourceContribution, appNameContribution, appPathContribution));
+        builder.add(new SyntheticModuleDef(symbolSourceContribution, aliasModeContribution,
+                appNameContribution, appPathContribution));
     }
 
     public Registry createRegistry()
@@ -228,8 +226,9 @@ public class TapestryAppInitializer
         Formatter f = new Formatter(buffer);
 
         f.format("Application '%s' (Tapestry version %s).\n\n"
-                + "Startup time: %,d ms to build IoC Registry, %,d ms overall.\n\n" + "Startup services status:\n",
-                appName, source.valueForSymbol(SymbolConstants.TAPESTRY_VERSION), registryCreatedTime - startTime,
+                + "Startup time: %,d ms to build IoC Registry, %,d ms overall.\n\n"
+                + "Startup services status:\n", appName, source
+                .valueForSymbol(SymbolConstants.TAPESTRY_VERSION), registryCreatedTime - startTime,
                 toFinish - startTime);
 
         int unrealized = 0;
@@ -261,8 +260,8 @@ public class TapestryAppInitializer
             f.format(formatString, activity.getServiceId(), activity.getStatus().name());
         }
 
-        f.format("\n%4.2f%% unrealized services (%d/%d)\n", 100. * unrealized / serviceActivity.size(), unrealized,
-                serviceActivity.size());
+        f.format("\n%4.2f%% unrealized services (%d/%d)\n", 100. * unrealized
+                / serviceActivity.size(), unrealized, serviceActivity.size());
 
         logger.info(buffer.toString());
     }

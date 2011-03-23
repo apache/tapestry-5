@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -74,7 +74,6 @@ import org.apache.tapestry5.ioc.services.ServiceLifecycleSource;
 import org.apache.tapestry5.ioc.services.Status;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.services.TapestryIOCModule;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.UpdateListenerHub;
@@ -148,8 +147,6 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     private final OperationTracker operationTracker;
 
-    private final TypeCoercerProxy typeCoercerProxy = new TypeCoercerProxyImpl(this);
-
     /**
      * Constructs the registry from a set of module definitions and other resources.
      * 
@@ -166,15 +163,15 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         operationTracker = new PerThreadOperationTracker(loggerSource.getLogger(Registry.class));
 
+        final ServiceActivityTrackerImpl scoreboardAndTracker = new ServiceActivityTrackerImpl();
+
+        tracker = scoreboardAndTracker;
+
         this.classFactory = classFactory;
 
         Logger logger = loggerForBuiltinService(PERTHREAD_MANAGER_SERVICE_ID);
 
         perthreadManager = new PerthreadManagerImpl(logger);
-
-        final ServiceActivityTrackerImpl scoreboardAndTracker = new ServiceActivityTrackerImpl(perthreadManager);
-
-        tracker = scoreboardAndTracker;
 
         logger = loggerForBuiltinService(REGISTRY_SHUTDOWN_HUB_SERVICE_ID);
 
@@ -280,14 +277,14 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         contributionMarkers.remove(Local.class);
 
         // Match services with the correct interface AND having as markers *all* the marker annotations
-
-        Flow<ServiceDef2> filtered = serviceDefs.filter(F.and(new Predicate<ServiceDef2>()
+        
+        Flow<ServiceDef2> filtered = serviceDefs.filter(new Predicate<ServiceDef2>()
         {
             public boolean accept(ServiceDef2 object)
             {
                 return object.getServiceInterface().equals(cd.getServiceInterface());
             }
-        }, new Predicate<ServiceDef2>()
+        }.and(new Predicate<ServiceDef2>()
         {
             public boolean accept(ServiceDef2 serviceDef)
             {
@@ -569,7 +566,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         for (final ContributionDef def : contributions)
         {
             final MappedConfiguration<K, V> validating = new ValidatingMappedConfigurationWrapper<K, V>(valueType,
-                    resources, typeCoercerProxy, map, overrides, serviceId, def, keyClass, keyToContribution);
+                    resources, map, overrides, serviceId, def, keyClass, keyToContribution);
 
             String description = IOCMessages.invokingMethod(def);
 
@@ -603,8 +600,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         for (final ContributionDef def : contributions)
         {
-            final Configuration<T> validating = new ValidatingConfigurationWrapper<T>(valueType, resources,
-                    typeCoercerProxy, collection, serviceId);
+            final Configuration<T> validating = new ValidatingConfigurationWrapper<T>(valueType, resources, collection,
+                    serviceId);
 
             String description = IOCMessages.invokingMethod(def);
 
@@ -639,7 +636,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         for (final ContributionDef def : contributions)
         {
             final OrderedConfiguration<T> validating = new ValidatingOrderedConfigurationWrapper<T>(valueType,
-                    resources, typeCoercerProxy, orderer, overrides, def, serviceId);
+                    resources, orderer, overrides, def, serviceId);
 
             String description = IOCMessages.invokingMethod(def);
 
@@ -1004,7 +1001,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     {
         assert interfaceClass != null;
         assert implementationClass != null;
-
+        
         if (InternalUtils.SERVICE_CLASS_RELOADING_ENABLED && InternalUtils.isLocalFile(implementationClass))
             return createReloadingProxy(interfaceClass, implementationClass, locator);
 
@@ -1101,4 +1098,5 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     {
         return markerToServiceDef.keySet();
     }
+
 }

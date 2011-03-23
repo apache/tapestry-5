@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,58 +14,25 @@
 
 package org.apache.tapestry5.internal.pageload;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.bindings.LiteralBinding;
-import org.apache.tapestry5.internal.parser.AttributeToken;
-import org.apache.tapestry5.internal.parser.BlockToken;
-import org.apache.tapestry5.internal.parser.CDATAToken;
-import org.apache.tapestry5.internal.parser.CommentToken;
-import org.apache.tapestry5.internal.parser.ComponentTemplate;
-import org.apache.tapestry5.internal.parser.DTDToken;
-import org.apache.tapestry5.internal.parser.DefineNamespacePrefixToken;
-import org.apache.tapestry5.internal.parser.ExpansionToken;
-import org.apache.tapestry5.internal.parser.ExtensionPointToken;
-import org.apache.tapestry5.internal.parser.ParameterToken;
-import org.apache.tapestry5.internal.parser.StartComponentToken;
-import org.apache.tapestry5.internal.parser.StartElementToken;
-import org.apache.tapestry5.internal.parser.TemplateToken;
-import org.apache.tapestry5.internal.parser.TextToken;
-import org.apache.tapestry5.internal.parser.TokenType;
-import org.apache.tapestry5.internal.services.ComponentInstantiatorSource;
-import org.apache.tapestry5.internal.services.ComponentTemplateSource;
-import org.apache.tapestry5.internal.services.Instantiator;
-import org.apache.tapestry5.internal.services.PageElementFactory;
-import org.apache.tapestry5.internal.services.PageLoader;
-import org.apache.tapestry5.internal.services.PersistentFieldManager;
-import org.apache.tapestry5.internal.services.StringInterner;
-import org.apache.tapestry5.internal.structure.BlockImpl;
-import org.apache.tapestry5.internal.structure.CommentPageElement;
-import org.apache.tapestry5.internal.structure.ComponentPageElement;
-import org.apache.tapestry5.internal.structure.ComponentPageElementResources;
-import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSource;
-import org.apache.tapestry5.internal.structure.DTDPageElement;
-import org.apache.tapestry5.internal.structure.Page;
-import org.apache.tapestry5.internal.structure.PageImpl;
-import org.apache.tapestry5.internal.structure.StartElementPageElement;
-import org.apache.tapestry5.internal.structure.TextPageElement;
+import org.apache.tapestry5.internal.parser.*;
+import org.apache.tapestry5.internal.services.*;
+import org.apache.tapestry5.internal.structure.*;
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
-import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.util.Stack;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
@@ -73,12 +40,16 @@ import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.InvalidationListener;
-import org.apache.tapestry5.services.Request;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * There's still a lot of room to beef up {@link org.apache.tapestry5.internal.pageload.ComponentAssembler} and
  * {@link org.apache.tapestry5.internal.pageload.EmbeddedComponentAssembler} to perform more static analysis, but
- * that may no longer be necessary, given the switch to shared (non-pooled) pages in 5.2.
+ * that may no longer be necessary, given Tapestry 5.2's default use of non-pooled pages.
  * <p/>
  * Loading a page involves a recursive process of creating
  * {@link org.apache.tapestry5.internal.pageload.ComponentAssembler}s: for the root component, then down the tree for
@@ -169,15 +140,14 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
     private final PerthreadManager perThreadManager;
 
-    private final Request request;
-
-    private final SymbolSource symbolSource;
+    private final boolean poolingEnabled;
 
     public PageLoaderImpl(ComponentInstantiatorSource instantiatorSource, ComponentTemplateSource templateSource,
             PageElementFactory elementFactory, ComponentPageElementResourcesSource resourcesSource,
             ComponentClassResolver componentClassResolver, PersistentFieldManager persistentFieldManager,
-            StringInterner interner, OperationTracker tracker, PerthreadManager perThreadManager, Request request,
-            SymbolSource symbolSource)
+            StringInterner interner, OperationTracker tracker, PerthreadManager perThreadManager,
+            @Symbol(SymbolConstants.PAGE_POOL_ENABLED)
+            boolean poolingEnabled)
     {
         this.instantiatorSource = instantiatorSource;
         this.templateSource = templateSource;
@@ -188,8 +158,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         this.interner = interner;
         this.tracker = tracker;
         this.perThreadManager = perThreadManager;
-        this.request = request;
-        this.symbolSource = symbolSource;
+        this.poolingEnabled = poolingEnabled;
     }
 
     public void objectWasInvalidated()
@@ -205,7 +174,8 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         {
             public Page invoke()
             {
-                Page page = new PageImpl(logicalPageName, locale, persistentFieldManager, perThreadManager);
+                Page page = new PageImpl(logicalPageName, locale, persistentFieldManager, perThreadManager,
+                        poolingEnabled);
 
                 ComponentAssembler assembler = getAssembler(pageClassName, locale);
 
@@ -258,7 +228,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
                 ComponentPageElementResources resources = resourcesSource.get(locale);
 
                 ComponentAssembler assembler = new ComponentAssemblerImpl(PageLoaderImpl.this, instantiatorSource,
-                        componentClassResolver, instantiator, resources, locale, tracker, request, symbolSource);
+                        componentClassResolver, instantiator, resources, locale, tracker);
 
                 // "Program" the assembler by adding actions to it. The actions interact with a
                 // PageAssembly object (a fresh one for each new page being created).

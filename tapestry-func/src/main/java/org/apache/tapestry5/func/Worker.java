@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,10 +20,32 @@ package org.apache.tapestry5.func;
  * @since 5.2.0
  * @see Flow#each(Worker)
  */
-public interface Worker<T>
+public abstract class Worker<T>
 {
     /**
      * Perform the operation on some object of type T.
      */
-    void work(T value);
+    public abstract void work(T value);
+
+    /**
+     * Combines this worker with the other worker, forming a new composite worker. In the composite,
+     * the value from the Flow is passed first to this worker, then to the other worker.
+     */
+    public Worker<T> combine(final Worker<? super T> other)
+    {
+        assert other != null;
+
+        final Worker<T> first = this;
+
+        return new Worker<T>()
+        {
+            public void work(T value)
+            {
+                first.work(value);
+                other.work(value);
+            }
+
+        };
+    }
+
 }

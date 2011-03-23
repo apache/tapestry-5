@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,22 +17,28 @@ package org.apache.tapestry5.internal;
 public class InternalSymbols
 {
     /**
-     * The name of the application (i.e., the name of the application filter). Used, for example, to
-     * select additional resources related to the application.
+     * The application mode, generally "servlet", used to select the correct contributions to the
+     * {@link org.apache.tapestry5.services.Alias} service.
+     */
+    public static final String ALIAS_MODE = "tapestry.alias-mode";
+
+    /**
+     * The name of the application (i.e., the name of the application filter). Used, for example, to select additional
+     * resources related to the application.
      */
     public static final String APP_NAME = "tapestry.app-name";
 
     /**
-     * The application package converted to a path ('.' becomes '/'). Useful for finding resources
-     * on the classpath relevant to the application.
+     * The application package converted to a path ('.' becomes '/'). Useful for finding resources on the classpath
+     * relevant to the application.
      * 
      * @since 5.1.0.0
      */
     public static final String APP_PACKAGE_PATH = "tapestry.app-package-path";
 
     /**
-     * Comma-separated list of pre-allocated Form component control names. Basically, this exists to
-     * work around name collisions on the client side.
+     * Comma-seperated list of pre-allocated Form component control names. Basically, this exists to work
+     * around name collisions on the client side.
      * 
      * @since 5.2.0
      */

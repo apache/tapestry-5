@@ -15,25 +15,12 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.Block;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.annotations.InjectContainer;
 import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.SupportsInformalParameters;
-import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.runtime.Component;
 
 /**
  * A component that does not do any rendering of its own, but will delegate to some other object that can do rendering.
  * This other object may be a component or a {@link Block} (among other things).
- * <p>
- * This component may also be used to create inline components. For each informal parameter the value will be stored as a 
- * render variable. To create an inline component, create a block
- * and use Delegate multiple times in the template to render the block passing parameters to Delegate. In the block body
- * reference the render variables using the "var:" binding prefix and the name of the parameter.
- * <p>
- * Note that the default binding prefix for parameter values is "literal".
  */
-@SupportsInformalParameters
 public class Delegate
 {
     /**
@@ -43,16 +30,8 @@ public class Delegate
     @Parameter(required = true)
     private Object to;
 
-	@Inject private ComponentResources resources;
-	@InjectContainer private Component container;
-	
-	Object beginRender()
-	{
-    	for(String name : resources.getInformalParameterNames()) {
-    		Object value = resources.getInformalParameter(name, Object.class);
-    		container.getComponentResources().storeRenderVariable(name, value);
-    	}
-    	
+    Object beginRender()
+    {
         return to;
     }
 }

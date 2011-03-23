@@ -173,36 +173,6 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         verify();
     }
-    
-    @Test
-    public void named_injected_service_method()
-    {
-        ServiceBuilderMethodFixture fixture = new ServiceBuilderMethodFixture();
-        ServiceBuilderResources resources = mockServiceBuilderResources(tracker);
-        Logger logger = mockLogger();
-
-        fixture.fie = mockFieService();
-        fixture.expectedFoe = newFoe();
-
-        trainForConstructor(resources, logger);
-
-        train_getModuleBuilder(resources, fixture);
-
-        train_getService(resources, "Foe", FoeService.class, fixture.expectedFoe);
-
-        train_isDebugEnabled(logger, false);
-
-        replay();
-
-        ObjectCreator sc = new ServiceBuilderMethodInvoker(resources, CREATOR_DESCRIPTION, findMethod(fixture,
-                "build_named_injected"));
-
-        Object actual = sc.createObject();
-
-        assertSame(actual, fixture.fie);
-
-        verify();
-    }
 
     @SuppressWarnings("unchecked")
     @Test

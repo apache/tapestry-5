@@ -1,4 +1,3 @@
-bin/
 .DS_Store
 .classpath
 .project
@@ -9,7 +8,3 @@ bin/
 target
 test-output
 temp-testng*.xml
-build/
-.gradle
-*~
-\#*

@@ -16,6 +16,7 @@ package org.apache.tapestry5.func;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.testng.annotations.Test;

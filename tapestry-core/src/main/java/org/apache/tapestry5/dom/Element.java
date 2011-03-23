@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-// http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -52,7 +52,7 @@ public final class Element extends Node
     private static final String CLASS_ATTRIBUTE = "class";
 
     /**
-     * URI of the namespace which contains the element. A quirk in XML is that the element may be in a namespace it
+     * URI of the namespace which contains the element.  A quirk in XML is that the element may be in a namespace it
      * defines itself, so resolving the namespace to a prefix must wait until render time (since the Element is created
      * before the namespaces for it are defined).
      */
@@ -92,13 +92,21 @@ public final class Element extends Node
     }
 
     /**
+     * Returns the containing element for this element. This will be null for the root element of a document.
+     *
+     * @deprecated since 5.1.0.1, use {@link Node#getContainer()} instead
+     */
+    public Element getParent()
+    {
+        return container;
+    }
+
+    /**
      * Adds an attribute to the element, but only if the attribute name does not already exist.
-     * 
-     * @param name
-     *            the name of the attribute to add
-     * @param value
-     *            the value for the attribute. A value of null is allowed, and no attribute will be added to the
-     *            element.
+     *
+     * @param name  the name of the attribute to add
+     * @param value the value for the attribute. A value of null is allowed, and no attribute will be added to the
+     *              element.
      */
     public Element attribute(String name, String value)
     {
@@ -107,14 +115,11 @@ public final class Element extends Node
 
     /**
      * Adds a namespaced attribute to the element, but only if the attribute name does not already exist.
-     * 
-     * @param namespace
-     *            the namespace to contain the attribute, or null
-     * @param name
-     *            the name of the attribute to add
-     * @param value
-     *            the value for the attribute. A value of null is allowed, and no attribute will be added to the
-     *            element.
+     *
+     * @param namespace the namespace to contain the attribute, or null
+     * @param name      the name of the attribute to add
+     * @param value     the value for the attribute. A value of null is allowed, and no attribute will be added to the
+     *                  element.
      */
     public Element attribute(String namespace, String name, String value)
     {
@@ -126,8 +131,7 @@ public final class Element extends Node
 
     private void updateAttribute(String namespace, String name, String value, boolean force)
     {
-        if (!force && value == null)
-            return;
+        if (!force && value == null) return;
 
         Attribute prior = null;
         Attribute cursor = firstAttribute;
@@ -136,8 +140,7 @@ public final class Element extends Node
         {
             if (cursor.matches(namespace, name))
             {
-                if (!force)
-                    return;
+                if (!force) return;
 
                 if (value != null)
                 {
@@ -159,19 +162,18 @@ public final class Element extends Node
             cursor = cursor.nextAttribute;
         }
 
-        // Don't add a Attribute if the value is null.
+        //  Don't add a Attribute if the value is null.
 
-        if (value == null)
-            return;
+        if (value == null) return;
 
         firstAttribute = new Attribute(this, namespace, name, value, firstAttribute);
     }
 
+
     /**
      * Convenience for invoking {@link #attribute(String, String)} multiple times.
-     * 
-     * @param namesAndValues
-     *            alternating attribute names and attribute values
+     *
+     * @param namesAndValues alternating attribute names and attribute values
      */
     public Element attributes(String... namesAndValues)
     {
@@ -190,9 +192,8 @@ public final class Element extends Node
     /**
      * Forces changes to a number of attributes. The new attributes <em>overwrite</em> previous values. Overriding an
      * attribute's value to null will remove the attribute entirely.
-     * 
-     * @param namesAndValues
-     *            alternating attribute names and attribute values
+     *
+     * @param namesAndValues alternating attribute names and attribute values
      * @return this element
      */
     public Element forceAttributes(String... namesAndValues)
@@ -204,12 +205,11 @@ public final class Element extends Node
      * Forces changes to a number of attributes in the global namespace. The new attributes <em>overwrite</em> previous
      * values. Overriding attribute's value to null will remove the attribute entirely.
      * TAP5-708: don't use element namespace for attributes
-     * 
-     * @param namespace
-     *            the namespace or null
-     * @param namesAndValues
-     *            alternating attribute name and value
+     *
+     * @param namespace the namespace or null
+     * @param namesAndValues alternating attribute name and value
      * @return this element
+     *
      */
     public Element forceAttributesNS(String namespace, String... namesAndValues)
     {
@@ -228,11 +228,9 @@ public final class Element extends Node
 
     /**
      * Creates and returns a new Element node as a child of this node.
-     * 
-     * @param name
-     *            the name of the element to create
-     * @param namesAndValues
-     *            alternating attribute names and attribute values
+     *
+     * @param name           the name of the element to create
+     * @param namesAndValues alternating attribute names and attribute values
      */
     public Element element(String name, String... namesAndValues)
     {
@@ -246,11 +244,9 @@ public final class Element extends Node
 
     /**
      * Creates and returns a new Element within a namespace as a child of this node.
-     * 
-     * @param namespace
-     *            namespace to contain the element, or null
-     * @param name
-     *            element name to create within the namespace
+     *
+     * @param namespace namespace to contain the element, or null
+     * @param name      element name to create within the namespace
      * @return the newly created element
      */
     public Element elementNS(String namespace, String name)
@@ -291,11 +287,10 @@ public final class Element extends Node
     }
 
     /**
-     * Adds and returns a new text node (the text node is returned so that {@link Text#write(String)} or [@link
-     * {@link Text#writef(String, Object[])} may be invoked .
-     * 
-     * @param text
-     *            initial text for the node
+     * Adds and returns a new text node (the text node is returned so that {@link Text#write(String)} or [@link {@link
+     * Text#writef(String, Object[])} may be invoked .
+     *
+     * @param text initial text for the node
      * @return the new Text node
      */
     public Text text(String text)
@@ -305,15 +300,15 @@ public final class Element extends Node
 
     /**
      * Adds and returns a new CDATA node.
-     * 
-     * @param content
-     *            the content to be rendered by the node
+     *
+     * @param content the content to be rendered by the node
      * @return the newly created node
      */
     public CData cdata(String content)
     {
         return newChild(new CData(this, content));
     }
+
 
     private <T extends Node> T newChild(T child)
     {
@@ -349,8 +344,7 @@ public final class Element extends Node
 
         for (String namespace : namespaces)
         {
-            if (namespace.equals(Document.XML_NAMESPACE_URI))
-                continue;
+            if (namespace.equals(Document.XML_NAMESPACE_URI)) continue;
 
             String prefix = namespaceToPrefix.get(namespace);
 
@@ -379,8 +373,12 @@ public final class Element extends Node
 
         writer.print(builder.toString());
 
-        if (hasChildren)
-            writeChildMarkup(document, writer, localNamespacePrefixToURI);
+        if (hasChildren) writeChildMarkup(document, writer, localNamespacePrefixToURI);
+
+        // Dangerous -- perhaps it should be an error for a tag of type OMIT to even have children!
+        // We'll certainly be writing out unbalanced markup in that case.
+
+        if (style == EndTagStyle.OMIT) return;
 
         if (hasChildren || style == EndTagStyle.REQUIRE)
         {
@@ -393,24 +391,21 @@ public final class Element extends Node
 
     String toPrefixedName(Map<String, String> namespaceURIToPrefix, String namespace, String name)
     {
-        if (namespace == null || namespace.equals(""))
-            return name;
+        if (namespace == null || namespace.equals("")) return name;
 
-        if (namespace.equals(Document.XML_NAMESPACE_URI))
-            return "xml:" + name;
+        if (namespace.equals(Document.XML_NAMESPACE_URI)) return "xml:" + name;
 
         String prefix = namespaceURIToPrefix.get(namespace);
 
         // This should never happen, because namespaces are automatically defined as needed.
 
         if (prefix == null)
-            throw new IllegalArgumentException(String.format("No prefix has been defined for namespace '%s'.",
-                    namespace));
+            throw new IllegalArgumentException(
+                    String.format("No prefix has been defined for namespace '%s'.", namespace));
 
         // The empty string indicates the default namespace which doesn't use a prefix.
 
-        if (prefix.equals(""))
-            return name;
+        if (prefix.equals("")) return name;
 
         return prefix + ":" + name;
     }
@@ -425,16 +420,16 @@ public final class Element extends Node
      * @return the element if found. null if not found.
      */
     public Element getElementById(final String id)
-    {
+    {   
         return getElementByAttributeValue("id", id);
     }
-
+    
     /**
      * Tries to find an element under this element (including itself) whose given attribute has a given value.
      * 
      * @since 5.2.3
-     * @param attributeName
-     *            the name of the attribute of the element being looked for
+     * 
+     * @param attributeName the name of the attribute of the element being looked for
      * @param attributeValue
      *            the value of the attribute of the element being looked for
      * @return the element if found. null if not found.
@@ -443,9 +438,11 @@ public final class Element extends Node
     {
         assert attributeName != null;
         assert attributeValue != null;
-
+        
         return getElement(new Predicate<Element>()
         {
+
+            @Override
             public boolean accept(Element e)
             {
                 String elementId = e.getAttribute(attributeName);
@@ -458,8 +455,8 @@ public final class Element extends Node
      * Tries to find an element under this element (including itself) accepted by the given predicate.
      * 
      * @since 5.2.3
-     * @param predicate
-     *            Predicate to accept the element
+     * 
+     * @param predicate Predicate to accept the element
      * @return the element if found. null if not found.
      */
     public Element getElement(Predicate<Element> predicate)
@@ -472,8 +469,7 @@ public final class Element extends Node
         {
             Element e = queue.removeFirst();
 
-            if (predicate.accept(e))
-                return e;
+            if (predicate.accept(e)) return e;
 
             for (Element child : e.childElements())
             {
@@ -486,10 +482,11 @@ public final class Element extends Node
         return null;
     }
 
+
     /**
      * Searchs for a child element with a particular name below this element. The path parameter is a slash separated
      * series of element names.
-     * 
+     *
      * @param path
      * @return
      */
@@ -502,8 +499,7 @@ public final class Element extends Node
         {
             search = search.findChildWithElementName(name);
 
-            if (search == null)
-                break;
+            if (search == null) break;
         }
 
         return search;
@@ -540,8 +536,7 @@ public final class Element extends Node
                     {
                         while (cursor != null)
                         {
-                            if (cursor instanceof Element)
-                                return;
+                            if (cursor instanceof Element) return;
 
                             cursor = cursor.nextSibling;
                         }
@@ -591,9 +586,8 @@ public final class Element extends Node
     /**
      * Adds one or more CSS class names to the "class" attribute. No check for duplicates is made. Note that CSS class
      * names are case insensitive on the client.
-     * 
-     * @param className
-     *            one or more CSS class names
+     *
+     * @param className one or more CSS class names
      * @return the element for further configuration
      */
     public Element addClassName(String... className)
@@ -602,13 +596,11 @@ public final class Element extends Node
 
         StringBuilder builder = new StringBuilder();
 
-        if (classes != null)
-            builder.append(classes);
+        if (classes != null) builder.append(classes);
 
         for (String name : className)
         {
-            if (builder.length() > 0)
-                builder.append(" ");
+            if (builder.length() > 0) builder.append(" ");
 
             builder.append(name);
         }
@@ -619,14 +611,12 @@ public final class Element extends Node
     }
 
     /**
-     * Defines a namespace for this element, mapping a URI to a prefix. This will affect how namespaced elements and
+     * Defines a namespace for this element, mapping a URI to a prefix.   This will affect how namespaced elements and
      * attributes nested within the element are rendered, and will also cause <code>xmlns:</code> attributes (to define
      * the namespace and prefix) to be rendered.
-     * 
-     * @param namespace
-     *            URI of the namespace
-     * @param namespacePrefix
-     *            prefix
+     *
+     * @param namespace       URI of the namespace
+     * @param namespacePrefix prefix
      * @return this element
      */
     public Element defineNamespace(String namespace, String namespacePrefix)
@@ -657,7 +647,7 @@ public final class Element extends Node
      */
     public void pop()
     {
-        // Have to be careful because we'll be modifying the underlying list of children
+        // Have to be careful because we'll be  modifying the underlying list of children
         // as we work, so we need a copy of the children.
 
         List<Node> childrenCopy = CollectionFactory.newList(getChildren());
@@ -672,7 +662,7 @@ public final class Element extends Node
 
     /**
      * Removes all children from this element.
-     * 
+     *
      * @return the element, for method chaining
      */
     public Element removeChildren()
@@ -687,7 +677,7 @@ public final class Element extends Node
      * Creates the URI to namespace prefix map for this element, which reflects namespace mappings from containing
      * elements. In addition, automatic namespaces are defined for any URIs that are not explicitly mapped (this occurs
      * sometimes in Ajax partial render scenarios).
-     * 
+     *
      * @return a mapping from namespace URI to namespace prefix
      */
     private Map<String, String> createNamespaceURIToPrefix(Map<String, String> containerNamespaceURIToPrefix)
@@ -695,6 +685,7 @@ public final class Element extends Node
         MapHolder holder = new MapHolder(containerNamespaceURIToPrefix);
 
         holder.putAll(namespaceToPrefix);
+
 
         // result now contains all the mappings, including this element's.
 
@@ -722,13 +713,11 @@ public final class Element extends Node
 
     private void addMappingIfNeeded(MapHolder holder, String namespace)
     {
-        if (InternalUtils.isBlank(namespace))
-            return;
+        if (InternalUtils.isBlank(namespace)) return;
 
         Map<String, String> current = holder.getResult();
 
-        if (current.containsKey(namespace))
-            return;
+        if (current.containsKey(namespace)) return;
 
         // A missing namespace.
 
@@ -779,15 +768,14 @@ public final class Element extends Node
 
     /**
      * Returns true if the element has no children, or has only text children that contain only whitespace.
-     * 
+     *
      * @since 5.1.0.0
      */
     public boolean isEmpty()
     {
         List<Node> children = getChildren();
 
-        if (children.isEmpty())
-            return true;
+        if (children.isEmpty()) return true;
 
         for (Node n : children)
         {
@@ -795,8 +783,7 @@ public final class Element extends Node
             {
                 Text t = (Text) n;
 
-                if (t.isEmpty())
-                    continue;
+                if (t.isEmpty()) continue;
             }
 
             // Not a text node, or a non-empty text node, then the element isn't empty.
@@ -809,9 +796,8 @@ public final class Element extends Node
     /**
      * Depth-first visitor traversal of this Element and its Element children. The traversal order is the same as render
      * order.
-     * 
-     * @param visitor
-     *            callback
+     *
+     * @param visitor callback
      * @since 5.1.0.0
      */
     public void visit(Visitor visitor)
@@ -830,10 +816,10 @@ public final class Element extends Node
         }
     }
 
+
     private void queueChildren(Stack<Element> queue)
     {
-        if (firstChild == null)
-            return;
+        if (firstChild == null) return;
 
         List<Element> childElements = CollectionFactory.newList();
 
@@ -881,6 +867,7 @@ public final class Element extends Node
                 cursor = cursor.nextSibling;
             }
 
+
             newChild.nextSibling = cursor.nextSibling;
             cursor.nextSibling = newChild;
         }
@@ -923,9 +910,9 @@ public final class Element extends Node
 
     /**
      * Returns an unmodifiable list of children for this element. Only {@link org.apache.tapestry5.dom.Element}s will
-     * have children. Also, note that unlike W3C DOM, attributes are not represented as
-     * {@link org.apache.tapestry5.dom.Node}s.
-     * 
+     * have children.  Also, note that unlike W3C DOM, attributes are not represented as {@link
+     * org.apache.tapestry5.dom.Node}s.
+     *
      * @return unmodifiable list of children nodes
      */
     @SuppressWarnings("unchecked")
@@ -1006,8 +993,7 @@ public final class Element extends Node
 
         while (cursor != null)
         {
-            if (node == cursor)
-                return index;
+            if (node == cursor) return index;
 
             cursor = cursor.nextSibling;
             index++;
@@ -1017,11 +1003,11 @@ public final class Element extends Node
     }
 
     /**
-     * Returns the attributes for this Element as a (often empty) collection of
-     * {@link org.apache.tapestry5.dom.Attribute}s. The order of the attributes within the collection is not specified.
+     * Returns the attributes for this Element as a (often empty) collection of {@link
+     * org.apache.tapestry5.dom.Attribute}s. The order of the attributes within the collection is not specified.
      * Modifying the collection will not affect the attributes (use {@link #forceAttributes(String[])} to change
      * existing attribute values, and {@link #attribute(String, String, String)} to add new attribute values.
-     * 
+     *
      * @return attribute collection
      */
     public Collection<Attribute> getAttributes()

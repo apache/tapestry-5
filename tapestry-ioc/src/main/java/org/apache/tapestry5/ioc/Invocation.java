@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,8 +13,6 @@
 // limitations under the License.
 
 package org.apache.tapestry5.ioc;
-
-import java.lang.annotation.Annotation;
 
 /**
  * A method invocation passed to a {@link org.apache.tapestry5.ioc.MethodAdvice}.
@@ -106,17 +104,4 @@ public interface Invocation
      * Overrides the result. Clears the thrown exception (if any).
      */
     void overrideResult(Object newResult);
-    
-    /**
-     * Returns the annotation, placed on the method being invoked, for the specified type. If
-     * such an annotation is present, else null.
-
-     * @param annotationClass the Class object corresponding to the 
-     *        annotation type
-     * @return method's annotation for the specified annotation type if
-     *     present on this element, else null
-     *     
-     * @since 5.3.0
-     */
-    <T extends Annotation> T getMethodAnnotation(Class<T> annotationClass);
 }

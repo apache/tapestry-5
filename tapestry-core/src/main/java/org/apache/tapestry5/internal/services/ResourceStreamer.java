@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2011 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,37 +14,38 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
+
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.services.assets.StreamableResource;
-import org.apache.tapestry5.services.assets.StreamableResourceSource;
-
 /**
  * Responsible for streaming the contents of a resource to the client. The {@link org.apache.tapestry5.ioc.Resource} to
- * stream is a {@link org.apache.tapestry5.ioc.internal.util.ClasspathResource} or {@link ContextResource}.
+ * stream is almost always a {@link org.apache.tapestry5.ioc.internal.util.ClasspathResource}.
+ * <p/>
+ * The service's configuration is used to map file extensions to content types. Note: this only works for simple
+ * extensions (i.e., "jpg") not for complex extensions (i.e., "tar.gz").
  * 
  * @since 5.1.0.0
  */
+@UsesMappedConfiguration(String.class)
 public interface ResourceStreamer
 {
     /**
      * Streams the content of the resource to the client (or sends
-     * an alternative response such as {@link HttpServletResponse#SC_NOT_MODIFIED}). Encapsulates logic for compression
-     * and for caching.
-     * 
-     * @see StreamableResourceSource
+     * an alternative response such as {@link HttpServletResponse#SC_NOT_MODIFIED}).
      */
     void streamResource(Resource resource) throws IOException;
 
     /**
-     * Streams a resource that has been assembled elsewhere.
+     * Analyzes the resource to determine what its content type is, possibly using the service's configuration.
      * 
      * @param resource
+     *            to analyze
+     * @return content type
      * @throws IOException
-     * @since 5.3.0
      */
-    void streamResource(StreamableResource resource) throws IOException;
+    String getContentType(Resource resource) throws IOException;
 }

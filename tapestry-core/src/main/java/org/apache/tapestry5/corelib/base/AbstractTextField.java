@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-// http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,7 +31,7 @@ import java.util.Locale;
  * Abstract class for a variety of components that render some variation of a text field. Most of the hooks for user
  * input validation are in this class.
  * <p/>
- * In particular, all subclasses support the "toclient" and "parseclient" events. These two events allow the normal
+ * In particular, all subclasses support the "toclient" and "parseclient" events.  These two events allow the normal
  * {@link Translator} (specified by the translate parameter, but often automatically derived by Tapestry) to be
  * augmented.
  * <p/>
@@ -40,11 +40,10 @@ import java.util.Locale;
  * handler method is t he current value of the value parameter.
  * <p/>
  * Likewise, on a form submit, the "parseclient" event handler method will be passed the string provided by the client,
- * and may provide a non-null value as the parsed value. Returning null allows the normal translator to operate. The
+ * and may provide a non-null value as the parsed value.  Returning null allows the normal translator to operate.  The
  * event handler may also throw {@link org.apache.tapestry5.ValidationException}.
  */
-@Events(
-{ EventConstants.TO_CLIENT, EventConstants.VALIDATE, EventConstants.PARSE_CLIENT })
+@Events({ EventConstants.TO_CLIENT, EventConstants.VALIDATE, EventConstants.PARSE_CLIENT })
 public abstract class AbstractTextField extends AbstractField
 {
     /**
@@ -53,7 +52,7 @@ public abstract class AbstractTextField extends AbstractField
      * container matching the component's id. If no such property exists, then you will see a runtime exception due to
      * the unbound value parameter.
      */
-    @Parameter(required = true, principal = true, autoconnect = true)
+    @Parameter(required = true, principal = true)
     private Object value;
 
     /**
@@ -72,9 +71,9 @@ public abstract class AbstractTextField extends AbstractField
     private FieldValidator<Object> validate;
 
     /**
-     * Provider of annotations used for some defaults. Annotation are usually provided in terms of the value parameter
+     * Provider of annotations used for some defaults.  Annotation are usually provided in terms of the value parameter
      * (i.e., from the getter and/or setter bound to the value parameter).
-     * 
+     *
      * @see org.apache.tapestry5.beaneditor.Width
      */
     @Parameter
@@ -82,7 +81,7 @@ public abstract class AbstractTextField extends AbstractField
 
     /**
      * Defines how nulls on the server side, or sent from the client side, are treated. The selected strategy may
-     * replace the nulls with some other value. The default strategy leaves nulls alone. Another built-in strategy,
+     * replace the nulls with some other value. The default strategy leaves nulls alone.  Another built-in strategy,
      * zero, replaces nulls with the value 0.
      */
     @Parameter(defaultPrefix = BindingConstants.NULLFIELDSTRATEGY, value = "default")
@@ -111,9 +110,8 @@ public abstract class AbstractTextField extends AbstractField
     private ComponentDefaultProvider defaultProvider;
 
     /**
-     * Computes a default value for the "translate" parameter using
-     * {@link org.apache.tapestry5.services.ComponentDefaultProvider#defaultTranslator(String, org.apache.tapestry5.ComponentResources)}
-     * .
+     * Computes a default value for the "translate" parameter using {@link org.apache.tapestry5.services.ComponentDefaultProvider#defaultTranslator(String,
+     * org.apache.tapestry5.ComponentResources)}.
      */
     final Binding defaultTranslate()
     {
@@ -132,16 +130,26 @@ public abstract class AbstractTextField extends AbstractField
     }
 
     /**
-     * Computes a default value for the "validate" parameter using
-     * {@link org.apache.tapestry5.services.FieldValidatorDefaultSource}.
+     * Computes a default value for the "validate" parameter using {@link org.apache.tapestry5.services.FieldValidatorDefaultSource}.
      */
     final Binding defaultValidate()
     {
         return defaultProvider.defaultValidatorBinding("value", resources);
     }
 
-    @SuppressWarnings(
-    { "unchecked" })
+    /**
+     * The default value is a property of the container whose name matches the component's id. May return null if the
+     * container does not have a matching property.
+     *
+     * @deprecated Likely to be removed in the future, use {@link org.apache.tapestry5.annotations.Parameter#autoconnect()}
+     *             instead
+     */
+    final Binding defaultValue()
+    {
+        return createDefaultParameterBinding("value");
+    }
+
+    @SuppressWarnings({ "unchecked" })
     @BeginRender
     void begin(MarkupWriter writer)
     {
@@ -160,12 +168,12 @@ public abstract class AbstractTextField extends AbstractField
         }
 
         writeFieldTag(writer, value);
-
+        
         putPropertyNameIntoBeanValidationContext("value");
 
         translate.render(writer);
         validate.render(writer);
-
+        
         removePropertyNameFromBeanValidationContext();
 
         resources.renderInformalParameters(writer);
@@ -180,16 +188,13 @@ public abstract class AbstractTextField extends AbstractField
      * <p/>
      * Generally, the subclass will invoke {@link MarkupWriter#element(String, Object[])}, and will be responsible for
      * including an {@link AfterRender} phase method to invoke {@link MarkupWriter#end()}.
-     * 
-     * @param writer
-     *            markup write to send output to
-     * @param value
-     *            the value (either obtained and translated from the value parameter, or obtained from the tracker)
+     *
+     * @param writer markup write to send output to
+     * @param value  the value (either obtained and translated from the value parameter, or obtained from the tracker)
      */
     protected abstract void writeFieldTag(MarkupWriter writer, String value);
 
-    @SuppressWarnings(
-    { "unchecked" })
+    @SuppressWarnings({ "unchecked" })
     @Override
     protected void processSubmission(String elementName)
     {
@@ -200,7 +205,7 @@ public abstract class AbstractTextField extends AbstractField
         try
         {
             Object translated = fieldValidationSupport.parseClient(rawValue, resources, translate, nulls);
-
+            
             putPropertyNameIntoBeanValidationContext("value");
 
             fieldValidationSupport.validate(translated, resources, validate);
@@ -215,13 +220,14 @@ public abstract class AbstractTextField extends AbstractField
         {
             tracker.recordError(this, ex.getMessage());
         }
-
+        
         removePropertyNameFromBeanValidationContext();
     }
+    
 
     /**
-     * Should blank input be ignored (after validation)? This will be true for
-     * {@link org.apache.tapestry5.corelib.components.PasswordField}.
+     * Should blank input be ignored (after validation)?  This will be true for {@link
+     * org.apache.tapestry5.corelib.components.PasswordField}.
      */
     protected boolean ignoreBlankInput()
     {
@@ -237,15 +243,14 @@ public abstract class AbstractTextField extends AbstractField
     /**
      * Looks for a {@link org.apache.tapestry5.beaneditor.Width} annotation and, if present, returns its value as a
      * string.
-     * 
+     *
      * @return the indicated width, or null if the annotation is not present
      */
     protected final String getWidth()
     {
         Width width = annotationProvider.getAnnotation(Width.class);
 
-        if (width == null)
-            return null;
+        if (width == null) return null;
 
         return Integer.toString(width.value());
     }

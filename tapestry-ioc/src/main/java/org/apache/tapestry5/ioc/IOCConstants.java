@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,18 @@ package org.apache.tapestry5.ioc;
 
 public class IOCConstants
 {
+    /**
+     * @deprecated Use {@link org.apache.tapestry5.ioc.ScopeConstants#DEFAULT} instead. To be removed after Tapestry
+     *             5.2.
+     */
+    public static final String DEFAULT_SCOPE = ScopeConstants.DEFAULT;
+
+    /**
+     * @deprecated Use {@link org.apache.tapestry5.ioc.ScopeConstants#PERTHREAD} instead. To be removed after Tapestry
+     *             5.2.
+     */
+    public static final String PERTHREAD_SCOPE = ScopeConstants.PERTHREAD;
+
     public static final String MODULE_BUILDER_MANIFEST_ENTRY_NAME = "Tapestry-Module-Classes";
 
     public static final String MASTER_OBJECT_PROVIDER_SERVICE_ID = "MasterObjectProvider";

@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,27 +24,21 @@ import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSour
 import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSourceImpl;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.Autobuild;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Primary;
+import org.apache.tapestry5.ioc.annotations.Scope;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.services.CtClassSource;
 import org.apache.tapestry5.ioc.services.Builtin;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
-import org.apache.tapestry5.services.ComponentClasses;
-import org.apache.tapestry5.services.ComponentLayer;
-import org.apache.tapestry5.services.ComponentMessages;
-import org.apache.tapestry5.services.ComponentTemplates;
-import org.apache.tapestry5.services.Core;
-import org.apache.tapestry5.services.InvalidationEventHub;
-import org.apache.tapestry5.services.LinkCreationListener2;
-import org.apache.tapestry5.services.LocalizationSetter;
-import org.apache.tapestry5.services.RequestGlobals;
-import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
-import org.apache.tapestry5.services.UpdateListenerHub;
+import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
 import org.slf4j.Logger;
 
@@ -97,8 +91,6 @@ public class InternalModule
         binder.bind(AssetResourceLocator.class);
         binder.bind(JavaScriptStackPathConstructor.class);
         binder.bind(AjaxFormUpdateController.class);
-        binder.bind(ResourceDigestManager.class, ResourceDigestManagerImpl.class);
-        binder.bind(RequestPageCache.class, NonPoolingRequestPageCacheImpl.class);
     }
 
     /**
@@ -115,6 +107,30 @@ public class InternalModule
             return locator.autobuild(ImmediateActionRenderResponseGenerator.class);
 
         return locator.autobuild(ActionRenderResponseGeneratorImpl.class);
+    }
+
+    @Scope(ScopeConstants.PERTHREAD)
+    public static RequestPageCache buildRequestPageCache(ServiceResources serviceResources,
+            @Symbol(SymbolConstants.PAGE_POOL_ENABLED)
+            boolean pagePoolEnabled, PerthreadManager perthreadManager)
+    {
+        if (pagePoolEnabled)
+        {
+
+            RequestPageCacheImpl service = serviceResources.autobuild(RequestPageCacheImpl.class);
+
+            perthreadManager.addThreadCleanupListener(service);
+
+            return service;
+        }
+
+        // Modern, non-pooling
+
+        NonPoolingRequestPageCacheImpl service = serviceResources.autobuild(NonPoolingRequestPageCacheImpl.class);
+
+        perthreadManager.addThreadCleanupListener(service);
+
+        return service;
     }
 
     public ComponentInstantiatorSource buildComponentInstantiatorSource(@Builtin
@@ -159,6 +175,34 @@ public class InternalModule
         classesInvalidationEventHub.addInvalidationListener(service);
         templatesHub.addInvalidationListener(service);
         messagesHub.addInvalidationListener(service);
+
+        return service;
+    }
+
+    public PagePool buildPagePool(@Autobuild
+    PagePoolImpl service,
+
+    @ComponentTemplates
+    InvalidationEventHub templatesHub,
+
+    @ComponentMessages
+    InvalidationEventHub messagesHub)
+    {
+        // This covers invalidations due to changes to classes
+
+        classesInvalidationEventHub.addInvalidationListener(service);
+
+        // This covers invalidation due to changes to message catalogs (properties files)
+
+        messagesHub.addInvalidationListener(service);
+
+        // ... and this covers invalidations due to changes to templates
+
+        templatesHub.addInvalidationListener(service);
+
+        // Give the service a chance to clean up its own cache periodically as well
+
+        updateListenerHub.addUpdateListener(service);
 
         return service;
     }
@@ -217,6 +261,14 @@ public class InternalModule
                 requestGlobals.getHTTPServletResponse().addCookie(cookie);
             }
         };
+    }
+
+    public ResourceCache buildResourceCache(@Autobuild
+    ResourceCacheImpl service)
+    {
+        updateListenerHub.addUpdateListener(service);
+
+        return service;
     }
 
     public ComponentTemplateSource buildComponentTemplateSource(TemplateParser parser, @Primary

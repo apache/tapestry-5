@@ -14,33 +14,7 @@
 
 package org.apache.tapestry.mojo;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import nu.xom.Attribute;
-import nu.xom.Builder;
-import nu.xom.Document;
-import nu.xom.Element;
-import nu.xom.Elements;
-import nu.xom.Node;
-import nu.xom.Nodes;
-import nu.xom.ParsingException;
+import nu.xom.*;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -59,6 +33,11 @@ import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.DefaultConsumer;
+
+import java.io.*;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The component report generates documentation about components and parameters within the current project.
@@ -81,14 +60,14 @@ public class ComponentReport extends AbstractMavenReport
     private static final Pattern TAPESTRY5_PATTERN = Pattern.compile("(org\\.apache\\.tapestry5[#_\\w\\.]*)");
 
     private static final char QUOTE = '"';
-   
+
     /**
-     * Identifies the root packages of the library.
+     * Identifies the application root package.
      *
      * @parameter
      * @required
      */
-    private List<String> rootPackages;
+    private String rootPackage;
 
     /**
      * The Maven Project Object
@@ -221,74 +200,57 @@ public class ComponentReport extends AbstractMavenReport
             sink.title_();
             sink.head_();
 
+            sink.section1();
+            sink.sectionTitle1();
+            sink.text("Component Reference");
+            sink.sectionTitle1_();
+            sink.list();
+
             String currentSubpackage = null;
 
-            for (String rootPackage: rootPackages)
+            for (String className : InternalUtils.sortedKeys(descriptions))
             {
-                sink.section1();
-                sink.sectionTitle1();
-                sink.text("Component Reference: "+rootPackage);
-                sink.sectionTitle1_();
-                
-                
-            	for (String className : InternalUtils.sortedKeys(descriptions))
-            	{
-            		ClassDescription classDescription = descriptions.get(className);
-            		
-	                String subpackage = extractSubpackage(className, rootPackage);
-	
-	                if (!SUPPORTED_SUBPACKAGES.contains(subpackage)) continue;
-	                
-	
-	                if (!subpackage.equals(currentSubpackage))
-	                {
-	                    if (currentSubpackage != null)
-	                    {
-	                        sink.list_();
-	                        sink.section2_();
-	                    }
-	
-	                    sink.section2();
-	                    sink.sectionTitle2();
-	                    sink.text(StringUtils.capitalize(subpackage));
-	                    sink.sectionTitle2_();
-	
-	
-	                    sink.list();
-	
-	                    currentSubpackage = subpackage;
-	                }
-	
-	
-	                sink.listItem();
-	                
-	                if(classDescription.isDeprecated())
-	                {
-	                	sink.rawText("<del>");
-	                }
-	                
-	                sink.link(toHtml(toPath(className)));
-	
-	                sink.text(className);
-	                sink.link_();
-	                
-	                if(classDescription.isDeprecated())
-	                {
-	                	sink.rawText("</del>");
-	                }
-	
-	                writeClassDescription(descriptions, refDir, docSearchPath, className);
-	
-	
-	                sink.listItem_();
-            	}
+                String subpackage = extractSubpackage(className);
 
-                if (currentSubpackage != null)
+                if (!SUPPORTED_SUBPACKAGES.contains(subpackage)) continue;
+
+                if (!subpackage.equals(currentSubpackage))
                 {
-                    sink.list_();
-                    sink.section2_();
-                    currentSubpackage = null;
+                    if (currentSubpackage != null)
+                    {
+                        sink.list_();
+                        sink.section2_();
+                    }
+
+                    sink.section2();
+                    sink.sectionTitle2();
+                    sink.text(StringUtils.capitalize(subpackage));
+                    sink.sectionTitle2_();
+
+
+                    sink.list();
+
+                    currentSubpackage = subpackage;
                 }
+
+
+                sink.listItem();
+
+                sink.link(toHtml(toPath(className)));
+
+                sink.text(className);
+                sink.link_();
+
+                writeClassDescription(descriptions, refDir, docSearchPath, className);
+
+
+                sink.listItem_();
+            }
+
+            if (currentSubpackage != null)
+            {
+                sink.list_();
+                sink.section2_();
             }
         }
         catch (Exception ex)
@@ -319,21 +281,16 @@ public class ComponentReport extends AbstractMavenReport
 
         return className.substring(dotx + 1);
     }
-   
-    private String extractSubpackage(String className, String rootPackage)
+
+    private String extractSubpackage(String className)
     {
-    	if(className.startsWith(rootPackage))
-    	{
-	        int dotx = className.indexOf(".", rootPackage.length() + 1);
-	
-	        // For classes directly in the root package.
-	
-	        if (dotx < 1) return "";
-	
-	        return className.substring(rootPackage.length() + 1, dotx);
-    	}
-    	
-    	return "";
+        int dotx = className.indexOf(".", rootPackage.length() + 1);
+
+        // For classes directly in the root package.
+
+        if (dotx < 1) return "";
+
+        return className.substring(rootPackage.length() + 1, dotx);
     }
 
     protected List<File> createDocSearchPath()
@@ -416,19 +373,8 @@ public class ComponentReport extends AbstractMavenReport
 
         Element body = new Element("body");
         root.appendChild(body);
-       
-        
-        Element section = null;
-        
-        if(cd.isDeprecated())
-        {
-        	section = addChild(body, "section");
-            addChild(addChild(section, "h2"), "del", className);
-        }
-        else
-        {
-        	 section = addSection(body, className);
-        }
+
+        Element section = addSection(body, className);
 
 
         StringBuilder javadocURL = new StringBuilder(200);
@@ -513,15 +459,7 @@ public class ComponentReport extends AbstractMavenReport
                 Element row = new Element("tr");
                 table.appendChild(row);
 
-                Element nameTd = addChild(row, "td");
-                if(pd.isDeprecated())
-                {
-                	addChild(nameTd, "del", pd.getName());
-                }
-                else
-                {
-                	nameTd.appendChild(pd.getName());
-                }
+                addChild(row, "td", pd.getName());
                 addChildWithJavadocs(row, "td", pd.getType(), javadocHref);
                 addChild(row, "td", InternalUtils.join(flags));
                 addChild(row, "td", pd.getDefaultValue());
@@ -705,7 +643,7 @@ public class ComponentReport extends AbstractMavenReport
 
         String[] arguments = { "-private", "-o", parametersPath,
 
-                "-subpackages", InternalUtils.join(rootPackages, ":"),
+                "-subpackages", rootPackage,
 
                 "-doclet", ParametersDoclet.class.getName(),
 
@@ -943,11 +881,9 @@ public class ComponentReport extends AbstractMavenReport
             String superClassName = element.getAttributeValue("super-class");
             String supportsInformalParameters = element.getAttributeValue("supports-informal-parameters");
             String since = element.getAttributeValue("since");
-            String deprecated = element.getAttributeValue("deprecated");
 
             ClassDescription cd = new ClassDescription(className, superClassName, description,
-                                                       Boolean.valueOf(supportsInformalParameters), since,
-                                                       Boolean.valueOf(deprecated));
+                                                       Boolean.valueOf(supportsInformalParameters), since);
 
             result.put(className, cd);
 
@@ -995,10 +931,9 @@ public class ComponentReport extends AbstractMavenReport
             String defaultPrefix = node.getAttributeValue("default-prefix");
             String description = node.getValue();
             String since = node.getAttributeValue("since");
-            String deprecated = node.getAttributeValue("deprecated");
 
             ParameterDescription pd = new ParameterDescription(name, type, defaultValue, defaultPrefix, required,
-                                                               allowNull, cache, description, since, Boolean.valueOf(deprecated));
+                                                               allowNull, cache, description, since);
 
             cd.getParameters().put(name, pd);
         }

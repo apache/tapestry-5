@@ -1,10 +1,10 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-// http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,20 +24,18 @@ import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 
-import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
-import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
 import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
 import org.apache.tapestry5.jmx.MBeanSupport;
 import org.slf4j.Logger;
 
 public class MBeanSupportImpl implements MBeanSupport, RegistryShutdownListener
 {
-    private final Logger logger;
+    private Logger logger;
 
-    private final MBeanServer server;
-
+    private MBeanServer server;
+    
     private final OneShotLock lock = new OneShotLock();
 
     private final Set<ObjectName> registeredBeans = CollectionFactory.newSet();
@@ -45,55 +43,28 @@ public class MBeanSupportImpl implements MBeanSupport, RegistryShutdownListener
     public MBeanSupportImpl(Logger logger)
     {
         this.logger = logger;
-
+        
         // TODO: Agent Id should be configurable
         final List<MBeanServer> servers = MBeanServerFactory.findMBeanServer(null);
 
-        MBeanServer server = null;
-
-        if (servers != null && 0 < servers.size())
+        if (servers != null && 0 <  servers.size())
         {
-            server = servers.get(0);
+            this.server = servers.get(0);
         }
 
         if (this.server == null)
         {
-            server = ManagementFactory.getPlatformMBeanServer();
-        }
-
-        this.server = server;
-    }
-
-    @PostInjection
-    public void listenForShutdown(RegistryShutdownHub hub)
-    {
-        hub.addRegistryShutdownListener(this);
-    }
-
-    public void register(Object bean, String name)
-    {
-        register(bean, toObjectName(name));
-    }
-
-    private static ObjectName toObjectName(String name)
-    {
-        try
-        {
-            return new ObjectName(name);
-        }
-        catch (Exception ex)
-        {
-            throw new RuntimeException(ex);
+            this.server = ManagementFactory.getPlatformMBeanServer();
         }
     }
 
     public void register(final Object object, final ObjectName objectName)
     {
         lock.check();
-
+        
         if (this.server.isRegistered(objectName))
             return;
-
+        
         try
         {
             this.server.registerMBean(object, objectName);
@@ -111,10 +82,10 @@ public class MBeanSupportImpl implements MBeanSupport, RegistryShutdownListener
     public void unregister(final ObjectName objectName)
     {
         lock.check();
-
+        
         doUnregister(objectName);
     }
-
+    
     private void doUnregister(final ObjectName objectName)
     {
         if (this.server.isRegistered(objectName))
@@ -124,8 +95,8 @@ public class MBeanSupportImpl implements MBeanSupport, RegistryShutdownListener
                 this.server.unregisterMBean(objectName);
 
                 this.logger.info(format("Unregistered MBean '%s' from server", objectName));
-
-                if (registeredBeans.contains(objectName))
+                
+                if(registeredBeans.contains(objectName))
                     registeredBeans.remove(objectName);
             }
             catch (final Exception e)
@@ -138,9 +109,8 @@ public class MBeanSupportImpl implements MBeanSupport, RegistryShutdownListener
     public void registryDidShutdown()
     {
         lock.lock();
-        // store into new data structure so we can remove them from registered beans
-        ObjectName[] objects = registeredBeans.toArray(new ObjectName[registeredBeans.size()]);
-        for (final ObjectName name : objects)
+        
+        for (final ObjectName name : this.registeredBeans)
         {
             doUnregister(name);
         }

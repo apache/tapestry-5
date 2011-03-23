@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -144,12 +144,6 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
     protected ServiceActivityTracker mockServiceActivityTracker()
     {
         return newMock(ServiceActivityTracker.class);
-    }
-
-    /** @since 5.3.0 */
-    protected final TypeCoercerProxy mockTypeCoercerProxy()
-    {
-        return newMock(TypeCoercerProxy.class);
     }
 
 }

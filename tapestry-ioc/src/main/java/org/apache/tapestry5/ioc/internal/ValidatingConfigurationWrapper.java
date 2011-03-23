@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010,, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,19 +25,16 @@ import org.apache.tapestry5.ioc.ObjectLocator;
  */
 public class ValidatingConfigurationWrapper<T> extends AbstractConfigurationImpl<T> implements Configuration<T>
 {
-    private final TypeCoercerProxy typeCoercer;
-
     private final String serviceId;
 
     private final Class<T> expectedType;
 
     private final Collection<T> collection;
 
-    public ValidatingConfigurationWrapper(Class<T> expectedType, ObjectLocator locator, TypeCoercerProxy typeCoercer,
-            Collection<T> collection, String serviceId)
+    public ValidatingConfigurationWrapper(Class<T> expectedType, ObjectLocator locator, Collection<T> collection,
+            String serviceId)
     {
         super(expectedType, locator);
-        this.typeCoercer = typeCoercer;
 
         this.collection = collection;
         this.serviceId = serviceId;
@@ -49,9 +46,13 @@ public class ValidatingConfigurationWrapper<T> extends AbstractConfigurationImpl
         if (object == null)
             throw new NullPointerException(IOCMessages.contributionWasNull(serviceId));
 
-        T coerced = typeCoercer.coerce(object, expectedType);
+        // Sure, we say it is type T ... but is it really?
 
-        collection.add(coerced);
+        if (!expectedType.isInstance(object))
+            throw new IllegalArgumentException(IOCMessages.contributionWrongValueType(serviceId, object.getClass(),
+                    expectedType));
+
+        collection.add(object);
     }
 
     public void addInstance(Class<? extends T> clazz)

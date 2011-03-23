@@ -18,26 +18,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.CSSClassConstants;
-import org.apache.tapestry5.ClientElement;
-import org.apache.tapestry5.ComponentAction;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.EventConstants;
-import org.apache.tapestry5.EventContext;
-import org.apache.tapestry5.Field;
-import org.apache.tapestry5.FormValidationControl;
-import org.apache.tapestry5.Link;
-import org.apache.tapestry5.MarkupConstants;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.PersistenceConstants;
-import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.TrackableComponentEventCallback;
-import org.apache.tapestry5.ValidationDecorator;
-import org.apache.tapestry5.ValidationException;
-import org.apache.tapestry5.ValidationTracker;
-import org.apache.tapestry5.ValidationTrackerImpl;
-import org.apache.tapestry5.ValidationTrackerWrapper;
+import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.HeartbeatDeferred;
@@ -90,10 +71,11 @@ import org.slf4j.Logger;
  * When the form is submitted, the component emits several notifications: first a
  * {@link EventConstants#PREPARE_FOR_SUBMIT}, then a {@link EventConstants#PREPARE}: these allow the page to update its
  * state as necessary to prepare for the form submission, then (after components enclosed by the form have operated), a
- * {@link EventConstants#VALIDATE} event is emitted, to allow for cross-form validation. After that, either a
- * {@link EventConstants#SUCCESS} OR {@link EventConstants#FAILURE} event (depending on whether the
- * {@link ValidationTracker} has recorded any errors). Lastly, a {@link EventConstants#SUBMIT} event, for any listeners
- * that care only about form submission, regardless of success or failure.
+ * {@link EventConstants#VALIDATE} event is emitted (followed by a {@link EventConstants#VALIDATE_FORM} event, for
+ * backwards compatibility), to allow for cross-form validation. After that, either a {@link EventConstants#SUCCESS} OR
+ * {@link EventConstants#FAILURE} event (depending on whether the {@link ValidationTracker} has recorded any errors).
+ * Lastly, a {@link EventConstants#SUBMIT} event, for any listeners that care only about form submission, regardless of
+ * success or failure.
  * <p/>
  * For all of these notifications, the event context is derived from the <strong>context</strong> parameter. This
  * context is encoded into the form's action URI (the parameter is not read when the form is submitted, instead the
@@ -101,9 +83,45 @@ import org.slf4j.Logger;
  */
 @Events(
 { EventConstants.PREPARE_FOR_RENDER, EventConstants.PREPARE, EventConstants.PREPARE_FOR_SUBMIT,
-        EventConstants.VALIDATE, EventConstants.SUBMIT, EventConstants.FAILURE, EventConstants.SUCCESS })
+        EventConstants.VALIDATE, EventConstants.VALIDATE_FORM, EventConstants.SUBMIT, EventConstants.FAILURE,
+        EventConstants.SUCCESS })
 public class Form implements ClientElement, FormValidationControl
 {
+    /**
+     * @deprecated Use constant from {@link EventConstants} instead.
+     */
+    public static final String PREPARE_FOR_RENDER = EventConstants.PREPARE_FOR_RENDER;
+
+    /**
+     * @deprecated Use constant from {@link EventConstants} instead.
+     */
+    public static final String PREPARE_FOR_SUBMIT = EventConstants.PREPARE_FOR_SUBMIT;
+
+    /**
+     * @deprecated Use constant from {@link EventConstants} instead.
+     */
+    public static final String PREPARE = EventConstants.PREPARE;
+
+    /**
+     * @deprecated Use constant from {@link EventConstants} instead.
+     */
+    public static final String SUBMIT = EventConstants.SUBMIT;
+
+    /**
+     * @deprecated Use constant from {@link EventConstants} instead.
+     */
+    public static final String VALIDATE_FORM = EventConstants.VALIDATE_FORM;
+
+    /**
+     * @deprecated Use constant from {@link EventConstants} instead.
+     */
+    public static final String SUCCESS = EventConstants.SUCCESS;
+
+    /**
+     * @deprecated Use constant from {@link EventConstants} instead.
+     */
+    public static final String FAILURE = EventConstants.FAILURE;
+
     /**
      * Query parameter name storing form data (the serialized commands needed to
      * process a form submission).
@@ -372,6 +390,7 @@ public class Form implements ClientElement, FormValidationControl
 
         environment.push(FormSupport.class, formSupport);
         environment.push(ValidationTracker.class, activeTracker);
+        environment.push(BeanValidationContext.class, new BeanValidationContextImpl(validate));
 
         if (autofocus)
         {
@@ -387,9 +406,6 @@ public class Form implements ClientElement, FormValidationControl
         resources.triggerEvent(EventConstants.PREPARE_FOR_RENDER, context, null);
 
         resources.triggerEvent(EventConstants.PREPARE, context, null);
-
-        // Push BeanValidationContext only after the container had a chance to prepare
-        environment.push(BeanValidationContext.class, new BeanValidationContextImpl(validate));
 
         // Save the form element for later, in case we want to write an encoding
         // type attribute.
@@ -503,6 +519,7 @@ public class Form implements ClientElement, FormValidationControl
 
         environment.push(ValidationTracker.class, activeTracker);
         environment.push(FormSupport.class, formSupport);
+        environment.push(BeanValidationContext.class, new BeanValidationContextImpl(validate));
 
         Heartbeat heartbeat = new HeartbeatImpl();
 
@@ -519,8 +536,6 @@ public class Form implements ClientElement, FormValidationControl
 
             resources.triggerContextEvent(EventConstants.PREPARE, context, eventCallback);
 
-            environment.push(BeanValidationContext.class, new BeanValidationContextImpl(validate));
-
             if (eventCallback.isAborted())
                 return true;
 
@@ -530,7 +545,7 @@ public class Form implements ClientElement, FormValidationControl
 
             formSupport.executeDeferred();
 
-            fireValidateEvent(EventConstants.VALIDATE, context, eventCallback);
+            fireValidateFormEvent(context, eventCallback);
 
             if (eventCallback.isAborted())
                 return true;
@@ -571,6 +586,17 @@ public class Form implements ClientElement, FormValidationControl
 
             activeTracker = null;
         }
+    }
+
+    private void fireValidateFormEvent(EventContext context, TrackableComponentEventCallback callback)
+            throws IOException
+    {
+        fireValidateEvent(EventConstants.VALIDATE, context, callback);
+
+        if (callback.isAborted())
+            return;
+
+        fireValidateEvent(EventConstants.VALIDATE_FORM, context, callback);
     }
 
     private void fireValidateEvent(String eventName, EventContext context, TrackableComponentEventCallback callback)

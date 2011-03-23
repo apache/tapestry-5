@@ -91,7 +91,7 @@ var Tapestry = {
 	CONSOLE_DURATION : 10,
 
 	/**
-	 * CSS Class added to a &lt;form&gt; element that directs Tapestry to prevent
+	 * CSS Class added to a <form> element that directs Tapestry to prevent
 	 * normal (HTTP POST) form submission, in favor of Ajax (XmlHttpRequest)
 	 * submission.
 	 */
@@ -220,10 +220,8 @@ var Tapestry = {
 		 * When a submit element is clicked, record the name of the element into
 		 * the associated form. This is necessary for some Ajax processing, see
 		 * TAPESTRY-2324.
-		 *
-		 * TAP5-1418: Added "type=image" so that they set the submitting element correctly.
 		 */
-		$$("INPUT[type=submit]","INPUT[type=image]").each(function(element) {
+		$$("INPUT[type=submit]").each(function(element) {
 			var t = $T(element);
 
 			if (!t.trackingClicks) {
@@ -449,7 +447,7 @@ var Tapestry = {
 
 	/**
 	 * Obtains the Tapestry.ZoneManager object associated with a triggering
-	 * element (an &lt;a&gt; or &lt;form&gt;) configured to update a zone. Writes errors to
+	 * element (an <a> or <form>) configured to update a zone. Writes errors to
 	 * the AjaxConsole if the zone and ZoneManager can not be resolved.
 	 * 
 	 * @param element
@@ -465,7 +463,7 @@ var Tapestry = {
 
 	/**
 	 * Obtains the Tapestry.ZoneManager object associated with a zone element
-	 * (usually a &lt;div&gt;). Writes errors to the Ajax console if the element or
+	 * (usually a <div>). Writes errors to the Ajax console if the element or
 	 * manager can not be resolved.
 	 * 
 	 * @param zoneElement
@@ -980,7 +978,7 @@ Tapestry.Initializer = {
 	 * indicated Zone.
 	 * 
 	 * @param spec.linkId
-	 *            id or instance of &lt;form&gt; or &lt;a&gt; element
+	 *            id or instance of <form> or <a> element
 	 * @param spec.zoneId
 	 *            id of the element to update when link clicked or form
 	 *            submitted
@@ -997,7 +995,7 @@ Tapestry.Initializer = {
 	 * information to reconnect with the server-side Form.
 	 * 
 	 * @param spec.selectId
-	 *            id or instance of &lt;select&gt;
+	 *            id or instance of <select>
 	 * @param spec.zoneId
 	 *            id of element to update when select is changed
 	 * @param spec.url
@@ -1817,7 +1815,7 @@ Tapestry.ElementEffect = {
 };
 
 /**
- * Manages a &lt;div&gt; (or other element) for dynamic updates.
+ * Manages a &lt;div&lt; (or other element) for dynamic updates.
  * 
  */
 Tapestry.ZoneManager = Class.create( {
@@ -2071,7 +2069,7 @@ Tapestry.ScriptManager = {
 	},
 
 	/**
-	 * Checks to see if the given collection (of &lt;script&gt; or &lt;style&gt; elements)
+	 * Checks to see if the given collection (of <script> or <style> elements)
 	 * contains the given asset URL.
 	 * 
 	 * @param collection

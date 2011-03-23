@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -138,42 +138,6 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         ServiceDef sd = def.getServiceDef("BarneyService");
 
         assertEquals(sd.getServiceId(), "BarneyService");
-
-        verify();
-    }
-    
-    @Test
-    public void default_service_id_from_method_named_annotation()
-    {
-        Logger logger = mockLogger();
-
-        replay();
-
-        ModuleDef def = new DefaultModuleDefImpl(NamedServiceModule.class, logger, null);
-
-        assertEquals(def.getServiceIds().size(), 2);
-
-        ServiceDef sd = def.getServiceDef("BazService");
-
-        assertEquals(sd.getServiceId(), "BazService");
-
-        verify();
-    }
-    
-    @Test
-    public void default_service_id_from_named_annotation()
-    {
-        Logger logger = mockLogger();
-
-        replay();
-
-        ModuleDef def = new DefaultModuleDefImpl(NamedServiceModule.class, logger, null);
-
-        assertEquals(def.getServiceIds().size(), 2);
-
-        ServiceDef sd = def.getServiceDef("QuuxService");
-
-        assertEquals(sd.getServiceId(), "QuuxService");
 
         verify();
     }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,12 +32,13 @@ import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.FieldValidatorSource;
 import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.ValidationMessagesSource;
 import org.apache.tapestry5.validator.ValidatorMacro;
 
 @SuppressWarnings("all")
 public class FieldValidatorSourceImpl implements FieldValidatorSource
 {
-    private final Messages globalMessages;
+    private final ValidationMessagesSource messagesSource;
 
     private final Map<String, Validator> validators;
 
@@ -47,10 +48,10 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
 
     private final ValidatorMacro validatorMacro;
 
-    public FieldValidatorSourceImpl(Messages globalMessages, TypeCoercer typeCoercer,
+    public FieldValidatorSourceImpl(ValidationMessagesSource messagesSource, TypeCoercer typeCoercer,
             FormSupport formSupport, Map<String, Validator> validators, ValidatorMacro validatorMacro)
     {
-        this.globalMessages = globalMessages;
+        this.messagesSource = messagesSource;
         this.typeCoercer = typeCoercer;
         this.formSupport = formSupport;
         this.validators = validators;
@@ -59,49 +60,49 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
 
     public FieldValidator createValidator(Field field, String validatorType, String constraintValue)
     {
-        Component component = (Component) field;
+        Component component = (Component) field;        
         assert InternalUtils.isNonBlank(validatorType);
         ComponentResources componentResources = component.getComponentResources();
         String overrideId = componentResources.getId();
+        Locale locale = componentResources.getLocale();
 
         // So, if you use a TextField on your EditUser page, we want to search the messages
         // of the EditUser page (the container), not the TextField (which will always be the same).
 
         Messages overrideMessages = componentResources.getContainerMessages();
 
-        return createValidator(field, validatorType, constraintValue, overrideId, overrideMessages, null);
+        return createValidator(field, validatorType, constraintValue, overrideId, overrideMessages, locale);
     }
 
     public FieldValidator createValidator(Field field, String validatorType, String constraintValue, String overrideId,
             Messages overrideMessages, Locale locale)
     {
-
-        ValidatorSpecification originalSpec = new ValidatorSpecification(validatorType, constraintValue);
-
-        List<ValidatorSpecification> specs = expandMacros(newList(originalSpec));
-
-        List<FieldValidator> fieldValidators = CollectionFactory.newList();
-
-        for (ValidatorSpecification spec : specs)
-        {
-            fieldValidators.add(createValidator(field, spec, overrideId, overrideMessages));
-        }
-
-        return new CompositeFieldValidator(fieldValidators);
+    	
+    	ValidatorSpecification originalSpec = new ValidatorSpecification(validatorType, constraintValue);
+    	
+    	List<ValidatorSpecification> specs = expandMacros(newList(originalSpec));
+    	
+    	List<FieldValidator> fieldValidators = CollectionFactory.newList();
+    	
+    	for (ValidatorSpecification spec : specs) {
+			fieldValidators.add(createValidator(field, spec, overrideId, overrideMessages, locale));
+		}
+    	
+    	return new CompositeFieldValidator(fieldValidators);
     }
-
+    
     private FieldValidator createValidator(Field field, ValidatorSpecification spec, String overrideId,
-            Messages overrideMessages)
+            Messages overrideMessages, Locale locale)
     {
-
-        String validatorType = spec.getValidatorType();
-
+    	
+    	String validatorType = spec.getValidatorType();
+    	
         assert InternalUtils.isNonBlank(validatorType);
         Validator validator = validators.get(validatorType);
 
         if (validator == null)
-            throw new IllegalArgumentException(ServicesMessages.unknownValidatorType(validatorType,
-                    InternalUtils.sortedKeys(validators)));
+            throw new IllegalArgumentException(ServicesMessages.unknownValidatorType(validatorType, InternalUtils
+                    .sortedKeys(validators)));
 
         // I just have this thing about always treating parameters as finals, so
         // we introduce a second variable to treat a mutable.
@@ -111,8 +112,8 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
         Object coercedConstraintValue = computeConstraintValue(validatorType, validator, spec.getConstraintValue(),
                 formValidationid, overrideId, overrideMessages);
 
-        MessageFormatter formatter = findMessageFormatter(formValidationid, overrideId, overrideMessages, validatorType,
-                validator);
+        MessageFormatter formatter = findMessageFormatter(formValidationid, overrideId, overrideMessages, locale,
+                validatorType, validator);
 
         return new FieldValidatorImpl(field, coercedConstraintValue, formatter, validator, formSupport);
     }
@@ -158,7 +159,7 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
     }
 
     private MessageFormatter findMessageFormatter(String formId, String overrideId, Messages overrideMessages,
-            String validatorType, Validator validator)
+            Locale locale, String validatorType, Validator validator)
     {
 
         String overrideKey = formId + "-" + overrideId + "-" + validatorType + "-message";
@@ -171,9 +172,11 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
         if (overrideMessages.contains(overrideKey))
             return overrideMessages.getFormatter(overrideKey);
 
+        Messages messages = messagesSource.getValidationMessages(locale);
+
         String key = validator.getMessageKey();
 
-        return globalMessages.getFormatter(key);
+        return messages.getFormatter(key);
     }
 
     public FieldValidator createValidators(Field field, String specification)

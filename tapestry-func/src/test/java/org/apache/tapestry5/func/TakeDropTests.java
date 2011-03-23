@@ -45,8 +45,7 @@ public class TakeDropTests extends BaseFuncTest
     @Test
     public void take_and_drop()
     {
-        // This can go much, much larger but starts taking a while. Don't hold a reference to the
-        // start
+        // This can go much, much larger but starts taking a while. Don't hold a reference to the start
         // of the series or it can run out of memory.
         int length = 100000;
 

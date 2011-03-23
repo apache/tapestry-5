@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2011 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,20 +14,13 @@
 
 package org.apache.tapestry5.internal.services;
 
-import static org.easymock.EasyMock.eq;
-
-import org.apache.tapestry5.ComponentEventCallback;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.EventConstants;
-import org.apache.tapestry5.FieldTranslator;
-import org.apache.tapestry5.FieldValidationSupport;
-import org.apache.tapestry5.FieldValidator;
-import org.apache.tapestry5.NullFieldStrategy;
-import org.apache.tapestry5.ValidationException;
+import org.apache.tapestry5.*;
 import org.apache.tapestry5.corelib.internal.InternalMessages;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.services.ValidationMessagesSource;
 import org.easymock.EasyMock;
+import static org.easymock.EasyMock.eq;
 import org.easymock.IAnswer;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -200,6 +193,7 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
     {
         ComponentResources resources = mockComponentResources();
         FieldTranslator translator = mockFieldTranslator();
+        ValidationMessagesSource source = mockValidationMessagesSource();
         NullFieldStrategy nullFieldStrategy = mockNullFieldStrategy();
 
         String clientValue = "abracadabra";

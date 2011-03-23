@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,7 +43,6 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.Orderer;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
-import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.model.ComponentModel;
@@ -55,7 +54,6 @@ import org.apache.tapestry5.runtime.Event;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
-import org.apache.tapestry5.services.Request;
 import org.slf4j.Logger;
 
 /**
@@ -238,10 +236,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         protected void invokeComponent(Component component, MarkupWriter writer, Event event)
         {
-            if (isRenderTracingEnabled())
-                writer.comment("BEGIN " + component.getComponentResources().getCompleteId() + " (" + getLocation()
-                        + ")");
-
             component.beginRender(writer, event);
         }
 
@@ -416,9 +410,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         protected void invokeComponent(Component component, MarkupWriter writer, Event event)
         {
             component.afterRender(writer, event);
-
-            if (isRenderTracingEnabled())
-                writer.comment("END " + component.getComponentResources().getCompleteId());
         }
 
         public void render(final MarkupWriter writer, RenderQueue queue)
@@ -486,6 +477,12 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             invoke(false, POST_RENDER_CLEANUP);
 
             queue.endComponent();
+
+            // Now and only now the component is done rendering and fully cleaned up. Decrement
+            // the page's dirty count. If the entire render goes well, then the page will be
+            // clean and can be stored into the pool for later reuse.
+
+            page.decrementDirtyCount();
         }
 
         @Override
@@ -547,12 +544,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     private final PerThreadValue<Boolean> rendering;
 
-    // should be okay since it's a shadow service object
-    private final Request request;
-    private final SymbolSource symbolSource;
-    private final boolean productionMode;
-    private final boolean componentTracingEnabled;
-
     // We know that, at the very least, there will be an element to force the component to render
     // its body, so there's no reason to wait to initialize the list.
 
@@ -585,7 +576,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
      */
     ComponentPageElementImpl(Page page, ComponentPageElement container, String id, String nestedId, String completeId,
             String elementName, Instantiator instantiator, Location location,
-            ComponentPageElementResources elementResources, Request request, SymbolSource symbolSource)
+            ComponentPageElementResources elementResources)
     {
         super(location);
 
@@ -596,13 +587,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         this.completeId = completeId;
         this.elementName = elementName;
         this.elementResources = elementResources;
-        this.request = request;
-        this.symbolSource = symbolSource;
-
-        // evaluate this once because it gets referenced a lot during rendering
-        this.productionMode = "true".equals(symbolSource.valueForSymbol(SymbolConstants.PRODUCTION_MODE));
-        this.componentTracingEnabled = "true".equals(symbolSource
-                .valueForSymbol(SymbolConstants.COMPONENT_RENDER_TRACING_ENABLED));
 
         ComponentResources containerResources = container == null ? null : container.getComponentResources();
 
@@ -620,10 +604,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     /**
      * Constructor for the root component of a page.
      */
-    public ComponentPageElementImpl(Page page, Instantiator instantiator,
-            ComponentPageElementResources elementResources, Request request, SymbolSource symbolSource)
+    public ComponentPageElementImpl(Page page, Instantiator instantiator, ComponentPageElementResources elementResources)
     {
-        this(page, null, null, null, page.getName(), null, instantiator, null, elementResources, request, symbolSource);
+        this(page, null, null, null, page.getName(), null, instantiator, null, elementResources);
     }
 
     private void initializeRenderPhases()
@@ -682,7 +665,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             Instantiator instantiator, Location location)
     {
         ComponentPageElementImpl child = new ComponentPageElementImpl(page, this, id, nestedId, completeId,
-                elementName, instantiator, location, elementResources, request, symbolSource);
+                elementName, instantiator, location, elementResources);
 
         addEmbeddedElement(child);
 
@@ -1037,6 +1020,10 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         // TODO: An error if the render flag is already set (recursive rendering not
         // allowed or advisable).
 
+        // Once we start rendering, the page is considered dirty, until we cleanup post render.
+
+        page.incrementDirtyCount();
+
         // TODO: Check for recursive rendering.
 
         rendering.set(true);
@@ -1311,10 +1298,5 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         renderEvent.set(result);
 
         return result;
-    }
-
-    boolean isRenderTracingEnabled()
-    {
-        return !productionMode && (componentTracingEnabled || "true".equals(request.getParameter("t:component-trace")));
     }
 }

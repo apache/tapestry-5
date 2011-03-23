@@ -1,10 +1,10 @@
-// Copyright 2008, 2009, 2011 The Apache Software Foundation
+// Copyright 2008, 2009 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-// http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,19 +14,19 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
-
-import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.PrimaryKeyEncoder;
 import org.apache.tapestry5.annotations.Log;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.integration.app1.data.DoubleItem;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.testng.Assert;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class FormInjectorDemo
 {
@@ -51,21 +51,27 @@ public class FormInjectorDemo
         }
     }
 
-    public ValueEncoder<DoubleItem> getDoubleItemEncoder()
+    public PrimaryKeyEncoder getEncoder()
     {
-        return new ValueEncoder<DoubleItem>()
+        return new PrimaryKeyEncoder<Long, DoubleItem>()
         {
-
-            public DoubleItem toValue(String clientValue)
+            public Long toKey(DoubleItem value)
             {
-                Long key = new Long(clientValue);
+                return value.getId();
+            }
 
+            public void prepareForKeys(List<Long> keys)
+            {
+            }
+
+            public DoubleItem toValue(Long key)
+            {
                 return DB.get(key);
             }
 
-            public String toClient(DoubleItem value)
+            public Class<Long> getKeyType()
             {
-                return String.valueOf(value.getId());
+                return Long.class;
             }
         };
     }
@@ -88,7 +94,7 @@ public class FormInjectorDemo
     Object onAddRow(long context)
     {
         Assert.assertEquals(context, DEMO_CONTEXT_VALUE,
-                "Context value provided to AjaxFormLoop must be provided to the event handler method.");
+                            "Context value provided to AjaxFormLoop must be provided to the event handler method.");
 
         DoubleItem item = new DoubleItem();
         item.setId(ID_ALLOCATOR.incrementAndGet());
@@ -113,6 +119,7 @@ public class FormInjectorDemo
         sum += item.getValue();
     }
 
+
     void onActionFromReset()
     {
         DB.clear();
@@ -126,6 +133,6 @@ public class FormInjectorDemo
     void onActivate(String context)
     {
         Assert.assertEquals(context, "FakePageActivationContextValue",
-                "Page activation context was not passed through correctly.");
+                            "Page activation context was not passed through correctly.");
     }
 }

@@ -56,5 +56,6 @@ public class DTD
         {
             writer.printf("<!DOCTYPE %s>", name);
         }
+
     }
 }

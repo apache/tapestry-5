@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,6 +40,24 @@ public interface PerthreadManager
      * map it stores.
      */
     void cleanup();
+
+    /**
+     * Returns an object stored in the per-thread map. When the object is a string, the expected name is <em>service
+     * id</em>.<em>subkey</em>. Unlike most of Tapestry, such keys <em>will</em> be case sensitive.
+     * 
+     * @param key
+     *            key used to retrieve object
+     * @return corresponding per-thread object, or null
+     * @deprecated use {@link PerthreadManager#createValue()} instead
+     */
+    Object get(Object key);
+
+    /**
+     * Stores a value into the per-thread map.
+     * 
+     * @deprecated use {@link PerthreadManager#createValue()} instead
+     */
+    void put(Object key, Object value);
 
     /**
      * Creates a value using a unique internal key.
