@@ -30,9 +30,9 @@
     <url>http://www.apache.org</url>
   </organization>
   <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk/</developerConnection>
-    <url>http://svn.apache.org/viewvc/tapestry/tapestry5/trunk/</url>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/branches/maint-5-2/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/branches/maint-5-2/</developerConnection>
+    <url>http://svn.apache.org/viewvc/tapestry/tapestry5/branches/maint-5-2/</url>
   </scm>
   <developers>
     <developer>
