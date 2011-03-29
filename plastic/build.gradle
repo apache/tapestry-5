@@ -1,0 +1,11 @@
+description = "Plastic core framework"
+
+dependencies {
+	compile "asm:asm-all:3.3.1"
+    
+	testCompile "org.spockframework:spock-core:0.5-groovy-1.7"    
+}
+
+test {
+	useJUnit()
+}

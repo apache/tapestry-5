@@ -1,0 +1,115 @@
+// Copyright 2011 The Apache Software Foundation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package org.apache.tapestry5.internal.plastic;
+
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * Used to track which methods are implemented by a base class, which is often needed when transforming
+ * a subclass.
+ */
+public class MethodBundle
+{
+    private final MethodBundle parent;
+
+    private final Set<String> methods = new HashSet<String>();
+
+    // TODO: So far, this is just a placeholder until we figure out what the API should look like.
+    // TODO: Possibly, rename this class and have it store additional information, such as the name of a
+    // (protected final) field storing the InstanceContext.
+
+    public MethodBundle()
+    {
+        this(null);
+    }
+
+    private MethodBundle(MethodBundle parent)
+    {
+        this.parent = parent;
+    }
+
+    /**
+     * Is this bundle for a transformed class, or for a base class (typically Object)?
+     * 
+     * @return
+     *         true if this bundle is for transformed class, false otherwise
+     */
+    public boolean isTransformed()
+    {
+        return parent != null;
+    }
+
+    /**
+     * Returns a new MethodBundle that represents the methods of a child class
+     * of this bundle. The returned bundle will always be {@linkplain #isTransformed() transformed}.
+     * 
+     * @param childClassName
+     *            name of subclass
+     * @return new method bundle
+     */
+    public MethodBundle createChild(String childClassName)
+    {
+        return new MethodBundle(this);
+    }
+
+    /**
+     * Adds a new instance method. Only non-private, non-abstract methods should be added (that is, methods which might
+     * be overridden in subclasses). This can later be queried to see if any base class implements the method.
+     * 
+     * @param name
+     *            name of method
+     * @param desc
+     *            method descriptor
+     */
+    public void addMethod(String name, String desc)
+    {
+        String value = toValue(name, desc);
+
+        methods.add(value);
+    }
+
+    /**
+     * Returns true if a transformed parent class contains the indicated method.
+     * 
+     * @param name
+     *            method name
+     * @param desc
+     *            method descriptor
+     * @return the <em>internal name</em> of the implementing base class for this method,
+     *         or null if no base class implements the method
+     */
+    public boolean isImplemented(String name, String desc)
+    {
+        return checkForMethod(toValue(name, desc));
+    }
+
+    private boolean checkForMethod(String value)
+    {
+        if (methods.contains(value))
+            return true;
+
+        return parent == null ? false : parent.checkForMethod(value);
+    }
+
+    /**
+     * Combines a method name and its desc (which describes parameter types and return value) to form
+     * a value, which is how methods are tracked.
+     */
+    private String toValue(String name, String desc)
+    {
+        return name + ":" + desc;
+    }
+}
