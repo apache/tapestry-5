@@ -196,6 +196,7 @@
     </mailingList>
   </mailingLists>
   <modules>
+    <module>plastic</module>
     <module>tapestry-json</module>
     <module>tapestry-func</module>
     <module>tapestry-test</module>
