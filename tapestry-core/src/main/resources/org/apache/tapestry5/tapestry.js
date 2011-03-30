@@ -91,9 +91,9 @@ var Tapestry = {
 	CONSOLE_DURATION : 10,
 
 	/**
-	 * CSS Class added to a &lt;form&gt; element that directs Tapestry to prevent
-	 * normal (HTTP POST) form submission, in favor of Ajax (XmlHttpRequest)
-	 * submission.
+	 * CSS Class added to a &lt;form&gt; element that directs Tapestry to
+	 * prevent normal (HTTP POST) form submission, in favor of Ajax
+	 * (XmlHttpRequest) submission.
 	 */
 	PREVENT_SUBMISSION : "t-prevent-submission",
 
@@ -122,7 +122,7 @@ var Tapestry = {
 		});
 		overlay.setOpacity(0.0);
 
-		body.insert( {
+		body.insert({
 			top : overlay
 		});
 
@@ -134,7 +134,7 @@ var Tapestry = {
 		var messageDiv = new Element("div", {
 			'class' : 't-page-loading-banner'
 		}).update(Tapestry.Messages.pageIsLoading);
-		overlay.insert( {
+		overlay.insert({
 			top : messageDiv
 		});
 
@@ -220,10 +220,11 @@ var Tapestry = {
 		 * When a submit element is clicked, record the name of the element into
 		 * the associated form. This is necessary for some Ajax processing, see
 		 * TAPESTRY-2324.
-		 *
-		 * TAP5-1418: Added "type=image" so that they set the submitting element correctly.
+		 * 
+		 * TAP5-1418: Added "type=image" so that they set the submitting element
+		 * correctly.
 		 */
-		$$("INPUT[type=submit]","INPUT[type=image]").each(function(element) {
+		$$("INPUT[type=submit]", "INPUT[type=image]").each(function(element) {
 			var t = $T(element);
 
 			if (!t.trackingClicks) {
@@ -409,10 +410,10 @@ var Tapestry = {
 
 		var successHandler = options.onSuccess || Prototype.emptyFunction;
 
-		var finalOptions = $H( {
+		var finalOptions = $H({
 			onException : Tapestry.ajaxExceptionHandler,
 			onFailure : Tapestry.ajaxFailureHandler
-		}).update(options).update( {
+		}).update(options).update({
 			onSuccess : function(response, jsonResponse) {
 				/*
 				 * When the page is unloaded, pending Ajax requests appear to
@@ -449,8 +450,9 @@ var Tapestry = {
 
 	/**
 	 * Obtains the Tapestry.ZoneManager object associated with a triggering
-	 * element (an &lt;a&gt; or &lt;form&gt;) configured to update a zone. Writes errors to
-	 * the AjaxConsole if the zone and ZoneManager can not be resolved.
+	 * element (an &lt;a&gt; or &lt;form&gt;) configured to update a zone.
+	 * Writes errors to the AjaxConsole if the zone and ZoneManager can not be
+	 * resolved.
 	 * 
 	 * @param element
 	 *            triggering element (id or instance)
@@ -465,8 +467,8 @@ var Tapestry = {
 
 	/**
 	 * Obtains the Tapestry.ZoneManager object associated with a zone element
-	 * (usually a &lt;div&gt;). Writes errors to the Ajax console if the element or
-	 * manager can not be resolved.
+	 * (usually a &lt;div&gt;). Writes errors to the Ajax console if the element
+	 * or manager can not be resolved.
 	 * 
 	 * @param zoneElement
 	 *            zone element (id or instance)
@@ -615,7 +617,7 @@ var Tapestry = {
 				"<" + newTagName).replace(new RegExp("</" + tag + ">$", "i"),
 				"</" + newTagName + ">");
 
-		element.insert( {
+		element.insert({
 			before : replaceHTML
 		});
 
@@ -685,7 +687,7 @@ var Tapestry = {
 	}
 };
 
-Element.addMethods( {
+Element.addMethods({
 
 	/**
 	 * Works upward from the element, checking to see if the element is visible.
@@ -858,7 +860,7 @@ Element
 					}
 				});
 
-Element.addMethods( [ 'INPUT', 'SELECT', 'TEXTAREA' ], {
+Element.addMethods([ 'INPUT', 'SELECT', 'TEXTAREA' ], {
 	/**
 	 * Invoked on a form element (INPUT, SELECT, etc.), gets or creates the
 	 * Tapestry.FieldEventManager for that field.
@@ -1208,7 +1210,7 @@ Tapestry.Initializer = {
 																		fname : "Tapestry.Validator."
 																				+ functionName,
 																		params : Object
-																				.toJSON( [
+																				.toJSON([
 																						field.id,
 																						message,
 																						constraint ]),
@@ -1381,7 +1383,7 @@ Tapestry.Validator = {
 	}
 };
 
-Tapestry.ErrorPopup = Class.create( {
+Tapestry.ErrorPopup = Class.create({
 
 	/*
 	 * If the images associated with the error popup are overridden (by
@@ -1407,7 +1409,7 @@ Tapestry.ErrorPopup = Class.create( {
 
 		var body = $(document.body);
 
-		body.insert( {
+		body.insert({
 			bottom : this.outerDiv
 		});
 
@@ -1466,7 +1468,7 @@ Tapestry.ErrorPopup = Class.create( {
 	repositionBubble : function() {
 		var fieldPos = this.field.cumulativeOffset();
 
-		this.outerDiv.setStyle( {
+		this.outerDiv.setStyle({
 			top : (fieldPos[1] + this.BUBBLE_VERT_OFFSET) + "px",
 			left : (fieldPos[0] + this.BUBBLE_HORIZONTAL_OFFSET) + "px",
 			width : this.BUBBLE_WIDTH,
@@ -1522,7 +1524,7 @@ Tapestry.ErrorPopup = Class.create( {
 	}
 });
 
-Tapestry.FormEventManager = Class.create( {
+Tapestry.FormEventManager = Class.create({
 
 	initialize : function(spec) {
 		this.form = $(spec.formId);
@@ -1562,7 +1564,7 @@ Tapestry.FormEventManager = Class.create( {
 					name : "t:submit"
 				});
 
-				firstHidden.insert( {
+				firstHidden.insert({
 					after : this.submitHidden
 				});
 			} else
@@ -1642,7 +1644,7 @@ Tapestry.FormEventManager = Class.create( {
 	}
 });
 
-Tapestry.FieldEventManager = Class.create( {
+Tapestry.FieldEventManager = Class.create({
 
 	initialize : function(field) {
 		this.field = $(field);
@@ -1820,7 +1822,7 @@ Tapestry.ElementEffect = {
  * Manages a &lt;div&gt; (or other element) for dynamic updates.
  * 
  */
-Tapestry.ZoneManager = Class.create( {
+Tapestry.ZoneManager = Class.create({
 	/*
 	 * spec are the parameters for the Zone: trigger: required -- name or
 	 * instance of link. element: required -- name or instance of div element to
@@ -1909,7 +1911,7 @@ Tapestry.ZoneManager = Class.create( {
 			 * zones is an object of zone ids and zone content that will be
 			 * present in a multi-zone update response.
 			 */
-			Object.keys(reply.zones).each(function(zoneId) {
+			reply.zones && Object.keys(reply.zones).each(function(zoneId) {
 				var manager = Tapestry.findZoneManagerForZone(zoneId);
 
 				if (manager) {
@@ -1931,7 +1933,7 @@ Tapestry.ZoneManager = Class.create( {
 	 */
 	updateFromURL : function(URL, parameters) {
 
-		var finalParameters = $H( {
+		var finalParameters = $H({
 			"t:zoneid" : this.element.id
 		}).update(this.specParameters);
 
@@ -1948,7 +1950,7 @@ Tapestry.ZoneManager = Class.create( {
 	}
 });
 
-Tapestry.FormInjector = Class.create( {
+Tapestry.FormInjector = Class.create({
 
 	initialize : function(spec) {
 		this.element = $(spec.element);
@@ -2014,7 +2016,7 @@ Tapestry.ScriptManager = {
 	 * Complete URLs of virtually loaded scripts (combined scripts loaded as a
 	 * single virtual asset).
 	 */
-	virtualScripts : $A( []),
+	virtualScripts : $A([]),
 
 	initialize : function() {
 
@@ -2042,7 +2044,7 @@ Tapestry.ScriptManager = {
 			type : 'text/javascript'
 		});
 
-		$$("head").first().insert( {
+		$$("head").first().insert({
 			bottom : element
 		});
 
@@ -2071,8 +2073,8 @@ Tapestry.ScriptManager = {
 	},
 
 	/**
-	 * Checks to see if the given collection (of &lt;script&gt; or &lt;style&gt; elements)
-	 * contains the given asset URL.
+	 * Checks to see if the given collection (of &lt;script&gt; or &lt;style&gt;
+	 * elements) contains the given asset URL.
 	 * 
 	 * @param collection
 	 * @param prop
@@ -2173,7 +2175,7 @@ Tapestry.ScriptManager = {
 					if (s.media != undefined)
 						element.writeAttribute('media', s.media);
 
-					head.insert( {
+					head.insert({
 						bottom : element
 					});
 
