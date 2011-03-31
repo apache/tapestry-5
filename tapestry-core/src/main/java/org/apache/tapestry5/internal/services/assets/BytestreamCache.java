@@ -14,8 +14,10 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
@@ -47,5 +49,10 @@ public class BytestreamCache
     public int size()
     {
         return streamData.length;
+    }
+
+    public InputStream openStream()
+    {
+        return new ByteArrayInputStream(streamData);
     }
 }

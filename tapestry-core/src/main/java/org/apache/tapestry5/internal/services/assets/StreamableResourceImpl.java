@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services.assets;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.tapestry5.services.assets.CompressionStatus;
@@ -62,6 +63,11 @@ public class StreamableResourceImpl implements StreamableResource
     public void streamTo(OutputStream os) throws IOException
     {
         bytestreamCache.writeTo(os);
+    }
+
+    public InputStream openStream() throws IOException
+    {
+        return bytestreamCache.openStream();
     }
 
     @Override

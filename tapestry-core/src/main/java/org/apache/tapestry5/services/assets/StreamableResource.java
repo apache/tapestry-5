@@ -15,6 +15,7 @@
 package org.apache.tapestry5.services.assets;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.tapestry5.ioc.Resource;
@@ -43,6 +44,15 @@ public interface StreamableResource
      * the output stream.
      */
     void streamTo(OutputStream os) throws IOException;
+
+    /**
+     * Opens the content of the resource as an input stream; the caller is responsible for closing the stream
+     * after reading it.
+     * 
+     * @return stream of the contents of the resource
+     * @throws IOException
+     */
+    InputStream openStream() throws IOException;
 
     /**
      * Returns the time the resource was last modified, with accuracy to one second (so as to match
