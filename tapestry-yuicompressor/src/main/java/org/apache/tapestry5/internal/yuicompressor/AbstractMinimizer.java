@@ -31,10 +31,14 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.assets.CompressionStatus;
 import org.apache.tapestry5.services.assets.ResourceMinimizer;
 import org.apache.tapestry5.services.assets.StreamableResource;
-import org.mozilla.javascript.ErrorReporter;
 import org.mozilla.javascript.EvaluatorException;
 import org.slf4j.Logger;
 
+/**
+ * Base class for resource minimizers.
+ * 
+ * @since 5.3.0
+ */
 public abstract class AbstractMinimizer implements ResourceMinimizer
 {
     private static final double NANOS_TO_MILLIS = 1.0d / 1000000.0d;
