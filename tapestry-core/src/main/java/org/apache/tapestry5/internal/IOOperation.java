@@ -17,11 +17,18 @@ package org.apache.tapestry5.internal;
 import java.io.IOException;
 
 /**
- * An operation that may throw an IOException.
+ * This interface is similar to {@link Runnable}, except that
+ * the operation may throw an {@link IOException}.
  * 
- * @asince 5.3.0
+ * @since 5.3.0
+ * @see TapestryInternalUtils#performIO(org.apache.tapestry5.ioc.OperationTracker, String, IOOperation)
  */
 public interface IOOperation
 {
+    /**
+     * Perform some work.
+     * 
+     * @throws IOException
+     */
     void perform() throws IOException;
 }
