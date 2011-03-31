@@ -42,6 +42,8 @@ import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
  */
 public class JSCompressor implements ResourceMinimizer
 {
+    private static final double NANOS_TO_MILLIS = 1.0d / 1000000.0d;
+
     private final Logger logger;
 
     private final OperationTracker tracker;
@@ -113,16 +115,20 @@ public class JSCompressor implements ResourceMinimizer
         inputStream.close();
         writer.close();
 
-        long ellapsedNanos = System.nanoTime() - startNanos;
-
         // The content is minimized, but can still be (GZip) compressed.
 
-        StreamableResource output = new StreamableResourceImpl(input.getContentType(),
-                CompressionStatus.COMPRESSABLE, input.getLastModified(), new BytestreamCache(bos));
+        StreamableResource output = new StreamableResourceImpl(input.getContentType(), CompressionStatus.COMPRESSABLE,
+                input.getLastModified(), new BytestreamCache(bos));
+
+        long elapsedNanos = System.nanoTime() - startNanos;
 
         if (logger.isDebugEnabled())
-            logger.debug(String.format("Minimized %,d input bytes to %,d output bytes in %.2d ms", input.getSize(),
-                    output.getSize(), ellapsedNanos / 1000.));
+        {
+            double elapsedMillis = ((double) elapsedNanos) * NANOS_TO_MILLIS;
+
+            logger.debug(String.format("Minimized %,d input bytes to %,d output bytes in %.2f ms", input.getSize(),
+                    output.getSize(), elapsedMillis));
+        }
 
         return output;
     }
