@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ class ActivationRequestParameterTests extends TapestryCoreTestCase
 {
     @Test
     void basic_links() {
-        clickThru "ActivationRequestParameter Annotation Demo"
+        openLinks "ActivationRequestParameter Annotation Demo"
         
         assertText "click-count", ""
         assertText "click-count-set", "false"
@@ -43,7 +43,7 @@ class ActivationRequestParameterTests extends TapestryCoreTestCase
     @Test
     public void form_components_do_not_conflict_with_mapped_field_names() {
         
-        clickThru "ActivationRequestParameter Annotation Demo"
+        openLinks "ActivationRequestParameter Annotation Demo"
         
         clickAndWait "link=increment count"
         

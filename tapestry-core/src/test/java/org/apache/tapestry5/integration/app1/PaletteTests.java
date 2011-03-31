@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ public class PaletteTests extends TapestryCoreTestCase
     @Test
     public void palette_component()
     {
-        clickThru("Palette Demo", "reset");
+        openLinks("Palette Demo", "reset");
 
         assertText("//div[@class='t-palette-available']/div[@class='t-palette-title']",
                 "Languages Offered");
@@ -85,7 +85,7 @@ public class PaletteTests extends TapestryCoreTestCase
     @Test
     public void palette_component_disabled_options()
     {
-        clickThru("Palette Demo", "reset");
+        openLinks("Palette Demo", "reset");
 
         /*
          * force of the options to be disabled rather than creating the model
@@ -103,7 +103,7 @@ public class PaletteTests extends TapestryCoreTestCase
     @Test
     public void palette_component_client_validation()
     {
-        clickThru("Palette Demo", "reset");
+        openLinks("Palette Demo", "reset");
 
         click(SUBMIT);
 

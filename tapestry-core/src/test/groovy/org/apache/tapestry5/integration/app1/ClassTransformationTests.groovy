@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ class ClassTransformationTests extends TapestryCoreTestCase
     /** TAP5-1222 */
     @Test
     void access_to_public_field_of_data_object_with_name_that_conflicts_with_component_field() {
-        clickThru "Public Field Access Demo"
+        openLinks "Public Field Access Demo"
         
         assertText "message", "success"
     }

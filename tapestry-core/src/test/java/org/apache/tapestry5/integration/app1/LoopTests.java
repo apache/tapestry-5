@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ public class LoopTests extends TapestryCoreTestCase
     @Test
     public void handling_of_empty_loop()
     {
-        clickThru("Empty Loop Demo");
+        openLinks("Empty Loop Demo");
 
         assertText("first", "");
         assertText("second", "Source is null.");
@@ -47,7 +47,7 @@ public class LoopTests extends TapestryCoreTestCase
     @Test
     public void generic_loop()
     {
-        clickThru("Generic Loop Demo");
+        openLinks("Generic Loop Demo");
         String[] strings = {"1", "3", "5", "7", "11"};
         for ( int i = 0; i< strings.length; ++i)
         {
@@ -69,7 +69,7 @@ public class LoopTests extends TapestryCoreTestCase
 
     private void test_loop_inside_form(String linkLabel)
     {
-        clickThru(linkLabel);
+        openLinks(linkLabel);
 
         clickAndWait("link=reset the database");
 

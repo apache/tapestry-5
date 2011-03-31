@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ public class AjaxTests extends TapestryCoreTestCase
     @Test
     public void autocomplete_mixin()
     {
-        clickThru("Autocomplete Mixin Demo");
+        openLinks("Autocomplete Mixin Demo");
 
         // And that's as far as we can go currently, because
         // of limitations in Selenium 0.8.3 and bugs in Selenium 0.9.2.
@@ -34,7 +34,7 @@ public class AjaxTests extends TapestryCoreTestCase
     @Test
     public void form_fragment()
     {
-        clickThru("Form Fragment Demo", "Clear");
+        openLinks("Form Fragment Demo", "Clear");
 
         type("name", "Fred");
 
@@ -83,7 +83,7 @@ public class AjaxTests extends TapestryCoreTestCase
     @Test
     public void form_injector()
     {
-        clickThru("FormInjector Demo");
+        openLinks("FormInjector Demo");
 
         assertText("sum", "0.0");
 
@@ -114,7 +114,7 @@ public class AjaxTests extends TapestryCoreTestCase
     @Test
     public void ajax_server_side_exception()
     {
-        clickThru("Zone Demo");
+        openLinks("Zone Demo");
 
         click("link=Failure on the server side");
 
@@ -131,7 +131,7 @@ public class AjaxTests extends TapestryCoreTestCase
     @Test
     public void slow_ajax_load_warning()
     {
-        clickThru("Slow Ajax Demo");
+        openLinks("Slow Ajax Demo");
 
         // ActionLink
 
@@ -164,7 +164,7 @@ public class AjaxTests extends TapestryCoreTestCase
     @Test
     public void progressive_display()
     {
-        clickThru("ProgressiveDisplay Demo");
+        openLinks("ProgressiveDisplay Demo");
 
         waitForElementToAppear("content1");
         assertText("content1", "Progressive Display content #1.");

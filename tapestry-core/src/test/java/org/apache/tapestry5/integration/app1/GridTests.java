@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ public class GridTests extends TapestryCoreTestCase
     @Test
     public void basic_grid()
     {
-        clickThru("Grid Demo");
+        openLinks("Grid Demo");
 
         // "Sort Rating" via the header cell override (TAPESTRY-2081)
 
@@ -108,7 +108,7 @@ public class GridTests extends TapestryCoreTestCase
     @Test
     public void grid_remove_reorder()
     {
-        clickThru("Grid Remove/Reorder Demo");
+        openLinks("Grid Remove/Reorder Demo");
 
         assertTextSeries("//th[%d]", 1, "Rating", "Title", "Album", "Artist", "Genre");
     }
@@ -116,7 +116,7 @@ public class GridTests extends TapestryCoreTestCase
     @Test
     public void grid_set() throws Exception
     {
-        clickThru("Grid Set Demo");
+        openLinks("Grid Set Demo");
 
         assertFalse(isTextPresent("Exception"));
 
@@ -128,7 +128,7 @@ public class GridTests extends TapestryCoreTestCase
     @Test
     public void grid_from_explicit_interface_model()
     {
-        clickThru("SimpleTrack Grid Demo");
+        openLinks("SimpleTrack Grid Demo");
 
         assertTextSeries("//th[%d]", 1, "Title", "Album", "Rating");
 
@@ -138,7 +138,7 @@ public class GridTests extends TapestryCoreTestCase
     @Test
     public void grid_enum_display()
     {
-        clickThru("Grid Enum Demo", "reset");
+        openLinks("Grid Enum Demo", "reset");
 
         assertTextSeries("//tr[1]/td[%d]", 1, "End World Hunger", "Medium");
         assertTextSeries("//tr[2]/td[%d]", 1, "Develop Faster-Than-Light Travel", "Ultra Important");
@@ -148,7 +148,7 @@ public class GridTests extends TapestryCoreTestCase
     @Test
     public void null_grid() throws Exception
     {
-        clickThru("Null Grid");
+        openLinks("Null Grid");
 
         assertTextPresent("There is no data to display.");
     }
@@ -156,7 +156,7 @@ public class GridTests extends TapestryCoreTestCase
     @Test
     public void grid_inside_form()
     {
-        clickThru("Grid Form Demo", "reset", "2");
+        openLinks("Grid Form Demo", "reset", "2");
 
         // The first input field is the form's hidden field.
 
@@ -178,7 +178,7 @@ public class GridTests extends TapestryCoreTestCase
     @Test
     public void grid_inside_form_with_encoder()
     {
-        clickThru("Grid Form Encoder Demo", "reset", "2");
+        openLinks("Grid Form Encoder Demo", "reset", "2");
 
         // The first input field is the form's hidden field.
 
@@ -213,7 +213,7 @@ public class GridTests extends TapestryCoreTestCase
     @Test
     public void lean_grid()
     {
-        clickThru("Lean Grid Demo");
+        openLinks("Lean Grid Demo");
 
         assertTextSeries("//th[%d]", 1, "Title", "Album", "Artist", "Genre", "Play Count", "Rating");
 
@@ -228,7 +228,7 @@ public class GridTests extends TapestryCoreTestCase
     @Test
     public void grid_row_and_column_indexes()
     {
-        clickThru("Lean Grid Demo", "2");
+        openLinks("Lean Grid Demo", "2");
 
         // Use page 2 to ensure that the row index is the row in the Grid, not
         // the row index of the data
@@ -245,7 +245,7 @@ public class GridTests extends TapestryCoreTestCase
     @Test
     public void adding_new_columns_to_grid_programattically()
     {
-        clickThru("Added Grid Columns Demo", "Title Length");
+        openLinks("Added Grid Columns Demo", "Title Length");
 
         assertTextSeries("//th[%d]", 1, "Title", "View", "Title Length", "Dummy");
 
@@ -256,7 +256,7 @@ public class GridTests extends TapestryCoreTestCase
     @Test
     public void inplace_grid()
     {
-        clickThru("In-Place Grid Demo");
+        openLinks("In-Place Grid Demo");
 
         String timestamp = getText("lastupdate");
 
@@ -275,7 +275,7 @@ public class GridTests extends TapestryCoreTestCase
     @Test
     public void short_grid()
     {
-        clickThru("Short Grid");
+        openLinks("Short Grid");
 
         for (int i = 0; i < 6; i++)
         {
@@ -296,7 +296,7 @@ public class GridTests extends TapestryCoreTestCase
     @Test
     public void delete_rows_from_grid()
     {
-        clickThru("Delete From Grid", "setup the database", "2");
+        openLinks("Delete From Grid", "setup the database", "2");
 
         for (int i = 6; i <= 10; i++)
             clickAndWait("link=ToDo #" + i);

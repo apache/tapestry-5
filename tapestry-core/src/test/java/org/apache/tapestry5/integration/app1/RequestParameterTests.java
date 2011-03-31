@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ public class RequestParameterTests extends TapestryCoreTestCase
     @Test
     public void successful_use_of_query_parameter_annotation()
     {
-        clickThru("RequestParameter Annotation Demo", "Working Link");
+        openLinks("RequestParameter Annotation Demo", "Working Link");
 
         assertText("id=current", "97");
     }
@@ -30,7 +30,7 @@ public class RequestParameterTests extends TapestryCoreTestCase
     @Test
     public void null_value_when_not_allowed()
     {
-        clickThru("RequestParameter Annotation Demo", "Null Link");
+        openLinks("RequestParameter Annotation Demo", "Null Link");
 
         assertTextPresent(
                 "Unable process query parameter 'gnip' as parameter #1 of event handler method void onFrob(int) (in class org.apache.tapestry5.integration.app1.pages.RequestParameterDemo)",
@@ -40,7 +40,7 @@ public class RequestParameterTests extends TapestryCoreTestCase
     @Test
     public void null_for_primitive_when_allowed()
     {
-        clickThru("RequestParameter Annotation Demo", "Null Allowed Link");
+        openLinks("RequestParameter Annotation Demo", "Null Allowed Link");
 
         assertTextPresent(
                 "Unable process query parameter 'gnip' as parameter #1 of event handler method void onFrobNullAllowed(int) (in class org.apache.tapestry5.integration.app1.pages.RequestParameterDemo)",
@@ -50,7 +50,7 @@ public class RequestParameterTests extends TapestryCoreTestCase
     @Test
     public void type_mismatch_for_method_parameter()
     {
-        clickThru("RequestParameter Annotation Demo", "Broken Link");
+        openLinks("RequestParameter Annotation Demo", "Broken Link");
 
         assertTextPresent(
                 "Unable process query parameter 'gnip' as parameter #1 of event handler method void onFrob(int) (in class org.apache.tapestry5.integration.app1.pages.RequestParameterDemo)",

@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public class BeanEditorTests extends TapestryCoreTestCase
     @Test
     public void bean_editor()
     {
-        clickThru("BeanEditor Demo", "Clear Data");
+        openLinks("BeanEditor Demo", "Clear Data");
 
         clickAndWait(SUBMIT);
 
@@ -82,7 +82,7 @@ public class BeanEditorTests extends TapestryCoreTestCase
     @Test
     public void bean_editor_property_reorder_remove()
     {
-        clickThru("BeanEdit Remove/Reorder", "Clear Data");
+        openLinks("BeanEdit Remove/Reorder", "Clear Data");
 
         // Looks like a bug in Selenium; we can see //label[1] but not
         // //label[2].
@@ -102,7 +102,7 @@ public class BeanEditorTests extends TapestryCoreTestCase
     @Test
     public void multiple_beaneditor_components()
     {
-        clickThru("MultiBeanEdit Demo", "Clear Data");
+        openLinks("MultiBeanEdit Demo", "Clear Data");
 
         type("firstName", "Howard");
         type("lastName", "Lewis Ship");
@@ -120,7 +120,7 @@ public class BeanEditorTests extends TapestryCoreTestCase
     @Test
     public void date_field_inside_bean_editor()
     {
-        clickThru("BeanEditor / Date Demo", "clear");
+        openLinks("BeanEditor / Date Demo", "clear");
 
         type("name", "Howard Lewis Ship");
         type("date", "12/24/1966");
@@ -140,7 +140,7 @@ public class BeanEditorTests extends TapestryCoreTestCase
     @Test
     public void bean_editor_overrides()
     {
-        clickThru("BeanEditor Override", "Clear Data");
+        openLinks("BeanEditor Override", "Clear Data");
 
         assertTextPresent("[FirstName Property Editor Override]");
     }
@@ -151,7 +151,7 @@ public class BeanEditorTests extends TapestryCoreTestCase
     @Test
     public void null_fields_and_bean_editor()
     {
-        clickThru("Number BeanEditor Demo");
+        openLinks("Number BeanEditor Demo");
 
         clickAndWait(SUBMIT);
 
@@ -171,7 +171,7 @@ public class BeanEditorTests extends TapestryCoreTestCase
     @Test
     public void nested_bean_editor_and_bean_display()
     {
-        clickThru("Nested BeanEditor");
+        openLinks("Nested BeanEditor");
 
         type("name", "Parent");
         type("age", "60");
@@ -194,7 +194,7 @@ public class BeanEditorTests extends TapestryCoreTestCase
     @Test
     public void bean_editor_pushes_bean_edit_context()
     {
-        clickThru("BeanEditor BeanEditContext");
+        openLinks("BeanEditor BeanEditContext");
 
         assertTextPresent("Bean class from context is: " + RegistrationData.class.getName());
     }
@@ -202,7 +202,7 @@ public class BeanEditorTests extends TapestryCoreTestCase
     /** TAP5-991 */
     public void bean_display_enum_value_from_messages()
     {
-        start("BeanDisplay Enum Demo");
+        openLinks("BeanDisplay Enum Demo");
         
         assertText("//dd[2]", "Ultra Important");
     }

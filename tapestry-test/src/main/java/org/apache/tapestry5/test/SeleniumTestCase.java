@@ -41,16 +41,34 @@ import com.thoughtworks.selenium.Selenium;
  * 
  * @since 5.2.0
  */
-public class SeleniumTestCase extends Assert implements Selenium
+public abstract class SeleniumTestCase extends Assert implements Selenium
 {
     /**
      * 15 seconds
      */
     public static final String PAGE_LOAD_TIMEOUT = "15000";
+
     public static final String TOMCAT_6 = "tomcat6";
+
     public static final String JETTY_7 = "jetty7";
 
-    private Selenium delegate;
+    /**
+     * An XPath expression for locating a submit element (very commonly used
+     * with {@link #clickAndWait(String)}.
+     * 
+     * @since 5.3.0
+     */
+    public static final String SUBMIT = "//input[@type='submit']";
+
+    /**
+     * The underlying {@link Selenium} instance that all the methods of this class delegate to;
+     * this can be useful when attempting to use SeleniumTestCase with a newer version of Selenium which
+     * has added some methods to the interface. This field will not be set until the test case instance
+     * has gone through its full initialization.
+     * 
+     * @since 5.3.0
+     */
+    protected Selenium selenium;
 
     private String baseURL;
 
@@ -159,12 +177,13 @@ public class SeleniumTestCase extends Assert implements Selenium
 
         String baseURL = String.format("http://localhost:%d%s/", port, contextPath);
 
-        CommandProcessor httpCommandProcessor = new HttpCommandProcessor("localhost", RemoteControlConfiguration.DEFAULT_PORT,
-                browserStartCommand, baseURL);
+        CommandProcessor httpCommandProcessor = new HttpCommandProcessor("localhost",
+                RemoteControlConfiguration.DEFAULT_PORT, browserStartCommand, baseURL);
 
         ErrorReporter errorReporter = new ErrorReporterImpl(httpCommandProcessor, testContext);
 
-        ErrorReportingCommandProcessor commandProcessor = new ErrorReportingCommandProcessor(httpCommandProcessor, errorReporter);
+        ErrorReportingCommandProcessor commandProcessor = new ErrorReportingCommandProcessor(httpCommandProcessor,
+                errorReporter);
 
         final Selenium selenium = new DefaultSelenium(commandProcessor);
 
@@ -187,7 +206,6 @@ public class SeleniumTestCase extends Assert implements Selenium
                 }
                 finally
                 {
-
                     testContext.removeAttribute(TapestryTestConstants.BASE_URL_ATTRIBUTE);
                     testContext.removeAttribute(TapestryTestConstants.SELENIUM_ATTRIBUTE);
                     testContext.removeAttribute(TapestryTestConstants.ERROR_REPORTER_ATTRIBUTE);
@@ -245,12 +263,13 @@ public class SeleniumTestCase extends Assert implements Selenium
         return launchWebServer(TOMCAT_6, webAppFolder, contextPath, port, sslPort);
     }
 
-    protected Runnable launchWebServer(String container, String webAppFolder, String contextPath, int port, int sslPort) throws Exception
+    protected Runnable launchWebServer(String container, String webAppFolder, String contextPath, int port, int sslPort)
+            throws Exception
     {
         final ServletContainerRunner runner;
-        if ( TOMCAT_6.equals(container) )
+        if (TOMCAT_6.equals(container))
             runner = new Tomcat6Runner(webAppFolder, contextPath, port, sslPort);
-        else if (JETTY_7.equals(container) )
+        else if (JETTY_7.equals(container))
             runner = new Jetty7Runner(webAppFolder, contextPath, port, sslPort);
         else
             throw new RuntimeException("Unknown servlet container: " + container);
@@ -269,7 +288,7 @@ public class SeleniumTestCase extends Assert implements Selenium
     {
         this.testContext = context;
 
-        delegate = (Selenium) context.getAttribute(TapestryTestConstants.SELENIUM_ATTRIBUTE);
+        selenium = (Selenium) context.getAttribute(TapestryTestConstants.SELENIUM_ATTRIBUTE);
         baseURL = (String) context.getAttribute(TapestryTestConstants.BASE_URL_ATTRIBUTE);
         errorReporter = (ErrorReporter) context.getAttribute(TapestryTestConstants.ERROR_REPORTER_ATTRIBUTE);
     }
@@ -277,7 +296,7 @@ public class SeleniumTestCase extends Assert implements Selenium
     @AfterClass
     public void cleanup()
     {
-        delegate = null;
+        selenium = null;
         baseURL = null;
         errorReporter = null;
         testContext = null;
@@ -295,6 +314,8 @@ public class SeleniumTestCase extends Assert implements Selenium
     /**
      * Returns the base URL for the application. This is of the typically <code>http://localhost:9999/</code> (i.e., it
      * includes a trailing slash).
+     * <p>
+     * Generally, you should use {@link #openLinks(String...)} to start from your application's home page.
      */
     public String getBaseURL()
     {
@@ -309,7 +330,7 @@ public class SeleniumTestCase extends Assert implements Selenium
         String className = testMethod.getDeclaringClass().getSimpleName();
         String testName = testMethod.getName().replace("_", " ");
 
-        delegate.setContext(className + ": " + testName);
+        selenium.setContext(className + ": " + testName);
     }
 
     @AfterMethod
@@ -328,772 +349,772 @@ public class SeleniumTestCase extends Assert implements Selenium
 
     public void addCustomRequestHeader(String key, String value)
     {
-        delegate.addCustomRequestHeader(key, value);
+        selenium.addCustomRequestHeader(key, value);
     }
 
     public void addLocationStrategy(String strategyName, String functionDefinition)
     {
-        delegate.addLocationStrategy(strategyName, functionDefinition);
+        selenium.addLocationStrategy(strategyName, functionDefinition);
     }
 
     public void addScript(String scriptContent, String scriptTagId)
     {
-        delegate.addScript(scriptContent, scriptTagId);
+        selenium.addScript(scriptContent, scriptTagId);
     }
 
     public void addSelection(String locator, String optionLocator)
     {
-        delegate.addSelection(locator, optionLocator);
+        selenium.addSelection(locator, optionLocator);
     }
 
     public void allowNativeXpath(String allow)
     {
-        delegate.allowNativeXpath(allow);
+        selenium.allowNativeXpath(allow);
     }
 
     public void altKeyDown()
     {
-        delegate.altKeyDown();
+        selenium.altKeyDown();
     }
 
     public void altKeyUp()
     {
-        delegate.altKeyUp();
+        selenium.altKeyUp();
     }
 
     public void answerOnNextPrompt(String answer)
     {
-        delegate.answerOnNextPrompt(answer);
+        selenium.answerOnNextPrompt(answer);
     }
 
     public void assignId(String locator, String identifier)
     {
-        delegate.assignId(locator, identifier);
+        selenium.assignId(locator, identifier);
     }
 
     public void attachFile(String fieldLocator, String fileLocator)
     {
-        delegate.attachFile(fieldLocator, fileLocator);
+        selenium.attachFile(fieldLocator, fileLocator);
     }
 
     public void captureEntirePageScreenshot(String filename, String kwargs)
     {
-        delegate.captureEntirePageScreenshot(filename, kwargs);
+        selenium.captureEntirePageScreenshot(filename, kwargs);
     }
 
     public String captureEntirePageScreenshotToString(String kwargs)
     {
-        return delegate.captureEntirePageScreenshotToString(kwargs);
+        return selenium.captureEntirePageScreenshotToString(kwargs);
     }
 
     public String captureNetworkTraffic(String type)
     {
-        return delegate.captureNetworkTraffic(type);
+        return selenium.captureNetworkTraffic(type);
     }
 
     public void captureScreenshot(String filename)
     {
-        delegate.captureScreenshot(filename);
+        selenium.captureScreenshot(filename);
     }
 
     public String captureScreenshotToString()
     {
-        return delegate.captureScreenshotToString();
+        return selenium.captureScreenshotToString();
     }
 
     public void check(String locator)
     {
-        delegate.check(locator);
+        selenium.check(locator);
     }
 
     public void chooseCancelOnNextConfirmation()
     {
-        delegate.chooseCancelOnNextConfirmation();
+        selenium.chooseCancelOnNextConfirmation();
     }
 
     public void chooseOkOnNextConfirmation()
     {
-        delegate.chooseOkOnNextConfirmation();
+        selenium.chooseOkOnNextConfirmation();
     }
 
     public void click(String locator)
     {
-        delegate.click(locator);
+        selenium.click(locator);
     }
 
     public void clickAt(String locator, String coordString)
     {
-        delegate.clickAt(locator, coordString);
+        selenium.clickAt(locator, coordString);
     }
 
     public void close()
     {
-        delegate.close();
+        selenium.close();
     }
 
     public void contextMenu(String locator)
     {
-        delegate.contextMenu(locator);
+        selenium.contextMenu(locator);
     }
 
     public void contextMenuAt(String locator, String coordString)
     {
-        delegate.contextMenuAt(locator, coordString);
+        selenium.contextMenuAt(locator, coordString);
     }
 
     public void controlKeyDown()
     {
-        delegate.controlKeyDown();
+        selenium.controlKeyDown();
     }
 
     public void controlKeyUp()
     {
-        delegate.controlKeyUp();
+        selenium.controlKeyUp();
     }
 
     public void createCookie(String nameValuePair, String optionsString)
     {
-        delegate.createCookie(nameValuePair, optionsString);
+        selenium.createCookie(nameValuePair, optionsString);
     }
 
     public void deleteAllVisibleCookies()
     {
-        delegate.deleteAllVisibleCookies();
+        selenium.deleteAllVisibleCookies();
     }
 
     public void deleteCookie(String name, String optionsString)
     {
-        delegate.deleteCookie(name, optionsString);
+        selenium.deleteCookie(name, optionsString);
     }
 
     public void deselectPopUp()
     {
-        delegate.deselectPopUp();
+        selenium.deselectPopUp();
     }
 
     public void doubleClick(String locator)
     {
-        delegate.doubleClick(locator);
+        selenium.doubleClick(locator);
     }
 
     public void doubleClickAt(String locator, String coordString)
     {
-        delegate.doubleClickAt(locator, coordString);
+        selenium.doubleClickAt(locator, coordString);
     }
 
     public void dragAndDrop(String locator, String movementsString)
     {
-        delegate.dragAndDrop(locator, movementsString);
+        selenium.dragAndDrop(locator, movementsString);
     }
 
     public void dragAndDropToObject(String locatorOfObjectToBeDragged, String locatorOfDragDestinationObject)
     {
-        delegate.dragAndDropToObject(locatorOfObjectToBeDragged, locatorOfDragDestinationObject);
+        selenium.dragAndDropToObject(locatorOfObjectToBeDragged, locatorOfDragDestinationObject);
     }
 
     public void dragdrop(String locator, String movementsString)
     {
-        delegate.dragdrop(locator, movementsString);
+        selenium.dragdrop(locator, movementsString);
     }
 
     public void fireEvent(String locator, String eventName)
     {
-        delegate.fireEvent(locator, eventName);
+        selenium.fireEvent(locator, eventName);
     }
 
     public void focus(String locator)
     {
-        delegate.focus(locator);
+        selenium.focus(locator);
     }
 
     public String getAlert()
     {
-        return delegate.getAlert();
+        return selenium.getAlert();
     }
 
     public String[] getAllButtons()
     {
-        return delegate.getAllButtons();
+        return selenium.getAllButtons();
     }
 
     public String[] getAllFields()
     {
-        return delegate.getAllFields();
+        return selenium.getAllFields();
     }
 
     public String[] getAllLinks()
     {
-        return delegate.getAllLinks();
+        return selenium.getAllLinks();
     }
 
     public String[] getAllWindowIds()
     {
-        return delegate.getAllWindowIds();
+        return selenium.getAllWindowIds();
     }
 
     public String[] getAllWindowNames()
     {
-        return delegate.getAllWindowNames();
+        return selenium.getAllWindowNames();
     }
 
     public String[] getAllWindowTitles()
     {
-        return delegate.getAllWindowTitles();
+        return selenium.getAllWindowTitles();
     }
 
     public String getAttribute(String attributeLocator)
     {
-        return delegate.getAttribute(attributeLocator);
+        return selenium.getAttribute(attributeLocator);
     }
 
     public String[] getAttributeFromAllWindows(String attributeName)
     {
-        return delegate.getAttributeFromAllWindows(attributeName);
+        return selenium.getAttributeFromAllWindows(attributeName);
     }
 
     public String getBodyText()
     {
-        return delegate.getBodyText();
+        return selenium.getBodyText();
     }
 
     public String getConfirmation()
     {
-        return delegate.getConfirmation();
+        return selenium.getConfirmation();
     }
 
     public String getCookie()
     {
-        return delegate.getCookie();
+        return selenium.getCookie();
     }
 
     public String getCookieByName(String name)
     {
-        return delegate.getCookieByName(name);
+        return selenium.getCookieByName(name);
     }
 
     public Number getCursorPosition(String locator)
     {
-        return delegate.getCursorPosition(locator);
+        return selenium.getCursorPosition(locator);
     }
 
     public Number getElementHeight(String locator)
     {
-        return delegate.getElementHeight(locator);
+        return selenium.getElementHeight(locator);
     }
 
     public Number getElementIndex(String locator)
     {
-        return delegate.getElementIndex(locator);
+        return selenium.getElementIndex(locator);
     }
 
     public Number getElementPositionLeft(String locator)
     {
-        return delegate.getElementPositionLeft(locator);
+        return selenium.getElementPositionLeft(locator);
     }
 
     public Number getElementPositionTop(String locator)
     {
-        return delegate.getElementPositionTop(locator);
+        return selenium.getElementPositionTop(locator);
     }
 
     public Number getElementWidth(String locator)
     {
-        return delegate.getElementWidth(locator);
+        return selenium.getElementWidth(locator);
     }
 
     public String getEval(String script)
     {
-        return delegate.getEval(script);
+        return selenium.getEval(script);
     }
 
     public String getExpression(String expression)
     {
-        return delegate.getExpression(expression);
+        return selenium.getExpression(expression);
     }
 
     public String getHtmlSource()
     {
-        return delegate.getHtmlSource();
+        return selenium.getHtmlSource();
     }
 
     public String getLocation()
     {
-        return delegate.getLocation();
+        return selenium.getLocation();
     }
 
     public String getLog()
     {
-        return delegate.getLog();
+        return selenium.getLog();
     }
 
     public Number getMouseSpeed()
     {
-        return delegate.getMouseSpeed();
+        return selenium.getMouseSpeed();
     }
 
     public String getPrompt()
     {
-        return delegate.getPrompt();
+        return selenium.getPrompt();
     }
 
     public String getSelectedId(String selectLocator)
     {
-        return delegate.getSelectedId(selectLocator);
+        return selenium.getSelectedId(selectLocator);
     }
 
     public String[] getSelectedIds(String selectLocator)
     {
-        return delegate.getSelectedIds(selectLocator);
+        return selenium.getSelectedIds(selectLocator);
     }
 
     public String getSelectedIndex(String selectLocator)
     {
-        return delegate.getSelectedIndex(selectLocator);
+        return selenium.getSelectedIndex(selectLocator);
     }
 
     public String[] getSelectedIndexes(String selectLocator)
     {
-        return delegate.getSelectedIndexes(selectLocator);
+        return selenium.getSelectedIndexes(selectLocator);
     }
 
     public String getSelectedLabel(String selectLocator)
     {
-        return delegate.getSelectedLabel(selectLocator);
+        return selenium.getSelectedLabel(selectLocator);
     }
 
     public String[] getSelectedLabels(String selectLocator)
     {
-        return delegate.getSelectedLabels(selectLocator);
+        return selenium.getSelectedLabels(selectLocator);
     }
 
     public String getSelectedValue(String selectLocator)
     {
-        return delegate.getSelectedValue(selectLocator);
+        return selenium.getSelectedValue(selectLocator);
     }
 
     public String[] getSelectedValues(String selectLocator)
     {
-        return delegate.getSelectedValues(selectLocator);
+        return selenium.getSelectedValues(selectLocator);
     }
 
     public String[] getSelectOptions(String selectLocator)
     {
-        return delegate.getSelectOptions(selectLocator);
+        return selenium.getSelectOptions(selectLocator);
     }
 
     public String getSpeed()
     {
-        return delegate.getSpeed();
+        return selenium.getSpeed();
     }
 
     public String getTable(String tableCellAddress)
     {
-        return delegate.getTable(tableCellAddress);
+        return selenium.getTable(tableCellAddress);
     }
 
     public String getText(String locator)
     {
-        return delegate.getText(locator);
+        return selenium.getText(locator);
     }
 
     public String getTitle()
     {
-        return delegate.getTitle();
+        return selenium.getTitle();
     }
 
     public String getValue(String locator)
     {
-        return delegate.getValue(locator);
+        return selenium.getValue(locator);
     }
 
     public boolean getWhetherThisFrameMatchFrameExpression(String currentFrameString, String target)
     {
-        return delegate.getWhetherThisFrameMatchFrameExpression(currentFrameString, target);
+        return selenium.getWhetherThisFrameMatchFrameExpression(currentFrameString, target);
     }
 
     public boolean getWhetherThisWindowMatchWindowExpression(String currentWindowString, String target)
     {
-        return delegate.getWhetherThisWindowMatchWindowExpression(currentWindowString, target);
+        return selenium.getWhetherThisWindowMatchWindowExpression(currentWindowString, target);
     }
 
     public Number getXpathCount(String xpath)
     {
-        return delegate.getXpathCount(xpath);
+        return selenium.getXpathCount(xpath);
     }
 
     public void goBack()
     {
-        delegate.goBack();
+        selenium.goBack();
     }
 
     public void highlight(String locator)
     {
-        delegate.highlight(locator);
+        selenium.highlight(locator);
     }
 
     public void ignoreAttributesWithoutValue(String ignore)
     {
-        delegate.ignoreAttributesWithoutValue(ignore);
+        selenium.ignoreAttributesWithoutValue(ignore);
     }
 
     public boolean isAlertPresent()
     {
-        return delegate.isAlertPresent();
+        return selenium.isAlertPresent();
     }
 
     public boolean isChecked(String locator)
     {
-        return delegate.isChecked(locator);
+        return selenium.isChecked(locator);
     }
 
     public boolean isConfirmationPresent()
     {
-        return delegate.isConfirmationPresent();
+        return selenium.isConfirmationPresent();
     }
 
     public boolean isCookiePresent(String name)
     {
-        return delegate.isCookiePresent(name);
+        return selenium.isCookiePresent(name);
     }
 
     public boolean isEditable(String locator)
     {
-        return delegate.isEditable(locator);
+        return selenium.isEditable(locator);
     }
 
     public boolean isElementPresent(String locator)
     {
-        return delegate.isElementPresent(locator);
+        return selenium.isElementPresent(locator);
     }
 
     public boolean isOrdered(String locator1, String locator2)
     {
-        return delegate.isOrdered(locator1, locator2);
+        return selenium.isOrdered(locator1, locator2);
     }
 
     public boolean isPromptPresent()
     {
-        return delegate.isPromptPresent();
+        return selenium.isPromptPresent();
     }
 
     public boolean isSomethingSelected(String selectLocator)
     {
-        return delegate.isSomethingSelected(selectLocator);
+        return selenium.isSomethingSelected(selectLocator);
     }
 
     public boolean isTextPresent(String pattern)
     {
-        return delegate.isTextPresent(pattern);
+        return selenium.isTextPresent(pattern);
     }
 
     public boolean isVisible(String locator)
     {
-        return delegate.isVisible(locator);
+        return selenium.isVisible(locator);
     }
 
     public void keyDown(String locator, String keySequence)
     {
-        delegate.keyDown(locator, keySequence);
+        selenium.keyDown(locator, keySequence);
     }
 
     public void keyDownNative(String keycode)
     {
-        delegate.keyDownNative(keycode);
+        selenium.keyDownNative(keycode);
     }
 
     public void keyPress(String locator, String keySequence)
     {
-        delegate.keyPress(locator, keySequence);
+        selenium.keyPress(locator, keySequence);
     }
 
     public void keyPressNative(String keycode)
     {
-        delegate.keyPressNative(keycode);
+        selenium.keyPressNative(keycode);
     }
 
     public void keyUp(String locator, String keySequence)
     {
-        delegate.keyUp(locator, keySequence);
+        selenium.keyUp(locator, keySequence);
     }
 
     public void keyUpNative(String keycode)
     {
-        delegate.keyUpNative(keycode);
+        selenium.keyUpNative(keycode);
     }
 
     public void metaKeyDown()
     {
-        delegate.metaKeyDown();
+        selenium.metaKeyDown();
     }
 
     public void metaKeyUp()
     {
-        delegate.metaKeyUp();
+        selenium.metaKeyUp();
     }
 
     public void mouseDown(String locator)
     {
-        delegate.mouseDown(locator);
+        selenium.mouseDown(locator);
     }
 
     public void mouseDownAt(String locator, String coordString)
     {
-        delegate.mouseDownAt(locator, coordString);
+        selenium.mouseDownAt(locator, coordString);
     }
 
     public void mouseDownRight(String locator)
     {
-        delegate.mouseDownRight(locator);
+        selenium.mouseDownRight(locator);
     }
 
     public void mouseDownRightAt(String locator, String coordString)
     {
-        delegate.mouseDownRightAt(locator, coordString);
+        selenium.mouseDownRightAt(locator, coordString);
     }
 
     public void mouseMove(String locator)
     {
-        delegate.mouseMove(locator);
+        selenium.mouseMove(locator);
     }
 
     public void mouseMoveAt(String locator, String coordString)
     {
-        delegate.mouseMoveAt(locator, coordString);
+        selenium.mouseMoveAt(locator, coordString);
     }
 
     public void mouseOut(String locator)
     {
-        delegate.mouseOut(locator);
+        selenium.mouseOut(locator);
     }
 
     public void mouseOver(String locator)
     {
-        delegate.mouseOver(locator);
+        selenium.mouseOver(locator);
     }
 
     public void mouseUp(String locator)
     {
-        delegate.mouseUp(locator);
+        selenium.mouseUp(locator);
     }
 
     public void mouseUpAt(String locator, String coordString)
     {
-        delegate.mouseUpAt(locator, coordString);
+        selenium.mouseUpAt(locator, coordString);
     }
 
     public void mouseUpRight(String locator)
     {
-        delegate.mouseUpRight(locator);
+        selenium.mouseUpRight(locator);
     }
 
     public void mouseUpRightAt(String locator, String coordString)
     {
-        delegate.mouseUpRightAt(locator, coordString);
+        selenium.mouseUpRightAt(locator, coordString);
     }
 
     public void open(String url)
     {
-        delegate.open(url);
+        selenium.open(url);
     }
 
     public void open(String url, String ignoreResponseCode)
     {
-        delegate.open(url, ignoreResponseCode);
+        selenium.open(url, ignoreResponseCode);
     }
 
     public void openWindow(String url, String windowID)
     {
-        delegate.openWindow(url, windowID);
+        selenium.openWindow(url, windowID);
     }
 
     public void refresh()
     {
-        delegate.refresh();
+        selenium.refresh();
     }
 
     public void removeAllSelections(String locator)
     {
-        delegate.removeAllSelections(locator);
+        selenium.removeAllSelections(locator);
     }
 
     public void removeScript(String scriptTagId)
     {
-        delegate.removeScript(scriptTagId);
+        selenium.removeScript(scriptTagId);
     }
 
     public void removeSelection(String locator, String optionLocator)
     {
-        delegate.removeSelection(locator, optionLocator);
+        selenium.removeSelection(locator, optionLocator);
     }
 
     public String retrieveLastRemoteControlLogs()
     {
-        return delegate.retrieveLastRemoteControlLogs();
+        return selenium.retrieveLastRemoteControlLogs();
     }
 
     public void rollup(String rollupName, String kwargs)
     {
-        delegate.rollup(rollupName, kwargs);
+        selenium.rollup(rollupName, kwargs);
     }
 
     public void runScript(String script)
     {
-        delegate.runScript(script);
+        selenium.runScript(script);
     }
 
     public void select(String selectLocator, String optionLocator)
     {
-        delegate.select(selectLocator, optionLocator);
+        selenium.select(selectLocator, optionLocator);
     }
 
     public void selectFrame(String locator)
     {
-        delegate.selectFrame(locator);
+        selenium.selectFrame(locator);
     }
 
     public void selectPopUp(String windowID)
     {
-        delegate.selectPopUp(windowID);
+        selenium.selectPopUp(windowID);
     }
 
     public void selectWindow(String windowID)
     {
-        delegate.selectWindow(windowID);
+        selenium.selectWindow(windowID);
     }
 
     public void setBrowserLogLevel(String logLevel)
     {
-        delegate.setBrowserLogLevel(logLevel);
+        selenium.setBrowserLogLevel(logLevel);
     }
 
     public void setContext(String context)
     {
-        delegate.setContext(context);
+        selenium.setContext(context);
     }
 
     public void setCursorPosition(String locator, String position)
     {
-        delegate.setCursorPosition(locator, position);
+        selenium.setCursorPosition(locator, position);
     }
 
     public void setExtensionJs(String extensionJs)
     {
-        delegate.setExtensionJs(extensionJs);
+        selenium.setExtensionJs(extensionJs);
     }
 
     public void setMouseSpeed(String pixels)
     {
-        delegate.setMouseSpeed(pixels);
+        selenium.setMouseSpeed(pixels);
     }
 
     public void setSpeed(String value)
     {
-        delegate.setSpeed(value);
+        selenium.setSpeed(value);
     }
 
     public void setTimeout(String timeout)
     {
-        delegate.setTimeout(timeout);
+        selenium.setTimeout(timeout);
     }
 
     public void shiftKeyDown()
     {
-        delegate.shiftKeyDown();
+        selenium.shiftKeyDown();
     }
 
     public void shiftKeyUp()
     {
-        delegate.shiftKeyUp();
+        selenium.shiftKeyUp();
     }
 
     public void showContextualBanner()
     {
-        delegate.showContextualBanner();
+        selenium.showContextualBanner();
     }
 
     public void showContextualBanner(String className, String methodName)
     {
-        delegate.showContextualBanner(className, methodName);
+        selenium.showContextualBanner(className, methodName);
     }
 
     public void shutDownSeleniumServer()
     {
-        delegate.shutDownSeleniumServer();
+        selenium.shutDownSeleniumServer();
     }
 
     public void start()
     {
-        delegate.start();
+        selenium.start();
     }
 
     public void start(Object optionsObject)
     {
-        delegate.start(optionsObject);
+        selenium.start(optionsObject);
     }
 
     public void start(String optionsString)
     {
-        delegate.start(optionsString);
+        selenium.start(optionsString);
     }
 
     public void stop()
     {
-        delegate.stop();
+        selenium.stop();
     }
 
     public void submit(String formLocator)
     {
-        delegate.submit(formLocator);
+        selenium.submit(formLocator);
     }
 
     public void type(String locator, String value)
     {
-        delegate.type(locator, value);
+        selenium.type(locator, value);
     }
 
     public void typeKeys(String locator, String value)
     {
-        delegate.typeKeys(locator, value);
+        selenium.typeKeys(locator, value);
     }
 
     public void uncheck(String locator)
     {
-        delegate.uncheck(locator);
+        selenium.uncheck(locator);
     }
 
     public void useXpathLibrary(String libraryName)
     {
-        delegate.useXpathLibrary(libraryName);
+        selenium.useXpathLibrary(libraryName);
     }
 
     public void waitForCondition(String script, String timeout)
     {
-        delegate.waitForCondition(script, timeout);
+        selenium.waitForCondition(script, timeout);
     }
 
     public void waitForFrameToLoad(String frameAddress, String timeout)
     {
-        delegate.waitForFrameToLoad(frameAddress, timeout);
+        selenium.waitForFrameToLoad(frameAddress, timeout);
     }
 
     public void waitForPageToLoad(String timeout)
     {
-        delegate.waitForPageToLoad(timeout);
+        selenium.waitForPageToLoad(timeout);
     }
 
     public void waitForPopUp(String windowID, String timeout)
     {
-        delegate.waitForPopUp(windowID, timeout);
+        selenium.waitForPopUp(windowID, timeout);
     }
 
     public void windowFocus()
     {
-        delegate.windowFocus();
+        selenium.windowFocus();
     }
 
     public void windowMaximize()
     {
-        delegate.windowMaximize();
+        selenium.windowMaximize();
     }
 
     // ---------------------------------------------------------------------
@@ -1107,9 +1128,12 @@ public class SeleniumTestCase extends Assert implements Selenium
         throw new AssertionError("This statement should not be reachable.");
     }
 
+    /** Open the {@linkplain #getBaseURL()}, and waits for the page to load. */
     protected final void openBaseURL()
     {
         open(baseURL);
+
+        waitForPageToLoad();
     }
 
     /**
@@ -1233,6 +1257,15 @@ public class SeleniumTestCase extends Assert implements Selenium
         throw new AssertionError(String.format("%s was '%s' not '%s'", locator, actual, expected));
     }
 
+    /**
+     * Assets that the value in the field matches the expectation
+     * 
+     * @param locator
+     *            identifies the field
+     * @param expected
+     *            expected value for the field
+     * @since 5.3.0
+     */
     protected final void assertFieldValue(String locator, String expected)
     {
         try
@@ -1245,5 +1278,83 @@ public class SeleniumTestCase extends Assert implements Selenium
 
             throw ex;
         }
+    }
+
+    /**
+     * Opens the base URL, then clicks through a series of links to get to a desired application
+     * state.
+     * 
+     * @since 5.3.0
+     */
+    protected final void openLinks(String... linkText)
+    {
+        openBaseURL();
+
+        for (String text : linkText)
+        {
+            clickAndWait("link=" + text);
+        }
+    }
+
+    /**
+     * Sleeps for the indicated number of seconds.
+     * 
+     * @since 5.3.0
+     */
+    protected final void sleep(long millis)
+    {
+        try
+        {
+            Thread.sleep(millis);
+        }
+        catch (InterruptedException ex)
+        {
+            // Ignore.
+        }
+    }
+
+    /**
+     * Waits, up to the page load limit for an element (identified by a CSS rule) to exist
+     * (it is not assured that the element will be visible).
+     * 
+     * @param cssRule
+     *            used to locate the element
+     * @since 5.3.0
+     */
+    protected void waitForCSSSelectedElementToAppear(String cssRule)
+    {
+        String condition = String.format("window.$$(\"%s\").size() > 0", cssRule);
+
+        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
+    }
+
+    /**
+     * Waits for the element with the given client-side id to be present in the DOM (
+     * does not assure that the element is visible).
+     * 
+     * @param elementId
+     *            identifies the element
+     * @since 5.3.0
+     */
+    protected final void waitForElementToAppear(String elementId)
+    {
+
+        String condition = String.format("window.$(\"%s\")", elementId);
+
+        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
+    }
+
+    /**
+     * Waits for the element to be removed from the DOM.
+     * 
+     * @param elementId
+     *            client-side id of element
+     * @since 5.3.0
+     */
+    protected final void waitForElementToDisappear(String elementId)
+    {
+        String condition = String.format("window.$(\"%s\").hide()", elementId);
+
+        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,9 +22,7 @@ public class LinkTransformerIntegrationTest extends TapestryCoreTestCase
     @Test
     public void page_render_links()
     {
-        open(getBaseURL());
-
-        clickAndWait("link=View Toys");
+        openLinks("View Toys");
 
         assertText("content", "toys");
         assertText("count", "0");
@@ -38,9 +36,7 @@ public class LinkTransformerIntegrationTest extends TapestryCoreTestCase
     @Test
     public void component_event_links()
     {
-        open(getBaseURL());
-        
-        clickAndWait("link=en");
+        openLinks("en");
         
         assertText("currentLocale", "en");
         

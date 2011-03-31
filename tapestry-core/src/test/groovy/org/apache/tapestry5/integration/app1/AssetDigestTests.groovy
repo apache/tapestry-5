@@ -37,7 +37,7 @@ class AssetDigestTests extends TapestryCoreTestCase
 
     @Test
     void protected_asset() {
-        clickThru "AssetDemo"
+        openLinks "AssetDemo"
 
         def path = getText("propurl").substring(1) // Strip leading slash
 
@@ -56,7 +56,7 @@ class AssetDigestTests extends TapestryCoreTestCase
 
     @Test
     void invalid_digest() {
-        clickThru "AssetDemo"
+        openLinks "AssetDemo"
 
         def path = getText("propurl").substring(1)
 
@@ -66,7 +66,7 @@ class AssetDigestTests extends TapestryCoreTestCase
 
     @Test
     void missing_digest() {
-        clickThru "AssetDemo"
+        openLinks "AssetDemo"
 
         def path = getText("propurl").substring(1)
 

@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ public class CacheTests extends TapestryCoreTestCase
     @Test
     public void cached_properties_cleared_at_end_of_request()
     {
-        clickThru("Clean Cache Demo");
+        openLinks("Clean Cache Demo");
 
         String time1_1 = getText("time1");
         String time1_2 = getText("time1");
@@ -52,7 +52,7 @@ public class CacheTests extends TapestryCoreTestCase
     @Test
     public void void_method_is_error_with_cached()
     {
-        clickThru("@Cached on void method");
+        openLinks("@Cached on void method");
 
         assertTextPresent("Method org.apache.tapestry5.integration.app1.pages.VoidMethodWithCached.invalidMethod()",
                 "may not be used with @Cached because it returns void.");
@@ -61,7 +61,7 @@ public class CacheTests extends TapestryCoreTestCase
     @Test
     public void parameters_not_allowed_with_cached_method()
     {
-        clickThru("@Cached on method with parameters");
+        openLinks("@Cached on method with parameters");
 
         assertTextPresent(
                 "Method org.apache.tapestry5.integration.app1.pages.ParamsMethodWithCached.invalidMethod(java.lang.String)",

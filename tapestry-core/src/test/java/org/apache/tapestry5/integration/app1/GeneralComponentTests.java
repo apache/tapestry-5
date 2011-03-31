@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ public class GeneralComponentTests extends TapestryCoreTestCase
     @Test
     public void unless_component()
     {
-        clickThru("Unless Demo");
+        openLinks("Unless Demo");
 
         assertText("//p[@id='false']", "false is rendered");
 
@@ -38,7 +38,7 @@ public class GeneralComponentTests extends TapestryCoreTestCase
     @Test
     public void action_links_on_non_active_page()
     {
-        clickThru("Action Links off of Active Page");
+        openLinks("Action Links off of Active Page");
 
         String contextSpan = "//span[@id='context']";
 
@@ -80,14 +80,14 @@ public class GeneralComponentTests extends TapestryCoreTestCase
     @Test
     public void report_location_of_unavailable_component_in_error()
     {
-        clickThru("Report Location of Unavailable Component");
+        openLinks("Report Location of Unavailable Component");
 
         assertText("//td[@class='t-location-content t-location-current']", "<t:unavailablecomponent/>");
     }
     
     /** TAP5-1378 */
     @Test public void using_delegate_for_inline_components() {
-    	clickThru("Inline Delegate");
+    	openLinks("Inline Delegate");
     	
     	// no params
     	assertText("block1", "block 1");

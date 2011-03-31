@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ class MissingPageActivationContext extends TapestryCoreTestCase
 {
     @Test
     void page_activation_context_omitted_from_url() {
-        clickThru "Missing page activation context"
+        openLinks "Missing page activation context"
         
         // Back to Index page, with alert message.
         

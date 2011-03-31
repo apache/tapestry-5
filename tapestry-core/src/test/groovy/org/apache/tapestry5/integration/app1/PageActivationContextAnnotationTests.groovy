@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ class PageActivationContextAnnotationTests extends TapestryCoreTestCase
     @Test
     void pac_fields_set_before_activate_event_handler_method_invoked()
     {
-        clickThru "PageActivationContext Demo"
+        openLinks "PageActivationContext Demo"
         
         assertText "count", ""
         assertText "count-set", "false"

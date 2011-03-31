@@ -18,23 +18,6 @@ import org.apache.tapestry5.test.SeleniumTestCase;
 
 public abstract class TapestryCoreTestCase extends SeleniumTestCase
 {
-    public static final String SUBMIT = "//input[@type='submit']";
-
-    /**
-     * Opens the base URL, then clicks through a series of links to get to a desired application
-     * state.
-     */
-    protected final void clickThru(String... linkText)
-    {
-        openBaseURL();
-
-        for (String text : linkText)
-        {
-            click("link=" + text);
-            waitForPageToLoad();
-        }
-    }
-
     protected final void assertTextSeries(String idFormat, int startIndex, String... values)
     {
         for (int i = 0; i < values.length; i++)
@@ -43,40 +26,6 @@ public abstract class TapestryCoreTestCase extends SeleniumTestCase
 
             assertText(id, values[i]);
         }
-    }
-
-    protected final void sleep(long millis)
-    {
-        try
-        {
-            Thread.sleep(millis);
-        }
-        catch (InterruptedException ex)
-        {
-            // Ignore.
-        }
-    }
-
-    protected void waitForCSSSelectedElementToAppear(String cssRule)
-    {
-        String condition = String.format("window.$$(\"%s\").size() > 0", cssRule);
-
-        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
-    }
-
-    protected final void waitForElementToAppear(String elementId)
-    {
-
-        String condition = String.format("window.$(\"%s\")", elementId);
-
-        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
-    }
-
-    protected final void waitForElementToDisappear(String elementId)
-    {
-        String condition = String.format("window.$(\"%s\").hide()", elementId);
-
-        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
     }
 
     protected final void assertBubbleMessage(String fieldId, String expected)

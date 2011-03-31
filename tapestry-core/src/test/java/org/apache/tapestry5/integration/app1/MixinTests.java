@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ public class MixinTests extends TapestryCoreTestCase
     @Test
     public void render_notification_mixin()
     {
-        clickThru("RenderNotification Demo");
+        openLinks("RenderNotification Demo");
 
         assertTextSeries("//ul[@id='list']//li[%d]", 1, "before item render", "item body in template",
                 "after item render");
@@ -31,7 +31,7 @@ public class MixinTests extends TapestryCoreTestCase
     @Test
     public void renderclientid_mixin()
     {
-        clickThru("RenderClientId Mixin");
+        openLinks("RenderClientId Mixin");
 
         assertText("divwithid", "Div Content");
     }
@@ -44,7 +44,7 @@ public class MixinTests extends TapestryCoreTestCase
         // echo2 => echo2-<original>-before, "3", echo2-<original>-after
         // echo3 => echo3-<original>-before, "world", echo3-<original>-after
         // order1: echo, echo2, echo3
-        clickThru("Mixin Ordering Demo");
+        openLinks("Mixin Ordering Demo");
 
         assertMixinOrder(1, 0, 1, 2, 3, true);
         // order2: echo3, echo2, echo

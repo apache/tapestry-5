@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public class AdditionalIntegrationTests extends TapestryCoreTestCase
     @Test
     public void bean_block_overrides()
     {
-        clickThru("BeanDisplay Override Demo");
+        openLinks("BeanDisplay Override Demo");
 
         assertText("//dd[@class='no']", "Nay");
         assertText("//dd[@class='yes']", "Yea");
@@ -64,7 +64,7 @@ public class AdditionalIntegrationTests extends TapestryCoreTestCase
     @Test
     public void page_document_generator()
     {
-        clickThru("PageDocumentGenerator demo");
+        openLinks("PageDocumentGenerator demo");
 
         // In generated document: not optimized
         assertAttribute("//a[1]/@href", "/login");
@@ -76,7 +76,7 @@ public class AdditionalIntegrationTests extends TapestryCoreTestCase
 
     public void ajax_server_side_exception()
     {
-        clickThru("Console demo");
+        openLinks("Console demo");
 
         assertTextPresent("Demonstrates Tapestry console");
 

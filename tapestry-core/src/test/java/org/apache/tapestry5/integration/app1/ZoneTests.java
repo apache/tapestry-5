@@ -30,7 +30,7 @@ public class ZoneTests extends TapestryCoreTestCase
     @Test
     public void select_zone()
     {
-        clickThru("Select Zone Demo");
+        openLinks("Select Zone Demo");
 
         select("carMaker", "Bmw");
 
@@ -70,7 +70,7 @@ public class ZoneTests extends TapestryCoreTestCase
     @Test
     public void zone_updates()
     {
-        clickThru("Zone Demo");
+        openLinks("Zone Demo");
 
         assertTextPresent("No name has been selected.");
 
@@ -93,7 +93,7 @@ public class ZoneTests extends TapestryCoreTestCase
     @Test
     public void zone_redirect_by_class()
     {
-        clickThru("Zone Demo");
+        openLinks("Zone Demo");
 
         clickAndWait("link=Perform a redirect to another page");
 
@@ -106,7 +106,7 @@ public class ZoneTests extends TapestryCoreTestCase
     @Test
     public void update_multiple_zones_at_once()
     {
-        clickThru("Multiple Zone Update Demo");
+        openLinks("Multiple Zone Update Demo");
 
         String now = getText("now");
 
@@ -134,7 +134,7 @@ public class ZoneTests extends TapestryCoreTestCase
     @Test
     public void zone_namespace_interaction_fixed()
     {
-        clickThru("Zone/Namespace Interaction");
+        openLinks("Zone/Namespace Interaction");
 
         String outerNow = getText("outernow");
         String innerNow = getText("innernow");
@@ -157,7 +157,7 @@ public class ZoneTests extends TapestryCoreTestCase
     @Test
     public void zone_updated_event_triggered_on_client()
     {
-        clickThru("Zone Demo");
+        openLinks("Zone Demo");
 
         assertText("zone-update-message", "");
 
@@ -176,7 +176,7 @@ public class ZoneTests extends TapestryCoreTestCase
     @Test
     public void link_submit_inside_form_that_updates_a_zone()
     {
-        clickThru("LinkSubmit inside Zone");
+        openLinks("LinkSubmit inside Zone");
 
         String now = getText("now");
 
@@ -203,7 +203,7 @@ public class ZoneTests extends TapestryCoreTestCase
     @Test
     public void zone_inject_component_from_template()
     {
-        clickThru("Inject Component Demo");
+        openLinks("Inject Component Demo");
 
         assertTextPresent(Form.class.getName() + "[form--form]");
     }
@@ -214,7 +214,7 @@ public class ZoneTests extends TapestryCoreTestCase
     @Test
     public void zone_fade_back_backgroundcolor()
     {
-        clickThru("Form Zone Demo");
+        openLinks("Form Zone Demo");
 
         type("longValue", "12");
 
@@ -235,7 +235,7 @@ public class ZoneTests extends TapestryCoreTestCase
     @Test
     public void update_zone_inside_form()
     {
-        clickThru("Zone/Form Update Demo");
+        openLinks("Zone/Form Update Demo");
 
         click("link=Update the form");
 
@@ -252,7 +252,7 @@ public class ZoneTests extends TapestryCoreTestCase
     @Test
     public void update_to_zone_inside_form()
     {
-        clickThru("MultiZone Update inside a Form");
+        openLinks("MultiZone Update inside a Form");
 
         select("selectValue1", "3 pre ajax");
 

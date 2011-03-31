@@ -41,7 +41,7 @@ public class AssetTests extends TapestryCoreTestCase
     @Test(dataProvider = "asset_data")
     public void assets(String id, String localPath) throws Exception
     {
-        clickThru("AssetDemo");
+        openLinks("AssetDemo");
 
         // Test for https://issues.apache.org/jira/browse/TAPESTRY-1935
 

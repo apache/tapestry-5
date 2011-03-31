@@ -40,7 +40,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void flash_persistence()
     {
-        clickThru("FlashDemo");
+        openLinks("FlashDemo");
 
         assertTextPresent("[]");
 
@@ -56,7 +56,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void component_parameter_default_from_method() throws Exception
     {
-        clickThru("ParameterDefault");
+        openLinks("ParameterDefault");
 
         assertTextPresent("Echo component default: [ParameterDefault:echo]");
     }
@@ -64,7 +64,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void embedded_components()
     {
-        clickThru("Countdown Page");
+        openLinks("Countdown Page");
 
         assertTextPresent("regexp:\\s+5\\s+4\\s+3\\s+2\\s+1\\s+");
 
@@ -78,7 +78,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void block_rendering() throws Exception
     {
-        clickThru("BlockDemo");
+        openLinks("BlockDemo");
 
         assertTextPresent("[]");
 
@@ -100,7 +100,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void environmental()
     {
-        clickThru("Environmental Annotation Usage");
+        openLinks("Environmental Annotation Usage");
 
         assertSourcePresent("[<strong>A message provided by the RenderableProvider component.</strong>]");
     }
@@ -109,7 +109,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     public void exception_report()
     {
         // mismatched tag.
-        clickThru("BadTemplate Page");
+        openLinks("BadTemplate Page");
 
         assertTextPresent("org.apache.tapestry5.ioc.internal.OperationException",
                 "Failure parsing template classpath:org/apache/tapestry5/integration/app1/pages/BadTemplate.tml",
@@ -121,7 +121,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void expansion()
     {
-        clickThru("Expansion Page");
+        openLinks("Expansion Page");
 
         assertTextPresent("[value provided by a template expansion]");
     }
@@ -136,7 +136,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void inject_container_failure() throws Exception
     {
-        clickThru("InjectContainerMismatch");
+        openLinks("InjectContainerMismatch");
 
         // And exception message:
 
@@ -146,7 +146,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void inject_component_failure() throws Exception
     {
-        clickThru("InjectComponentMismatch");
+        openLinks("InjectComponentMismatch");
 
         assertTextPresent("Unable to inject component 'form' into field form of component InjectComponentMismatch. Class org.apache.tapestry5.corelib.components.BeanEditForm is not assignable to a field of type org.apache.tapestry5.corelib.components.Form.");
     }
@@ -154,7 +154,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void injection() throws Exception
     {
-        clickThru("Inject Demo");
+        openLinks("Inject Demo");
 
         // is a test for a named @Inject:
         assertTextPresent("<Proxy for Request(org.apache.tapestry5.services.Request)>");
@@ -173,11 +173,11 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         assertText("viaInjectService", "1722 tracks in music library");
     }
-    
+
     @Test
     public void atinjection() throws Exception
     {
-        clickThru("@javax.inject.Inject Demo");
+        openLinks("@javax.inject.Inject Demo");
 
         // is a test for a named @Inject:
         assertTextPresent("<Proxy for Request(org.apache.tapestry5.services.Request)>");
@@ -202,7 +202,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void instance_mixin()
     {
-        clickThru("InstanceMixin");
+        openLinks("InstanceMixin");
 
         final String[] dates =
         { "Jun 13, 1999", "Jul 15, 2001", "Dec 4, 2005" };
@@ -226,7 +226,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void localization()
     {
-        clickThru("Localization");
+        openLinks("Localization");
 
         assertTextPresent("Via injected Messages property: [Accessed via injected Messages]");
         assertTextPresent("Via message: binding prefix: [Accessed via message: binding prefix]");
@@ -241,7 +241,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void page_injection() throws Exception
     {
-        clickThru("Inject Demo");
+        openLinks("Inject Demo");
 
         clickAndWait("link=Fred");
 
@@ -260,7 +260,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void passivate_activate() throws Exception
     {
-        clickThru("NumberSelect");
+        openLinks("NumberSelect");
 
         clickAndWait("link=5");
 
@@ -270,7 +270,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void render_phase_method_returns_a_component() throws Exception
     {
-        clickThru("RenderComponentDemo");
+        openLinks("RenderComponentDemo");
 
         assertText("//span[@id='container']", "[]");
 
@@ -294,7 +294,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void render_phase_order()
     {
-        clickThru("RenderPhaseOrder");
+        openLinks("RenderPhaseOrder");
 
         assertTextPresent("[BEGIN-TRACER-MIXIN BEGIN-ABSTRACT-TRACER BEGIN-TRACER BODY AFTER-TRACER AFTER-ABSTRACT-TRACER AFTER-TRACER-MIXIN]");
     }
@@ -304,7 +304,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     {
         final String YOU_CHOSE = "You chose: ";
 
-        clickThru("Action Page");
+        openLinks("Action Page");
 
         assertFalse(isTextPresent(YOU_CHOSE));
 
@@ -319,7 +319,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void subclass_inherits_parent_template()
     {
-        clickThru("ExpansionSubclass");
+        openLinks("ExpansionSubclass");
 
         assertTextPresent("[value provided, in the subclass, via a template expansion]");
     }
@@ -327,7 +327,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void template_overridden()
     {
-        clickThru("Template Overridden by Class Page");
+        openLinks("Template Overridden by Class Page");
 
         assertTextPresent("Output: ClassValue");
     }
@@ -335,7 +335,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void pageloaded_lifecycle_method_invoked()
     {
-        clickThru("PageLoaded Demo");
+        openLinks("PageLoaded Demo");
 
         assertTextPresent("[pageLoaded() was invoked.]");
     }
@@ -343,7 +343,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void navigation_response_from_page_activate() throws Exception
     {
-        clickThru("Protected Page");
+        openLinks("Protected Page");
 
         assertText("pagetitle", "Security Alert");
 
@@ -355,7 +355,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void mixed_page_activation_context_and_component_context()
     {
-        clickThru("Kicker");
+        openLinks("Kicker");
 
         clickAndWait("link=kick target");
 
@@ -371,7 +371,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void page_link_with_explicit_empty_context()
     {
-        clickThru("Kicker");
+        openLinks("Kicker");
 
         clickAndWait("link=kick target");
 
@@ -385,7 +385,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void page_link_with_explicit_activation_context()
     {
-        clickThru("PageLink Context Demo", "no context");
+        openLinks("PageLink Context Demo", "no context");
 
         assertTextPresent("No activation context.");
 
@@ -425,7 +425,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void recursive_components_are_identified_as_errors()
     {
-        clickThru("Recursive Demo");
+        openLinks("Recursive Demo");
 
         assertTextPresent(
                 "An unexpected application exception has occurred.",
@@ -436,7 +436,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void render_phase_method_may_return_renderable()
     {
-        clickThru("Renderable Demo");
+        openLinks("Renderable Demo");
 
         assertTextPresent("Renderable Demo", "[This proves it works.]");
     }
@@ -446,7 +446,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     {
         String clear = "link=clear";
 
-        clickThru("EventHandler Demo");
+        openLinks("EventHandler Demo");
 
         clickAndWait(clear);
 
@@ -478,7 +478,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void inherited_bindings()
     {
-        clickThru("Inherited Bindings Demo");
+        openLinks("Inherited Bindings Demo");
 
         assertTextPresent("Bound: [ value: the-bound-value, bound: true ]", "Unbound: [ value: null, bound: false ]");
     }
@@ -486,7 +486,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void client_persistence()
     {
-        clickThru("Client Persistence Demo");
+        openLinks("Client Persistence Demo");
         // can't assume session won't exist because other tests use form
         // components w/ defaults, which means
         // session creation to store the ValidationTracker. So we explicitly
@@ -503,7 +503,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void attribute_expansions()
     {
-        clickThru("Attribute Expansions Demo");
+        openLinks("Attribute Expansions Demo");
 
         assertAttribute("//div[@id='mixed-expansion']/@style", "color: blue;");
         assertAttribute("//div[@id='single']/@class", "red");
@@ -553,7 +553,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertTextPresent("Success!");
         goBack();
         waitForPageToLoad();
-        
+
         clickAndWait("link=stream page content");
         assertTextPresent("Tapestry 5 Integration Application 1");
         goBack();
@@ -579,17 +579,15 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
                 "context:ReturnTypes.tml, line 50");
         goBack();
         waitForPageToLoad();
-        
+
         clickAndWait("link=http error");
-        assertTextPresent(
-                "HTTP ERROR 410",
-                "Oups! Resource disappeared!");
+        assertTextPresent("HTTP ERROR 410", "Oups! Resource disappeared!");
     }
 
     @Test
     public void missing_template_for_page()
     {
-        clickThru("Missing Template Demo");
+        openLinks("Missing Template Demo");
 
         assertTextPresent("Page MissingTemplate did not generate any markup when rendered. This could be because its template file could not be located, or because a render phase method in the page prevented rendering.");
     }
@@ -622,7 +620,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void components_passed_as_parameters() throws Exception
     {
-        clickThru("ComponentParameter Demo");
+        openLinks("ComponentParameter Demo");
 
         // This component is inside a block, and is only rendered because it is
         // passed as a parameter, of type ActionLink,
@@ -639,7 +637,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void inherit_informals() throws Exception
     {
-        clickThru("Inherit Informal Parameters Demo");
+        openLinks("Inherit Informal Parameters Demo");
 
         assertAttribute("//span[@id='target']/@class", "inherit");
     }
@@ -650,7 +648,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void var_binding()
     {
-        clickThru("Var Binding Demo");
+        openLinks("Var Binding Demo");
 
         assertTextSeries("//li[%d]", 1, "1", "2", "3");
     }
@@ -661,7 +659,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void component_event_errors()
     {
-        clickThru("Exception Event Demo", "enable", "force invalid activation context");
+        openLinks("Exception Event Demo", "enable", "force invalid activation context");
 
         assertTextPresent("Exception: Exception in method org.apache.tapestry5.integration.app1.pages.ExceptionEventDemo.onActivate(float)");
 
@@ -686,7 +684,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void generic_page_type()
     {
-        clickThru("Generic Page Class Demo");
+        openLinks("Generic Page Class Demo");
 
         assertTextPresent("Editor for org.apache.tapestry5.integration.app1.data.Track");
 
@@ -699,7 +697,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void render_queue_exception()
     {
-        clickThru("Render Error Demo");
+        openLinks("Render Error Demo");
 
         assertTextPresent("An unexpected application exception has occurred");
 
@@ -716,7 +714,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void primitive_array_as_parameter_type()
     {
-        clickThru("Primitive Array Parameter Demo");
+        openLinks("Primitive Array Parameter Demo");
 
         assertSourcePresent("<ul><li>1</li><li>3</li><li>5</li><li>7</li><li>9</li></ul>");
     }
@@ -727,7 +725,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void ignored_paths_filter()
     {
-        clickThru("Unreachable Page");
+        openLinks("Unreachable Page");
 
         // This message changes from one release of Jetty to the next sometimes
         assertText("//title", "Error 404 Not Found");
@@ -739,7 +737,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void render_phase_methods_may_throw_checked_exceptions()
     {
-        clickThru("Render Phase Method Exception Demo");
+        openLinks("Render Phase Method Exception Demo");
 
         assertTextPresent("Render queue error in BeginRender[RenderPhaseMethodExceptionDemo]: java.sql.SQLException: Simulated JDBC exception while rendering.");
     }
@@ -750,7 +748,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void boolean_properties_can_use_get_or_is_as_method_name_prefix()
     {
-        clickThru("Boolean Property Demo", "clear");
+        openLinks("Boolean Property Demo", "clear");
 
         assertText("usingGet", "false");
         assertText("usingIs", "false");
@@ -767,7 +765,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void discard_persistent_field_changes()
     {
-        clickThru("Persistent Demo");
+        openLinks("Persistent Demo");
 
         assertText("message", "");
 
@@ -792,7 +790,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void nested_page_names()
     {
-        clickThru("Music Page", "2");
+        openLinks("Music Page", "2");
 
         assertText("activePageName", "Music");
 
@@ -807,7 +805,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void generated_activation_context_handlers()
     {
-        clickThru("Music Page", "69");
+        openLinks("Music Page", "69");
 
         assertText("activePageName", "Music");
 
@@ -826,7 +824,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void list_as_event_context()
     {
-        clickThru("List Event Context Demo");
+        openLinks("List Event Context Demo");
 
         assertTextSeries("//ul[@id='eventcontext']/li[%d]", 1, "1", "2", "3");
     }
@@ -837,7 +835,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void protected_field_in_page_class()
     {
-        clickThru("Protected Fields Demo", "Trigger the Exception");
+        openLinks("Protected Fields Demo", "Trigger the Exception");
 
         assertTextPresent(
                 "An unexpected application exception has occurred.",
@@ -850,7 +848,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void noclassdeffound_exception_is_linked_to_underlying_cause()
     {
-        clickThru("Class Transformation Exception Demo");
+        openLinks("Class Transformation Exception Demo");
 
         assertTextPresent("Class org.apache.tapestry5.integration.app1.pages.Datum contains field(s) (_value) that are not private. You should change these fields to private, and add accessor methods if needed.");
     }
@@ -858,7 +856,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void method_advice()
     {
-        clickThru("Method Advice Demo");
+        openLinks("Method Advice Demo");
 
         // @ReverseStrings intercepted and reversed the result:
         assertText("message", "!olleH");
@@ -881,7 +879,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void component_classes_may_not_be_directly_instantiated()
     {
-        clickThru("Instantiate Page");
+        openLinks("Instantiate Page");
 
         assertTextPresent("Component class org.apache.tapestry5.integration.app1.pages.Music may not be instantiated directly.");
     }
@@ -892,7 +890,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void field_annotation_conflict()
     {
-        clickThru("Field Annotation Conflict");
+        openLinks("Field Annotation Conflict");
 
         assertTextPresent("Field flashDemo of class org.apache.tapestry5.integration.app1.pages.FieldAnnotationConflict is already claimed by @org.apache.tapestry5.annotations.InjectPage and can not be claimed by @org.apache.tapestry5.annotations.Parameter.");
     }
@@ -903,7 +901,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void access_to_informal_parameters()
     {
-        clickThru("Informal Parameters Demo");
+        openLinks("Informal Parameters Demo");
 
         assertTextSeries("//dl[@id='informals']/dt[%d]", 1, "barney", "fred", "pageName");
         assertTextSeries("//dl[@id='informals']/dd[%d]", 1, "rubble", "flintstone", "InformalParametersDemo");
@@ -915,7 +913,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void cached_exception_for_loading_failed_page()
     {
-        clickThru("Failed Field Injection Demo");
+        openLinks("Failed Field Injection Demo");
 
         assertTextPresent("Error obtaining injected value for field org.apache.tapestry5.integration.app1.pages.FailedInjectDemo.buffer: No service implements the interface java.lang.StringBuffer.");
 
@@ -934,7 +932,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void create_page_link_via_page_class()
     {
-        clickThru("PageLink via Class Demo");
+        openLinks("PageLink via Class Demo");
 
         assertTextPresent("Demonstrates the use of the @Inject annotation.");
     }
@@ -945,7 +943,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void exception_when_attaching_page()
     {
-        clickThru("Page Attach Failure");
+        openLinks("Page Attach Failure");
 
         assertTextPresent("Failure inside pageAttached().");
     }
@@ -956,7 +954,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void default_method_for_parameter_returns_primitive()
     {
-        clickThru("Primitive Default Demo");
+        openLinks("Primitive Default Demo");
 
         assertText("value", "99");
     }
@@ -967,11 +965,11 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void unhandled_client_events_throw_exceptions()
     {
-        clickThru("Unhandled Event Demo", "traditional");
+        openLinks("Unhandled Event Demo", "traditional");
 
         assertTextPresent("Request event 'action' (on component UnhandledEventDemo:traditional) was not handled; you must provide a matching event handler method in the component or in one of its containers.");
 
-        clickThru("Unhandled Event Demo");
+        openLinks("Unhandled Event Demo");
 
         click("link=ajax");
 
@@ -986,7 +984,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void component_in_class_but_not_template_is_an_exception()
     {
-        clickThru("Components Not In Template Demo");
+        openLinks("Components Not In Template Demo");
 
         assertTextPresent("Embedded component(s) form are defined within component class org.apache.tapestry5.integration.app1.pages.ComponentsNotInTemplateDemo");
     }
@@ -997,7 +995,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void conflict_between_property_annotation_and_existing_method()
     {
-        clickThru("Getter Method Already Exists");
+        openLinks("Getter Method Already Exists");
 
         assertTextPresent("Unable to create new method public java.lang.String getName() as it already exists in class org.apache.tapestry5.integration.app1.pages.GetterMethodAlreadyExists.");
     }
@@ -1008,7 +1006,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void duplicate_ids_highlight_both_locations()
     {
-        clickThru("Duplicate IDs");
+        openLinks("Duplicate IDs");
 
         assertTextPresent("Component DuplicateIds already contains a child component with id 'index'. Embedded component ids must be unique (excluding case, which is ignored).");
         assertTextPresent("Component DuplicateIds declared original child component with id 'index' in DuplicateIds.tml on line 6.");
@@ -1020,7 +1018,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void published_parameters()
     {
-        clickThru("Publish Parameters Demo");
+        openLinks("Publish Parameters Demo");
 
         assertText("p3-where", "PublishParametersDemo:publish1.publish2.publish3");
         assertText("p3-number", "6");
@@ -1033,7 +1031,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void conflicting_published_parameter_names_within_same_component()
     {
-        clickThru("Duplicate Published Parameter Name");
+        openLinks("Duplicate Published Parameter Name");
 
         assertTextPresent("Parameter 'value' of embedded component 'passwordfield' can not be published as a parameter of "
                 + "component org.apache.tapestry5.integration.app1.components.BadPublishDuplicate, "
@@ -1043,7 +1041,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void embedded_type_conflict()
     {
-        clickThru("Embedded Component Type Conflict");
+        openLinks("Embedded Component Type Conflict");
 
         assertTextPresent("Embedded component 'input' provides a type attribute in the template ('passwordfield') "
                 + "as well as in the component class ('textfield'). You should not provide a type attribute in "
@@ -1053,7 +1051,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void publish_unknown_parameter()
     {
-        clickThru("Publish Unknown Parameter Demo");
+        openLinks("Publish Unknown Parameter Demo");
 
         assertTextPresent("Parameter 'xyzzyx' of component org.apache.tapestry5.integration.app1.components.BadPublishUnknown "
                 + "is improperly published from embedded component 'publish1' (where it does not exist). "
@@ -1063,7 +1061,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void unknown_mixin_id()
     {
-        clickThru("Bad Mixin Id Demo");
+        openLinks("Bad Mixin Id Demo");
 
         assertTextPresent("Mixin id for parameter 'unknownmixinid.foo' not found. Attached mixins: RenderInformals.");
     }
@@ -1071,7 +1069,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void duplicate_mixin()
     {
-        clickThru("Duplicate Mixin Demo");
+        openLinks("Duplicate Mixin Demo");
 
         assertTextPresent("Failure creating embedded component 'form' of "
                 + "org.apache.tapestry5.integration.app1.pages.DupeMixinDemo: "
@@ -1081,7 +1079,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void unsupported_informal_block_parameter()
     {
-        clickThru("Unsupported Parameter Block Demo");
+        openLinks("Unsupported Parameter Block Demo");
 
         assertTextPresent(
                 "Exception assembling root component of page UnsupportedParameterBlockDemo:",
@@ -1094,7 +1092,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void component_extends_parent_template()
     {
-        clickThru("Template Override Demo");
+        openLinks("Template Override Demo");
 
         // From the parent template (could be overridden, but is not).
 
@@ -1108,7 +1106,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void extend_without_base_template()
     {
-        clickThru("Invalid Template Extend Demo");
+        openLinks("Invalid Template Extend Demo");
 
         assertTextPresent("Component org.apache.tapestry5.integration.app1.pages.InvalidTemplateExtend uses an extension template, but does not have a parent component.");
     }
@@ -1119,7 +1117,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void abstract_component_class()
     {
-        clickThru("Abstract Component Demo");
+        openLinks("Abstract Component Demo");
 
         assertTextPresent(
                 "java.lang.RuntimeException",
@@ -1129,7 +1127,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void multi_level_parameter_inheritance()
     {
-        clickThru("Multi-Level Inherit Demo");
+        openLinks("Multi-Level Inherit Demo");
 
         assertText("prop.middle.bottom", "bound value");
         assertText("literal.middle.bottom", "some text");
@@ -1138,7 +1136,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void bindparameter()
     {
-        clickThru("BindParameter mixin annotation");
+        openLinks("BindParameter mixin annotation");
         // implicit parameter name
         assertEchoMixins("testmixin", "mypropertyvalue", 0, -1, -1, 1, true);
         assertText("mypropertyoutput", "mypropertyvalue");
@@ -1203,7 +1201,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void missing_componentclass()
     {
-        clickThru("Missing Component Class Exception");
+        openLinks("Missing Component Class Exception");
         assertTextPresent(
                 "An unexpected application exception has occurred",
                 "Failure creating embedded component 'componentwithnotype' of org.apache.tapestry5.integration.app1.pages.MissingComponentClassException: You must specify the type via t:type, the element, or @Component");
@@ -1212,7 +1210,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void session_attribute()
     {
-        clickThru("SessionAttribute Demo");
+        openLinks("SessionAttribute Demo");
 
         assertTextPresent("Foo");
         assertTextPresent("Bar");
@@ -1229,7 +1227,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void value_encoder_via_type_coercer()
     {
-        clickThru("Magic ValueEncoder Demo");
+        openLinks("Magic ValueEncoder Demo");
 
         select("number", "25");
 
@@ -1251,7 +1249,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void create_action_link_while_not_rendering()
     {
-        clickThru("Action via Link Demo", "via explicit Link creation");
+        openLinks("Action via Link Demo", "via explicit Link creation");
 
         assertText("message", "from getActionURL()");
     }
@@ -1262,7 +1260,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void cached()
     {
-        clickThru("Cached Annotation");
+        openLinks("Cached Annotation");
 
         assertText("value", "000");
         assertText("value2size", "111");
@@ -1291,7 +1289,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void override_method_with_cached()
     {
-        clickThru("Cached Annotation2");
+        openLinks("Cached Annotation2");
 
         assertText("value", "111");
 
@@ -1310,7 +1308,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void has_body()
     {
-        clickThru("Has Body Demo");
+        openLinks("Has Body Demo");
 
         assertText("nobody", "false");
         assertText("somebody", "true");
@@ -1319,7 +1317,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void bindparameter_nomatchingparameter()
     {
-        clickThru("BindParameter error handling");
+        openLinks("BindParameter error handling");
 
         assertTextPresent(
                 "An unexpected application exception has occurred.",
@@ -1332,7 +1330,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void bindparameter_on_componentfield_throws_exception()
     {
-        clickThru("BindParameter on component");
+        openLinks("BindParameter on component");
 
         assertTextPresent(
                 "An unexpected application exception has occurred.",
@@ -1342,7 +1340,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void trigger_demo()
     {
-        clickThru("Trigger Demo");
+        openLinks("Trigger Demo");
 
         assertTextPresent("Event 'provideAdditionalMarkup' handled.");
     }
@@ -1360,7 +1358,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void secure_page_access()
     {
-        clickThru("Secure Page Demo");
+        openLinks("Secure Page Demo");
 
         assertText("secure", "secure");
 
@@ -1392,23 +1390,23 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         // the next.
 
         // context resources should be available by default.
-        clickThru("Asset Protection Demo");
+        openLinks("Asset Protection Demo");
         clickAndWait("link=Available File");
         assertTextPresent("This file should be available to clients.");
 
-        clickThru("Asset Protection Demo");
+        openLinks("Asset Protection Demo");
         clickAndWait("link=Unavailable CSS");
         assertTextPresent("HTTP ERROR 404");
 
-        clickThru("Asset Protection Demo");
+        openLinks("Asset Protection Demo");
         clickAndWait("link=WEB-INF");
         assertTextPresent("HTTP ERROR 404");
 
-        clickThru("Asset Protection Demo");
+        openLinks("Asset Protection Demo");
         clickAndWait("link=WEB-INF/");
         assertTextPresent("HTTP ERROR 404");
 
-        clickThru("Asset Protection Demo");
+        openLinks("Asset Protection Demo");
         clickAndWait("link=Available File2");
         assertTextPresent("This file should be available to clients.");
     }
@@ -1417,7 +1415,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void failure_inside_default_object_renderer()
     {
-        clickThru("RenderObject Exception Demo");
+        openLinks("RenderObject Exception Demo");
 
         assertText(
                 "container",
@@ -1429,7 +1427,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void module_loading()
     {
-        clickThru("Test Only Service Demo");
+        openLinks("Test Only Service Demo");
 
         assertText("message", "TestOnly service message");
     }
@@ -1438,7 +1436,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void page_reset_annotation()
     {
-        clickThru("PageReset Annotation Demo");
+        openLinks("PageReset Annotation Demo");
 
         assertText("current", "0");
 
@@ -1464,7 +1462,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void page_reset_annotation_on_bad_method()
     {
-        clickThru("PageReset Annotation Failure");
+        openLinks("PageReset Annotation Failure");
 
         assertTextPresent(
                 "Method org.apache.tapestry5.integration.app1.pages.PageResetFailure.reset(java.lang.String)",
@@ -1475,7 +1473,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void injection_of_application_message_catalog_into_service()
     {
-        clickThru("Inject Global Messages into Service Demo");
+        openLinks("Inject Global Messages into Service Demo");
 
         assertText("status", "Application Catalog Working");
     }
@@ -1484,7 +1482,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void discard_after()
     {
-        clickThru("@DiscardAfter Demo");
+        openLinks("@DiscardAfter Demo");
 
         type("stringValue", "foo bar baz");
 
@@ -1508,7 +1506,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         assertTextPresent("Oops! Error occured");
 
-        clickThru("@DiscardAfter Demo");
+        openLinks("@DiscardAfter Demo");
 
         assertTextPresent("Value is: 'barney quux'");
     }
@@ -1526,31 +1524,31 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     @Test
     public void multiple_resources_contributed_to_global_message_catalog()
     {
-        clickThru("Library Messages Demo");
+        openLinks("Library Messages Demo");
 
         assertText("id=no-override", "[pre-app]");
         assertText("id=override", "[app]");
     }
-    
+
     /** TAP5-1254 */
     @Test
     public void decorate_page_render_link()
     {
-        clickThru("Decorate Page Render Link Demo");
+        openLinks("Decorate Page Render Link Demo");
 
         clickAndWait("link=refresh");
-        
+
         assertTextPresent("Page Render Link Decorated: true");
     }
-    
+
     /** TAP5-1254 */
     @Test
     public void decorate_component_event_link()
     {
-        clickThru("Decorate Component Event Link Demo");
+        openLinks("Decorate Component Event Link Demo");
 
         clickAndWait("link=refresh");
-        
+
         assertTextPresent("Component Event Link Decorated: true");
     }
 }

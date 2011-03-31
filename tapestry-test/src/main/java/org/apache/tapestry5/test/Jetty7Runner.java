@@ -1,10 +1,10 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,13 +30,13 @@ public class Jetty7Runner implements ServletContainerRunner
     private final String description;
 
     private final int port;
-    
+
     private final int sslPort;
 
     public Jetty7Runner(String webappFolder, String contextPath, int port, int sslPort) throws Exception
     {
         this.port = port;
-        
+
         this.sslPort = sslPort;
 
         String expandedPath = expand(webappFolder);
@@ -110,9 +110,9 @@ public class Jetty7Runner implements ServletContainerRunner
         File path = new File(moduleLocalPath);
 
         // Don't expand if the path provided already exists.
-        if(path.isAbsolute() && path.isDirectory())
+        if (path.isAbsolute() && path.isDirectory())
             return moduleLocalPath;
-        
+
         return new File(TapestryTestConstants.MODULE_BASE_DIR, moduleLocalPath).getPath();
     }
 }

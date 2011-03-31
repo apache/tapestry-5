@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ public class FailureTests extends TapestryCoreTestCase
     @Test
     public void component_id_in_template_with_no_type()
     {
-        clickThru("No Component Type Provided");
+        openLinks("No Component Type Provided");
 
         assertTextPresent("org.apache.tapestry5.integration.app1.pages.NoTypeProvidedDemo",
                 "You must specify the type via t:type, the element, or @Component annotation.");

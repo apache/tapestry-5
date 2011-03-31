@@ -27,7 +27,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void form_encoding_type()
     {
-        clickThru("Form Encoding Type");
+        openLinks("Form Encoding Type");
 
         assertAttribute("//form/@enctype", "x-override");
     }
@@ -35,7 +35,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void page_context_in_form()
     {
-        clickThru("Page Context in Form");
+        openLinks("Page Context in Form");
 
         assertTextSeries("//li[%d]", 1, "betty", "wilma", "context with spaces", "context/with/slashes");
         assertFieldValue("t:ac", "betty/wilma/context$0020with$0020spaces/context$002fwith$002fslashes");
@@ -49,7 +49,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void password_field()
     {
-        clickThru("PasswordFieldDemo");
+        openLinks("PasswordFieldDemo");
 
         type("userName", "howard");
         type("password", "wrong-password");
@@ -74,7 +74,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void server_side_validation_for_textfield_and_textarea() throws Exception
     {
-        clickThru("ValidForm");
+        openLinks("ValidForm");
 
         clickAndWait(SUBMIT);
         assertTextPresent("You must provide a value for Email.");
@@ -122,7 +122,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void client_side_validation()
     {
-        clickThru("Client Validation Demo");
+        openLinks("Client Validation Demo");
 
         // Used to ensure that the <script> tag was present, but that's hard to
         // do with script combining enabled.
@@ -153,7 +153,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void cancel_button()
     {
-        clickThru("Client Validation Demo");
+        openLinks("Client Validation Demo");
 
         // Used to ensure that the <script> tag was present, but that's hard to
         // do with script combining enabled.
@@ -168,7 +168,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void radio_group_validator()
     {
-        clickThru("RadioDemo", "reset");
+        openLinks("RadioDemo", "reset");
 
         // Verify that the "required" validator works.
         clickAndWait(SUBMIT);
@@ -179,7 +179,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void regexp_validator()
     {
-        clickThru("Regexp Demo");
+        openLinks("Regexp Demo");
 
         String update = SUBMIT;
 
@@ -207,7 +207,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void basic_datefield()
     {
-        clickThru("DateField Demo", "clear", "english");
+        openLinks("DateField Demo", "clear", "english");
 
         type("birthday", "24 dec 1966");
         type("asteroidImpact", "05/28/2046");
@@ -236,7 +236,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void xss_datefield()
     {
-        clickThru("DateField Demo", "clear", "english");
+        openLinks("DateField Demo", "clear", "english");
 
         type("asteroidImpact", "<script>alert('T5 is great'); </script>");
 
@@ -248,7 +248,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void event_based_translate() throws Exception
     {
-        clickThru("EventMethod Translator");
+        openLinks("EventMethod Translator");
 
         type("count", "123");
         clickAndWait(SUBMIT);
@@ -292,7 +292,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void radio_button_and_group()
     {
-        clickThru("RadioDemo");
+        openLinks("RadioDemo");
 
         String update = SUBMIT;
 
@@ -318,7 +318,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void disabled_fields() throws Exception
     {
-        clickThru("Disabled Fields");
+        openLinks("Disabled Fields");
 
         String[] paths = new String[]
         { "//input[@id='textfield']",
@@ -361,7 +361,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void null_field_strategy()
     {
-        clickThru("Null Field Strategy Demo");
+        openLinks("Null Field Strategy Demo");
 
         String locator = "//span[@id='value']";
 
@@ -382,7 +382,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void label_invokes_validation_decorator_at_correct_time()
     {
-        clickThru("Override Validation Decorator");
+        openLinks("Override Validation Decorator");
 
         // This is sub-optimal, as it doesn't esnure that the before/after field
         // values really do wrap around
@@ -407,7 +407,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void wrapper_types_with_text_field()
     {
-        clickThru("TextField Wrapper Types", "clear");
+        openLinks("TextField Wrapper Types", "clear");
 
         assertFieldValue("count", "");
         assertText("value", "null");
@@ -433,7 +433,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void submit_with_context()
     {
-        clickThru("Submit With Context");
+        openLinks("Submit With Context");
 
         clickAndWait(SUBMIT);
 
@@ -457,7 +457,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void client_field_format_validation()
     {
-        clickThru("Client Format Validation");
+        openLinks("Client Format Validation");
 
         type("amount", "abc");
         type("quantity", "abc");
@@ -477,7 +477,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void validation_exception_thrown_from_validate_form_event_handler()
     {
-        clickThru("ValidationForm ValidationException Demo");
+        openLinks("ValidationForm ValidationException Demo");
 
         clickAndWait(SUBMIT);
 
@@ -489,7 +489,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void form_field_outside_form()
     {
-        clickThru("Form Field Outside Form");
+        openLinks("Form Field Outside Form");
 
         assertTextPresent(
                 "org.apache.tapestry5.internal.services.RenderQueueException",
@@ -503,7 +503,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void nested_form_check()
     {
-        clickThru("Nested Form Demo");
+        openLinks("Nested Form Demo");
 
         assertTextPresent("Form components may not be placed inside other Form components.");
     }
@@ -514,7 +514,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void blank_password_does_not_update()
     {
-        clickThru("Blank Password Demo");
+        openLinks("Blank Password Demo");
 
         type("password", "secret");
 
@@ -537,7 +537,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void per_form_validation_messages_and_constraints()
     {
-        clickThru("Per-Form Validation Messages");
+        openLinks("Per-Form Validation Messages");
 
         clickAndWait("//input[@type='submit' and @value='Login']");
 
@@ -566,7 +566,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void link_submit_without_validator()
     {
-        clickThru("LinkSubmit Without Validator Demo");
+        openLinks("LinkSubmit Without Validator Demo");
 
         type("searchField", "Anders Haraldsson");
 
@@ -581,7 +581,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void client_side_numeric_validation()
     {
-        clickThru("Client-Side Numeric Validation", "reset");
+        openLinks("Client-Side Numeric Validation", "reset");
 
         assertText("outputLongValue", "1000");
         assertText("outputDoubleValue", "1234.67");
@@ -636,7 +636,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void client_validation_for_numeric_fields_that_are_not_required()
     {
-        clickThru("Form Zone Demo");
+        openLinks("Form Zone Demo");
 
         type("longValue", "alpha");
 
@@ -658,7 +658,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void hidden_field()
     {
-        clickThru("Hidden Demo", "setup");
+        openLinks("Hidden Demo", "setup");
 
         clickAndWait(SUBMIT);
 
@@ -668,7 +668,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void validation_constraints_from_messages()
     {
-        clickThru("Validation Constraints From Messages");
+        openLinks("Validation Constraints From Messages");
 
         click(SUBMIT);
 
@@ -696,7 +696,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void link_submit_component()
     {
-        clickThru("LinkSubmit Demo");
+        openLinks("LinkSubmit Demo");
 
         // Wait a moment for the page to initialize.
 
@@ -726,7 +726,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void calendar_field_inside_bean_editor()
     {
-        clickThru("BeanEditor / Calendar Demo", "clear");
+        openLinks("BeanEditor / Calendar Demo", "clear");
 
         type("calendar", "04/06/1978");
 
@@ -741,7 +741,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void image_submit_triggers_selected_event()
     {
-        clickThru("Submit with an Image Demo");
+        openLinks("Submit with an Image Demo");
 
         type("value", "barney gumble");
 
@@ -760,7 +760,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void simple_form()
     {
-        clickThru("SimpleForm");
+        openLinks("SimpleForm");
 
         assertText("//label[@for='disabled']", "Disabled");
 
@@ -850,7 +850,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void use_of_cancel_mode_on_submit_button()
     {
-        clickThru("Cancel Demo");
+        openLinks("Cancel Demo");
 
         clickAndWait("//input[@type='submit']");
 
@@ -860,7 +860,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void use_of_cancel_mode_with_submitlink()
     {
-        clickThru("Cancel Demo");
+        openLinks("Cancel Demo");
 
         clickAndWait("//a[@id='cancelLink']");
 
@@ -870,7 +870,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void validation_decoration_for_select() throws Exception
     {
-        clickThru("Select Demo");
+        openLinks("Select Demo");
 
         clickAndWait(SUBMIT);
         assertTextPresent("You must provide a value for Color.");
@@ -894,7 +894,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void create_select_model_from_objects_and_property_name() throws Exception
     {
-        clickThru("SelectModel from objects and property name");
+        openLinks("SelectModel from objects and property name");
 
         select("track", "label=The Calling");
 
@@ -906,7 +906,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void validation_macro() throws Exception
     {
-        clickThru("Validator Macro Demo");
+        openLinks("Validator Macro Demo");
 
         clickAndWait(SUBMIT);
         
