@@ -28,7 +28,10 @@ import java.util.zip.GZIPOutputStream;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.internal.IOOperation;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.ResourceStreamer;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -71,12 +74,14 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
 
     private final ResourceMinimizer resourceMinimizer;
 
+    private final OperationTracker tracker;
+
     private final boolean minificationEnabled;
 
     public StackAssetRequestHandler(StreamableResourceSource streamableResourceSource,
             JavaScriptStackSource javascriptStackSource, LocalizationSetter localizationSetter,
             ResponseCompressionAnalyzer compressionAnalyzer, ResourceStreamer resourceStreamer,
-            ResourceMinimizer resourceMinimizer,
+            ResourceMinimizer resourceMinimizer, OperationTracker tracker,
 
             @Symbol(SymbolConstants.MINIFICATION_ENABLED)
             boolean minificationEnabled)
@@ -87,6 +92,7 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
         this.compressionAnalyzer = compressionAnalyzer;
         this.resourceStreamer = resourceStreamer;
         this.resourceMinimizer = resourceMinimizer;
+        this.tracker = tracker;
         this.minificationEnabled = minificationEnabled;
     }
 
@@ -96,13 +102,19 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
         resourceChangeTracker.addInvalidationListener(this);
     }
 
-    public boolean handleAssetRequest(Request request, Response response, String extraPath) throws IOException
+    public boolean handleAssetRequest(Request request, Response response, final String extraPath) throws IOException
     {
-        boolean compress = compressionAnalyzer.isGZipSupported();
+        TapestryInternalUtils.performIO(tracker, String.format("Streaming asset stack %s", extraPath), new IOOperation()
+        {
+            public void perform() throws IOException
+            {
+                boolean compress = compressionAnalyzer.isGZipSupported();
 
-        StreamableResource resource = getResource(extraPath, compress);
+                StreamableResource resource = getResource(extraPath, compress);
 
-        resourceStreamer.streamResource(resource);
+                resourceStreamer.streamResource(resource);
+            }
+        });
 
         return true;
     }

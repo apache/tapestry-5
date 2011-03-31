@@ -16,12 +16,14 @@ package org.apache.tapestry5.internal.services;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.internal.IOOperation;
 import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.Request;
@@ -46,6 +48,8 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
     private final boolean productionMode;
 
+    private final OperationTracker tracker;
+
     public ResourceStreamerImpl(Request request,
 
     Response response,
@@ -53,6 +57,8 @@ public class ResourceStreamerImpl implements ResourceStreamer
     StreamableResourceSource streamableResourceSource,
 
     ResponseCompressionAnalyzer analyzer,
+
+    OperationTracker tracker,
 
     @Symbol(SymbolConstants.PRODUCTION_MODE)
     boolean productionMode)
@@ -62,10 +68,11 @@ public class ResourceStreamerImpl implements ResourceStreamer
         this.streamableResourceSource = streamableResourceSource;
 
         this.analyzer = analyzer;
+        this.tracker = tracker;
         this.productionMode = productionMode;
     }
 
-    public void streamResource(Resource resource) throws IOException
+    public void streamResource(final Resource resource) throws IOException
     {
         if (!resource.exists())
         {
@@ -73,12 +80,18 @@ public class ResourceStreamerImpl implements ResourceStreamer
             return;
         }
 
-        StreamableResourceProcessing processing = analyzer.isGZipSupported() ? StreamableResourceProcessing.COMPRESSION_ENABLED
-                : StreamableResourceProcessing.COMPRESSION_DISABLED;
+        TapestryInternalUtils.performIO(tracker, String.format("Streaming %s", resource), new IOOperation()
+        {
+            public void perform() throws IOException
+            {
+                StreamableResourceProcessing processing = analyzer.isGZipSupported() ? StreamableResourceProcessing.COMPRESSION_ENABLED
+                        : StreamableResourceProcessing.COMPRESSION_DISABLED;
 
-        StreamableResource streamable = streamableResourceSource.getStreamableResource(resource, processing);
+                StreamableResource streamable = streamableResourceSource.getStreamableResource(resource, processing);
 
-        streamResource(streamable);
+                streamResource(streamable);
+            }
+        });
     }
 
     public void streamResource(StreamableResource streamable) throws IOException
