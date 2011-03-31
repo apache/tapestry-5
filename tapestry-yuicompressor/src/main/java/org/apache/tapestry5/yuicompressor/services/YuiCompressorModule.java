@@ -31,7 +31,7 @@ public class YuiCompressorModule
 {
     @Contribute(ResourceMinimizer.class)
     @Primary
-    void setupJavaScriptMinimizer(MappedConfiguration<String, ResourceMinimizer> configuration)
+    public static void setupJavaScriptMinimizer(MappedConfiguration<String, ResourceMinimizer> configuration)
     {
         configuration.addInstance("text/javascript", JSCompressor.class);
     }
