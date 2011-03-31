@@ -44,7 +44,7 @@ public class SRSCachingInterceptor implements StreamableResourceSource, Invalida
     public StreamableResource getStreamableResource(Resource baseResource, StreamableResourceProcessing processing)
             throws IOException
     {
-        if (processing != StreamableResourceProcessing.FOR_AGGREGATION)
+        if (processing == StreamableResourceProcessing.FOR_AGGREGATION)
             return delegate.getStreamableResource(baseResource, processing);
 
         StreamableResource result = cache.get(baseResource);
