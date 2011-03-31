@@ -71,6 +71,6 @@ public class JavaScriptResourceMinimizer extends AbstractMinimizer
     {
         JavaScriptCompressor compressor = new JavaScriptCompressor(input, errorReporter);
 
-        compressor.compress(output, 0, true, false, false, false);
+        compressor.compress(output, -1, true, false, false, false);
     }
 }
