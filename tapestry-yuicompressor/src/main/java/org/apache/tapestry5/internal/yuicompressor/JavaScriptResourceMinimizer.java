@@ -38,9 +38,9 @@ import org.slf4j.Logger;
 import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 
 /**
- * JavaScript resource compressor based on the YUI {@link JavaScriptCompressor}.
+ * JavaScript resource minimizer based on the YUI {@link JavaScriptCompressor}.
  */
-public class JSCompressor implements ResourceMinimizer
+public class JavaScriptResourceMinimizer implements ResourceMinimizer
 {
     private static final double NANOS_TO_MILLIS = 1.0d / 1000000.0d;
 
@@ -48,7 +48,7 @@ public class JSCompressor implements ResourceMinimizer
 
     private final OperationTracker tracker;
 
-    public JSCompressor(Logger logger, OperationTracker tracker)
+    public JavaScriptResourceMinimizer(Logger logger, OperationTracker tracker)
     {
         this.logger = logger;
         this.tracker = tracker;

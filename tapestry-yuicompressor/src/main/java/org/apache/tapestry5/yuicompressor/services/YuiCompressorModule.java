@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.yuicompressor.services;
 
-import org.apache.tapestry5.internal.yuicompressor.JSCompressor;
+import org.apache.tapestry5.internal.yuicompressor.JavaScriptResourceMinimizer;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Primary;
@@ -33,6 +33,6 @@ public class YuiCompressorModule
     @Primary
     public static void setupJavaScriptMinimizer(MappedConfiguration<String, ResourceMinimizer> configuration)
     {
-        configuration.addInstance("text/javascript", JSCompressor.class);
+        configuration.addInstance("text/javascript", JavaScriptResourceMinimizer.class);
     }
 }
