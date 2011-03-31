@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.yuicompressor.services;
 
+import org.apache.tapestry5.internal.yuicompressor.CSSResourceMinimizer;
 import org.apache.tapestry5.internal.yuicompressor.JavaScriptResourceMinimizer;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.annotations.Contribute;
@@ -29,10 +30,16 @@ import com.yahoo.platform.yui.compressor.YUICompressor;
  */
 public class YuiCompressorModule
 {
+    /**
+     * Contibutes minimizers for <code>text/javascript</code> and <code>test/css</code>.
+     * 
+     * @param configuration
+     */
     @Contribute(ResourceMinimizer.class)
     @Primary
-    public static void setupJavaScriptMinimizer(MappedConfiguration<String, ResourceMinimizer> configuration)
+    public static void contributeMinimizers(MappedConfiguration<String, ResourceMinimizer> configuration)
     {
         configuration.addInstance("text/javascript", JavaScriptResourceMinimizer.class);
+        configuration.addInstance("text/css", CSSResourceMinimizer.class);
     }
 }
