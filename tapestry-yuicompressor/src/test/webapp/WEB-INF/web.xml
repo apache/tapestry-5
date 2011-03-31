@@ -6,7 +6,7 @@
   <display-name>Tapestry/YUICompressor Integration Test</display-name>
   <context-param>
     <param-name>tapestry.app-package</param-name>
-    <param-value>testapp</param-value>
+    <param-value>yuicompressor.testapp</param-value>
   </context-param>
   <filter>
     <filter-name>app</filter-name>

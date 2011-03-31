@@ -1,4 +1,4 @@
-package testapp.services;
+package yuicompressor.testapp.services;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.MappedConfiguration;

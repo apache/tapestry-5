@@ -1,4 +1,4 @@
-package testapp.pages;
+package yuicompressor.testapp.pages;
 
 import java.util.List;
 
