@@ -31,7 +31,9 @@ import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
+import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.Messages;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Orderable;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -596,5 +598,30 @@ public class TapestryInternalUtils
         int dotx = fileName.lastIndexOf('.');
 
         return dotx < 0 ? "" : fileName.substring(dotx + 1);
+    }
+
+    /** Performs an operation and re-throws the IOException that may occur. */
+    public static void performIO(OperationTracker tracker, String description, final IOOperation operation)
+            throws IOException
+    {
+        final Holder<IOException> exceptionHolder = Holder.create();
+    
+        tracker.run(description, new Runnable()
+        {
+            public void run()
+            {
+                try
+                {
+                    operation.perform();
+                }
+                catch (IOException ex)
+                {
+                    exceptionHolder.put(ex);
+                }
+            }
+        });
+    
+        if (exceptionHolder.hasValue())
+            throw exceptionHolder.get();
     }
 }
