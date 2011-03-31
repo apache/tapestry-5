@@ -1,0 +1,25 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd" xmlns:p="tapestry:parameter">
+  <head>
+    <title>YUICompressor Test</title>
+  </head>
+  <body>
+
+    <t:form>
+      <t:errors/>
+      <t:palette t:id="languages" selected="languages" model="languagesModel" encoder="languagesEncoder" reorder="true"/>
+      <br/>
+      <input type="submit"/>
+    </t:form>
+
+    <hr/>
+
+    <t:if test="languages">
+      <p>
+        Selected languages:
+        <span id="selected">${selectedLanguages}</span>
+      </p>
+    </t:if>
+
+
+  </body>
+</html>
