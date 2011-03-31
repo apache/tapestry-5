@@ -30,6 +30,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.tapestry5.func.Flow;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.IntermediateType;
@@ -180,6 +181,8 @@ public final class TapestryIOCModule
      * <li>{@link org.apache.tapestry5.ioc.util.TimeInterval} to Long</li>
      * <li>Object to Object[] (wrapping the object as an array)</li>
      * <li>Collection to Object[] (via the toArray() method)
+     * <li>{@link Flow} to List</li>
+     * <li>{@link Flow} to Boolean (false if empty)</li>
      * </ul>
      */
     @Contribute(TypeCoercer.class)
@@ -408,6 +411,22 @@ public final class TapestryIOCModule
             public Object[] coerce(Collection input)
             {
                 return input.toArray();
+            }
+        });
+
+        add(configuration, Flow.class, List.class, new Coercion<Flow, List>()
+        {
+            public List coerce(Flow input)
+            {
+                return input.toList();
+            }
+        });
+
+        add(configuration, Flow.class, Boolean.class, new Coercion<Flow, Boolean>()
+        {
+            public Boolean coerce(Flow input)
+            {
+                return !input.isEmpty();
             }
         });
     }
