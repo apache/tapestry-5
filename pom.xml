@@ -211,6 +211,7 @@
     <module>tapestry-hibernate</module>
     <module>tapestry-upload</module>
     <module>tapestry-jpa</module>
+    <module>tapestry-yuicompressor</module>
     <!-- Now we're getting into the archetypes. -->
     <module>quickstart</module>
     <!-- And the Maven plugin. -->
