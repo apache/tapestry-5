@@ -17,7 +17,6 @@ package org.apache.tapestry5.services.assets;
 import java.io.IOException;
 
 import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
 /**
