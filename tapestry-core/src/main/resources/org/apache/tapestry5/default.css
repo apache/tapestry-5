@@ -353,11 +353,14 @@ DIV.t-palette-controls {
 DIV.t-palette-controls BUTTON {
     display: block;
     margin-bottom: 3px;
+    cursor: pointer;
 }
 
 DIV.t-palette-controls BUTTON[disabled] IMG {
     filter: alpha(opacity = 25);
     -moz-opacity: .25;
+    opacity: .25;
+    cursor: default;
 }
 
 DIV.t-palette-selected {
