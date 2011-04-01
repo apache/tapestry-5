@@ -20,11 +20,6 @@
       <artifactId>tapestry-test</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.apache.tapestry</groupId>
-      <artifactId>tapestry-ioc</artifactId>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
   <build>
     <plugins>

@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,12 +19,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.testng.Assert;
 
 /**
  * Extra assertions on top of the standard set, packaged as a base class for easy referencing in tests. Also,
  * utilities for instantiation objects and setting and reading private fields of those objects.
+ * <p>
+ * This class was originally in the tapestry-ioc module as was moved to tapestry-test; the package name was not changed
+ * to ensure backwards compatibility.
  * 
  * @since 5.2.0
  */
@@ -94,15 +96,16 @@ public class TestUtils extends Assert
         List<String> actualStrings = toStrings(actual);
         List<String> expectedStrings = toStrings(expected);
 
-        String format = String.format("%%3d: [%%-%ds] [%%-%ds]\n", maxLength(actualStrings), maxLength(expectedStrings));
+        String format = String
+                .format("%%3d: [%%-%ds] [%%-%ds]\n", maxLength(actualStrings), maxLength(expectedStrings));
 
         int count = Math.max(actual.size(), expected.size());
 
         System.out.flush();
         System.err.flush();
-        
+
         System.err.println("List results differ (actual  vs. expected):");
-        
+
         for (int i = 0; i < count; i++)
         {
             System.err.printf(format, i, get(actualStrings, i), get(expectedStrings, i));
@@ -201,7 +204,7 @@ public class TestUtils extends Assert
             catch (Exception ex)
             {
                 throw new RuntimeException(String.format("Unable to set field '%s' of %s to %s: %s", fieldName, object,
-                        fieldValue, InternalUtils.toMessage(ex)), ex);
+                        fieldValue, toMessage(ex)), ex);
             }
         }
 
@@ -221,7 +224,7 @@ public class TestUtils extends Assert
     public static Object get(Object object, String fieldName)
     {
         assert object != null;
-        assert InternalUtils.isNonBlank(fieldName);
+
         try
         {
             Field field = findField(object.getClass(), fieldName);
@@ -233,8 +236,18 @@ public class TestUtils extends Assert
         catch (Exception ex)
         {
             throw new RuntimeException(String.format("Unable to read field '%s' of %s: %s", fieldName, object,
-                    InternalUtils.toMessage(ex)), ex);
+                    toMessage(ex)), ex);
         }
+    }
+
+    private static String toMessage(Throwable exception)
+    {
+        String message = exception.getMessage();
+
+        if (message != null)
+            return message;
+
+        return exception.getClass().getName();
     }
 
     private static Field findField(Class objectClass, String fieldName)
@@ -281,7 +294,7 @@ public class TestUtils extends Assert
         catch (Exception ex)
         {
             throw new RuntimeException(String.format("Unable to instantiate instance of %s: %s", objectType.getName(),
-                    InternalUtils.toMessage(ex)), ex);
+                    toMessage(ex)), ex);
         }
 
         return set(result, fieldValues);

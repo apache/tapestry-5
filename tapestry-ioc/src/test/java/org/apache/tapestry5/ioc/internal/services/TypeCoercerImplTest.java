@@ -20,6 +20,8 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.ioc.util.TimeInterval;
+import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.json.JSONObject;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -279,6 +281,10 @@ public class TypeCoercerImplTest extends IOCInternalTestCase
                 { F.flow(1, 2, 3), Boolean.class, true },
 
                 { F.flow(1, 2, 3), List.class, Arrays.asList(1, 2, 3) },
+
+                { "[1, true]", JSONArray.class, new JSONArray(1, true) },
+
+                { "{ 'fred': 1, 'barney': 2}", JSONObject.class, new JSONObject().put("fred", 1).put("barney", 2) },
 
                 // null to arbitrary object is still null
 

@@ -13,5 +13,6 @@ dependencies {
   
   compile "org.apache.tomcat:catalina:$tomcatVersion"
   compile "org.apache.tomcat:coyote:$tomcatVersion"
-  
+
+  compile "org.easymock:easymock:$easymockVersion"
 }

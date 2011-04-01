@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
 // limitations under the License.
 
 package org.apache.tapestry5.ioc.test;
-
 
 import org.easymock.Capture;
 import org.easymock.EasyMock;
@@ -37,6 +36,9 @@ import org.testng.annotations.AfterMethod;
  * <p/>
  * This class is thread safe (it uses a thread local to store the mock control). In theory, this should allow TestNG to
  * execute tests in parallel.
+ * <p>
+ * This class was originally in the tapestry-ioc module as was moved to tapestry-test; the package name was not changed
+ * to ensure backwards compatibility.
  * 
  * @see org.easymock.EasyMock#createControl()
  * @see org.apache.tapestry5.ioc.test.MockTester

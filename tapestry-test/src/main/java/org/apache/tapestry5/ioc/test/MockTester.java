@@ -1,10 +1,10 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,6 +22,9 @@ import org.easymock.IMocksControl;
  * suite. A <em>single</em> standard mock control is used for all mock instances. The control does not care about
  * execution order, but will balk at any unexpected method invocations. This class is thread safe (it used a thread
  * local to store the mock control).
+ * <p>
+ * This class was originally in the tapestry-ioc module as was moved to tapestry-test; the package name was not changed
+ * to ensure backwards compatibility.
  */
 public final class MockTester
 {
@@ -52,9 +55,11 @@ public final class MockTester
     /**
      * Creates a new mock object of the indicated type. The shared mock control does <strong>not</strong> check order,
      * but does fail on any unexpected method invocations.
-     *
-     * @param <T>       the type of the mock object
-     * @param mockClass the class to mock
+     * 
+     * @param <T>
+     *            the type of the mock object
+     * @param mockClass
+     *            the class to mock
      * @return the mock object, ready for training
      */
     public <T> T newMock(Class<T> mockClass)

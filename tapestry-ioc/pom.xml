@@ -30,6 +30,26 @@
 			<version>${project.version}</version>
 		</dependency>
 
+        <dependency>
+            <groupId>org.apache.tapestry</groupId>
+            <artifactId>tapestry-json</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+            <dependency>
+                <groupId>org.apache.tapestry</groupId>
+                <artifactId>tapestry-test</artifactId>
+                <version>${project.version}</version>
+                <scope>provided</scope>
+            </dependency>        
+        
+            <!-- Override parent pom: needed at compile time. -->
+            <dependency>
+              <groupId>org.easymock</groupId>
+              <artifactId>easymock</artifactId>
+              <scope>provided</scope>
+            </dependency>
+            
 		<dependency>
 			<groupId>javassist</groupId>
 			<artifactId>javassist</artifactId>
@@ -62,23 +82,6 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.6.1</version>
-		</dependency>
-
-
-		<!-- Override parent pom: needed at compile time. -->
-		<dependency>
-			<groupId>org.easymock</groupId>
-			<artifactId>easymock</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<!-- Override parent pom: needed at compile time. -->
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<!-- Looks like if you override scope, you have to provide version (and 
-				classifier) as well. Or perhaps this has something to do with classifier. -->
-			<version>${testng-version}</version>
-			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 	<build>

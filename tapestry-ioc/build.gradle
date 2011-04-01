@@ -3,8 +3,9 @@ description = "A code-centric, high-performance, simple Inversion of Control con
 dependencies {
   compile project(':tapestry-func')
   compile project(':tapestry-annotations')
+  compile project(':tapestry-json')
   
-  testCompile project(':tapestry-test')
+  provided project(':tapestry-test')
 
   compile "javassist:javassist:3.12.1.GA"
 
@@ -13,8 +14,6 @@ dependencies {
   compile "org.slf4j:slf4j-api:1.6.1"
   compile "log4j:log4j:1.2.14"
   compile "org.slf4j:slf4j-log4j12:1.6.1"
-  
-  compile "org.easymock:easymock:$easymockVersion"
-  
+    
   compile "org.testng:testng:$testngVersion", { transitive = false }
 }

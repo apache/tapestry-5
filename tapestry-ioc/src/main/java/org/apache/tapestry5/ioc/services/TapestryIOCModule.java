@@ -31,17 +31,58 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.tapestry5.func.Flow;
-import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.Configuration;
+import org.apache.tapestry5.ioc.IOCSymbols;
+import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.ioc.ObjectProvider;
+import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.ScopeConstants;
+import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.ServiceLifecycle;
+import org.apache.tapestry5.ioc.ServiceLifecycle2;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.IntermediateType;
 import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.services.*;
+import org.apache.tapestry5.ioc.internal.services.AspectDecoratorImpl;
+import org.apache.tapestry5.ioc.internal.services.AutobuildObjectProvider;
+import org.apache.tapestry5.ioc.internal.services.ChainBuilderImpl;
+import org.apache.tapestry5.ioc.internal.services.ClassNameLocatorImpl;
+import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
+import org.apache.tapestry5.ioc.internal.services.DefaultImplementationBuilderImpl;
+import org.apache.tapestry5.ioc.internal.services.ExceptionAnalyzerImpl;
+import org.apache.tapestry5.ioc.internal.services.ExceptionTrackerImpl;
+import org.apache.tapestry5.ioc.internal.services.LazyAdvisorImpl;
+import org.apache.tapestry5.ioc.internal.services.LoggingAdvisorImpl;
+import org.apache.tapestry5.ioc.internal.services.LoggingDecoratorImpl;
+import org.apache.tapestry5.ioc.internal.services.MapSymbolProvider;
+import org.apache.tapestry5.ioc.internal.services.MasterObjectProviderImpl;
+import org.apache.tapestry5.ioc.internal.services.NonParallelExecutor;
+import org.apache.tapestry5.ioc.internal.services.ParallelExecutorImpl;
+import org.apache.tapestry5.ioc.internal.services.PerThreadServiceLifecycle;
+import org.apache.tapestry5.ioc.internal.services.PipelineBuilderImpl;
+import org.apache.tapestry5.ioc.internal.services.PropertyAccessImpl;
+import org.apache.tapestry5.ioc.internal.services.PropertyShadowBuilderImpl;
+import org.apache.tapestry5.ioc.internal.services.RegistryStartup;
+import org.apache.tapestry5.ioc.internal.services.ServiceOverrideImpl;
+import org.apache.tapestry5.ioc.internal.services.StrategyBuilderImpl;
+import org.apache.tapestry5.ioc.internal.services.SymbolObjectProvider;
+import org.apache.tapestry5.ioc.internal.services.SymbolSourceImpl;
+import org.apache.tapestry5.ioc.internal.services.SystemPropertiesSymbolProvider;
+import org.apache.tapestry5.ioc.internal.services.ThreadLocaleImpl;
+import org.apache.tapestry5.ioc.internal.services.ThunkCreatorImpl;
+import org.apache.tapestry5.ioc.internal.services.TypeCoercerImpl;
+import org.apache.tapestry5.ioc.internal.services.UpdateListenerHubImpl;
+import org.apache.tapestry5.ioc.internal.services.ValueObjectProvider;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.TimeInterval;
+import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.UpdateListenerHub;
 
 /**
@@ -183,6 +224,8 @@ public final class TapestryIOCModule
      * <li>Collection to Object[] (via the toArray() method)
      * <li>{@link Flow} to List</li>
      * <li>{@link Flow} to Boolean (false if empty)</li>
+     * <li>{@link String} to {@link JSONObject}</li>
+     * <li>{@link String} to {@link JSONArray}</li>
      * </ul>
      */
     @Contribute(TypeCoercer.class)
@@ -427,6 +470,22 @@ public final class TapestryIOCModule
             public Boolean coerce(Flow input)
             {
                 return !input.isEmpty();
+            }
+        });
+
+        add(configuration, String.class, JSONArray.class, new Coercion<String, JSONArray>()
+        {
+            public JSONArray coerce(String input)
+            {
+                return new JSONArray(input);
+            }
+        });
+
+        add(configuration, String.class, JSONObject.class, new Coercion<String, JSONObject>()
+        {
+            public JSONObject coerce(String input)
+            {
+                return new JSONObject(input);
             }
         });
     }
