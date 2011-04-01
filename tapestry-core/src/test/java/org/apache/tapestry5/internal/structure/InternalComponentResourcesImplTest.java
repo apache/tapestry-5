@@ -167,16 +167,12 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         Component component = mockComponent();
         Instantiator ins = mockInstantiator(component);
         ComponentModel model = mockComponentModel();
-        ComponentPageElement element = mockComponentPageElement();
 
         train_getModel(ins, model);
 
-        train_isRendering(element, true);
-        train_isRendering(element, true);
-
         replay();
 
-        ComponentResources resources = new InternalComponentResourcesImpl(null, element, null, elementResources,
+        ComponentResources resources = new InternalComponentResourcesImpl(null, null, null, elementResources,
                 "Foo.bar", null, ins, false);
 
         resources.storeRenderVariable("fred", "FRED");
@@ -203,17 +199,13 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         Component component = mockComponent();
         Instantiator ins = mockInstantiator(component);
         ComponentModel model = mockComponentModel();
-        ComponentPageElement element = mockComponentPageElement();
 
         train_getModel(ins, model);
 
-        train_isRendering(element, true);
-        train_isRendering(element, true);
-
         replay();
 
-        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null,
-                elementResources, "Foo.bar", null, ins, false);
+        InternalComponentResources resources = new InternalComponentResourcesImpl(null, null, null, elementResources,
+                "Foo.bar", null, ins, false);
 
         resources.storeRenderVariable("fred", "FRED");
         resources.storeRenderVariable("barney", "BARNEY");
@@ -229,37 +221,6 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         {
             assertEquals(ex.getMessage(),
                     "Component Foo.bar does not contain a stored render variable with name 'fred'.  Stored render variables: (none).");
-        }
-
-        verify();
-    }
-
-    @Test
-    public void store_render_variable_when_not_rendering()
-    {
-        Component component = mockComponent();
-        Instantiator ins = mockInstantiator(component);
-        ComponentModel model = mockComponentModel();
-        ComponentPageElement element = mockComponentPageElement();
-
-        train_getModel(ins, model);
-
-        train_isRendering(element, false);
-
-        replay();
-
-        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, null, "Foo.bar",
-                null, ins, false);
-
-        try
-        {
-            resources.storeRenderVariable("fred", "FRED");
-            unreachable();
-        }
-        catch (IllegalStateException ex)
-        {
-            assertEquals(ex.getMessage(),
-                    "Component Foo.bar is not rendering, so render variable 'fred' may not be updated.");
         }
 
         verify();
