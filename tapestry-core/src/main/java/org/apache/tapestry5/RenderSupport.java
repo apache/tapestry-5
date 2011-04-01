@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ public interface RenderSupport
 
     /**
      * Adds one or more new script assets to the page. Assets are added uniquely, and appear as &lt;script&gt; elements
-     * just inside the &lt;body&gt; element of the rendered page. Duplicate requests to add the same script are quietly
+     * inside the &lt;head&gt; element of the rendered page. Duplicate requests to add the same script are quietly
      * ignored.
      * 
      * @param scriptAssets
