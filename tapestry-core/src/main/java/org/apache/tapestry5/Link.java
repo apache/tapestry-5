@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ public interface Link
      * @param parameterName
      *            the name of the parameter to store
      * @param value
-     *            the value to store
+     *            the value to store, a null or blank value is allowed (as of Tapestry 5.3)
      * @throws IllegalArgumentException
      *             if the link already has a parameter with the given name
      */

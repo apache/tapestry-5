@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -257,5 +257,31 @@ public class LinkImplTest extends InternalBaseTestCase
 
         assertNull(link.getParameterValue("fred"));
         assertListsEquals(link.getParameterNames(), "barney");
+    }
+
+    /**
+     * TAP5-922
+     * 
+     * @since 5.3.0
+     */
+    @Test
+    public void null_parameter_value()
+    {
+        Response response = mockResponse();
+
+        String expectedURI = "/ctx/foo?barney=&fred=flintstone";
+        train_encodeURL(response, expectedURI, expectedURI);
+
+        replay();
+
+        Link link = new LinkImpl("/ctx/foo", false, LinkSecurity.INSECURE, response, null, null);
+
+        link.addParameter("fred", "flintstone");
+        link.addParameter("barney", null);
+
+        assertEquals(link.toURI(), expectedURI);
+
+        verify();
+
     }
 }

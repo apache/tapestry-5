@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -72,11 +72,11 @@ public class LinkImpl implements Link
     public void addParameter(String parameterName, String value)
     {
         assert InternalUtils.isNonBlank(parameterName);
-        assert InternalUtils.isNonBlank(value);
+
         if (parameters == null)
             parameters = CollectionFactory.newMap();
 
-        parameters.put(parameterName, value);
+        parameters.put(parameterName, value == null ? "" : value);
     }
 
     public String getBasePath()
