@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -139,17 +139,14 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         Component component = mockComponent();
         Instantiator ins = mockInstantiator(component);
         ComponentModel model = mockComponentModel();
-        ComponentPageElement element = mockComponentPageElement();
 
         Object value = new Object();
 
         train_getModel(ins, model);
 
-        train_isRendering(element, true);
-
         replay();
 
-        ComponentResources resources = new InternalComponentResourcesImpl(null, element, null, elementResources, "id",
+        ComponentResources resources = new InternalComponentResourcesImpl(null, null, null, elementResources, "id",
                 null, ins, false);
 
         resources.storeRenderVariable("myRenderVar", value);

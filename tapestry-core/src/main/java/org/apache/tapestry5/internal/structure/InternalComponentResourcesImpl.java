@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -461,14 +461,19 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return result;
     }
 
-    private synchronized Map<String, Object> getRenderVariables()
+    private synchronized Map<String, Object> getRenderVariables(boolean create)
     {
         if (renderVariables == null)
+        {
+            if (!create)
+                return null;
+
             renderVariables = elementResources.createPerThreadValue();
+        }
 
         Map<String, Object> result = renderVariables.get();
 
-        if (result == null)
+        if (result == null && create)
             result = renderVariables.set(CollectionFactory.newCaseInsensitiveMap());
 
         return result;
@@ -476,13 +481,13 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public Object getRenderVariable(String name)
     {
-        Map<String, Object> renderVariables = getRenderVariables();
+        Map<String, Object> variablesMap = getRenderVariables(false);
 
-        Object result = InternalUtils.get(renderVariables, name);
+        Object result = InternalUtils.get(variablesMap, name);
 
         if (result == null)
             throw new IllegalArgumentException(StructureMessages.missingRenderVariable(getCompleteId(), name,
-                    renderVariables == null ? null : renderVariables.keySet()));
+                    variablesMap == null ? null : variablesMap.keySet()));
 
         return result;
     }
@@ -491,17 +496,18 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     {
         assert InternalUtils.isNonBlank(name);
         assert value != null;
-        if (!element.isRendering())
-            throw new IllegalStateException(StructureMessages.renderVariableSetWhenNotRendering(getCompleteId(), name));
 
-        Map<String, Object> renderVariables = getRenderVariables();
+        Map<String, Object> renderVariables = getRenderVariables(true);
 
         renderVariables.put(name, value);
     }
 
     public void postRenderCleanup()
     {
-        getRenderVariables().clear();
+        Map<String, Object> variablesMap = getRenderVariables(false);
+
+        if (variablesMap != null)
+            variablesMap.clear();
     }
 
     public void addPageLifecycleListener(PageLifecycleListener listener)
