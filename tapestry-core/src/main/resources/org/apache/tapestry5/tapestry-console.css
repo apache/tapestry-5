@@ -21,6 +21,11 @@ DIV.t-console DIV.t-warn {
     color: black;
 }
 
+DIV.t-console DIV.t-info {
+    background-color: green;
+    color: white;
+}
+
 DIV.t-console DIV.t-debug {
     background-color: silver;
     color: black;

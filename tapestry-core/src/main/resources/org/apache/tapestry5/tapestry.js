@@ -288,6 +288,11 @@ var Tapestry = {
 		Tapestry.invokeLogger(message, substitutions, Tapestry.Logging.warn);
 	},
 
+	/** Formats and displays an info message on the console. */
+	info : function(message, substitutions) {
+		Tapestry.invokeLogger(message, substitutions, Tapestry.Logging.info);
+	},
+
 	/** Formats and displays a debug message on the console. */
 	debug : function(message, substitutions) {
 		Tapestry.invokeLogger(message, substitutions, Tapestry.Logging.debug);

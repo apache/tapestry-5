@@ -19,6 +19,11 @@ Tapestry.Logging = {
 				Tapestry.Logging.updateConsole("t-debug", msg);
         },
         
+        info: function(msg)
+        {
+			Tapestry.Logging.updateConsole("t-info", msg);
+        },
+
         warn: function(msg)
         {
 			Tapestry.Logging.updateConsole("t-warn", msg);
