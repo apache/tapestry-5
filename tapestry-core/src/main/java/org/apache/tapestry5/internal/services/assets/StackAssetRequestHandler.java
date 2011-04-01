@@ -104,17 +104,18 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
 
     public boolean handleAssetRequest(Request request, Response response, final String extraPath) throws IOException
     {
-        TapestryInternalUtils.performIO(tracker, String.format("Streaming asset stack %s", extraPath), new IOOperation()
-        {
-            public void perform() throws IOException
-            {
-                boolean compress = compressionAnalyzer.isGZipSupported();
+        TapestryInternalUtils.performIO(tracker, String.format("Streaming asset stack %s", extraPath),
+                new IOOperation()
+                {
+                    public void perform() throws IOException
+                    {
+                        boolean compress = compressionAnalyzer.isGZipSupported();
 
-                StreamableResource resource = getResource(extraPath, compress);
+                        StreamableResource resource = getResource(extraPath, compress);
 
-                resourceStreamer.streamResource(resource);
-            }
-        });
+                        resourceStreamer.streamResource(resource);
+                    }
+                });
 
         return true;
     }
@@ -209,8 +210,6 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
 
             lastModified = Math.max(lastModified, streamable.getLastModified());
         }
-
-        writer.format("\n;/**/\nTapestry.markScriptLibrariesLoaded(%s);\n", paths);
 
         writer.close();
 

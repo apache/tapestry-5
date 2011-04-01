@@ -1,4 +1,4 @@
-/* Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
+/* Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -577,22 +577,6 @@ var Tapestry = {
 		});
 
 		return Number(canonical);
-	},
-
-	/**
-	 * Marks a number of script libraries as loaded; this is used with virtual
-	 * scripts (which combine multiple actual scripts). This is necessary so
-	 * that subsequent Ajax requests do not load scripts that have already been
-	 * loaded
-	 * 
-	 * @param scripts
-	 *            array of script paths
-	 */
-	markScriptLibrariesLoaded : function(scripts) {
-		$(scripts).each(function(script) {
-			var complete = Tapestry.rebuildURL(script);
-			Tapestry.ScriptManager.virtualScripts.push(complete);
-		});
 	},
 
 	/**
@@ -2017,12 +2001,6 @@ Tapestry.FormInjector = Class.create({
 
 Tapestry.ScriptManager = {
 
-	/**
-	 * Complete URLs of virtually loaded scripts (combined scripts loaded as a
-	 * single virtual asset).
-	 */
-	virtualScripts : $A([]),
-
 	initialize : function() {
 
 		/*
@@ -2120,13 +2098,6 @@ Tapestry.ScriptManager = {
 		/* scripts may be null or undefined */
 		(scripts || []).each(function(s) {
 			var assetURL = Tapestry.rebuildURL(s);
-
-			/*
-			 * Check to see if the script is already loaded, either as a virtual
-			 * script, or as an individual script src="" element.
-			 */
-			if (Tapestry.ScriptManager.virtualScripts.member(assetURL))
-				return;
 
 			if (Tapestry.ScriptManager.contains(document.scripts, "src",
 					assetURL))
