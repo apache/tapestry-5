@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,10 +46,5 @@ public final class InternalMessages
     public static String toClientShouldReturnString()
     {
         return MESSAGES.format("to-client-should-return-string");
-    }
-
-    public static String formFieldOutsideForm(String fieldName)
-    {
-        return MESSAGES.format("form-field-outside-form", fieldName);
     }
 }

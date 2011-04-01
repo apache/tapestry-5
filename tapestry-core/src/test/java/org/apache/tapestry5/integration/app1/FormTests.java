@@ -493,7 +493,7 @@ public class FormTests extends TapestryCoreTestCase
 
         assertTextPresent(
                 "org.apache.tapestry5.internal.services.RenderQueueException",
-                "Render queue error in SetupRender[FormFieldOutsideForm:textfield]: The Textfield component must be enclosed by a Form component.",
+                "Render queue error in SetupRender[FormFieldOutsideForm:textfield]: Component FormFieldOutsideForm:textfield must be enclosed by a Form component.",
                 "context:FormFieldOutsideForm.tml, line 5");
     }
 

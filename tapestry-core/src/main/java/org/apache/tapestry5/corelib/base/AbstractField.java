@@ -153,7 +153,8 @@ public abstract class AbstractField implements Field
         // that is used multiple times.
 
         if (formSupport == null)
-            throw new RuntimeException(InternalMessages.formFieldOutsideForm(getLabel()));
+            throw new RuntimeException(String.format("Component %s must be enclosed by a Form component.",
+                    resources.getCompleteId()));
 
         assignedClientId = jsSupport.allocateClientId(id);
         String controlName = formSupport.allocateControlName(id);
