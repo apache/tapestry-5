@@ -75,11 +75,6 @@ import org.apache.tapestry5.annotations.Secure;
 import org.apache.tapestry5.annotations.Service;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.corelib.ClientValidation;
-import org.apache.tapestry5.corelib.LoopFormState;
-import org.apache.tapestry5.corelib.SubmitMode;
-import org.apache.tapestry5.corelib.data.BlankOption;
-import org.apache.tapestry5.corelib.data.GridPagerPosition;
-import org.apache.tapestry5.corelib.data.InsertPosition;
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.internal.AssetConstants;
 import org.apache.tapestry5.internal.DefaultNullFieldStrategy;
@@ -1102,22 +1097,17 @@ public final class TapestryModule
      * Adds coercions:
      * <ul>
      * <li>String to {@link SelectModel}
-     * <li>String to {@link InsertPosition}
      * <li>Map to {@link oSelectModel}
      * <li>Collection to {@link GridDataSource}
      * <li>null to {@link GridDataSource}
-     * <li>String to {@link GridPagerPosition}
      * <li>List to {@link SelectModel}
      * <li>{@link .ComponentResourcesAware} (typically, a component) to {@link ComponentResources}
-     * <li>String to {@link BlankOption}
      * <li> {@link ComponentResources} to {@link PropertyOverrides}
      * <li>String to {@link Renderable}
      * <li>{@link Renderable} to {@link Block}
      * <li>String to {@link DateFormat}
      * <li>String to {@link Resource} (via {@link AssetSource#resourceForPath(String)})
      * <li>{@link Renderable} to {@link RenderCommand}</li>
-     * <li>String to {@link LoopFormState}</li>
-     * <li>String to {@link SubmitMode}</li>
      * <li>String to {@link Pattern}</li>
      * <li>String to {@link DateFormat}</li>
      * </ul>
@@ -1177,12 +1167,6 @@ public final class TapestryModule
                 return source;
             }
         }));
-
-        add(configuration, GridPagerPosition.class);
-        add(configuration, InsertPosition.class);
-        add(configuration, BlankOption.class);
-        add(configuration, LoopFormState.class);
-        add(configuration, SubmitMode.class);
 
         configuration.add(CoercionTuple.create(List.class, SelectModel.class, new Coercion<List, SelectModel>()
         {
@@ -1276,12 +1260,6 @@ public final class TapestryModule
                 .addAlias("false", ClientValidation.NONE);
 
         configuration.add(CoercionTuple.create(String.class, ClientValidation.class, stringToClientValidationCoercion));
-    }
-
-    @SuppressWarnings("rawtypes")
-    private static <T extends Enum> void add(Configuration<CoercionTuple> configuration, Class<T> enumType)
-    {
-        configuration.add(CoercionTuple.create(String.class, enumType, StringToEnumCoercion.create(enumType)));
     }
 
     /**
