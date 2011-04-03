@@ -120,7 +120,7 @@ public class URLChangeTrackerTest extends IOCTestCase
     {
         URLChangeTracker t = new URLChangeTracker(converter);
 
-        URL url = new URL("ftp://breeblebrox.com");
+        URL url = new URL("http://google.com");
 
         t.add(url);
 
