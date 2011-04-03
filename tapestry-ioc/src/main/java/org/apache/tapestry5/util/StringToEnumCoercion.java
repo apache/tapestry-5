@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ import org.apache.tapestry5.ioc.util.UnknownValueException;
  * A {@link org.apache.tapestry5.ioc.services.Coercion} for converting strings into an instance of a particular
  * enumerated type. The {@link Enum#name() name} is used as the key to identify the enum instance, in a case-insensitive
  * fashion.
+ * <p>
+ * Moved from tapestry-core to tapestry-ioc is release 5.3.0, but kept in same package for compatibility.
  * 
  * @param <T>
  *            the type of enumeration
@@ -57,9 +59,13 @@ public final class StringToEnumCoercion<T extends Enum> implements Coercion<Stri
         T result = stringToEnum.get(input);
 
         if (result == null)
-            throw new UnknownValueException(
-                    PublicUtilMessages.missingEnumValue(input, enumClass, stringToEnum.keySet()), new AvailableValues(
-                            enumClass.getName() + " enum constants", stringToEnum));
+        {
+            String message = String.format("Input '%s' does not identify a value from enumerated type %s.", input,
+                    enumClass.getName());
+
+            throw new UnknownValueException(message, new AvailableValues(enumClass.getName() + " enum constants",
+                    stringToEnum));
+        }
 
         return result;
     }

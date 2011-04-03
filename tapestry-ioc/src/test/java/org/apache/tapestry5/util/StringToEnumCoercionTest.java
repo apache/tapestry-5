@@ -1,4 +1,4 @@
-// Copyright 2007, 2010 The Apache Software Foundation
+// Copyright 2007, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
 
 package org.apache.tapestry5.util;
 
-import junit.framework.AssertionFailedError;
-
-import org.apache.tapestry5.root.Stooge;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -55,13 +52,13 @@ public class StringToEnumCoercionTest extends Assert
         try
         {
             coercion.coerce("shemp");
-            throw new AssertionFailedError("unreachable");
+
+            fail("Unreachable");
         }
         catch (RuntimeException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Input \'shemp\' does not identify a value from enumerated type org.apache.tapestry5.root.Stooge. Available values: CURLY_JOE, LARRY, MOE.");
+            assertEquals(ex.getMessage(),
+                    "Input \'shemp\' does not identify a value from enumerated type org.apache.tapestry5.util.Stooge.");
         }
     }
 }
