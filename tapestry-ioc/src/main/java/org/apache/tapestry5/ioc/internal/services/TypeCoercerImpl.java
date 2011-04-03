@@ -15,12 +15,14 @@
 package org.apache.tapestry5.ioc.internal.services;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InheritanceSearch;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -30,6 +32,7 @@ import org.apache.tapestry5.ioc.services.CoercionTuple;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
+import org.apache.tapestry5.util.StringToEnumCoercion;
 
 @SuppressWarnings("all")
 public class TypeCoercerImpl implements TypeCoercer
@@ -241,7 +244,7 @@ public class TypeCoercerImpl implements TypeCoercer
         Set<CoercionTuple> consideredTuples = CollectionFactory.newSet();
         LinkedList<CoercionTuple> queue = CollectionFactory.newLinkedList();
 
-        seedQueue(sourceType, consideredTuples, queue);
+        seedQueue(sourceType, targetType, consideredTuples, queue);
 
         while (!queue.isEmpty())
         {
@@ -264,14 +267,14 @@ public class TypeCoercerImpl implements TypeCoercer
             // Now we're going to look for conversions from the intermediate type
             // to some other type.
 
-            queueIntermediates(sourceType, tuple, consideredTuples, queue);
+            queueIntermediates(sourceType, targetType, tuple, consideredTuples, queue);
         }
 
         // Not found anywhere. Identify the source and target type and a (sorted) list of
         // all the known coercions.
 
-        throw new UnknownValueException(String.format("Could not find a coercion from type %s to type %s.", sourceType
-                .getName(), targetType.getName()), buildCoercionCatalog());
+        throw new UnknownValueException(String.format("Could not find a coercion from type %s to type %s.",
+                sourceType.getName(), targetType.getName()), buildCoercionCatalog());
     }
 
     /**
@@ -285,20 +288,14 @@ public class TypeCoercerImpl implements TypeCoercer
      */
     private Coercion searchForNullCoercion(Class targetType)
     {
-        List<CoercionTuple> tuples = sourceTypeToTuple.get(void.class);
+        List<CoercionTuple> tuples = getTuples(void.class, targetType);
 
-        // We know it will never be null, because we make contributions
-        // to ensure this, but a little check doesn't hurt.
-
-        if (tuples != null)
+        for (CoercionTuple tuple : tuples)
         {
-            for (CoercionTuple tuple : tuples)
-            {
-                Class tupleTargetType = tuple.getTargetType();
+            Class tupleTargetType = tuple.getTargetType();
 
-                if (targetType.equals(tupleTargetType))
-                    return tuple.getCoercion();
-            }
+            if (targetType.equals(tupleTargetType))
+                return tuple.getCoercion();
         }
 
         // Typical case: no match, this coercion passes the null through
@@ -327,13 +324,14 @@ public class TypeCoercerImpl implements TypeCoercer
     /**
      * Seeds the pool with the initial set of coercions for the given type.
      */
-    private void seedQueue(Class sourceType, Set<CoercionTuple> consideredTuples, LinkedList<CoercionTuple> queue)
+    private void seedQueue(Class sourceType, Class targetType, Set<CoercionTuple> consideredTuples,
+            LinkedList<CoercionTuple> queue)
     {
         // Work from the source type up looking for tuples
 
         for (Class c : new InheritanceSearch(sourceType))
         {
-            List<CoercionTuple> tuples = sourceTypeToTuple.get(c);
+            List<CoercionTuple> tuples = getTuples(c, targetType);
 
             if (tuples == null)
                 continue;
@@ -359,6 +357,8 @@ public class TypeCoercerImpl implements TypeCoercer
      * 
      * @param sourceType
      *            the source type of the coercion
+     * @param targetType
+     *            TODO
      * @param intermediateTuple
      *            a tuple that converts from the source type to some intermediate type (that is not
      *            assignable to the target type)
@@ -369,19 +369,14 @@ public class TypeCoercerImpl implements TypeCoercer
      *            the work queue of tuples
      */
     @SuppressWarnings("unchecked")
-    private void queueIntermediates(Class sourceType, CoercionTuple intermediateTuple,
+    private void queueIntermediates(Class sourceType, Class targetType, CoercionTuple intermediateTuple,
             Set<CoercionTuple> consideredTuples, LinkedList<CoercionTuple> queue)
     {
         Class intermediateType = intermediateTuple.getTargetType();
 
         for (Class c : new InheritanceSearch(intermediateType))
         {
-            List<CoercionTuple> tuples = sourceTypeToTuple.get(c);
-
-            if (tuples == null)
-                continue;
-
-            for (CoercionTuple tuple : tuples)
+            for (CoercionTuple tuple : getTuples(c, targetType))
             {
                 if (consideredTuples.contains(tuple))
                     continue;
@@ -406,13 +401,47 @@ public class TypeCoercerImpl implements TypeCoercer
                 CoercionTuple compoundTuple = new CoercionTuple(sourceType, newIntermediateType, compoundCoercer, false);
 
                 // So, every tuple that is added to the queue can take as input the sourceType.
-                // The target type may be another intermdiate type, or may be something
-                // assignable to the target type, which will bring the search to a succesful
+                // The target type may be another intermediate type, or may be something
+                // assignable to the target type, which will bring the search to a successful
                 // conclusion.
 
                 queue.addLast(compoundTuple);
                 consideredTuples.add(tuple);
             }
         }
+    }
+
+    /**
+     * Returns a non-null list of the tuples from the source type.
+     * 
+     * @param sourceType
+     *            used to locate tuples
+     * @param targetType
+     *            used to add synthetic tuples
+     * @return non-null list of tuples
+     */
+    private List<CoercionTuple> getTuples(Class sourceType, Class targetType)
+    {
+        List<CoercionTuple> tuples = sourceTypeToTuple.get(sourceType);
+
+        if (tuples == null)
+            tuples = Collections.emptyList();
+
+        // So, when we see String and an Enum type, we add an additional synthetic tuple to the end
+        // of the real list. This is the easiest way to accomplish this is a thread-safe and class-reloading
+        // safe way (i.e., what if the Enum is defined by a class loader that gets discarded?  Don't want to cause
+        // memory leaks by retaining an instance). In any case, there are edge cases where we may create
+        // the tuple unnecessarily (such as when an explicit string-to-enum coercion is part of the TypeCoercer
+        // configuration), but on the whole, this is cheap at works.
+        
+        if (sourceType == String.class && Enum.class.isAssignableFrom(targetType))
+            tuples = extend(tuples, new CoercionTuple(sourceType, targetType, new StringToEnumCoercion(targetType)));
+
+        return tuples;
+    }
+
+    private static <T> List<T> extend(List<T> list, T extraValue)
+    {
+        return F.flow(list).append(extraValue).toList();
     }
 }

@@ -15,6 +15,7 @@
 package org.apache.tapestry5.ioc.internal.services;
 
 import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.ioc.annotations.AnnotationUseContext;
 import org.apache.tapestry5.ioc.internal.IOCInternalTestCase;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.Coercion;
@@ -285,6 +286,10 @@ public class TypeCoercerImplTest extends IOCInternalTestCase
                 { "[1, true]", JSONArray.class, new JSONArray(1, true) },
 
                 { "{ 'fred': 1, 'barney': 2}", JSONObject.class, new JSONObject().put("fred", 1).put("barney", 2) },
+
+                // TAP5-98:
+
+                { "mixin", AnnotationUseContext.class, AnnotationUseContext.MIXIN },
 
                 // null to arbitrary object is still null
 
