@@ -23,6 +23,7 @@
       <package name="org.apache.tapestry5.dom"/>
       <package name="org.apache.tapestry5.runtime"/>
       <package name="org.apache.tapestry5.services"/>
+      <package name="org.apache.tapestry5.services.javascript"/>
       <package name="org.apache.tapestry5.util"/>
       <package name="org.apache.tapestry5.validator"/>
       <package name="org.apache.tapestry5.internal"/>
