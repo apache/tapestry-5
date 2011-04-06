@@ -105,25 +105,9 @@ public class MethodDescription implements Comparable<MethodDescription>
     /** Creates a MethodDescription from a Java Method. */
     public MethodDescription(Method method)
     {
-        this(method.getModifiers(), toTypeName(method.getReturnType()), method.getName(), toTypeNames(method
-                .getParameterTypes()), toTypeNames(method.getExceptionTypes()));
-    }
-
-    @SuppressWarnings("rawtypes")
-    private static String toTypeName(Class type)
-    {
-        return type.getName();
-    }
-
-    @SuppressWarnings("rawtypes")
-    private static String[] toTypeNames(Class[] types)
-    {
-        String[] result = new String[types.length];
-
-        for (int i = 0; i < types.length; i++)
-            result[i] = toTypeName(types[i]);
-
-        return result;
+        this(method.getModifiers(), PlasticInternalUtils.toTypeName(method.getReturnType()), method.getName(),
+                PlasticInternalUtils.toTypeNames(method.getParameterTypes()), PlasticInternalUtils.toTypeNames(method
+                        .getExceptionTypes()));
     }
 
     public int compareTo(MethodDescription o)
