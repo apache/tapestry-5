@@ -95,7 +95,13 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     /**
      * The set of marker annotations for a builtin service.
      */
-    private final static Set<Class> BUILTIN = CollectionFactory.newSet(Builtin.class);
+    private final static Set<Class> BUILTIN = CollectionFactory.newSet();
+
+    // Split create/assign to appease generics gods
+    static
+    {
+        BUILTIN.add(Builtin.class);
+    }
 
     /**
      * Used to obtain the {@link org.apache.tapestry5.ioc.services.ClassFactory} service, which is
@@ -169,7 +175,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         assert classFactory != null;
         assert proxyFactory != null;
         assert loggerSource != null;
-        
+
         this.loggerSource = loggerSource;
 
         operationTracker = new PerThreadOperationTracker(loggerSource.getLogger(Registry.class));
