@@ -142,4 +142,36 @@ public class PlasticManager
 
         return transformation.createInstantiator();
     }
+
+    /**
+     * Creates an entirely new class, extending from the provided base class.
+     * 
+     * @param interfaceType
+     *            class to extend from, which must be a class, not an interface
+     * @param callback
+     *            used to configure the new class
+     * @return the instantiator, which allows instances of the new class to be created
+     */
+    public ClassInstantiator createProxy(Class interfaceType, PlasticClassTransformer callback)
+    {
+        assert interfaceType != null;
+        assert callback != null;
+
+        if (!interfaceType.isInterface())
+            throw new IllegalArgumentException(String.format(
+                    "Class %s is not an interface; proxies may only be created for interfaces.",
+                    interfaceType.getName()));
+
+        String name = String.format("$PlasticProxy$%s_%s", interfaceType.getSimpleName(), PlasticUtils.nextUID());
+
+        PlasticClassTransformation transformation = pool.createTransformation("java.lang.Object", name);
+
+        PlasticClass plasticClass = transformation.getPlasticClass();
+
+        plasticClass.introduceInterface(interfaceType);
+
+        callback.transform(plasticClass);
+
+        return transformation.createInstantiator();
+    }
 }
