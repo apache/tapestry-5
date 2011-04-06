@@ -15,7 +15,6 @@
 package org.apache.tapestry5.internal.plastic;
 
 import org.apache.tapestry5.plastic.InstanceContext;
-import org.apache.tapestry5.plastic.MethodAdvice;
 import org.apache.tapestry5.plastic.MethodInvocation;
 
 public abstract class AbstractMethodInvocation implements MethodInvocation
@@ -24,15 +23,15 @@ public abstract class AbstractMethodInvocation implements MethodInvocation
 
     private final InstanceContext instanceContext;
 
-    private final MethodAdvice[] advice;
+    private final MethodInvocationBundle bundle;
 
     private int adviceIndex;
 
-    protected AbstractMethodInvocation(Object instance, InstanceContext instanceContext, MethodAdvice[] advice)
+    protected AbstractMethodInvocation(Object instance, InstanceContext instanceContext, MethodInvocationBundle bundle)
     {
         this.instance = instance;
         this.instanceContext = instanceContext;
-        this.advice = advice;
+        this.bundle = bundle;
     }
 
     private Exception checkedException;
@@ -70,10 +69,10 @@ public abstract class AbstractMethodInvocation implements MethodInvocation
 
     public MethodInvocation proceed()
     {
-        if (adviceIndex == advice.length)
+        if (adviceIndex == bundle.advice.length)
             proceedToAdvisedMethod();
         else
-            advice[adviceIndex++].advise(this);
+            bundle.advice[adviceIndex++].advise(this);
 
         return this;
     }

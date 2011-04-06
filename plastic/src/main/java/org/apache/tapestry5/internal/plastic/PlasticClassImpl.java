@@ -945,7 +945,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             List<String> consTypes = new ArrayList<String>();
             consTypes.add(Object.class.getName());
             consTypes.add(InstanceContext.class.getName());
-            consTypes.add(MethodAdvice.class.getName() + "[]");
+            consTypes.add(MethodInvocationBundle.class.getName());
 
             for (int i = 0; i < description.argumentTypes.length; i++)
             {
@@ -970,7 +970,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             builder.loadArgument(1);
             builder.loadArgument(2);
             builder.invokeConstructor(AbstractMethodInvocation.class, Object.class, InstanceContext.class,
-                    MethodAdvice[].class);
+                    MethodInvocationBundle.class);
 
             for (int i = 0; i < description.argumentTypes.length; i++)
             {
@@ -1207,12 +1207,13 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         {
             pool.realize(invocationClassNode);
 
-            String fieldName = String.format("advice_%s_%s", description.methodName, PlasticUtils.nextUID());
+            String fieldName = String.format("methodinvocationbundle_%s_%s", description.methodName, PlasticUtils.nextUID());
 
             MethodAdvice[] adviceArray = advice.toArray(new MethodAdvice[advice.size()]);
+            MethodInvocationBundle bundle = new MethodInvocationBundle(adviceArray);
 
             classNode.visitField(ACC_PRIVATE | ACC_FINAL, fieldName, nameCache.toDesc(constructorTypes[2]), null, null);
-            initializeFieldFromStaticContext(fieldName, constructorTypes[2], adviceArray);
+            initializeFieldFromStaticContext(fieldName, constructorTypes[2], bundle);
 
             // Ok, here's the easy part: replace the method invocation with instantiating the invocation class
 
