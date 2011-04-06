@@ -15,6 +15,7 @@
 package org.apache.tapestry5.ioc.services;
 
 import org.apache.tapestry5.plastic.ClassInstantiator;
+import org.apache.tapestry5.plastic.PlasticClassTransformation;
 import org.apache.tapestry5.plastic.PlasticClassTransformer;
 
 /**
@@ -41,4 +42,15 @@ public interface PlasticProxyFactory
      * @return instantiator that can be used to create an instance of the proxy class
      */
     ClassInstantiator createProxy(Class interfaceType, PlasticClassTransformer callback);
+
+    /**
+     * Creates the underlying {@link PlasticClassTransformation} for an interface proxy. This should only be
+     * used in the cases where encapsulating the PlasticClass construction into a {@linkplain PlasticClassTransformer
+     * callback} is not feasible (which is the case for some of the older APIs inside Tapestry IoC).
+     * 
+     * @param interfaceType
+     *            class proxy will extend from
+     * @return transformation from which an instantiator may be created
+     */
+    PlasticClassTransformation createProxyTransformation(Class interfaceType);
 }
