@@ -37,7 +37,17 @@ public class PlasticManager
      */
     public PlasticManager()
     {
-        this(Thread.currentThread().getContextClassLoader(), new NoopDelegate(), Collections.<String> emptySet());
+        this(Thread.currentThread().getContextClassLoader());
+    }
+
+    /**
+     * Creates a PlasticManager using the Thread's contextClassLoader as the parent class loader. No classes will
+     * be automatically transformed, but instead {@link #createClass(Class, CreateClassCallback)} can be used to create
+     * entirely new classes.
+     */
+    public PlasticManager(ClassLoader parentClassLoader)
+    {
+        this(parentClassLoader, new NoopDelegate(), Collections.<String> emptySet());
     }
 
     /**
@@ -48,17 +58,18 @@ public class PlasticManager
      *            main source for (untransformed) classes
      * @param delegate
      *            performs transformations on top-level classes from controlled packages
-     * @param controlledPackageName
+     * @param controlledPackageNames
      *            defines the packages that are to be transformed; top-classes in these packages
      *            (or sub-packages) will be passed to the delegate for transformation
      */
     public PlasticManager(ClassLoader parentClassLoader, PlasticManagerDelegate delegate,
-            Set<String> controlledPackageName)
+            Set<String> controlledPackageNames)
     {
         assert parentClassLoader != null;
         assert delegate != null;
+        assert controlledPackageNames != null;
 
-        pool = new PlasticClassPool(parentClassLoader, delegate, controlledPackageName);
+        pool = new PlasticClassPool(parentClassLoader, delegate, controlledPackageNames);
     }
 
     /**
