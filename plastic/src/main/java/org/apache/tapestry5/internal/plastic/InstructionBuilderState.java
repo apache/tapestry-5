@@ -16,9 +16,9 @@ package org.apache.tapestry5.internal.plastic;
 
 import java.util.Map;
 
+import org.apache.tapestry5.internal.plastic.asm.Label;
+import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 import org.apache.tapestry5.plastic.MethodDescription;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
 
 /**
  * Stores information about the method whose instructions are being constructed, to make it easier

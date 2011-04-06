@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5.internal.plastic;
 
+import org.apache.tapestry5.internal.plastic.asm.Label;
 import org.apache.tapestry5.plastic.InstructionBuilderCallback;
 import org.apache.tapestry5.plastic.TryCatchBlock;
 import org.apache.tapestry5.plastic.TryCatchCallback;
-import org.objectweb.asm.Label;
 
 public class TryCatchBlockImpl extends Lockable implements TryCatchBlock
 {

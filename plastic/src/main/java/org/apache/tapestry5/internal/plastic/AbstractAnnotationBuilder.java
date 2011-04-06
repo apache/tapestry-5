@@ -18,8 +18,8 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.Type;
+import org.apache.tapestry5.internal.plastic.asm.AnnotationVisitor;
+import org.apache.tapestry5.internal.plastic.asm.Type;
 
 @SuppressWarnings(
 { "rawtypes", "unchecked" })

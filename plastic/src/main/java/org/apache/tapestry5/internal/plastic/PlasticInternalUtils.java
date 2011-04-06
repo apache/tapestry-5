@@ -27,11 +27,11 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.tapestry5.internal.plastic.asm.Type;
+import org.apache.tapestry5.internal.plastic.asm.tree.ClassNode;
+import org.apache.tapestry5.internal.plastic.asm.tree.MethodNode;
+import org.apache.tapestry5.internal.plastic.asm.util.TraceClassVisitor;
 import org.apache.tapestry5.plastic.MethodDescription;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.util.TraceClassVisitor;
 
 @SuppressWarnings("rawtypes")
 public class PlasticInternalUtils
