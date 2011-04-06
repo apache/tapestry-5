@@ -43,6 +43,7 @@ import java.util.regex.Pattern;
 
 import javax.inject.Named;
 
+import org.aopalliance.intercept.Invocation;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Flow;
 import org.apache.tapestry5.func.Mapper;
@@ -84,6 +85,8 @@ import org.apache.tapestry5.ioc.internal.InternalServiceDef;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.Coercion;
+import org.apache.tapestry5.plastic.MethodAdvice;
+import org.apache.tapestry5.plastic.MethodInvocation;
 
 /**
  * Utilities used within various internal implementations of the tapestry-ioc module.
@@ -1281,4 +1284,97 @@ public class InternalUtils
         return null;
     }
 
+    /**
+     * Converts old-style Tapestry IoC {@link org.apache.tapestry5.ioc.MethodAdvice} to modern
+     * Plastic {@link MethodAdvice}
+     * 
+     * @param iocMethodAdvice
+     *            old style advice
+     * @return new style advice
+     */
+    public static MethodAdvice toPlasticMethodAdvice(final org.apache.tapestry5.ioc.MethodAdvice iocMethodAdvice)
+    {
+        assert iocMethodAdvice != null;
+
+        return new MethodAdvice()
+        {
+            public void advise(final MethodInvocation invocation)
+            {
+                org.apache.tapestry5.ioc.Invocation iocInvocation = new org.apache.tapestry5.ioc.Invocation()
+                {
+                    public void rethrow()
+                    {
+                        invocation.rethrow();
+                    }
+
+                    public void proceed()
+                    {
+                        invocation.proceed();
+                    }
+
+                    public void overrideThrown(Exception thrown)
+                    {
+                        invocation.setCheckedException(thrown);
+                    }
+
+                    public void overrideResult(Object newResult)
+                    {
+                        invocation.setReturnValue(newResult);
+                    }
+
+                    public void override(int index, Object newParameter)
+                    {
+                        invocation.setParameter(index, newParameter);
+                    }
+
+                    public boolean isFail()
+                    {
+                        return invocation.didThrowCheckedException();
+                    }
+
+                    public <T extends Throwable> T getThrown(Class<T> throwableClass)
+                    {
+                        return invocation.getCheckedException(throwableClass);
+                    }
+
+                    public Object getParameter(int index)
+                    {
+                        return invocation.getParameter(index);
+                    }
+
+                    public Object getResult()
+                    {
+                        return invocation.getReturnValue();
+                    }
+
+                    public Class getResultType()
+                    {
+                        throw new IllegalStateException("getResultType() not yet implemented.");
+                    }
+
+                    public Class getParameterType(int index)
+                    {
+                        throw new IllegalStateException("getParameterType() not yet implemented.");
+                    }
+
+                    public int getParameterCount()
+                    {
+                        throw new IllegalStateException("getParameterCount() not yet implemented.");
+                    }
+
+                    public String getMethodName()
+                    {
+                        throw new IllegalStateException("getMethodName() not yet implemented.");
+                    }
+
+                    public <T extends Annotation> T getMethodAnnotation(Class<T> annotationClass)
+                    {
+                        throw new IllegalStateException("getMethodAnnotation() not yet implemented.");
+                    }
+                };
+
+                iocMethodAdvice.advise(iocInvocation);
+            }
+        };
+    }
 }
