@@ -84,5 +84,10 @@ public abstract class AbstractMethodInvocation implements MethodInvocation
         return this;
     }
 
+    public String getMethodName()
+    {
+        return bundle.methodDescription.methodName;
+    }
+
     protected abstract void proceedToAdvisedMethod();
 }

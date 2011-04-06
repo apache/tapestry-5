@@ -76,4 +76,7 @@ public interface MethodInvocation extends MethodInvocationResult
      * @return this method invocation, for a fluent API
      */
     MethodInvocation setCheckedException(Exception exception);
+
+    /** Returns the name of the advised method. */
+    String getMethodName();
 }

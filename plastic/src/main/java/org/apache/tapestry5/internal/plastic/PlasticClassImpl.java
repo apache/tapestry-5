@@ -1207,10 +1207,11 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         {
             pool.realize(invocationClassNode);
 
-            String fieldName = String.format("methodinvocationbundle_%s_%s", description.methodName, PlasticUtils.nextUID());
+            String fieldName = String.format("methodinvocationbundle_%s_%s", description.methodName,
+                    PlasticUtils.nextUID());
 
             MethodAdvice[] adviceArray = advice.toArray(new MethodAdvice[advice.size()]);
-            MethodInvocationBundle bundle = new MethodInvocationBundle(adviceArray);
+            MethodInvocationBundle bundle = new MethodInvocationBundle(description, adviceArray);
 
             classNode.visitField(ACC_PRIVATE | ACC_FINAL, fieldName, nameCache.toDesc(constructorTypes[2]), null, null);
             initializeFieldFromStaticContext(fieldName, constructorTypes[2], bundle);

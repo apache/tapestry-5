@@ -14,7 +14,10 @@ class MethodAdviceTests extends AbstractPlasticSpecification {
 
             findMethod(pc, "aSingleMethod").addAdvice ({
                 didInvoke = true
-                it.proceed()
+                
+                assert it.methodName == "aSingleMethod"
+                
+                it.proceed()                
             } as MethodAdvice)
         } as PlasticClassTransformer)
 

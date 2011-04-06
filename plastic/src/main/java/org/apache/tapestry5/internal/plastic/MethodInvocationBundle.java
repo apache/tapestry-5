@@ -15,16 +15,20 @@
 package org.apache.tapestry5.internal.plastic;
 
 import org.apache.tapestry5.plastic.MethodAdvice;
+import org.apache.tapestry5.plastic.MethodDescription;
 
 /**
  * Bundles together the fixed (same for all instances) information needed by a {@link MethodInvocationBundle}.
  */
 public class MethodInvocationBundle
 {
+    public final MethodDescription methodDescription;
+
     public final MethodAdvice[] advice;
 
-    public MethodInvocationBundle(MethodAdvice[] advice)
+    public MethodInvocationBundle(MethodDescription methodDescription, MethodAdvice[] advice)
     {
+        this.methodDescription = methodDescription;
         this.advice = advice;
     }
 }
