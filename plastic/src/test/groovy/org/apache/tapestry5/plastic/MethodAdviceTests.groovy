@@ -16,6 +16,9 @@ class MethodAdviceTests extends AbstractPlasticSpecification {
                 didInvoke = true
                 
                 assert it.methodName == "aSingleMethod"
+                assert it.parameterCount == 1
+                
+                assert it.getParameter(0) == 123
                 
                 it.proceed()                
             } as MethodAdvice)
@@ -31,7 +34,7 @@ class MethodAdviceTests extends AbstractPlasticSpecification {
 
         when:
 
-        o.aSingleMethod()
+        o.aSingleMethod(123)
 
         then:
 

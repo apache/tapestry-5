@@ -16,7 +16,7 @@ package testsubjects;
 
 public class SingleMethod
 {
-    public void aSingleMethod()
+    public void aSingleMethod(int value)
     {
     }
 }

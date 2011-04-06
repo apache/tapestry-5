@@ -43,7 +43,7 @@ class ObtainPlasticClass extends Specification
 
         expect:
         methods.size() == 1
-        methods.first().description.toString() == "public void aSingleMethod()"
+        methods.first().description.toString() == "public void aSingleMethod(int)"
     }
 
     def "static methods are ignored"() {

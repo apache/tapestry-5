@@ -79,4 +79,7 @@ public interface MethodInvocation extends MethodInvocationResult
 
     /** Returns the name of the advised method. */
     String getMethodName();
+
+    /** Returns the number of parameters passed to the advised method. */
+    int getParameterCount();
 }
