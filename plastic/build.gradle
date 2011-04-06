@@ -1,10 +1,13 @@
 description = "Plastic core framework"
 
 dependencies {
-	compile "asm:asm-all:3.3.1"
     
 	testCompile "org.spockframework:spock-core:0.5-groovy-1.7"    
 }
+
+// Add the source directory for the imported/repackaged ASM 3.3.1 code
+
+sourceSets.main.java.srcDir "src/external/java"
 
 test {
 	useJUnit()
