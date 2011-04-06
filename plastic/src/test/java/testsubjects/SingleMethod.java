@@ -14,8 +14,12 @@
 
 package testsubjects;
 
+import testannotations.Maybe;
+import testannotations.Truth;
+
 public class SingleMethod
 {
+    @Maybe(Truth.YES)
     public void aSingleMethod(int value)
     {
     }

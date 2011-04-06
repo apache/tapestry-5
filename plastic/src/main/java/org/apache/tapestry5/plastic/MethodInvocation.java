@@ -16,9 +16,10 @@ package org.apache.tapestry5.plastic;
 
 /**
  * A representation of the invocation of a method that allows the behavior of the method to be advised: either by
- * changing parameter values, or by changing the return value, or by catch or throwing different exeptions.
+ * changing parameter values, or by changing the return value, or by catch or throwing different exceptions. Provides
+ * access to annotations on the advised method.
  */
-public interface MethodInvocation extends MethodInvocationResult
+public interface MethodInvocation extends MethodInvocationResult, AnnotationAccess
 {
     /** The instance on which the method was originally invoked. */
     Object getInstance();
@@ -82,4 +83,10 @@ public interface MethodInvocation extends MethodInvocationResult
 
     /** Returns the number of parameters passed to the advised method. */
     int getParameterCount();
+
+    /** Returns the method's return type. */
+    Class getReturnType();
+
+    /** Returns the type of the indicated parameter. */
+    Class getParameterType(int index);
 }

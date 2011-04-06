@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.internal.plastic;
 
+import java.lang.reflect.Method;
+
 import org.apache.tapestry5.plastic.MethodAdvice;
 import org.apache.tapestry5.plastic.MethodDescription;
 
@@ -26,9 +28,41 @@ public class MethodInvocationBundle
 
     public final MethodAdvice[] advice;
 
+    private volatile Method method;
+
     public MethodInvocationBundle(MethodDescription methodDescription, MethodAdvice[] advice)
     {
         this.methodDescription = methodDescription;
         this.advice = advice;
     }
+
+    public Method getMethod(Object instance)
+    {
+        if (method == null)
+            method = findMethod(instance.getClass());
+
+        return method;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Method findMethod(Class clazz)
+    {
+        try
+        {
+            Class[] types = new Class[methodDescription.argumentTypes.length];
+
+            for (int i = 0; i < types.length; i++)
+            {
+                types[i] = PlasticInternalUtils.toClass(clazz.getClassLoader(), methodDescription.argumentTypes[i]);
+            }
+
+            return clazz.getDeclaredMethod(methodDescription.methodName, types);
+        }
+        catch (Exception ex)
+        {
+            throw new RuntimeException(String.format("Unable to locate Method %s: %s", methodDescription,
+                    PlasticInternalUtils.toMessage(ex)), ex);
+        }
+    }
+
 }

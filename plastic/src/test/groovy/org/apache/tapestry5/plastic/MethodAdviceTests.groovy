@@ -4,6 +4,9 @@ import java.sql.SQLException
 
 import org.apache.tapestry5.plastic.test.NoopAdvice
 
+import testannotations.Maybe
+import testannotations.Truth
+
 class MethodAdviceTests extends AbstractPlasticSpecification {
     def "advice for a void method"() {
         setup:
@@ -14,13 +17,21 @@ class MethodAdviceTests extends AbstractPlasticSpecification {
 
             findMethod(pc, "aSingleMethod").addAdvice ({
                 didInvoke = true
-                
+
                 assert it.methodName == "aSingleMethod"
                 assert it.parameterCount == 1
-                
+
                 assert it.getParameter(0) == 123
-                
-                it.proceed()                
+
+                assert it.returnType == void.class
+                assert it.getParameterType(0) == int.class
+
+                assert it.hasAnnotation(Deprecated.class) == false
+                assert it.hasAnnotation(Maybe.class) == true
+
+                assert it.getAnnotation(Maybe.class).value() == Truth.YES
+
+                it.proceed()
             } as MethodAdvice)
         } as PlasticClassTransformer)
 
@@ -65,28 +76,27 @@ class MethodAdviceTests extends AbstractPlasticSpecification {
 
         o.dupe(2, "Fam") == "FAM FAM FAM FAM FAM FAM FAM FAM FAM FAM FAM FAM"
     }
-    
+
     def "method that throws exceptions"() {
-        
+
         setup:
-        
+
         def mgr = createMgr({ PlasticClass pc ->
             findMethod(pc, "maybeThrow").addAdvice(new NoopAdvice())
         } as PlasticClassTransformer)
-        
+
         def o = mgr.getClassInstantiator("testsubjects.MethodAdviceTarget").newInstance()
 
         expect:
-        
+
         o.maybeThrow(7) == 7
-        
+
         when:
-        
+
         o.maybeThrow(0)
-        
-        then: 
-        
+
+        then:
+
         thrown(SQLException)
-                
     }
 }

@@ -14,6 +14,9 @@
 
 package org.apache.tapestry5.internal.plastic;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+
 import org.apache.tapestry5.plastic.InstanceContext;
 import org.apache.tapestry5.plastic.MethodInvocation;
 
@@ -92,6 +95,31 @@ public abstract class AbstractMethodInvocation implements MethodInvocation
     public int getParameterCount()
     {
         return bundle.methodDescription.argumentTypes.length;
+    }
+
+    public <T extends Annotation> boolean hasAnnotation(Class<T> annotationType)
+    {
+        return getAnnotation(annotationType) != null;
+    }
+
+    public <T extends Annotation> T getAnnotation(Class<T> annotationType)
+    {
+        return method().getAnnotation(annotationType);
+    }
+
+    public Method method()
+    {
+        return bundle.getMethod(getInstance());
+    }
+
+    public Class getReturnType()
+    {
+        return method().getReturnType();
+    }
+
+    public Class getParameterType(int index)
+    {
+        return method().getParameterTypes()[index];
     }
 
     protected abstract void proceedToAdvisedMethod();
