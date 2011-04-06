@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.plastic;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -292,5 +293,66 @@ public class PlasticInternalUtils
             return input;
 
         return String.valueOf(Character.toUpperCase(first)) + input.substring(1);
+    }
+
+    private static final Map<String, Class> PRIMITIVES = new HashMap<String, Class>();
+
+    static
+    {
+        PRIMITIVES.put("boolean", boolean.class);
+        PRIMITIVES.put("char", char.class);
+        PRIMITIVES.put("byte", byte.class);
+        PRIMITIVES.put("short", short.class);
+        PRIMITIVES.put("int", int.class);
+        PRIMITIVES.put("long", long.class);
+        PRIMITIVES.put("float", float.class);
+        PRIMITIVES.put("double", double.class);
+        PRIMITIVES.put("void", void.class);
+    }
+
+    /**
+     * @param loader
+     *            class loader to look up in
+     * @param javaName
+     *            java name is Java source format (e.g., "int", "int[]", "java.lang.String", "java.lang.String[]", etc.)
+     * @return class instance
+     * @throws ClassNotFoundException
+     */
+    public static Class toClass(ClassLoader loader, String javaName) throws ClassNotFoundException
+    {
+        int depth = 0;
+
+        while (javaName.endsWith("[]"))
+        {
+            depth++;
+            javaName = javaName.substring(0, javaName.length() - 2);
+        }
+
+        Class primitive = PRIMITIVES.get(javaName);
+
+        if (primitive != null)
+        {
+            Class result = primitive;
+            for (int i = 0; i < depth; i++)
+            {
+                result = Array.newInstance(result, 0).getClass();
+            }
+
+            return result;
+        }
+
+        if (depth == 0)
+            return Class.forName(javaName, true, loader);
+
+        StringBuilder builder = new StringBuilder(20);
+
+        for (int i = 0; i < depth; i++)
+        {
+            builder.append("[");
+        }
+
+        builder.append("L").append(javaName).append(";");
+
+        return Class.forName(builder.toString(), true, loader);
     }
 }

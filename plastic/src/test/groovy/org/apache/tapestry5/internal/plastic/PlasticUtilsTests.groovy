@@ -44,6 +44,24 @@ class PlasticUtilsTests extends Specification
         'Lfoo/bar/Baz$Biff;' | 'foo.bar.Baz$Biff'
     }
 
+    @Unroll("toClass '#javaName' should be #expectedClass")
+    def "toClass tests"() {
+        expect:
+
+        PlasticInternalUtils.toClass(getClass().classLoader, javaName) == expectedClass
+
+        where:
+
+        javaName | expectedClass
+        "java.lang.String" | String.class
+        "java.lang.Integer[]" | Integer[].class
+        "java.lang.Long[][]" | Long[][].class
+        "void" | void.class
+        "int" | int.class
+        "int[]" | int[].class
+        "float[][]" | float[][].class
+    }
+
     def "not object descriptor is an exception"() {
         when:
         PlasticInternalUtils.objectDescriptorToClassName("I")
