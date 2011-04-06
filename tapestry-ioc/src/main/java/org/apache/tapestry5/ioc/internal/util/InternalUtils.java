@@ -43,9 +43,6 @@ import java.util.regex.Pattern;
 
 import javax.inject.Named;
 
-import org.aopalliance.intercept.Invocation;
-import org.apache.tapestry5.func.F;
-import org.apache.tapestry5.func.Flow;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.ioc.AdvisorDef;
