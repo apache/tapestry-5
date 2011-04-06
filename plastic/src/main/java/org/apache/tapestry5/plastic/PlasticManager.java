@@ -19,7 +19,6 @@ import java.util.Set;
 
 import org.apache.tapestry5.internal.plastic.NoopDelegate;
 import org.apache.tapestry5.internal.plastic.PlasticClassPool;
-import org.apache.tapestry5.internal.plastic.PlasticClassTransformation;
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
 
 /**
@@ -151,11 +150,31 @@ public class PlasticManager
      * @param callback
      *            used to configure the new class
      * @return the instantiator, which allows instances of the new class to be created
+     * @see #createProxyTransformation(Class)
      */
     public ClassInstantiator createProxy(Class interfaceType, PlasticClassTransformer callback)
     {
-        assert interfaceType != null;
         assert callback != null;
+
+        PlasticClassTransformation transformation = createProxyTransformation(interfaceType);
+
+        callback.transform(transformation.getPlasticClass());
+
+        return transformation.createInstantiator();
+    }
+
+    /**
+     * Creates the underlying {@link PlasticClassTransformation} for an interface proxy. This should only be
+     * used in the cases where encapsulating the PlasticClass construction into a {@linkplain PlasticClassTransformer
+     * callback} is not feasible (which is the case for some of the older APIs inside Tapestry IoC).
+     * 
+     * @param interfaceType
+     *            class proxy will extend from
+     * @return transformation from which an instantiator may be created
+     */
+    public PlasticClassTransformation createProxyTransformation(Class interfaceType)
+    {
+        assert interfaceType != null;
 
         if (!interfaceType.isInterface())
             throw new IllegalArgumentException(String.format(
@@ -164,14 +183,10 @@ public class PlasticManager
 
         String name = String.format("$PlasticProxy$%s_%s", interfaceType.getSimpleName(), PlasticUtils.nextUID());
 
-        PlasticClassTransformation transformation = pool.createTransformation("java.lang.Object", name);
+        PlasticClassTransformation result = pool.createTransformation("java.lang.Object", name);
 
-        PlasticClass plasticClass = transformation.getPlasticClass();
+        result.getPlasticClass().introduceInterface(interfaceType);
 
-        plasticClass.introduceInterface(interfaceType);
-
-        callback.transform(plasticClass);
-
-        return transformation.createInstantiator();
+        return result;
     }
 }

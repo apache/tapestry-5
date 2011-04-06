@@ -64,7 +64,7 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
 @SuppressWarnings("all")
-public class PlasticClassImpl extends Lockable implements PlasticClass, PlasticClassTransformation, Opcodes
+public class PlasticClassImpl extends Lockable implements PlasticClass, InternalPlasticClassTransformation, Opcodes
 {
     private static final String NOTHING_TO_VOID = "()V";
 

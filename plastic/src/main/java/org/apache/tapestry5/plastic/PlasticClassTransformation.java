@@ -12,11 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.plastic;
-
-import org.apache.tapestry5.plastic.ClassInstantiator;
-import org.apache.tapestry5.plastic.InstanceContext;
-import org.apache.tapestry5.plastic.PlasticClass;
+package org.apache.tapestry5.plastic;
 
 public interface PlasticClassTransformation
 {
@@ -36,10 +32,4 @@ public interface PlasticClassTransformation
      * {@link ClassInstantiator#with(Class, Object)} to create a new ClassInstantiator with new InstanceContext entries.
      */
     ClassInstantiator createInstantiator();
-
-    /**
-     * Only invokable after {@link #createInstantiator()}, returns the transformed Class instance, as loaded
-     * by a {@link PlasticClassLoader}.
-     */
-    Class<?> getTransformedClass();
 }

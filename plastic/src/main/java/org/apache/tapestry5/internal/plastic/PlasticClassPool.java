@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.apache.tapestry5.plastic.AnnotationAccess;
 import org.apache.tapestry5.plastic.ClassInstantiator;
+import org.apache.tapestry5.plastic.PlasticClassTransformation;
 import org.apache.tapestry5.plastic.PlasticManagerDelegate;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -236,7 +237,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes
         // TODO: What about interfaces, enums, annotations, etc. ... they shouldn't be in the package, but
         // we should generate a reasonable error message.
 
-        PlasticClassTransformation transformation = getPlasticClassTransformation(className);
+        InternalPlasticClassTransformation transformation = getPlasticClassTransformation(className);
 
         delegate.transform(transformation.getPlasticClass());
 
@@ -261,7 +262,8 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes
      * 
      * @throws ClassNotFoundException
      */
-    public PlasticClassTransformation getPlasticClassTransformation(String className) throws ClassNotFoundException
+    public InternalPlasticClassTransformation getPlasticClassTransformation(String className)
+            throws ClassNotFoundException
     {
         assert PlasticInternalUtils.isNonBlank(className);
 
@@ -272,7 +274,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes
         return createTransformation(baseClassName, classNode);
     }
 
-    private PlasticClassTransformation createTransformation(String baseClassName, ClassNode classNode)
+    private InternalPlasticClassTransformation createTransformation(String baseClassName, ClassNode classNode)
             throws ClassNotFoundException
     {
         if (shouldInterceptClassLoading(baseClassName))
