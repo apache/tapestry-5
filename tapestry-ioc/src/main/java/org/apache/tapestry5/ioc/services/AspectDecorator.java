@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ public interface AspectDecorator
 
     /**
      * Creates a builder that can be used to create the interceptor.  This is used when only some of the methods need to
-     * be advised, or when different methods need to recieve different advice, or when multiple advice is to be
+     * be advised, or when different methods need to receive different advice, or when multiple advice is to be
      * applied.
      *
      * @param serviceInterface defines the interface of the interceptor and the delegate
