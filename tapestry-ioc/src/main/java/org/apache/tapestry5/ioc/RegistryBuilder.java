@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,6 +14,11 @@
 
 package org.apache.tapestry5.ioc;
 
+import java.lang.reflect.AnnotatedElement;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.internal.DefaultModuleDefImpl;
@@ -21,17 +26,14 @@ import org.apache.tapestry5.ioc.internal.LoggerSourceImpl;
 import org.apache.tapestry5.ioc.internal.RegistryImpl;
 import org.apache.tapestry5.ioc.internal.RegistryWrapper;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
+import org.apache.tapestry5.ioc.internal.services.PlasticProxyFactoryImpl;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.services.TapestryIOCModule;
 import org.slf4j.Logger;
-
-import java.lang.reflect.AnnotatedElement;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Used to construct the IoC {@link org.apache.tapestry5.ioc.Registry}. This class is <em>not</em> thread-safe. The
@@ -53,6 +55,8 @@ public final class RegistryBuilder
     private final LoggerSource loggerSource;
 
     private final ClassFactory classFactory;
+
+    private final PlasticProxyFactory proxyFactory;
 
     private final Set<Class> addedModuleClasses = CollectionFactory.newSet();
 
@@ -78,6 +82,7 @@ public final class RegistryBuilder
         Logger classFactoryLogger = loggerSource.getLogger(TapestryIOCModule.class.getName() + ".ClassFactory");
 
         classFactory = new ClassFactoryImpl(this.classLoader, classFactoryLogger);
+        proxyFactory = new PlasticProxyFactoryImpl(this.classLoader);
 
         add(TapestryIOCModule.class);
     }
@@ -100,7 +105,7 @@ public final class RegistryBuilder
 
     /**
      * Adds a number of modules (as module classes) to the registry, returning the builder for further configuration.
-     *
+     * 
      * @see org.apache.tapestry5.ioc.annotations.SubModule
      */
     public RegistryBuilder add(Class... moduleClasses)
@@ -115,7 +120,8 @@ public final class RegistryBuilder
 
             // Quietly ignore previously added classes.
 
-            if (addedModuleClasses.contains(c)) continue;
+            if (addedModuleClasses.contains(c))
+                continue;
 
             addedModuleClasses.add(c);
 
@@ -126,7 +132,8 @@ public final class RegistryBuilder
 
             SubModule annotation = ((AnnotatedElement) c).getAnnotation(SubModule.class);
 
-            if (annotation == null) continue;
+            if (annotation == null)
+                continue;
 
             queue.addAll(Arrays.asList(annotation.value()));
         }
@@ -135,9 +142,9 @@ public final class RegistryBuilder
     }
 
     /**
-     * Adds a  modle class (specified by fully qualified class name) to the registry, returning the builder
+     * Adds a modle class (specified by fully qualified class name) to the registry, returning the builder
      * for further configuration.
-     *
+     * 
      * @see org.apache.tapestry5.ioc.annotations.SubModule
      */
     public RegistryBuilder add(String classname)
@@ -152,22 +159,22 @@ public final class RegistryBuilder
         }
         catch (Exception ex)
         {
-            throw new RuntimeException(String.format("Failure loading Tapestry IoC module class %s: %s",
-                                                     classname, InternalUtils.toMessage(ex), ex));
+            throw new RuntimeException(String.format("Failure loading Tapestry IoC module class %s: %s", classname,
+                    InternalUtils.toMessage(ex), ex));
         }
 
         return this;
     }
 
     /**
-     * Constructs and returns the registry; this may only be done once. The caller is responsible for invoking {@link
-     * org.apache.tapestry5.ioc.Registry#performRegistryStartup()}.
+     * Constructs and returns the registry; this may only be done once. The caller is responsible for invoking
+     * {@link org.apache.tapestry5.ioc.Registry#performRegistryStartup()}.
      */
     public Registry build()
     {
         lock.lock();
 
-        RegistryImpl registry = new RegistryImpl(modules, classFactory, loggerSource);
+        RegistryImpl registry = new RegistryImpl(modules, classFactory, null, loggerSource);
 
         return new RegistryWrapper(registry);
     }
@@ -181,49 +188,49 @@ public final class RegistryBuilder
     {
         return logger;
     }
-    
+
     /**
-     * Constructs the registry, adds a {@link ModuleDef} and a number of modules (as module classes) to the registry and 
-     * performs registry startup. The returned registry is ready to use. The caller is must not invoke {@link
-     * org.apache.tapestry5.ioc.Registry#performRegistryStartup()}.
+     * Constructs the registry, adds a {@link ModuleDef} and a number of modules (as module classes) to the registry and
+     * performs registry startup. The returned registry is ready to use. The caller is must not invoke
+     * {@link org.apache.tapestry5.ioc.Registry#performRegistryStartup()}.
      * 
-     * @param moduleDef {@link ModuleDef} to add 
-     * @param moduleClasses modules (as module classes) to add
-     * 
+     * @param moduleDef
+     *            {@link ModuleDef} to add
+     * @param moduleClasses
+     *            modules (as module classes) to add
      * @return {@link Registry}
-     * 
      * @since 5.2.0
      */
     public static Registry buildAndStartupRegistry(ModuleDef moduleDef, Class... moduleClasses)
     {
         RegistryBuilder builder = new RegistryBuilder();
-        
-        if(moduleDef != null)
+
+        if (moduleDef != null)
             builder.add(moduleDef);
-        
+
         builder.add(moduleClasses);
-        
+
         Registry registry = builder.build();
-        
+
         registry.performRegistryStartup();
-        
+
         return registry;
     }
-    
+
     /**
-     * Constructs the registry, adds a number of modules (as module classes) to the registry and 
-     * performs registry startup. The returned registry is ready to use. The caller is must not invoke {@link
-     * org.apache.tapestry5.ioc.Registry#performRegistryStartup()}.
+     * Constructs the registry, adds a number of modules (as module classes) to the registry and
+     * performs registry startup. The returned registry is ready to use. The caller is must not invoke
+     * {@link org.apache.tapestry5.ioc.Registry#performRegistryStartup()}.
      * 
-     * @param moduleDef {@link ModuleDef} to add 
-     * @param moduleClasses modules (as module classes) to add
-     * 
+     * @param moduleDef
+     *            {@link ModuleDef} to add
+     * @param moduleClasses
+     *            modules (as module classes) to add
      * @return {@link Registry}
-     * 
      * @since 5.2.0
      */
     public static Registry buildAndStartupRegistry(Class... moduleClasses)
-    {   
+    {
         return buildAndStartupRegistry(null, moduleClasses);
     }
 }

@@ -67,6 +67,7 @@ import org.apache.tapestry5.ioc.services.ClassFab;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.MasterObjectProvider;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
 import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
 import org.apache.tapestry5.ioc.services.ServiceActivityScoreboard;
@@ -94,12 +95,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     /**
      * The set of marker annotations for a builtin service.
      */
-    private final static Set<Class> BUILTIN = CollectionFactory.newSet();
-
-    static
-    {
-        BUILTIN.add(Builtin.class);
-    }
+    private final static Set<Class> BUILTIN = CollectionFactory.newSet(Builtin.class);
 
     /**
      * Used to obtain the {@link org.apache.tapestry5.ioc.services.ClassFactory} service, which is
@@ -107,6 +103,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
      * runtime classes for proxies and the like.
      */
     static final String CLASS_FACTORY_SERVICE_ID = "ClassFactory";
+
+    static final String PLASTIC_PROXY_FACTORY_SERVICE_ID = "PlasticProxyFactory";
 
     static final String LOGGER_SOURCE_SERVICE_ID = "LoggerSource";
 
@@ -133,6 +131,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     private final ClassFactory classFactory;
 
+    private final PlasticProxyFactory proxyFactory;
+
     private final ServiceActivityTracker tracker;
 
     private SymbolSource symbolSource;
@@ -157,16 +157,20 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
      *            defines the modules (and builders, decorators, etc., within)
      * @param classFactory
      *            TODO
+     * @param proxyFactory
+     *            TODO
      * @param loggerSource
      *            used to obtain Logger instances
      */
-    public RegistryImpl(Collection<ModuleDef> moduleDefs, ClassFactory classFactory, LoggerSource loggerSource)
+    public RegistryImpl(Collection<ModuleDef> moduleDefs, ClassFactory classFactory, PlasticProxyFactory proxyFactory,
+            LoggerSource loggerSource)
     {
         this.loggerSource = loggerSource;
 
         operationTracker = new PerThreadOperationTracker(loggerSource.getLogger(Registry.class));
 
         this.classFactory = classFactory;
+        this.proxyFactory = proxyFactory;
 
         Logger logger = loggerForBuiltinService(PERTHREAD_MANAGER_SERVICE_ID);
 
@@ -228,6 +232,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         addBuiltin(CLASS_FACTORY_SERVICE_ID, ClassFactory.class, this.classFactory);
         addBuiltin(PERTHREAD_MANAGER_SERVICE_ID, PerthreadManager.class, perthreadManager);
         addBuiltin(REGISTRY_SHUTDOWN_HUB_SERVICE_ID, RegistryShutdownHub.class, registryShutdownHub);
+        addBuiltin(PLASTIC_PROXY_FACTORY_SERVICE_ID, PlasticProxyFactory.class, proxyFactory);
 
         validateContributeDefs(moduleDefs);
 

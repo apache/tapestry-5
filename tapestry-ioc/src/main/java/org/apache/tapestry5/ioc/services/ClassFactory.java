@@ -22,6 +22,8 @@ import java.lang.reflect.Method;
 
 /**
  * Service used when dynamically creating new classes.
+ * 
+ * @deprecated In 5.3.0, use {@link PlasticProxyFactory} instead
  */
 public interface ClassFactory
 {
@@ -96,7 +98,7 @@ public interface ClassFactory
      * @param proxyInterface
      *            proxy interface class
      * @parame delegateCreator
-     *            creates the delegate
+     *         creates the delegate
      * @param description
      *            used for the toString() method
      * @since 5.2.0
@@ -114,12 +116,13 @@ public interface ClassFactory
      * @param proxyInterface
      *            proxy interface class
      * @parame delegateClass
-     *            delegate class
+     *         delegate class
      * @parame delegateCreator
-     *            creates the delegate
+     *         creates the delegate
      * @param description
      *            used for the toString() method
      * @since 5.2.0
      */
-    <T> T createProxy(Class<T> proxyInterface, Class<? extends T> delegateClass, ObjectCreator delegateCreator, String description);
+    <T> T createProxy(Class<T> proxyInterface, Class<? extends T> delegateClass, ObjectCreator delegateCreator,
+            String description);
 }
