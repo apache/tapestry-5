@@ -1364,7 +1364,7 @@ public class InternalUtils
 
                     public String getMethodName()
                     {
-                        throw new IllegalStateException("getMethodName() not yet implemented.");
+                        return invocation.getMethodName();
                     }
 
                     public <T extends Annotation> T getMethodAnnotation(Class<T> annotationClass)
