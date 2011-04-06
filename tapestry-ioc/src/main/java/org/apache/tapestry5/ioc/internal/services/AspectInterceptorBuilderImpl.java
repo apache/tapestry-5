@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,54 +23,46 @@ import java.util.Set;
 
 import org.apache.tapestry5.ioc.MethodAdvice;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.apache.tapestry5.ioc.services.AspectInterceptorBuilder;
 import org.apache.tapestry5.ioc.services.ClassFab;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
-import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.MethodSignature;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticClassTransformation;
+import org.apache.tapestry5.plastic.PlasticField;
 
 @SuppressWarnings("all")
 public class AspectInterceptorBuilderImpl<T> implements AspectInterceptorBuilder<T>
 {
-    private final ClassFactory classFactory;
-
     private final Class<T> serviceInterface;
 
-    private final ClassFab interceptorFab;
+    private final Set<Method> allMethods = CollectionFactory.newSet();
 
-    private final ConstantInjectorImpl injector;
+    private final PlasticClassTransformation transformation;
 
-    private final String delegateFieldName;
+    private final PlasticClass plasticClass;
 
-    private final String description;
-
-    private final OneShotLock lock = new OneShotLock();
-
-    private final Set<Method> remainingMethods = CollectionFactory.newSet();
-
-    private final Map<Method, AdvisedMethodInvocationBuilder> methodToBuilder = CollectionFactory.newMap();
-
-    /**
-     * Set to true if we ever see toString() as a method of the interface; either advised or pass thru. If false at the
-     * end, we add our own implementation.
-     */
-    private boolean sawToString;
-
-    public AspectInterceptorBuilderImpl(ClassFactory classFactory, Class<T> serviceInterface, T delegate,
+    public AspectInterceptorBuilderImpl(PlasticProxyFactory plasticProxyFactory, Class<T> serviceInterface, T delegate,
             String description)
     {
-        this.classFactory = classFactory;
         this.serviceInterface = serviceInterface;
-        this.description = description;
 
-        interceptorFab = this.classFactory.newClass(serviceInterface);
+        transformation = plasticProxyFactory.createProxyTransformation(serviceInterface);
+        plasticClass = transformation.getPlasticClass();
 
-        injector = new ConstantInjectorImpl(interceptorFab);
+        plasticClass.addToString(description);
 
-        delegateFieldName = injector.inject(serviceInterface, delegate);
+        allMethods.addAll(Arrays.asList(serviceInterface.getMethods()));
 
-        remainingMethods.addAll(Arrays.asList(serviceInterface.getMethods()));
+        PlasticField delegateField = plasticClass.introduceField(serviceInterface, "delegate").inject(delegate);
+
+        for (Method method : allMethods)
+        {
+            plasticClass.introduceMethod(method).delegateTo(delegateField);
+        }
     }
 
     public void adviseMethod(Method method, MethodAdvice advice)
@@ -78,28 +70,11 @@ public class AspectInterceptorBuilderImpl<T> implements AspectInterceptorBuilder
         assert method != null;
         assert advice != null;
 
-        lock.check();
+        if (!allMethods.contains(method))
+            throw new IllegalArgumentException(String.format("Method %s is not defined for interface %s.", method,
+                    serviceInterface));
 
-        AdvisedMethodInvocationBuilder builder = methodToBuilder.get(method);
-
-        if (builder == null)
-        {
-            if (!remainingMethods.contains(method))
-                throw new IllegalArgumentException(String.format("Method %s is not defined for interface %s.", method,
-                        serviceInterface));
-
-            // One less method to pass thru to the delegate
-
-            remainingMethods.remove(method);
-
-            sawToString |= ClassFabUtils.isToString(method);
-
-            builder = new AdvisedMethodInvocationBuilder(classFactory, serviceInterface, method);
-
-            methodToBuilder.put(method, builder);
-        }
-
-        builder.addAdvice(advice);
+        plasticClass.introduceMethod(method).addAdvice(InternalUtils.toPlasticMethodAdvice(advice));
     }
 
     public void adviseAllMethods(MethodAdvice advice)
@@ -115,55 +90,6 @@ public class AspectInterceptorBuilderImpl<T> implements AspectInterceptorBuilder
 
     public T build()
     {
-        lock.lock();
-
-        // Finish up each method that has been advised
-
-        for (AdvisedMethodInvocationBuilder builder : methodToBuilder.values())
-        {
-            builder.commit(interceptorFab, delegateFieldName, injector);
-        }
-
-        // Hit all the methods that haven't been referenced so far.
-
-        addPassthruMethods();
-
-        // And if we haven't seen a toString(), we can add it now.
-
-        if (!sawToString)
-            interceptorFab.addToString(description);
-
-        injector.implementConstructor();
-
-        Class interceptorClass = interceptorFab.createClass();
-
-        Object[] parameters = injector.getParameters();
-
-        try
-        {
-            Constructor constructor = interceptorClass.getConstructors()[0];
-
-            Object raw = constructor.newInstance(parameters);
-
-            return serviceInterface.cast(raw);
-        }
-        catch (Exception ex)
-        {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    private void addPassthruMethods()
-    {
-        for (Method m : remainingMethods)
-        {
-            sawToString |= ClassFabUtils.isToString(m);
-
-            MethodSignature sig = new MethodSignature(m);
-
-            String body = String.format("return ($r) %s.%s($$);", delegateFieldName, m.getName());
-
-            interceptorFab.addMethod(Modifier.PUBLIC, sig, body);
-        }
+        return (T) transformation.createInstantiator().newInstance();
     }
 }

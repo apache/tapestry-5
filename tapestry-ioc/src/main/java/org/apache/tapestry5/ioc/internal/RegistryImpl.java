@@ -165,6 +165,11 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     public RegistryImpl(Collection<ModuleDef> moduleDefs, ClassFactory classFactory, PlasticProxyFactory proxyFactory,
             LoggerSource loggerSource)
     {
+        assert moduleDefs != null;
+        assert classFactory != null;
+        assert proxyFactory != null;
+        assert loggerSource != null;
+        
         this.loggerSource = loggerSource;
 
         operationTracker = new PerThreadOperationTracker(loggerSource.getLogger(Registry.class));

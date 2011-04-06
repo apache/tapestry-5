@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,17 +22,17 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.AspectDecorator;
 import org.apache.tapestry5.ioc.services.AspectInterceptorBuilder;
 import org.apache.tapestry5.ioc.services.Builtin;
-import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 
 @PreventServiceDecoration
 public class AspectDecoratorImpl implements AspectDecorator
 {
-    private final ClassFactory classFactory;
+    private final PlasticProxyFactory proxyFactory;
 
     public AspectDecoratorImpl(@Builtin
-    ClassFactory classFactory)
+    PlasticProxyFactory proxyFactory)
     {
-        this.classFactory = classFactory;
+        this.proxyFactory = proxyFactory;
     }
 
     public <T> T build(Class<T> serviceInterface, T delegate, MethodAdvice advice, String description)
@@ -51,6 +51,10 @@ public class AspectDecoratorImpl implements AspectDecorator
         assert serviceInterface != null;
         assert delegate != null;
         assert InternalUtils.isNonBlank(description);
+
+        // The inner class here prevents the needless creation of the AspectInterceptorBuilderImpl,
+        // and the various Plastic related overhead, until there's some actual advice.
+
         return new AspectInterceptorBuilder<T>()
         {
             private AspectInterceptorBuilder<T> builder;
@@ -78,7 +82,7 @@ public class AspectDecoratorImpl implements AspectDecorator
             private AspectInterceptorBuilder<T> getBuilder()
             {
                 if (builder == null)
-                    builder = new AspectInterceptorBuilderImpl<T>(classFactory, serviceInterface, delegate, description);
+                    builder = new AspectInterceptorBuilderImpl<T>(proxyFactory, serviceInterface, delegate, description);
 
                 return builder;
             }

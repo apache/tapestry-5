@@ -174,7 +174,7 @@ public final class RegistryBuilder
     {
         lock.lock();
 
-        RegistryImpl registry = new RegistryImpl(modules, classFactory, null, loggerSource);
+        RegistryImpl registry = new RegistryImpl(modules, classFactory, proxyFactory, loggerSource);
 
         return new RegistryWrapper(registry);
     }
