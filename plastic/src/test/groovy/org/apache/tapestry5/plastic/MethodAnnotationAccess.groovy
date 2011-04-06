@@ -3,10 +3,10 @@ package org.apache.tapestry5.plastic
 import org.apache.tapestry5.plastic.PlasticManager;
 
 import spock.lang.Specification;
-import testsubjects.Maybe 
-import testsubjects.Outer 
-import testsubjects.PrimitiveValues 
-import testsubjects.Truth 
+import testannotations.Maybe;
+import testannotations.Outer;
+import testannotations.PrimitiveValues;
+import testannotations.Truth;
 
 class MethodAnnotationAccess extends Specification {
     def mgr = new PlasticManager()

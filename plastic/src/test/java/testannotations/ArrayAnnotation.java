@@ -1,4 +1,4 @@
-package testsubjects;
+package testannotations;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
@@ -9,16 +9,23 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+
 @Target(
 { TYPE, FIELD, METHOD, PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PrimitiveValues
+@SuppressWarnings("rawtypes")
+public @interface ArrayAnnotation
 {
-    int count();
+    int[] numbers() default
+    {};
 
-    String title();
+    String[] strings() default
+    {};
 
-    Class type();
+    Class[] types() default
+    {};
 
-    String message() default "created";
+    Maybe[] annotations() default
+    {};
+
 }

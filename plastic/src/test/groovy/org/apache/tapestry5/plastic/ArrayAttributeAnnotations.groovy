@@ -3,8 +3,8 @@ package org.apache.tapestry5.plastic
 import org.apache.tapestry5.plastic.PlasticManager;
 
 import spock.lang.Specification;
-import testsubjects.ArrayAnnotation 
-import testsubjects.Truth;
+import testannotations.ArrayAnnotation;
+import testannotations.Truth;
 
 class ArrayAttributeAnnotations extends Specification {
     def mgr = new PlasticManager()

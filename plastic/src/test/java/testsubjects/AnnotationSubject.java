@@ -1,5 +1,12 @@
 package testsubjects;
 
+import testannotations.ArrayAnnotation;
+import testannotations.Maybe;
+import testannotations.Outer;
+import testannotations.PrimitiveValues;
+import testannotations.SimpleAnnotation;
+import testannotations.Truth;
+
 @SimpleAnnotation
 @ArrayAnnotation
 public class AnnotationSubject

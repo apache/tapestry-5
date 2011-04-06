@@ -1,4 +1,4 @@
-package testsubjects;
+package testannotations;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
@@ -12,7 +12,13 @@ import java.lang.annotation.Target;
 @Target(
 { TYPE, FIELD, METHOD, PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Maybe
+public @interface PrimitiveValues
 {
-    Truth value();
+    int count();
+
+    String title();
+
+    Class type();
+
+    String message() default "created";
 }

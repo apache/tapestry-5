@@ -1,4 +1,4 @@
-package testsubjects;
+package testannotations;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
@@ -9,11 +9,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/** Simple annotation with no attributes. */
+
 @Target(
 { TYPE, FIELD, METHOD, PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SimpleAnnotation
+public @interface Maybe
 {
-
+    Truth value();
 }

@@ -18,7 +18,7 @@ import org.apache.tapestry5.plastic.PlasticManager;
 import org.apache.tapestry5.plastic.PropertyAccessType;
 
 import spock.lang.Specification;
-import testsubjects.Property;
+import testannotations.Property;
 
 class FieldPropertyMethodCreation extends Specification
 {

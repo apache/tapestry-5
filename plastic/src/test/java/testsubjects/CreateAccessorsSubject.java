@@ -14,6 +14,8 @@
 
 package testsubjects;
 
+import testannotations.Property;
+
 public class CreateAccessorsSubject
 {
     @Property

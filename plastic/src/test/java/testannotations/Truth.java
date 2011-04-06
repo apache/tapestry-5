@@ -1,4 +1,4 @@
-package testsubjects;
+package testannotations;
 
 public enum Truth
 {

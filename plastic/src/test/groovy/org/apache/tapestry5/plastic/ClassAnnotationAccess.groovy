@@ -3,7 +3,7 @@ package org.apache.tapestry5.plastic
 import org.apache.tapestry5.plastic.PlasticManager;
 
 import spock.lang.Specification;
-import testsubjects.SimpleAnnotation 
+import testannotations.SimpleAnnotation;
 
 class ClassAnnotationAccess extends Specification {
     def mgr = new PlasticManager()
