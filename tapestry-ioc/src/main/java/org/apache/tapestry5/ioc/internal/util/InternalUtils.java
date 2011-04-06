@@ -1349,12 +1349,12 @@ public class InternalUtils
 
                     public Class getResultType()
                     {
-                        throw new IllegalStateException("getResultType() not yet implemented.");
+                        return invocation.getReturnType();
                     }
 
                     public Class getParameterType(int index)
                     {
-                        throw new IllegalStateException("getParameterType() not yet implemented.");
+                        return invocation.getParameterType(index);
                     }
 
                     public int getParameterCount()
@@ -1369,7 +1369,7 @@ public class InternalUtils
 
                     public <T extends Annotation> T getMethodAnnotation(Class<T> annotationClass)
                     {
-                        throw new IllegalStateException("getMethodAnnotation() not yet implemented.");
+                        return invocation.getAnnotation(annotationClass);
                     }
                 };
 
