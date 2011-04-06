@@ -47,7 +47,9 @@ public interface InstructionBuilder
     InstructionBuilder loadNull();
 
     /**
-     * Loads an argument onto the stack, using the opcode appropriate to the argument's type.
+     * Loads an argument onto the stack, using the opcode appropriate to the argument's type. In addition
+     * this automatically adjusts for arguments of primitive type long or double (which take up two
+     * local variable indexes, rather than one as for all other types)
      * 
      * @param index
      *            to argument (0 is the first argument, not this)

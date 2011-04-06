@@ -99,4 +99,24 @@ class MethodAdviceTests extends AbstractPlasticSpecification {
 
         thrown(SQLException)
     }
+
+    /**
+     * This is important because each double/long takes up two local variable slots.
+     * 
+     * @return
+     */
+    def "method with long and double parameters"() {
+        setup:
+
+        def mgr = createMgr({ PlasticClass pc ->
+            findMethod(pc, "doMath").addAdvice(new NoopAdvice())
+        } as PlasticClassTransformer)
+
+        def o = mgr.getClassInstantiator("testsubjects.WidePrimitives").newInstance()
+
+        expect:
+        "The interceptor builds proper bytecode to pass the values through"
+
+        o.doMath(2l, 4.0d, 5, 6l) == 38d
+    }
 }

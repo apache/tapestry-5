@@ -18,13 +18,14 @@ import java.util.Map;
 
 import org.apache.tapestry5.internal.plastic.asm.Label;
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
+import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 import org.apache.tapestry5.plastic.MethodDescription;
 
 /**
  * Stores information about the method whose instructions are being constructed, to make it easier
  * to share data across multiple instances.
  */
-public class InstructionBuilderState
+public class InstructionBuilderState implements Opcodes
 {
     final MethodDescription description;
 
@@ -36,6 +37,12 @@ public class InstructionBuilderState
 
     final Map<String, LocalVariable> locals = PlasticInternalUtils.newMap();
 
+    /** Index for argument (0 is first true argument); allows for double-width primitive types. */
+    final int[] argumentIndex;
+
+    /** Opcode used to load argument (0 is first true argument). */
+    final int[] argumentLoadOpcode;
+
     protected InstructionBuilderState(MethodDescription description, MethodVisitor visitor, NameCache nameCache)
     {
         this.description = description;
@@ -44,7 +51,27 @@ public class InstructionBuilderState
 
         // TODO: Account for static methods?
 
-        localIndex = 1 + description.argumentTypes.length;
+        int argCount = description.argumentTypes.length;
+
+        argumentIndex = new int[argCount];
+        argumentLoadOpcode = new int[argCount];
+
+        // first argument index is for "this"
+
+        int offset = 1;
+
+        for (int i = 0; i < argCount; i++)
+        {
+            PrimitiveType type = PrimitiveType.getByName(description.argumentTypes[i]);
+
+            argumentIndex[i] = offset++;
+            argumentLoadOpcode[i] = type == null ? ALOAD : type.loadOpcode;
+
+            if (type != null && type.isWide())
+                offset++;
+        }
+
+        localIndex = offset;
     }
 
     Label newLabel()

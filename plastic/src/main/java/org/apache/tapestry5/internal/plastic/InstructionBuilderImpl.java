@@ -118,9 +118,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
 
         int opcode = type == null ? ALOAD : type.loadOpcode;
 
-        // TODO: May need to adjust offset for static (0) vs. instance (1) method.
-
-        v.visitVarInsn(opcode, index + 1);
+        v.visitVarInsn(state.argumentLoadOpcode[index], state.argumentIndex[index]);
 
         return this;
     }

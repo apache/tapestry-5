@@ -103,6 +103,11 @@ public enum PrimitiveType implements Opcodes
         }
     }
 
+    public boolean isWide()
+    {
+        return this == LONG || this == DOUBLE;
+    }
+
     /**
      * Returns the primitive type matching the given type name or null for a non-primitive type (an array type,
      * or an class name).
