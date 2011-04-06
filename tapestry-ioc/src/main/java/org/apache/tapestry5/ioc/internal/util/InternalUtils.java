@@ -1359,7 +1359,7 @@ public class InternalUtils
 
                     public int getParameterCount()
                     {
-                        throw new IllegalStateException("getParameterCount() not yet implemented.");
+                        return invocation.getParameterCount();
                     }
 
                     public String getMethodName()
