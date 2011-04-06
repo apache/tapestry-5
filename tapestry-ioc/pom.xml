@@ -29,6 +29,12 @@
 			<artifactId>tapestry-func</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.tapestry</groupId>
+			<artifactId>plastic</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
         <dependency>
             <groupId>org.apache.tapestry</groupId>

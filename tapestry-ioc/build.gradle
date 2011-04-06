@@ -4,6 +4,7 @@ dependencies {
   compile project(':tapestry-func')
   compile project(':tapestry-annotations')
   compile project(':tapestry-json')
+  compile project(":plastic")
   
   provided project(':tapestry-test')
 
