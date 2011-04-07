@@ -98,6 +98,12 @@ public interface InstructionBuilder
     InstructionBuilder invoke(Class clazz, Class returnType, String methodName, Class... argumentTypes);
 
     /**
+     * Invokes a static method of a class.
+     */
+    @Opcodes("INVOKESTATIC")
+    InstructionBuilder invokeStatic(Class clazz, Class returnType, String methodName, Class... argumentTypes);
+
+    /**
      * Returns the top value on the stack. For void methods, no value should
      * be on the stack and the method will simply return.
      */

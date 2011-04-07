@@ -72,6 +72,27 @@ class FieldInjection extends Specification
         thrown(IllegalStateException)
     }
 
+    def "injection from instance context"() {
+
+        String injected = "InstanceContext value injected into the StringPropertyHolder class"
+
+        def pc = mgr.getPlasticClass("testsubjects.StringPropertyHolder")
+
+        pc.allFields.first().injectFromInstanceContext()
+
+        def o = pc.createInstantiator().with(String.class, injected).newInstance()
+
+        expect:
+
+        o.value.is(injected)
+
+        when:
+        o.value = "attempt to update"
+
+        then:
+        thrown(IllegalStateException)
+    }
+
     def "injection of primitive value"() {
 
         def pc = mgr.getPlasticClass("testsubjects.Empty")
@@ -94,9 +115,9 @@ class FieldInjection extends Specification
         def pc = mgr.getPlasticClass("testsubjects.InjectFieldSubject")
 
         def pf = pc.allFields.first();
-        
+
         def handle = pf.handle;
-        
+
         pf.inject(99)
 
         def ins = pc.createInstantiator()
@@ -111,12 +132,12 @@ class FieldInjection extends Specification
         then:
         def e = thrown(IllegalStateException)
         e.message == "Field value of class testsubjects.InjectFieldSubject is read-only."
-        
+
         when:
         handle.set(o, 456)
-        
+
         then:
-        
+
         thrown(IllegalStateException)
     }
 

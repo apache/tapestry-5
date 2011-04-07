@@ -170,6 +170,13 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
                 cache.toMethodDescriptor(returnType, argumentTypes));
     }
 
+    public InstructionBuilder invokeStatic(Class clazz, Class returnType, String methodName, Class... argumentTypes)
+    {
+        doInvoke(INVOKESTATIC, clazz, returnType, methodName, argumentTypes);
+
+        return this;
+    }
+
     private void doInvoke(int opcode, Class clazz, Class returnType, String methodName, Class... argumentTypes)
     {
         doInvoke(opcode, clazz.getName(), cache.toTypeName(returnType), methodName,

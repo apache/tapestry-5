@@ -631,6 +631,34 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             constructorBuilder.putField(className, node.name, typeName);
         }
 
+        public PlasticField injectFromInstanceContext()
+        {
+            check();
+
+            verifyInitialState("inject instance context value into");
+
+            // Easiest to load this, for the putField(), early, in case the field is
+            // wide (long or double primitive)
+            
+            constructorBuilder.loadThis();
+            
+            // Add the InstanceContext to the stack
+
+            constructorBuilder.loadArgument(1);
+            constructorBuilder.loadConstant(typeName);
+
+            constructorBuilder.invokeStatic(PlasticInternalUtils.class, Object.class, "getFromInstanceContext",
+                    InstanceContext.class, String.class).castOrUnbox(typeName);
+
+            constructorBuilder.putField(className, node.name, typeName);
+
+            makeReadOnly();
+
+            state = FieldState.INJECTED;
+
+            return this;
+        }
+
         public PlasticField setConduit(FieldConduit<?> conduit)
         {
             assert conduit != null;

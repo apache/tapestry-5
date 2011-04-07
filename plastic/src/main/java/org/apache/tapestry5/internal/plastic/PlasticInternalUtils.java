@@ -31,6 +31,7 @@ import org.apache.tapestry5.internal.plastic.asm.Type;
 import org.apache.tapestry5.internal.plastic.asm.tree.ClassNode;
 import org.apache.tapestry5.internal.plastic.asm.tree.MethodNode;
 import org.apache.tapestry5.internal.plastic.asm.util.TraceClassVisitor;
+import org.apache.tapestry5.plastic.InstanceContext;
 import org.apache.tapestry5.plastic.MethodDescription;
 
 @SuppressWarnings("rawtypes")
@@ -354,5 +355,21 @@ public class PlasticInternalUtils
         builder.append("L").append(javaName).append(";");
 
         return Class.forName(builder.toString(), true, loader);
+    }
+
+    public static Object getFromInstanceContext(InstanceContext context, String javaName)
+    {
+        ClassLoader loader = context.getInstanceType().getClassLoader();
+
+        try
+        {
+            Class valueType = toClass(loader, javaName);
+
+            return context.get(valueType);
+        }
+        catch (ClassNotFoundException ex)
+        {
+            throw new RuntimeException(ex);
+        }
     }
 }
