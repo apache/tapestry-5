@@ -60,7 +60,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes
 
         protected TypeCategory convert(String typeName)
         {
-            ClassNode cn = createClassNode(typeName);
+            ClassNode cn = constructClassNode(typeName);
 
             return Modifier.isInterface(cn.access) ? TypeCategory.INTERFACE : TypeCategory.CLASS;
         }
@@ -267,7 +267,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes
     {
         assert PlasticInternalUtils.isNonBlank(className);
 
-        ClassNode classNode = createClassNode(className);
+        ClassNode classNode = constructClassNode(className);
 
         String baseClassName = PlasticInternalUtils.toClassName(classNode.superName);
 
@@ -291,7 +291,15 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes
         return new PlasticClassImpl(classNode, this, emptyMethodBundle, emptyStaticContext);
     }
 
-    private ClassNode createClassNode(String className)
+    /**
+     * Constructs a class node by reading the raw bytecode for a class and instantiating a ClassNode
+     * (via {@link ClassReader#accept(org.apache.tapestry5.internal.plastic.asm.ClassVisitor, int)}).
+     * 
+     * @param className
+     *            fully qualified class name
+     * @return corresponding ClassNode
+     */
+    public ClassNode constructClassNode(String className)
     {
         byte[] bytecode = readBytecode(className);
 

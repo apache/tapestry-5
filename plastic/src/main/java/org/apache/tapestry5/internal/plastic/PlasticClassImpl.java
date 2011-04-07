@@ -639,9 +639,9 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
             // Easiest to load this, for the putField(), early, in case the field is
             // wide (long or double primitive)
-            
+
             constructorBuilder.loadThis();
-            
+
             // Add the InstanceContext to the stack
 
             constructorBuilder.loadArgument(1);
@@ -2211,6 +2211,96 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     private boolean isMethodImplemented(MethodDescription description)
     {
         return methodBundle.isImplemented(description.methodName, nameCache.toDesc(description));
+    }
+
+    public PlasticClass copyAnnotations(String sourceClassName)
+    {
+        assert PlasticInternalUtils.isNonBlank(sourceClassName);
+
+        ClassNode sourceClass = pool.constructClassNode(sourceClassName);
+
+        classNode.visibleAnnotations = sourceClass.visibleAnnotations;
+
+        Map<String, MethodNode> sourceMethods = buildMethodNodeMap(sourceClass, true);
+
+        if (sourceMethods.isEmpty())
+            return this;
+
+        Map<String, MethodNode> targetMethods = buildMethodNodeMap(classNode, false);
+
+        for (Map.Entry<String, MethodNode> entry : sourceMethods.entrySet())
+        {
+            MethodNode target = targetMethods.get(entry.getKey());
+
+            // Not all source methods (especially private ones) will be in the target class,
+            // which is typically a proxy, implementing just public methods defined in an interface.
+
+            if (target == null)
+                continue;
+
+            MethodNode source = entry.getValue();
+
+            target.visibleAnnotations = source.visibleAnnotations;
+            target.visibleParameterAnnotations = source.visibleParameterAnnotations;
+        }
+
+        return this;
+    }
+
+    private static Map<String, MethodNode> buildMethodNodeMap(ClassNode source, boolean withAnnotationsOnly)
+    {
+        boolean all = !withAnnotationsOnly;
+
+        Map<String, MethodNode> result = new HashMap<String, MethodNode>();
+
+        for (Object m : source.methods)
+        {
+            MethodNode mn = (MethodNode) m;
+
+            if (mn.name.equals(CONSTRUCTOR_NAME))
+                continue;
+
+            if (all || hasAnnotations(mn))
+                result.put(mn.name + ":" + mn.desc, mn);
+        }
+
+        return result;
+    }
+
+    /**
+     * True if the node has any visible annotations, or it has visible annotations on any
+     * parameter.
+     * 
+     * @param mn
+     * @return true if any annotations present
+     */
+    private static boolean hasAnnotations(MethodNode mn)
+    {
+        if (nonEmpty(mn.visibleAnnotations))
+            return true;
+
+        if (mn.visibleParameterAnnotations != null)
+        {
+            for (List pa : mn.visibleParameterAnnotations)
+            {
+                if (nonEmpty(pa))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean nonEmpty(List l)
+    {
+        return l != null && !l.isEmpty();
+    }
+
+    public PlasticClass copyAnnotations(Class sourceClass)
+    {
+        assert sourceClass != null;
+
+        return copyAnnotations(sourceClass.getName());
     }
 
 }
