@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
@@ -51,10 +52,17 @@ import org.apache.tapestry5.ioc.internal.util.InjectionResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.MapInjectionResources;
 import org.apache.tapestry5.ioc.services.AspectDecorator;
-import org.apache.tapestry5.ioc.services.ClassFab;
 import org.apache.tapestry5.ioc.services.ClassFactory;
-import org.apache.tapestry5.ioc.services.MethodSignature;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.services.Status;
+import org.apache.tapestry5.plastic.ClassInstantiator;
+import org.apache.tapestry5.plastic.InstructionBuilder;
+import org.apache.tapestry5.plastic.InstructionBuilderCallback;
+import org.apache.tapestry5.plastic.MethodDescription;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticClassTransformer;
+import org.apache.tapestry5.plastic.PlasticField;
+import org.apache.tapestry5.plastic.PlasticMethod;
 import org.slf4j.Logger;
 
 @SuppressWarnings("all")
@@ -67,6 +75,8 @@ public class ModuleImpl implements Module
     private final ModuleDef2 moduleDef;
 
     private final ClassFactory classFactory;
+
+    private final PlasticProxyFactory proxyFactory;
 
     private final Logger logger;
 
@@ -94,10 +104,11 @@ public class ModuleImpl implements Module
     private final static ConcurrentBarrier BARRIER = new ConcurrentBarrier();
 
     public ModuleImpl(InternalRegistry registry, ServiceActivityTracker tracker, ModuleDef moduleDef,
-            ClassFactory classFactory, Logger logger)
+            ClassFactory classFactory, PlasticProxyFactory proxyFactory, Logger logger)
     {
         this.registry = registry;
         this.tracker = tracker;
+        this.proxyFactory = proxyFactory;
         this.moduleDef = InternalUtils.toModuleDef2(moduleDef);
         this.classFactory = classFactory;
         this.logger = logger;
@@ -472,62 +483,77 @@ public class ModuleImpl implements Module
 
         String toString = format("<Proxy for %s(%s)>", serviceId, serviceInterface.getName());
 
-        return createProxyInstance(creator, serviceId, serviceInterface, resources.getImplementationClass(), toString);
-    }
-
-    private Object createProxyInstance(ObjectCreator creator, String serviceId, Class serviceInterface,
-            Class serviceImplementation, String description)
-    {
         ServiceProxyToken token = SerializationSupport.createToken(serviceId);
 
-        ClassFab classFab = registry.newClass(serviceInterface);
+        return createProxyInstance(creator, token, serviceInterface, resources.getImplementationClass(), toString);
+    }
 
-        classFab.addField("creator", Modifier.PRIVATE | Modifier.FINAL, ObjectCreator.class);
-        classFab.addField("token", Modifier.PRIVATE | Modifier.FINAL, ServiceProxyToken.class);
+    /** "Magic" method related to Externalizable that allows the Proxy object to replace itself with the token. */
+    private static final MethodDescription WRITE_REPLACE = new MethodDescription(Modifier.PRIVATE, "java.lang.Object",
+            "writeReplace", null, new String[]
+            { ObjectStreamException.class.getName() });
 
-        classFab.addConstructor(new Class[]
-        { ObjectCreator.class, ServiceProxyToken.class }, null, "{ creator = $1; token = $2; }");
-
-        // Make proxies serializable by writing the token to the stream.
-
-        classFab.addInterface(Serializable.class);
-
-        // This is the "magic" signature that allows an object to substitute some other
-        // object for itself.
-        MethodSignature writeReplaceSig = new MethodSignature(Object.class, "writeReplace", null, new Class[]
-        { ObjectStreamException.class });
-
-        classFab.addMethod(Modifier.PRIVATE, writeReplaceSig, "return token;");
-
-        // Now delegate all the methods.
-
-        String body = format("return (%s) creator.createObject();", serviceInterface.getName());
-
-        MethodSignature sig = new MethodSignature(serviceInterface, "delegate", null, null);
-
-        classFab.addMethod(Modifier.PRIVATE, sig, body);
-
-        classFab.proxyMethodsToDelegate(serviceInterface, "delegate()", description);
-
-        if (serviceImplementation != null)
+    private Object createProxyInstance(final ObjectCreator creator, final ServiceProxyToken token,
+            final Class serviceInterface, Class serviceImplementation, final String description)
+    {
+        ClassInstantiator instantiator = proxyFactory.createProxy(serviceInterface, new PlasticClassTransformer()
         {
-            classFab.copyClassAnnotationsFromDelegate(serviceImplementation);
+            public void transform(final PlasticClass plasticClass)
+            {
+                plasticClass.introduceInterface(Serializable.class);
 
-            classFab.copyMethodAnnotationsFromDelegate(serviceInterface, serviceImplementation);
-        }
+                final PlasticField creatorField = plasticClass.introduceField(ObjectCreator.class, "creator").inject(
+                        creator);
 
-        Class proxyClass = classFab.createClass();
+                final PlasticField tokenField = plasticClass.introduceField(ServiceProxyToken.class, "token").inject(
+                        token);
 
-        try
-        {
-            return proxyClass.getConstructors()[0].newInstance(creator, token);
-        }
-        catch (Exception ex)
-        {
-            // Exceptions should not happen.
+                // TODO: Choose a simpler name, unless it conflicts with a service interface method name.
 
-            throw new RuntimeException(ex.getMessage(), ex);
-        }
+                PlasticMethod delegateMethod = plasticClass.introduceMethod(new MethodDescription(Modifier.PRIVATE,
+                        serviceInterface.getName(), "_$delegate", null, null));
+
+                // If not concerned with efficiency, this might be done with method advice instead.
+                delegateMethod.changeImplementation(new InstructionBuilderCallback()
+                {
+                    public void doBuild(InstructionBuilder builder)
+                    {
+                        builder.loadThis().getField(plasticClass.getClassName(), creatorField.getName(),
+                                ObjectCreator.class);
+                        builder.invoke(ObjectCreator.class, Object.class, "createObject").checkcast(serviceInterface)
+                                .returnResult();
+                    }
+                });
+
+                for (Method m : serviceInterface.getMethods())
+                {
+                    plasticClass.introduceMethod(m).delegateTo(delegateMethod);
+                }
+
+                plasticClass.introduceMethod(WRITE_REPLACE).changeImplementation(new InstructionBuilderCallback()
+                {
+                    public void doBuild(InstructionBuilder builder)
+                    {
+                        builder.loadThis()
+                                .getField(plasticClass.getClassName(), tokenField.getName(), ServiceProxyToken.class)
+                                .returnResult();
+                    }
+                });
+
+                /*
+                 * TODO:
+                 * if (serviceImplementation != null)
+                 * {
+                 * classFab.copyClassAnnotationsFromDelegate(serviceImplementation);
+                 * classFab.copyMethodAnnotationsFromDelegate(serviceInterface, serviceImplementation);
+                 * }
+                 */
+
+                plasticClass.addToString(description);
+            }
+        });
+
+        return instantiator.newInstance();
     }
 
     @SuppressWarnings("all")
@@ -545,7 +571,7 @@ public class ModuleImpl implements Module
             }
             else
             {
-                if(markerMatched(serviceDef, def))
+                if (markerMatched(serviceDef, def))
                 {
                     result.add(def);
                 }
@@ -554,11 +580,12 @@ public class ModuleImpl implements Module
 
         return result;
     }
-   
+
     private boolean markerMatched(ServiceDef serviceDef, Markable markable)
     {
         if (!serviceDef.getServiceInterface().equals(markable.getServiceInterface()))
-            return false;;
+            return false;
+        ;
 
         Set<Class> contributionMarkers = CollectionFactory.newSet(markable.getMarkers());
 

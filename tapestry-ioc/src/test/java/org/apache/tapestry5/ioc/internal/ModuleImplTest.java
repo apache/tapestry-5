@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public class ModuleImplTest extends IOCInternalTestCase
 
         ModuleDef moduleDef = new DefaultModuleDefImpl(ModuleImplTestModule.class, logger, null);
 
-        Module module = new ModuleImpl(registry, null, moduleDef, null, logger);
+        Module module = new ModuleImpl(registry, null, moduleDef, null, null, logger);
 
         replay();
 
@@ -82,7 +82,7 @@ public class ModuleImplTest extends IOCInternalTestCase
 
         replay();
 
-        Module module = new ModuleImpl(registry, null, moduleDef, null, logger);
+        Module module = new ModuleImpl(registry, null, moduleDef, null, null, logger);
 
         Set<DecoratorDef> defs = module.findMatchingDecoratorDefs(serviceDef);
 

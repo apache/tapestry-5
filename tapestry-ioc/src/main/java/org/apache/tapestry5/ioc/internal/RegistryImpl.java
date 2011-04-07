@@ -209,7 +209,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         {
             logger = this.loggerSource.getLogger(def.getLoggerName());
 
-            Module module = new ModuleImpl(this, tracker, def, classFactory, logger);
+            Module module = new ModuleImpl(this, tracker, def, classFactory, proxyFactory, logger);
 
             Set<ServiceDef2> moduleServiceDefs = CollectionFactory.newSet();
 
