@@ -22,6 +22,9 @@ package org.apache.tapestry5.plastic;
  */
 public interface PlasticField extends AnnotationAccess
 {
+    /** Returns the class containing this field. */
+    PlasticClass getPlasticClass();
+    
     /**
      * Returns a handle that can be used to directly access a private field of a
      * transformed class instance.

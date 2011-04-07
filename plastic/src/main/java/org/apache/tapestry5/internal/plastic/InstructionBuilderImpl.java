@@ -21,6 +21,7 @@ import org.apache.tapestry5.internal.plastic.asm.Type;
 import org.apache.tapestry5.plastic.InstructionBuilder;
 import org.apache.tapestry5.plastic.InstructionBuilderCallback;
 import org.apache.tapestry5.plastic.MethodDescription;
+import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.plastic.SwitchCallback;
 import org.apache.tapestry5.plastic.TryCatchCallback;
 
@@ -251,6 +252,13 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         v.visitFieldInsn(GETFIELD, cache.toInternalName(className), fieldName, cache.toDesc(typeName));
 
         return this;
+    }
+
+    public InstructionBuilder getField(PlasticField field)
+    {
+        check();
+
+        return getField(field.getPlasticClass().getClassName(), field.getName(), field.getTypeName());
     }
 
     public InstructionBuilder putField(String className, String fieldName, String typeName)

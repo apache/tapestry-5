@@ -269,12 +269,10 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                 {
                     // Load the field
 
-                    String delegateType = field.getTypeName();
-
-                    builder.loadThis().getField(className, field.getName(), delegateType);
+                    builder.loadThis().getField(field);
                     builder.loadArguments();
 
-                    invokeDelegateAndReturnResult(builder, delegateType);
+                    invokeDelegateAndReturnResult(builder, field.getTypeName());
                 }
             });
 
@@ -510,6 +508,13 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             return this.node.name.compareTo(o.node.name);
         }
 
+        public PlasticClass getPlasticClass()
+        {
+            check();
+
+            return PlasticClassImpl.this;
+        }
+
         public FieldHandle getHandle()
         {
             check();
@@ -701,12 +706,12 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
             if (accessType != PropertyAccessType.WRITE_ONLY)
             {
-                introduceMethod(new MethodDescription(getTypeName(), "get" + capitalized, new String[0]))
-                        .changeImplementation(new InstructionBuilderCallback()
+                introduceMethod(new MethodDescription(getTypeName(), "get" + capitalized, null)).changeImplementation(
+                        new InstructionBuilderCallback()
                         {
                             public void doBuild(InstructionBuilder builder)
                             {
-                                builder.loadThis().getField(className, node.name, getTypeName()).returnResult();
+                                builder.loadThis().getField(PlasticFieldImpl.this).returnResult();
                             }
                         });
             }

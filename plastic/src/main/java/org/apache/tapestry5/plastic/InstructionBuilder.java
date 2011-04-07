@@ -128,7 +128,8 @@ public interface InstructionBuilder
     InstructionBuilder unboxPrimitive(String typeName);
 
     /**
-     * Loads an instance field onto the stack. The object containing the field should already be loaded onto the stack.
+     * Loads an instance field onto the stack. The object containing the field should already be loaded onto the stack
+     * (usually, via {@link #loadThis()}).
      * 
      * @param className
      *            name of class containing the field
@@ -139,6 +140,20 @@ public interface InstructionBuilder
      */
     @Opcodes("GETFIELD")
     InstructionBuilder getField(String className, String fieldName, String typeName);
+
+    /**
+     * Loads an instance field onto the stack. The plastic class instance containing the field should already be loaded
+     * onto the stack (usually, via {@link #loadThis()}).
+     * 
+     * @param className
+     *            name of class containing the field
+     * @param fieldName
+     *            name of the field
+     * @param typeName
+     *            type of field
+     */
+    @Opcodes("GETFIELD")
+    InstructionBuilder getField(PlasticField field);
 
     /**
      * Loads a field onto the stack. This version is used when the
