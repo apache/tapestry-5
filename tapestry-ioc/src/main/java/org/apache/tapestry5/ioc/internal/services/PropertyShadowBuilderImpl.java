@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,32 +14,42 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.services.*;
-import org.apache.tapestry5.ioc.util.BodyBuilder;
-
-import static java.lang.String.format;
-import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+
+import org.apache.tapestry5.ioc.services.Builtin;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
+import org.apache.tapestry5.ioc.services.PropertyAccess;
+import org.apache.tapestry5.ioc.services.PropertyAdapter;
+import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
+import org.apache.tapestry5.plastic.ClassInstantiator;
+import org.apache.tapestry5.plastic.InstructionBuilder;
+import org.apache.tapestry5.plastic.InstructionBuilderCallback;
+import org.apache.tapestry5.plastic.MethodDescription;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticClassTransformer;
+import org.apache.tapestry5.plastic.PlasticField;
+import org.apache.tapestry5.plastic.PlasticMethod;
 
 public class PropertyShadowBuilderImpl implements PropertyShadowBuilder
 {
-    private final ClassFactory classFactory;
-
     private final PropertyAccess propertyAccess;
 
+    private final PlasticProxyFactory proxyFactory;
+
     public PropertyShadowBuilderImpl(@Builtin
-    ClassFactory classFactory,
+    PlasticProxyFactory proxyFactory,
 
     PropertyAccess propertyAccess)
     {
-        this.classFactory = classFactory;
+        this.proxyFactory = proxyFactory;
         this.propertyAccess = propertyAccess;
     }
 
-    public <T> T build(Object source, String propertyName, Class<T> propertyType)
+    public <T> T build(final Object source, final String propertyName, final Class<T> propertyType)
     {
-        Class sourceClass = source.getClass();
-        PropertyAdapter adapter = propertyAccess.getAdapter(sourceClass).getPropertyAdapter(propertyName);
+        final Class sourceClass = source.getClass();
+        final PropertyAdapter adapter = propertyAccess.getAdapter(sourceClass).getPropertyAdapter(propertyName);
 
         // TODO: Perhaps extend ClassPropertyAdapter to do these checks?
 
@@ -53,55 +63,54 @@ public class PropertyShadowBuilderImpl implements PropertyShadowBuilder
             throw new RuntimeException(ServiceMessages.propertyTypeMismatch(propertyName, sourceClass,
                     adapter.getType(), propertyType));
 
-        ClassFab cf = classFactory.newClass(propertyType);
-
-        cf.addField("_source", Modifier.PRIVATE | Modifier.FINAL, sourceClass);
-
-        cf.addConstructor(new Class[]
-        { sourceClass }, null, "_source = $1;");
-
-        BodyBuilder body = new BodyBuilder();
-        body.begin();
-
-        body.addln("%s result = _source.%s();", sourceClass.getName(), adapter.getReadMethod().getName());
-
-        body.addln("if (result == null)");
-        body.begin();
-        body.addln("throw new NullPointerException(%s.buildMessage(_source, \"%s\"));", getClass().getName(),
-                propertyName);
-        body.end();
-
-        body.addln("return result;");
-
-        body.end();
-
-        MethodSignature sig = new MethodSignature(propertyType, "_delegate", null, null);
-        cf.addMethod(Modifier.PRIVATE, sig, body.toString());
-
-        String toString = format("<Shadow: property %s of %s>", propertyName, source);
-
-        cf.proxyMethodsToDelegate(propertyType, "_delegate()", toString);
-
-        Class shadowClass = cf.createClass();
-
-        try
+        ClassInstantiator instantiator = proxyFactory.createProxy(propertyType, new PlasticClassTransformer()
         {
-            Constructor cc = shadowClass.getConstructors()[0];
+            public void transform(PlasticClass plasticClass)
+            {
+                final PlasticField sourceField = plasticClass.introduceField(sourceClass, "source").inject(source);
 
-            Object instance = cc.newInstance(source);
+                PlasticMethod delegateMethod = plasticClass.introduceMethod(new MethodDescription(Modifier.PRIVATE,
+                        propertyType.getName(), "_$readProperty", null, null));
 
-            return propertyType.cast(instance);
-        }
-        catch (Exception ex)
-        {
-            // Should not be reachable
-            throw new RuntimeException(ex);
-        }
+                // You don't do this using MethodAdvice, because then we'd have to use reflection to access the read
+                // method.
 
-    }
+                delegateMethod.changeImplementation(new InstructionBuilderCallback()
+                {
+                    public void doBuild(InstructionBuilder builder)
+                    {
+                        builder.loadThis().getField(sourceField);
+                        builder.invoke(sourceClass, propertyType, adapter.getReadMethod().getName());
 
-    public static final String buildMessage(Object source, String propertyName)
-    {
-        return String.format("Unable to delegate method invocation to property '%s' of %s, because the property is null.", propertyName, source);
+                        // Now add the null check.
+
+                        builder.dupe(0);
+
+                        builder.ifNull(new InstructionBuilderCallback()
+                        {
+                            public void doBuild(InstructionBuilder builder)
+                            {
+                                builder.throwException(
+                                        NullPointerException.class,
+                                        String.format(
+                                                "Unable to delegate method invocation to property '%s' of %s, because the property is null.",
+                                                propertyName, source));
+                            }
+                        }, null);
+
+                        builder.returnResult();
+                    }
+                });
+
+                for (Method m : propertyType.getMethods())
+                {
+                    plasticClass.introduceMethod(m).delegateTo(delegateMethod);
+                }
+
+                plasticClass.addToString(String.format("<Shadow: property %s of %s>", propertyName, source));
+            }
+        });
+
+        return propertyType.cast(instantiator.newInstance());
     }
 }
