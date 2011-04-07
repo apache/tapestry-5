@@ -103,6 +103,11 @@ public class ModuleImpl implements Module
      */
     private final static ConcurrentBarrier BARRIER = new ConcurrentBarrier();
 
+    /** "Magic" method related to Externalizable that allows the Proxy object to replace itself with the token. */
+    private static final MethodDescription WRITE_REPLACE = new MethodDescription(Modifier.PRIVATE, "java.lang.Object",
+            "writeReplace", null, new String[]
+            { ObjectStreamException.class.getName() });
+
     public ModuleImpl(InternalRegistry registry, ServiceActivityTracker tracker, ModuleDef moduleDef,
             ClassFactory classFactory, PlasticProxyFactory proxyFactory, Logger logger)
     {
@@ -488,13 +493,8 @@ public class ModuleImpl implements Module
         return createProxyInstance(creator, token, serviceInterface, resources.getImplementationClass(), toString);
     }
 
-    /** "Magic" method related to Externalizable that allows the Proxy object to replace itself with the token. */
-    private static final MethodDescription WRITE_REPLACE = new MethodDescription(Modifier.PRIVATE, "java.lang.Object",
-            "writeReplace", null, new String[]
-            { ObjectStreamException.class.getName() });
-
     private Object createProxyInstance(final ObjectCreator creator, final ServiceProxyToken token,
-            final Class serviceInterface, Class serviceImplementation, final String description)
+            final Class serviceInterface, final Class serviceImplementation, final String description)
     {
         ClassInstantiator instantiator = proxyFactory.createProxy(serviceInterface, new PlasticClassTransformer()
         {
@@ -540,16 +540,10 @@ public class ModuleImpl implements Module
                     }
                 });
 
-                /*
-                 * TODO:
-                 * if (serviceImplementation != null)
-                 * {
-                 * classFab.copyClassAnnotationsFromDelegate(serviceImplementation);
-                 * classFab.copyMethodAnnotationsFromDelegate(serviceInterface, serviceImplementation);
-                 * }
-                 */
-
                 plasticClass.addToString(description);
+
+                if (serviceImplementation != null)
+                    plasticClass.copyAnnotations(serviceImplementation);
             }
         });
 
