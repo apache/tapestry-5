@@ -508,10 +508,8 @@ public class ModuleImpl implements Module
                 final PlasticField tokenField = plasticClass.introduceField(ServiceProxyToken.class, "token").inject(
                         token);
 
-                // TODO: Choose a simpler name, unless it conflicts with a service interface method name.
-
-                PlasticMethod delegateMethod = plasticClass.introduceMethod(new MethodDescription(Modifier.PRIVATE,
-                        serviceInterface.getName(), "_$delegate", null, null));
+                PlasticMethod delegateMethod = plasticClass.introducePrivateMethod(serviceInterface.getName(),
+                        "delegate", null, null);
 
                 // If not concerned with efficiency, this might be done with method advice instead.
                 delegateMethod.changeImplementation(new InstructionBuilderCallback()

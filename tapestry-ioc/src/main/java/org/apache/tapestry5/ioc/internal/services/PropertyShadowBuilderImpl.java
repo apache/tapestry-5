@@ -69,8 +69,8 @@ public class PropertyShadowBuilderImpl implements PropertyShadowBuilder
             {
                 final PlasticField sourceField = plasticClass.introduceField(sourceClass, "source").inject(source);
 
-                PlasticMethod delegateMethod = plasticClass.introduceMethod(new MethodDescription(Modifier.PRIVATE,
-                        propertyType.getName(), "_$readProperty", null, null));
+                PlasticMethod delegateMethod = plasticClass.introducePrivateMethod(propertyType.getName(),
+                        "readProperty", null, null);
 
                 // You don't do this using MethodAdvice, because then we'd have to use reflection to access the read
                 // method.
