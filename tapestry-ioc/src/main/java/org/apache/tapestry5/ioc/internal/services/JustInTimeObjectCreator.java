@@ -1,10 +1,10 @@
-// Copyright 2007, 2009 The Apache Software Foundation
+// Copyright 2007, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,19 +26,17 @@ import org.apache.tapestry5.ioc.services.Status;
  * same time (a service should be realized only once). The additional interfaces implemented by this class support eager
  * loading of services (at application startup), and orderly shutdown of proxies.
  */
-public class JustInTimeObjectCreator implements ObjectCreator, EagerLoadServiceProxy,
-        RegistryShutdownListener
+public class JustInTimeObjectCreator<T> implements ObjectCreator<T>, EagerLoadServiceProxy, RegistryShutdownListener
 {
     private final ServiceActivityTracker tracker;
 
-    private volatile ObjectCreator creator;
+    private volatile ObjectCreator<T> creator;
 
-    private volatile Object object;
+    private volatile T object;
 
     private final String serviceId;
 
-    public JustInTimeObjectCreator(ServiceActivityTracker tracker, ObjectCreator creator,
-                                   String serviceId)
+    public JustInTimeObjectCreator(ServiceActivityTracker tracker, ObjectCreator<T> creator, String serviceId)
     {
         this.tracker = tracker;
         this.creator = creator;
@@ -48,10 +46,11 @@ public class JustInTimeObjectCreator implements ObjectCreator, EagerLoadServiceP
     /**
      * Checks to see if the proxy has been shutdown, then invokes {@link ObjectCreator#createObject()} if it has not
      * already done so.
-     *
-     * @throws IllegalStateException if the registry has been shutdown
+     * 
+     * @throws IllegalStateException
+     *             if the registry has been shutdown
      */
-    public Object createObject()
+    public T createObject()
     {
         if (object == null)
             obtainObjectFromCreator();
@@ -61,7 +60,8 @@ public class JustInTimeObjectCreator implements ObjectCreator, EagerLoadServiceP
 
     private synchronized void obtainObjectFromCreator()
     {
-        if (object != null) return;
+        if (object != null)
+            return;
 
         try
         {
@@ -94,9 +94,9 @@ public class JustInTimeObjectCreator implements ObjectCreator, EagerLoadServiceP
      */
     public void registryDidShutdown()
     {
-        creator = new ObjectCreator()
+        creator = new ObjectCreator<T>()
         {
-            public Object createObject()
+            public T createObject()
             {
                 throw new IllegalStateException(ServiceMessages.registryShutdown(serviceId));
             }

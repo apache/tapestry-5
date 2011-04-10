@@ -1030,19 +1030,19 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     private <T> T createNonReloadingProxy(Class<T> interfaceClass, final Class<? extends T> implementationClass,
             final ObjectLocator locator)
     {
-        final ObjectCreator autobuildCreator = new ObjectCreator()
+        final ObjectCreator<T> autobuildCreator = new ObjectCreator<T>()
         {
-            public Object createObject()
+            public T createObject()
             {
                 return locator.autobuild(implementationClass);
             }
         };
 
-        ObjectCreator justInTime = new ObjectCreator()
+        ObjectCreator<T> justInTime = new ObjectCreator<T>()
         {
-            private Object delegate;
+            private T delegate;
 
-            public synchronized Object createObject()
+            public synchronized T createObject()
             {
                 if (delegate == null)
                     delegate = autobuildCreator.createObject();

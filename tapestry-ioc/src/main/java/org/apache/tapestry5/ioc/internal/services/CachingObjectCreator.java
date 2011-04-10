@@ -1,10 +1,10 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,23 +17,23 @@ package org.apache.tapestry5.ioc.internal.services;
 import org.apache.tapestry5.ioc.ObjectCreator;
 
 /**
- * An {@link org.apache.tapestry5.ioc.ObjectCreator} that delegates to another {@link
- * org.apache.tapestry5.ioc.ObjectCreator} and caches the result.
+ * An {@link org.apache.tapestry5.ioc.ObjectCreator} that delegates to another
+ * {@link org.apache.tapestry5.ioc.ObjectCreator} and caches the result.
  */
-public class CachingObjectCreator implements ObjectCreator
+public class CachingObjectCreator<T> implements ObjectCreator<T>
 {
     private boolean cached;
 
-    private Object cachedValue;
+    private T cachedValue;
 
-    private ObjectCreator delegate;
+    private ObjectCreator<T> delegate;
 
-    public CachingObjectCreator(ObjectCreator delegate)
+    public CachingObjectCreator(ObjectCreator<T> delegate)
     {
         this.delegate = delegate;
     }
 
-    public synchronized Object createObject()
+    public synchronized T createObject()
     {
         if (!cached)
         {
