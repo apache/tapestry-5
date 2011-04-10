@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.plastic;
 
 import org.apache.tapestry5.plastic.MethodDescription;
+import org.apache.tapestry5.plastic.PlasticUtils;
 
 /**
  * A cache of translations from type names to internal names and descriptors, as well as a cache from MethodDescription
@@ -65,7 +66,7 @@ public class NameCache
         @Override
         protected String convert(Class type)
         {
-            return PlasticInternalUtils.toTypeName(type);
+            return PlasticUtils.toTypeName(type);
         };
     };
 

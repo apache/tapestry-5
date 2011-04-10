@@ -105,8 +105,8 @@ public class MethodDescription implements Comparable<MethodDescription>
     /** Creates a MethodDescription from a Java Method. */
     public MethodDescription(Method method)
     {
-        this(method.getModifiers(), PlasticInternalUtils.toTypeName(method.getReturnType()), method.getName(),
-                PlasticInternalUtils.toTypeNames(method.getParameterTypes()), PlasticInternalUtils.toTypeNames(method
+        this(method.getModifiers(), PlasticUtils.toTypeName(method.getReturnType()), method.getName(),
+                PlasticUtils.toTypeNames(method.getParameterTypes()), PlasticUtils.toTypeNames(method
                         .getExceptionTypes()));
     }
 

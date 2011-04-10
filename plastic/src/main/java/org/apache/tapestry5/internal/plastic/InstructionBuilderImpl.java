@@ -22,6 +22,7 @@ import org.apache.tapestry5.plastic.InstructionBuilder;
 import org.apache.tapestry5.plastic.InstructionBuilderCallback;
 import org.apache.tapestry5.plastic.MethodDescription;
 import org.apache.tapestry5.plastic.PlasticField;
+import org.apache.tapestry5.plastic.PlasticUtils;
 import org.apache.tapestry5.plastic.SwitchCallback;
 import org.apache.tapestry5.plastic.TryCatchCallback;
 
@@ -181,7 +182,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
     private void doInvoke(int opcode, Class clazz, Class returnType, String methodName, Class... argumentTypes)
     {
         doInvoke(opcode, clazz.getName(), cache.toTypeName(returnType), methodName,
-                PlasticInternalUtils.toTypeNames(argumentTypes));
+                PlasticUtils.toTypeNames(argumentTypes));
     }
 
     public InstructionBuilder invoke(Class clazz, Class returnType, String methodName, Class... argumentTypes)
@@ -363,7 +364,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
     {
         check();
 
-        return invokeConstructor(clazz.getName(), PlasticInternalUtils.toTypeNames(argumentTypes));
+        return invokeConstructor(clazz.getName(), PlasticUtils.toTypeNames(argumentTypes));
     }
 
     public InstructionBuilder dupe(int depth)

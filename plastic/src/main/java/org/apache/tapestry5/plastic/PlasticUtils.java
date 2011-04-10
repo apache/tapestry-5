@@ -37,4 +37,27 @@ public class PlasticUtils
     {
         return Long.toHexString(PlasticUtils.UID_GENERATOR.getAndIncrement());
     }
+
+    /**
+     * Converts a type (including array and primitive types) to their type name (the way they are represented in Java
+     * source files).
+     */
+    public static String toTypeName(Class type)
+    {
+        if (type.isArray())
+            return toTypeName(type.getComponentType()) + "[]";
+    
+        return type.getName();
+    }
+
+    /** Converts a number of types (usually, arguments to a method or constructor) into their type names. */
+    public static String[] toTypeNames(Class[] types)
+    {
+        String[] result = new String[types.length];
+    
+        for (int i = 0; i < result.length; i++)
+            result[i] = toTypeName(types[i]);
+    
+        return result;
+    }
 }
