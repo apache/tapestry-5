@@ -1690,6 +1690,22 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return unclaimedFields;
     }
 
+    public PlasticMethod introducePrivateMethod(String typeName, String suggestedName, String[] argumentTypes,
+            String[] exceptionTypes)
+    {
+        check();
+
+        assert PlasticInternalUtils.isNonBlank(typeName);
+        assert PlasticInternalUtils.isNonBlank(suggestedName);
+
+        String name = makeUnique(methodNames, suggestedName);
+
+        MethodDescription description = new MethodDescription(Modifier.PRIVATE, typeName, name, argumentTypes,
+                exceptionTypes);
+
+        return introduceMethod(description);
+    }
+
     public PlasticField introduceField(String className, String suggestedName)
     {
         check();
@@ -1762,6 +1778,8 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             description2method.put(description, result);
         }
 
+        methodNames.add(description.methodName);
+        
         // Note that is it not necessary to add the new MethodNode to
         // fieldTransformMethods (the default implementations provided by introduceMethod() do not
         // ever access instance fields) ... unless the caller invokes changeImplementation().

@@ -79,6 +79,22 @@ public interface PlasticClass extends AnnotationAccess
     PlasticField introduceField(Class fieldType, String suggestedName);
 
     /**
+     * Introduces a new private method into the class, ensuring that the method name is unique.
+     * 
+     * @param typeName
+     *            return type of method
+     * @param suggestedName
+     *            suggested name for the method; the actual method name may be modified to ensure uniqueness
+     * @param argumentTypes
+     *            types of any arguments (may be null)
+     * @param exceptionTypes
+     *            type of any checked exceptions (may be null)
+     * @return new method, with default implementation
+     */
+    PlasticMethod introducePrivateMethod(String typeName, String suggestedName, String[] argumentTypes,
+            String[] exceptionTypes);
+
+    /**
      * Matches methods with the given annotation.
      * 
      * @return Unmodifiable list of methods, in sorted order.
