@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.ioc.services;
 
+import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.plastic.ClassInstantiator;
 import org.apache.tapestry5.plastic.PlasticClassTransformation;
 import org.apache.tapestry5.plastic.PlasticClassTransformer;
@@ -53,4 +54,22 @@ public interface PlasticProxyFactory
      * @return transformation from which an instantiator may be created
      */
     PlasticClassTransformation createProxyTransformation(Class interfaceType);
+
+    /**
+     * Creates a proxy instance that delegates all methods through a corresponding
+     * ObjectCreator. Each method invocation on the proxy will route through {@link ObjectCreator#createObject()} (the
+     * creator implementation may decide to
+     * cache the return value as appropriate).
+     * 
+     * @param <T>
+     *            type of proxy
+     * @param interfaceType
+     *            interface class for proxy
+     * @param creator
+     *            object responsible for creating the real object
+     * @param description
+     *            the <code>toString()</code> of the proxy
+     * @return proxy instance
+     */
+    <T> T createProxy(Class<T> interfaceType, ObjectCreator<T> creator, String description);
 }
