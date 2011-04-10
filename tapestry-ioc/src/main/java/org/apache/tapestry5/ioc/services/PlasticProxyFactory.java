@@ -67,9 +67,12 @@ public interface PlasticProxyFactory
      *            interface class for proxy
      * @param creator
      *            object responsible for creating the real object
+     * @param annotationSource
+     *            if non-null, the class from which annotations should be copied
      * @param description
      *            the <code>toString()</code> of the proxy
      * @return proxy instance
      */
-    <T> T createProxy(Class<T> interfaceType, ObjectCreator<T> creator, String description);
+    <T> T createProxy(Class<T> interfaceType, ObjectCreator<T> creator, Class<? extends T> annotationSource,
+            String description);
 }
