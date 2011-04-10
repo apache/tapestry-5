@@ -23,7 +23,7 @@ import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.ObjectProvider;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
@@ -85,9 +85,10 @@ public class ApplicationMessageCatalogObjectProvider implements ObjectProvider, 
             this.messagesSource = objectLocator.getService(ComponentMessagesSource.class);
             this.threadLocale = objectLocator.getService(ThreadLocale.class);
 
-            ClassFactory classFactory = objectLocator.getService("ClassFactory", ClassFactory.class);
+            PlasticProxyFactory proxyFactory = objectLocator.getService("PlasticProxyFactory",
+                    PlasticProxyFactory.class);
 
-            proxy = classFactory.createProxy(Messages.class, new ApplicationMessagesObjectCreator(),
+            proxy = proxyFactory.createProxy(Messages.class, new ApplicationMessagesObjectCreator(),
                     "<ApplicationMessagesProxy>");
 
             // Listen for invalidations; clear our cache of localized Messages bundles when
