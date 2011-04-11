@@ -1051,7 +1051,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             }
         };
 
-        return classFactory.createProxy(interfaceClass, implementationClass, justInTime,
+        return proxyFactory.createProxy(interfaceClass, justInTime, implementationClass,
                 String.format("<Autobuild proxy %s(%s)>", implementationClass.getName(), interfaceClass.getName()));
     }
 
@@ -1063,7 +1063,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         getService(UpdateListenerHub.class).addUpdateListener(creator);
 
-        return classFactory.createProxy(interfaceClass, implementationClass, creator,
+        return proxyFactory.createProxy(interfaceClass, (ObjectCreator<T>) creator, implementationClass,
                 String.format("<Autoreload proxy %s(%s)>", implementationClass.getName(), interfaceClass.getName()));
     }
 
