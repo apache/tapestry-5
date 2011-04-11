@@ -94,7 +94,7 @@ public class RegistryBuilderTest extends IOCTestCase
         Logger logger = LoggerFactory.getLogger(getClass());
         ClassFactory classFactory = new ClassFactoryImpl();
 
-        ModuleDef module = new DefaultModuleDefImpl(ServiceBuilderModule.class, logger, classFactory);
+        ModuleDef module = new DefaultModuleDefImpl(ServiceBuilderModule.class, logger, classFactory, null);
         
         Registry r = RegistryBuilder.buildAndStartupRegistry(module, MasterModule.class);
         

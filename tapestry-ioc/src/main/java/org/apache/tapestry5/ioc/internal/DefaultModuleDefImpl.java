@@ -57,6 +57,7 @@ import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.slf4j.Logger;
 
 /**
@@ -92,6 +93,8 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
     private final ClassFactory classFactory;
 
+    private final PlasticProxyFactory proxyFactory;
+
     /**
      * Keyed on service id.
      */
@@ -124,14 +127,17 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
      *            based on the class name of the module
      * @param classFactory
      *            factory used to create new classes at runtime or locate method line numbers for
-     *            error
-     *            reporting
+     *            error reporting
+     * @param proxyFactory
+     *            factory used to create proxy classes at runtime
      */
-    public DefaultModuleDefImpl(Class<?> moduleClass, Logger logger, ClassFactory classFactory)
+    public DefaultModuleDefImpl(Class<?> moduleClass, Logger logger, ClassFactory classFactory,
+            PlasticProxyFactory proxyFactory)
     {
         this.moduleClass = moduleClass;
         this.logger = logger;
         this.classFactory = classFactory;
+        this.proxyFactory = proxyFactory;
 
         Marker annotation = moduleClass.getAnnotation(Marker.class);
 
@@ -266,9 +272,9 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
     private void addStartupDef(Method method)
     {
         Set<Class> markers = Collections.emptySet();
-        
+
         ContributionDef2 def = new ContributionDefImpl("RegistryStartup", method, classFactory, Runnable.class, markers);
-        
+
         contributionDefs.add(def);
     }
 
@@ -312,12 +318,13 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
     private void addDecoratorDef(Method method)
     {
         Decorate annotation = method.getAnnotation(Decorate.class);
-       
+
         Class serviceInterface = annotation == null ? null : annotation.serviceInterface();
-       
+
         // TODO: methods just named "decorate"
 
-        String decoratorId = annotation == null? stripMethodPrefix(method, DECORATE_METHOD_NAME_PREFIX) : extractId(serviceInterface, annotation.id());
+        String decoratorId = annotation == null ? stripMethodPrefix(method, DECORATE_METHOD_NAME_PREFIX) : extractId(
+                serviceInterface, annotation.id());
 
         // TODO: Check for duplicates
 
@@ -325,7 +332,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
         if (returnType.isPrimitive() || returnType.isArray())
             throw new RuntimeException(IOCMessages.decoratorMethodWrongReturnType(method));
-       
+
         Set<Class> markers = extractMarkers(method, Decorate.class);
 
         DecoratorDef def = new DecoratorDefImpl(method, extractPatterns(annotation, decoratorId, method),
@@ -336,9 +343,10 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
     private <T extends Annotation> String[] extractPatterns(T annotation, String id, Method method)
     {
-        if(annotation != null)
-            return new String[]{};
-       
+        if (annotation != null)
+            return new String[]
+            {};
+
         Match match = method.getAnnotation(Match.class);
 
         if (match == null)
@@ -361,12 +369,13 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
     private void addAdvisorDef(Method method)
     {
         Advise annotation = method.getAnnotation(Advise.class);
-       
+
         Class serviceInterface = annotation == null ? null : annotation.serviceInterface();
-       
+
         // TODO: methods just named "decorate"
 
-        String advisorId = annotation == null ? stripMethodPrefix(method, ADVISE_METHOD_NAME_PREFIX) : extractId(serviceInterface, annotation.id());
+        String advisorId = annotation == null ? stripMethodPrefix(method, ADVISE_METHOD_NAME_PREFIX) : extractId(
+                serviceInterface, annotation.id());
 
         // TODO: Check for duplicates
 
@@ -390,19 +399,19 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
         if (!found)
             throw new RuntimeException(String.format("Advise method %s must take a parameter of type %s.",
                     toString(method), MethodAdviceReceiver.class.getName()));
-       
+
         Set<Class> markers = extractMarkers(method, Advise.class);
-       
-        AdvisorDef def = new AdvisorDefImpl(method, extractPatterns(annotation, advisorId, method), extractConstraints(method),
-                classFactory, advisorId, serviceInterface, markers);
+
+        AdvisorDef def = new AdvisorDefImpl(method, extractPatterns(annotation, advisorId, method),
+                extractConstraints(method), classFactory, advisorId, serviceInterface, markers);
 
         advisorDefs.put(advisorId, def);
 
     }
-    
+
     private String extractId(Class serviceInterface, String id)
     {
-    	return InternalUtils.isBlank(id) ? serviceInterface.getSimpleName() : id;
+        return InternalUtils.isBlank(id) ? serviceInterface.getSimpleName() : id;
     }
 
     private String toString(Method method)
@@ -422,7 +431,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
     {
         String serviceId = InternalUtils.getServiceId(method);
 
-        if(serviceId == null)
+        if (serviceId == null)
         {
             serviceId = stripMethodPrefix(method, BUILD_METHOD_NAME_PREFIX);
         }
@@ -556,8 +565,8 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
             if (!Modifier.isStatic(bindMethod.getModifiers()))
                 throw new RuntimeException(IOCMessages.bindMethodMustBeStatic(toString(bindMethod)));
 
-            ServiceBinderImpl binder = new ServiceBinderImpl(this, bindMethod, classFactory, defaultMarkers,
-                    modulePreventsServiceDecoration);
+            ServiceBinderImpl binder = new ServiceBinderImpl(this, bindMethod, classFactory, proxyFactory,
+                    defaultMarkers, modulePreventsServiceDecoration);
 
             bindMethod.invoke(null, binder);
 

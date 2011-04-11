@@ -36,6 +36,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 
 @SuppressWarnings("all")
 public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
@@ -48,16 +49,19 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     private final ClassFactory classFactory;
 
+    private PlasticProxyFactory proxyFactory;
+
     private final Set<Class> defaultMarkers;
 
     private final boolean moduleDefaultPreventDecoration;
 
     public ServiceBinderImpl(ServiceDefAccumulator accumulator, Method bindMethod, ClassFactory classFactory,
-            Set<Class> defaultMarkers, boolean moduleDefaultPreventDecoration)
+            PlasticProxyFactory proxyFactory, Set<Class> defaultMarkers, boolean moduleDefaultPreventDecoration)
     {
         this.accumulator = accumulator;
         this.bindMethod = bindMethod;
         this.classFactory = classFactory;
+        this.proxyFactory = proxyFactory;
         this.defaultMarkers = defaultMarkers;
         this.moduleDefaultPreventDecoration = moduleDefaultPreventDecoration;
 
@@ -104,8 +108,8 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         Set<Class> markers = CollectionFactory.newSet(defaultMarkers);
         markers.addAll(this.markers);
 
-        ServiceDef serviceDef = new ServiceDefImpl(serviceInterface, serviceImplementation, serviceId, markers, scope, eagerLoad,
-                preventDecoration, source);
+        ServiceDef serviceDef = new ServiceDefImpl(serviceInterface, serviceImplementation, serviceId, markers, scope,
+                eagerLoad, preventDecoration, source);
 
         accumulator.addServiceDef(serviceDef);
 
@@ -127,7 +131,8 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     private ObjectCreatorSource createObjectCreatorSourceFromImplementationClass()
     {
-        if (InternalUtils.SERVICE_CLASS_RELOADING_ENABLED && !preventReloading && isProxiable() && reloadableScope() && InternalUtils.isLocalFile(serviceImplementation))
+        if (InternalUtils.SERVICE_CLASS_RELOADING_ENABLED && !preventReloading && isProxiable() && reloadableScope()
+                && InternalUtils.isLocalFile(serviceImplementation))
             return createReloadableConstructorBasedObjectCreatorSource();
 
         return createStandardConstructorBasedObjectCreatorSource();
@@ -159,16 +164,16 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
             public String getDescription()
             {
-                return String.format("%s via %s", classFactory.getConstructorLocation(constructor), classFactory
-                        .getMethodLocation(bindMethod));
+                return String.format("%s via %s", classFactory.getConstructorLocation(constructor),
+                        classFactory.getMethodLocation(bindMethod));
             }
         };
     }
 
     private ObjectCreatorSource createReloadableConstructorBasedObjectCreatorSource()
     {
-        return new ReloadableObjectCreatorSource(classFactory, bindMethod, serviceInterface, serviceImplementation,
-                eagerLoad);
+        return new ReloadableObjectCreatorSource(classFactory, proxyFactory, bindMethod, serviceInterface,
+                serviceImplementation, eagerLoad);
     }
 
     @SuppressWarnings("unchecked")
@@ -247,12 +252,12 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         // Set defaults for the other properties.
 
         eagerLoad = serviceImplementation.getAnnotation(EagerLoad.class) != null;
-        
+
         serviceId = InternalUtils.getServiceId(serviceImplementation);
-        
-        if(serviceId == null)
+
+        if (serviceId == null)
         {
-        	serviceId = serviceInterface.getSimpleName();
+            serviceId = serviceInterface.getSimpleName();
         }
 
         Scope scope = serviceImplementation.getAnnotation(Scope.class);

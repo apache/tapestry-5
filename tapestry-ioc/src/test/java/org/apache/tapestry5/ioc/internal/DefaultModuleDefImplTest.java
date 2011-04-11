@@ -67,7 +67,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         // BigDecimal is arbitrary, any class would do.
 
-        ModuleDef md = new DefaultModuleDefImpl(SimpleModule.class, logger, classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(SimpleModule.class, logger, classFactory, null);
 
         assertEquals(md.toString(), "ModuleDef[" + className + " Barney, Fred, Wilma]");
 
@@ -113,7 +113,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         replay();
 
-        ModuleDef def = new DefaultModuleDefImpl(ServiceIdViaAnnotationModule.class, logger, null);
+        ModuleDef def = new DefaultModuleDefImpl(ServiceIdViaAnnotationModule.class, logger, null, null);
 
         assertEquals(def.getServiceIds().size(), 2);
 
@@ -131,7 +131,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         replay();
 
-        ModuleDef def = new DefaultModuleDefImpl(ServiceIdViaAnnotationModule.class, logger, null);
+        ModuleDef def = new DefaultModuleDefImpl(ServiceIdViaAnnotationModule.class, logger, null, null);
 
         assertEquals(def.getServiceIds().size(), 2);
 
@@ -149,7 +149,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         replay();
 
-        ModuleDef def = new DefaultModuleDefImpl(NamedServiceModule.class, logger, null);
+        ModuleDef def = new DefaultModuleDefImpl(NamedServiceModule.class, logger, null, null);
 
         assertEquals(def.getServiceIds().size(), 2);
 
@@ -167,7 +167,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         replay();
 
-        ModuleDef def = new DefaultModuleDefImpl(NamedServiceModule.class, logger, null);
+        ModuleDef def = new DefaultModuleDefImpl(NamedServiceModule.class, logger, null, null);
 
         assertEquals(def.getServiceIds().size(), 2);
 
@@ -185,7 +185,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         replay();
 
-        ModuleDef def = new DefaultModuleDefImpl(DefaultServiceIdModule.class, logger, null);
+        ModuleDef def = new DefaultModuleDefImpl(DefaultServiceIdModule.class, logger, null, null);
 
         assertEquals(def.getServiceIds().size(), 1);
 
@@ -216,7 +216,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         try
         {
-            new DefaultModuleDefImpl(ServiceIdConflictMethodModule.class, logger, classFactory);
+            new DefaultModuleDefImpl(ServiceIdConflictMethodModule.class, logger, classFactory, null);
 
             unreachable();
         }
@@ -242,7 +242,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         try
         {
-            new DefaultModuleDefImpl(VoidBuilderMethodModule.class, logger, null);
+            new DefaultModuleDefImpl(VoidBuilderMethodModule.class, logger, null, null);
             unreachable();
         }
         catch (RuntimeException ex)
@@ -264,7 +264,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         try
         {
-            new DefaultModuleDefImpl(BuilderMethodModule.class, logger, null);
+            new DefaultModuleDefImpl(BuilderMethodModule.class, logger, null, null);
             unreachable();
         }
         catch (RuntimeException ex)
@@ -291,7 +291,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         try
         {
-            new DefaultModuleDefImpl(moduleClass, logger, null);
+            new DefaultModuleDefImpl(moduleClass, logger, null, null);
             unreachable();
         }
         catch (RuntimeException ex)
@@ -339,7 +339,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(moduleClass, logger, classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(moduleClass, logger, classFactory, null);
 
         Set<ContributionDef> defs = md.getContributionDefs();
 
@@ -371,7 +371,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         try
         {
-            new DefaultModuleDefImpl(moduleClass, logger, null);
+            new DefaultModuleDefImpl(moduleClass, logger, null, null);
             unreachable();
         }
         catch (RuntimeException ex)
@@ -396,7 +396,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         try
         {
-            new DefaultModuleDefImpl(moduleClass, logger, null);
+            new DefaultModuleDefImpl(moduleClass, logger, null, null);
             unreachable();
         }
         catch (RuntimeException ex)
@@ -415,7 +415,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(AutobuildModule.class, logger, classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(AutobuildModule.class, logger, classFactory, null);
 
         ServiceDef sd = md.getServiceDef("StringHolder");
 
@@ -434,7 +434,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(ComplexAutobuildModule.class, logger, classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(ComplexAutobuildModule.class, logger, classFactory, null);
 
         ServiceDef sd = md.getServiceDef("SH");
 
@@ -455,7 +455,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         try
         {
-            new DefaultModuleDefImpl(UninstantiableAutobuildServiceModule.class, logger, classFactory);
+            new DefaultModuleDefImpl(UninstantiableAutobuildServiceModule.class, logger, classFactory, null);
             unreachable();
         }
         catch (RuntimeException ex)
@@ -476,7 +476,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         try
         {
-            new DefaultModuleDefImpl(NonStaticBindMethodModule.class, logger, classFactory);
+            new DefaultModuleDefImpl(NonStaticBindMethodModule.class, logger, classFactory, null);
             unreachable();
         }
         catch (RuntimeException ex)
@@ -513,7 +513,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         replay();
 
         ModuleDef def = new DefaultModuleDefImpl(MutlipleAutobuildServiceConstructorsModule.class, logger,
-                                                 classFactory);
+                                                 classFactory, null);
 
         ServiceDef sd = def.getServiceDef("StringHolder");
 
@@ -538,7 +538,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         try
         {
-            new DefaultModuleDefImpl(ExceptionInBindMethod.class, logger, classFactory);
+            new DefaultModuleDefImpl(ExceptionInBindMethod.class, logger, classFactory, null);
             unreachable();
         }
         catch (RuntimeException ex)
@@ -559,7 +559,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(EagerLoadViaAnnotationModule.class, logger, classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(EagerLoadViaAnnotationModule.class, logger, classFactory, null);
 
         ServiceDef sd = md.getServiceDef("Runnable");
 
@@ -575,7 +575,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(MarkerModule.class, logger, classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(MarkerModule.class, logger, classFactory, null);
 
         ServiceDef sd = md.getServiceDef("Greeter");
 
@@ -591,7 +591,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(MarkerModule.class, logger, classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(MarkerModule.class, logger, classFactory, null);
 
         ServiceDef sd = md.getServiceDef("RedGreeter");
 
@@ -607,7 +607,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(MarkerModule.class, logger, classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(MarkerModule.class, logger, classFactory, null);
 
         ServiceDef sd = md.getServiceDef("SecondRedGreeter");
 
@@ -624,7 +624,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(MarkerModule.class, logger, classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(MarkerModule.class, logger, classFactory, null);
 
         ServiceDef sd = md.getServiceDef("SurprisinglyBlueGreeter");
 
@@ -651,7 +651,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(moduleClass, logger, classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(moduleClass, logger, classFactory, null);
 
         // reality check that a service was found
         

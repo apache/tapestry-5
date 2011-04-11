@@ -41,7 +41,7 @@ public class ModuleImplTest extends IOCInternalTestCase
         InternalRegistry registry = mockInternalRegistry();
         Logger logger = mockLogger();
 
-        ModuleDef moduleDef = new DefaultModuleDefImpl(ModuleImplTestModule.class, logger, null);
+        ModuleDef moduleDef = new DefaultModuleDefImpl(ModuleImplTestModule.class, logger, null, null);
 
         Module module = new ModuleImpl(registry, null, moduleDef, null, null, logger);
 

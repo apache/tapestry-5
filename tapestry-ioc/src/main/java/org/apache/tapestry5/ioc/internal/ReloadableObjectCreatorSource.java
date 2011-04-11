@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,14 +19,18 @@ import java.lang.reflect.Method;
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
 import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.services.UpdateListenerHub;
 
 /**
  * Responsible for creating a {@link ReloadableServiceImplementationObjectCreator} for a service implementation.
  */
+@SuppressWarnings("unchecked")
 public class ReloadableObjectCreatorSource implements ObjectCreatorSource
 {
     private final ClassFactory classFactory;
+
+    private final PlasticProxyFactory proxyFactory;
 
     private final Method bindMethod;
 
@@ -36,10 +40,11 @@ public class ReloadableObjectCreatorSource implements ObjectCreatorSource
 
     private final boolean eagerLoad;
 
-    public ReloadableObjectCreatorSource(ClassFactory classFactory, Method bindMethod, Class serviceInterfaceClass,
-            Class serviceImplementationClass, boolean eagerLoad)
+    public ReloadableObjectCreatorSource(ClassFactory classFactory, PlasticProxyFactory proxyFactory,
+            Method bindMethod, Class serviceInterfaceClass, Class serviceImplementationClass, boolean eagerLoad)
     {
         this.classFactory = classFactory;
+        this.proxyFactory = proxyFactory;
         this.bindMethod = bindMethod;
         this.serviceInterfaceClass = serviceInterfaceClass;
         this.serviceImplementationClass = serviceImplementationClass;
@@ -59,20 +64,21 @@ public class ReloadableObjectCreatorSource implements ObjectCreatorSource
 
     public String getDescription()
     {
-        return String.format("Reloadable %s via %s", serviceImplementationClass.getName(), classFactory
-                .getMethodLocation(bindMethod));
+        return String.format("Reloadable %s via %s", serviceImplementationClass.getName(),
+                classFactory.getMethodLocation(bindMethod));
     }
 
     private Object createReloadableProxy(ServiceBuilderResources resources)
     {
         ReloadableServiceImplementationObjectCreator reloadableCreator = new ReloadableServiceImplementationObjectCreator(
-                resources, classFactory.getClassLoader(), serviceImplementationClass.getName());
+                resources, proxyFactory.getClassLoader(), serviceImplementationClass.getName());
 
         resources.getService(UpdateListenerHub.class).addUpdateListener(reloadableCreator);
 
         if (eagerLoad)
             reloadableCreator.createObject();
 
-        return classFactory.createProxy(serviceInterfaceClass, serviceImplementationClass, reloadableCreator, getDescription());
+        return proxyFactory.createProxy(serviceInterfaceClass, reloadableCreator, serviceImplementationClass,
+                getDescription());
     }
 }
