@@ -41,9 +41,9 @@ public class ModuleImplTest extends IOCInternalTestCase
         InternalRegistry registry = mockInternalRegistry();
         Logger logger = mockLogger();
 
-        ModuleDef moduleDef = new DefaultModuleDefImpl(ModuleImplTestModule.class, logger, null, null);
+        ModuleDef moduleDef = new DefaultModuleDefImpl(ModuleImplTestModule.class, logger, null);
 
-        Module module = new ModuleImpl(registry, null, moduleDef, null, null, logger);
+        Module module = new ModuleImpl(registry, null, moduleDef, null, logger);
 
         replay();
 
@@ -82,7 +82,7 @@ public class ModuleImplTest extends IOCInternalTestCase
 
         replay();
 
-        Module module = new ModuleImpl(registry, null, moduleDef, null, null, logger);
+        Module module = new ModuleImpl(registry, null, moduleDef, null, logger);
 
         Set<DecoratorDef> defs = module.findMatchingDecoratorDefs(serviceDef);
 

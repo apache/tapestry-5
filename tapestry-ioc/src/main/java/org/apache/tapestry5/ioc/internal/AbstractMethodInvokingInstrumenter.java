@@ -1,10 +1,10 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,6 +22,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InjectionResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.slf4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
@@ -30,7 +31,7 @@ import java.util.Map;
 
 /**
  * Based class for service decorators and service advisors that work by invoking a module method.
- *
+ * 
  * @since 5.1.0.0
  */
 public class AbstractMethodInvokingInstrumenter
@@ -41,23 +42,23 @@ public class AbstractMethodInvokingInstrumenter
 
     private final ServiceResources resources;
 
-    private final ClassFactory classFactory;
+    private final PlasticProxyFactory proxyFactory;
 
     protected final Method method;
 
     protected final Class serviceInterface;
 
     protected final String serviceId;
-    
+
     private final Logger logger;
 
-    public AbstractMethodInvokingInstrumenter(
-            ModuleBuilderSource moduleSource, Method method, ServiceResources resources, ClassFactory classFactory)
+    public AbstractMethodInvokingInstrumenter(ModuleBuilderSource moduleSource, Method method,
+            ServiceResources resources, PlasticProxyFactory proxyFactory)
     {
         this.moduleSource = moduleSource;
         this.method = method;
         this.resources = resources;
-        this.classFactory = classFactory;
+        this.proxyFactory = proxyFactory;
 
         serviceId = resources.getServiceId();
 
@@ -74,14 +75,12 @@ public class AbstractMethodInvokingInstrumenter
     @Override
     public String toString()
     {
-        return classFactory.getMethodLocation(method).toString();
+        return proxyFactory.getMethodLocation(method).toString();
     }
 
     private Object getModuleInstance()
     {
-        return InternalUtils.isStatic(method)
-               ? null
-               : moduleSource.getModuleBuilder();
+        return InternalUtils.isStatic(method) ? null : moduleSource.getModuleBuilder();
     }
 
     protected Object invoke(InjectionResources injectionResources)
@@ -94,10 +93,8 @@ public class AbstractMethodInvokingInstrumenter
 
         try
         {
-            Object[] parameters = InternalUtils.calculateParametersForMethod(
-                    method,
-                    resources,
-                    injectionResources, resources.getTracker());
+            Object[] parameters = InternalUtils.calculateParametersForMethod(method, resources, injectionResources,
+                    resources.getTracker());
 
             result = method.invoke(getModuleInstance(), parameters);
         }
@@ -111,11 +108,8 @@ public class AbstractMethodInvokingInstrumenter
         }
 
         if (failure != null)
-            throw new RuntimeException(
-                    String.format("Exception invoking method %s: %s",
-                                  this,
-                                  InternalUtils.toMessage(failure)),
-                    failure);
+            throw new RuntimeException(String.format("Exception invoking method %s: %s", this,
+                    InternalUtils.toMessage(failure)), failure);
 
         return result;
     }

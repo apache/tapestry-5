@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,7 +32,7 @@ import org.apache.tapestry5.ioc.internal.util.InjectionResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.MapInjectionResources;
 import org.apache.tapestry5.ioc.internal.util.WrongConfigurationTypeGuard;
-import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.slf4j.Logger;
 
 public class ContributionDefImpl implements ContributionDef2
@@ -41,20 +41,21 @@ public class ContributionDefImpl implements ContributionDef2
 
     private final Method contributorMethod;
 
-    private final ClassFactory classFactory;
-    
+    private final PlasticProxyFactory proxyFactory;
+
     private final Set<Class> markers;
-    
+
     private final Class serviceInterface;
 
-    private static final Class[] CONFIGURATION_TYPES = new Class[] {Configuration.class, MappedConfiguration.class,
-            OrderedConfiguration.class};
+    private static final Class[] CONFIGURATION_TYPES = new Class[]
+    { Configuration.class, MappedConfiguration.class, OrderedConfiguration.class };
 
-    public ContributionDefImpl(String serviceId, Method contributorMethod, ClassFactory classFactory, Class serviceInterface, Set<Class> markers)
+    public ContributionDefImpl(String serviceId, Method contributorMethod, PlasticProxyFactory proxyFactory,
+            Class serviceInterface, Set<Class> markers)
     {
         this.serviceId = serviceId;
         this.contributorMethod = contributorMethod;
-        this.classFactory = classFactory;
+        this.proxyFactory = proxyFactory;
         this.serviceInterface = serviceInterface;
         this.markers = markers;
     }
@@ -62,7 +63,7 @@ public class ContributionDefImpl implements ContributionDef2
     @Override
     public String toString()
     {
-        return InternalUtils.asString(contributorMethod, classFactory);
+        return InternalUtils.asString(contributorMethod, proxyFactory);
     }
 
     public String getServiceId()
@@ -70,26 +71,25 @@ public class ContributionDefImpl implements ContributionDef2
         return serviceId;
     }
 
-    public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources,
-                           Configuration configuration)
+    public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources, Configuration configuration)
     {
         invokeMethod(moduleSource, resources, Configuration.class, configuration);
     }
 
     public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources,
-                           OrderedConfiguration configuration)
+            OrderedConfiguration configuration)
     {
         invokeMethod(moduleSource, resources, OrderedConfiguration.class, configuration);
     }
 
     public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources,
-                           MappedConfiguration configuration)
+            MappedConfiguration configuration)
     {
         invokeMethod(moduleSource, resources, MappedConfiguration.class, configuration);
     }
 
-    private <T> void invokeMethod(ModuleBuilderSource source, ServiceResources resources,
-                                  Class<T> parameterType, T parameterValue)
+    private <T> void invokeMethod(ModuleBuilderSource source, ServiceResources resources, Class<T> parameterType,
+            T parameterValue)
     {
         Map<Class, Object> resourceMap = CollectionFactory.newMap();
 
@@ -105,23 +105,18 @@ public class ContributionDefImpl implements ContributionDef2
         {
             if (parameterType != t)
             {
-                injectionResources = new DelegatingInjectionResources(
-                        new WrongConfigurationTypeGuard(resources.getServiceId(), t, parameterType),
-                        injectionResources);
+                injectionResources = new DelegatingInjectionResources(new WrongConfigurationTypeGuard(
+                        resources.getServiceId(), t, parameterType), injectionResources);
             }
         }
 
-
         Throwable fail = null;
 
-        Object moduleInstance = InternalUtils.isStatic(contributorMethod) ? null : source
-                .getModuleBuilder();
+        Object moduleInstance = InternalUtils.isStatic(contributorMethod) ? null : source.getModuleBuilder();
 
         try
         {
-            Object[] parameters = InternalUtils.calculateParametersForMethod(
-                    contributorMethod,
-                    resources,
+            Object[] parameters = InternalUtils.calculateParametersForMethod(contributorMethod, resources,
                     injectionResources, resources.getTracker());
 
             contributorMethod.invoke(moduleInstance, parameters);
@@ -136,8 +131,7 @@ public class ContributionDefImpl implements ContributionDef2
         }
 
         if (fail != null)
-            throw new RuntimeException(IOCMessages
-                    .contributionMethodError(contributorMethod, fail), fail);
+            throw new RuntimeException(IOCMessages.contributionMethodError(contributorMethod, fail), fail);
     }
 
     public Set<Class> getMarkers()

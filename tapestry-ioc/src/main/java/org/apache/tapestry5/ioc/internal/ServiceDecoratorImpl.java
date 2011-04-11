@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,16 +14,16 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import java.lang.reflect.Method;
+import java.util.Map;
+
 import org.apache.tapestry5.ioc.ModuleBuilderSource;
 import org.apache.tapestry5.ioc.ServiceDecorator;
 import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InjectionResources;
 import org.apache.tapestry5.ioc.internal.util.MapInjectionResources;
-import org.apache.tapestry5.ioc.services.ClassFactory;
-
-import java.lang.reflect.Method;
-import java.util.Map;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 
 /**
  * A wrapper around a decorator method.
@@ -31,10 +31,10 @@ import java.util.Map;
 public class ServiceDecoratorImpl extends AbstractMethodInvokingInstrumenter implements ServiceDecorator
 {
 
-    public ServiceDecoratorImpl(Method method, ModuleBuilderSource moduleSource,
-                                ServiceResources resources, ClassFactory classFactory)
+    public ServiceDecoratorImpl(Method method, ModuleBuilderSource moduleSource, ServiceResources resources,
+            PlasticProxyFactory proxyFactory)
     {
-        super(moduleSource, method, resources, classFactory);
+        super(moduleSource, method, resources, proxyFactory);
     }
 
     public Object createInterceptor(Object delegate)
@@ -50,14 +50,8 @@ public class ServiceDecoratorImpl extends AbstractMethodInvokingInstrumenter imp
 
         Object result = invoke(injectionResources);
 
-        if (result != null && !serviceInterface.isInstance(result))
-        {
-            throw new RuntimeException(IOCMessages.decoratorReturnedWrongType(
-                    method,
-                    serviceId,
-                    result,
-                    serviceInterface));
-        }
+        if (result != null && !serviceInterface.isInstance(result)) { throw new RuntimeException(
+                IOCMessages.decoratorReturnedWrongType(method, serviceId, result, serviceInterface)); }
 
         return result;
     }

@@ -214,7 +214,7 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
 
     private ContributionDef newContributionDef(String methodName)
     {
-        return new ContributionDefImpl(SERVICE_ID, findMethod(methodName), getClassFactory(), null, null);
+        return new ContributionDefImpl(SERVICE_ID, findMethod(methodName), getProxyFactory(), null, null);
     }
 
     public void contributionPlaceholder1()

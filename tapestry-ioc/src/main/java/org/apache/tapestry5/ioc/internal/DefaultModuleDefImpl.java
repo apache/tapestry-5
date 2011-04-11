@@ -47,7 +47,6 @@ import org.apache.tapestry5.ioc.annotations.Match;
 import org.apache.tapestry5.ioc.annotations.Order;
 import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
 import org.apache.tapestry5.ioc.annotations.Scope;
-import org.apache.tapestry5.ioc.annotations.ServiceId;
 import org.apache.tapestry5.ioc.annotations.Startup;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.ContributionDef2;
@@ -56,7 +55,6 @@ import org.apache.tapestry5.ioc.def.ModuleDef2;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.slf4j.Logger;
 
@@ -91,8 +89,6 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
     private final Logger logger;
 
-    private final ClassFactory classFactory;
-
     private final PlasticProxyFactory proxyFactory;
 
     /**
@@ -125,18 +121,13 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
      *            the class that is responsible for building services, etc.
      * @param logger
      *            based on the class name of the module
-     * @param classFactory
-     *            factory used to create new classes at runtime or locate method line numbers for
-     *            error reporting
      * @param proxyFactory
      *            factory used to create proxy classes at runtime
      */
-    public DefaultModuleDefImpl(Class<?> moduleClass, Logger logger, ClassFactory classFactory,
-            PlasticProxyFactory proxyFactory)
+    public DefaultModuleDefImpl(Class<?> moduleClass, Logger logger, PlasticProxyFactory proxyFactory)
     {
         this.moduleClass = moduleClass;
         this.logger = logger;
-        this.classFactory = classFactory;
         this.proxyFactory = proxyFactory;
 
         Marker annotation = moduleClass.getAnnotation(Marker.class);
@@ -273,7 +264,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
     {
         Set<Class> markers = Collections.emptySet();
 
-        ContributionDef2 def = new ContributionDefImpl("RegistryStartup", method, classFactory, Runnable.class, markers);
+        ContributionDef2 def = new ContributionDefImpl("RegistryStartup", method, proxyFactory, Runnable.class, markers);
 
         contributionDefs.add(def);
     }
@@ -310,7 +301,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
         Set<Class> markers = extractMarkers(method, Contribute.class);
 
-        ContributionDef2 def = new ContributionDefImpl(serviceId, method, classFactory, serviceInterface, markers);
+        ContributionDef2 def = new ContributionDefImpl(serviceId, method, proxyFactory, serviceInterface, markers);
 
         contributionDefs.add(def);
     }
@@ -336,7 +327,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
         Set<Class> markers = extractMarkers(method, Decorate.class);
 
         DecoratorDef def = new DecoratorDefImpl(method, extractPatterns(annotation, decoratorId, method),
-                extractConstraints(method), classFactory, decoratorId, serviceInterface, markers);
+                extractConstraints(method), proxyFactory, decoratorId, serviceInterface, markers);
 
         decoratorDefs.put(decoratorId, def);
     }
@@ -403,7 +394,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
         Set<Class> markers = extractMarkers(method, Advise.class);
 
         AdvisorDef def = new AdvisorDefImpl(method, extractPatterns(annotation, advisorId, method),
-                extractConstraints(method), classFactory, advisorId, serviceInterface, markers);
+                extractConstraints(method), proxyFactory, advisorId, serviceInterface, markers);
 
         advisorDefs.put(advisorId, def);
 
@@ -416,7 +407,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
     private String toString(Method method)
     {
-        return InternalUtils.asString(method, classFactory);
+        return InternalUtils.asString(method, proxyFactory);
     }
 
     private String stripMethodPrefix(Method method, String prefix)

@@ -52,7 +52,6 @@ import org.apache.tapestry5.ioc.internal.util.InjectionResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.MapInjectionResources;
 import org.apache.tapestry5.ioc.services.AspectDecorator;
-import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.services.Status;
 import org.apache.tapestry5.plastic.ClassInstantiator;
@@ -73,8 +72,6 @@ public class ModuleImpl implements Module
     private final ServiceActivityTracker tracker;
 
     private final ModuleDef2 moduleDef;
-
-    private final ClassFactory classFactory;
 
     private final PlasticProxyFactory proxyFactory;
 
@@ -109,13 +106,12 @@ public class ModuleImpl implements Module
             { ObjectStreamException.class.getName() });
 
     public ModuleImpl(InternalRegistry registry, ServiceActivityTracker tracker, ModuleDef moduleDef,
-            ClassFactory classFactory, PlasticProxyFactory proxyFactory, Logger logger)
+            PlasticProxyFactory proxyFactory, Logger logger)
     {
         this.registry = registry;
         this.tracker = tracker;
         this.proxyFactory = proxyFactory;
         this.moduleDef = InternalUtils.toModuleDef2(moduleDef);
-        this.classFactory = classFactory;
         this.logger = logger;
 
         for (String id : moduleDef.getServiceIds())

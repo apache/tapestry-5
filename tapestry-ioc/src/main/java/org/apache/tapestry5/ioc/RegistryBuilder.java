@@ -127,7 +127,7 @@ public final class RegistryBuilder
 
             logger.info("Adding module definition for " + c);
 
-            ModuleDef def = new DefaultModuleDefImpl(c, logger, classFactory, proxyFactory);
+            ModuleDef def = new DefaultModuleDefImpl(c, logger, proxyFactory);
             add(def);
 
             SubModule annotation = ((AnnotatedElement) c).getAnnotation(SubModule.class);

@@ -82,6 +82,7 @@ import org.apache.tapestry5.ioc.internal.InternalServiceDef;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.Coercion;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.plastic.MethodAdvice;
 import org.apache.tapestry5.plastic.MethodInvocation;
 
@@ -107,19 +108,19 @@ public class InternalUtils
             Pattern.CASE_INSENSITIVE);
 
     /**
-     * Converts a method to a user presentable string using a {@link ClassFactory} to obtain a {@link Location} (where
-     * possible). {@link #asString(Method)} is used under the covers, to present a detailed, but not excessive,
+     * Converts a method to a user presentable string using a {@link PlasticProxyFactory} to obtain a {@link Location}
+     * (where possible). {@link #asString(Method)} is used under the covers, to present a detailed, but not excessive,
      * description of the class, method and parameters.
      * 
      * @param method
      *            method to convert to a string
-     * @param classFactory
+     * @param proxyFactory
      *            used to obtain the {@link Location}
      * @return the method formatted for presentation to the user
      */
-    public static String asString(Method method, ClassFactory classFactory)
+    public static String asString(Method method, PlasticProxyFactory proxyFactory)
     {
-        Location location = classFactory.getMethodLocation(method);
+        Location location = proxyFactory.getMethodLocation(method);
 
         return location != null ? location.toString() : asString(method);
     }

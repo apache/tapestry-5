@@ -1,10 +1,10 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,16 +22,16 @@ import org.apache.tapestry5.ioc.ModuleBuilderSource;
 import org.apache.tapestry5.ioc.ServiceAdvisor;
 import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 
 public class AdvisorDefImpl extends AbstractServiceInstrumenter implements AdvisorDef2
 {
     private final String advisorId;
 
-    public AdvisorDefImpl(Method method, String[] patterns, String[] constraints, ClassFactory classFactory,
-                          String advisorId, Class serviceInterface, Set<Class> markers)
+    public AdvisorDefImpl(Method method, String[] patterns, String[] constraints, PlasticProxyFactory proxyFactory,
+            String advisorId, Class serviceInterface, Set<Class> markers)
     {
-        super(method, patterns, constraints, serviceInterface, markers, classFactory);
+        super(method, patterns, constraints, serviceInterface, markers, proxyFactory);
         assert InternalUtils.isNonBlank(advisorId);
 
         this.advisorId = advisorId;
@@ -39,7 +39,7 @@ public class AdvisorDefImpl extends AbstractServiceInstrumenter implements Advis
 
     public ServiceAdvisor createAdvisor(ModuleBuilderSource moduleSource, ServiceResources resources)
     {
-        return new ServiceAdvisorImpl(moduleSource, method, resources, classFactory);
+        return new ServiceAdvisorImpl(moduleSource, method, resources, proxyFactory);
     }
 
     public String getAdvisorId()

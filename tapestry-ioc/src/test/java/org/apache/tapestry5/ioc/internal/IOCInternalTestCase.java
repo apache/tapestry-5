@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,6 +25,7 @@ import org.apache.tapestry5.ioc.RegistryBuilder;
 import org.apache.tapestry5.ioc.ServiceDecorator;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
@@ -36,6 +37,8 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
 
     private static ClassFactory classFactory;
 
+    private static PlasticProxyFactory proxyFactory;
+
     @AfterMethod
     public final void cleanupThread()
     {
@@ -45,6 +48,11 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
     public final ClassFactory getClassFactory()
     {
         return classFactory;
+    }
+
+    public final PlasticProxyFactory getProxyFactory()
+    {
+        return proxyFactory;
     }
 
     public final <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider)
@@ -92,6 +100,8 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
         registry.performRegistryStartup();
 
         classFactory = registry.getService(ClassFactory.class);
+        proxyFactory = registry.getService(PlasticProxyFactory.class);
+
     }
 
     public final void shutdown()
@@ -135,8 +145,8 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
         expect(source.getDescription()).andReturn(description).atLeastOnce();
     }
 
-    protected final <T> void train_getService(InternalRegistry registry, String serviceId,
-            Class<T> serviceInterface, T service)
+    protected final <T> void train_getService(InternalRegistry registry, String serviceId, Class<T> serviceInterface,
+            T service)
     {
         expect(registry.getService(serviceId, serviceInterface)).andReturn(service);
     }

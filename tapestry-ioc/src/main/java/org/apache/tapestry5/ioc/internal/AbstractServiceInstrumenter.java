@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.apache.tapestry5.ioc.IdMatcher;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 
 /**
  * Abstract base class for implementations of {@link org.apache.tapestry5.ioc.ServiceDecorator} (i.e., old school) and
@@ -39,18 +39,19 @@ public class AbstractServiceInstrumenter
 
     protected final String[] constraints;
 
-    protected final ClassFactory classFactory;
-   
+    protected final PlasticProxyFactory proxyFactory;
+
     private final Set<Class> markers;
-   
+
     private final Class serviceInterface;
 
-    public AbstractServiceInstrumenter(Method method, String[] patterns, String[] constraints, Class serviceInterface, Set<Class> markers, ClassFactory classFactory)
+    public AbstractServiceInstrumenter(Method method, String[] patterns, String[] constraints, Class serviceInterface,
+            Set<Class> markers, PlasticProxyFactory proxyFactory)
     {
         this.method = method;
         this.serviceInterface = serviceInterface;
         this.markers = markers;
-        this.classFactory = classFactory;
+        this.proxyFactory = proxyFactory;
 
         assert patterns != null;
 
@@ -70,7 +71,7 @@ public class AbstractServiceInstrumenter
     @Override
     public String toString()
     {
-        return InternalUtils.asString(method, classFactory);
+        return InternalUtils.asString(method, proxyFactory);
     }
 
     public String[] getConstraints()
