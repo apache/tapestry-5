@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.slf4j.Logger;
 
 /**
@@ -48,17 +48,17 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
 
     private final Logger logger;
 
-    private final ClassFactory classFactory;
+    private final PlasticProxyFactory proxyFactory;
 
     public ServiceResourcesImpl(InternalRegistry registry, Module module, ServiceDef serviceDef,
-            ClassFactory classFactory, Logger logger)
+            PlasticProxyFactory proxyFactory, Logger logger)
     {
         super(registry, module);
 
         this.registry = registry;
         this.module = module;
         this.serviceDef = InternalUtils.toInternalServiceDef(serviceDef);
-        this.classFactory = classFactory;
+        this.proxyFactory = proxyFactory;
         this.logger = logger;
     }
 
@@ -152,7 +152,7 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
                 if (constructor == null)
                     throw new RuntimeException(IOCMessages.noAutobuildConstructor(clazz));
 
-                String description = classFactory.getConstructorLocation(constructor).toString();
+                String description = proxyFactory.getConstructorLocation(constructor).toString();
 
                 ObjectCreator creator = new ConstructorServiceCreator(ServiceResourcesImpl.this, description,
                         constructor);

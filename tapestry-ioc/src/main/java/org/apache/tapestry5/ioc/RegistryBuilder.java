@@ -82,7 +82,7 @@ public final class RegistryBuilder
         Logger classFactoryLogger = loggerSource.getLogger(TapestryIOCModule.class.getName() + ".ClassFactory");
 
         classFactory = new ClassFactoryImpl(this.classLoader, classFactoryLogger);
-        proxyFactory = new PlasticProxyFactoryImpl(this.classLoader);
+        proxyFactory = new PlasticProxyFactoryImpl(classFactory, this.classLoader);
 
         add(TapestryIOCModule.class);
     }

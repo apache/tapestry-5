@@ -580,7 +580,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         boolean debug = logger.isDebugEnabled();
 
-        final ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
+        final ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, proxyFactory, logger);
 
         for (final ContributionDef def : contributions)
         {
@@ -615,7 +615,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         boolean debug = logger.isDebugEnabled();
 
-        final ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
+        final ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, proxyFactory, logger);
 
         for (final ContributionDef def : contributions)
         {
@@ -650,7 +650,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         Logger logger = getServiceLogger(serviceId);
         boolean debug = logger.isDebugEnabled();
 
-        final ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
+        final ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, proxyFactory, logger);
 
         for (final ContributionDef def : contributions)
         {
@@ -756,7 +756,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             if (decoratorDefs.isEmpty())
                 continue;
 
-            ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
+            ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, proxyFactory, logger);
 
             for (DecoratorDef decoratorDef : decoratorDefs)
             {
@@ -786,7 +786,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             if (advisorDefs.isEmpty())
                 continue;
 
-            ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
+            ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, proxyFactory, logger);
 
             for (AdvisorDef advisorDef : advisorDefs)
             {
@@ -1084,7 +1084,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     private Object invokeConstructor(final Constructor constructor, final InjectionResources resources)
     {
-        final String description = classFactory.getConstructorLocation(constructor).toString();
+        final String description = proxyFactory.getConstructorLocation(constructor).toString();
 
         return invoke("Invoking " + description, new Invokable<Object>()
         {

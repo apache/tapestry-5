@@ -565,8 +565,8 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
             if (!Modifier.isStatic(bindMethod.getModifiers()))
                 throw new RuntimeException(IOCMessages.bindMethodMustBeStatic(toString(bindMethod)));
 
-            ServiceBinderImpl binder = new ServiceBinderImpl(this, bindMethod, classFactory, proxyFactory,
-                    defaultMarkers, modulePreventsServiceDecoration);
+            ServiceBinderImpl binder = new ServiceBinderImpl(this, bindMethod, proxyFactory, defaultMarkers,
+                    modulePreventsServiceDecoration);
 
             bindMethod.invoke(null, binder);
 

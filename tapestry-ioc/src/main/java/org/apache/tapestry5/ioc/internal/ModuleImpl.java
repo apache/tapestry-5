@@ -289,7 +289,7 @@ public class ModuleImpl implements Module
             {
                 try
                 {
-                    ServiceBuilderResources resources = new ServiceResourcesImpl(registry, module, def, classFactory,
+                    ServiceBuilderResources resources = new ServiceResourcesImpl(registry, module, def, proxyFactory,
                             logger);
 
                     // Build up a stack of operations that will be needed to realize the service

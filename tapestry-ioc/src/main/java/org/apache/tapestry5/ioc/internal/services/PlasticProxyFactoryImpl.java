@@ -1,10 +1,13 @@
 package org.apache.tapestry5.ioc.internal.services;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.plastic.ClassInstantiator;
 import org.apache.tapestry5.plastic.InstructionBuilder;
@@ -19,10 +22,13 @@ import org.apache.tapestry5.plastic.PlasticMethod;
 
 public class PlasticProxyFactoryImpl implements PlasticProxyFactory
 {
+    private final ClassFactory classFactory;
+
     private final PlasticManager manager;
 
-    public PlasticProxyFactoryImpl(ClassLoader parentClassLoader)
+    public PlasticProxyFactoryImpl(ClassFactory classFactory, ClassLoader parentClassLoader)
     {
+        this.classFactory = classFactory;
         manager = new PlasticManager(parentClassLoader);
     }
 
@@ -80,6 +86,16 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
         });
 
         return interfaceType.cast(instantiator.newInstance());
+    }
+
+    public Location getMethodLocation(Method method)
+    {
+        return classFactory.getMethodLocation(method);
+    }
+
+    public Location getConstructorLocation(Constructor constructor)
+    {
+        return classFactory.getConstructorLocation(constructor);
     }
 
 }

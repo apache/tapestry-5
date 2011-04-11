@@ -18,7 +18,6 @@ import java.lang.reflect.Method;
 
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
-import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.services.UpdateListenerHub;
 
@@ -28,8 +27,6 @@ import org.apache.tapestry5.services.UpdateListenerHub;
 @SuppressWarnings("unchecked")
 public class ReloadableObjectCreatorSource implements ObjectCreatorSource
 {
-    private final ClassFactory classFactory;
-
     private final PlasticProxyFactory proxyFactory;
 
     private final Method bindMethod;
@@ -40,10 +37,9 @@ public class ReloadableObjectCreatorSource implements ObjectCreatorSource
 
     private final boolean eagerLoad;
 
-    public ReloadableObjectCreatorSource(ClassFactory classFactory, PlasticProxyFactory proxyFactory,
-            Method bindMethod, Class serviceInterfaceClass, Class serviceImplementationClass, boolean eagerLoad)
+    public ReloadableObjectCreatorSource(PlasticProxyFactory proxyFactory, Method bindMethod,
+            Class serviceInterfaceClass, Class serviceImplementationClass, boolean eagerLoad)
     {
-        this.classFactory = classFactory;
         this.proxyFactory = proxyFactory;
         this.bindMethod = bindMethod;
         this.serviceInterfaceClass = serviceInterfaceClass;
@@ -65,7 +61,7 @@ public class ReloadableObjectCreatorSource implements ObjectCreatorSource
     public String getDescription()
     {
         return String.format("Reloadable %s via %s", serviceImplementationClass.getName(),
-                classFactory.getMethodLocation(bindMethod));
+                proxyFactory.getMethodLocation(bindMethod));
     }
 
     private Object createReloadableProxy(ServiceBuilderResources resources)

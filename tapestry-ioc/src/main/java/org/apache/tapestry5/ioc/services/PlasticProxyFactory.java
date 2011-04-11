@@ -14,13 +14,18 @@
 
 package org.apache.tapestry5.ioc.services;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+
+import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.plastic.ClassInstantiator;
 import org.apache.tapestry5.plastic.PlasticClassTransformation;
 import org.apache.tapestry5.plastic.PlasticClassTransformer;
 
 /**
- * A service used to create proxies of varying types.
+ * A service used to create proxies of varying types. As a secondary concern, manages to identify the
+ * location of methods and constructors, which is important for exception reporting.
  * 
  * @since 5.3.0
  */
@@ -75,4 +80,19 @@ public interface PlasticProxyFactory
      */
     <T> T createProxy(Class<T> interfaceType, ObjectCreator<T> creator, Class<? extends T> annotationSource,
             String description);
+
+    /**
+     * Converts a method to a {@link Location}, which includes information about the source file name and line number.
+     * 
+     * @param method
+     *            to look up
+     * @return the location, or null if the necessary information is not available
+     */
+    Location getMethodLocation(Method method);
+
+    /**
+     * Return a string representation for the constructor (including class and parameters) and (if available) file name
+     * and line number.
+     */
+    Location getConstructorLocation(Constructor constructor);
 }

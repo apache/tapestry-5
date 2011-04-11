@@ -35,7 +35,6 @@ import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
-import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 
 @SuppressWarnings("all")
@@ -47,20 +46,17 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     private final ServiceDefAccumulator accumulator;
 
-    private final ClassFactory classFactory;
-
     private PlasticProxyFactory proxyFactory;
 
     private final Set<Class> defaultMarkers;
 
     private final boolean moduleDefaultPreventDecoration;
 
-    public ServiceBinderImpl(ServiceDefAccumulator accumulator, Method bindMethod, ClassFactory classFactory,
-            PlasticProxyFactory proxyFactory, Set<Class> defaultMarkers, boolean moduleDefaultPreventDecoration)
+    public ServiceBinderImpl(ServiceDefAccumulator accumulator, Method bindMethod, PlasticProxyFactory proxyFactory,
+            Set<Class> defaultMarkers, boolean moduleDefaultPreventDecoration)
     {
         this.accumulator = accumulator;
         this.bindMethod = bindMethod;
-        this.classFactory = classFactory;
         this.proxyFactory = proxyFactory;
         this.defaultMarkers = defaultMarkers;
         this.moduleDefaultPreventDecoration = moduleDefaultPreventDecoration;
@@ -164,16 +160,16 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
             public String getDescription()
             {
-                return String.format("%s via %s", classFactory.getConstructorLocation(constructor),
-                        classFactory.getMethodLocation(bindMethod));
+                return String.format("%s via %s", proxyFactory.getConstructorLocation(constructor),
+                        proxyFactory.getMethodLocation(bindMethod));
             }
         };
     }
 
     private ObjectCreatorSource createReloadableConstructorBasedObjectCreatorSource()
     {
-        return new ReloadableObjectCreatorSource(classFactory, proxyFactory, bindMethod, serviceInterface,
-                serviceImplementation, eagerLoad);
+        return new ReloadableObjectCreatorSource(proxyFactory, bindMethod, serviceInterface, serviceImplementation,
+                eagerLoad);
     }
 
     @SuppressWarnings("unchecked")
@@ -185,7 +181,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
             {
                 String expectedImplName = serviceClass.getName() + "Impl";
 
-                ClassLoader classLoader = classFactory.getClassLoader();
+                ClassLoader classLoader = proxyFactory.getClassLoader();
 
                 Class<T> implementationClass = (Class<T>) classLoader.loadClass(expectedImplName);
 
@@ -230,7 +226,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
             public String getDescription()
             {
-                return classFactory.getMethodLocation(bindMethod).toString();
+                return proxyFactory.getMethodLocation(bindMethod).toString();
             }
         };
 

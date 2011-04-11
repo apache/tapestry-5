@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,11 +21,13 @@ import org.apache.tapestry5.ioc.def.DecoratorDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
+import org.apache.tapestry5.ioc.internal.services.PlasticProxyFactoryImpl;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFab;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.MethodSignature;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
 import static org.easymock.EasyMock.contains;
 import org.slf4j.Logger;
@@ -42,18 +44,22 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 {
     private ClassFactory classFactory;
 
+    private PlasticProxyFactory proxyFactory;
+
     private final OperationTracker tracker = new QuietOperationTracker();
 
     @BeforeClass
     public void setup()
     {
         classFactory = new ClassFactoryImpl();
+        proxyFactory = new PlasticProxyFactoryImpl(classFactory, Thread.currentThread().getContextClassLoader());
     }
 
     @AfterClass
     public void cleanup()
     {
         classFactory = null;
+        proxyFactory = null;
     }
 
     @Test
@@ -123,7 +129,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         verify();
     }
-    
+
     @Test
     public void default_service_id_from_annotation()
     {
@@ -141,7 +147,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         verify();
     }
-    
+
     @Test
     public void default_service_id_from_method_named_annotation()
     {
@@ -159,7 +165,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         verify();
     }
-    
+
     @Test
     public void default_service_id_from_named_annotation()
     {
@@ -177,7 +183,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         verify();
     }
-    
+
     @Test
     public void default_service_id_from_return_type()
     {
@@ -205,8 +211,8 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         Method conflictMethod = ServiceIdConflictMethodModule.class.getMethod("buildFred");
         String conflictMethodString = InternalUtils.asString(conflictMethod, classFactory);
 
-        String expectedMethod = InternalUtils.asString(ServiceIdConflictMethodModule.class
-                .getMethod("buildFred", Object.class), classFactory);
+        String expectedMethod = InternalUtils.asString(
+                ServiceIdConflictMethodModule.class.getMethod("buildFred", Object.class), classFactory);
 
         Logger logger = mockLogger();
 
@@ -222,11 +228,11 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(ex,
-                                  "Service Fred (defined by org.apache.tapestry5.ioc.internal.ServiceIdConflictMethodModule.buildFred()",
-                                  "conflicts with previously defined service defined by org.apache.tapestry5.ioc.internal.ServiceIdConflictMethodModule.buildFred(Object)");
+            assertMessageContains(
+                    ex,
+                    "Service Fred (defined by org.apache.tapestry5.ioc.internal.ServiceIdConflictMethodModule.buildFred()",
+                    "conflicts with previously defined service defined by org.apache.tapestry5.ioc.internal.ServiceIdConflictMethodModule.buildFred(Object)");
         }
-
 
         verify();
     }
@@ -324,7 +330,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     public void ordered_contribution_method()
     {
         attemptConfigurationMethod(OrderedConfigurationModule.class, "Ordered",
-                                   "contributeOrdered(OrderedConfiguration)");
+                "contributeOrdered(OrderedConfiguration)");
     }
 
     @Test
@@ -376,10 +382,10 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(ex.getMessage(),
-                         "Service contribution method org.apache.tapestry5.ioc.internal.TooManyContributionParametersModule.contributeTooMany(Configuration, OrderedConfiguration) contains more than one parameter of type Configuration, OrderedConfiguration, or MappedConfiguration. Exactly one such parameter is required for a service contribution method.");
+            assertEquals(
+                    ex.getMessage(),
+                    "Service contribution method org.apache.tapestry5.ioc.internal.TooManyContributionParametersModule.contributeTooMany(Configuration, OrderedConfiguration) contains more than one parameter of type Configuration, OrderedConfiguration, or MappedConfiguration. Exactly one such parameter is required for a service contribution method.");
         }
-
 
         verify();
     }
@@ -401,8 +407,9 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(ex.getMessage(),
-                         "Service contribution method org.apache.tapestry5.ioc.internal.NoUsableContributionParameterModule.contributeNoParameter(UpcaseService) does not contain a parameter of type Configuration, OrderedConfiguration or MappedConfiguration. This parameter is how the method make contributions into the service's configuration.");
+            assertEquals(
+                    ex.getMessage(),
+                    "Service contribution method org.apache.tapestry5.ioc.internal.NoUsableContributionParameterModule.contributeNoParameter(UpcaseService) does not contain a parameter of type Configuration, OrderedConfiguration or MappedConfiguration. This parameter is how the method make contributions into the service's configuration.");
         }
 
         verify();
@@ -460,8 +467,9 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(ex,
-                                  "Class org.apache.tapestry5.ioc.internal.RunnableServiceImpl (implementation of service \'Runnable\') does not contain any public constructors.");
+            assertMessageContains(
+                    ex,
+                    "Class org.apache.tapestry5.ioc.internal.RunnableServiceImpl (implementation of service \'Runnable\') does not contain any public constructors.");
         }
 
         verify();
@@ -482,8 +490,8 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         catch (RuntimeException ex)
         {
             assertMessageContains(ex,
-                                  "Method org.apache.tapestry5.ioc.internal.NonStaticBindMethodModule.bind(ServiceBinder)",
-                                  "appears to be a service binder method, but is an instance method, not a static method.");
+                    "Method org.apache.tapestry5.ioc.internal.NonStaticBindMethodModule.bind(ServiceBinder)",
+                    "appears to be a service binder method, but is an instance method, not a static method.");
         }
 
         verify();
@@ -501,9 +509,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         // The point is, we're choosing the constructor with the largest number of parameters.
 
-        logger
-                .debug(contains(
-                        "Invoking constructor org.apache.tapestry5.ioc.internal.MultipleConstructorsAutobuildService(StringHolder)"));
+        logger.debug(contains("Invoking constructor org.apache.tapestry5.ioc.internal.MultipleConstructorsAutobuildService(StringHolder)"));
 
         train_getServiceId(resources, "StringHolder");
         train_getLogger(resources, logger);
@@ -513,7 +519,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         replay();
 
         ModuleDef def = new DefaultModuleDefImpl(MutlipleAutobuildServiceConstructorsModule.class, logger,
-                                                 classFactory, null);
+                classFactory, proxyFactory);
 
         ServiceDef sd = def.getServiceDef("StringHolder");
 
@@ -543,10 +549,9 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         }
         catch (RuntimeException ex)
         {
-            assertTrue(ex
-                    .getMessage()
-                    .matches(
-                    "Error invoking service binder method org.apache.tapestry5.ioc.internal.ExceptionInBindMethod.bind\\(ServiceBinder\\) " + "\\(at ExceptionInBindMethod.java:\\d+\\): Really, how often is this going to happen\\?"));
+            assertTrue(ex.getMessage().matches(
+                    "Error invoking service binder method org.apache.tapestry5.ioc.internal.ExceptionInBindMethod.bind\\(ServiceBinder\\) "
+                            + "\\(at ExceptionInBindMethod.java:\\d+\\): Really, how often is this going to happen\\?"));
         }
 
         verify();
@@ -654,7 +659,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         ModuleDef md = new DefaultModuleDefImpl(moduleClass, logger, classFactory, null);
 
         // reality check that a service was found
-        
+
         assertEquals(md.getServiceIds().size(), 1);
 
         verify();
@@ -677,7 +682,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         // make sure we really managed to create a synthetic method
 
         assertTrue(moduleClass.getMethod("size").isSynthetic());
-        
+
         return moduleClass;
     }
 
