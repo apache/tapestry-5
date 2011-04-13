@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.internal.plastic;
 
+import java.lang.reflect.Method;
+
 import org.apache.tapestry5.internal.plastic.asm.Label;
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
@@ -196,6 +198,13 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
     {
         doInvoke(opcode, clazz.getName(), cache.toTypeName(returnType), methodName,
                 PlasticUtils.toTypeNames(argumentTypes));
+    }
+
+    public InstructionBuilder invoke(Method method)
+    {
+        check();
+
+        return invoke(method.getDeclaringClass(), method.getReturnType(), method.getName(), method.getParameterTypes());
     }
 
     public InstructionBuilder invoke(Class clazz, Class returnType, String methodName, Class... argumentTypes)

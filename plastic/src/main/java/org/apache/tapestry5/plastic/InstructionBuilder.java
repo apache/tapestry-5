@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.plastic;
 
+import java.lang.reflect.Method;
+
 /**
  * Simplifies the generation of method instructions for a particular method (or constructor), allowing bytecode to be
  * created with a friendlier API that focuses on Java type names (names as they would appear in Java source) rather than
@@ -85,7 +87,7 @@ public interface InstructionBuilder
 
     @Opcodes("INVOKEVIRTUAL")
     InstructionBuilder invokeVirtual(PlasticMethod method);
-    
+
     /**
      * Invokes a standard virtual method.
      */
@@ -99,6 +101,12 @@ public interface InstructionBuilder
      */
     @Opcodes("INVOKEVIRTUAL, INVOKEINTERFACE")
     InstructionBuilder invoke(Class clazz, Class returnType, String methodName, Class... argumentTypes);
+
+    /**
+     * Automatically invokes an interface or virtual method. Remember to use {@link #invokeConstructor(Class, Class...)}
+     * for constructors and {@link #invokeSpecial(String, MethodDescription)} for private methods.
+     */
+    InstructionBuilder invoke(Method method);
 
     /**
      * Invokes a static method of a class.

@@ -92,10 +92,6 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     private static final MethodSignature SET_SIGNATURE = new MethodSignature(void.class, "set", new Class[]
     { Object.class, Object.class }, null);
 
-    private static final Method RANGE = getMethod(PropertyConduitDelegate.class, "range", int.class, int.class);
-
-    private static final Method INVERT = getMethod(PropertyConduitDelegate.class, "invert", Object.class);
-
     private static final MethodDescription GET_ANNOTATION = getMethodDescription(AnnotationProvider.class,
             "getAnnotation", Class.class);
 
@@ -104,6 +100,15 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
     private static final MethodDescription GET_PROPERTY_NAME = getMethodDescription(InternalPropertyConduit.class,
             "getPropertyName");
+
+    static class DelegateMethods
+    {
+        static final Method INVERT = getMethod(PropertyConduitDelegate.class, "invert", Object.class);
+
+        static final Method RANGE = getMethod(PropertyConduitDelegate.class, "range", int.class, int.class);
+
+        static final Method COERCE = getMethod(PropertyConduitDelegate.class, "coerce", Object.class, Class.class);
+    }
 
     private static final InstructionBuilderCallback RETURN_RESULT = new InstructionBuilderCallback()
     {
@@ -749,7 +754,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             addRootVariable(builder);
 
-            builder.addln("return %s;", createMethodInvocation(builder, node, rootName, 0, RANGE));
+            builder.addln("return %s;", createMethodInvocation(builder, node, rootName, 0, DelegateMethods.RANGE));
 
             builder.end();
 
@@ -775,8 +780,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                     builder.loadThis().getField(delegateField);
 
-                    builder.swap().invoke(PropertyConduitDelegate.class, boolean.class, "invert", new Class[]
-                    { Object.class });
+                    builder.swap().invoke(DelegateMethods.INVERT);
 
                     // When the dust settles, may change invert() to return Boolean, not boolean
 
@@ -883,7 +887,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             addRootVariable(builder);
 
-            builder.addln("return ($w) %s;", createMethodInvocation(builder, node, rootName, 0, INVERT));
+            builder.addln("return ($w) %s;", createMethodInvocation(builder, node, rootName, 0, DelegateMethods.INVERT));
 
             builder.end();
 
@@ -1078,8 +1082,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     else
                     {
                         // Invoke the setter method
-                        builder.invoke(method.getDeclaringClass(), void.class, method.getName(),
-                                method.getParameterTypes());
+                        builder.invoke(method);
                     }
 
                     builder.returnResult();
@@ -1250,8 +1253,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 {
                     builder.loadThis().getField(delegateField);
                     builder.swap().loadTypeConstant(parameterType);
-                    builder.invoke(PropertyConduitDelegate.class, Object.class, "coerce", Object.class, Class.class);
-                    builder.checkcast(parameterType);
+                    builder.invoke(DelegateMethods.COERCE).checkcast(parameterType);
 
                     // TODO: unboxing if primitive
                 }
@@ -1545,8 +1547,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             // TODO: Get subexpressions, use TypeCoercer to get them to right type.
 
-            builder.invoke(method.getDeclaringClass(), method.getReturnType(), method.getName(),
-                    method.getParameterTypes());
+            builder.invoke(method);
 
         }
 

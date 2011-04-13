@@ -94,12 +94,28 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     private static final String CONSTRUCTOR_DESC = String.format("(L%s;L%s;)V", STATIC_CONTEXT_INTERNAL_NAME,
             INSTANCE_CONTEXT_INTERNAL_NAME);
 
+    private static final Method STATIC_CONTEXT_GET_METHOD = toMethod(StaticContext.class, "get", int.class);
+
+    private static final Method COMPUTED_VALUE_GET_METHOD = toMethod(ComputedValue.class, "get", InstanceContext.class);
+
     private static final MethodDescription TO_STRING_METHOD_DESCRIPTION = new MethodDescription(String.class.getName(),
             "toString");
 
     private static String toDesc(String internalName)
     {
         return "L" + internalName + ";";
+    }
+
+    private static Method toMethod(Class declaringClass, String methodName, Class... parameterTypes)
+    {
+        try
+        {
+            return declaringClass.getMethod(methodName, parameterTypes);
+        }
+        catch (Exception ex)
+        {
+            throw new RuntimeException(ex);
+        }
     }
 
     private class PlasticMember implements AnnotationAccess
@@ -631,14 +647,12 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             // Get the ComputedValue out of the StaticContext and onto the stack
 
             constructorBuilder.loadArgument(0).loadConstant(index);
-            constructorBuilder.invoke(StaticContext.class, Object.class, "get", int.class).checkcast(
-                    ComputedValue.class);
+            constructorBuilder.invoke(STATIC_CONTEXT_GET_METHOD).checkcast(ComputedValue.class);
 
             // Add the InstanceContext to the stack
 
             constructorBuilder.loadArgument(1);
-            constructorBuilder.invoke(ComputedValue.class, Object.class, "get", InstanceContext.class).castOrUnbox(
-                    typeName);
+            constructorBuilder.invoke(COMPUTED_VALUE_GET_METHOD).castOrUnbox(typeName);
 
             constructorBuilder.putField(className, node.name, typeName);
         }
@@ -2152,7 +2166,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         constructorBuilder.loadThis();
 
         constructorBuilder.loadArgument(0).loadConstant(index);
-        constructorBuilder.invoke(StaticContext.class, Object.class, "get", int.class);
+        constructorBuilder.invoke(STATIC_CONTEXT_GET_METHOD);
         constructorBuilder.castOrUnbox(fieldType);
 
         constructorBuilder.putField(className, fieldName, fieldType);
