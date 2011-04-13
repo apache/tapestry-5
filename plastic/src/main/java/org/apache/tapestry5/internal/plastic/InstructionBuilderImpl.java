@@ -52,6 +52,33 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         m.put(Condition.NON_ZERO, IFEQ);
     }
 
+    private static final Map<Object, Integer> constantOpcodes = new HashMap<Object, Integer>();
+
+    static
+    {
+        Map<Object, Integer> m = constantOpcodes;
+
+        m.put(Integer.valueOf(-1), ICONST_M1);
+        m.put(Integer.valueOf(0), ICONST_0);
+        m.put(Integer.valueOf(1), ICONST_1);
+        m.put(Integer.valueOf(2), ICONST_2);
+        m.put(Integer.valueOf(3), ICONST_3);
+        m.put(Integer.valueOf(4), ICONST_4);
+        m.put(Integer.valueOf(5), ICONST_5);
+
+        m.put(Long.valueOf(0), LCONST_0);
+        m.put(Long.valueOf(1), LCONST_1);
+
+        m.put(Float.valueOf(0), FCONST_0);
+        m.put(Float.valueOf(1), FCONST_1);
+        m.put(Float.valueOf(2), FCONST_2);
+
+        m.put(Double.valueOf(0), DCONST_0);
+        m.put(Double.valueOf(1), DCONST_1);
+
+        m.put(null, ACONST_NULL);
+    }
+
     protected final InstructionBuilderState state;
 
     protected final MethodVisitor v;
@@ -450,7 +477,12 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
     {
         check();
 
-        v.visitLdcInsn(constant);
+        Integer opcode = constantOpcodes.get(constant);
+
+        if (opcode != null)
+            v.visitInsn(opcode);
+        else
+            v.visitLdcInsn(constant);
 
         return this;
     }

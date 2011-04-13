@@ -300,9 +300,9 @@ public interface InstructionBuilder
      * Loads a constant value
      * 
      * @param constant
-     *            a non-null Integer, Float, Double, Long, String.
+     *            Integer, Float, Double, Long, String or null
      */
-    @Opcodes("LDC")
+    @Opcodes("LDC, ICONST_*, LCONST_*, FCONST_*, DCONST_*, ACONST_NULL")
     InstructionBuilder loadConstant(Object constant);
 
     /**
