@@ -951,6 +951,11 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 {
                     builder.loadThis().loadArgument(0).invokeVirtual(navMethod);
 
+                    // When the navigation method returns null, we do nothing (error checking is inside
+                    // the navigation method).
+
+                    builder.dupe(0).ifNull(RETURN_RESULT, null);
+
                     String typeName = PlasticUtils.toTypeName(GenericsUtils.asClass(info.getType()));
 
                     builder.loadArgument(1).castOrUnbox(typeName);
