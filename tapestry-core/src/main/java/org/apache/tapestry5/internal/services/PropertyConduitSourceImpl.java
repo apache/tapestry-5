@@ -780,8 +780,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 {
                     Class expressionType = buildSubexpression(builder, null, node.getChild(0));
 
-                    if (expressionType.isPrimitive())
-                        builder.boxPrimitive(expressionType.getName());
+                    boxIfPrimitive(builder, expressionType);
 
                     // Now invoke the delegate invert() method
 
@@ -931,8 +930,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                 Class expressionType = buildSubexpression(builder, null, listNode.getChild(i));
 
-                if (expressionType.isPrimitive())
-                    builder.boxPrimitive(expressionType.getName());
+                boxIfPrimitive(builder, expressionType);
 
                 // Add the value to the array, then pop off the returned boolean
                 builder.invoke(ArrayListMethods.ADD).pop();
@@ -1224,7 +1222,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 return;
             }
 
-            plasticClass.introduceMethod(GET).changeImplementation(new InstructionBuilderCallback()
+            plasticClass.introduceMethod(GET, new InstructionBuilderCallback()
             {
                 public void doBuild(InstructionBuilder builder)
                 {
@@ -1232,18 +1230,11 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                     Class termType = evaluateTerm(builder, activeType, node, info);
 
-                    unboxIfPrimitive(builder, termType);
+                    boxIfPrimitive(builder, termType);
 
                     builder.returnResult();
                 }
-
             });
-        }
-
-        private void unboxIfPrimitive(InstructionBuilder builder, Class type)
-        {
-            if (type.isPrimitive())
-                builder.unboxPrimitive(type.getName());
         }
 
         /**
@@ -1875,6 +1866,12 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 return findMethod(Object.class, methodName, parameterCount);
 
             throw new NoSuchMethodException(ServicesMessages.noSuchMethod(activeType, methodName));
+        }
+
+        public void boxIfPrimitive(InstructionBuilder builder, Class termType)
+        {
+            if (termType.isPrimitive())
+                builder.boxPrimitive(termType.getName());
         }
     }
 
