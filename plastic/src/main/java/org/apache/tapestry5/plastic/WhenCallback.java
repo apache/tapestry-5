@@ -15,9 +15,9 @@
 package org.apache.tapestry5.plastic;
 
 /**
- * Used with {@link InstructionBuilder#conditional(Condition, ConditionCallback)}.
+ * Used with {@link InstructionBuilder#when(Condition, WhenCallback)}.
  */
-public interface ConditionCallback
+public interface WhenCallback
 {
     /** Generates code for when the condition is true. */
     void ifTrue(InstructionBuilder builder);

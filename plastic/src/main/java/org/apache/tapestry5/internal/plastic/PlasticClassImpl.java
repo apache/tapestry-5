@@ -43,7 +43,7 @@ import org.apache.tapestry5.plastic.AnnotationAccess;
 import org.apache.tapestry5.plastic.ClassInstantiator;
 import org.apache.tapestry5.plastic.ComputedValue;
 import org.apache.tapestry5.plastic.Condition;
-import org.apache.tapestry5.plastic.ConditionCallback;
+import org.apache.tapestry5.plastic.WhenCallback;
 import org.apache.tapestry5.plastic.FieldConduit;
 import org.apache.tapestry5.plastic.FieldHandle;
 import org.apache.tapestry5.plastic.InstanceContext;
@@ -1311,7 +1311,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                     {
                         builder.invoke(MethodInvocation.class, boolean.class, "didThrowCheckedException");
 
-                        builder.conditional(Condition.NON_ZERO, new InstructionBuilderCallback()
+                        builder.when(Condition.NON_ZERO, new InstructionBuilderCallback()
                         {
                             public void doBuild(InstructionBuilder builder)
                             {

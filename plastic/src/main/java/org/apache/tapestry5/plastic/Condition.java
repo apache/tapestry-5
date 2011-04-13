@@ -15,7 +15,7 @@
 package org.apache.tapestry5.plastic;
 
 /**
- * Condition used with {@link InstructionBuilder#conditional(Condition, ConditionCallback)}.
+ * Condition used with {@link InstructionBuilder#when(Condition, WhenCallback)}.
  */
 public enum Condition
 {

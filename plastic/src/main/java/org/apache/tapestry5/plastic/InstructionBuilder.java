@@ -396,10 +396,10 @@ public interface InstructionBuilder
      * @return this builder
      */
     @Opcodes("IFEQ, etc., GOTO")
-    InstructionBuilder conditional(Condition condition, ConditionCallback callback);
+    InstructionBuilder when(Condition condition, WhenCallback callback);
 
     /**
-     * Simplified version of {@link #conditional(Condition, ConditionCallback)} that
+     * Simplified version of {@link #when(Condition, WhenCallback)} that
      * simply executes the callback code when the condition is true and does nothing
      * if the condition is false (the more general case).
      * <p>
@@ -412,6 +412,6 @@ public interface InstructionBuilder
      * @return
      */
     @Opcodes("IFEQ, etc., GOTO")
-    InstructionBuilder conditional(Condition condition, InstructionBuilderCallback ifTrue);
+    InstructionBuilder when(Condition condition, InstructionBuilderCallback ifTrue);
 
 }

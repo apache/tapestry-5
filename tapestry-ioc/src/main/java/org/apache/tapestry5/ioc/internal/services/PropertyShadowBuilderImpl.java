@@ -24,7 +24,7 @@ import org.apache.tapestry5.ioc.services.PropertyAdapter;
 import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
 import org.apache.tapestry5.plastic.ClassInstantiator;
 import org.apache.tapestry5.plastic.Condition;
-import org.apache.tapestry5.plastic.ConditionCallback;
+import org.apache.tapestry5.plastic.WhenCallback;
 import org.apache.tapestry5.plastic.InstructionBuilder;
 import org.apache.tapestry5.plastic.InstructionBuilderCallback;
 import org.apache.tapestry5.plastic.MethodDescription;
@@ -86,7 +86,7 @@ public class PropertyShadowBuilderImpl implements PropertyShadowBuilder
 
                         // Now add the null check.
 
-                        builder.dupe(0).conditional(Condition.NULL, new InstructionBuilderCallback()
+                        builder.dupe(0).when(Condition.NULL, new InstructionBuilderCallback()
                         {
                             public void doBuild(InstructionBuilder builder)
                             {

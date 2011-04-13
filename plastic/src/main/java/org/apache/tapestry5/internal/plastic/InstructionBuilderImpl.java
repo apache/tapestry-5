@@ -23,7 +23,7 @@ import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 import org.apache.tapestry5.internal.plastic.asm.Type;
 import org.apache.tapestry5.plastic.Condition;
-import org.apache.tapestry5.plastic.ConditionCallback;
+import org.apache.tapestry5.plastic.WhenCallback;
 import org.apache.tapestry5.plastic.InstructionBuilder;
 import org.apache.tapestry5.plastic.InstructionBuilderCallback;
 import org.apache.tapestry5.plastic.MethodDescription;
@@ -579,47 +579,16 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
-    public InstructionBuilder ifZero(InstructionBuilderCallback ifTrue, InstructionBuilderCallback ifFalse)
-    {
-        doConditional(IFEQ, ifTrue, ifFalse);
-
-        return this;
-    }
-
-    public InstructionBuilder ifNull(InstructionBuilderCallback ifTrue, InstructionBuilderCallback ifFalse)
-    {
-        doConditional(IFNULL, ifTrue, ifFalse);
-
-        return this;
-    }
-
-    private void doConditional(int opcode, InstructionBuilderCallback ifTrueCallback,
-            InstructionBuilderCallback ifFalseCallback)
+    public InstructionBuilder when(Condition condition, final InstructionBuilderCallback ifTrue)
     {
         check();
 
-        Label ifTrueLabel = new Label();
-        Label endIfLabel = new Label();
+        assert ifTrue != null;
 
-        // Kind of clumsy code, but it will work.
+        // This is nice for code coverage but could be more efficient, possibly generate
+        // more efficient bytecode, if it talked to the v directly.
 
-        v.visitJumpInsn(opcode, ifTrueLabel);
-
-        new InstructionBuilderImpl(state).doCallback(ifFalseCallback);
-
-        v.visitJumpInsn(GOTO, endIfLabel);
-        v.visitLabel(ifTrueLabel);
-
-        new InstructionBuilderImpl(state).doCallback(ifTrueCallback);
-
-        v.visitLabel(endIfLabel);
-    }
-
-    public InstructionBuilder conditional(Condition condition, final InstructionBuilderCallback ifTrue)
-    {
-        check();
-
-        return conditional(condition, new ConditionCallback()
+        return when(condition, new WhenCallback()
         {
             public void ifTrue(InstructionBuilder builder)
             {
@@ -632,9 +601,12 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         });
     }
 
-    public InstructionBuilder conditional(Condition condition, ConditionCallback callback)
+    public InstructionBuilder when(Condition condition, WhenCallback callback)
     {
         check();
+
+        assert condition != null;
+        assert callback != null;
 
         Label ifFalseLabel = new Label();
         Label endIfLabel = new Label();

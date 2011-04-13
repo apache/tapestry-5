@@ -68,7 +68,7 @@ import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.BodyBuilder;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.plastic.Condition;
-import org.apache.tapestry5.plastic.ConditionCallback;
+import org.apache.tapestry5.plastic.WhenCallback;
 import org.apache.tapestry5.plastic.InstructionBuilder;
 import org.apache.tapestry5.plastic.InstructionBuilderCallback;
 import org.apache.tapestry5.plastic.MethodDescription;
@@ -415,7 +415,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 public void doBuild(InstructionBuilder builder)
                 {
                     builder.loadArgument(0).dupe(0);
-                    builder.conditional(Condition.NULL, new InstructionBuilderCallback()
+                    builder.when(Condition.NULL, new InstructionBuilderCallback()
                     {
                         public void doBuild(InstructionBuilder builder)
                         {
@@ -804,7 +804,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         public void returnResultIfNull(InstructionBuilder builder)
         {
-            builder.dupe(0).conditional(Condition.NULL, new InstructionBuilderCallback()
+            builder.dupe(0).when(Condition.NULL, new InstructionBuilderCallback()
             {
                 public void doBuild(InstructionBuilder builder)
                 {
@@ -1516,7 +1516,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                         createPlasticMethodInvocation(builder, term, method, info);
                     }
 
-                    builder.dupe(0).conditional(Condition.NULL, new InstructionBuilderCallback()
+                    builder.dupe(0).when(Condition.NULL, new InstructionBuilderCallback()
                     {
                         public void doBuild(InstructionBuilder builder)
                         {
