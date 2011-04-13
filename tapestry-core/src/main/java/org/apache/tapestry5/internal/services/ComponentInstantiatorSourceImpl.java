@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,12 +33,14 @@ import org.apache.tapestry5.ioc.internal.services.ClassFactoryClassPool;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry5.ioc.internal.services.CtClassSource;
 import org.apache.tapestry5.ioc.internal.services.CtClassSourceImpl;
+import org.apache.tapestry5.ioc.internal.services.PlasticProxyFactoryImpl;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.UpdateListener;
 import org.slf4j.Logger;
@@ -70,6 +72,8 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     private final Logger logger;
 
     private ClassFactory classFactory;
+
+    private PlasticProxyFactory proxyFactory;
 
     /**
      * Map from class name to Instantiator.
@@ -170,6 +174,8 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
         }
 
         classFactory = new ClassFactoryImpl(loader, classPool, classSource, logger);
+
+        proxyFactory = new PlasticProxyFactoryImpl(classFactory, loader);
 
         classToPriorTransformException.clear();
     }
@@ -357,6 +363,11 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     public ClassFactory getClassFactory()
     {
         return classFactory;
+    }
+
+    public PlasticProxyFactory getProxyFactory()
+    {
+        return proxyFactory;
     }
 
     public CtClassSource getClassSource()

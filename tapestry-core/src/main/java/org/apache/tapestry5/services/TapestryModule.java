@@ -201,6 +201,7 @@ import org.apache.tapestry5.ioc.services.LazyAdvisor;
 import org.apache.tapestry5.ioc.services.MasterObjectProvider;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.PipelineBuilder;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
 import org.apache.tapestry5.ioc.services.StrategyBuilder;
@@ -1591,6 +1592,19 @@ public final class TapestryModule
     public ClassFactory buildComponentClassFactory(ComponentInstantiatorSource source)
     {
         return shadowBuilder.build(source, "classFactory", ClassFactory.class);
+    }
+
+    /**
+     * Returns a {@link PlasticProxyFactory} that can be used to create extra classes around component classes. This
+     * factory will be cleared whenever an underlying component class is discovered to have changed. Use of this
+     * factory implies that your code will become aware of this (if necessary) to discard any cached object (alas,
+     * this currently involves dipping into the internals side to register for the correct notifications). Failure to
+     * properly clean up can result in really nasty PermGen space memory leaks.
+     */
+    @Marker(ComponentLayer.class)
+    public PlasticProxyFactory buildComponentProxyFactory(ComponentInstantiatorSource source)
+    {
+        return shadowBuilder.build(source, "proxyFactory", PlasticProxyFactory.class);
     }
 
     /**
