@@ -632,7 +632,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 case IDENTIFIER:
                 case INVOKE:
 
-                    // So, a this point, we have the navigation method written
+                    // So, at this point, we have the navigation method written
                     // and it covers all but the terminal
                     // de-reference. node is an IDENTIFIER or INVOKE. We're
                     // ready to use the navigation
@@ -672,7 +672,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     return;
 
                 case NOT:
-                    // createPlasticNotOpGetter(node);
+                    createPlasticNotOpGetter(node);
                     createPlasticNoOpSetter();
 
                     conduitPropertyType = boolean.class;
@@ -756,9 +756,96 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             classFab.addMethod(Modifier.PUBLIC, GET_SIGNATURE, builder.toString());
         }
 
-        private void createPlasticNotOpGetter()
+        /**
+         * @param node
+         *            subexpression to invert
+         */
+        private void createPlasticNotOpGetter(final Tree node)
         {
+            // Implement get() as navigate, then do a method invocation based on node
+            // then, then pass (wrapped) result to delegate.invert()
 
+            plasticClass.introduceMethod(GET, new InstructionBuilderCallback()
+            {
+                public void doBuild(InstructionBuilder builder)
+                {
+                    buildSubexpression(builder, rootType, node.getChild(0));
+
+                    // Now invoke the delegate invert() method
+
+                    builder.loadThis().getField(delegateField);
+
+                    builder.swap().invoke(PropertyConduitDelegate.class, boolean.class, "invert", new Class[]
+                    { Object.class });
+
+                    // When the dust settles, may change invert() to return Boolean, not boolean
+
+                    builder.boxPrimitive("boolean").returnResult();
+                }
+            });
+        }
+
+        /**
+         * The first part of any implementation of get() or set(): invoke the navigation method
+         * and if the result is null, return immediately.
+         */
+        private void invokeNavigateMethod(InstructionBuilder builder)
+        {
+            builder.loadThis().loadArgument(0).invokeVirtual(navMethod);
+
+            builder.dupe(0).ifNull(RETURN_RESULT, null);
+        }
+
+        private Class buildSubexpression(InstructionBuilder builder, Class activeType, Tree node)
+        {
+            while (node != null)
+            {
+                switch (node.getType())
+                {
+                    case TRUE:
+
+                        builder.loadConstant(Boolean.TRUE);
+                        activeType = Boolean.class;
+
+                        node = null;
+                        break;
+
+                    case FALSE:
+
+                        builder.loadConstant(Boolean.FALSE);
+                        activeType = Boolean.class;
+
+                        node = null;
+                        break;
+
+                    case IDENTIFIER:
+                    case INVOKE:
+
+                        invokeNavigateMethod(builder);
+
+                        ExpressionTermInfo info = infoForMember(activeType, node);
+
+                        activeType = evaluateTerm(builder, activeType, info);
+                        
+                        node = null;
+
+                        break;
+
+                    case INTEGER:
+                    case DECIMAL:
+                    case STRING:
+                    case DEREF:
+                    case SAFEDEREF:
+                    case LIST:
+                        throw new RuntimeException("Not yet re-implemented.");
+
+                    default:
+                        throw unexpectedNodeType(node, TRUE, FALSE, INTEGER, DECIMAL, STRING, DEREF, SAFEDEREF,
+                                IDENTIFIER, INVOKE, LIST);
+                }
+            }
+
+            return activeType;
         }
 
         private void createNotOpGetter(Tree node, String rootName)
@@ -949,12 +1036,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             {
                 public void doBuild(InstructionBuilder builder)
                 {
-                    builder.loadThis().loadArgument(0).invokeVirtual(navMethod);
-
-                    // When the navigation method returns null, we do nothing (error checking is inside
-                    // the navigation method).
-
-                    builder.dupe(0).ifNull(RETURN_RESULT, null);
+                    invokeNavigateMethod(builder);
 
                     String typeName = PlasticUtils.toTypeName(GenericsUtils.asClass(info.getType()));
 
@@ -1056,9 +1138,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
          */
         private void createPlasticGetter(final Class activeType, final ExpressionTermInfo info)
         {
-            final Method method = info.getReadMethod();
-
-            if (method == null && !info.isField())
+            if (info.getReadMethod() == null && !info.isField())
             {
                 createNoOpMethod(GET, "Expression %s for class %s is write-only.", expression, rootType.getName());
                 return;
@@ -1068,28 +1148,43 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             {
                 public void doBuild(InstructionBuilder builder)
                 {
-                    builder.loadThis().loadArgument(0).invokeVirtual(navMethod);
+                    invokeNavigateMethod(builder);
 
-                    // I.e. due to ?. operator. The navigate method will already have
-                    // checked for nulls if they are not allowed.
+                    evaluateTerm(builder, activeType, info);
 
-                    builder.dupe(0).ifNull(RETURN_RESULT, null);
-
-                    Class termType = GenericsUtils.asClass(info.getType());
-                    String termTypeName = PlasticUtils.toTypeName(termType);
-
-                    if (info.isField())
-                    {
-                        builder.getField(PlasticUtils.toTypeName(activeType), info.getPropertyName(), termTypeName);
-                    }
-                    else
-                    {
-                        invokeNoArgsMethod(builder, method);
-                    }
-
-                    builder.boxPrimitive(termTypeName).returnResult();
+                    builder.returnResult();
                 }
+
             });
+        }
+
+        /**
+         * Extends the builder with the code to evaluate a term (which may
+         * 
+         * @param builder
+         * @param activeType
+         *            current type
+         * @param info
+         *            about the expression term
+         * @return the new active type
+         */
+        public Class evaluateTerm(InstructionBuilder builder, Class activeType, ExpressionTermInfo info)
+        {
+            Class termType = GenericsUtils.asClass(info.getType());
+            String termTypeName = PlasticUtils.toTypeName(termType);
+
+            if (info.isField())
+            {
+                builder.getField(PlasticUtils.toTypeName(activeType), info.getPropertyName(), termTypeName);
+            }
+            else
+            {
+                invokeNoArgsMethod(builder, info.getReadMethod());
+            }
+
+            builder.boxPrimitive(termTypeName);
+
+            return termType;
         }
 
         private void invokeNoArgsMethod(InstructionBuilder builder, Method method)
