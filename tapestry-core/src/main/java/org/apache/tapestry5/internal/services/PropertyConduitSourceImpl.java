@@ -1309,12 +1309,6 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             final Class termClass = GenericsUtils.asClass(termType);
 
-            final Class wrappedType = ClassFabUtils.getWrapperType(termClass);
-
-            String wrapperTypeName = ClassFabUtils.toJavaClassName(wrappedType);
-
-            final String variableName = nextVariableName(wrappedType);
-
             InstructionBuilderCallback callback = new InstructionBuilderCallback()
             {
                 public void doBuild(InstructionBuilder builder)
@@ -1323,14 +1317,14 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     {
                         String typeName = PlasticUtils.toTypeName(termClass);
 
-                        builder.getField(PlasticUtils.toTypeName(info.getField().getDeclaringClass()), info.getField()
-                                .getName(), typeName);
+                        builder.getField(info.getField().getDeclaringClass().getName(), info.getField().getName(),
+                                PlasticUtils.toTypeName(info.getField().getType()));
 
                         builder.unboxPrimitive(typeName);
                     }
                     else
                     {
-                        createPlasticMethodInvocation(term, method);
+                        createPlasticMethodInvocation(builder, term, method, info);
                     }
 
                     builder.dupe(0).ifNull(new InstructionBuilderCallback()
@@ -1350,18 +1344,35 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                                     builder.invokeStatic(PropertyConduitSourceImpl.class, void.class, "nullTerm",
                                             String.class, String.class, Object.class);
+
+                                    // Verifier doesn't realize that the static method throws and exception.
+                                    // Add code, that never executes, to return the null on top of the stack
+
+                                    builder.returnResult();
                             }
                         }
                     }, null);
+
+                    if (info.isCastRequired())
+                    {
+                        builder.checkcast(termClass);
+                    }
                 }
             };
 
             return new PlasticTerm(termType, callback);
         }
 
-        private void createPlasticMethodInvocation(Tree term, Method method)
+        private void createPlasticMethodInvocation(InstructionBuilder builder, Tree node, Method method,
+                ExpressionTermInfo info)
         {
-            // TODO Auto-generated method stub
+            if (method.getParameterTypes().length > 0)
+                throw new RuntimeException("invoking methods with parameters not yet re-implemented");
+
+            // TODO: Get subexpressions, use TypeCoercer to get them to right type.
+
+            builder.invoke(method.getDeclaringClass(), method.getReturnType(), method.getName(),
+                    method.getParameterTypes());
 
         }
 
