@@ -137,59 +137,6 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     private final AnnotationProvider nullAnnotationProvider = new NullAnnotationProvider();
 
     /**
-     * Describes all the gory details of one term (one property or method
-     * invocation) from within the expression.
-     */
-    private interface ExpressionTermInfo extends AnnotationProvider
-    {
-
-        /**
-         * The method to invoke to read the property value, or null.
-         */
-        Method getReadMethod();
-
-        /**
-         * The method to invoke to write the property value, or null. Always
-         * null for method terms (which are inherently
-         * read-only).
-         */
-        Method getWriteMethod();
-
-        /**
-         * The return type of the method, or the type of the property.
-         */
-        Type getType();
-
-        /**
-         * True if an explicit cast to the return type is needed (typically
-         * because of generics).
-         */
-        boolean isCastRequired();
-
-        /**
-         * Returns a user-presentable name identifying the property or method
-         * name.
-         */
-        String getDescription();
-
-        /**
-         * Returns the name of the property, if exists. This is also the name of the public field.
-         */
-        String getPropertyName();
-
-        /**
-         * Returns true if the term is actually a public field.
-         */
-        boolean isField();
-
-        /**
-         * Returns the Field if the term is a public field.
-         */
-        Field getField();
-
-    }
-
-    /**
      * How are null values in intermdiate terms to be handled?
      */
     private enum NullHandling
@@ -203,32 +150,54 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
          * Add code to check for null and short-circuit (i.e., the "?."
          * safe-dereference operator)
          */
-        ALLOW,
-
-        /**
-         * Add no null check at all.
-         */
-        IGNORE
+        ALLOW
     }
 
     /**
      * One term in an expression. Expressions start with some root type and each term advances
      * to a new type.
      */
-    private class PlasticTerm
+    private class Term
     {
         /**
          * The generic type of the term.
          */
         final Type type;
 
+        final Class genericType;
+
+        /** Describes the term, for use in error messages. */
+        final String description;
+
+        final AnnotationProvider annotationProvider;
+
         /** Callback that will implement the term. */
         final InstructionBuilderCallback callback;
 
-        PlasticTerm(Type type, InstructionBuilderCallback callback)
+        Term(Type type, Class genericType, String description, AnnotationProvider annotationProvider,
+                InstructionBuilderCallback callback)
         {
             this.type = type;
+            this.genericType = genericType;
+            this.description = description;
+            this.annotationProvider = annotationProvider;
             this.callback = callback;
+        }
+
+        Term(Type type, String description, AnnotationProvider annotationProvider, InstructionBuilderCallback callback)
+        {
+            this(type, GenericsUtils.asClass(type), description, annotationProvider, callback);
+        }
+
+        Term(Type type, String description, InstructionBuilderCallback callback)
+        {
+            this(type, description, null, callback);
+        }
+
+        /** Returns a clone of this Term with a new callback. */
+        Term withCallback(InstructionBuilderCallback newCallback)
+        {
+            return new Term(type, genericType, description, annotationProvider, newCallback);
         }
     }
 
@@ -379,7 +348,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             while (!isLeaf(node))
             {
-                PlasticTerm term = analyzeDerefNode(activeType, node);
+                Term term = analyzeDerefNode(activeType, node);
 
                 callbacks.add(term.callback);
 
@@ -413,14 +382,19 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 }
             });
 
-            implementAccessors(activeClass, node);
+            implementAccessors(activeType, node);
         }
 
-        private void implementAccessors(Class activeType, Tree node)
+        private void implementAccessors(Type activeType, Tree node)
         {
             switch (node.getType())
             {
                 case IDENTIFIER:
+
+                    implementPropertyAccessors(activeType, node);
+
+                    return;
+
                 case INVOKE:
 
                     // So, at this point, we have the navigation method written
@@ -429,14 +403,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     // ready to use the navigation
                     // method to implement get() and set().
 
-                    ExpressionTermInfo info = infoForMember(activeType, node);
-
-                    implementSetter(activeType, info);
-                    implementGetter(activeType, info, node);
-
-                    conduitPropertyType = GenericsUtils.asClass(info.getType());
-                    conduitPropertyName = info.getPropertyName();
-                    annotationProvider = info;
+                    implementMethodAccessors(activeType, node);
 
                     return;
 
@@ -475,6 +442,160 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             }
         }
 
+        public void implementMethodAccessors(final Type activeType, final Tree invokeNode)
+        {
+            final Term term = buildInvokeTerm(activeType, invokeNode);
+
+            implementNoOpSetter();
+
+            conduitPropertyName = term.description;
+            conduitPropertyType = term.genericType;
+            annotationProvider = term.annotationProvider;
+
+            plasticClass.introduceMethod(GET, new InstructionBuilderCallback()
+            {
+                public void doBuild(InstructionBuilder builder)
+                {
+                    invokeNavigateMethod(builder);
+
+                    term.callback.doBuild(builder);
+
+                    boxIfPrimitive(builder, conduitPropertyType);
+
+                    builder.returnResult();
+                }
+            });
+
+            implementNoOpSetter();
+        }
+
+        public void implementPropertyAccessors(Type activeType, Tree identifierNode)
+        {
+            String propertyName = identifierNode.getText();
+
+            PropertyAdapter adapter = findPropertyAdapter(activeType, propertyName);
+
+            implementGetter(activeType, adapter);
+            implementSetter(activeType, adapter);
+
+            conduitPropertyName = propertyName;
+            annotationProvider = adapter;
+        }
+
+        private void implementSetter(Type activeType, PropertyAdapter adapter)
+        {
+            if (adapter.getWriteMethod() != null)
+            {
+                implementSetter(activeType, adapter.getWriteMethod());
+                return;
+            }
+
+            if (adapter.getField() != null)
+            {
+                implementSetter(activeType, adapter.getField());
+                return;
+            }
+
+            implementNoOpMethod(SET, "Expression %s for class %s is read-only.", expression, rootType.getName());
+        }
+
+        private void implementSetter(Type activeType, final Field field)
+        {
+            plasticClass.introduceMethod(SET, new InstructionBuilderCallback()
+            {
+                public void doBuild(InstructionBuilder builder)
+                {
+                    invokeNavigateMethod(builder);
+
+                    builder.loadArgument(1).castOrUnbox(PlasticUtils.toTypeName(field.getType()));
+
+                    builder.putField(field.getDeclaringClass().getName(), field.getName(), field.getType());
+
+                    builder.returnResult();
+                }
+            });
+        }
+
+        private void implementSetter(Type activeType, final Method writeMethod)
+        {
+            plasticClass.introduceMethod(SET, new InstructionBuilderCallback()
+            {
+                public void doBuild(InstructionBuilder builder)
+                {
+                    invokeNavigateMethod(builder);
+
+                    Class propertyType = writeMethod.getParameterTypes()[0];
+                    String propertyTypeName = PlasticUtils.toTypeName(propertyType);
+
+                    builder.loadArgument(1).castOrUnbox(propertyTypeName);
+
+                    builder.invoke(writeMethod);
+
+                    builder.returnResult();
+                }
+            });
+        }
+
+        private void implementGetter(Type activeType, PropertyAdapter adapter)
+        {
+            if (adapter.getReadMethod() != null)
+            {
+                implementGetter(activeType, adapter.getReadMethod());
+                return;
+            }
+
+            if (adapter.getField() != null)
+            {
+                implementGetter(activeType, adapter.getField());
+                return;
+            }
+
+            implementNoOpMethod(GET, "Expression %d for class %s is write-only.", expression, rootType.getName());
+        }
+
+        private void implementGetter(final Type activeType, final Field field)
+        {
+            plasticClass.introduceMethod(GET, new InstructionBuilderCallback()
+            {
+                public void doBuild(InstructionBuilder builder)
+                {
+                    invokeNavigateMethod(builder);
+
+                    Type actualType = GenericsUtils.extractActualType(activeType, field);
+                    conduitPropertyType = GenericsUtils.asClass(actualType);
+
+                    builder.getField(field.getDeclaringClass().getName(), field.getName(), field.getType());
+
+                    // Cast not necessary here since the return type of get() is Object
+
+                    boxIfPrimitive(builder, field.getType());
+
+                    builder.returnResult();
+                }
+            });
+        }
+
+        private void implementGetter(final Type activeType, final Method readMethod)
+        {
+            plasticClass.introduceMethod(GET, new InstructionBuilderCallback()
+            {
+                public void doBuild(InstructionBuilder builder)
+                {
+                    invokeNavigateMethod(builder);
+
+                    Type actualType = GenericsUtils.extractActualType(activeType, readMethod);
+
+                    invokeMethod(builder, readMethod, null, 0);
+
+                    conduitPropertyType = GenericsUtils.asClass(actualType);
+
+                    boxIfPrimitive(builder, conduitPropertyType);
+
+                    builder.returnResult();
+                }
+            });
+        }
+
         private void implementRangeOpGetter(final Tree rangeNode)
         {
             plasticClass.introduceMethod(GET, new InstructionBuilderCallback()
@@ -505,7 +626,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             {
                 public void doBuild(InstructionBuilder builder)
                 {
-                    Class expressionType = implementNotExpression(builder, node);
+                    Type expressionType = implementNotExpression(builder, node);
 
                     // Yes, we know this will always be the case, for now.
 
@@ -538,8 +659,10 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
          *            defines the expression
          * @return the expression type
          */
-        private Class implementSubexpression(InstructionBuilder builder, Class activeType, Tree node)
+        private Type implementSubexpression(InstructionBuilder builder, Type activeType, Tree node)
         {
+            Term term;
+
             while (node != null)
             {
                 switch (node.getType())
@@ -554,9 +677,11 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                             activeType = rootType;
                         }
 
-                        ExpressionTermInfo info = infoForMember(activeType, node);
+                        term = buildTerm(activeType, node);
 
-                        return evaluateTerm(builder, activeType, node, info);
+                        term.callback.doBuild(builder);
+
+                        return term.type;
 
                     case INTEGER:
 
@@ -586,7 +711,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                             activeType = rootType;
                         }
 
-                        PlasticTerm term = analyzeDerefNode(activeType, node);
+                        term = analyzeDerefNode(activeType, node);
 
                         term.callback.doBuild(builder);
 
@@ -638,7 +763,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             });
         }
 
-        private Class implementListConstructor(InstructionBuilder builder, Tree listNode)
+        private Type implementListConstructor(InstructionBuilder builder, Tree listNode)
         {
             // First, create an empty instance of ArrayList
 
@@ -651,51 +776,15 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             {
                 builder.dupe(); // the ArrayList
 
-                Class expressionType = implementSubexpression(builder, null, listNode.getChild(i));
+                Type expressionType = implementSubexpression(builder, null, listNode.getChild(i));
 
-                boxIfPrimitive(builder, expressionType);
+                boxIfPrimitive(builder, GenericsUtils.asClass(expressionType));
 
                 // Add the value to the array, then pop off the returned boolean
                 builder.invoke(ArrayListMethods.ADD).pop();
             }
 
             return ArrayList.class;
-        }
-
-        private void implementSetter(final Class activeType, final ExpressionTermInfo info)
-        {
-            final Method method = info.getWriteMethod();
-
-            if (method == null && !info.isField())
-            {
-                implementNoOpSetter();
-                return;
-            }
-
-            plasticClass.introduceMethod(SET, new InstructionBuilderCallback()
-            {
-                public void doBuild(InstructionBuilder builder)
-                {
-                    invokeNavigateMethod(builder);
-
-                    String typeName = PlasticUtils.toTypeName(GenericsUtils.asClass(info.getType()));
-
-                    builder.loadArgument(1).castOrUnbox(typeName);
-
-                    if (info.isField())
-                    {
-                        builder.putField(PlasticUtils.toTypeName(activeType), info.getField().getName(), typeName);
-                    }
-                    else
-                    {
-                        // Invoke the setter method
-                        // TODO: unbox to primitive?
-                        builder.invoke(method);
-                    }
-
-                    builder.returnResult();
-                }
-            });
         }
 
         private void implementNoOpSetter()
@@ -714,67 +803,6 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     builder.throwException(RuntimeException.class, message);
                 }
             });
-        }
-
-        /**
-         * Implements the get() method, using the navigate method.
-         * 
-         * @param activeType
-         *            the type containing the property to read (may be the root type for simple
-         *            property expressions)
-         * @param info
-         *            describes the property to read
-         */
-        private void implementGetter(final Class activeType, final ExpressionTermInfo info, final Tree node)
-        {
-            if (info.getReadMethod() == null && !info.isField())
-            {
-                implementNoOpMethod(GET, "Expression %s for class %s is write-only.", expression, rootType.getName());
-                return;
-            }
-
-            plasticClass.introduceMethod(GET, new InstructionBuilderCallback()
-            {
-                public void doBuild(InstructionBuilder builder)
-                {
-                    invokeNavigateMethod(builder);
-
-                    Class termType = evaluateTerm(builder, activeType, node, info);
-
-                    boxIfPrimitive(builder, termType);
-
-                    builder.returnResult();
-                }
-            });
-        }
-
-        /**
-         * Extends the builder with the code to evaluate a term (which may
-         * 
-         * @param builder
-         * @param activeType
-         *            current type
-         * @param termNode
-         *            the parse Tree node for the term (IDENTIFIER or INVOKE)
-         * @param info
-         *            about the expression term
-         * @return the new active type
-         */
-        public Class evaluateTerm(InstructionBuilder builder, Class activeType, Tree termNode, ExpressionTermInfo info)
-        {
-            Class termType = GenericsUtils.asClass(info.getType());
-            String termTypeName = PlasticUtils.toTypeName(termType);
-
-            if (info.isField())
-            {
-                builder.getField(PlasticUtils.toTypeName(activeType), info.getPropertyName(), termTypeName);
-            }
-            else
-            {
-                invokeMethod(builder, info.getReadMethod(), termNode, 1);
-            }
-
-            return termType;
         }
 
         /**
@@ -804,19 +832,16 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             for (int i = 0; i < parameterTypes.length; i++)
             {
-                Class expressionType = implementSubexpression(builder, null, node.getChild(i + childOffset));
+                Type expressionType = implementSubexpression(builder, null, node.getChild(i + childOffset));
 
                 // The value left on the stack is not primitive, and expressionType represents
                 // its real type.
 
                 Class parameterType = parameterTypes[i];
 
-                if (!parameterType.isAssignableFrom(expressionType))
+                if (!parameterType.isAssignableFrom(GenericsUtils.asClass(expressionType)))
                 {
-                    if (expressionType.isPrimitive())
-                    {
-                        builder.boxPrimitive(expressionType.getName());
-                    }
+                    boxIfPrimitive(builder, expressionType);
 
                     builder.loadThis().getField(delegateField);
                     builder.swap().loadTypeConstant(PlasticUtils.toWrapperType(parameterType));
@@ -849,7 +874,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
          * @return a term indicating the type of the expression to this point, and a {@link InstructionBuilderCallback}
          *         to advance the evaluation of the expression form the previous value to the current
          */
-        private PlasticTerm analyzeDerefNode(Type activeType, Tree node)
+        private Term analyzeDerefNode(Type activeType, Tree node)
         {
             // The first child is the term.
 
@@ -860,43 +885,20 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             return buildTerm(activeType, term, allowNull ? NullHandling.ALLOW : NullHandling.FORBID);
         }
 
-        private PlasticTerm buildTerm(Type activeType, final Tree term, final NullHandling nullHandling)
+        private Term buildTerm(Type activeType, Tree term, final NullHandling nullHandling)
         {
             assertNodeType(term, IDENTIFIER, INVOKE);
 
-            // Get info about this property or method.
+            final Term simpleTerm = buildTerm(activeType, term);
 
-            final ExpressionTermInfo info = infoForMember(activeType, term);
+            if (simpleTerm.genericType.isPrimitive())
+                return simpleTerm;
 
-            final Method method = info.getReadMethod();
-            final Class activeClass = GenericsUtils.asClass(activeType);
-
-            if (method == null && !info.isField())
-                throw new RuntimeException(String.format(
-                        "Property '%s' of class %s is not readable (it has no read accessor method).",
-                        info.getDescription(), activeClass.getName()));
-
-            Type termType = info.getType();
-
-            final Class termClass = GenericsUtils.asClass(termType);
-
-            InstructionBuilderCallback callback = new InstructionBuilderCallback()
+            return simpleTerm.withCallback(new InstructionBuilderCallback()
             {
                 public void doBuild(InstructionBuilder builder)
                 {
-                    if (info.isField())
-                    {
-                        String typeName = PlasticUtils.toTypeName(termClass);
-
-                        builder.getField(info.getField().getDeclaringClass().getName(), info.getField().getName(),
-                                PlasticUtils.toTypeName(info.getField().getType()));
-
-                        builder.unboxPrimitive(typeName);
-                    }
-                    else
-                    {
-                        invokeMethod(builder, method, term, 1);
-                    }
+                    simpleTerm.callback.doBuild(builder);
 
                     builder.dupe().when(Condition.NULL, new InstructionBuilderCallback()
                     {
@@ -914,7 +916,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                                 case FORBID:
 
-                                    builder.loadConstant(info.getDescription());
+                                    builder.loadConstant(simpleTerm.description);
                                     builder.loadConstant(expression);
                                     builder.loadArgument(0);
 
@@ -927,15 +929,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                             }
                         }
                     });
-
-                    if (info.isCastRequired())
-                    {
-                        builder.checkcast(termClass);
-                    }
                 }
-            };
-
-            return new PlasticTerm(termType, callback);
+            });
         }
 
         private void assertNodeType(Tree node, int... expected)
@@ -965,21 +960,48 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             return new RuntimeException(message);
         }
 
-        private ExpressionTermInfo infoForMember(Type activeType, Tree node)
+        private Term buildTerm(Type activeType, Tree termNode)
         {
-            if (node.getType() == INVOKE)
-                return infoForInvokeNode(activeType, node);
+            switch (termNode.getType())
+            {
+                case INVOKE:
 
-            return infoForPropertyOrPublicField(activeType, node);
+                    return buildInvokeTerm(activeType, termNode);
+
+                case IDENTIFIER:
+
+                    return buildPropertyAccessTerm(activeType, termNode);
+
+                default:
+                    throw unexpectedNodeType(termNode, INVOKE, IDENTIFIER);
+            }
         }
 
-        private ExpressionTermInfo infoForPropertyOrPublicField(Type activeType, Tree node)
+        private Term buildPropertyAccessTerm(Type activeType, Tree termNode)
         {
-            String propertyName = node.getText();
+            String propertyName = termNode.getText();
 
-            final Class activeClass = GenericsUtils.asClass(activeType);
+            PropertyAdapter adapter = findPropertyAdapter(activeType, propertyName);
+
+            // Prefer the accessor over the field
+
+            if (adapter.getReadMethod() != null) { return buildGetterMethodAccessTerm(activeType, propertyName,
+                    adapter.getReadMethod()); }
+
+            if (adapter.getField() != null) { return buildPublicFieldAccessTerm(activeType, propertyName,
+                    adapter.getField()); }
+
+            throw new RuntimeException(String.format(
+                    "Property '%s' of class %s is not readable (it has no read accessor method).", adapter.getName(),
+                    adapter.getBeanType().getName()));
+        }
+
+        public PropertyAdapter findPropertyAdapter(Type activeType, String propertyName)
+        {
+            Class activeClass = GenericsUtils.asClass(activeType);
+
             ClassPropertyAdapter classAdapter = access.getAdapter(activeClass);
-            final PropertyAdapter adapter = classAdapter.getPropertyAdapter(propertyName);
+            PropertyAdapter adapter = classAdapter.getPropertyAdapter(propertyName);
 
             if (adapter == null)
             {
@@ -989,147 +1011,100 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                         "Class %s does not contain a property (or public field) named '%s'.", className, propertyName),
                         new AvailableValues("Properties (and public fields)", names));
             }
+            return adapter;
+        }
 
-            final Type type;
-            final boolean isCastRequired;
-            if (adapter.getField() != null)
+        private Term buildGetterMethodAccessTerm(final Type activeType, String propertyName, final Method readMethod)
+        {
+            Type returnType = GenericsUtils.extractActualType(activeType, readMethod);
+
+            return new Term(returnType, propertyName, new InstructionBuilderCallback()
             {
-                type = GenericsUtils.extractActualType(activeType, adapter.getField());
-                isCastRequired = !type.equals(adapter.getField().getType());
+                public void doBuild(InstructionBuilder builder)
+                {
+                    invokeMethod(builder, readMethod, null, 0);
+
+                    Type genericType = GenericsUtils.extractActualType(activeType, readMethod);
+
+                    castToGenericType(builder, readMethod.getReturnType(), genericType);
+                }
+            });
+        }
+
+        private Term buildPublicFieldAccessTerm(Type activeType, String propertyName, final Field field)
+        {
+            final Type fieldType = GenericsUtils.extractActualType(activeType, field);
+
+            return new Term(fieldType, propertyName, new InstructionBuilderCallback()
+            {
+                public void doBuild(InstructionBuilder builder)
+                {
+                    Class rawFieldType = field.getType();
+
+                    builder.getField(field.getDeclaringClass().getName(), field.getName(),
+                            PlasticUtils.toTypeName(rawFieldType));
+
+                    castToGenericType(builder, rawFieldType, fieldType);
+                }
+
+            });
+        }
+
+        /**
+         * Casts the results of a field read or method invocation based on generic information.
+         * 
+         * @param builder
+         *            used to add instructions
+         * @param rawType
+         *            the simple type (often Object) of the field (or method return type)
+         * @param genericType
+         *            the generic Type, from which parameterizations can be determined
+         */
+        private void castToGenericType(InstructionBuilder builder, Class rawType, final Type genericType)
+        {
+            if (!genericType.equals(rawType))
+            {
+                Class castType = GenericsUtils.asClass(genericType);
+                builder.checkcast(castType);
             }
-            else if (adapter.getReadMethod() != null)
+        }
+
+        private Term buildInvokeTerm(final Type activeType, final Tree invokeNode)
+        {
+            String methodName = invokeNode.getChild(0).getText();
+
+            int parameterCount = invokeNode.getChildCount() - 1;
+
+            Class activeClass = GenericsUtils.asClass(activeType);
+
+            final Method method = findMethod(activeClass, methodName, parameterCount);
+
+            if (method.getReturnType().equals(void.class))
+                throw new RuntimeException(String.format("Method %s.%s() returns void.", activeClass.getName(),
+                        methodName));
+
+            Type returnType = GenericsUtils.extractActualType(activeType, method);
+
+            return new Term(returnType, new MethodSignature(method).getUniqueId(), new AnnotationProvider()
             {
-                type = GenericsUtils.extractActualType(activeType, adapter.getReadMethod());
-                isCastRequired = !type.equals(adapter.getReadMethod().getReturnType());
-            }
-            else
-            {
-                type = adapter.getType();
-                isCastRequired = adapter.isCastRequired();
-            }
-
-            return new ExpressionTermInfo()
-            {
-                public Method getReadMethod()
-                {
-                    return adapter.getReadMethod();
-                }
-
-                public Method getWriteMethod()
-                {
-                    return adapter.getWriteMethod();
-                }
-
-                public Type getType()
-                {
-                    return type;
-                }
-
-                public boolean isCastRequired()
-                {
-                    return isCastRequired;
-                }
-
-                public String getDescription()
-                {
-                    return adapter.getName();
-                }
-
                 public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
                 {
-                    return adapter.getAnnotation(annotationClass);
+                    return method.getAnnotation(annotationClass);
                 }
-
-                public String getPropertyName()
+            }, new InstructionBuilderCallback()
+            {
+                public void doBuild(InstructionBuilder builder)
                 {
-                    return adapter.getName();
-                }
+                    invokeMethod(builder, method, invokeNode, 1);
 
-                public boolean isField()
-                {
-                    return adapter.isField();
-                }
+                    Type genericType = GenericsUtils.extractActualType(activeType, method);
 
-                public Field getField()
-                {
-                    return adapter.getField();
+                    castToGenericType(builder, method.getReturnType(), genericType);
                 }
-            };
+            });
         }
 
-        private ExpressionTermInfo infoForInvokeNode(Type activeType, Tree node)
-        {
-            String methodName = node.getChild(0).getText();
-
-            int parameterCount = node.getChildCount() - 1;
-
-            final Class activeClass = GenericsUtils.asClass(activeType);
-            try
-            {
-                final Method method = findMethod(activeClass, methodName, parameterCount);
-
-                if (method.getReturnType().equals(void.class))
-                    throw new RuntimeException(String.format("Method %s.%s() returns void.", activeClass.getName(),
-                            methodName));
-
-                final Type genericType = GenericsUtils.extractActualType(activeType, method);
-
-                return new ExpressionTermInfo()
-                {
-                    public Method getReadMethod()
-                    {
-                        return method;
-                    }
-
-                    public Method getWriteMethod()
-                    {
-                        return null;
-                    }
-
-                    public Type getType()
-                    {
-                        return genericType;
-                    }
-
-                    public boolean isCastRequired()
-                    {
-                        return genericType != method.getReturnType();
-                    }
-
-                    public String getDescription()
-                    {
-                        return new MethodSignature(method).getUniqueId();
-                    }
-
-                    public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
-                    {
-                        return method.getAnnotation(annotationClass);
-                    }
-
-                    public String getPropertyName()
-                    {
-                        return null;
-                    }
-
-                    public boolean isField()
-                    {
-                        return false;
-                    }
-
-                    public Field getField()
-                    {
-                        return null;
-                    }
-                };
-            }
-            catch (NoSuchMethodException ex)
-            {
-                throw new RuntimeException(String.format("No public method '%s()' in class %s.", methodName,
-                        activeClass.getName()));
-            }
-        }
-
-        private Method findMethod(Class activeType, String methodName, int parameterCount) throws NoSuchMethodException
+        private Method findMethod(Class activeType, String methodName, int parameterCount)
         {
             for (Method method : activeType.getMethods())
             {
@@ -1143,7 +1118,13 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             if (activeType != Object.class)
                 return findMethod(Object.class, methodName, parameterCount);
 
-            throw new NoSuchMethodException(ServicesMessages.noSuchMethod(activeType, methodName));
+            throw new RuntimeException(String.format("Class %s does not contain a method named '%s()'.", activeType,
+                    methodName));
+        }
+
+        public void boxIfPrimitive(InstructionBuilder builder, Type termType)
+        {
+            boxIfPrimitive(builder, GenericsUtils.asClass(termType));
         }
 
         public void boxIfPrimitive(InstructionBuilder builder, Class termType)
@@ -1154,7 +1135,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         public Class implementNotExpression(InstructionBuilder builder, final Tree notNode)
         {
-            Class expressionType = implementSubexpression(builder, null, notNode.getChild(0));
+            Type expressionType = implementSubexpression(builder, null, notNode.getChild(0));
 
             boxIfPrimitive(builder, expressionType);
 

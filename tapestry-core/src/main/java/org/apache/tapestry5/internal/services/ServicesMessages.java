@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -285,10 +285,6 @@ public class ServicesMessages
         return MESSAGES.format("parameter-binding-must-not-be-empty", parameterName);
     }
 
-    public static String noSuchMethod(Class clazz, String methodName)
-    {
-        return MESSAGES.format("no-such-method", ClassFabUtils.toJavaClassName(clazz), methodName);
-    }
 
     public static String forbidInstantiateComponentClass(String className)
     {
