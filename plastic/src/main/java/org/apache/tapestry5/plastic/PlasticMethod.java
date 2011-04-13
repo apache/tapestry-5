@@ -24,6 +24,9 @@ import java.util.List;
  */
 public interface PlasticMethod extends AnnotationAccess
 {
+    /** Returns the PlasticClass containing this method. */
+    PlasticClass getPlasticClass();
+
     /**
      * Returns a representation of the method's name, return value, argument types, etc.
      */

@@ -18,12 +18,12 @@ package org.apache.tapestry5.plastic;
  * The end result of a class transformation is a ClassInstantiator that can be used to
  * instantiate an instance of the transformed class.
  */
-public interface ClassInstantiator
+public interface ClassInstantiator<T>
 {
     /**
      * Creates and returns a new instance of the transformed class.
      */
-    Object newInstance();
+    T newInstance();
 
     /**
      * Returns a <em>new</em> instantiator that adds the indicated value to the
@@ -38,5 +38,5 @@ public interface ClassInstantiator
      * @throws IllegalStateException
      *             if a value of the given value type has already been stored
      */
-    <T> ClassInstantiator with(Class<T> valueType, T instanceContextValue);
+    <V> ClassInstantiator<T> with(Class<V> valueType, V instanceContextValue);
 }

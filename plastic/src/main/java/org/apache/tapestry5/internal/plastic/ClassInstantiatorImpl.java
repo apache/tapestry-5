@@ -22,11 +22,11 @@ import org.apache.tapestry5.plastic.ClassInstantiator;
 import org.apache.tapestry5.plastic.InstanceContext;
 
 @SuppressWarnings("all")
-public class ClassInstantiatorImpl implements ClassInstantiator, InstanceContext
+public class ClassInstantiatorImpl<T> implements ClassInstantiator<T>, InstanceContext
 {
     private final Class clazz;
 
-    private final Constructor ctor;
+    private final Constructor<T> ctor;
 
     private final StaticContext staticContext;
 
@@ -35,7 +35,7 @@ public class ClassInstantiatorImpl implements ClassInstantiator, InstanceContext
 
     private final Map instanceContextMap;
 
-    ClassInstantiatorImpl(Class clazz, Constructor ctor, StaticContext staticContext)
+    ClassInstantiatorImpl(Class<T> clazz, Constructor ctor, StaticContext staticContext)
     {
         this(clazz, ctor, staticContext, null);
     }
@@ -48,7 +48,7 @@ public class ClassInstantiatorImpl implements ClassInstantiator, InstanceContext
         this.instanceContextMap = instanceContextMap;
     }
 
-    public <T> ClassInstantiator with(Class<T> valueType, T instanceContextValue)
+    public <V> ClassInstantiator<T> with(Class<V> valueType, V instanceContextValue)
     {
         assert valueType != null;
         assert instanceContextValue != null;
@@ -82,7 +82,7 @@ public class ClassInstantiatorImpl implements ClassInstantiator, InstanceContext
         return instanceContextMap == null ? null : valueType.cast(instanceContextMap.get(valueType));
     }
 
-    public Object newInstance()
+    public T newInstance()
     {
         try
         {
@@ -95,7 +95,7 @@ public class ClassInstantiatorImpl implements ClassInstantiator, InstanceContext
         }
     }
 
-    public Class<?> getInstanceType()
+    public Class<T> getInstanceType()
     {
         return clazz;
     }

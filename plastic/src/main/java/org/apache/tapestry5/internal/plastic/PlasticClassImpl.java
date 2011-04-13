@@ -183,6 +183,13 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             return String.format("PlasticMethod[%s in class %s]", description, className);
         }
 
+        public PlasticClass getPlasticClass()
+        {
+            check();
+
+            return PlasticClassImpl.this;
+        }
+
         public MethodDescription getDescription()
         {
             check();
@@ -1769,6 +1776,11 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     {
         check();
 
+        if (Modifier.isAbstract(description.modifiers))
+        {
+            description = description.withModifiers(description.modifiers & ~ACC_ABSTRACT);
+        }
+
         PlasticMethod result = description2method.get(description);
 
         if (result == null)
@@ -1779,7 +1791,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         }
 
         methodNames.add(description.methodName);
-        
+
         // Note that is it not necessary to add the new MethodNode to
         // fieldTransformMethods (the default implementations provided by introduceMethod() do not
         // ever access instance fields) ... unless the caller invokes changeImplementation().
@@ -1787,11 +1799,20 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return result;
     }
 
+    public PlasticMethod introduceMethod(MethodDescription description, InstructionBuilderCallback callback)
+    {
+        check();
+
+        // TODO: optimize this so that a default implementation is not created.
+
+        return introduceMethod(description).changeImplementation(callback);
+    }
+
     public PlasticMethod introduceMethod(Method method)
     {
         check();
 
-        return introduceMethod(new MethodDescription(method).withModifiers(method.getModifiers() & ~Modifier.ABSTRACT));
+        return introduceMethod(new MethodDescription(method));
     }
 
     private void addMethod(MethodNode methodNode)
@@ -1803,9 +1824,9 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
     private PlasticMethod createNewMethod(MethodDescription description)
     {
-        if (Modifier.isAbstract(description.modifiers) || Modifier.isStatic(description.modifiers))
+        if (Modifier.isStatic(description.modifiers))
             throw new IllegalArgumentException(String.format(
-                    "Unable to introduce method '%s' into class %s: introduced methods may not be abstract or static.",
+                    "Unable to introduce method '%s' into class %s: introduced methods may not be static.",
                     description, className));
 
         String desc = nameCache.toDesc(description);
@@ -2215,7 +2236,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         if (!isMethodImplemented(TO_STRING_METHOD_DESCRIPTION))
         {
-            introduceMethod(TO_STRING_METHOD_DESCRIPTION).changeImplementation(new InstructionBuilderCallback()
+            introduceMethod(TO_STRING_METHOD_DESCRIPTION, new InstructionBuilderCallback()
             {
                 public void doBuild(InstructionBuilder builder)
                 {

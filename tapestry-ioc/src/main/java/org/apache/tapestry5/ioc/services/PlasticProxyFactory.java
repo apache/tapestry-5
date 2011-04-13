@@ -47,7 +47,7 @@ public interface PlasticProxyFactory
      *            configures the proxy
      * @return instantiator that can be used to create an instance of the proxy class
      */
-    ClassInstantiator createProxy(Class interfaceType, PlasticClassTransformer callback);
+    <T> ClassInstantiator<T> createProxy(Class<T> interfaceType, PlasticClassTransformer callback);
 
     /**
      * Creates the underlying {@link PlasticClassTransformation} for an interface proxy. This should only be
@@ -58,7 +58,7 @@ public interface PlasticProxyFactory
      *            class proxy will extend from
      * @return transformation from which an instantiator may be created
      */
-    PlasticClassTransformation createProxyTransformation(Class interfaceType);
+    <T> PlasticClassTransformation<T> createProxyTransformation(Class<T> interfaceType);
 
     /**
      * Creates a proxy instance that delegates all methods through a corresponding

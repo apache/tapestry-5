@@ -25,6 +25,7 @@ import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
  * Manages the internal class loaders and other logics necessary to load and transform existing classes,
  * or to create new classes dynamically at runtime.
  */
+@SuppressWarnings("unchecked")
 public class PlasticManager
 {
     private final PlasticClassPool pool;
@@ -92,7 +93,7 @@ public class PlasticManager
      * 
      * @throws ClassNotFoundException
      */
-    PlasticClassTransformation getPlasticClass(String className) throws ClassNotFoundException
+    <T> PlasticClassTransformation<T> getPlasticClass(String className) throws ClassNotFoundException
     {
         assert PlasticInternalUtils.isNonBlank(className);
 
@@ -110,7 +111,7 @@ public class PlasticManager
      * @throws IllegalArgumentException
      *             if the class is not a transformed class
      */
-    public ClassInstantiator getClassInstantiator(String className)
+    public <T> ClassInstantiator<T> getClassInstantiator(String className)
     {
         return pool.getClassInstantiator(className);
     }
@@ -124,7 +125,7 @@ public class PlasticManager
      *            used to configure the new class
      * @return the instantiator, which allows instances of the new class to be created
      */
-    public ClassInstantiator createClass(Class baseClass, PlasticClassTransformer callback)
+    public <T> ClassInstantiator<T> createClass(Class<T> baseClass, PlasticClassTransformer callback)
     {
         assert baseClass != null;
         assert callback != null;
@@ -135,7 +136,7 @@ public class PlasticManager
 
         String name = String.format("$PlasticProxy$%s_%s", baseClass.getSimpleName(), PlasticUtils.nextUID());
 
-        PlasticClassTransformation transformation = pool.createTransformation(baseClass.getName(), name);
+        PlasticClassTransformation<T> transformation = pool.createTransformation(baseClass.getName(), name);
 
         callback.transform(transformation.getPlasticClass());
 
@@ -152,11 +153,11 @@ public class PlasticManager
      * @return the instantiator, which allows instances of the new class to be created
      * @see #createProxyTransformation(Class)
      */
-    public ClassInstantiator createProxy(Class interfaceType, PlasticClassTransformer callback)
+    public <T> ClassInstantiator<T> createProxy(Class<T> interfaceType, PlasticClassTransformer callback)
     {
         assert callback != null;
 
-        PlasticClassTransformation transformation = createProxyTransformation(interfaceType);
+        PlasticClassTransformation<T> transformation = createProxyTransformation(interfaceType);
 
         callback.transform(transformation.getPlasticClass());
 
@@ -172,7 +173,7 @@ public class PlasticManager
      *            class proxy will extend from
      * @return transformation from which an instantiator may be created
      */
-    public PlasticClassTransformation createProxyTransformation(Class interfaceType)
+    public <T> PlasticClassTransformation<T> createProxyTransformation(Class interfaceType)
     {
         assert interfaceType != null;
 
@@ -183,7 +184,7 @@ public class PlasticManager
 
         String name = String.format("$PlasticProxy$%s_%s", interfaceType.getSimpleName(), PlasticUtils.nextUID());
 
-        PlasticClassTransformation result = pool.createTransformation("java.lang.Object", name);
+        PlasticClassTransformation<T> result = pool.createTransformation("java.lang.Object", name);
 
         result.getPlasticClass().introduceInterface(interfaceType);
 

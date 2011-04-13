@@ -83,6 +83,9 @@ public interface InstructionBuilder
     @Opcodes("INVOKEVIRTUAL")
     InstructionBuilder invokeVirtual(String className, String returnType, String methodName, String... argumentTypes);
 
+    @Opcodes("INVOKEVIRTUAL")
+    InstructionBuilder invokeVirtual(PlasticMethod method);
+    
     /**
      * Invokes a standard virtual method.
      */

@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.plastic;
 
-public interface PlasticClassTransformation
+public interface PlasticClassTransformation<T>
 {
     /**
      * Returns the PlasticClass being transformed.
@@ -31,5 +31,5 @@ public interface PlasticClassTransformation
      * The returned ClassInstantiator has an empty {@link InstanceContext} map. Use
      * {@link ClassInstantiator#with(Class, Object)} to create a new ClassInstantiator with new InstanceContext entries.
      */
-    ClassInstantiator createInstantiator();
+    ClassInstantiator<T> createInstantiator();
 }

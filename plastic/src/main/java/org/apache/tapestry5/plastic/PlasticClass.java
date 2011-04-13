@@ -115,6 +115,9 @@ public interface PlasticClass extends AnnotationAccess
      * implemented in a <em>transformed</em> super class, the the default behavior is to invoke that method and return
      * its value. Otherwise, the default behavior is to ignore parameters and return 0, false, or null. Void methods
      * will invoke the super-class implementation (if it exists) and return no value.
+     * <p>
+     * It is allowed for the method description to indicate an abstract method; however the abstract flag will be
+     * removed, and a non-abstract method will be created.
      * 
      * @param description
      *            describes the method name, visibility, return value, etc.
@@ -123,6 +126,23 @@ public interface PlasticClass extends AnnotationAccess
      *             if the method is abstract or static
      */
     PlasticMethod introduceMethod(MethodDescription description);
+
+    /**
+     * Returns an existing method declared in this class, or introduces a new method into this class.
+     * The method is created with default behavior.
+     * <p>
+     * It is allowed for the method description to indicate an abstract method; however the abstract flag will be
+     * removed, and a non-abstract method will be created.
+     * 
+     * @param description
+     *            describes the method name, visibility, return value, etc.
+     * @param callback
+     *            used to create the implementation of the method
+     * @return a new (or previously created) PlasticMethod for the method
+     * @throws IllegalArgumentException
+     *             if the method is abstract or static
+     */
+    PlasticMethod introduceMethod(MethodDescription description, InstructionBuilderCallback callback);
 
     /**
      * A convenience that creates a {@link MethodDescription} from the Method and introduces that. This is often

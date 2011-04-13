@@ -22,6 +22,7 @@ import org.apache.tapestry5.plastic.InstructionBuilder;
 import org.apache.tapestry5.plastic.InstructionBuilderCallback;
 import org.apache.tapestry5.plastic.MethodDescription;
 import org.apache.tapestry5.plastic.PlasticField;
+import org.apache.tapestry5.plastic.PlasticMethod;
 import org.apache.tapestry5.plastic.PlasticUtils;
 import org.apache.tapestry5.plastic.SwitchCallback;
 import org.apache.tapestry5.plastic.TryCatchCallback;
@@ -144,6 +145,18 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         doInvoke(INVOKESPECIAL, containingClassName, description);
 
         return this;
+    }
+
+    public InstructionBuilder invokeVirtual(PlasticMethod method)
+    {
+        check();
+
+        assert method != null;
+
+        MethodDescription description = method.getDescription();
+
+        return invokeVirtual(method.getPlasticClass().getClassName(), description.returnType, description.methodName,
+                description.argumentTypes);
     }
 
     public InstructionBuilder invokeVirtual(String className, String returnType, String methodName,
