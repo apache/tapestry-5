@@ -112,11 +112,11 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         static final Method COERCE = getMethod(PropertyConduitDelegate.class, "coerce", Object.class, Class.class);
     }
 
-    private static final InstructionBuilderCallback RETURN_RESULT = new InstructionBuilderCallback()
+    private static InstructionBuilderCallback RETURN_NULL = new InstructionBuilderCallback()
     {
         public void doBuild(InstructionBuilder builder)
         {
-            builder.returnResult();
+            builder.loadNull().returnResult();
         }
     };
 
@@ -585,8 +585,6 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                         callback.doBuild(builder);
                     }
 
-                    // No need to box, the callbacks for each property ensure that primitives are boxed
-
                     builder.returnResult();
                 }
             });
@@ -775,7 +773,10 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             {
                 public void doBuild(InstructionBuilder builder)
                 {
-                    buildSubexpression(builder, null, node.getChild(0));
+                    Class expressionType = buildSubexpression(builder, null, node.getChild(0));
+
+                    if (expressionType.isPrimitive())
+                        builder.boxPrimitive(expressionType.getName());
 
                     // Now invoke the delegate invert() method
 
@@ -798,18 +799,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         {
             builder.loadThis().loadArgument(0).invokeVirtual(navMethod);
 
-            returnResultIfNull(builder);
-        }
-
-        public void returnResultIfNull(InstructionBuilder builder)
-        {
-            builder.dupe().when(Condition.NULL, new InstructionBuilderCallback()
-            {
-                public void doBuild(InstructionBuilder builder)
-                {
-                    builder.returnResult();
-                }
-            });
+            builder.dupe().when(Condition.NULL, RETURN_NULL);
         }
 
         private Class buildSubexpression(InstructionBuilder builder, Class activeType, Tree node)
@@ -835,16 +825,14 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     case INTEGER:
 
                         builder.loadConstant(new Long(node.getText()));
-                        builder.boxPrimitive("long");
 
-                        return Long.class;
+                        return long.class;
 
                     case DECIMAL:
 
                         builder.loadConstant(new Double(node.getText()));
-                        builder.boxPrimitive("double");
 
-                        return Double.class;
+                        return double.class;
 
                     case STRING:
 
@@ -873,16 +861,11 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                         break;
 
                     case TRUE:
-
-                        builder.loadConstant(1).boxPrimitive("boolean");
-
-                        return Boolean.class;
-
                     case FALSE:
 
-                        builder.loadConstant(0).boxPrimitive("boolean");
+                        builder.loadConstant(node.getType() == TRUE ? 1 : 0);
 
-                        return Boolean.class;
+                        return boolean.class;
 
                     case LIST:
                         throw new RuntimeException("Not yet re-implemented.");
@@ -899,8 +882,6 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         public void invokeGetRootMethod(InstructionBuilder builder)
         {
             builder.loadThis().loadArgument(0).invokeVirtual(getRootMethod);
-
-            returnResultIfNull(builder);
         }
 
         private void createNotOpGetter(Tree node, String rootName)
@@ -1104,6 +1085,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     else
                     {
                         // Invoke the setter method
+                        // TODO: unbox to primitive?
                         builder.invoke(method);
                     }
 
@@ -1204,12 +1186,20 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 {
                     invokeNavigateMethod(builder);
 
-                    evaluateTerm(builder, activeType, node, info);
+                    Class termType = evaluateTerm(builder, activeType, node, info);
+
+                    unboxIfPrimitive(builder, termType);
 
                     builder.returnResult();
                 }
 
             });
+        }
+
+        private void unboxIfPrimitive(InstructionBuilder builder, Class type)
+        {
+            if (type.isPrimitive())
+                builder.unboxPrimitive(type.getName());
         }
 
         /**
@@ -1237,8 +1227,6 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             {
                 invokeMethod(builder, info.getReadMethod(), termNode);
             }
-
-            builder.boxPrimitive(termTypeName);
 
             return termType;
         }
@@ -1530,7 +1518,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     }
                     else
                     {
-                        createPlasticMethodInvocation(builder, term, method, info);
+                        invokeMethod(builder, method, term);
                     }
 
                     builder.dupe().when(Condition.NULL, new InstructionBuilderCallback()
@@ -1539,8 +1527,13 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                         {
                             switch (nullHandling)
                             {
+                                // It is necessary to load a null onto the stack (even if there's already one
+                                // there) because of the verifier. It sees the return when the stack contains an
+                                // intermediate value (along the navigation chain) and thinks the method is
+                                // returning a value of the wrong type.
+
                                 case ALLOW:
-                                    builder.returnResult();
+                                    builder.loadNull().returnResult();
 
                                 case FORBID:
 
@@ -1548,13 +1541,12 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                                     builder.loadConstant(expression);
                                     builder.loadArgument(0);
 
-                                    builder.invokeStatic(PropertyConduitSourceImpl.class, void.class, "nullTerm",
-                                            String.class, String.class, Object.class);
+                                    builder.invokeStatic(PropertyConduitSourceImpl.class, NullPointerException.class,
+                                            "nullTerm", String.class, String.class, Object.class);
+                                    builder.throwException();
 
-                                    // Verifier doesn't realize that the static method throws an exception.
-                                    // Add code, that never executes, to return the null on top of the stack
+                                    break;
 
-                                    builder.returnDefaultValue();
                             }
                         }
                     });
@@ -1567,18 +1559,6 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             };
 
             return new PlasticTerm(termType, callback);
-        }
-
-        private void createPlasticMethodInvocation(InstructionBuilder builder, Tree node, Method method,
-                ExpressionTermInfo info)
-        {
-            if (method.getParameterTypes().length > 0)
-                throw new RuntimeException("invoking methods with parameters not yet re-implemented");
-
-            // TODO: Get subexpressions, use TypeCoercer to get them to right type.
-
-            builder.invoke(method);
-
         }
 
         private GeneratedTerm addAccessForMember(BodyBuilder builder, Type activeType, Tree term,
@@ -2071,11 +2051,11 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     /**
      * May be invoked from fabricated PropertyConduit instances.
      */
-    public static void nullTerm(String term, String expression, Object root)
+    public static NullPointerException nullTerm(String term, String expression, Object root)
     {
         String message = String.format("Property '%s' (within property expression '%s', of %s) is null.", term,
                 expression, root);
 
-        throw new NullPointerException(message);
+        return new NullPointerException(message);
     }
 }
