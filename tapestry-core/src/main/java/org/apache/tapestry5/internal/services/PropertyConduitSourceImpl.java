@@ -873,7 +873,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                         return boolean.class;
 
                     case LIST:
-                        throw new RuntimeException("Not yet re-implemented.");
+
+                        return createPlasticListConstructor(builder, node);
 
                     default:
                         throw unexpectedNodeType(node, TRUE, FALSE, INTEGER, DECIMAL, STRING, DEREF, SAFEDEREF,
@@ -915,7 +916,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             });
         }
 
-        private void createPlasticListConstructor(InstructionBuilder builder, Tree listNode)
+        private Class createPlasticListConstructor(InstructionBuilder builder, Tree listNode)
         {
             // First, create an empty instance of ArrayList
 
@@ -933,8 +934,11 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 if (expressionType.isPrimitive())
                     builder.boxPrimitive(expressionType.getName());
 
-                builder.invoke(ArrayListMethods.ADD);
+                // Add the value to the array, then pop off the returned boolean
+                builder.invoke(ArrayListMethods.ADD).pop();
             }
+
+            return ArrayList.class;
         }
 
         private void createListGetter(Tree node, String rootName)
