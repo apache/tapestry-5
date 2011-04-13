@@ -16,6 +16,8 @@ package org.apache.tapestry5.plastic;
 
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.tapestry5.internal.plastic.PrimitiveType;
+
 /**
  * Utilities for user code making use of Plastic.
  */
@@ -46,7 +48,7 @@ public class PlasticUtils
     {
         if (type.isArray())
             return toTypeName(type.getComponentType()) + "[]";
-    
+
         return type.getName();
     }
 
@@ -54,10 +56,25 @@ public class PlasticUtils
     public static String[] toTypeNames(Class[] types)
     {
         String[] result = new String[types.length];
-    
+
         for (int i = 0; i < result.length; i++)
             result[i] = toTypeName(types[i]);
-    
+
         return result;
+    }
+
+    /**
+     * Gets the wrapper type for a given type (if primitive)
+     * 
+     * @param type
+     *            type to look up
+     * @return the input type for non-primitive type, or corresponding wrapper type (Boolean.class for boolean.class,
+     *         etc.)
+     */
+    public static Class toWrapperType(Class type)
+    {
+        assert type != null;
+
+        return type.isPrimitive() ? PrimitiveType.getByPrimitiveType(type).wrapperType : type;
     }
 }

@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.plastic
 
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
+import org.apache.tapestry5.plastic.PlasticUtils;
 
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -125,5 +126,20 @@ class PlasticUtilsTests extends Specification
         "g" | "G"
 
         "goodbye" | "Goodbye"
+    }
+
+    @Unroll("toWrapperType #primitiveType should be #wrapperType")
+    def "primitive type to wrapper type"() {
+        expect:
+
+        PlasticUtils.toWrapperType (primitiveType) == wrapperType
+        where:
+
+        primitiveType | wrapperType
+
+        String.class | String.class
+        boolean.class | Boolean.class
+        double.class | Double.class
+        int[].class  | int[].class
     }
 }

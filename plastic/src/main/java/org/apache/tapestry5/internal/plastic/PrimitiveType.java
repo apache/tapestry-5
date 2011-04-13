@@ -27,29 +27,31 @@ import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 @SuppressWarnings("rawtypes")
 public enum PrimitiveType implements Opcodes
 {
-    VOID("void", "V", null, null, null, ILOAD, ISTORE, RETURN),
+    VOID("void", "V", void.class, Void.class, null, null, ILOAD, ISTORE, RETURN),
 
-    BOOLEAN("boolean", "Z", Boolean.class, "booleanValue", "getBoolean", ILOAD, ISTORE, IRETURN),
+    BOOLEAN("boolean", "Z", boolean.class, Boolean.class, "booleanValue", "getBoolean", ILOAD, ISTORE, IRETURN),
 
-    CHAR("char", "C", Character.class, "charValue", "getChar", ILOAD, ISTORE, IRETURN),
+    CHAR("char", "C", char.class, Character.class, "charValue", "getChar", ILOAD, ISTORE, IRETURN),
 
-    BYTE("byte", "B", Byte.class, "byteValue", "getByte", ILOAD, ISTORE, IRETURN),
+    BYTE("byte", "B", byte.class, Byte.class, "byteValue", "getByte", ILOAD, ISTORE, IRETURN),
 
-    SHORT("short", "S", Short.class, "shortValue", "getShort", ILOAD, ISTORE, IRETURN),
+    SHORT("short", "S", short.class, Short.class, "shortValue", "getShort", ILOAD, ISTORE, IRETURN),
 
-    INT("int", "I", Integer.class, "intValue", "getInt", ILOAD, ISTORE, IRETURN),
+    INT("int", "I", int.class, Integer.class, "intValue", "getInt", ILOAD, ISTORE, IRETURN),
 
-    FLOAT("float", "F", Float.class, "floatValue", "getFloat", FLOAD, FSTORE, FRETURN),
+    FLOAT("float", "F", float.class, Float.class, "floatValue", "getFloat", FLOAD, FSTORE, FRETURN),
 
-    LONG("long", "J", Long.class, "longValue", "getLong", LLOAD, LSTORE, LRETURN),
+    LONG("long", "J", long.class, Long.class, "longValue", "getLong", LLOAD, LSTORE, LRETURN),
 
-    DOUBLE("double", "D", Double.class, "doubleValue", "getDouble", DLOAD, DSTORE, DRETURN);
+    DOUBLE("double", "D", double.class, Double.class, "doubleValue", "getDouble", DLOAD, DSTORE, DRETURN);
 
     /**
      * @param name
      *            the Java source name for the type
      * @param descriptor
      *            Java descriptor for the type ('Z', 'I', etc.)
+     * @param primitiveType
+     *            TODO
      * @param wrapperType
      *            wrapper type, e.g., java.lang.Integer
      * @param toValueMethodName
@@ -65,11 +67,13 @@ public enum PrimitiveType implements Opcodes
      *            Correct opcode for returning the top value on the stack (IRETURN, LRETURN, FRETURN
      *            or DRETURN)
      */
-    private PrimitiveType(String name, String descriptor, Class wrapperType, String toValueMethodName,
-            String getFromStaticContextMethodName, int loadOpcode, int storeOpcode, int returnOpcode)
+    private PrimitiveType(String name, String descriptor, Class primitiveType, Class wrapperType,
+            String toValueMethodName, String getFromStaticContextMethodName, int loadOpcode, int storeOpcode,
+            int returnOpcode)
     {
         this.name = name;
         this.descriptor = descriptor;
+        this.primitiveType = primitiveType;
         this.wrapperType = wrapperType;
         this.wrapperInternalName = wrapperType == null ? null : PlasticInternalUtils.toInternalName(wrapperType
                 .getName());
@@ -87,12 +91,13 @@ public enum PrimitiveType implements Opcodes
     public final String name, descriptor, wrapperInternalName, valueOfMethodDescriptor, toValueMethodName,
             getFromStaticContextMethodName, toValueMethodDescriptor, getFromStaticContextMethodDescriptor;
 
-    public final Class wrapperType;
+    public final Class primitiveType, wrapperType;
 
     public final int loadOpcode, storeOpcode, returnOpcode;
 
     private static final Map<String, PrimitiveType> BY_NAME = new HashMap<String, PrimitiveType>();
     private static final Map<String, PrimitiveType> BY_DESC = new HashMap<String, PrimitiveType>();
+    private static final Map<Class, PrimitiveType> BY_PRIMITIVE_TYPE = new HashMap<Class, PrimitiveType>();
 
     static
     {
@@ -100,6 +105,7 @@ public enum PrimitiveType implements Opcodes
         {
             BY_NAME.put(type.name, type);
             BY_DESC.put(type.descriptor, type);
+            BY_PRIMITIVE_TYPE.put(type.primitiveType, type);
         }
     }
 
@@ -119,5 +125,10 @@ public enum PrimitiveType implements Opcodes
     public static PrimitiveType getByName(String name)
     {
         return BY_NAME.get(name);
+    }
+
+    public static PrimitiveType getByPrimitiveType(Class primitiveType)
+    {
+        return BY_PRIMITIVE_TYPE.get(primitiveType);
     }
 }
