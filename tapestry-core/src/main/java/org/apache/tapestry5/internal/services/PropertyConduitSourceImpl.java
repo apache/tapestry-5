@@ -641,7 +641,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     ExpressionTermInfo info = infoForMember(activeType, node);
 
                     createPlasticSetter(activeType, info);
-                    createPlasticGetter(activeType, info);
+                    createPlasticGetter(activeType, info, node);
 
                     conduitPropertyType = GenericsUtils.asClass(info.getType());
                     conduitPropertyName = info.getPropertyName();
@@ -769,7 +769,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             {
                 public void doBuild(InstructionBuilder builder)
                 {
-                    buildSubexpression(builder, rootType, node.getChild(0));
+                    buildSubexpression(builder, null, node.getChild(0));
 
                     // Now invoke the delegate invert() method
 
@@ -802,40 +802,62 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             {
                 switch (node.getType())
                 {
-                    case TRUE:
-
-                        builder.loadConstant(Boolean.TRUE);
-                        activeType = Boolean.class;
-
-                        node = null;
-                        break;
-
-                    case FALSE:
-
-                        builder.loadConstant(Boolean.FALSE);
-                        activeType = Boolean.class;
-
-                        node = null;
-                        break;
-
                     case IDENTIFIER:
                     case INVOKE:
 
-                        invokeNavigateMethod(builder);
+                        if (activeType == null)
+                        {
+                            invokeGetRootMethod(builder);
+
+                            activeType = rootType;
+                        }
 
                         ExpressionTermInfo info = infoForMember(activeType, node);
 
-                        activeType = evaluateTerm(builder, activeType, info);
-                        
-                        node = null;
+                        return evaluateTerm(builder, activeType, node, info);
+
+                    case INTEGER:
+
+                        builder.loadConstant(new Long(node.getText()));
+                        builder.boxPrimitive("long");
+
+                        return Long.class;
+
+                    case DECIMAL:
+
+                        builder.loadConstant(new Double(node.getText()));
+                        builder.boxPrimitive("double");
+
+                        return Double.class;
+
+                    case STRING:
+
+                        builder.loadConstant(node.getText());
+
+                        return String.class;
+
+                    case DEREF:
+                    case SAFEDEREF:
+
+                        if (activeType == null)
+                        {
+                            invokeGetRootMethod(builder);
+
+                            activeType = rootType;
+                        }
+
+                        PlasticTerm term = analyzeDerefNode(activeType, node);
+
+                        term.callback.doBuild(builder);
+
+                        activeType = GenericsUtils.asClass(term.type);
+
+                        node = node.getChild(1);
 
                         break;
 
-                    case INTEGER:
-                    case DECIMAL:
-                    case STRING:
-                    case DEREF:
-                    case SAFEDEREF:
+                    case TRUE:
+                    case FALSE:
                     case LIST:
                         throw new RuntimeException("Not yet re-implemented.");
 
@@ -846,6 +868,13 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             }
 
             return activeType;
+        }
+
+        public void invokeGetRootMethod(InstructionBuilder builder)
+        {
+            builder.loadThis().loadArgument(0).invokeVirtual(getRootMethod);
+
+            builder.dupe(0).ifNull(RETURN_RESULT, null);
         }
 
         private void createNotOpGetter(Tree node, String rootName)
@@ -1136,7 +1165,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
          * @param info
          *            describes the property to read
          */
-        private void createPlasticGetter(final Class activeType, final ExpressionTermInfo info)
+        private void createPlasticGetter(final Class activeType, final ExpressionTermInfo info, final Tree node)
         {
             if (info.getReadMethod() == null && !info.isField())
             {
@@ -1150,7 +1179,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 {
                     invokeNavigateMethod(builder);
 
-                    evaluateTerm(builder, activeType, info);
+                    evaluateTerm(builder, activeType, node, info);
 
                     builder.returnResult();
                 }
@@ -1164,11 +1193,13 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
          * @param builder
          * @param activeType
          *            current type
+         * @param termNode
+         *            the parse Tree node for the term (IDENTIFIER or INVOKE)
          * @param info
          *            about the expression term
          * @return the new active type
          */
-        public Class evaluateTerm(InstructionBuilder builder, Class activeType, ExpressionTermInfo info)
+        public Class evaluateTerm(InstructionBuilder builder, Class activeType, Tree termNode, ExpressionTermInfo info)
         {
             Class termType = GenericsUtils.asClass(info.getType());
             String termTypeName = PlasticUtils.toTypeName(termType);
@@ -1179,7 +1210,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             }
             else
             {
-                invokeNoArgsMethod(builder, info.getReadMethod());
+                invokeMethod(builder, info.getReadMethod(), termNode);
             }
 
             builder.boxPrimitive(termTypeName);
@@ -1187,9 +1218,52 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             return termType;
         }
 
-        private void invokeNoArgsMethod(InstructionBuilder builder, Method method)
+        /**
+         * Invokes a method that may take parameters. The children of the invokeNode are subexpressions
+         * to be evaluated, and potentially coerced, so that they may be passed to the method.
+         * 
+         * @param builder
+         * @param method
+         * @param invokeNode
+         */
+        private void invokeMethod(InstructionBuilder builder, Method method, Tree invokeNode)
         {
-            builder.invoke(method.getDeclaringClass(), method.getReturnType(), method.getName());
+            // We start with the target object for the method on top of the stack.
+            // Next, we have to push each method parameter, which may include boxing/deboxing
+            // and coercion. Once the code is in good shape, there's a lot of room to optimize
+            // the bytecode (a bit too much boxing/deboxing occurs, as well as some unnecessary
+            // trips through TypeCoercer). We might also want to have a local variable to store
+            // the root object (result of getRoot()).
+
+            Class[] parameterTypes = method.getParameterTypes();
+
+            for (int i = 0; i < parameterTypes.length; i++)
+            {
+                Class expressionType = buildSubexpression(builder, null, invokeNode.getChild(i + 1));
+
+                // The value left on the stack is not primitive, and expressionType represents
+                // its real type.
+
+                Class parameterType = parameterTypes[i];
+
+                if (!parameterType.isAssignableFrom(expressionType))
+                {
+                    builder.loadThis().getField(delegateField);
+                    builder.swap().loadTypeConstant(parameterType);
+                    builder.invoke(PropertyConduitDelegate.class, Object.class, "coerce", Object.class, Class.class);
+                    builder.checkcast(parameterType);
+
+                    // TODO: unboxing if primitive
+                }
+
+                // And that should leave an object of the correct type on the stack,
+                // ready for the method invocation.
+            }
+
+            // Now the target object and all parameters are in place.
+
+            builder.invoke(method.getDeclaringClass(), method.getReturnType(), method.getName(),
+                    method.getParameterTypes());
         }
 
         private void createGetter(MethodSignature navigateMethod, Tree node, ExpressionTermInfo info)
