@@ -307,11 +307,18 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     builder.loadConstant(conduitPropertyName).returnResult();
                 }
             });
+
+            if (conduitPropertyType == null)
+                throw new RuntimeException("Conduit property type is null for " + rootType + " " + expression);
+
+            final PlasticField propertyTypeField = plasticClass.introduceField(Class.class, "propertyType").inject(
+                    conduitPropertyType);
+
             plasticClass.introduceMethod(ConduitMethods.GET_PROPERTY_TYPE, new InstructionBuilderCallback()
             {
                 public void doBuild(InstructionBuilder builder)
                 {
-                    builder.loadTypeConstant(conduitPropertyType).returnResult();
+                    builder.loadThis().getField(propertyTypeField).returnResult();
                 }
             });
 
@@ -492,11 +499,12 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             PropertyAdapter adapter = findPropertyAdapter(activeType, propertyName);
 
-            implementGetter(activeType, adapter);
-            implementSetter(activeType, adapter);
-
+            conduitPropertyType = adapter.getType();
             conduitPropertyName = propertyName;
             annotationProvider = adapter;
+
+            implementGetter(activeType, adapter);
+            implementSetter(activeType, adapter);
         }
 
         private void implementSetter(Type activeType, PropertyAdapter adapter)
@@ -513,7 +521,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 return;
             }
 
-            implementNoOpMethod(ConduitMethods.SET, "Expression %s for class %s is read-only.", expression,
+            implementNoOpMethod(ConduitMethods.SET, "Expression '%s' for class %s is read-only.", expression,
                     rootType.getName());
         }
 
@@ -568,7 +576,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 return;
             }
 
-            implementNoOpMethod(ConduitMethods.GET, "Expression %d for class %s is write-only.", expression,
+            implementNoOpMethod(ConduitMethods.GET, "Expression '%s' for class %s is write-only.", expression,
                     rootType.getName());
         }
 
@@ -579,9 +587,6 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 public void doBuild(InstructionBuilder builder)
                 {
                     invokeNavigateMethod(builder);
-
-                    Type actualType = GenericsUtils.extractActualType(activeType, field);
-                    conduitPropertyType = GenericsUtils.asClass(actualType);
 
                     builder.getField(field.getDeclaringClass().getName(), field.getName(), field.getType());
 
@@ -605,8 +610,6 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     Type actualType = GenericsUtils.extractActualType(activeType, readMethod);
 
                     invokeMethod(builder, readMethod, null, 0);
-
-                    conduitPropertyType = GenericsUtils.asClass(actualType);
 
                     boxIfPrimitive(builder, conduitPropertyType);
 
@@ -1126,20 +1129,29 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         private Method findMethod(Class activeType, String methodName, int parameterCount)
         {
-            for (Method method : activeType.getMethods())
+            Class searchType = activeType;
+
+            while (true)
             {
 
-                if (method.getParameterTypes().length == parameterCount
-                        && method.getName().equalsIgnoreCase(methodName))
-                    return method;
+                for (Method method : searchType.getMethods())
+                {
+                    if (method.getParameterTypes().length == parameterCount
+                            && method.getName().equalsIgnoreCase(methodName))
+                        return method;
+                }
+
+                // TAP5-330
+                if (searchType != Object.class)
+                {
+                    searchType = Object.class;
+                }
+                else
+                {
+                    throw new RuntimeException(String.format("Class %s does not contain a public method named '%s()'.",
+                            activeType.getName(), methodName));
+                }
             }
-
-            // TAP5-330
-            if (activeType != Object.class)
-                return findMethod(Object.class, methodName, parameterCount);
-
-            throw new RuntimeException(String.format("Class %s does not contain a method named '%s()'.", activeType,
-                    methodName));
         }
 
         public void boxIfPrimitive(InstructionBuilder builder, Type termType)

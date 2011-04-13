@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -266,7 +266,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         catch (RuntimeException ex)
         {
             assertMessageContains(ex,
-                    "No public method \'isThatRealBlood()\' in class org.apache.tapestry5.internal.bindings.TargetBean");
+                    "Class org.apache.tapestry5.internal.bindings.TargetBean does not contain a public method named 'isThatRealBlood()'");
         }
 
         verify();
@@ -290,8 +290,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(ex,
-                    "No public method \'isThatRealBlood()\' in class org.apache.tapestry5.internal.bindings.StringHolder");
+            assertMessageContains(ex, "StringHolder", "does not contain a public method", "isThatRealBlood()");
         }
 
         verify();
@@ -478,7 +477,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         catch (TapestryException ex)
         {
             assertEquals(ex.getMessage(),
-                    "Expression writeOnly for class org.apache.tapestry5.internal.bindings.TargetBean is write-only.");
+                    "Expression 'writeOnly' for class org.apache.tapestry5.internal.bindings.TargetBean is write-only.");
             assertEquals(ex.getLocation(), l);
         }
 
