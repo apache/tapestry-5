@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,40 +14,34 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.services.*;
-import org.apache.tapestry5.ioc.util.BodyBuilder;
-import org.apache.tapestry5.ioc.util.StrategyRegistry;
-
-import java.lang.reflect.Modifier;
+import java.lang.reflect.Method;
 import java.util.Map;
+
+import org.apache.tapestry5.ioc.services.Builtin;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
+import org.apache.tapestry5.ioc.services.StrategyBuilder;
+import org.apache.tapestry5.ioc.util.StrategyRegistry;
+import org.apache.tapestry5.plastic.ClassInstantiator;
+import org.apache.tapestry5.plastic.InstructionBuilder;
+import org.apache.tapestry5.plastic.InstructionBuilderCallback;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticClassTransformer;
+import org.apache.tapestry5.plastic.PlasticField;
+import org.apache.tapestry5.plastic.PlasticUtils;
 
 public class StrategyBuilderImpl implements StrategyBuilder
 {
-    private final ClassFactory classFactory;
+    private final PlasticProxyFactory proxyFactory;
 
-    public StrategyBuilderImpl(@Builtin ClassFactory classFactory)
+    public StrategyBuilderImpl(@Builtin
+    PlasticProxyFactory proxyFactory)
     {
-        this.classFactory = classFactory;
+        this.proxyFactory = proxyFactory;
     }
 
     public <S> S build(StrategyRegistry<S> registry)
     {
-        Class<S> interfaceClass = registry.getAdapterType();
-
-        // TODO: Could cache the implClass by interfaceClass ...
-
-        Class implClass = createImplClass(interfaceClass);
-
-        try
-        {
-            Object raw = implClass.getConstructors()[0].newInstance(registry);
-
-            return interfaceClass.cast(raw);
-        }
-        catch (Exception ex)
-        {
-            throw new RuntimeException(ex);
-        }
+        return createProxy(registry.getAdapterType(), registry);
     }
 
     public <S> S build(Class<S> adapterType, Map<Class, S> registrations)
@@ -57,44 +51,49 @@ public class StrategyBuilderImpl implements StrategyBuilder
         return build(registry);
     }
 
-    private Class createImplClass(Class interfaceClass)
+    private <S> S createProxy(final Class<S> interfaceType, final StrategyRegistry<S> registry)
     {
-        ClassFab cf = classFactory.newClass(interfaceClass);
-
-        String interfaceClassName = interfaceClass.getName();
-
-        cf.addField("_registry", Modifier.PRIVATE | Modifier.FINAL, StrategyRegistry.class);
-        cf.addConstructor(new Class[]
-                {StrategyRegistry.class}, null, "_registry = $1;");
-
-        BodyBuilder builder = new BodyBuilder();
-
-        MethodIterator mi = new MethodIterator(interfaceClass);
-
-        while (mi.hasNext())
+        ClassInstantiator instantiator = proxyFactory.createProxy(interfaceType, new PlasticClassTransformer()
         {
-            MethodSignature sig = mi.next();
+            public void transform(PlasticClass plasticClass)
+            {
+                final PlasticField registryField = plasticClass.introduceField(StrategyRegistry.class, "registry")
+                        .inject(registry);
 
-            // TODO: Checks for methods that don't have at least one parameter, or don't have a
-            // compatible 1st parameter. Currently, we'll get a Javassist exception.
+                for (final Method method : interfaceType.getMethods())
+                {
+                    plasticClass.introduceMethod(method).changeImplementation(new InstructionBuilderCallback()
+                    {
+                        public void doBuild(InstructionBuilder builder)
+                        {
+                            Class returnType = method.getReturnType();
 
-            builder.clear();
-            builder.begin();
+                            builder.loadThis().getField(registryField);
 
-            builder.addln("Object selector = $1;");
-            builder.addln(
-                    "%s adapter = (%<s) _registry.getByInstance(selector);",
-                    interfaceClassName);
-            builder.addln("return ($r) adapter.%s($$);", sig.getName());
+                            // Argument 0 is the selector used to find the adapter and should be an object reference,
+                            // not a primitive.
 
-            builder.end();
+                            builder.loadArgument(0);
 
-            cf.addMethod(Modifier.PUBLIC, sig, builder.toString());
-        }
+                            // Use the StrategyRegistry to get the adapter to re-invoke the method on
+                            builder.invoke(StrategyRegistry.class, Object.class, "getByInstance", Object.class)
+                                    .checkcast(interfaceType);
 
-        if (!mi.getToString())
-            cf.addToString(String.format("<Strategy for %s>", interfaceClassName));
+                            // That leaves the correct adapter on top of the stack. Get the
+                            // selector and the rest of the arguments in place and invoke the method.
 
-        return cf.createClass();
+                            builder.loadArguments().invoke(interfaceType, returnType, method.getName(),
+                                    method.getParameterTypes());
+
+                            builder.returnResult();
+                        }
+                    });
+                }
+
+                plasticClass.addToString(String.format("<Strategy for %s>", interfaceType.getName()));
+            }
+        });
+
+        return interfaceType.cast(instantiator.newInstance());
     }
 }
