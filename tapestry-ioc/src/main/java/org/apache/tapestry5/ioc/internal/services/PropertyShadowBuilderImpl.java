@@ -86,7 +86,7 @@ public class PropertyShadowBuilderImpl implements PropertyShadowBuilder
 
                         // Now add the null check.
 
-                        builder.dupe(0).when(Condition.NULL, new InstructionBuilderCallback()
+                        builder.dupe().when(Condition.NULL, new InstructionBuilderCallback()
                         {
                             public void doBuild(InstructionBuilder builder)
                             {

@@ -1282,7 +1282,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
             InstructionBuilder builder = newBuilder(description, advisedMethodNode);
 
-            builder.newInstance(invocationClassName).dupe(0);
+            builder.newInstance(invocationClassName).dupe();
 
             // Now load up the parameters to the constructor
 
@@ -1303,7 +1303,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             {
                 public void doBuild(InstructionBuilder builder)
                 {
-                    builder.dupe(0).storeVariable("invocation");
+                    builder.dupe().storeVariable("invocation");
 
                     builder.invoke(AbstractMethodInvocation.class, MethodInvocation.class, "proceed");
 

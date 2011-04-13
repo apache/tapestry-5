@@ -419,6 +419,15 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    public InstructionBuilder dupe()
+    {
+        check();
+
+        v.visitInsn(DUP);
+
+        return this;
+    }
+
     public InstructionBuilder pop()
     {
         check();
@@ -487,10 +496,10 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
     {
         check();
 
-        newInstance(className);
-        dupe(0);
-        loadConstant(message);
+        newInstance(className).dupe().loadConstant(message);
+
         invokeConstructor(className, "java.lang.String");
+
         v.visitInsn(ATHROW);
 
         return this;

@@ -263,7 +263,7 @@ public interface InstructionBuilder
     InstructionBuilder invokeConstructor(Class clazz, Class... argumentTypes);
 
     /**
-     * Duplicates the top` object on the stack, placing the result at some depth.
+     * Duplicates the top object on the stack, placing the result at some depth.
      * 
      * @param depth
      *            0 (DUP), 1 (DUP_X1) or 2 (DUP_X2)
@@ -271,6 +271,14 @@ public interface InstructionBuilder
      */
     @Opcodes("DUP, DUP_X1, DUP_X2")
     InstructionBuilder dupe(int depth);
+
+    /**
+     * Duplicates the top object on the stack. Commonly used with {@link #when(Condition, WhenCallback)}.
+     * 
+     * @see #dupe(int)
+     */
+    @Opcodes("DUP")
+    InstructionBuilder dupe();
 
     /**
      * Discards the top value on the stack. Assumes the value is a single word value: an object reference, or a small

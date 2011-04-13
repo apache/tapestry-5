@@ -414,8 +414,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             {
                 public void doBuild(InstructionBuilder builder)
                 {
-                    builder.loadArgument(0).dupe(0);
-                    builder.when(Condition.NULL, new InstructionBuilderCallback()
+                    builder.loadArgument(0).dupe().when(Condition.NULL, new InstructionBuilderCallback()
                     {
                         public void doBuild(InstructionBuilder builder)
                         {
@@ -804,7 +803,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         public void returnResultIfNull(InstructionBuilder builder)
         {
-            builder.dupe(0).when(Condition.NULL, new InstructionBuilderCallback()
+            builder.dupe().when(Condition.NULL, new InstructionBuilderCallback()
             {
                 public void doBuild(InstructionBuilder builder)
                 {
@@ -1516,7 +1515,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                         createPlasticMethodInvocation(builder, term, method, info);
                     }
 
-                    builder.dupe(0).when(Condition.NULL, new InstructionBuilderCallback()
+                    builder.dupe().when(Condition.NULL, new InstructionBuilderCallback()
                     {
                         public void doBuild(InstructionBuilder builder)
                         {
