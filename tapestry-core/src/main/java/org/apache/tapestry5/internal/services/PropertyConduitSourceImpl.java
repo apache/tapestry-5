@@ -1345,10 +1345,10 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                                     builder.invokeStatic(PropertyConduitSourceImpl.class, void.class, "nullTerm",
                                             String.class, String.class, Object.class);
 
-                                    // Verifier doesn't realize that the static method throws and exception.
+                                    // Verifier doesn't realize that the static method throws an exception.
                                     // Add code, that never executes, to return the null on top of the stack
 
-                                    builder.returnResult();
+                                    builder.returnDefaultValue();
                             }
                         }
                     }, null);
