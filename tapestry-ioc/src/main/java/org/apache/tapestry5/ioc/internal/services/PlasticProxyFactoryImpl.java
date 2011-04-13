@@ -51,7 +51,7 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
         return manager.getClassLoader();
     }
 
-    public ClassInstantiator createProxy(Class interfaceType, PlasticClassTransformer callback)
+    public <T> ClassInstantiator<T> createProxy(Class<T> interfaceType, PlasticClassTransformer callback)
     {
         return manager.createProxy(interfaceType, callback);
     }
@@ -67,7 +67,7 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
         assert creator != null;
         assert InternalUtils.isNonBlank(description);
 
-        ClassInstantiator instantiator = createProxy(interfaceType, new PlasticClassTransformer()
+        ClassInstantiator<T> instantiator = createProxy(interfaceType, new PlasticClassTransformer()
         {
             public void transform(PlasticClass plasticClass)
             {

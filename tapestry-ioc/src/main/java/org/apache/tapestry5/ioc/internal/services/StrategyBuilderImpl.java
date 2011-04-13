@@ -24,10 +24,10 @@ import org.apache.tapestry5.ioc.util.StrategyRegistry;
 import org.apache.tapestry5.plastic.ClassInstantiator;
 import org.apache.tapestry5.plastic.InstructionBuilder;
 import org.apache.tapestry5.plastic.InstructionBuilderCallback;
+import org.apache.tapestry5.plastic.MethodDescription;
 import org.apache.tapestry5.plastic.PlasticClass;
 import org.apache.tapestry5.plastic.PlasticClassTransformer;
 import org.apache.tapestry5.plastic.PlasticField;
-import org.apache.tapestry5.plastic.PlasticUtils;
 
 public class StrategyBuilderImpl implements StrategyBuilder
 {
@@ -62,7 +62,7 @@ public class StrategyBuilderImpl implements StrategyBuilder
 
                 for (final Method method : interfaceType.getMethods())
                 {
-                    plasticClass.introduceMethod(method).changeImplementation(new InstructionBuilderCallback()
+                    plasticClass.introduceMethod(new MethodDescription(method), new InstructionBuilderCallback()
                     {
                         public void doBuild(InstructionBuilder builder)
                         {

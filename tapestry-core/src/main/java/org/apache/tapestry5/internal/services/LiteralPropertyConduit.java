@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,13 +14,14 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.internal.InternalPropertyConduit;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 
 /**
  * A PropertyConduit for a literal value in an expression, such as a number, or "true", "false" or "null".
  */
-public class LiteralPropertyConduit extends BasePropertyConduit
+public class LiteralPropertyConduit extends PropertyConduitDelegate implements InternalPropertyConduit
 {
     private final Object value;
 
@@ -28,7 +29,7 @@ public class LiteralPropertyConduit extends BasePropertyConduit
                                   TypeCoercer typeCoercer,
                                   Object value)
     {
-        super(propertyType, null, annotationProvider, description, typeCoercer);
+        super(propertyType, null, annotationProvider, typeCoercer);
 
         this.value = value;
     }

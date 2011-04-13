@@ -1,10 +1,10 @@
-// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,40 +23,31 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 
 /**
- * Base class for {@link org.apache.tapestry5.PropertyConduit} instances created by the {@link
- * org.apache.tapestry5.services.PropertyConduitSource}.
+ * Base class for {@link org.apache.tapestry5.PropertyConduit} instances created by the
+ * {@link org.apache.tapestry5.services.PropertyConduitSource}.
  */
 @SuppressWarnings("all")
-public abstract class BasePropertyConduit implements InternalPropertyConduit
+public class PropertyConduitDelegate
 {
     private final Class propertyType;
-    
+
     private final String propertyName;
 
     private final AnnotationProvider annotationProvider;
 
-    private final String description;
-
     private final TypeCoercer typeCoercer;
 
-    public BasePropertyConduit(Class propertyType, String propertyName, AnnotationProvider annotationProvider, String description,
-                               TypeCoercer typeCoercer)
+    public PropertyConduitDelegate(Class propertyType, String propertyName, AnnotationProvider annotationProvider,
+            TypeCoercer typeCoercer)
     {
         assert propertyType != null;
         assert annotationProvider != null;
         assert typeCoercer != null;
-        assert InternalUtils.isNonBlank(description);
+
         this.propertyType = propertyType;
         this.propertyName = propertyName;
         this.annotationProvider = annotationProvider;
-        this.description = description;
         this.typeCoercer = typeCoercer;
-    }
-
-    @Override
-    public final String toString()
-    {
-        return description;
     }
 
     public final <T extends Annotation> T getAnnotation(Class<T> annotationClass)

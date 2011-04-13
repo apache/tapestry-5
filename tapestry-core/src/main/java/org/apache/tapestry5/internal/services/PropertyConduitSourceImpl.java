@@ -14,26 +14,20 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.antlr.runtime.ANTLRInputStream;
-import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.tree.Tree;
-import org.apache.tapestry5.PropertyConduit;
-import org.apache.tapestry5.internal.antlr.PropertyExpressionLexer;
-import org.apache.tapestry5.internal.antlr.PropertyExpressionParser;
-import org.apache.tapestry5.internal.util.IntegerRange;
-import org.apache.tapestry5.internal.util.MultiKey;
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.internal.NullAnnotationProvider;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.GenericsUtils;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.*;
-import org.apache.tapestry5.ioc.util.AvailableValues;
-import org.apache.tapestry5.ioc.util.BodyBuilder;
-import org.apache.tapestry5.ioc.util.UnknownValueException;
-import org.apache.tapestry5.services.ComponentLayer;
-import org.apache.tapestry5.services.InvalidationListener;
-import org.apache.tapestry5.services.PropertyConduitSource;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.DECIMAL;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.DEREF;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.FALSE;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.IDENTIFIER;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.INTEGER;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.INVOKE;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.LIST;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.NOT;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.NULL;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.RANGEOP;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.SAFEDEREF;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.STRING;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.THIS;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.TRUE;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -47,31 +41,97 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.*;
+import org.antlr.runtime.ANTLRInputStream;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.tree.Tree;
+import org.apache.tapestry5.PropertyConduit;
+import org.apache.tapestry5.internal.InternalPropertyConduit;
+import org.apache.tapestry5.internal.antlr.PropertyExpressionLexer;
+import org.apache.tapestry5.internal.antlr.PropertyExpressionParser;
+import org.apache.tapestry5.internal.util.IntegerRange;
+import org.apache.tapestry5.internal.util.MultiKey;
+import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.internal.NullAnnotationProvider;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.GenericsUtils;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.ClassFab;
+import org.apache.tapestry5.ioc.services.ClassFabUtils;
+import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
+import org.apache.tapestry5.ioc.services.MethodSignature;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
+import org.apache.tapestry5.ioc.services.PropertyAccess;
+import org.apache.tapestry5.ioc.services.PropertyAdapter;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.ioc.util.AvailableValues;
+import org.apache.tapestry5.ioc.util.BodyBuilder;
+import org.apache.tapestry5.ioc.util.UnknownValueException;
+import org.apache.tapestry5.plastic.InstructionBuilder;
+import org.apache.tapestry5.plastic.InstructionBuilderCallback;
+import org.apache.tapestry5.plastic.MethodDescription;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticClassTransformer;
+import org.apache.tapestry5.plastic.PlasticField;
+import org.apache.tapestry5.plastic.PlasticMethod;
+import org.apache.tapestry5.plastic.PlasticUtils;
+import org.apache.tapestry5.services.ComponentLayer;
+import org.apache.tapestry5.services.InvalidationListener;
+import org.apache.tapestry5.services.PropertyConduitSource;
 
 public class PropertyConduitSourceImpl implements PropertyConduitSource, InvalidationListener
 {
+    private static final MethodDescription GET = getMethodDescription(PropertyConduit.class, "get", Object.class);
+
+    private static final MethodDescription SET = getMethodDescription(PropertyConduit.class, "set", Object.class,
+            Object.class);
+
     private static final MethodSignature GET_SIGNATURE = new MethodSignature(Object.class, "get", new Class[]
     { Object.class }, null);
 
     private static final MethodSignature SET_SIGNATURE = new MethodSignature(void.class, "set", new Class[]
     { Object.class, Object.class }, null);
 
-    private static final Method RANGE;
+    private static final Method RANGE = getMethod(PropertyConduitDelegate.class, "range", int.class, int.class);
 
-    private static final Method INVERT;
+    private static final Method INVERT = getMethod(PropertyConduitDelegate.class, "invert", Object.class);
 
-    static
+    private static final MethodDescription GET_ANNOTATION = getMethodDescription(AnnotationProvider.class,
+            "getAnnotation", Class.class);
+
+    private static final MethodDescription GET_PROPERTY_TYPE = getMethodDescription(PropertyConduit.class,
+            "getPropertyType");
+
+    private static final MethodDescription GET_PROPERTY_NAME = getMethodDescription(InternalPropertyConduit.class,
+            "getPropertyName");
+
+    private static final InstructionBuilderCallback RETURN_RESULT = new InstructionBuilderCallback()
+    {
+        public void doBuild(InstructionBuilder builder)
+        {
+            builder.returnResult();
+        }
+    };
+
+    private static final String[] SINGLE_OBJECT_ARGUMENT = new String[]
+    { Object.class.getName() };
+
+    @SuppressWarnings("unchecked")
+    private static Method getMethod(Class containingClass, String name, Class... parameterTypes)
     {
         try
         {
-            RANGE = BasePropertyConduit.class.getMethod("range", int.class, int.class);
-            INVERT = BasePropertyConduit.class.getMethod("invert", Object.class);
+            return containingClass.getMethod(name, parameterTypes);
         }
         catch (NoSuchMethodException ex)
         {
-            throw new RuntimeException(ex);
+            throw new IllegalArgumentException(ex);
         }
+    }
+
+    private static MethodDescription getMethodDescription(Class containingClass, String name, Class... parameterTypes)
+    {
+        return new MethodDescription(getMethod(containingClass, name, parameterTypes));
     }
 
     private final AnnotationProvider nullAnnotationProvider = new NullAnnotationProvider();
@@ -201,9 +261,24 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         }
     }
 
+    private class PlasticTerm
+    {
+        final Type type;
+
+        final InstructionBuilderCallback callback;
+
+        PlasticTerm(Type type, InstructionBuilderCallback callback)
+        {
+            this.type = type;
+            this.callback = callback;
+        }
+    }
+
     private final PropertyAccess access;
 
     private final ClassFactory classFactory;
+
+    private final PlasticProxyFactory proxyFactory;
 
     private final TypeCoercer typeCoercer;
 
@@ -250,7 +325,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
      * Encapsulates the process of building a PropertyConduit instance from an
      * expression.
      */
-    class PropertyConduitBuilder
+    class PropertyConduitBuilder implements PlasticClassTransformer
     {
         private final Class rootType;
 
@@ -274,6 +349,12 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         private final BodyBuilder navBuilder = new BodyBuilder();
 
+        private PlasticField delegateField;
+
+        private PlasticClass plasticClass;
+
+        private PlasticMethod getRootMethod, navMethod;
+
         PropertyConduitBuilder(Class rootType, String expression, Tree tree)
         {
             this.rootType = rootType;
@@ -282,7 +363,63 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             String name = ClassFabUtils.generateClassName("PropertyConduit");
 
-            this.classFab = classFactory.newClass(name, BasePropertyConduit.class);
+            this.classFab = classFactory.newClass(name, PropertyConduitDelegate.class);
+        }
+
+        public void transform(PlasticClass plasticClass)
+        {
+            this.plasticClass = plasticClass;
+
+            delegateField = plasticClass.introduceField(PropertyConduitDelegate.class, "delegate");
+
+            // Create the various methods; also determine the conduit's property type, property name and identify
+            // the annotation provider.
+
+            createPlasticAccessors();
+
+            addDelegateMethods();
+
+            plasticClass.addToString(String.format("PropertyConduit[%s %s]", rootType.getName(), expression));
+        }
+
+        private void addDelegateMethods()
+        {
+            PropertyConduitDelegate delegate = new PropertyConduitDelegate(conduitPropertyType, conduitPropertyName,
+                    annotationProvider, typeCoercer);
+
+            delegateField.inject(delegate);
+
+            plasticClass.introduceMethod(GET_ANNOTATION).delegateTo(delegateField);
+            plasticClass.introduceMethod(GET_PROPERTY_TYPE).delegateTo(delegateField);
+            plasticClass.introduceMethod(GET_PROPERTY_NAME).delegateTo(delegateField);
+        }
+
+        /**
+         * Creates a method that does a conversion from Object to the expected root type, with
+         * a null check.
+         */
+        private void createPlasticGetRoot()
+        {
+            getRootMethod = plasticClass.introducePrivateMethod(PlasticUtils.toTypeName(rootType), "getRoot",
+                    SINGLE_OBJECT_ARGUMENT, null);
+
+            getRootMethod.changeImplementation(new InstructionBuilderCallback()
+            {
+                public void doBuild(InstructionBuilder builder)
+                {
+                    builder.loadArgument(0).dupe(0);
+                    builder.ifNull(new InstructionBuilderCallback()
+                    {
+                        public void doBuild(InstructionBuilder builder)
+                        {
+                            builder.throwException(NullPointerException.class,
+                                    String.format("Root object of property expression '%s' is null.", expression));
+                        }
+                    }, null);
+
+                    builder.checkcast(rootType).returnResult();
+                }
+            });
         }
 
         PropertyConduit createInstance()
@@ -398,6 +535,59 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             builder.addln("%s root = getRoot($1);", ClassFabUtils.toJavaClassName(rootType));
         }
 
+        private void createPlasticAccessors()
+        {
+            createPlasticGetRoot();
+
+            // First, create the navigate method.
+
+            final List<InstructionBuilderCallback> callbacks = CollectionFactory.newList();
+
+            Type activeType = rootType;
+
+            Tree node = tree;
+
+            while (!isLeaf(node))
+            {
+                PlasticTerm term = analyzeDerefNode(activeType, node);
+
+                callbacks.add(term.callback);
+
+                activeType = term.type;
+
+                // Second term is the continuation, possibly another chained
+                // DEREF, etc.
+                node = node.getChild(1);
+            }
+
+            // TODO: Optimization -- navigate method not needed (i.e., same as getRoot) for simple
+            // expressions.
+
+            Class activeClass = GenericsUtils.asClass(activeType);
+
+            navMethod = plasticClass.introducePrivateMethod(PlasticUtils.toTypeName(activeClass), "navigate",
+                    SINGLE_OBJECT_ARGUMENT, null);
+
+            navMethod.changeImplementation(new InstructionBuilderCallback()
+            {
+                public void doBuild(InstructionBuilder builder)
+                {
+                    builder.loadThis().loadArgument(0).invokeVirtual(getRootMethod);
+
+                    for (InstructionBuilderCallback callback : callbacks)
+                    {
+                        callback.doBuild(builder);
+                    }
+
+                    // No need to box, the callbacks for each property ensure that primitives are boxed
+
+                    builder.returnResult();
+                }
+            });
+
+            createPlasticGetterAndSetter(activeClass, node);
+        }
+
         private void createAccessors()
         {
             createGetRoot();
@@ -433,6 +623,65 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             classFab.addMethod(Modifier.PRIVATE, sig, navBuilder.toString());
 
             createGetterAndSetter(activeClass, sig, node);
+        }
+
+        private void createPlasticGetterAndSetter(Class activeType, Tree node)
+        {
+            switch (node.getType())
+            {
+                case IDENTIFIER:
+                case INVOKE:
+
+                    // So, a this point, we have the navigation method written
+                    // and it covers all but the terminal
+                    // de-reference. node is an IDENTIFIER or INVOKE. We're
+                    // ready to use the navigation
+                    // method to implement get() and set().
+
+                    ExpressionTermInfo info = infoForMember(activeType, node);
+
+                    createPlasticSetter(activeType, info);
+                    createPlasticGetter(activeType, info);
+
+                    conduitPropertyType = GenericsUtils.asClass(info.getType());
+                    conduitPropertyName = info.getPropertyName();
+                    annotationProvider = info;
+
+                    return;
+
+                case RANGEOP:
+
+                    // As currently implemented, RANGEOP can only appear as the
+                    // top level, which
+                    // means we didn't need the navigate method after all.
+
+                    // createPlasticRangeOpGetter(node, "root");
+                    createPlasticNoOpSetter();
+
+                    conduitPropertyType = IntegerRange.class;
+
+                    return;
+
+                case LIST:
+
+                    // createPlasticListGetter(node, "root");
+                    createPlasticNoOpSetter();
+
+                    conduitPropertyType = List.class;
+
+                    return;
+
+                case NOT:
+                    // createPlasticNotOpGetter(node);
+                    createPlasticNoOpSetter();
+
+                    conduitPropertyType = boolean.class;
+
+                    return;
+
+                default:
+                    throw unexpectedNodeType(node, IDENTIFIER, INVOKE, RANGEOP, LIST, NOT);
+            }
         }
 
         private void createGetterAndSetter(Class activeType, MethodSignature navigateMethod, Tree node)
@@ -507,6 +756,11 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             classFab.addMethod(Modifier.PUBLIC, GET_SIGNATURE, builder.toString());
         }
 
+        private void createPlasticNotOpGetter()
+        {
+
+        }
+
         private void createNotOpGetter(Tree node, String rootName)
         {
             BodyBuilder builder = new BodyBuilder().begin();
@@ -564,7 +818,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         /**
          * Evalutates the node as a sub expression, storing the result into a
          * new variable, whose name is returned.
-         *
+         * 
          * @param builder
          *            to receive generated code
          * @param node
@@ -648,7 +902,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                         previousReference = generated.termReference;
                         activeType = GenericsUtils.asClass(generated.type);
-                        if ( activeType.isPrimitive() )
+                        if (activeType.isPrimitive())
                             activeType = ClassFabUtils.getWrapperType(activeType);
                         node = null;
 
@@ -679,6 +933,38 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             }
 
             return new GeneratedTerm(activeType, previousReference);
+        }
+
+        private void createPlasticSetter(final Class activeType, final ExpressionTermInfo info)
+        {
+            final Method method = info.getWriteMethod();
+
+            if (method == null && !info.isField())
+            {
+                createPlasticNoOpSetter();
+                return;
+            }
+
+            plasticClass.introduceMethod(SET, new InstructionBuilderCallback()
+            {
+                public void doBuild(InstructionBuilder builder)
+                {
+                    builder.loadThis().loadArgument(0).invokeVirtual(navMethod);
+
+                    String typeName = PlasticUtils.toTypeName(GenericsUtils.asClass(info.getType()));
+
+                    builder.loadArgument(0).unboxPrimitive(typeName);
+
+                    if (info.isField())
+                    {
+                        builder.putField(PlasticUtils.toTypeName(activeType), info.getField().getName(), typeName);
+                    }
+                    else
+                    {
+                        invokeNoArgsMethod(builder, method);
+                    }
+                }
+            });
         }
 
         private void createSetter(MethodSignature navigateMethod, ExpressionTermInfo info)
@@ -726,10 +1012,80 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             classFab.addMethod(Modifier.PUBLIC, SET_SIGNATURE, builder.toString());
         }
 
+        private void createPlasticNoOpSetter()
+        {
+            createNoOpMethod(SET, "Expression '%s' for class %s is read-only.", expression, rootType.getName());
+        }
+
+        public void createNoOpMethod(MethodDescription method, String format, Object... arguments)
+        {
+            final String message = String.format(format, arguments);
+
+            plasticClass.introduceMethod(method).changeImplementation(new InstructionBuilderCallback()
+            {
+                public void doBuild(InstructionBuilder builder)
+                {
+                    builder.throwException(RuntimeException.class, message);
+                }
+            });
+        }
+
         private void createNoOpSetter()
         {
             createNoOp(classFab, SET_SIGNATURE, "Expression '%s' for class %s is read-only.", expression,
                     rootType.getName());
+        }
+
+        /**
+         * Creates the get() method, using the navigate method.
+         * 
+         * @param activeType
+         *            the type containing the property to read (may be the root type for simple
+         *            property expressions)
+         * @param info
+         *            describes the property to read
+         */
+        private void createPlasticGetter(final Class activeType, final ExpressionTermInfo info)
+        {
+            final Method method = info.getReadMethod();
+
+            if (method == null && !info.isField())
+            {
+                createNoOpMethod(GET, "Expression %s for class %s is write-only.", expression, rootType.getName());
+                return;
+            }
+
+            plasticClass.introduceMethod(GET).changeImplementation(new InstructionBuilderCallback()
+            {
+                public void doBuild(InstructionBuilder builder)
+                {
+                    builder.loadThis().loadArgument(0).invokeVirtual(navMethod);
+
+                    // I.e. due to ?. operator. The navigate method will already have
+                    // checked for nulls if they are not allowed.
+
+                    builder.dupe(0).ifNull(RETURN_RESULT, null);
+
+                    Class termType = GenericsUtils.asClass(info.getType());
+                    String termTypeName = PlasticUtils.toTypeName(termType);
+
+                    if (info.isField())
+                    {
+                        builder.getField(PlasticUtils.toTypeName(activeType), info.getPropertyName(), termTypeName);
+                    }
+                    else
+                    {
+                        invokeNoArgsMethod(builder, method);
+                    }
+
+                    builder.boxPrimitive(termTypeName).returnResult();
+                }
+            });
+        }
+
+        private void invokeNoArgsMethod(InstructionBuilder builder, Method method)
+        {
+            builder.invoke(method.getDeclaringClass(), method.getReturnType(), method.getName());
         }
 
         private void createGetter(MethodSignature navigateMethod, Tree node, ExpressionTermInfo info)
@@ -767,7 +1123,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         /**
          * Creates a method invocation call for the given node (an INVOKE node).
-         *
+         * 
          * @param bodyBuilder
          *            may receive new code to define variables for some
          *            sub-expressions
@@ -791,7 +1147,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         /**
          * Creates a method invocation call for the given node
-         *
+         * 
          * @param bodyBuilder
          *            may receive new code to define variables for some
          *            sub-expressions
@@ -870,6 +1226,24 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         /**
          * Extends the navigate method for a node, which will be a DEREF or
          * SAFEDERF.
+         * 
+         * @return a term indicating the type of the expression to this point, and a {@link InstructionBuilderCallback}
+         *         to advance the evaluation of the expression form the previous value to the current
+         */
+        private PlasticTerm analyzeDerefNode(Type activeType, Tree node)
+        {
+            // The first child is the term.
+
+            Tree term = node.getChild(0);
+
+            boolean allowNull = node.getType() == SAFEDEREF;
+
+            return buildTerm(activeType, term, allowNull ? NullHandling.ALLOW : NullHandling.FORBID);
+        }
+
+        /**
+         * Extends the navigate method for a node, which will be a DEREF or
+         * SAFEDERF.
          */
         private GeneratedTerm processDerefNode(BodyBuilder builder, Type activeType, Tree node,
                 String previousVariableName, String rootName)
@@ -911,6 +1285,82 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             return InternalUtils.lastTerm(type.getName());
         }
 
+        private PlasticTerm buildTerm(Type activeType, final Tree term, final NullHandling nullHandling)
+        {
+            assertNodeType(term, IDENTIFIER, INVOKE);
+
+            // Get info about this property or method.
+
+            final ExpressionTermInfo info = infoForMember(activeType, term);
+
+            final Method method = info.getReadMethod();
+            final Class activeClass = GenericsUtils.asClass(activeType);
+
+            if (method == null && !info.isField())
+                throw new RuntimeException(String.format(
+                        "Property '%s' of class %s is not readable (it has no read accessor method).",
+                        info.getDescription(), activeClass.getName()));
+
+            Type termType = info.getType();
+
+            final Class termClass = GenericsUtils.asClass(termType);
+
+            final Class wrappedType = ClassFabUtils.getWrapperType(termClass);
+
+            String wrapperTypeName = ClassFabUtils.toJavaClassName(wrappedType);
+
+            final String variableName = nextVariableName(wrappedType);
+
+            InstructionBuilderCallback callback = new InstructionBuilderCallback()
+            {
+                public void doBuild(InstructionBuilder builder)
+                {
+                    if (info.isField())
+                    {
+                        String typeName = PlasticUtils.toTypeName(termClass);
+
+                        builder.getField(PlasticUtils.toTypeName(info.getField().getDeclaringClass()), info.getField()
+                                .getName(), typeName);
+
+                        builder.unboxPrimitive(typeName);
+                    }
+                    else
+                    {
+                        createPlasticMethodInvocation(term, method);
+                    }
+
+                    builder.dupe(0).ifNull(new InstructionBuilderCallback()
+                    {
+                        public void doBuild(InstructionBuilder builder)
+                        {
+                            switch (nullHandling)
+                            {
+                                case ALLOW:
+                                    builder.returnResult();
+
+                                case FORBID:
+
+                                    builder.loadConstant(info.getDescription());
+                                    builder.loadConstant(expression);
+                                    builder.loadArgument(0);
+
+                                    builder.invokeStatic(PropertyConduitSourceImpl.class, void.class, "nullTerm",
+                                            String.class, String.class, Object.class);
+                            }
+                        }
+                    }, null);
+                }
+            };
+
+            return new PlasticTerm(termType, callback);
+        }
+
+        private void createPlasticMethodInvocation(Tree term, Method method)
+        {
+            // TODO Auto-generated method stub
+
+        }
+
         private GeneratedTerm addAccessForMember(BodyBuilder builder, Type activeType, Tree term,
                 String previousVariableName, String rootName, NullHandling nullHandling)
         {
@@ -949,7 +1399,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             {
                 builder.add(" ($w) ");
             }
-            else if (info.isCastRequired() )
+            else if (info.isCastRequired())
             {
                 builder.add(" (%s) ", wrapperTypeName);
             }
@@ -1161,8 +1611,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             }
             catch (NoSuchMethodException ex)
             {
-                throw new RuntimeException(
-                        String.format("No public method '%s()' in class %s.", methodName, activeClass.getName()));
+                throw new RuntimeException(String.format("No public method '%s()' in class %s.", methodName,
+                        activeClass.getName()));
             }
         }
 
@@ -1185,10 +1635,12 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     }
 
     public PropertyConduitSourceImpl(PropertyAccess access, @ComponentLayer
-    ClassFactory classFactory, TypeCoercer typeCoercer, StringInterner interner)
+    ClassFactory classFactory, @ComponentLayer
+    PlasticProxyFactory proxyFactory, TypeCoercer typeCoercer, StringInterner interner)
     {
         this.access = access;
         this.classFactory = classFactory;
+        this.proxyFactory = proxyFactory;
         this.typeCoercer = typeCoercer;
         this.interner = interner;
 
@@ -1244,13 +1696,13 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     }
 
     /**
-     * Builds a subclass of {@link BasePropertyConduit} that implements the
+     * Builds a subclass of {@link PropertyConduitDelegate} that implements the
      * get() and set() methods and overrides the
      * constructor. In a worst-case race condition, we may build two (or more)
      * conduits for the same
      * rootClass/expression, and it will get sorted out when the conduit is
      * stored into the cache.
-     *
+     * 
      * @param rootClass
      *            class of root object for expression evaluation
      * @param expression
@@ -1322,7 +1774,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     break;
             }
 
-            return new PropertyConduitBuilder(rootClass, expression, tree).createInstance();
+            return proxyFactory.createProxy(InternalPropertyConduit.class,
+                    new PropertyConduitBuilder(rootClass, expression, tree)).newInstance();
         }
         catch (Exception ex)
         {
