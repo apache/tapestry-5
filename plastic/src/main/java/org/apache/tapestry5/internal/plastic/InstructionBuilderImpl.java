@@ -15,11 +15,15 @@
 package org.apache.tapestry5.internal.plastic;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.tapestry5.internal.plastic.asm.Label;
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 import org.apache.tapestry5.internal.plastic.asm.Type;
+import org.apache.tapestry5.plastic.Condition;
+import org.apache.tapestry5.plastic.ConditionCallback;
 import org.apache.tapestry5.plastic.InstructionBuilder;
 import org.apache.tapestry5.plastic.InstructionBuilderCallback;
 import org.apache.tapestry5.plastic.MethodDescription;
@@ -34,6 +38,19 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
 {
     private static final int[] DUPE_OPCODES = new int[]
     { DUP, DUP_X1, DUP_X2 };
+
+    /** Maps from condition to opcode to jump to the false code block. */
+    private static final Map<Condition, Integer> conditionToOpcode = new HashMap<Condition, Integer>();
+
+    static
+    {
+        Map<Condition, Integer> m = conditionToOpcode;
+
+        m.put(Condition.NULL, IFNONNULL);
+        m.put(Condition.NON_NULL, IFNULL);
+        m.put(Condition.ZERO, IFNE);
+        m.put(Condition.NON_ZERO, IFEQ);
+    }
 
     protected final InstructionBuilderState state;
 
@@ -596,6 +613,53 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         new InstructionBuilderImpl(state).doCallback(ifTrueCallback);
 
         v.visitLabel(endIfLabel);
+    }
+
+    public InstructionBuilder conditional(Condition condition, final InstructionBuilderCallback ifTrue)
+    {
+        check();
+
+        return conditional(condition, new ConditionCallback()
+        {
+            public void ifTrue(InstructionBuilder builder)
+            {
+                ifTrue.doBuild(builder);
+            }
+
+            public void ifFalse(InstructionBuilder builder)
+            {
+            }
+        });
+    }
+
+    public InstructionBuilder conditional(Condition condition, ConditionCallback callback)
+    {
+        check();
+
+        Label ifFalseLabel = new Label();
+        Label endIfLabel = new Label();
+
+        v.visitJumpInsn(conditionToOpcode.get(condition), ifFalseLabel);
+
+        InstructionBuilderImpl trueBuilder = new InstructionBuilderImpl(state);
+
+        callback.ifTrue(trueBuilder);
+
+        trueBuilder.lock();
+
+        v.visitJumpInsn(GOTO, endIfLabel);
+
+        v.visitLabel(ifFalseLabel);
+
+        InstructionBuilderImpl falseBuilder = new InstructionBuilderImpl(state);
+
+        callback.ifFalse(falseBuilder);
+
+        falseBuilder.lock();
+
+        v.visitLabel(endIfLabel);
+
+        return this;
     }
 
     void doCallback(InstructionBuilderCallback callback)

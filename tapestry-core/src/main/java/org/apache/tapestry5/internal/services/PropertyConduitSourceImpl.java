@@ -67,6 +67,8 @@ import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.BodyBuilder;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
+import org.apache.tapestry5.plastic.Condition;
+import org.apache.tapestry5.plastic.ConditionCallback;
 import org.apache.tapestry5.plastic.InstructionBuilder;
 import org.apache.tapestry5.plastic.InstructionBuilderCallback;
 import org.apache.tapestry5.plastic.MethodDescription;
@@ -413,14 +415,14 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 public void doBuild(InstructionBuilder builder)
                 {
                     builder.loadArgument(0).dupe(0);
-                    builder.ifNull(new InstructionBuilderCallback()
+                    builder.conditional(Condition.NULL, new InstructionBuilderCallback()
                     {
                         public void doBuild(InstructionBuilder builder)
                         {
                             builder.throwException(NullPointerException.class,
                                     String.format("Root object of property expression '%s' is null.", expression));
                         }
-                    }, null);
+                    });
 
                     builder.checkcast(rootType).returnResult();
                 }
@@ -797,7 +799,18 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         {
             builder.loadThis().loadArgument(0).invokeVirtual(navMethod);
 
-            builder.dupe(0).ifNull(RETURN_RESULT, null);
+            returnResultIfNull(builder);
+        }
+
+        public void returnResultIfNull(InstructionBuilder builder)
+        {
+            builder.dupe(0).conditional(Condition.NULL, new InstructionBuilderCallback()
+            {
+                public void doBuild(InstructionBuilder builder)
+                {
+                    builder.returnResult();
+                }
+            });
         }
 
         private Class buildSubexpression(InstructionBuilder builder, Class activeType, Tree node)
@@ -878,7 +891,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         {
             builder.loadThis().loadArgument(0).invokeVirtual(getRootMethod);
 
-            builder.dupe(0).ifNull(RETURN_RESULT, null);
+            returnResultIfNull(builder);
         }
 
         private void createNotOpGetter(Tree node, String rootName)
@@ -1503,7 +1516,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                         createPlasticMethodInvocation(builder, term, method, info);
                     }
 
-                    builder.dupe(0).ifNull(new InstructionBuilderCallback()
+                    builder.dupe(0).conditional(Condition.NULL, new InstructionBuilderCallback()
                     {
                         public void doBuild(InstructionBuilder builder)
                         {
@@ -1527,7 +1540,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                                     builder.returnDefaultValue();
                             }
                         }
-                    }, null);
+                    });
 
                     if (info.isCastRequired())
                     {

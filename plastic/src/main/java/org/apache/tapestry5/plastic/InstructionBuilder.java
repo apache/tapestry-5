@@ -386,26 +386,32 @@ public interface InstructionBuilder
     InstructionBuilder loadVariable(String name);
 
     /**
-     * Checks if the top value on the stack is zero and invokes the code from one of the two callbacks.
+     * Executes conditional code based on a {@link Condition}. The testing opcodes all pop
+     * the value off the stack, so this is usually preceded by {@link #dupe(int) dupe(0)}.
      * 
-     * @param ifTrue
-     *            callback to generate code for the case where the top value on the stack is zero (may be null)
-     * @param ifFalse
-     *            callback to generate code for the case where the top value on the stack is non-zero
-     *            (may be null)
+     * @param condition
+     *            defines true and false cases
+     * @param callback
+     *            provides code for true and false blocks
+     * @return this builder
      */
-    @Opcodes("IFEQ, GOTO")
-    InstructionBuilder ifZero(InstructionBuilderCallback ifTrue, InstructionBuilderCallback ifFalse);
+    @Opcodes("IFEQ, etc., GOTO")
+    InstructionBuilder conditional(Condition condition, ConditionCallback callback);
 
     /**
-     * Checks if the top value on the stack is null and invokes the code from one of the two callbacks.
+     * Simplified version of {@link #conditional(Condition, ConditionCallback)} that
+     * simply executes the callback code when the condition is true and does nothing
+     * if the condition is false (the more general case).
+     * <p>
+     * The testing opcodes all pop the value off the stack, so this is usually preceded by {@link #dupe(int) dupe(0)}.
      * 
+     * @param condition
+     *            to evaluate
      * @param ifTrue
-     *            callback to generate code for the case where the top value on the stack is null (may be null)
-     * @param ifFalse
-     *            callback to generate code for the case where the top value on the stack is not null
-     *            (may be null)
+     *            generates code for when condition is true
+     * @return
      */
-    @Opcodes("IFNULL, GOTO")
-    InstructionBuilder ifNull(InstructionBuilderCallback ifTrue, InstructionBuilderCallback ifFalse);
+    @Opcodes("IFEQ, etc., GOTO")
+    InstructionBuilder conditional(Condition condition, InstructionBuilderCallback ifTrue);
+
 }
