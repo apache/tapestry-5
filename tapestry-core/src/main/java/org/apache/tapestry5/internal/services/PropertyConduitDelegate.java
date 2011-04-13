@@ -29,40 +29,11 @@ import org.apache.tapestry5.ioc.services.TypeCoercer;
 @SuppressWarnings("all")
 public class PropertyConduitDelegate
 {
-    private final Class propertyType;
-
-    private final String propertyName;
-
-    private final AnnotationProvider annotationProvider;
-
     private final TypeCoercer typeCoercer;
 
-    public PropertyConduitDelegate(Class propertyType, String propertyName, AnnotationProvider annotationProvider,
-            TypeCoercer typeCoercer)
+    public PropertyConduitDelegate(TypeCoercer typeCoercer)
     {
-        assert propertyType != null;
-        assert annotationProvider != null;
-        assert typeCoercer != null;
-
-        this.propertyType = propertyType;
-        this.propertyName = propertyName;
-        this.annotationProvider = annotationProvider;
         this.typeCoercer = typeCoercer;
-    }
-
-    public final <T extends Annotation> T getAnnotation(Class<T> annotationClass)
-    {
-        return annotationProvider.getAnnotation(annotationClass);
-    }
-
-    public final Class getPropertyType()
-    {
-        return propertyType;
-    }
-
-    public final String getPropertyName()
-    {
-        return propertyName;
     }
 
     public final IntegerRange range(int from, int to)

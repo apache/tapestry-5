@@ -77,19 +77,23 @@ import org.apache.tapestry5.services.PropertyConduitSource;
 
 public class PropertyConduitSourceImpl implements PropertyConduitSource, InvalidationListener
 {
-    private static final MethodDescription GET = getMethodDescription(PropertyConduit.class, "get", Object.class);
+    static class ConduitMethods
+    {
+        private static final MethodDescription GET = getMethodDescription(PropertyConduit.class, "get", Object.class);
 
-    private static final MethodDescription SET = getMethodDescription(PropertyConduit.class, "set", Object.class,
-            Object.class);
+        private static final MethodDescription SET = getMethodDescription(PropertyConduit.class, "set", Object.class,
+                Object.class);
 
-    private static final MethodDescription GET_ANNOTATION = getMethodDescription(AnnotationProvider.class,
-            "getAnnotation", Class.class);
+        private static final MethodDescription GET_PROPERTY_TYPE = getMethodDescription(PropertyConduit.class,
+                "getPropertyType");
 
-    private static final MethodDescription GET_PROPERTY_TYPE = getMethodDescription(PropertyConduit.class,
-            "getPropertyType");
+        private static final MethodDescription GET_PROPERTY_NAME = getMethodDescription(InternalPropertyConduit.class,
+                "getPropertyName");
 
-    private static final MethodDescription GET_PROPERTY_NAME = getMethodDescription(InternalPropertyConduit.class,
-            "getPropertyName");
+        private static final MethodDescription GET_ANNOTATION = getMethodDescription(AnnotationProvider.class,
+                "getAnnotation", Class.class);
+
+    }
 
     static class DelegateMethods
     {
@@ -239,6 +243,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
     private final PropertyConduit literalNull;
 
+    private final PropertyConduitDelegate sharedDelegate;
+
     /**
      * Encapsulates the process of building a PropertyConduit instance from an
      * expression, as an {@link PlasticClassTransformer}.
@@ -274,30 +280,41 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         {
             this.plasticClass = plasticClass;
 
-            delegateField = plasticClass.introduceField(PropertyConduitDelegate.class, "delegate");
+            delegateField = plasticClass.introduceField(PropertyConduitDelegate.class, "delegate").inject(
+                    sharedDelegate);
 
             // Create the various methods; also determine the conduit's property type, property name and identify
             // the annotation provider.
 
             implementNavMethodAndAccessors();
 
-            implementDelegateMethods();
+            implementOtherMethods();
 
             plasticClass.addToString(String.format("PropertyConduit[%s %s]", rootType.getName(), expression));
         }
 
-        private void implementDelegateMethods()
+        private void implementOtherMethods()
         {
-            PropertyConduitDelegate delegate = new PropertyConduitDelegate(conduitPropertyType, conduitPropertyName,
-                    annotationProvider, typeCoercer);
+            PlasticField annotationProviderField = plasticClass.introduceField(AnnotationProvider.class,
+                    "annotationProvider").inject(annotationProvider);
 
-            delegateField.inject(delegate);
+            plasticClass.introduceMethod(ConduitMethods.GET_ANNOTATION).delegateTo(annotationProviderField);
 
-            // TODO: These can easily be injected into the proxy, and not require delegate access.
+            plasticClass.introduceMethod(ConduitMethods.GET_PROPERTY_NAME, new InstructionBuilderCallback()
+            {
+                public void doBuild(InstructionBuilder builder)
+                {
+                    builder.loadConstant(conduitPropertyName).returnResult();
+                }
+            });
+            plasticClass.introduceMethod(ConduitMethods.GET_PROPERTY_TYPE, new InstructionBuilderCallback()
+            {
+                public void doBuild(InstructionBuilder builder)
+                {
+                    builder.loadTypeConstant(conduitPropertyType).returnResult();
+                }
+            });
 
-            plasticClass.introduceMethod(GET_ANNOTATION).delegateTo(delegateField);
-            plasticClass.introduceMethod(GET_PROPERTY_TYPE).delegateTo(delegateField);
-            plasticClass.introduceMethod(GET_PROPERTY_NAME).delegateTo(delegateField);
         }
 
         /**
@@ -452,7 +469,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             conduitPropertyType = term.genericType;
             annotationProvider = term.annotationProvider;
 
-            plasticClass.introduceMethod(GET, new InstructionBuilderCallback()
+            plasticClass.introduceMethod(ConduitMethods.GET, new InstructionBuilderCallback()
             {
                 public void doBuild(InstructionBuilder builder)
                 {
@@ -496,12 +513,13 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 return;
             }
 
-            implementNoOpMethod(SET, "Expression %s for class %s is read-only.", expression, rootType.getName());
+            implementNoOpMethod(ConduitMethods.SET, "Expression %s for class %s is read-only.", expression,
+                    rootType.getName());
         }
 
         private void implementSetter(Type activeType, final Field field)
         {
-            plasticClass.introduceMethod(SET, new InstructionBuilderCallback()
+            plasticClass.introduceMethod(ConduitMethods.SET, new InstructionBuilderCallback()
             {
                 public void doBuild(InstructionBuilder builder)
                 {
@@ -518,7 +536,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         private void implementSetter(Type activeType, final Method writeMethod)
         {
-            plasticClass.introduceMethod(SET, new InstructionBuilderCallback()
+            plasticClass.introduceMethod(ConduitMethods.SET, new InstructionBuilderCallback()
             {
                 public void doBuild(InstructionBuilder builder)
                 {
@@ -550,12 +568,13 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 return;
             }
 
-            implementNoOpMethod(GET, "Expression %d for class %s is write-only.", expression, rootType.getName());
+            implementNoOpMethod(ConduitMethods.GET, "Expression %d for class %s is write-only.", expression,
+                    rootType.getName());
         }
 
         private void implementGetter(final Type activeType, final Field field)
         {
-            plasticClass.introduceMethod(GET, new InstructionBuilderCallback()
+            plasticClass.introduceMethod(ConduitMethods.GET, new InstructionBuilderCallback()
             {
                 public void doBuild(InstructionBuilder builder)
                 {
@@ -577,7 +596,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         private void implementGetter(final Type activeType, final Method readMethod)
         {
-            plasticClass.introduceMethod(GET, new InstructionBuilderCallback()
+            plasticClass.introduceMethod(ConduitMethods.GET, new InstructionBuilderCallback()
             {
                 public void doBuild(InstructionBuilder builder)
                 {
@@ -598,7 +617,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         private void implementRangeOpGetter(final Tree rangeNode)
         {
-            plasticClass.introduceMethod(GET, new InstructionBuilderCallback()
+            plasticClass.introduceMethod(ConduitMethods.GET, new InstructionBuilderCallback()
             {
                 public void doBuild(InstructionBuilder builder)
                 {
@@ -622,7 +641,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             // Implement get() as navigate, then do a method invocation based on node
             // then, then pass (wrapped) result to delegate.invert()
 
-            plasticClass.introduceMethod(GET, new InstructionBuilderCallback()
+            plasticClass.introduceMethod(ConduitMethods.GET, new InstructionBuilderCallback()
             {
                 public void doBuild(InstructionBuilder builder)
                 {
@@ -752,7 +771,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         private void implementListGetter(final Tree listNode)
         {
-            plasticClass.introduceMethod(GET, new InstructionBuilderCallback()
+            plasticClass.introduceMethod(ConduitMethods.GET, new InstructionBuilderCallback()
             {
                 public void doBuild(InstructionBuilder builder)
                 {
@@ -789,7 +808,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         private void implementNoOpSetter()
         {
-            implementNoOpMethod(SET, "Expression '%s' for class %s is read-only.", expression, rootType.getName());
+            implementNoOpMethod(ConduitMethods.SET, "Expression '%s' for class %s is read-only.", expression,
+                    rootType.getName());
         }
 
         public void implementNoOpMethod(MethodDescription method, String format, Object... arguments)
@@ -1160,6 +1180,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         literalTrue = createLiteralConduit(Boolean.class, true);
         literalFalse = createLiteralConduit(Boolean.class, false);
         literalNull = createLiteralConduit(Void.class, null);
+
+        sharedDelegate = new PropertyConduitDelegate(typeCoercer);
     }
 
     public PropertyConduit create(Class rootClass, String expression)
@@ -1309,8 +1331,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
     private <T> PropertyConduit createLiteralConduit(Class<T> type, T value)
     {
-        return new LiteralPropertyConduit(type, invariantAnnotationProvider, interner.format(
-                "LiteralPropertyConduit[%s]", value), typeCoercer, value);
+        return new LiteralPropertyConduit(typeCoercer, type, invariantAnnotationProvider, interner.format(
+                "LiteralPropertyConduit[%s]", value), value);
     }
 
     private Tree parse(String expression)

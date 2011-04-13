@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,6 +13,8 @@
 // limitations under the License.
 
 package org.apache.tapestry5.internal.services;
+
+import java.lang.annotation.Annotation;
 
 import org.apache.tapestry5.internal.InternalPropertyConduit;
 import org.apache.tapestry5.ioc.AnnotationProvider;
@@ -23,13 +25,22 @@ import org.apache.tapestry5.ioc.services.TypeCoercer;
  */
 public class LiteralPropertyConduit extends PropertyConduitDelegate implements InternalPropertyConduit
 {
+    private final Class propertyType;
+
+    private final AnnotationProvider annotationProvider;
+
+    private final String description;
+
     private final Object value;
 
-    public LiteralPropertyConduit(Class propertyType, AnnotationProvider annotationProvider, String description,
-                                  TypeCoercer typeCoercer,
-                                  Object value)
+    public LiteralPropertyConduit(TypeCoercer typeCoercer, Class propertyType, AnnotationProvider annotationProvider,
+            String description, Object value)
     {
-        super(propertyType, null, annotationProvider, typeCoercer);
+        super(typeCoercer);
+
+        this.propertyType = propertyType;
+        this.annotationProvider = annotationProvider;
+        this.description = description;
 
         this.value = value;
     }
@@ -43,4 +54,26 @@ public class LiteralPropertyConduit extends PropertyConduitDelegate implements I
     {
         throw new RuntimeException(ServicesMessages.literalConduitNotUpdateable());
     }
+
+    public Class getPropertyType()
+    {
+        return propertyType;
+    }
+
+    public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
+    {
+        return annotationProvider.getAnnotation(annotationClass);
+    }
+
+    public String getPropertyName()
+    {
+        return null;
+    }
+
+    @Override
+    public String toString()
+    {
+        return description;
+    }
+
 }
