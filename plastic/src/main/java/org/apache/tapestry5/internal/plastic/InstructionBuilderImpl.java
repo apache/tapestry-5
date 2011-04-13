@@ -348,7 +348,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
     {
         check();
 
-        return getField(className, fieldName, fieldType.getName());
+        return getField(className, fieldName, cache.toTypeName(fieldType));
     }
 
     public InstructionBuilder loadArrayElement(int index, String elementType)
