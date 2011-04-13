@@ -23,7 +23,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 
 /**
- * Base class for {@link org.apache.tapestry5.PropertyConduit} instances created by the
+ * Companion class for {@link org.apache.tapestry5.PropertyConduit} instances created by the
  * {@link org.apache.tapestry5.services.PropertyConduitSource}.
  */
 @SuppressWarnings("all")

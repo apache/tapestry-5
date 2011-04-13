@@ -664,7 +664,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     // top level, which
                     // means we didn't need the navigate method after all.
 
-                    // createPlasticRangeOpGetter(node, "root");
+                    createPlasticRangeOpGetter(node);
                     createPlasticNoOpSetter();
 
                     conduitPropertyType = IntegerRange.class;
@@ -750,6 +750,28 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 default:
                     throw unexpectedNodeType(node, IDENTIFIER, INVOKE, RANGEOP, LIST, NOT);
             }
+        }
+
+        private void createPlasticRangeOpGetter(final Tree rangeNode)
+        {
+            plasticClass.introduceMethod(GET, new InstructionBuilderCallback()
+            {
+                public void doBuild(InstructionBuilder builder)
+                {
+                    // Put the delegate on top of the stack
+
+                    builder.loadThis().getField(delegateField);
+
+                    invokeMethod(builder, DelegateMethods.RANGE, rangeNode, 0);
+
+                    builder.returnResult();
+                }
+            });
+        }
+
+        private Object foo(PropertyConduitDelegate d)
+        {
+            return d.range(1, 99);
         }
 
         private void createRangeOpGetter(Tree node, String rootName)
@@ -1258,7 +1280,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             }
             else
             {
-                invokeMethod(builder, info.getReadMethod(), termNode);
+                invokeMethod(builder, info.getReadMethod(), termNode, 1);
             }
 
             return termType;
@@ -1269,10 +1291,16 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
          * to be evaluated, and potentially coerced, so that they may be passed to the method.
          * 
          * @param builder
+         *            constructs code
          * @param method
-         * @param invokeNode
+         *            method to invoke
+         * @param node
+         *            INVOKE or RANGEOP node
+         * @param childOffset
+         *            offset within the node to the first child expression (1 in an INVOKE node because the
+         *            first child is the method name, 0 in a RANGEOP node)
          */
-        private void invokeMethod(InstructionBuilder builder, Method method, Tree invokeNode)
+        private void invokeMethod(InstructionBuilder builder, Method method, Tree node, int childOffset)
         {
             // We start with the target object for the method on top of the stack.
             // Next, we have to push each method parameter, which may include boxing/deboxing
@@ -1285,7 +1313,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             for (int i = 0; i < parameterTypes.length; i++)
             {
-                Class expressionType = buildSubexpression(builder, null, invokeNode.getChild(i + 1));
+                Class expressionType = buildSubexpression(builder, null, node.getChild(i + childOffset));
 
                 // The value left on the stack is not primitive, and expressionType represents
                 // its real type.
@@ -1294,8 +1322,12 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                 if (!parameterType.isAssignableFrom(expressionType))
                 {
+                    if (expressionType.isPrimitive())
+                    {
+                        builder.boxPrimitive(expressionType.getName());
+                    }
+
                     builder.loadThis().getField(delegateField);
-                    // TODO: Will this work for wide primitives?
                     builder.swap().loadTypeConstant(PlasticUtils.toWrapperType(parameterType));
                     builder.invoke(DelegateMethods.COERCE);
 
@@ -1551,7 +1583,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     }
                     else
                     {
-                        invokeMethod(builder, method, term);
+                        invokeMethod(builder, method, term, 1);
                     }
 
                     builder.dupe().when(Condition.NULL, new InstructionBuilderCallback()
@@ -2102,6 +2134,20 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         }
     }
 
+    private Class processConstant(InstructionBuilder builder, Tree integerNode)
+    {
+        long value = Long.parseLong(integerNode.getText());
+
+        if (value >= Integer.MIN_VALUE && value <= Integer.MAX_VALUE)
+        {
+            builder.loadConstant((int) value);
+            return int.class;
+        }
+
+        builder.loadConstant(value);
+        return long.class;
+    }
+
     /**
      * May be invoked from fabricated PropertyConduit instances.
      */
@@ -2112,4 +2158,5 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         return new NullPointerException(message);
     }
+
 }
