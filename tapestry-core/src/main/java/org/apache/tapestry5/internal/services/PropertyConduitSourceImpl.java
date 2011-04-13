@@ -778,19 +778,13 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             {
                 public void doBuild(InstructionBuilder builder)
                 {
-                    Class expressionType = buildSubexpression(builder, null, node.getChild(0));
+                    Class expressionType = buildPlasticNotExpression(builder, node);
+
+                    // Yes, we know this will always be the case, for now.
 
                     boxIfPrimitive(builder, expressionType);
 
-                    // Now invoke the delegate invert() method
-
-                    builder.loadThis().getField(delegateField);
-
-                    builder.swap().invoke(DelegateMethods.INVERT);
-
-                    // When the dust settles, may change invert() to return Boolean, not boolean
-
-                    builder.boxPrimitive("boolean").returnResult();
+                    builder.returnResult();
                 }
             });
         }
@@ -875,9 +869,13 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                         return createPlasticListConstructor(builder, node);
 
+                    case NOT:
+
+                        return buildPlasticNotExpression(builder, node);
+
                     default:
                         throw unexpectedNodeType(node, TRUE, FALSE, INTEGER, DECIMAL, STRING, DEREF, SAFEDEREF,
-                                IDENTIFIER, INVOKE, LIST);
+                                IDENTIFIER, INVOKE, LIST, NOT);
                 }
             }
 
@@ -1872,6 +1870,21 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         {
             if (termType.isPrimitive())
                 builder.boxPrimitive(termType.getName());
+        }
+
+        public Class buildPlasticNotExpression(InstructionBuilder builder, final Tree notNode)
+        {
+            Class expressionType = buildSubexpression(builder, null, notNode.getChild(0));
+
+            boxIfPrimitive(builder, expressionType);
+
+            // Now invoke the delegate invert() method
+
+            builder.loadThis().getField(delegateField);
+
+            builder.swap().invoke(DelegateMethods.INVERT);
+
+            return boolean.class;
         }
     }
 
