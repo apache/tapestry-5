@@ -953,7 +953,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                     String typeName = PlasticUtils.toTypeName(GenericsUtils.asClass(info.getType()));
 
-                    builder.loadArgument(0).unboxPrimitive(typeName);
+                    builder.loadArgument(1).castOrUnbox(typeName);
 
                     if (info.isField())
                     {
@@ -961,8 +961,11 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     }
                     else
                     {
+                        // TODO: Its not a no-args method. It's one arg.
                         invokeNoArgsMethod(builder, method);
                     }
+
+                    builder.returnResult();
                 }
             });
         }
