@@ -37,6 +37,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -68,7 +69,6 @@ import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.BodyBuilder;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.plastic.Condition;
-import org.apache.tapestry5.plastic.WhenCallback;
 import org.apache.tapestry5.plastic.InstructionBuilder;
 import org.apache.tapestry5.plastic.InstructionBuilderCallback;
 import org.apache.tapestry5.plastic.MethodDescription;
@@ -110,6 +110,11 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         static final Method RANGE = getMethod(PropertyConduitDelegate.class, "range", int.class, int.class);
 
         static final Method COERCE = getMethod(PropertyConduitDelegate.class, "coerce", Object.class, Class.class);
+    }
+
+    static class ArrayListMethods
+    {
+        static final Method ADD = getMethod(ArrayList.class, "add", Object.class);
     }
 
     private static InstructionBuilderCallback RETURN_NULL = new InstructionBuilderCallback()
@@ -668,7 +673,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                 case LIST:
 
-                    // createPlasticListGetter(node, "root");
+                    createPlasticListGetter(node);
                     createPlasticNoOpSetter();
 
                     conduitPropertyType = List.class;
@@ -897,7 +902,42 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             classFab.addMethod(Modifier.PUBLIC, GET_SIGNATURE, builder.toString());
         }
 
-        public void createListGetter(Tree node, String rootName)
+        private void createPlasticListGetter(final Tree listNode)
+        {
+            plasticClass.introduceMethod(GET, new InstructionBuilderCallback()
+            {
+                public void doBuild(InstructionBuilder builder)
+                {
+                    createPlasticListConstructor(builder, listNode);
+
+                    builder.returnResult();
+                }
+            });
+        }
+
+        private void createPlasticListConstructor(InstructionBuilder builder, Tree listNode)
+        {
+            // First, create an empty instance of ArrayList
+
+            int count = listNode.getChildCount();
+
+            builder.newInstance(ArrayList.class);
+            builder.dupe().loadConstant(count).invokeConstructor(ArrayList.class, int.class);
+
+            for (int i = 0; i < count; i++)
+            {
+                builder.dupe(); // the ArrayList
+
+                Class expressionType = buildSubexpression(builder, null, listNode.getChild(i));
+
+                if (expressionType.isPrimitive())
+                    builder.boxPrimitive(expressionType.getName());
+
+                builder.invoke(ArrayListMethods.ADD);
+            }
+        }
+
+        private void createListGetter(Tree node, String rootName)
         {
             BodyBuilder builder = new BodyBuilder().begin();
 
