@@ -70,7 +70,7 @@ public class PropertyConduitDelegate
         return new IntegerRange(from, to);
     }
 
-    protected final <T> T coerce(Object value, Class<T> type)
+    public final <T> T coerce(Object value, Class<T> type)
     {
         return typeCoercer.coerce(value, type);
     }

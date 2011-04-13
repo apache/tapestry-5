@@ -873,7 +873,17 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                         break;
 
                     case TRUE:
+
+                        builder.loadConstant(1).boxPrimitive("boolean");
+
+                        return Boolean.class;
+
                     case FALSE:
+
+                        builder.loadConstant(0).boxPrimitive("boolean");
+
+                        return Boolean.class;
+
                     case LIST:
                         throw new RuntimeException("Not yet re-implemented.");
 
@@ -1264,10 +1274,18 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 if (!parameterType.isAssignableFrom(expressionType))
                 {
                     builder.loadThis().getField(delegateField);
-                    builder.swap().loadTypeConstant(parameterType);
-                    builder.invoke(DelegateMethods.COERCE).checkcast(parameterType);
+                    // TODO: Will this work for wide primitives?
+                    builder.swap().loadTypeConstant(PlasticUtils.toWrapperType(parameterType));
+                    builder.invoke(DelegateMethods.COERCE);
 
-                    // TODO: unboxing if primitive
+                    if (parameterType.isPrimitive())
+                    {
+                        builder.castOrUnbox(parameterType.getName());
+                    }
+                    else
+                    {
+                        builder.checkcast(parameterType);
+                    }
                 }
 
                 // And that should leave an object of the correct type on the stack,
