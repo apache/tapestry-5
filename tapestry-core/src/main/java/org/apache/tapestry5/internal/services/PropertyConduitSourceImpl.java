@@ -961,8 +961,9 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     }
                     else
                     {
-                        // TODO: Its not a no-args method. It's one arg.
-                        invokeNoArgsMethod(builder, method);
+                        // Invoke the setter method
+                        builder.invoke(method.getDeclaringClass(), void.class, method.getName(),
+                                method.getParameterTypes());
                     }
 
                     builder.returnResult();
