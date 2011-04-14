@@ -383,28 +383,32 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 node = node.getChild(1);
             }
 
-            // TODO: Optimization -- navigate method not needed (i.e., same as getRoot) for simple
-            // expressions.
-
             Class activeClass = GenericsUtils.asClass(activeType);
 
-            navMethod = plasticClass.introducePrivateMethod(PlasticUtils.toTypeName(activeClass), "navigate",
-                    SINGLE_OBJECT_ARGUMENT, null);
-
-            navMethod.changeImplementation(new InstructionBuilderCallback()
+            if (callbacks.isEmpty())
             {
-                public void doBuild(InstructionBuilder builder)
+                navMethod = getRootMethod;
+            }
+            else
+            {
+                navMethod = plasticClass.introducePrivateMethod(PlasticUtils.toTypeName(activeClass), "navigate",
+                        SINGLE_OBJECT_ARGUMENT, null);
+
+                navMethod.changeImplementation(new InstructionBuilderCallback()
                 {
-                    builder.loadThis().loadArgument(0).invokeVirtual(getRootMethod);
-
-                    for (InstructionBuilderCallback callback : callbacks)
+                    public void doBuild(InstructionBuilder builder)
                     {
-                        callback.doBuild(builder);
-                    }
+                        builder.loadThis().loadArgument(0).invokeVirtual(getRootMethod);
 
-                    builder.returnResult();
-                }
-            });
+                        for (InstructionBuilderCallback callback : callbacks)
+                        {
+                            callback.doBuild(builder);
+                        }
+
+                        builder.returnResult();
+                    }
+                });
+            }
 
             implementAccessors(activeType, node);
         }
