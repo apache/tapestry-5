@@ -1,0 +1,26 @@
+description = "Provides support for simple CRUD applications built on top of Tapestry and JPA"
+
+dependencies {
+  compile project(':tapestry-core')
+  compile "org.eclipse.persistence:javax.persistence:2.0.3"
+  
+  testCompile project(':tapestry-test')
+  testCompile "com.h2database:h2:1.2.145"
+  testCompile "org.eclipse.persistence:org.eclipse.persistence.jpa:2.2.0"
+  
+}
+
+repositories {
+  mavenRepo urls: "http://mirrors.ibiblio.org/pub/mirrors/eclipse/rt/eclipselink/maven.repo"
+}
+
+test {
+    systemProperties "tapestry.service-reloading-enabled": "false"
+}
+
+
+jar {
+    manifest {
+        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.jpa.JpaModule'
+    }
+}
