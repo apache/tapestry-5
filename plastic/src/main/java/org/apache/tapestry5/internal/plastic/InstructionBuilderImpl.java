@@ -60,6 +60,17 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         m.put(Condition.GREATER, IF_ICMPLE);
     }
 
+    private static final Map<String, Integer> typeToSpecialComparisonOpcode = new HashMap<String, Integer>();
+
+    static
+    {
+        Map<String, Integer> m = typeToSpecialComparisonOpcode;
+
+        m.put("long", LCMP);
+        m.put("float", FCMPL);
+        m.put("double", DCMPL);
+    }
+
     private static final Map<Object, Integer> constantOpcodes = new HashMap<Object, Integer>();
 
     static
@@ -760,6 +771,38 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
                 });
             }
         });
+
+        return this;
+    }
+
+    public InstructionBuilder dupeWide()
+    {
+        check();
+
+        v.visitInsn(DUP2);
+
+        return this;
+    }
+
+    public InstructionBuilder popWide()
+    {
+        check();
+
+        v.visitInsn(POP2);
+
+        return this;
+    }
+
+    public InstructionBuilder compareSpecial(String typeName)
+    {
+        check();
+
+        Integer opcode = typeToSpecialComparisonOpcode.get(typeName);
+
+        if (opcode == null)
+            throw new IllegalArgumentException(String.format("Not a special primitive type: '%s'.", typeName));
+
+        v.visitInsn(opcode);
 
         return this;
     }

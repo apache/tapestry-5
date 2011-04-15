@@ -1,10 +1,10 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,18 +14,16 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.tapestry5.ioc.internal.IOCInternalTestCase;
 import org.apache.tapestry5.ioc.services.ChainBuilder;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class ChainBuilderImplTest extends IOCInternalTestCase
 {
-    private final ChainBuilder builder = new ChainBuilderImpl(new ClassFactoryImpl());
-
     @Test
     public void simple_void_method()
     {
@@ -151,41 +149,11 @@ public class ChainBuilderImplTest extends IOCInternalTestCase
         return newMock(ChainCommand.class);
     }
 
-    @Test
-    public void fabricated_classes_are_reused()
-    {
-        Runnable r1 = mockRunnable();
-        Runnable r2 = mockRunnable();
-
-        Runnable chain1 = build(Runnable.class, r1);
-        Runnable chain2 = build(Runnable.class, r2);
-
-        Assert.assertSame(chain1.getClass(), chain2.getClass());
-
-        // Now make sure that the two instances are independent.
-
-        r1.run();
-
-        replay();
-
-        chain1.run();
-
-        verify();
-
-        r2.run();
-
-        replay();
-
-        chain2.run();
-
-        verify();
-    }
-
     private <T> T build(Class<T> commandInterface, T... commands)
     {
         List<T> list = Arrays.asList(commands);
 
-        return builder.build(commandInterface, list);
+        return getService(ChainBuilder.class).build(commandInterface, list);
     }
 
 }

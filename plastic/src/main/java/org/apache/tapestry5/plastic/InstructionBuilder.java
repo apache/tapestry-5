@@ -280,6 +280,14 @@ public interface InstructionBuilder
     @Opcodes("DUP, DUP_X1, DUP_X2")
     InstructionBuilder dupe(int depth);
 
+    /** Duplicates a wide value (a primitive long or double). */
+    @Opcodes("DUP2")
+    InstructionBuilder dupeWide();
+
+    /** Pops a wide value (a primitive long or double). */
+    @Opcodes("POP2")
+    InstructionBuilder popWide();
+
     /**
      * Duplicates the top object on the stack. Commonly used with {@link #when(Condition, WhenCallback)}.
      * 
@@ -465,4 +473,14 @@ public interface InstructionBuilder
     /** Expects the top object on the stack to be an array. Replaces it with the length of that array. */
     @Opcodes("ARRAYLENGTH")
     InstructionBuilder arrayLength();
+
+    /**
+     * Special comparison logic for primitive float, double and long. Expect two matching wide values
+     * on the stack. Reduces the two wide values to a single int value: -1, 0, or 1 depending on whether the deeper
+     * value is less than, equal to, or greater than the top value on the stack.
+     * 
+     * @param typeName
+     */
+    @Opcodes("LCMP, FCMPL, DCMPL")
+    InstructionBuilder compareSpecial(String typeName);
 }
