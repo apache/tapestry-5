@@ -279,9 +279,6 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         {
             this.plasticClass = plasticClass;
 
-            delegateField = plasticClass.introduceField(PropertyConduitDelegate.class, "delegate").inject(
-                    sharedDelegate);
-
             // Create the various methods; also determine the conduit's property type, property name and identify
             // the annotation provider.
 
@@ -306,9 +303,6 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     builder.loadConstant(conduitPropertyName).returnResult();
                 }
             });
-
-            if (conduitPropertyType == null)
-                throw new RuntimeException("Conduit property type is null for " + rootType + " " + expression);
 
             final PlasticField propertyTypeField = plasticClass.introduceField(Class.class, "propertyType").inject(
                     conduitPropertyType);
@@ -629,7 +623,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 {
                     // Put the delegate on top of the stack
 
-                    builder.loadThis().getField(delegateField);
+                    builder.loadThis().getField(getDelegateField());
 
                     invokeMethod(builder, DelegateMethods.RANGE, rangeNode, 0);
 
@@ -688,7 +682,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         {
             Term term;
 
-            while (node != null)
+            while (true)
             {
                 switch (node.getType())
                 {
@@ -766,8 +760,6 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                                 IDENTIFIER, INVOKE, LIST, NOT);
                 }
             }
-
-            return activeType;
         }
 
         public void invokeGetRootMethod(InstructionBuilder builder)
@@ -869,7 +861,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 {
                     boxIfPrimitive(builder, expressionType);
 
-                    builder.loadThis().getField(delegateField);
+                    builder.loadThis().getField(getDelegateField());
                     builder.swap().loadTypeConstant(PlasticUtils.toWrapperType(parameterType));
                     builder.invoke(DelegateMethods.COERCE);
 
@@ -1176,11 +1168,21 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             // Now invoke the delegate invert() method
 
-            builder.loadThis().getField(delegateField);
+            builder.loadThis().getField(getDelegateField());
 
             builder.swap().invoke(DelegateMethods.INVERT);
 
             return boolean.class;
+        }
+
+        /** Defer creation of the delegate field unless actually needed. */
+        private PlasticField getDelegateField()
+        {
+            if (delegateField == null)
+                delegateField = plasticClass.introduceField(PropertyConduitDelegate.class, "delegate").inject(
+                        sharedDelegate);
+
+            return delegateField;
         }
     }
 
