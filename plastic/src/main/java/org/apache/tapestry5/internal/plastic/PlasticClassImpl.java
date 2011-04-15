@@ -1756,7 +1756,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     {
         assert fieldType != null;
 
-        return introduceField(fieldType.getName(), suggestedName);
+        return introduceField(nameCache.toTypeName(fieldType), suggestedName);
     }
 
     private String makeUnique(Set<String> values, String input)
