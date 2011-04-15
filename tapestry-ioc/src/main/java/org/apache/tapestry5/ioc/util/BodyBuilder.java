@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.ioc.util;
 
-import org.apache.tapestry5.ioc.services.MethodSignature;
-
 import java.util.Formatter;
+
+import org.apache.tapestry5.ioc.services.MethodSignature;
 
 /**
  * Utility class for assembling the <em>body</em> used with Javassist when defining a method or constructor. Basically,
@@ -27,6 +27,8 @@ import java.util.Formatter;
  * This class is not threadsafe.
  * <p/>
  * Most of the methods return the BodyBuilder, to form a fluent interface.
+ * 
+ * @deprecated In 5.3/0, to be removed in a later release
  */
 public final class BodyBuilder
 {
@@ -61,9 +63,11 @@ public final class BodyBuilder
 
     /**
      * Adds text to the current line, without ending the line.
-     *
-     * @param format string format, as per {@link java.util.Formatter}
-     * @param args   arguments referenced by format specifiers
+     * 
+     * @param format
+     *            string format, as per {@link java.util.Formatter}
+     * @param args
+     *            arguments referenced by format specifiers
      */
     public BodyBuilder add(String format, Object... args)
     {
@@ -74,9 +78,11 @@ public final class BodyBuilder
 
     /**
      * Adds text to the current line and ends the line.
-     *
-     * @param format string format, as per {@link java.util.Formatter}
-     * @param args   arguments referenced by format specifiers
+     * 
+     * @param format
+     *            string format, as per {@link java.util.Formatter}
+     * @param args
+     *            arguments referenced by format specifiers
      */
     public BodyBuilder addln(String format, Object... args)
     {
@@ -93,7 +99,8 @@ public final class BodyBuilder
 
         formatter.format(format, args);
 
-        if (newLine) newline();
+        if (newLine)
+            newline();
 
         return this;
     }
@@ -109,7 +116,8 @@ public final class BodyBuilder
      */
     public BodyBuilder begin()
     {
-        if (!atNewLine) newline();
+        if (!atNewLine)
+            newline();
 
         indent();
         buffer.append("{");
@@ -125,7 +133,8 @@ public final class BodyBuilder
      */
     public BodyBuilder end()
     {
-        if (!atNewLine) newline();
+        if (!atNewLine)
+            newline();
 
         // TODO: Could check here if nesting depth goes below zero.
 
@@ -151,9 +160,9 @@ public final class BodyBuilder
     }
 
     /**
-     * Returns the current contents of the buffer. This value is often passed to methods such as {@link
-     * org.apache.tapestry5.ioc.services.ClassFab#addConstructor(Class[], Class[], String)} or {@link
-     * org.apache.tapestry5.ioc.services.ClassFab#addMethod(int, MethodSignature, String)}.
+     * Returns the current contents of the buffer. This value is often passed to methods such as
+     * {@link org.apache.tapestry5.ioc.services.ClassFab#addConstructor(Class[], Class[], String)} or
+     * {@link org.apache.tapestry5.ioc.services.ClassFab#addMethod(int, MethodSignature, String)}.
      * <p/>
      * A BodyBuilder can be used again after invoking toString(), typically by invoking {@link #clear()}.
      */

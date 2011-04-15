@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,6 +30,8 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
  * <p/>
  * This version of MethodSignature works with <em>loaded</em> classes, and it usually used in the context of
  * {@link org.apache.tapestry5.ioc.services.ClassFab} to create new classes and subclasses.
+ * 
+ * @deprecated In 5.3.0, to be removed in a later release
  */
 @SuppressWarnings("all")
 public class MethodSignature
@@ -44,8 +46,16 @@ public class MethodSignature
 
     private final Class[] exceptionTypes;
 
+    private final Method method;
+
     public MethodSignature(Class returnType, String name, Class[] parameterTypes, Class[] exceptionTypes)
     {
+        this(null, returnType, name, parameterTypes, exceptionTypes);
+    }
+
+    private MethodSignature(Method method, Class returnType, String name, Class[] parameterTypes, Class[] exceptionTypes)
+    {
+        this.method = method;
         assert returnType != null;
         this.returnType = returnType;
         assert InternalUtils.isNonBlank(name);
@@ -58,7 +68,7 @@ public class MethodSignature
 
     public MethodSignature(Method m)
     {
-        this(m.getReturnType(), m.getName(), m.getParameterTypes(), m.getExceptionTypes());
+        this(m, m.getReturnType(), m.getName(), m.getParameterTypes(), m.getExceptionTypes());
     }
 
     /**
@@ -72,6 +82,16 @@ public class MethodSignature
     public String getName()
     {
         return name;
+    }
+
+    /**
+     * If this signature was created from a method, return that method.
+     * 
+     * @since 5.3.0
+     */
+    public Method getMethod()
+    {
+        return method;
     }
 
     /**

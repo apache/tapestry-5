@@ -55,7 +55,6 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.GenericsUtils;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
-import org.apache.tapestry5.ioc.services.MethodSignature;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.PropertyAdapter;
@@ -1112,7 +1111,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             Type returnType = GenericsUtils.extractActualType(activeType, method);
 
-            return new Term(returnType, new MethodSignature(method).getUniqueId(), new AnnotationProvider()
+            return new Term(returnType, toUniqueId(method), new AnnotationProvider()
             {
                 public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
                 {
@@ -1394,4 +1393,19 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         return new NullPointerException(message);
     }
 
+    private static String toUniqueId(Method method)
+    {
+        StringBuilder builder = new StringBuilder(method.getName()).append("(");
+        String sep = "";
+
+        for (Class parameterType : method.getParameterTypes())
+        {
+            builder.append(sep);
+            builder.append(PlasticUtils.toTypeName(parameterType));
+
+            sep = ",";
+        }
+
+        return builder.append(")").toString();
+    }
 }

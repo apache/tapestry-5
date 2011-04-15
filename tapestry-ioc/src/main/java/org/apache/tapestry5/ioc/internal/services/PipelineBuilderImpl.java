@@ -1,10 +1,10 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,21 +18,24 @@ import org.apache.tapestry5.ioc.services.Builtin;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.DefaultImplementationBuilder;
 import org.apache.tapestry5.ioc.services.PipelineBuilder;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.slf4j.Logger;
 
 import java.util.List;
 
 public class PipelineBuilderImpl implements PipelineBuilder
 {
-    private final ClassFactory classFactory;
+
+    private final PlasticProxyFactory proxyFactory;
 
     private final DefaultImplementationBuilder defaultImplementationBuilder;
 
-    public PipelineBuilderImpl(@Builtin ClassFactory classFactory,
+    public PipelineBuilderImpl(@Builtin
+    PlasticProxyFactory proxyFactory,
 
-                               DefaultImplementationBuilder defaultImplementationBuilder)
+    DefaultImplementationBuilder defaultImplementationBuilder)
     {
-        this.classFactory = classFactory;
+        this.proxyFactory = proxyFactory;
         this.defaultImplementationBuilder = defaultImplementationBuilder;
     }
 
@@ -44,11 +47,12 @@ public class PipelineBuilderImpl implements PipelineBuilder
     }
 
     public <S, F> S build(Logger logger, Class<S> serviceInterface, Class<F> filterInterface, List<F> filters,
-                          S terminator)
+            S terminator)
     {
-        if (filters.isEmpty()) return terminator;
+        if (filters.isEmpty())
+            return terminator;
 
-        BridgeBuilder<S, F> bb = new BridgeBuilder<S, F>(logger, serviceInterface, filterInterface, classFactory);
+        BridgeBuilder<S, F> bb = new BridgeBuilder<S, F>(logger, serviceInterface, filterInterface, proxyFactory);
 
         // The first bridge will point to the terminator.
         // Like service decorators, we work deepest (last)

@@ -1,10 +1,10 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,16 +14,23 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.internal.IOCInternalTestCase;
-import org.apache.tapestry5.ioc.services.ClassFactory;
-import org.slf4j.Logger;
-import org.testng.annotations.Test;
-
 import java.io.Serializable;
+
+import org.apache.tapestry5.ioc.internal.IOCInternalTestCase;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
+import org.slf4j.Logger;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 public class BridgeBuilderTest extends IOCInternalTestCase
 {
-    private ClassFactory classFactory = new ClassFactoryImpl();
+    private PlasticProxyFactory proxyFactory;
+
+    @BeforeClass
+    public void setup()
+    {
+        proxyFactory = getService(PlasticProxyFactory.class);
+    }
 
     @Test
     public void standard_interface_and_filter()
@@ -32,8 +39,8 @@ public class BridgeBuilderTest extends IOCInternalTestCase
 
         replay();
 
-        BridgeBuilder<StandardService, StandardFilter> bb = new BridgeBuilder<StandardService, StandardFilter>(
-                logger, StandardService.class, StandardFilter.class, classFactory);
+        BridgeBuilder<StandardService, StandardFilter> bb = new BridgeBuilder<StandardService, StandardFilter>(logger,
+                StandardService.class, StandardFilter.class, proxyFactory);
 
         StandardFilter sf = new StandardFilter()
         {
@@ -75,8 +82,8 @@ public class BridgeBuilderTest extends IOCInternalTestCase
 
         replay();
 
-        BridgeBuilder<ToStringService, ToStringFilter> bb = new BridgeBuilder<ToStringService, ToStringFilter>(
-                logger, ToStringService.class, ToStringFilter.class, classFactory);
+        BridgeBuilder<ToStringService, ToStringFilter> bb = new BridgeBuilder<ToStringService, ToStringFilter>(logger,
+                ToStringService.class, ToStringFilter.class, proxyFactory);
 
         ToStringFilter f = new ToStringFilter()
         {
@@ -109,13 +116,12 @@ public class BridgeBuilderTest extends IOCInternalTestCase
         ExtraServiceMethod next = newMock(ExtraServiceMethod.class);
         Serializable filter = newMock(Serializable.class);
 
-        logger
-                .error("Method void extraServiceMethod() has no match in filter interface java.io.Serializable.");
+        logger.error("Method void extraServiceMethod() has no match in filter interface java.io.Serializable.");
 
         replay();
 
         BridgeBuilder<ExtraServiceMethod, Serializable> bb = new BridgeBuilder<ExtraServiceMethod, Serializable>(
-                logger, ExtraServiceMethod.class, Serializable.class, classFactory);
+                logger, ExtraServiceMethod.class, Serializable.class, proxyFactory);
 
         ExtraServiceMethod esm = bb.instantiateBridge(next, filter);
 
@@ -126,8 +132,7 @@ public class BridgeBuilderTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
+            assertEquals(ex.getMessage(),
                     "Method void extraServiceMethod() has no match in filter interface java.io.Serializable.");
         }
 
@@ -141,15 +146,14 @@ public class BridgeBuilderTest extends IOCInternalTestCase
         Serializable next = newMock(Serializable.class);
         ExtraFilterMethod filter = newMock(ExtraFilterMethod.class);
 
-        logger
-                .error("Method void extraFilterMethod() of filter interface "
-                        + "org.apache.tapestry5.ioc.internal.services.ExtraFilterMethod does not have a matching method "
-                        + "in java.io.Serializable.");
+        logger.error("Method void extraFilterMethod() of filter interface "
+                + "org.apache.tapestry5.ioc.internal.services.ExtraFilterMethod does not have a matching method "
+                + "in java.io.Serializable.");
 
         replay();
 
-        BridgeBuilder<Serializable, ExtraFilterMethod> bb = new BridgeBuilder<Serializable, ExtraFilterMethod>(
-                logger, Serializable.class, ExtraFilterMethod.class, classFactory);
+        BridgeBuilder<Serializable, ExtraFilterMethod> bb = new BridgeBuilder<Serializable, ExtraFilterMethod>(logger,
+                Serializable.class, ExtraFilterMethod.class, proxyFactory);
 
         assertNotNull(bb.instantiateBridge(next, filter));
 
@@ -163,8 +167,8 @@ public class BridgeBuilderTest extends IOCInternalTestCase
 
         replay();
 
-        BridgeBuilder<MiddleService, MiddleFilter> bb = new BridgeBuilder<MiddleService, MiddleFilter>(
-                logger, MiddleService.class, MiddleFilter.class, classFactory);
+        BridgeBuilder<MiddleService, MiddleFilter> bb = new BridgeBuilder<MiddleService, MiddleFilter>(logger,
+                MiddleService.class, MiddleFilter.class, proxyFactory);
 
         MiddleFilter mf = new MiddleFilter()
         {

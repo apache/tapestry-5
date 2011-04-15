@@ -1,10 +1,10 @@
-// Copyright 2004, 2005, 2006 The Apache Software Foundation
+// Copyright 2004, 2005, 2006, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,8 +24,9 @@ import java.util.*;
  * Utility used to iterate over the publically visible methods of a class or interface. The MethodIterator understands
  * some complications that can occur when a class inherits the same method from multiple interfaces and with slightly
  * different signatures (due to the fact that declared thrown exceptions can vary slightly for the "same" method).
- *
+ * 
  * @see org.apache.tapestry5.ioc.services.MethodSignature#isOverridingSignatureOf(MethodSignature)
+ * @deprecated In 5.3.0, to be removed in a later release
  */
 public class MethodIterator
 {
@@ -46,7 +47,6 @@ public class MethodIterator
         }
     };
 
-
     public MethodIterator(Class subjectClass)
     {
         Method[] methods = subjectClass.getMethods();
@@ -58,7 +58,6 @@ public class MethodIterator
 
         signatures = newList(map.values());
         count = signatures.size();
-
 
         Collections.sort(signatures, COMPARATOR);
     }
@@ -72,7 +71,8 @@ public class MethodIterator
 
         MethodSignature existing = map.get(uid);
 
-        if (existing == null || sig.isOverridingSignatureOf(existing)) map.put(uid, sig);
+        if (existing == null || sig.isOverridingSignatureOf(existing))
+            map.put(uid, sig);
     }
 
     public boolean hasNext()
@@ -84,12 +84,14 @@ public class MethodIterator
      * Returns the next method (as a {@link MethodSignature}, returning null when all are exhausted. Each method
      * signature is returned exactly once (even if the same method signature is defined in multiple inherited classes or
      * interfaces). The method signatures returned in ascending order, according to the "natural ordering".
-     *
-     * @throws NoSuchElementException if there are no more signatures
+     * 
+     * @throws NoSuchElementException
+     *             if there are no more signatures
      */
     public MethodSignature next()
     {
-        if (index >= count) throw new NoSuchElementException();
+        if (index >= count)
+            throw new NoSuchElementException();
 
         return signatures.get(index++);
     }
