@@ -15,19 +15,24 @@
 package org.apache.tapestry5.internal.plastic;
 
 import org.apache.tapestry5.internal.plastic.asm.Label;
+import org.apache.tapestry5.plastic.InstructionBuilder;
 import org.apache.tapestry5.plastic.InstructionBuilderCallback;
 import org.apache.tapestry5.plastic.TryCatchBlock;
 import org.apache.tapestry5.plastic.TryCatchCallback;
 
 public class TryCatchBlockImpl extends Lockable implements TryCatchBlock
 {
+    private final InstructionBuilder builder;
+
     private final InstructionBuilderState state;
 
     private final Label startLabel, endLabel;
 
-    TryCatchBlockImpl(InstructionBuilderState state)
+    TryCatchBlockImpl(InstructionBuilder builder, InstructionBuilderState state)
     {
+        this.builder = builder;
         this.state = state;
+
         this.startLabel = new Label();
         this.endLabel = new Label();
     }
@@ -36,7 +41,7 @@ public class TryCatchBlockImpl extends Lockable implements TryCatchBlock
     {
         state.visitor.visitLabel(startLabel);
 
-        new InstructionBuilderImpl(state).doCallback(callback);
+        callback.doBuild(builder);
 
         state.visitor.visitLabel(endLabel);
     }
@@ -54,7 +59,7 @@ public class TryCatchBlockImpl extends Lockable implements TryCatchBlock
 
         Label handler = state.newLabel();
 
-        new InstructionBuilderImpl(state).doCallback(callback);
+        callback.doBuild(builder);
 
         state.visitor.visitTryCatchBlock(startLabel, endLabel, handler, exceptionInternalName);
     }

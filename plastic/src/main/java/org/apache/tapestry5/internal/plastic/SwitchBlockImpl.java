@@ -23,6 +23,8 @@ import org.apache.tapestry5.plastic.SwitchCallback;
 
 public class SwitchBlockImpl extends Lockable implements SwitchBlock, Opcodes
 {
+    private final InstructionBuilder builder;
+
     private final InstructionBuilderState state;
 
     private final int min, max;
@@ -33,10 +35,11 @@ public class SwitchBlockImpl extends Lockable implements SwitchBlock, Opcodes
 
     private boolean defaultAdded = false;
 
-    SwitchBlockImpl(InstructionBuilderState state, int min, int max)
+    SwitchBlockImpl(InstructionBuilder builder, InstructionBuilderState state, int min, int max)
     {
         assert min <= max;
 
+        this.builder = builder;
         this.state = state;
         this.min = min;
         this.max = max;
@@ -89,7 +92,7 @@ public class SwitchBlockImpl extends Lockable implements SwitchBlock, Opcodes
 
         state.visitor.visitLabel(caseLabels[caseValue - min]);
 
-        new InstructionBuilderImpl(state).doCallback(callback);
+        callback.doBuild(builder);
 
         if (jumpToEnd)
             state.visitor.visitJumpInsn(GOTO, endSwitchLabel);
@@ -102,7 +105,7 @@ public class SwitchBlockImpl extends Lockable implements SwitchBlock, Opcodes
 
         state.visitor.visitLabel(defaultLabel);
 
-        new InstructionBuilderImpl(state).doCallback(callback);
+        callback.doBuild(builder);
 
         defaultAdded = true;
     }

@@ -106,15 +106,12 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
 
     InstructionBuilderImpl(MethodDescription description, MethodVisitor visitor, NameCache cache)
     {
-        this(new InstructionBuilderState(description, visitor, cache));
-    }
-
-    InstructionBuilderImpl(InstructionBuilderState state)
-    {
+        InstructionBuilderState state = new InstructionBuilderState(description, visitor, cache);
         this.state = state;
 
         // These are conveniences for values stored inside the state. In fact,
         // these fields predate the InstructionBuilderState type.
+
         this.v = state.visitor;
         this.cache = state.nameCache;
     }
@@ -424,7 +421,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
     {
         check();
 
-        new TryCatchBlockImpl(state).doCallback(callback);
+        new TryCatchBlockImpl(this, state).doCallback(callback);
 
         return this;
     }
@@ -587,7 +584,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
 
         assert callback != null;
 
-        new SwitchBlockImpl(state, min, max).doCallback(callback);
+        new SwitchBlockImpl(this, state, min, max).doCallback(callback);
 
         return this;
     }
@@ -598,13 +595,13 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
 
         final LocalVariable var = state.startVariable(type);
 
-        runSubBuilder(new InstructionBuilderCallback()
+        new InstructionBuilderCallback()
         {
             public void doBuild(InstructionBuilder builder)
             {
                 callback.doBuild(var, builder);
             }
-        });
+        }.doBuild(this);
 
         state.stopVariable(var);
 
@@ -663,25 +660,25 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
 
         v.visitJumpInsn(conditionToOpcode.get(condition), ifFalseLabel);
 
-        runSubBuilder(new InstructionBuilderCallback()
+        new InstructionBuilderCallback()
         {
             public void doBuild(InstructionBuilder builder)
             {
                 callback.ifTrue(builder);
             }
-        });
+        }.doBuild(this);
 
         v.visitJumpInsn(GOTO, endIfLabel);
 
         v.visitLabel(ifFalseLabel);
 
-        runSubBuilder(new InstructionBuilderCallback()
+        new InstructionBuilderCallback()
         {
             public void doBuild(InstructionBuilder builder)
             {
                 callback.ifFalse(builder);
             }
-        });
+        }.doBuild(this);
 
         v.visitLabel(endIfLabel);
 
@@ -699,23 +696,23 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
 
         Label exitLoop = new Label();
 
-        runSubBuilder(new InstructionBuilderCallback()
+        new InstructionBuilderCallback()
         {
             public void doBuild(InstructionBuilder builder)
             {
                 callback.buildTest(builder);
             }
-        });
+        }.doBuild(this);
 
         v.visitJumpInsn(conditionToOpcode.get(condition), exitLoop);
 
-        runSubBuilder(new InstructionBuilderCallback()
+        new InstructionBuilderCallback()
         {
             public void doBuild(InstructionBuilder builder)
             {
                 callback.buildBody(builder);
             }
-        });
+        }.doBuild(this);
 
         v.visitJumpInsn(GOTO, doCheck);
 
@@ -805,11 +802,6 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         v.visitInsn(opcode);
 
         return this;
-    }
-
-    private void runSubBuilder(InstructionBuilderCallback callback)
-    {
-        new InstructionBuilderImpl(state).doCallback(callback);
     }
 
     void doCallback(InstructionBuilderCallback callback)
