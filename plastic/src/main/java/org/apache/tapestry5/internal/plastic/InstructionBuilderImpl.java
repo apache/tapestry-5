@@ -18,6 +18,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.tapestry5.internal.plastic.InstructionBuilderState.LVInfo;
 import org.apache.tapestry5.internal.plastic.asm.Label;
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
@@ -25,6 +26,8 @@ import org.apache.tapestry5.internal.plastic.asm.Type;
 import org.apache.tapestry5.plastic.Condition;
 import org.apache.tapestry5.plastic.InstructionBuilder;
 import org.apache.tapestry5.plastic.InstructionBuilderCallback;
+import org.apache.tapestry5.plastic.LocalVariable;
+import org.apache.tapestry5.plastic.LocalVariableCallback;
 import org.apache.tapestry5.plastic.MethodDescription;
 import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.plastic.PlasticMethod;
@@ -578,58 +581,39 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
-    public InstructionBuilder startVariable(String name, String type, InstructionBuilderCallback callback)
+    public InstructionBuilder startVariable(String type, final LocalVariableCallback callback)
     {
         check();
 
-        Label start = state.newLabel();
-        Label end = new Label();
+        final LocalVariable var = state.startVariable(type);
 
-        LocalVariable var = new LocalVariable(name, type, state.localIndex++);
+        runSubBuilder(new InstructionBuilderCallback()
+        {
+            public void doBuild(InstructionBuilder builder)
+            {
+                callback.doBuild(var, builder);
+            }
+        });
 
-        v.visitLocalVariable(name, cache.toDesc(type), null, start, end, var.index);
-
-        LocalVariable prior = state.locals.put(name, var);
-
-        runSubBuilder(callback);
-
-        v.visitLabel(end);
-
-        state.localIndex--;
-
-        // Restore the original variable with this name, probably just null though.
-
-        state.locals.put(name, prior);
+        state.stopVariable(var);
 
         return this;
     }
 
-    public InstructionBuilder storeVariable(String name)
+    public InstructionBuilder storeVariable(LocalVariable var)
     {
         check();
 
-        LocalVariable var = state.locals.get(name);
-
-        PrimitiveType type = PrimitiveType.getByName(var.type);
-
-        int opcode = type == null ? ASTORE : type.storeOpcode;
-
-        v.visitVarInsn(opcode, var.index);
+        state.store(var);
 
         return this;
     }
 
-    public InstructionBuilder loadVariable(String name)
+    public InstructionBuilder loadVariable(LocalVariable var)
     {
         check();
 
-        LocalVariable var = state.locals.get(name);
-
-        PrimitiveType type = PrimitiveType.getByName(var.type);
-
-        int opcode = type == null ? ALOAD : type.loadOpcode;
-
-        v.visitVarInsn(opcode, var.index);
+        state.load(var);
 
         return this;
     }
@@ -716,7 +700,6 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
 
         runSubBuilder(new InstructionBuilderCallback()
         {
-
             public void doBuild(InstructionBuilder builder)
             {
                 callback.buildBody(builder);
@@ -730,13 +713,13 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
-    public InstructionBuilder increment(String name)
+    public InstructionBuilder increment(LocalVariable variable)
     {
         check();
 
-        LocalVariable var = state.locals.get(name);
+        LVInfo info = state.locals.get(variable);
 
-        v.visitIincInsn(var.index, 1);
+        v.visitIincInsn(info.offset, 1);
 
         return this;
     }
@@ -752,53 +735,33 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
 
     public InstructionBuilder iterateArray(final InstructionBuilderCallback callback)
     {
-        final String name = newUniqueLocalVarName("i");
-
-        startVariable(name, "int", new InstructionBuilderCallback()
+        startVariable("int", new LocalVariableCallback()
         {
-            public void doBuild(InstructionBuilder builder)
+            public void doBuild(final LocalVariable indexVariable, InstructionBuilder builder)
             {
-                builder.loadConstant(0).storeVariable(name);
+                builder.loadConstant(0).storeVariable(indexVariable);
 
                 builder.doWhile(Condition.LESS_THAN, new WhileCallback()
                 {
                     public void buildTest(InstructionBuilder builder)
                     {
                         builder.dupe().arrayLength();
-                        builder.loadVariable(name).swap();
+                        builder.loadVariable(indexVariable).swap();
                     }
 
                     public void buildBody(InstructionBuilder builder)
                     {
-                        builder.dupe().loadVariable(name).loadArrayElement();
+                        builder.dupe().loadVariable(indexVariable).loadArrayElement();
 
                         callback.doBuild(builder);
-                        
-                        builder.increment(name);
+
+                        builder.increment(indexVariable);
                     }
                 });
             }
         });
 
         return this;
-    }
-
-    private String newUniqueLocalVarName(String base)
-    {
-        if (!state.locals.containsKey(base))
-            return base;
-
-        int index = 0;
-
-        while (true)
-        {
-            String name = base + "_" + index;
-
-            if (!state.locals.containsKey(name))
-                return name;
-
-            index++;
-        }
     }
 
     private void runSubBuilder(InstructionBuilderCallback callback)

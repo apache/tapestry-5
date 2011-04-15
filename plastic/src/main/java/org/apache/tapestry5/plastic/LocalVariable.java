@@ -12,21 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.plastic;
+package org.apache.tapestry5.plastic;
 
-import org.apache.tapestry5.plastic.LocalVariable;
-
-class LocalVariableImpl implements LocalVariable
+/**
+ * Variable available inside a {@link LocalVariableCallback}.
+ */
+public interface LocalVariable
 {
-    private String type;
-
-    LocalVariableImpl(String type)
-    {
-        this.type = type;
-    }
-
-    public String getType()
-    {
-        return type;
-    }
+    /** Returns the Java type of the variable. */
+    String getType();
 }

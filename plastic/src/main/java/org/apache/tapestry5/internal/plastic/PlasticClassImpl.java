@@ -43,12 +43,13 @@ import org.apache.tapestry5.plastic.AnnotationAccess;
 import org.apache.tapestry5.plastic.ClassInstantiator;
 import org.apache.tapestry5.plastic.ComputedValue;
 import org.apache.tapestry5.plastic.Condition;
-import org.apache.tapestry5.plastic.WhenCallback;
 import org.apache.tapestry5.plastic.FieldConduit;
 import org.apache.tapestry5.plastic.FieldHandle;
 import org.apache.tapestry5.plastic.InstanceContext;
 import org.apache.tapestry5.plastic.InstructionBuilder;
 import org.apache.tapestry5.plastic.InstructionBuilderCallback;
+import org.apache.tapestry5.plastic.LocalVariable;
+import org.apache.tapestry5.plastic.LocalVariableCallback;
 import org.apache.tapestry5.plastic.MethodAdvice;
 import org.apache.tapestry5.plastic.MethodDescription;
 import org.apache.tapestry5.plastic.MethodHandle;
@@ -1299,11 +1300,11 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             // and throws no checked exceptions, then the variable actually isn't used. This code
             // should be refactored a bit once there are tests for those cases.
 
-            builder.startVariable("invocation", invocationClassName, new InstructionBuilderCallback()
+            builder.startVariable(invocationClassName, new LocalVariableCallback()
             {
-                public void doBuild(InstructionBuilder builder)
+                public void doBuild(final LocalVariable invocation, InstructionBuilder builder)
                 {
-                    builder.dupe().storeVariable("invocation");
+                    builder.dupe().storeVariable(invocation);
 
                     builder.invoke(AbstractMethodInvocation.class, MethodInvocation.class, "proceed");
 
@@ -1315,7 +1316,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                         {
                             public void doBuild(InstructionBuilder builder)
                             {
-                                builder.loadVariable("invocation").loadTypeConstant(Exception.class);
+                                builder.loadVariable(invocation).loadTypeConstant(Exception.class);
                                 builder.invokeVirtual(invocationClassName, Throwable.class.getName(),
                                         "getCheckedException", Class.class.getName());
                                 builder.throwException();
@@ -1324,7 +1325,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                     }
 
                     if (!isVoid)
-                        builder.loadVariable("invocation").getField(invocationClassName, RETURN_VALUE,
+                        builder.loadVariable(invocation).getField(invocationClassName, RETURN_VALUE,
                                 description.returnType);
 
                     builder.returnResult();

@@ -19,6 +19,7 @@ import java.util.Map;
 import org.apache.tapestry5.internal.plastic.asm.Label;
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
+import org.apache.tapestry5.plastic.LocalVariable;
 import org.apache.tapestry5.plastic.MethodDescription;
 
 /**
@@ -35,7 +36,26 @@ public class InstructionBuilderState implements Opcodes
 
     int localIndex;
 
-    final Map<String, LocalVariable> locals = PlasticInternalUtils.newMap();
+    int varSuffix;
+
+    static class LVInfo
+    {
+        final int width, offset, loadOpcode, storeOpcode;
+
+        final Label end;
+
+        public LVInfo(int width, int offset, int loadOpcode, int storeOpcode, Label end)
+        {
+            this.width = width;
+            this.offset = offset;
+            this.loadOpcode = loadOpcode;
+            this.storeOpcode = storeOpcode;
+            this.end = end;
+        }
+    }
+
+    /** Map from LocalVariable to Integer offset. */
+    final Map<LocalVariable, LVInfo> locals = PlasticInternalUtils.newMap();
 
     /** Index for argument (0 is first true argument); allows for double-width primitive types. */
     final int[] argumentIndex;
@@ -74,6 +94,7 @@ public class InstructionBuilderState implements Opcodes
         localIndex = offset;
     }
 
+    /** Creates a new Label and adds it to the method. */
     Label newLabel()
     {
         Label result = new Label();
@@ -81,5 +102,60 @@ public class InstructionBuilderState implements Opcodes
         visitor.visitLabel(result);
 
         return result;
+    }
+
+    LocalVariable startVariable(String type)
+    {
+        Label start = newLabel();
+        Label end = new Label();
+
+        PrimitiveType ptype = PrimitiveType.getByName(type);
+
+        int width = (ptype != null && ptype.isWide()) ? 2 : 1;
+
+        int loadOpcode = ptype == null ? ALOAD : ptype.loadOpcode;
+        int storeOpcode = ptype == null ? ASTORE : ptype.storeOpcode;
+
+        LVInfo info = new LVInfo(width, localIndex, loadOpcode, storeOpcode, end);
+
+        localIndex += width;
+
+        LocalVariable var = new LocalVariableImpl(type);
+
+        locals.put(var, info);
+
+        visitor.visitLocalVariable(nextVarName(), nameCache.toDesc(type), null, start, end, info.offset);
+
+        return var;
+    }
+
+    void load(LocalVariable var)
+    {
+        LVInfo info = locals.get(var);
+
+        visitor.visitVarInsn(info.loadOpcode, info.offset);
+    }
+
+    void store(LocalVariable var)
+    {
+        LVInfo info = locals.get(var);
+
+        visitor.visitVarInsn(info.storeOpcode, info.offset);
+    }
+
+    void stopVariable(LocalVariable variable)
+    {
+        LVInfo info = locals.get(variable);
+
+        visitor.visitLabel(info.end);
+
+        locals.remove(variable);
+
+        localIndex -= info.width;
+    }
+
+    private String nextVarName()
+    {
+        return "var" + varSuffix++;
     }
 }

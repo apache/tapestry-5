@@ -25,9 +25,10 @@ import java.lang.reflect.Method;
  * Most methods return the same instance of InstructionBuilder, allowing for a "fluid" API.
  * <p>
  * More complex functionality, such as {@linkplain #startTryCatch(InstructionBuilderCallback, TryCatchCallback)
- * try/catch blocks}, is more DSL (domain specific language) like, and is based on callbacks. This looks better in
+ * try/catch blocks}, is more like a DSL (domain specific language), and is based on callbacks. This looks better in
  * Groovy and will be more reasonable once JDK 1.8 closures are available; in the meantime, it means some deeply nested
- * inner classes, but helps ensure that correct bytecode is generated.
+ * inner classes, but helps ensure that correct bytecode is generated and helps to limit the amount of bookkeeping is
+ * necessary on the part of coce using InstructionBuilder.
  */
 @SuppressWarnings("rawtypes")
 public interface InstructionBuilder
@@ -377,28 +378,26 @@ public interface InstructionBuilder
     /**
      * Starts a block where the given name is active.
      * 
-     * @param name
-     *            name of local variable
      * @param type
      *            type of local variable
      * @param callback
      *            generates code used when variable is in effect
      */
-    InstructionBuilder startVariable(String name, String type, InstructionBuilderCallback callback);
+    InstructionBuilder startVariable(String type, LocalVariableCallback callback);
 
     /**
      * Stores the value on top of the stack to a local variable (previously defined by
      * {@link #startVariable(String, String, InstructionBuilderCallback)}.
      */
     @Opcodes("ASTORE, ISTORE, LSTORE, FSTORE, DSTORE")
-    InstructionBuilder storeVariable(String name);
+    InstructionBuilder storeVariable(LocalVariable variable);
 
     /**
-     * Loads a value from a local variable and pushes it onto the stack. The variable must have been previously defined
-     * by {@link #startVariable(String, String, InstructionBuilderCallback)}.
+     * Loads a value from a local variable and pushes it onto the stack. The is defined by
+     * {@link #startVariable(String, InstructionBuilderCallback)} and made available via {@link LocalVariableCallback}.
      */
     @Opcodes("ALOAD, ILOAD, LLOAD, FLOAD, DLOAD")
-    InstructionBuilder loadVariable(String name);
+    InstructionBuilder loadVariable(LocalVariable variable);
 
     /**
      * Executes conditional code based on a {@link Condition}. The testing opcodes all pop
@@ -461,7 +460,7 @@ public interface InstructionBuilder
      * @return this builder
      */
     @Opcodes("IINC")
-    InstructionBuilder increment(String name);
+    InstructionBuilder increment(LocalVariable variable);
 
     /** Expects the top object on the stack to be an array. Replaces it with the length of that array. */
     @Opcodes("ARRAYLENGTH")

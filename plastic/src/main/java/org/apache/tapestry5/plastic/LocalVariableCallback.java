@@ -12,21 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.plastic;
+package org.apache.tapestry5.plastic;
 
-import org.apache.tapestry5.plastic.LocalVariable;
-
-class LocalVariableImpl implements LocalVariable
+/**
+ * A callback for generating code where a local variable is in effect.
+ */
+public interface LocalVariableCallback
 {
-    private String type;
-
-    LocalVariableImpl(String type)
-    {
-        this.type = type;
-    }
-
-    public String getType()
-    {
-        return type;
-    }
+    /**
+     * Callback to generate code with a local variable
+     * 
+     * @param variable
+     *            the variable that is available within the block
+     * @param builder
+     *            builder the block where the variable is active
+     */
+    void doBuild(LocalVariable variable, InstructionBuilder builder);
 }
