@@ -210,7 +210,9 @@
     <module>tapestry-hibernate-core</module>
     <module>tapestry-hibernate</module>
     <module>tapestry-upload</module>
+    <!-- Temporarily removed 
     <module>tapestry-jpa</module>
+    -->
     <module>tapestry-yuicompressor</module>
     <!-- Now we're getting into the archetypes. -->
     <module>quickstart</module>
