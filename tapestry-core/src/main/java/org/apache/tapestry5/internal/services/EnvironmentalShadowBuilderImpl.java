@@ -1,10 +1,10 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,70 +14,64 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.lang.reflect.Method;
+
 import org.apache.tapestry5.ioc.services.Builtin;
-import org.apache.tapestry5.ioc.services.ClassFab;
-import org.apache.tapestry5.ioc.services.ClassFactory;
-import org.apache.tapestry5.ioc.services.MethodSignature;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
+import org.apache.tapestry5.plastic.ClassInstantiator;
+import org.apache.tapestry5.plastic.MethodAdvice;
+import org.apache.tapestry5.plastic.MethodInvocation;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticClassTransformer;
+import org.apache.tapestry5.plastic.PlasticMethod;
+import org.apache.tapestry5.plastic.PlasticUtils;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.EnvironmentalShadowBuilder;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
-
 public class EnvironmentalShadowBuilderImpl implements EnvironmentalShadowBuilder
 {
-    private final ClassFactory classFactory;
+    private final PlasticProxyFactory proxyFactory;
 
     private final Environment environment;
 
     /**
      * Construct using the default builtin factory, not the component layer version.
      */
-    public EnvironmentalShadowBuilderImpl(@Builtin ClassFactory classFactory,
+    public EnvironmentalShadowBuilderImpl(@Builtin
+    PlasticProxyFactory proxyFactory,
 
-                                          Environment environment)
+    Environment environment)
     {
-        this.classFactory = classFactory;
+        this.proxyFactory = proxyFactory;
         this.environment = environment;
     }
 
-    public <T> T build(Class<T> serviceType)
+    public <T> T build(final Class<T> serviceType)
     {
-        // TODO: Check that serviceType is an interface?
-
-        Class proxyClass = buildProxyClass(serviceType);
-
-        try
+        ClassInstantiator<T> instantiator = proxyFactory.createProxy(serviceType, new PlasticClassTransformer()
         {
-            Constructor cons = proxyClass.getConstructors()[0];
+            public void transform(PlasticClass plasticClass)
+            {
+                PlasticMethod delegateMethod = plasticClass.introducePrivateMethod(
+                        PlasticUtils.toTypeName(serviceType), "delegate", null, null);
 
-            Object raw = cons.newInstance(environment, serviceType);
+                delegateMethod.addAdvice(new MethodAdvice()
+                {
+                    public void advise(MethodInvocation invocation)
+                    {
+                        invocation.setReturnValue(environment.peekRequired(serviceType));
+                    }
+                });
 
-            return serviceType.cast(raw);
-        }
-        catch (Exception ex)
-        {
-            throw new RuntimeException(ex);
-        }
+                for (Method method : serviceType.getMethods())
+                {
+                    plasticClass.introduceMethod(method).delegateTo(delegateMethod);
+                }
+
+                plasticClass.addToString(String.format("<EnvironmentalProxy for %s>", serviceType.getName()));
+            }
+        });
+
+        return instantiator.newInstance();
     }
-
-    private Class buildProxyClass(Class serviceType)
-    {
-        ClassFab classFab = classFactory.newClass(serviceType);
-
-        classFab.addField("environment", Environment.class);
-        classFab.addField("_serviceType", Class.class);
-
-        classFab.addConstructor(new Class[] { Environment.class, Class.class }, null,
-                                "{ environment = $1; _serviceType = $2; }");
-
-        classFab.addMethod(Modifier.PRIVATE, new MethodSignature(serviceType, "_delegate", null, null),
-                           "return ($r) environment.peekRequired(_serviceType); ");
-
-        classFab.proxyMethodsToDelegate(serviceType, "_delegate()",
-                                        String.format("<EnvironmentalProxy for %s>", serviceType.getName()));
-
-        return classFab.createClass();
-    }
-
 }
