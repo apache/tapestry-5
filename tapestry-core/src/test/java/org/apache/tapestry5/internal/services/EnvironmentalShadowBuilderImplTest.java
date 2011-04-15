@@ -15,8 +15,6 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
-import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.EnvironmentalShadowBuilder;
