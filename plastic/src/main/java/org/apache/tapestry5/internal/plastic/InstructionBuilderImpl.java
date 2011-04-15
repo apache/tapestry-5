@@ -23,7 +23,6 @@ import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 import org.apache.tapestry5.internal.plastic.asm.Type;
 import org.apache.tapestry5.plastic.Condition;
-import org.apache.tapestry5.plastic.WhenCallback;
 import org.apache.tapestry5.plastic.InstructionBuilder;
 import org.apache.tapestry5.plastic.InstructionBuilderCallback;
 import org.apache.tapestry5.plastic.MethodDescription;
@@ -32,6 +31,8 @@ import org.apache.tapestry5.plastic.PlasticMethod;
 import org.apache.tapestry5.plastic.PlasticUtils;
 import org.apache.tapestry5.plastic.SwitchCallback;
 import org.apache.tapestry5.plastic.TryCatchCallback;
+import org.apache.tapestry5.plastic.WhenCallback;
+import org.apache.tapestry5.plastic.WhileCallback;
 
 @SuppressWarnings("rawtypes")
 public class InstructionBuilderImpl extends Lockable implements Opcodes, InstructionBuilder
@@ -50,6 +51,10 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         m.put(Condition.NON_NULL, IFNULL);
         m.put(Condition.ZERO, IFNE);
         m.put(Condition.NON_ZERO, IFEQ);
+        m.put(Condition.EQUAL, IF_ICMPNE);
+        m.put(Condition.NOT_EQUAL, IF_ICMPEQ);
+        m.put(Condition.LESS_THAN, IF_ICMPGE);
+        m.put(Condition.GREATER, IF_ICMPLE);
     }
 
     private static final Map<Object, Integer> constantOpcodes = new HashMap<Object, Integer>();
@@ -355,7 +360,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
     {
         check();
 
-        v.visitLdcInsn(index);
+        loadConstant(index);
 
         PrimitiveType type = PrimitiveType.getByName(elementType);
 
@@ -367,6 +372,15 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         {
             throw new RuntimeException("Access to non-object arrays is not yet supported.");
         }
+
+        return this;
+    }
+
+    public InstructionBuilder loadArrayElement()
+    {
+        check();
+
+        v.visitInsn(AALOAD);
 
         return this;
     }
@@ -577,7 +591,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
 
         LocalVariable prior = state.locals.put(name, var);
 
-        new InstructionBuilderImpl(state).doCallback(callback);
+        runSubBuilder(callback);
 
         v.visitLabel(end);
 
@@ -642,7 +656,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         });
     }
 
-    public InstructionBuilder when(Condition condition, WhenCallback callback)
+    public InstructionBuilder when(Condition condition, final WhenCallback callback)
     {
         check();
 
@@ -654,25 +668,142 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
 
         v.visitJumpInsn(conditionToOpcode.get(condition), ifFalseLabel);
 
-        InstructionBuilderImpl trueBuilder = new InstructionBuilderImpl(state);
-
-        callback.ifTrue(trueBuilder);
-
-        trueBuilder.lock();
+        runSubBuilder(new InstructionBuilderCallback()
+        {
+            public void doBuild(InstructionBuilder builder)
+            {
+                callback.ifTrue(builder);
+            }
+        });
 
         v.visitJumpInsn(GOTO, endIfLabel);
 
         v.visitLabel(ifFalseLabel);
 
-        InstructionBuilderImpl falseBuilder = new InstructionBuilderImpl(state);
-
-        callback.ifFalse(falseBuilder);
-
-        falseBuilder.lock();
+        runSubBuilder(new InstructionBuilderCallback()
+        {
+            public void doBuild(InstructionBuilder builder)
+            {
+                callback.ifFalse(builder);
+            }
+        });
 
         v.visitLabel(endIfLabel);
 
         return this;
+    }
+
+    public InstructionBuilder doWhile(Condition condition, final WhileCallback callback)
+    {
+        check();
+
+        assert condition != null;
+        assert callback != null;
+
+        Label doCheck = state.newLabel();
+
+        Label exitLoop = new Label();
+
+        runSubBuilder(new InstructionBuilderCallback()
+        {
+            public void doBuild(InstructionBuilder builder)
+            {
+                callback.buildTest(builder);
+            }
+        });
+
+        v.visitJumpInsn(conditionToOpcode.get(condition), exitLoop);
+
+        runSubBuilder(new InstructionBuilderCallback()
+        {
+
+            public void doBuild(InstructionBuilder builder)
+            {
+                callback.buildBody(builder);
+            }
+        });
+
+        v.visitJumpInsn(GOTO, doCheck);
+
+        v.visitLabel(exitLoop);
+
+        return this;
+    }
+
+    public InstructionBuilder increment(String name)
+    {
+        check();
+
+        LocalVariable var = state.locals.get(name);
+
+        v.visitIincInsn(var.index, 1);
+
+        return this;
+    }
+
+    public InstructionBuilder arrayLength()
+    {
+        check();
+
+        v.visitInsn(ARRAYLENGTH);
+
+        return this;
+    }
+
+    public InstructionBuilder iterateArray(final InstructionBuilderCallback callback)
+    {
+        final String name = newUniqueLocalVarName("i");
+
+        startVariable(name, "int", new InstructionBuilderCallback()
+        {
+            public void doBuild(InstructionBuilder builder)
+            {
+                builder.loadConstant(0).storeVariable(name);
+
+                builder.doWhile(Condition.LESS_THAN, new WhileCallback()
+                {
+                    public void buildTest(InstructionBuilder builder)
+                    {
+                        builder.dupe().arrayLength();
+                        builder.loadVariable(name).swap();
+                    }
+
+                    public void buildBody(InstructionBuilder builder)
+                    {
+                        builder.dupe().loadVariable(name).loadArrayElement();
+
+                        callback.doBuild(builder);
+                        
+                        builder.increment(name);
+                    }
+                });
+            }
+        });
+
+        return this;
+    }
+
+    private String newUniqueLocalVarName(String base)
+    {
+        if (!state.locals.containsKey(base))
+            return base;
+
+        int index = 0;
+
+        while (true)
+        {
+            String name = base + "_" + index;
+
+            if (!state.locals.containsKey(name))
+                return name;
+
+            index++;
+        }
+    }
+
+    private void runSubBuilder(InstructionBuilderCallback callback)
+    {
+        new InstructionBuilderImpl(state).doCallback(callback);
     }
 
     void doCallback(InstructionBuilderCallback callback)

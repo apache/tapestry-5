@@ -43,4 +43,40 @@ class MethodImplementationTests extends AbstractPlasticSpecification {
 
         o.value == 2
     }
+
+    def "while, increment, array operations"() {
+        setup:
+
+        def mgr = new PlasticManager();
+
+        PlasticClass pc = mgr.getPlasticClass("testsubjects.WhileSubject")
+
+        PlasticMethod m = findMethod(pc, "firstNonNull")
+
+        m.changeImplementation({ InstructionBuilder b1 ->
+            b1.loadArgument 0
+            b1.iterateArray ({ InstructionBuilder b2 ->
+                b2.dupe().when (Condition.NON_NULL,
+                        [
+                            ifTrue: { it.returnResult() } ,
+                            ifFalse: { it.pop() }
+                        ] as WhenCallback)
+            } as InstructionBuilderCallback)
+
+            b1.returnDefaultValue()
+        } as InstructionBuilderCallback)
+
+        def o = pc.createInstantiator().newInstance()
+
+        expect:
+
+        o.firstNonNull ( [
+            null,
+            "fred",
+            "barney",
+            null,
+            "wilma"
+        ]
+        as String[]) == "fred"
+    }
 }

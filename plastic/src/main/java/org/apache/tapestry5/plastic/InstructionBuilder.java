@@ -191,7 +191,7 @@ public interface InstructionBuilder
      * Loads a value from an array object, which must be the top element of the stack.
      * 
      * @param index
-     *            into the array
+     *            constant index into the array
      * @param elementType
      *            the type name of the elements of the array
      *            <strong>Note: currently only reference types (objects and arrays) are supported, not
@@ -199,6 +199,13 @@ public interface InstructionBuilder
      */
     @Opcodes("LDC, AALOAD")
     InstructionBuilder loadArrayElement(int index, String elementType);
+
+    /**
+     * Loads a value from an array object. The stack should have the array at depth 1, and an array index
+     * on top. Only object arrays (not arrays of primitives) are supported.
+     */
+    @Opcodes("AALOAD")
+    InstructionBuilder loadArrayElement();
 
     /**
      * Adds a check that the object on top of the stack is assignable to the indicated class.
@@ -417,9 +424,46 @@ public interface InstructionBuilder
      *            to evaluate
      * @param ifTrue
      *            generates code for when condition is true
-     * @return
+     * @return this builder
      */
     @Opcodes("IFEQ, etc., GOTO")
     InstructionBuilder when(Condition condition, InstructionBuilderCallback ifTrue);
 
+    /**
+     * Implements a simple loop based on a condition. First the {@linkplain WhileCallback#buildTest(InstructionBuilder)}
+     * code is executed, then the condition is evaluated (which will consume at least the top value on the stack).
+     * When the condition is false, the loop is exited. When the condition is true, the code defined by
+     * {@link WhileCallback#buildBody(InstructionBuilder)} is executed, and then a GOTO back to the test code.
+     * 
+     * @param condition
+     * @param callback
+     * @return this builder
+     */
+    @Opcodes("IFEQ, etc., GOTO")
+    InstructionBuilder doWhile(Condition condition, WhileCallback callback);
+
+    /**
+     * Expects an array to be the top value on the stack. Iterates the array.
+     * The callback generates code that will have each successive value from the array
+     * as the top value on the stack. Creates a variable to store the loop index.
+     * 
+     * @param callback
+     *            to invoke. The element will be the top value on the stack. The callback is responsible
+     *            for removing it from the stack.
+     * @return this builder
+     */
+    @Opcodes("IINC, ARRAYLENGTH, IFEQ, etc., GOTO")
+    InstructionBuilder iterateArray(InstructionBuilderCallback callback);
+
+    /**
+     * Increments a local integer variable.
+     * 
+     * @return this builder
+     */
+    @Opcodes("IINC")
+    InstructionBuilder increment(String name);
+
+    /** Expects the top object on the stack to be an array. Replaces it with the length of that array. */
+    @Opcodes("ARRAYLENGTH")
+    InstructionBuilder arrayLength();
 }

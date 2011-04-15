@@ -15,9 +15,44 @@
 package org.apache.tapestry5.plastic;
 
 /**
- * Condition used with {@link InstructionBuilder#when(Condition, WhenCallback)}.
+ * Condition used with {@link InstructionBuilder#when(Condition, WhenCallback)}. Most conditions
+ * pop the top element off the stack; some pop two elements.
  */
 public enum Condition
 {
-    NULL, NON_NULL, ZERO, NON_ZERO;
+    /** Is the top element of the stack null? */
+    NULL,
+
+    /** Is the top element of the stack non-null? */
+    NON_NULL,
+
+    /** Is the top element of the stack the integer zero? */
+    ZERO,
+
+    /** Is the top element of the stack not the integer zero? */
+    NON_ZERO,
+
+    /**
+     * Compare two integer elements on the stack; branch if the deeper
+     * element is less than the top element.
+     */
+    LESS_THAN,
+
+    /**
+     * Compare two integer elements on the stack; branch if the deeper
+     * element equal to the top element.
+     */
+    EQUAL,
+
+    /**
+     * Compare two integer elements on the stack; branch if the deeper
+     * element is not equal to the top element.
+     */
+    NOT_EQUAL,
+
+    /**
+     * Compare two integer elements on the stack; branch if the deeper
+     * element is greater than the top element.
+     */
+    GREATER;
 }
