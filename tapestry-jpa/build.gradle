@@ -5,8 +5,10 @@ dependencies {
   compile "org.eclipse.persistence:javax.persistence:2.0.3"
   
   testCompile project(':tapestry-test')
-  testCompile "com.h2database:h2:1.2.145"
-  testCompile "org.eclipse.persistence:org.eclipse.persistence.jpa:2.2.0"
+  
+  testRuntime "com.h2database:h2:1.2.145"
+  testRuntime "org.eclipse.persistence:org.eclipse.persistence.jpa:2.2.0"
+  testRuntime "org.apache.tomcat:dbcp:6.0.32"   
   
 }
 
