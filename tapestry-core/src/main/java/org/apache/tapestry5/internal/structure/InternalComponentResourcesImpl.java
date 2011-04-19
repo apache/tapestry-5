@@ -30,6 +30,7 @@ import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.bindings.InternalPropBinding;
 import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.internal.transform.ParameterConduit;
+import org.apache.tapestry5.internal.util.NamedSet;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Messages;
@@ -76,11 +77,11 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     private static final AnnotationProvider NULL_ANNOTATION_PROVIDER = new NullAnnotationProvider();
 
     // Case insensitive map from parameter name to binding
-    private Map<String, Binding> bindings;
+    private NamedSet<Binding> bindings;
 
     // Case insensitive map from parameter name to ParameterConduit, used to support mixins
     // which need access to the containing component's PC's
-    private Map<String, ParameterConduit> conduits;
+    private NamedSet<ParameterConduit> conduits;
 
     private Messages messages;
 
@@ -318,7 +319,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     public void bindParameter(String parameterName, Binding binding)
     {
         if (bindings == null)
-            bindings = CollectionFactory.newCaseInsensitiveMap();
+            bindings = NamedSet.create();
 
         bindings.put(parameterName, binding);
     }
@@ -332,7 +333,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public Binding getBinding(String parameterName)
     {
-        return InternalUtils.get(bindings, parameterName);
+        return NamedSet.get(bindings, parameterName);
     }
 
     public AnnotationProvider getAnnotationProvider(String parameterName)
@@ -446,16 +447,12 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     {
         Map<String, Binding> result = CollectionFactory.newMap();
 
-        if (bindings != null)
+        for (String name : NamedSet.getNames(bindings))
         {
-            for (String name : bindings.keySet())
-            {
+            if (componentModel.getParameterModel(name) != null)
+                continue;
 
-                if (componentModel.getParameterModel(name) != null)
-                    continue;
-
-                result.put(name, bindings.get(name));
-            }
+            result.put(name, bindings.get(name));
         }
 
         return result;
@@ -527,13 +524,13 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public synchronized ParameterConduit getParameterConduit(String parameterName)
     {
-        return InternalUtils.get(conduits, parameterName);
+        return NamedSet.get(conduits, parameterName);
     }
 
     public synchronized void setParameterConduit(String parameterName, ParameterConduit conduit)
     {
         if (conduits == null)
-            conduits = CollectionFactory.newCaseInsensitiveMap();
+            conduits = NamedSet.create();
 
         conduits.put(parameterName, conduit);
     }

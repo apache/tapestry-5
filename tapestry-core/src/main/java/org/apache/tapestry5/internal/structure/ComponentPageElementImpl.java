@@ -14,13 +14,24 @@
 
 package org.apache.tapestry5.internal.structure;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.tapestry5.*;
+import org.apache.tapestry5.Binding;
+import org.apache.tapestry5.Block;
+import org.apache.tapestry5.BlockNotFoundException;
+import org.apache.tapestry5.ComponentEventCallback;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.Renderable;
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.TapestryMarkers;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.AfterRenderBody;
 import org.apache.tapestry5.annotations.AfterRenderTemplate;
@@ -34,6 +45,7 @@ import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.ComponentEventImpl;
 import org.apache.tapestry5.internal.services.Instantiator;
+import org.apache.tapestry5.internal.util.NamedSet;
 import org.apache.tapestry5.internal.util.NotificationEventCallback;
 import org.apache.tapestry5.ioc.BaseLocatable;
 import org.apache.tapestry5.ioc.Invokable;
@@ -495,11 +507,11 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         }
     }
 
-    private Map<String, Block> blocks;
+    private NamedSet<Block> blocks;
 
     private BlockImpl bodyBlock;
 
-    private Map<String, ComponentPageElement> children;
+    private NamedSet<ComponentPageElement> children;
 
     private final String elementName;
 
@@ -534,10 +546,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     /**
      * Map from mixin id (the simple name of the mixin class) to resources for the mixin. Created
-     * when first mixin is
-     * added.
+     * when first mixin is added.
      */
-    private Map<String, InternalComponentResources> mixinIdToComponentResources;
+    private NamedSet<InternalComponentResources> mixinIdToComponentResources;
 
     private final String nestedId;
 
@@ -643,10 +654,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         Set<Class> handled = coreResources.getComponentModel().getHandledRenderPhases();
 
-        if (mixinIdToComponentResources != null)
+        for (ComponentResources r : NamedSet.getValues(mixinIdToComponentResources))
         {
-            for (ComponentResources r : mixinIdToComponentResources.values())
-                handled.addAll(r.getComponentModel().getHandledRenderPhases());
+            handled.addAll(r.getComponentModel().getHandledRenderPhases());
         }
 
         if (!handled.contains(CleanupRender.class))
@@ -703,25 +713,25 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     void addEmbeddedElement(ComponentPageElement child)
     {
         if (children == null)
-            children = CollectionFactory.newCaseInsensitiveMap();
+            children = NamedSet.create();
 
         String childId = child.getId();
 
-        ComponentPageElement existing = children.get(childId);
+        if (!children.putIfNew(childId, child))
+        {
+            ComponentPageElement existing = children.get(childId);
 
-        if (existing != null)
             throw new TapestryException(StructureMessages.duplicateChildComponent(this, childId), child,
                     new TapestryException(StructureMessages.originalChildComponent(this, childId,
                             existing.getLocation()), existing, null));
-
-        children.put(childId, child);
+        }
     }
 
     public void addMixin(String mixinId, Instantiator instantiator, String... order)
     {
         if (mixinIdToComponentResources == null)
         {
-            mixinIdToComponentResources = CollectionFactory.newCaseInsensitiveMap();
+            mixinIdToComponentResources = NamedSet.create();
             components = CollectionFactory.newList();
         }
 
@@ -753,7 +763,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     public void bindMixinParameter(String mixinId, String parameterName, Binding binding)
     {
-        InternalComponentResources mixinResources = InternalUtils.get(mixinIdToComponentResources, mixinId);
+        InternalComponentResources mixinResources = NamedSet.get(mixinIdToComponentResources, mixinId);
 
         mixinResources.bindParameter(parameterName, binding);
     }
@@ -887,11 +897,11 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     public ComponentPageElement getEmbeddedElement(String embeddedId)
     {
-        ComponentPageElement embeddedElement = InternalUtils.get(children, embeddedId);
+        ComponentPageElement embeddedElement = NamedSet.get(children, embeddedId);
 
         if (embeddedElement == null)
         {
-            Set<String> ids = InternalUtils.keys(children);
+            Set<String> ids = NamedSet.getNames(children);
 
             throw new UnknownValueException(String.format("Component %s does not contain embedded component '%s'.",
                     getCompleteId(), embeddedId), new AvailableValues("Embedded components", ids));
@@ -925,7 +935,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         if (mixinIdToComponentResources == null)
             return null;
 
-        for (InternalComponentResources resources : mixinIdToComponentResources.values())
+        for (InternalComponentResources resources : NamedSet.getValues(mixinIdToComponentResources))
         {
             if (resources.getComponentModel().getComponentClassName().equals(mixinClassName)) { return resources
                     .getComponent(); }
@@ -936,10 +946,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     public ComponentResources getMixinResources(String mixinId)
     {
-        ComponentResources result = null;
-
-        if (mixinIdToComponentResources != null)
-            result = mixinIdToComponentResources.get(mixinId);
+        ComponentResources result = NamedSet.get(mixinIdToComponentResources, mixinId);
 
         if (result == null)
             throw new IllegalArgumentException(String.format("Unable to locate mixin '%s' for component '%s'.",
@@ -1199,8 +1206,14 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         addUnboundParameterNames(null, unbound, coreResources);
 
-        for (String name : InternalUtils.sortedKeys(mixinIdToComponentResources))
+        List<String> sortedNames = CollectionFactory.newList(NamedSet.getNames(mixinIdToComponentResources));
+
+        Collections.sort(sortedNames);
+
+        for (String name : sortedNames)
+        {
             addUnboundParameterNames(name, unbound, mixinIdToComponentResources.get(name));
+        }
 
         if (unbound.isEmpty())
             return;
@@ -1231,18 +1244,17 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     public Block findBlock(String id)
     {
         assert InternalUtils.isNonBlank(id);
-        return InternalUtils.get(blocks, id);
+
+        return NamedSet.get(blocks, id);
     }
 
     public void addBlock(String blockId, Block block)
     {
         if (blocks == null)
-            blocks = CollectionFactory.newCaseInsensitiveMap();
+            blocks = NamedSet.create();
 
-        if (blocks.containsKey(blockId))
+        if (!blocks.putIfNew(blockId, block))
             throw new TapestryException(StructureMessages.duplicateBlock(this, blockId), block, null);
-
-        blocks.put(blockId, block);
     }
 
     public String getPageName()
