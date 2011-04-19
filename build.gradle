@@ -89,10 +89,9 @@ subprojects {
 
 subprojects.each { evaluationDependsOn(it.name) }
 
-// Cribbed from
-https://github.com/hibernate/hibernate-core/blob/master/release/release.gradle#L19
+// Cribbed from https://github.com/hibernate/hibernate-core/blob/master/release/release.gradle#L19
 
-javadocBuildDir = dir( buildDirName + "/documentation/javadocs" )
+javadocBuildDir = dir(buildDirName + "/documentation/javadocs")
 
 task aggregateJavadocs(type: Javadoc) {
    description = "Build the aggregated JavaDocs for all modules"
@@ -124,4 +123,8 @@ task aggregateJavadocs(type: Javadoc) {
            }
        }
    }
+}
+
+task clean(type: Delete) {
+  delete buildDirName
 }
