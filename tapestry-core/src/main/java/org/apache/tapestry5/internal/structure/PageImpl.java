@@ -16,11 +16,12 @@ package org.apache.tapestry5.internal.structure;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.services.PersistentFieldManager;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
@@ -47,12 +48,16 @@ public class PageImpl implements Page
 
     private final OneShotLock lock = new OneShotLock();
 
+    private final Map<String, ComponentPageElement> idToComponent = CollectionFactory.newCaseInsensitiveMap();
+
     /**
      * Obtained from the {@link org.apache.tapestry5.internal.services.PersistentFieldManager} when
      * first needed,
      * discarded at the end of the request.
      */
     private final PerThreadValue<PersistentFieldBundle> fieldBundle;
+
+    private static final Pattern SPLIT_ON_DOT = Pattern.compile("\\.");
 
     /**
      * @param name
@@ -80,15 +85,25 @@ public class PageImpl implements Page
         return String.format("Page[%s %s]", name, locale);
     }
 
-    public ComponentPageElement getComponentElementByNestedId(String nestedId)
+    public synchronized ComponentPageElement getComponentElementByNestedId(String nestedId)
     {
         assert nestedId != null;
-        ComponentPageElement element = rootElement;
 
-        if (InternalUtils.isNonBlank(nestedId))
+        if (nestedId.equals(""))
+            return rootElement;
+
+        ComponentPageElement element = idToComponent.get(nestedId);
+
+        if (element == null)
         {
-            for (String id : nestedId.split("\\."))
+            element = rootElement;
+
+            for (String id : SPLIT_ON_DOT.split(nestedId))
+            {
                 element = element.getEmbeddedElement(id);
+            }
+
+            idToComponent.put(nestedId, element);
         }
 
         return element;
