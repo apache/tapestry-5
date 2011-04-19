@@ -57,6 +57,26 @@ class NamedSetTests extends Assert
     }
 
     @Test
+    void put_if_new_does_not_overrwrite() {
+        NamedSet ns = new NamedSet()
+
+        ns.put "Fred", 100
+        ns.put "Barney", 200
+
+        assert ns.get("fred") == 100
+        assert ns.get("barney") == 200
+
+        assert ns.putIfNew("FRED", 110) == false
+        assert ns.putIfNew("Wilma", 300) == true
+
+        assert ns.get("fred") == 100
+        assert ns.get("barney") == 200
+        assert ns.get("wilma") == 300
+
+        assert ns.names.sort() == ["Barney", "Fred", "Wilma"]
+    }
+
+    @Test
     void missing_key_returns_null() {
         NamedSet ns = new NamedSet()
 

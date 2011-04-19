@@ -130,4 +130,45 @@ public class NamedSet<T>
         else
             prev.next = newRef;
     }
+
+    /**
+     * Puts a new value, but only if it does not already exist.
+     * 
+     * @param name
+     *            name to store (comparisons are case insensitive) may not be blank
+     * @param newValue
+     *            non-null value to store
+     * @return true if value stored, false if name already exists
+     */
+    public synchronized boolean putIfNew(String name, T newValue)
+    {
+        assert InternalUtils.isNonBlank(name);
+        assert newValue != null;
+
+        NamedRef<T> prev = null;
+        NamedRef<T> cursor = first;
+
+        while (cursor != null)
+        {
+            if (cursor.name.equalsIgnoreCase(name)) { return false; }
+
+            prev = cursor;
+            cursor = cursor.next;
+        }
+
+        NamedRef<T> newRef = new NamedRef<T>(name, newValue);
+
+        if (prev == null)
+            first = newRef;
+        else
+            prev.next = newRef;
+
+        return true;
+    }
+
+    /** Convienience method for creating a new, empty set. */
+    public static <T> NamedSet<T> create()
+    {
+        return new NamedSet<T>();
+    }
 }
