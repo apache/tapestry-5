@@ -14,9 +14,11 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.services.UpdateListener;
@@ -27,8 +29,12 @@ public class ResourceChangeTrackerImpl extends InvalidationEventHubImpl implemen
 {
     private final URLChangeTracker tracker;
 
-    public ResourceChangeTrackerImpl(ClasspathURLConverter classpathURLConverter)
+    public ResourceChangeTrackerImpl(ClasspathURLConverter classpathURLConverter,
+            @Symbol(SymbolConstants.PRODUCTION_MODE)
+            boolean productionMode)
     {
+        super(productionMode);
+        
         // Use granularity of seconds (not milliseconds) since that works properly
         // with response headers for identifying last modified. Don't track
         // folder changes, just changes to actual files.

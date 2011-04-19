@@ -92,14 +92,17 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
         }
     };
 
-    public ComponentTemplateSourceImpl(TemplateParser parser, @Primary
+    public ComponentTemplateSourceImpl(boolean productionMode, TemplateParser parser, @Primary
     ComponentTemplateLocator templateLocator, ClasspathURLConverter classpathURLConverter)
     {
-        this(parser, templateLocator, new URLChangeTracker(classpathURLConverter));
+        this(productionMode, parser, templateLocator, new URLChangeTracker(classpathURLConverter));
     }
 
-    ComponentTemplateSourceImpl(TemplateParser parser, ComponentTemplateLocator locator, URLChangeTracker tracker)
+    ComponentTemplateSourceImpl(boolean productionMode, TemplateParser parser, ComponentTemplateLocator locator,
+            URLChangeTracker tracker)
     {
+        super(productionMode);
+
         this.parser = parser;
         this.locator = locator;
         this.tracker = tracker;

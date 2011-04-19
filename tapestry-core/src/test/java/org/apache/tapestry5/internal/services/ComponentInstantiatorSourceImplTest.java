@@ -77,8 +77,8 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentInstantiatorSourceImpl e = new ComponentInstantiatorSourceImpl(logger, contextLoader, transformer,
-                null, converter);
+        ComponentInstantiatorSourceImpl e = new ComponentInstantiatorSourceImpl(false, logger, contextLoader,
+                transformer, null, converter);
 
         assertEquals(e.inControlledPackage("foo.bar.Baz"), false);
 

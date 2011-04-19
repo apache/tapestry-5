@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -48,8 +48,8 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
     private final Resource simpleComponentResource = new ClasspathResource(
             "org/apache/tapestry5/internal/services/SimpleComponent.class");
 
-    private final ComponentMessagesSourceImpl source = new ComponentMessagesSourceImpl(simpleComponentResource
-            .forFile("AppCatalog.properties"), new PropertiesFileParserImpl(), tracker);
+    private final ComponentMessagesSourceImpl source = new ComponentMessagesSourceImpl(false,
+            simpleComponentResource.forFile("AppCatalog.properties"), new PropertiesFileParserImpl(), tracker);
 
     @Test
     public void simple_component()
@@ -211,8 +211,8 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
         Resource resource = simpleComponentResource.forFile("NoSuchAppCatalog.properties");
         List<Resource> resources = Arrays.asList(resource);
 
-        ComponentMessagesSource source = new ComponentMessagesSourceImpl(resources, new PropertiesFileParserImpl(),
-                converter);
+        ComponentMessagesSource source = new ComponentMessagesSourceImpl(true, resources,
+                new PropertiesFileParserImpl(), converter);
 
         Messages messages = source.getMessages(model, Locale.ENGLISH);
 

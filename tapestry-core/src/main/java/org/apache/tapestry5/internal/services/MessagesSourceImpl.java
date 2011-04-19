@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,8 +32,7 @@ import org.apache.tapestry5.services.messages.PropertiesFileParser;
  * A utility class that encapsulates all the logic for reading properties files and assembling {@link Messages} from
  * them, in accordance with extension rules and locale. This represents code that was refactored out of
  * {@link ComponentMessagesSourceImpl}. This class can be used as a base class, though the existing code base uses it as
- * a
- * utility. Composition trumps inheritance!
+ * a utility. Composition trumps inheritance!
  * <p/>
  * The message catalog for a component is the combination of all appropriate properties files for the component, plus
  * any keys inherited form base components and, ultimately, the application global message catalog. At some point we
@@ -66,15 +65,18 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
 
     private final Map<String, String> emptyMap = Collections.emptyMap();
 
-    public MessagesSourceImpl(URLChangeTracker tracker, PropertiesFileParser propertiesFileParser)
+    public MessagesSourceImpl(boolean productionMode, URLChangeTracker tracker,
+            PropertiesFileParser propertiesFileParser)
     {
+        super(productionMode);
+
         this.tracker = tracker;
         this.propertiesFileParser = propertiesFileParser;
     }
 
     public void checkForUpdates()
     {
-        if (tracker.containsChanges())
+        if (tracker != null && tracker.containsChanges())
         {
             messagesByBundleIdAndLocale.clear();
             cookedProperties.clear();
@@ -206,7 +208,10 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
         if (!resource.exists())
             return emptyMap;
 
-        tracker.add(resource.toURL());
+        if (tracker != null)
+        {
+            tracker.add(resource.toURL());
+        }
 
         try
         {

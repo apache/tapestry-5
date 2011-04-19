@@ -61,13 +61,19 @@ public class InternalModule
 
     private final InvalidationEventHub classesInvalidationEventHub;
 
+    private final boolean productionMode;
+
     public InternalModule(UpdateListenerHub updateListenerHub, RequestGlobals requestGlobals,
+
+    @Symbol(SymbolConstants.PRODUCTION_MODE)
+    boolean productionMode,
 
     @ComponentClasses
     InvalidationEventHub classesInvalidationEventHub)
     {
         this.updateListenerHub = updateListenerHub;
         this.requestGlobals = requestGlobals;
+        this.productionMode = productionMode;
         this.classesInvalidationEventHub = classesInvalidationEventHub;
     }
 
@@ -128,7 +134,7 @@ public class InternalModule
 
     ClasspathURLConverter classpathURLConverter)
     {
-        ComponentInstantiatorSourceImpl source = new ComponentInstantiatorSourceImpl(logger,
+        ComponentInstantiatorSourceImpl source = new ComponentInstantiatorSourceImpl(productionMode, logger,
                 classFactory.getClassLoader(), transformer, internalRequestGlobals, classpathURLConverter);
 
         updateListenerHub.addUpdateListener(source);
@@ -222,7 +228,7 @@ public class InternalModule
     public ComponentTemplateSource buildComponentTemplateSource(TemplateParser parser, @Primary
     ComponentTemplateLocator locator, ClasspathURLConverter classpathURLConverter)
     {
-        ComponentTemplateSourceImpl service = new ComponentTemplateSourceImpl(parser, locator, classpathURLConverter);
+        ComponentTemplateSourceImpl service = new ComponentTemplateSourceImpl(productionMode, parser, locator, classpathURLConverter);
 
         updateListenerHub.addUpdateListener(service);
 

@@ -69,21 +69,23 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
         }
     }
 
-    public ComponentMessagesSourceImpl(List<Resource> appCatalogResources, PropertiesFileParser parser,
+    public ComponentMessagesSourceImpl(@Symbol(SymbolConstants.PRODUCTION_MODE)
+    boolean productionMode, List<Resource> appCatalogResources, PropertiesFileParser parser,
             ClasspathURLConverter classpathURLConverter)
     {
-        this(appCatalogResources, parser, new URLChangeTracker(classpathURLConverter));
+        this(productionMode, appCatalogResources, parser, new URLChangeTracker(classpathURLConverter));
     }
 
-    ComponentMessagesSourceImpl(Resource appCatalogResource, PropertiesFileParser parser, URLChangeTracker tracker)
-    {
-        this(Arrays.asList(appCatalogResource), parser, tracker);
-    }
-
-    ComponentMessagesSourceImpl(List<Resource> appCatalogResources, PropertiesFileParser parser,
+    ComponentMessagesSourceImpl(boolean productionMode, Resource appCatalogResource, PropertiesFileParser parser,
             URLChangeTracker tracker)
     {
-        messagesSource = new MessagesSourceImpl(tracker, parser);
+        this(productionMode, Arrays.asList(appCatalogResource), parser, tracker);
+    }
+
+    ComponentMessagesSourceImpl(boolean productionMode, List<Resource> appCatalogResources,
+            PropertiesFileParser parser, URLChangeTracker tracker)
+    {
+        messagesSource = new MessagesSourceImpl(productionMode, productionMode ? null : tracker, parser);
 
         appCatalogBundle = createAppCatalogBundle(appCatalogResources);
     }

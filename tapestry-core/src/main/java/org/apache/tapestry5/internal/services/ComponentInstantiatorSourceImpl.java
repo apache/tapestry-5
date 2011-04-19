@@ -111,9 +111,11 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
         }
     }
 
-    public ComponentInstantiatorSourceImpl(Logger logger, ClassLoader parent, ComponentClassTransformer transformer,
-            InternalRequestGlobals internalRequestGlobals, ClasspathURLConverter classpathURLConverter)
+    public ComponentInstantiatorSourceImpl(boolean productionMode, Logger logger, ClassLoader parent,
+            ComponentClassTransformer transformer, InternalRequestGlobals internalRequestGlobals, ClasspathURLConverter classpathURLConverter)
     {
+        super(productionMode);
+        
         this.parent = parent;
         this.transformer = transformer;
         this.logger = logger;
