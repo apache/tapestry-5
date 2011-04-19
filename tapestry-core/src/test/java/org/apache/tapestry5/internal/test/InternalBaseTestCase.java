@@ -82,7 +82,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     {
         RegistryBuilder builder = new RegistryBuilder();
 
-        builder.add(TapestryModule.class);
+        builder.add(TapestryModule.class, ForceDevelopmentModeModule.class);
 
         registry = builder.build();
 

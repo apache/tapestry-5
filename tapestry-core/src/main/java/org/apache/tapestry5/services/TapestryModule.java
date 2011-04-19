@@ -197,6 +197,7 @@ import org.apache.tapestry5.ioc.services.ChainBuilder;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.services.CoercionTuple;
+import org.apache.tapestry5.ioc.services.DefaultImplementationBuilder;
 import org.apache.tapestry5.ioc.services.LazyAdvisor;
 import org.apache.tapestry5.ioc.services.MasterObjectProvider;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
@@ -204,6 +205,7 @@ import org.apache.tapestry5.ioc.services.PipelineBuilder;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
+import org.apache.tapestry5.ioc.services.ServiceOverride;
 import org.apache.tapestry5.ioc.services.StrategyBuilder;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
@@ -999,7 +1001,8 @@ public final class TapestryModule
      * the request</dd>
      * <dt>CheckForUpdates</dt>
      * <dd>Periodically fires events that checks to see if the file system sources for any cached data has changed (see
-     * {@link org.apache.tapestry5.internal.services.CheckForUpdatesFilter}).
+     * {@link org.apache.tapestry5.internal.services.CheckForUpdatesFilter}). Starting in 5.3, this filter will be null
+     * in production mode (it will only be active in development mode).
      * <dt>ErrorFilter</dt>
      * <dd>Catches request errors and lets the {@link org.apache.tapestry5.services.RequestExceptionHandler} handle them
      * </dd>
@@ -1012,15 +1015,8 @@ public final class TapestryModule
      */
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration, Context context,
 
-    @Symbol(SymbolConstants.FILE_CHECK_INTERVAL)
-    @IntermediateType(TimeInterval.class)
-    long checkInterval,
-
-    @Symbol(SymbolConstants.FILE_CHECK_UPDATE_TIMEOUT)
-    @IntermediateType(TimeInterval.class)
-    long updateTimeout,
-
-    UpdateListenerHub updateListenerHub)
+    @Symbol(SymbolConstants.PRODUCTION_MODE)
+    boolean productionMode)
     {
         RequestFilter staticFilesFilter = new StaticFilesFilter(context);
 
@@ -1049,8 +1045,14 @@ public final class TapestryModule
             }
         };
 
-        configuration.add("CheckForUpdates",
-                new CheckForUpdatesFilter(updateListenerHub, checkInterval, updateTimeout), "before:*");
+        if (productionMode)
+        {
+            configuration.add("CheckForUpdates", null, "before:*");
+        }
+        else
+        {
+            configuration.addInstance("CheckForUpdates", CheckForUpdatesFilter.class, "before:*");
+        }
 
         configuration.add("StaticFiles", staticFilesFilter);
 
@@ -1059,7 +1061,6 @@ public final class TapestryModule
         configuration.add("StoreIntoGlobals", storeIntoGlobals, "after:StaticFiles", "before:ErrorFilter");
 
         configuration.add("EndOfRequest", fireEndOfRequestEvent, "after:StoreIntoGlobals", "before:ErrorFilter");
-
     }
 
     /**
@@ -2947,5 +2948,29 @@ public final class TapestryModule
             ComponentEventLinkEncoder delegate)
     {
         return new LinkTransformerInterceptor(linkTransformer, delegate);
+    }
+
+    /**
+     * In production mode, overrides {@link UpdateListenerHub} to be an empty placeholder.
+     */
+    @Contribute(ServiceOverride.class)
+    public static void productionModeOverrides(MappedConfiguration<Class, Object> configuration,
+            @Symbol(SymbolConstants.PRODUCTION_MODE)
+            boolean productionMode)
+    {
+        if (productionMode)
+        {
+            configuration.add(UpdateListenerHub.class, new UpdateListenerHub()
+            {
+                public void fireCheckForUpdates()
+                {
+                }
+
+                public void addUpdateListener(UpdateListener listener)
+                {
+
+                }
+            });
+        }
     }
 }

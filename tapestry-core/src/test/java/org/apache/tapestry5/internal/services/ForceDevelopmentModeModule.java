@@ -1,4 +1,4 @@
-// Copyright 2008, 2011 The Apache Software Foundation
+// Copyright 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,16 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.integration.reload.services;
+package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.services.ApplicationDefaults;
+import org.apache.tapestry5.ioc.services.SymbolProvider;
 
-public class AppModule
+public class ForceDevelopmentModeModule
 {
-    public static void contributeApplicationDefaults(MappedConfiguration<String, Object> conf)
+    @Contribute(SymbolProvider.class)
+    @ApplicationDefaults
+    public static void enableDevelopmentMode(MappedConfiguration<String, Object> configuration)
     {
-        conf.add(SymbolConstants.FILE_CHECK_INTERVAL, "0ms");
-        conf.add(SymbolConstants.PRODUCTION_MODE, false);
+        configuration.add(SymbolConstants.PRODUCTION_MODE, false);
     }
 }

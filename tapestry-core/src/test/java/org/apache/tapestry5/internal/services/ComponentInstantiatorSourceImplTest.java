@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -78,7 +78,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
         replay();
 
         ComponentInstantiatorSourceImpl e = new ComponentInstantiatorSourceImpl(logger, contextLoader, transformer,
-                                                                                null, converter);
+                null, converter);
 
         assertEquals(e.inControlledPackage("foo.bar.Baz"), false);
 
@@ -102,7 +102,6 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         verify();
     }
- 
 
     /**
      * This allows tests the exists() method.
@@ -121,7 +120,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
         assertTrue(source.exists(SYNTH_COMPONENT_CLASSNAME));
 
         getMocksControl().resetToNice();
-        
+
         Named named = (Named) createComponent(SYNTH_COMPONENT_CLASSNAME);
 
         assertEquals(named.getName(), "Original");
@@ -133,7 +132,8 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         while (true)
         {
-            if (readDTM(url) != dtm) break;
+            if (readDTM(url) != dtm)
+                break;
 
             // Keep re-writing the file until we see the DTM change.
 
@@ -220,10 +220,11 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         URL url = extraClasspath.toURL();
 
-        extraLoader = new URLClassLoader(new URL[] { url }, contextLoader);
+        extraLoader = new URLClassLoader(new URL[]
+        { url }, contextLoader);
         RegistryBuilder builder = new RegistryBuilder(extraLoader);
 
-        builder.add(TapestryModule.class);
+        builder.add(TapestryModule.class, ForceDevelopmentModeModule.class);
 
         registry = builder.build();
 

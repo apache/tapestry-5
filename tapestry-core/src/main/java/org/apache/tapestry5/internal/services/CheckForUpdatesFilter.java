@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,9 +14,13 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.Invokable;
+import org.apache.tapestry5.ioc.annotations.IntermediateType;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.ConcurrentBarrier;
+import org.apache.tapestry5.ioc.util.TimeInterval;
 import org.apache.tapestry5.services.*;
 
 import java.io.IOException;
@@ -60,11 +64,22 @@ public class CheckForUpdatesFilter implements RequestFilter
     private long lastCheck = 0;
 
     /**
-     * @param updateListenerHub invoked, at intervals, to spur the process of detecting changes
-     * @param checkInterval     interval, in milliseconds, between checks
-     * @param updateTimeout     time, in  milliseconds, to wait to obtain update lock.
+     * @param updateListenerHub
+     *            invoked, at intervals, to spur the process of detecting changes
+     * @param checkInterval
+     *            interval, in milliseconds, between checks
+     * @param updateTimeout
+     *            time, in milliseconds, to wait to obtain update lock.
      */
-    public CheckForUpdatesFilter(UpdateListenerHub updateListenerHub, long checkInterval, long updateTimeout)
+    public CheckForUpdatesFilter(UpdateListenerHub updateListenerHub,
+
+    @Symbol(SymbolConstants.FILE_CHECK_INTERVAL)
+    @IntermediateType(TimeInterval.class)
+    long checkInterval,
+
+    @Symbol(SymbolConstants.FILE_CHECK_UPDATE_TIMEOUT)
+    @IntermediateType(TimeInterval.class)
+    long updateTimeout)
     {
         this.updateListenerHub = updateListenerHub;
         this.checkInterval = checkInterval;
@@ -97,12 +112,14 @@ public class CheckForUpdatesFilter implements RequestFilter
             }
         };
 
-        // Obtain a read lock while handling the request. This will not impair parallel operations, except when a file check
+        // Obtain a read lock while handling the request. This will not impair parallel operations, except when a file
+        // check
         // is needed (the exclusive write lock will block threads attempting to get a read lock).
 
         boolean result = barrier.withRead(invokable);
 
-        if (exceptionHolder.hasValue()) throw exceptionHolder.get();
+        if (exceptionHolder.hasValue())
+            throw exceptionHolder.get();
 
         return result;
     }
