@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.util;
 
+import java.util.Collections;
 import java.util.Set;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
@@ -62,6 +63,24 @@ public class NamedSet<T>
         while (cursor != null)
         {
             result.add(cursor.name);
+            cursor = cursor.next;
+        }
+
+        return result;
+    }
+
+    /**
+     * Returns a set of all the values in the set.
+     */
+    public synchronized Set<T> getValues()
+    {
+        Set<T> result = CollectionFactory.newSet();
+
+        NamedRef<T> cursor = first;
+
+        while (cursor != null)
+        {
+            result.add(cursor.value);
             cursor = cursor.next;
         }
 
@@ -170,5 +189,40 @@ public class NamedSet<T>
     public static <T> NamedSet<T> create()
     {
         return new NamedSet<T>();
+    }
+
+    /**
+     * Convienience method for getting a value from a set that may be null.
+     * 
+     * @param <T>
+     * @param set
+     *            set to search, may be null
+     * @param name
+     *            name to lookup
+     * @return value from set, or null if not found, or if set is null
+     */
+    public static <T> T get(NamedSet<T> set, String name)
+    {
+        return set == null ? null : set.get(name);
+    }
+
+    /**
+     * Gets the names in the set, returning an empty set if the NamedSet is null.
+     */
+    public static Set<String> getNames(NamedSet<?> set)
+    {
+        if (set == null)
+            return Collections.emptySet();
+
+        return set.getNames();
+    }
+
+    /** Returns the values in the set, returning an empty set if the NamedSet is null. */
+    public static <T> Set<T> getValues(NamedSet<T> set)
+    {
+        if (set == null)
+            return Collections.emptySet();
+
+        return set.getValues();
     }
 }

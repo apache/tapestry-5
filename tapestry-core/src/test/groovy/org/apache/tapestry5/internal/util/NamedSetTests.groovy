@@ -38,6 +38,16 @@ class NamedSetTests extends Assert
     }
 
     @Test
+    void get_values_in_set() {
+        NamedSet ns = new NamedSet()
+
+        ns.put "Fred", 100
+        ns.put "Barney", 200
+
+        assert ns.values == [100, 200] as Set
+    }
+
+    @Test
     void replace_a_named_value() {
         NamedSet ns = new NamedSet()
 
