@@ -86,3 +86,42 @@ subprojects {
         }
     }
 }
+
+subprojects.each { evaluationDependsOn(it.name) }
+
+// Cribbed from
+https://github.com/hibernate/hibernate-core/blob/master/release/release.gradle#L19
+
+javadocBuildDir = dir( buildDirName + "/documentation/javadocs" )
+
+task aggregateJavadocs(type: Javadoc) {
+   description = "Build the aggregated JavaDocs for all modules"
+   maxMemory = '512m'
+   destinationDir = javadocBuildDir.dir
+   configure(options) {
+       // overview = new File( projectDir, 'src/javadoc/package.html' )
+       // stylesheetFile = new File( projectDir, 'src/javadoc/stylesheet.css' )
+       windowTitle = 'Tapestry API Documentation'
+       docTitle = "Tapestry JavaDoc ($project.version)"
+       bottom = "Copyright &copy; 2003-2011 <a href=\"http://tapestry.apache.org\">The Apache Software Foundation</a>."
+       use = true
+       links = [ 'http://download.oracle.com/javase/6/docs/api/', 'http://download.oracle.com/javaee/6/api/' ]
+   }
+
+   subprojects.each { subProject->
+
+       subProject.sourceSets.each { set ->
+		
+           if ("test" != set.name) {
+               source set.java
+
+               if (classpath) {
+                   classpath += set.classes + set.compileClasspath
+               }
+               else {
+                   classpath = set.classes + set.compileClasspath
+               }
+           }
+       }
+   }
+}
