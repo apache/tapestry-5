@@ -511,7 +511,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     private BlockImpl bodyBlock;
 
-    private NamedSet<ComponentPageElement> children;
+    private List<ComponentPageElement> children;
 
     private final String elementName;
 
@@ -713,18 +713,19 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     void addEmbeddedElement(ComponentPageElement child)
     {
         if (children == null)
-            children = NamedSet.create();
+            children = CollectionFactory.newList();
 
         String childId = child.getId();
 
-        if (!children.putIfNew(childId, child))
+        for (ComponentPageElement existing : children)
         {
-            ComponentPageElement existing = children.get(childId);
-
-            throw new TapestryException(StructureMessages.duplicateChildComponent(this, childId), child,
-                    new TapestryException(StructureMessages.originalChildComponent(this, childId,
-                            existing.getLocation()), existing, null));
+            if (existing.getId().equalsIgnoreCase(childId))
+                throw new TapestryException(StructureMessages.duplicateChildComponent(this, childId), child,
+                        new TapestryException(StructureMessages.originalChildComponent(this, childId,
+                                existing.getLocation()), existing, null));
         }
+
+        children.add(child);
     }
 
     public void addMixin(String mixinId, Instantiator instantiator, String... order)
@@ -897,11 +898,31 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     public ComponentPageElement getEmbeddedElement(String embeddedId)
     {
-        ComponentPageElement embeddedElement = NamedSet.get(children, embeddedId);
+        ComponentPageElement embeddedElement = null;
+
+        if (children != null)
+        {
+            for (ComponentPageElement child : children)
+            {
+                if (child.getId().equalsIgnoreCase(embeddedId))
+                {
+                    embeddedElement = child;
+                    break;
+                }
+            }
+        }
 
         if (embeddedElement == null)
         {
-            Set<String> ids = NamedSet.getNames(children);
+            Set<String> ids = CollectionFactory.newSet();
+
+            if (children != null)
+            {
+                for (ComponentPageElement child : children)
+                {
+                    ids.add(child.getId());
+                }
+            }
 
             throw new UnknownValueException(String.format("Component %s does not contain embedded component '%s'.",
                     getCompleteId(), embeddedId), new AvailableValues("Embedded components", ids));
