@@ -19,23 +19,23 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
 import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.def.ServiceDef3;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.slf4j.Logger;
 
 /**
  * Implementation of {@link org.apache.tapestry5.ioc.ServiceBuilderResources}. We just have one
- * implementation that
- * fills the purposes of methods that need a {@link org.apache.tapestry5.ioc.ServiceResources} (which includes service
- * decorator methods) as well as methods that need a {@link org.apache.tapestry5.ioc.ServiceBuilderResources} (which is
- * just service builder methods). Since it is most commonly used for the former, we'll just leave
- * the name as
- * ServiceResourcesImpl.
+ * implementation that fills the purposes of methods that need a {@link org.apache.tapestry5.ioc.ServiceResources}
+ * (which includes service decorator methods) as well as methods that need a
+ * {@link org.apache.tapestry5.ioc.ServiceBuilderResources} (which is just service builder methods). Since it is most
+ * commonly used for the former, we'll just leave the name as ServiceResourcesImpl.
  */
 @SuppressWarnings("all")
 public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBuilderResources
@@ -44,20 +44,20 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
 
     private final Module module;
 
-    private final InternalServiceDef serviceDef;
+    private final ServiceDef3 serviceDef;
 
     private final Logger logger;
 
     private final PlasticProxyFactory proxyFactory;
 
-    public ServiceResourcesImpl(InternalRegistry registry, Module module, ServiceDef serviceDef,
+    public ServiceResourcesImpl(InternalRegistry registry, Module module, ServiceDef3 serviceDef,
             PlasticProxyFactory proxyFactory, Logger logger)
     {
         super(registry, module);
 
         this.registry = registry;
         this.module = module;
-        this.serviceDef = InternalUtils.toInternalServiceDef(serviceDef);
+        this.serviceDef = serviceDef;
         this.proxyFactory = proxyFactory;
         this.logger = logger;
     }
@@ -177,6 +177,16 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
 
     public Class getImplementationClass()
     {
-        return serviceDef.getImplementationClass();
+        return null;
+    }
+
+    public AnnotationProvider getClassAnnotationProvider()
+    {
+        return serviceDef.getClassAnnotationProvider();
+    }
+
+    public AnnotationProvider getMethodAnnotationProvider(String methodName, Class... parameterTypes)
+    {
+        return serviceDef.getMethodAnnotationProvider(methodName, parameterTypes);
     }
 }

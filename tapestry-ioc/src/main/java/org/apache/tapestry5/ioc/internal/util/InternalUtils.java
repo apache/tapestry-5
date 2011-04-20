@@ -43,10 +43,13 @@ import java.util.regex.Pattern;
 
 import javax.inject.Named;
 
+import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.func.Flow;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.ioc.AdvisorDef;
 import org.apache.tapestry5.ioc.AdvisorDef2;
+import org.apache.tapestry5.ioc.AnnotationAccess;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.IOCConstants;
@@ -78,9 +81,10 @@ import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.def.ModuleDef2;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.def.ServiceDef2;
-import org.apache.tapestry5.ioc.internal.InternalServiceDef;
+import org.apache.tapestry5.ioc.def.ServiceDef3;
+import org.apache.tapestry5.ioc.internal.NullAnnotationProvider;
+import org.apache.tapestry5.ioc.internal.services.AnnotationProviderChain;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
-import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.plastic.MethodAdvice;
@@ -106,6 +110,9 @@ public class InternalUtils
      */
     private static final Pattern NAME_PATTERN = Pattern.compile("^[_|$]*([\\p{javaJavaIdentifierPart}]+?)[_|$]*$",
             Pattern.CASE_INSENSITIVE);
+
+    /** @since 5.3.0 */
+    public static AnnotationProvider NULL_ANNOTATION_PROVIDER = new NullAnnotationProvider();
 
     /**
      * Converts a method to a user presentable string using a {@link PlasticProxyFactory} to obtain a {@link Location}
@@ -883,51 +890,113 @@ public class InternalUtils
                             constructor));
     }
 
-    public static InternalServiceDef toInternalServiceDef(final ServiceDef sd)
+    /** @since 5.3.0 */
+    public static final Mapper<Class, AnnotationProvider> CLASS_TO_AP_MAPPER = new Mapper<Class, AnnotationProvider>()
     {
-        if (sd instanceof InternalServiceDef)
-            return (InternalServiceDef) sd;
-
-        return new InternalServiceDef()
+        public AnnotationProvider map(final Class element)
         {
+            return toAnnotationProvider(element);
+        }
+
+    };
+
+    /** @since 5.3.0 */
+    public static AnnotationProvider toAnnotationProvider(final Class element)
+    {
+        return new AnnotationProvider()
+        {
+            public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
+            {
+                return annotationClass.cast(element.getAnnotation(annotationClass));
+            }
+        };
+    };
+
+    /** @since 5.3.0 */
+    public static final Mapper<Method, AnnotationProvider> METHOD_TO_AP_MAPPER = new Mapper<Method, AnnotationProvider>()
+    {
+        public AnnotationProvider map(final Method element)
+        {
+            return toAnnotationProvider(element);
+        }
+    };
+
+    public static final Method findMethod(Class containingClass, String methodName, Class... parameterTypes)
+    {
+        if (containingClass == null)
+            return null;
+
+        try
+        {
+            return containingClass.getMethod(methodName, parameterTypes);
+        }
+        catch (SecurityException ex)
+        {
+            throw new RuntimeException(ex);
+        }
+        catch (NoSuchMethodException ex)
+        {
+            return null;
+        }
+    }
+
+    /** @since 5.3.0 */
+    public static ServiceDef3 toServiceDef3(ServiceDef sd)
+    {
+        if (sd instanceof ServiceDef3)
+            return (ServiceDef3) sd;
+
+        final ServiceDef2 sd2 = toServiceDef2(sd);
+
+        return new ServiceDef3()
+        {
+            // ServiceDef3 methods:
+
+            public AnnotationProvider getClassAnnotationProvider()
+            {
+                return toAnnotationProvider(getServiceInterface());
+            }
+
+            public AnnotationProvider getMethodAnnotationProvider(final String methodName, final Class... argumentTypes)
+            {
+                return toAnnotationProvider(findMethod(getServiceInterface(), methodName, argumentTypes));
+            }
+
+            // ServiceDef2 methods:
+
             public boolean isPreventDecoration()
             {
-                return false;
+                return sd2.isPreventDecoration();
             }
 
             public ObjectCreator createServiceCreator(ServiceBuilderResources resources)
             {
-                return sd.createServiceCreator(resources);
+                return sd2.createServiceCreator(resources);
             }
 
             public String getServiceId()
             {
-                return sd.getServiceId();
+                return sd2.getServiceId();
             }
 
             public Set<Class> getMarkers()
             {
-                return sd.getMarkers();
+                return sd2.getMarkers();
             }
 
             public Class getServiceInterface()
             {
-                return sd.getServiceInterface();
+                return sd2.getServiceInterface();
             }
 
             public String getServiceScope()
             {
-                return sd.getServiceScope();
+                return sd2.getServiceScope();
             }
 
             public boolean isEagerLoad()
             {
-                return sd.isEagerLoad();
-            }
-
-            public Class getImplementationClass()
-            {
-                return null;
+                return sd2.isEagerLoad();
             }
         };
     }
@@ -939,10 +1008,14 @@ public class InternalUtils
 
         return new ServiceDef2()
         {
+            // ServiceDef2 methods:
+
             public boolean isPreventDecoration()
             {
                 return false;
             }
+
+            // ServiceDef methods:
 
             public ObjectCreator createServiceCreator(ServiceBuilderResources resources)
             {
@@ -1284,13 +1357,14 @@ public class InternalUtils
 
     /**
      * Converts old-style Tapestry IoC {@link org.apache.tapestry5.ioc.MethodAdvice} to modern
-     * Plastic {@link MethodAdvice}
+     * Plastic {@link MethodAdvice}.
      * 
      * @param iocMethodAdvice
      *            old style advice
      * @return new style advice
      */
-    public static MethodAdvice toPlasticMethodAdvice(final org.apache.tapestry5.ioc.MethodAdvice iocMethodAdvice)
+    public static MethodAdvice toPlasticMethodAdvice(final org.apache.tapestry5.ioc.MethodAdvice iocMethodAdvice,
+            final AnnotationProvider methodAnnotationProvider)
     {
         assert iocMethodAdvice != null;
 
@@ -1367,11 +1441,25 @@ public class InternalUtils
 
                     public <T extends Annotation> T getMethodAnnotation(Class<T> annotationClass)
                     {
-                        return invocation.getAnnotation(annotationClass);
+                        return methodAnnotationProvider.getAnnotation(annotationClass);
                     }
                 };
 
                 iocMethodAdvice.advise(iocInvocation);
+            }
+        };
+    }
+
+    public static AnnotationProvider toAnnotationProvider(final Method element)
+    {
+        if (element == null)
+            return NULL_ANNOTATION_PROVIDER;
+
+        return new AnnotationProvider()
+        {
+            public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
+            {
+                return element.getAnnotation(annotationClass);
             }
         };
     }

@@ -185,28 +185,4 @@ public interface PlasticClass extends AnnotationAccess
      * @return this plastic class, for further configuration
      */
     PlasticClass addToString(String toStringValue);
-
-    /**
-     * Copies annotations from the indicated source class name; this copies all class annotations,
-     * and for each method that exists in both classes, copies over method and parameter annotations. This addresses
-     * a specific use case for Tapestry IoC, where a proxy class is expected to expose the visible annotations of the
-     * implementation class. As currently implemented, copied annotations <em>overwrite</em> annotations in this
-     * PlasticClass (because it is expected that there are no annotations in a proxy).
-     * <p>
-     * This method should be invoked late in the PlasticClass transformation; copied annotations may not be visible as
-     * annotations on the PlasticClass or {@link PlasticMethod}s of the PlasticClass.
-     * 
-     * @param sourceClassName
-     *            source class from which to extract annotations
-     * @return this plastic class, for further configuration
-     */
-    PlasticClass copyAnnotations(String sourceClassName);
-
-    /**
-     * An convenience for {@link #copyAnnotations(String)}.
-     * 
-     * @param sourceClass
-     * @return this plastic class, for further configuration
-     */
-    PlasticClass copyAnnotations(Class sourceClass);
 }

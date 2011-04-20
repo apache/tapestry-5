@@ -55,8 +55,6 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes
 
     private final StaticContext emptyStaticContext = new StaticContext();
 
-    private final Map<String, byte[]> createdClassesBytecode = PlasticInternalUtils.newMap();
-
     private final Cache<String, TypeCategory> typeName2Category = new Cache<String, TypeCategory>()
     {
 
@@ -124,8 +122,6 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes
         byte[] bytecode = toBytecode(classNode);
 
         String className = PlasticInternalUtils.toClassName(classNode.name);
-
-        createdClassesBytecode.put(className, bytecode);
 
         return loader.defineClassWithBytecode(className, bytecode);
     }
@@ -257,7 +253,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes
 
     private Class loadInnerClass(String className)
     {
-        byte[] bytecode = readBytecode(className, true);
+        byte[] bytecode = readBytecode(className);
 
         return loader.defineClassWithBytecode(className, bytecode);
     }
@@ -309,7 +305,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes
      */
     public ClassNode constructClassNode(String className, boolean mustExist)
     {
-        byte[] bytecode = readBytecode(className, mustExist);
+        byte[] bytecode = readBytecode(className);
 
         if (bytecode == null)
             return null;
@@ -328,27 +324,16 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes
         return result;
     }
 
-    private byte[] readBytecode(String className, boolean mustExist)
+    private byte[] readBytecode(String className)
     {
-        byte[] createdBytecode = createdClassesBytecode.get(className);
-
-        if (createdBytecode != null)
-            return createdBytecode;
-
         ClassLoader parentClassLoader = loader.getParent();
 
         String path = PlasticInternalUtils.toClassPath(className);
 
         InputStream stream = parentClassLoader.getResourceAsStream(path);
 
-        if (stream == null)
-        {
-            if (mustExist)
-                throw new RuntimeException(String.format("Unable to locate class file for '%s' in class loader %s.",
-                        className, parentClassLoader));
-
-            return null;
-        }
+        if (stream == null) { throw new RuntimeException(String.format(
+                "Unable to locate class file for '%s' in class loader %s.", className, parentClassLoader)); }
 
         try
         {

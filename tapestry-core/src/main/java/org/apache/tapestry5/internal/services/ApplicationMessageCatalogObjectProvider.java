@@ -89,7 +89,7 @@ public class ApplicationMessageCatalogObjectProvider implements ObjectProvider, 
                     PlasticProxyFactory.class);
 
             proxy = proxyFactory.createProxy(Messages.class, new ApplicationMessagesObjectCreator(),
-                    null, "<ApplicationMessagesProxy>");
+                    "<ApplicationMessagesProxy>");
 
             // Listen for invalidations; clear our cache of localized Messages bundles when
             // and invalidation occurs.

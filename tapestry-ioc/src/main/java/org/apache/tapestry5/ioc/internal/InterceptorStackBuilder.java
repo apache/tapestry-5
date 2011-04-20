@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,33 +14,35 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.Invokable;
-import org.apache.tapestry5.ioc.ObjectCreator;
-import org.apache.tapestry5.ioc.ServiceDecorator;
-import org.apache.tapestry5.ioc.def.ServiceDef;
-
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.tapestry5.ioc.Invokable;
+import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.ServiceDecorator;
+import org.apache.tapestry5.ioc.def.ServiceDef3;
+
 /**
- * Responsible for constructing the interceptor stack, on demand, by invoking an ordered series of decorators ({@link
- * org.apache.tapestry5.ioc.def.DecoratorDef} (which are converted into {@link ServiceDecorator}s).
+ * Responsible for constructing the interceptor stack, on demand, by invoking an ordered series of decorators (
+ * {@link org.apache.tapestry5.ioc.def.DecoratorDef} (which are converted into {@link ServiceDecorator}s).
  */
 public class InterceptorStackBuilder implements ObjectCreator
 {
-    private final ServiceDef serviceDef;
+    private final ServiceDef3 serviceDef;
 
     private final ObjectCreator delegate;
 
     private final InternalRegistry registry;
 
     /**
-     * @param serviceDef service begin decorated
-     * @param delegate   responsible for creating the object to be decorated
-     * @param registry   access to service decorators
+     * @param serviceDef
+     *            service begin decorated
+     * @param delegate
+     *            responsible for creating the object to be decorated
+     * @param registry
+     *            access to service decorators
      */
-    public InterceptorStackBuilder(ServiceDef serviceDef, ObjectCreator delegate,
-                                   InternalRegistry registry)
+    public InterceptorStackBuilder(ServiceDef3 serviceDef, ObjectCreator delegate, InternalRegistry registry)
     {
         this.serviceDef = serviceDef;
         this.delegate = delegate;
@@ -62,19 +64,19 @@ public class InterceptorStackBuilder implements ObjectCreator
         {
             final Object delegate = current;
 
-            Object interceptor =
-                    registry.invoke("Invoking " + decorator, new Invokable<Object>()
-                    {
-                        public Object invoke()
-                        {
-                            return decorator.createInterceptor(delegate);
-                        }
-                    });
+            Object interceptor = registry.invoke("Invoking " + decorator, new Invokable<Object>()
+            {
+                public Object invoke()
+                {
+                    return decorator.createInterceptor(delegate);
+                }
+            });
 
             // Decorator methods may return null; this indicates that the decorator chose not to
             // decorate.
 
-            if (interceptor != null) current = interceptor;
+            if (interceptor != null)
+                current = interceptor;
         }
 
         // The stack of interceptors (plus the core service implementation) are "represented" to the

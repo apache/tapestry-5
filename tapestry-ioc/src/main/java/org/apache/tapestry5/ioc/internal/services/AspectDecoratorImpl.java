@@ -16,8 +16,10 @@ package org.apache.tapestry5.ioc.internal.services;
 
 import java.lang.reflect.Method;
 
+import org.apache.tapestry5.ioc.AnnotationAccess;
 import org.apache.tapestry5.ioc.MethodAdvice;
 import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
+import org.apache.tapestry5.ioc.internal.AnnotationAccessImpl;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.AspectDecorator;
 import org.apache.tapestry5.ioc.services.AspectInterceptorBuilder;
@@ -45,8 +47,13 @@ public class AspectDecoratorImpl implements AspectDecorator
         return builder.build();
     }
 
+    public <T> AspectInterceptorBuilder<T> createBuilder(Class<T> serviceInterface, final T delegate, String description)
+    {
+        return createBuilder(serviceInterface, delegate, new AnnotationAccessImpl(serviceInterface), description);
+    }
+
     public <T> AspectInterceptorBuilder<T> createBuilder(final Class<T> serviceInterface, final T delegate,
-            final String description)
+            AnnotationAccess annotationAccess, final String description)
     {
         assert serviceInterface != null;
         assert delegate != null;
@@ -55,7 +62,7 @@ public class AspectDecoratorImpl implements AspectDecorator
         // The inner class here prevents the needless creation of the AspectInterceptorBuilderImpl,
         // and the various Plastic related overhead, until there's some actual advice.
 
-        return new AspectInterceptorBuilder<T>()
+        return new AbtractAspectInterceptorBuilder<T>(annotationAccess)
         {
             private AspectInterceptorBuilder<T> builder;
 
@@ -82,7 +89,8 @@ public class AspectDecoratorImpl implements AspectDecorator
             private AspectInterceptorBuilder<T> getBuilder()
             {
                 if (builder == null)
-                    builder = new AspectInterceptorBuilderImpl<T>(proxyFactory, serviceInterface, delegate, description);
+                    builder = new AspectInterceptorBuilderImpl<T>(annotationAccess, proxyFactory, serviceInterface,
+                            delegate, description);
 
                 return builder;
             }

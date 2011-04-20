@@ -1,10 +1,10 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,24 +14,24 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import java.util.List;
+
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.ServiceAdvisor;
-import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.def.ServiceDef3;
 import org.apache.tapestry5.ioc.services.AspectDecorator;
 import org.apache.tapestry5.ioc.services.AspectInterceptorBuilder;
 
-import java.util.List;
-
 /**
- * Equivalent of {@link org.apache.tapestry5.ioc.internal.InterceptorStackBuilder}, but works using an {@link
- * org.apache.tapestry5.ioc.services.AspectInterceptorBuilder} that receives advice from {@link
- * org.apache.tapestry5.ioc.ServiceAdvisor}s.
- *
+ * Equivalent of {@link org.apache.tapestry5.ioc.internal.InterceptorStackBuilder}, but works using an
+ * {@link org.apache.tapestry5.ioc.services.AspectInterceptorBuilder} that receives advice from
+ * {@link org.apache.tapestry5.ioc.ServiceAdvisor}s.
+ * 
  * @since 5.1.0.0
  */
 public class AdvisorStackBuilder implements ObjectCreator
 {
-    private final ServiceDef serviceDef;
+    private final ServiceDef3 serviceDef;
 
     private final ObjectCreator delegate;
 
@@ -40,14 +40,17 @@ public class AdvisorStackBuilder implements ObjectCreator
     private final InternalRegistry registry;
 
     /**
-     * @param serviceDef      the service that is ultimately being constructed
-     * @param delegate        responsible for creating the object to be decorated
-     * @param aspectDecorator used to create the {@link org.apache.tapestry5.ioc.services.AspectInterceptorBuilder}
-     *                        passed to each {@link org.apache.tapestry5.ioc.ServiceAdvisor}
+     * @param serviceDef
+     *            the service that is ultimately being constructed
+     * @param delegate
+     *            responsible for creating the object to be decorated
+     * @param aspectDecorator
+     *            used to create the {@link org.apache.tapestry5.ioc.services.AspectInterceptorBuilder} passed to each
+     *            {@link org.apache.tapestry5.ioc.ServiceAdvisor}
      * @param registry
      */
-    public AdvisorStackBuilder(ServiceDef serviceDef, ObjectCreator delegate,
-                               AspectDecorator aspectDecorator, InternalRegistry registry)
+    public AdvisorStackBuilder(ServiceDef3 serviceDef, ObjectCreator delegate, AspectDecorator aspectDecorator,
+            InternalRegistry registry)
     {
         this.serviceDef = serviceDef;
         this.delegate = delegate;
@@ -65,10 +68,9 @@ public class AdvisorStackBuilder implements ObjectCreator
             return service;
 
         final AspectInterceptorBuilder builder = aspectDecorator.createBuilder(serviceDef.getServiceInterface(),
-                                                                               service,
-                                                                               String.format("<AspectProxy for %s(%s)>",
-                                                                                             serviceDef.getServiceId(),
-                                                                                             serviceDef.getServiceInterface().getName()));
+                service, serviceDef, String.format("<AspectProxy for %s(%s)>", serviceDef.getServiceId(), serviceDef
+                        .getServiceInterface().getName()));
+
         for (final ServiceAdvisor advisor : advisors)
         {
             registry.run("Invoking " + advisor, new Runnable()

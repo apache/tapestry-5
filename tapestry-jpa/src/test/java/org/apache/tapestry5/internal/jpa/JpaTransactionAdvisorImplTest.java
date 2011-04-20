@@ -327,6 +327,8 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         train_commitActiveTransaction(transaction);
 
         replay();
+
+
         try
         {
             interceptor.perform();

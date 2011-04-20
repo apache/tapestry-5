@@ -60,7 +60,6 @@ public class PerThreadServiceLifecycle implements ServiceLifecycle
 
         Class serviceInterface = resources.getServiceInterface();
 
-        return proxyFactory.createProxy(serviceInterface, perThreadCreator, resources.getImplementationClass(),
-                String.format("<PerThread Proxy for %s(%s)>", resources.getServiceId(), serviceInterface.getName()));
+        return proxyFactory.createProxy(serviceInterface, perThreadCreator, String.format("<PerThread Proxy for %s(%s)>", resources.getServiceId(), serviceInterface.getName()));
     }
 }

@@ -14,28 +14,22 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Set;
 
+import org.apache.tapestry5.ioc.AnnotationAccess;
+import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.MethodAdvice;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.internal.util.OneShotLock;
-import org.apache.tapestry5.ioc.services.AspectInterceptorBuilder;
-import org.apache.tapestry5.ioc.services.ClassFab;
-import org.apache.tapestry5.ioc.services.ClassFabUtils;
-import org.apache.tapestry5.ioc.services.MethodSignature;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.plastic.PlasticClass;
 import org.apache.tapestry5.plastic.PlasticClassTransformation;
 import org.apache.tapestry5.plastic.PlasticField;
 
 @SuppressWarnings("all")
-public class AspectInterceptorBuilderImpl<T> implements AspectInterceptorBuilder<T>
+public class AspectInterceptorBuilderImpl<T> extends AbtractAspectInterceptorBuilder<T>
 {
     private final Class<T> serviceInterface;
 
@@ -45,9 +39,11 @@ public class AspectInterceptorBuilderImpl<T> implements AspectInterceptorBuilder
 
     private final PlasticClass plasticClass;
 
-    public AspectInterceptorBuilderImpl(PlasticProxyFactory plasticProxyFactory, Class<T> serviceInterface, T delegate,
-            String description)
+    public AspectInterceptorBuilderImpl(AnnotationAccess annotationAccess, PlasticProxyFactory plasticProxyFactory,
+            Class<T> serviceInterface, T delegate, String description)
     {
+        super(annotationAccess);
+
         this.serviceInterface = serviceInterface;
 
         transformation = plasticProxyFactory.createProxyTransformation(serviceInterface);
@@ -63,8 +59,6 @@ public class AspectInterceptorBuilderImpl<T> implements AspectInterceptorBuilder
         {
             plasticClass.introduceMethod(method).delegateTo(delegateField);
         }
-
-        plasticClass.copyAnnotations(delegate.getClass());
     }
 
     public void adviseMethod(Method method, MethodAdvice advice)
@@ -76,7 +70,11 @@ public class AspectInterceptorBuilderImpl<T> implements AspectInterceptorBuilder
             throw new IllegalArgumentException(String.format("Method %s is not defined for interface %s.", method,
                     serviceInterface));
 
-        plasticClass.introduceMethod(method).addAdvice(InternalUtils.toPlasticMethodAdvice(advice));
+        AnnotationProvider methodAnnotationProvider = getMethodAnnotationProvider(method.getName(),
+                method.getParameterTypes());
+
+        plasticClass.introduceMethod(method).addAdvice(
+                InternalUtils.toPlasticMethodAdvice(advice, methodAnnotationProvider));
     }
 
     public void adviseAllMethods(MethodAdvice advice)

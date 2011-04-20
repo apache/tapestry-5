@@ -54,6 +54,7 @@ import org.apache.tapestry5.ioc.def.DecoratorDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.def.ServiceDef2;
+import org.apache.tapestry5.ioc.def.ServiceDef3;
 import org.apache.tapestry5.ioc.internal.services.PerthreadManagerImpl;
 import org.apache.tapestry5.ioc.internal.services.RegistryShutdownHubImpl;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -75,7 +76,6 @@ import org.apache.tapestry5.ioc.services.ServiceLifecycleSource;
 import org.apache.tapestry5.ioc.services.Status;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.services.TapestryIOCModule;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.UpdateListenerHub;
@@ -484,7 +484,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         return module;
     }
 
-    public <T> Collection<T> getUnorderedConfiguration(ServiceDef serviceDef, Class<T> objectType)
+    public <T> Collection<T> getUnorderedConfiguration(ServiceDef3 serviceDef, Class<T> objectType)
     {
         lock.check();
 
@@ -497,7 +497,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     }
 
     @SuppressWarnings("unchecked")
-    public <T> List<T> getOrderedConfiguration(ServiceDef serviceDef, Class<T> objectType)
+    public <T> List<T> getOrderedConfiguration(ServiceDef3 serviceDef, Class<T> objectType)
     {
         lock.check();
 
@@ -532,7 +532,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         return orderer.getOrdered();
     }
 
-    public <K, V> Map<K, V> getMappedConfiguration(ServiceDef serviceDef, Class<K> keyType, Class<V> objectType)
+    public <K, V> Map<K, V> getMappedConfiguration(ServiceDef3 serviceDef, Class<K> keyType, Class<V> objectType)
     {
         lock.check();
 
@@ -567,7 +567,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     }
 
     private <K, V> void addToMappedConfiguration(Map<K, V> map, Map<K, MappedConfigurationOverride<K, V>> overrides,
-            Map<K, ContributionDef> keyToContribution, Class<K> keyClass, Class<V> valueType, ServiceDef serviceDef,
+            Map<K, ContributionDef> keyToContribution, Class<K> keyClass, Class<V> valueType, ServiceDef3 serviceDef,
             final Module module)
     {
         String serviceId = serviceDef.getServiceId();
@@ -602,7 +602,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         }
     }
 
-    private <T> void addToUnorderedConfiguration(Collection<T> collection, Class<T> valueType, ServiceDef serviceDef,
+    private <T> void addToUnorderedConfiguration(Collection<T> collection, Class<T> valueType, ServiceDef3 serviceDef,
             final Module module)
     {
         String serviceId = serviceDef.getServiceId();
@@ -638,7 +638,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     }
 
     private <T> void addToOrderedConfiguration(Orderer<T> orderer,
-            Map<String, OrderedConfigurationOverride<T>> overrides, Class<T> valueType, ServiceDef serviceDef,
+            Map<String, OrderedConfigurationOverride<T>> overrides, Class<T> valueType, ServiceDef3 serviceDef,
             final Module module)
     {
         String serviceId = serviceDef.getServiceId();
@@ -739,7 +739,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         return InternalUtils.toServiceLifecycle2(result);
     }
 
-    public List<ServiceDecorator> findDecoratorsForService(ServiceDef serviceDef)
+    public List<ServiceDecorator> findDecoratorsForService(ServiceDef3 serviceDef)
     {
         lock.check();
 
@@ -769,7 +769,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         return orderer.getOrdered();
     }
 
-    public List<ServiceAdvisor> findAdvisorsForService(ServiceDef serviceDef)
+    public List<ServiceAdvisor> findAdvisorsForService(ServiceDef3 serviceDef)
     {
         lock.check();
 
@@ -1051,8 +1051,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             }
         };
 
-        return proxyFactory.createProxy(interfaceClass, justInTime, implementationClass,
-                String.format("<Autobuild proxy %s(%s)>", implementationClass.getName(), interfaceClass.getName()));
+        return proxyFactory.createProxy(interfaceClass, justInTime, String.format("<Autobuild proxy %s(%s)>", implementationClass.getName(), interfaceClass.getName()));
     }
 
     private <T> T createReloadingProxy(Class<T> interfaceClass, final Class<? extends T> implementationClass,
@@ -1063,8 +1062,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         getService(UpdateListenerHub.class).addUpdateListener(creator);
 
-        return proxyFactory.createProxy(interfaceClass, (ObjectCreator<T>) creator, implementationClass,
-                String.format("<Autoreload proxy %s(%s)>", implementationClass.getName(), interfaceClass.getName()));
+        return proxyFactory.createProxy(interfaceClass, (ObjectCreator<T>) creator, String.format("<Autoreload proxy %s(%s)>", implementationClass.getName(), interfaceClass.getName()));
     }
 
     public Object provideServiceProxy(String serviceId)

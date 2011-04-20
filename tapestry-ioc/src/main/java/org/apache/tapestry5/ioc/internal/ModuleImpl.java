@@ -45,6 +45,7 @@ import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.def.ModuleDef2;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.def.ServiceDef2;
+import org.apache.tapestry5.ioc.def.ServiceDef3;
 import org.apache.tapestry5.ioc.internal.services.JustInTimeObjectCreator;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.ConcurrentBarrier;
@@ -92,7 +93,7 @@ public class ModuleImpl implements Module
      */
     private final Map<String, Object> services = CollectionFactory.newCaseInsensitiveMap();
 
-    private final Map<String, ServiceDef2> serviceDefs = CollectionFactory.newCaseInsensitiveMap();
+    private final Map<String, ServiceDef3> serviceDefs = CollectionFactory.newCaseInsensitiveMap();
 
     /**
      * The barrier is shared by all modules, which means that creation of *any* service for any module is single
@@ -118,9 +119,9 @@ public class ModuleImpl implements Module
         {
             ServiceDef sd = moduleDef.getServiceDef(id);
 
-            ServiceDef2 sd2 = InternalUtils.toServiceDef2(sd);
+            ServiceDef3 sd3 = InternalUtils.toServiceDef3(sd);
 
-            serviceDefs.put(id, sd2);
+            serviceDefs.put(id, sd3);
         }
     }
 
@@ -128,7 +129,7 @@ public class ModuleImpl implements Module
     {
         assert InternalUtils.isNonBlank(serviceId);
         assert serviceInterface != null;
-        ServiceDef2 def = getServiceDef(serviceId);
+        ServiceDef3 def = getServiceDef(serviceId);
 
         // RegistryImpl should already have checked that the service exists.
         assert def != null;
@@ -200,7 +201,7 @@ public class ModuleImpl implements Module
      *            collection into which proxies for eager loaded services are added (or null)
      * @return the service proxy
      */
-    private Object findOrCreate(final ServiceDef2 def, final Collection<EagerLoadServiceProxy> eagerLoadProxies)
+    private Object findOrCreate(final ServiceDef3 def, final Collection<EagerLoadServiceProxy> eagerLoadProxies)
     {
         final String key = def.getServiceId();
 
@@ -249,7 +250,7 @@ public class ModuleImpl implements Module
         {
             public void run()
             {
-                for (ServiceDef2 def : serviceDefs.values())
+                for (ServiceDef3 def : serviceDefs.values())
                 {
                     if (def.isEagerLoad())
                         findOrCreate(def, proxies);
@@ -266,7 +267,7 @@ public class ModuleImpl implements Module
      * @param eagerLoadProxies
      *            a list into which any eager loaded proxies should be added
      */
-    private Object create(final ServiceDef2 def, final Collection<EagerLoadServiceProxy> eagerLoadProxies)
+    private Object create(final ServiceDef3 def, final Collection<EagerLoadServiceProxy> eagerLoadProxies)
     {
         final String serviceId = def.getServiceId();
 
@@ -535,9 +536,6 @@ public class ModuleImpl implements Module
                 });
 
                 plasticClass.addToString(description);
-
-                if (serviceImplementation != null)
-                    plasticClass.copyAnnotations(serviceImplementation);
             }
         });
 
@@ -602,7 +600,7 @@ public class ModuleImpl implements Module
         return serviceDefs.containsKey(serviceDef.getServiceId());
     }
 
-    public ServiceDef2 getServiceDef(String serviceId)
+    public ServiceDef3 getServiceDef(String serviceId)
     {
         return serviceDefs.get(serviceId);
     }

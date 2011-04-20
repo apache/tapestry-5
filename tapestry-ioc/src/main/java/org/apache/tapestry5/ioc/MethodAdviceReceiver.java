@@ -1,10 +1,10 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,19 +14,22 @@
 
 package org.apache.tapestry5.ioc;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 /**
- * Interface used with service advisor methods to define advice.  Allows advice on specific methods, or on all methods.
+ * Interface used with service advisor methods to define advice. Allows advice on specific methods, or on all methods.
  */
-public interface MethodAdviceReceiver
+public interface MethodAdviceReceiver extends AnnotationAccess
 {
     /**
      * Adds advice for a specific method of the aspect interceptor being constructed.
-     *
-     * @param method method (of the interface for which an interceptor is being constructed) to be advised. Multiple
-     *               advice is allowed for a single method; the advice will be executed in the order it is added.
-     * @param advice the advice for this particular method.   Advice must be threadsafe.
+     * 
+     * @param method
+     *            method (of the interface for which an interceptor is being constructed) to be advised. Multiple
+     *            advice is allowed for a single method; the advice will be executed in the order it is added.
+     * @param advice
+     *            the advice for this particular method. Advice must be threadsafe.
      */
     void adviseMethod(Method method, MethodAdvice advice);
 
@@ -37,9 +40,23 @@ public interface MethodAdviceReceiver
 
     /**
      * Returns the interface for which methods may be advised.
-     *
+     * 
      * @see org.apache.tapestry5.ioc.services.MethodIterator
      * @since 5.1.0.0
      */
     Class getInterface();
+
+    /**
+     * Gets an annotation from a method, via {@link AnnotationAccess#getMethodAnnotationProvider(String, Class...)}.
+     * 
+     * @param <T>
+     *            type of annotation
+     * @param method
+     *            method to search
+     * @param annotationType
+     *            type of annotation
+     * @return the annotation found on the underlying implementation class (if known) or service interface, or null if
+     *         not found
+     */
+    <T extends Annotation> T getMethodAnnotation(Method method, Class<T> annotationType);
 }

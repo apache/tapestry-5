@@ -416,26 +416,6 @@ public class IntegrationTest extends IOCInternalTestCase
     }
 
     @Test
-    public void proxy_annotations() throws Exception
-    {
-        Registry r = buildRegistry(AutobuildModule.class);
-
-        StringHolder sh = r.getService(StringHolder.class);
-
-        SimpleAnnotation annotation = sh.getClass().getAnnotation(SimpleAnnotation.class);
-        assertNotNull(annotation);
-        assertEquals(annotation.value(), "StringHolderImpl");
-
-        Method method = sh.getClass().getMethod("getValue");
-
-        annotation = method.getAnnotation(SimpleAnnotation.class);
-        assertNotNull(annotation);
-        assertEquals(annotation.value(), "StringHolderImpl#getValue()");
-
-        r.shutdown();
-    }
-
-    @Test
     public void exception_in_autobuild_service_constructor()
     {
         Registry r = buildRegistry(ExceptionInConstructorModule.class);

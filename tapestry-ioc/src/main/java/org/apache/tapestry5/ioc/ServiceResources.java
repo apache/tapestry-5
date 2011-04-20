@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,10 +18,10 @@ import org.slf4j.Logger;
 
 /**
  * Contains resources that may be provided to a service when it initializes, which includes other services defined in
- * the registry. ServiceResources provides access to other services (it extends {@link
- * org.apache.tapestry5.ioc.ObjectLocator}).
+ * the registry. ServiceResources provides access to other services (it extends
+ * {@link org.apache.tapestry5.ioc.ObjectLocator}).
  */
-public interface ServiceResources extends ObjectLocator
+public interface ServiceResources extends ObjectLocator, AnnotationAccess
 {
     /**
      * Returns the fully qualified id of the service.
@@ -45,11 +45,12 @@ public interface ServiceResources extends ObjectLocator
      * initializing the service.
      */
     OperationTracker getTracker();
-    
+
     /**
-     * Returns the service implementation class.
+     * Returns null (as of 5.3.0).
      * 
      * @since 5.2.0
+     * @deprecated Deprecated in 5.3.0 with no replacement. May be removed in 5.4.
      */
     Class getImplementationClass();
 }

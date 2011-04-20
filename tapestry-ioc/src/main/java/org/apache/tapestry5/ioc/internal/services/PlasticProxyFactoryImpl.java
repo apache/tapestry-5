@@ -61,8 +61,7 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
         return manager.createProxyTransformation(interfaceType);
     }
 
-    public <T> T createProxy(final Class<T> interfaceType, final ObjectCreator<T> creator,
-            final Class<? extends T> annotationSource, final String description)
+    public <T> T createProxy(final Class<T> interfaceType, final ObjectCreator<T> creator, final String description)
     {
         assert creator != null;
         assert InternalUtils.isNonBlank(description);
@@ -93,9 +92,6 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
                 }
 
                 plasticClass.addToString(description);
-
-                if (annotationSource != null)
-                    plasticClass.copyAnnotations(annotationSource);
             }
         });
 

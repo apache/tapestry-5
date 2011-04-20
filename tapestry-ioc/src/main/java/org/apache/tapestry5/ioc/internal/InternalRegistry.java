@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.ServiceAdvisor;
 import org.apache.tapestry5.ioc.ServiceDecorator;
 import org.apache.tapestry5.ioc.ServiceLifecycle2;
-import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.def.ServiceDef3;
 import org.apache.tapestry5.ioc.services.ClassFab;
 import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
 import org.slf4j.Logger;
@@ -69,14 +69,14 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub, Operati
      * s
      * are ordered, then converted into {@link ServiceDecorator}s.
      */
-    List<ServiceDecorator> findDecoratorsForService(ServiceDef serviceDef);
+    List<ServiceDecorator> findDecoratorsForService(ServiceDef3 serviceDef);
 
     /**
      * Searches for advisors for a particular service, returning them in order of application.
      * 
      * @since 5.1.0.0
      */
-    List<ServiceAdvisor> findAdvisorsForService(ServiceDef serviceDef);
+    List<ServiceAdvisor> findAdvisorsForService(ServiceDef3 serviceDef);
 
     /**
      * Builds up an unordered collection by invoking service contributor methods that target the service (from any
@@ -89,7 +89,7 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub, Operati
      *            identifies the type of object allowed into the collection
      * @return the final collection
      */
-    <T> Collection<T> getUnorderedConfiguration(ServiceDef serviceDef, Class<T> valueType);
+    <T> Collection<T> getUnorderedConfiguration(ServiceDef3 serviceDef, Class<T> valueType);
 
     /**
      * Builds up an ordered collection by invoking service contributor methods that target the service (from any module,
@@ -103,7 +103,7 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub, Operati
      *            identifies the type of object allowed into the collection
      * @return the final ordered list
      */
-    <T> List<T> getOrderedConfiguration(ServiceDef serviceDef, Class<T> valueType);
+    <T> List<T> getOrderedConfiguration(ServiceDef3 serviceDef, Class<T> valueType);
 
     /**
      * Builds up a map of key/value pairs by invoking service contribution methods that tharget the service (from any
@@ -119,7 +119,7 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub, Operati
      *            identifies the type of value object allowed into the map
      * @return the final ordered list
      */
-    <K, V> Map<K, V> getMappedConfiguration(ServiceDef serviceDef, Class<K> keyType, Class<V> valueType);
+    <K, V> Map<K, V> getMappedConfiguration(ServiceDef3 serviceDef, Class<K> keyType, Class<V> valueType);
 
     /**
      * Convieience for creating a new {@link org.apache.tapestry5.ioc.services.ClassFab} instance using a

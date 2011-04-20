@@ -74,7 +74,6 @@ public class ReloadableObjectCreatorSource implements ObjectCreatorSource
         if (eagerLoad)
             reloadableCreator.createObject();
 
-        return proxyFactory.createProxy(serviceInterfaceClass, reloadableCreator, serviceImplementationClass,
-                getDescription());
+        return proxyFactory.createProxy(serviceInterfaceClass, reloadableCreator, getDescription());
     }
 }

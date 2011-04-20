@@ -23,7 +23,7 @@ import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;
 import org.apache.tapestry5.ioc.ServiceDecorator;
-import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.def.ServiceDef3;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
@@ -137,7 +137,7 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
     {
         List<ServiceDecorator> result = Collections.emptyList();
 
-        expect(registry.findDecoratorsForService(isA(ServiceDef.class))).andReturn(result);
+        expect(registry.findDecoratorsForService(isA(ServiceDef3.class))).andReturn(result);
     }
 
     protected final void train_getDescription(ObjectCreatorSource source, String description)
