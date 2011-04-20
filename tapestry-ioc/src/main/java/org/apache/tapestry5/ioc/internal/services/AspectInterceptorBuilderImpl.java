@@ -63,6 +63,8 @@ public class AspectInterceptorBuilderImpl<T> implements AspectInterceptorBuilder
         {
             plasticClass.introduceMethod(method).delegateTo(delegateField);
         }
+
+        plasticClass.copyAnnotations(delegate.getClass());
     }
 
     public void adviseMethod(Method method, MethodAdvice advice)
