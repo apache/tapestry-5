@@ -93,7 +93,7 @@ subprojects.each { evaluationDependsOn(it.name) }
 
 javadocBuildDir = dir(buildDirName + "/documentation/javadocs")
 
-task aggregateJavadocs(type: Javadoc) {
+task aggregateJavadoc(type: Javadoc) {
    description = "Build the aggregated JavaDocs for all modules"
    maxMemory = '512m'
    destinationDir = javadocBuildDir.dir
@@ -128,3 +128,5 @@ task aggregateJavadocs(type: Javadoc) {
 task clean(type: Delete) {
   delete buildDirName
 }
+
+task continuousIntegration(dependsOn: [subprojects.build, 'aggregateJavadoc'])
