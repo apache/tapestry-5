@@ -49,18 +49,20 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes
 
     private final Set<String> controlledPackages;
 
-    private final Map<String, ClassInstantiator> instantiators = new HashMap<String, ClassInstantiator>();
+    private final Map<String, ClassInstantiator> instantiators = PlasticInternalUtils.newMap();
 
     private final MethodBundle emptyMethodBundle = new MethodBundle();
 
     private final StaticContext emptyStaticContext = new StaticContext();
+
+    private final Map<String, byte[]> createdClassesBytecode = PlasticInternalUtils.newMap();
 
     private final Cache<String, TypeCategory> typeName2Category = new Cache<String, TypeCategory>()
     {
 
         protected TypeCategory convert(String typeName)
         {
-            ClassNode cn = constructClassNode(typeName);
+            ClassNode cn = constructClassNode(typeName, true);
 
             return Modifier.isInterface(cn.access) ? TypeCategory.INTERFACE : TypeCategory.CLASS;
         }
@@ -115,13 +117,17 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes
         return result;
     }
 
-    public Class realize(ClassNode classNode)
+    public synchronized Class realize(ClassNode classNode)
     {
         PlasticInternalUtils.debugClass(classNode);
 
         byte[] bytecode = toBytecode(classNode);
 
-        return loader.defineClassWithBytecode(PlasticInternalUtils.toClassName(classNode.name), bytecode);
+        String className = PlasticInternalUtils.toClassName(classNode.name);
+
+        createdClassesBytecode.put(className, bytecode);
+
+        return loader.defineClassWithBytecode(className, bytecode);
     }
 
     private byte[] toBytecode(ClassNode classNode)
@@ -251,7 +257,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes
 
     private Class loadInnerClass(String className)
     {
-        byte[] bytecode = readBytecode(className);
+        byte[] bytecode = readBytecode(className, true);
 
         return loader.defineClassWithBytecode(className, bytecode);
     }
@@ -267,7 +273,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes
     {
         assert PlasticInternalUtils.isNonBlank(className);
 
-        ClassNode classNode = constructClassNode(className);
+        ClassNode classNode = constructClassNode(className, true);
 
         String baseClassName = PlasticInternalUtils.toClassName(classNode.superName);
 
@@ -297,11 +303,16 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes
      * 
      * @param className
      *            fully qualified class name
+     * @param mustExist
+     *            TODO
      * @return corresponding ClassNode
      */
-    public ClassNode constructClassNode(String className)
+    public ClassNode constructClassNode(String className, boolean mustExist)
     {
-        byte[] bytecode = readBytecode(className);
+        byte[] bytecode = readBytecode(className, mustExist);
+
+        if (bytecode == null)
+            return null;
 
         return convertBytecodeToClassNode(bytecode);
     }
@@ -317,8 +328,13 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes
         return result;
     }
 
-    private byte[] readBytecode(String className)
+    private byte[] readBytecode(String className, boolean mustExist)
     {
+        byte[] createdBytecode = createdClassesBytecode.get(className);
+
+        if (createdBytecode != null)
+            return createdBytecode;
+
         ClassLoader parentClassLoader = loader.getParent();
 
         String path = PlasticInternalUtils.toClassPath(className);
@@ -326,8 +342,13 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes
         InputStream stream = parentClassLoader.getResourceAsStream(path);
 
         if (stream == null)
-            throw new RuntimeException(String.format("Unable to locate class file for '%s' in class loader %s.",
-                    className, parentClassLoader));
+        {
+            if (mustExist)
+                throw new RuntimeException(String.format("Unable to locate class file for '%s' in class loader %s.",
+                        className, parentClassLoader));
+
+            return null;
+        }
 
         try
         {

@@ -2278,9 +2278,18 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     {
         assert PlasticInternalUtils.isNonBlank(sourceClassName);
 
-        ClassNode sourceClass = pool.constructClassNode(sourceClassName);
+        ClassNode sourceClass = pool.constructClassNode(sourceClassName, false);
 
-        classNode.visibleAnnotations = sourceClass.visibleAnnotations;
+        if (sourceClass == null)
+            return this;
+
+        if (sourceClass.visibleAnnotations != null)
+        {
+            if (classNode.visibleAnnotations == null)
+                classNode.visibleAnnotations = PlasticInternalUtils.newList();
+
+            mergeAnnotations(classNode.visibleAnnotations, sourceClass.visibleAnnotations);
+        }
 
         Map<String, MethodNode> sourceMethods = buildMethodNodeMap(sourceClass, true);
 
@@ -2301,11 +2310,58 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
             MethodNode source = entry.getValue();
 
-            target.visibleAnnotations = source.visibleAnnotations;
-            target.visibleParameterAnnotations = source.visibleParameterAnnotations;
+            if (source.visibleAnnotations != null)
+            {
+                if (target.visibleAnnotations == null)
+                    target.visibleAnnotations = PlasticInternalUtils.newList();
+
+                mergeAnnotations(target.visibleAnnotations, source.visibleAnnotations);
+            }
+
+            if (source.visibleParameterAnnotations != null)
+            {
+                int count = source.visibleParameterAnnotations.length;
+
+                if (target.visibleParameterAnnotations == null)
+                    target.visibleParameterAnnotations = new List[count];
+
+                for (int i = 0; i < count; i++)
+                {
+                    if (source.visibleParameterAnnotations[i] == null)
+                        continue;
+
+                    if (target.visibleParameterAnnotations[i] == null)
+                        target.visibleParameterAnnotations[i] = PlasticInternalUtils.newList();
+
+                    mergeAnnotations(target.visibleParameterAnnotations[i], source.visibleParameterAnnotations[i]);
+                }
+
+            }
         }
 
         return this;
+    }
+
+    /**
+     * Copies nodes from the source list to the target list, as long as they don't conflict with an
+     * annotation already present in the target list (as annotations must be unique).
+     */
+    private static void mergeAnnotations(List<AnnotationNode> targetAnnotations, List<AnnotationNode> sourceAnnotations)
+    {
+        Set<String> targetDescs = PlasticInternalUtils.newSet();
+
+        for (AnnotationNode targetNode : targetAnnotations)
+        {
+            targetDescs.add(targetNode.desc);
+        }
+
+        for (AnnotationNode sourceNode : sourceAnnotations)
+        {
+            if (targetDescs.contains(sourceNode.desc))
+                continue;
+
+            targetAnnotations.add(sourceNode);
+        }
     }
 
     private static Map<String, MethodNode> buildMethodNodeMap(ClassNode source, boolean withAnnotationsOnly)
