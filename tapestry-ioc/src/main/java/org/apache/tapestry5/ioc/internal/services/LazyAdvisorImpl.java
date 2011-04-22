@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -49,13 +49,13 @@ public class LazyAdvisorImpl implements LazyAdvisor
     {
         final Class thunkType = method.getReturnType();
 
-        final String description = String.format("<%s Thunk for %s>", thunkType.getName(), InternalUtils
-                .asString(method));
+        final String description = String.format("<%s Thunk for %s>", thunkType.getName(),
+                InternalUtils.asString(method));
 
         MethodAdvice advice = new MethodAdvice()
         {
             /**
-             * When the method is invoked, we don't immediately proceed. Intead, we return a thunk instance
+             * When the method is invoked, we don't immediately proceed. Instead, we return a thunk instance
              * that defers its behavior to the lazily invoked invocation.
              */
             public void advise(final Invocation invocation)
