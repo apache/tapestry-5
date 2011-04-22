@@ -1,10 +1,10 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,42 +14,38 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.Method;
 import java.util.Map;
 
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.Builtin;
-import org.apache.tapestry5.ioc.services.ClassFab;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
-import org.apache.tapestry5.ioc.services.ClassFactory;
-import org.apache.tapestry5.ioc.services.MethodIterator;
-import org.apache.tapestry5.ioc.services.MethodSignature;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.services.ThunkCreator;
+import org.apache.tapestry5.plastic.ClassInstantiator;
+import org.apache.tapestry5.plastic.InstructionBuilder;
+import org.apache.tapestry5.plastic.InstructionBuilderCallback;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticClassTransformer;
+import org.apache.tapestry5.plastic.PlasticField;
+import org.apache.tapestry5.plastic.PlasticMethod;
+import org.apache.tapestry5.plastic.PlasticUtils;
 
 @SuppressWarnings("all")
 public class ThunkCreatorImpl implements ThunkCreator
 {
-    /**
-     * Map from an interface type to a corresponding "thunk" class that implements the interface.
-     */
-    private final Map<Class, Class> interfaceToThunkClass = CollectionFactory.newConcurrentMap();
+    private final Map<Class, ClassInstantiator> interfaceToInstantiator = CollectionFactory.newConcurrentMap();
 
-    private final ClassFactory classFactory;
+    private final PlasticProxyFactory proxyFactory;
 
-    private final MethodSignature toStringSignature = new MethodSignature(String.class, "toString", null, null);
+    private static final Method CREATE_OBJECT = PlasticUtils.getMethod(ObjectCreator.class, "createObject");
 
-    private static final int PRIVATE_FINAL = Modifier.FINAL + Modifier.PRIVATE;
-
-    private static final String DESCRIPTION_FIELD = "_$description";
-    private static final String CREATOR_FIELD = "_$creator";
-    private static final String DELEGATE_METHOD = "_$delegate";
-
-    public ThunkCreatorImpl(@Builtin ClassFactory classFactory)
+    public ThunkCreatorImpl(@Builtin
+    PlasticProxyFactory proxyFactory)
     {
-        this.classFactory = classFactory;
+        this.proxyFactory = proxyFactory;
     }
 
     public <T> T createThunk(Class<T> proxyType, ObjectCreator objectCreator, String description)
@@ -57,75 +53,71 @@ public class ThunkCreatorImpl implements ThunkCreator
         assert proxyType != null;
         assert objectCreator != null;
         assert InternalUtils.isNonBlank(description);
+
         if (!proxyType.isInterface())
-            throw new IllegalArgumentException(
-                    String.format("Thunks may only be created for interfaces; %s is a class.",
-                                  ClassFabUtils.toJavaClassName(proxyType)));
+            throw new IllegalArgumentException(String.format(
+                    "Thunks may only be created for interfaces; %s is a class.",
+                    ClassFabUtils.toJavaClassName(proxyType)));
 
-        final Class thunkClass = getThunkClass(proxyType);
+        return getInstantiator(proxyType).with(ObjectCreator.class, objectCreator).with(String.class, description)
+                .newInstance();
 
-        Throwable failure;
-
-        try
-        {
-            return proxyType.cast(thunkClass.getConstructors()[0].newInstance(description, objectCreator));
-        }
-        catch (InvocationTargetException ex)
-        {
-            failure = ex.getTargetException();
-        }
-        catch (Exception ex)
-        {
-            failure = ex;
-        }
-
-        throw new RuntimeException(String.format("Exception instantiating thunk class %s: %s",
-                                                 thunkClass.getName(),
-                                                 InternalUtils.toMessage(failure)),
-                                   failure);
     }
 
-    private Class getThunkClass(Class type)
+    private <T> ClassInstantiator<T> getInstantiator(Class<T> interfaceType)
     {
-        Class result = interfaceToThunkClass.get(type);
+        ClassInstantiator<T> result = interfaceToInstantiator.get(interfaceType);
 
         if (result == null)
         {
-            result = constructThunkClass(type);
-            interfaceToThunkClass.put(type, result);
+            result = createInstantiator(interfaceType);
+            interfaceToInstantiator.put(interfaceType, result);
         }
 
         return result;
     }
 
-    private Class constructThunkClass(Class interfaceType)
+    private <T> ClassInstantiator<T> createInstantiator(final Class<T> interfaceType)
     {
-        ClassFab classFab = classFactory.newClass(interfaceType);
-
-        classFab.addField(DESCRIPTION_FIELD, PRIVATE_FINAL, String.class);
-
-        classFab.addField(CREATOR_FIELD, PRIVATE_FINAL, ObjectCreator.class);
-
-        classFab.addConstructor(new Class[] { String.class, ObjectCreator.class }, null,
-                                String.format("{ %s = $1; %s = $2; }", DESCRIPTION_FIELD, CREATOR_FIELD));
-
-        MethodSignature sig = new MethodSignature(interfaceType, DELEGATE_METHOD, null, null);
-
-        classFab.addMethod(Modifier.PRIVATE, sig, String.format("return ($r) %s.createObject();", CREATOR_FIELD));
-
-        MethodIterator mi = new MethodIterator(interfaceType);
-
-        while (mi.hasNext())
+        return proxyFactory.createProxy(interfaceType, new PlasticClassTransformer()
         {
-            sig = mi.next();
+            public void transform(PlasticClass plasticClass)
+            {
+                final PlasticField objectCreatorField = plasticClass.introduceField(ObjectCreator.class, "creator")
+                        .injectFromInstanceContext();
 
-            classFab.addMethod(Modifier.PUBLIC, sig,
-                               String.format("return ($r) %s().%s($$);", DELEGATE_METHOD, sig.getName()));
-        }
+                PlasticMethod delegateMethod = plasticClass.introducePrivateMethod(interfaceType.getName(), "delegate",
+                        null, null);
 
-        if (!mi.getToString())
-            classFab.addMethod(Modifier.PUBLIC, toStringSignature, String.format("return %s;", DESCRIPTION_FIELD));
+                delegateMethod.changeImplementation(new InstructionBuilderCallback()
+                {
+                    public void doBuild(InstructionBuilder builder)
+                    {
+                        builder.loadThis().getField(objectCreatorField);
+                        builder.invoke(CREATE_OBJECT);
+                        builder.checkcast(interfaceType).returnResult();
+                    }
+                });
 
-        return classFab.createClass();
+                for (Method method : interfaceType.getMethods())
+                {
+                    plasticClass.introduceMethod(method).delegateTo(delegateMethod);
+                }
+
+                if (!plasticClass.isMethodImplemented(PlasticUtils.TO_STRING_DESCRIPTION))
+                {
+                    final PlasticField descriptionField = plasticClass.introduceField(String.class, "description")
+                            .injectFromInstanceContext();
+
+                    plasticClass.introduceMethod(PlasticUtils.TO_STRING_DESCRIPTION, new InstructionBuilderCallback()
+                    {
+                        public void doBuild(InstructionBuilder builder)
+                        {
+                            builder.loadThis().getField(descriptionField).returnResult();
+                        }
+                    });
+                }
+            }
+        });
     }
 }
