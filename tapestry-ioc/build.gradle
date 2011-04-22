@@ -18,3 +18,9 @@ dependencies {
     
   compile "org.testng:testng:$testngVersion", { transitive = false }
 }
+
+test
+{
+    // Override the master build.gradle
+    systemProperties.remove("tapestry.service-reloading-enabled")
+}
