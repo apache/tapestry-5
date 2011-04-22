@@ -1,7 +1,7 @@
 description = "Apache Tapestry 5 Project"
 
-if (!project.hasProperty('deployUserName')) deployUserName = '*UNSET-USERNAME*'
-if (!project.hasProperty('deployPassword')) deployPassword = '*UNSET-PASSWORD*'
+if (!project.hasProperty('apacheDeployUserName')) apacheDeployUserName = '*UNSET-USERNAME*'
+if (!project.hasProperty('apacheDeployPassword')) apacheDeployPassword = '*UNSET-PASSWORD*'
 
 
 jettyVersion = '7.0.0.v20091005'
@@ -52,7 +52,7 @@ subprojects {
     dependencies {
         groovy "org.codehaus.groovy:groovy-all:1.7.4"
         
-        deployerJars "org.apache.maven.wagon:wagon-ftp:1.0-beta-2"        
+        deployerJars "org.apache.maven.wagon:wagon-http-lightweight:1.0-beta-6"
     }
     
     test {
@@ -73,14 +73,13 @@ subprojects {
     artifacts {
        archives sourcesJar
     }    
-
     
     uploadArchives {
         repositories.mavenDeployer {
             configuration = configurations.deployerJars
-            // deployUserName and deployPassword should be specified in ~/.gradle/gradle.properties
-            snapshotRepository(url: "ftp://howardlewisship.com/snapshot-repository") {
-              authentication(userName: deployUserName, password: deployPassword)
+            // apacheDeployUserName and apacheDeployPassword should be specified in ~/.gradle/gradle.properties
+            snapshotRepository(url: "https://repository.apache.org/content/repositories/snapshots/") {
+              authentication(userName: apacheDeployUserName, password: apacheDeployPassword)
             }
             
         }
