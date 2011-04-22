@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.plastic;
 
+import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.tapestry5.internal.plastic.PrimitiveType;
@@ -76,5 +77,31 @@ public class PlasticUtils
         assert type != null;
 
         return type.isPrimitive() ? PrimitiveType.getByPrimitiveType(type).wrapperType : type;
+    }
+
+    /**
+     * Convenience for getting a method from a class.
+     * 
+     * @param declaringClass
+     *            containing class
+     * @param name
+     *            name of method
+     * @param parameterTypes
+     *            types of parameters
+     * @return the Method
+     * @throws RuntimeException
+     *             if any error (such as method not found)
+     */
+    @SuppressWarnings("unchecked")
+    public static Method getMethod(Class declaringClass, String name, Class... parameterTypes)
+    {
+        try
+        {
+            return declaringClass.getMethod(name, parameterTypes);
+        }
+        catch (Exception ex)
+        {
+            throw new RuntimeException(ex);
+        }
     }
 }

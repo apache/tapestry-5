@@ -111,14 +111,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
     private static Method toMethod(Class declaringClass, String methodName, Class... parameterTypes)
     {
-        try
-        {
-            return declaringClass.getMethod(methodName, parameterTypes);
-        }
-        catch (Exception ex)
-        {
-            throw new RuntimeException(ex);
-        }
+        return PlasticUtils.getMethod(declaringClass, methodName, parameterTypes);
     }
 
     private class PlasticMember implements AnnotationAccess
