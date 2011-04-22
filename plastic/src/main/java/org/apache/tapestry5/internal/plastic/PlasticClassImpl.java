@@ -769,7 +769,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
             addMethod(mn);
 
-            fieldToWriteMethod.put(node.name, setAccessName);
+            fieldToWriteMethod.put(node.name, mn);
         }
 
         private void replaceFieldReadAccess(String conduitFieldName)
@@ -794,7 +794,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
             addMethod(mn);
 
-            fieldToReadMethod.put(node.name, getAccessName);
+            fieldToReadMethod.put(node.name, mn);
         }
 
         private void pushFieldConduitOntoStack(String conduitFileName, InstructionBuilder builder)
@@ -815,7 +815,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
             addMethod(mn);
 
-            fieldToWriteMethod.put(node.name, setAccessName);
+            fieldToWriteMethod.put(node.name, mn);
 
             node.access |= ACC_FINAL;
         }
@@ -1374,13 +1374,13 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
      * Maps a field name to a replacement method that should be invoked instead of reading the
      * field.
      */
-    private final Map<String, String> fieldToReadMethod = new HashMap<String, String>();
+    private final Map<String, MethodNode> fieldToReadMethod = PlasticInternalUtils.newMap();
 
     /**
      * Maps a field name to a replacement method that should be invoked instead of writing the
      * field.
      */
-    private final Map<String, String> fieldToWriteMethod = new HashMap<String, String>();
+    private final Map<String, MethodNode> fieldToWriteMethod = PlasticInternalUtils.newMap();
 
     /**
      * This normal no-arguments constructor, or null. By the end of the transformation
@@ -1564,9 +1564,9 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     {
         lock();
 
-        interceptFieldAccess();
-
         createShimIfNeeded();
+
+        interceptFieldAccess();
 
         rewriteAdvisedMethods();
 
@@ -1877,17 +1877,31 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
     /**
      * Iterates over all non-introduced methods, including the original constructor. For each
-     * method, the bytecode is
-     * scanned for field reads and writes. When a match is found against an intercepted field, the
-     * operation is
-     * replaced with a method invocation.
+     * method, the bytecode is scanned for field reads and writes. When a match is found against an intercepted field,
+     * the operation is replaced with a method invocation. This is invoked only after THE {@link PlasticClassHandleShim}
+     * for the class has been created, as the shim may create methods
+     * that contain references to fields that may be subject to field access interception.
      */
     private void interceptFieldAccess()
     {
+        Set<MethodNode> unusedAccessMethods = PlasticInternalUtils.newSet();
+
+        // Track all the access methods created for the fields.
+
+        unusedAccessMethods.addAll(fieldToReadMethod.values());
+        unusedAccessMethods.addAll(fieldToWriteMethod.values());
+
         for (MethodNode node : fieldTransformMethods)
         {
-            interceptFieldAccess(node);
+            // Intercept field access inside the method, tracking which access methods
+            // are actually used by removing them from accessMethods
+
+            interceptFieldAccess(node, unusedAccessMethods);
         }
+
+        // Remove all added methods that aren't actually used.
+
+        classNode.methods.removeAll(unusedAccessMethods);
     }
 
     /**
@@ -2065,7 +2079,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         }
     }
 
-    private void interceptFieldAccess(MethodNode methodNode)
+    private void interceptFieldAccess(MethodNode methodNode, Set<MethodNode> unusedAccessMethods)
     {
         InsnList insns = methodNode.instructions;
 
@@ -2088,20 +2102,22 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             if (!fnode.owner.equals(classNode.name))
                 continue;
 
-            Map<String, String> fieldToMethod = opcode == GETFIELD ? fieldToReadMethod : fieldToWriteMethod;
+            Map<String, MethodNode> fieldToMethod = opcode == GETFIELD ? fieldToReadMethod : fieldToWriteMethod;
 
-            String methodName = fieldToMethod.get(fnode.name);
+            MethodNode mn = fieldToMethod.get(fnode.name);
 
-            if (methodName == null)
+            if (mn == null)
                 continue;
 
             String methodDescription = opcode == GETFIELD ? "()" + fnode.desc : "(" + fnode.desc + ")V";
 
             // Replace the field access node with the appropriate method invocation.
 
-            insns.insertBefore(fnode, new MethodInsnNode(INVOKEVIRTUAL, fnode.owner, methodName, methodDescription));
+            insns.insertBefore(fnode, new MethodInsnNode(INVOKEVIRTUAL, fnode.owner, mn.name, methodDescription));
 
             it.remove();
+
+            unusedAccessMethods.remove(mn);
         }
     }
 
@@ -2255,7 +2271,6 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return this;
     }
 
-  
     public boolean isMethodImplemented(MethodDescription description)
     {
         return methodBundle.isImplemented(description.methodName, nameCache.toDesc(description));
