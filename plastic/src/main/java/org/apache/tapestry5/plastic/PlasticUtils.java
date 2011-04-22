@@ -24,6 +24,11 @@ import org.apache.tapestry5.internal.plastic.PrimitiveType;
  */
 public class PlasticUtils
 {
+    /**
+     * The {@code toString()} method inherited from Object.
+     */
+    public static final Method TO_STRING = getMethod(Object.class, "toString");
+
     private static final AtomicLong UID_GENERATOR = new AtomicLong(System.nanoTime());
 
     /**

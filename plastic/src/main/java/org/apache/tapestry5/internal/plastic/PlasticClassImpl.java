@@ -101,8 +101,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
     private static final Method COMPUTED_VALUE_GET_METHOD = toMethod(ComputedValue.class, "get", InstanceContext.class);
 
-    private static final MethodDescription TO_STRING_METHOD_DESCRIPTION = new MethodDescription(String.class.getName(),
-            "toString");
+    private static final MethodDescription TO_STRING_METHOD_DESCRIPTION = new MethodDescription(PlasticUtils.TO_STRING);
 
     private static String toDesc(String internalName)
     {
