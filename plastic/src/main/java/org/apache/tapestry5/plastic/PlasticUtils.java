@@ -29,6 +29,11 @@ public class PlasticUtils
      */
     public static final Method TO_STRING = getMethod(Object.class, "toString");
 
+    /**
+     * The MethodDescription version of {@code toString()}.
+     */
+    public static final MethodDescription TO_STRING_DESCRIPTION = new MethodDescription(TO_STRING);
+
     private static final AtomicLong UID_GENERATOR = new AtomicLong(System.nanoTime());
 
     /**

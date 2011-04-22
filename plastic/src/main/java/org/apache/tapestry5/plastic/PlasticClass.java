@@ -185,4 +185,10 @@ public interface PlasticClass extends AnnotationAccess
      * @return this plastic class, for further configuration
      */
     PlasticClass addToString(String toStringValue);
+
+    /**
+     * Returns true if this class has an implementation of the indicated method, or a super-class provides
+     * a non-abstract implementation.
+     */
+    boolean isMethodImplemented(MethodDescription description);
 }

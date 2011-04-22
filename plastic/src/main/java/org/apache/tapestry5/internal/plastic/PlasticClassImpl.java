@@ -101,8 +101,6 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
     private static final Method COMPUTED_VALUE_GET_METHOD = toMethod(ComputedValue.class, "get", InstanceContext.class);
 
-    private static final MethodDescription TO_STRING_METHOD_DESCRIPTION = new MethodDescription(PlasticUtils.TO_STRING);
-
     private static String toDesc(String internalName)
     {
         return "L" + internalName + ";";
@@ -2243,9 +2241,9 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     {
         check();
 
-        if (!isMethodImplemented(TO_STRING_METHOD_DESCRIPTION))
+        if (!isMethodImplemented(PlasticUtils.TO_STRING_DESCRIPTION))
         {
-            introduceMethod(TO_STRING_METHOD_DESCRIPTION, new InstructionBuilderCallback()
+            introduceMethod(PlasticUtils.TO_STRING_DESCRIPTION, new InstructionBuilderCallback()
             {
                 public void doBuild(InstructionBuilder builder)
                 {
@@ -2257,11 +2255,8 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return this;
     }
 
-    /**
-     * Returns true if this class has an implementation of the indicated method, or a super-class provides
-     * a non-abstract implementation.
-     */
-    private boolean isMethodImplemented(MethodDescription description)
+  
+    public boolean isMethodImplemented(MethodDescription description)
     {
         return methodBundle.isImplemented(description.methodName, nameCache.toDesc(description));
     }
