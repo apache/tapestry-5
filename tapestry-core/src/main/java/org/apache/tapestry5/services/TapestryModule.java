@@ -739,7 +739,7 @@ public final class TapestryModule
 
         configuration.add("InvokePostRenderCleanupOnResources", new InvokePostRenderCleanupOnResourcesWorker());
 
-        configuration.add("Property", new PropertyWorker());
+        configuration.add("Property", new PropertyWorker(), "before:Inject*");
 
         // These must come after Property, since they actually delete fields
         // that may still have the annotation
