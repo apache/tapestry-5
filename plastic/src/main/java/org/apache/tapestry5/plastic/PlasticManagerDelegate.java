@@ -29,5 +29,5 @@ public interface PlasticManagerDelegate extends PlasticClassTransformer
      *            default instantiator, which has an empty {@link InstanceContext}
      * @return the same instantiator, or a new one configured with additional {@link InstanceContext} values
      */
-    ClassInstantiator configureInstantiator(String className, ClassInstantiator instantiator);
+    <T> ClassInstantiator<T> configureInstantiator(String className, ClassInstantiator<T> instantiator);
 }
