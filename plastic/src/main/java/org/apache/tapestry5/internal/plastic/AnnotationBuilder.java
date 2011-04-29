@@ -74,8 +74,16 @@ public class AnnotationBuilder extends AbstractAnnotationBuilder
             Object defaultValue = m.getDefaultValue();
 
             if (defaultValue != null)
+            {
                 attributes.put(m.getName(), defaultValue);
+            }
         }
+
+        if (!attributes.containsKey("toString"))
+        {
+            attributes.put("toString", "@" + annotationType.getName());
+        }
+
     }
 
     protected void store(String name, Object value)

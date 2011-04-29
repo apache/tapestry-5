@@ -30,6 +30,8 @@ class ClassAnnotationAccess extends Specification {
         a instanceof SimpleAnnotation
 
         a.annotationType() == SimpleAnnotation.class
+        
+        a.toString() == "@testannotations.SimpleAnnotation"
     }
 
     def "inherited class annotations visible in subclass"() {
