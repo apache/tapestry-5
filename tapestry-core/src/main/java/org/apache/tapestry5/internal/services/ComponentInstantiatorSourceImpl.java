@@ -219,7 +219,9 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
         ComponentModel parentModel = classToModel.get(parentClassName);
 
-        if (parentModel == null
+        final boolean isRoot = parentModel == null;
+
+        if (isRoot
                 && !(parentClassName.equals("java.lang.Object") || parentClassName
                         .equals("groovy.lang.GroovyObjectSupport")))
         {
@@ -254,6 +256,11 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
                     throw new RuntimeException(String.format("Unable to convert type '%s' to a Class: %s", typeName,
                             InternalUtils.toMessage(ex)), ex);
                 }
+            }
+
+            public boolean isRootTransformation()
+            {
+                return isRoot;
             }
         }, model);
 

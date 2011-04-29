@@ -29,4 +29,12 @@ public interface TransformationSupport
      * @return corresponding Java Class
      */
     Class toClass(String typeName);
+
+    /**
+     * Returns true if the class being transformed is a root class: it does not inherit
+     * from another transformed class, but instead inherits from Object.
+     * 
+     * @return true if root
+     */
+    boolean isRootTransformation();
 }

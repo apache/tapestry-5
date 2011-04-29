@@ -183,11 +183,16 @@ public class BridgeClassTransformation implements ClassTransformation
         }
     }
 
+    private static BridgeTransformField toTransformField(PlasticField plasticField)
+    {
+        return new BridgeTransformField(plasticField);
+    }
+
     private static Mapper<PlasticField, TransformField> TO_TRANSFORM_FIELD = new Mapper<PlasticField, TransformField>()
     {
         public TransformField map(PlasticField element)
         {
-            return new BridgeTransformField(element);
+            return toTransformField(element);
         }
     };
 
@@ -452,7 +457,13 @@ public class BridgeClassTransformation implements ClassTransformation
 
     public TransformField getField(String fieldName)
     {
-        throw new IllegalArgumentException("getField() not yet implemented.");
+        for (PlasticField f : plasticClass.getAllFields())
+        {
+            if (f.getName().equals(fieldName)) { return toTransformField(f); }
+        }
+
+        throw new IllegalArgumentException(String.format("Class %s does not contain a field named '%s'.",
+                plasticClass.getClassName(), fieldName));
     }
 
     public List<TransformField> matchUnclaimedFields()
@@ -471,7 +482,7 @@ public class BridgeClassTransformation implements ClassTransformation
 
         PlasticField newField = plasticClass.introduceField(type, suggestedName);
 
-        return new BridgeTransformField(newField);
+        return toTransformField(newField);
     }
 
     public String addInjectedField(Class type, String suggestedName, Object value)
@@ -489,7 +500,7 @@ public class BridgeClassTransformation implements ClassTransformation
 
         PlasticField field = plasticClass.introduceField(type, suggestedName).injectComputed(toComputedValue(provider));
 
-        return new BridgeTransformField(field);
+        return toTransformField(field);
     }
 
     public void addImplementedInterface(Class interfaceClass)
@@ -509,7 +520,7 @@ public class BridgeClassTransformation implements ClassTransformation
 
     public boolean isRootTransformation()
     {
-        throw new IllegalArgumentException("isRootTransformation() not yet implemented.");
+        return support.isRootTransformation();
     }
 
     public TransformMethod getOrCreateMethod(TransformMethodSignature signature)
