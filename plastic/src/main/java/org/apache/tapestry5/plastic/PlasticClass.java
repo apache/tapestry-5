@@ -42,7 +42,7 @@ public interface PlasticClass extends AnnotationAccess
     String getClassName();
 
     /**
-     * Matches all unclaimed fields that have the given annotation. Returns the fields in sorted order.
+     * Matches all fields (claimed or not) that have the given annotation. Returns the fields in sorted order.
      * 
      * @return Unmodifiable List of fields.
      */

@@ -19,18 +19,4 @@ class FieldAnnotationAccess extends Specification {
         fields.size() == 1
         fields[0].name == "hasMaybeAnnotation"
     }
-
-    def "claimed fields not visible to getFieldsWithAnnotation()"() {
-        setup:
-        def pc  = mgr.getPlasticClass("testsubjects.AnnotationSubject")
-
-        when:
-        def fields = pc.getFieldsWithAnnotation(Maybe.class)
-
-        fields[0].claim(this)
-
-        then:
-
-        pc.getFieldsWithAnnotation(Maybe.class).empty
-    }
 }

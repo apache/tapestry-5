@@ -1693,7 +1693,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     {
         check();
 
-        List<PlasticField> result = getUnclaimedFields();
+        List<PlasticField> result = getAllFields();
 
         Iterator<PlasticField> iterator = result.iterator();
 
