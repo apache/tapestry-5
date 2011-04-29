@@ -191,4 +191,9 @@ public interface PlasticClass extends AnnotationAccess
      * a non-abstract implementation.
      */
     boolean isMethodImplemented(MethodDescription description);
+
+    /**
+     * Returns the name of the super-class of the class being transformed.
+     */
+    String getSuperClassName();
 }

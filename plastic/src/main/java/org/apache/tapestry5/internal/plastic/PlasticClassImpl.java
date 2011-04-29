@@ -2304,4 +2304,10 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     {
         return l != null && !l.isEmpty();
     }
+
+    public String getSuperClassName()
+    {
+        return superClassName;
+    }
+
 }
