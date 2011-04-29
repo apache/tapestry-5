@@ -132,9 +132,9 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
      */
     private void initializeService()
     {
-        classFactory = new ClassFactoryImpl(parent, logger);
-
         manager = new PlasticManager(parent, this, controlledPackageNames);
+
+        classFactory = new ClassFactoryImpl(manager.getClassLoader(), logger);
 
         proxyFactory = new PlasticProxyFactoryImpl(classFactory, manager.getClassLoader());
 
