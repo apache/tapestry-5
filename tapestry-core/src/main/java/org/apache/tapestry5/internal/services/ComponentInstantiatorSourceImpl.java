@@ -235,7 +235,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
         Logger logger = loggerSource.getLogger(className);
 
-        Resource baseResource = new ClasspathResource(PlasticInternalUtils.toClassPath(className));
+        Resource baseResource = new ClasspathResource(parent, PlasticInternalUtils.toClassPath(className));
 
         changeTracker.add(baseResource.toURL());
 
