@@ -714,7 +714,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
             state = FieldState.CONDUIT;
 
-            return null;
+            return this;
         }
 
         public PlasticField setComputedConduit(ComputedValue<FieldConduit<?>> computedConduit)
@@ -738,7 +738,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
             state = FieldState.CONDUIT;
 
-            return null;
+            return this;
         }
 
         public PlasticField createAccessors(PropertyAccessType accessType)
