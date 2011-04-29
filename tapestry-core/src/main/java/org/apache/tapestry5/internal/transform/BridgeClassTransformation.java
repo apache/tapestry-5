@@ -24,7 +24,6 @@ import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.FieldValueConduit;
-import org.apache.tapestry5.ioc.services.MethodSignature;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.ComputedValue;
 import org.apache.tapestry5.plastic.FieldConduit;
@@ -84,6 +83,22 @@ public class BridgeClassTransformation implements ClassTransformation
         };
     }
 
+    private static FieldConduit<?> toFieldConduit(final FieldValueConduit fieldValueConduit)
+    {
+        return new FieldConduit<Object>()
+        {
+            public Object get(InstanceContext context)
+            {
+                return fieldValueConduit.get();
+            }
+
+            public void set(InstanceContext context, Object newValue)
+            {
+                fieldValueConduit.set(newValue);
+            }
+        };
+    }
+
     private static TransformMethodSignature toMethodSignature(MethodDescription description)
     {
         return new TransformMethodSignature(description.modifiers, description.returnType, description.methodName,
@@ -131,7 +146,17 @@ public class BridgeClassTransformation implements ClassTransformation
 
         public void replaceAccess(final ComponentValueProvider<FieldValueConduit> conduitProvider)
         {
-            throw new IllegalStateException("replaceAccess() not yet implemented.");
+            plasticField.setComputedConduit(new ComputedValue<FieldConduit<?>>()
+            {
+                public FieldConduit<?> get(InstanceContext context)
+                {
+                    ComponentResources resources = context.get(ComponentResources.class);
+
+                    FieldValueConduit fieldValueConduit = conduitProvider.get(resources);
+
+                    return toFieldConduit(fieldValueConduit);
+                }
+            });
         }
 
         public void replaceAccess(TransformField conduitField)
