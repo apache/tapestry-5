@@ -406,7 +406,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             builder.invokeSpecial(className, description);
             builder.returnResult();
 
-            classNode.methods.add(mn);
+            addMethod(mn);
 
             return name;
         }
@@ -1531,6 +1531,8 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             methodNames.add(node.name);
         }
 
+        methodNames.addAll(parentMethodBundle.methodNames());
+        
         Collections.sort(methods);
 
         fields = new ArrayList(classNode.fields.size());
@@ -1887,6 +1889,9 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         classNode.methods.add(methodNode);
 
         methodNames.add(methodNode.name);
+
+        if (!Modifier.isPrivate(methodNode.access))
+            methodBundle.addMethod(methodNode.name, methodNode.desc);
     }
 
     private PlasticMethod createNewMethod(MethodDescription description)
@@ -1912,11 +1917,8 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         else
             createNewMethodImpl(description, methodNode);
 
-        classNode.methods.add(methodNode);
-
-        if (!Modifier.isPrivate(description.modifiers))
-            methodBundle.addMethod(description.methodName, desc);
-
+        addMethod(methodNode);
+        
         return new PlasticMethodImpl(methodNode);
     }
 

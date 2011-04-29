@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.plastic;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,11 +26,8 @@ public class MethodBundle
 {
     private final MethodBundle parent;
 
-    private final Set<String> methods = new HashSet<String>();
-
-    // TODO: So far, this is just a placeholder until we figure out what the API should look like.
-    // TODO: Possibly, rename this class and have it store additional information, such as the name of a
-    // (protected final) field storing the InstanceContext.
+    private final Set<String> methodNames = PlasticInternalUtils.newSet();
+    private final Set<String> methods = PlasticInternalUtils.newSet();
 
     public MethodBundle()
     {
@@ -79,6 +77,7 @@ public class MethodBundle
         String value = toValue(name, desc);
 
         methods.add(value);
+        methodNames.add(name);
     }
 
     /**
@@ -111,5 +110,23 @@ public class MethodBundle
     private String toValue(String name, String desc)
     {
         return name + ":" + desc;
+    }
+
+    /**
+     * Returns the names of any methods in this bundle, or from any parent bundles.
+     */
+    public Set<String> methodNames()
+    {
+        Set<String> result = PlasticInternalUtils.newSet();
+
+        MethodBundle cursor = this;
+
+        while (cursor != null)
+        {
+            result.addAll(methodNames);
+            cursor = cursor.parent;
+        }
+
+        return result;
     }
 }
