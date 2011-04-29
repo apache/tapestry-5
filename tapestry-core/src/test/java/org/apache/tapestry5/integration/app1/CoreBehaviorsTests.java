@@ -881,7 +881,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     {
         openLinks("Instantiate Page");
 
-        assertTextPresent("Component class org.apache.tapestry5.integration.app1.pages.Music may not be instantiated directly.");
+        assertTextPresent("Class org.apache.tapestry5.integration.app1.pages.Music has been transformed and may not be directly instantiated.");
     }
 
     /**
@@ -1121,7 +1121,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         assertTextPresent(
                 "java.lang.RuntimeException",
-                "Component class org.apache.tapestry5.integration.app1.components.AbstractComponent is abstract and can not be instantiated.");
+                "Class org.apache.tapestry5.integration.app1.components.AbstractComponent is abstract and can not be instantiated.");
     }
 
     @Test
