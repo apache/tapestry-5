@@ -1,6 +1,5 @@
 include "plastic", "tapestry-annotations", "tapestry-test", "tapestry-func", "tapestry-ioc", "tapestry-json", "tapestry-core"
 include "tapestry-hibernate-core", "tapestry-hibernate", "tapestry-jmx", "tapestry-upload", "tapestry-spring"
-include "tapestry-beanvalidator", "tapestry-yuicompressor"
-// Temporarily removed: "tapestry-jpa"
+include "tapestry-beanvalidator", "tapestry-yuicompressor", "tapestry-jpa"
 // TODO (LATER): tapestry-component-report, quickstart
 

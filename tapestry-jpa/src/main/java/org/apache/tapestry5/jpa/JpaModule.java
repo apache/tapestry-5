@@ -67,7 +67,7 @@ import org.slf4j.Logger;
 
 /**
  * Defines core services for JPA support.
- *
+ * 
  * @since 5.3.0
  */
 public class JpaModule
@@ -75,8 +75,8 @@ public class JpaModule
     public static void bind(final ServiceBinder binder)
     {
         binder.bind(JpaTransactionAdvisor.class, JpaTransactionAdvisorImpl.class);
-        binder.bind(PersistenceUnitConfigurer.class, PackageNamePersistenceUnitConfigurer.class)
-                .withId("PackageNamePersistenceUnitConfigurer");
+        binder.bind(PersistenceUnitConfigurer.class, PackageNamePersistenceUnitConfigurer.class).withId(
+                "PackageNamePersistenceUnitConfigurer");
     }
 
     public static EntityManagerSource buildEntityManagerSource(final Logger logger,
@@ -91,16 +91,15 @@ public class JpaModule
 
     final RegistryShutdownHub hub)
     {
-        final EntityManagerSourceImpl ems = new EntityManagerSourceImpl(logger,
-                persistenceDescriptor, persistenceUnitConfigurer, configuration);
+        final EntityManagerSourceImpl ems = new EntityManagerSourceImpl(logger, persistenceDescriptor,
+                persistenceUnitConfigurer, configuration);
 
         hub.addRegistryShutdownListener(ems);
 
         return ems;
     }
 
-    public static JpaEntityPackageManager buildJpaEntityPackageManager(
-            final Collection<String> packageNames)
+    public static JpaEntityPackageManager buildJpaEntityPackageManager(final Collection<String> packageNames)
     {
         return new JpaEntityPackageManager()
         {
@@ -112,12 +111,10 @@ public class JpaModule
     }
 
     @Scope(ScopeConstants.PERTHREAD)
-    public static EntityManagerManager buildEntityManagerManager(
-            final EntityManagerSource entityManagerSource, final PerthreadManager perthreadManager,
-            final Logger logger)
+    public static EntityManagerManager buildEntityManagerManager(final EntityManagerSource entityManagerSource,
+            final PerthreadManager perthreadManager, final Logger logger)
     {
-        final EntityManagerManagerImpl service = new EntityManagerManagerImpl(entityManagerSource,
-                logger);
+        final EntityManagerManagerImpl service = new EntityManagerManagerImpl(entityManagerSource, logger);
 
         perthreadManager.addThreadCleanupListener(service);
 
@@ -137,45 +134,34 @@ public class JpaModule
     public static void provideEntityPersistentFieldStrategies(
             final MappedConfiguration<String, PersistentFieldStrategy> configuration)
     {
-        configuration.addInstance(JpaPersistenceConstants.ENTITY,
-                EntityPersistentFieldStrategy.class);
+        configuration.addInstance(JpaPersistenceConstants.ENTITY, EntityPersistentFieldStrategy.class);
     }
 
     @Contribute(ApplicationStatePersistenceStrategySource.class)
     public void provideApplicationStatePersistenceStrategies(
             final MappedConfiguration<String, ApplicationStatePersistenceStrategy> configuration)
     {
-        configuration.addInstance(JpaPersistenceConstants.ENTITY,
-                EntityApplicationStatePersistenceStrategy.class);
+        configuration.addInstance(JpaPersistenceConstants.ENTITY, EntityApplicationStatePersistenceStrategy.class);
     }
 
-    @Contribute(ComponentClassTransformWorker.class)
-    public static void provideComponentClassTransformWorkers(
+    public static void contributeComponentClassTransformWorker(
             final OrderedConfiguration<ComponentClassTransformWorker> configuration)
     {
+        configuration.addInstance("PersistenceContext", PersistenceContextWorker.class, "after:Property");
 
         configuration.addInstance("JPACommitAfter", CommitAfterWorker.class, "after:Log");
     }
 
     @Contribute(MasterObjectProvider.class)
-    public static void provideObjectProviders(
-            final OrderedConfiguration<ObjectProvider> configuration)
+    public static void provideObjectProviders(final OrderedConfiguration<ObjectProvider> configuration)
     {
         configuration.addInstance("EntityManager", EntityManagerObjectProvider.class,
                 "before:AnnotationBasedContributions");
     }
 
-    @Contribute(ComponentClassTransformWorker.class)
-    public static void perovideComponentClassTransformWorker(
-            final OrderedConfiguration<ComponentClassTransformWorker> configuration)
-    {
-        configuration.addInstance("PersistenceContext", PersistenceContextWorker.class, "after:Property");
-    }
-
     @Contribute(SymbolProvider.class)
     @FactoryDefaults
-    public static void provideFactoryDefaults(
-            final MappedConfiguration<String, String> configuration)
+    public static void provideFactoryDefaults(final MappedConfiguration<String, String> configuration)
     {
         configuration.add(JpaSymbols.PROVIDE_ENTITY_VALUE_ENCODERS, "true");
         configuration.add(JpaSymbols.EARLY_START_UP, "true");
@@ -184,8 +170,7 @@ public class JpaModule
     }
 
     @Contribute(ValueEncoderSource.class)
-    public static void provideValueEncoders(
-            final MappedConfiguration<Class, ValueEncoderFactory> configuration,
+    public static void provideValueEncoders(final MappedConfiguration<Class, ValueEncoderFactory> configuration,
             @Symbol(JpaSymbols.PROVIDE_ENTITY_VALUE_ENCODERS)
             final boolean provideEncoders, final EntityManagerSource entityManagerSource,
             final EntityManagerManager entityManagerManager, final TypeCoercer typeCoercer,
@@ -197,8 +182,7 @@ public class JpaModule
 
         for (final PersistenceUnitInfo info : entityManagerSource.getPersistenceUnitInfos())
         {
-            final EntityManagerFactory emf = entityManagerSource.getEntityManagerFactory(info
-                    .getPersistenceUnitName());
+            final EntityManagerFactory emf = entityManagerSource.getEntityManagerFactory(info.getPersistenceUnitName());
 
             for (final String className : info.getManagedClassNames())
             {
@@ -212,9 +196,8 @@ public class JpaModule
                 {
                     public ValueEncoder create(final Class type)
                     {
-                        return new JpaValueEncoder(entity, entityManagerManager,
-                                info.getPersistenceUnitName(), propertyAccess, typeCoercer,
-                                loggerSource.getLogger(clazz));
+                        return new JpaValueEncoder(entity, entityManagerManager, info.getPersistenceUnitName(),
+                                propertyAccess, typeCoercer, loggerSource.getLogger(clazz));
                     }
                 };
 
@@ -240,16 +223,14 @@ public class JpaModule
             {
                 final Class<?> clazz = loadClass(info, className);
 
-                configuration.add(clazz, new ApplicationStateContribution(
-                        JpaPersistenceConstants.ENTITY));
+                configuration.add(clazz, new ApplicationStateContribution(JpaPersistenceConstants.ENTITY));
             }
         }
     }
 
     @Startup
-    public static void startupEarly(final EntityManagerManager entityManagerManager,
-            @Symbol(JpaSymbols.EARLY_START_UP)
-            final boolean earlyStartup)
+    public static void startupEarly(final EntityManagerManager entityManagerManager, @Symbol(JpaSymbols.EARLY_START_UP)
+    final boolean earlyStartup)
     {
         if (!earlyStartup)
             return;
