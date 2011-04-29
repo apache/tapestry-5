@@ -490,7 +490,7 @@ public class BridgeClassTransformation implements ClassTransformation
 
     public List<TransformField> matchFields(Predicate<TransformField> predicate)
     {
-        return F.flow(plasticClass.getUnclaimedFields()).map(TO_TRANSFORM_FIELD).filter(predicate).toList();
+        return F.flow(plasticClass.getAllFields()).map(TO_TRANSFORM_FIELD).filter(predicate).toList();
     }
 
     public TransformField getField(String fieldName)
