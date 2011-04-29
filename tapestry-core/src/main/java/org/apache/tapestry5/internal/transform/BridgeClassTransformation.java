@@ -165,9 +165,34 @@ public class BridgeClassTransformation implements ClassTransformation
             });
         }
 
+        /**
+         * We assume that the conduit field contains a {@link FieldValueConduit}, and that the field
+         * was introduced through this instance of BridgeClassTransformation.
+         */
         public void replaceAccess(TransformField conduitField)
         {
-            throw new IllegalStateException("replaceAccess() not yet implemented.");
+            // Ugly:
+            PlasticField conduitFieldPlastic = ((BridgeTransformField) conduitField).plasticField;
+
+            final FieldHandle conduitHandle = conduitFieldPlastic.getHandle();
+
+            plasticField.setConduit(new FieldConduit<Object>()
+            {
+                private FieldValueConduit conduit(Object instance)
+                {
+                    return (FieldValueConduit) conduitHandle.get(instance);
+                }
+
+                public Object get(Object instance, InstanceContext context)
+                {
+                    return conduit(instance).get();
+                }
+
+                public void set(Object instance, InstanceContext context, Object newValue)
+                {
+                    conduit(instance).set(newValue);
+                }
+            });
         }
 
         public void replaceAccess(final FieldValueConduit conduit)
