@@ -100,4 +100,11 @@ public interface PlasticMethod extends AnnotationAccess
      * the visible annotations on those parameters.
      */
     List<MethodParameter> getParameters();
+
+    /**
+     * Returns true if the method is an override of a method from the parent class.
+     * 
+     * @return true if the parent class contains a method with the name signature
+     */
+    boolean isOverride();
 }

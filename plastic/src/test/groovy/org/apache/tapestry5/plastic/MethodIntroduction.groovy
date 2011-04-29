@@ -8,10 +8,12 @@ class MethodIntroduction extends AbstractPlasticSpecification {
 
     static final String CLASS_NAME = "testsubjects.ChildClass"
 
-    def instanceWithIntroducedMethod(MethodDescription md) {
+    def instanceWithIntroducedMethod(MethodDescription md, isOverride) {
         def mgr = createMgr ({ PlasticClass pc ->
             if (pc.className == CLASS_NAME) {
-                pc.introduceMethod(md)
+                def method = pc.introduceMethod(md)
+                
+                assert method.override == isOverride
             }
         } as PlasticClassTransformer)
 
@@ -20,7 +22,7 @@ class MethodIntroduction extends AbstractPlasticSpecification {
 
     def "introduce method not present in base class"() {
 
-        def o = instanceWithIntroducedMethod(new MethodDescription(returnType, methodName))
+        def o = instanceWithIntroducedMethod(new MethodDescription(returnType, methodName), false)
 
         when:
 
@@ -55,7 +57,7 @@ class MethodIntroduction extends AbstractPlasticSpecification {
 
         setup:
 
-        def o = instanceWithIntroducedMethod(new MethodDescription("void", "voidMethod"))
+        def o = instanceWithIntroducedMethod(new MethodDescription("void", "voidMethod"), true)
 
         when:
 
@@ -69,7 +71,7 @@ class MethodIntroduction extends AbstractPlasticSpecification {
     def "introduce primitive method override"() {
         setup:
 
-        def o = instanceWithIntroducedMethod (new MethodDescription("int", "primitiveMethod", "int"))
+        def o = instanceWithIntroducedMethod (new MethodDescription("int", "primitiveMethod", "int"), true)
 
         expect:
 
@@ -80,7 +82,7 @@ class MethodIntroduction extends AbstractPlasticSpecification {
 
         setup:
 
-        def o = instanceWithIntroducedMethod (new MethodDescription("java.lang.String", "objectMethod", "java.lang.String"))
+        def o = instanceWithIntroducedMethod (new MethodDescription("java.lang.String", "objectMethod", "java.lang.String"), true)
 
         expect:
 

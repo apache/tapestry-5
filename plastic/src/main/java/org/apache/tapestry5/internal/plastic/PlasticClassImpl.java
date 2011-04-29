@@ -211,6 +211,11 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             return description.compareTo(o.description);
         }
 
+        public boolean isOverride()
+        {
+            return parentMethodBundle.isImplemented(node.name, node.desc);
+        }
+
         public MethodHandle getHandle()
         {
             check();
@@ -1363,7 +1368,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
     private final StaticContext staticContext;
 
-    private final MethodBundle methodBundle;
+    private final MethodBundle parentMethodBundle, methodBundle;
 
     // MethodNodes in which field transformations should occur; this is most existing and
     // introduced methods, outside of special access methods.
@@ -1428,6 +1433,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         className = PlasticInternalUtils.toClassName(classNode.name);
         superClassName = PlasticInternalUtils.toClassName(classNode.superName);
 
+        this.parentMethodBundle = parentMethodBundle;
         methodBundle = parentMethodBundle.createChild(className);
 
         methods = new ArrayList(classNode.methods.size());
