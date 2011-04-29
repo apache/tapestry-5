@@ -65,6 +65,8 @@ public interface ComponentInstantiatorSource
     /**
      * Returns a class factory that can be used to generate additional classes around enhanced classes, or create
      * subclasses of enhanced classes.
+     * 
+     * @deprecated Deprecated in 5.3.0, to be removed in 5.4
      */
     ClassFactory getClassFactory();
 
@@ -75,11 +77,6 @@ public interface ComponentInstantiatorSource
      * @since 5.3.0
      */
     PlasticProxyFactory getProxyFactory();
-
-    /**
-     * Returns a class source used when creating new classes dynamically.
-     */
-    CtClassSource getClassSource();
 
     /**
      * Invalidation event hub used to notify listeners that component classes have changed.
