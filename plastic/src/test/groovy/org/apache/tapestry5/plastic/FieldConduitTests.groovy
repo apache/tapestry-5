@@ -91,4 +91,42 @@ class FieldConduitTests extends Specification
 
         1 * fc.set(_, _, 100)
     }
+
+    /**
+     * When an inner class accesses private members of its containing class, the compiler generates
+     * synthetic static methods (package private visibility).  This ensures that those methods are
+     * also subject to field access transformations.
+     */
+    def "inner class access methods are routed through field conduit"() {
+
+        FieldConduit fc = Mock()
+
+        def mgr = new PlasticManager (Thread.currentThread().contextClassLoader, [
+                    transform: { PlasticClass pc ->
+                        pc.allFields.first().setConduit(fc)
+                    },
+                    configureInstantiator: { className, instantiator -> instantiator }
+                ] as PlasticManagerDelegate , ["testsubjects"] as Set)
+
+
+        def o = mgr.getClassInstantiator("testsubjects.AccessMethodsSubject").newInstance()
+
+        def i = o.valueAccess
+
+        when:
+
+        i.set("funky")
+
+        then:
+
+        1 * fc.set(o, _, "funky")
+
+        when:
+
+        assert i.get() == "plastic"
+
+        then:
+
+        1 * fc.get(o, _) >> "plastic"
+    }
 }

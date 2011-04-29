@@ -1514,8 +1514,23 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                 continue;
             }
 
+            /**
+             * Static methods are not visible to the main API methods, but they must still be transformed,
+             * incase they directly access fields. In addition, track their names to avoid collisions.
+             */
             if (Modifier.isStatic(node.access))
+            {
+                if (!Modifier.isPrivate(node.access))
+                {
+                    methodBundle.addMethod(node.name, node.desc);
+                }
+
+                methodNames.add(node.name);
+
+                fieldTransformMethods.add(node);
+
                 continue;
+            }
 
             if (!Modifier.isAbstract(node.access))
                 fieldTransformMethods.add(node);
@@ -1532,7 +1547,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         }
 
         methodNames.addAll(parentMethodBundle.methodNames());
-        
+
         Collections.sort(methods);
 
         fields = new ArrayList(classNode.fields.size());
@@ -1918,7 +1933,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             createNewMethodImpl(description, methodNode);
 
         addMethod(methodNode);
-        
+
         return new PlasticMethodImpl(methodNode);
     }
 
