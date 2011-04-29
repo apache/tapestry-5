@@ -134,12 +134,12 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     {
         classFactory = new ClassFactoryImpl(parent, logger);
 
-        proxyFactory = new PlasticProxyFactoryImpl(classFactory, parent);
+        manager = new PlasticManager(parent, this, controlledPackageNames);
+
+        proxyFactory = new PlasticProxyFactoryImpl(classFactory, manager.getClassLoader());
 
         classToInstantiator.clear();
         classToModel.clear();
-
-        manager = null;
     }
 
     public synchronized Instantiator getInstantiator(final String className)
@@ -148,11 +148,6 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
         if (result == null)
         {
-            if (manager == null)
-            {
-                manager = new PlasticManager(parent, this, controlledPackageNames);
-            }
-
             // Force the creation of the class (and the transformation of the class). This will first
             // trigger transformations of any base classes.
 
@@ -192,8 +187,6 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
         assert InternalUtils.isNonBlank(packageName);
 
         controlledPackageNames.add(packageName);
-
-        manager = null;
     }
 
     public boolean exists(String className)
