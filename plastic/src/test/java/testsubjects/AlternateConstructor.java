@@ -4,6 +4,10 @@ public class AlternateConstructor
 {
     private String value;
 
+    public AlternateConstructor()
+    {
+    }
+
     public AlternateConstructor(String initialValue)
     {
         value = initialValue;

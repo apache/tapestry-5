@@ -1493,8 +1493,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         methods = new ArrayList(classNode.methods.size());
 
-        String invalidConstructorMessage = String.format(
-                "Class %s has been transformed and may not be directly instantiated.", className);
+        String invalidConstructorMessage = invalidConstructorMessage();
 
         for (MethodNode node : (List<MethodNode>) classNode.methods)
         {
@@ -1608,6 +1607,11 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         // Later on, we'll add the RETURN opcode
     }
 
+    private String invalidConstructorMessage()
+    {
+        return String.format("Class %s has been transformed and may not be directly instantiated.", className);
+    }
+
     public <T extends Annotation> boolean hasAnnotation(Class<T> annotationType)
     {
         check();
@@ -1679,12 +1683,22 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
             String initializerName = makeUnique(methodNames, "initializeInstance");
 
+            int originalAccess = originalConstructor.access;
+
             originalConstructor.access = ACC_PRIVATE;
             originalConstructor.name = initializerName;
 
             stripOutSuperConstructorCall(originalConstructor);
 
             constructorBuilder.loadThis().invokeVirtual(className, "void", initializerName);
+
+            // And replace it with a constructor that throws an exception
+
+            MethodNode replacementConstructor = new MethodNode(originalAccess, CONSTRUCTOR_NAME, NOTHING_TO_VOID, null, null);
+
+            newBuilder(replacementConstructor).throwException(IllegalStateException.class, invalidConstructorMessage());
+
+            classNode.methods.add(replacementConstructor);
         }
 
         constructorBuilder.returnResult();

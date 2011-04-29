@@ -106,7 +106,7 @@ class ObtainPlasticClass extends Specification
         e.message == "Field shouldBePrivate of class testsubjects.NonPrivateInstanceField is not private. Class transformation requires that all instance fields be private."
     }
 
-    def "alternate constructors now throw exceptions"() {
+    def "original constructors now throw exceptions"() {
         setup:
 
         def delegate = new NoopDelegate()
@@ -123,6 +123,18 @@ class ObtainPlasticClass extends Specification
         then:
 
         def e = thrown(InvocationTargetException)
+
+        e.cause.getClass() == IllegalStateException.class
+
+        e.cause.message == "Class testsubjects.AlternateConstructor has been transformed and may not be directly instantiated."
+
+        when:
+
+        clazz.getConstructor([] as Class[]).newInstance([] as Object[])
+
+        then:
+       
+        e = thrown(InvocationTargetException)
 
         e.cause.getClass() == IllegalStateException.class
 
