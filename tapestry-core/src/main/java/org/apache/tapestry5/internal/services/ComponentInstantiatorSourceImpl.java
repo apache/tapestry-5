@@ -14,48 +14,45 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Map;
 import java.util.Set;
 
-import javassist.CannotCompileException;
-import javassist.ClassPath;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.Loader;
-import javassist.LoaderClassPath;
-import javassist.NotFoundException;
-import javassist.Translator;
-
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.internal.InternalComponentResources;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
-import org.apache.tapestry5.ioc.internal.services.ClassFactoryClassPool;
+import org.apache.tapestry5.internal.model.MutableComponentModelImpl;
+import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
+import org.apache.tapestry5.ioc.LoggerSource;
+import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
-import org.apache.tapestry5.ioc.internal.services.CtClassSource;
-import org.apache.tapestry5.ioc.internal.services.CtClassSourceImpl;
 import org.apache.tapestry5.ioc.internal.services.PlasticProxyFactoryImpl;
+import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
-import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
+import org.apache.tapestry5.model.ComponentModel;
+import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.plastic.ClassInstantiator;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticManager;
+import org.apache.tapestry5.plastic.PlasticManagerDelegate;
+import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.UpdateListener;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 import org.slf4j.Logger;
 
 /**
- * A wrapper around a Javassist class loader that allows certain classes to be modified as they are loaded.
+ * A wrapper around a {@link PlasticManager} that allows certain classes to be modified as they are loaded.
  */
-public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubImpl implements Translator,
-        ComponentInstantiatorSource, UpdateListener
+public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubImpl implements
+        ComponentInstantiatorSource, UpdateListener, PlasticManagerDelegate
 {
-    /**
-     * Add -Djavassist-write-dir=target/transformed-classes to the command line to force output of transformed classes
-     * to disk (for hardcore debugging).
-     */
-    private static final String JAVASSIST_WRITE_DIR = System.getProperty("javassist-write-dir");
 
     private final Set<String> controlledPackageNames = CollectionFactory.newSet();
 
@@ -65,9 +62,9 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
     private final InternalRequestGlobals internalRequestGlobals;
 
-    private Loader loader;
+    private final ComponentClassTransformWorker2 transformerChain;
 
-    private final ComponentClassTransformer transformer;
+    private final LoggerSource loggerSource;
 
     private final Logger logger;
 
@@ -75,50 +72,29 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
     private PlasticProxyFactory proxyFactory;
 
+    private PlasticManager manager;
+
     /**
      * Map from class name to Instantiator.
      */
-    private final Map<String, Instantiator> classNameToInstantiator = CollectionFactory.newMap();
+    private final Map<String, Instantiator> classToInstantiator = CollectionFactory.newMap();
 
-    private final Map<String, RuntimeException> classToPriorTransformException = CollectionFactory.newMap();
+    private final Map<String, ComponentModel> classToModel = CollectionFactory.newMap();
 
-    private CtClassSource classSource;
+    private final String[] SUBPACKAGES =
+    { "." + InternalConstants.PAGES_SUBPACKAGE + ".", "." + InternalConstants.COMPONENTS_SUBPACKAGE + ".",
+            "." + InternalConstants.MIXINS_SUBPACKAGE + ".", "." + InternalConstants.BASE_SUBPACKAGE + "." };
 
-    private class PackageAwareLoader extends Loader
-    {
-        public PackageAwareLoader(ClassLoader parent, ClassPool classPool)
-        {
-            super(parent, classPool);
-        }
-
-        /**
-         * Determines if the class name represents a component class from a controlled package. If so,
-         * super.findClass() will load it and transform it. Returns null if not in a controlled package, allowing the
-         * parent class loader to do the work.
-         * 
-         * @param className
-         * @return the loaded transformed Class, or null to force a load of the class from the parent class loader
-         * @throws ClassNotFoundException
-         */
-        @Override
-        protected Class findClass(String className) throws ClassNotFoundException
-        {
-            if (inControlledPackage(className)) { return super.findClass(className); }
-
-            // Returning null forces delegation to the parent class loader.
-
-            return null;
-        }
-    }
-
-    public ComponentInstantiatorSourceImpl(boolean productionMode, Logger logger, ClassLoader parent,
-            ComponentClassTransformer transformer, InternalRequestGlobals internalRequestGlobals, ClasspathURLConverter classpathURLConverter)
+    public ComponentInstantiatorSourceImpl(boolean productionMode, Logger logger, LoggerSource loggerSource,
+            ClassLoader parent, ComponentClassTransformWorker2 transformerChain,
+            InternalRequestGlobals internalRequestGlobals, ClasspathURLConverter classpathURLConverter)
     {
         super(productionMode);
-        
+
         this.parent = parent;
-        this.transformer = transformer;
+        this.transformerChain = transformerChain;
         this.logger = logger;
+        this.loggerSource = loggerSource;
         this.internalRequestGlobals = internalRequestGlobals;
         this.changeTracker = new URLChangeTracker(classpathURLConverter);
 
@@ -131,7 +107,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
             return;
 
         changeTracker.clear();
-        classNameToInstantiator.clear();
+        classToInstantiator.clear();
 
         // Release the existing class pool, loader and so forth.
         // Create a new one.
@@ -150,216 +126,73 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
      */
     private void initializeService()
     {
-        ClassFactoryClassPool classPool = new ClassFactoryClassPool(parent);
+        classFactory = new ClassFactoryImpl(parent, logger);
 
-        // For TAPESTRY-2561, we're introducing a class loader between the parent (i.e., the
-        // context class loader), and the component class loader, to try and prevent the deadlocks
-        // that we've been seeing.
+        proxyFactory = new PlasticProxyFactoryImpl(classFactory, parent);
 
-        ClassLoader threadDeadlockBuffer = new URLClassLoader(new URL[0], parent);
+        classToInstantiator.clear();
+        classToModel.clear();
 
-        loader = new PackageAwareLoader(threadDeadlockBuffer, classPool);
-
-        ClassPath path = new LoaderClassPath(loader);
-
-        classPool.appendClassPath(path);
-
-        classSource = new CtClassSourceImpl(classPool, loader);
-
-        try
-        {
-            loader.addTranslator(classPool, this);
-        }
-        catch (Exception ex)
-        {
-            throw new RuntimeException(ex);
-        }
-
-        classFactory = new ClassFactoryImpl(loader, classPool, classSource, logger);
-
-        proxyFactory = new PlasticProxyFactoryImpl(classFactory, loader);
-
-        classToPriorTransformException.clear();
+        manager = null;
     }
 
-    // This is called from well within a synchronized block.
-    public void onLoad(ClassPool pool, String classname) throws NotFoundException, CannotCompileException
+    public synchronized Instantiator getInstantiator(final String className)
     {
-        logger.debug("BEGIN onLoad " + classname);
-
-        // This is our chance to make changes to the CtClass before it is loaded into memory.
-
-        String diag = "FAIL";
-
-        // TAPESTRY-2517: Attempting to re-transform a class that was partially transformed (but
-        // then failed) gives confusing exceptions if the user refreshes the failed page.
-        // Just give the same exception back.
-
-        RuntimeException failure = classToPriorTransformException.get(classname);
-
-        if (failure == null)
-        {
-            // If we are loading a class, it is because it is in a controlled package. There may be
-            // errors in the class that keep it from loading. By adding it to the change tracker
-            // early, we ensure that when the class is fixed, the change is picked up. Originally,
-            // this code was at the end of the method, and classes that contained errors would not be
-            // reloaded even after the code was fixed.
-
-            addClassFileToChangeTracker(classname);
-
-            try
-            {
-                CtClass ctClass = pool.get(classname);
-
-                // Force the creation of the super-class before the target class.
-
-                forceSuperclassTransform(ctClass);
-
-                // Do the transformations here
-
-                transformer.transformComponentClass(ctClass, loader);
-
-                writeClassToFileSystemForHardCoreDebuggingPurposesOnly(ctClass);
-
-                diag = "END";
-            }
-            catch (RuntimeException classLoaderException)
-            {
-                internalRequestGlobals.storeClassLoaderException(classLoaderException);
-
-                failure = classLoaderException;
-
-                classToPriorTransformException.put(classname, failure);
-            }
-        }
-
-        logger.debug(String.format("%5s onLoad %s", diag, classname));
-
-        if (failure != null)
-            throw failure;
-    }
-
-    private void writeClassToFileSystemForHardCoreDebuggingPurposesOnly(CtClass ctClass)
-    {
-        if (JAVASSIST_WRITE_DIR == null)
-            return;
-
-        try
-        {
-            boolean p = ctClass.stopPruning(true);
-            ctClass.writeFile(JAVASSIST_WRITE_DIR);
-            ctClass.defrost();
-            ctClass.stopPruning(p);
-        }
-        catch (Exception ex)
-        {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    private void addClassFileToChangeTracker(String classname)
-    {
-        String path = ClassFabUtils.getPathForClassNamed(classname);
-
-        URL url = loader.getResource(path);
-
-        changeTracker.add(url);
-    }
-
-    private void forceSuperclassTransform(CtClass ctClass) throws NotFoundException
-    {
-        CtClass superClass = ctClass.getSuperclass();
-
-        findClass(superClass.getName());
-    }
-
-    /**
-     * Does nothing.
-     */
-    public void start(ClassPool pool) throws NotFoundException, CannotCompileException
-    {
-    }
-
-    public synchronized Instantiator getInstantiator(String className)
-    {
-        Instantiator result = classNameToInstantiator.get(className);
-
-        // Note: a race condition here can result in the temporary creation of a duplicate instantiator.
+        Instantiator result = classToInstantiator.get(className);
 
         if (result == null)
         {
-            // Force the creation of the class (and the transformation of the class).
+            if (manager == null)
+            {
+                manager = new PlasticManager(parent, this, controlledPackageNames);
+            }
 
-            findClass(className);
+            // Force the creation of the class (and the transformation of the class). This will first
+            // trigger transformations of any base classes.
 
-            // Note: this is really a create, and in fact, will create a new Class instance
-            // (it doesn't cache internally). This code is the only cache, which is why
-            // the method is synchronized. We could use a ConcurrentBarrier, but I suspect
-            // that the overhead of that is greater on a typical invocation than
-            // the cost of the synchronization and the Map lookup.
+            final ClassInstantiator<Component> plasticInstantiator = manager.getClassInstantiator(className);
 
-            result = transformer.createInstantiator(className);
+            final ComponentModel model = classToModel.get(className);
 
-            classNameToInstantiator.put(className, result);
+            result = new Instantiator()
+            {
+                public Component newInstance(InternalComponentResources resources)
+                {
+                    return plasticInstantiator.with(ComponentResources.class, resources)
+                            .with(InternalComponentResources.class, resources).newInstance();
+                }
+
+                public ComponentModel getModel()
+                {
+                    return model;
+                }
+
+                @Override
+                public String toString()
+                {
+                    return String.format("[Instantiator[%s]", className);
+                }
+            };
+
+            classToInstantiator.put(className, result);
         }
 
         return result;
-    }
-
-    private Class findClass(String classname)
-    {
-        try
-        {
-            return loader.loadClass(classname);
-        }
-        catch (ClassNotFoundException ex)
-        {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    /**
-     * Returns true if the package for the class name is in a package that is controlled by the enhancer. Controlled
-     * packages are identified by {@link #addPackage(String)}.
-     */
-
-    boolean inControlledPackage(String classname)
-    {
-        String packageName = stripTail(classname);
-
-        while (packageName != null)
-        {
-            if (controlledPackageNames.contains(packageName))
-                return true;
-
-            packageName = stripTail(packageName);
-        }
-
-        return false;
-    }
-
-    private String stripTail(String input)
-    {
-        int lastdot = input.lastIndexOf('.');
-
-        if (lastdot < 0)
-            return null;
-
-        return input.substring(0, lastdot);
     }
 
     // synchronized may be overkill, but that's ok.
     public synchronized void addPackage(String packageName)
     {
         assert InternalUtils.isNonBlank(packageName);
+
         controlledPackageNames.add(packageName);
+
+        manager = null;
     }
 
     public boolean exists(String className)
     {
-        String path = className.replace(".", "/") + ".class";
-
-        return parent.getResource(path) != null;
+        return parent.getResource(PlasticInternalUtils.toClassPath(className)) != null;
     }
 
     public ClassFactory getClassFactory()
@@ -372,13 +205,81 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
         return proxyFactory;
     }
 
-    public CtClassSource getClassSource()
-    {
-        return classSource;
-    }
-
     public InvalidationEventHub getInvalidationEventHub()
     {
         return this;
+    }
+
+    public void transform(PlasticClass plasticClass)
+    {
+        String className = plasticClass.getClassName();
+        String parentClassName = plasticClass.getSuperClassName();
+
+        // The parent model may not exist, if the super class is not in a controlled package.
+
+        ComponentModel parentModel = classToModel.get(parentClassName);
+
+        if (parentModel == null
+                && !(parentClassName.equals("java.lang.Object") || parentClassName
+                        .equals("groovy.lang.GroovyObjectSupport")))
+        {
+            String suggestedPackageName = buildSuggestedPackageName(className);
+
+            throw new RuntimeException(ServicesMessages.baseClassInWrongPackage(parentClassName, className,
+                    suggestedPackageName));
+        }
+
+        // Tapestry 5.2 was more sensitive that the parent class have a public no-args constructor. Plastic
+        // doesn't care, and we don't have the tools to dig that information out.
+
+        Logger logger = loggerSource.getLogger(className);
+
+        Resource baseResource = new ClasspathResource(PlasticInternalUtils.toClassPath(className));
+
+        changeTracker.add(baseResource.toURL());
+
+        MutableComponentModel model = new MutableComponentModelImpl(plasticClass.getClassName(), logger, baseResource,
+                parentModel);
+
+        transformerChain.transform(plasticClass, new TransformationSupport()
+        {
+            public Class toClass(String typeName)
+            {
+                try
+                {
+                    return PlasticInternalUtils.toClass(manager.getClassLoader(), typeName);
+                }
+                catch (ClassNotFoundException ex)
+                {
+                    throw new RuntimeException(String.format("Unable to convert type '%s' to a Class: %s", typeName,
+                            InternalUtils.toMessage(ex)), ex);
+                }
+            }
+        }, model);
+
+        classToModel.put(className, model);
+    }
+
+    public <T> ClassInstantiator<T> configureInstantiator(String className, ClassInstantiator<T> instantiator)
+    {
+        return instantiator;
+    }
+
+    private String buildSuggestedPackageName(String className)
+    {
+        for (String subpackage : SUBPACKAGES)
+        {
+            int pos = className.indexOf(subpackage);
+
+            // Keep the leading '.' in the subpackage name and tack on "base".
+
+            if (pos > 0)
+                return className.substring(0, pos + 1) + InternalConstants.BASE_SUBPACKAGE;
+        }
+
+        // Is this even reachable? className should always be in a controlled package and so
+        // some subpackage above should have matched.
+
+        return null;
     }
 }

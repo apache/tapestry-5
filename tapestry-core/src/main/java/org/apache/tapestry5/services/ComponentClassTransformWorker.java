@@ -15,6 +15,7 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 
 /**
  * Interface for a set of objects that can perform component class transformations. Implementations should be

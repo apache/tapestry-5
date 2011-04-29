@@ -132,6 +132,7 @@ import org.apache.tapestry5.internal.services.templates.PageTemplateLocator;
 import org.apache.tapestry5.internal.transform.ActivationRequestParameterWorker;
 import org.apache.tapestry5.internal.transform.ApplicationStateWorker;
 import org.apache.tapestry5.internal.transform.BindParameterWorker;
+import org.apache.tapestry5.internal.transform.CCTWToCCTW2Coercion;
 import org.apache.tapestry5.internal.transform.CachedWorker;
 import org.apache.tapestry5.internal.transform.ComponentWorker;
 import org.apache.tapestry5.internal.transform.DiscardAfterWorker;
@@ -183,7 +184,6 @@ import org.apache.tapestry5.ioc.annotations.Autobuild;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.InjectService;
-import org.apache.tapestry5.ioc.annotations.IntermediateType;
 import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Match;
@@ -197,7 +197,6 @@ import org.apache.tapestry5.ioc.services.ChainBuilder;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.services.CoercionTuple;
-import org.apache.tapestry5.ioc.services.DefaultImplementationBuilder;
 import org.apache.tapestry5.ioc.services.LazyAdvisor;
 import org.apache.tapestry5.ioc.services.MasterObjectProvider;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
@@ -213,7 +212,6 @@ import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
-import org.apache.tapestry5.ioc.util.TimeInterval;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.Component;
@@ -237,6 +235,7 @@ import org.apache.tapestry5.services.meta.FixedExtractor;
 import org.apache.tapestry5.services.meta.MetaDataExtractor;
 import org.apache.tapestry5.services.meta.MetaWorker;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.util.StringToEnumCoercion;
 import org.apache.tapestry5.validator.Email;
 import org.apache.tapestry5.validator.Max;
@@ -1112,6 +1111,7 @@ public final class TapestryModule
      * <li>{@link Renderable} to {@link RenderCommand}</li>
      * <li>String to {@link Pattern}</li>
      * <li>String to {@link DateFormat}</li>
+     * <li>{@link ComponentClassTransformWorker} to {@link ComponentClassTransformWorker2}</li>
      * </ul>
      */
     public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration,
@@ -1262,6 +1262,8 @@ public final class TapestryModule
                 .addAlias("false", ClientValidation.NONE);
 
         configuration.add(CoercionTuple.create(String.class, ClientValidation.class, stringToClientValidationCoercion));
+
+        configuration.add(CCTWToCCTW2Coercion.TUPLE);
     }
 
     /**
@@ -1419,10 +1421,11 @@ public final class TapestryModule
      * be defined.
      */
     @Marker(Primary.class)
-    public ComponentClassTransformWorker buildComponentClassTransformWorker(
-            List<ComponentClassTransformWorker> configuration)
+    public ComponentClassTransformWorker2 buildComponentClassTransformWorker(
+            List<ComponentClassTransformWorker2> configuration)
+
     {
-        return chainBuilder.build(ComponentClassTransformWorker.class, configuration);
+        return chainBuilder.build(ComponentClassTransformWorker2.class, configuration);
     }
 
     /**

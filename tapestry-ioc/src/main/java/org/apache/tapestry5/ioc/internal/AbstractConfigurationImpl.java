@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,7 +33,13 @@ public abstract class AbstractConfigurationImpl<T>
     {
         assert clazz != null;
 
-        if (contributionType.isInterface() && InternalUtils.isLocalFile(clazz))
+        // Only attempt to proxy the class if it is the right type for the contribution. Starting
+        // in 5.3, it is allowed to make contributions of different types (as long as they can be
+        // coerced to the right type) ... but this means that sometimes, a class is passed that isn't
+        // assignable to the actual contribution type.
+
+        if (contributionType.isInterface() && InternalUtils.isLocalFile(clazz)
+                && contributionType.isAssignableFrom(clazz))
             return locator.proxy(contributionType, clazz);
 
         return locator.autobuild(clazz);

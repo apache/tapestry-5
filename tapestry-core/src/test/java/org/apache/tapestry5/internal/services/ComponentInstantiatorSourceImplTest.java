@@ -40,6 +40,7 @@ import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.TapestryModule;
 import org.apache.tapestry5.services.UpdateListenerHub;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.slf4j.Logger;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -68,40 +69,6 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
     private ClassLoader extraLoader;
 
     private String tempDir;
-
-    @Test
-    public void controlled_packages() throws Exception
-    {
-        ComponentClassTransformer transformer = newMock(ComponentClassTransformer.class);
-        Logger logger = mockLogger();
-
-        replay();
-
-        ComponentInstantiatorSourceImpl e = new ComponentInstantiatorSourceImpl(false, logger, contextLoader,
-                transformer, null, converter);
-
-        assertEquals(e.inControlledPackage("foo.bar.Baz"), false);
-
-        // Check that classes in the default package are never controlled
-
-        assertEquals(e.inControlledPackage("Biff"), false);
-
-        // Now add a controlled package
-
-        e.addPackage("foo.bar");
-
-        assertEquals(e.inControlledPackage("foo.bar.Baz"), true);
-
-        // Sub-packages of controlled packages are controlled as well
-
-        assertEquals(e.inControlledPackage("foo.bar.biff.Pop"), true);
-
-        // Parents of controlled packages are not controlled
-
-        assertEquals(e.inControlledPackage("foo.Gloop"), false);
-
-        verify();
-    }
 
     /**
      * This allows tests the exists() method.
@@ -181,13 +148,6 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
         ctClass.addInterface(pool.get(Named.class.getName()));
 
         ctClass.writeFile(extraClasspath.getAbsolutePath());
-    }
-
-    private Component createComponent(Class componentClass)
-    {
-        String classname = componentClass.getName();
-
-        return createComponent(classname);
     }
 
     private Component createComponent(String classname)

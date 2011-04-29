@@ -52,6 +52,7 @@ import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.TransformField;
 import org.apache.tapestry5.services.TransformMethod;
 import org.apache.tapestry5.services.TransformMethodSignature;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 import org.slf4j.Logger;
 
 /**
@@ -64,6 +65,8 @@ import org.slf4j.Logger;
 public class BridgeClassTransformation implements ClassTransformation
 {
     private final PlasticClass plasticClass;
+
+    private final TransformationSupport support;
 
     private final MutableComponentModel model;
 
@@ -399,9 +402,11 @@ public class BridgeClassTransformation implements ClassTransformation
         }
     };
 
-    public BridgeClassTransformation(PlasticClass plasticClass, MutableComponentModel model)
+    public BridgeClassTransformation(PlasticClass plasticClass, TransformationSupport support,
+            MutableComponentModel model)
     {
         this.plasticClass = plasticClass;
+        this.support = support;
         this.model = model;
     }
 
@@ -494,7 +499,7 @@ public class BridgeClassTransformation implements ClassTransformation
 
     public Class toClass(String type)
     {
-        throw new IllegalArgumentException("toClass() not yet implemented.");
+        return support.toClass(type);
     }
 
     public Logger getLogger()

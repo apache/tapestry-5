@@ -22,6 +22,7 @@ import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateController;
 import org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathConstructor;
 import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSource;
 import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSourceImpl;
+import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
@@ -46,6 +47,7 @@ import org.apache.tapestry5.services.RequestGlobals;
 import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.services.UpdateListenerHub;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.slf4j.Logger;
 
 /**
@@ -126,29 +128,24 @@ public class InternalModule
     public ComponentInstantiatorSource buildComponentInstantiatorSource(@Builtin
     ClassFactory classFactory,
 
-    ComponentClassTransformer transformer,
+    @Primary
+    ComponentClassTransformWorker2 transformerChain,
 
     Logger logger,
+
+    LoggerSource loggerSource,
 
     InternalRequestGlobals internalRequestGlobals,
 
     ClasspathURLConverter classpathURLConverter)
     {
         ComponentInstantiatorSourceImpl source = new ComponentInstantiatorSourceImpl(productionMode, logger,
-                classFactory.getClassLoader(), transformer, internalRequestGlobals, classpathURLConverter);
+                loggerSource, classFactory.getClassLoader(), transformerChain, internalRequestGlobals,
+                classpathURLConverter);
 
         updateListenerHub.addUpdateListener(source);
 
         return source;
-    }
-
-    public static ComponentClassTransformer buildComponentClassTransformer(@Autobuild
-    ComponentClassTransformerImpl transformer, @ComponentClasses
-    InvalidationEventHub hub)
-    {
-        hub.addInvalidationListener(transformer);
-
-        return transformer;
     }
 
     public PageLoader buildPageLoader(@Autobuild
@@ -228,7 +225,8 @@ public class InternalModule
     public ComponentTemplateSource buildComponentTemplateSource(TemplateParser parser, @Primary
     ComponentTemplateLocator locator, ClasspathURLConverter classpathURLConverter)
     {
-        ComponentTemplateSourceImpl service = new ComponentTemplateSourceImpl(productionMode, parser, locator, classpathURLConverter);
+        ComponentTemplateSourceImpl service = new ComponentTemplateSourceImpl(productionMode, parser, locator,
+                classpathURLConverter);
 
         updateListenerHub.addUpdateListener(service);
 

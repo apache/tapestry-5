@@ -20,7 +20,8 @@ import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.PlasticClass;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 
 @SuppressWarnings("deprecation")
 public class CCTWToCCTW2Coercion implements Coercion<ComponentClassTransformWorker, ComponentClassTransformWorker2>
@@ -29,9 +30,9 @@ public class CCTWToCCTW2Coercion implements Coercion<ComponentClassTransformWork
     {
         return new ComponentClassTransformWorker2()
         {
-            public void transform(PlasticClass plasticClass, MutableComponentModel model)
+            public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
             {
-                ClassTransformation ct = new BridgeClassTransformation(plasticClass, model);
+                ClassTransformation ct = new BridgeClassTransformation(plasticClass, support, model);
 
                 oldStyleWorker.transform(ct, model);
             }
