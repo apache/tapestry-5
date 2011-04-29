@@ -14,7 +14,15 @@
 
 package org.apache.tapestry5.jpa;
 
+/**
+ * Defines constants used inside the Tapestry JPA integration.
+ *
+ * @since 5.3.0
+ */
 public class JpaConstants
 {
+    /**
+     * Name of the <code>EntityManager</code> property whose value is the name of a persistence unit.
+     */
     public static final String PERSISTENCE_UNIT_NAME = "tapestry.persistence-unit-name";
 }

@@ -37,6 +37,8 @@ import org.apache.tapestry5.grid.SortConstraint;
  * <p/>
  * Typically, an instance of this object is created fresh as needed (that is, it is not stored
  * between requests).
+ *
+ * @since 5.3.0
  */
 public class JpaGridDataSource<E> implements GridDataSource
 {

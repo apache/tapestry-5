@@ -65,6 +65,11 @@ import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.apache.tapestry5.services.ValueEncoderSource;
 import org.slf4j.Logger;
 
+/**
+ * Defines core services for JPA support.
+ *
+ * @since 5.3.0
+ */
 public class JpaModule
 {
     public static void bind(final ServiceBinder binder)

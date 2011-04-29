@@ -16,6 +16,11 @@ package org.apache.tapestry5.jpa;
 
 import org.apache.tapestry5.PersistenceConstants;
 
+/**
+ * Constants for persistent field strategies.
+ *
+ * @since 5.3.0
+ */
 public class JpaPersistenceConstants
 {
     /**

@@ -18,9 +18,30 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 
+/**
+ * Manages <code>EntityManager</code>s for the current thread.
+ * An <code>EntityManager</code> is created as needed and closed at the end of each request.
+ *
+ * <p/>
+ *
+ * The implementation of this service is per-thread.
+ *
+ * @since 5.3.0
+ */
 public interface EntityManagerManager
 {
+    /**
+     * Gets the active <code>EntityManager</code> for this request, creating it as necessary.
+     *
+     * @param persistenceUnitName the name of a persistence unit as defined in <code>persistence.xml<code>
+     * @return EntityManager for the persistence unit,
+     */
     EntityManager getEntityManager(String persistenceUnitName);
 
+    /**
+     * Gets all active <code>EntityManager</code>s for this request, creating them as necessary.
+     *
+     * @return Map in which persistence unit names are associated with EntityManagers
+     */
     Map<String, EntityManager> getEntityManagers();
 }

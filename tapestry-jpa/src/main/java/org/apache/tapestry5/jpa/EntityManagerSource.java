@@ -20,11 +20,34 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceUnitInfo;
 
+/**
+ * Responsible for creating an EntityManager as needed.
+ *
+ * @since 5.3.0
+ */
 public interface EntityManagerSource
 {
+    /**
+     * Creates an <code>EntityManager</code> for the given persistence unit name.
+     *
+     * @param persistenceUnitName the name of a persistence unit as defined in <code>persistence.xml<code>
+     * @return  EntityManager for the given persistence unit name
+     */
     EntityManager create(String persistenceUnitName);
 
+    /**
+     * Gets the <code>EntityManagerFactory</code> for the given persistence unit name, creating it as necessary.
+     *
+     * @param persistenceUnitName the name of a persistence unit as defined in <code>persistence.xml<code>
+     *
+     * @return EntityManagerFactory for the given persistence unit name
+     */
     EntityManagerFactory getEntityManagerFactory(String persistenceUnitName);
 
+    /**
+     * Get the list of {@linkplain PersistenceUnitInfo} parsed from <code>persistence.xml<code>.
+     *
+     * @return list of PersistenceUnitInfos
+     */
     List<PersistenceUnitInfo> getPersistenceUnitInfos();
 }
