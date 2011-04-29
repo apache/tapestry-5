@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -839,18 +839,20 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         assertTextPresent(
                 "An unexpected application exception has occurred.",
-                "Class org.apache.tapestry5.integration.app1.pages.ProtectedFields contains field(s) (_field) that are not private. You should change these fields to private, and add accessor methods if needed.");
+                "Field _field of class org.apache.tapestry5.integration.app1.pages.ProtectedFields is not private. Class transformation requires that all instance fields be private.");
     }
 
     /**
      * TAPESTRY-2078
+     * <p>
+     * Update 4/29/11: Not sure this is necessary as exceptions seem to be reported properly without the old heroics.
      */
     @Test
     public void noclassdeffound_exception_is_linked_to_underlying_cause()
     {
         openLinks("Class Transformation Exception Demo");
 
-        assertTextPresent("Class org.apache.tapestry5.integration.app1.pages.Datum contains field(s) (_value) that are not private. You should change these fields to private, and add accessor methods if needed.");
+        assertTextPresent("Field _value of class org.apache.tapestry5.integration.app1.pages.Datum is not private. Class transformation requires that all instance fields be private.");
     }
 
     @Test
@@ -892,7 +894,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     {
         openLinks("Field Annotation Conflict");
 
-        assertTextPresent("Field flashDemo of class org.apache.tapestry5.integration.app1.pages.FieldAnnotationConflict is already claimed by @org.apache.tapestry5.annotations.InjectPage and can not be claimed by @org.apache.tapestry5.annotations.Parameter.");
+        assertTextPresent("Field flashDemo of class org.apache.tapestry5.integration.app1.pages.FieldAnnotationConflict can not be claimed by @org.apache.tapestry5.annotations.Parameter as it is already claimed by @org.apache.tapestry5.annotations.InjectPage.");
     }
 
     /**
@@ -1119,8 +1121,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     {
         openLinks("Abstract Component Demo");
 
-        assertTextPresent(
-                "java.lang.RuntimeException",
+        assertTextPresent("java.lang.RuntimeException",
                 "Class org.apache.tapestry5.integration.app1.components.AbstractComponent is abstract and can not be instantiated.");
     }
 
