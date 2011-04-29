@@ -37,10 +37,16 @@ import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.ClassInstantiator;
+import org.apache.tapestry5.plastic.InstructionBuilder;
+import org.apache.tapestry5.plastic.InstructionBuilderCallback;
+import org.apache.tapestry5.plastic.MethodDescription;
 import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.plastic.PlasticManager;
 import org.apache.tapestry5.plastic.PlasticManagerDelegate;
+import org.apache.tapestry5.plastic.PlasticUtils;
 import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.runtime.ComponentResourcesAware;
 import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.UpdateListener;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
@@ -240,6 +246,11 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
         changeTracker.add(baseResource.toURL());
 
+        if (isRoot)
+        {
+            implementComponentInterface(plasticClass);
+        }
+
         MutableComponentModel model = new MutableComponentModelImpl(plasticClass.getClassName(), logger, baseResource,
                 parentModel);
 
@@ -265,6 +276,25 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
         }, model);
 
         classToModel.put(className, model);
+    }
+
+    private MethodDescription GET_COMPONENT_RESOURCES = new MethodDescription(PlasticUtils.getMethod(
+            ComponentResourcesAware.class, "getComponentResources"));
+
+    private void implementComponentInterface(PlasticClass plasticClass)
+    {
+        plasticClass.introduceInterface(Component.class);
+
+        final PlasticField resourcesField = plasticClass.introduceField(InternalComponentResources.class,
+                "internalComponentResources").injectFromInstanceContext();
+
+        plasticClass.introduceMethod(GET_COMPONENT_RESOURCES, new InstructionBuilderCallback()
+        {
+            public void doBuild(InstructionBuilder builder)
+            {
+                builder.loadThis().getField(resourcesField).returnResult();
+            }
+        });
     }
 
     public <T> ClassInstantiator<T> configureInstantiator(String className, ClassInstantiator<T> instantiator)

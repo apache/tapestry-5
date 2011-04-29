@@ -232,6 +232,8 @@ public class BridgeClassTransformation implements ClassTransformation
     {
         private final PlasticMethod plasticMethod;
 
+        private TransformMethodSignature signature;
+
         public BridgeTransformMethod(PlasticMethod plasticMethod)
         {
             this.plasticMethod = plasticMethod;
@@ -249,7 +251,12 @@ public class BridgeClassTransformation implements ClassTransformation
 
         public TransformMethodSignature getSignature()
         {
-            return toMethodSignature(plasticMethod.getDescription());
+            if (signature == null)
+            {
+                signature = toMethodSignature(plasticMethod.getDescription());
+            }
+
+            return signature;
         }
 
         public String getName()
@@ -416,7 +423,7 @@ public class BridgeClassTransformation implements ClassTransformation
 
         public String getMethodIdentifier()
         {
-            throw new IllegalStateException("getMethodIdentifer() not yet implemented");
+            return getSignature().getMediumDescription();
         }
 
         public boolean isOverride()
@@ -428,7 +435,6 @@ public class BridgeClassTransformation implements ClassTransformation
         {
             return plasticMethod.getParameters().get(index).getAnnotation(annotationType);
         }
-
     }
 
     private static final Mapper<PlasticMethod, TransformMethod> TO_TRANSFORM_METHOD = new Mapper<PlasticMethod, TransformMethod>()
