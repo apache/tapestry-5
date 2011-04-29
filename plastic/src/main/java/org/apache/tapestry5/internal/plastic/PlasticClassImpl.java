@@ -111,6 +111,14 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return PlasticUtils.getMethod(declaringClass, methodName, parameterTypes);
     }
 
+    private static <T> T safeArrayDeref(T[] array, int index)
+    {
+        if (array == null)
+            return null;
+
+        return array[index];
+    }
+
     private class PlasticMember implements AnnotationAccess
     {
         private final AnnotationAccess annotationAccess;
@@ -350,8 +358,9 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
                 for (int i = 0; i < description.argumentTypes.length; i++)
                 {
-                    parameters.add(new MethodParameterImpl(node.visibleParameterAnnotations[i],
-                            description.argumentTypes[i], i));
+
+                    parameters.add(new MethodParameterImpl(safeArrayDeref(node.visibleParameterAnnotations, i),
+                            safeArrayDeref(description.argumentTypes, i), i));
                 }
             }
 
