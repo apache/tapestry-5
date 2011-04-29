@@ -49,6 +49,8 @@ public class MethodDescription implements Comparable<MethodDescription>
     /** The name of the method. */
     public final String methodName;
 
+    public final String genericSignature;
+
     /**
      * A non-null array of Java source names for arguments. Do not modify
      * the contents of this array.
@@ -70,7 +72,7 @@ public class MethodDescription implements Comparable<MethodDescription>
      */
     public MethodDescription(String returnType, String methodName, String... argumentTypes)
     {
-        this(Modifier.PUBLIC, returnType, methodName, argumentTypes, null);
+        this(Modifier.PUBLIC, returnType, methodName, argumentTypes, null, null);
     }
 
     /**
@@ -80,11 +82,13 @@ public class MethodDescription implements Comparable<MethodDescription>
      * @param methodName
      * @param argumentTypes
      *            may be null
+     * @param genericSignature
+     *            TODO
      * @param checkedExceptionTypes
      *            may be null
      */
     public MethodDescription(int modifiers, String returnType, String methodName, String[] argumentTypes,
-            String[] checkedExceptionTypes)
+            String genericSignature, String[] checkedExceptionTypes)
     {
         assert PlasticInternalUtils.isNonBlank(returnType);
         assert PlasticInternalUtils.isNonBlank(methodName);
@@ -92,6 +96,7 @@ public class MethodDescription implements Comparable<MethodDescription>
         this.modifiers = modifiers;
         this.returnType = returnType;
         this.methodName = methodName;
+        this.genericSignature = genericSignature;
 
         this.argumentTypes = PlasticInternalUtils.orEmpty(argumentTypes);
         this.checkedExceptionTypes = PlasticInternalUtils.orEmpty(checkedExceptionTypes);
@@ -99,15 +104,15 @@ public class MethodDescription implements Comparable<MethodDescription>
 
     public MethodDescription withModifiers(int newModifiers)
     {
-        return new MethodDescription(newModifiers, returnType, methodName, argumentTypes, checkedExceptionTypes);
+        return new MethodDescription(newModifiers, returnType, methodName, argumentTypes, genericSignature,
+                checkedExceptionTypes);
     }
 
-    /** Creates a MethodDescription from a Java Method. */
+    /** Creates a MethodDescription from a Java Method. The generic signature will be null. */
     public MethodDescription(Method method)
     {
-        this(method.getModifiers(), PlasticUtils.toTypeName(method.getReturnType()), method.getName(),
-                PlasticUtils.toTypeNames(method.getParameterTypes()), PlasticUtils.toTypeNames(method
-                        .getExceptionTypes()));
+        this(method.getModifiers(), PlasticUtils.toTypeName(method.getReturnType()), method.getName(), PlasticUtils
+                .toTypeNames(method.getParameterTypes()), null, PlasticUtils.toTypeNames(method.getExceptionTypes()));
     }
 
     public int compareTo(MethodDescription o)
@@ -130,6 +135,8 @@ public class MethodDescription implements Comparable<MethodDescription>
         result = prime * result + Arrays.hashCode(checkedExceptionTypes);
         result = prime * result + methodName.hashCode();
         result = prime * result + modifiers;
+        result = prime * result + (genericSignature == null ? 0 : genericSignature.hashCode());
+
         result = prime * result + returnType.hashCode();
 
         return result;
@@ -164,6 +171,9 @@ public class MethodDescription implements Comparable<MethodDescription>
         if (!Arrays.equals(argumentTypes, other.argumentTypes))
             return false;
 
+        if (!PlasticInternalUtils.isEqual(genericSignature, other.genericSignature))
+            return false;
+
         if (!Arrays.equals(checkedExceptionTypes, other.checkedExceptionTypes))
             return false;
 
@@ -194,6 +204,9 @@ public class MethodDescription implements Comparable<MethodDescription>
         }
 
         builder.append(")");
+
+        if (genericSignature != null)
+            builder.append(" <").append(genericSignature).append(">");
 
         sep = " throws ";
 

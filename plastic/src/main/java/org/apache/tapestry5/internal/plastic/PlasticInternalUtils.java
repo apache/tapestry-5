@@ -112,7 +112,7 @@ public class PlasticInternalUtils
             exceptionClassNames[i] = exceptions.get(i).replace('/', '.');
         }
 
-        return new MethodDescription(node.access, returnType, node.name, arguments, exceptionClassNames);
+        return new MethodDescription(node.access, returnType, node.name, arguments, node.signature, exceptionClassNames);
     }
 
     private static String[] toClassNames(Type[] types)
@@ -348,5 +348,13 @@ public class PlasticInternalUtils
         {
             throw new RuntimeException(ex);
         }
+    }
+
+    /**
+     * Returns true if both objects are the same instance, or both null, or left equals right.
+     */
+    public static boolean isEqual(Object left, Object right)
+    {
+        return left == right || (left != null && left.equals(right));
     }
 }

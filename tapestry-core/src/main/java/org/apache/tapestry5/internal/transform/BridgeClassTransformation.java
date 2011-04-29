@@ -108,7 +108,7 @@ public class BridgeClassTransformation implements ClassTransformation
     private static MethodDescription toMethodDescription(TransformMethodSignature signature)
     {
         return new MethodDescription(signature.getModifiers(), signature.getReturnType(), signature.getMethodName(),
-                signature.getParameterTypes(), signature.getExceptionTypes());
+                signature.getParameterTypes(), signature.getSignature(), signature.getExceptionTypes());
     }
 
     private static class BridgeTransformField implements TransformField

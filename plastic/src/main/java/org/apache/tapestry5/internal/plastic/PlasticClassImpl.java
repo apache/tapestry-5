@@ -1809,7 +1809,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         String name = makeUnique(methodNames, suggestedName);
 
-        MethodDescription description = new MethodDescription(Modifier.PRIVATE, typeName, name, argumentTypes,
+        MethodDescription description = new MethodDescription(Modifier.PRIVATE, typeName, name, argumentTypes, null,
                 exceptionTypes);
 
         return introduceMethod(description);
@@ -1942,7 +1942,8 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             exceptions[i] = PlasticInternalUtils.toInternalName(description.checkedExceptionTypes[i]);
         }
 
-        MethodNode methodNode = new MethodNode(description.modifiers, description.methodName, desc, null, exceptions);
+        MethodNode methodNode = new MethodNode(description.modifiers, description.methodName, desc,
+                description.genericSignature, exceptions);
         boolean isOverride = methodBundle.isImplemented(methodNode.name, desc);
 
         if (isOverride)

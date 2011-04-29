@@ -103,7 +103,7 @@ public class ModuleImpl implements Module
 
     /** "Magic" method related to Externalizable that allows the Proxy object to replace itself with the token. */
     private static final MethodDescription WRITE_REPLACE = new MethodDescription(Modifier.PRIVATE, "java.lang.Object",
-            "writeReplace", null, new String[]
+            "writeReplace", null, null, new String[]
             { ObjectStreamException.class.getName() });
 
     public ModuleImpl(InternalRegistry registry, ServiceActivityTracker tracker, ModuleDef moduleDef,
