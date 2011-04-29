@@ -24,6 +24,21 @@ class ObtainPlasticClass extends Specification
 {
     def mgr = new PlasticManager()
 
+    def "abstract classes may not be instantiated"()
+    {
+        def pc = mgr.getPlasticClass("testsubjects.AbstractSubject")
+        
+        when:
+        
+        pc.createInstantiator().newInstance()
+        
+        then:
+        
+        def e = thrown(IllegalStateException)
+        
+        assert e.message == "Class testsubjects.AbstractSubject is abstract and can not be instantiated."
+    }
+    
     def "access to simple empty class"() {
         setup:
         def pc = mgr.getPlasticClass("testsubjects.Empty")

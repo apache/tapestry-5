@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.plastic;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -84,6 +85,10 @@ public class ClassInstantiatorImpl<T> implements ClassInstantiator<T>, InstanceC
 
     public T newInstance()
     {
+        if (Modifier.isAbstract(clazz.getModifiers()))
+            throw new IllegalStateException(String.format("Class %s is abstract and can not be instantiated.",
+                    clazz.getName()));
+
         try
         {
             return ctor.newInstance(staticContext, this);
