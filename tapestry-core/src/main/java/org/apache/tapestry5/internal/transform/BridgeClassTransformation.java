@@ -105,6 +105,12 @@ public class BridgeClassTransformation implements ClassTransformation
                 description.argumentTypes, description.checkedExceptionTypes);
     }
 
+    private static MethodDescription toMethodDescription(TransformMethodSignature signature)
+    {
+        return new MethodDescription(signature.getModifiers(), signature.getReturnType(), signature.getMethodName(),
+                signature.getParameterTypes(), signature.getExceptionTypes());
+    }
+
     private static class BridgeTransformField implements TransformField
     {
         private final PlasticField plasticField;
@@ -136,7 +142,7 @@ public class BridgeClassTransformation implements ClassTransformation
 
         public String getSignature()
         {
-            throw new IllegalStateException("getSignature() not yet implemented.");
+            return plasticField.getGenericSignature();
         }
 
         public void claim(Object tag)
@@ -182,7 +188,7 @@ public class BridgeClassTransformation implements ClassTransformation
 
         public int getModifiers()
         {
-            throw new IllegalStateException("getModifiers() not yet implemented.");
+            return plasticField.getModifiers();
         }
 
         public void inject(Object value)
@@ -563,8 +569,7 @@ public class BridgeClassTransformation implements ClassTransformation
 
     public TransformMethod getOrCreateMethod(TransformMethodSignature signature)
     {
-        MethodDescription md = new MethodDescription(signature.getModifiers(), signature.getReturnType(),
-                signature.getMethodName(), signature.getParameterTypes(), signature.getExceptionTypes());
+        MethodDescription md = toMethodDescription(signature);
 
         PlasticMethod plasticMethod = plasticClass.introduceMethod(md);
 
@@ -573,7 +578,15 @@ public class BridgeClassTransformation implements ClassTransformation
 
     public boolean isDeclaredMethod(TransformMethodSignature signature)
     {
-        throw new IllegalArgumentException("isDeclaredMethod() not yet implemented.");
+        final MethodDescription md = toMethodDescription(signature);
+
+        return !F.flow(plasticClass.getMethods()).filter(new Predicate<PlasticMethod>()
+        {
+            public boolean accept(PlasticMethod element)
+            {
+                return element.getDescription().equals(md);
+            }
+        }).isEmpty();
     }
 
     // TODO: This is very handy, there should be an additional object passed around that encapsulates
