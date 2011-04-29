@@ -39,6 +39,8 @@ public interface MethodInvocation extends MethodInvocationResult, AnnotationAcce
      * Overrides the return value of the method. The value provided will be cast to the actual return type
      * (or, if the return type is a primitive value, the value will be cast to the corresponding wrapper type and then
      * converted to a primitive).
+     * <p>
+     * Overriding the return value clears any checked exception.
      * 
      * @param returnValue
      * @return this method invocation, for a fluent API

@@ -1143,6 +1143,8 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                 builder.castOrUnbox(description.returnType);
                 builder.putField(invocationClassName, RETURN_VALUE, description.returnType);
 
+                builder.loadThis().invoke(AbstractMethodInvocation.class, void.class, "clearCheckedException");
+
                 builder.loadThis().returnResult();
             }
         }
@@ -1694,7 +1696,8 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
             // And replace it with a constructor that throws an exception
 
-            MethodNode replacementConstructor = new MethodNode(originalAccess, CONSTRUCTOR_NAME, NOTHING_TO_VOID, null, null);
+            MethodNode replacementConstructor = new MethodNode(originalAccess, CONSTRUCTOR_NAME, NOTHING_TO_VOID, null,
+                    null);
 
             newBuilder(replacementConstructor).throwException(IllegalStateException.class, invalidConstructorMessage());
 

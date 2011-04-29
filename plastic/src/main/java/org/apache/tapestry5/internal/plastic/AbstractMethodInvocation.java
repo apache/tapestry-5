@@ -39,6 +39,14 @@ public abstract class AbstractMethodInvocation implements MethodInvocation
 
     private Exception checkedException;
 
+    /**
+     * Invoked from the implementation of {@link MethodInvocation#setReturnValue(Object)}.
+     */
+    protected void clearCheckedException()
+    {
+        checkedException = null;
+    }
+
     public void rethrow()
     {
         if (checkedException != null)

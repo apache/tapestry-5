@@ -89,15 +89,36 @@ class MethodAdviceTests extends AbstractPlasticSpecification {
 
         expect:
 
-        o.maybeThrow(7) == 7
+        o.maybeThrow(7L) == 7L
 
         when:
 
-        o.maybeThrow(0)
+        o.maybeThrow(0L)
 
         then:
 
         thrown(SQLException)
+    }
+
+    def "setting return value clears checked exceptions"() {
+        def mgr = createMgr({ PlasticClass pc ->
+            findMethod(pc, "maybeThrow").addAdvice({  MethodInvocation mi ->
+
+                mi.proceed()
+
+                if (mi.didThrowCheckedException()) {
+                    mi.setReturnValue(-1L)
+                }
+            } as MethodAdvice)
+        } as PlasticClassTransformer)
+
+        def o = mgr.getClassInstantiator("testsubjects.MethodAdviceTarget").newInstance()
+
+        expect:
+
+        o.maybeThrow(9L) == 9L
+
+        o.maybeThrow(0L) == -1L
     }
 
     /**
