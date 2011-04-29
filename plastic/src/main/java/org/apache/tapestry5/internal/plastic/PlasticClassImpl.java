@@ -504,7 +504,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         // these also represent the names of the methods that replace field access
         // in non-introduced methods
 
-        private String getAccessName, setAccessName;
+        private MethodNode getAccess, setAccess;
 
         private FieldState state = FieldState.INITIAL;
 
@@ -788,11 +788,11 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         private void replaceFieldWriteAccess(String conduitFieldName)
         {
-            setAccessName = makeUnique(methodNames, "set_" + node.name);
+            String setAccessName = makeUnique(methodNames, "set_" + node.name);
 
-            MethodNode mn = new MethodNode(ACC_SYNTHETIC | ACC_FINAL, setAccessName, "(" + node.desc + ")V", null, null);
+            setAccess = new MethodNode(ACC_SYNTHETIC | ACC_FINAL, setAccessName, "(" + node.desc + ")V", null, null);
 
-            InstructionBuilder builder = newBuilder(mn);
+            InstructionBuilder builder = newBuilder(setAccess);
 
             pushFieldConduitOntoStack(conduitFieldName, builder);
 
@@ -809,18 +809,18 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
             builder.returnResult();
 
-            addMethod(mn);
+            addMethod(setAccess);
 
-            fieldToWriteMethod.put(node.name, mn);
+            fieldToWriteMethod.put(node.name, setAccess);
         }
 
         private void replaceFieldReadAccess(String conduitFieldName)
         {
-            getAccessName = makeUnique(methodNames, "getfieldvalue_" + node.name);
+            String getAccessName = makeUnique(methodNames, "getfieldvalue_" + node.name);
 
-            MethodNode mn = new MethodNode(ACC_SYNTHETIC | ACC_FINAL, getAccessName, "()" + node.desc, null, null);
+            getAccess = new MethodNode(ACC_SYNTHETIC | ACC_FINAL, getAccessName, "()" + node.desc, null, null);
 
-            InstructionBuilder builder = newBuilder(mn);
+            InstructionBuilder builder = newBuilder(getAccess);
 
             // Get the correct FieldConduit object on the stack
 
@@ -837,9 +837,9 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
             builder.returnResult();
 
-            addMethod(mn);
+            addMethod(getAccess);
 
-            fieldToReadMethod.put(node.name, mn);
+            fieldToReadMethod.put(node.name, getAccess);
         }
 
         private void pushFieldConduitOntoStack(String conduitFileName, InstructionBuilder builder)
@@ -850,17 +850,17 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         private void makeReadOnly()
         {
-            setAccessName = makeUnique(methodNames, "setfieldvalue_" + node.name);
+            String setAccessName = makeUnique(methodNames, "setfieldvalue_" + node.name);
 
-            MethodNode mn = new MethodNode(ACC_SYNTHETIC | ACC_FINAL, setAccessName, "(" + node.desc + ")V", null, null);
+            setAccess = new MethodNode(ACC_SYNTHETIC | ACC_FINAL, setAccessName, "(" + node.desc + ")V", null, null);
 
             String message = String.format("Field %s of class %s is read-only.", node.name, className);
 
-            newBuilder(mn).throwException(IllegalStateException.class, message);
+            newBuilder(setAccess).throwException(IllegalStateException.class, message);
 
-            addMethod(mn);
+            addMethod(setAccess);
 
-            fieldToWriteMethod.put(node.name, mn);
+            fieldToWriteMethod.put(node.name, setAccess);
 
             node.access |= ACC_FINAL;
         }
@@ -869,9 +869,9 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
          * Adds a static setter method, allowing an external FieldAccess implementation
          * to directly set the value of the field.
          */
-        private MethodNode addSetAccessMethod()
+        private MethodNode addShimSetAccessMethod()
         {
-            String name = makeUnique(methodNames, "directset_" + node.name);
+            String name = makeUnique(methodNames, "shimset_" + node.name);
 
             // Takes two Object parameters (instance, and value) and returns void.
 
@@ -884,12 +884,14 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
             addMethod(mn);
 
+            fieldTransformMethods.add(mn);
+
             return mn;
         }
 
-        private MethodNode addGetAccessMethod()
+        private MethodNode addShimGetAccessMethod()
         {
-            String name = makeUnique(methodNames, "directget_" + node.name);
+            String name = makeUnique(methodNames, "shimget_" + node.name);
 
             MethodNode mn = new MethodNode(ACC_SYNTHETIC | ACC_FINAL, name, "()" + node.desc, null, null);
 
@@ -898,6 +900,8 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             builder.loadThis().getField(className, node.name, typeName).returnResult();
 
             addMethod(mn);
+
+            fieldTransformMethods.add(mn);
 
             return mn;
         }
@@ -913,16 +917,14 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         /** Invoked with the object instance on the stack and cast to the right type. */
         void extendShimGet(SwitchBlock switchBlock)
         {
-            String accessMethodName = getAccessName;
-
-            if (accessMethodName == null)
+            if (getAccess == null)
             {
-                MethodNode method = addGetAccessMethod();
-                fieldTransformMethods.add(method);
-                accessMethodName = method.name;
+                getAccess = addShimGetAccessMethod();
             }
 
-            final String methodToInvoke = accessMethodName;
+            final String methodToInvoke = getAccess.name;
+
+            shimInvokedMethods.add(getAccess);
 
             switchBlock.addCase(fieldIndex, false, new InstructionBuilderCallback()
             {
@@ -939,18 +941,16 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
          */
         void extendShimSet(SwitchBlock switchBlock)
         {
-            String accessMethodName = setAccessName;
-
             // If no conduit has yet been specified, then we need a set access method for the shim to invoke.
 
-            if (accessMethodName == null)
+            if (setAccess == null)
             {
-                MethodNode method = addSetAccessMethod();
-                fieldTransformMethods.add(method);
-                accessMethodName = method.name;
+                setAccess = addShimSetAccessMethod();
             }
 
-            final String methodToInvoke = accessMethodName;
+            shimInvokedMethods.add(setAccess);
+
+            final String methodToInvoke = setAccess.name;
 
             switchBlock.addCase(fieldIndex, true, new InstructionBuilderCallback()
             {
@@ -1415,6 +1415,10 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     // introduced methods, outside of special access methods.
 
     private final Set<MethodNode> fieldTransformMethods = PlasticInternalUtils.newSet();
+
+    // Tracks any methods that the Shim class uses to gain access to fields; used to ensure that
+    // such methods are not optimized away incorrectly.
+    private final Set<MethodNode> shimInvokedMethods = PlasticInternalUtils.newSet();
 
     /**
      * Maps a field name to a replacement method that should be invoked instead of reading the
@@ -1925,9 +1929,9 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     /**
      * Iterates over all non-introduced methods, including the original constructor. For each
      * method, the bytecode is scanned for field reads and writes. When a match is found against an intercepted field,
-     * the operation is replaced with a method invocation. This is invoked only after THE {@link PlasticClassHandleShim}
-     * for the class has been created, as the shim may create methods
-     * that contain references to fields that may be subject to field access interception.
+     * the operation is replaced with a method invocation. This is invoked only after the {@link PlasticClassHandleShim}
+     * for the class has been created, as the shim may create methods that contain references to fields that may be
+     * subject to field access interception.
      */
     private void interceptFieldAccess()
     {
@@ -1937,6 +1941,9 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         unusedAccessMethods.addAll(fieldToReadMethod.values());
         unusedAccessMethods.addAll(fieldToWriteMethod.values());
+
+        // Keep any field access methods invoked from the shim
+        unusedAccessMethods.removeAll(shimInvokedMethods);
 
         for (MethodNode node : fieldTransformMethods)
         {

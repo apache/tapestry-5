@@ -162,4 +162,30 @@ class FieldHandleTests extends Specification
     def handleByName(pc, name) {
         pc.allFields.find({ it.name == name}).handle
     }
+
+    /**
+     * Hit a bug where if a field has a conduit (and therefore, has added methods to access that conduit
+     * when the field is read or written) and it has a FieldHandle, the methods needed by the shim
+     * (for the FieldHandle) were incorrectly optimized out of existence.
+     */
+    def "handle to field keeps synthetic access methods from being removed"() {
+
+        def fc = Mock(FieldConduit)
+
+        def pc = mgr.getPlasticClass("testsubjects.FieldHandleAccessOnly")
+
+        def field = pc.allFields.first()
+
+        def handle = field.setConduit(fc).handle
+
+        def instance = pc.createInstantiator().newInstance()
+
+        when:
+
+        handle.set(instance, "ok")
+
+        then:
+
+        1 * fc.set(_, _, "ok")
+    }
 }
