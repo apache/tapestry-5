@@ -29,18 +29,22 @@ public interface FieldConduit<T>
     /**
      * Invoked when the field is read.
      * 
+     * @param instance
+     *            the instance containing the field
      * @param context
      *            (see {@link ClassInstantiator#with(Class, Object)})
      */
-    T get(InstanceContext context);
+    T get(Object instance, InstanceContext context);
 
     /**
      * Invoked when the field's value is updated.
      * 
+     * @param instance
+     *            the instance containing the field
      * @param context
      *            (see {@link ClassInstantiator#with(Class, Object)})
      * @param newValue
      *            value assigned to the field
      */
-    void set(InstanceContext context, T newValue);
+    void set(Object instance, InstanceContext context, T newValue);
 }

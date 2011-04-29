@@ -87,12 +87,12 @@ public class BridgeClassTransformation implements ClassTransformation
     {
         return new FieldConduit<Object>()
         {
-            public Object get(InstanceContext context)
+            public Object get(Object instance, InstanceContext context)
             {
                 return fieldValueConduit.get();
             }
 
-            public void set(InstanceContext context, Object newValue)
+            public void set(Object instance, InstanceContext context, Object newValue)
             {
                 fieldValueConduit.set(newValue);
             }
@@ -174,12 +174,12 @@ public class BridgeClassTransformation implements ClassTransformation
         {
             plasticField.setConduit(new FieldConduit()
             {
-                public Object get(InstanceContext context)
+                public Object get(Object instance, InstanceContext context)
                 {
                     return conduit.get();
                 }
 
-                public void set(InstanceContext context, Object newValue)
+                public void set(Object instance, InstanceContext context, Object newValue)
                 {
                     conduit.set(newValue);
                 }

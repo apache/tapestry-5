@@ -39,10 +39,10 @@ class FieldConduitTests extends Specification
 
         then:
 
-        1 * fc.set(_, 123)
+        1 * fc.set(_, _, 123)
 
         when:
-        fc.get(_) >>> 999
+        fc.get(_, _) >>> 999
 
         then:
 
@@ -71,7 +71,7 @@ class FieldConduitTests extends Specification
 
         then:
 
-        1 * fc.set(_, 456)
+        1 * fc.set(_, _, 456)
     }
 
     def "field initializations are visible to the conduit"() {
@@ -89,6 +89,6 @@ class FieldConduitTests extends Specification
 
         // 100 is the initial value of the field
 
-        1 * fc.set(_, 100)
+        1 * fc.set(_, _, 100)
     }
 }

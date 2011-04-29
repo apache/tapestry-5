@@ -795,6 +795,9 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             InstructionBuilder builder = newBuilder(mn);
 
             pushFieldConduitOntoStack(conduitFieldName, builder);
+
+            builder.loadThis();
+
             pushInstanceContextFieldOntoStack(builder);
 
             // Take the value passed to this method and push it onto the stack.
@@ -802,7 +805,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             builder.loadArgument(0);
             builder.boxPrimitive(typeName);
 
-            builder.invoke(FieldConduit.class, void.class, "set", InstanceContext.class, Object.class);
+            builder.invoke(FieldConduit.class, void.class, "set", Object.class, InstanceContext.class, Object.class);
 
             builder.returnResult();
 
@@ -823,11 +826,14 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
             pushFieldConduitOntoStack(conduitFieldName, builder);
 
+            builder.loadThis();
+
             // Now push the instance context on the stack
 
             pushInstanceContextFieldOntoStack(builder);
 
-            builder.invoke(FieldConduit.class, Object.class, "get", InstanceContext.class).castOrUnbox(typeName);
+            builder.invoke(FieldConduit.class, Object.class, "get", Object.class, InstanceContext.class).castOrUnbox(
+                    typeName);
 
             builder.returnResult();
 
