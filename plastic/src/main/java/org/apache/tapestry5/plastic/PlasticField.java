@@ -24,7 +24,7 @@ public interface PlasticField extends AnnotationAccess
 {
     /** Returns the class containing this field. */
     PlasticClass getPlasticClass();
-    
+
     /**
      * Returns a handle that can be used to directly access a private field of a
      * transformed class instance.
@@ -109,8 +109,18 @@ public interface PlasticField extends AnnotationAccess
      * @return the field for further manipulation
      * @throws IllegalStateException
      *             if the field already has an injection or a conduit
+     * @return this field for further manipulation
      */
     PlasticField setConduit(FieldConduit<?> conduit);
+
+    /**
+     * Sets the conduit for the field to a value computed when the class is instantiated
+     * 
+     * @param computedConduit
+     *            object that will compute the actual conduit to be used
+     * @return this field for further manipulation
+     */
+    PlasticField setComputedConduit(ComputedValue<FieldConduit<?>> computedConduit);
 
     /**
      * Creates access to the field, using the default property name derived from the name of the field.

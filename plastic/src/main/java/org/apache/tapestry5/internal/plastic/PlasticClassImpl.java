@@ -707,6 +707,30 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             return null;
         }
 
+        public PlasticField setComputedConduit(ComputedValue<FieldConduit<?>> computedConduit)
+        {
+            assert computedConduit != null;
+
+            check();
+
+            verifyInitialState("set the computed FieldConduit for");
+
+            // First step: define a field to store the conduit and add constructor logic
+            // to initialize it
+
+            PlasticField conduitField = introduceField(FieldConduit.class, node.name + "_FieldConduit").injectComputed(
+                    computedConduit);
+
+            replaceFieldReadAccess(conduitField.getName());
+            replaceFieldWriteAccess(conduitField.getName());
+
+            // TODO: Do we keep the field or not? It will now always be null/0/false.
+
+            state = FieldState.CONDUIT;
+
+            return null;
+        }
+
         public PlasticField createAccessors(PropertyAccessType accessType)
         {
             check();
@@ -925,6 +949,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                 }
             });
         }
+
     }
 
     /**
