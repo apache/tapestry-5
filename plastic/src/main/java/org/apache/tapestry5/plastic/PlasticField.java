@@ -147,4 +147,10 @@ public interface PlasticField extends AnnotationAccess
      * @return the field for further manipulation
      */
     PlasticField createAccessors(PropertyAccessType accessType, String propertyName);
+
+    /** Returns the field's fully qualified generic type, or null if not defined. */
+    String getGenericSignature();
+
+    /** Returns the modifiers on the field. */
+    int getModifiers();
 }

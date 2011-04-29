@@ -524,6 +524,16 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                     node.name, className);
         }
 
+        public String getGenericSignature()
+        {
+            return node.signature;
+        }
+
+        public int getModifiers()
+        {
+            return node.access;
+        }
+
         public int compareTo(PlasticFieldImpl o)
         {
             return this.node.name.compareTo(o.node.name);
