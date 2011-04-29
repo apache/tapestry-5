@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.plastic.PlasticClass;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.Event;
 import org.slf4j.Logger;
@@ -55,6 +56,8 @@ import org.slf4j.Logger;
  * 
  * @see org.apache.tapestry5.services.TapestryModule#contributeComponentClassTransformWorker(org.apache.tapestry5.ioc.OrderedConfiguration,
  *      org.apache.tapestry5.ioc.ObjectLocator, InjectionProvider, ComponentClassResolver)
+ * @deprecated In 5.3
+ * @see {@link PlasticClass}
  */
 public interface ClassTransformation extends AnnotationProvider
 {

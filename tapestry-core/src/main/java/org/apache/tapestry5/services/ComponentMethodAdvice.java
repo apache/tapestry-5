@@ -1,4 +1,4 @@
-// Copyright 2008, 2010 The Apache Software Foundation
+// Copyright 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,10 @@
 
 package org.apache.tapestry5.services;
 
+import org.apache.tapestry5.plastic.MethodAdvice;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticMethod;
+
 /**
  * An object that receives control around an "advised" method of a component. The advise can query or even replace
  * method parameters. After invoking {@link org.apache.tapestry5.services.ComponentMethodInvocation#proceed()}, the
@@ -21,6 +25,8 @@ package org.apache.tapestry5.services;
  * 
  * @see TransformMethod#addAdvice(ComponentMethodAdvice)
  * @see ComponentInstanceOperation
+ * @deprecated Deprecated in 5.3
+ * @see {@link PlasticClass}, {@link PlasticMethod}, {@link MethodAdvice}
  */
 public interface ComponentMethodAdvice
 {

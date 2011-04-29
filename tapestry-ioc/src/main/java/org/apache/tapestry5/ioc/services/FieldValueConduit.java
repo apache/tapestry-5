@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,15 @@
 
 package org.apache.tapestry5.ioc.services;
 
+import org.apache.tapestry5.plastic.FieldConduit;
+import org.apache.tapestry5.plastic.PlasticField;
 
 /**
  * Used as a replacement for a field.
  * 
  * @since 5.2.0
+ * @deprecated Deprecated in 5.3.0, using Plastic equivalents
+ * @see {@link PlasticField}, {@link FieldConduit}
  */
 public interface FieldValueConduit
 {

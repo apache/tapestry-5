@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,10 @@
 
 package org.apache.tapestry5.services;
 
+import org.apache.tapestry5.plastic.MethodHandle;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticMethod;
+
 /**
  * Represents a bridge to an object method, when that method may not be public. A MethodAccess object
  * encapsulates the approach for invoking the method and capturing the result (either the return value,
@@ -21,6 +25,8 @@ package org.apache.tapestry5.services;
  * 
  * @since 5.2.0
  * @see TransformMethod#getAccess()
+ * @deprecated Deprecated in 5.3.0
+ * @see {@link PlasticClass}, {@link {@link PlasticMethod}, {@link MethodHandle}
  */
 public interface MethodAccess
 {

@@ -41,7 +41,7 @@ public interface TransformField extends AnnotationProvider, Comparable<Transform
     String getType();
 
     /**
-     * Returns the fields fully qualified generic type, or null if not defined.
+     * Returns the field's fully qualified generic type, or null if not defined.
      * (in Java source syntax, i.e., "()Ljava/util/List<Ljava/lang/String;>;"
      *
      * @since 5.3.0
