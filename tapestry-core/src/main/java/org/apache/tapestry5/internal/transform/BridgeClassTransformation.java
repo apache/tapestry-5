@@ -259,7 +259,7 @@ public class BridgeClassTransformation implements ClassTransformation
         }
     };
 
-    private static class BridgeTransformMethod implements TransformMethod
+    private class BridgeTransformMethod implements TransformMethod
     {
         private final PlasticMethod plasticMethod;
 
@@ -454,7 +454,7 @@ public class BridgeClassTransformation implements ClassTransformation
 
         public String getMethodIdentifier()
         {
-            return getSignature().getMediumDescription();
+            return String.format("%s.%s", plasticClass.getClassName(), getSignature().getMediumDescription());
         }
 
         public boolean isOverride()
@@ -468,7 +468,7 @@ public class BridgeClassTransformation implements ClassTransformation
         }
     }
 
-    private static final Mapper<PlasticMethod, TransformMethod> TO_TRANSFORM_METHOD = new Mapper<PlasticMethod, TransformMethod>()
+    private final Mapper<PlasticMethod, TransformMethod> toTransformMethod = new Mapper<PlasticMethod, TransformMethod>()
     {
         public TransformMethod map(PlasticMethod element)
         {
@@ -511,12 +511,12 @@ public class BridgeClassTransformation implements ClassTransformation
 
     public List<TransformMethod> matchMethods(Predicate<TransformMethod> predicate)
     {
-        return F.flow(plasticClass.getMethods()).map(TO_TRANSFORM_METHOD).filter(predicate).toList();
+        return F.flow(plasticClass.getMethods()).map(toTransformMethod).filter(predicate).toList();
     }
 
     public List<TransformMethod> matchMethodsWithAnnotation(Class<? extends Annotation> annotationType)
     {
-        return F.flow(plasticClass.getMethodsWithAnnotation(annotationType)).map(TO_TRANSFORM_METHOD).toList();
+        return F.flow(plasticClass.getMethodsWithAnnotation(annotationType)).map(toTransformMethod).toList();
     }
 
     public List<TransformField> matchFields(Predicate<TransformField> predicate)
