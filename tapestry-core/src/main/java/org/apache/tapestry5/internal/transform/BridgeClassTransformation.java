@@ -24,6 +24,7 @@ import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.FieldValueConduit;
+import org.apache.tapestry5.ioc.services.MethodSignature;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.ComputedValue;
 import org.apache.tapestry5.plastic.FieldConduit;
@@ -81,6 +82,12 @@ public class BridgeClassTransformation implements ClassTransformation
                 return provider.get(resources);
             }
         };
+    }
+
+    private static TransformMethodSignature toMethodSignature(MethodDescription description)
+    {
+        return new TransformMethodSignature(description.modifiers, description.returnType, description.methodName,
+                description.argumentTypes, description.checkedExceptionTypes);
     }
 
     private static class BridgeTransformField implements TransformField
@@ -217,7 +224,7 @@ public class BridgeClassTransformation implements ClassTransformation
 
         public TransformMethodSignature getSignature()
         {
-            throw new IllegalStateException("getSignature() not yet implemented.");
+            return toMethodSignature(plasticMethod.getDescription());
         }
 
         public String getName()
