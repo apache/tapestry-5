@@ -451,28 +451,29 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         clickAndWait(clear);
 
         clickAndWait("link=No Context");
-        assertText("methodNames", "[parent.eventHandlerZero(), parent.onAction(), child.eventHandlerZeroChild()]");
+        assertText("methodNames",
+                "[parent.eventHandlerZero(), parent.onAction(), child.eventHandlerZeroChild(), child.onAction()]");
 
         clickAndWait(clear);
         clickAndWait("link=Single context value");
 
         assertText(
                 "methodNames",
-                "[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerOneChild(), child.eventHandlerZeroChild()]");
+                "[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onAction(String), child.onAction()]");
 
         clickAndWait(clear);
         clickAndWait("link=Two value context");
 
         assertText(
                 "methodNames",
-                "[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerOneChild(), child.eventHandlerZeroChild()]");
+                "[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onAction(String), child.onAction()]");
 
         clickAndWait(clear);
         clickAndWait("link=Two value context (from fred)");
 
         assertText(
                 "methodNames",
-                "[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerForFred(), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onActionFromFred(String), child.onActionFromFred()]");
+                "[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerForFred(), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onAction(String), child.onAction(), child.onActionFromFred(String), child.onActionFromFred()]");
     }
 
     @Test
