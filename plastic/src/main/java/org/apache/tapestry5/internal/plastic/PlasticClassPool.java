@@ -135,6 +135,33 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes
         return writer.toByteArray();
     }
 
+    public AnnotationAccess createAnnotationAccess(String className)
+    {
+        try
+        {
+            final Class searchClass = loader.loadClass(className);
+
+            return new AnnotationAccess()
+            {
+                public <T extends Annotation> boolean hasAnnotation(Class<T> annotationType)
+                {
+                    return getAnnotation(annotationType) != null;
+                }
+
+                public <T extends Annotation> T getAnnotation(Class<T> annotationType)
+                {
+                    // For the life of me, I don't understand why the cast is necessary.
+
+                    return annotationType.cast(searchClass.getAnnotation(annotationType));
+                }
+            };
+        }
+        catch (Exception ex)
+        {
+            throw new RuntimeException(ex);
+        }
+    }
+
     public AnnotationAccess createAnnotationAccess(List<AnnotationNode> annotationNodes)
     {
         if (annotationNodes == null)

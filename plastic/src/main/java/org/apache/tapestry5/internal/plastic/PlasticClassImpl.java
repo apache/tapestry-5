@@ -1482,10 +1482,11 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         staticContext = parentStaticContext.dupe();
 
-        annotationAccess = pool.createAnnotationAccess(classNode.visibleAnnotations);
-
         className = PlasticInternalUtils.toClassName(classNode.name);
         superClassName = PlasticInternalUtils.toClassName(classNode.superName);
+
+        annotationAccess = new DelegatingAnnotationAccess(pool.createAnnotationAccess(classNode.visibleAnnotations),
+                pool.createAnnotationAccess(superClassName));
 
         this.parentMethodBundle = parentMethodBundle;
         methodBundle = parentMethodBundle.createChild(className);
