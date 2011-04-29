@@ -389,7 +389,7 @@ public class BridgeClassTransformation implements ClassTransformation
 
         public boolean isOverride()
         {
-            throw new IllegalStateException("isOverride() not yet implemented");
+            return plasticMethod.isOverride();
         }
 
         public <A extends Annotation> A getParameterAnnotation(int index, Class<A> annotationType)
