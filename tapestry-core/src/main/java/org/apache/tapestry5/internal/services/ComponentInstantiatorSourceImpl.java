@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
@@ -25,12 +26,17 @@ import org.apache.tapestry5.internal.model.MutableComponentModelImpl;
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
 import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
+import org.apache.tapestry5.ioc.annotations.Primary;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry5.ioc.internal.services.PlasticProxyFactoryImpl;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
+import org.apache.tapestry5.ioc.services.Builtin;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
@@ -49,6 +55,7 @@ import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.ComponentResourcesAware;
 import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.UpdateListener;
+import org.apache.tapestry5.services.UpdateListenerHub;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
 import org.slf4j.Logger;
@@ -91,13 +98,27 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     { "." + InternalConstants.PAGES_SUBPACKAGE + ".", "." + InternalConstants.COMPONENTS_SUBPACKAGE + ".",
             "." + InternalConstants.MIXINS_SUBPACKAGE + ".", "." + InternalConstants.BASE_SUBPACKAGE + "." };
 
-    public ComponentInstantiatorSourceImpl(boolean productionMode, Logger logger, LoggerSource loggerSource,
-            ClassLoader parent, ComponentClassTransformWorker2 transformerChain,
-            InternalRequestGlobals internalRequestGlobals, ClasspathURLConverter classpathURLConverter)
+    public ComponentInstantiatorSourceImpl(@Inject
+    @Symbol(SymbolConstants.PRODUCTION_MODE)
+    boolean productionMode,
+
+    Logger logger,
+
+    LoggerSource loggerSource,
+
+    @Builtin
+    PlasticProxyFactory proxyFactory,
+
+    @Primary
+    ComponentClassTransformWorker2 transformerChain,
+
+    InternalRequestGlobals internalRequestGlobals,
+
+    ClasspathURLConverter classpathURLConverter)
     {
         super(productionMode);
 
-        this.parent = parent;
+        this.parent = proxyFactory.getClassLoader();
         this.transformerChain = transformerChain;
         this.logger = logger;
         this.loggerSource = loggerSource;
@@ -105,6 +126,12 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
         this.changeTracker = new URLChangeTracker(classpathURLConverter);
 
         initializeService();
+    }
+
+    @PostInjection
+    public void listenForUpdates(UpdateListenerHub hub)
+    {
+        hub.addUpdateListener(this);
     }
 
     public synchronized void checkForUpdates()

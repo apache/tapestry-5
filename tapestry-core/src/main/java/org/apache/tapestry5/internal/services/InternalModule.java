@@ -22,7 +22,6 @@ import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateController;
 import org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathConstructor;
 import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSource;
 import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSourceImpl;
-import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
@@ -31,8 +30,6 @@ import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.services.CtClassSource;
-import org.apache.tapestry5.ioc.services.Builtin;
-import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
 import org.apache.tapestry5.services.ComponentClasses;
@@ -47,8 +44,6 @@ import org.apache.tapestry5.services.RequestGlobals;
 import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.services.UpdateListenerHub;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
-import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
-import org.slf4j.Logger;
 
 /**
  * {@link org.apache.tapestry5.services.TapestryModule} has gotten too complicated and it is nice to demarkate public
@@ -107,6 +102,7 @@ public class InternalModule
         binder.bind(AjaxFormUpdateController.class);
         binder.bind(ResourceDigestManager.class, ResourceDigestManagerImpl.class);
         binder.bind(RequestPageCache.class, NonPoolingRequestPageCacheImpl.class);
+        binder.bind(ComponentInstantiatorSource.class);
     }
 
     /**
@@ -123,29 +119,6 @@ public class InternalModule
             return locator.autobuild(ImmediateActionRenderResponseGenerator.class);
 
         return locator.autobuild(ActionRenderResponseGeneratorImpl.class);
-    }
-
-    public ComponentInstantiatorSource buildComponentInstantiatorSource(@Builtin
-    ClassFactory classFactory,
-
-    @Primary
-    ComponentClassTransformWorker2 transformerChain,
-
-    Logger logger,
-
-    LoggerSource loggerSource,
-
-    InternalRequestGlobals internalRequestGlobals,
-
-    ClasspathURLConverter classpathURLConverter)
-    {
-        ComponentInstantiatorSourceImpl source = new ComponentInstantiatorSourceImpl(productionMode, logger,
-                loggerSource, classFactory.getClassLoader(), transformerChain, internalRequestGlobals,
-                classpathURLConverter);
-
-        updateListenerHub.addUpdateListener(source);
-
-        return source;
     }
 
     public PageLoader buildPageLoader(@Autobuild

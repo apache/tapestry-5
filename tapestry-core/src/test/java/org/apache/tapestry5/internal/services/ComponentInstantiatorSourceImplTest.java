@@ -34,14 +34,9 @@ import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.transform.pages.BasicComponent;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;
-import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
-import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
-import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.TapestryModule;
 import org.apache.tapestry5.services.UpdateListenerHub;
-import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
-import org.slf4j.Logger;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -56,15 +51,11 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
     private static final String SYNTH_COMPONENT_CLASSNAME = "org.apache.tapestry5.internal.transform.pages.SynthComponent";
 
-    private final ClasspathURLConverter converter = new ClasspathURLConverterImpl();
-
     private File extraClasspath;
 
     private ComponentInstantiatorSource source;
 
     private Registry registry;
-
-    private PropertyAccess access;
 
     private ClassLoader extraLoader;
 
@@ -189,7 +180,6 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
         registry = builder.build();
 
         source = registry.getService(ComponentInstantiatorSource.class);
-        access = registry.getService(PropertyAccess.class);
 
         source.addPackage("org.apache.tapestry5.internal.transform.pages");
     }
@@ -201,6 +191,5 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         registry = null;
         source = null;
-        access = null;
     }
 }
