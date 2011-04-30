@@ -14,14 +14,13 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
+import java.util.List;
+
 import org.apache.tapestry5.ioc.services.Builtin;
-import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.DefaultImplementationBuilder;
 import org.apache.tapestry5.ioc.services.PipelineBuilder;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.slf4j.Logger;
-
-import java.util.List;
 
 public class PipelineBuilderImpl implements PipelineBuilder
 {

@@ -18,6 +18,8 @@ package org.apache.tapestry5.plastic;
  * A representation of the invocation of a method that allows the behavior of the method to be advised: either by
  * changing parameter values, or by changing the return value, or by catch or throwing different exceptions. Provides
  * access to annotations on the advised method.
+ * 
+ * @see MethodAdvice
  */
 public interface MethodInvocation extends MethodInvocationResult, AnnotationAccess
 {

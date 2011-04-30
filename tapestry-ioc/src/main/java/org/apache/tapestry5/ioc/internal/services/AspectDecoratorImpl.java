@@ -76,6 +76,16 @@ public class AspectDecoratorImpl implements AspectDecorator
                 getBuilder().adviseAllMethods(advice);
             }
 
+            public void adviseMethod(Method method, org.apache.tapestry5.plastic.MethodAdvice advice)
+            {
+                getBuilder().adviseMethod(method, advice);
+            }
+
+            public void adviseAllMethods(org.apache.tapestry5.plastic.MethodAdvice advice)
+            {
+                getBuilder().adviseAllMethods(advice);
+            }
+
             public Class getInterface()
             {
                 return serviceInterface;

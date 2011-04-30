@@ -66,21 +66,36 @@ public class AspectInterceptorBuilderImpl<T> extends AbtractAspectInterceptorBui
         assert method != null;
         assert advice != null;
 
-        if (!allMethods.contains(method))
-            throw new IllegalArgumentException(String.format("Method %s is not defined for interface %s.", method,
-                    serviceInterface));
-
         AnnotationProvider methodAnnotationProvider = getMethodAnnotationProvider(method.getName(),
                 method.getParameterTypes());
 
-        plasticClass.introduceMethod(method).addAdvice(
-                InternalUtils.toPlasticMethodAdvice(advice, methodAnnotationProvider));
+        adviseMethod(method, InternalUtils.toPlasticMethodAdvice(advice, methodAnnotationProvider));
     }
 
     public void adviseAllMethods(MethodAdvice advice)
     {
         for (Method m : serviceInterface.getMethods())
             adviseMethod(m, advice);
+    }
+
+    public void adviseMethod(Method method, org.apache.tapestry5.plastic.MethodAdvice advice)
+    {
+        assert method != null;
+        assert advice != null;
+
+        if (!allMethods.contains(method))
+            throw new IllegalArgumentException(String.format("Method %s is not defined for interface %s.", method,
+                    serviceInterface));
+
+        plasticClass.introduceMethod(method).addAdvice(advice);
+    }
+
+    public void adviseAllMethods(org.apache.tapestry5.plastic.MethodAdvice advice)
+    {
+        for (Method m : serviceInterface.getMethods())
+        {
+            adviseMethod(m, advice);
+        }
     }
 
     public Class getInterface()

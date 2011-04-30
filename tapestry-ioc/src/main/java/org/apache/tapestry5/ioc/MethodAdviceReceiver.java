@@ -30,13 +30,37 @@ public interface MethodAdviceReceiver extends AnnotationAccess
      *            advice is allowed for a single method; the advice will be executed in the order it is added.
      * @param advice
      *            the advice for this particular method. Advice must be threadsafe.
+     * @deprecated Deprecated in 5.3, to be removed in 5.4. Replaced with
+     *             {@link #adviseMethod(Method, org.apache.tapestry5.plastic.MethodAdvice)}
      */
     void adviseMethod(Method method, MethodAdvice advice);
 
     /**
      * Advises <em>all</em> methods of the interface with the given advice.
+     * 
+     * @deprecated Deprecated in 5.3, to be removed in 5.4. Replaced with
+     *             {@link #adviseAllMethods(org.apache.tapestry5.plastic.MethodAdvice)}.
      */
     void adviseAllMethods(MethodAdvice advice);
+
+    /**
+     * Adds advice for a specific method of the aspect interceptor being constructed.
+     * 
+     * @param method
+     *            method (of the interface for which an interceptor is being constructed) to be advised. Multiple
+     *            advice is allowed for a single method; the advice will be executed in the order it is added.
+     * @param advice
+     *            the advice for this particular method. Advice must be threadsafe.
+     * @since 5.3.0
+     */
+    void adviseMethod(Method method, org.apache.tapestry5.plastic.MethodAdvice advice);
+
+    /**
+     * Advises <em>all</em> methods of the interface with the given advice.
+     * 
+     * @since 5.3.0
+     */
+    void adviseAllMethods(org.apache.tapestry5.plastic.MethodAdvice advice);
 
     /**
      * Returns the interface for which methods may be advised.

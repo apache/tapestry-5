@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.ioc.services;
 
-import org.apache.tapestry5.ioc.MethodAdvice;
 import org.apache.tapestry5.ioc.AnnotationAccess;
+import org.apache.tapestry5.ioc.MethodAdvice;
 
 /**
  * A decorator used to create an interceptor that delegates each method's invocation to an

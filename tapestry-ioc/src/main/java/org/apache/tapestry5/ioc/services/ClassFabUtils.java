@@ -25,6 +25,8 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 /**
  * Handy method useful when creating new classes using {@link org.apache.tapestry5.ioc.services.ClassFab}.
+ * 
+ * @deprecated Deprecated in Tapestry 5.3, to be removed in 5.4 with no replacement
  */
 @SuppressWarnings("all")
 public final class ClassFabUtils

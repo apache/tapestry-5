@@ -23,9 +23,14 @@ package org.apache.tapestry5.plastic;
 public interface MethodAdvice
 {
     /**
-     * Advice the method, usually invoking {@link MethodInvocation#proceed()} at some point.
+     * Advise the method, usually invoking {@link MethodInvocation#proceed()} at some point.
+     * The advice is free to inspect and even replace parameters. Most
+     * Aspects will then invoke {@link MethodInvocation#proceed()}. The advice may then inspect and
+     * replace any checked thrown exceptions. Some advice (for example, caching) may selectively decide to bypass the
+     * invocation entirely, and instead invoke some other method or otherwise set a return value or thrown exception.
      * 
      * @param invocation
+     *            identifies the method being invoked, including parameters
      */
     void advise(MethodInvocation invocation);
 }

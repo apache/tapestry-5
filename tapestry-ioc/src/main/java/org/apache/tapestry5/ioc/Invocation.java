@@ -16,8 +16,12 @@ package org.apache.tapestry5.ioc;
 
 import java.lang.annotation.Annotation;
 
+import org.apache.tapestry5.plastic.MethodInvocation;
+
 /**
  * A method invocation passed to a {@link org.apache.tapestry5.ioc.MethodAdvice}.
+ * 
+ * @deprecated Deprecated in 5.3, to be removed in 5.4. Replaced with {@link MethodInvocation}.
  */
 public interface Invocation
 {
@@ -106,16 +110,16 @@ public interface Invocation
      * Overrides the result. Clears the thrown exception (if any).
      */
     void overrideResult(Object newResult);
-    
+
     /**
      * Returns the annotation, placed on the method being invoked, for the specified type. If
      * such an annotation is present, else null.
-
-     * @param annotationClass the Class object corresponding to the 
-     *        annotation type
+     * 
+     * @param annotationClass
+     *            the Class object corresponding to the
+     *            annotation type
      * @return method's annotation for the specified annotation type if
-     *     present on this element, else null
-     *     
+     *         present on this element, else null
      * @since 5.3.0
      */
     <T extends Annotation> T getMethodAnnotation(Class<T> annotationClass);

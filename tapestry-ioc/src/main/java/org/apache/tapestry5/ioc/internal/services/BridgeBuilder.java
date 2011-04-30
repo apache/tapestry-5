@@ -14,17 +14,10 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import static java.lang.String.format;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.ClassFab;
-import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.MethodIterator;
 import org.apache.tapestry5.ioc.services.MethodSignature;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
@@ -55,12 +48,6 @@ class BridgeBuilder<S, F>
     private final PlasticProxyFactory proxyFactory;
 
     private ClassInstantiator<S> instantiator;
-
-    BridgeBuilder(Logger logger, Class<S> serviceInterface, Class<F> filterInterface, ClassFactory classFactory,
-            PlasticProxyFactory proxyFactory)
-    {
-        this(logger, serviceInterface, filterInterface, proxyFactory);
-    }
 
     BridgeBuilder(Logger logger, Class<S> serviceInterface, Class<F> filterInterface, PlasticProxyFactory proxyFactory)
     {
