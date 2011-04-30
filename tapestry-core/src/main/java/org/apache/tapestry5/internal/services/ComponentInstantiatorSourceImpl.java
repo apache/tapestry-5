@@ -24,7 +24,9 @@ import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry5.internal.model.MutableComponentModelImpl;
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
+import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.LoggerSource;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
@@ -81,6 +83,8 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
     private final Logger logger;
 
+    private final OperationTracker tracker;
+
     private ClassFactory classFactory;
 
     private PlasticProxyFactory proxyFactory;
@@ -114,7 +118,9 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
     InternalRequestGlobals internalRequestGlobals,
 
-    ClasspathURLConverter classpathURLConverter)
+    ClasspathURLConverter classpathURLConverter,
+
+    OperationTracker tracker)
     {
         super(productionMode);
 
@@ -124,6 +130,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
         this.loggerSource = loggerSource;
         this.internalRequestGlobals = internalRequestGlobals;
         this.changeTracker = new URLChangeTracker(classpathURLConverter);
+        this.tracker = tracker;
 
         initializeService();
     }
@@ -175,37 +182,50 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
         if (result == null)
         {
-            // Force the creation of the class (and the transformation of the class). This will first
-            // trigger transformations of any base classes.
-
-            final ClassInstantiator<Component> plasticInstantiator = manager.getClassInstantiator(className);
-
-            final ComponentModel model = classToModel.get(className);
-
-            result = new Instantiator()
-            {
-                public Component newInstance(InternalComponentResources resources)
-                {
-                    return plasticInstantiator.with(ComponentResources.class, resources)
-                            .with(InternalComponentResources.class, resources).newInstance();
-                }
-
-                public ComponentModel getModel()
-                {
-                    return model;
-                }
-
-                @Override
-                public String toString()
-                {
-                    return String.format("[Instantiator[%s]", className);
-                }
-            };
+            result = createInstantiatorForClass(className);
 
             classToInstantiator.put(className, result);
         }
 
         return result;
+    }
+
+    private Instantiator createInstantiatorForClass(final String className)
+    {
+        return tracker.invoke(String.format("Creating instantiator for component class %s", className),
+                new Invokable<Instantiator>()
+                {
+                    public Instantiator invoke()
+                    {
+                        // Force the creation of the class (and the transformation of the class). This will first
+                        // trigger transformations of any base classes.
+
+                        final ClassInstantiator<Component> plasticInstantiator = manager
+                                .getClassInstantiator(className);
+
+                        final ComponentModel model = classToModel.get(className);
+
+                        return new Instantiator()
+                        {
+                            public Component newInstance(InternalComponentResources resources)
+                            {
+                                return plasticInstantiator.with(ComponentResources.class, resources)
+                                        .with(InternalComponentResources.class, resources).newInstance();
+                            }
+
+                            public ComponentModel getModel()
+                            {
+                                return model;
+                            }
+
+                            @Override
+                            public String toString()
+                            {
+                                return String.format("[Instantiator[%s]", className);
+                            }
+                        };
+                    }
+                });
     }
 
     // synchronized may be overkill, but that's ok.
@@ -236,66 +256,76 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
         return this;
     }
 
-    public void transform(PlasticClass plasticClass)
+    public void transform(final PlasticClass plasticClass)
     {
-        String className = plasticClass.getClassName();
-        String parentClassName = plasticClass.getSuperClassName();
-
-        // The parent model may not exist, if the super class is not in a controlled package.
-
-        ComponentModel parentModel = classToModel.get(parentClassName);
-
-        final boolean isRoot = parentModel == null;
-
-        if (isRoot
-                && !(parentClassName.equals("java.lang.Object") || parentClassName
-                        .equals("groovy.lang.GroovyObjectSupport")))
-        {
-            String suggestedPackageName = buildSuggestedPackageName(className);
-
-            throw new RuntimeException(ServicesMessages.baseClassInWrongPackage(parentClassName, className,
-                    suggestedPackageName));
-        }
-
-        // Tapestry 5.2 was more sensitive that the parent class have a public no-args constructor. Plastic
-        // doesn't care, and we don't have the tools to dig that information out.
-
-        Logger logger = loggerSource.getLogger(className);
-
-        Resource baseResource = new ClasspathResource(parent, PlasticInternalUtils.toClassPath(className));
-
-        changeTracker.add(baseResource.toURL());
-
-        if (isRoot)
-        {
-            implementComponentInterface(plasticClass);
-        }
-
-        MutableComponentModel model = new MutableComponentModelImpl(plasticClass.getClassName(), logger, baseResource,
-                parentModel);
-
-        transformerChain.transform(plasticClass, new TransformationSupport()
-        {
-            public Class toClass(String typeName)
-            {
-                try
+        tracker.run(String.format("Running component class transformations on %s", plasticClass.getClassName()),
+                new Runnable()
                 {
-                    return PlasticInternalUtils.toClass(manager.getClassLoader(), typeName);
-                }
-                catch (ClassNotFoundException ex)
-                {
-                    throw new RuntimeException(String.format("Unable to convert type '%s' to a Class: %s", typeName,
-                            InternalUtils.toMessage(ex)), ex);
-                }
-            }
+                    public void run()
+                    {
+                        String className = plasticClass.getClassName();
+                        String parentClassName = plasticClass.getSuperClassName();
 
-            public boolean isRootTransformation()
-            {
-                return isRoot;
-            }
-        }, model);
+                        // The parent model may not exist, if the super class is not in a controlled package.
 
-        classToModel.put(className, model);
+                        ComponentModel parentModel = classToModel.get(parentClassName);
+
+                        final boolean isRoot = parentModel == null;
+
+                        if (isRoot
+                                && !(parentClassName.equals("java.lang.Object") || parentClassName
+                                        .equals("groovy.lang.GroovyObjectSupport")))
+                        {
+                            String suggestedPackageName = buildSuggestedPackageName(className);
+
+                            throw new RuntimeException(ServicesMessages.baseClassInWrongPackage(parentClassName,
+                                    className, suggestedPackageName));
+                        }
+
+                        // Tapestry 5.2 was more sensitive that the parent class have a public no-args constructor.
+                        // Plastic
+                        // doesn't care, and we don't have the tools to dig that information out.
+
+                        Logger logger = loggerSource.getLogger(className);
+
+                        Resource baseResource = new ClasspathResource(parent, PlasticInternalUtils
+                                .toClassPath(className));
+
+                        changeTracker.add(baseResource.toURL());
+
+                        if (isRoot)
+                        {
+                            implementComponentInterface(plasticClass);
+                        }
+
+                        MutableComponentModel model = new MutableComponentModelImpl(plasticClass.getClassName(),
+                                logger, baseResource, parentModel);
+
+                        transformerChain.transform(plasticClass, new TransformationSupport()
+                        {
+                            public Class toClass(String typeName)
+                            {
+                                try
+                                {
+                                    return PlasticInternalUtils.toClass(manager.getClassLoader(), typeName);
+                                }
+                                catch (ClassNotFoundException ex)
+                                {
+                                    throw new RuntimeException(String.format(
+                                            "Unable to convert type '%s' to a Class: %s", typeName,
+                                            InternalUtils.toMessage(ex)), ex);
+                                }
+                            }
+
+                            public boolean isRootTransformation()
+                            {
+                                return isRoot;
+                            }
+                        }, model);
+
+                        classToModel.put(className, model);
+                    }
+                });
     }
 
     private MethodDescription GET_COMPONENT_RESOURCES = new MethodDescription(PlasticUtils.getMethod(
