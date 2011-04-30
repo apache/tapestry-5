@@ -41,6 +41,7 @@ import org.apache.tapestry5.internal.plastic.asm.tree.MethodNode;
 import org.apache.tapestry5.internal.plastic.asm.tree.VarInsnNode;
 import org.apache.tapestry5.plastic.AnnotationAccess;
 import org.apache.tapestry5.plastic.ClassInstantiator;
+import org.apache.tapestry5.plastic.ClassType;
 import org.apache.tapestry5.plastic.ComputedValue;
 import org.apache.tapestry5.plastic.Condition;
 import org.apache.tapestry5.plastic.FieldConduit;
@@ -1309,7 +1310,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         private void rewriteOriginalMethod()
         {
-            pool.realize(invocationClassNode);
+            pool.realize(className, ClassType.METHOD_INVOCATION, invocationClassNode);
 
             String fieldName = String.format("methodinvocationbundle_%s_%s", description.methodName,
                     PlasticUtils.nextUID());
@@ -1566,7 +1567,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             // TODO: Perhaps we should defer this private check until it is needed,
             // i.e., when we do some work on the field that requires it to be private?
             // However, given class loading issues, public fields are likely to cause
-            // their own problems when passing the ClassLoader boundrary.
+            // their own problems when passing the ClassLoader boundary.
 
             if (!Modifier.isPrivate(node.access))
                 throw new IllegalArgumentException(
@@ -2069,10 +2070,10 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
     private PlasticClassHandleShim instantiateShim(ClassNode shimClassNode)
     {
-        Class shimClass = pool.realize(shimClassNode);
-
         try
         {
+            Class shimClass = pool.realize(className, ClassType.SUPPORT, shimClassNode);
+
             return (PlasticClassHandleShim) shimClass.newInstance();
         }
         catch (Exception ex)

@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.tapestry5.internal.plastic.asm.ClassReader;
 import org.apache.tapestry5.internal.plastic.asm.ClassWriter;
@@ -33,6 +34,10 @@ import org.apache.tapestry5.internal.plastic.asm.tree.AnnotationNode;
 import org.apache.tapestry5.internal.plastic.asm.tree.ClassNode;
 import org.apache.tapestry5.plastic.AnnotationAccess;
 import org.apache.tapestry5.plastic.ClassInstantiator;
+import org.apache.tapestry5.plastic.ClassType;
+import org.apache.tapestry5.plastic.PlasticClassEvent;
+import org.apache.tapestry5.plastic.PlasticClassListener;
+import org.apache.tapestry5.plastic.PlasticClassListenerHub;
 import org.apache.tapestry5.plastic.PlasticClassTransformation;
 import org.apache.tapestry5.plastic.PlasticManagerDelegate;
 
@@ -41,7 +46,7 @@ import org.apache.tapestry5.plastic.PlasticManagerDelegate;
  * to be instantiated as runtime classes.
  */
 @SuppressWarnings("rawtypes")
-public class PlasticClassPool implements ClassLoaderDelegate, Opcodes
+public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticClassListenerHub
 {
     final PlasticClassLoader loader;
 
@@ -54,6 +59,8 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes
     private final MethodBundle emptyMethodBundle = new MethodBundle();
 
     private final StaticContext emptyStaticContext = new StaticContext();
+
+    private final List<PlasticClassListener> listeners = new CopyOnWriteArrayList<PlasticClassListener>();
 
     private final Cache<String, TypeCategory> typeName2Category = new Cache<String, TypeCategory>()
     {
@@ -108,22 +115,60 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes
     public synchronized Class realizeTransformedClass(ClassNode classNode, MethodBundle methodBundle,
             StaticContext staticContext)
     {
-        Class result = realize(classNode);
+        Class result = realize(PlasticInternalUtils.toClassName(classNode.name), ClassType.PRIMARY, classNode);
 
         baseClassDefs.put(result.getName(), new BaseClassDef(methodBundle, staticContext));
 
         return result;
     }
 
-    public synchronized Class realize(ClassNode classNode)
+    public synchronized Class realize(String primaryClassName, ClassType classType, final ClassNode classNode)
     {
-        PlasticInternalUtils.debugClass(classNode);
+        if (!listeners.isEmpty())
+        {
+            fire(toEvent(primaryClassName, classType, classNode));
+        }
 
         byte[] bytecode = toBytecode(classNode);
 
         String className = PlasticInternalUtils.toClassName(classNode.name);
 
         return loader.defineClassWithBytecode(className, bytecode);
+    }
+
+    private PlasticClassEvent toEvent(final String primaryClassName, final ClassType classType,
+            final ClassNode classNode)
+    {
+        return new PlasticClassEvent()
+        {
+            public ClassType getType()
+            {
+                return classType;
+            }
+
+            public String getPrimaryClassName()
+            {
+                return primaryClassName;
+            }
+
+            public String getDissasembledBytecode()
+            {
+                return PlasticInternalUtils.dissasembleBytecode(classNode);
+            }
+
+            public String getClassName()
+            {
+                return PlasticInternalUtils.toClassName(classNode.name);
+            }
+        };
+    }
+
+    private void fire(PlasticClassEvent event)
+    {
+        for (PlasticClassListener listener : listeners)
+        {
+            listener.classWillLoad(event);
+        }
     }
 
     private byte[] toBytecode(ClassNode classNode)
@@ -468,4 +513,19 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes
 
         return typeName2Category.get(typeName);
     }
+
+    public void addPlasticClassListener(PlasticClassListener listener)
+    {
+        assert listener != null;
+
+        listeners.add(listener);
+    }
+
+    public void removePlasticClassListener(PlasticClassListener listener)
+    {
+        assert listener != null;
+
+        listeners.remove(listener);
+    }
+
 }

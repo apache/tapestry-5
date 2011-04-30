@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.plastic;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,11 +38,6 @@ import org.apache.tapestry5.plastic.MethodDescription;
 @SuppressWarnings("rawtypes")
 public class PlasticInternalUtils
 {
-
-    private static final String SEP = "================================================";
-
-    public static final boolean DEBUG_ENABLED = Boolean.getBoolean("plastic-classnode-debug");
-
     public static final String[] EMPTY = new String[0];
 
     public static boolean isEmpty(Object[] input)
@@ -218,22 +214,18 @@ public class PlasticInternalUtils
         return new ArrayList<T>();
     }
 
-    public static void debugClass(ClassNode classNode)
+    public static String dissasembleBytecode(ClassNode classNode)
     {
-        if (!DEBUG_ENABLED)
-            return;
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter writer = new PrintWriter(stringWriter);
 
-        PrintWriter pw = new PrintWriter(System.out);
-
-        TraceClassVisitor visitor = new TraceClassVisitor(pw);
-
-        System.out.println(SEP);
+        TraceClassVisitor visitor = new TraceClassVisitor(writer);
 
         classNode.accept(visitor);
 
-        pw.flush();
+        writer.close();
 
-        System.out.println(SEP);
+        return stringWriter.toString();
     }
 
     private static final Pattern PROPERTY_PATTERN = Pattern.compile("^(m?_+)?(.+?)_*$", Pattern.CASE_INSENSITIVE);

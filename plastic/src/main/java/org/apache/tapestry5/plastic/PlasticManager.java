@@ -26,7 +26,7 @@ import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
  * or to create new classes dynamically at runtime.
  */
 @SuppressWarnings("unchecked")
-public class PlasticManager
+public class PlasticManager implements PlasticClassListenerHub
 {
     private final PlasticClassPool pool;
 
@@ -182,12 +182,22 @@ public class PlasticManager
                     "Class %s is not an interface; proxies may only be created for interfaces.",
                     interfaceType.getName()));
 
-        String name = String.format("$PlasticProxy$%s_%s", interfaceType.getSimpleName(), PlasticUtils.nextUID());
+        String name = String.format("$%s_%s", interfaceType.getSimpleName(), PlasticUtils.nextUID());
 
         PlasticClassTransformation<T> result = pool.createTransformation("java.lang.Object", name);
 
         result.getPlasticClass().introduceInterface(interfaceType);
 
         return result;
+    }
+
+    public void addPlasticClassListener(PlasticClassListener listener)
+    {
+        pool.addPlasticClassListener(listener);
+    }
+
+    public void removePlasticClassListener(PlasticClassListener listener)
+    {
+        pool.removePlasticClassListener(listener);
     }
 }
