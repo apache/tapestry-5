@@ -33,6 +33,7 @@ import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
+import org.apache.tapestry5.ioc.internal.services.PlasticClassListenerLogger;
 import org.apache.tapestry5.ioc.internal.services.PlasticProxyFactoryImpl;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -49,6 +50,8 @@ import org.apache.tapestry5.plastic.InstructionBuilder;
 import org.apache.tapestry5.plastic.InstructionBuilderCallback;
 import org.apache.tapestry5.plastic.MethodDescription;
 import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticClassEvent;
+import org.apache.tapestry5.plastic.PlasticClassListener;
 import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.plastic.PlasticManager;
 import org.apache.tapestry5.plastic.PlasticManagerDelegate;
@@ -66,7 +69,7 @@ import org.slf4j.Logger;
  * A wrapper around a {@link PlasticManager} that allows certain classes to be modified as they are loaded.
  */
 public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubImpl implements
-        ComponentInstantiatorSource, UpdateListener, PlasticManagerDelegate
+        ComponentInstantiatorSource, UpdateListener, PlasticManagerDelegate, PlasticClassListener
 {
 
     private final Set<String> controlledPackageNames = CollectionFactory.newSet();
@@ -168,9 +171,11 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     {
         manager = new PlasticManager(parent, this, controlledPackageNames);
 
+        manager.addPlasticClassListener(this);
+
         classFactory = new ClassFactoryImpl(manager.getClassLoader(), logger);
 
-        proxyFactory = new PlasticProxyFactoryImpl(classFactory, manager.getClassLoader());
+        proxyFactory = new PlasticProxyFactoryImpl(classFactory, manager.getClassLoader(), logger);
 
         classToInstantiator.clear();
         classToModel.clear();
@@ -369,4 +374,13 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
         return null;
     }
+
+    public void classWillLoad(PlasticClassEvent event)
+    {
+        Logger logger = loggerSource.getLogger("tapestry.transformer." + event.getPrimaryClassName());
+
+        if (logger.isDebugEnabled())
+            logger.debug(event.getDissasembledBytecode());
+    }
+
 }

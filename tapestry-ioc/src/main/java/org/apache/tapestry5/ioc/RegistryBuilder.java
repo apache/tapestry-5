@@ -80,9 +80,10 @@ public final class RegistryBuilder
         // module exists.
 
         Logger classFactoryLogger = loggerSource.getLogger(TapestryIOCModule.class.getName() + ".ClassFactory");
+        Logger proxyFactoryLogger = loggerSource.getLogger(TapestryIOCModule.class.getName() + ".PlasticProxyFactory");
 
         classFactory = new ClassFactoryImpl(this.classLoader, classFactoryLogger);
-        proxyFactory = new PlasticProxyFactoryImpl(classFactory, this.classLoader);
+        proxyFactory = new PlasticProxyFactoryImpl(classFactory, this.classLoader, proxyFactoryLogger);
 
         add(TapestryIOCModule.class);
     }

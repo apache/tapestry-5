@@ -16,7 +16,6 @@ package org.apache.tapestry5.ioc.internal.services;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.ObjectCreator;
@@ -26,24 +25,34 @@ import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.plastic.ClassInstantiator;
 import org.apache.tapestry5.plastic.InstructionBuilder;
 import org.apache.tapestry5.plastic.InstructionBuilderCallback;
-import org.apache.tapestry5.plastic.MethodDescription;
 import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticClassListener;
 import org.apache.tapestry5.plastic.PlasticClassTransformation;
 import org.apache.tapestry5.plastic.PlasticClassTransformer;
 import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.plastic.PlasticManager;
 import org.apache.tapestry5.plastic.PlasticMethod;
+import org.slf4j.Logger;
 
 public class PlasticProxyFactoryImpl implements PlasticProxyFactory
 {
     private final ClassFactory classFactory;
 
+    private final Logger logger;
+
     private final PlasticManager manager;
 
-    public PlasticProxyFactoryImpl(ClassFactory classFactory, ClassLoader parentClassLoader)
+    public PlasticProxyFactoryImpl(ClassFactory classFactory, ClassLoader parentClassLoader, Logger logger)
     {
         this.classFactory = classFactory;
+        this.logger = logger;
+
         manager = new PlasticManager(parentClassLoader);
+
+        if (logger != null)
+        {
+            manager.addPlasticClassListener(new PlasticClassListenerLogger(logger));
+        }
     }
 
     public ClassLoader getClassLoader()
@@ -106,6 +115,16 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
     public Location getConstructorLocation(Constructor constructor)
     {
         return classFactory.getConstructorLocation(constructor);
+    }
+
+    public void addPlasticClassListener(PlasticClassListener listener)
+    {
+        manager.addPlasticClassListener(listener);
+    }
+
+    public void removePlasticClassListener(PlasticClassListener listener)
+    {
+        manager.removePlasticClassListener(listener);
     }
 
 }

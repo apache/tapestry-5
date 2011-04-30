@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.plastic.ClassInstantiator;
+import org.apache.tapestry5.plastic.PlasticClassListenerHub;
 import org.apache.tapestry5.plastic.PlasticClassTransformation;
 import org.apache.tapestry5.plastic.PlasticClassTransformer;
 
@@ -29,7 +30,7 @@ import org.apache.tapestry5.plastic.PlasticClassTransformer;
  * 
  * @since 5.3.0
  */
-public interface PlasticProxyFactory
+public interface PlasticProxyFactory extends PlasticClassListenerHub
 {
     /**
      * Returns the class loader used when creating new classes, this is a child class loader
