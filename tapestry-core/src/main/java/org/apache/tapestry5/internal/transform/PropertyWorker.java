@@ -45,8 +45,6 @@ public class PropertyWorker implements ComponentClassTransformWorker2
         PropertyAccessType accessType = toType(field);
 
         field.createAccessors(accessType);
-
-        // TODO: Change createAccessors() to do a check that the methods do not already exist.
     }
 
     private PropertyAccessType toType(PlasticField field)
