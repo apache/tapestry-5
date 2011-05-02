@@ -1000,7 +1000,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     {
         openLinks("Getter Method Already Exists");
 
-        assertTextPresent("Unable to create new method public java.lang.String getName() as it already exists in class org.apache.tapestry5.integration.app1.pages.GetterMethodAlreadyExists.");
+        assertTextPresent("Unable to create new accessor method public java.lang.String getName() on class org.apache.tapestry5.integration.app1.pages.GetterMethodAlreadyExists as the method is already implemented.");
     }
 
     /**

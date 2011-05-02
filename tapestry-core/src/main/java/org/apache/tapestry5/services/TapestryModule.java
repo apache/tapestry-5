@@ -627,6 +627,19 @@ public final class TapestryModule
 
     /**
      * Adds a number of standard component class transform workers:
+     * <ul>
+     * <dt>Property</dt>
+     * <dd>Generates accessor methods if {@link org.apache.tapestry5.annotations.Property} annotation is present</dd>
+     * </ul>
+     */
+    @Contribute(ComponentClassTransformWorker2.class)
+    public static void provideTransformWorkers(OrderedConfiguration<ComponentClassTransformWorker2> configuration)
+    {
+        configuration.add("Property", new PropertyWorker());
+    }
+
+    /**
+     * Adds a number of standard component class transform workers:
      * <dl>
      * <dt>Retain</dt>
      * <dd>Allows fields to retain their values between requests</dd>
@@ -666,8 +679,6 @@ public final class TapestryModule
      * <dt>InvokePostRenderCleanupOnResources</dt>
      * <dd>Makes sure {@link org.apache.tapestry5.internal.InternalComponentResources#postRenderCleanup()} is invoked
      * after a component finishes rendering</dd>
-     * <dt>GenerateAccessors</dt>
-     * <dd>Generates accessor methods if {@link org.apache.tapestry5.annotations.Property} annotation is present</dd>
      * <dt>Cached</dt>
      * <dd>Checks for the {@link org.apache.tapestry5.annotations.Cached} annotation</dd>
      * <dt>Log</dt>
@@ -680,7 +691,8 @@ public final class TapestryModule
      * <dd>Support for the {@link ActivationRequestParameter} annotation
      * </dl>
      */
-    public static void contributeComponentClassTransformWorker(
+    @Contribute(ComponentClassTransformWorker2.class)
+    public static void provideOldStyleCassTransformWorkers(
             OrderedConfiguration<ComponentClassTransformWorker> configuration,
 
             MetaWorker metaWorker,
@@ -738,8 +750,6 @@ public final class TapestryModule
         configuration.addInstance("Import", ImportWorker.class, "after:SetupRender");
 
         configuration.add("InvokePostRenderCleanupOnResources", new InvokePostRenderCleanupOnResourcesWorker());
-
-        configuration.add("Property", new PropertyWorker(), "before:Inject*");
 
         // These must come after Property, since they actually delete fields
         // that may still have the annotation

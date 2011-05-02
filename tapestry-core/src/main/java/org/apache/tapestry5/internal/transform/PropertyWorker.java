@@ -1,4 +1,4 @@
-// Copyright 2008, 2010 The Apache Software Foundation
+// Copyright 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,93 +14,59 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import java.lang.reflect.Modifier;
-
 import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.ComponentMethodAdvice;
-import org.apache.tapestry5.services.ComponentMethodInvocation;
-import org.apache.tapestry5.services.FieldAccess;
-import org.apache.tapestry5.services.TransformField;
-import org.apache.tapestry5.services.TransformMethodSignature;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticField;
+import org.apache.tapestry5.plastic.PropertyAccessType;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 
 /**
  * Provides the getter and setter methods. The methods are added as "existing", meaning that field access to them will
  * be transformed as necessary by other annotations. This worker needs to be scheduled before any worker that might
  * delete a field.
- *
+ * 
  * @see org.apache.tapestry5.annotations.Property
  */
-public class PropertyWorker implements ComponentClassTransformWorker
+public class PropertyWorker implements ComponentClassTransformWorker2
 {
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-        for (TransformField field : transformation.matchFieldsWithAnnotation(Property.class))
+        for (PlasticField field : plasticClass.getFieldsWithAnnotation(Property.class))
         {
-            createAccessorsForField(transformation, field);
+            createAccessorsForField(field);
         }
     }
 
-    private void createAccessorsForField(ClassTransformation transformation, TransformField field)
+    private void createAccessorsForField(PlasticField field)
+    {
+        PropertyAccessType accessType = toType(field);
+
+        field.createAccessors(accessType);
+
+        // TODO: Change createAccessors() to do a check that the methods do not already exist.
+    }
+
+    private PropertyAccessType toType(PlasticField field)
     {
         Property annotation = field.getAnnotation(Property.class);
 
-        String propertyName = InternalUtils.capitalize(InternalUtils.stripMemberName(field.getName()));
+        boolean read = annotation.read();
+        boolean write = annotation.write();
 
-        if (annotation.read())
-            addGetter(transformation, field, propertyName);
+        if (read && write)
+            return PropertyAccessType.READ_WRITE;
 
-        if (annotation.write())
-            addSetter(transformation, field, propertyName);
-    }
+        if (read)
+            return PropertyAccessType.READ_ONLY;
 
-    private void addSetter(ClassTransformation transformation, TransformField field, String propertyName)
-    {
-        TransformMethodSignature setter = new TransformMethodSignature(Modifier.PUBLIC, "void", "set" + propertyName,
-                new String[]
-                { field.getType() }, null);
+        if (write)
+            return PropertyAccessType.WRITE_ONLY;
 
-        ensureNotOverride(transformation, setter);
-
-        final FieldAccess access = field.getAccess();
-
-        transformation.getOrCreateMethod(setter).addAdvice(new ComponentMethodAdvice()
-        {
-            public void advise(ComponentMethodInvocation invocation)
-            {
-                access.write(invocation.getInstance(), invocation.getParameter(0));
-            }
-        });
-    }
-
-    private void ensureNotOverride(ClassTransformation transformation, TransformMethodSignature signature)
-    {
-        if (transformation.isDeclaredMethod(signature))
-            throw new RuntimeException(String.format(
-                    "Unable to create new method %s as it already exists in class %s.", signature, transformation
-                            .getClassName()));
-    }
-
-    private void addGetter(ClassTransformation transformation, TransformField field, String propertyName)
-    {
-        final String methodSignature = field.getSignature() != null ? "()" + field.getSignature() : null;
-        TransformMethodSignature getter =
-                new TransformMethodSignature(Modifier.PUBLIC, field.getType(), methodSignature,
-                        "get" + propertyName, null, null);
-
-        ensureNotOverride(transformation, getter);
-
-        final FieldAccess access = field.getAccess();
-
-        transformation.getOrCreateMethod(getter).addAdvice(new ComponentMethodAdvice()
-        {
-            public void advise(ComponentMethodInvocation invocation)
-            {
-                invocation.overrideResult(access.read(invocation.getInstance()));
-            }
-        });
+        throw new IllegalArgumentException(String.format(
+                "@Property annotation on %s.%s should have either read() or write() enabled.", field.getPlasticClass()
+                        .getClassName(), field.getName()));
     }
 }
