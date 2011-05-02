@@ -126,25 +126,28 @@ public interface PlasticField extends AnnotationAccess
      * Creates access to the field, using the default property name derived from the name of the field.
      * The default property name is the same as the name of the field, but with any leading or trailing underscore
      * characters removed (a common convention among some programmers). Also, strips leading "m_" from the field name
-     * (another
-     * common convention).
+     * (another common convention).
      * 
      * @param accessType
      *            which methods to create
      * @return the field for further manipulation
+     * @throws IllegalArgumentException
+     *             if an accessor method to be created already exists (possibly inherited from a base class)
      */
     PlasticField createAccessors(PropertyAccessType accessType);
 
     /**
      * Creates accessors, possibly replacing existing methods (or overriding methods from a super class).
      * The method names consist of the property name, with its first character converted to upper-case, prefixed
-     * with "get" or "set".
+     * with "get" or "set". The accessor methods must not already exist.
      * 
      * @param accessType
      *            which methods to create
      * @param propertyName
      *            the name of the property (from which the names of the methods are generated)
      * @return the field for further manipulation
+     * @throws IllegalArgumentException
+     *             if an accessor method to be created already exists (possibly inherited from a base class)
      */
     PlasticField createAccessors(PropertyAccessType accessType, String propertyName);
 

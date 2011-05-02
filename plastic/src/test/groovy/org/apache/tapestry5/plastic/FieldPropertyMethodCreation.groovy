@@ -14,23 +14,29 @@
 
 package org.apache.tapestry5.plastic
 
-import org.apache.tapestry5.plastic.PlasticManager;
-import org.apache.tapestry5.plastic.PropertyAccessType;
+import java.util.concurrent.atomic.AtomicReference
 
-import spock.lang.Specification;
-import testannotations.Property;
+import spock.lang.Specification
+import testannotations.Property
+import testsubjects.CreateAccessorsSubject
+import testsubjects.GenericCreateAccessorsSubject
 
 class FieldPropertyMethodCreation extends Specification
 {
-    def "create accessors for fields"() {
-        setup:
-
+    def withAccessors(Class subject, PropertyAccessType accessType) {
         def mgr = new PlasticManager()
-        def pc = mgr.getPlasticClass ("testsubjects.CreateAccessorsSubject")
+        def pc = mgr.getPlasticClass (subject.name)
 
-        pc.getFieldsWithAnnotation(Property.class).each { f -> f.createAccessors(PropertyAccessType.READ_WRITE) }
+        pc.getFieldsWithAnnotation(Property.class).each { f ->
+            f.createAccessors(accessType)
+        }
 
         def o = pc.createInstantiator().newInstance()
+    }
+
+    def "create accessors for fields"() {
+
+        def o = withAccessors(CreateAccessorsSubject.class, PropertyAccessType.READ_WRITE)
 
         when:
 
@@ -61,5 +67,46 @@ class FieldPropertyMethodCreation extends Specification
 
         then: "Setting primitive property reflected in original field"
         assert o.m_count == o.count
+    }
+
+    def "create accessors for generic fields"() {
+
+        def o = withAccessors(GenericCreateAccessorsSubject.class, PropertyAccessType.READ_WRITE)
+
+        def ref = new AtomicReference<String>("Plastic")
+
+        o.ref = ref
+
+        expect:
+
+        assert o.ref == ref
+        assert o.refValue == "Plastic"
+
+        o.class.getMethod("getRef").signature == "()Ljava/util/concurrent/atomic/AtomicReference<Ljava/lang/String;>;"
+        o.class.getMethod("setRef", AtomicReference.class).signature == "Ljava/util/concurrent/atomic/AtomicReference<Ljava/lang/String;>;"
+    }
+
+    def "create getter that already exists"() {
+        when:
+
+        withAccessors(AccessorsAlreadyExistSubject.class, PropertyAccessType.READ_ONLY)
+
+        then:
+
+        def e = thrown(IllegalArgumentException)
+
+        assert e.message == "Unable to create new accessor method public java.lang.String getValue() on class org.apache.tapestry5.plastic.AccessorsAlreadyExistSubject as the method is already implemented."
+    }
+
+    def "create setter that already exists"() {
+        when:
+
+        withAccessors(AccessorsAlreadyExistSubject.class, PropertyAccessType.WRITE_ONLY)
+
+        then:
+
+        def e = thrown(IllegalArgumentException)
+
+        assert e.message == "Unable to create new accessor method public void setValue(java.lang.String) on class org.apache.tapestry5.plastic.AccessorsAlreadyExistSubject as the method is already implemented."
     }
 }

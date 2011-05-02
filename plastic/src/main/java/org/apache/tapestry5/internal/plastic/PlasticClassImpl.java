@@ -769,7 +769,9 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
             if (accessType != PropertyAccessType.WRITE_ONLY)
             {
-                introduceMethod(new MethodDescription(getTypeName(), "get" + capitalized, null)).changeImplementation(
+                String signature = node.signature == null ? null : "()" + node.signature;
+
+                introduceAccessorMethod(getTypeName(), "get" + capitalized, null, signature,
                         new InstructionBuilderCallback()
                         {
                             public void doBuild(InstructionBuilder builder)
@@ -781,19 +783,37 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
             if (accessType != PropertyAccessType.READ_ONLY)
             {
-                introduceMethod(new MethodDescription("void", "set" + capitalized, getTypeName()))
-                        .changeImplementation(new InstructionBuilderCallback()
-                        {
-                            public void doBuild(InstructionBuilder builder)
-                            {
-                                builder.loadThis().loadArgument(0);
-                                builder.putField(className, node.name, getTypeName());
-                                builder.returnResult();
-                            }
-                        });
+                String signature = node.signature == null ? null : "(" + node.signature + ")V";
+
+                introduceAccessorMethod("void", "set" + capitalized, new String[]
+                { getTypeName() }, node.signature, new InstructionBuilderCallback()
+                {
+                    public void doBuild(InstructionBuilder builder)
+                    {
+                        builder.loadThis().loadArgument(0);
+                        builder.putField(className, node.name, getTypeName());
+                        builder.returnResult();
+                    }
+                });
             }
 
             return this;
+        }
+
+        private void introduceAccessorMethod(String returnType, String name, String[] parameterTypes, String signature,
+                InstructionBuilderCallback callback)
+        {
+            MethodDescription description = new MethodDescription(ACC_PUBLIC, returnType, name, parameterTypes,
+                    signature, null);
+
+            String desc = nameCache.toDesc(description);
+
+            if (methodBundle.isImplemented(name, desc))
+                throw new IllegalArgumentException(String.format(
+                        "Unable to create new accessor method %s on class %s as the method is already implemented.",
+                        description.toString(), className));
+
+            introduceMethod(description, callback);
         }
 
         private void replaceFieldWriteAccess(String conduitFieldName)
