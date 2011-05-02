@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import java.lang.reflect.Modifier;
-import java.util.List;
 import java.util.Locale;
 
 import org.apache.tapestry5.Asset;
@@ -23,21 +21,29 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.func.Flow;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.runtime.Component;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.plastic.FieldHandle;
+import org.apache.tapestry5.plastic.MethodAdvice;
+import org.apache.tapestry5.plastic.MethodInvocation;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticMethod;
+import org.apache.tapestry5.services.AssetSource;
+import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 
 /**
  * Implements the {@link Import} annotation, both at the class and at the method level.
  * 
  * @since 5.2.0
  */
-public class ImportWorker implements ComponentClassTransformWorker
+public class ImportWorker implements ComponentClassTransformWorker2
 {
     private final JavaScriptSupport javascriptSupport;
 
@@ -68,59 +74,58 @@ public class ImportWorker implements ComponentClassTransformWorker
         this.assetSource = assetSource;
     }
 
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+    public void transform(PlasticClass componentClass, TransformationSupport support, MutableComponentModel model)
     {
-        processClassAnnotationAtSetupRenderPhase(transformation, model);
+        processClassAnnotationAtSetupRenderPhase(componentClass, model);
 
-        for (TransformMethod m : transformation.matchMethodsWithAnnotation(Import.class))
+        for (PlasticMethod m : componentClass.getMethodsWithAnnotation(Import.class))
         {
-            decorateMethod(transformation, model, m);
+            decorateMethod(componentClass, model, m);
         }
     }
 
-    private void processClassAnnotationAtSetupRenderPhase(ClassTransformation transformation,
-            MutableComponentModel model)
+    private void processClassAnnotationAtSetupRenderPhase(PlasticClass componentClass, MutableComponentModel model)
     {
-        Import annotation = transformation.getAnnotation(Import.class);
+        Import annotation = componentClass.getAnnotation(Import.class);
 
         if (annotation == null)
             return;
 
-        TransformMethod setupRender = transformation.getOrCreateMethod(TransformConstants.SETUP_RENDER_SIGNATURE);
+        PlasticMethod setupRender = componentClass.introduceMethod(TransformConstants.SETUP_RENDER_DESCRIPTION);
 
-        decorateMethod(transformation, model, setupRender, annotation);
+        decorateMethod(componentClass, model, setupRender, annotation);
 
         model.addRenderPhase(SetupRender.class);
     }
 
-    private void decorateMethod(ClassTransformation transformation, MutableComponentModel model, TransformMethod method)
+    private void decorateMethod(PlasticClass componentClass, MutableComponentModel model, PlasticMethod method)
     {
         Import annotation = method.getAnnotation(Import.class);
 
-        decorateMethod(transformation, model, method, annotation);
+        decorateMethod(componentClass, model, method, annotation);
     }
 
-    private void decorateMethod(ClassTransformation transformation, MutableComponentModel model,
-            TransformMethod method, Import annotation)
+    private void decorateMethod(PlasticClass componentClass, MutableComponentModel model, PlasticMethod method,
+            Import annotation)
     {
         importStacks(method, annotation.stack());
 
-        importLibraries(transformation, model, method, annotation.library());
+        importLibraries(componentClass, model, method, annotation.library());
 
-        importStylesheets(transformation, model, method, annotation.stylesheet());
+        importStylesheets(componentClass, model, method, annotation.stylesheet());
     }
 
-    private void importStacks(TransformMethod method, String[] stacks)
+    private void importStacks(PlasticMethod method, String[] stacks)
     {
         if (stacks.length != 0)
             method.addAdvice(createImportStackAdvice(stacks));
     }
 
-    private ComponentMethodAdvice createImportStackAdvice(final String[] stacks)
+    private MethodAdvice createImportStackAdvice(final String[] stacks)
     {
-        return new ComponentMethodAdvice()
+        return new MethodAdvice()
         {
-            public void advise(ComponentMethodInvocation invocation)
+            public void advise(MethodInvocation invocation)
             {
                 for (String stack : stacks)
                 {
@@ -132,31 +137,32 @@ public class ImportWorker implements ComponentClassTransformWorker
         };
     }
 
-    private void importLibraries(ClassTransformation transformation, MutableComponentModel model,
-            TransformMethod method, String[] paths)
+    private void importLibraries(PlasticClass plasticClass, MutableComponentModel model, PlasticMethod method,
+            String[] paths)
     {
-        decorateMethodWithOperation(transformation, model, method, paths, importLibrary);
+        decorateMethodWithOperation(plasticClass, model, method, paths, importLibrary);
     }
 
-    private void importStylesheets(ClassTransformation transformation, MutableComponentModel model,
-            TransformMethod method, String[] paths)
+    private void importStylesheets(PlasticClass plasticClass, MutableComponentModel model, PlasticMethod method,
+            String[] paths)
     {
-        decorateMethodWithOperation(transformation, model, method, paths, importStylesheet);
+        decorateMethodWithOperation(plasticClass, model, method, paths, importStylesheet);
     }
 
-    private void decorateMethodWithOperation(ClassTransformation transformation, MutableComponentModel model,
-            TransformMethod method, String[] paths, Worker<Asset> operation)
+    private void decorateMethodWithOperation(PlasticClass componentClass, MutableComponentModel model,
+            PlasticMethod method, String[] paths, Worker<Asset> operation)
     {
         if (paths.length == 0)
             return;
 
         String[] expandedPaths = expandPaths(paths);
 
-        FieldAccess access = createFieldForAssets(transformation);
+        FieldHandle assetListHandle = componentClass.introduceField(Asset[].class,
+                "importedAssets_" + method.getDescription().methodName).getHandle();
 
-        storeLocalizedAssetsAtPageLoad(transformation, model.getBaseResource(), expandedPaths, access);
+        storeLocalizedAssetsAtPageLoad(componentClass, model.getBaseResource(), expandedPaths, assetListHandle);
 
-        addMethodAssetOperationAdvice(method, access, operation);
+        addMethodAssetOperationAdvice(method, assetListHandle, operation);
     }
 
     private String[] expandPaths(String[] paths)
@@ -169,59 +175,50 @@ public class ImportWorker implements ComponentClassTransformWorker
         return result;
     }
 
-    private FieldAccess createFieldForAssets(ClassTransformation transformation)
+    private void storeLocalizedAssetsAtPageLoad(PlasticClass componentClass, final Resource baseResource,
+            final String[] expandedPaths, final FieldHandle access)
     {
-        TransformField field = transformation.createField(Modifier.PROTECTED, List.class.getName(), "includedAssets");
-
-        return field.getAccess();
-    }
-
-    private void storeLocalizedAssetsAtPageLoad(ClassTransformation transformation, final Resource baseResource,
-            final String[] expandedPaths, final FieldAccess access)
-    {
-        ComponentMethodAdvice advice = new ComponentMethodAdvice()
+        MethodAdvice advice = new MethodAdvice()
         {
-            public void advise(ComponentMethodInvocation invocation)
+            public void advise(MethodInvocation invocation)
             {
                 invocation.proceed();
 
-                ComponentResources resources = invocation.getComponentResources();
+                ComponentResources resources = invocation.getInstanceContext().get(ComponentResources.class);
 
-                List<Asset> assets = convertPathsToAssets(baseResource, resources.getLocale(), expandedPaths);
+                Asset[] assets = convertPathsToAssetArray(baseResource, resources.getLocale(), expandedPaths);
 
-                access.write(invocation.getInstance(), assets);
+                access.set(invocation.getInstance(), assets);
             }
         };
 
-        transformation.getOrCreateMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE).addAdvice(advice);
+        componentClass.introduceMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_DESCRIPTION).addAdvice(advice);
     }
 
-    private List<Asset> convertPathsToAssets(final Resource baseResource, final Locale locale, String[] assetPaths)
+    private Asset[] convertPathsToAssetArray(final Resource baseResource, final Locale locale, String[] assetPaths)
     {
-
         return F.flow(assetPaths).map(new Mapper<String, Asset>()
         {
             public Asset map(String assetPath)
             {
                 return assetSource.getAsset(baseResource, assetPath, locale);
             }
-        }).toList();
+        }).toArray(Asset.class);
     }
 
-    private void addMethodAssetOperationAdvice(TransformMethod method, final FieldAccess access,
+    private void addMethodAssetOperationAdvice(PlasticMethod method, final FieldHandle access,
             final Worker<Asset> operation)
     {
-        ComponentInstanceOperation advice = new ComponentInstanceOperation()
+        method.addAdvice(new MethodAdvice()
         {
-
-            public void invoke(Component instance)
+            public void advise(MethodInvocation invocation)
             {
-                List<Asset> assets = (List<Asset>) access.read(instance);
+                Asset[] assets = (Asset[]) access.get(invocation.getInstance());
 
                 F.flow(assets).each(operation);
-            }
-        };
 
-        method.addOperationBefore(advice);
+                invocation.proceed();
+            }
+        });
     }
 }

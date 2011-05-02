@@ -22,8 +22,7 @@ import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
  * multithreaded, ideally they should be stateless (all necessary state can be stored in the
  * {@link org.apache.tapestry5.services.ClassTransformation}).
  * 
- * @deprecated In 5.3
- * @see {@link ComponentClassTransformWorker2}
+ * @deprecated Deprecated in Tapestry 5.3; use {@link ComponentClassTransformWorker2}
  */
 public interface ComponentClassTransformWorker
 {

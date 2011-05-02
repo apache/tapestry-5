@@ -333,8 +333,8 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
                 });
     }
 
-    private MethodDescription GET_COMPONENT_RESOURCES = new MethodDescription(PlasticUtils.getMethod(
-            ComponentResourcesAware.class, "getComponentResources"));
+    private MethodDescription GET_COMPONENT_RESOURCES = PlasticUtils.getMethodDescription(
+            ComponentResourcesAware.class, "getComponentResources");
 
     private void implementComponentInterface(PlasticClass plasticClass)
     {

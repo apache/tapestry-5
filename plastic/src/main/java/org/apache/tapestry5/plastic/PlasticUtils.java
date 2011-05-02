@@ -114,4 +114,22 @@ public class PlasticUtils
             throw new RuntimeException(ex);
         }
     }
+
+    /**
+     * Uses {@link #getMethod(Class, String, Class...)} and wraps the result as a {@link MethodDescription}.
+     * 
+     * @param declaringClass
+     *            containing class
+     * @param name
+     *            name of method
+     * @param parameterTypes
+     *            types of parameters
+     * @return description for method
+     * @throws RuntimeException
+     *             if any error (such as method not found)
+     */
+    public static MethodDescription getMethodDescription(Class declaringClass, String name, Class... parameterTypes)
+    {
+        return new MethodDescription(getMethod(declaringClass, name, parameterTypes));
+    }
 }

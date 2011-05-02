@@ -629,13 +629,16 @@ public final class TapestryModule
      * Adds a number of standard component class transform workers:
      * <ul>
      * <dt>Property</dt>
-     * <dd>Generates accessor methods if {@link org.apache.tapestry5.annotations.Property} annotation is present</dd>
+     * <dd>Generates accessor methods if {@link org.apache.tapestry5.annotations.Property} annotation is present</dd> *
+     * <dt>Import</dt>
+     * <dd>Supports the {@link Import} annotation</dd>
      * </ul>
      */
     @Contribute(ComponentClassTransformWorker2.class)
     public static void provideTransformWorkers(OrderedConfiguration<ComponentClassTransformWorker2> configuration)
     {
         configuration.add("Property", new PropertyWorker());
+        configuration.addInstance("Import", ImportWorker.class, "after:SetupRender");
     }
 
     /**
@@ -662,8 +665,6 @@ public final class TapestryModule
      * annotation</dd>
      * <dt>InjectBlock</dt>
      * <dd>Allows a block from the template to be injected into a field</dd>
-     * <dt>Import</dt>
-     * <dd>Supports the {@link Import} annotation</dd>
      * <dt>SupportsInformalParameters</dt>
      * <dd>Checks for the annotation</dd>
      * <dt>Meta</dt>
@@ -746,8 +747,6 @@ public final class TapestryModule
         configuration.addInstance("Persist", PersistWorker.class);
 
         configuration.addInstance("DiscardAfter", DiscardAfterWorker.class);
-
-        configuration.addInstance("Import", ImportWorker.class, "after:SetupRender");
 
         configuration.add("InvokePostRenderCleanupOnResources", new InvokePostRenderCleanupOnResourcesWorker());
 

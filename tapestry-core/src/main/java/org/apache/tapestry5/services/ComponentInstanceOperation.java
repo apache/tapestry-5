@@ -25,6 +25,7 @@ import org.apache.tapestry5.runtime.Component;
  * @since 5.2.0
  * @see TransformMethod#addOperationAfter(ComponentInstanceOperation)
  * @see TransformMethod#addOperationBefore(ComponentInstanceOperation)
+ * @deprecated Deprecated in 5.3 with no replacement
  */
 public interface ComponentInstanceOperation
 {
