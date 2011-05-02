@@ -14,9 +14,6 @@
 
 package org.apache.tapestry5.internal.plastic;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -73,7 +70,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
         }
     };
 
-    class BaseClassDef
+    static class BaseClassDef
     {
         final MethodBundle methodBundle;
 
@@ -382,65 +379,14 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
         if (bytecode == null)
             return null;
 
-        return convertBytecodeToClassNode(bytecode);
-    }
-
-    private ClassNode convertBytecodeToClassNode(byte[] bytecode)
-    {
-        ClassReader cr = new ClassReader(bytecode);
-
-        ClassNode result = new ClassNode();
-
-        cr.accept(result, 0);
-
-        return result;
+        return PlasticInternalUtils.convertBytecodeToClassNode(bytecode);
     }
 
     private byte[] readBytecode(String className)
     {
         ClassLoader parentClassLoader = loader.getParent();
 
-        String path = PlasticInternalUtils.toClassPath(className);
-
-        InputStream stream = parentClassLoader.getResourceAsStream(path);
-
-        if (stream == null) { throw new RuntimeException(String.format(
-                "Unable to locate class file for '%s' in class loader %s.", className, parentClassLoader)); }
-
-        try
-        {
-            return readBytestream(stream);
-        }
-        catch (IOException ex)
-        {
-            throw new RuntimeException(String.format("Failure reading bytecode for class %s: %s", className,
-                    PlasticInternalUtils.toMessage(ex)), ex);
-        }
-        finally
-        {
-            PlasticInternalUtils.close(stream);
-        }
-    }
-
-    private byte[] readBytestream(InputStream stream) throws IOException
-    {
-        byte[] buffer = new byte[5000];
-
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-        while (true)
-        {
-            int length = stream.read(buffer);
-
-            if (length < 0)
-                break;
-
-            bos.write(buffer, 0, length);
-        }
-
-        bos.close();
-
-        return bos.toByteArray();
+        return PlasticInternalUtils.readBytecodeForClass(parentClassLoader, className, true);
     }
 
     public PlasticClassTransformation createTransformation(String baseClassName, String newClassName)

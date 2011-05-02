@@ -15,12 +15,20 @@
 package org.apache.tapestry5.ioc.internal.services;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.util.List;
 
+import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
+import org.apache.tapestry5.internal.plastic.asm.Type;
+import org.apache.tapestry5.internal.plastic.asm.tree.AbstractInsnNode;
+import org.apache.tapestry5.internal.plastic.asm.tree.ClassNode;
+import org.apache.tapestry5.internal.plastic.asm.tree.InsnList;
+import org.apache.tapestry5.internal.plastic.asm.tree.LineNumberNode;
+import org.apache.tapestry5.internal.plastic.asm.tree.MethodNode;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.plastic.ClassInstantiator;
 import org.apache.tapestry5.plastic.InstructionBuilder;
@@ -36,15 +44,15 @@ import org.slf4j.Logger;
 
 public class PlasticProxyFactoryImpl implements PlasticProxyFactory
 {
-    private final ClassFactory classFactory;
-
     private final Logger logger;
 
     private final PlasticManager manager;
 
-    public PlasticProxyFactoryImpl(ClassFactory classFactory, ClassLoader parentClassLoader, Logger logger)
+    private final ClassLoader loader;
+
+    public PlasticProxyFactoryImpl(ClassLoader parentClassLoader, Logger logger)
     {
-        this.classFactory = classFactory;
+        this.loader = parentClassLoader;
         this.logger = logger;
 
         manager = new PlasticManager(parentClassLoader);
@@ -107,14 +115,83 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
         return interfaceType.cast(instantiator.newInstance());
     }
 
+    private ClassNode readClassNode(Class clazz)
+    {
+        byte[] bytecode = PlasticInternalUtils.readBytecodeForClass(loader, clazz.getName(), false);
+
+        return bytecode == null ? null : PlasticInternalUtils.convertBytecodeToClassNode(bytecode);
+    }
+
     public Location getMethodLocation(Method method)
     {
-        return classFactory.getMethodLocation(method);
+        return getMemberLocation(method, method.getName(), Type.getMethodDescriptor(method),
+                InternalUtils.asString(method));
     }
 
     public Location getConstructorLocation(Constructor constructor)
     {
-        return classFactory.getConstructorLocation(constructor);
+        StringBuilder builder = new StringBuilder(constructor.getDeclaringClass().getName()).append("(");
+        String sep = "";
+
+        for (Class parameterType : constructor.getParameterTypes())
+        {
+            builder.append(sep);
+            builder.append(parameterType.getSimpleName());
+
+            sep = ", ";
+        }
+
+        builder.append(")");
+
+        String constructorDescription = builder.toString();
+
+        Location location = getMemberLocation(constructor, "<init>", Type.getConstructorDescriptor(constructor),
+                constructorDescription);
+
+        if (location != null)
+            return location;
+
+        return new StringLocation(builder.toString(), 0);
+    }
+
+    public Location getMemberLocation(Member member, String methodName, String memberTypeDesc, String textDescription)
+    {
+        ClassNode classNode = readClassNode(member.getDeclaringClass());
+
+        if (classNode == null)
+            return null;
+
+        if (classNode.sourceFile == null)
+            return null;
+
+        for (MethodNode mn : (List<MethodNode>) classNode.methods)
+        {
+            if (mn.name.equals(methodName) && mn.desc.equals(memberTypeDesc))
+            {
+                int lineNumber = findFirstLineNumber(mn.instructions);
+
+                if (lineNumber < 1)
+                    return null;
+
+                String description = String.format("%s (at %s:%d)", textDescription, classNode.sourceFile, lineNumber);
+
+                return new StringLocation(description, lineNumber);
+            }
+        }
+
+        // Didn't find it. Odd.
+
+        return null;
+    }
+
+    private int findFirstLineNumber(InsnList instructions)
+    {
+        for (AbstractInsnNode node = instructions.getFirst(); node != null; node = node.getNext())
+        {
+            if (node instanceof LineNumberNode) { return ((LineNumberNode) node).line; }
+        }
+
+        return -1;
     }
 
     public void addPlasticClassListener(PlasticClassListener listener)

@@ -52,7 +52,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     public void setup()
     {
         classFactory = new ClassFactoryImpl();
-        proxyFactory = new PlasticProxyFactoryImpl(classFactory, Thread.currentThread().getContextClassLoader(), null);
+        proxyFactory = new PlasticProxyFactoryImpl(Thread.currentThread().getContextClassLoader(), null);
     }
 
     @AfterClass

@@ -175,7 +175,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
         classFactory = new ClassFactoryImpl(manager.getClassLoader(), logger);
 
-        proxyFactory = new PlasticProxyFactoryImpl(classFactory, manager.getClassLoader(), logger);
+        proxyFactory = new PlasticProxyFactoryImpl(manager.getClassLoader(), logger);
 
         classToInstantiator.clear();
         classToModel.clear();

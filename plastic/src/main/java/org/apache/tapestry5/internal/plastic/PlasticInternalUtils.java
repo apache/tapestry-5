@@ -14,8 +14,10 @@
 
 package org.apache.tapestry5.internal.plastic;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Array;
@@ -28,6 +30,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.tapestry5.internal.plastic.asm.ClassReader;
 import org.apache.tapestry5.internal.plastic.asm.Type;
 import org.apache.tapestry5.internal.plastic.asm.tree.ClassNode;
 import org.apache.tapestry5.internal.plastic.asm.tree.MethodNode;
@@ -348,5 +351,67 @@ public class PlasticInternalUtils
     public static boolean isEqual(Object left, Object right)
     {
         return left == right || (left != null && left.equals(right));
+    }
+
+    static byte[] readBytestream(InputStream stream) throws IOException
+    {
+        byte[] buffer = new byte[5000];
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+        while (true)
+        {
+            int length = stream.read(buffer);
+
+            if (length < 0)
+                break;
+
+            bos.write(buffer, 0, length);
+        }
+
+        bos.close();
+
+        return bos.toByteArray();
+    }
+
+    public static byte[] readBytecodeForClass(ClassLoader loader, String className, boolean mustExist)
+    {
+        String path = toClassPath(className);
+
+        InputStream stream = loader.getResourceAsStream(path);
+
+        if (stream == null)
+        {
+            if (mustExist)
+                throw new RuntimeException(String.format("Unable to locate class file for '%s' in class loader %s.",
+                        className, loader));
+
+            return null;
+        }
+
+        try
+        {
+            return readBytestream(stream);
+        }
+        catch (IOException ex)
+        {
+            throw new RuntimeException(String.format("Failure reading bytecode for class %s: %s", className,
+                    toMessage(ex)), ex);
+        }
+        finally
+        {
+            close(stream);
+        }
+    }
+
+    public static ClassNode convertBytecodeToClassNode(byte[] bytecode)
+    {
+        ClassReader cr = new ClassReader(bytecode);
+
+        ClassNode result = new ClassNode();
+
+        cr.accept(result, 0);
+
+        return result;
     }
 }
