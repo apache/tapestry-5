@@ -70,6 +70,44 @@ public class BridgeClassTransformation implements ClassTransformation
 
     private final MutableComponentModel model;
 
+    private static final class WrapMethodHandleAsMethodAccess implements MethodAccess
+    {
+        private final MethodHandle handle;
+
+        private WrapMethodHandleAsMethodAccess(MethodHandle handle)
+        {
+            this.handle = handle;
+        }
+
+        public MethodInvocationResult invoke(Object target, Object... arguments)
+        {
+            final org.apache.tapestry5.plastic.MethodInvocationResult plasticResult = handle.invoke(target, arguments);
+
+            return new MethodInvocationResult()
+            {
+                public void rethrow()
+                {
+                    plasticResult.rethrow();
+                }
+
+                public boolean isFail()
+                {
+                    return plasticResult.didThrowCheckedException();
+                }
+
+                public <T extends Throwable> T getThrown(Class<T> throwableClass)
+                {
+                    return plasticResult.getCheckedException(throwableClass);
+                }
+
+                public Object getReturnValue()
+                {
+                    return plasticResult.getReturnValue();
+                }
+            };
+        }
+    }
+
     private static <T> ComputedValue<T> toComputedValue(final ComponentValueProvider<T> provider)
     {
         return new ComputedValue<T>()
@@ -113,6 +151,92 @@ public class BridgeClassTransformation implements ClassTransformation
 
     private static class BridgeTransformField implements TransformField
     {
+        private static final class WrapFieldHandleAsFieldAccess implements FieldAccess
+        {
+            private final FieldHandle handle;
+
+            private WrapFieldHandleAsFieldAccess(FieldHandle handle)
+            {
+                this.handle = handle;
+            }
+
+            public void write(Object instance, Object value)
+            {
+                handle.set(instance, value);
+            }
+
+            public Object read(Object instance)
+            {
+                return handle.get(instance);
+            }
+        }
+
+        private static final class WrapFieldValueConduitAsFieldConduit implements FieldConduit
+        {
+            private final FieldValueConduit conduit;
+
+            private WrapFieldValueConduitAsFieldConduit(FieldValueConduit conduit)
+            {
+                this.conduit = conduit;
+            }
+
+            public Object get(Object instance, InstanceContext context)
+            {
+                return conduit.get();
+            }
+
+            public void set(Object instance, InstanceContext context, Object newValue)
+            {
+                conduit.set(newValue);
+            }
+        }
+
+        private static final class WrapFieldHandleForFieldValueConduitAsFieldConduit implements FieldConduit<Object>
+        {
+            private final FieldHandle conduitHandle;
+
+            private WrapFieldHandleForFieldValueConduitAsFieldConduit(FieldHandle conduitHandle)
+            {
+                this.conduitHandle = conduitHandle;
+            }
+
+            private FieldValueConduit conduit(Object instance)
+            {
+                return (FieldValueConduit) conduitHandle.get(instance);
+            }
+
+            public Object get(Object instance, InstanceContext context)
+            {
+                return conduit(instance).get();
+            }
+
+            public void set(Object instance, InstanceContext context, Object newValue)
+            {
+                conduit(instance).set(newValue);
+            }
+        }
+
+        private static final class WrapCVP_FieldValueConduit_as_CV_FieldConduit implements
+                ComputedValue<FieldConduit<?>>
+        {
+            private final ComponentValueProvider<FieldValueConduit> conduitProvider;
+
+            private WrapCVP_FieldValueConduit_as_CV_FieldConduit(
+                    ComponentValueProvider<FieldValueConduit> conduitProvider)
+            {
+                this.conduitProvider = conduitProvider;
+            }
+
+            public FieldConduit<?> get(InstanceContext context)
+            {
+                ComponentResources resources = context.get(ComponentResources.class);
+
+                FieldValueConduit fieldValueConduit = conduitProvider.get(resources);
+
+                return toFieldConduit(fieldValueConduit);
+            }
+        }
+
         private final PlasticField plasticField;
 
         public BridgeTransformField(PlasticField plasticField)
@@ -152,17 +276,7 @@ public class BridgeClassTransformation implements ClassTransformation
 
         public void replaceAccess(final ComponentValueProvider<FieldValueConduit> conduitProvider)
         {
-            plasticField.setComputedConduit(new ComputedValue<FieldConduit<?>>()
-            {
-                public FieldConduit<?> get(InstanceContext context)
-                {
-                    ComponentResources resources = context.get(ComponentResources.class);
-
-                    FieldValueConduit fieldValueConduit = conduitProvider.get(resources);
-
-                    return toFieldConduit(fieldValueConduit);
-                }
-            });
+            plasticField.setComputedConduit(new WrapCVP_FieldValueConduit_as_CV_FieldConduit(conduitProvider));
         }
 
         /**
@@ -176,39 +290,12 @@ public class BridgeClassTransformation implements ClassTransformation
 
             final FieldHandle conduitHandle = conduitFieldPlastic.getHandle();
 
-            plasticField.setConduit(new FieldConduit<Object>()
-            {
-                private FieldValueConduit conduit(Object instance)
-                {
-                    return (FieldValueConduit) conduitHandle.get(instance);
-                }
-
-                public Object get(Object instance, InstanceContext context)
-                {
-                    return conduit(instance).get();
-                }
-
-                public void set(Object instance, InstanceContext context, Object newValue)
-                {
-                    conduit(instance).set(newValue);
-                }
-            });
+            plasticField.setConduit(new WrapFieldHandleForFieldValueConduitAsFieldConduit(conduitHandle));
         }
 
         public void replaceAccess(final FieldValueConduit conduit)
         {
-            plasticField.setConduit(new FieldConduit()
-            {
-                public Object get(Object instance, InstanceContext context)
-                {
-                    return conduit.get();
-                }
-
-                public void set(Object instance, InstanceContext context, Object newValue)
-                {
-                    conduit.set(newValue);
-                }
-            });
+            plasticField.setConduit(new WrapFieldValueConduitAsFieldConduit(conduit));
         }
 
         public int getModifiers()
@@ -230,19 +317,7 @@ public class BridgeClassTransformation implements ClassTransformation
         {
             final FieldHandle handle = plasticField.getHandle();
 
-            return new FieldAccess()
-            {
-
-                public void write(Object instance, Object value)
-                {
-                    handle.set(instance, value);
-                }
-
-                public Object read(Object instance)
-                {
-                    return handle.get(instance);
-                }
-            };
+            return new WrapFieldHandleAsFieldAccess(handle);
         }
     }
 
@@ -258,6 +333,136 @@ public class BridgeClassTransformation implements ClassTransformation
             return toTransformField(element);
         }
     };
+
+    private static final class WrapMethodAdviceAsComponentMethodAdvice implements MethodAdvice
+    {
+        private final ComponentMethodAdvice advice;
+
+        private WrapMethodAdviceAsComponentMethodAdvice(ComponentMethodAdvice advice)
+        {
+            this.advice = advice;
+        }
+
+        public void advise(final MethodInvocation invocation)
+        {
+            advice.advise(new ComponentMethodInvocation()
+            {
+                public ComponentResources getComponentResources()
+                {
+                    return invocation.getInstanceContext().get(ComponentResources.class);
+                }
+
+                public void rethrow()
+                {
+                    invocation.rethrow();
+                }
+
+                public void proceed()
+                {
+                    invocation.proceed();
+                }
+
+                public void overrideThrown(Exception thrown)
+                {
+                    invocation.setCheckedException(thrown);
+                }
+
+                public void overrideResult(Object newResult)
+                {
+                    invocation.setReturnValue(newResult);
+                }
+
+                public void override(int index, Object newParameter)
+                {
+                    invocation.setParameter(index, newParameter);
+                }
+
+                public boolean isFail()
+                {
+                    return invocation.didThrowCheckedException();
+                }
+
+                public <T extends Throwable> T getThrown(Class<T> throwableClass)
+                {
+                    return invocation.getCheckedException(throwableClass);
+                }
+
+                public Class getResultType()
+                {
+                    return invocation.getReturnType();
+                }
+
+                public Object getResult()
+                {
+                    return invocation.getReturnValue();
+                }
+
+                public Class getParameterType(int index)
+                {
+                    return invocation.getParameterType(index);
+                }
+
+                public int getParameterCount()
+                {
+                    return invocation.getParameterCount();
+                }
+
+                public Object getParameter(int index)
+                {
+                    return invocation.getParameter(index);
+                }
+
+                public String getMethodName()
+                {
+                    return invocation.getMethodName();
+                }
+
+                public <T extends Annotation> T getMethodAnnotation(Class<T> annotationClass)
+                {
+                    return invocation.getAnnotation(annotationClass);
+                }
+
+                public Component getInstance()
+                {
+                    return (Component) invocation.getInstance();
+                }
+            });
+        }
+    }
+
+    private static final class WrapAfterComponentInstanceOperationAsMethodAdvice implements MethodAdvice
+    {
+        private final ComponentInstanceOperation operation;
+
+        private WrapAfterComponentInstanceOperationAsMethodAdvice(ComponentInstanceOperation operation)
+        {
+            this.operation = operation;
+        }
+
+        public void advise(MethodInvocation invocation)
+        {
+            invocation.proceed();
+
+            operation.invoke((Component) invocation.getInstance());
+        }
+    }
+
+    private static final class WrapBeforeComponentInstanceOperationAsMethodAdvice implements MethodAdvice
+    {
+        private final ComponentInstanceOperation operation;
+
+        private WrapBeforeComponentInstanceOperationAsMethodAdvice(ComponentInstanceOperation operation)
+        {
+            this.operation = operation;
+        }
+
+        public void advise(MethodInvocation invocation)
+        {
+            operation.invoke((Component) invocation.getInstance());
+
+            invocation.proceed();
+        }
+    }
 
     private class BridgeTransformMethod implements TransformMethod
     {
@@ -299,157 +504,24 @@ public class BridgeClassTransformation implements ClassTransformation
         {
             final MethodHandle handle = plasticMethod.getHandle();
 
-            return new MethodAccess()
-            {
-                public MethodInvocationResult invoke(Object target, Object... arguments)
-                {
-                    final org.apache.tapestry5.plastic.MethodInvocationResult plasticResult = handle.invoke(target,
-                            arguments);
-
-                    return new MethodInvocationResult()
-                    {
-                        public void rethrow()
-                        {
-                            plasticResult.rethrow();
-                        }
-
-                        public boolean isFail()
-                        {
-                            return plasticResult.didThrowCheckedException();
-                        }
-
-                        public <T extends Throwable> T getThrown(Class<T> throwableClass)
-                        {
-                            return plasticResult.getCheckedException(throwableClass);
-                        }
-
-                        public Object getReturnValue()
-                        {
-                            return plasticResult.getReturnValue();
-                        }
-                    };
-                }
-            };
+            return new WrapMethodHandleAsMethodAccess(handle);
         }
 
         public void addAdvice(final ComponentMethodAdvice advice)
         {
-            MethodAdvice plasticAdvice = new MethodAdvice()
-            {
-                public void advise(final MethodInvocation invocation)
-                {
-                    advice.advise(new ComponentMethodInvocation()
-                    {
-                        public ComponentResources getComponentResources()
-                        {
-                            return invocation.getInstanceContext().get(ComponentResources.class);
-                        }
-
-                        public void rethrow()
-                        {
-                            invocation.rethrow();
-                        }
-
-                        public void proceed()
-                        {
-                            invocation.proceed();
-                        }
-
-                        public void overrideThrown(Exception thrown)
-                        {
-                            invocation.setCheckedException(thrown);
-                        }
-
-                        public void overrideResult(Object newResult)
-                        {
-                            invocation.setReturnValue(newResult);
-                        }
-
-                        public void override(int index, Object newParameter)
-                        {
-                            invocation.setParameter(index, newParameter);
-                        }
-
-                        public boolean isFail()
-                        {
-                            return invocation.didThrowCheckedException();
-                        }
-
-                        public <T extends Throwable> T getThrown(Class<T> throwableClass)
-                        {
-                            return invocation.getCheckedException(throwableClass);
-                        }
-
-                        public Class getResultType()
-                        {
-                            return invocation.getReturnType();
-                        }
-
-                        public Object getResult()
-                        {
-                            return invocation.getReturnValue();
-                        }
-
-                        public Class getParameterType(int index)
-                        {
-                            return invocation.getParameterType(index);
-                        }
-
-                        public int getParameterCount()
-                        {
-                            return invocation.getParameterCount();
-                        }
-
-                        public Object getParameter(int index)
-                        {
-                            return invocation.getParameter(index);
-                        }
-
-                        public String getMethodName()
-                        {
-                            return invocation.getMethodName();
-                        }
-
-                        public <T extends Annotation> T getMethodAnnotation(Class<T> annotationClass)
-                        {
-                            return invocation.getAnnotation(annotationClass);
-                        }
-
-                        public Component getInstance()
-                        {
-                            return (Component) invocation.getInstance();
-                        }
-                    });
-                }
-            };
+            MethodAdvice plasticAdvice = new WrapMethodAdviceAsComponentMethodAdvice(advice);
 
             plasticMethod.addAdvice(plasticAdvice);
         }
 
         public void addOperationBefore(final ComponentInstanceOperation operation)
         {
-            addAdvice(new ComponentMethodAdvice()
-            {
-                public void advise(ComponentMethodInvocation invocation)
-                {
-                    operation.invoke(invocation.getInstance());
-
-                    invocation.proceed();
-                }
-            });
+            plasticMethod.addAdvice(new WrapBeforeComponentInstanceOperationAsMethodAdvice(operation));
         }
 
         public void addOperationAfter(final ComponentInstanceOperation operation)
         {
-            addAdvice(new ComponentMethodAdvice()
-            {
-                public void advise(ComponentMethodInvocation invocation)
-                {
-                    invocation.proceed();
-
-                    operation.invoke(invocation.getInstance());
-                }
-            });
+            plasticMethod.addAdvice(new WrapAfterComponentInstanceOperationAsMethodAdvice(operation));
         }
 
         public String getMethodIdentifier()
@@ -626,17 +698,17 @@ public class BridgeClassTransformation implements ClassTransformation
 
         model.addEventHandler(eventType);
 
-        getOrCreateMethod(TransformConstants.DISPATCH_COMPONENT_EVENT).addAdvice(
+        plasticClass.introduceMethod(TransformConstants.DISPATCH_COMPONENT_EVENT_DESCRIPTION).addAdvice(
                 createEventHandlerAdvice(eventType, minContextValues, methodDescription, handler));
 
     }
 
-    private static ComponentMethodAdvice createEventHandlerAdvice(final String eventType, final int minContextValues,
+    private static MethodAdvice createEventHandlerAdvice(final String eventType, final int minContextValues,
             final String methodDescription, final ComponentEventHandler handler)
     {
-        return new ComponentMethodAdvice()
+        return new MethodAdvice()
         {
-            public void advise(ComponentMethodInvocation invocation)
+            public void advise(MethodInvocation invocation)
             {
                 // Invoke the super-class implementation first.
 
@@ -648,11 +720,11 @@ public class BridgeClassTransformation implements ClassTransformation
                 {
                     event.setMethodDescription(methodDescription);
 
-                    handler.handleEvent(invocation.getInstance(), event);
+                    handler.handleEvent((Component) invocation.getInstance(), event);
 
                     // Ensure that the caller knows that some event handler method
                     // was invoked.
-                    invocation.overrideResult(true);
+                    invocation.setReturnValue(true);
                 }
             }
         };

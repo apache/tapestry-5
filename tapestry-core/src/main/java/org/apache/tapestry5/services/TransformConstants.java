@@ -49,10 +49,22 @@ public final class TransformConstants
      * .
      * 
      * @see org.apache.tapestry5.annotations.OnEvent
+     * @deprecated Deprecated in Tapestry 5.3, use {@link #DISPATCH_COMPONENT_EVENT_DESCRIPTION}.
      */
     public static final TransformMethodSignature DISPATCH_COMPONENT_EVENT = new TransformMethodSignature(
             Modifier.PUBLIC, "boolean", "dispatchComponentEvent", new String[]
             { ComponentEvent.class.getName() }, null);
+
+    /**
+     * Description for
+     * {@link org.apache.tapestry5.runtime.Component#dispatchComponentEvent(org.apache.tapestry5.runtime.ComponentEvent)}
+     * .
+     * 
+     * @see org.apache.tapestry5.annotations.OnEvent
+     * @since 5.3.0
+     */
+    public static final MethodDescription DISPATCH_COMPONENT_EVENT_DESCRIPTION = PlasticUtils.getMethodDescription(
+            Component.class, "dispatchComponentEvent", ComponentEvent.class);
 
     /**
      * Signature for {@link org.apache.tapestry5.runtime.PageLifecycleListener#containingPageDidLoad()}.
