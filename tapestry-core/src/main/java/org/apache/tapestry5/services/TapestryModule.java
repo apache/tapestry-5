@@ -2635,12 +2635,15 @@ public final class TapestryModule
     }
 
     /**
+     * Exposes the public portion of the internal {@link InternalComponentInvalidationEventHub} service.
+     * 
      * @since 5.1.0.0
      */
     @Marker(ComponentClasses.class)
-    public static InvalidationEventHub buildComponentClassesInvalidationEventHub(ComponentInstantiatorSource source)
+    public static InvalidationEventHub buildComponentClassesInvalidationEventHub(
+            InternalComponentInvalidationEventHub trueHub)
     {
-        return source.getInvalidationEventHub();
+        return trueHub;
     }
 
     /**
@@ -2963,7 +2966,7 @@ public final class TapestryModule
     }
 
     /**
-     * In production mode, overrides {@link UpdateListenerHub} to be an empty placeholder.
+     * In production mode, override {@link UpdateListenerHub} to be an empty placeholder.
      */
     @Contribute(ServiceOverride.class)
     public static void productionModeOverrides(MappedConfiguration<Class, Object> configuration,

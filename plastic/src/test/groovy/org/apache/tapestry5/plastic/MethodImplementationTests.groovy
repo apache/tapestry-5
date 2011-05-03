@@ -1,9 +1,5 @@
 package org.apache.tapestry5.plastic
 
-import org.apache.tapestry5.plastic.InstructionBuilderCallback;
-import org.apache.tapestry5.plastic.PlasticClass;
-import org.apache.tapestry5.plastic.PlasticClassTransformer;
-
 
 class MethodImplementationTests extends AbstractPlasticSpecification {
     def "overwrite implementation of method"() {
@@ -46,8 +42,6 @@ class MethodImplementationTests extends AbstractPlasticSpecification {
 
     def "while, increment, array operations"() {
         setup:
-
-        def mgr = new PlasticManager();
 
         PlasticClass pc = mgr.getPlasticClass("testsubjects.WhileSubject")
 

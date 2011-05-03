@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Map;
+
 import javax.servlet.http.Cookie;
 
 import org.apache.tapestry5.SymbolConstants;
@@ -22,16 +24,19 @@ import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateController;
 import org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathConstructor;
 import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSource;
 import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSourceImpl;
+import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Autobuild;
+import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.services.CtClassSource;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
+import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentClasses;
 import org.apache.tapestry5.services.ComponentLayer;
 import org.apache.tapestry5.services.ComponentMessages;
@@ -44,6 +49,7 @@ import org.apache.tapestry5.services.RequestGlobals;
 import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
 import org.apache.tapestry5.services.UpdateListenerHub;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
+import org.apache.tapestry5.services.transform.ControlledPackageType;
 
 /**
  * {@link org.apache.tapestry5.services.TapestryModule} has gotten too complicated and it is nice to demarkate public
@@ -103,6 +109,7 @@ public class InternalModule
         binder.bind(ResourceDigestManager.class, ResourceDigestManagerImpl.class);
         binder.bind(RequestPageCache.class, NonPoolingRequestPageCacheImpl.class);
         binder.bind(ComponentInstantiatorSource.class);
+        binder.bind(InternalComponentInvalidationEventHub.class);
     }
 
     /**
@@ -244,5 +251,20 @@ public class InternalModule
     public static void contributeLinkSource(OrderedConfiguration<LinkCreationListener2> configuration)
     {
         configuration.addInstance("LinkDecoration", LinkDecorationListener.class);
+    }
+
+    /**
+     * Contributes packages identified by {@link ComponentClassResolver#getControlledPackageMapping()}.
+     * 
+     * @since 5.3.0
+     */
+    @Contribute(ComponentInstantiatorSource.class)
+    public static void configureControlledPackagesFromComponentClassResolver(
+            MappedConfiguration<String, ControlledPackageType> configuration, ComponentClassResolver resolver)
+    {
+        for (Map.Entry<String, ControlledPackageType> entry : resolver.getControlledPackageMapping().entrySet())
+        {
+            configuration.add(entry.getKey(), entry.getValue());
+        }
     }
 }

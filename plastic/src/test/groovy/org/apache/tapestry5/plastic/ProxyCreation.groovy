@@ -1,12 +1,9 @@
 package org.apache.tapestry5.plastic
 
-import spock.lang.Specification
 
-class ProxyCreation extends Specification {
+class ProxyCreation extends AbstractPlasticSpecification {
     def "create a field delegating proxy"() {
         setup:
-
-        def mgr = new PlasticManager()
 
         Runnable r = Mock(Runnable)
 
@@ -36,8 +33,6 @@ class ProxyCreation extends Specification {
     def "create a method delegating proxy"() {
         setup:
         "Each method of the interface delegates through a method that returns the new target for the method."
-
-        def mgr = new PlasticManager()
 
         Runnable r = Mock(Runnable)
 
@@ -77,9 +72,6 @@ class ProxyCreation extends Specification {
 
 
     def "type must be an interface"() {
-        setup:
-        def mgr = new PlasticManager()
-
         when:
 
         mgr.createProxy (String.class, {
@@ -101,8 +93,6 @@ class ProxyCreation extends Specification {
 
             assert event.type == ClassType.PRIMARY
         } as PlasticClassListener
-
-        def mgr = new PlasticManager()
 
         mgr.addPlasticClassListener listener
 

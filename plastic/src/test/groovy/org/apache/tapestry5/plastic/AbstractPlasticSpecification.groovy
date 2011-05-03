@@ -5,6 +5,9 @@ import org.apache.tapestry5.internal.plastic.StandardDelegate
 import spock.lang.Specification
 
 abstract class AbstractPlasticSpecification extends Specification {
+    
+    def mgr = PlasticManager.withContextClassLoader().create()
+    
     PlasticMethod findMethod(pc, name) {
         pc.methods.find { it.description.methodName == name }
     }
@@ -17,6 +20,6 @@ abstract class AbstractPlasticSpecification extends Specification {
         def delegate = new StandardDelegate(transformers)
         def packages = ["testsubjects"]as Set
 
-        return new PlasticManager(Thread.currentThread().contextClassLoader, delegate, packages)
+        return PlasticManager.withContextClassLoader().delegate(delegate).packages(packages).create()
     }
 }

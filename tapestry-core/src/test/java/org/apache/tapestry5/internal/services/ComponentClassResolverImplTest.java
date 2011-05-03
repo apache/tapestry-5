@@ -14,6 +14,13 @@
 
 package org.apache.tapestry5.internal.services;
 
+import static org.easymock.EasyMock.isA;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -22,14 +29,8 @@ import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.LibraryMapping;
 import org.easymock.EasyMock;
-import static org.easymock.EasyMock.isA;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 public class ComponentClassResolverImplTest extends InternalBaseTestCase
 {
@@ -46,12 +47,11 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
     private static final String LIB_ROOT_PACKAGE = "org.example.lib";
 
-    private ComponentClassResolverImpl create(Logger logger, ComponentInstantiatorSource source,
-            ClassNameLocator locator, LibraryMapping... mappings)
+    private ComponentClassResolverImpl create(Logger logger, ClassNameLocator locator, LibraryMapping... mappings)
     {
         List<LibraryMapping> full = F.flow(APP_ROOT_PACKAGE_MAPPINGS).concat(F.flow(mappings)).toList();
 
-        return new ComponentClassResolverImpl(logger, source, locator, "Start", full);
+        return new ComponentClassResolverImpl(logger, locator, "Start", full);
     }
 
     private Logger compliantLogger()
@@ -68,11 +68,8 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     @Test
     public void simple_page_name()
     {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_app_packages(source);
 
         String className = APP_ROOT_PACKAGE + ".pages.SimplePage";
 
@@ -80,7 +77,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator);
+        ComponentClassResolver resolver = create(logger, locator);
 
         assertEquals(resolver.resolvePageNameToClassName("SimplePage"), className);
 
@@ -93,11 +90,8 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     @Test
     public void get_page_names()
     {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_app_packages(source);
 
         train_locateComponentClassNames(locator, APP_ROOT_PACKAGE + ".pages", APP_ROOT_PACKAGE + ".pages.SimplePage",
                 APP_ROOT_PACKAGE + ".pages.nested.Other", APP_ROOT_PACKAGE + ".pages.nested.NestedPage",
@@ -105,7 +99,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator);
+        ComponentClassResolver resolver = create(logger, locator);
 
         List<String> pageNames = resolver.getPageNames();
 
@@ -120,11 +114,8 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     @Test
     public void page_name_matches_containing_folder_name()
     {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_app_packages(source);
 
         String className = APP_ROOT_PACKAGE + ".pages.admin.product.ProductAdmin";
 
@@ -132,7 +123,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator);
+        ComponentClassResolver resolver = create(logger, locator);
 
         assertEquals(resolver.resolvePageNameToClassName("admin/product/ProductAdmin"), className);
 
@@ -142,11 +133,8 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     @Test
     public void canonicalize_existing_page_name()
     {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_app_packages(source);
 
         String className = APP_ROOT_PACKAGE + ".pages.SimplePage";
 
@@ -154,7 +142,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator);
+        ComponentClassResolver resolver = create(logger, locator);
 
         assertEquals(resolver.canonicalizePageName("simplepage"), "SimplePage");
 
@@ -164,11 +152,8 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     @Test
     public void canonicalize_start_page()
     {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_app_packages(source);
 
         String className = APP_ROOT_PACKAGE + ".pages.HomePage";
 
@@ -176,7 +161,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentClassResolver resolver = new ComponentClassResolverImpl(logger, source, locator, "HomePage",
+        ComponentClassResolver resolver = new ComponentClassResolverImpl(logger, locator, "HomePage",
                 APP_ROOT_PACKAGE_MAPPINGS);
 
         assertEquals(resolver.canonicalizePageName("HomePage"), "HomePage");
@@ -189,11 +174,8 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     @Test
     public void start_page_in_subfolder()
     {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_app_packages(source);
 
         String className = APP_ROOT_PACKAGE + ".pages.sub.HomePage";
 
@@ -201,7 +183,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentClassResolver resolver = new ComponentClassResolverImpl(logger, source, locator, "HomePage",
+        ComponentClassResolver resolver = new ComponentClassResolverImpl(logger, locator, "HomePage",
                 APP_ROOT_PACKAGE_MAPPINGS);
 
         assertEquals(resolver.canonicalizePageName("sub/HomePage"), "sub/HomePage");
@@ -217,11 +199,8 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     @Test
     public void index_page_precedence()
     {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_app_packages(source);
 
         String[] classNames =
         { APP_ROOT_PACKAGE + ".pages.sub.HomePage", APP_ROOT_PACKAGE + ".pages.sub.SubIndex" };
@@ -232,7 +211,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         List<LibraryMapping> mappings = APP_ROOT_PACKAGE_MAPPINGS;
 
-        ComponentClassResolver resolver = new ComponentClassResolverImpl(logger, source, locator, "HomePage", mappings);
+        ComponentClassResolver resolver = new ComponentClassResolverImpl(logger, locator, "HomePage", mappings);
 
         assertTrue(resolver.isPageName("sub/HomePage"));
         assertTrue(resolver.isPageName("sub/subIndex"));
@@ -247,11 +226,8 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     @Test
     public void page_name_in_subfolder()
     {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_app_packages(source);
 
         String className = APP_ROOT_PACKAGE + ".pages.subfolder.NestedPage";
 
@@ -259,7 +235,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator);
+        ComponentClassResolver resolver = create(logger, locator);
 
         assertEquals(resolver.resolvePageNameToClassName("subfolder/NestedPage"), className);
 
@@ -269,11 +245,8 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     @Test
     public void lots_of_prefixes_and_suffixes_stripped()
     {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_app_packages(source);
 
         String className = APP_ROOT_PACKAGE + ".pages.admin.edit.AdminUserEdit";
 
@@ -281,7 +254,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator);
+        ComponentClassResolver resolver = create(logger, locator);
 
         assertEquals(resolver.resolvePageNameToClassName("admin/edit/User"), className);
         assertEquals(resolver.resolvePageNameToClassName("admin/edit/AdminUserEdit"), className);
@@ -292,11 +265,8 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     @Test
     public void page_in_subfolder()
     {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_app_packages(source);
 
         String className = APP_ROOT_PACKAGE + ".pages.subfolder.NestedPage";
 
@@ -304,7 +274,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator);
+        ComponentClassResolver resolver = create(logger, locator);
 
         assertEquals(resolver.resolvePageNameToClassName("subfolder/NestedPage"), className);
 
@@ -314,11 +284,8 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     @Test
     public void subfolder_name_as_classname_prefix_is_stripped()
     {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_app_packages(source);
 
         String className = APP_ROOT_PACKAGE + ".pages.foo.FooBar";
 
@@ -326,7 +293,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator);
+        ComponentClassResolver resolver = create(logger, locator);
 
         assertEquals(resolver.resolvePageNameToClassName("foo/Bar"), className);
 
@@ -336,12 +303,8 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     @Test
     public void core_prefix_stripped_from_exception_message()
     {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_packages(source, CORE_ROOT_PACKAGE);
-        train_for_app_packages(source);
 
         train_locateComponentClassNames(locator, CORE_ROOT_PACKAGE + ".pages", CORE_ROOT_PACKAGE + ".pages.Fred",
                 CORE_ROOT_PACKAGE + ".pages.Barney");
@@ -350,8 +313,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator, new LibraryMapping(CORE_PREFIX,
-                CORE_ROOT_PACKAGE));
+        ComponentClassResolver resolver = create(logger, locator, new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
 
         try
         {
@@ -370,11 +332,8 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     @Test
     public void is_page_name()
     {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_app_packages(source);
 
         String className = APP_ROOT_PACKAGE + ".pages.SimplePage";
 
@@ -382,7 +341,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator);
+        ComponentClassResolver resolver = create(logger, locator);
 
         assertTrue(resolver.isPageName("SimplePage"));
         assertTrue(resolver.isPageName("simplepage"));
@@ -394,11 +353,8 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     @Test
     public void index_page_name_at_root()
     {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_app_packages(source);
 
         String className = APP_ROOT_PACKAGE + ".pages.Index";
 
@@ -406,7 +362,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator);
+        ComponentClassResolver resolver = create(logger, locator);
 
         assertTrue(resolver.isPageName("Index"));
         assertTrue(resolver.isPageName(""));
@@ -417,12 +373,8 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     @Test
     public void is_page_name_for_core_page()
     {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_app_packages(source);
-        train_for_packages(source, CORE_ROOT_PACKAGE);
 
         String className = CORE_ROOT_PACKAGE + ".pages.MyCorePage";
 
@@ -430,8 +382,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator, new LibraryMapping(CORE_PREFIX,
-                CORE_ROOT_PACKAGE));
+        ComponentClassResolver resolver = create(logger, locator, new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
 
         // Can look like an application page, but still resolves to the core library class name.
 
@@ -473,17 +424,14 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     {
         String className = APP_ROOT_PACKAGE + ".pages.SimplePage";
 
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_app_packages(source);
 
         train_locateComponentClassNames(locator, APP_ROOT_PACKAGE + ".pages", className);
 
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator);
+        ComponentClassResolver resolver = create(logger, locator);
 
         assertEquals(resolver.resolvePageClassNameToPageName(className), "SimplePage");
 
@@ -498,17 +446,14 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     {
         String pageClassName = APP_ROOT_PACKAGE + ".pages.SimplePage";
 
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_app_packages(source);
 
         train_locateComponentClassNames(locator, APP_ROOT_PACKAGE + ".pages", pageClassName);
 
         replay();
 
-        ComponentClassResolverImpl resolver = create(logger, source, locator);
+        ComponentClassResolverImpl resolver = create(logger, locator);
 
         assertEquals(resolver.resolvePageNameToClassName("SimplePage"), pageClassName);
 
@@ -541,19 +486,14 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     {
         String className = CORE_ROOT_PACKAGE + ".pages.MyCorePage";
 
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_packages(source, CORE_ROOT_PACKAGE);
-        train_for_app_packages(source);
 
         train_locateComponentClassNames(locator, CORE_ROOT_PACKAGE + ".pages", className);
 
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator, new LibraryMapping(CORE_PREFIX,
-                CORE_ROOT_PACKAGE));
+        ComponentClassResolver resolver = create(logger, locator, new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
 
         assertEquals(resolver.resolvePageNameToClassName("MyCorePage"), className);
 
@@ -565,19 +505,14 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     {
         String className = CORE_ROOT_PACKAGE + ".pages.MyCorePage";
 
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_packages(source, CORE_ROOT_PACKAGE);
-        train_for_app_packages(source);
 
         train_locateComponentClassNames(locator, CORE_ROOT_PACKAGE + ".pages", className);
 
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator, new LibraryMapping(CORE_PREFIX,
-                CORE_ROOT_PACKAGE));
+        ComponentClassResolver resolver = create(logger, locator, new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
 
         assertEquals(resolver.resolvePageClassNameToPageName(className), "core/MyCorePage");
 
@@ -589,20 +524,15 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     {
         String className = LIB_ROOT_PACKAGE + ".pages.MyLibPage";
 
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_packages(source, LIB_ROOT_PACKAGE);
-        train_for_packages(source, CORE_ROOT_PACKAGE);
-        train_for_app_packages(source);
 
         train_locateComponentClassNames(locator, LIB_ROOT_PACKAGE + ".pages", className);
 
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator, new LibraryMapping(LIB_PREFIX,
-                LIB_ROOT_PACKAGE), new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
+        ComponentClassResolver resolver = create(logger, locator, new LibraryMapping(LIB_PREFIX, LIB_ROOT_PACKAGE),
+                new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
 
         assertEquals(resolver.resolvePageNameToClassName("lib/MyLibPage"), className);
 
@@ -614,20 +544,15 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     {
         String className = LIB_ROOT_PACKAGE + ".pages.MyLibPage";
 
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_packages(source, LIB_ROOT_PACKAGE);
-        train_for_packages(source, CORE_ROOT_PACKAGE);
-        train_for_app_packages(source);
 
         train_locateComponentClassNames(locator, LIB_ROOT_PACKAGE + ".pages", className);
 
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator, new LibraryMapping(LIB_PREFIX,
-                LIB_ROOT_PACKAGE), new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
+        ComponentClassResolver resolver = create(logger, locator, new LibraryMapping(LIB_PREFIX, LIB_ROOT_PACKAGE),
+                new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
 
         assertEquals(resolver.resolvePageNameToClassName("lib/MyLibPage"), className);
 
@@ -639,20 +564,15 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     {
         String className = LIB_ROOT_PACKAGE + ".pages.MyLibPage";
 
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_packages(source, LIB_ROOT_PACKAGE);
-        train_for_packages(source, CORE_ROOT_PACKAGE);
-        train_for_app_packages(source);
 
         train_locateComponentClassNames(locator, LIB_ROOT_PACKAGE + ".pages", className);
 
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator, new LibraryMapping(LIB_PREFIX,
-                LIB_ROOT_PACKAGE), new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
+        ComponentClassResolver resolver = create(logger, locator, new LibraryMapping(LIB_PREFIX, LIB_ROOT_PACKAGE),
+                new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
 
         assertEquals(resolver.resolvePageNameToClassName("lib/MyLibPage"), className);
 
@@ -664,20 +584,15 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     {
         String className = LIB_ROOT_PACKAGE + ".pages.LibPage";
 
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_packages(source, LIB_ROOT_PACKAGE);
-        train_for_packages(source, CORE_ROOT_PACKAGE);
-        train_for_app_packages(source);
 
         train_locateComponentClassNames(locator, LIB_ROOT_PACKAGE + ".pages", className);
 
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator, new LibraryMapping(LIB_PREFIX,
-                LIB_ROOT_PACKAGE), new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
+        ComponentClassResolver resolver = create(logger, locator, new LibraryMapping(LIB_PREFIX, LIB_ROOT_PACKAGE),
+                new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
 
         assertEquals(resolver.resolvePageNameToClassName("lib/Page"), className);
 
@@ -687,17 +602,12 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     @Test
     public void class_name_does_not_resolve_to_page_name()
     {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = mockLogger();
 
-        train_for_packages(source, CORE_ROOT_PACKAGE);
-        train_for_app_packages(source);
-
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator, new LibraryMapping(CORE_PREFIX,
-                CORE_ROOT_PACKAGE));
+        ComponentClassResolver resolver = create(logger, locator, new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
 
         String className = LIB_ROOT_PACKAGE + ".pages.LibPage";
 
@@ -717,20 +627,14 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     @Test
     public void page_name_to_canonicalize_does_not_exist()
     {
-
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_packages(source, CORE_ROOT_PACKAGE);
-        train_for_app_packages(source);
 
         train_locateComponentClassNames(locator, APP_ROOT_PACKAGE + ".pages", APP_ROOT_PACKAGE + ".pages.Start");
 
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator, new LibraryMapping(CORE_PREFIX,
-                CORE_ROOT_PACKAGE));
+        ComponentClassResolver resolver = create(logger, locator, new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
 
         try
         {
@@ -748,17 +652,12 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     @Test
     public void class_name_not_in_a_pages_package()
     {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = mockLogger();
 
-        train_for_packages(source, CORE_ROOT_PACKAGE);
-        train_for_app_packages(source);
-
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator, new LibraryMapping(CORE_PREFIX,
-                CORE_ROOT_PACKAGE));
+        ComponentClassResolver resolver = create(logger, locator, new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
 
         String className = CORE_ROOT_PACKAGE + ".foo.CorePage";
 
@@ -781,34 +680,19 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         String secondaryLibPackage = "org.examples.addon.lib";
         String className = secondaryLibPackage + ".pages.MyLibPage";
 
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_packages(source, LIB_ROOT_PACKAGE);
-        train_for_packages(source, secondaryLibPackage);
-        train_for_packages(source, CORE_ROOT_PACKAGE);
-        train_for_app_packages(source);
 
         train_locateComponentClassNames(locator, secondaryLibPackage + ".pages", className);
 
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator, new LibraryMapping(LIB_PREFIX,
-                LIB_ROOT_PACKAGE), new LibraryMapping(LIB_PREFIX, secondaryLibPackage), new LibraryMapping(CORE_PREFIX,
-                CORE_ROOT_PACKAGE));
+        ComponentClassResolver resolver = create(logger, locator, new LibraryMapping(LIB_PREFIX, LIB_ROOT_PACKAGE),
+                new LibraryMapping(LIB_PREFIX, secondaryLibPackage), new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
 
         assertEquals(resolver.resolvePageNameToClassName("lib/MyLibPage"), className);
 
         verify();
-    }
-
-    private void train_for_packages(ComponentInstantiatorSource source, String packageName)
-    {
-        source.addPackage(packageName + ".pages");
-        source.addPackage(packageName + ".components");
-        source.addPackage(packageName + ".mixins");
-        source.addPackage(packageName + ".base");
     }
 
     /**
@@ -820,17 +704,14 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     {
         String className = APP_ROOT_PACKAGE + ".components.SimpleComponent";
 
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_app_packages(source);
 
         train_locateComponentClassNames(locator, APP_ROOT_PACKAGE + ".components", className);
 
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator);
+        ComponentClassResolver resolver = create(logger, locator);
 
         assertEquals(resolver.resolveComponentTypeToClassName("SimpleComponent"), className);
 
@@ -846,17 +727,14 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     {
         String expectedClassName = APP_ROOT_PACKAGE + ".mixins.SimpleMixin";
 
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_app_packages(source);
 
         train_locateComponentClassNames(locator, APP_ROOT_PACKAGE + ".mixins", expectedClassName);
 
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator);
+        ComponentClassResolver resolver = create(logger, locator);
 
         assertEquals(resolver.resolveMixinTypeToClassName("SimpleMixin"), expectedClassName);
 
@@ -866,17 +744,12 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     @Test
     public void mixin_type_not_found()
     {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = mockLogger();
 
-        train_for_packages(source, CORE_ROOT_PACKAGE);
-        train_for_app_packages(source);
-
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator, new LibraryMapping(CORE_PREFIX,
-                CORE_ROOT_PACKAGE));
+        ComponentClassResolver resolver = create(logger, locator, new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
 
         try
         {
@@ -894,17 +767,12 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     @Test
     public void component_type_not_found()
     {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = mockLogger();
 
-        train_for_packages(source, CORE_ROOT_PACKAGE);
-        train_for_app_packages(source);
-
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator, new LibraryMapping(CORE_PREFIX,
-                CORE_ROOT_PACKAGE));
+        ComponentClassResolver resolver = create(logger, locator, new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
 
         try
         {
@@ -917,11 +785,6 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         }
 
         verify();
-    }
-
-    private void train_for_app_packages(ComponentInstantiatorSource source)
-    {
-        train_for_packages(source, APP_ROOT_PACKAGE);
     }
 
     @Test
@@ -966,11 +829,8 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     @Test
     public void ignore_start_page_outside_root()
     {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
         Logger logger = compliantLogger();
-
-        train_for_app_packages(source);
 
         String[] classNames = new String[]
         { APP_ROOT_PACKAGE + ".pages.exam.ExamIndex", APP_ROOT_PACKAGE + ".pages.exam.StartExam" };
@@ -979,7 +839,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentClassResolver resolver = create(logger, source, locator);
+        ComponentClassResolver resolver = create(logger, locator);
 
         assertEquals(resolver.resolvePageNameToClassName("exam"), classNames[0]);
 

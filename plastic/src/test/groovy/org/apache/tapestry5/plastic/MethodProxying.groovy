@@ -1,25 +1,15 @@
 package org.apache.tapestry5.plastic
 
-import org.apache.tapestry5.plastic.MethodAdvice;
-import org.apache.tapestry5.plastic.MethodDescription;
-import org.apache.tapestry5.plastic.MethodInvocation;
-import org.apache.tapestry5.plastic.PlasticClass;
-import org.apache.tapestry5.plastic.PlasticClassTransformer;
-import org.apache.tapestry5.plastic.PlasticManager;
-import org.apache.tapestry5.plastic.PlasticMethod;
-
 import testsubjects.Memory
 
 class MethodProxying extends AbstractPlasticSpecification {
-    PlasticManager mgr = new PlasticManager()
 
     def "basic proxying"() {
         setup:
 
         def mockRunnable = Mock(Runnable.class)
 
-        def o = mgr.createClass (Object.class, {
-            PlasticClass pc ->
+        def o = mgr.createClass (Object.class, { PlasticClass pc ->
 
             def field = pc.introduceField (Runnable.class, "delegate").inject(mockRunnable)
 
@@ -45,8 +35,7 @@ class MethodProxying extends AbstractPlasticSpecification {
         def handle
         def methodToString
 
-        def o = mgr.createClass(Object.class, {
-            PlasticClass pc ->
+        def o = mgr.createClass(Object.class, { PlasticClass pc ->
 
             def field = pc.introduceField(Memory.class, "delegate").inject(new Memory())
 
@@ -76,8 +65,7 @@ class MethodProxying extends AbstractPlasticSpecification {
 
         def handle
 
-        def o = mgr.createClass(Object.class, {
-            PlasticClass pc ->
+        def o = mgr.createClass(Object.class, { PlasticClass pc ->
 
             def memory = new Memory()
 

@@ -1,8 +1,5 @@
 package org.apache.tapestry5.plastic
 
-import org.apache.tapestry5.plastic.MethodDescription;
-import org.apache.tapestry5.plastic.PlasticClass;
-import org.apache.tapestry5.plastic.PlasticClassTransformer;
 
 class MethodIntroduction extends AbstractPlasticSpecification {
 

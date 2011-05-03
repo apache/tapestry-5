@@ -9,9 +9,10 @@ class ToStringTests extends AbstractPlasticSpecification {
     def "add toString method to class that does not yet implement it"() {
         setup:
 
-        PlasticManager mgr = new PlasticManager()
+        def mgr = PlasticManager.withContextClassLoader().create()
 
-        def o = mgr.createClass (Object.class, { it.addToString "<ToString>" } as PlasticClassTransformer).newInstance()
+        def o = mgr.createClass (Object.class, {
+            it.addToString "<ToString>" } as PlasticClassTransformer).newInstance()
 
         expect:
 
@@ -23,7 +24,7 @@ class ToStringTests extends AbstractPlasticSpecification {
 
         // Make sure the base class is transformed (and therefore, the existence of the toString() method noted)
 
-        def mgr = new PlasticManager (Thread.currentThread().contextClassLoader, new StandardDelegate(), ["testsubjects"]as Set)
+        def mgr = PlasticManager.withContextClassLoader().delegate(new StandardDelegate()).packages(["testsubjects"]).create()
 
         def o = mgr.createClass (HasToString.class, { it.addToString "<OverrideToString>" } as PlasticClassTransformer).newInstance()
 

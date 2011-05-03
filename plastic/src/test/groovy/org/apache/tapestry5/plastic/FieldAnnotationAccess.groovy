@@ -5,8 +5,7 @@ import org.apache.tapestry5.plastic.PlasticManager;
 import spock.lang.Specification
 import testannotations.Maybe;
 
-class FieldAnnotationAccess extends Specification {
-    def mgr = new PlasticManager()
+class FieldAnnotationAccess extends AbstractPlasticSpecification {
 
     def "locate field by annotation"() {
         setup:

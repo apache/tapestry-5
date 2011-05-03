@@ -20,6 +20,7 @@ import java.util.Map;
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
 import org.apache.tapestry5.ioc.services.ClassNameLocator;
+import org.apache.tapestry5.services.transform.ControlledPackageType;
 
 /**
  * Resolves page names and component types to fully qualified class names. Pages and components may be provided by the
@@ -122,4 +123,14 @@ public interface ComponentClassResolver
      * @see ClasspathAssetAliasManager
      */
     Map<String, String> getFolderToPackageMapping();
+
+    /**
+     * Used to identify which packages are controlled packages (from which components are loaded). Future expansion
+     * may allow for additional packages which are live reloaded but not components (or perhaps are transformed, but not
+     * as components).
+     * 
+     * @return a mapping from package name to {@link ControlledPackageType}.
+     * @since 5.3.0
+     */
+    Map<String, ControlledPackageType> getControlledPackageMapping();
 }

@@ -55,7 +55,7 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
         this.loader = parentClassLoader;
         this.logger = logger;
 
-        manager = new PlasticManager(parentClassLoader);
+        manager = PlasticManager.withClassLoader(parentClassLoader).create();
 
         if (logger != null)
         {

@@ -15,19 +15,20 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.annotations.Contribute;
-import org.apache.tapestry5.ioc.services.ApplicationDefaults;
-import org.apache.tapestry5.ioc.services.SymbolProvider;
+import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 
-public class ForceDevelopmentModeModule
+public class InternalComponentInvalidationEventHubImpl extends InvalidationEventHubImpl implements
+        InternalComponentInvalidationEventHub
 {
-    @Contribute(SymbolProvider.class)
-    @ApplicationDefaults
-    public static void enableDevelopmentMode(MappedConfiguration<String, Object> configuration)
+    public InternalComponentInvalidationEventHubImpl(@Symbol(SymbolConstants.PRODUCTION_MODE)
+    boolean productionMode)
     {
-        configuration.add(SymbolConstants.PRODUCTION_MODE, false);
-        configuration.add(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, "app.root.package");
+        super(productionMode);
+    }
+
+    public void classInControlledPackageHasChanged()
+    {
+        fireInvalidationEvent();
     }
 }

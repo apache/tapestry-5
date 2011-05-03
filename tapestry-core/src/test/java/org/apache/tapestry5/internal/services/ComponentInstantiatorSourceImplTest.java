@@ -175,13 +175,11 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
         { url }, contextLoader);
         RegistryBuilder builder = new RegistryBuilder(extraLoader);
 
-        builder.add(TapestryModule.class, ForceDevelopmentModeModule.class);
+        builder.add(TapestryModule.class, ForceDevelopmentModeModule.class, AddTransformPagesToCISModule.class);
 
         registry = builder.build();
 
         source = registry.getService(ComponentInstantiatorSource.class);
-
-        source.addPackage("org.apache.tapestry5.internal.transform.pages");
     }
 
     @AfterClass

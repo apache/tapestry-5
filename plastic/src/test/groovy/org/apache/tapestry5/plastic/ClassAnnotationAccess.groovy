@@ -6,8 +6,8 @@ import spock.lang.Specification;
 import testannotations.InheritedAnnotation;
 import testannotations.SimpleAnnotation;
 
-class ClassAnnotationAccess extends Specification {
-    def mgr = new PlasticManager()
+class ClassAnnotationAccess extends AbstractPlasticSpecification {
+
     def pc = mgr.getPlasticClass("testsubjects.AnnotationSubject")
 
     def "access to non-existent annotation"() {
@@ -30,7 +30,7 @@ class ClassAnnotationAccess extends Specification {
         a instanceof SimpleAnnotation
 
         a.annotationType() == SimpleAnnotation.class
-        
+
         a.toString() == "@testannotations.SimpleAnnotation"
     }
 

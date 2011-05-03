@@ -14,15 +14,8 @@
 
 package org.apache.tapestry5.plastic
 
-import org.apache.tapestry5.plastic.FieldConduit;
-import org.apache.tapestry5.plastic.PlasticManager;
-
-import spock.lang.Specification
-
-class FieldConduitTests extends Specification
+class FieldConduitTests extends AbstractPlasticSpecification
 {
-    def mgr = new PlasticManager()
-
     def "setting a field invokes the conduit"() {
 
         FieldConduit fc = Mock()
@@ -106,7 +99,7 @@ class FieldConduitTests extends Specification
                         pc.allFields.first().setConduit(fc)
                     },
                     configureInstantiator: { className, instantiator -> instantiator }
-                ] as PlasticManagerDelegate , ["testsubjects"] as Set)
+                ] as PlasticManagerDelegate , ["testsubjects"]as Set)
 
 
         def o = mgr.getClassInstantiator("testsubjects.AccessMethodsSubject").newInstance()

@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.plastic;
 
-import java.util.Collections;
+import java.util.Collection;
 import java.util.Set;
 
 import org.apache.tapestry5.internal.plastic.NoopDelegate;
@@ -23,7 +23,9 @@ import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
 
 /**
  * Manages the internal class loaders and other logics necessary to load and transform existing classes,
- * or to create new classes dynamically at runtime.
+ * or to create new classes dynamically at runtime. New instances are instantiates using
+ * {@link #withClassLoader(ClassLoader)} or {@link #withContextClassLoader()}, then configuring
+ * the returned options object before invoking {@link PlasticManagerOptions#create()}.
  */
 @SuppressWarnings("unchecked")
 public class PlasticManager implements PlasticClassListenerHub
@@ -31,23 +33,72 @@ public class PlasticManager implements PlasticClassListenerHub
     private final PlasticClassPool pool;
 
     /**
-     * Creates a PlasticManager using the Thread's contextClassLoader as the parent class loader. No classes will
-     * be automatically transformed, but instead {@link #createClass(Class, CreateClassCallback)} can be used to create
-     * entirely new classes.
+     * A builder object for configuring the PlasticManager before instantiating it. Assumes a no-op
+     * {@link PlasticManagerDelegate} and an empty
+     * set of controlled packages.
      */
-    public PlasticManager()
+    public static class PlasticManagerOptions
     {
-        this(Thread.currentThread().getContextClassLoader());
+        private final ClassLoader loader;
+
+        private PlasticManagerDelegate delegate = new NoopDelegate();
+
+        private final Set<String> packages = PlasticInternalUtils.newSet();
+
+        private PlasticManagerOptions(ClassLoader loader)
+        {
+            assert loader != null;
+
+            this.loader = loader;
+        }
+
+        /**
+         * Sets the {@link PlasticManagerDelegate}, which is ultimately responsible for
+         * transforming classes loaded from controlled packages. The default delegate
+         * does nothing.
+         */
+        public PlasticManagerOptions delegate(PlasticManagerDelegate delegate)
+        {
+            assert delegate != null;
+
+            this.delegate = delegate;
+
+            return this;
+        }
+
+        /**
+         * Adds additional controlled packages, in which classes are loaded and transformed.
+         */
+        public PlasticManagerOptions packages(Collection<String> packageNames)
+        {
+            packages.addAll(packageNames);
+
+            return this;
+        }
+
+        /**
+         * Creates the PlasticManager with the current set of options.
+         * 
+         * @return the PlasticManager
+         */
+        public PlasticManager create()
+        {
+            return new PlasticManager(loader, delegate, packages);
+        }
     }
 
     /**
-     * Creates a PlasticManager using the Thread's contextClassLoader as the parent class loader. No classes will
-     * be automatically transformed, but instead {@link #createClass(Class, CreateClassCallback)} can be used to create
-     * entirely new classes.
+     * Creates a new options using the thread's context class loader.
      */
-    public PlasticManager(ClassLoader parentClassLoader)
+    public static PlasticManagerOptions withContextClassLoader()
     {
-        this(parentClassLoader, new NoopDelegate(), Collections.<String> emptySet());
+        return withClassLoader(Thread.currentThread().getContextClassLoader());
+    }
+
+    /** Creates a new options using the specified class loader. */
+    public static PlasticManagerOptions withClassLoader(ClassLoader loader)
+    {
+        return new PlasticManagerOptions(loader);
     }
 
     /**
@@ -62,7 +113,7 @@ public class PlasticManager implements PlasticClassListenerHub
      *            defines the packages that are to be transformed; top-classes in these packages
      *            (or sub-packages) will be passed to the delegate for transformation
      */
-    public PlasticManager(ClassLoader parentClassLoader, PlasticManagerDelegate delegate,
+    private PlasticManager(ClassLoader parentClassLoader, PlasticManagerDelegate delegate,
             Set<String> controlledPackageNames)
     {
         assert parentClassLoader != null;
@@ -74,10 +125,10 @@ public class PlasticManager implements PlasticClassListenerHub
 
     /**
      * Returns the ClassLoader that is used to instantiate transformed classes. The parent class loader
-     * of the returned class loader is the class loader provided to
-     * {@link #PlasticManager(ClassLoader, PlasticManagerDelegate, Set)}
+     * of the returned class loader is the context class loader, or the class loader specified by
+     * {@link #withClassLoader(ClassLoader)}.
      * 
-     * @return class loader
+     * @return class loader used to load classes in controlled packages
      */
     public ClassLoader getClassLoader()
     {
@@ -134,7 +185,7 @@ public class PlasticManager implements PlasticClassListenerHub
             throw new IllegalArgumentException(String.format("Class %s defines an interface, not a base class.",
                     baseClass.getName()));
 
-        String name = String.format("$PlasticProxy$%s_%s", baseClass.getSimpleName(), PlasticUtils.nextUID());
+        String name = String.format("$%s_%s", baseClass.getSimpleName(), PlasticUtils.nextUID());
 
         PlasticClassTransformation<T> transformation = pool.createTransformation(baseClass.getName(), name);
 

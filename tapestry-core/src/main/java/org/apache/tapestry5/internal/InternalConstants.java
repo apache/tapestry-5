@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -132,4 +132,12 @@ public final class InternalConstants
      * @since 5.2.0
      */
     public static final String CORE_STACK_NAME = "core";
+
+    /**
+     * The names of the standard controlled subpackages.
+     * 
+     * @since 5.3.0
+     */
+    public static final String[] SUBPACKAGES =
+    { PAGES_SUBPACKAGE, COMPONENTS_SUBPACKAGE, MIXINS_SUBPACKAGE, BASE_SUBPACKAGE };
 }

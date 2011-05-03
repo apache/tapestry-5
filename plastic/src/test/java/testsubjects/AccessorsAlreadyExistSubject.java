@@ -1,4 +1,4 @@
-package org.apache.tapestry5.plastic;
+package testsubjects;
 
 import testannotations.Property;
 

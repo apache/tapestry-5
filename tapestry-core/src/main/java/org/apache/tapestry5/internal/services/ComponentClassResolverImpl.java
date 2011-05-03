@@ -35,6 +35,7 @@ import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.LibraryMapping;
+import org.apache.tapestry5.services.transform.ControlledPackageType;
 import org.slf4j.Logger;
 
 public class ComponentClassResolverImpl implements ComponentClassResolver, InvalidationListener
@@ -42,8 +43,6 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     private static final String CORE_LIBRARY_PREFIX = "core/";
 
     private final Logger logger;
-
-    private final ComponentInstantiatorSource componentInstantiatorSource;
 
     private final ClassNameLocator classNameLocator;
 
@@ -53,6 +52,8 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     // The key does not begin or end with a slash.
 
     private final Map<String, List<String>> mappings = CollectionFactory.newCaseInsensitiveMap();
+
+    private final Map<String, ControlledPackageType> packageMappings = CollectionFactory.newMap();
 
     // Flag indicating that the maps have been cleared following an invalidation
     // and need to be rebuilt. The flag and the four maps below are not synchronized
@@ -100,8 +101,6 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
     public ComponentClassResolverImpl(Logger logger,
 
-    ComponentInstantiatorSource componentInstantiatorSource,
-
     ClassNameLocator classNameLocator,
 
     @Symbol(SymbolConstants.START_PAGE_NAME)
@@ -110,7 +109,6 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     Collection<LibraryMapping> mappings)
     {
         this.logger = logger;
-        this.componentInstantiatorSource = componentInstantiatorSource;
         this.classNameLocator = classNameLocator;
 
         this.startPageName = startPageName;
@@ -145,16 +143,21 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
             // must be registered with the component instantiator (which is responsible
             // for transformation).
 
-            addPackagesToInstantiatorSource(rootPackage);
+            addSubpackagesToPackageMapping(rootPackage);
         }
     }
 
-    private void addPackagesToInstantiatorSource(String rootPackage)
+    private void addSubpackagesToPackageMapping(String rootPackage)
     {
-        componentInstantiatorSource.addPackage(rootPackage + "." + InternalConstants.PAGES_SUBPACKAGE);
-        componentInstantiatorSource.addPackage(rootPackage + "." + InternalConstants.COMPONENTS_SUBPACKAGE);
-        componentInstantiatorSource.addPackage(rootPackage + "." + InternalConstants.MIXINS_SUBPACKAGE);
-        componentInstantiatorSource.addPackage(rootPackage + "." + InternalConstants.BASE_SUBPACKAGE);
+        for (String subpackage : InternalConstants.SUBPACKAGES)
+        {
+            packageMappings.put(rootPackage + "." + subpackage, ControlledPackageType.COMPONENT);
+        }
+    }
+
+    public Map<String, ControlledPackageType> getControlledPackageMapping()
+    {
+        return Collections.unmodifiableMap(packageMappings);
     }
 
     /**
@@ -313,7 +316,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
                     // Make the super-stripped name another alias to the class.
                     // TAP5-1444: Everything else but a start page has precedence
-                    
+
                     if (!(lastTerm.equalsIgnoreCase(startPageName) && logicalNameToClassName.containsKey(reducedName)))
                     {
                         logicalNameToClassName.put(reducedName, name);
@@ -597,10 +600,9 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
         if (packageName == null)
             throw new RuntimeException(
-                    String
-                            .format(
-                                    "Package names for library folder '%s' (%s) can not be reduced to a common base package (of at least two terms).",
-                                    folder, InternalUtils.joinSorted(packageNames)));
+                    String.format(
+                            "Package names for library folder '%s' (%s) can not be reduced to a common base package (of at least two terms).",
+                            folder, InternalUtils.joinSorted(packageNames)));
         return packageName;
     }
 

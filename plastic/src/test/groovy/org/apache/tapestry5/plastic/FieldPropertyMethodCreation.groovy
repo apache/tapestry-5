@@ -18,13 +18,13 @@ import java.util.concurrent.atomic.AtomicReference
 
 import spock.lang.Specification
 import testannotations.Property
+import testsubjects.AccessorsAlreadyExistSubject;
 import testsubjects.CreateAccessorsSubject
 import testsubjects.GenericCreateAccessorsSubject
 
-class FieldPropertyMethodCreation extends Specification
+class FieldPropertyMethodCreation extends AbstractPlasticSpecification
 {
     def withAccessors(Class subject, PropertyAccessType accessType) {
-        def mgr = new PlasticManager()
         def pc = mgr.getPlasticClass (subject.name)
 
         pc.getFieldsWithAnnotation(Property.class).each { f ->
@@ -95,7 +95,7 @@ class FieldPropertyMethodCreation extends Specification
 
         def e = thrown(IllegalArgumentException)
 
-        assert e.message == "Unable to create new accessor method public java.lang.String getValue() on class org.apache.tapestry5.plastic.AccessorsAlreadyExistSubject as the method is already implemented."
+        assert e.message == "Unable to create new accessor method public java.lang.String getValue() on class testsubjects.AccessorsAlreadyExistSubject as the method is already implemented."
     }
 
     def "create setter that already exists"() {
@@ -107,6 +107,6 @@ class FieldPropertyMethodCreation extends Specification
 
         def e = thrown(IllegalArgumentException)
 
-        assert e.message == "Unable to create new accessor method public void setValue(java.lang.String) on class org.apache.tapestry5.plastic.AccessorsAlreadyExistSubject as the method is already implemented."
+        assert e.message == "Unable to create new accessor method public void setValue(java.lang.String) on class testsubjects.AccessorsAlreadyExistSubject as the method is already implemented."
     }
 }

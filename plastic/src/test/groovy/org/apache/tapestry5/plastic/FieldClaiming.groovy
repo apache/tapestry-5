@@ -18,40 +18,38 @@ import org.apache.tapestry5.plastic.PlasticManager;
 
 import spock.lang.Specification;
 
-class FieldClaiming extends Specification
+class FieldClaiming extends AbstractPlasticSpecification
 {
-    def mgr = new PlasticManager()
-    
     def "get fields ignores claimed fields"() {
         setup:
         def pc = mgr.getPlasticClass("testsubjects.SingleField")
         def f = pc.unclaimedFields.first()
-        
+
         expect:
         f.name == "myField"
         ! f.claimed
-        
+
         when:
         def f2 = f.claim("my tag")
-        
+
         then:
         f2.is(f)
-        
+
         f.claimed
         pc.unclaimedFields == []
         pc.allFields == [f]
     }
-    
+
     def "a field may only be claimed once"() {
         setup:
         def pc = mgr.getPlasticClass("testsubjects.SingleField")
         def f = pc.unclaimedFields.first()
-        
+
         f.claim "[first tag]"
-        
+
         when:
         f.claim "[second tag]"
-        
+
         then:
         def e = thrown(IllegalStateException)
         e.message == "Field myField of class testsubjects.SingleField can not be claimed by [second tag] as it is already claimed by [first tag]."

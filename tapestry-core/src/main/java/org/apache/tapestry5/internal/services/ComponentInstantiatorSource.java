@@ -14,10 +14,12 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 import org.apache.tapestry5.ioc.internal.services.CtClassSource;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.services.InvalidationEventHub;
+import org.apache.tapestry5.services.transform.ControlledPackageType;
 
 /**
  * Creates {@link org.apache.tapestry5.internal.services.Instantiator}s for components, based on component class name.
@@ -29,7 +31,11 @@ import org.apache.tapestry5.services.InvalidationEventHub;
  * The strategy used is that when <em>any</em> class (in a controlled package) changes, the entire class loader is
  * discarded, along with any instances derived from those classes. A new class loader is created, and then invalidation
  * events are fired to listeners.
+ * <p>
+ * Starting in Tapestry 5.3, the packages that are loaded are controlled by a configuration that maps package names to
+ * {@link ControlledPackageType}s.
  */
+@UsesMappedConfiguration(key = String.class, value = ControlledPackageType.class)
 public interface ComponentInstantiatorSource
 {
 
@@ -46,15 +52,7 @@ public interface ComponentInstantiatorSource
     Instantiator getInstantiator(String classname);
 
     /**
-     * Adds a controlled package. Only classes within controlled packages are subject to transformation.
-     * 
-     * @param packageName
-     *            the package name to add (must not be blank)
-     */
-    void addPackage(String packageName);
-
-    /**
-     * Checks to see if a fully qualfied class name exists. This method appears to exist only for testing.
+     * Checks to see if a fully qualified class name exists. This method appears to exist only for testing.
      * 
      * @param className
      *            name of class to check
@@ -77,12 +75,4 @@ public interface ComponentInstantiatorSource
      * @since 5.3.0
      */
     PlasticProxyFactory getProxyFactory();
-
-    /**
-     * Invalidation event hub used to notify listeners that component classes have changed.
-     * 
-     * @see org.apache.tapestry5.services.ComponentClasses
-     * @since 5.1.0.0
-     */
-    InvalidationEventHub getInvalidationEventHub();
 }

@@ -14,14 +14,8 @@
 
 package org.apache.tapestry5.plastic
 
-import org.apache.tapestry5.plastic.PlasticManager;
-
-import spock.lang.Specification;
-
-class FieldHandleTests extends Specification
+class FieldHandleTests extends AbstractPlasticSpecification
 {
-    def mgr = new PlasticManager()
-
     def "getting access to a new primitive field"() {
         def pc = mgr.getPlasticClass("testsubjects.Empty")
 

@@ -18,22 +18,17 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry5.internal.model.MutableComponentModelImpl;
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Primary;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
-import org.apache.tapestry5.ioc.internal.services.PlasticClassListenerLogger;
 import org.apache.tapestry5.ioc.internal.services.PlasticProxyFactoryImpl;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -58,20 +53,20 @@ import org.apache.tapestry5.plastic.PlasticManagerDelegate;
 import org.apache.tapestry5.plastic.PlasticUtils;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.ComponentResourcesAware;
-import org.apache.tapestry5.services.InvalidationEventHub;
+import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.UpdateListener;
 import org.apache.tapestry5.services.UpdateListenerHub;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.ControlledPackageType;
 import org.apache.tapestry5.services.transform.TransformationSupport;
 import org.slf4j.Logger;
 
 /**
  * A wrapper around a {@link PlasticManager} that allows certain classes to be modified as they are loaded.
  */
-public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubImpl implements
-        ComponentInstantiatorSource, UpdateListener, PlasticManagerDelegate, PlasticClassListener
+public final class ComponentInstantiatorSourceImpl implements ComponentInstantiatorSource, UpdateListener,
+        InvalidationListener, PlasticManagerDelegate, PlasticClassListener
 {
-
     private final Set<String> controlledPackageNames = CollectionFactory.newSet();
 
     private final URLChangeTracker changeTracker;
@@ -88,6 +83,10 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
     private final OperationTracker tracker;
 
+    private final InternalComponentInvalidationEventHub invalidationHub;
+
+    // These change whenever the invalidation event hub sends an invalidation notification
+
     private ClassFactory classFactory;
 
     private PlasticProxyFactory proxyFactory;
@@ -101,15 +100,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
     private final Map<String, ComponentModel> classToModel = CollectionFactory.newMap();
 
-    private final String[] SUBPACKAGES =
-    { "." + InternalConstants.PAGES_SUBPACKAGE + ".", "." + InternalConstants.COMPONENTS_SUBPACKAGE + ".",
-            "." + InternalConstants.MIXINS_SUBPACKAGE + ".", "." + InternalConstants.BASE_SUBPACKAGE + "." };
-
-    public ComponentInstantiatorSourceImpl(@Inject
-    @Symbol(SymbolConstants.PRODUCTION_MODE)
-    boolean productionMode,
-
-    Logger logger,
+    public ComponentInstantiatorSourceImpl(Logger logger,
 
     LoggerSource loggerSource,
 
@@ -123,10 +114,10 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
     ClasspathURLConverter classpathURLConverter,
 
-    OperationTracker tracker)
-    {
-        super(productionMode);
+    OperationTracker tracker,
 
+    Map<String, ControlledPackageType> configuration, InternalComponentInvalidationEventHub invalidationHub)
+    {
         this.parent = proxyFactory.getClassLoader();
         this.transformerChain = transformerChain;
         this.logger = logger;
@@ -134,6 +125,12 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
         this.internalRequestGlobals = internalRequestGlobals;
         this.changeTracker = new URLChangeTracker(classpathURLConverter);
         this.tracker = tracker;
+        this.invalidationHub = invalidationHub;
+
+        // For now, we just need the keys of the configuration. When there are more types of controlled
+        // packages, we'll need to do more.
+
+        controlledPackageNames.addAll(configuration.keySet());
 
         initializeService();
     }
@@ -141,14 +138,20 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     @PostInjection
     public void listenForUpdates(UpdateListenerHub hub)
     {
+        invalidationHub.addInvalidationListener(this);
         hub.addUpdateListener(this);
     }
 
     public synchronized void checkForUpdates()
     {
-        if (!changeTracker.containsChanges())
-            return;
+        if (changeTracker.containsChanges())
+        {
+            invalidationHub.classInControlledPackageHasChanged();
+        }
+    }
 
+    public void objectWasInvalidated()
+    {
         changeTracker.clear();
         classToInstantiator.clear();
 
@@ -156,11 +159,6 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
         // Create a new one.
 
         initializeService();
-
-        // Tell everyone that the world has changed and they should discard
-        // their cache.
-
-        fireInvalidationEvent();
     }
 
     /**
@@ -169,7 +167,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
      */
     private void initializeService()
     {
-        manager = new PlasticManager(parent, this, controlledPackageNames);
+        manager = PlasticManager.withClassLoader(parent).delegate(this).packages(controlledPackageNames).create();
 
         manager.addPlasticClassListener(this);
 
@@ -254,11 +252,6 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     public PlasticProxyFactory getProxyFactory()
     {
         return proxyFactory;
-    }
-
-    public InvalidationEventHub getInvalidationEventHub()
-    {
-        return this;
     }
 
     public void transform(final PlasticClass plasticClass)
@@ -359,9 +352,11 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
     private String buildSuggestedPackageName(String className)
     {
-        for (String subpackage : SUBPACKAGES)
+        for (String subpackage : InternalConstants.SUBPACKAGES)
         {
-            int pos = className.indexOf(subpackage);
+            String term = "." + subpackage + ".";
+
+            int pos = className.indexOf(term);
 
             // Keep the leading '.' in the subpackage name and tack on "base".
 

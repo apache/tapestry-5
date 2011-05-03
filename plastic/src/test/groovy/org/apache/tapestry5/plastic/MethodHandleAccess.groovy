@@ -1,11 +1,8 @@
 package org.apache.tapestry5.plastic
 
-import org.apache.tapestry5.plastic.PlasticManager;
-
 import testsubjects.WillNotDoubleException
 
 class MethodHandleAccess extends AbstractPlasticSpecification {
-    def mgr = new PlasticManager()
 
     def init(name) {
         def pc = mgr.getPlasticClass("testsubjects.MethodHandleSubject")

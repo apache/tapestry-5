@@ -14,16 +14,10 @@
 
 package org.apache.tapestry5.plastic
 
-import org.apache.tapestry5.plastic.ComputedValue;
-import org.apache.tapestry5.plastic.PlasticManager;
+import testsubjects.StringPropertyHolder
 
-import spock.lang.Specification;
-import testsubjects.StringPropertyHolder;
-
-class FieldInjection extends Specification
+class FieldInjection extends AbstractPlasticSpecification
 {
-    def mgr = new PlasticManager()
-
     def "injection of a reference value"() {
         String injected = "Value injected into the Empty class"
 
