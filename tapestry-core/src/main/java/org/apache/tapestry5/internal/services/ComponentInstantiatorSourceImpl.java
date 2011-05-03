@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.model.MutableComponentModelImpl;
@@ -28,6 +29,7 @@ import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Primary;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry5.ioc.internal.services.PlasticProxyFactoryImpl;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
@@ -49,6 +51,8 @@ import org.apache.tapestry5.plastic.PlasticClassEvent;
 import org.apache.tapestry5.plastic.PlasticClassListener;
 import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.plastic.PlasticManager;
+import org.apache.tapestry5.plastic.TransformationOption;
+import org.apache.tapestry5.plastic.PlasticManager.PlasticManagerBuilder;
 import org.apache.tapestry5.plastic.PlasticManagerDelegate;
 import org.apache.tapestry5.plastic.PlasticUtils;
 import org.apache.tapestry5.runtime.Component;
@@ -85,6 +89,8 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
     private final InternalComponentInvalidationEventHub invalidationHub;
 
+    private final boolean productionMode;
+
     // These change whenever the invalidation event hub sends an invalidation notification
 
     private ClassFactory classFactory;
@@ -116,7 +122,12 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
     OperationTracker tracker,
 
-    Map<String, ControlledPackageType> configuration, InternalComponentInvalidationEventHub invalidationHub)
+    Map<String, ControlledPackageType> configuration,
+
+    @Symbol(SymbolConstants.PRODUCTION_MODE)
+    boolean productionMode,
+
+    InternalComponentInvalidationEventHub invalidationHub)
     {
         this.parent = proxyFactory.getClassLoader();
         this.transformerChain = transformerChain;
@@ -126,6 +137,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
         this.changeTracker = new URLChangeTracker(classpathURLConverter);
         this.tracker = tracker;
         this.invalidationHub = invalidationHub;
+        this.productionMode = productionMode;
 
         // For now, we just need the keys of the configuration. When there are more types of controlled
         // packages, we'll need to do more.
@@ -167,7 +179,15 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
      */
     private void initializeService()
     {
-        manager = PlasticManager.withClassLoader(parent).delegate(this).packages(controlledPackageNames).create();
+        PlasticManagerBuilder builder = PlasticManager.withClassLoader(parent).delegate(this)
+                .packages(controlledPackageNames);
+
+        if (!productionMode)
+        {
+            builder.enable(TransformationOption.FIELD_WRITEBEHIND);
+        }
+
+        manager = builder.create();
 
         manager.addPlasticClassListener(this);
 
