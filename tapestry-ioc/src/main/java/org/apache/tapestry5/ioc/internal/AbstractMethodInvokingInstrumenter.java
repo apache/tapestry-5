@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.ModuleBuilderSource;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.OperationTracker;
@@ -83,34 +84,47 @@ public class AbstractMethodInvokingInstrumenter
         return InternalUtils.isStatic(method) ? null : moduleSource.getModuleBuilder();
     }
 
-    protected Object invoke(InjectionResources injectionResources)
+    protected Object invoke(final InjectionResources injectionResources)
     {
-        Object result = null;
-        Throwable failure = null;
+        final String methodId = toString();
+
+        String description = String.format("Invoking method %s", methodId);
 
         if (logger.isDebugEnabled())
-            logger.debug(String.format("Invoking method %s", this));
-
-        try
         {
-            Object[] parameters = InternalUtils.calculateParametersForMethod(method, resources, injectionResources,
-                    resources.getTracker());
-
-            result = method.invoke(getModuleInstance(), parameters);
-        }
-        catch (InvocationTargetException ite)
-        {
-            failure = ite.getTargetException();
-        }
-        catch (Exception ex)
-        {
-            failure = ex;
+            logger.debug(description);
         }
 
-        if (failure != null)
-            throw new RuntimeException(String.format("Exception invoking method %s: %s", this,
-                    InternalUtils.toMessage(failure)), failure);
+        return resources.getTracker().invoke(description, new Invokable<Object>()
+        {
+            public Object invoke()
+            {
+                Object result = null;
+                Throwable failure = null;
 
-        return result;
+                try
+                {
+                    Object[] parameters = InternalUtils.calculateParametersForMethod(method, resources,
+                            injectionResources, resources.getTracker());
+
+                    result = method.invoke(getModuleInstance(), parameters);
+                }
+                catch (InvocationTargetException ite)
+                {
+                    failure = ite.getTargetException();
+                }
+                catch (Exception ex)
+                {
+                    failure = ex;
+                }
+
+                if (failure != null)
+                    throw new RuntimeException(String.format("Exception invoking method %s: %s", methodId,
+                            InternalUtils.toMessage(failure)), failure);
+
+                return result;
+            }
+        });
+
     }
 }

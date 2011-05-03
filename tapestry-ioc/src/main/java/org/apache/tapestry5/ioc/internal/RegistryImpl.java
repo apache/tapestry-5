@@ -1051,7 +1051,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             }
         };
 
-        return proxyFactory.createProxy(interfaceClass, justInTime, String.format("<Autobuild proxy %s(%s)>", implementationClass.getName(), interfaceClass.getName()));
+        return proxyFactory.createProxy(interfaceClass, justInTime,
+                String.format("<Autobuild proxy %s(%s)>", implementationClass.getName(), interfaceClass.getName()));
     }
 
     private <T> T createReloadingProxy(Class<T> interfaceClass, final Class<? extends T> implementationClass,
@@ -1062,7 +1063,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         getService(UpdateListenerHub.class).addUpdateListener(creator);
 
-        return proxyFactory.createProxy(interfaceClass, (ObjectCreator<T>) creator, String.format("<Autoreload proxy %s(%s)>", implementationClass.getName(), interfaceClass.getName()));
+        return proxyFactory.createProxy(interfaceClass, (ObjectCreator<T>) creator,
+                String.format("<Autoreload proxy %s(%s)>", implementationClass.getName(), interfaceClass.getName()));
     }
 
     public Object provideServiceProxy(String serviceId)

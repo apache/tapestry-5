@@ -1,10 +1,10 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
 import org.apache.tapestry5.ioc.internal.util.InjectionResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -29,7 +30,7 @@ public class ConstructorServiceCreator extends AbstractServiceCreator
     private final Constructor constructor;
 
     public ConstructorServiceCreator(ServiceBuilderResources resources, String creatorDescription,
-                                     Constructor constructor)
+            Constructor constructor)
     {
         super(resources, creatorDescription);
 
@@ -44,39 +45,47 @@ public class ConstructorServiceCreator extends AbstractServiceCreator
 
     public Object createObject()
     {
-        Throwable failure = null;
-        Object result = null;
-
-        InternalUtils.validateConstructorForAutobuild(constructor);
-
-        InjectionResources injectionResources = createInjectionResources();
-
-        try
+        return resources.getTracker().invoke("Invoking " + creatorDescription, new Invokable<Object>()
         {
-            Object[] parameters = InternalUtils.calculateParametersForConstructor(constructor, resources,
-                                                                                  injectionResources,
-                                                                                  resources.getTracker());
+            public Object invoke()
+            {
+                Throwable failure = null;
+                Object result = null;
 
-            if (logger.isDebugEnabled()) logger.debug(IOCMessages.invokingConstructor(creatorDescription));
+                InternalUtils.validateConstructorForAutobuild(constructor);
 
-            result = constructor.newInstance(parameters);
+                InjectionResources injectionResources = createInjectionResources();
 
-            InternalUtils.injectIntoFields(result, resources, injectionResources, resources.getTracker());
-        }
-        catch (InvocationTargetException ite)
-        {
-            failure = ite.getTargetException();
-        }
-        catch (Exception ex)
-        {
-            failure = ex;
-        }
+                try
+                {
+                    Object[] parameters = InternalUtils.calculateParametersForConstructor(constructor, resources,
+                            injectionResources, resources.getTracker());
 
-        if (failure != null)
-            throw new RuntimeException(IOCMessages.constructorError(creatorDescription, serviceId, failure), failure);
+                    if (logger.isDebugEnabled())
+                        logger.debug(IOCMessages.invokingConstructor(creatorDescription));
 
-        InternalUtils.invokePostInjectionMethods(result, resources, injectionResources, resources.getTracker());
+                    result = constructor.newInstance(parameters);
 
-        return result;
+                    InternalUtils.injectIntoFields(result, resources, injectionResources, resources.getTracker());
+                }
+                catch (InvocationTargetException ite)
+                {
+                    failure = ite.getTargetException();
+                }
+                catch (Exception ex)
+                {
+                    failure = ex;
+                }
+
+                if (failure != null)
+                    throw new RuntimeException(IOCMessages.constructorError(creatorDescription, serviceId, failure),
+                            failure);
+
+                InternalUtils.invokePostInjectionMethods(result, resources, injectionResources, resources.getTracker());
+
+                return result;
+            }
+        });
+
     }
 }

@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import org.apache.tapestry5.ioc.Invokable;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
@@ -28,8 +30,7 @@ public class ServiceBuilderMethodInvoker extends AbstractServiceCreator
 {
     private final Method builderMethod;
 
-    public ServiceBuilderMethodInvoker(ServiceBuilderResources resources,
-                                       String creatorDescription, Method method)
+    public ServiceBuilderMethodInvoker(ServiceBuilderResources resources, String creatorDescription, Method method)
     {
         super(resources, creatorDescription);
 
@@ -44,46 +45,47 @@ public class ServiceBuilderMethodInvoker extends AbstractServiceCreator
         // Defer getting (and possibly instantitating) the module instance until the last possible
         // moment. If the method is static, there's no need to even get the builder.
 
-        Object moduleInstance = InternalUtils.isStatic(builderMethod)
-                                ? null
-                                : resources.getModuleBuilder();
+        final Object moduleInstance = InternalUtils.isStatic(builderMethod) ? null : resources.getModuleBuilder();
 
-        Object result = null;
-        Throwable failure = null;
+        final OperationTracker tracker = resources.getTracker();
 
-        try
+        return tracker.invoke(String.format("Invoking " + creatorDescription), new Invokable<Object>()
         {
-            Object[] parameters = InternalUtils.calculateParametersForMethod(
-                    builderMethod,
-                    resources,
-                    createInjectionResources(), resources.getTracker());
+            public Object invoke()
+            {
+                final OperationTracker tracker = resources.getTracker();
+                Object result = null;
+                Throwable failure = null;
 
-            if (logger.isDebugEnabled())
-                logger.debug(IOCMessages.invokingMethod(creatorDescription));
+                try
+                {
+                    Object[] parameters = InternalUtils.calculateParametersForMethod(builderMethod, resources,
+                            createInjectionResources(), tracker);
 
-            result = builderMethod.invoke(moduleInstance, parameters);
-        }
-        catch (InvocationTargetException ite)
-        {
-            failure = ite.getTargetException();
-        }
-        catch (Exception ex)
-        {
-            failure = ex;
-        }
+                    if (logger.isDebugEnabled())
+                        logger.debug(IOCMessages.invokingMethod(creatorDescription));
 
-        if (failure != null)
-            throw new RuntimeException(IOCMessages.builderMethodError(
-                    creatorDescription,
-                    serviceId,
-                    failure), failure);
+                    result = builderMethod.invoke(moduleInstance, parameters);
+                }
+                catch (InvocationTargetException ite)
+                {
+                    failure = ite.getTargetException();
+                }
+                catch (Exception ex)
+                {
+                    failure = ex;
+                }
 
-        if (result == null)
-            throw new RuntimeException(IOCMessages.builderMethodReturnedNull(
-                    creatorDescription,
-                    serviceId));
+                if (failure != null)
+                    throw new RuntimeException(IOCMessages.builderMethodError(creatorDescription, serviceId, failure),
+                            failure);
 
-        return result;
+                if (result == null)
+                    throw new RuntimeException(IOCMessages.builderMethodReturnedNull(creatorDescription, serviceId));
+
+                return result;
+            }
+        });
     }
 
     @Override
