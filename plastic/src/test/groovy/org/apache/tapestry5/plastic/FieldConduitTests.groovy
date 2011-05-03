@@ -94,12 +94,13 @@ class FieldConduitTests extends AbstractPlasticSpecification
 
         FieldConduit fc = Mock()
 
-        def mgr = new PlasticManager (Thread.currentThread().contextClassLoader, [
+        def mgr = PlasticManager.withContextClassLoader().delegate(
+                [
                     transform: { PlasticClass pc ->
                         pc.allFields.first().setConduit(fc)
                     },
                     configureInstantiator: { className, instantiator -> instantiator }
-                ] as PlasticManagerDelegate , ["testsubjects"]as Set)
+                ] as PlasticManagerDelegate).packages(["testsubjects"]).create()
 
 
         def o = mgr.getClassInstantiator("testsubjects.AccessMethodsSubject").newInstance()
@@ -121,5 +122,73 @@ class FieldConduitTests extends AbstractPlasticSpecification
         then:
 
         1 * fc.get(o, _) >> "plastic"
+    }
+
+    def "verify writebehind on normal field"() {
+        FieldConduit fc = Mock()
+
+        def mgr = PlasticManager.withContextClassLoader().enable(TransformationOption.FIELD_WRITEBEHIND).create()
+
+        def pc = mgr.getPlasticClass("testsubjects.IntWriteBehind")
+
+        pc.allFields.first().setConduit(fc)
+
+        def o = pc.createInstantiator().newInstance()
+
+        when:
+
+        o.value = 97
+
+        then:
+
+        1 * fc.set(o, _, 97)
+
+        o.m_value == 97
+
+        when:
+
+        def r = o.value
+
+        then:
+
+        1 * fc.get(o, _) >> 1097
+
+        r == 1097
+
+        o.m_value == 1097
+    }
+    
+    def "verify writebehind on wide field"() {
+        FieldConduit fc = Mock()
+
+        def mgr = PlasticManager.withContextClassLoader().enable(TransformationOption.FIELD_WRITEBEHIND).create()
+
+        def pc = mgr.getPlasticClass("testsubjects.LongWriteBehind")
+
+        pc.allFields.first().setConduit(fc)
+
+        def o = pc.createInstantiator().newInstance()
+
+        when:
+
+        o.value = 123456789L
+
+        then:
+
+        1 * fc.set(o, _, 123456789L)
+
+        o.m_value == 123456789L
+
+        when:
+
+        def r = o.value
+
+        then:
+
+        1 * fc.get(o, _) >> 987654321L
+
+        r == 987654321L
+
+        o.m_value == 987654321L
     }
 }

@@ -37,6 +37,7 @@ import org.apache.tapestry5.plastic.PlasticClassListener;
 import org.apache.tapestry5.plastic.PlasticClassListenerHub;
 import org.apache.tapestry5.plastic.PlasticClassTransformation;
 import org.apache.tapestry5.plastic.PlasticManagerDelegate;
+import org.apache.tapestry5.plastic.TransformationOption;
 
 /**
  * Responsible for managing a class loader that allows ASM {@link ClassNode}s
@@ -86,6 +87,8 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
     /** Map from FQCN to BaseClassDef. */
     private final Map<String, BaseClassDef> baseClassDefs = new HashMap<String, PlasticClassPool.BaseClassDef>();
 
+    private final Set<TransformationOption> options;
+
     /**
      * Creates the pool with a set of controlled packages; all classes in the controlled packages are loaded by the
      * pool's class loader, and all top-level classes in the controlled packages are transformed via the delegate.
@@ -96,12 +99,16 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
      *            responsible for end stages of transforming top-level classes
      * @param controlledPackages
      *            set of package names (note: retained, not copied)
+     * @param options
+     *            used when transforming classes
      */
-    public PlasticClassPool(ClassLoader parentLoader, PlasticManagerDelegate delegate, Set<String> controlledPackages)
+    public PlasticClassPool(ClassLoader parentLoader, PlasticManagerDelegate delegate, Set<String> controlledPackages,
+            Set<TransformationOption> options)
     {
         loader = new PlasticClassLoader(parentLoader, this);
         this.delegate = delegate;
         this.controlledPackages = controlledPackages;
+        this.options = options;
     }
 
     public ClassLoader getClassLoader()
@@ -474,4 +481,8 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
         listeners.remove(listener);
     }
 
+    boolean isEnabled(TransformationOption option)
+    {
+        return options.contains(option);
+    }
 }

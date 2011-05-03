@@ -105,6 +105,9 @@ public interface PlasticField extends AnnotationAccess
      * Intercepts all access to the field, replacing such access with calls on the conduit. Even access via
      * the FieldHandle will instead delegate to the conduit. Once a conduit is provided, it is not possible
      * to inject a value into the field.
+     * <p>
+     * Normally, once a conduit is in place, the field will never be actually read or written. This is problematic for
+     * debugging, so {@link TransformationOption#FIELD_WRITEBEHIND} is useful when operating in a non-production mode.
      * 
      * @return the field for further manipulation
      * @throws IllegalStateException

@@ -15,8 +15,10 @@
 package org.apache.tapestry5.plastic;
 
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.Set;
 
+import org.apache.tapestry5.internal.plastic.Lockable;
 import org.apache.tapestry5.internal.plastic.NoopDelegate;
 import org.apache.tapestry5.internal.plastic.PlasticClassPool;
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
@@ -25,7 +27,7 @@ import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
  * Manages the internal class loaders and other logics necessary to load and transform existing classes,
  * or to create new classes dynamically at runtime. New instances are instantiates using
  * {@link #withClassLoader(ClassLoader)} or {@link #withContextClassLoader()}, then configuring
- * the returned options object before invoking {@link PlasticManagerOptions#create()}.
+ * the returned options object before invoking {@link PlasticManagerBuilder#create()}.
  */
 @SuppressWarnings("unchecked")
 public class PlasticManager implements PlasticClassListenerHub
@@ -34,10 +36,11 @@ public class PlasticManager implements PlasticClassListenerHub
 
     /**
      * A builder object for configuring the PlasticManager before instantiating it. Assumes a no-op
-     * {@link PlasticManagerDelegate} and an empty
-     * set of controlled packages.
+     * {@link PlasticManagerDelegate} and an empty set of controlled packages, which is appropriate
+     * when simply {@linkplain PlasticManager#createProxy(Class, PlasticClassTransformer) creating proxy objects).
+     * The builder object is internally mutable and uses a fluid API (each method returns the same instance).
      */
-    public static class PlasticManagerOptions
+    public static class PlasticManagerBuilder extends Lockable
     {
         private final ClassLoader loader;
 
@@ -45,7 +48,9 @@ public class PlasticManager implements PlasticClassListenerHub
 
         private final Set<String> packages = PlasticInternalUtils.newSet();
 
-        private PlasticManagerOptions(ClassLoader loader)
+        private final Set<TransformationOption> options = EnumSet.noneOf(TransformationOption.class);
+
+        private PlasticManagerBuilder(ClassLoader loader)
         {
             assert loader != null;
 
@@ -57,9 +62,11 @@ public class PlasticManager implements PlasticClassListenerHub
          * transforming classes loaded from controlled packages. The default delegate
          * does nothing.
          */
-        public PlasticManagerOptions delegate(PlasticManagerDelegate delegate)
+        public PlasticManagerBuilder delegate(PlasticManagerDelegate delegate)
         {
             assert delegate != null;
+
+            check();
 
             this.delegate = delegate;
 
@@ -69,9 +76,20 @@ public class PlasticManager implements PlasticClassListenerHub
         /**
          * Adds additional controlled packages, in which classes are loaded and transformed.
          */
-        public PlasticManagerOptions packages(Collection<String> packageNames)
+        public PlasticManagerBuilder packages(Collection<String> packageNames)
         {
             packages.addAll(packageNames);
+
+            check();
+
+            return this;
+        }
+
+        public PlasticManagerBuilder enable(TransformationOption option)
+        {
+            options.add(option);
+
+            check();
 
             return this;
         }
@@ -83,22 +101,24 @@ public class PlasticManager implements PlasticClassListenerHub
          */
         public PlasticManager create()
         {
-            return new PlasticManager(loader, delegate, packages);
+            lock();
+
+            return new PlasticManager(loader, delegate, packages, options);
         }
     }
 
     /**
-     * Creates a new options using the thread's context class loader.
+     * Creates a new builder using the thread's context class loader.
      */
-    public static PlasticManagerOptions withContextClassLoader()
+    public static PlasticManagerBuilder withContextClassLoader()
     {
         return withClassLoader(Thread.currentThread().getContextClassLoader());
     }
 
-    /** Creates a new options using the specified class loader. */
-    public static PlasticManagerOptions withClassLoader(ClassLoader loader)
+    /** Creates a new builder using the specified class loader. */
+    public static PlasticManagerBuilder withClassLoader(ClassLoader loader)
     {
-        return new PlasticManagerOptions(loader);
+        return new PlasticManagerBuilder(loader);
     }
 
     /**
@@ -112,15 +132,17 @@ public class PlasticManager implements PlasticClassListenerHub
      * @param controlledPackageNames
      *            defines the packages that are to be transformed; top-classes in these packages
      *            (or sub-packages) will be passed to the delegate for transformation
+     * @param options
+     *            used when transforming classes
      */
     private PlasticManager(ClassLoader parentClassLoader, PlasticManagerDelegate delegate,
-            Set<String> controlledPackageNames)
+            Set<String> controlledPackageNames, Set<TransformationOption> options)
     {
         assert parentClassLoader != null;
         assert delegate != null;
         assert controlledPackageNames != null;
 
-        pool = new PlasticClassPool(parentClassLoader, delegate, controlledPackageNames);
+        pool = new PlasticClassPool(parentClassLoader, delegate, controlledPackageNames, options);
     }
 
     /**
@@ -195,7 +217,7 @@ public class PlasticManager implements PlasticClassListenerHub
     }
 
     /**
-     * Creates an entirely new class, extending from the provided base class.
+     * Creates an entirely new class. The class extends from Object and implements the provided interface.
      * 
      * @param interfaceType
      *            class to extend from, which must be a class, not an interface

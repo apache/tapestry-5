@@ -64,6 +64,7 @@ import org.apache.tapestry5.plastic.PlasticUtils;
 import org.apache.tapestry5.plastic.PropertyAccessType;
 import org.apache.tapestry5.plastic.SwitchBlock;
 import org.apache.tapestry5.plastic.SwitchCallback;
+import org.apache.tapestry5.plastic.TransformationOption;
 import org.apache.tapestry5.plastic.TryCatchBlock;
 import org.apache.tapestry5.plastic.TryCatchCallback;
 
@@ -837,6 +838,11 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
             builder.invoke(FieldConduit.class, void.class, "set", Object.class, InstanceContext.class, Object.class);
 
+            if (isWriteBehindEnabled())
+            {
+                builder.loadThis().loadArgument(0).putField(className, node.name, typeName);
+            }
+
             builder.returnResult();
 
             addMethod(setAccess);
@@ -846,6 +852,8 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         private void replaceFieldReadAccess(String conduitFieldName)
         {
+            boolean writeBehindEnabled = isWriteBehindEnabled();
+
             String getAccessName = makeUnique(methodNames, "getfieldvalue_" + node.name);
 
             getAccess = new MethodNode(ACC_SYNTHETIC | ACC_FINAL, getAccessName, "()" + node.desc, null, null);
@@ -865,11 +873,45 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             builder.invoke(FieldConduit.class, Object.class, "get", Object.class, InstanceContext.class).castOrUnbox(
                     typeName);
 
+            if (writeBehindEnabled)
+            {
+                // Dupe the value, then push this, then swap
+
+                if (isWide())
+                {
+                    // Dupe this under the wide value, then pop the wide value
+
+                    builder.dupeWide().loadThis().dupe(2).pop();
+                }
+                else
+                {
+                    builder.dupe().loadThis().swap();
+                }
+
+                // At which point the stack is the result value, this, the result value
+
+                builder.putField(className, node.name, typeName);
+
+                // And now it is just the result value
+            }
+
             builder.returnResult();
 
             addMethod(getAccess);
 
             fieldToReadMethod.put(node.name, getAccess);
+        }
+
+        private boolean isWriteBehindEnabled()
+        {
+            return pool.isEnabled(TransformationOption.FIELD_WRITEBEHIND);
+        }
+
+        private boolean isWide()
+        {
+            PrimitiveType pt = PrimitiveType.getByName(typeName);
+
+            return pt != null && pt.isWide();
         }
 
         private void pushFieldConduitOntoStack(String conduitFileName, InstructionBuilder builder)
@@ -2288,7 +2330,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     {
         int index = staticContext.store(injectedFieldValue);
 
-        // Although it feels nicer to do the loadThis() later and then swap() that breaks
+        // Although it feels nicer to do the loadThis() later and then swap(), that breaks
         // on primitive longs and doubles, so its just easier to do the loadThis() first
         // so its at the right place on the stack for the putField().
 

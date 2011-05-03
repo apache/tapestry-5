@@ -119,10 +119,7 @@ class ObtainPlasticClass extends AbstractPlasticSpecification
     def "original constructors now throw exceptions"() {
         setup:
 
-        def delegate = new NoopDelegate()
-        def packages = ["testsubjects"]as Set
-
-        def mgr = new PlasticManager(Thread.currentThread().contextClassLoader, delegate, packages)
+        def mgr = PlasticManager.withContextClassLoader().delegate(new NoopDelegate()).packages(["testsubjects"]).create()
 
         Class clazz = mgr.classLoader.loadClass("testsubjects.AlternateConstructor")
 
