@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -467,7 +467,10 @@ public class Index
 
                     new Item("ValidatorMacroDemo", "Validator Macro Demo", "Using validator macros"),
 
-                    new Item("AtInjectDemo", "@javax.inject.Inject Demo", "Using @javax.inject.Inject for injection")
+                    new Item("AtInjectDemo", "@javax.inject.Inject Demo", "Using @javax.inject.Inject for injection"),
+
+                    new Item("LinkQueryParameters", "Link Query Parameters Demo",
+                                         "Providing Query Parameters directly to link components as a map of key=parameter name, value=parameter values")
 
             );
 

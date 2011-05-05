@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
+import java.util.Map;
+
 /**
  * Provides base utilities for classes that generate clickable links.
  */
@@ -40,6 +42,14 @@ public abstract class AbstractLink implements ClientElement
      */
     @Parameter("false")
     private boolean disabled;
+
+    /**
+     * If specified, the parameters are added to the link as query parameters in key=value fashion.
+     * Both values will be coerced to string using value encoder.
+     * @since 5.3
+     */
+    @Parameter(allowNull = false)
+    private Map<String, ?> parameters;
 
     @Inject
     private ComponentResources resources;
@@ -84,6 +94,8 @@ public abstract class AbstractLink implements ClientElement
      */
     protected final void writeLink(MarkupWriter writer, Link link, Object... namesAndValues)
     {
+        addParameters(link);
+
         element = writer.element("a", "href", buildHref(link));
 
         writer.attributes(namesAndValues);
@@ -91,6 +103,21 @@ public abstract class AbstractLink implements ClientElement
         resources.renderInformalParameters(writer);
 
         this.link = link;
+    }
+
+    /**
+     * Adds any user-defined parameters as query parameters.
+     * @param link
+     */
+    protected final void addParameters(Link link)
+    {
+       if (!resources.isBound("parameters"))
+           return;
+
+       for(Map.Entry<String,?> entry : parameters.entrySet())
+       {
+           link.addParameterValue(entry.getKey(), entry.getValue());
+       }
     }
 
     /**

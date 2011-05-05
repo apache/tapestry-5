@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,6 +38,9 @@ public class AbstractLinkTest extends InternalBaseTestCase
         MarkupWriter writer = new MarkupWriterImpl();
 
         train_toURI(link, LINK_URI);
+        //note that we aren't trying to test the parameters code here, so we only worry about the single, simplest branch.
+        //The parameters code is fully tested in CoreBehaviorsTests.
+        expect(resources.isBound("parameters")).andReturn(false);
 
         resources.renderInformalParameters(writer);
 
@@ -65,6 +68,9 @@ public class AbstractLinkTest extends InternalBaseTestCase
         MarkupWriter writer = new MarkupWriterImpl();
 
         train_toURI(link, LINK_URI);
+
+        //see note in no_anchor.
+        expect(resources.isBound("parameters")).andReturn(false);
 
         resources.renderInformalParameters(writer);
 

@@ -422,6 +422,66 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertText("//li[1]", "NULL");
     }
 
+    private void openLinkParameterTest()
+    {
+        openLinks("Link Query Parameters Demo");
+        assertText("parametercheck", "No Parameters");
+    }
+
+    //TAP5-1496
+    @Test
+    public void links_with_unspecified_query_parameter_map()
+    {
+        openLinkParameterTest();
+
+        clickAndWait("link=Page Link With No Parameters");
+        assertText("parametercheck", "No Parameters");
+
+        clickAndWait("link=Action Link With No Parameters");
+        assertText("parametercheck", "No Parameters");
+
+        clickAndWait("link=Event Link With No Parameters");
+        assertText("parametercheck", "No Parameters");
+    }
+
+    //TAP5-1496
+    @Test
+    public void links_with_explicit_empty_query_parameter_map()
+    {
+        openLinkParameterTest();
+
+        clickAndWait("link=Page Link With Explicitly Empty Parameters");
+        assertText("parametercheck", "No Parameters");
+
+        clickAndWait("link=Action Link With Explicitly Empty Parameters");
+        assertText("parametercheck", "No Parameters");
+
+        clickAndWait("link=Event Link With Explicitly Empty Parameters");
+        assertText("parametercheck", "No Parameters");
+    }
+
+    //TAP5-1496
+    @Test
+    public void links_with_nonempty_query_parameter_map()
+    {
+        openLinkParameterTest();
+
+        clickAndWait("link=Page Link With Parameters");
+        assertText("xpath=(//li[@class='qparam'])[1]", "param1: value1");
+        assertText("xpath=(//li[@class='qparam'])[2]", "param2: 10");
+
+        //re-open between checks to make sure there is no "bleedover" between checks.
+        openLinkParameterTest();
+        clickAndWait("link=Action Link With Parameters");
+        assertText("xpath=(//li[@class='qparam'])[1]", "param1: value1");
+        assertText("xpath=(//li[@class='qparam'])[2]", "param2: 10");
+
+        openLinkParameterTest();;
+        clickAndWait("link=Event Link With Parameters");
+        assertText("xpath=(//li[@class='qparam'])[1]", "param1: value1");
+        assertText("xpath=(//li[@class='qparam'])[2]", "param2: 10");
+    }
+
     @Test
     public void recursive_components_are_identified_as_errors()
     {
