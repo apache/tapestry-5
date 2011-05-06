@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.internal.util.IntegerRange;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ClassFab;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.services.PropertyConduitSource;
@@ -34,6 +35,7 @@ import org.testng.annotations.Test;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Most of the testing occurs inside {@link PropBindingFactoryTest} (due to
@@ -622,6 +624,49 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     }
 
     @Test
+    public void top_level_map()
+    {
+        PropertyConduit conduit = source.create(EchoBean.class, "{'one': true, 'two': 2.0, stringSource.value: 3, 'four': storedString}");
+        EchoBean bean = new EchoBean();
+
+        bean.setStoredString("four");
+        bean.setStringSource(new StringSource("three"));
+
+        Map actual = (Map) conduit.get(bean);
+        assertEquals(actual.get("one"), true);
+        assertEquals(actual.get("two"), 2.0);
+        assertEquals(actual.get("three"), 3L);
+        assertEquals(actual.get("four"), "four");
+    }
+
+    @Test
+    public void empty_map()
+    {
+        PropertyConduit conduit = source.create(EchoBean.class, "{ }");
+        EchoBean bean = new EchoBean();
+        Map m = (Map) conduit.get(bean);
+
+        assertTrue(m.isEmpty());
+
+    }
+
+    @Test
+    public void map_as_method_argument()
+    {
+        PropertyConduit conduit = source.create(EchoBean.class, "echoMap({ 1: 'one', 2.0: 'two', storedString: stringSource.value })");
+        EchoBean bean = new EchoBean();
+
+        bean.setStoredString( "3" );
+        bean.setStringSource(new StringSource("three"));
+
+        Map m = (Map) conduit.get(bean);
+        assertEquals("one", m.get(1L));
+        assertEquals("two", m.get(2.0));
+        assertEquals("three", m.get("3"));
+
+    }
+
+    @Test
     public void not_operator()
     {
         PropertyConduit conduit = source.create(IntegerHolder.class, "! value");
@@ -678,8 +723,10 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         }
         catch (RuntimeException ex)
         {
+            //note that addition of map support changed how this expression was parsed such that the error is now
+            //reported at character 8, (, rather than 0: getValue(.
             assertEquals(ex.getMessage(),
-                    "Error parsing property expression 'getValue(': line 1:0 no viable alternative at input 'getValue'.");
+                    "Error parsing property expression 'getValue(': line 1:8 no viable alternative at input '('.");
         }
     }
 
@@ -688,13 +735,13 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     {
         try
         {
-            source.create(IntegerHolder.class, "fred {");
+            source.create(IntegerHolder.class, "fred #");
             unreachable();
         }
         catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(),
-                    "Error parsing property expression 'fred {': Unable to parse input at character position 6.");
+                    "Error parsing property expression 'fred #': Unable to parse input at character position 6.");
         }
     }
 

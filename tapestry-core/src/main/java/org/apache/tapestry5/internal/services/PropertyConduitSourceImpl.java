@@ -21,6 +21,7 @@ import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.IDENT
 import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.INTEGER;
 import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.INVOKE;
 import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.LIST;
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.MAP;
 import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.NOT;
 import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.NULL;
 import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.RANGEOP;
@@ -37,6 +38,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -106,6 +108,11 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     static class ArrayListMethods
     {
         static final Method ADD = getMethod(ArrayList.class, "add", Object.class);
+    }
+
+    static class HashMapMethods
+    {
+        static final Method PUT = getMethod(HashMap.class, "put", Object.class, Object.class);
     }
 
     private static InstructionBuilderCallback RETURN_NULL = new InstructionBuilderCallback()
@@ -450,6 +457,15 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                     return;
 
+                case MAP:
+                    implementMapGetter(node);
+                    implementNoOpSetter();
+
+                    conduitPropertyType = Map.class;
+
+                    return;
+
+
                 case NOT:
                     implementNotOpGetter(node);
                     implementNoOpSetter();
@@ -751,6 +767,9 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                         return implementListConstructor(builder, node);
 
+                    case MAP:
+                        return implementMapConstructor(builder, node);
+
                     case NOT:
 
                         return implementNotExpression(builder, node);
@@ -803,6 +822,46 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             return ArrayList.class;
         }
+
+        private void implementMapGetter(final Tree mapNode)
+        {
+            plasticClass.introduceMethod(ConduitMethods.GET, new InstructionBuilderCallback()
+            {
+                public void doBuild(InstructionBuilder builder)
+                {
+                    implementMapConstructor(builder, mapNode);
+
+                    builder.returnResult();
+                }
+            });
+        }
+
+        private Type implementMapConstructor(InstructionBuilder builder, Tree mapNode)
+        {
+            int count = mapNode.getChildCount();
+            builder.newInstance(HashMap.class);
+            builder.dupe().loadConstant(count).invokeConstructor(HashMap.class, int.class);
+
+            for (int i = 0; i < count; i+=2)
+            {
+                builder.dupe();
+
+                //build the key:
+                Type keyType = implementSubexpression(builder, null, mapNode.getChild(i));
+                boxIfPrimitive(builder, GenericsUtils.asClass(keyType));
+
+                //and the value:
+                Type valueType = implementSubexpression(builder, null, mapNode.getChild(i+1));
+                boxIfPrimitive(builder, GenericsUtils.asClass(valueType));
+
+                //put the value into the array, then pop off the returned object.
+                builder.invoke(HashMapMethods.PUT).pop();
+
+            }
+
+            return HashMap.class;
+        }
+
 
         private void implementNoOpSetter()
         {

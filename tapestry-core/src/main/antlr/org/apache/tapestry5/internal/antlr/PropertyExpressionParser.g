@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,6 +30,8 @@ tokens
     	INVOKE;
     	// A List (top level, or as method parameter)
     	LIST;
+		//A Map (top level, or as method parameter)
+		MAP;
     	// Not operation (invert a boolean)
     	NOT;
 }
@@ -49,8 +51,9 @@ expression
 	|	propertyChain
 	|	list
 	|	notOp
+	|	map
 	;
-	
+
 keyword	:	NULL | TRUE | FALSE | THIS;
 
 constant:	INTEGER| DECIMAL | STRING;	
@@ -73,7 +76,7 @@ methodInvocation
 expressionList
 	:	expression (COMMA! expression)*
 	;	
-	
+
 rangeOp
 	:	from=rangeopArg  RANGEOP to=rangeopArg -> ^(RANGEOP $from $to)
 	;	
@@ -87,6 +90,16 @@ list	:	LBRACKET RBRACKET -> ^(LIST)
 	|	LBRACKET expressionList RBRACKET -> ^(LIST expressionList)
 	;	
 	
-	
 notOp 	:	BANG expression -> ^(NOT expression)
 	;
+
+map 	:	LBRACE RBRACE -> ^(MAP)
+	|	LBRACE mapEntryList RBRACE -> ^(MAP mapEntryList)
+    ;
+	
+mapEntryList : mapEntry (COMMA! mapEntry)*;
+
+mapEntry :  mapKey COLON! expression;
+	
+mapKey :	keyword | constant | propertyChain;
+	

@@ -28,7 +28,7 @@ import java.lang.reflect.Method;
  * try/catch blocks}, is more like a DSL (domain specific language), and is based on callbacks. This looks better in
  * Groovy and will be more reasonable once JDK 1.8 closures are available; in the meantime, it means some deeply nested
  * inner classes, but helps ensure that correct bytecode is generated and helps to limit the amount of bookkeeping is
- * necessary on the part of coce using InstructionBuilder.
+ * necessary on the part of code using InstructionBuilder.
  */
 @SuppressWarnings("rawtypes")
 public interface InstructionBuilder

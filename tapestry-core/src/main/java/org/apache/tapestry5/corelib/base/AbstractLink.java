@@ -45,7 +45,7 @@ public abstract class AbstractLink implements ClientElement
 
     /**
      * If specified, the parameters are added to the link as query parameters in key=value fashion.
-     * Both values will be coerced to string using value encoder.
+     * Values will be coerced to string using value encoder; keys should be Strings.
      * @since 5.3
      */
     @Parameter(allowNull = false)

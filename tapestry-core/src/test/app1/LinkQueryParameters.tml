@@ -13,12 +13,18 @@
         <li><a t:type="eventlink" event="parameterCheck">Event Link With No Parameters</a></li>
         <li><a t:type="eventlink" event="parameterCheck" parameters="emptyParameters">Event Link With Explicitly Empty Parameters</a></li>
         <li><a t:type="eventlink" event="parameterCheck" parameters="nonEmptyParameters">Event Link With Parameters</a></li>
+
+        <li>
+            <a t:type="pagelink" page="LinkQueryParameters" parameters="{'parama': 'valuea', 'paramb': 'valueb'}">
+                Two Element Map
+            </a>
+        </li>
     </ul>
 
     <div id="parametercheck">
         <t:if test="hasParameters">
             <ul>
-                <li t:type="loop" source="parameters" value="paramName" class="qparam">
+                <li t:type="loop" source="parameters" value="paramName" class="${paramName}">
                     ${paramName}: ${paramVal}
                 </li>
             </ul>

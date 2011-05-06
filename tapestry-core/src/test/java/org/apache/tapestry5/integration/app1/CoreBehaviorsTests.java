@@ -467,19 +467,33 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         openLinkParameterTest();
 
         clickAndWait("link=Page Link With Parameters");
-        assertText("xpath=(//li[@class='qparam'])[1]", "param1: value1");
-        assertText("xpath=(//li[@class='qparam'])[2]", "param2: 10");
+        assertText("css=li.param1", "param1: value1");
+        assertText("css=li.param2", "param2: 10");
 
         //re-open between checks to make sure there is no "bleedover" between checks.
         openLinkParameterTest();
         clickAndWait("link=Action Link With Parameters");
-        assertText("xpath=(//li[@class='qparam'])[1]", "param1: value1");
-        assertText("xpath=(//li[@class='qparam'])[2]", "param2: 10");
+        assertText("css=li.param1", "param1: value1");
+        assertText("css=li.param2", "param2: 10");
 
         openLinkParameterTest();;
         clickAndWait("link=Event Link With Parameters");
-        assertText("xpath=(//li[@class='qparam'])[1]", "param1: value1");
-        assertText("xpath=(//li[@class='qparam'])[2]", "param2: 10");
+        assertText("css=li.param1", "param1: value1");
+        assertText("css=li.param2", "param2: 10");
+    }
+
+    //TAP5-1495
+    @Test
+    public void map_expression_support()
+    {
+        openLinkParameterTest();
+
+        //more extensive testing done in PropertyConduitSourceImplTest, including multiple key and value types,
+        //access from methods and nested methods, and map as method arguments.
+        //This just provides an integration sanity check.
+        clickAndWait("link=Two Element Map");
+        assertText("css=li.parama", "parama: valuea");
+        assertText("css=li.paramb", "paramb: valueb");
     }
 
     @Test
