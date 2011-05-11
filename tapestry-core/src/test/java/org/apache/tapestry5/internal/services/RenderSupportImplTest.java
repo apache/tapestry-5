@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -146,9 +146,9 @@ public class RenderSupportImplTest extends InternalBaseTestCase
     {
         JavaScriptSupport js = mockJavaScriptSupport();
 
-        JSONObject spec = new JSONObject().put("foo", new JSONArray().put(new JSONArray("fred", "barney")));
+        JSONArray array = new JSONArray("fred", "barney");
 
-        js.addScript("Tapestry.init(%s);", spec);
+        js.addInitializerCall("foo", array);
 
         replay();
 

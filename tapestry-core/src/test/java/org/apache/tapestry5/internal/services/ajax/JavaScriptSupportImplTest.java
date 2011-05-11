@@ -402,7 +402,6 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
     @Test
     public void init_with_string()
     {
-
         DocumentLinker linker = mockDocumentLinker();
         JavaScriptStackSource stackSource = mockJavaScriptStackSource();
         JavaScriptStackPathConstructor pathConstructor = mockJavaScriptStackPathConstructor();
@@ -418,6 +417,33 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
 
         jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", "chuck");
         jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", "charley");
+
+        jss.commit();
+
+        verify();
+    }
+
+    @Test
+    public void init_with_array()
+    {
+        DocumentLinker linker = mockDocumentLinker();
+        JavaScriptStackSource stackSource = mockJavaScriptStackSource();
+        JavaScriptStackPathConstructor pathConstructor = mockJavaScriptStackPathConstructor();
+        trainForEmptyCoreStack(linker, stackSource, pathConstructor);
+
+        JSONArray chuck = new JSONArray("chuck", "yeager");
+        JSONArray buzz = new JSONArray("buzz", "aldrin");
+
+        JSONObject aggregated = new JSONObject().put("setup", new JSONArray(chuck, buzz));
+
+        linker.setInitialization(InitializationPriority.IMMEDIATE, aggregated);
+
+        replay();
+
+        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor);
+
+        jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", chuck);
+        jss.addInitializerCall(InitializationPriority.IMMEDIATE, "setup", buzz);
 
         jss.commit();
 
@@ -441,6 +467,31 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
         JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor);
 
         jss.addInitializerCall("setup", "chuck");
+
+        jss.commit();
+
+        verify();
+    }
+
+    @Test
+    public void default_for_init_array_is_normal_priority()
+    {
+        DocumentLinker linker = mockDocumentLinker();
+        JavaScriptStackSource stackSource = mockJavaScriptStackSource();
+        JavaScriptStackPathConstructor pathConstructor = mockJavaScriptStackPathConstructor();
+        trainForEmptyCoreStack(linker, stackSource, pathConstructor);
+
+        JSONArray chuck = new JSONArray("chuck", "yeager");
+
+        JSONObject aggregated = new JSONObject().put("setup", new JSONArray(chuck));
+
+        linker.setInitialization(InitializationPriority.NORMAL, aggregated);
+
+        replay();
+
+        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor);
+
+        jss.addInitializerCall("setup", chuck);
 
         jss.commit();
 

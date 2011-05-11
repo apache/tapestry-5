@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -141,6 +141,16 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     }
 
     public void addInitializerCall(InitializationPriority priority, String functionName, JSONObject parameter)
+    {
+        storeInitializerCall(priority, functionName, parameter);
+    }
+
+    public void addInitializerCall(String functionName, JSONArray parameter)
+    {
+        storeInitializerCall(InitializationPriority.NORMAL, functionName, parameter);
+    }
+
+    public void addInitializerCall(InitializationPriority priority, String functionName, JSONArray parameter)
     {
         storeInitializerCall(priority, functionName, parameter);
     }

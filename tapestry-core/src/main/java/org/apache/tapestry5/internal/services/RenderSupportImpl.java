@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -107,7 +107,7 @@ public class RenderSupportImpl implements RenderSupport
 
     public void addInit(String functionName, JSONArray parameterList)
     {
-        addInitFunctionInvocation(functionName, parameterList);
+        javascriptSupport.addInitializerCall(functionName, parameterList);
     }
 
     public void addInit(String functionName, JSONObject parameter)
@@ -130,23 +130,6 @@ public class RenderSupportImpl implements RenderSupport
     public void autofocus(FieldFocusPriority priority, String fieldId)
     {
         javascriptSupport.autofocus(priority, fieldId);
-    }
-
-    /**
-     * For the few existing places that use the old variations of addInit(), passing a list of
-     * strings or a JSONArray, the end result is a bit inefficient. We end up generating lots
-     * of calls to Tapestry.init, with no attempt to aggregate them. Most of the time, the init
-     * occurs with a JSONObject (the "spec") and is handled by {@link JavaScriptSupport}.
-     */
-    private void addInitFunctionInvocation(String functionName, Object parameters)
-    {
-        assert InternalUtils.isNonBlank(functionName);
-        assert parameters != null;
-
-        JSONArray list = new JSONArray().put(parameters);
-        JSONObject wrapper = new JSONObject().put(functionName, list);
-
-        addScript("Tapestry.init(%s);", wrapper);
     }
 
     public void addStylesheetLink(Asset stylesheet, String media)

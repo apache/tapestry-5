@@ -20,6 +20,7 @@ import org.apache.tapestry5.FieldFocusPriority;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.EnvironmentalShadowBuilder;
 
@@ -98,6 +99,32 @@ public interface JavaScriptSupport
      *            object to pass to the client-side function
      */
     void addInitializerCall(String functionName, JSONObject parameter);
+
+    /**
+     * Adds a call to a client-side function inside the Tapestry.Initializer namespace. Calls to this
+     * method are aggregated into a call to the Tapestry.init() function. Initialization occurs at
+     * {@link InitializationPriority#NORMAL} priority.
+     * 
+     * @param functionName
+     *            name of client-side function (within Tapestry.Initializer namespace) to execute
+     * @param parameter
+     *            array of parameters to pass to the client-side function
+     * @since 5.3.0
+     */
+    void addInitializerCall(String functionName, JSONArray parameter);
+
+    /**
+     * Adds a call to a client-side function inside the Tapestry.Initializer namespace. Calls to this
+     * method are aggregated into a call to the Tapestry.init() function. Initialization occurs at
+     * {@link InitializationPriority#NORMAL} priority.
+     * 
+     * @param functionName
+     *            name of client-side function (within Tapestry.Initializer namespace) to execute
+     * @param parameter
+     *            array of parameters to pass to the client-side function
+     * @since 5.3.0
+     */
+    void addInitializerCall(InitializationPriority priority, String functionName, JSONArray parameter);
 
     /**
      * Adds a call to a client-side function inside the Tapestry.Initializer namespace. Calls to this
