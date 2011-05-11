@@ -484,7 +484,6 @@ public final class TapestryModule
         binder.bind(ClientDataEncoder.class, ClientDataEncoderImpl.class);
         binder.bind(ComponentEventLinkEncoder.class, ComponentEventLinkEncoderImpl.class);
         binder.bind(PageRenderLinkSource.class, PageRenderLinkSourceImpl.class);
-        binder.bind(ClientInfrastructure.class, ClientInfrastructureImpl.class);
         binder.bind(ValidatorMacro.class, ValidatorMacroImpl.class);
         binder.bind(PropertiesFileParser.class, PropertiesFileParserImpl.class);
         binder.bind(PageActivator.class, PageActivatorImpl.class);
@@ -2419,8 +2418,6 @@ public final class TapestryModule
         configuration.add(SymbolConstants.COOKIE_MAX_AGE, "7 d");
 
         configuration.add(SymbolConstants.START_PAGE_NAME, "start");
-
-        configuration.add(SymbolConstants.DEFAULT_JAVASCRIPT, "classpath:/org/apache/tapestry5/tapestry.js");
 
         configuration.add(SymbolConstants.DEFAULT_STYLESHEET, "classpath:/org/apache/tapestry5/default.css");
         configuration.add("tapestry.spacer-image", "classpath:/org/apache/tapestry5/spacer.gif");

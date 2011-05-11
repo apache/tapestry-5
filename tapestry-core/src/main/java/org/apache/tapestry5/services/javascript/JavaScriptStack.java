@@ -18,10 +18,8 @@ import java.util.List;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.AssetSource;
-import org.apache.tapestry5.services.ClientInfrastructure;
 
 /**
  * A high level description of a group of related JavaScript libraries and stylesheets. The built-in "core"
@@ -29,9 +27,6 @@ import org.apache.tapestry5.services.ClientInfrastructure;
  * Prototype and Scriptaculous, as well as Tapestry-specific libraries). Other component libraries may
  * define additional stacks for related sets of resources, for example, to bundle together some portion
  * of the ExtJS or YUI libraries.
- * <p>
- * A JavaScriptStack can be thought of as a generalization of Tapestry 5.1's {@link ClientInfrastructure}, which exists
- * now to define the "core" JavaScript stack.
  * <p>
  * A JavaScript assets of a stack may (when {@linkplain SymbolConstants#COMBINE_SCRIPTS enabled}) be exposed to the
  * client as a single URL (identifying the stack by name). The individual assets are combined into a single virtual

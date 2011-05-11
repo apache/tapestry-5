@@ -72,6 +72,9 @@ public class Index
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
 
+                    new Item("JavaScriptTests", "JavaScript Unit Tests",
+                            "Unit tests for client-side JavaScript"),
+                            
                     new Item("PACAnnotationDemo", "PageActivationContext Demo",
                             "Shows that @PageActivationContext fields are set before calls to the activate event handler."),
 

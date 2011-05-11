@@ -1,0 +1,36 @@
+
+TABLE.js-results { width: 100%; }
+
+TABLE.js-results THEAD TR
+{
+    font-weight: bold;
+    background-color: black;
+    color: white;
+}
+
+TABLE.js-results TR.odd
+{
+  background-color: #e5e5e5;
+}
+
+TABLE.js-results TR.active
+{
+  font-weight: bold;
+  background-color: #ffff00;
+}
+
+TABLE.js-results TR.pass {
+    color: green;    
+}
+
+TABLE.js-results CAPTION {
+  font-weight: bold;
+}
+
+TABLE.js-results CAPTION.success { color: green; }
+
+TABLE.js-results CAPTION.failures { color: red; }
+
+TABLE.js-results TR.fail { color: red; }
+
+TABLE.js-results TR.exception { color: red; font-family: italic; }

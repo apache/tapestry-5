@@ -236,14 +236,6 @@ public class SymbolConstants
     public static final String BLACKBIRD = "tapestry.blackbird";
 
     /**
-     * The Asset path of the default javascript (tapestry.js) automatically injected into every rendered HTML page.
-     * 
-     * @since 5.2.0
-     * @deprecated Deprecated in 5.3; not used since 5.1, replaced with the core {@link JavaScriptStack}.
-     */
-    public static final String DEFAULT_JAVASCRIPT = "tapestry.default-javascript";
-
-    /**
      * If "true", then JSON page initialization content is compressed; if "false"
      * then extra white space is added (pretty printing). Defaults to "true" in production mode.
      * 

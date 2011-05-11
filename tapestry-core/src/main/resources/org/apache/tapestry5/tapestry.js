@@ -922,389 +922,414 @@ Element.addMethods([ 'INPUT', 'SELECT', 'TEXTAREA' ], {
 	}
 });
 
+/** Compatibility: set Tapestry.Initializer equal to T5.Initializer. */
+
+Tapestry.Initializer = T5.Initializer;
+
 /** Container of functions that may be invoked by the Tapestry.init() function. */
-Tapestry.Initializer = {
+T5
+		.extendInitializer({
 
-	/** Make the given field the active field (focus on the field). */
-	activate : function(id) {
-		$(id).activate();
-	},
+			/** Make the given field the active field (focus on the field). */
+			activate : function(id) {
+				$(id).activate();
+			},
 
-	/**
-	 * evalScript is a synonym for the JavaScript eval function. It is used in
-	 * Ajax requests to handle any setup code that does not fit into a standard
-	 * Tapestry.Initializer call.
-	 */
-	evalScript : eval,
-
-	ajaxFormLoop : function(spec) {
-		var rowInjector = $(spec.rowInjector);
-
-		$(spec.addRowTriggers).each(function(triggerId) {
-			$(triggerId).observeAction("click", function(event) {
-				$(rowInjector).trigger();
-			});
-		});
-	},
-
-	formLoopRemoveLink : function(spec) {
-		var link = $(spec.link);
-		var fragmentId = spec.fragment;
-
-		link.observeAction("click", function(event) {
-			var successHandler = function(transport) {
-				var container = $(fragmentId);
-
-				var effect = Tapestry.ElementEffect.fade(container);
-
-				effect.options.afterFinish = function() {
-					Tapestry.remove(container);
-				}
-			};
-
-			Tapestry.ajaxRequest(spec.url, successHandler);
-		});
-	},
-
-	/**
-	 * Convert a form or link into a trigger of an Ajax update that updates the
-	 * indicated Zone.
-	 * 
-	 * @param spec.linkId
-	 *            id or instance of &lt;form&gt; or &lt;a&gt; element
-	 * @param spec.zoneId
-	 *            id of the element to update when link clicked or form
-	 *            submitted
-	 * @param spec.url
-	 *            absolute component event request URL
-	 */
-	linkZone : function(spec) {
-		Tapestry.Initializer.updateZoneOnEvent("click", spec.linkId,
-				spec.zoneId, spec.url);
-	},
-
-	/**
-	 * Converts a link into an Ajax update of a Zone. The url includes the
-	 * information to reconnect with the server-side Form.
-	 * 
-	 * @param spec.selectId
-	 *            id or instance of &lt;select&gt;
-	 * @param spec.zoneId
-	 *            id of element to update when select is changed
-	 * @param spec.url
-	 *            component event request URL
-	 */
-	linkSelectToZone : function(spec) {
-		Tapestry.Initializer.updateZoneOnEvent("change", spec.selectId,
-				spec.zoneId, spec.url);
-	},
-
-	linkSubmit : function(spec) {
-
-		Tapestry.replaceElementTagName(spec.clientId, "A");
-
-		$(spec.clientId).writeAttribute("href", "#");
-
-		$(spec.clientId).observeAction("click", function(event) {
-
-			var form = $(spec.form);
-
-			if (!spec.validate)
-				form.skipValidation();
-
-			form.setSubmittingElement(this);
-
-			form.performSubmit(event);
-		});
-	},
-
-	/**
-	 * Used by other initializers to connect an element (either a link or a
-	 * form) to a zone.
-	 * 
-	 * @param eventName
-	 *            the event on the element to observe
-	 * @param element
-	 *            the element to observe for events
-	 * @param zoneId
-	 *            identified a Zone by its clientId. Alternately, the special
-	 *            value '^' indicates that the Zone is a container of the
-	 *            element (the first container with the 't-zone' CSS class).
-	 * @param url
-	 *            The request URL to be triggered when the event is observed.
-	 *            Ultimately, a partial page update JSON response will be passed
-	 *            to the Zone's ZoneManager.
-	 */
-	updateZoneOnEvent : function(eventName, element, zoneId, url) {
-		element = $(element);
-
-		$T(element).zoneUpdater = true;
-
-		var zoneElement = zoneId == '^' ? $(element).up('.t-zone') : $(zoneId);
-
-		if (!zoneElement) {
-			Tapestry
-					.error(
-							"Could not find zone element '#{zoneId}' to update on #{eventName} of element '#{elementId}",
-							{
-								zoneId : zoneId,
-								eventName : eventName,
-								elementId : element.id
-							});
-			return;
-		}
-
-		/*
-		 * Update the element with the id of zone div. This may be changed
-		 * dynamically on the client side.
-		 */
-
-		$T(element).zoneId = zoneElement.id;
-
-		if (element.tagName == "FORM") {
-
-			// Create the FEM if necessary.
-			element.addClassName(Tapestry.PREVENT_SUBMISSION);
-
-			/*
-			 * After the form is validated and prepared, this code will process
-			 * the form submission via an Ajax call. The original submit event
-			 * will have been cancelled.
+			/**
+			 * evalScript is a synonym for the JavaScript eval function. It is
+			 * used in Ajax requests to handle any setup code that does not fit
+			 * into a standard Tapestry.Initializer call.
 			 */
+			evalScript : eval,
 
-			element.observe(Tapestry.FORM_PROCESS_SUBMIT_EVENT, function() {
-				var zoneManager = Tapestry.findZoneManager(element);
+			ajaxFormLoop : function(spec) {
+				var rowInjector = $(spec.rowInjector);
 
-				if (!zoneManager)
-					return;
-
-				var successHandler = function(transport) {
-					zoneManager.processReply(transport.responseJSON);
-				};
-
-				element.sendAjaxRequest(url, {
-					parameters : {
-						"t:zoneid" : zoneId
-					},
-					onSuccess : successHandler
+				$(spec.addRowTriggers).each(function(triggerId) {
+					$(triggerId).observeAction("click", function(event) {
+						$(rowInjector).trigger();
+					});
 				});
-			});
+			},
 
-			return;
-		}
+			formLoopRemoveLink : function(spec) {
+				var link = $(spec.link);
+				var fragmentId = spec.fragment;
 
-		/* Otherwise, assume it's just an ordinary link or input field. */
+				link.observeAction("click", function(event) {
+					var successHandler = function(transport) {
+						var container = $(fragmentId);
 
-		element.observeAction(eventName, function(event) {
-			element.fire(Tapestry.TRIGGER_ZONE_UPDATE_EVENT);
-		});
+						var effect = Tapestry.ElementEffect.fade(container);
 
-		element.observe(Tapestry.TRIGGER_ZONE_UPDATE_EVENT, function() {
+						effect.options.afterFinish = function() {
+							Tapestry.remove(container);
+						}
+					};
 
-			var zoneObject = Tapestry.findZoneManager(element);
+					Tapestry.ajaxRequest(spec.url, successHandler);
+				});
+			},
 
-			if (!zoneObject)
-				return;
-
-			/*
-			 * A hack related to allowing a Select to perform an Ajax update of
-			 * the page.
+			/**
+			 * Convert a form or link into a trigger of an Ajax update that
+			 * updates the indicated Zone.
+			 * 
+			 * @param spec.linkId
+			 *            id or instance of &lt;form&gt; or &lt;a&gt; element
+			 * @param spec.zoneId
+			 *            id of the element to update when link clicked or form
+			 *            submitted
+			 * @param spec.url
+			 *            absolute component event request URL
 			 */
+			linkZone : function(spec) {
+				Tapestry.Initializer.updateZoneOnEvent("click", spec.linkId,
+						spec.zoneId, spec.url);
+			},
 
-			var parameters = {};
+			/**
+			 * Converts a link into an Ajax update of a Zone. The url includes
+			 * the information to reconnect with the server-side Form.
+			 * 
+			 * @param spec.selectId
+			 *            id or instance of &lt;select&gt;
+			 * @param spec.zoneId
+			 *            id of element to update when select is changed
+			 * @param spec.url
+			 *            component event request URL
+			 */
+			linkSelectToZone : function(spec) {
+				Tapestry.Initializer.updateZoneOnEvent("change", spec.selectId,
+						spec.zoneId, spec.url);
+			},
 
-			if (element.tagName == "SELECT" && element.value) {
-				parameters["t:selectvalue"] = element.value;
-			}
+			linkSubmit : function(spec) {
 
-			zoneObject.updateFromURL(url, parameters);
-		});
-	},
+				Tapestry.replaceElementTagName(spec.clientId, "A");
 
-	/**
-	 * Sets up a Tapestry.FormEventManager for the form, and enables events for
-	 * validations. This is executed with InitializationPriority.EARLY, to
-	 * ensure that the FormEventManager exists vefore any validations are added
-	 * for fields within the Form.
-	 * 
-	 * @since 5.2.2
-	 */
-	formEventManager : function(spec) {
-		$T(spec.formId).formEventManager = new Tapestry.FormEventManager(spec);
-	},
+				$(spec.clientId).writeAttribute("href", "#");
 
-	/**
-	 * Keys in the masterSpec are ids of field control elements. Value is a list
-	 * of validation specs. Each validation spec is a 2 or 3 element array.
-	 */
-	validate : function(masterSpec) {
-		$H(masterSpec)
-				.each(
-						function(pair) {
+				$(spec.clientId).observeAction("click", function(event) {
 
-							var field = $(pair.key);
+					var form = $(spec.form);
 
-							/*
-							 * Force the creation of the field event manager.
-							 */
+					if (!spec.validate)
+						form.skipValidation();
 
-							$(field).getFieldEventManager();
+					form.setSubmittingElement(this);
 
-							$A(pair.value)
-									.each(
-											function(spec) {
-												/*
-												 * Each pair value is an array
-												 * of specs, each spec is a 2 or
-												 * 3 element array. validator
-												 * function name, message,
-												 * optional constraint
-												 */
+					form.performSubmit(event);
+				});
+			},
 
-												var name = spec[0];
-												var message = spec[1];
-												var constraint = spec[2];
+			/**
+			 * Used by other initializers to connect an element (either a link
+			 * or a form) to a zone.
+			 * 
+			 * @param eventName
+			 *            the event on the element to observe
+			 * @param element
+			 *            the element to observe for events
+			 * @param zoneId
+			 *            identified a Zone by its clientId. Alternately, the
+			 *            special value '^' indicates that the Zone is a
+			 *            container of the element (the first container with the
+			 *            't-zone' CSS class).
+			 * @param url
+			 *            The request URL to be triggered when the event is
+			 *            observed. Ultimately, a partial page update JSON
+			 *            response will be passed to the Zone's ZoneManager.
+			 */
+			updateZoneOnEvent : function(eventName, element, zoneId, url) {
+				element = $(element);
 
-												var vfunc = Tapestry.Validator[name];
+				$T(element).zoneUpdater = true;
 
-												if (vfunc == undefined) {
-													Tapestry
-															.error(
-																	Tapestry.Messages.missingValidator,
-																	{
-																		name : name,
-																		fieldName : field.id
-																	});
-													return;
-												}
+				var zoneElement = zoneId == '^' ? $(element).up('.t-zone')
+						: $(zoneId);
 
-												/*
-												 * Pass the extended field, the
-												 * provided message, and the
-												 * constraint object to the
-												 * Tapestry.Validator function,
-												 * so that it can, typically,
-												 * invoke field.addValidator().
-												 */
-												try {
-													vfunc
-															.call(this, field,
-																	message,
-																	constraint);
-												} catch (e) {
-													Tapestry
-															.error(
-																	Tapestry.Messages.invocationException,
-																	{
-																		fname : "Tapestry.Validator."
-																				+ functionName,
-																		params : Object
-																				.toJSON([
-																						field.id,
-																						message,
-																						constraint ]),
-																		exception : e
-																	});
-												}
-											});
-						});
-	},
-
-	zone : function(spec) {
-		new Tapestry.ZoneManager(spec);
-	},
-
-	formFragment : function(spec) {
-
-		var element = $(spec.element);
-
-		var hidden = $(spec.element + "-hidden");
-		var form = $(hidden.form);
-
-		function runAnimation(makeVisible) {
-			var effect = makeVisible ? Tapestry.ElementEffect[spec.show]
-					|| Tapestry.ElementEffect.slidedown
-					: Tapestry.ElementEffect[spec.hide]
-							|| Tapestry.ElementEffect.slideup;
-			return effect(element);
-		}
-
-		element.observe(Tapestry.CHANGE_VISIBILITY_EVENT, function(event) {
-			var makeVisible = event.memo.visible;
-
-			if (makeVisible == element.visible())
-				return;
-
-			runAnimation(makeVisible);
-		});
-
-		element.observe(Tapestry.HIDE_AND_REMOVE_EVENT, function() {
-			var effect = runAnimation(false);
-
-			effect.options.afterFinish = function() {
-				Tapestry.remove(element);
-			};
-		});
-
-		if (!spec.alwaysSubmit) {
-			form.observe(Tapestry.FORM_PREPARE_FOR_SUBMIT_EVENT, function() {
+				if (!zoneElement) {
+					Tapestry
+							.error(
+									"Could not find zone element '#{zoneId}' to update on #{eventName} of element '#{elementId}",
+									{
+										zoneId : zoneId,
+										eventName : eventName,
+										elementId : element.id
+									});
+					return;
+				}
 
 				/*
-				 * On a submission, if the fragment is not visible, then
-				 * disabled its form submission data, so that no processing or
-				 * validation occurs on the server.
+				 * Update the element with the id of zone div. This may be
+				 * changed dynamically on the client side.
 				 */
-				hidden.disabled = !element.isDeepVisible();
-			});
-		}
-	},
 
-	formInjector : function(spec) {
-		new Tapestry.FormInjector(spec);
-	},
+				$T(element).zoneId = zoneElement.id;
 
-	/*
-	 * Links a FormFragment to a trigger (a radio or a checkbox), such that
-	 * changing the trigger will hide or show the FormFragment. Care should be
-	 * taken to render the page with the checkbox and the FormFragment's
-	 * visibility in agreement.
-	 */
-	linkTriggerToFormFragment : function(spec) {
-		var trigger = $(spec.triggerId);
+				if (element.tagName == "FORM") {
 
-		var update = function() {
-			var checked = trigger.checked;
-			var makeVisible = checked == !spec.invert;
+					// Create the FEM if necessary.
+					element.addClassName(Tapestry.PREVENT_SUBMISSION);
 
-			$(spec.fragmentId).fire(Tapestry.CHANGE_VISIBILITY_EVENT, {
-				visible : makeVisible
-			}, true);
-		}
+					/*
+					 * After the form is validated and prepared, this code will
+					 * process the form submission via an Ajax call. The
+					 * original submit event will have been cancelled.
+					 */
 
-		/* Let the event bubble up to the form level. */
-		if (trigger.type == "radio") {
-			$(trigger.form).observe("click", update);
-			return;
-		}
+					element
+							.observe(
+									Tapestry.FORM_PROCESS_SUBMIT_EVENT,
+									function() {
+										var zoneManager = Tapestry
+												.findZoneManager(element);
 
-		/* Normal trigger is a checkbox; listen just to it. */
-		trigger.observe("click", update);
+										if (!zoneManager)
+											return;
 
-	},
+										var successHandler = function(transport) {
+											zoneManager
+													.processReply(transport.responseJSON);
+										};
 
-	cancelButton : function(clientId) {
+										element.sendAjaxRequest(url, {
+											parameters : {
+												"t:zoneid" : zoneId
+											},
+											onSuccess : successHandler
+										});
+									});
 
-		/*
-		 * Set the form's skipValidation property and allow the event to
-		 * continue, which will ultimately submit the form.
-		 */
-		$(clientId).observeAction("click", function(event) {
-			$(this.form).skipValidation();
-			$(this.form).setSubmittingElement(clientId);
-			$(this.form).performSubmit(event);
+					return;
+				}
+
+				/* Otherwise, assume it's just an ordinary link or input field. */
+
+				element.observeAction(eventName, function(event) {
+					element.fire(Tapestry.TRIGGER_ZONE_UPDATE_EVENT);
+				});
+
+				element.observe(Tapestry.TRIGGER_ZONE_UPDATE_EVENT, function() {
+
+					var zoneObject = Tapestry.findZoneManager(element);
+
+					if (!zoneObject)
+						return;
+
+					/*
+					 * A hack related to allowing a Select to perform an Ajax
+					 * update of the page.
+					 */
+
+					var parameters = {};
+
+					if (element.tagName == "SELECT" && element.value) {
+						parameters["t:selectvalue"] = element.value;
+					}
+
+					zoneObject.updateFromURL(url, parameters);
+				});
+			},
+
+			/**
+			 * Sets up a Tapestry.FormEventManager for the form, and enables
+			 * events for validations. This is executed with
+			 * InitializationPriority.EARLY, to ensure that the FormEventManager
+			 * exists vefore any validations are added for fields within the
+			 * Form.
+			 * 
+			 * @since 5.2.2
+			 */
+			formEventManager : function(spec) {
+				$T(spec.formId).formEventManager = new Tapestry.FormEventManager(
+						spec);
+			},
+
+			/**
+			 * Keys in the masterSpec are ids of field control elements. Value
+			 * is a list of validation specs. Each validation spec is a 2 or 3
+			 * element array.
+			 */
+			validate : function(masterSpec) {
+				$H(masterSpec)
+						.each(
+								function(pair) {
+
+									var field = $(pair.key);
+
+									/*
+									 * Force the creation of the field event
+									 * manager.
+									 */
+
+									$(field).getFieldEventManager();
+
+									$A(pair.value)
+											.each(
+													function(spec) {
+														/*
+														 * Each pair value is an
+														 * array of specs, each
+														 * spec is a 2 or 3
+														 * element array.
+														 * validator function
+														 * name, message,
+														 * optional constraint
+														 */
+
+														var name = spec[0];
+														var message = spec[1];
+														var constraint = spec[2];
+
+														var vfunc = Tapestry.Validator[name];
+
+														if (vfunc == undefined) {
+															Tapestry
+																	.error(
+																			Tapestry.Messages.missingValidator,
+																			{
+																				name : name,
+																				fieldName : field.id
+																			});
+															return;
+														}
+
+														/*
+														 * Pass the extended
+														 * field, the provided
+														 * message, and the
+														 * constraint object to
+														 * the
+														 * Tapestry.Validator
+														 * function, so that it
+														 * can, typically,
+														 * invoke
+														 * field.addValidator().
+														 */
+														try {
+															vfunc.call(this,
+																	field,
+																	message,
+																	constraint);
+														} catch (e) {
+															Tapestry
+																	.error(
+																			Tapestry.Messages.invocationException,
+																			{
+																				fname : "Tapestry.Validator."
+																						+ functionName,
+																				params : Object
+																						.toJSON([
+																								field.id,
+																								message,
+																								constraint ]),
+																				exception : e
+																			});
+														}
+													});
+								});
+			},
+
+			zone : function(spec) {
+				new Tapestry.ZoneManager(spec);
+			},
+
+			formFragment : function(spec) {
+
+				var element = $(spec.element);
+
+				var hidden = $(spec.element + "-hidden");
+				var form = $(hidden.form);
+
+				function runAnimation(makeVisible) {
+					var effect = makeVisible ? Tapestry.ElementEffect[spec.show]
+							|| Tapestry.ElementEffect.slidedown
+							: Tapestry.ElementEffect[spec.hide]
+									|| Tapestry.ElementEffect.slideup;
+					return effect(element);
+				}
+
+				element.observe(Tapestry.CHANGE_VISIBILITY_EVENT, function(
+						event) {
+					var makeVisible = event.memo.visible;
+
+					if (makeVisible == element.visible())
+						return;
+
+					runAnimation(makeVisible);
+				});
+
+				element.observe(Tapestry.HIDE_AND_REMOVE_EVENT, function() {
+					var effect = runAnimation(false);
+
+					effect.options.afterFinish = function() {
+						Tapestry.remove(element);
+					};
+				});
+
+				if (!spec.alwaysSubmit) {
+					form.observe(Tapestry.FORM_PREPARE_FOR_SUBMIT_EVENT,
+							function() {
+
+								/*
+								 * On a submission, if the fragment is not
+								 * visible, then disabled its form submission
+								 * data, so that no processing or validation
+								 * occurs on the server.
+								 */
+								hidden.disabled = !element.isDeepVisible();
+							});
+				}
+			},
+
+			formInjector : function(spec) {
+				new Tapestry.FormInjector(spec);
+			},
+
+			/*
+			 * Links a FormFragment to a trigger (a radio or a checkbox), such
+			 * that changing the trigger will hide or show the FormFragment.
+			 * Care should be taken to render the page with the checkbox and the
+			 * FormFragment's visibility in agreement.
+			 */
+			linkTriggerToFormFragment : function(spec) {
+				var trigger = $(spec.triggerId);
+
+				var update = function() {
+					var checked = trigger.checked;
+					var makeVisible = checked == !spec.invert;
+
+					$(spec.fragmentId).fire(Tapestry.CHANGE_VISIBILITY_EVENT, {
+						visible : makeVisible
+					}, true);
+				}
+
+				/* Let the event bubble up to the form level. */
+				if (trigger.type == "radio") {
+					$(trigger.form).observe("click", update);
+					return;
+				}
+
+				/* Normal trigger is a checkbox; listen just to it. */
+				trigger.observe("click", update);
+
+			},
+
+			cancelButton : function(clientId) {
+
+				/*
+				 * Set the form's skipValidation property and allow the event to
+				 * continue, which will ultimately submit the form.
+				 */
+				$(clientId).observeAction("click", function(event) {
+					$(this.form).skipValidation();
+					$(this.form).setSubmittingElement(clientId);
+					$(this.form).performSubmit(event);
+				});
+			}
 		});
-	}
-};
 
 /*
  * Collection of field based functions related to validation. Each function
