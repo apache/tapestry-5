@@ -17,7 +17,6 @@ T5.extend(T5, function() {
 
 	var map = T5.map;
 	var mapcat = T5.mapcat;
-	var each = T5.each;
 
 	var subscribersVersion = 0;
 
@@ -47,9 +46,9 @@ T5.extend(T5, function() {
 
 	function doPublish(listeners, message) {
 
-		return map(listeners, function(fn) {
+		return map(function(fn) {
 			fn(message);
-		});
+		}, listeners);
 	}
 
 	/**
@@ -82,9 +81,9 @@ T5.extend(T5, function() {
 				// has changed.
 
 				if (subscribersVersionSnapshot !== subscribersVersion) {
-					listeners = mapcat(selectors, function(selector) {
+					listeners = mapcat(function(selector) {
 						return subscribers[selector] || [];
-					});
+					}, selectors);
 
 					subscribersVersionSnapshot = subscribersVersion;
 				}
@@ -111,7 +110,7 @@ T5.extend(T5, function() {
 	function unsubscribe(selector, listenerfn) {
 		var listeners = subscribers[selector];
 
-		var editted = T5.without(listeners, listenerfn);
+		var editted = T5.without(listenerfn, listeners);
 
 		if (editted !== listeners) {
 			subscribers[selector] = editted;

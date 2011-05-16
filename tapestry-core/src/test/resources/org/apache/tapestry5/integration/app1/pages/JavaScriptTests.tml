@@ -18,7 +18,7 @@
 
     <tr>
       <td>
-        assertEqual(map(undefined, null), [])
+        assertEqual(map(null, undefined), [])
     </td>
       <td>
         Map() on undefined returns an empty array
@@ -27,14 +27,14 @@
 
     <tr>
       <td>
-        assertEqual(map([], null), [])
+        assertEqual(map(null, []), [])
     </td>
       <td>Map() on empty array returns an empty array</td>
     </tr>
 
     <tr>
       <td>
-        assertEqual(map([1, 2, 3], function(e) { return e + 100; }), [101, 102, 103])
+        assertEqual(map(function(e) { return e + 100; }, [1, 2, 3]), [101, 102, 103])
         </td>
       <td>
         The normal use of map().
@@ -44,8 +44,7 @@
     <tr>
       <td>
         <pre>
-          assertEqual(map([1, 2, 3],
-          function(e, index) { return (e + 100) + "@" + index; }),
+          assertEqual(map(function(e, index) { return (e + 100) + "@" + index; }, [1, 2, 3]),
           ["101@0", "102@1",
           "103@2"])            
         </pre>
@@ -59,7 +58,7 @@
       <td>
         <pre>
           var initial = { };
-          assertSame(reduce([], initial, function() { }), initial);
+          assertSame(reduce(function() { }, initial, []), initial);
         </pre>
       </td>
       <td>
@@ -71,12 +70,12 @@
 
       <td>
         <pre>
-          assertEqual(reduce(["fred", "barney", "wilma"], {},
-          function(o, value, index) {
+          assertEqual(reduce(function(o, value, index) {
           o[value] = index;
 
           return o;
-          }),
+          }, {}, ["fred", "barney",
+          "wilma"]),
           { fred: 0, barney: 1, wilma: 2 })
         </pre>
       </td>
@@ -88,7 +87,7 @@
       <td>
         <pre>
           var initial = [1, 2, 3]
-          assertSame(without(initial, 9), initial)
+          assertSame(without(9, initial), initial)
         </pre>
       </td>
       <td>
@@ -98,7 +97,7 @@
 
     <tr>
       <td>
-        assertEqual(without([1, 2, 2, 3, 4, 2, 5], 2), [1, 3, 4, 5])
+        assertEqual(without(2, [1, 2, 2, 3, 4, 2, 5]), [1, 3, 4, 5])
         </td>
       <td>
         Multiple matches should all be removed
@@ -109,7 +108,7 @@
       <td>
         <pre>
           var initial = [1, 2, 3]
-          without(initial, 2)
+          without(2, initial)
           assertEqual(initial, [1, 2, 3])
           </pre>
       </td>
@@ -121,6 +120,22 @@
     <tr>
       <td>assertEqual(mapcat(null,null), [])</td>
       <td>mapcat() on empty/null/undefined returns empty list</td>
+    </tr>
+
+    <tr>
+      <td>
+        <pre>
+          assertEqual(mapcat(function (value) {
+          var out = []
+          for (var i = 0; i &lt; value; i++) { out.push(value); }
+          return out;
+          }, [1, 3, 5]),
+          [1, 3, 3, 3, 5, 5, 5, 5, 5])            
+            </pre>
+      </td>
+      <td>
+        Basic execution of mapcat().
+      </td>
     </tr>
 
     <tr>
@@ -159,7 +174,8 @@
 
           unsub()
 
-          pub("foo"); assertEqual(count, 2)
+          pub("foo");
+          assertEqual(count, 2)
           </pre>
       </td>
       <td>
@@ -173,7 +189,8 @@
 
           sub("foo/bar", function() { pubs.push("foo/bar"); })
           sub("foo", function() {
-          pubs.push("foo"); })
+          pubs.push("foo");
+          })
 
           pub("foo/bar")
 
@@ -192,7 +209,8 @@
 
           sub("foo/bar", function() { pubs.push("foo/bar"); })
           sub("foo", function() {
-          pubs.push("foo"); })
+          pubs.push("foo");
+          })
 
           pub("foo")
 

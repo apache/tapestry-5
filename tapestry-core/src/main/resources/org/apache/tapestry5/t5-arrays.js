@@ -28,13 +28,13 @@ T5.extend(T5, function() {
 	/**
 	 * Iterates over an array, invoking a function for each array element.
 	 * 
-	 * @param array
-	 *            to iterate over (possibly null or undefined)
 	 * @param fn
 	 *            passed each element in array as first parameter, element index
 	 *            as second parameter
+	 * @param array
+	 *            to iterate over (possibly null or undefined)
 	 */
-	function each(array, fn) {
+	function each(fn, array) {
 		if (isNonEmpty(array)) {
 			for ( var index = 0; index < array.length; index++) {
 				fn(array[index], index);
@@ -46,19 +46,19 @@ T5.extend(T5, function() {
 	 * Maps over a JavaScript array, passing each value to the mapper function.
 	 * Returns the array of return values from the mapper.
 	 * 
-	 * @param array
-	 *            object to iterate over (may be null or undefined)
 	 * @param mapperfn
 	 *            function passed each object from the array, and the index for
 	 *            each object from the array
+	 * @param array
+	 *            object to iterate over (may be null or undefined)
 	 * @returns result array (possibly empty)
 	 */
-	function map(array, mapperfn) {
+	function map(mapperfn, array) {
 		var result = [];
 
-		each(array, function(element, index) {
+		each(function(element, index) {
 			result[index] = mapperfn(element, index);
-		});
+		}, array);
 
 		return result;
 	}
@@ -69,40 +69,40 @@ T5.extend(T5, function() {
 	 * reducer function with the second element, and so on. The final result is
 	 * the accumulator after all elements have been passed.
 	 * 
-	 * @param array
-	 *            array (may be null or undefined)
-	 * @param initial
-	 *            the initial value for the accumulator
 	 * @param reducerfn
 	 *            passed the accumulator, an element, and an index and returns
 	 *            the new accumulator
+	 * @param initial
+	 *            the initial value for the accumulator
+	 * @param array
+	 *            array (may be null or undefined)
 	 * @returns the accumulator
 	 */
-	function reduce(array, initial, reducerfn) {
+	function reduce(reducerfn, initial, array) {
 		var accumulator = initial;
 
-		each(array, function(element, index) {
+		each(function(element, index) {
 			accumulator = reducerfn(accumulator, element, index);
-		});
+		}, array);
 
 		return accumulator;
 	}
 
 	var concat = Array.prototype.concat;
-	
+
 	/**
 	 * A variation of map, where the mapperfn is expected to return an array of
 	 * values (not a single value). The result arrays are concatenated, to
 	 * return a single flattened result.
 	 * 
-	 * @param array
-	 *            to iterate over
 	 * @param mapperfn
 	 *            passed each element and index, returns an array of results
-	 * @returns the concatination of the result arrays
+	 * @param array
+	 *            to iterate over
+	 * @returns the concatenation of the result arrays
 	 */
-	function mapcat(array, mapperfn) {
-		var results = map(array, mapperfn);
+	function mapcat(mapperfn, array) {
+		var results = map(mapperfn, array);
 
 		return concat.apply([], results);
 	}
@@ -113,13 +113,13 @@ T5.extend(T5, function() {
 	 * comparison. May return the original array unchanged if the element is not
 	 * present.
 	 * 
-	 * @param array
-	 *            a non-null array
 	 * @param element
 	 *            to remove from array
+	 * @param array
+	 *            a non-null array
 	 * @returns the array, or the array with any references to element removed
 	 */
-	function without(array, element) {
+	function without(element, array) {
 		var index;
 		for (index = array.length - 1; index >= 0; index--) {
 			if (array[index] === element) {
