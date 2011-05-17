@@ -78,18 +78,18 @@ public class PlasticManager implements PlasticClassListenerHub
          */
         public PlasticManagerBuilder packages(Collection<String> packageNames)
         {
-            packages.addAll(packageNames);
-
             check();
+
+            packages.addAll(packageNames);
 
             return this;
         }
 
         public PlasticManagerBuilder enable(TransformationOption option)
         {
-            options.add(option);
-
             check();
+
+            options.add(option);
 
             return this;
         }
