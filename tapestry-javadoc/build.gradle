@@ -1,5 +1,5 @@
 description = "JavaDoc Plugin for Tapestry that generates component reference documentation for component classes"
 
 dependencies {
-  compile project(':tapestry-ioc')
+  compile project(':tapestry-core')
 }
