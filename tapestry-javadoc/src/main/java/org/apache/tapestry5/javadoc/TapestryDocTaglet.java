@@ -14,8 +14,11 @@
 
 package org.apache.tapestry5.javadoc;
 
+import java.io.File;
+import java.io.StringWriter;
 import java.util.Map;
 
+import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.Tag;
 import com.sun.tools.doclets.Taglet;
 
@@ -64,7 +67,7 @@ public class TapestryDocTaglet implements Taglet
 
     public boolean isInlineTag()
     {
-        return true;
+        return false;
     }
 
     public String getName()
@@ -72,15 +75,67 @@ public class TapestryDocTaglet implements Taglet
         return NAME;
     }
 
-    public String toString(Tag paramTag)
+    public String toString(Tag tag)
     {
-        return String.format("<em>TapestryDoc: %s</em>", paramTag.holder());
+        throw new IllegalStateException("toString(Tag) should not be called for a non-inline tag.");
     }
 
-    // Never called for an inline tag.
-    public String toString(Tag[] paramArrayOfTag)
+    public String toString(Tag[] tags)
     {
-        return null;
+        if (tags.length == 0)
+            return null;
+
+        // This should only be invoked with 0 or 1 tags. I suppose someone could put @tapestrydoc in the comment block
+        // more than once.
+
+        Tag tag = tags[0];
+
+        try
+        {
+            StringWriter writer = new StringWriter(5000);
+
+            ClassDoc classDoc = (ClassDoc) tag.holder();
+
+            streamXdoc(classDoc, writer);
+
+            return writer.toString();
+        }
+        catch (Exception ex)
+        {
+            System.err.println(ex);
+            System.exit(-1);
+
+            return null; // unreachable
+        }
     }
 
+    private void streamXdoc(ClassDoc classDoc, StringWriter writer) throws Exception
+    {
+        File sourceFile = classDoc.position().file();
+
+        // The .xdoc file will be adjacent to the sourceFile
+
+        String sourceName = sourceFile.getName();
+
+        String xdocName = sourceName.replaceAll("\\.java$", ".xdoc");
+
+        File xdocFile = new File(sourceFile.getParentFile(), xdocName);
+
+        if (xdocFile.exists())
+        {
+            try
+            {
+                writer.write("<dt><b>Additional Notes:</b></dt><dd>");
+
+                new XDocStreamer(xdocFile, writer).writeContent();
+
+                writer.write("</dd>");
+            }
+            catch (Exception ex)
+            {
+                System.err.println("Error streaming XDOC content for " + classDoc);
+                throw ex;
+            }
+        }
+    }
 }
