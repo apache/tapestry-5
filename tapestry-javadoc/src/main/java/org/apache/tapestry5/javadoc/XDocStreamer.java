@@ -158,13 +158,22 @@ public class XDocStreamer
 
             if (localName.equals("section"))
             {
-                writeSectionHeader(atts, "h3");
+
+                String name = getAttribute(atts, "name");
+
+                // More JavaDoc ugliness; this makes sections fit in well with the main
+                // output.
+
+                write(String.format("<dt><b>%s:</b></dt><dd>", name));
+
+                endElementHandlers.push(writeClose("dd"));
+
                 return;
             }
 
             if (localName.equals("subsection"))
             {
-                writeSectionHeader(atts, "h4");
+                writeSectionHeader(atts, "h3");
                 return;
             }
 

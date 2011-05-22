@@ -187,11 +187,10 @@ public class TapestryDocTaglet implements Taglet
         {
             try
             {
-                writer.write("<dt><b>Additional Notes:</b></dt><dd>");
+                // Close the definition list, to avoid unwanted indents. Very, very ugly.
 
                 new XDocStreamer(xdocFile, writer).writeContent();
-
-                writer.write("</dd>");
+                // Open a new (empty) definition list, that HtmlDoclet will close.
             }
             catch (Exception ex)
             {
