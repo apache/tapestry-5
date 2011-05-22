@@ -16,24 +16,36 @@ package org.apache.tapestry5.javadoc;
 
 import java.util.Map;
 
+import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.annotations.Events;
+import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 import com.sun.javadoc.AnnotationDesc;
+import com.sun.javadoc.AnnotationDesc.ElementValuePair;
 import com.sun.javadoc.AnnotationValue;
 import com.sun.javadoc.ClassDoc;
+import com.sun.javadoc.Doc;
+import com.sun.javadoc.FieldDoc;
 import com.sun.javadoc.ProgramElementDoc;
-import com.sun.javadoc.AnnotationDesc.ElementValuePair;
+import com.sun.javadoc.Tag;
 
 public class ClassDescription
 {
-    private final ClassDoc classDoc;
+    public final ClassDoc classDoc;
 
-    private final Map<String, ParameterDescription> parameters = CollectionFactory.newCaseInsensitiveMap();
+    public final Map<String, ParameterDescription> parameters = CollectionFactory.newCaseInsensitiveMap();
 
-    private final Map<String, String> publishedParameters = CollectionFactory.newCaseInsensitiveMap();
+    /**
+     * Case insensitive map, keyed on parameter name, value is class name of component from which the parameter is
+     * published.
+     */
+    public final Map<String, String> publishedParameters = CollectionFactory.newCaseInsensitiveMap();
 
-    private final Map<String, String> events = CollectionFactory.newCaseInsensitiveMap();
+    /**
+     * Case insensitive map, keyed on event name, value is optional description (often blank).
+     */
+    public final Map<String, String> events = CollectionFactory.newCaseInsensitiveMap();
 
     public ClassDescription(ClassDoc classDoc)
     {
@@ -72,10 +84,70 @@ public class ClassDescription
 
     private void loadParameters()
     {
+        for (FieldDoc fd : classDoc.fields(false))
+        {
+            if (fd.isStatic())
+                continue;
 
+            if (!fd.isPrivate())
+                continue;
+
+            Map<String, String> values = getAnnotationValues(fd, Parameter.class);
+
+            if (values != null)
+            {
+                String name = values.get("name");
+
+                if (name == null)
+                    name = fd.name().replaceAll("^[$_]*", "");
+
+                ParameterDescription pd = new ParameterDescription(name, fd.type().qualifiedTypeName(), get(values,
+                        "value", ""), get(values, "defaultPrefix", BindingConstants.PROP), getBoolean(values,
+                        "required", false), getBoolean(values, "allowNull", true), getBoolean(values, "cache", true),
+                        getSinceTagValue(fd), isDeprecated(fd));
+
+                parameters.put(name, pd);
+
+                continue;
+            }
+
+        }
     }
 
-    private AnnotationDesc getAnnotation(ProgramElementDoc source, Class annotationType)
+    private static boolean isDeprecated(ProgramElementDoc doc)
+    {
+        return (getAnnotation(doc, Deprecated.class) != null) || (doc.tags("deprecated").length != 0);
+    }
+
+    private static String getSinceTagValue(Doc doc)
+    {
+        return getTagValue(doc, "since");
+    }
+
+    private static String getTagValue(Doc doc, String tagName)
+    {
+        Tag[] tags = doc.tags(tagName);
+
+        return 0 < tags.length ? tags[0].text() : "";
+    }
+
+    private static boolean getBoolean(Map<String, String> map, String key, boolean defaultValue)
+    {
+        if (map.containsKey(key))
+            return Boolean.parseBoolean(map.get(key));
+
+        return defaultValue;
+    }
+
+    private static String get(Map<String, String> map, String key, String defaultValue)
+    {
+        if (map.containsKey(key))
+            return map.get(key);
+
+        return defaultValue;
+    }
+
+    private static AnnotationDesc getAnnotation(ProgramElementDoc source, Class annotationType)
     {
         String name = annotationType.getName();
 
@@ -87,35 +159,26 @@ public class ClassDescription
         return null;
     }
 
+    private static Map<String, String> getAnnotationValues(ProgramElementDoc source, Class annotationType)
+    {
+        AnnotationDesc annotation = getAnnotation(source, annotationType);
+
+        if (annotation == null)
+            return null;
+
+        Map<String, String> result = CollectionFactory.newMap();
+
+        for (ElementValuePair pair : annotation.elementValues())
+        {
+            result.put(pair.element().name(), pair.value().value().toString());
+        }
+
+        return result;
+    }
+
     public String getClassName()
     {
         return classDoc.qualifiedName();
     }
 
-    public Map<String, ParameterDescription> getParameters()
-    {
-        return parameters;
-    }
-
-    public String getSuperClassName()
-    {
-        return classDoc.superclass().qualifiedName();
-    }
-
-    /**
-     * Case insensitive map, keyed on parameter name, value is class name of component from which the parameter is
-     * published.
-     */
-    public Map<String, String> getPublishedParameters()
-    {
-        return publishedParameters;
-    }
-
-    /**
-     * Case insensitive map, keyed on event name, value is optional description (often blank).
-     */
-    public Map<String, String> getEvents()
-    {
-        return events;
-    }
 }

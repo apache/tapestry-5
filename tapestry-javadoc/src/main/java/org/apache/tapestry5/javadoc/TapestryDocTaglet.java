@@ -142,29 +142,64 @@ public class TapestryDocTaglet implements Taglet
         }
     }
 
-    private void writeElement(Writer writer, String elementName, String text) throws IOException
+    private void element(Writer writer, String elementName, String text) throws IOException
     {
         writer.write(String.format("<%s>%s</%1$s>", elementName, text));
     }
 
     private void writeClassDescription(ClassDescription cd, Writer writer) throws IOException
     {
-        Map<String, String> events = cd.getEvents();
+        writeParameters(cd, writer);
 
-        if (events.isEmpty())
+        writeEvents(cd, writer);
+    }
+
+    private void writeParameters(ClassDescription cd, Writer writer) throws IOException
+    {
+        if (cd.parameters.isEmpty())
+            return;
+
+        writer.write("<dt><b>Parameters:</b></dt><dd>");
+
+        writer.write("<table>"
+                + "<tr><th>Name</th><th>Type</th><th>Flags</th><th>Default</th><th>Default Prefix</th><th>Since</th><th>Description</th></tr>");
+
+        for (String name : InternalUtils.sortedKeys(cd.parameters))
+        {
+            ParameterDescription pd = cd.parameters.get(name);
+
+            writerParameter(pd, writer);
+        }
+
+        writer.write("</table></dd>");
+    }
+
+    private void writerParameter(ParameterDescription pd, Writer writer) throws IOException
+    {
+        writer.write("<tr>");
+
+        element(writer, "td", pd.name);
+        element(writer, "td", pd.type);
+
+        writer.write("</tr>");
+    }
+
+    private void writeEvents(ClassDescription cd, Writer writer) throws IOException
+    {
+        if (cd.events.isEmpty())
             return;
 
         writer.write("<dt><b>Events:</b></dt><dd><dl>");
 
-        for (String name : InternalUtils.sortedKeys(events))
+        for (String name : InternalUtils.sortedKeys(cd.events))
         {
-            writeElement(writer, "dt", name);
+            element(writer, "dt", name);
 
-            String value = events.get(name);
+            String value = cd.events.get(name);
 
             if (value.length() > 0)
             {
-                writeElement(writer, "dd", value);
+                element(writer, "dd", value);
             }
         }
 

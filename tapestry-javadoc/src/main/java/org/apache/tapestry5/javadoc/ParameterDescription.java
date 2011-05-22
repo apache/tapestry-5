@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,29 +16,26 @@ package org.apache.tapestry5.javadoc;
 
 public class ParameterDescription
 {
-    private final String name;
+    public final String name;
 
-    private final String type;
+    public final String type;
 
-    private final String defaultValue;
+    public final String defaultValue;
 
-    private final String defaultPrefix;
+    public final String defaultPrefix;
 
-    private final boolean required;
+    public final boolean required;
 
-    private final boolean allowNull;
+    public final boolean allowNull;
 
-    private final boolean cache;
+    public final boolean cache;
 
-    private final String description;
-    
-    private final String since;
-    
-    private final boolean deprecated;
+    public final String since;
 
-    public ParameterDescription(String name, String type, String defaultValue,
-                                String defaultPrefix, boolean required, boolean allowNull, boolean cache,
-                                String description, String since, boolean deprecated)
+    public final boolean deprecated;
+
+    public ParameterDescription(String name, String type, String defaultValue, String defaultPrefix, boolean required,
+            boolean allowNull, boolean cache, String since, boolean deprecated)
     {
         this.name = name;
         this.type = type;
@@ -47,57 +44,7 @@ public class ParameterDescription
         this.required = required;
         this.allowNull = allowNull;
         this.cache = cache;
-        this.description = description;
         this.since = since;
         this.deprecated = deprecated;
     }
-
-    public boolean getCache()
-    {
-        return cache;
-    }
-
-    public String getDefaultPrefix()
-    {
-        return defaultPrefix;
-    }
-
-    public String getDefaultValue()
-    {
-        return defaultValue;
-    }
-
-    public String getDescription()
-    {
-        return description;
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public boolean getRequired()
-    {
-        return required;
-    }
-
-    public String getType()
-    {
-        return type;
-    }
-
-    public boolean getAllowNull()
-    {
-        return allowNull;
-    }
-
-	public String getSince() 
-	{
-		return since;
-	}
-
-	public boolean isDeprecated() {
-		return deprecated;
-	}
 }
