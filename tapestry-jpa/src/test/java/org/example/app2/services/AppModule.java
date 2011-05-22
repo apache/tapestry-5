@@ -15,16 +15,24 @@
 package org.example.app2.services;
 
 import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.ioc.services.ApplicationDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.jpa.JpaModule;
 import org.apache.tapestry5.jpa.JpaSymbols;
+import org.example.app2.services.impl.UserDAOImpl;
 
 @SubModule(JpaModule.class)
 public class AppModule
 {
+
+    public static void bind(final ServiceBinder binder)
+    {
+        binder.bind(UserDAO.class, UserDAOImpl.class);
+    }
+
     @Contribute(SymbolProvider.class)
     @ApplicationDefaults
     public static void provideFactoryDefaults(

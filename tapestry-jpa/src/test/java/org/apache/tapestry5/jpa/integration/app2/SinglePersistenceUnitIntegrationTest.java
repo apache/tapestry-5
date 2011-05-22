@@ -29,4 +29,24 @@ public class SinglePersistenceUnitIntegrationTest extends SeleniumTestCase
         clickAndWait("link=create item");
         assertText("//span[@id='name']", "name");
     }
+
+    @Test
+    public void inject_into_page_wihout_jpa_annotationt()
+    {
+        open("/persistitem2");
+        assertEquals(getText("//span[@id='name']").length(), 0);
+
+        clickAndWait("link=create item");
+        assertText("//span[@id='name']", "name");
+    }
+
+    @Test
+    public void inject_into_service_wihout_jpa_annotationt()
+    {
+        open("/persistitem3");
+        assertEquals(getText("//span[@id='name']").length(), 0);
+
+        clickAndWait("link=create item");
+        assertText("//span[@id='name']", "name");
+    }
 }

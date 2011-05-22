@@ -14,13 +14,6 @@
 
 package org.apache.tapestry5.internal.jpa;
 
-import java.sql.SQLException;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceContext;
-
 import org.apache.tapestry5.ioc.IOCUtilities;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -35,6 +28,12 @@ import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceContext;
+import java.sql.SQLException;
+import java.util.Map;
 
 public class JpaTransactionAdvisorImplTest extends IOCTestCase
 {
@@ -101,10 +100,18 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         
         expect(manager.getEntityManagers()).andReturn(managers);
 
-        delegate.persistenceUnitNameMissing();
-
         replay();
-        interceptor.persistenceUnitNameMissing();
+
+        try
+        {
+            interceptor.persistenceUnitNameMissing();
+            TestBase.unreachable();
+        }
+        catch (Exception e)
+        {
+               Assert.assertEquals(e.getMessage(), "Unable to locate a single EntityManager.  " +
+                       "Please provide the persistence unit name as defined in the persistence.xml using the @PersistenceContext annotation");
+        }
         verify();
     }
     
@@ -154,10 +161,18 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         final VoidService interceptor = builder.build();
 
         expect(manager.getEntityManagers()).andReturn(managers);
-        delegate.persistenceUnitMissing();
 
         replay();
-        interceptor.persistenceUnitMissing();
+        try
+        {
+            interceptor.persistenceUnitMissing();
+            TestBase.unreachable();
+        }
+        catch (Exception e)
+        {
+               Assert.assertEquals(e.getMessage(), "Unable to locate a single EntityManager.  " +
+                       "Please provide the persistence unit name as defined in the persistence.xml using the @PersistenceContext annotation");
+        }
         verify();
     }
     

@@ -70,7 +70,7 @@ public class JpaInternalUtils
 
         throw new IllegalArgumentException(
                 String.format(
-                        "Failed persisting an entity in the session. The entity '%s' does not belong to any of the existing persistence contexts.",
+                        "Failed persisting the entity. The entity '%s' does not belong to any of the existing persistence contexts.",
                         entity));
     }
 
@@ -87,6 +87,7 @@ public class JpaInternalUtils
         if (entityManagers.size() == 1)
             return entityManagers.values().iterator().next();
 
-        return null;
+        throw new RuntimeException("Unable to locate a single EntityManager.  " +
+                "Please provide the persistence unit name as defined in the persistence.xml using the @PersistenceContext annotation");
     }
 }

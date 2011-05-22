@@ -49,17 +49,15 @@ public class EntityManagerObjectProvider implements ObjectProvider
             final ClassFactory classFactory = objectLocator.getService("ClassFactory",
                     ClassFactory.class);
 
+             final PersistenceContext annotation = annotationProvider
+                            .getAnnotation(PersistenceContext.class);
+
             proxy = classFactory.createProxy(EntityManager.class, new ObjectCreator()
             {
-
                 public Object createObject()
                 {
-
                     final EntityManagerManager entityManagerManager = objectLocator
                             .getService(EntityManagerManager.class);
-
-                    final PersistenceContext annotation = annotationProvider
-                            .getAnnotation(PersistenceContext.class);
 
                     return JpaInternalUtils.getEntityManager(entityManagerManager, annotation);
                 }

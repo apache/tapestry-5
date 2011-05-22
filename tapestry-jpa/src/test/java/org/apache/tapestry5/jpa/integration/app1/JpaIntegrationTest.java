@@ -62,7 +62,7 @@ public class JpaIntegrationTest extends SeleniumTestCase
 
         // transient objects cannot be persisted
         clickAndWait("link=set to transient");
-        assertTextPresent("Failed persisting an entity in the session.");
+        assertTextPresent("Failed persisting the entity.");
     }
 
     @Test
