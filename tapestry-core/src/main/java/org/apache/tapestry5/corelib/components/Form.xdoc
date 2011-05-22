@@ -115,7 +115,6 @@
                     <li>prepareForSubmit</li>
                     <li>prepare</li>
                     <li>validate</li>
-                    <li>validateForm <em>(deprecated)</em></li>
                     <li>failure
                         <em>or</em>
                         success
