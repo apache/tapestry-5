@@ -10,7 +10,7 @@
 </t:zone>
 
 <p>
-<t:actionlink t:id="clicker" zone="counterZone">increment the count</t:actionlink>
+  <t:actionlink t:id="clicker" zone="counterZone">increment the count</t:actionlink>
 </p>
 
 ]]></source>
