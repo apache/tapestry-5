@@ -31,7 +31,7 @@ import com.sun.tools.doclets.Taglet;
 /**
  * An inline tag allowed inside a type; it produces Tapestry component reference and other information.
  */
-public class TapestryDocTaglet implements Taglet
+public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
 {
     /**
      * Map from class name to class description.
@@ -95,7 +95,7 @@ public class TapestryDocTaglet implements Taglet
         if (result == null)
         {
             ClassDoc cd = firstSeen.findClass(className);
-            result = new ClassDescription(cd);
+            result = new ClassDescription(cd, this);
             classDescriptions.put(className, result);
         }
 

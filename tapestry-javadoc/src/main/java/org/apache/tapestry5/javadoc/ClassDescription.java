@@ -17,9 +17,11 @@ package org.apache.tapestry5.javadoc;
 import java.util.Map;
 
 import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import com.sun.javadoc.AnnotationDesc;
 import com.sun.javadoc.AnnotationDesc.ElementValuePair;
@@ -37,22 +39,16 @@ public class ClassDescription
     public final Map<String, ParameterDescription> parameters = CollectionFactory.newCaseInsensitiveMap();
 
     /**
-     * Case insensitive map, keyed on parameter name, value is class name of component from which the parameter is
-     * published.
-     */
-    public final Map<String, String> publishedParameters = CollectionFactory.newCaseInsensitiveMap();
-
-    /**
      * Case insensitive map, keyed on event name, value is optional description (often blank).
      */
     public final Map<String, String> events = CollectionFactory.newCaseInsensitiveMap();
 
-    public ClassDescription(ClassDoc classDoc)
+    public ClassDescription(ClassDoc classDoc, ClassDescriptionSource source)
     {
         this.classDoc = classDoc;
 
         loadEvents();
-        loadParameters();
+        loadParameters(source);
     }
 
     private void loadEvents()
@@ -82,7 +78,7 @@ public class ClassDescription
         }
     }
 
-    private void loadParameters()
+    private void loadParameters(ClassDescriptionSource source)
     {
         for (FieldDoc fd : classDoc.fields(false))
         {
@@ -111,6 +107,38 @@ public class ClassDescription
                 continue;
             }
 
+            values = getAnnotationValues(fd, Component.class);
+
+            if (values != null)
+            {
+                String names = get(values, "publishParameters", "");
+
+                if (InternalUtils.isBlank(names))
+                    continue;
+
+                for (String name : names.split("\\s*,\\s*"))
+                {
+                    ParameterDescription pd = getPublishedParameterDescription(source, fd, name);
+                    parameters.put(name, pd);
+                }
+
+            }
+
+        }
+    }
+
+    private ParameterDescription getPublishedParameterDescription(ClassDescriptionSource source, FieldDoc fd,
+            String name)
+    {
+        String currentClassName = fd.type().qualifiedTypeName();
+
+        while (true)
+        {
+            ClassDescription componentCD = source.getDescription(currentClassName);
+
+            if (componentCD.parameters.containsKey(name)) { return componentCD.parameters.get(name); }
+
+            currentClassName = componentCD.classDoc.superclass().typeName();
         }
     }
 

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,14 +16,23 @@ package org.apache.tapestry5.corelib.components;
 
 import java.io.IOException;
 
-import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ClientElement;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.Field;
+import org.apache.tapestry5.FormValidationControl;
+import org.apache.tapestry5.TrackableComponentEventCallback;
+import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Events;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
-import org.apache.tapestry5.internal.services.ComponentResultProcessorWrapper;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.BeanModelSource;
-import org.apache.tapestry5.services.ComponentEventResultProcessor;
 
 /**
  * A component that creates an entire form editing the properties of a particular bean. Inspired by <a
@@ -45,6 +54,7 @@ import org.apache.tapestry5.services.ComponentEventResultProcessor;
  * @see org.apache.tapestry5.services.BeanModelSource
  * @see org.apache.tapestry5.corelib.components.PropertyEditor
  * @see org.apache.tapestry5.beaneditor.DataType
+ * @tapestrydoc
  */
 @SupportsInformalParameters
 @Events(EventConstants.PREPARE)
