@@ -603,4 +603,21 @@ public class FuncTest extends BaseFuncTest
 
         assertFlowValues(flow, 9, 7, 1);
     }
+
+    @Test
+    public void lazy_flow_from_mapper()
+    {
+        Mapper<Integer, Integer> mapper = new Mapper<Integer, Integer>()
+        {
+            public Integer map(Integer element)
+            {
+
+                return 2 * element.intValue();
+            }
+        };
+
+        Flow<Integer> flow = F.lazy(3, mapper);
+
+        assertFlowValues(flow.take(5), 3, 6, 12, 24, 48);
+    }
 }

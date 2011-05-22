@@ -385,6 +385,44 @@ public class F
         return new LazyFlow<T>(function);
     }
 
+    private static <T> LazyFunction<T> toLazyFunction(final T currentValue, final Mapper<T, T> function)
+    {
+        return new LazyFunction<T>()
+        {
+            public LazyContinuation<T> next()
+            {
+                final T nextValue = function.map(currentValue);
+
+                return new LazyContinuation<T>(nextValue, toLazyFunction(nextValue, function));
+            }
+        };
+    }
+
+    /**
+     * Creates an infinite lazy flow from an initial value and a function to map from the current value to the
+     * next value.
+     * 
+     * @since 5.3.0
+     * @param <T>
+     * @param initial
+     *            initial value in flow
+     * @param function
+     *            maps from current value in flow to next value in flow
+     * @return lazy flow
+     */
+    public static <T> Flow<T> lazy(final T initial, final Mapper<T, T> function)
+    {
+        LazyFunction<T> head = new LazyFunction<T>()
+        {
+            public LazyContinuation<T> next()
+            {
+                return new LazyContinuation<T>(initial, toLazyFunction(initial, function));
+            }
+        };
+
+        return lazy(head);
+    }
+
     /**
      * Creates an <em>infinite</em> series of numbers.
      * <p>
