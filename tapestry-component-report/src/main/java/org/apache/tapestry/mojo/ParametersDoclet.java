@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -59,10 +59,12 @@ public class ParametersDoclet extends Doclet
 
         private void emitClass(ClassDoc classDoc)
         {
-            if (!classDoc.isPublic()) return;
+            if (!classDoc.isPublic())
+                return;
 
             // Components must be root classes, not nested classes.
-            if (classDoc.containingClass() != null) return;
+            if (classDoc.containingClass() != null)
+                return;
 
             // Check for a no-args public constructor
 
@@ -77,24 +79,27 @@ public class ParametersDoclet extends Doclet
                 }
             }
 
-            if (!found) return;
+            if (!found)
+                return;
 
             Map<String, String> annotationValues = findTapestryAnnotation(classDoc, "SupportsInformalParameters");
-            
+
             boolean deprecated = isDeprecated(classDoc);
 
             println("<class name='%s' super-class='%s'  supports-informal-parameters='%s' since='%s' deprecated='%s'>",
-                    classDoc.qualifiedTypeName(),
-                    classDoc.superclass().qualifiedTypeName(), annotationValues != null, getSinceTagValue(classDoc), deprecated);
+                    classDoc.qualifiedTypeName(), classDoc.superclass().qualifiedTypeName(), annotationValues != null,
+                    getSinceTagValue(classDoc), deprecated);
             print("<description>");
             printDescription(classDoc);
             println("</description>", classDoc.commentText());
 
             for (FieldDoc fd : classDoc.fields())
             {
-                if (fd.isStatic()) continue;
+                if (fd.isStatic())
+                    continue;
 
-                if (!fd.isPrivate()) continue;
+                if (!fd.isPrivate())
+                    continue;
 
                 Map<String, String> parameterAnnotationsValues = findTapestryAnnotation(fd, "Parameter");
 
@@ -118,21 +123,20 @@ public class ParametersDoclet extends Doclet
 
             emitEvents(classDoc);
 
-
             println("</class>");
         }
-        
+
         private boolean isDeprecated(ProgramElementDoc classDoc)
         {
-        	return (findAnnotation(classDoc, "java.lang.Deprecated") != null) || (0 < classDoc.tags("deprecated").length);
+            return (findAnnotation(classDoc, "java.lang.Deprecated") != null)
+                    || (0 < classDoc.tags("deprecated").length);
         }
 
         private void emitEvents(ClassDoc classDoc)
         {
             for (AnnotationDesc annotation : classDoc.annotations())
             {
-                if (!annotation.annotationType().qualifiedTypeName().equals(
-                        "org.apache.tapestry5.annotations.Events"))
+                if (!annotation.annotationType().qualifiedTypeName().equals("org.apache.tapestry5.annotations.Events"))
                 {
                     continue;
                 }
@@ -144,7 +148,6 @@ public class ParametersDoclet extends Doclet
 
                 AnnotationValue annotationValue = pair.value();
                 AnnotationValue[] values = (AnnotationValue[]) annotationValue.value();
-
 
                 for (AnnotationValue eventValue : values)
                 {
@@ -164,28 +167,28 @@ public class ParametersDoclet extends Doclet
         {
             String names = get(componentAnnotationValues, "publishParameters", "");
 
-            if (names == null || names.equals("")) return;
+            if (names == null || names.equals(""))
+                return;
 
             String embeddedTypeName = fd.type().qualifiedTypeName();
 
             for (String name : names.split("\\s*,\\s*"))
             {
-                print("<published-parameter name='%s' component-class='%s'/>",
-                      name,
-                      embeddedTypeName);
+                print("<published-parameter name='%s' component-class='%s'/>", name, embeddedTypeName);
             }
         }
 
         private void emitParameter(FieldDoc fd, Map<String, String> parameterAnnotationValues)
         {
             String name = parameterAnnotationValues.get("name");
-            if (name == null) name = fd.name().replaceAll("^[$_]*", "");
+            if (name == null)
+                name = fd.name().replaceAll("^[$_]*", "");
 
-            print("<parameter name='%s' type='%s' default='%s' required='%s' cache='%s' " +
-                    "default-prefix='%s' since='%s' deprecated='%s'>",
-                  name, fd.type().qualifiedTypeName(), get(parameterAnnotationValues, "value", ""),
-                  get(parameterAnnotationValues, "required", "false"), get(parameterAnnotationValues, "cache", "true"),
-                  get(parameterAnnotationValues, "defaultPrefix", "prop"), getSinceTagValue(fd), isDeprecated(fd));
+            print("<parameter name='%s' type='%s' default='%s' required='%s' cache='%s' "
+                    + "default-prefix='%s' since='%s' deprecated='%s'>", name, fd.type().qualifiedTypeName(),
+                    get(parameterAnnotationValues, "value", ""), get(parameterAnnotationValues, "required", "false"),
+                    get(parameterAnnotationValues, "cache", "true"),
+                    get(parameterAnnotationValues, "defaultPrefix", "prop"), getSinceTagValue(fd), isDeprecated(fd));
 
             // Body of a parameter is the comment text.
 
@@ -198,7 +201,7 @@ public class ParametersDoclet extends Doclet
         {
             return getTagValue(doc, "since");
         }
-        
+
         private String getTagValue(Doc doc, String tagName)
         {
             Tag[] tags = doc.tags(tagName);
@@ -208,17 +211,18 @@ public class ParametersDoclet extends Doclet
 
         private String get(Map<String, String> map, String key, String defaultValue)
         {
-            if (map.containsKey(key)) return map.get(key);
+            if (map.containsKey(key))
+                return map.get(key);
 
             return defaultValue;
         }
-        
+
         private Map<String, String> findTapestryAnnotation(ProgramElementDoc doc, String name)
-       {
-           return findAnnotation(doc, "org.apache.tapestry5.annotations." + name);
-       }
- 
-         private Map<String, String> findAnnotation(ProgramElementDoc doc, String name)
+        {
+            return findAnnotation(doc, "org.apache.tapestry5.annotations." + name);
+        }
+
+        private Map<String, String> findAnnotation(ProgramElementDoc doc, String name)
         {
             for (AnnotationDesc annotation : doc.annotations())
             {
@@ -273,7 +277,8 @@ public class ParametersDoclet extends Doclet
                         continue;
                     }
 
-                    if (seeTag.referencedClassName() != null) builder.append(seeTag.referencedClassName());
+                    if (seeTag.referencedClassName() != null)
+                        builder.append(seeTag.referencedClassName());
 
                     if (seeTag.referencedMemberName() != null)
                     {
@@ -305,7 +310,8 @@ public class ParametersDoclet extends Doclet
 
     public static int optionLength(String option)
     {
-        if (option.equals(OUTPUT_PATH_OPTION)) return 2;
+        if (option.equals(OUTPUT_PATH_OPTION))
+            return 2;
 
         return 0;
     }
@@ -314,13 +320,15 @@ public class ParametersDoclet extends Doclet
     {
         for (String[] group : options)
         {
-            if (group[0].equals(OUTPUT_PATH_OPTION)) outputPath = group[1];
+            if (group[0].equals(OUTPUT_PATH_OPTION))
+                outputPath = group[1];
 
             // Do we need to check for other unexpected options?
             // TODO: Check for duplicate -o?
         }
 
-        if (outputPath == null) reporter.printError(String.format("Usage: javadoc %s path", OUTPUT_PATH_OPTION));
+        if (outputPath == null)
+            reporter.printError(String.format("Usage: javadoc %s path", OUTPUT_PATH_OPTION));
 
         return true;
     }

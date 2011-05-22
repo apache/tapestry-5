@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -161,7 +162,7 @@ public class TapestryDocTaglet implements Taglet
 
         writer.write("<dt><b>Parameters:</b></dt><dd>");
 
-        writer.write("<table>"
+        writer.write("<table border='1' cellpadding='3' cellspacing='0'>"
                 + "<tr><th>Name</th><th>Type</th><th>Flags</th><th>Default</th><th>Default Prefix</th><th>Since</th><th>Description</th></tr>");
 
         for (String name : InternalUtils.sortedKeys(cd.parameters))
@@ -181,7 +182,27 @@ public class TapestryDocTaglet implements Taglet
         element(writer, "td", pd.name);
         element(writer, "td", pd.type);
 
-        writer.write("</tr>");
+        List<String> flags = CollectionFactory.newList();
+
+        if (pd.required)
+            flags.add("Required");
+
+        if (!pd.cache)
+            flags.add("NOT Cached");
+
+        if (!pd.allowNull)
+            flags.add("NOT Allow Null");
+
+        element(writer, "td", InternalUtils.join(flags));
+        element(writer, "td", pd.defaultValue);
+        element(writer, "td", pd.defaultPrefix);
+        element(writer, "td", pd.since);
+
+        writer.write("<td>");
+
+        pd.writeDescription(writer);
+
+        writer.write("</td></tr>");
     }
 
     private void writeEvents(ClassDescription cd, Writer writer) throws IOException

@@ -101,7 +101,7 @@ public class ClassDescription
                 if (name == null)
                     name = fd.name().replaceAll("^[$_]*", "");
 
-                ParameterDescription pd = new ParameterDescription(name, fd.type().qualifiedTypeName(), get(values,
+                ParameterDescription pd = new ParameterDescription(fd, name, fd.type().qualifiedTypeName(), get(values,
                         "value", ""), get(values, "defaultPrefix", BindingConstants.PROP), getBoolean(values,
                         "required", false), getBoolean(values, "allowNull", true), getBoolean(values, "cache", true),
                         getSinceTagValue(fd), isDeprecated(fd));
@@ -175,10 +175,4 @@ public class ClassDescription
 
         return result;
     }
-
-    public String getClassName()
-    {
-        return classDoc.qualifiedName();
-    }
-
 }
