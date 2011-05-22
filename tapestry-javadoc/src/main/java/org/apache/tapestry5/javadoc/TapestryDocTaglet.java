@@ -15,8 +15,13 @@
 package org.apache.tapestry5.javadoc;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Map;
+
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.Tag;
@@ -27,6 +32,13 @@ import com.sun.tools.doclets.Taglet;
  */
 public class TapestryDocTaglet implements Taglet
 {
+    /**
+     * Map from class name to class description.
+     */
+    private final Map<String, ClassDescription> classDescriptions = CollectionFactory.newMap();
+
+    private ClassDoc firstSeen;
+
     private static final String NAME = "tapestrydoc";
 
     @SuppressWarnings("unchecked")
@@ -75,6 +87,20 @@ public class TapestryDocTaglet implements Taglet
         return NAME;
     }
 
+    public ClassDescription getDescription(String className)
+    {
+        ClassDescription result = classDescriptions.get(className);
+
+        if (result == null)
+        {
+            ClassDoc cd = firstSeen.findClass(className);
+            result = new ClassDescription(cd);
+            classDescriptions.put(className, result);
+        }
+
+        return result;
+    }
+
     public String toString(Tag tag)
     {
         throw new IllegalStateException("toString(Tag) should not be called for a non-inline tag.");
@@ -96,6 +122,13 @@ public class TapestryDocTaglet implements Taglet
 
             ClassDoc classDoc = (ClassDoc) tag.holder();
 
+            if (firstSeen == null)
+                firstSeen = classDoc;
+
+            ClassDescription cd = getDescription(classDoc.qualifiedName());
+
+            writeClassDescription(cd, writer);
+
             streamXdoc(classDoc, writer);
 
             return writer.toString();
@@ -109,7 +142,36 @@ public class TapestryDocTaglet implements Taglet
         }
     }
 
-    private void streamXdoc(ClassDoc classDoc, StringWriter writer) throws Exception
+    private void writeElement(Writer writer, String elementName, String text) throws IOException
+    {
+        writer.write(String.format("<%s>%s</%1$s>", elementName, text));
+    }
+
+    private void writeClassDescription(ClassDescription cd, Writer writer) throws IOException
+    {
+        Map<String, String> events = cd.getEvents();
+
+        if (events.isEmpty())
+            return;
+
+        writer.write("<dt><b>Events:</b></dt><dd><dl>");
+
+        for (String name : InternalUtils.sortedKeys(events))
+        {
+            writeElement(writer, "dt", name);
+
+            String value = events.get(name);
+
+            if (value.length() > 0)
+            {
+                writeElement(writer, "dd", value);
+            }
+        }
+
+        writer.write("</dl></dd>");
+    }
+
+    private void streamXdoc(ClassDoc classDoc, Writer writer) throws Exception
     {
         File sourceFile = classDoc.position().file();
 
