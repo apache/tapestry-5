@@ -1,24 +1,6 @@
 <document>
     <body>
-
-        <section name="Related Components">
-
-            <ul>
-                <li>
-                    <a href="BeanEditForm.html">BeanEditForm</a>
-                </li>
-                <li>
-                    <a href="Errors.html">Errors</a>
-                </li>
-                <li>
-                    <a href="FormFragment.html">FormFragment</a>
-                </li>
-                <li>
-                    <a href="Label.html">Label</a>
-                </li>
-            </ul>
-        </section>
-
+     
         <section name="Form Control Element Components">
 
             <p>

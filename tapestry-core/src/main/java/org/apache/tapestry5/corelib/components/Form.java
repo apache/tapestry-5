@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -98,6 +98,12 @@ import org.slf4j.Logger;
  * For all of these notifications, the event context is derived from the <strong>context</strong> parameter. This
  * context is encoded into the form's action URI (the parameter is not read when the form is submitted, instead the
  * values encoded into the form are used).
+ * 
+ * @tapestrydoc
+ * @see BeanEditForm
+ * @see Errors
+ * @see FormFragment
+ * @see Label
  */
 @Events(
 { EventConstants.PREPARE_FOR_RENDER, EventConstants.PREPARE, EventConstants.PREPARE_FOR_SUBMIT,
