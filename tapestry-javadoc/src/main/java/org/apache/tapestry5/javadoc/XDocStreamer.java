@@ -68,7 +68,7 @@ public class XDocStreamer
 
     enum ParserState
     {
-        IGNORING, COPYING
+        IGNORING, COPYING, COPYING_CDATA
     };
 
     class SaxHandler implements ContentHandler, LexicalHandler
@@ -95,12 +95,26 @@ public class XDocStreamer
 
         public void startCDATA() throws SAXException
         {
-            // TODO: Update state
+            if (state == ParserState.IGNORING)
+            {
+                endElementHandlers.push(NO_OP);
+                return;
+            }
+
+            state = ParserState.COPYING_CDATA;
+
+            endElementHandlers.push(new Runnable()
+            {
+                public void run()
+                {
+                    state = ParserState.COPYING;
+                }
+            });
         }
 
         public void endCDATA() throws SAXException
         {
-            // TODO: Restore state
+            endElementHandlers.pop().run();
         }
 
         /** Does nothing; comments are always stripped out. */
@@ -154,7 +168,12 @@ public class XDocStreamer
                 return;
             }
 
-            // TODO: <source> element
+            if (localName.equals("source"))
+            {
+                write("<pre>");
+                endElementHandlers.push(writeClose("pre"));
+                return;
+            }
 
             write("<");
             write(localName);
@@ -178,7 +197,7 @@ public class XDocStreamer
         {
             String name = getAttribute(atts, "name");
 
-            write(String.format("<%s>%s<%1$s>", elementName, name));
+            write(String.format("<%s>%s</%1$s>", elementName, name));
 
             endElementHandlers.push(NO_OP);
             return;
@@ -202,16 +221,43 @@ public class XDocStreamer
 
         public void characters(char[] ch, int start, int length) throws SAXException
         {
-            if (state != ParserState.IGNORING)
+            try
             {
-                try
+                switch (state)
                 {
-                    writer.write(ch, start, length);
+                    case IGNORING:
+                        break;
+
+                    case COPYING:
+                        writer.write(ch, start, length);
+                        break;
+
+                    case COPYING_CDATA:
+
+                        for (int i = start; i < start + length; i++)
+                        {
+                            switch (ch[i])
+                            {
+                                case '<':
+                                    write("&lt;");
+                                    break;
+                                case '>':
+                                    write("&gt;");
+                                    break;
+                                case '&':
+                                    write("&amp;");
+                                    break;
+                                default:
+                                    writer.write(ch[i]);
+                            }
+                        }
+
+                        break;
                 }
-                catch (IOException ex)
-                {
-                    throw new SAXException(ex);
-                }
+            }
+            catch (IOException ex)
+            {
+                throw new SAXException(ex);
             }
         }
 
