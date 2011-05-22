@@ -1,15 +1,5 @@
 <document>
-    <body>
-        <section name="Related Components">
-            <ul>
-                <li>
-                    <a href="AjaxFormLoop.html">AjaxFormLoop</a>
-                </li>
-                <li>
-                    <a href="FormFragment.html">FormFragment</a>
-                </li>
-            </ul>
-        </section>
+    <body>     
         <section name="Examples">
 
             <subsection name="ZoneDemo.tml (partial)">
