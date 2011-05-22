@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -78,6 +78,8 @@ import org.slf4j.Logger;
  * <p/>
  * After the client-side content is updated, a client-side event is fired on the zone's element. The constant
  * Tapestry.ZONE_UPDATED_EVENT can be used to listen to the event.
+ * 
+ * @tapestrydoc
  */
 @SupportsInformalParameters
 public class Zone implements ClientBodyElement

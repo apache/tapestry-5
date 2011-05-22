@@ -1,0 +1,8 @@
+description = "JavaDoc Plugin for Tapestry that generates component reference documentation for component classes"
+
+dependencies {
+  compile project(':tapestry5-annotations')
+
+  provided "javax.servlet:servlet-api:$servletAPIVersion"
+
+}
