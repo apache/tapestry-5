@@ -402,7 +402,6 @@ public class F
      * Creates an infinite lazy flow from an initial value and a function to map from the current value to the
      * next value.
      * 
-     * @since 5.3.0
      * @param <T>
      * @param initial
      *            initial value in flow
@@ -410,7 +409,7 @@ public class F
      *            maps from current value in flow to next value in flow
      * @return lazy flow
      */
-    public static <T> Flow<T> lazy(final T initial, final Mapper<T, T> function)
+    public static <T> Flow<T> iterate(final T initial, final Mapper<T, T> function)
     {
         LazyFunction<T> head = new LazyFunction<T>()
         {
@@ -428,27 +427,13 @@ public class F
      * <p>
      * Attempting to get the {@linkplain Flow#count()} of the series will form an infinite loop.
      */
-    public static Flow<Integer> series(int start, int delta)
+    public static Flow<Integer> series(int start, final int delta)
     {
-        return lazy(new LazySeries(start, delta));
-    }
-
-    /**
-     * Creates a lazy, infinte Flow consisting of the initial value, then the result of passing
-     * the initial value through the Mapper, and so forth, which each step value passed through the
-     * mapper
-     * to form the next step value.
-     */
-    public static <T> Flow<T> iterate(final T initial, final Mapper<T, T> mapper)
-    {
-        assert mapper != null;
-
-        return F.lazy(new LazyFunction<T>()
+        return iterate(start, new Mapper<Integer, Integer>()
         {
-
-            public LazyContinuation<T> next()
+            public Integer map(Integer element)
             {
-                return new LazyContinuation<T>(initial, new LazyIterate<T>(initial, mapper));
+                return element + delta;
             }
         });
     }
