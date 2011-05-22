@@ -180,12 +180,7 @@ public class XDocStreamer
 
             for (int i = 0; i < atts.getLength(); i++)
             {
-                if (i > 0)
-                {
-                    write(" ");
-                }
-
-                write(String.format("%s=\"%s\"", atts.getLocalName(i), atts.getValue(i)));
+                write(String.format(" %s=\"%s\"", atts.getLocalName(i), atts.getValue(i)));
             }
 
             write(">");
