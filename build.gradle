@@ -106,6 +106,9 @@ subprojects.each { evaluationDependsOn(it.name) }
 javadocBuildDir = dir(buildDirName + "/documentation/javadocs")
 
 task aggregateJavadoc(type: Javadoc) {
+
+   dependsOn configurations.javadoc
+   
    description = "Build the aggregated JavaDocs for all modules"
    maxMemory = '512m'
    destinationDir = javadocBuildDir.dir
