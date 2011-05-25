@@ -51,7 +51,7 @@ public class PersistenceContentHandler implements ContentHandler
     private static final String ATTRIBUTE_TRANSACTION_TYPE = "transaction-type";
 
     private final List<TapestryPersistenceUnitInfo> persistenceUnits = CollectionFactory.newList();
-    private TapestryPersistenceUnitInfo persistenceUnitInfo;
+    private PersistenceUnitInfoImpl persistenceUnitInfo;
     private StringBuilder characters;
 
     public List<TapestryPersistenceUnitInfo> getPersistenceUnits()

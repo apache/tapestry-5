@@ -23,14 +23,13 @@ import org.apache.tapestry5.ioc.annotations.Match;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.ioc.services.ApplicationDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
-import org.apache.tapestry5.jpa.EntityManagerSource;
-import org.apache.tapestry5.jpa.JpaModule;
-import org.apache.tapestry5.jpa.JpaTransactionAdvisor;
-import org.apache.tapestry5.jpa.PersistenceUnitConfigurer;
-import org.apache.tapestry5.jpa.TapestryPersistenceUnitInfo;
+import org.apache.tapestry5.jpa.*;
 import org.example.app1.AppConstants;
+import org.example.app1.entities.Thang;
 import org.example.app1.entities.User;
 import org.example.app1.services.impl.UserDAOImpl;
+
+import java.util.Properties;
 
 @SubModule(JpaModule.class)
 public class AppModule
@@ -61,6 +60,22 @@ public class AppModule
             }
         };
         configuration.add(AppConstants.TEST_PERSISTENCE_UNIT, configurer);
+
+        final PersistenceUnitConfigurer configurer2 = new PersistenceUnitConfigurer()
+        {
+            public void configure(final TapestryPersistenceUnitInfo unitInfo)
+            {
+                final Properties properties = unitInfo.getProperties();
+                properties.put("javax.persistence.jdbc.driver", "org.h2.Driver");
+                properties.put("javax.persistence.jdbc.url", "jdbc:h2:mem:test");
+                properties.put("eclipselink.ddl-generation", "create-tables");
+                properties.put("eclipselink.logging.level", "fine");
+
+                unitInfo.addManagedClass(Thang.class);
+            }
+        };
+
+        configuration.add(AppConstants.TEST_PERSISTENCE_UNIT_2, configurer2);
 
     }
 

@@ -12,11 +12,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.example.app1;
+package org.example.app1.entities;
 
-public class AppConstants
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
+public class Thang
 {
-    public static final String TEST_PERSISTENCE_UNIT = "TestUnit";
+    @Id
+    @GeneratedValue
+    private Long id;
 
-    public static final String TEST_PERSISTENCE_UNIT_2 = "TestUnit2";
+    private String name;
+
+    public Long getId()
+    {
+        return id;
+    }
+
+    public void setId(final Long id)
+    {
+        this.id = id;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(final String name)
+    {
+        this.name = name;
+    }
+
 }

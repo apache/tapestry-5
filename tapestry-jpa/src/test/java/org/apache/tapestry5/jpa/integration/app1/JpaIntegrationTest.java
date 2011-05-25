@@ -66,6 +66,33 @@ public class JpaIntegrationTest extends SeleniumTestCase
     }
 
     @Test
+    public void persist_thangs()
+    {
+        open("/persistthang");
+        assertEquals(getText("//span[@id='name']").length(), 0);
+
+        clickAndWait("link=create entity");
+        assertText("//span[@id='name']", "name");
+
+        // shouldn't save the change to the name because it's reloaded every time
+        clickAndWait("link=change the name");
+        assertText("//span[@id='name']", "name");
+
+        // can set back to null
+        clickAndWait("link=set to null");
+        assertEquals(getText("//span[@id='name']").length(), 0);
+
+        // deleting an entity that is still persisted. just remove the entity from the session if
+        // it's not found.
+        clickAndWait("link=delete");
+        assertEquals(getText("//span[@id='name']").length(), 0);
+
+        // transient objects cannot be persisted
+        clickAndWait("link=set to transient");
+        assertTextPresent("Failed persisting the entity.");
+    }
+
+    @Test
     public void sso_entities()
     {
         open("/ssoentity");

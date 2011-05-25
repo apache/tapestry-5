@@ -6,18 +6,8 @@
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
 			<property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:test" />
-			<property name="javax.persistence.jdbc.username" value="sa" />
 			<property name="eclipselink.ddl-generation" value="create-tables"/>
 			<property name="eclipselink.logging.level" value="fine"/>
-		</properties>
-	</persistence-unit>
-	
-	
-	<persistence-unit name="TestUnit2" transaction-type="RESOURCE_LOCAL">
-		<properties>
-			<property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:test" />
-			<property name="javax.persistence.jdbc.username" value="sa" />
 		</properties>
 	</persistence-unit>
 

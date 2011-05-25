@@ -37,7 +37,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
 
     private String persistenceXMLSchemaVersion;
 
-    private PersistenceUnitTransactionType transactionType;
+    private PersistenceUnitTransactionType transactionType = PersistenceUnitTransactionType.RESOURCE_LOCAL;
 
     private DataSource nonJtaDataSource;
 
@@ -46,6 +46,8 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     private ValidationMode validationMode;
 
     private SharedCacheMode sharedCacheMode;
+
+    private boolean excludeUnlistedClasses = true;
 
     private final List<String> managedClassNames = new ArrayList<String>();
 
@@ -195,7 +197,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
      */
     public boolean excludeUnlistedClasses()
     {
-        return false;
+        return excludeUnlistedClasses;
     }
 
     /**
@@ -246,9 +248,6 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
         return persistenceXMLSchemaVersion;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void setPersistenceXMLSchemaVersion(final String version)
     {
         persistenceXMLSchemaVersion = version;

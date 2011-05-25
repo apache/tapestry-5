@@ -53,6 +53,7 @@ public class EntityManagerSourceImpl implements EntityManagerSource, RegistryShu
         super();
         this.logger = logger;
 
+        List<TapestryPersistenceUnitInfo> persistenceUnitInfos = null;
         final PersistenceParser parser = new PersistenceParser();
 
         InputStream inputStream = null;
@@ -70,18 +71,49 @@ public class EntityManagerSourceImpl implements EntityManagerSource, RegistryShu
             InternalUtils.close(inputStream);
         }
 
+         final Map<String, PersistenceUnitConfigurer> remainingConfigurations = configure(configuration, persistenceUnitInfos);
+
+        configureRemaining(persistenceUnitInfos, remainingConfigurations);
+
         if(persistenceUnitInfos.size() == 1)
             packageNamePersistenceUnitConfigurer.configure(persistenceUnitInfos.get(0));
-            
+
+        this.persistenceUnitInfos = persistenceUnitInfos;
+    }
+
+    private Map<String, PersistenceUnitConfigurer> configure(Map<String, PersistenceUnitConfigurer> configuration, List<TapestryPersistenceUnitInfo> persistenceUnitInfos)
+    {
+        final Map<String, PersistenceUnitConfigurer> remainingConfigurations = CollectionFactory.newMap(configuration);
+
         for (final TapestryPersistenceUnitInfo info : persistenceUnitInfos)
         {
-            final PersistenceUnitConfigurer configurer = configuration.get(info
-                    .getPersistenceUnitName());
+            final String unitName = info.getPersistenceUnitName();
+
+            final PersistenceUnitConfigurer configurer = configuration.get(unitName);
 
             if (configurer != null)
             {
                 configurer.configure(info);
+
+                remainingConfigurations.remove(unitName) ;
             }
+        }
+
+        return remainingConfigurations;
+    }
+
+
+    private void configureRemaining(List<TapestryPersistenceUnitInfo> persistenceUnitInfos, Map<String, PersistenceUnitConfigurer> remainingConfigurations)
+    {
+        for(Entry<String, PersistenceUnitConfigurer> entry: remainingConfigurations.entrySet())
+        {
+            final PersistenceUnitInfoImpl info = new PersistenceUnitInfoImpl();
+            info.setPersistenceUnitName(entry.getKey());
+
+            final PersistenceUnitConfigurer configurer = entry.getValue();
+            configurer.configure(info);
+
+            persistenceUnitInfos.add(info);
         }
     }
 

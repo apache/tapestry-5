@@ -40,7 +40,5 @@ public interface TapestryPersistenceUnitInfo extends PersistenceUnitInfo
 
     void setValidationMode(ValidationMode validationMode);
 
-    void setPersistenceXMLSchemaVersion(String version);
-
     void addMappingFileName(String string);
 }
