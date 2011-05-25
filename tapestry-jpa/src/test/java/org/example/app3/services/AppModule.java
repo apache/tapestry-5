@@ -19,8 +19,10 @@ import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.ioc.services.ApplicationDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
-import org.apache.tapestry5.jpa.JpaModule;
-import org.apache.tapestry5.jpa.JpaSymbols;
+import org.apache.tapestry5.jpa.*;
+import org.example.app1.AppConstants;
+import org.example.app1.entities.Thang;
+import org.example.app1.entities.User;
 
 @SubModule(JpaModule.class)
 public class AppModule
@@ -30,6 +32,28 @@ public class AppModule
     public static void provideFactoryDefaults(
             final MappedConfiguration<String, String> configuration)
     {
-        configuration.add(JpaSymbols.PERSISTENCE_DESCRIPTOR, "/jndi-datasource-persistence-unit.xml");
+        //META-INF/persistence.xml is already on the test classpath,
+        //so we need to pretend as if it doesn't exists
+        configuration.add(JpaSymbols.PERSISTENCE_DESCRIPTOR, "/does-not-exist.xml");
+    }
+
+    @Contribute(EntityManagerSource.class)
+    public static void configurePersistenceUnitInfos(
+            final MappedConfiguration<String, PersistenceUnitConfigurer> configuration)
+    {
+
+        final PersistenceUnitConfigurer configurer = new PersistenceUnitConfigurer()
+        {
+            public void configure(final TapestryPersistenceUnitInfo unitInfo)
+            {
+                unitInfo.nonJtaDataSource("jdbc/JPATest")
+                        .addMappingFileName("mappings.xml")
+                        .addProperty("eclipselink.ddl-generation", "create-tables")
+                        .addProperty("eclipselink.logging.level", "fine");
+            }
+        };
+
+        configuration.add("JndiDataSourcePersistenceUnit", configurer);
+
     }
 }

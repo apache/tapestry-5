@@ -86,8 +86,7 @@ public class PersistenceContentHandler implements ContentHandler
         {
             if (ELEMENT_PERSISTENCE_UNIT.equals(localName))
             {
-                persistenceUnitInfo = new PersistenceUnitInfoImpl();
-                persistenceUnitInfo.setPersistenceUnitName(atts.getValue(ATTRIBUTE_NAME));
+                persistenceUnitInfo = new PersistenceUnitInfoImpl(atts.getValue(ATTRIBUTE_NAME));
                 persistenceUnitInfo
                         .setPersistenceXMLSchemaVersion(atts.getValue(ATTRIBUTE_VERSION));
 
@@ -95,7 +94,7 @@ public class PersistenceContentHandler implements ContentHandler
 
                 if (transactionType != null)
                 {
-                    persistenceUnitInfo.setTransactionType(PersistenceUnitTransactionType
+                    persistenceUnitInfo.transactionType(PersistenceUnitTransactionType
                             .valueOf(transactionType));
                 }
             }
@@ -119,7 +118,7 @@ public class PersistenceContentHandler implements ContentHandler
         {
             if (ELEMENT_PROVIDER.equals(localName))
             {
-                persistenceUnitInfo.setPersistenceProviderClassName(string);
+                persistenceUnitInfo.persistenceProviderClassName(string);
             }
             else if (ELEMENT_CLASS.equals(localName))
             {
@@ -127,11 +126,11 @@ public class PersistenceContentHandler implements ContentHandler
             }
             else if (ELEMENT_CACHING.equals(localName))
             {
-                persistenceUnitInfo.setSharedCacheMode(toEnum(SharedCacheMode.class, string));
+                persistenceUnitInfo.sharedCacheMode(toEnum(SharedCacheMode.class, string));
             }
             else if (ELEMENT_VALIDATION_MODE.equals(localName))
             {
-                persistenceUnitInfo.setValidationMode(toEnum(ValidationMode.class, string));
+                persistenceUnitInfo.validationMode(toEnum(ValidationMode.class, string));
             }
             else if (ELEMENT_MAPPING_FILE.equals(localName))
             {
@@ -139,11 +138,11 @@ public class PersistenceContentHandler implements ContentHandler
             }
             else if (ELEMENT_NON_JTA_DATA_SOURCE.equals(localName))
             {
-                persistenceUnitInfo.setNonJtaDataSource(lookupDataSource(string));
+                persistenceUnitInfo.nonJtaDataSource(string);
             }
             else if (ELEMENT_JTA_DATA_SOURCE.equals(localName))
             {
-                persistenceUnitInfo.setJtaDataSource(lookupDataSource(string));
+                persistenceUnitInfo.jtaDataSource(string);
             }
             else if (ELEMENT_PERSISTENCE_UNIT.equals(localName))
             {
@@ -187,23 +186,5 @@ public class PersistenceContentHandler implements ContentHandler
     private <T extends Enum<T>> T toEnum(final Class<T> enumType, final String value)
     {
         return Enum.valueOf(enumType, value);
-    }
-
-    private DataSource lookupDataSource(final String name)
-    {
-        try
-        {
-            // TODO: Create InitialContext with environment properties?
-            final Context initContext = new InitialContext();
-
-            final Context envContext = (Context) initContext.lookup("java:comp/env");
-
-            return (DataSource) envContext.lookup(name);
-        }
-        catch (final NamingException e)
-        {
-            throw new RuntimeException(e);
-        }
-
     }
 }

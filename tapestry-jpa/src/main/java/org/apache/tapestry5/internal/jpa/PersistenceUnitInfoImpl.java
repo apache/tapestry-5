@@ -21,6 +21,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.persistence.SharedCacheMode;
 import javax.persistence.ValidationMode;
 import javax.persistence.spi.ClassTransformer;
@@ -55,20 +58,18 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
 
     private final Properties properties = new Properties();
 
+
+    public PersistenceUnitInfoImpl(String persistenceUnitName)
+    {
+        this.persistenceUnitName = persistenceUnitName;
+    }
+
     /**
      * {@inheritDoc}
      */
     public String getPersistenceUnitName()
     {
         return persistenceUnitName;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setPersistenceUnitName(final String persistenceUnitName)
-    {
-        this.persistenceUnitName = persistenceUnitName;
     }
 
     /**
@@ -82,9 +83,11 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
-    public void setPersistenceProviderClassName(final String persistenceProviderClassName)
+    public TapestryPersistenceUnitInfo persistenceProviderClassName(final String persistenceProviderClassName)
     {
         this.persistenceProviderClassName = persistenceProviderClassName;
+
+        return this;
     }
 
     /**
@@ -98,9 +101,11 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
-    public void setTransactionType(final PersistenceUnitTransactionType transactionType)
+    public TapestryPersistenceUnitInfo transactionType(final PersistenceUnitTransactionType transactionType)
     {
         this.transactionType = transactionType;
+
+        return this;
     }
 
     /**
@@ -122,17 +127,21 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
-    public void setNonJtaDataSource(final DataSource nonJtaDataSource)
+    public TapestryPersistenceUnitInfo nonJtaDataSource(final String nonJtaDataSource)
     {
-        this.nonJtaDataSource = nonJtaDataSource;
+        this.nonJtaDataSource = lookupDataSource(nonJtaDataSource);
+
+        return this;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void setJtaDataSource(final DataSource jtaDataSource)
+    public TapestryPersistenceUnitInfo jtaDataSource(final String jtaDataSource)
     {
-        this.jtaDataSource = jtaDataSource;
+        this.jtaDataSource =  lookupDataSource(jtaDataSource);
+
+        return this;
     }
 
     /**
@@ -146,10 +155,19 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
-    public void addMappingFileName(final String fileName)
+    public TapestryPersistenceUnitInfo addMappingFileName(final String fileName)
     {
         mappingFilesNames.add(fileName);
 
+        return this;
+
+    }
+
+    public TapestryPersistenceUnitInfo addProperty(String name, String value)
+    {
+        getProperties().put(name, value);
+
+        return this;
     }
 
     /**
@@ -179,17 +197,21 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
-    public void addManagedClassName(final String className)
+    public TapestryPersistenceUnitInfo addManagedClassName(final String className)
     {
         managedClassNames.add(className);
+
+        return this;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void addManagedClass(final Class<?> clazz)
+    public TapestryPersistenceUnitInfo addManagedClass(final Class<?> clazz)
     {
         addManagedClassName(clazz.getName());
+
+        return this;
     }
 
     /**
@@ -211,9 +233,11 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
-    public void setSharedCacheMode(final SharedCacheMode cacheMode)
+    public TapestryPersistenceUnitInfo sharedCacheMode(final SharedCacheMode cacheMode)
     {
         sharedCacheMode = cacheMode;
+
+        return this;
     }
 
     /**
@@ -227,9 +251,11 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     /**
      * {@inheritDoc}
      */
-    public void setValidationMode(final ValidationMode validationMode)
+    public TapestryPersistenceUnitInfo validationMode(final ValidationMode validationMode)
     {
         this.validationMode = validationMode;
+
+        return this;
     }
 
     /**
@@ -275,6 +301,25 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     public ClassLoader getNewTempClassLoader()
     {
         return getClassLoader();
+    }
+
+
+    private DataSource lookupDataSource(final String name)
+    {
+        try
+        {
+            // TODO: Create InitialContext with environment properties?
+            final Context initContext = new InitialContext();
+
+            final Context envContext = (Context) initContext.lookup("java:comp/env");
+
+            return (DataSource) envContext.lookup(name);
+        }
+        catch (final NamingException e)
+        {
+            throw new RuntimeException(e);
+        }
+
     }
 
 }

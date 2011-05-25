@@ -65,13 +65,11 @@ public class AppModule
         {
             public void configure(final TapestryPersistenceUnitInfo unitInfo)
             {
-                final Properties properties = unitInfo.getProperties();
-                properties.put("javax.persistence.jdbc.driver", "org.h2.Driver");
-                properties.put("javax.persistence.jdbc.url", "jdbc:h2:mem:test");
-                properties.put("eclipselink.ddl-generation", "create-tables");
-                properties.put("eclipselink.logging.level", "fine");
-
-                unitInfo.addManagedClass(Thang.class);
+                unitInfo.addProperty("javax.persistence.jdbc.driver", "org.h2.Driver")
+                        .addProperty("javax.persistence.jdbc.url", "jdbc:h2:mem:test")
+                        .addProperty("eclipselink.ddl-generation", "create-tables")
+                        .addProperty("eclipselink.logging.level", "fine")
+                        .addManagedClass(Thang.class);
             }
         };
 

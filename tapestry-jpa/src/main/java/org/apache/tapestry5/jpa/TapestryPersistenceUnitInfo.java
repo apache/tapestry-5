@@ -18,27 +18,26 @@ import javax.persistence.SharedCacheMode;
 import javax.persistence.ValidationMode;
 import javax.persistence.spi.PersistenceUnitInfo;
 import javax.persistence.spi.PersistenceUnitTransactionType;
-import javax.sql.DataSource;
 
 public interface TapestryPersistenceUnitInfo extends PersistenceUnitInfo
 {
-    void setPersistenceUnitName(String persistenceUnitName);
+    TapestryPersistenceUnitInfo persistenceProviderClassName(String persistenceProviderClassName);
 
-    void setPersistenceProviderClassName(String persistenceProviderClassName);
+    TapestryPersistenceUnitInfo transactionType(PersistenceUnitTransactionType transactionType);
 
-    void setTransactionType(PersistenceUnitTransactionType transactionType);
+    TapestryPersistenceUnitInfo nonJtaDataSource(String nonJtaDataSource);
 
-    void setNonJtaDataSource(DataSource nonJtaDataSource);
+    TapestryPersistenceUnitInfo jtaDataSource(String jtaDataSource);
 
-    void setJtaDataSource(DataSource jtaDataSource);
+    TapestryPersistenceUnitInfo addManagedClassName(String className);
 
-    void addManagedClassName(String className);
+    TapestryPersistenceUnitInfo addManagedClass(Class<?> clazz);
 
-    void addManagedClass(Class<?> clazz);
+    TapestryPersistenceUnitInfo sharedCacheMode(SharedCacheMode cacheMode);
 
-    void setSharedCacheMode(SharedCacheMode cacheMode);
+    TapestryPersistenceUnitInfo validationMode(ValidationMode validationMode);
 
-    void setValidationMode(ValidationMode validationMode);
+    TapestryPersistenceUnitInfo addMappingFileName(String string);
 
-    void addMappingFileName(String string);
+    TapestryPersistenceUnitInfo addProperty(String name, String value);
 }

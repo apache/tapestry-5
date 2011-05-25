@@ -53,23 +53,7 @@ public class EntityManagerSourceImpl implements EntityManagerSource, RegistryShu
         super();
         this.logger = logger;
 
-        List<TapestryPersistenceUnitInfo> persistenceUnitInfos = null;
-        final PersistenceParser parser = new PersistenceParser();
-
-        InputStream inputStream = null;
-        try
-        {
-            inputStream = persistenceDescriptor.openStream();
-            persistenceUnitInfos = parser.parse(inputStream);
-        }
-        catch(Exception e)
-        {
-            throw new RuntimeException(e);
-        }
-        finally
-        {
-            InternalUtils.close(inputStream);
-        }
+        List<TapestryPersistenceUnitInfo> persistenceUnitInfos = parsePersistenceUnitInfos(persistenceDescriptor);
 
          final Map<String, PersistenceUnitConfigurer> remainingConfigurations = configure(configuration, persistenceUnitInfos);
 
@@ -79,6 +63,33 @@ public class EntityManagerSourceImpl implements EntityManagerSource, RegistryShu
             packageNamePersistenceUnitConfigurer.configure(persistenceUnitInfos.get(0));
 
         this.persistenceUnitInfos = persistenceUnitInfos;
+    }
+
+    private List<TapestryPersistenceUnitInfo> parsePersistenceUnitInfos(Resource persistenceDescriptor)
+    {
+        List<TapestryPersistenceUnitInfo> persistenceUnitInfos = CollectionFactory.newList();
+
+        if(persistenceDescriptor.exists())
+        {
+            final PersistenceParser parser = new PersistenceParser();
+
+            InputStream inputStream = null;
+            try
+            {
+                inputStream = persistenceDescriptor.openStream();
+                persistenceUnitInfos = parser.parse(inputStream);
+            }
+            catch(Exception e)
+            {
+                throw new RuntimeException(e);
+            }
+            finally
+            {
+                InternalUtils.close(inputStream);
+            }
+
+        }
+        return persistenceUnitInfos;
     }
 
     private Map<String, PersistenceUnitConfigurer> configure(Map<String, PersistenceUnitConfigurer> configuration, List<TapestryPersistenceUnitInfo> persistenceUnitInfos)
@@ -107,8 +118,7 @@ public class EntityManagerSourceImpl implements EntityManagerSource, RegistryShu
     {
         for(Entry<String, PersistenceUnitConfigurer> entry: remainingConfigurations.entrySet())
         {
-            final PersistenceUnitInfoImpl info = new PersistenceUnitInfoImpl();
-            info.setPersistenceUnitName(entry.getKey());
+            final PersistenceUnitInfoImpl info = new PersistenceUnitInfoImpl(entry.getKey());
 
             final PersistenceUnitConfigurer configurer = entry.getValue();
             configurer.configure(info);
