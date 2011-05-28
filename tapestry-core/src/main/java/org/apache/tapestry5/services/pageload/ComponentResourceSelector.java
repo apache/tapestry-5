@@ -106,4 +106,25 @@ public final class ComponentResourceSelector
     {
         return 37 * locale.hashCode() + axis.hashCode();
     }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder builder = new StringBuilder("ComponentResourcesSelector[");
+
+        builder.append(locale.toString());
+
+        String sep = " ";
+        for (Map.Entry<Class, Object> e : axis.entrySet())
+        {
+            builder.append(sep);
+            builder.append(e.getKey().getName());
+            builder.append("=");
+            builder.append(e.getValue().toString());
+
+            sep = ", ";
+        }
+
+        return builder.append("]").toString();
+    }
 }
