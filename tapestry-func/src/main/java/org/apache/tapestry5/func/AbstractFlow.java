@@ -260,4 +260,34 @@ abstract class AbstractFlow<T> implements Flow<T>
         return remove(F.isNull());
     }
 
+    public boolean isEmpty()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    public T first()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public Flow<T> rest()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public Flow<T> interleave(Flow<T>... otherFlows)
+    {
+        List<Flow<T>> allFlows = new ArrayList<Flow<T>>(otherFlows.length + 1);
+        allFlows.add(this);
+
+        for (Flow<T> otherFlow : otherFlows)
+        {
+            allFlows.add(otherFlow);
+        }
+
+        return F.lazy(new Interleaver<T>(allFlows));
+    }
 }

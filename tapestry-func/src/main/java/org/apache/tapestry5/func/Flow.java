@@ -20,20 +20,19 @@ import java.util.List;
  * A flow is a a functional interface for working with an ordered collection of elements.
  * A given Flow contains only elements of a particular type. Standard operations allow for
  * filtering the flow, or appending elements to the Flow. Since flows are immutable, all operations
- * on flows return new immutable flows. Flows are thread safe (to the extent that the {@link Mapper}
- * , {@link Predicate}, {@link Worker} and {@link Reducer} objects applied to the flow are).
+ * on flows return new immutable flows. Flows are thread safe (to the extent that the {@link Mapper} , {@link Predicate}
+ * , {@link Worker} and {@link Reducer} objects applied to the flow are).
  * Flows are <em>lazy</em>: filtering, mapping, and concatenating flows will do so with no, or a
  * minimum, of evaluation. However, converting a Flow into a {@link List} (or other collection) will
  * force a realization of the entire flow.
  * <p>
- * In some cases, a flow may be an infinite, lazily evaluated sequence. Operations that iterate over
- * all elements (such as {@link #count()} or {@link #reduce(Reducer, Object)}) may become infinite
- * loops.
+ * In some cases, a flow may be an infinite, lazily evaluated sequence. Operations that iterate over all elements (such
+ * as {@link #count()} or {@link #reduce(Reducer, Object)}) may become infinite loops.
  * <p>
  * Using flows allows for a very fluid interface.
  * <p>
- * Flows are initially created using {@link F#flow(java.util.Collection)}, {@link F#flow(Object...)}
- * or {@link F#flow(Iterable)}.
+ * Flows are initially created using {@link F#flow(java.util.Collection)}, {@link F#flow(Object...)} or
+ * {@link F#flow(Iterable)}.
  * 
  * @since 5.2.0
  * @see F#lazy(LazyFunction)
@@ -89,8 +88,8 @@ public interface Flow<T> extends FlowOperations<T, Flow<T>>
      * flow is the length of the shorter of the two input flows. Zipping flows together is a lazy
      * operation.
      * <p>
-     * The elements of this flow become the {@linkplain Tuple#first} value in each Tuple, the
-     * elements of the other flow become the {@linkplain Tuple#second} value in each Tuple.
+     * The elements of this flow become the {@linkplain Tuple#first} value in each Tuple, the elements of the other flow
+     * become the {@linkplain Tuple#second} value in each Tuple.
      * 
      * @param <X>
      *            type of element stored in the other flow
@@ -100,4 +99,13 @@ public interface Flow<T> extends FlowOperations<T, Flow<T>>
      * @since 5.3.0
      */
     <X> ZippedFlow<T, X> zipWith(Flow<X> otherFlow);
+
+    /**
+     * "Stripes" together a group of flows. The output flow contains the first value from this flow, then the first
+     * value from each of the other flows, in turn, then the second value from this flow, etc. The resulting flow ends
+     * when this or any of the other flows runs out of values.
+     * 
+     * @return combined flow
+     */
+    Flow<T> interleave(Flow<T>... otherFlows);
 }
