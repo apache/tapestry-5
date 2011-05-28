@@ -1,10 +1,10 @@
-// Copyright 2006, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.Locale;
 
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.util.LocalizedNameGenerator;
 
 /**
  * Abstract implementation of {@link Resource}. Subclasses must implement the abstract methods {@link Resource#toURL()}
@@ -64,9 +65,11 @@ public abstract class AbstractResource implements Resource
         {
             // This will occur if the relative path contains sequential slashes
 
-            if (term.equals("")) continue;
+            if (term.equals(""))
+                continue;
 
-            if (term.equals(".")) continue;
+            if (term.equals("."))
+                continue;
 
             if (term.equals(".."))
             {
@@ -85,7 +88,8 @@ public abstract class AbstractResource implements Resource
             // name of a folder, since a Resource should be a file within
             // a folder.
 
-            if (builder.length() > 0) builder.append("/");
+            if (builder.length() > 0)
+                builder.append("/");
 
             builder.append(term);
         }
@@ -99,7 +103,8 @@ public abstract class AbstractResource implements Resource
         {
             Resource potential = createResource(path);
 
-            if (potential.exists()) return potential;
+            if (potential.exists())
+                return potential;
         }
 
         return null;
@@ -110,7 +115,8 @@ public abstract class AbstractResource implements Resource
         assert InternalUtils.isNonBlank(extension);
         int dotx = path.lastIndexOf('.');
 
-        if (dotx < 0) return createResource(path + "." + extension);
+        if (dotx < 0)
+            return createResource(path + "." + extension);
 
         return createResource(path.substring(0, dotx + 1) + extension);
     }
@@ -121,7 +127,8 @@ public abstract class AbstractResource implements Resource
      */
     private Resource createResource(String path)
     {
-        if (this.path.equals(path)) return this;
+        if (this.path.equals(path))
+            return this;
 
         return newResource(path);
     }
@@ -141,7 +148,8 @@ public abstract class AbstractResource implements Resource
     {
         URL url = toURL();
 
-        if (url == null) return null;
+        if (url == null)
+            return null;
 
         return new BufferedInputStream(url.openStream());
     }

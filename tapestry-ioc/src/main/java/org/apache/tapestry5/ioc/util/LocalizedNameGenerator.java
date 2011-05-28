@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,17 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc.internal.util;
+package org.apache.tapestry5.ioc.util;
 
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+
 /**
- * Used in a wide variety of resource searches. Generates a series of name variations from a path (which must include a
- * suffix) and locale.
+ * Generates name variations for a given file name or path and a locale. The name variations
+ * are provided in most-specific to least-specific order, so for a path of "Base.ext" and a Locale
+ * of "en_US", the generated names would be "Base_en_US.ext", "Base_en.ext", "Base.ext".
+ * <p>
+ * Implements Iterable, so a LocalizedNameGenerator may be used directly in a for loop.
  * <p/>
  * This class is not threadsafe.
+ * 
+ * @since 5.3.0
  */
 public class LocalizedNameGenerator implements Iterator<String>, Iterable<String>
 {
@@ -56,16 +63,26 @@ public class LocalizedNameGenerator implements Iterator<String>, Iterable<String
 
     private static final int EXHAUSTED = 6;
 
+    /**
+     * Creates a new generator for the given path and locale.
+     * 
+     * @param path
+     *            non-blank path
+     * @param locale
+     *            non-null locale
+     */
     public LocalizedNameGenerator(String path, Locale locale)
     {
+        assert InternalUtils.isNonBlank(path);
+        assert locale != null;
+
         int dotx = path.lastIndexOf('.');
 
         // When there is no dot in the name, pretend it exists after the
         // end of the string. The locale extensions will be tacked on there.
 
-        if (dotx == -1) dotx = path.length();
-
-        // TODO: Case where there is no suffix
+        if (dotx == -1)
+            dotx = path.length();
 
         String baseName = path.substring(0, dotx);
 
@@ -97,13 +114,15 @@ public class LocalizedNameGenerator implements Iterator<String>, Iterable<String
             {
                 case LCV:
 
-                    if (InternalUtils.isBlank(variant)) continue;
+                    if (InternalUtils.isBlank(variant))
+                        continue;
 
                     return;
 
                 case LC:
 
-                    if (InternalUtils.isBlank(country)) continue;
+                    if (InternalUtils.isBlank(country))
+                        continue;
 
                     return;
 
@@ -112,13 +131,15 @@ public class LocalizedNameGenerator implements Iterator<String>, Iterable<String
                     // If country is null, then we've already generated this string
                     // as state LCV and we can continue directly to state L
 
-                    if (InternalUtils.isBlank(variant) || InternalUtils.isBlank(country)) continue;
+                    if (InternalUtils.isBlank(variant) || InternalUtils.isBlank(country))
+                        continue;
 
                     return;
 
                 case L:
 
-                    if (InternalUtils.isBlank(language)) continue;
+                    if (InternalUtils.isBlank(language))
+                        continue;
 
                     return;
 
@@ -140,13 +161,15 @@ public class LocalizedNameGenerator implements Iterator<String>, Iterable<String
 
     /**
      * Returns the next localized variant.
-     *
-     * @throws NoSuchElementException if all variants have been returned.
+     * 
+     * @throws NoSuchElementException
+     *             if all variants have been returned.
      */
 
     public String next()
     {
-        if (state == EXHAUSTED) throw new NoSuchElementException();
+        if (state == EXHAUSTED)
+            throw new NoSuchElementException();
 
         String result = build();
 
@@ -172,7 +195,8 @@ public class LocalizedNameGenerator implements Iterator<String>, Iterable<String
         {
             builder.append('_');
 
-            if (state != LV) builder.append(country);
+            if (state != LV)
+                builder.append(country);
         }
 
         if (state == LV || state == LCV)
@@ -181,7 +205,8 @@ public class LocalizedNameGenerator implements Iterator<String>, Iterable<String
             builder.append(variant);
         }
 
-        if (suffix != null) builder.append(suffix);
+        if (suffix != null)
+            builder.append(suffix);
 
         return builder.toString();
     }
