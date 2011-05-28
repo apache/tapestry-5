@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,30 +37,15 @@ public class Index
 
     public static class Item implements Comparable<Item>
     {
-        private final String pageName;
-        private final String label;
-        private final String description;
+        public final String pageName;
+        public final String label;
+        public final String description;
 
         public Item(String pageName, String label, String description)
         {
             this.pageName = pageName;
             this.label = label;
             this.description = description;
-        }
-
-        public String getPageName()
-        {
-            return pageName;
-        }
-
-        public String getLabel()
-        {
-            return label;
-        }
-
-        public String getDescription()
-        {
-            return description;
         }
 
         public int compareTo(Item o)
@@ -72,9 +57,13 @@ public class Index
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
 
-                    new Item("JavaScriptTests", "JavaScript Unit Tests",
-                            "Unit tests for client-side JavaScript"),
-                            
+                    new Item("DynamicDemo", "Dynamic Demo", "Basic Dynamic component tests"),
+
+                    new Item("DynamicExpansionsDemo", "Expansions in Dynamic Templates",
+                            "Expansions inside Dynamic component content and attributes"),
+
+                    new Item("JavaScriptTests", "JavaScript Unit Tests", "Unit tests for client-side JavaScript"),
+
                     new Item("PACAnnotationDemo", "PageActivationContext Demo",
                             "Shows that @PageActivationContext fields are set before calls to the activate event handler."),
 
@@ -154,7 +143,8 @@ public class Index
 
                     new Item("EmptyLoopDemo", "Empty Loop Demo", "Use of empty parameter with the Loop component."),
 
-                    new Item("GenericLoopDemo", "Generic Loop Demo", "Use of generic parameters with the Loop component."),
+                    new Item("GenericLoopDemo", "Generic Loop Demo",
+                            "Use of generic parameters with the Loop component."),
 
                     new Item("BlankPasswordDemo", "Blank Password Demo",
                             "Show that a blank value in a PasswordField does not update the server side value."),
@@ -361,8 +351,9 @@ public class Index
                             "Actions can exist on pages other than the active page, via Blocks."),
 
                     new Item("unlessdemo", "Unless Demo", "use of the Unless component"),
-                    
-                    new Item("delegateinline", "Inline Delegate", "Using the delegate component to create inline components"),
+
+                    new Item("delegateinline", "Inline Delegate",
+                            "Using the delegate component to create inline components"),
 
                     new Item("MagicValueEncoder", "Magic ValueEncoder Demo",
                             "Automatic creation of ValueEncoder using the TypeCoercer"),
@@ -473,7 +464,7 @@ public class Index
                     new Item("AtInjectDemo", "@javax.inject.Inject Demo", "Using @javax.inject.Inject for injection"),
 
                     new Item("LinkQueryParameters", "Link Query Parameters Demo",
-                                         "Providing Query Parameters directly to link components as a map of key=parameter name, value=parameter values")
+                            "Providing Query Parameters directly to link components as a map of key=parameter name, value=parameter values")
 
             );
 

@@ -100,6 +100,7 @@ import org.apache.tapestry5.internal.bindings.RenderVariableBindingFactory;
 import org.apache.tapestry5.internal.bindings.SymbolBindingFactory;
 import org.apache.tapestry5.internal.bindings.TranslateBindingFactory;
 import org.apache.tapestry5.internal.bindings.ValidateBindingFactory;
+import org.apache.tapestry5.internal.dynamic.DynamicTemplateParserImpl;
 import org.apache.tapestry5.internal.grid.CollectionGridDataSource;
 import org.apache.tapestry5.internal.grid.NullDataSource;
 import org.apache.tapestry5.internal.gzip.GZipFilter;
@@ -222,6 +223,8 @@ import org.apache.tapestry5.services.ajax.MultiZoneUpdateEventResultProcessor;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
 import org.apache.tapestry5.services.assets.AssetsModule;
+import org.apache.tapestry5.services.dynamic.DynamicTemplateParser;
+import org.apache.tapestry5.services.dynamic.DynamicTemplate;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
@@ -494,6 +497,7 @@ public final class TapestryModule
         binder.bind(MetaWorker.class, MetaWorkerImpl.class);
         binder.bind(LinkTransformer.class, LinkTransformerImpl.class);
         binder.bind(SelectModelFactory.class, SelectModelFactoryImpl.class);
+        binder.bind(DynamicTemplateParser.class, DynamicTemplateParserImpl.class);
     }
 
     // ========================================================================
@@ -1120,6 +1124,8 @@ public final class TapestryModule
      * <li>String to {@link Pattern}</li>
      * <li>String to {@link DateFormat}</li>
      * <li>{@link ComponentClassTransformWorker} to {@link ComponentClassTransformWorker2}</li>
+     * <li>{@link Resource} to {@link DynamicTemplate}</li>
+     * <li>{@link Asset} to {@link Resource}</li>
      * </ul>
      */
     public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration,
@@ -1131,7 +1137,10 @@ public final class TapestryModule
     final ThreadLocale threadLocale,
 
     @Core
-    final AssetSource assetSource)
+    final AssetSource assetSource,
+
+    @Core
+    final DynamicTemplateParser dynamicTemplateParser)
     {
         configuration.add(CoercionTuple.create(ComponentResources.class, PropertyOverrides.class,
                 new Coercion<ComponentResources, PropertyOverrides>()
@@ -1259,6 +1268,23 @@ public final class TapestryModule
                 Calendar calendar = Calendar.getInstance(threadLocale.getLocale());
                 calendar.setTime(input);
                 return calendar;
+            }
+        }));
+
+        configuration.add(CoercionTuple.create(Resource.class, DynamicTemplate.class,
+                new Coercion<Resource, DynamicTemplate>()
+                {
+                    public DynamicTemplate coerce(Resource input)
+                    {
+                        return dynamicTemplateParser.parseTemplate(input);
+                    }
+                }));
+
+        configuration.add(CoercionTuple.create(Asset.class, Resource.class, new Coercion<Asset, Resource>()
+        {
+            public Resource coerce(Asset input)
+            {
+                return input.getResource();
             }
         }));
 

@@ -1,0 +1,32 @@
+<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd" xmlns:p="tapestry:parameter">
+
+  <style>
+    a.nav { color: white }
+</style>
+
+  <p>Selected template: ${selectedTemplate.resource}</p>
+
+  <div class="dynamic">
+    <t:dynamic template="prop:selectedTemplate">
+      <p:switchTo1>
+        <p>
+          Switch back to [
+          <t:eventlink class="nav" event="select" context="1">
+            <span id="target">1</span>
+          </t:eventlink>
+          ]
+        </p>
+      </p:switchTo1>
+      <p:switchTo2>
+        <p>
+          Switch to [
+          <t:eventlink class="nav" event="select" context="2">
+            <span id="target">2</span>
+          </t:eventlink>
+          ]
+        </p>
+      </p:switchTo2>
+    </t:dynamic>
+  </div>
+
+</t:border>

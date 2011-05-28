@@ -1,0 +1,16 @@
+<div>
+  <p>
+    This is dynamic template #
+    <span id="templateid">2</span>
+    :
+  </p>
+  <!--  A comment -->
+
+  <div style="background-color: green; color:white;">
+    <span id="param:switchTo1">
+
+      <p>Placeholder content.</p>
+
+    </span>
+  </div>
+</div>

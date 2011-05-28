@@ -1,0 +1,17 @@
+<div>
+  <style>
+
+    em.important { color: red; }
+</style>
+
+  <h2>${message:page-title}</h2>
+
+  <p xml:space="preserve">
+    The value of the color property is
+    <em id="color-value" class="${cssClass}">${color}</em>.
+  </p>
+  
+  <p>
+    Expansion text with null in the middle: <span id="with-null">[${null}]</span>
+  </p>
+</div>

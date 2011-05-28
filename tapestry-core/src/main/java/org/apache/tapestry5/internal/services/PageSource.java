@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,14 +17,25 @@ package org.apache.tapestry5.internal.services;
 import java.util.Locale;
 
 import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.services.dynamic.DynamicTemplate;
 
 /**
  * Access to localized page instances (which are now shared singletons, starting in release 5.2).
- * This service is a wrapper around {@link PageLoader} that caches the loaded pages.
+ * This service is a wrapper around the {@link PageLoader} that caches the loaded pages.
  * 
  * @since 5.2.0
  */
 public interface PageSource
 {
+    /**
+     * Clears the source's cache of loaded pages. This occurs when an outside change to the world invalidates
+     * created page instances. Introduced to handle the case where a page has a {@link DynamicTemplate}, but the
+     * underlying {@link Resource} is noticed to have changed.
+     * 
+     * @since 5.3.0
+     */
+    void clearCache();
+
     Page getPage(String canonicalPageName, Locale locale);
 }
