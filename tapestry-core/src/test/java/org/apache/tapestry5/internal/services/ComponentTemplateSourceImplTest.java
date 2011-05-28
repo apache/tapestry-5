@@ -30,6 +30,7 @@ import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.InvalidationListener;
+import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
 import org.testng.annotations.Test;
 
@@ -42,6 +43,8 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
     private final ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
     private final ClasspathURLConverter converter = new ClasspathURLConverterImpl();
+
+    private final ComponentResourceSelector english = new ComponentResourceSelector(Locale.ENGLISH);
 
     /**
      * Creates a new class loader, whose parent is the thread's context class loader, but adds a single classpath root
@@ -94,12 +97,12 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         ComponentTemplateSource source = new ComponentTemplateSourceImpl(true, parser, locator, converter);
 
-        assertSame(source.getTemplate(model, Locale.ENGLISH), template);
+        assertSame(source.getTemplate(model, english), template);
 
         // A second pass will test the caching (the
         // parser is not invoked).
 
-        assertSame(source.getTemplate(model, Locale.ENGLISH), template);
+        assertSame(source.getTemplate(model, english), template);
 
         verify();
     }
@@ -285,7 +288,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         ComponentTemplateSource source = new ComponentTemplateSourceImpl(true, parser, locator, converter);
 
-        assertSame(source.getTemplate(model, Locale.ENGLISH), template);
+        assertSame(source.getTemplate(model, english), template);
 
         verify();
     }

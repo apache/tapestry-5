@@ -286,12 +286,6 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         expect(model.getEmbeddedComponentIds()).andReturn(Arrays.asList(ids));
     }
 
-    protected void train_getTemplate(ComponentTemplateSource templateSource, ComponentModel model, Locale locale,
-            ComponentTemplate template)
-    {
-        expect(templateSource.getTemplate(model, locale)).andReturn(template);
-    }
-
     protected final void train_getComponentModel(ComponentResources resources, ComponentModel model)
     {
         expect(resources.getComponentModel()).andReturn(model).atLeastOnce();
@@ -465,11 +459,6 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
             String pageClassName)
     {
         expect(resolver.resolvePageNameToClassName(pageName)).andReturn(pageClassName).atLeastOnce();
-    }
-
-    protected final void train_getLocale(Page page, Locale locale)
-    {
-        expect(page.getLocale()).andReturn(locale).atLeastOnce();
     }
 
     protected final void train_detached(Page page, boolean dirty)

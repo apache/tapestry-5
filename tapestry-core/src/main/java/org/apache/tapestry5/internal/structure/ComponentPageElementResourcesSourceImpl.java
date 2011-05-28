@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.internal.structure;
 
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.tapestry5.internal.services.ComponentClassCache;
@@ -28,10 +27,12 @@ import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ContextValueEncoder;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
+import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
 public class ComponentPageElementResourcesSourceImpl implements ComponentPageElementResourcesSource
 {
-    private final Map<Locale, ComponentPageElementResources> cache = CollectionFactory.newConcurrentMap();
+    private final Map<ComponentResourceSelector, ComponentPageElementResources> cache = CollectionFactory
+            .newConcurrentMap();
 
     private final ComponentMessagesSource componentMessagesSource;
 
@@ -70,21 +71,22 @@ public class ComponentPageElementResourcesSourceImpl implements ComponentPageEle
         this.perThreadManager = perThreadManager;
     }
 
-    public ComponentPageElementResources get(Locale locale)
+    public ComponentPageElementResources get(ComponentResourceSelector selector)
     {
-        assert locale != null;
-        ComponentPageElementResources result = cache.get(locale);
+        assert selector != null;
+
+        ComponentPageElementResources result = cache.get(selector);
 
         if (result == null)
         {
-            result = new ComponentPageElementResourcesImpl(locale, componentMessagesSource, typeCoercer,
+            result = new ComponentPageElementResourcesImpl(selector, componentMessagesSource, typeCoercer,
                     componentClassCache, contextValueEncoder, linkSource, requestPageCache, componentClassResolver,
                     loggerSource, tracker, perThreadManager);
 
             // Small race condition here, where we may create two instances of the CPER for the same locale,
             // but that's not worth worrying about.
 
-            cache.put(locale, result);
+            cache.put(selector, result);
         }
 
         return result;

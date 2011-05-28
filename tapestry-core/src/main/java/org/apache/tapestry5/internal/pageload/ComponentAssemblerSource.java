@@ -1,10 +1,10 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.pageload;
 
-import java.util.Locale;
+import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
 /**
  * Provides access to {@link org.apache.tapestry5.internal.pageload.ComponentAssembler}s (this is used by the assemblers
@@ -23,7 +23,7 @@ import java.util.Locale;
 public interface ComponentAssemblerSource
 {
     /**
-     * Gets (and possibly creates) a component assembler for the indicated class name and locale.
+     * Gets (and possibly creates) a component assembler for the indicated class name and selector.
      */
-    public ComponentAssembler getAssembler(String className, Locale locale);
+    public ComponentAssembler getAssembler(String className, ComponentResourceSelector selector);
 }

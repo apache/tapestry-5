@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,12 +22,15 @@ import org.apache.tapestry5.ioc.annotations.NotLazy;
 import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.InvalidationEventHub;
+import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
 /**
  * Used to connect a Tapestry component to its message catalog, or to obtain the application catalog (that all
  * component message catalogs extend from). The application catalog is defined by the collection of {@link Resource}s
- * contributed to the service. In general, component libraries will contribute a Resource before the "AppCatalog" resource (representing
- * the application message catalog, WEB-INF/app.properties) so that the application can override messages of the component library.
+ * contributed to the service. In general, component libraries will contribute a Resource before the "AppCatalog"
+ * resource (representing
+ * the application message catalog, WEB-INF/app.properties) so that the application can override messages of the
+ * component library.
  */
 @UsesOrderedConfiguration(Resource.class)
 public interface ComponentMessagesSource
@@ -40,8 +43,21 @@ public interface ComponentMessagesSource
      * @param componentModel
      * @param locale
      * @return the message catalog for the component, in the indicated locale
+     * @deprecated Deprecated in 5.3; use {@link #getMessages(ComponentModel, ComponentResourceSelector) instead.
      */
     Messages getMessages(ComponentModel componentModel, Locale locale);
+
+    /**
+     * Used to obtain a {@link Messages} instance for a particular component, using a particular selector. If the
+     * component extends from another component, then its localized properties will merge with its parent's properties
+     * (with the subclass overriding the super class on any conflicts).
+     * 
+     * @param componentModel
+     * @param locale
+     * @return the message catalog for the component, in the indicated selector
+     * @since 5.3.0
+     */
+    Messages getMessages(ComponentModel componentModel, ComponentResourceSelector selector);
 
     /**
      * Gets the Messages derived from the application's message catalog.

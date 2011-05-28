@@ -98,12 +98,12 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
     {
         private final String className;
 
-        private final Locale locale;
+        private final ComponentResourceSelector selector;
 
-        private Key(String className, Locale locale)
+        private Key(String className, ComponentResourceSelector selector)
         {
             this.className = className;
-            this.locale = locale;
+            this.selector = selector;
         }
 
         @Override
@@ -116,13 +116,13 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
             Key key = (Key) o;
 
-            return className.equals(key.className) && locale.equals(key.locale);
+            return className.equals(key.className) && selector.equals(key.selector);
         }
 
         @Override
         public int hashCode()
         {
-            return 31 * className.hashCode() + locale.hashCode();
+            return 31 * className.hashCode() + selector.hashCode();
         }
     }
 
@@ -206,9 +206,9 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         {
             public Page invoke()
             {
-                Page page = new PageImpl(logicalPageName, selector.locale, persistentFieldManager, perThreadManager);
+                Page page = new PageImpl(logicalPageName, selector, persistentFieldManager, perThreadManager);
 
-                ComponentAssembler assembler = getAssembler(pageClassName, selector.locale);
+                ComponentAssembler assembler = getAssembler(pageClassName, selector);
 
                 ComponentPageElement rootElement = assembler.assembleRootComponent(page);
 
@@ -225,9 +225,9 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         });
     }
 
-    public ComponentAssembler getAssembler(String className, Locale locale)
+    public ComponentAssembler getAssembler(String className, ComponentResourceSelector selector)
     {
-        Key key = new Key(className, locale);
+        Key key = new Key(className, selector);
 
         ComponentAssembler result = cache.get(key);
 
@@ -236,7 +236,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
             // There's a window here where two threads may create the same assembler simultaneously;
             // the extra assembler will be discarded.
 
-            result = createAssembler(className, locale);
+            result = createAssembler(className, selector);
 
             cache.put(key, result);
         }
@@ -244,7 +244,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         return result;
     }
 
-    private ComponentAssembler createAssembler(final String className, final Locale locale)
+    private ComponentAssembler createAssembler(final String className, final ComponentResourceSelector selector)
     {
         return tracker.invoke("Creating ComponentAssembler for " + className, new Invokable<ComponentAssembler>()
         {
@@ -254,12 +254,12 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
                 ComponentModel componentModel = instantiator.getModel();
 
-                ComponentTemplate template = templateSource.getTemplate(componentModel, locale);
+                ComponentTemplate template = templateSource.getTemplate(componentModel, selector);
 
-                ComponentPageElementResources resources = resourcesSource.get(locale);
+                ComponentPageElementResources resources = resourcesSource.get(selector);
 
                 ComponentAssembler assembler = new ComponentAssemblerImpl(PageLoaderImpl.this, instantiatorSource,
-                        componentClassResolver, instantiator, resources, locale, tracker, request, symbolSource);
+                        componentClassResolver, instantiator, resources, selector, tracker, request, symbolSource);
 
                 // "Program" the assembler by adding actions to it. The actions interact with a
                 // PageAssembly object (a fresh one for each new page being created).
@@ -403,7 +403,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
             if (parentModel == null) { throw new RuntimeException(PageloadMessages.noParentForExtension(model)); }
 
-            ComponentTemplate parentTemplate = templateSource.getTemplate(parentModel, assembler.getLocale());
+            ComponentTemplate parentTemplate = templateSource.getTemplate(parentModel, assembler.getSelector());
 
             result.add(parentTemplate);
 
@@ -960,11 +960,11 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
             {
                 pageAssembly.checkForRecursion(componentClassName, embeddedAssembler.getLocation());
 
-                Locale locale = pageAssembly.page.getLocale();
+                ComponentResourceSelector selector = pageAssembly.page.getSelector();
 
-                ComponentAssembler assemblerForSubcomponent = getAssembler(componentClassName, locale);
+                ComponentAssembler assemblerForSubcomponent = getAssembler(componentClassName, selector);
 
-                // Remeber: this pushes onto to the createdElement stack, but does not pop it.
+                // Remember: this pushes onto to the createdElement stack, but does not pop it.
 
                 assemblerForSubcomponent.assembleEmbeddedComponent(pageAssembly, embeddedAssembler, embeddedId,
                         elementName, embeddedAssembler.getLocation());

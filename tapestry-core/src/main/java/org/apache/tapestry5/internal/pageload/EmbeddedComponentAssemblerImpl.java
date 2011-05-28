@@ -1,10 +1,10 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,8 +14,9 @@
 
 package org.apache.tapestry5.internal.pageload;
 
-import org.apache.tapestry5.internal.TapestryInternalUtils;
+import java.util.Map;
 
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.ComponentInstantiatorSource;
 import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
@@ -27,9 +28,7 @@ import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
 import org.apache.tapestry5.services.ComponentClassResolver;
-
-import java.util.Locale;
-import java.util.Map;
+import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
 public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssembler
 {
@@ -37,7 +36,7 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
 
     private final ComponentAssemblerSource assemblerSource;
 
-    private final Locale locale;
+    private final ComponentResourceSelector selector;
 
     private final ComponentModel componentModel;
 
@@ -51,7 +50,7 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
      */
     private final Map<String, ParameterBinder> parameterNameToBinder = CollectionFactory.newCaseInsensitiveMap();
 
-    // The id of the mixin to receive informal parameters.  If null, the component itself recieves them.
+    // The id of the mixin to receive informal parameters. If null, the component itself recieves them.
     // If the component doesn't support them, they are quietly dropped.
 
     private final String informalParametersMixinId;
@@ -60,26 +59,29 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
 
     /**
      * @param assemblerSource
-     * @param instantiatorSource     used to access component models
-     * @param componentClassResolver used to convert mixin types to component models
-     * @param componentClassName     class name of embedded component
-     * @param locale
-     * @param embeddedModel          embedded model (may be null for components defined in the template)
-     * @param templateMixins         list of mixins from the t:mixins element (possibly null)
-     * @param location               location of components element in its container's template
+     * @param instantiatorSource
+     *            used to access component models
+     * @param componentClassResolver
+     *            used to convert mixin types to component models
+     * @param componentClassName
+     *            class name of embedded component
+     * @param selector
+     *            used to select template and other resources
+     * @param embeddedModel
+     *            embedded model (may be null for components defined in the template)
+     * @param templateMixins
+     *            list of mixins from the t:mixins element (possibly null)
+     * @param location
+     *            location of components element in its container's template
      */
     public EmbeddedComponentAssemblerImpl(ComponentAssemblerSource assemblerSource,
-                                          ComponentInstantiatorSource instantiatorSource,
-                                          ComponentClassResolver componentClassResolver,
-                                          String componentClassName,
-                                          Locale locale,
-                                          EmbeddedComponentModel embeddedModel,
-                                          String templateMixins,
-                                          Location location)
+            ComponentInstantiatorSource instantiatorSource, ComponentClassResolver componentClassResolver,
+            String componentClassName, ComponentResourceSelector selector, EmbeddedComponentModel embeddedModel,
+            String templateMixins, Location location)
     {
         this.assemblerSource = assemblerSource;
         this.instantiatorSource = instantiatorSource;
-        this.locale = locale;
+        this.selector = selector;
         this.location = location;
 
         componentModel = getModel(componentClassName);
@@ -88,7 +90,7 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
 
         for (String className : componentModel.getMixinClassNames())
         {
-            addMixin(className,componentModel.getOrderForMixin(className));
+            addMixin(className, componentModel.getOrderForMixin(className));
         }
 
         // If there's an embedded model (i.e., there was an @Component annotation)
@@ -98,7 +100,7 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
         {
             for (String className : embeddedModel.getMixinClassNames())
             {
-                addMixin(className,embeddedModel.getConstraintsForMixin(className));
+                addMixin(className, embeddedModel.getConstraintsForMixin(className));
             }
         }
 
@@ -109,7 +111,7 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
             Orderable<String> order = TapestryInternalUtils.mixinTypeAndOrder(mixinDef);
             String className = componentClassResolver.resolveMixinTypeToClassName(order.getId());
 
-            addMixin(className,order.getConstraints());
+            addMixin(className, order.getConstraints());
         }
 
         informalParametersMixinId = prescanMixins();
@@ -148,8 +150,7 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
 
             ParameterBinderImpl binder = new ParameterBinderImpl(mixinId, parameterName, defaultBindingPrefix);
 
-            parameterNameToBinder.put(parameterName,
-                                      binder);
+            parameterNameToBinder.put(parameterName, binder);
 
             if (mixinId != null)
                 parameterNameToBinder.put(mixinId + "." + parameterName, binder);
@@ -163,10 +164,7 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
         String mixinId = InternalUtils.lastTerm(className);
 
         if (mixinIdToInstantiator.containsKey(mixinId))
-            throw new TapestryException(
-                    PageloadMessages.uniqueMixinRequired(mixinId),
-                    location, null);
-
+            throw new TapestryException(PageloadMessages.uniqueMixinRequired(mixinId), location, null);
 
         mixinIdToInstantiator.put(mixinId, mixinInstantiator);
         mixinsIdToOrderConstraints.put(mixinId, order);
@@ -179,7 +177,7 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
 
     public ComponentAssembler getComponentAssembler()
     {
-        return assemblerSource.getAssembler(componentModel.getComponentClassName(), locale);
+        return assemblerSource.getAssembler(componentModel.getComponentClassName(), selector);
     }
 
     public ParameterBinder createParameterBinder(String parameterName)
@@ -188,13 +186,9 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
         if (dotx >= 0)
         {
             String mixinId = parameterName.substring(0, dotx);
-            if (!mixinIdToInstantiator.containsKey(mixinId))
-            {
-                throw new TapestryException(
-                        PageloadMessages.mixinidForParamnotfound(parameterName, mixinIdToInstantiator.keySet()),
-                        location, 
-                        null);
-            }
+            if (!mixinIdToInstantiator.containsKey(mixinId)) { throw new TapestryException(
+                    PageloadMessages.mixinidForParamnotfound(parameterName, mixinIdToInstantiator.keySet()), location,
+                    null); }
         }
         else
         {
@@ -202,11 +196,13 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
             // parameter of a component embedded in this component. The ComponentAssembler for this component
             // will know.
 
-            ComponentAssembler assembler = assemblerSource.getAssembler(componentModel.getComponentClassName(), locale);
+            ComponentAssembler assembler = assemblerSource.getAssembler(componentModel.getComponentClassName(),
+                    selector);
 
             ParameterBinder binder = assembler.getBinder(parameterName);
 
-            if (binder != null) return binder;
+            if (binder != null)
+                return binder;
         }
 
         final ParameterBinder binder = parameterNameToBinder.get(parameterName);

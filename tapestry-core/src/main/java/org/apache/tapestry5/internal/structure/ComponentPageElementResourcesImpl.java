@@ -33,11 +33,12 @@ import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ContextValueEncoder;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
+import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.slf4j.Logger;
 
 public class ComponentPageElementResourcesImpl implements ComponentPageElementResources
 {
-    private final Locale locale;
+    private final ComponentResourceSelector selector;
 
     private final ComponentMessagesSource componentMessagesSource;
 
@@ -59,13 +60,14 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
 
     private final PerthreadManager perThreadManager;
 
-    public ComponentPageElementResourcesImpl(Locale locale, ComponentMessagesSource componentMessagesSource,
-            TypeCoercer typeCoercer, ComponentClassCache componentClassCache, ContextValueEncoder contextValueEncoder,
-            LinkSource linkSource, RequestPageCache requestPageCache, ComponentClassResolver componentClassResolver,
+    public ComponentPageElementResourcesImpl(ComponentResourceSelector selector,
+            ComponentMessagesSource componentMessagesSource, TypeCoercer typeCoercer,
+            ComponentClassCache componentClassCache, ContextValueEncoder contextValueEncoder, LinkSource linkSource,
+            RequestPageCache requestPageCache, ComponentClassResolver componentClassResolver,
             LoggerSource loggerSource, OperationTracker tracker, PerthreadManager perThreadManager)
     {
+        this.selector = selector;
         this.componentMessagesSource = componentMessagesSource;
-        this.locale = locale;
         this.typeCoercer = typeCoercer;
         this.componentClassCache = componentClassCache;
         this.contextValueEncoder = contextValueEncoder;
@@ -79,7 +81,7 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
 
     public Messages getMessages(ComponentModel componentModel)
     {
-        return componentMessagesSource.getMessages(componentModel, locale);
+        return componentMessagesSource.getMessages(componentModel, selector);
     }
 
     public <S, T> T coerce(S input, Class<T> targetType)

@@ -18,6 +18,7 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
+import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.slf4j.Logger;
 
 import java.util.Locale;
@@ -49,10 +50,9 @@ public interface Page
     String getName();
 
     /**
-     * The locale for which the page is localized. This is set when the page is created and does not
-     * change.
+     * The selector (which includes Locale) used when the page was constructor.
      */
-    Locale getLocale();
+    ComponentResourceSelector getSelector();
 
     /**
      * Invoked during page construction time to connect the page's root component to the page

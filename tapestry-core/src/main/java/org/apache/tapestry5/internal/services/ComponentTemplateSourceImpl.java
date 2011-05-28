@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.UpdateListener;
+import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
 
 import java.util.Collections;
@@ -106,6 +107,11 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
         this.parser = parser;
         this.locator = locator;
         this.tracker = tracker;
+    }
+
+    public ComponentTemplate getTemplate(ComponentModel componentModel, ComponentResourceSelector selector)
+    {
+        return getTemplate(componentModel, selector.locale);
     }
 
     /**

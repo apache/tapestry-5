@@ -32,6 +32,7 @@ import org.apache.tapestry5.model.EmbeddedComponentModel;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
 import java.util.List;
 import java.util.Locale;
@@ -47,7 +48,7 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
     private final Instantiator instantiator;
 
-    private final Locale locale;
+    private final ComponentResourceSelector selector;
 
     private final ComponentPageElementResources resources;
 
@@ -56,25 +57,26 @@ class ComponentAssemblerImpl implements ComponentAssembler
     private final IdAllocator allocator = new IdAllocator();
 
     private final OperationTracker tracker;
-    
+
     private final Request request;
-    
+
     private final SymbolSource symbolSource;
 
     private Map<String, String> publishedParameterToEmbeddedId;
 
     private Map<String, EmbeddedComponentAssembler> embeddedIdToAssembler;
-    
+
     public ComponentAssemblerImpl(ComponentAssemblerSource assemblerSource,
             ComponentInstantiatorSource instantiatorSource, ComponentClassResolver componentClassResolver,
-            Instantiator instantiator, ComponentPageElementResources resources, Locale locale, OperationTracker tracker, Request request, SymbolSource symbolSource)
+            Instantiator instantiator, ComponentPageElementResources resources, ComponentResourceSelector selector,
+            OperationTracker tracker, Request request, SymbolSource symbolSource)
     {
         this.assemblerSource = assemblerSource;
         this.instantiatorSource = instantiatorSource;
         this.componentClassResolver = componentClassResolver;
         this.instantiator = instantiator;
         this.resources = resources;
-        this.locale = locale;
+        this.selector = selector;
         this.tracker = tracker;
         this.request = request;
         this.symbolSource = symbolSource;
@@ -98,7 +100,8 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
         try
         {
-            ComponentPageElement newElement = new ComponentPageElementImpl(pageAssembly.page, instantiator, resources, request, symbolSource);
+            ComponentPageElement newElement = new ComponentPageElementImpl(pageAssembly.page, instantiator, resources,
+                    request, symbolSource);
 
             pageAssembly.componentName.push(new ComponentName(pageAssembly.page.getName()));
 
@@ -253,8 +256,9 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
             String className = getModel().getComponentClassName();
 
-            throw new RuntimeException(PageloadMessages.embeddedComponentsNotInTemplate(InternalUtils
-                    .joinSorted(embeddedIds.keySet()), className, InternalUtils.lastTerm(className), templateResource));
+            throw new RuntimeException(PageloadMessages.embeddedComponentsNotInTemplate(
+                    InternalUtils.joinSorted(embeddedIds.keySet()), className, InternalUtils.lastTerm(className),
+                    templateResource));
         }
     }
 
@@ -279,10 +283,10 @@ class ComponentAssemblerImpl implements ComponentAssembler
         try
         {
 
-            if (InternalUtils.isBlank(componentClassName)) { throw new TapestryException(PageloadMessages
-                    .missingComponentType(), location, null); }
+            if (InternalUtils.isBlank(componentClassName)) { throw new TapestryException(
+                    PageloadMessages.missingComponentType(), location, null); }
             EmbeddedComponentAssemblerImpl embedded = new EmbeddedComponentAssemblerImpl(assemblerSource,
-                    instantiatorSource, componentClassResolver, componentClassName, locale, embeddedModel, mixins,
+                    instantiatorSource, componentClassResolver, componentClassName, selector, embeddedModel, mixins,
                     location);
 
             if (embeddedIdToAssembler == null)
@@ -299,9 +303,9 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
                     String existingEmbeddedId = publishedParameterToEmbeddedId.get(publishedParameterName);
 
-                    if (existingEmbeddedId != null) { throw new TapestryException(PageloadMessages
-                            .parameterAlreadyPublished(publishedParameterName, embeddedId, instantiator.getModel()
-                                    .getComponentClassName(), existingEmbeddedId), location, null); }
+                    if (existingEmbeddedId != null) { throw new TapestryException(
+                            PageloadMessages.parameterAlreadyPublished(publishedParameterName, embeddedId, instantiator
+                                    .getModel().getComponentClassName(), existingEmbeddedId), location, null); }
 
                     publishedParameterToEmbeddedId.put(publishedParameterName, embeddedId);
                 }
@@ -376,14 +380,14 @@ class ComponentAssemblerImpl implements ComponentAssembler
         };
     }
 
-    public Locale getLocale()
+    public ComponentResourceSelector getSelector()
     {
-        return locale;
+        return selector;
     }
 
     @Override
     public String toString()
     {
-        return String.format("ComponentAssembler[%s]", instantiator.getModel().getComponentClassName());
+        return String.format("ComponentAssembler[%s %s]", instantiator.getModel().getComponentClassName(), selector);
     }
 }

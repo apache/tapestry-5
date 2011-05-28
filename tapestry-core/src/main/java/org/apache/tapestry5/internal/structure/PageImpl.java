@@ -15,7 +15,6 @@
 package org.apache.tapestry5.internal.structure;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -28,13 +27,14 @@ import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.services.PersistentFieldBundle;
+import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.slf4j.Logger;
 
 public class PageImpl implements Page
 {
     private final String name;
 
-    private final Locale locale;
+    private final ComponentResourceSelector selector;
 
     private final PersistentFieldManager persistentFieldManager;
 
@@ -62,18 +62,18 @@ public class PageImpl implements Page
     /**
      * @param name
      *            canonicalized page name
-     * @param locale
-     *            locale for page and all components
+     * @param selector
+     *            used to locate resources
      * @param persistentFieldManager
      *            for access to cross-request persistent values
      * @param perThreadManager
      *            for managing per-request mutable state
      */
-    public PageImpl(String name, Locale locale, PersistentFieldManager persistentFieldManager,
+    public PageImpl(String name, ComponentResourceSelector selector, PersistentFieldManager persistentFieldManager,
             PerthreadManager perThreadManager)
     {
         this.name = name;
-        this.locale = locale;
+        this.selector = selector;
         this.persistentFieldManager = persistentFieldManager;
 
         fieldBundle = perThreadManager.createValue();
@@ -82,7 +82,7 @@ public class PageImpl implements Page
     @Override
     public String toString()
     {
-        return String.format("Page[%s %s]", name, locale);
+        return String.format("Page[%s %s]", name, selector);
     }
 
     public synchronized ComponentPageElement getComponentElementByNestedId(String nestedId)
@@ -109,9 +109,9 @@ public class PageImpl implements Page
         return element;
     }
 
-    public Locale getLocale()
+    public ComponentResourceSelector getSelector()
     {
-        return locale;
+        return selector;
     }
 
     public void setRootElement(ComponentPageElement component)

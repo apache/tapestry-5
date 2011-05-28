@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.UpdateListener;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 import org.apache.tapestry5.services.messages.PropertiesFileParser;
+import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
 public class ComponentMessagesSourceImpl implements ComponentMessagesSource, UpdateListener
 {
@@ -100,6 +101,11 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
         MessagesBundle bundle = new ComponentModelBundle(componentModel);
 
         return messagesSource.getMessages(bundle, locale);
+    }
+
+    public Messages getMessages(ComponentModel componentModel, ComponentResourceSelector selector)
+    {
+        return getMessages(componentModel, selector.locale);
     }
 
     public Messages getApplicationCatalog(Locale locale)
