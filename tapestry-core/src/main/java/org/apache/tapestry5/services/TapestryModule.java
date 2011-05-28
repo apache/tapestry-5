@@ -237,6 +237,7 @@ import org.apache.tapestry5.services.messages.PropertiesFileParser;
 import org.apache.tapestry5.services.meta.FixedExtractor;
 import org.apache.tapestry5.services.meta.MetaDataExtractor;
 import org.apache.tapestry5.services.meta.MetaWorker;
+import org.apache.tapestry5.services.pageload.PageLoadModule;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.util.StringToEnumCoercion;
@@ -256,7 +257,7 @@ import org.slf4j.Logger;
  */
 @Marker(Core.class)
 @SubModule(
-{ InternalModule.class, AssetsModule.class })
+{ InternalModule.class, AssetsModule.class, PageLoadModule.class })
 public final class TapestryModule
 {
     private final PipelineBuilder pipelineBuilder;
