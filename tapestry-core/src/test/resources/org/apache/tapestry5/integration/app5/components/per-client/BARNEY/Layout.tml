@@ -1,0 +1,23 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd" xmlns:p="tapestry:parameter">
+  <head>
+    <title>Barney Layout</title>
+  </head>
+  <style>
+    BODY {
+    background: #ee0;
+    }
+  </style>
+  <body>
+    <h1>Hello Barney Layout</h1>
+
+    <t:body/>
+
+    <hr/>
+
+    <p>
+      <t:actionlink t:id="reset">reset session</t:actionlink>
+    </p>
+
+
+  </body>
+</html>

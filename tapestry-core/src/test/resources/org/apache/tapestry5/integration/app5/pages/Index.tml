@@ -1,0 +1,19 @@
+<t:layout xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"
+  xmlns:p="tapestry:parameter">
+
+  <ul>
+    <li>
+      <t:actionlink t:id="fred">Fred Client</t:actionlink>
+    </li>
+    <li>
+      <t:actionlink t:id="barney">Barney Client</t:actionlink>
+    </li>
+    <li>
+      <t:actionlink t:id="english">English</t:actionlink>
+    </li>
+    <li>
+      <t:actionlink t:id="french">French</t:actionlink>
+    </li>
+  </ul>
+
+</t:layout>
