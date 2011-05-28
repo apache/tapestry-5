@@ -9,6 +9,8 @@
     <dd id="page">${message:page-message}</dd>
     <dt>page perclient</dt>
     <dd id="page-over">${message:page-perclient-message}</dd>
+    <dt>hello</dt>
+    <dd id="hello">${message:hello}</dd>
   </dl>
 
 

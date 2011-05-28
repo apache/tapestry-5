@@ -1357,4 +1357,25 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
         waitForCondition(condition, PAGE_LOAD_TIMEOUT);
     }
+
+    /**
+     * Asserts that the current page's title matches the expected value.
+     * 
+     * @since 5.3.0
+     * @param expected
+     *            value for title
+     */
+    protected final void assertTitle(String expected)
+    {
+        try
+        {
+            assertEquals(getTitle(), expected);
+        }
+        catch (AssertionError ex)
+        {
+            writeErrorReport();
+
+            throw ex;
+        }
+    }
 }

@@ -28,11 +28,11 @@ class SkinningTests extends TapestryCoreTestCase
 
         assertTitle "Default Layout"
 
-        clickAndWait "title=Barney Client"
+        clickAndWait "link=Barney Client"
 
         assertTitle "Barney Layout"
 
-        clickAndWait "French"
+        clickAndWait "link=French"
 
         assertTitle "Barney Layout (French)"
     }
@@ -44,7 +44,7 @@ class SkinningTests extends TapestryCoreTestCase
         assertText "app", "Application catalog message"
         assertText "app-over", "Overridable app catalog message"
 
-        clickAndWait "Barney Client"
+        clickAndWait "link=Barney Client"
 
         assertText "app-over", "Overriden app catalog message (Barney)"
     }
@@ -56,7 +56,7 @@ class SkinningTests extends TapestryCoreTestCase
         assertText "page", "Page catalog message"
         assertText "page-over", "Overridable page catalog message"
 
-        clickAndWait "Barney Client"
+        clickAndWait "link=Barney Client"
 
         assertText "page-over", "Overridden page catalog message (Barney)"
     }
