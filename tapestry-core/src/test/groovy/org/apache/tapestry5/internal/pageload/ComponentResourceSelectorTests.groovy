@@ -27,17 +27,17 @@ class ComponentResourceSelectorTests extends Assert
     @Test
     void mismatch_if_locales_not_same() {
         assert english != french
-}
+    }
 
     @Test
     void equals_this_is_true() {
-        assert  english == english
-}
+        assert english == english
+    }
 
     @Test
     void equals_null_is_false() {
         assert english != null
-}
+    }
 
     @Test
     void with_axis_returns_new_instance() {
@@ -48,7 +48,7 @@ class ComponentResourceSelectorTests extends Assert
         assert english.getAxis(AnnotationUseContext.class) == null
 
         assert withAxis.getAxis(AnnotationUseContext.class).is(AnnotationUseContext.SERVICE)
-}
+    }
 
     @Test
     void cant_add_same_axis_type_again() {
@@ -57,7 +57,7 @@ class ComponentResourceSelectorTests extends Assert
 
         try {
             withAxis.withAxis(AnnotationUseContext.class, AnnotationUseContext.COMPONENT)
-}
+        }
         catch (IllegalArgumentException ex) {
             assert ex.message == "Axis type org.apache.tapestry5.ioc.annotations.AnnotationUseContext is already specified as SERVICE."
         }
