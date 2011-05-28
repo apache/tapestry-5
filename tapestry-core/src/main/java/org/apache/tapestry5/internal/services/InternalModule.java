@@ -202,24 +202,6 @@ public class InternalModule
         };
     }
 
-    public ComponentTemplateSource buildComponentTemplateSource(TemplateParser parser, @Primary
-    ComponentTemplateLocator locator, ClasspathURLConverter classpathURLConverter)
-    {
-        ComponentTemplateSourceImpl service = new ComponentTemplateSourceImpl(productionMode, parser, locator,
-                classpathURLConverter);
-
-        updateListenerHub.addUpdateListener(service);
-
-        return service;
-    }
-
-    @Marker(ComponentLayer.class)
-    public static CtClassSource buildCtClassSource(PropertyShadowBuilder builder,
-            ComponentInstantiatorSource componentInstantiatorSource)
-    {
-        return builder.build(componentInstantiatorSource, "classSource", CtClassSource.class);
-    }
-
     public PageActivationContextCollector buildPageActivationContextCollector(@Autobuild
     PageActivationContextCollectorImpl service)
     {

@@ -14,6 +14,12 @@
 
 package org.apache.tapestry5.internal.services;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry5.internal.parser.ComponentTemplate;
@@ -21,20 +27,19 @@ import org.apache.tapestry5.internal.parser.TemplateToken;
 import org.apache.tapestry5.internal.util.MultiKey;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.annotations.Primary;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.UpdateListener;
+import org.apache.tapestry5.services.UpdateListenerHub;
+import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * Service implementation that manages a cache of parsed component templates.
@@ -44,9 +49,9 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
 {
     private final TemplateParser parser;
 
-    private final ComponentTemplateLocator locator;
-
     private final URLChangeTracker tracker;
+
+    private final ComponentResourceLocator locator;
 
     /**
      * Caches from a key (combining component name and locale) to a resource. Often, many different keys will point to
@@ -93,13 +98,15 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
         }
     };
 
-    public ComponentTemplateSourceImpl(boolean productionMode, TemplateParser parser, @Primary
-    ComponentTemplateLocator templateLocator, ClasspathURLConverter classpathURLConverter)
+    public ComponentTemplateSourceImpl(@Inject
+    @Symbol(SymbolConstants.PRODUCTION_MODE)
+    boolean productionMode, TemplateParser parser, ComponentResourceLocator locator,
+            ClasspathURLConverter classpathURLConverter)
     {
-        this(productionMode, parser, templateLocator, new URLChangeTracker(classpathURLConverter));
+        this(productionMode, parser, locator, new URLChangeTracker(classpathURLConverter));
     }
 
-    ComponentTemplateSourceImpl(boolean productionMode, TemplateParser parser, ComponentTemplateLocator locator,
+    ComponentTemplateSourceImpl(boolean productionMode, TemplateParser parser, ComponentResourceLocator locator,
             URLChangeTracker tracker)
     {
         super(productionMode);
@@ -109,22 +116,17 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
         this.tracker = tracker;
     }
 
-    public ComponentTemplate getTemplate(ComponentModel componentModel, ComponentResourceSelector selector)
+    @PostInjection
+    public void registerAsUpdateListener(UpdateListenerHub hub)
     {
-        return getTemplate(componentModel, selector.locale);
+        hub.addUpdateListener(this);
     }
 
-    /**
-     * Resolves the component name to a localized {@link Resource} (using the {@link ComponentTemplateLocator} chain of
-     * command service). The localized resource is used as the key to a cache of {@link ComponentTemplate}s.
-     * <p/>
-     * If a template doesn't exist, then the missing ComponentTemplate is returned.
-     */
-    public ComponentTemplate getTemplate(ComponentModel componentModel, Locale locale)
+    public ComponentTemplate getTemplate(ComponentModel componentModel, ComponentResourceSelector selector)
     {
         String componentName = componentModel.getComponentClassName();
 
-        MultiKey key = new MultiKey(componentName, locale);
+        MultiKey key = new MultiKey(componentName, selector);
 
         // First cache is key to resource.
 
@@ -132,7 +134,7 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
 
         if (resource == null)
         {
-            resource = locateTemplateResource(componentModel, locale);
+            resource = locateTemplateResource(componentModel, selector);
             templateResources.put(key, resource);
         }
 
@@ -149,6 +151,17 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
         return result;
     }
 
+    /**
+     * Resolves the component name to a localized {@link Resource} (using the {@link ComponentTemplateLocator} chain of
+     * command service). The localized resource is used as the key to a cache of {@link ComponentTemplate}s.
+     * <p/>
+     * If a template doesn't exist, then the missing ComponentTemplate is returned.
+     */
+    public ComponentTemplate getTemplate(ComponentModel componentModel, Locale locale)
+    {
+        return getTemplate(componentModel, new ComponentResourceSelector(locale));
+    }
+
     private ComponentTemplate parseTemplate(Resource r)
     {
         // In a race condition, we may parse the same template more than once. This will likely add
@@ -162,12 +175,12 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
         return parser.parseTemplate(r);
     }
 
-    private Resource locateTemplateResource(ComponentModel initialModel, Locale locale)
+    private Resource locateTemplateResource(ComponentModel initialModel, ComponentResourceSelector selector)
     {
         ComponentModel model = initialModel;
         while (model != null)
         {
-            Resource localized = locator.locateTemplate(model, locale);
+            Resource localized = locator.locateTemplate(model, selector);
 
             if (localized != null)
                 return localized;

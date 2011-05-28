@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,6 +32,14 @@ import java.util.Set;
  */
 public interface ComponentModel
 {
+    /**
+     * Is this a model of a page (rather than a component, mixin, or base-class)?
+     * 
+     * @return true if a page
+     * @since 5.3
+     */
+    boolean isPage();
+    
     /**
      * Returns the resource corresponding to the class file for this component. This is used to find related resources,
      * such as the component's template and message catalog.

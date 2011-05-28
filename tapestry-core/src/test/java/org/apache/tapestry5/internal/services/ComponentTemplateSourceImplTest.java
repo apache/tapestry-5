@@ -30,6 +30,7 @@ import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.InvalidationListener;
+import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
 import org.testng.annotations.Test;
@@ -45,6 +46,8 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
     private final ClasspathURLConverter converter = new ClasspathURLConverterImpl();
 
     private final ComponentResourceSelector english = new ComponentResourceSelector(Locale.ENGLISH);
+
+    private final ComponentResourceSelector french = new ComponentResourceSelector(Locale.FRENCH);
 
     /**
      * Creates a new class loader, whose parent is the thread's context class loader, but adds a single classpath root
@@ -75,6 +78,16 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
         return new File(rootDirPath);
     }
 
+    private ComponentResourceLocator mockLocator(ComponentModel model, ComponentResourceSelector selector,
+            Resource templateResource)
+    {
+        ComponentResourceLocator locator = newMock(ComponentResourceLocator.class);
+
+        expect(locator.locateTemplate(model, selector)).andReturn(templateResource).once();
+
+        return locator;
+    }
+
     @Test
     public void caching()
     {
@@ -82,11 +95,9 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
         ComponentTemplate template = mockComponentTemplate();
         ComponentModel model = mockComponentModel();
         Resource resource = mockResource();
-        ComponentTemplateLocator locator = mockComponentTemplateLocator();
+        ComponentResourceLocator locator = mockLocator(model, english, resource);
 
         train_getComponentClassName(model, PACKAGE + ".Fred");
-
-        expect(locator.locateTemplate(model, Locale.ENGLISH)).andReturn(resource);
 
         expect(resource.exists()).andReturn(true);
         expect(resource.toURL()).andReturn(null);
@@ -135,11 +146,10 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
         TemplateParser parser = mockTemplateParser();
         ComponentTemplate template = mockComponentTemplate();
         InvalidationListener listener = mockInvalidationListener();
-        ComponentTemplateLocator locator = mockComponentTemplateLocator();
 
         train_getComponentClassName(model, "baz.Biff");
 
-        expect(locator.locateTemplate(model, Locale.ENGLISH)).andReturn(localized);
+        ComponentResourceLocator locator = mockLocator(model, english, localized);
 
         train_parseTemplate(parser, localized, template);
 
@@ -177,7 +187,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         train_getComponentClassName(model, "baz.Biff");
 
-        expect(locator.locateTemplate(model, Locale.ENGLISH)).andReturn(localized);
+        expect(locator.locateTemplate(model, english)).andReturn(localized);
 
         train_parseTemplate(parser, localized, template);
 
@@ -198,16 +208,16 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
         TemplateParser parser = mockTemplateParser();
         ComponentTemplate template = mockComponentTemplate();
         ComponentModel model = mockComponentModel();
-        ComponentTemplateLocator locator = mockComponentTemplateLocator();
+        ComponentResourceLocator locator = newMock(ComponentResourceLocator.class);
 
         train_getComponentClassName(model, PACKAGE + ".Fred");
 
-        expect(locator.locateTemplate(model, Locale.ENGLISH)).andReturn(resource);
+        expect(locator.locateTemplate(model, english)).andReturn(resource).once();
 
         expect(resource.exists()).andReturn(true).anyTimes();
         expect(resource.toURL()).andReturn(null).anyTimes();
 
-        expect(locator.locateTemplate(model, Locale.FRENCH)).andReturn(resource);
+        expect(locator.locateTemplate(model, french)).andReturn(resource).once();
 
         train_parseTemplate(parser, resource, template);
 
@@ -234,13 +244,12 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
     {
         TemplateParser parser = mockTemplateParser();
         ComponentModel model = mockComponentModel();
-        ComponentTemplateLocator locator = mockComponentTemplateLocator();
         Resource baseResource = mockResource();
         Resource missingResource = mockResource();
 
         train_getComponentClassName(model, PACKAGE + ".Barney");
 
-        expect(locator.locateTemplate(model, Locale.ENGLISH)).andReturn(null);
+        ComponentResourceLocator locator = mockLocator(model, english, null);
 
         train_getParentModel(model, null);
 
@@ -269,15 +278,13 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
         ComponentModel model = mockComponentModel();
         ComponentModel parentModel = mockComponentModel();
         Resource resource = mockResource();
-        ComponentTemplateLocator locator = mockComponentTemplateLocator();
+        ComponentResourceLocator locator = mockLocator(model, english, null);
 
         train_getComponentClassName(model, "foo.Bar");
 
-        expect(locator.locateTemplate(model, Locale.ENGLISH)).andReturn(null);
-
         train_getParentModel(model, parentModel);
 
-        expect(locator.locateTemplate(parentModel, Locale.ENGLISH)).andReturn(resource);
+        expect(locator.locateTemplate(parentModel, english)).andReturn(resource).once();
 
         expect(resource.exists()).andReturn(true);
         expect(resource.toURL()).andReturn(null);
@@ -291,10 +298,5 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
         assertSame(source.getTemplate(model, english), template);
 
         verify();
-    }
-
-    private Resource newResource(String name)
-    {
-        return new ClasspathResource(loader, PATH + "/" + name);
     }
 }

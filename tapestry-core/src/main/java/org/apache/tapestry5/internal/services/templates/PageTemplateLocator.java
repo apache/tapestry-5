@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,8 +13,6 @@
 // limitations under the License.
 
 package org.apache.tapestry5.internal.services.templates;
-
-import static java.lang.String.format;
 
 import java.util.Locale;
 
@@ -44,12 +42,9 @@ public class PageTemplateLocator implements ComponentTemplateLocator
 
     public Resource locateTemplate(ComponentModel model, Locale locale)
     {
+        if (!model.isPage()) { return null; }
+
         String className = model.getComponentClassName();
-
-        // A bit of a hack, but should work.
-
-        if (!className.contains(".pages."))
-            return null;
 
         String logicalName = resolver.resolvePageClassNameToPageName(className);
 
@@ -65,7 +60,7 @@ public class PageTemplateLocator implements ComponentTemplateLocator
             logicalName = logicalName.substring(0, slashx + 1) + simpleClassName;
         }
 
-        String path = format("%s.%s", logicalName, TapestryConstants.TEMPLATE_EXTENSION);
+        String path = String.format("%s.%s", logicalName, TapestryConstants.TEMPLATE_EXTENSION);
 
         return contextRoot.forFile(path).forLocale(locale);
     }
