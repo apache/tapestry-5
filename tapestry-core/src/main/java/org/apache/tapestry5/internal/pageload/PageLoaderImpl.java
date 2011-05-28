@@ -74,6 +74,7 @@ import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
 /**
  * There's still a lot of room to beef up {@link org.apache.tapestry5.internal.pageload.ComponentAssembler} and
@@ -197,7 +198,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         cache.clear();
     }
 
-    public Page loadPage(final String logicalPageName, final Locale locale)
+    public Page loadPage(final String logicalPageName, final ComponentResourceSelector selector)
     {
         final String pageClassName = componentClassResolver.resolvePageNameToClassName(logicalPageName);
 
@@ -205,9 +206,9 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         {
             public Page invoke()
             {
-                Page page = new PageImpl(logicalPageName, locale, persistentFieldManager, perThreadManager);
+                Page page = new PageImpl(logicalPageName, selector.locale, persistentFieldManager, perThreadManager);
 
-                ComponentAssembler assembler = getAssembler(pageClassName, locale);
+                ComponentAssembler assembler = getAssembler(pageClassName, selector.locale);
 
                 ComponentPageElement rootElement = assembler.assembleRootComponent(page);
 

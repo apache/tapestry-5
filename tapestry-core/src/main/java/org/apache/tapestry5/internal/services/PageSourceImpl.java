@@ -84,7 +84,7 @@ public class PageSourceImpl implements PageSource, InvalidationListener
             // different threads. The last built one will "evict" the others from the page cache,
             // and the earlier ones will be GCed.
 
-            Page page = pageLoader.loadPage(canonicalPageName, selector.locale);
+            Page page = pageLoader.loadPage(canonicalPageName, selector);
 
             pageCache.put(key, page);
         }
