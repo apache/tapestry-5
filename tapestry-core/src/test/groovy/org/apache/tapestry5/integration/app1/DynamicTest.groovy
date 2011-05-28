@@ -71,7 +71,7 @@ class DynamicTest extends SeleniumTestCase
     
     @Test
     void exception_inside_expansion() {
-        clickThru "Invalid expression in a dynamic template"
+        clickThru "Invalid Dynamic Expression"
         
         assertTextPresent "An unexpected application exception has occurred", 
                 "InvalidExpressionInDynamicTemplate does not contain a property (or public field) named 'xyzzyx'", 

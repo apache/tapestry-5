@@ -57,6 +57,9 @@ public class Index
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
 
+                    new Item("InvalidExpressionInDynamicTemplate", "Invalid Dynamic Expression",
+                            "Invalid expression in a Dynamic Template"),
+
                     new Item("DynamicDemo", "Dynamic Demo", "Basic Dynamic component tests"),
 
                     new Item("DynamicExpansionsDemo", "Expansions in Dynamic Templates",
