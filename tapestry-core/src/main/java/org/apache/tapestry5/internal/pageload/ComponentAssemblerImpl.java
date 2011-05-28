@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,10 +14,17 @@
 
 package org.apache.tapestry5.internal.pageload;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.internal.services.ComponentInstantiatorSource;
 import org.apache.tapestry5.internal.services.Instantiator;
-import org.apache.tapestry5.internal.structure.*;
+import org.apache.tapestry5.internal.structure.BodyPageElement;
+import org.apache.tapestry5.internal.structure.ComponentPageElement;
+import org.apache.tapestry5.internal.structure.ComponentPageElementImpl;
+import org.apache.tapestry5.internal.structure.ComponentPageElementResources;
+import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.OperationTracker;
@@ -34,10 +41,6 @@ import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 class ComponentAssemblerImpl implements ComponentAssembler
 {
     private final ComponentAssemblerSource assemblerSource;
@@ -47,8 +50,6 @@ class ComponentAssemblerImpl implements ComponentAssembler
     private final ComponentClassResolver componentClassResolver;
 
     private final Instantiator instantiator;
-
-    private final ComponentResourceSelector selector;
 
     private final ComponentPageElementResources resources;
 
@@ -68,15 +69,14 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
     public ComponentAssemblerImpl(ComponentAssemblerSource assemblerSource,
             ComponentInstantiatorSource instantiatorSource, ComponentClassResolver componentClassResolver,
-            Instantiator instantiator, ComponentPageElementResources resources, ComponentResourceSelector selector,
-            OperationTracker tracker, Request request, SymbolSource symbolSource)
+            Instantiator instantiator, ComponentPageElementResources resources, OperationTracker tracker,
+            Request request, SymbolSource symbolSource)
     {
         this.assemblerSource = assemblerSource;
         this.instantiatorSource = instantiatorSource;
         this.componentClassResolver = componentClassResolver;
         this.instantiator = instantiator;
         this.resources = resources;
-        this.selector = selector;
         this.tracker = tracker;
         this.request = request;
         this.symbolSource = symbolSource;
@@ -286,8 +286,8 @@ class ComponentAssemblerImpl implements ComponentAssembler
             if (InternalUtils.isBlank(componentClassName)) { throw new TapestryException(
                     PageloadMessages.missingComponentType(), location, null); }
             EmbeddedComponentAssemblerImpl embedded = new EmbeddedComponentAssemblerImpl(assemblerSource,
-                    instantiatorSource, componentClassResolver, componentClassName, selector, embeddedModel, mixins,
-                    location);
+                    instantiatorSource, componentClassResolver, componentClassName, getSelector(), embeddedModel,
+                    mixins, location);
 
             if (embeddedIdToAssembler == null)
                 embeddedIdToAssembler = CollectionFactory.newMap();
@@ -382,12 +382,12 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
     public ComponentResourceSelector getSelector()
     {
-        return selector;
+        return resources.getSelector();
     }
 
     @Override
     public String toString()
     {
-        return String.format("ComponentAssembler[%s %s]", instantiator.getModel().getComponentClassName(), selector);
+        return String.format("ComponentAssembler[%s %s]", instantiator.getModel().getComponentClassName(), getSelector());
     }
 }

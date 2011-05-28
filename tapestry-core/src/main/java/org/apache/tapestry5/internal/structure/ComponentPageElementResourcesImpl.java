@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,8 +13,6 @@
 // limitations under the License.
 
 package org.apache.tapestry5.internal.structure;
-
-import java.util.Locale;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
@@ -77,6 +75,11 @@ public class ComponentPageElementResourcesImpl implements ComponentPageElementRe
         this.loggerSource = loggerSource;
         this.tracker = tracker;
         this.perThreadManager = perThreadManager;
+    }
+
+    public ComponentResourceSelector getSelector()
+    {
+        return selector;
     }
 
     public Messages getMessages(ComponentModel componentModel)

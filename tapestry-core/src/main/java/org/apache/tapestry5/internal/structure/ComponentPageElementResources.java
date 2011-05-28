@@ -1,4 +1,4 @@
-// Copyright 2008, 2010 The Apache Software Foundation
+// Copyright 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.ContextValueEncoder;
+import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.slf4j.Logger;
 
 /**
@@ -30,6 +31,13 @@ import org.slf4j.Logger;
  */
 public interface ComponentPageElementResources extends ContextValueEncoder, OperationTracker
 {
+    /**
+     * Returns the selector associated with this resources.
+     * 
+     * @since 5.3.0
+     */
+    ComponentResourceSelector getSelector();
+
     /**
      * Used to obtain a {@link org.apache.tapestry5.ioc.Messages} instance for a particular component. If the component
      * extends from another component, then its localized properties will merge with its parent's properties (with the
