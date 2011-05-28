@@ -96,7 +96,7 @@ configurations {
 }
 
 dependencies {
-  javadoc project(':tapestry-javadoc')
+  // javadoc project(':tapestry-javadoc') -- temporarily removed
 }
 
 subprojects.each { evaluationDependsOn(it.name) }
@@ -146,4 +146,4 @@ task clean(type: Delete) {
   delete buildDirName
 }
 
-task continuousIntegration(dependsOn: [subprojects.build, 'aggregateJavadoc'])
+task continuousIntegration(dependsOn: [subprojects.build /* , 'aggregateJavadoc' */])
