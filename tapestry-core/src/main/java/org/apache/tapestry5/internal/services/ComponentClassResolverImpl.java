@@ -447,6 +447,17 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         });
     }
 
+    public boolean isPage(final String pageClassName)
+    {
+        return barrier.withRead(new Invokable<Boolean>()
+        {
+            public Boolean invoke()
+            {
+                return locate(pageClassName, pageClassNameToLogicalName) != null;
+            }
+        });
+    }
+
     public List<String> getPageNames()
     {
         return barrier.withRead(new Invokable<List<String>>()

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,11 +46,11 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         assertTrue(model.isRootClass());
 
-        MutableComponentModel subModel = new MutableComponentModelImpl(CLASS_NAME, logger, r, model);
+        MutableComponentModel subModel = new MutableComponentModelImpl(CLASS_NAME, logger, r, model, false);
 
         assertFalse(subModel.isRootClass());
 
@@ -65,7 +65,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         assertTrue(model.getParameterNames().isEmpty());
 
@@ -100,7 +100,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         model.addParameter("fred", true, true, BindingConstants.PROP);
         model.addParameter("wilma", true, true, BindingConstants.PROP);
@@ -123,7 +123,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, parent);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, parent, false);
 
         model.addParameter("fred", true, true, BindingConstants.PROP);
         model.addParameter("wilma", true, true, BindingConstants.PROP);
@@ -143,7 +143,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         model.addParameter("fred", true, true, BindingConstants.PROP);
 
@@ -171,7 +171,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         assertNull(model.getParameterModel("foo"));
 
@@ -186,7 +186,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
         model.addParameter("fred", true, true, BindingConstants.PROP);
 
         assertNull(model.getParameterModel("barney"));
@@ -203,7 +203,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         assertTrue(model.getEmbeddedComponentIds().isEmpty());
 
@@ -241,7 +241,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         model.addEmbeddedComponent("fred", "Fred1", COMPONENT_CLASS_NAME, false, null);
 
@@ -268,7 +268,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         assertTrue(model.getEmbeddedComponentIds().isEmpty());
 
@@ -291,7 +291,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         model.addEmbeddedComponent("fred", "Fred1", COMPONENT_CLASS_NAME, false, null);
 
@@ -317,7 +317,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         MutableEmbeddedComponentModel fred = model.addEmbeddedComponent("fred", "Fred", COMPONENT_CLASS_NAME, false,
                                                                         null);
@@ -342,7 +342,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         MutableEmbeddedComponentModel fred = model.addEmbeddedComponent("fred", "Fred", COMPONENT_CLASS_NAME, false,
                                                                         null);
@@ -371,7 +371,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         MutableEmbeddedComponentModel fred = model.addEmbeddedComponent("fred", "Fred", COMPONENT_CLASS_NAME, false,
                                                                         null);
@@ -389,7 +389,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         MutableEmbeddedComponentModel fred = model.addEmbeddedComponent("fred", "Fred", COMPONENT_CLASS_NAME, false,
                                                                         null);
@@ -410,7 +410,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         MutableEmbeddedComponentModel fred = model.addEmbeddedComponent("fred", "Fred", COMPONENT_CLASS_NAME, false,
                                                                         null);
@@ -442,7 +442,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         assertTrue(model.getPersistentFieldNames().isEmpty());
 
@@ -457,7 +457,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         assertEquals(model.setFieldPersistenceStrategy("fred", "session"), "fred");
         assertEquals(model.setFieldPersistenceStrategy("barney", "client"), "barney");
@@ -475,11 +475,11 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel parent = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel parent = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         assertEquals(parent.setFieldPersistenceStrategy("wilma", "session"), "wilma");
 
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, parent);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, parent, false);
 
         assertEquals(model.setFieldPersistenceStrategy("fred", "session"), "fred");
         assertEquals(model.setFieldPersistenceStrategy("barney", "client"), "barney");
@@ -497,10 +497,10 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel parent = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel parent = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
         assertEquals(parent.setFieldPersistenceStrategy("wilma", "session"), "wilma");
 
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, parent);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, parent, false);
 
         assertEquals(model.setFieldPersistenceStrategy("wilma", "session"), "wilma_0");
 
@@ -517,7 +517,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         model.setFieldPersistenceStrategy("fred", "session");
         model.setFieldPersistenceStrategy("barney", "client");
@@ -536,7 +536,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         try
         {
@@ -559,8 +559,8 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel parent = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, parent);
+        MutableComponentModel parent = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, parent, false);
 
         parent.setFieldPersistenceStrategy("wilma", "parent");
 
@@ -579,7 +579,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         assertFalse(model.getSupportsInformalParameters());
 
@@ -597,7 +597,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         Logger logger = mockLogger();
 
         replay();
-        ComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        ComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         assertTrue(model.getMixinClassNames().isEmpty());
 
@@ -612,11 +612,11 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel parent = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel parent = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         parent.addMixinClassName("Wilma");
 
-        MutableComponentModel child = new MutableComponentModelImpl(CLASS_NAME, logger, r, parent);
+        MutableComponentModel child = new MutableComponentModelImpl(CLASS_NAME, logger, r, parent, false);
 
         child.addMixinClassName("Fred");
         child.addMixinClassName("Barney");
@@ -634,8 +634,8 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel parent = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
-        MutableComponentModel child = new MutableComponentModelImpl(CLASS_NAME, logger, r, parent);
+        MutableComponentModel parent = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
+        MutableComponentModel child = new MutableComponentModelImpl(CLASS_NAME, logger, r, parent, false);
 
         assertSame(child.getParentModel(), parent);
         assertNull(parent.getParentModel());
@@ -651,7 +651,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         model.setMeta("fred", "flintstone");
         model.setMeta("barney", "rubble");
@@ -675,8 +675,8 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel parent = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
-        MutableComponentModel child = new MutableComponentModelImpl(CLASS_NAME, logger, r, parent);
+        MutableComponentModel parent = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
+        MutableComponentModel child = new MutableComponentModelImpl(CLASS_NAME, logger, r, parent, false);
 
         parent.setMeta("fred", "flintstone");
 
@@ -693,8 +693,8 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel parent = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
-        MutableComponentModel child = new MutableComponentModelImpl(CLASS_NAME, logger, r, parent);
+        MutableComponentModel parent = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
+        MutableComponentModel child = new MutableComponentModelImpl(CLASS_NAME, logger, r, parent, false);
 
         parent.setMeta("fred", "flintstone");
 
@@ -711,8 +711,8 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel parent = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
-        MutableComponentModel child = new MutableComponentModelImpl(CLASS_NAME, logger, r, parent);
+        MutableComponentModel parent = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
+        MutableComponentModel child = new MutableComponentModelImpl(CLASS_NAME, logger, r, parent, false);
 
         parent.setMeta("fred", "flintstone");
         child.setMeta("fred", "mcmurray");
@@ -734,7 +734,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
 
         assertFalse(model.getHandledRenderPhases().contains(BeginRender.class));
@@ -753,7 +753,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         model.addRenderPhase(BeginRender.class);
 
@@ -773,8 +773,8 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         replay();
 
-        MutableComponentModel parent = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
-        MutableComponentModel child = new MutableComponentModelImpl(CLASS_NAME, logger, r, parent);
+        MutableComponentModel parent = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
+        MutableComponentModel child = new MutableComponentModelImpl(CLASS_NAME, logger, r, parent, false);
 
         parent.addRenderPhase(BeginRender.class);
 

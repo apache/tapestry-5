@@ -51,12 +51,13 @@ import org.apache.tapestry5.plastic.PlasticClassEvent;
 import org.apache.tapestry5.plastic.PlasticClassListener;
 import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.plastic.PlasticManager;
-import org.apache.tapestry5.plastic.TransformationOption;
 import org.apache.tapestry5.plastic.PlasticManager.PlasticManagerBuilder;
 import org.apache.tapestry5.plastic.PlasticManagerDelegate;
 import org.apache.tapestry5.plastic.PlasticUtils;
+import org.apache.tapestry5.plastic.TransformationOption;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.ComponentResourcesAware;
+import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.UpdateListener;
 import org.apache.tapestry5.services.UpdateListenerHub;
@@ -90,6 +91,8 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
     private final InternalComponentInvalidationEventHub invalidationHub;
 
     private final boolean productionMode;
+    
+    private final ComponentClassResolver resolver;
 
     // These change whenever the invalidation event hub sends an invalidation notification
 
@@ -126,6 +129,8 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
     @Symbol(SymbolConstants.PRODUCTION_MODE)
     boolean productionMode,
+    
+    ComponentClassResolver resolver,
 
     InternalComponentInvalidationEventHub invalidationHub)
     {
@@ -138,6 +143,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
         this.tracker = tracker;
         this.invalidationHub = invalidationHub;
         this.productionMode = productionMode;
+        this.resolver = resolver;
 
         // For now, we just need the keys of the configuration. When there are more types of controlled
         // packages, we'll need to do more.
@@ -316,8 +322,10 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                             implementComponentInterface(plasticClass);
                         }
 
-                        MutableComponentModel model = new MutableComponentModelImpl(plasticClass.getClassName(),
-                                logger, baseResource, parentModel);
+                        boolean isPage = resolver.isPage(className);
+
+                        MutableComponentModel model = new MutableComponentModelImpl(className, logger, baseResource,
+                                parentModel, isPage);
 
                         transformerChain.transform(plasticClass, new TransformationSupport()
                         {

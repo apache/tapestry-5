@@ -46,6 +46,8 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
     private final Logger logger;
 
+    private final boolean pageClass;
+
     private Map<String, ParameterModel> parameters;
 
     private Map<String, EmbeddedComponentModel> embeddedComponents;
@@ -69,13 +71,14 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
     private Map<String, Boolean> handledEvents;
 
-    public MutableComponentModelImpl(String componentClassName, Logger logger,
-            Resource baseResource, ComponentModel parentModel)
+    public MutableComponentModelImpl(String componentClassName, Logger logger, Resource baseResource,
+            ComponentModel parentModel, boolean pageClass)
     {
         this.componentClassName = componentClassName;
         this.logger = logger;
         this.baseResource = baseResource;
         this.parentModel = parentModel;
+        this.pageClass = pageClass;
 
         // Pre-allocate names from the parent, to avoid name collisions.
 
@@ -109,8 +112,8 @@ public final class MutableComponentModelImpl implements MutableComponentModel
         return componentClassName;
     }
 
-    public void addParameter(String name, boolean required, boolean allowNull,
-            String defaultBindingPrefix, boolean cached)
+    public void addParameter(String name, boolean required, boolean allowNull, String defaultBindingPrefix,
+            boolean cached)
     {
         assert InternalUtils.isNonBlank(name);
         assert InternalUtils.isNonBlank(defaultBindingPrefix);
@@ -118,15 +121,12 @@ public final class MutableComponentModelImpl implements MutableComponentModel
             parameters = CollectionFactory.newCaseInsensitiveMap();
 
         if (parameters.containsKey(name))
-            throw new IllegalArgumentException(ModelMessages.duplicateParameter(name,
-                    componentClassName));
+            throw new IllegalArgumentException(ModelMessages.duplicateParameter(name, componentClassName));
 
-        parameters.put(name, new ParameterModelImpl(name, required, allowNull,
-                defaultBindingPrefix, cached));
+        parameters.put(name, new ParameterModelImpl(name, required, allowNull, defaultBindingPrefix, cached));
     }
 
-    public void addParameter(String name, boolean required, boolean allowNull,
-            String defaultBindingPrefix)
+    public void addParameter(String name, boolean required, boolean allowNull, String defaultBindingPrefix)
     {
         // assume /false/ for the default because:
         // if the parameter is actually cached, the only effect will be to reduce that optimization
@@ -145,7 +145,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
         return result;
     }
-    
+
     public boolean isFormalParameter(String parameterName)
     {
         return getParameterModel(parameterName) != null;
@@ -171,19 +171,18 @@ public final class MutableComponentModelImpl implements MutableComponentModel
         return InternalUtils.sortedKeys(parameters);
     }
 
-    public MutableEmbeddedComponentModel addEmbeddedComponent(String id, String type,
-            String componentClassName, boolean inheritInformalParameters, Location location)
+    public MutableEmbeddedComponentModel addEmbeddedComponent(String id, String type, String componentClassName,
+            boolean inheritInformalParameters, Location location)
     {
         // TODO: Parent compent model? Or would we simply override the parent?
 
         if (embeddedComponents == null)
             embeddedComponents = CollectionFactory.newCaseInsensitiveMap();
         else if (embeddedComponents.containsKey(id))
-            throw new IllegalArgumentException(ModelMessages.duplicateComponentId(id,
-                    this.componentClassName));
+            throw new IllegalArgumentException(ModelMessages.duplicateComponentId(id, this.componentClassName));
 
-        MutableEmbeddedComponentModel embedded = new MutableEmbeddedComponentModelImpl(id, type,
-                componentClassName, this.componentClassName, inheritInformalParameters, location);
+        MutableEmbeddedComponentModel embedded = new MutableEmbeddedComponentModelImpl(id, type, componentClassName,
+                this.componentClassName, inheritInformalParameters, location);
 
         embeddedComponents.put(id, embedded);
 
@@ -367,5 +366,10 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     public String[] getOrderForMixin(String mixinClassName)
     {
         return InternalUtils.get(mixinOrders, mixinClassName);
+    }
+
+    public boolean isPage()
+    {
+        return pageClass;
     }
 }
