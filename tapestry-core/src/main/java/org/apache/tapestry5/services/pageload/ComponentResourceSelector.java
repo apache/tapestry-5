@@ -21,16 +21,17 @@ import java.util.Map;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 /**
- * Encapsulates the information that is used when selecting a template or message catalog associated with a component.
- * The selector is created using information from the incoming request (principally, the {@link Locale}, which can be
- * considered the primary axis), but with additional, application-specific axes, which provides a way to skin an
- * application (when used in concert with a custom {@link ComponentResourceLocator} implementation.
+ * Encapsulates the information that is used when locating a template or message catalog associated with a component.
+ * The selector is combined with the component class name to locate the other resources. The selector defines one or
+ * more <em>axes</em> that are combined with a {@link ComponentResourceLocator} implementation to enforce a naming
+ * convention for locating resources. The primary axis is {@link Locale} (Tapestry 5.2 and earlier used a Locale
+ * instance as the selector), but Tapestry 5.3 adds support for additional axes.
  * 
  * @since 5.3.0
  */
-public class ComponentResourceSelector
+public final class ComponentResourceSelector
 {
-    private final Locale locale;
+    public final Locale locale;
 
     private final Map<Class, Object> axis;
 

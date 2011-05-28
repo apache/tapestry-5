@@ -14,32 +14,35 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.InvalidationListener;
+import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
+import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
 public class PageSourceImpl implements PageSource, InvalidationListener
 {
+    private final ComponentRequestSelectorAnalyzer selectorAnalyzer;
+
     private final PageLoader pageLoader;
 
     private static final class CachedPageKey
     {
         final String pageName;
 
-        final Locale locale;
+        final ComponentResourceSelector selector;
 
-        public CachedPageKey(String pageName, Locale locale)
+        public CachedPageKey(String pageName, ComponentResourceSelector selector)
         {
             this.pageName = pageName;
-            this.locale = locale;
+            this.selector = selector;
         }
 
         public int hashCode()
         {
-            return 37 * pageName.hashCode() + locale.hashCode();
+            return 37 * pageName.hashCode() + selector.hashCode();
         }
 
         public boolean equals(Object obj)
@@ -52,15 +55,16 @@ public class PageSourceImpl implements PageSource, InvalidationListener
 
             CachedPageKey other = (CachedPageKey) obj;
 
-            return pageName.equals(other.pageName) && locale.equals(other.locale);
+            return pageName.equals(other.pageName) && selector.equals(other.selector);
         }
     }
 
     private final Map<CachedPageKey, Page> pageCache = CollectionFactory.newConcurrentMap();
 
-    public PageSourceImpl(PageLoader pageLoader)
+    public PageSourceImpl(PageLoader pageLoader, ComponentRequestSelectorAnalyzer selectorAnalyzer)
     {
         this.pageLoader = pageLoader;
+        this.selectorAnalyzer = selectorAnalyzer;
     }
 
     public synchronized void objectWasInvalidated()
@@ -68,9 +72,11 @@ public class PageSourceImpl implements PageSource, InvalidationListener
         pageCache.clear();
     }
 
-    public Page getPage(String canonicalPageName, Locale locale)
+    public Page getPage(String canonicalPageName)
     {
-        CachedPageKey key = new CachedPageKey(canonicalPageName, locale);
+        ComponentResourceSelector selector = selectorAnalyzer.buildSelectorForRequest();
+
+        CachedPageKey key = new CachedPageKey(canonicalPageName, selector);
 
         if (!pageCache.containsKey(key))
         {
@@ -78,7 +84,7 @@ public class PageSourceImpl implements PageSource, InvalidationListener
             // different threads. The last built one will "evict" the others from the page cache,
             // and the earlier ones will be GCed.
 
-            Page page = pageLoader.loadPage(canonicalPageName, locale);
+            Page page = pageLoader.loadPage(canonicalPageName, selector.locale);
 
             pageCache.put(key, page);
         }

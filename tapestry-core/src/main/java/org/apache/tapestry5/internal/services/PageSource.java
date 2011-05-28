@@ -19,6 +19,8 @@ import java.util.Locale;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.services.dynamic.DynamicTemplate;
+import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
+import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
 /**
  * Access to localized page instances (which are now shared singletons, starting in release 5.2).
@@ -37,5 +39,12 @@ public interface PageSource
      */
     void clearCache();
 
-    Page getPage(String canonicalPageName, Locale locale);
+    /**
+     * Returns a loaded instance of the indicated page, using the Locale and other information
+     * from the {@link ComponentResourceSelector} obtained from the {@link ComponentRequestSelectorAnalyzer}.
+     * 
+     * @param canonicalPageName
+     * @return existing, or newly created, page instance
+     */
+    Page getPage(String canonicalPageName);
 }

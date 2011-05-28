@@ -174,11 +174,6 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         return newMock(PageLoader.class);
     }
 
-    protected final void train_loadPage(PageLoader loader, String pageName, Locale locale, Page page)
-    {
-        expect(loader.loadPage(pageName, locale)).andReturn(page);
-    }
-
     protected RenderQueue mockRenderQueue()
     {
         return newMock(RenderQueue.class);

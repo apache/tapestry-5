@@ -14,15 +14,21 @@
 
 package org.apache.tapestry5.internal.pageload;
 
-import java.util.Locale;
-
+import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
 public class DefaultComponentRequestSelectorAnalyzer implements ComponentRequestSelectorAnalyzer
 {
-    public ComponentResourceSelector buildSelector(Locale locale)
+    private final ThreadLocale threadLocale;
+
+    public DefaultComponentRequestSelectorAnalyzer(ThreadLocale threadLocale)
     {
-        return new ComponentResourceSelector(locale);
+        this.threadLocale = threadLocale;
+    }
+
+    public ComponentResourceSelector buildSelectorForRequest()
+    {
+        return new ComponentResourceSelector(threadLocale.getLocale());
     }
 }

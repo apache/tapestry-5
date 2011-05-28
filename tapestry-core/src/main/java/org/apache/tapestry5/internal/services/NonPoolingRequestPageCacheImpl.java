@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.tapestry5.internal.structure.Page;
@@ -25,7 +24,6 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
-import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.slf4j.Logger;
 
@@ -44,17 +42,13 @@ public class NonPoolingRequestPageCacheImpl implements RequestPageCache, ThreadC
 
     private final PageSource pageSource;
 
-    private final ThreadLocale threadLocale;
-
     private final Map<String, Page> cache = CollectionFactory.newMap();
 
-    public NonPoolingRequestPageCacheImpl(Logger logger, ComponentClassResolver resolver, PageSource pageSource,
-            ThreadLocale threadLocale)
+    public NonPoolingRequestPageCacheImpl(Logger logger, ComponentClassResolver resolver, PageSource pageSource)
     {
         this.logger = logger;
         this.resolver = resolver;
         this.pageSource = pageSource;
-        this.threadLocale = threadLocale;
     }
 
     @PostInjection
@@ -86,9 +80,7 @@ public class NonPoolingRequestPageCacheImpl implements RequestPageCache, ThreadC
 
         if (page == null)
         {
-            Locale locale = threadLocale.getLocale();
-
-            page = pageSource.getPage(canonical, locale);
+            page = pageSource.getPage(canonical);
 
             try
             {
@@ -96,7 +88,7 @@ public class NonPoolingRequestPageCacheImpl implements RequestPageCache, ThreadC
             }
             catch (Throwable t)
             {
-                throw new RuntimeException(String.format("Unable to attach page %s (%s): %s", canonical, locale,
+                throw new RuntimeException(String.format("Unable to attach page %s: %s", canonical,
                         InternalUtils.toMessage(t)), t);
             }
 
