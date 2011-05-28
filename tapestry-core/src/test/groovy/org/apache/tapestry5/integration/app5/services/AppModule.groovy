@@ -15,11 +15,11 @@
 package org.apache.tapestry5.integration.app5.services
 
 import org.apache.tapestry5.SymbolConstants
+import org.apache.tapestry5.func.F
 import org.apache.tapestry5.integration.app5.Client
 import org.apache.tapestry5.integration.app5.ClientTracker
 import org.apache.tapestry5.ioc.MappedConfiguration
 import org.apache.tapestry5.ioc.Resource
-import org.apache.tapestry5.ioc.ServiceBinder
 import org.apache.tapestry5.model.ComponentModel
 import org.apache.tapestry5.services.ApplicationStateManager
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer
@@ -60,6 +60,23 @@ class AppModule {
                 }
 
                 delegate.locateTemplate model, selector
+            }
+
+            List<Resource> locateMessageCatalog(Resource baseResource, ComponentResourceSelector selector) {
+
+                def client = selector.getAxis(Client.class)
+
+                if (client != null) {
+
+                    def skinnedBase = baseResource.forFile("per-client/${client.name()}/${baseResource.file}")
+
+                    def skinned = F.flow(delegate.locateMessageCatalog(skinnedBase, selector))
+                    def standard = F.flow(delegate.locateMessageCatalog(baseResource, selector))
+
+                    return skinned.interleave(standard).toList()
+                }
+
+                delegate.locateMessageCatalog(baseResource, selector);
             }
         }
     }

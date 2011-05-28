@@ -16,17 +16,18 @@ package org.apache.tapestry5.internal.services;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
+import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry5.internal.util.MultiKey;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
-import org.apache.tapestry5.ioc.util.LocalizedNameGenerator;
 import org.apache.tapestry5.services.messages.PropertiesFileParser;
+import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
+import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
 /**
  * A utility class that encapsulates all the logic for reading properties files and assembling {@link Messages} from
@@ -47,14 +48,16 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
 
     private final PropertiesFileParser propertiesFileParser;
 
-    /**
-     * Keyed on bundle id and locale.
-     */
-    private final Map<MultiKey, Messages> messagesByBundleIdAndLocale = CollectionFactory.newConcurrentMap();
+    private final ComponentResourceLocator resourceLocator;
 
     /**
-     * Keyed on bundle id and locale, the cooked properties include properties inherited from less locale-specific
-     * properties files, or inherited from parent bundles.
+     * Keyed on bundle id and ComponentResourceSelector.
+     */
+    private final Map<MultiKey, Messages> messagesByBundleIdAndSelector = CollectionFactory.newConcurrentMap();
+
+    /**
+     * Keyed on bundle id and ComponentResourceSelector, the cooked properties include properties inherited from less
+     * locale-specific properties files, or inherited from parent bundles.
      */
     private final Map<MultiKey, Map<String, String>> cookedProperties = CollectionFactory.newConcurrentMap();
 
@@ -66,19 +69,20 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
     private final Map<String, String> emptyMap = Collections.emptyMap();
 
     public MessagesSourceImpl(boolean productionMode, URLChangeTracker tracker,
-            PropertiesFileParser propertiesFileParser)
+            ComponentResourceLocator resourceLocator, PropertiesFileParser propertiesFileParser)
     {
         super(productionMode);
 
         this.tracker = tracker;
         this.propertiesFileParser = propertiesFileParser;
+        this.resourceLocator = resourceLocator;
     }
 
     public void checkForUpdates()
     {
         if (tracker != null && tracker.containsChanges())
         {
-            messagesByBundleIdAndLocale.clear();
+            messagesByBundleIdAndSelector.clear();
             cookedProperties.clear();
             rawProperties.clear();
 
@@ -88,26 +92,26 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
         }
     }
 
-    public Messages getMessages(MessagesBundle bundle, Locale locale)
+    public Messages getMessages(MessagesBundle bundle, ComponentResourceSelector selector)
     {
-        MultiKey key = new MultiKey(bundle.getId(), locale);
+        MultiKey key = new MultiKey(bundle.getId(), selector);
 
-        Messages result = messagesByBundleIdAndLocale.get(key);
+        Messages result = messagesByBundleIdAndSelector.get(key);
 
         if (result == null)
         {
-            result = buildMessages(bundle, locale);
-            messagesByBundleIdAndLocale.put(key, result);
+            result = buildMessages(bundle, selector);
+            messagesByBundleIdAndSelector.put(key, result);
         }
 
         return result;
     }
 
-    private Messages buildMessages(MessagesBundle bundle, Locale locale)
+    private Messages buildMessages(MessagesBundle bundle, ComponentResourceSelector selector)
     {
-        Map<String, String> properties = findBundleProperties(bundle, locale);
+        Map<String, String> properties = findBundleProperties(bundle, selector);
 
-        return new MapMessages(locale, properties);
+        return new MapMessages(selector.locale, properties);
     }
 
     /**
@@ -115,12 +119,12 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
      * reflect the properties of the bundles' parent (if any) for the locale, overalyed with any properties defined for
      * this bundle and its locale.
      */
-    private Map<String, String> findBundleProperties(MessagesBundle bundle, Locale locale)
+    private Map<String, String> findBundleProperties(MessagesBundle bundle, ComponentResourceSelector selector)
     {
         if (bundle == null)
             return emptyMap;
 
-        MultiKey key = new MultiKey(bundle.getId(), locale);
+        MultiKey key = new MultiKey(bundle.getId(), selector);
 
         Map<String, String> existing = cookedProperties.get(key);
 
@@ -133,30 +137,18 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
 
         Resource propertiesResource = bundle.getBaseResource().withExtension("properties");
 
-        List<Resource> localizations = CollectionFactory.newList();
-
-        for (String localizedFile : new LocalizedNameGenerator(propertiesResource.getFile(), locale))
-        {
-            Resource localized = propertiesResource.forFile(localizedFile);
-
-            localizations.add(localized);
-        }
-
-        // We need them in least-specific to most-specific order, the opposite
-        // of how the LocalizedNameGenerator provides them.
-
-        Collections.reverse(localizations);
+        List<Resource> localizations = resourceLocator.locateMessageCatalog(propertiesResource, selector);
 
         // Localizations are now in least-specific to most-specific order.
 
-        Map<String, String> previous = findBundleProperties(bundle.getParent(), locale);
+        Map<String, String> previous = findBundleProperties(bundle.getParent(), selector);
 
-        for (Resource localization : localizations)
+        for (Resource localization : F.flow(localizations).reverse())
         {
             Map<String, String> rawProperties = getRawProperties(localization);
 
             // Woould be nice to write into the cookedProperties cache here,
-            // but we can't because we don't know the locale part of the MultiKey.
+            // but we can't because we don't know the selector part of the MultiKey.
 
             previous = extend(previous, rawProperties);
         }

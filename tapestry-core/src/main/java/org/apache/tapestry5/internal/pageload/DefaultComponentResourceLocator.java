@@ -14,7 +14,12 @@
 
 package org.apache.tapestry5.internal.pageload;
 
+import java.util.List;
+
+import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.util.LocalizedNameGenerator;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
@@ -35,6 +40,19 @@ public class DefaultComponentResourceLocator implements ComponentResourceLocator
         // ComponentTemplateLocator command chain. That may be removed in 5.4.
 
         return componentTemplateLocator.locateTemplate(model, selector.locale);
+    }
+
+    public List<Resource> locateMessageCatalog(final Resource baseResource, ComponentResourceSelector selector)
+    {
+        String baseName = baseResource.getFile();
+
+        return F.flow(new LocalizedNameGenerator(baseName, selector.locale)).map(new Mapper<String, Resource>()
+        {
+            public Resource map(String element)
+            {
+                return baseResource.forFile(element);
+            }
+        }).toList();
     }
 
 }

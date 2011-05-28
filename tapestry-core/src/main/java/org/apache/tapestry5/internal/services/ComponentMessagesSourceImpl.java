@@ -32,6 +32,7 @@ import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.UpdateListener;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 import org.apache.tapestry5.services.messages.PropertiesFileParser;
+import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
 public class ComponentMessagesSourceImpl implements ComponentMessagesSource, UpdateListener
@@ -72,21 +73,22 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
 
     public ComponentMessagesSourceImpl(@Symbol(SymbolConstants.PRODUCTION_MODE)
     boolean productionMode, List<Resource> appCatalogResources, PropertiesFileParser parser,
-            ClasspathURLConverter classpathURLConverter)
+            ComponentResourceLocator resourceLocator, ClasspathURLConverter classpathURLConverter)
     {
-        this(productionMode, appCatalogResources, parser, new URLChangeTracker(classpathURLConverter));
+        this(productionMode, appCatalogResources, resourceLocator, parser, new URLChangeTracker(classpathURLConverter));
     }
 
-    ComponentMessagesSourceImpl(boolean productionMode, Resource appCatalogResource, PropertiesFileParser parser,
-            URLChangeTracker tracker)
+    ComponentMessagesSourceImpl(boolean productionMode, Resource appCatalogResource,
+            ComponentResourceLocator resourceLocator, PropertiesFileParser parser, URLChangeTracker tracker)
     {
-        this(productionMode, Arrays.asList(appCatalogResource), parser, tracker);
+        this(productionMode, Arrays.asList(appCatalogResource), resourceLocator, parser, tracker);
     }
 
     ComponentMessagesSourceImpl(boolean productionMode, List<Resource> appCatalogResources,
-            PropertiesFileParser parser, URLChangeTracker tracker)
+            ComponentResourceLocator resourceLocator, PropertiesFileParser parser, URLChangeTracker tracker)
     {
-        messagesSource = new MessagesSourceImpl(productionMode, productionMode ? null : tracker, parser);
+        messagesSource = new MessagesSourceImpl(productionMode, productionMode ? null : tracker, resourceLocator,
+                parser);
 
         appCatalogBundle = createAppCatalogBundle(appCatalogResources);
     }
@@ -98,19 +100,19 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
 
     public Messages getMessages(ComponentModel componentModel, Locale locale)
     {
-        MessagesBundle bundle = new ComponentModelBundle(componentModel);
-
-        return messagesSource.getMessages(bundle, locale);
+        return getMessages(componentModel, new ComponentResourceSelector(locale));
     }
 
     public Messages getMessages(ComponentModel componentModel, ComponentResourceSelector selector)
     {
-        return getMessages(componentModel, selector.locale);
+        MessagesBundle bundle = new ComponentModelBundle(componentModel);
+
+        return messagesSource.getMessages(bundle, selector);
     }
 
     public Messages getApplicationCatalog(Locale locale)
     {
-        return messagesSource.getMessages(appCatalogBundle, locale);
+        return messagesSource.getMessages(appCatalogBundle, new ComponentResourceSelector(locale));
     }
 
     private MessagesBundle createAppCatalogBundle(List<Resource> resources)

@@ -14,7 +14,10 @@
 
 package org.apache.tapestry5.services.pageload;
 
+import java.util.List;
+
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.util.LocalizedNameGenerator;
 import org.apache.tapestry5.model.ComponentModel;
 
 /**
@@ -39,4 +42,19 @@ public interface ComponentResourceLocator
      * @return Resource for component template, or null if not found
      */
     Resource locateTemplate(ComponentModel model, ComponentResourceSelector selector);
+
+    /**
+     * Locates the properties files that make up the message catalog for a specific component. The properties
+     * files are returned in order of specificity: the properties provided by the first resource override
+     * properties in later resources. Only resources specific to the class associated with the model
+     * should be concerned (message inheritance from base classes is handled by Tapestry).
+     * 
+     * @param baseResource
+     *            the resource for the base component properties file (i.e., with the ".properties" file extension)
+     * @param selector
+     *            defined the locale and other axes used to locate individual properties files
+     * @return list of properties file Resources
+     * @see LocalizedNameGenerator
+     */
+    List<Resource> locateMessageCatalog(Resource baseResource, ComponentResourceSelector selector);
 }

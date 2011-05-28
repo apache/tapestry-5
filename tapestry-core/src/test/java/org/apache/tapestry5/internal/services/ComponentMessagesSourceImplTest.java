@@ -28,6 +28,9 @@ import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
+import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -48,8 +51,24 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
     private final Resource simpleComponentResource = new ClasspathResource(
             "org/apache/tapestry5/internal/services/SimpleComponent.class");
 
-    private final ComponentMessagesSourceImpl source = new ComponentMessagesSourceImpl(false,
-            simpleComponentResource.forFile("AppCatalog.properties"), new PropertiesFileParserImpl(), tracker);
+    private ComponentMessagesSourceImpl source;
+
+    private ComponentResourceLocator resourceLocator;
+
+    @BeforeClass
+    public void setup()
+    {
+        resourceLocator = getService(ComponentResourceLocator.class);
+
+        source = new ComponentMessagesSourceImpl(false, simpleComponentResource.forFile("AppCatalog.properties"),
+                resourceLocator, new PropertiesFileParserImpl(), tracker);
+    }
+
+    @AfterClass
+    public void cleanup()
+    {
+        source = null;
+    }
 
     @Test
     public void simple_component()
@@ -212,7 +231,7 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
         List<Resource> resources = Arrays.asList(resource);
 
         ComponentMessagesSource source = new ComponentMessagesSourceImpl(true, resources,
-                new PropertiesFileParserImpl(), converter);
+                new PropertiesFileParserImpl(), resourceLocator, converter);
 
         Messages messages = source.getMessages(model, Locale.ENGLISH);
 

@@ -24,7 +24,7 @@ class SkinningTests extends TapestryCoreTestCase
 {
     @Test
     void template_selection() {
-        openLinks "reset session", "Fred Client"
+        openLinks "reset session"
 
         assertTitle "Default Layout"
 
@@ -35,5 +35,29 @@ class SkinningTests extends TapestryCoreTestCase
         clickAndWait "French"
 
         assertTitle "Barney Layout (French)"
+    }
+
+    @Test
+    void application_catalog_overrides() {
+        openLinks "reset session"
+
+        assertText "app", "Application catalog message"
+        assertText "app-over", "Overridable app catalog message"
+
+        clickAndWait "Barney Client"
+
+        assertText "app-over", "Overriden app catalog message (Barney)"
+    }
+
+    @Test
+    void component_catalog_overrides() {
+        openLinks "reset session"
+
+        assertText "page", "Page catalog message"
+        assertText "page-over", "Overridable page catalog message"
+
+        clickAndWait "Barney Client"
+
+        assertText "page-over", "Overridden page catalog message (Barney)"
     }
 }
