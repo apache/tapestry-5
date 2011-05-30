@@ -1609,6 +1609,19 @@ public class IntegrationTest extends IOCInternalTestCase
     }
 
     @Test
+    public void decorate_by_annotation_matched_by_id()
+    {
+        Registry r = buildRegistry(DecorateByMarkerModule2.class);
+
+        Greeter green = r.getService("RedGreeter", Greeter.class);
+
+        assertEquals(green.getGreeting(), "Decorated by beta[Decorated by alpha[Red]]");
+
+        r.shutdown();
+
+    }
+
+    @Test
     public void startup_inside_module()
     {
         Registry r = buildRegistry(StartupModule2.class);
