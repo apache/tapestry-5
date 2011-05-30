@@ -23,29 +23,9 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Locale;
 
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.Configuration;
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.LoggerSource;
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.MessageFormatter;
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.ObjectCreator;
-import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.ObjectProvider;
-import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
-import org.apache.tapestry5.ioc.Registry;
-import org.apache.tapestry5.ioc.RegistryBuilder;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.ServiceBuilderResources;
-import org.apache.tapestry5.ioc.ServiceDecorator;
-import org.apache.tapestry5.ioc.ServiceResources;
+import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.IntermediateType;
-import org.apache.tapestry5.ioc.def.ContributionDef;
-import org.apache.tapestry5.ioc.def.DecoratorDef;
-import org.apache.tapestry5.ioc.def.ModuleDef;
-import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.def.*;
 import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry5.ioc.services.MasterObjectProvider;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
@@ -133,6 +113,21 @@ public class IOCTestCase extends TestBase
         return newMock(DecoratorDef.class);
     }
 
+    protected final DecoratorDef2 mockDecoratorDef2()
+    {
+        return newMock(DecoratorDef2.class);
+    }
+
+    protected final AdvisorDef mockAdvisorDef()
+    {
+        return newMock(AdvisorDef.class);
+    }
+
+    protected final AdvisorDef2 mockAdvisorDef2()
+    {
+        return newMock(AdvisorDef2.class);
+    }
+
     protected final Location mockLocation()
     {
         return newMock(Location.class);
@@ -167,6 +162,11 @@ public class IOCTestCase extends TestBase
     protected final ModuleDef mockModuleDef()
     {
         return newMock(ModuleDef.class);
+    }
+
+    protected final ModuleDef2 mockModuleDef2()
+    {
+        return newMock(ModuleDef2.class);
     }
 
     protected final ObjectCreator mockObjectCreator()
@@ -365,6 +365,11 @@ public class IOCTestCase extends TestBase
     protected final void train_matches(DecoratorDef decoratorDef, ServiceDef serviceDef, boolean matches)
     {
         expect(decoratorDef.matches(serviceDef)).andReturn(matches);
+    }
+
+    protected final void train_matches(AdvisorDef advisorDef, ServiceDef serviceDef, boolean matches)
+    {
+        expect(advisorDef.matches(serviceDef)).andReturn(matches);
     }
 
     protected final <T> void train_provide(ObjectProvider provider, Class<T> objectType,

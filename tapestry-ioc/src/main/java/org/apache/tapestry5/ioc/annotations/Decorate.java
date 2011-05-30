@@ -36,7 +36,7 @@ public @interface Decorate
     /**
      * Type of the service to decorate.
      */
-    Class serviceInterface();
+    Class serviceInterface() default Object.class;
    
     /**
      * Id of the decorator.

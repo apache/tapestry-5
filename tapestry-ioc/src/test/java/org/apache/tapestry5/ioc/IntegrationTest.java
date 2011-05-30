@@ -25,15 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.tapestry5.ioc.internal.AdviseByMarkerModule;
-import org.apache.tapestry5.ioc.internal.AlphabetModule;
-import org.apache.tapestry5.ioc.internal.AlphabetModule2;
-import org.apache.tapestry5.ioc.internal.DecorateByMarkerModule;
-import org.apache.tapestry5.ioc.internal.ExceptionInConstructorModule;
-import org.apache.tapestry5.ioc.internal.ExtraPublicConstructorsModule;
-import org.apache.tapestry5.ioc.internal.IOCInternalTestCase;
-import org.apache.tapestry5.ioc.internal.PrivateConstructorModule;
-import org.apache.tapestry5.ioc.internal.UpcaseService;
+import org.apache.tapestry5.ioc.internal.*;
 import org.apache.tapestry5.ioc.internal.services.SimpleAnnotation;
 import org.apache.tapestry5.ioc.internal.services.StartupModule2;
 import org.apache.tapestry5.ioc.services.Builtin;
@@ -1572,6 +1564,19 @@ public class IntegrationTest extends IOCInternalTestCase
         Greeter red = r.getService("RedGreeter", Greeter.class);
 
         assertEquals(red.getGreeting(), "delta[Red]");
+
+        r.shutdown();
+
+    }
+
+    @Test
+    public void advise_by_annotation_matched_by_id()
+    {
+        Registry r = buildRegistry(AdviseByMarkerModule2.class);
+
+        Greeter green = r.getService("RedGreeter", Greeter.class);
+
+        assertEquals(green.getGreeting(), "beta[alpha[Red]]");
 
         r.shutdown();
 

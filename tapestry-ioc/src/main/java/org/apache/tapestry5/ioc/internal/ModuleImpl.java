@@ -28,15 +28,7 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.tapestry5.ioc.AdvisorDef;
-import org.apache.tapestry5.ioc.Invokable;
-import org.apache.tapestry5.ioc.Markable;
-import org.apache.tapestry5.ioc.ObjectCreator;
-import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.ioc.ServiceBuilderResources;
-import org.apache.tapestry5.ioc.ServiceLifecycle2;
-import org.apache.tapestry5.ioc.ServiceResources;
+import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.ContributionDef2;
@@ -569,9 +561,10 @@ public class ModuleImpl implements Module
 
     private boolean markerMatched(ServiceDef serviceDef, Markable markable)
     {
-        if (!serviceDef.getServiceInterface().equals(markable.getServiceInterface()))
+        final Class markableInterface = markable.getServiceInterface();
+
+        if (markableInterface == null || !markableInterface.isAssignableFrom(serviceDef.getServiceInterface()))
             return false;
-        ;
 
         Set<Class> contributionMarkers = CollectionFactory.newSet(markable.getMarkers());
 
@@ -591,6 +584,12 @@ public class ModuleImpl implements Module
         // service, in any module, as a marker annotation.
 
         contributionMarkers.retainAll(registry.getMarkerAnnotations());
+
+        //@Advise and @Decorate default to Object.class service interface.
+        //If @Match is present, no marker annotations are needed.
+        //In such a case an empty contribution marker list  should be ignored.
+        if (markableInterface == Object.class && contributionMarkers.isEmpty())
+            return false;
 
         return serviceDef.getMarkers().containsAll(contributionMarkers);
     }

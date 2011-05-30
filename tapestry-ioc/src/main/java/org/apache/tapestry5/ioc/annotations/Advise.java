@@ -36,7 +36,7 @@ public @interface Advise
     /**
      * Type of the service to advise.
      */
-    Class serviceInterface();
+    Class serviceInterface() default Object.class;
    
     /**
      * Id of the advisor.

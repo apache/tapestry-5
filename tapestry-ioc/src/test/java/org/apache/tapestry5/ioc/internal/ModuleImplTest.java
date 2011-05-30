@@ -14,11 +14,9 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.Registry;
-import org.apache.tapestry5.ioc.RegistryBuilder;
-import org.apache.tapestry5.ioc.def.DecoratorDef;
-import org.apache.tapestry5.ioc.def.ModuleDef;
-import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.def.*;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
@@ -62,8 +60,8 @@ public class ModuleImplTest extends IOCInternalTestCase
     {
         InternalRegistry registry = mockInternalRegistry();
         ServiceDef serviceDef = mockServiceDef();
-        DecoratorDef def1 = mockDecoratorDef();
-        DecoratorDef def2 = mockDecoratorDef();
+        DecoratorDef2 def1 =newMock(DecoratorDef2.class);
+        DecoratorDef def2 = newMock(DecoratorDef2.class);
         Set<DecoratorDef> rawDefs = newMock(Set.class);
         Logger logger = mockLogger();
 
@@ -77,6 +75,7 @@ public class ModuleImplTest extends IOCInternalTestCase
         expect(rawDefs.iterator()).andReturn(Arrays.asList(def1, def2).iterator());
 
         train_matches(def1, serviceDef, false);
+        expect(def1.getServiceInterface()).andReturn(ToStringService.class);
         expect(serviceDef.getServiceInterface()).andReturn(Runnable.class);
         train_matches(def2, serviceDef, true);
 
@@ -88,6 +87,214 @@ public class ModuleImplTest extends IOCInternalTestCase
 
         assertEquals(defs.size(), 1);
         assertTrue(defs.contains(def2));
+
+        verify();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void find_decorator_defs_for_service_markers_do_not_match()
+    {
+        InternalRegistry registry = mockInternalRegistry();
+        ServiceDef serviceDef = mockServiceDef();
+        DecoratorDef2 def1 =newMock(DecoratorDef2.class);
+        DecoratorDef def2 = newMock(DecoratorDef2.class);
+        Set<DecoratorDef> rawDefs = newMock(Set.class);
+        Set<Class> def1Markers = CollectionFactory.newSet((Class)BlueMarker.class);
+        Set<Class> serviceDefMarkers =CollectionFactory.newSet((Class)RedMarker.class);
+        Set<Class> allMarkers = CollectionFactory.newSet((Class)BlueMarker.class, (Class)BlueMarker.class);
+        Logger logger = mockLogger();
+
+        ModuleDef moduleDef = mockModuleDef();
+
+        Set<String> serviceIds = Collections.emptySet();
+        expect(moduleDef.getServiceIds()).andReturn(serviceIds);
+
+        expect(moduleDef.getDecoratorDefs()).andReturn(rawDefs);
+
+        expect(rawDefs.iterator()).andReturn(Arrays.asList(def1, def2).iterator());
+
+        train_matches(def1, serviceDef, false);
+        expect(def1.getServiceInterface()).andReturn(Object.class);
+        expect(serviceDef.getServiceInterface()).andReturn(Runnable.class);
+        expect(def1.getMarkers()).andReturn(def1Markers);
+        expect(registry.getMarkerAnnotations()).andReturn(allMarkers);
+        expect(serviceDef.getMarkers()).andReturn(serviceDefMarkers);
+        train_matches(def2, serviceDef, true);
+
+        replay();
+
+        Module module = new ModuleImpl(registry, null, moduleDef, null, logger);
+
+        Set<DecoratorDef> defs = module.findMatchingDecoratorDefs(serviceDef);
+
+        assertEquals(defs.size(), 1);
+        assertTrue(defs.contains(def2));
+
+        verify();
+    }
+
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void find_advisor_defs_for_service()
+    {
+        InternalRegistry registry = mockInternalRegistry();
+        ServiceDef serviceDef = mockServiceDef();
+        AdvisorDef2 def1 = mockAdvisorDef2();
+        AdvisorDef2 def2 = mockAdvisorDef2();
+        Set<AdvisorDef> rawDefs = newMock(Set.class);
+        Logger logger = mockLogger();
+
+        ModuleDef2 moduleDef = mockModuleDef2();
+
+        Set<String> serviceIds = Collections.emptySet();
+        expect(moduleDef.getServiceIds()).andReturn(serviceIds);
+
+        expect(moduleDef.getAdvisorDefs()).andReturn(rawDefs);
+
+        expect(rawDefs.iterator()).andReturn(Arrays.<AdvisorDef>asList(def1, def2).iterator());
+
+        train_matches(def1, serviceDef, false);
+        expect(def1.getServiceInterface()).andReturn(ToStringService.class);
+        expect(serviceDef.getServiceInterface()).andReturn(Runnable.class);
+        train_matches(def2, serviceDef, true);
+
+        replay();
+
+        Module module = new ModuleImpl(registry, null, moduleDef, null, logger);
+
+        Set<AdvisorDef> defs = module.findMatchingServiceAdvisors(serviceDef);
+
+        assertEquals(defs.size(), 1);
+        assertTrue(defs.contains(def2));
+
+        verify();
+    }
+
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void find_advisor_defs_for_service_markers_do_not_match()
+    {
+        InternalRegistry registry = mockInternalRegistry();
+        ServiceDef serviceDef = mockServiceDef();
+        AdvisorDef2 def1 = mockAdvisorDef2();
+        AdvisorDef2 def2 = mockAdvisorDef2();
+        Set<AdvisorDef> rawDefs = newMock(Set.class);
+        Set<Class> def1Markers = CollectionFactory.newSet((Class)BlueMarker.class);
+        Set<Class> serviceDefMarkers =CollectionFactory.newSet((Class)RedMarker.class);
+        Set<Class> allMarkers = CollectionFactory.newSet((Class)BlueMarker.class, (Class)BlueMarker.class);
+        Logger logger = mockLogger();
+
+        ModuleDef2 moduleDef = mockModuleDef2();
+
+        Set<String> serviceIds = Collections.emptySet();
+        expect(moduleDef.getServiceIds()).andReturn(serviceIds);
+
+        expect(moduleDef.getAdvisorDefs()).andReturn(rawDefs);
+
+        expect(rawDefs.iterator()).andReturn(Arrays.<AdvisorDef>asList(def1, def2).iterator());
+
+        train_matches(def1, serviceDef, false);
+        expect(def1.getServiceInterface()).andReturn(Object.class);
+        expect(serviceDef.getServiceInterface()).andReturn(Runnable.class);
+        expect(def1.getMarkers()).andReturn(def1Markers);
+        expect(registry.getMarkerAnnotations()).andReturn(allMarkers);
+        expect(serviceDef.getMarkers()).andReturn(serviceDefMarkers);
+
+        train_matches(def2, serviceDef, true);
+
+        replay();
+
+        Module module = new ModuleImpl(registry, null, moduleDef, null, logger);
+
+        Set<AdvisorDef> defs = module.findMatchingServiceAdvisors(serviceDef);
+
+        assertEquals(defs.size(), 1);
+        assertTrue(defs.contains(def2));
+
+        verify();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void find_advisor_defs_for_service_markers_do_match()
+    {
+        InternalRegistry registry = mockInternalRegistry();
+        ServiceDef serviceDef = mockServiceDef();
+        AdvisorDef2 def1 = mockAdvisorDef2();
+        AdvisorDef2 def2 = mockAdvisorDef2();
+        Set<AdvisorDef> rawDefs = newMock(Set.class);
+        Set<Class> def1Markers = CollectionFactory.newSet((Class)BlueMarker.class);
+        Set<Class> serviceDefMarkers =CollectionFactory.newSet((Class)BlueMarker.class);
+        Set<Class> allMarkers = CollectionFactory.newSet((Class)BlueMarker.class);
+        Logger logger = mockLogger();
+
+        ModuleDef2 moduleDef = mockModuleDef2();
+
+        Set<String> serviceIds = Collections.emptySet();
+        expect(moduleDef.getServiceIds()).andReturn(serviceIds);
+
+        expect(moduleDef.getAdvisorDefs()).andReturn(rawDefs);
+
+        expect(rawDefs.iterator()).andReturn(Arrays.<AdvisorDef>asList(def1, def2).iterator());
+
+        train_matches(def1, serviceDef, false);
+        expect(def1.getServiceInterface()).andReturn(Object.class);
+        expect(serviceDef.getServiceInterface()).andReturn(Runnable.class);
+        expect(def1.getMarkers()).andReturn(def1Markers);
+        expect(registry.getMarkerAnnotations()).andReturn(allMarkers);
+        expect(serviceDef.getMarkers()).andReturn(serviceDefMarkers);
+
+        train_matches(def2, serviceDef, true);
+
+        replay();
+
+        Module module = new ModuleImpl(registry, null, moduleDef, null, logger);
+
+        Set<AdvisorDef> defs = module.findMatchingServiceAdvisors(serviceDef);
+
+        assertEquals(defs.size(), 2);
+        assertTrue(defs.contains(def1));
+        assertTrue(defs.contains(def2));
+
+        verify();
+    }
+
+
+     @SuppressWarnings("unchecked")
+    @Test
+    public void no_advisor_def_when_service_interface_is_default_and_no_markers()
+    {
+        InternalRegistry registry = mockInternalRegistry();
+        ServiceDef serviceDef = mockServiceDef();
+        AdvisorDef2 def = mockAdvisorDef2();
+        Set<AdvisorDef> rawDefs = newMock(Set.class);
+        Logger logger = mockLogger();
+
+        ModuleDef2 moduleDef = mockModuleDef2();
+
+        Set<String> serviceIds = Collections.emptySet();
+        expect(moduleDef.getServiceIds()).andReturn(serviceIds);
+
+        expect(moduleDef.getAdvisorDefs()).andReturn(rawDefs);
+
+        expect(rawDefs.iterator()).andReturn(Arrays.<AdvisorDef>asList(def).iterator());
+
+        train_matches(def, serviceDef, false);
+        expect(def.getServiceInterface()).andReturn(Object.class);
+        expect(serviceDef.getServiceInterface()).andReturn(Runnable.class);
+        expect(def.getMarkers()).andReturn(CollectionFactory.<Class>newSet());
+        expect(registry.getMarkerAnnotations()).andReturn(CollectionFactory.<Class>newSet());
+
+        replay();
+
+        Module module = new ModuleImpl(registry, null, moduleDef, null, logger);
+
+        Set<AdvisorDef> defs = module.findMatchingServiceAdvisors(serviceDef);
+
+        assertEquals(defs.size(), 0);
 
         verify();
     }

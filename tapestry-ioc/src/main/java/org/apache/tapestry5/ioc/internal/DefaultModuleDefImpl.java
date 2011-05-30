@@ -326,23 +326,20 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
         Set<Class> markers = extractMarkers(method, Decorate.class);
 
-        DecoratorDef def = new DecoratorDefImpl(method, extractPatterns(annotation, decoratorId, method),
+        DecoratorDef def = new DecoratorDefImpl(method, extractPatterns(decoratorId, method),
                 extractConstraints(method), proxyFactory, decoratorId, serviceInterface, markers);
 
         decoratorDefs.put(decoratorId, def);
     }
 
-    private <T extends Annotation> String[] extractPatterns(T annotation, String id, Method method)
+    private <T extends Annotation> String[] extractPatterns(String id, Method method)
     {
-        if (annotation != null)
-            return new String[]
-            {};
-
         Match match = method.getAnnotation(Match.class);
 
         if (match == null)
-            return new String[]
-            { id };
+        {
+            return new String[] { id };
+        }
 
         return match.value();
     }
@@ -393,7 +390,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
         Set<Class> markers = extractMarkers(method, Advise.class);
 
-        AdvisorDef def = new AdvisorDefImpl(method, extractPatterns(annotation, advisorId, method),
+        AdvisorDef def = new AdvisorDefImpl(method, extractPatterns(advisorId, method),
                 extractConstraints(method), proxyFactory, advisorId, serviceInterface, markers);
 
         advisorDefs.put(advisorId, def);
