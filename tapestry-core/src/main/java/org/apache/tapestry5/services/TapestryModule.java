@@ -200,6 +200,7 @@ import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.services.CoercionTuple;
 import org.apache.tapestry5.ioc.services.LazyAdvisor;
 import org.apache.tapestry5.ioc.services.MasterObjectProvider;
+import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.PipelineBuilder;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
@@ -636,6 +637,8 @@ public final class TapestryModule
      * <dd>Generates accessor methods if {@link org.apache.tapestry5.annotations.Property} annotation is present</dd> *
      * <dt>Import</dt>
      * <dd>Supports the {@link Import} annotation</dd>
+     * <dt>UnclaimedField</dt>
+     * <dd>Manages unclaimed fields, storing their value in a {@link PerThreadValue}</dd>
      * </ul>
      */
     @Contribute(ComponentClassTransformWorker2.class)
@@ -643,6 +646,12 @@ public final class TapestryModule
     {
         configuration.add("Property", new PropertyWorker());
         configuration.addInstance("Import", ImportWorker.class, "after:SetupRender");
+
+        // This one is always last. Any additional private fields that aren't
+        // annotated will
+        // be converted to clear out at the end of the request.
+
+        configuration.addInstance("UnclaimedField", UnclaimedFieldWorker.class, "after:*");
     }
 
     /**
@@ -675,8 +684,6 @@ public final class TapestryModule
      * <dd>Checks for meta data annotations and adds it to the component model</dd>
      * <dt>ApplicationState</dt>
      * <dd>Converts fields that reference application state objects
-     * <dt>UnclaimedField</dt>
-     * <dd>Identifies unclaimed fields and resets them to null/0/false at the end of the request</dd>
      * <dt>RenderCommand</dt>
      * <dd>Ensures all components also implement {@link org.apache.tapestry5.runtime.RenderCommand}</dd>
      * <dt>RenderPhase</dt>
@@ -762,12 +769,6 @@ public final class TapestryModule
         configuration.addInstance("Log", LogWorker.class);
 
         configuration.addInstance("PageReset", PageResetAnnotationWorker.class);
-
-        // This one is always last. Any additional private fields that aren't
-        // annotated will
-        // be converted to clear out at the end of the request.
-
-        configuration.addInstance("UnclaimedField", UnclaimedFieldWorker.class, "after:*");
 
         configuration.add("PageActivationContext", new PageActivationContextWorker(), "after:OnEvent");
 

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,26 +19,28 @@ import java.lang.reflect.Modifier;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
-import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.ComponentValueProvider;
-import org.apache.tapestry5.services.TransformField;
+import org.apache.tapestry5.plastic.ComputedValue;
+import org.apache.tapestry5.plastic.FieldConduit;
+import org.apache.tapestry5.plastic.InstanceContext;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticField;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 
 /**
  * Designed to be just about the last worker in the pipeline. Its job is to convert each otherwise unclaimed
  * field into a value stored in the {@link PerthreadManager}.
  */
-public final class UnclaimedFieldWorker implements ComponentClassTransformWorker
+public final class UnclaimedFieldWorker implements ComponentClassTransformWorker2
 {
     private final PerthreadManager perThreadManager;
 
     private final ComponentClassCache classCache;
 
-    static class UnclaimedFieldConduit implements FieldValueConduit
+    static class UnclaimedFieldConduit implements FieldConduit<Object>
     {
         private final InternalComponentResources resources;
 
@@ -56,12 +58,12 @@ public final class UnclaimedFieldWorker implements ComponentClassTransformWorker
             this.fieldDefaultValue = fieldDefaultValue;
         }
 
-        public Object get()
+        public Object get(Object instance, InstanceContext context)
         {
             return fieldValue.get(fieldDefaultValue);
         }
 
-        public void set(Object newValue)
+        public void set(Object instance, InstanceContext context, Object newValue)
         {
             fieldValue.set(newValue);
 
@@ -71,7 +73,6 @@ public final class UnclaimedFieldWorker implements ComponentClassTransformWorker
             if (!resources.isLoaded())
                 fieldDefaultValue = newValue;
         }
-
     }
 
     public UnclaimedFieldWorker(ComponentClassCache classCache, PerthreadManager perThreadManager)
@@ -80,36 +81,36 @@ public final class UnclaimedFieldWorker implements ComponentClassTransformWorker
         this.perThreadManager = perThreadManager;
     }
 
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-        for (TransformField field : transformation.matchUnclaimedFields())
+        for (PlasticField field : plasticClass.getUnclaimedFields())
         {
             transformField(field);
         }
     }
 
-    private void transformField(TransformField field)
+    private void transformField(PlasticField field)
     {
         int modifiers = field.getModifiers();
 
         if (Modifier.isFinal(modifiers) || Modifier.isStatic(modifiers))
             return;
 
-        ComponentValueProvider<FieldValueConduit> provider = createFieldValueConduitProvider(field);
+        ComputedValue<FieldConduit<?>> computed = createComputedFieldConduit(field);
 
-        field.replaceAccess(provider);
+        field.setComputedConduit(computed);
     }
 
-    private ComponentValueProvider<FieldValueConduit> createFieldValueConduitProvider(TransformField field)
+    private ComputedValue<FieldConduit<?>> createComputedFieldConduit(PlasticField field)
     {
-        final String fieldName = field.getName();
-        final String fieldType = field.getType();
+        final String fieldType = field.getTypeName();
 
-        return new ComponentValueProvider<FieldValueConduit>()
+        return new ComputedValue<FieldConduit<?>>()
         {
-            public FieldValueConduit get(ComponentResources resources)
+            public FieldConduit<?> get(InstanceContext context)
             {
                 Object fieldDefaultValue = classCache.defaultValueForType(fieldType);
+                ComponentResources resources = context.get(ComponentResources.class);
 
                 return new UnclaimedFieldConduit((InternalComponentResources) resources,
                         perThreadManager.createValue(), fieldDefaultValue);

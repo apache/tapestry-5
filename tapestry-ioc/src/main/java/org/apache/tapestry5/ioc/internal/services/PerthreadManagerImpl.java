@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc.internal.services;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -48,6 +49,8 @@ public class PerthreadManagerImpl implements PerthreadManager
     private final Logger logger;
 
     private final MapHolder holder = new MapHolder();
+
+    private final AtomicInteger uuidGenerator = new AtomicInteger();
 
     public PerthreadManagerImpl(Logger logger)
     {
@@ -181,7 +184,7 @@ public class PerthreadManagerImpl implements PerthreadManager
 
     public <T> PerThreadValue<T> createValue()
     {
-        return createValue(InternalUtils.nextUUID());
+        return createValue(uuidGenerator.getAndIncrement());
     }
 
     public void run(Runnable runnable)
