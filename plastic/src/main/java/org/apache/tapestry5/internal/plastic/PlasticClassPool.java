@@ -65,7 +65,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
         protected TypeCategory convert(String typeName)
         {
-            ClassNode cn = constructClassNode(typeName, true);
+            ClassNode cn = constructClassNode(typeName);
 
             return Modifier.isInterface(cn.access) ? TypeCategory.INTERFACE : TypeCategory.CLASS;
         }
@@ -345,7 +345,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
     {
         assert PlasticInternalUtils.isNonBlank(className);
 
-        ClassNode classNode = constructClassNode(className, true);
+        ClassNode classNode = constructClassNode(className);
 
         String baseClassName = PlasticInternalUtils.toClassName(classNode.superName);
 
@@ -375,11 +375,9 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
      * 
      * @param className
      *            fully qualified class name
-     * @param mustExist
-     *            TODO
      * @return corresponding ClassNode
      */
-    public ClassNode constructClassNode(String className, boolean mustExist)
+    public ClassNode constructClassNode(String className)
     {
         byte[] bytecode = readBytecode(className);
 
