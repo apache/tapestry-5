@@ -110,10 +110,9 @@ public final class UnclaimedFieldWorker implements ComponentClassTransformWorker
             public FieldConduit<?> get(InstanceContext context)
             {
                 Object fieldDefaultValue = classCache.defaultValueForType(fieldType);
-                ComponentResources resources = context.get(ComponentResources.class);
+                InternalComponentResources resources = context.get(InternalComponentResources.class);
 
-                return new UnclaimedFieldConduit((InternalComponentResources) resources,
-                        perThreadManager.createValue(), fieldDefaultValue);
+                return new UnclaimedFieldConduit(resources, perThreadManager.createValue(), fieldDefaultValue);
             }
         };
     }
