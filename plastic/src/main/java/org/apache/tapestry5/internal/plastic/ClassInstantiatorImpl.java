@@ -31,22 +31,26 @@ public class ClassInstantiatorImpl<T> implements ClassInstantiator<T>, InstanceC
 
     private final StaticContext staticContext;
 
-    // Keeping a whole HashMap around for just one or two values feels wasteful, perhaps
-    // come up with something else later.
+    private final ClassInstantiatorImpl<T> parent;
 
-    private final Map instanceContextMap;
+    private final Class withType;
+
+    private final Object withValue;
 
     ClassInstantiatorImpl(Class<T> clazz, Constructor ctor, StaticContext staticContext)
     {
-        this(clazz, ctor, staticContext, null);
+        this(clazz, ctor, staticContext, null, null, null);
     }
 
-    private ClassInstantiatorImpl(Class clazz, Constructor ctor, StaticContext staticContext, Map instanceContextMap)
+    private <W> ClassInstantiatorImpl(Class clazz, Constructor ctor, StaticContext staticContext,
+            ClassInstantiatorImpl<T> parent, Class<W> withType, W withValue)
     {
         this.clazz = clazz;
         this.ctor = ctor;
         this.staticContext = staticContext;
-        this.instanceContextMap = instanceContextMap;
+        this.parent = parent;
+        this.withType = withType;
+        this.withValue = withValue;
     }
 
     public <V> ClassInstantiator<T> with(Class<V> valueType, V instanceContextValue)
@@ -54,22 +58,21 @@ public class ClassInstantiatorImpl<T> implements ClassInstantiator<T>, InstanceC
         assert valueType != null;
         assert instanceContextValue != null;
 
-        Object existing = getFromMap(valueType);
+        Object existing = find(valueType);
 
         if (existing != null)
             throw new IllegalStateException(String.format(
                     "An instance context value of type %s has already been added.", valueType.getName()));
 
-        Map newMap = instanceContextMap == null ? new HashMap() : new HashMap(instanceContextMap);
-
-        newMap.put(valueType, instanceContextValue);
-
-        return new ClassInstantiatorImpl(clazz, ctor, staticContext, newMap);
+        // A little optimization: the new CI doesn't need this CI as a parent, if this CI has no type/value pair
+        
+        return new ClassInstantiatorImpl(clazz, ctor, staticContext, withType == null ? null : this, valueType,
+                instanceContextValue);
     }
 
-    public <T> T get(Class<T> valueType)
+    public <V> V get(Class<V> valueType)
     {
-        T result = getFromMap(valueType);
+        V result = find(valueType);
 
         if (result == null)
             throw new IllegalArgumentException(String.format(
@@ -78,9 +81,18 @@ public class ClassInstantiatorImpl<T> implements ClassInstantiator<T>, InstanceC
         return result;
     }
 
-    private <T> T getFromMap(Class<T> valueType)
+    private <V> V find(Class<V> valueType)
     {
-        return instanceContextMap == null ? null : valueType.cast(instanceContextMap.get(valueType));
+        ClassInstantiatorImpl cursor = this;
+
+        while (cursor != null)
+        {
+            if (cursor.withType == valueType) { return valueType.cast(cursor.withValue); }
+
+            cursor = cursor.parent;
+        }
+
+        return null;
     }
 
     public T newInstance()
