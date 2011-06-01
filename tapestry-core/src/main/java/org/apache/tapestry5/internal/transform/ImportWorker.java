@@ -21,16 +21,18 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.func.F;
-import org.apache.tapestry5.func.Flow;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.plastic.ComputedValue;
 import org.apache.tapestry5.plastic.FieldHandle;
+import org.apache.tapestry5.plastic.InstanceContext;
 import org.apache.tapestry5.plastic.MethodAdvice;
 import org.apache.tapestry5.plastic.MethodInvocation;
 import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.plastic.PlasticMethod;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.TransformConstants;
@@ -157,12 +159,12 @@ public class ImportWorker implements ComponentClassTransformWorker2
 
         String[] expandedPaths = expandPaths(paths);
 
-        FieldHandle assetListHandle = componentClass.introduceField(Asset[].class,
-                "importedAssets_" + method.getDescription().methodName).getHandle();
+        PlasticField assetListField = componentClass.introduceField(Asset[].class,
+                "importedAssets_" + method.getDescription().methodName);
 
-        storeLocalizedAssetsAtPageLoad(componentClass, model.getBaseResource(), expandedPaths, assetListHandle);
+        initializeAssetsFromPaths(componentClass, model.getBaseResource(), expandedPaths, assetListField);
 
-        addMethodAssetOperationAdvice(method, assetListHandle, operation);
+        addMethodAssetOperationAdvice(method, assetListField.getHandle(), operation);
     }
 
     private String[] expandPaths(String[] paths)
@@ -175,24 +177,18 @@ public class ImportWorker implements ComponentClassTransformWorker2
         return result;
     }
 
-    private void storeLocalizedAssetsAtPageLoad(PlasticClass componentClass, final Resource baseResource,
-            final String[] expandedPaths, final FieldHandle access)
+    private void initializeAssetsFromPaths(PlasticClass componentClass, final Resource baseResource,
+            final String[] expandedPaths, final PlasticField assetsField)
     {
-        MethodAdvice advice = new MethodAdvice()
+        assetsField.injectComputed(new ComputedValue<Asset[]>()
         {
-            public void advise(MethodInvocation invocation)
+            public Asset[] get(InstanceContext context)
             {
-                invocation.proceed();
+                ComponentResources resources = context.get(ComponentResources.class);
 
-                ComponentResources resources = invocation.getInstanceContext().get(ComponentResources.class);
-
-                Asset[] assets = convertPathsToAssetArray(baseResource, resources.getLocale(), expandedPaths);
-
-                access.set(invocation.getInstance(), assets);
+                return convertPathsToAssetArray(baseResource, resources.getLocale(), expandedPaths);
             }
-        };
-
-        componentClass.introduceMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_DESCRIPTION).addAdvice(advice);
+        });
     }
 
     private Asset[] convertPathsToAssetArray(final Resource baseResource, final Locale locale, String[] assetPaths)
