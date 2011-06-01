@@ -33,8 +33,8 @@ subprojects {
     }
     
     configurations {
-		provided
-        deployerJars
+      provided
+     deployerJars
     }
 
     // See http://jira.codehaus.org/browse/GRADLE-784
@@ -91,12 +91,14 @@ subprojects {
     }
 }
 
+// Specific to top-level build, not set for subprojects:
+
 configurations {
   javadoc
 }
 
 dependencies {
-  // javadoc project(':tapestry-javadoc') -- temporarily removed
+  javadoc project(':tapestry-javadoc')
 }
 
 subprojects.each { evaluationDependsOn(it.name) }
@@ -146,4 +148,4 @@ task clean(type: Delete) {
   delete buildDirName
 }
 
-task continuousIntegration(dependsOn: [subprojects.build /* , 'aggregateJavadoc' */])
+task continuousIntegration(dependsOn: [subprojects.build, 'aggregateJavadoc'])
