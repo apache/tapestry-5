@@ -91,9 +91,7 @@ public final class UnclaimedFieldWorker implements ComponentClassTransformWorker
 
     private void transformField(PlasticField field)
     {
-        int modifiers = field.getModifiers();
-
-        if (Modifier.isFinal(modifiers) || Modifier.isStatic(modifiers))
+        if (Modifier.isFinal(field.getModifiers()))
             return;
 
         ComputedValue<FieldConduit<?>> computed = createComputedFieldConduit(field);
