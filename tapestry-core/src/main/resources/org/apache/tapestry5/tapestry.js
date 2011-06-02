@@ -522,8 +522,12 @@ var Tapestry = {
 			return path;
 		}
 
-		var l = window.location;
-		return l.protocol + "//" + l.host + path;
+		if (!Tapestry.buildUrl) {
+			var l = window.location;
+			Tapestry.buildUrl = l.protocol + "//" + l.host;
+		}
+
+		return Tapestry.buildUrl + path;
 	},
 
 	stripToLastSlash : function(URL) {
