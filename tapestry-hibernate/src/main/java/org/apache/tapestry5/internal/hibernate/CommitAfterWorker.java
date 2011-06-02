@@ -17,20 +17,25 @@ package org.apache.tapestry5.internal.hibernate;
 import org.apache.tapestry5.hibernate.HibernateSessionManager;
 import org.apache.tapestry5.hibernate.annotations.CommitAfter;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.plastic.MethodAdvice;
+import org.apache.tapestry5.plastic.MethodInvocation;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticMethod;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 
 /**
  * Searches for methods that have the {@link org.apache.tapestry5.hibernate.annotations.CommitAfter} annotation and adds
  * logic around the method to commit or abort the transaction. The commit/abort logic is the same as for the
  * {@link org.apache.tapestry5.hibernate.HibernateTransactionDecorator} service.
  */
-public class CommitAfterWorker implements ComponentClassTransformWorker
+public class CommitAfterWorker implements ComponentClassTransformWorker2
 {
     private final HibernateSessionManager manager;
 
-    private final ComponentMethodAdvice advice = new ComponentMethodAdvice()
+    private final MethodAdvice advice = new MethodAdvice()
     {
-        public void advise(ComponentMethodInvocation invocation)
+        public void advise(MethodInvocation invocation)
         {
             try
             {
@@ -54,9 +59,9 @@ public class CommitAfterWorker implements ComponentClassTransformWorker
         this.manager = manager;
     }
 
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-        for (TransformMethod method : transformation.matchMethodsWithAnnotation(CommitAfter.class))
+        for (PlasticMethod method : plasticClass.getMethodsWithAnnotation(CommitAfter.class))
         {
             method.addAdvice(advice);
         }

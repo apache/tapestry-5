@@ -37,6 +37,7 @@ import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.LibraryMapping;
 import org.apache.tapestry5.services.PersistentFieldStrategy;
 import org.apache.tapestry5.services.ValueEncoderFactory;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.hibernate.Session;
 import org.hibernate.mapping.PersistentClass;
 
@@ -171,8 +172,9 @@ public class HibernateModule
      * Adds the CommitAfter annotation work, to process the
      * {@link org.apache.tapestry5.hibernate.annotations.CommitAfter} annotation.
      */
-    public static void contributeComponentClassTransformWorker(
-            OrderedConfiguration<ComponentClassTransformWorker> configuration)
+    @Contribute(ComponentClassTransformWorker2.class)
+    public static void provideCommitAfterAnnotationSupport(
+            OrderedConfiguration<ComponentClassTransformWorker2> configuration)
     {
         // If logging is enabled, we want logging to be the first advice, wrapping around the commit advice.
 
