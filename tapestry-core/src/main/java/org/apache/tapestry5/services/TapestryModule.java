@@ -639,6 +639,8 @@ public final class TapestryModule
      * <dd>Supports the {@link Import} annotation</dd>
      * <dt>UnclaimedField</dt>
      * <dd>Manages unclaimed fields, storing their value in a {@link PerThreadValue}</dd>
+     * <dt>OnEvent</dt>
+     * <dd>Handle the @OnEvent annotation, and related naming convention</dd>
      * </ul>
      */
     @Contribute(ComponentClassTransformWorker2.class)
@@ -652,6 +654,8 @@ public final class TapestryModule
         // be converted to clear out at the end of the request.
 
         configuration.addInstance("UnclaimedField", UnclaimedFieldWorker.class, "after:*");
+
+        configuration.addInstance("OnEvent", OnEventWorker.class);
     }
 
     /**
@@ -724,7 +728,6 @@ public final class TapestryModule
         configuration.add("Mixin", new MixinWorker(resolver));
         configuration
                 .addInstance("ActivationRequestParameter", ActivationRequestParameterWorker.class, "after:OnEvent");
-        configuration.addInstance("OnEvent", OnEventWorker.class);
         configuration.add("SupportsInformalParameters", new SupportsInformalParametersWorker());
         configuration.addInstance("InjectPage", InjectPageWorker.class);
         configuration.addInstance("InjectContainer", InjectContainerWorker.class);

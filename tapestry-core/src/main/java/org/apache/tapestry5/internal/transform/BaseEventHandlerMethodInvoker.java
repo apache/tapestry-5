@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
 package org.apache.tapestry5.internal.transform;
 
 import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.plastic.MethodHandle;
+import org.apache.tapestry5.plastic.MethodInvocationResult;
+import org.apache.tapestry5.plastic.PlasticMethod;
 import org.apache.tapestry5.runtime.ComponentEvent;
-import org.apache.tapestry5.services.MethodAccess;
-import org.apache.tapestry5.services.MethodInvocationResult;
-import org.apache.tapestry5.services.TransformMethod;
 
 /**
  * Base class for invoking event handler methods that also serves when invoking an
@@ -28,7 +28,7 @@ import org.apache.tapestry5.services.TransformMethod;
  */
 public class BaseEventHandlerMethodInvoker implements EventHandlerMethodInvoker
 {
-    private final MethodAccess access;
+    private final MethodHandle handle;
 
     private final String identifier;
 
@@ -36,20 +36,21 @@ public class BaseEventHandlerMethodInvoker implements EventHandlerMethodInvoker
 
     private final String componentId;
 
-    public BaseEventHandlerMethodInvoker(TransformMethod method, String eventType, String componentId)
+    public BaseEventHandlerMethodInvoker(PlasticMethod method, String eventType, String componentId)
     {
         this.eventType = eventType;
         this.componentId = componentId;
 
-        access = method.getAccess();
-        identifier = method.getMethodIdentifier();
+        handle = method.getHandle();
+        identifier = String.format("%s.%s", method.getPlasticClass().getClassName(), method.getDescription()
+                .toShortString());
     }
 
     public void invokeEventHandlerMethod(ComponentEvent event, Object instance)
     {
         event.setMethodDescription(identifier);
 
-        MethodInvocationResult result = access.invoke(instance, constructParameters(event));
+        MethodInvocationResult result = handle.invoke(instance, constructParameters(event));
 
         result.rethrow();
 

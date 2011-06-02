@@ -221,5 +221,25 @@ public class MethodDescription implements Comparable<MethodDescription>
         return builder.toString();
     }
 
-    // TODO: convienience methods: isStatic(), isPrivate()
+    /**
+     * A string used to identify the method, containing just the method name and argument types
+     * (but ignoring visibility, return type and thrown exceptions).
+     * 
+     * @return method identifier
+     */
+    public String toShortString()
+    {
+        StringBuilder builder = new StringBuilder(methodName).append("(");
+
+        String sep = "";
+
+        for (String name : argumentTypes)
+        {
+            builder.append(sep).append(name);
+
+            sep = ", ";
+        }
+
+        return builder.append(")").toString();
+    }
 }

@@ -1,5 +1,5 @@
 //
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -22,28 +22,33 @@ import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.RequestParameter;
+import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.func.Flow;
+import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
+import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.plastic.MethodAdvice;
+import org.apache.tapestry5.plastic.MethodDescription;
+import org.apache.tapestry5.plastic.MethodInvocation;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticMethod;
 import org.apache.tapestry5.runtime.ComponentEvent;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.ComponentMethodAdvice;
-import org.apache.tapestry5.services.ComponentMethodInvocation;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.TransformConstants;
-import org.apache.tapestry5.services.TransformMethod;
-import org.apache.tapestry5.services.TransformMethodSignature;
 import org.apache.tapestry5.services.ValueEncoderSource;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 
 /**
  * Provides implementations of the
  * {@link org.apache.tapestry5.runtime.Component#dispatchComponentEvent(org.apache.tapestry5.runtime.ComponentEvent)}
  * method, based on {@link org.apache.tapestry5.annotations.OnEvent} annotations.
  */
-public class OnEventWorker implements ComponentClassTransformWorker
+public class OnEventWorker implements ComponentClassTransformWorker2
 {
 
     private final Request request;
@@ -98,33 +103,34 @@ public class OnEventWorker implements ComponentClassTransformWorker
         this.classCache = classCache;
     }
 
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-        List<TransformMethod> methods = matchEventHandlerMethods(transformation);
+        Flow<PlasticMethod> methods = matchEventHandlerMethods(plasticClass);
 
         if (methods.isEmpty())
             return;
 
-        List<EventHandlerMethodInvoker> invokers = toInvokers(transformation.getClassName(), methods);
+        Flow<EventHandlerMethodInvoker> invokers = toInvokers(plasticClass.getClassName(), methods);
 
         updateModelWithHandledEvents(model, invokers);
 
-        adviseDispatchComponentEventMethod(transformation, invokers);
+        adviseDispatchComponentEventMethod(plasticClass, invokers);
     }
 
-    private void adviseDispatchComponentEventMethod(ClassTransformation transformation,
-            List<EventHandlerMethodInvoker> invokers)
+    private void adviseDispatchComponentEventMethod(PlasticClass plasticClass, Flow<EventHandlerMethodInvoker> invokers)
     {
-        ComponentMethodAdvice advice = createDispatchComponentEventAdvice(invokers);
+        MethodAdvice advice = createDispatchComponentEventAdvice(invokers);
 
-        transformation.getOrCreateMethod(TransformConstants.DISPATCH_COMPONENT_EVENT).addAdvice(advice);
+        plasticClass.introduceMethod(TransformConstants.DISPATCH_COMPONENT_EVENT_DESCRIPTION).addAdvice(advice);
     }
 
-    private ComponentMethodAdvice createDispatchComponentEventAdvice(final List<EventHandlerMethodInvoker> invokers)
+    private MethodAdvice createDispatchComponentEventAdvice(Flow<EventHandlerMethodInvoker> invokers)
     {
-        return new ComponentMethodAdvice()
+        final EventHandlerMethodInvoker[] invokersArray = invokers.toArray(EventHandlerMethodInvoker.class);
+
+        return new MethodAdvice()
         {
-            public void advise(ComponentMethodInvocation invocation)
+            public void advise(MethodInvocation invocation)
             {
                 // Invoke the super-class implementation first. If no super-class,
                 // this will do nothing and return false.
@@ -134,7 +140,7 @@ public class OnEventWorker implements ComponentClassTransformWorker
                 ComponentEvent event = (ComponentEvent) invocation.getParameter(0);
 
                 if (invokeEventHandlers(event, invocation.getInstance()))
-                    invocation.overrideResult(true);
+                    invocation.setReturnValue(true);
             }
 
             private boolean invokeEventHandlers(ComponentEvent event, Object instance)
@@ -147,7 +153,7 @@ public class OnEventWorker implements ComponentClassTransformWorker
 
                 boolean didInvokeSomeHandler = false;
 
-                for (EventHandlerMethodInvoker invoker : invokers)
+                for (EventHandlerMethodInvoker invoker : invokersArray)
                 {
                     if (event.matches(invoker.getEventType(), invoker.getComponentId(),
                             invoker.getMinContextValueCount()))
@@ -166,60 +172,63 @@ public class OnEventWorker implements ComponentClassTransformWorker
         };
     }
 
-    private void updateModelWithHandledEvents(MutableComponentModel model,
-            final List<EventHandlerMethodInvoker> invokers)
+    private void updateModelWithHandledEvents(final MutableComponentModel model,
+            Flow<EventHandlerMethodInvoker> invokers)
     {
-        for (EventHandlerMethodInvoker invoker : invokers)
+        invokers.each(new Worker<EventHandlerMethodInvoker>()
         {
-            model.addEventHandler(invoker.getEventType());
-        }
-    }
-
-    private List<TransformMethod> matchEventHandlerMethods(ClassTransformation transformation)
-    {
-        return transformation.matchMethods(new Predicate<TransformMethod>()
-        {
-            public boolean accept(TransformMethod method)
+            public void work(EventHandlerMethodInvoker value)
             {
-                return (hasCorrectPrefix(method) || hasAnnotation(method)) && !method.isOverride();
-            }
-
-            private boolean hasCorrectPrefix(TransformMethod method)
-            {
-                return method.getName().startsWith("on");
-            }
-
-            private boolean hasAnnotation(TransformMethod method)
-            {
-                return method.getAnnotation(OnEvent.class) != null;
+                model.addEventHandler(value.getEventType());
             }
         });
     }
 
-    private List<EventHandlerMethodInvoker> toInvokers(String componentClassName, List<TransformMethod> methods)
+    private Flow<PlasticMethod> matchEventHandlerMethods(PlasticClass plasticClass)
     {
-        List<EventHandlerMethodInvoker> result = CollectionFactory.newList();
-
-        for (TransformMethod method : methods)
+        return F.flow(plasticClass.getMethods()).filter(new Predicate<PlasticMethod>()
         {
-            result.add(toInvoker(componentClassName, method));
-        }
+            public boolean accept(PlasticMethod method)
+            {
+                return (hasCorrectPrefix(method) || hasAnnotation(method)) && !method.isOverride();
+            }
 
-        return result;
+            private boolean hasCorrectPrefix(PlasticMethod method)
+            {
+                return method.getDescription().methodName.startsWith("on");
+            }
+
+            private boolean hasAnnotation(PlasticMethod method)
+            {
+                return method.hasAnnotation(OnEvent.class);
+            }
+
+        });
     }
 
-    private EventHandlerMethodInvoker toInvoker(final String componentClassName, TransformMethod method)
+    private Flow<EventHandlerMethodInvoker> toInvokers(final String componentClassName, Flow<PlasticMethod> methods)
+    {
+        return methods.map(new Mapper<PlasticMethod, EventHandlerMethodInvoker>()
+        {
+            public EventHandlerMethodInvoker map(PlasticMethod element)
+            {
+                return toInvoker(componentClassName, element);
+            }
+        });
+    }
+
+    private EventHandlerMethodInvoker toInvoker(final String componentClassName, PlasticMethod method)
     {
         OnEvent annotation = method.getAnnotation(OnEvent.class);
 
-        String methodName = method.getName();
+        final MethodDescription description = method.getDescription();
+
+        String methodName = description.methodName;
 
         String eventType = extractEventType(methodName, annotation);
         String componentId = extractComponentId(methodName, annotation);
 
-        final TransformMethodSignature signature = method.getSignature();
-
-        String[] parameterTypes = signature.getParameterTypes();
+        String[] parameterTypes = description.argumentTypes;
 
         if (parameterTypes.length == 0)
             return new BaseEventHandlerMethodInvoker(method, eventType, componentId);
@@ -242,13 +251,13 @@ public class OnEventWorker implements ComponentClassTransformWorker
                 continue;
             }
 
-            RequestParameter parameterAnnotation = method.getParameterAnnotation(i, RequestParameter.class);
+            RequestParameter parameterAnnotation = method.getParameters().get(i).getAnnotation(RequestParameter.class);
 
             if (parameterAnnotation != null)
             {
                 String parameterName = parameterAnnotation.value();
 
-                sources.add(createQueryParameterSource(componentClassName, signature, i, parameterName, type,
+                sources.add(createQueryParameterSource(componentClassName, description, i, parameterName, type,
                         parameterAnnotation.allowBlank()));
                 continue;
             }
@@ -265,7 +274,7 @@ public class OnEventWorker implements ComponentClassTransformWorker
     }
 
     private EventHandlerMethodParameterSource createQueryParameterSource(final String componentClassName,
-            final TransformMethodSignature signature, final int parameterIndex, final String parameterName,
+            final MethodDescription description, final int parameterIndex, final String parameterName,
             final String parameterTypeName, final boolean allowBlank)
     {
         return new EventHandlerMethodParameterSource()
@@ -301,14 +310,14 @@ public class OnEventWorker implements ComponentClassTransformWorker
                     throw new RuntimeException(
                             String.format(
                                     "Unable process query parameter '%s' as parameter #%d of event handler method %s (in class %s): %s",
-                                    parameterName, parameterIndex + 1, signature, componentClassName,
+                                    parameterName, parameterIndex + 1, description, componentClassName,
                                     InternalUtils.toMessage(ex)), ex);
                 }
             }
         };
     }
 
-    private EventHandlerMethodInvoker createInvoker(TransformMethod method, String eventType, String componentId,
+    private EventHandlerMethodInvoker createInvoker(PlasticMethod method, String eventType, String componentId,
             final int minContextCount, final List<EventHandlerMethodParameterSource> sources)
     {
         return new BaseEventHandlerMethodInvoker(method, eventType, componentId)
