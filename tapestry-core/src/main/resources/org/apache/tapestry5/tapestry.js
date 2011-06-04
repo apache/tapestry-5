@@ -1667,13 +1667,6 @@ Tapestry.FieldEventManager = Class.create({
 	initialize : function(field) {
 		this.field = $(field);
 
-		var id = this.field.id;
-
-		var selector = "label[for='" + id + "']";
-
-		this.label = this.field.up("form").down(selector);
-		this.icon = $(id + '_icon');
-
 		this.translator = Prototype.K;
 
 		var fem = $(this.field.form).getFormEventManager();
@@ -1699,6 +1692,23 @@ Tapestry.FieldEventManager = Class.create({
 		}
 	},
 
+	getLabel : function() {
+		if (!this.label) {
+			var selector = "label[for='" + this.field.id + "']";
+			this.label = this.field.form.down(selector);
+		}
+
+		return this.label;
+	},
+
+	getIcon : function() {
+		if (!this.icon) {
+			this.com = $(this.field.id + "_icon");
+		}
+
+		return this.icon;
+	},
+
 	/**
 	 * Removes validation decorations if present. Hides the ErrorPopup, if it
 	 * exists.
@@ -1706,11 +1716,9 @@ Tapestry.FieldEventManager = Class.create({
 	removeDecorations : function() {
 		this.field.removeClassName("t-error");
 
-		if (this.label)
-			this.label.removeClassName("t-error");
+		this.getLabel() && this.getLabel().removeClassName("t-error");
 
-		if (this.icon)
-			this.icon.hide();
+		this.getIcon() && this.getIcon().hide();
 
 		if (this.errorPopup)
 			this.errorPopup.hide();
@@ -1730,12 +1738,12 @@ Tapestry.FieldEventManager = Class.create({
 
 		this.field.addClassName("t-error");
 
-		if (this.label)
-			this.label.addClassName("t-error");
+		this.getLabel() && this.getLabel().addClassName("t-error");
 
-		if (this.icon) {
-			if (!this.icon.visible())
-				new Effect.Appear(this.icon);
+		var icon = this.getIcon();
+
+		if (icon && !icon.visible()) {
+			new Effect.Appear(this.icon);
 		}
 
 		if (this.errorPopup == undefined)
