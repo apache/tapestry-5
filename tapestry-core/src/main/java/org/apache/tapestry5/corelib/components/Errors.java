@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,6 +30,9 @@ import java.util.List;
  * div element around a banner message and around an unnumbered list of
  * error messages. Renders nothing if the {@link org.apache.tapestry5.ValidationTracker} shows no
  * errors.
+ * 
+ * @see Form
+ * @tapestrydoc
  */
 public class Errors
 {

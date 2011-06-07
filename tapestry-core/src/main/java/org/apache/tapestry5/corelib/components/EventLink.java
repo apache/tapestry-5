@@ -30,6 +30,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
  * <p/>
  * This allows slightly shorter URLs but also allows multiple components within the same container to generate identical
  * URLs for common actions.
+ * @tapestrydoc
  */
 public class EventLink extends AbstractComponentEventLink
 {

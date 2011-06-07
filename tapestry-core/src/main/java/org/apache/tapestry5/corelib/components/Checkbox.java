@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import org.apache.tapestry5.services.Request;
 
 /**
  * A Checkbox component is simply a &lt;input type="checkbox"&gt;.
+ * 
+ * @tapestrydoc
  */
 public class Checkbox extends AbstractField
 {

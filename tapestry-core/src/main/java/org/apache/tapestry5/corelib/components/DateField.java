@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -45,6 +45,10 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * <p/>
  * Tapestry's DateField component is a wrapper around <a
  * href="http://webfx.eae.net/dhtml/datepicker/datepicker.html">WebFX DatePicker</a>.
+ * 
+ * @tapestrydoc
+ * @see Form
+ * @see TextField
  */
 // TODO: More testing; see https://issues.apache.org/jira/browse/TAPESTRY-1844
 @Import(stack = "core-datefield")

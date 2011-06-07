@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.internal.ComponentActionSink;
 import org.apache.tapestry5.corelib.internal.FormSupportAdapter;
 import org.apache.tapestry5.corelib.internal.HiddenFieldPositioner;
+import org.apache.tapestry5.corelib.mixins.TriggerFragment;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.ClientBehaviorSupport;
@@ -54,7 +55,9 @@ import org.slf4j.Logger;
  * <dd>Hides the element, then removes it from the DOM entirely.
  * </dl>
  * 
- * @see org.apache.tapestry5.corelib.mixins.TriggerFragment
+ * @see TriggerFragment
+ * @see Form
+ * @tapestrydoc
  */
 @SupportsInformalParameters
 public class FormFragment implements ClientElement

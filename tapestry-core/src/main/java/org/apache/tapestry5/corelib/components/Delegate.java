@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,7 +31,9 @@ import org.apache.tapestry5.runtime.Component;
  * and use Delegate multiple times in the template to render the block passing parameters to Delegate. In the block body
  * reference the render variables using the "var:" binding prefix and the name of the parameter.
  * <p>
- * Note that the default binding prefix for parameter values is "literal".
+ * Note that the default binding prefix for informal parameter values is "literal".
+ * 
+ * @tapestrydoc
  */
 @SupportsInformalParameters
 public class Delegate

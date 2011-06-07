@@ -1,17 +1,6 @@
 <document>
     <body>
-        <section name="Related Components">
-
-            <ul>
-                <li>
-                    <a href="Form.html">Form</a>
-                </li>
-                <li>
-                    <a href="../mixins/TriggerFragment.html">TriggerFragment</a>
-                </li>
-            </ul>
-        </section>
-
+      
         <section name="Examples">
 
             <p>

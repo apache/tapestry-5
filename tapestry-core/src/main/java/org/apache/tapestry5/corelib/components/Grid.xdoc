@@ -1,18 +1,6 @@
 <document>
     <body>
-        <section name="Related Components">
-            <ul>
-                <li>
-                    <a href="BeanEditForm.html">BeanEditForm</a>
-                </li>
-                <li>
-                    <a href="BeanDisplay.html">BeanDisplay</a>
-                </li>
-                <li>
-                    <a href="Loop.html"></a>
-                </li>
-            </ul>
-        </section>
+       
 
         <section name="Simple Example">
 
