@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentValueProvider;
 import org.apache.tapestry5.services.InjectionProvider;
+import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.slf4j.Logger;
 
 /**
@@ -32,6 +33,14 @@ import org.slf4j.Logger;
  */
 public class CommonResourcesInjectionProvider implements InjectionProvider
 {
+    private static ComponentValueProvider<ComponentResourceSelector> selectorProvider = new ComponentValueProvider<ComponentResourceSelector>()
+    {
+        public ComponentResourceSelector get(ComponentResources resources)
+        {
+            return resources.getResourceSelector();
+        }
+    };
+
     private static ComponentValueProvider<Messages> messagesProvider = new ComponentValueProvider<Messages>()
     {
 
@@ -67,10 +76,10 @@ public class CommonResourcesInjectionProvider implements InjectionProvider
         }
     };
 
-    private static final Map<Class, ComponentValueProvider> configuration = CollectionFactory
-            .newMap();
+    private static final Map<Class, ComponentValueProvider> configuration = CollectionFactory.newMap();
 
     {
+        configuration.put(ComponentResourceSelector.class, selectorProvider);
         configuration.put(Messages.class, messagesProvider);
         configuration.put(Locale.class, localeProvider);
         configuration.put(Logger.class, loggerProvider);

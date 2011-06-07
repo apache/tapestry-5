@@ -44,6 +44,7 @@ import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.runtime.RenderQueue;
+import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.slf4j.Logger;
 
 /**
@@ -398,6 +399,11 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     public Locale getLocale()
     {
         return element.getLocale();
+    }
+
+    public ComponentResourceSelector getResourceSelector()
+    {
+        return element.getResourceSelector();
     }
 
     public synchronized Messages getMessages()

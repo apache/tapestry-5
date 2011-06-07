@@ -60,4 +60,16 @@ class SkinningTests extends TapestryCoreTestCase
 
         assertText "page-over", "Overridden page catalog message (Barney)"
     }
+    
+    @Test
+    void injection_of_selector()
+    {
+        openLinks "reset session", "English"
+        
+        assertText "selector", "ComponentResourcesSelector[en]"
+        
+        clickAndWait "link=French"
+        
+        assertText "selector", "ComponentResourcesSelector[fr]"        
+    }
 }

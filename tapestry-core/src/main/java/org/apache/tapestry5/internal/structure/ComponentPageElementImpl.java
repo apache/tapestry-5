@@ -68,6 +68,7 @@ import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.slf4j.Logger;
 
 /**
@@ -1349,5 +1350,10 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     boolean isRenderTracingEnabled()
     {
         return !productionMode && (componentTracingEnabled || "true".equals(request.getParameter("t:component-trace")));
+    }
+
+    public ComponentResourceSelector getResourceSelector()
+    {
+        return page.getSelector();
     }
 }

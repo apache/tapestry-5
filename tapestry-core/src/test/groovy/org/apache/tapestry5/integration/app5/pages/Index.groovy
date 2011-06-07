@@ -14,11 +14,13 @@
 
 package org.apache.tapestry5.integration.app5.pages
 
+import org.apache.tapestry5.annotations.Property
 import org.apache.tapestry5.annotations.SessionState
 import org.apache.tapestry5.integration.app5.Client
 import org.apache.tapestry5.integration.app5.ClientTracker
 import org.apache.tapestry5.ioc.annotations.Inject
 import org.apache.tapestry5.services.PersistentLocale
+import org.apache.tapestry5.services.pageload.ComponentResourceSelector
 
 class Index {
 
@@ -27,6 +29,10 @@ class Index {
 
     @SessionState
     private ClientTracker tracker
+    
+    @Property
+    @Inject
+    private ComponentResourceSelector selector
 
     void onActionFromFred() {
         tracker.client = Client.FRED

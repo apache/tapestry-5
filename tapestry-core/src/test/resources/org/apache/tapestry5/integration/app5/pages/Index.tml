@@ -11,6 +11,8 @@
     <dd id="page-over">${message:page-perclient-message}</dd>
     <dt>hello</dt>
     <dd id="hello">${message:hello}</dd>
+    <dt>selector</dt>
+    <dd id="selector">${selector}</dd>
   </dl>
 
 
