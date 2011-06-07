@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,6 +40,8 @@ import java.lang.annotation.Annotation;
  * A component that generates a user interface for editing the properties of a bean. This is the central component of
  * the {@link BeanEditForm}, and utilizes a {@link PropertyEditor} for much of its functionality. This component places
  * a {@link BeanEditContext} into the environment.
+ * 
+ * @tapestrydoc
  */
 @SupportsInformalParameters
 public class BeanEditor
@@ -207,8 +209,8 @@ public class BeanEditor
             }
             catch (Exception ex)
             {
-                String message = InternalMessages.failureInstantiatingObject(model.getBeanType(), resources
-                        .getCompleteId(), ex);
+                String message = InternalMessages.failureInstantiatingObject(model.getBeanType(),
+                        resources.getCompleteId(), ex);
                 throw new TapestryException(message, resources.getLocation(), ex);
             }
 

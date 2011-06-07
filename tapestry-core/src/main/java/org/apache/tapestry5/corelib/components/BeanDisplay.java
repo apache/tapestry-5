@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,6 +38,9 @@ import org.apache.tapestry5.services.BeanModelSource;
  * 
  * @see org.apache.tapestry5.beaneditor.DataType
  * @see BeanModel
+ * @tapestrydoc
+ * @see BeanEditForm
+ * @see Grid
  */
 @SupportsInformalParameters
 public class BeanDisplay

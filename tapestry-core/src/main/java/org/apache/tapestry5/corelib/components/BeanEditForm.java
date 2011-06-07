@@ -55,6 +55,9 @@ import org.apache.tapestry5.services.BeanModelSource;
  * @see org.apache.tapestry5.corelib.components.PropertyEditor
  * @see org.apache.tapestry5.beaneditor.DataType
  * @tapestrydoc
+ * @see Form
+ * @see Errors
+ * @see BeanEditor
  */
 @SupportsInformalParameters
 @Events(EventConstants.PREPARE)

@@ -1,23 +1,5 @@
 <document>
     <body>
-        <section name="Related Components">
-
-            <ul>
-                <li>
-                    <a href="AddRowLink.html">AddRowLink</a>
-                </li>
-                <li>
-                    <a href="RemoveRowLink.html">RemoveRowLink</a>
-                </li>
-                <li>
-                    <a href="Loop.html">Loop</a>
-                </li>
-                <li>
-                    <a href="FormInjector.html">FormInjector</a>
-                </li>
-            </ul>
-        </section>
-
         <section name="Examples">
 
             <p>
