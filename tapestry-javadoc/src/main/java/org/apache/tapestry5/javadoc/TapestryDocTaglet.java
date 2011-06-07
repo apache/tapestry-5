@@ -94,8 +94,14 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
 
         if (result == null)
         {
+            // System.err.printf("*** Search for CD %s ...\n", className);
+
             ClassDoc cd = firstSeen.findClass(className);
-            result = new ClassDescription(cd, this);
+
+            // System.err.printf("CD %s ... %s\n", className, cd == null ? "NOT found" : "found");
+
+            result = cd == null ? new ClassDescription() : new ClassDescription(cd, this);
+
             classDescriptions.put(className, result);
         }
 

@@ -43,12 +43,27 @@ public class ClassDescription
      */
     public final Map<String, String> events = CollectionFactory.newCaseInsensitiveMap();
 
+    public ClassDescription()
+    {
+        this.classDoc = null;
+    }
+
     public ClassDescription(ClassDoc classDoc, ClassDescriptionSource source)
     {
         this.classDoc = classDoc;
 
         loadEvents();
         loadParameters(source);
+
+        ClassDoc parentDoc = classDoc.superclass();
+
+        if (parentDoc != null)
+        {
+            ClassDescription parentDescription = source.getDescription(classDoc.superclass().qualifiedName());
+
+            mergeInto(events, parentDescription.events);
+            mergeInto(parameters, parentDescription.parameters);
+        }
     }
 
     private void loadEvents()
@@ -75,6 +90,18 @@ public class ClassDescription
             String description = ws < 0 ? "" : event.substring(ws + 1).trim();
 
             events.put(name, description);
+        }
+    }
+
+    private static <K, V> void mergeInto(Map<K, V> target, Map<K, V> source)
+    {
+        for (K key : source.keySet())
+        {
+            if (!target.containsKey(key))
+            {
+                V value = source.get(key);
+                target.put(key, value);
+            }
         }
     }
 
@@ -135,6 +162,10 @@ public class ClassDescription
         while (true)
         {
             ClassDescription componentCD = source.getDescription(currentClassName);
+
+            if (componentCD.classDoc == null)
+                throw new IllegalArgumentException(String.format("Published parameter '%s' from %s not found.", name,
+                        fd.qualifiedName()));
 
             if (componentCD.parameters.containsKey(name)) { return componentCD.parameters.get(name); }
 
