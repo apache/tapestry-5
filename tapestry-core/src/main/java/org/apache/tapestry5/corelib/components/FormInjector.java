@@ -52,6 +52,8 @@ import org.slf4j.Logger;
  * On the client side, a new function, trigger(), is added to the element. Invoking this client-side function will
  * trigger the FormInjector; a request is sent to the server, new content is generated, and the new content is placed
  * before or after (per configuration) the existing FormInjector element.
+ * 
+ * @tapestrydoc
  */
 @SupportsInformalParameters
 @Events(EventConstants.ACTION)

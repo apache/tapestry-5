@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * to a page or a component (via calls to the {@link JavaScriptSupport} environmental).
  * 
  * @since 5.2.0
+ * @tapestrydoc
  */
 public class Trigger
 {

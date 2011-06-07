@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,6 +38,8 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * Generates a client-side hyperlink that submits the enclosing form. If the link is clicked in the browser, the
  * component will trigger an event ({@linkplain EventConstants#SELECTED selected} by default) , just like {@link Submit}
  * .
+ * 
+ * @tapestrydoc
  */
 @SupportsInformalParameters
 @Events(EventConstants.SELECTED + " by default, may be overridden")

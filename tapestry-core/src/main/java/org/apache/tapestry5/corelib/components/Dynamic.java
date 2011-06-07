@@ -46,6 +46,7 @@ import org.apache.tapestry5.services.dynamic.DynamicTemplateParser;
  * @since 5.3.0
  * @see DynamicTemplate
  * @see DynamicTemplateParser
+ * @tapestrydoc
  */
 @SupportsInformalParameters
 public class Dynamic

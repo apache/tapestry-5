@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ import org.apache.tapestry5.services.FormSupport;
  * the form on {@link org.apache.tapestry5.annotations.BeginRender} and {@link org.apache.tapestry5.annotations.AfterRender}
  * that (during the form submission) triggers "BeginSubmit" and "AfterSubmit" events.  The container can receive these
  * events to perform setup before a group of components process their submission, and perform cleanup afterwards.
+ * 
+ * @tapestrydoc
  */
 @Events({ "BeginSubmit", "AfterSubmit" })
 public class SubmitNotifier

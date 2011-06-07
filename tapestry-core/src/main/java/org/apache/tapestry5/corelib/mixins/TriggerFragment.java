@@ -1,4 +1,4 @@
-// Copyright 2008, 2010 The Apache Software Foundation
+// Copyright 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,16 +21,17 @@ import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.HeartbeatDeferred;
 import org.apache.tapestry5.annotations.InjectContainer;
 import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.corelib.components.FormFragment;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.Heartbeat;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * A mixin that can be applied to a {@link org.apache.tapestry5.corelib.components.Checkbox} or
  * {@link org.apache.tapestry5.corelib.components.Radio} component that will link the input field and a
  * {@link org.apache.tapestry5.corelib.components.FormFragment}, making the field control the client-side visibility of
- * the
- * FormFragment.
+ * the FormFragment. See a full example with {@link FormFragment}'s documentation.
+ * 
+ * @tapestrydoc
  */
 public class TriggerFragment
 {

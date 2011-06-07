@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,6 +34,8 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
  * {@linkplain org.apache.tapestry5.Field#getLabel() field's label} as it's body. Remember, however, that it is the
  * field label that will be used in any error messages. The Label component allows for client- and server-side
  * validation error decorations.
+ * 
+ * @tapestrydoc
  */
 @SupportsInformalParameters
 public class Label

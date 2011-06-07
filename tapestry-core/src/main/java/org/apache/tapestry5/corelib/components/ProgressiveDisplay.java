@@ -51,6 +51,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * as the partial markup response.
  * 
  * @since 5.1.0.1
+ * @tapestrydoc
  */
 @SupportsInformalParameters
 @Import(library = "ProgressiveDisplay.js")

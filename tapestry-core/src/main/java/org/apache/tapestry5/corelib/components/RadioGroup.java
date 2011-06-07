@@ -1,10 +1,10 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,6 +25,12 @@ import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Request;
 
+/**
+ * A wrapper component around some number of {@link Radio} components, used to organize the selection and define the
+ * property to be edited. Examples of its use are in the {@link Radio} documentation.
+ * 
+ * @tapestrydoc
+ */
 @Events(EventConstants.VALIDATE)
 public class RadioGroup implements Field
 {
@@ -234,9 +240,10 @@ public class RadioGroup implements Field
     }
 
     /**
-     * Returns null; the radio group does not render as a tag and so doesn't have an id to share.  RadioGroup implements
-     * {@link org.apache.tapestry5.Field} only so it can interact with the {@link org.apache.tapestry5.ValidationTracker}.
-     *
+     * Returns null; the radio group does not render as a tag and so doesn't have an id to share. RadioGroup implements
+     * {@link org.apache.tapestry5.Field} only so it can interact with the
+     * {@link org.apache.tapestry5.ValidationTracker}.
+     * 
      * @return null
      */
     public String getClientId()

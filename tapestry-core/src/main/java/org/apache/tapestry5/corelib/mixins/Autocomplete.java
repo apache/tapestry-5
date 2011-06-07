@@ -65,6 +65,8 @@ import org.apache.tapestry5.util.TextStreamResponse;
  *   return . . .;
  * }
  * </pre>
+ * 
+ * @tapestrydoc
  */
 @Import(library =
 { "${tapestry.scriptaculous}/controls.js", "autocomplete.js" })

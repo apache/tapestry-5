@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,6 +29,8 @@ import org.apache.tapestry5.ioc.annotations.Inject;
  * <p/>
  * Pages are not required to have an activation context. When a page does have an activation context, the value
  * typically represents the identity of some object displayed or otherwise manipulated by the page.
+ * 
+ * @tapestrydoc
  */
 public class PageLink extends AbstractLink
 {

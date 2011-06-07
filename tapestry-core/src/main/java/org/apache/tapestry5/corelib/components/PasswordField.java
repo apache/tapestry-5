@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,6 +24,11 @@ import org.apache.tapestry5.corelib.base.AbstractTextField;
  * <p/>
  * Includes the <code>size</code> attribute, if a {@link org.apache.tapestry5.beaneditor.Width} annotation is present on
  * the property bound to the value parameter.
+ * 
+ * @tapestrydoc
+ * @see Form
+ * @see TextField
+ * @see TextArea
  */
 public class PasswordField extends AbstractTextField
 {

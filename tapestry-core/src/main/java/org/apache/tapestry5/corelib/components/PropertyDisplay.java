@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import org.apache.tapestry5.corelib.base.AbstractPropertyOutput;
  * Outputs a single property value. Overrides for individual properties come from block parameters whose name matches
  * the {@linkplain PropertyModel#getId() property id}. This component is rarely used on its own, but is a critical piece
  * of the {@link BeanDisplay} component.
+ * 
+ * @tapestrydoc
  */
 public class PropertyDisplay extends AbstractPropertyOutput
 {

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,6 +35,11 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * <p/>
  * If the value parameter is not bound, then the default value is a property of the container component whose name
  * matches the Radio component's id.
+ * 
+ * @tapestrydoc
+ * @see RadioGroup
+ * @see Form
+ * @see Select
  */
 public class Radio implements Field
 {

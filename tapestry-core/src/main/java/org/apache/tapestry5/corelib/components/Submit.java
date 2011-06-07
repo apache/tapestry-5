@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,6 +31,8 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * Corresponds to &lt;input type="submit"&gt; or &lt;input type="image"&gt;, a client-side element that can force the
  * enclosing form to submit. The submit responsible for the form submission will post a notification that allows the
  * application to know that it was the responsible entity. The notification is named "selected" and has no context.
+ * 
+ * @tapestrydoc
  */
 @SupportsInformalParameters
 @Events(EventConstants.SELECTED + " by default, may be overridden")

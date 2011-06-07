@@ -1,10 +1,10 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +19,8 @@ import org.apache.tapestry5.corelib.base.AbstractConditional;
 
 /**
  * Conditionally renders its body. May render its tag and any informal parameters.
+ * 
+ * @tapestrydoc
  */
 public class If extends AbstractConditional
 {
@@ -31,8 +33,9 @@ public class If extends AbstractConditional
     /**
      * Optional parameter to invert the test. If true, then the body is rendered when the test parameter is false (not
      * true).
-     *
+     * 
      * @see Unless
+     * @deprecated Since 5.3 as property expressions support the '!' invert operator
      */
     @Parameter
     private boolean negate;
@@ -44,6 +47,5 @@ public class If extends AbstractConditional
     {
         return test != negate;
     }
-
 
 }

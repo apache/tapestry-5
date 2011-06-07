@@ -1,4 +1,4 @@
-// Copyright 2008, 2010 The Apache Software Foundation
+// Copyright 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * Used inside a {@link org.apache.tapestry5.corelib.components.AjaxFormLoop} to remove the current row from the loop.
  * This fires a server-side event (from the AjaxFormLoop component); the event context is the object to be removed. On
  * the client-side, the element for the row is hidden, then removed altogether.
+ * 
+ * @tapestrydoc
  */
 @SupportsInformalParameters
 public class RemoveRowLink

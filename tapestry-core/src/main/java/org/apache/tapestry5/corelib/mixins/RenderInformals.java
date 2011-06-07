@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,11 @@ package org.apache.tapestry5.corelib.mixins;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.annotations.AfterRenderTemplate;
+import org.apache.tapestry5.annotations.BeforeRenderTemplate;
+import org.apache.tapestry5.annotations.BeginRender;
+import org.apache.tapestry5.annotations.MixinAfter;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
 
 /**
@@ -32,6 +36,8 @@ import org.apache.tapestry5.ioc.annotations.Inject;
  * elements and close them.
  * <p/>
  * This is often used as a base class, for cases where a component doesn't have other mixins.
+ * 
+ * @tapestrydoc
  */
 @MixinAfter
 @SupportsInformalParameters

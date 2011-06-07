@@ -1,10 +1,10 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,9 +22,12 @@ import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.services.ObjectRenderer;
 
 /**
- * Renders out an object using the {@link ObjectRenderer} service. Used primarily on the {@link ExceptionReport} page.
+ * Renders out an object using the @{@link Primary} {@link ObjectRenderer} service. Used primarily on the
+ * {@link ExceptionReport} page.
  * This is focused on objects that have a specific {@link ObjectRenderer} strategy. The {@link BeanDisplay} component is
  * used for displaying the contents of arbitrary objects in terms of a series of property names and values.
+ * 
+ * @tapestrydoc
  */
 public class RenderObject
 {

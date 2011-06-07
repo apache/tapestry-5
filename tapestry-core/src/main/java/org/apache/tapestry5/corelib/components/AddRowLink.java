@@ -1,4 +1,4 @@
-// Copyright 2008, 2010 The Apache Software Foundation
+// Copyright 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@ package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.internal.AjaxFormLoopContext;
@@ -28,6 +27,8 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * row. Triggers a server-side {@linkplain org.apache.tapestry5.EventConstants#ADD_ROW addRow} event on the
  * AjaxFormLoop, which must return the newly added object, which will be rendered in the body of the AjaxFormLoop and
  * sent to the client web browser.
+ * 
+ * @tapestrydoc
  */
 @SupportsInformalParameters
 public class AddRowLink

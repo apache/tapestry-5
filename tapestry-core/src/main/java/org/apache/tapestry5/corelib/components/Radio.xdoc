@@ -1,22 +1,5 @@
 <document>
     <body>
-
-        <section name="Related Components">
-
-            <ul>
-                <li>
-                    <a href="RadioGroup.html">RadioGroup</a>
-                </li>
-                <li>
-                    <a href="Form.html">Form</a>
-                </li>
-                <li>
-                    <a href="Select.html">Select</a>
-                </li>
-            </ul>
-
-        </section>
-
         <section name="Examples">
             <p>
                 Radio components are always used in conjunction with

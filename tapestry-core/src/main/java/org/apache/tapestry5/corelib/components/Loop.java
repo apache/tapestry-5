@@ -56,6 +56,8 @@ import org.apache.tapestry5.services.Heartbeat;
  * {@link org.apache.tapestry5.EventConstants#SYNCHRONIZE_VALUES} event to inform its container what values were
  * submitted and in what order; this can allow the container to pre-load the values in a single batch form external
  * storage, if that is appropriate.
+ * 
+ * @tapestrydoc
  */
 @SupportsInformalParameters
 @Events(EventConstants.SYNCHRONIZE_VALUES)

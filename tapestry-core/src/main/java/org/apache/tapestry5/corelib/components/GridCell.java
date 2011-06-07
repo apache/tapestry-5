@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ import org.apache.tapestry5.corelib.base.AbstractPropertyOutput;
 /**
  * Part of {@link Grid} that renders the markup inside a single data cell. GridCell is used inside a pair of loops; the
  * outer loop for each row, the inner loop for each property of the row.
+ * 
+ * @tapestrydoc
  */
 public class GridCell extends AbstractPropertyOutput
 {

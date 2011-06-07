@@ -1,10 +1,10 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,12 +19,16 @@ import org.apache.tapestry5.corelib.base.AbstractTextField;
 
 /**
  * TextArea component corresponds to a &lt;textarea&gt; element. The value parameter is almost always bound to a string,
- * but this is not an absolute requirement.
+ * but this is not an absolute requirement.  Since the component accepts informal parameters, the rows and cols attribute may
+ * be set that way (there is not a formal parameter).
  * <p/>
  * Includes the <code>cols</code> attribute, if a {@link org.apache.tapestry5.beaneditor.Width} annotation is present on
  * the property bound to the value parameter.
- *
+ * 
  * @see org.apache.tapestry5.corelib.components.TextOutput
+ * @tapestrydoc
+ * @see TextField
+ * @see Form
  */
 public class TextArea extends AbstractTextField
 {
@@ -35,11 +39,11 @@ public class TextArea extends AbstractTextField
     {
         writer.element("textarea",
 
-                       "name", getControlName(),
+        "name", getControlName(),
 
-                       "id", getClientId(),
+        "id", getClientId(),
 
-                       "cols", getWidth());
+        "cols", getWidth());
 
         // Save until needed in after()
 
@@ -50,7 +54,8 @@ public class TextArea extends AbstractTextField
     {
         // TextArea will not have a template.
 
-        if (value != null) writer.write(value);
+        if (value != null)
+            writer.write(value);
 
         writer.end(); // textarea
     }
