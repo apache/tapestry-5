@@ -43,7 +43,7 @@ public interface ComponentMessagesSource
      * @param componentModel
      * @param locale
      * @return the message catalog for the component, in the indicated locale
-     * @deprecated Deprecated in 5.3; use {@link #getMessages(ComponentModel, ComponentResourceSelector) instead.
+     * @deprecated Deprecated in 5.3; use {@link #getMessages(ComponentModel, ComponentResourceSelector)} instead.
      */
     Messages getMessages(ComponentModel componentModel, Locale locale);
 

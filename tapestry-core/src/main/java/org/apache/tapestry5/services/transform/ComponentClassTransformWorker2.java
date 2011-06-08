@@ -29,7 +29,7 @@ import org.apache.tapestry5.services.ComponentClassTransformWorker;
  * {@link ComponentClassTransformWorker} are type coerced into this type automatically.
  * 
  * @since 5.3.0
- * @see {@link PlasticClass}
+ * @see PlasticClass
  */
 @UsesOrderedConfiguration(ComponentClassTransformWorker2.class)
 public interface ComponentClassTransformWorker2

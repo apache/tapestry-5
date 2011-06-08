@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.services.dynamic;
 
+import org.apache.tapestry5.corelib.components.Dynamic;
 import org.apache.tapestry5.runtime.RenderCommand;
 
 /**

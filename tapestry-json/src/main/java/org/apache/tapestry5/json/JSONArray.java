@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -335,7 +335,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
      * @param value
      *            An object value. The value should be a Boolean, Double, Integer, JSONArray, JSONObject, JSONLiteral,
      *            Long, or String, or the JSONObject.NULL singleton.
-     * @return
+     * @return this array
      */
     public JSONArray put(Object value)
     {
@@ -357,7 +357,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
      * @param value
      *            The value to put into the array. The value should be a Boolean, Double, Integer, JSONArray,
      *            JSONObject, JSONString, Long, or String, or the JSONObject.NULL singeton.
-     * @return
+     * @return this array
      * @throws RuntimeException
      *             If the index is negative or if the the value is an invalid number.
      */

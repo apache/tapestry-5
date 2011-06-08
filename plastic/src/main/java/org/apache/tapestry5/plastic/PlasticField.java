@@ -17,8 +17,7 @@ package org.apache.tapestry5.plastic;
 /**
  * Represents a field of a class being {@linkplain PlasticClass transformed}.
  * <p>
- * No methods of this object should be invoked after the class transformation is
- * {@linkplain PlasticClass#createInstantiator() completed}.
+ * No methods of this object should be invoked after the class transformation is completed.
  */
 public interface PlasticField extends AnnotationAccess
 {

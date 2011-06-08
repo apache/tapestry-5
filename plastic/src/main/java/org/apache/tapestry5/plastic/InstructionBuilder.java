@@ -24,7 +24,7 @@ import java.lang.reflect.Method;
  * <p>
  * Most methods return the same instance of InstructionBuilder, allowing for a "fluid" API.
  * <p>
- * More complex functionality, such as {@linkplain #startTryCatch(InstructionBuilderCallback, TryCatchCallback)
+ * More complex functionality, such as {@linkplain #startTryCatch(TryCatchCallback)
  * try/catch blocks}, is more like a DSL (domain specific language), and is based on callbacks. This looks better in
  * Groovy and will be more reasonable once JDK 1.8 closures are available; in the meantime, it means some deeply nested
  * inner classes, but helps ensure that correct bytecode is generated and helps to limit the amount of bookkeeping is
@@ -157,12 +157,8 @@ public interface InstructionBuilder
      * Loads an instance field onto the stack. The plastic class instance containing the field should already be loaded
      * onto the stack (usually, via {@link #loadThis()}).
      * 
-     * @param className
-     *            name of class containing the field
-     * @param fieldName
-     *            name of the field
-     * @param typeName
-     *            type of field
+     * @param field
+     *            identifies name, type and container of field to load
      */
     @Opcodes("GETFIELD")
     InstructionBuilder getField(PlasticField field);
@@ -225,12 +221,10 @@ public interface InstructionBuilder
      * Continue using this InstructionBuilder to define code inside the block, then call
      * methods on the InstructionBlock to define the end of the block and set up handlers.
      * 
-     * @param tryCallback
-     *            generates the code that is "inside" the <code>try</code>
-     * @param catchCallback
-     *            generates <code>catch</code> and <code>finally</code> blocks
+     * @param tryCatchCallback
+     *            allows generation of try, catch, and finally clauses
      */
-    InstructionBuilder startTryCatch(TryCatchCallback catchCallback);
+    InstructionBuilder startTryCatch(TryCatchCallback tryCatchCallback);
 
     /**
      * Creates a new, uninitialized instance of the indicated class. This should be followed
@@ -262,7 +256,6 @@ public interface InstructionBuilder
      *            the class containing the constructor
      * @param argumentTypes
      *            java type names for each argument of the constructor
-     * @return
      */
     @Opcodes("INVOKESPECIAL")
     InstructionBuilder invokeConstructor(String className, String... argumentTypes);
@@ -275,7 +268,6 @@ public interface InstructionBuilder
      * 
      * @param depth
      *            0 (DUP), 1 (DUP_X1) or 2 (DUP_X2)
-     * @return
      */
     @Opcodes("DUP, DUP_X1, DUP_X2")
     InstructionBuilder dupe(int depth);
@@ -306,8 +298,6 @@ public interface InstructionBuilder
      * Swaps the top element of the stack with the next element down. Note that this can cause problems if the top
      * element on the stack
      * is a long or double.
-     * 
-     * @return
      */
     @Opcodes("SWAP")
     InstructionBuilder swap();
@@ -395,14 +385,14 @@ public interface InstructionBuilder
 
     /**
      * Stores the value on top of the stack to a local variable (previously defined by
-     * {@link #startVariable(String, String, InstructionBuilderCallback)}.
+     * {@link #startVariable(String, LocalVariableCallback)}.
      */
     @Opcodes("ASTORE, ISTORE, LSTORE, FSTORE, DSTORE")
     InstructionBuilder storeVariable(LocalVariable variable);
 
     /**
-     * Loads a value from a local variable and pushes it onto the stack. The is defined by
-     * {@link #startVariable(String, InstructionBuilderCallback)} and made available via {@link LocalVariableCallback}.
+     * Loads a value from a local variable and pushes it onto the stack. The variable is defined by
+     * {@link #startVariable(String, LocalVariableCallback)}.
      */
     @Opcodes("ALOAD, ILOAD, LLOAD, FLOAD, DLOAD")
     InstructionBuilder loadVariable(LocalVariable variable);

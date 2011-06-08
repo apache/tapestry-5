@@ -25,7 +25,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.apache.tapestry5.ioc.annotations.UseWith;
-import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
@@ -35,7 +34,8 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * Alternately, the annotation maybe placed on any method (though typically it will be placed on a render phase
  * method) and the import operations will be associated of that method.
  * <p>
- * Assets are localized during the {@link Component#containingPageDidLoad()} lifecycle method.
+ * Assets are localized during the {@link org.apache.tapestry5.runtime.Component#containingPageDidLoad()} lifecycle
+ * method.
  * 
  * @see JavaScriptSupport
  * @since 5.2.0
