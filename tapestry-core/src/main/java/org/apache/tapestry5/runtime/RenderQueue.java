@@ -1,10 +1,10 @@
-// Copyright 2006, 2008 The Apache Software Foundation
+// Copyright 2006, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,13 +29,15 @@ public interface RenderQueue
 
     /**
      * Indicates that a component is starting its render. A stack of active components is used for exception reporting.
-     *
-     * @param resources identifies the component that is rendering
+     * 
+     * @param resources
+     *            identifies the component that is rendering
      */
     void startComponent(ComponentResources resources);
 
     /**
-     * Corresponds to {@link #startComponent(String)}, used to denote when the most recently started component finishes
+     * Corresponds to {@link #startComponent(ComponentResources)}, used to denote when the most recently started
+     * component finishes
      * rendering.
      */
     void endComponent();

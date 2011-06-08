@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
 
@@ -26,8 +25,7 @@ import org.apache.tapestry5.runtime.PageLifecycleListener;
  * {@link org.apache.tapestry5.services.ComponentSource} service instead.
  * <p>
  * Starting in 5.2, page instances are shared (with externalized mutable state), not pooled, but the cache is still
- * useful for managing the page's {@linkplain PageLifecycleListener lifecycle}. There are now two different
- * implementation classes for this single service, selected via {@link SymbolConstants#PAGE_POOL_ENABLED}.
+ * useful for managing the page's {@linkplain PageLifecycleListener lifecycle}.
  */
 public interface RequestPageCache
 {

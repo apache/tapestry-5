@@ -1,10 +1,10 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,26 +31,32 @@ public interface FieldValidatorDefaultSource
     /**
      * Analyzes the property type and property annotations to determine the default set of validations for the property,
      * which are wrapped to form a {@link org.apache.tapestry5.FieldValidator} for a field.
-     *
-     * @param field               Field component for which a validator is being created
-     * @param overrideId          the id of the component, used to locate related messages for labels and errors
-     * @param overrideMessages    where to search for label and error messages
-     * @param locale              locale used for locating messages
-     * @param propertyType        type of property bound to the editting parameter of the field (typically, the
-     *                            parameter named "value").
-     * @param propertyAnnotations source of annotations for the property being editted
+     * 
+     * @param field
+     *            Field component for which a validator is being created
+     * @param overrideId
+     *            the id of the component, used to locate related messages for labels and errors
+     * @param overrideMessages
+     *            where to search for label and error messages
+     * @param locale
+     *            locale used for locating messages
+     * @param propertyType
+     *            type of property bound to the editting parameter of the field (typically, the
+     *            parameter named "value").
+     * @param propertyAnnotations
+     *            source of annotations for the property being editted
      * @return a validator reflecting all default validations for the field
      */
     FieldValidator createDefaultValidator(Field field, String overrideId, Messages overrideMessages, Locale locale,
-                                          Class propertyType, AnnotationProvider propertyAnnotations);
+            Class propertyType, AnnotationProvider propertyAnnotations);
 
     /**
-     * A convienience for the full version; assumes that the resources are associated with a {@link
-     * org.apache.tapestry5.Field}.
-     *
+     * A convenience for the full version; assumes that the resources are associated with a
+     * {@link org.apache.tapestry5.Field}.
+     * 
      * @param resources
      * @param parameterName
-     * @return
+     * @return a validator reflecting all default validations for the field
      */
     FieldValidator createDefaultValidator(ComponentResources resources, String parameterName);
 }

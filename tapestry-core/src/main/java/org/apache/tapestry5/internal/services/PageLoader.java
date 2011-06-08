@@ -35,7 +35,7 @@ public interface PageLoader
      *            the <em>canonicalized</em> logical name of the page, which will be made available via
      *            {@link Page#getName()} and {@link ComponentResourcesCommon#getPageName()} (for any component within
      *            the page).
-     * @param locale
+     * @param selector
      *            Encapsulates the locale and other information used to select the component's
      *            template and message catalog resources.
      */
