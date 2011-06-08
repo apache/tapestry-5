@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 The Apache Software Foundation
+// Copyright 2007, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,6 +23,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
+
+import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.UseWith;
 
 /**

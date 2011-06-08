@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ public interface EmbeddedComponentModel extends Locatable
     /**
      * @param mixinClassName
      * @return the ordering constraints for the specified mixin, or null.
-     * @Since 5.2.0.0
+     * @since 5.2.0.0
      */
     String[] getConstraintsForMixin(String mixinClassName);
 }
