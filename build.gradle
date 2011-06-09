@@ -155,7 +155,7 @@ task aggregateJavadoc(type: Javadoc) {
                // Some of the component .xdoc files refer to PNG images
                // (we could also exclude .java and .xdoc)
                copy {
-                 from set.java
+                 from set.java.srcDirs.toList()                 
                  into javadocBuildDir.dir
                  include '**/*.png'
                }
