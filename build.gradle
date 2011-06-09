@@ -3,7 +3,6 @@ description = "Apache Tapestry 5 Project"
 if (!project.hasProperty('apacheDeployUserName')) apacheDeployUserName = '*UNSET-USERNAME*'
 if (!project.hasProperty('apacheDeployPassword')) apacheDeployPassword = '*UNSET-PASSWORD*'
 
-
 jettyVersion = '7.0.0.v20091005'
 tomcatVersion = '6.0.30'
 testngVersion = '5.14.9'
@@ -23,6 +22,8 @@ subprojects {
     
     version = '5.3.0-SNAPSHOT'
 
+  	isSnapshot = version.endsWith("-SNAPSHOT")
+
     group = 'org.apache.tapestry'
     
     repositories {
@@ -34,8 +35,10 @@ subprojects {
     
     configurations {
       provided
-     deployerJars
+      deployerJars
     }
+    
+
 
     // See http://jira.codehaus.org/browse/GRADLE-784
     
@@ -81,9 +84,16 @@ subprojects {
     
     uploadArchives {
         repositories.mavenDeployer {
+          
             configuration = configurations.deployerJars
+            
             // apacheDeployUserName and apacheDeployPassword should be specified in ~/.gradle/gradle.properties
+
             snapshotRepository(url: "https://repository.apache.org/content/repositories/snapshots/") {
+              authentication(userName: apacheDeployUserName, password: apacheDeployPassword)
+            }
+
+            repository(url: "https://repository.apache.org/service/local/staging/deploy/maven2/") {
               authentication(userName: apacheDeployUserName, password: apacheDeployPassword)
             }
             
@@ -131,7 +141,7 @@ task aggregateJavadoc(type: Javadoc) {
    subprojects.each { subProject->
 
        subProject.sourceSets.each { set ->
-		
+    
            if ("test" != set.name) {
                source set.java
 
