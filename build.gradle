@@ -159,3 +159,7 @@ task clean(type: Delete) {
 }
 
 task continuousIntegration(dependsOn: [subprojects.build, 'aggregateJavadoc'])
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '1.0-milestone-3'
+}
