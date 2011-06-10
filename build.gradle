@@ -167,16 +167,16 @@ task wrapper(type: Wrapper) {
 }
 
 task distSourcesZip(type: Zip) {
- classifier = "sources"
- baseName = "apache-tapestry"
- version = project.version
- destinationDir = buildDir
- 
- from project.projectDir
- exclude "**/.*/**"
- exclude "**/bin/**"
- exclude "**/target/**"
- exclude "**/build/**"
- exclude "**/test-output/**"  // Left around by TestNG sometimes
+  classifier = "sources"
+  baseName = "apache-tapestry"
+  version = project.version
+  destinationDir = buildDir
+
+  from project.projectDir
+  exclude "**/.*/**"
+  exclude "**/bin/**"
+  exclude "**/target/**"
+  exclude "**/build/**"
+  exclude "**/test-output/**"  // Left around by TestNG sometimes
  
 }
