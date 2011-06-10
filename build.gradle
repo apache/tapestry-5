@@ -172,10 +172,11 @@ task distSourcesZip(type: Zip) {
  version = project.version
  destinationDir = buildDir
  
- subprojects.each {sp ->
-   into (sp.name) { from sp.projectDir ; include "LIC*" ; include "NOT*"}
-   sp.sourceSets.all.findAll { set -> set.name != "test" }.each { set -> 
-     into ("${sp.name}/src") { from set.allSource }
-   }
- }
+ from project.projectDir
+ exclude "**/.*/**"
+ exclude "**/bin/**"
+ exclude "**/target/**"
+ exclude "**/build/**"
+ exclude "**/test-output/**"  // Left around by TestNG sometimes
+ 
 }
