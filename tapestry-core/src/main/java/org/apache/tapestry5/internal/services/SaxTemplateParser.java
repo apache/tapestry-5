@@ -46,6 +46,10 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 
+import static org.apache.tapestry5.internal.services.SaxTemplateParser.Version.T_5_0;
+import static org.apache.tapestry5.internal.services.SaxTemplateParser.Version.T_5_1;
+import static org.apache.tapestry5.internal.services.SaxTemplateParser.Version.T_5_3;
+
 /**
  * SAX-based template parser logic, taking a {@link Resource} to a Tapestry
  * template file and returning
@@ -70,20 +74,13 @@ public class SaxTemplateParser
 
     public static final String XML_NAMESPACE_URI = "http://www.w3.org/XML/1998/namespace";
 
-    /**
-     * Used as the namespace URI for Tapestry templates.
-     */
-    public static final String TAPESTRY_SCHEMA_5_0_0 = "http://tapestry.apache.org/schema/tapestry_5_0_0.xsd";
+    private static final Map<String, Version> NAMESPACE_URI_TO_VERSION = CollectionFactory.newMap();
 
-    /**
-     * Adds several new elements.
-     */
-    public static final String TAPESTRY_SCHEMA_5_1_0 = "http://tapestry.apache.org/schema/tapestry_5_1_0.xsd";
-
-    // Might want to change this from a Set to a map from URI to version number
-    // (if we hit a 3rd version of the namespace URI).
-    private static final Set<String> TAPESTRY_SCHEMA_URIS = CollectionFactory.newSet(
-            TAPESTRY_SCHEMA_5_0_0, TAPESTRY_SCHEMA_5_1_0);
+    {
+        NAMESPACE_URI_TO_VERSION.put("http://tapestry.apache.org/schema/tapestry_5_0_0.xsd", T_5_0);
+        NAMESPACE_URI_TO_VERSION.put("http://tapestry.apache.org/schema/tapestry_5_1_0.xsd", T_5_1);
+        NAMESPACE_URI_TO_VERSION.put("http://tapestry.apache.org/schema/tapestry_5_3.xsd", T_5_3);
+    }
 
     /**
      * Special namespace used to denote Block parameters to components, as a
@@ -228,8 +225,9 @@ public class SaxTemplateParser
 
         String uri = tokenStream.getNamespaceURI();
         String name = tokenStream.getLocalName();
+        Version version = NAMESPACE_URI_TO_VERSION.get(uri);
 
-        if (TAPESTRY_SCHEMA_5_1_0.equals(uri))
+        if (T_5_1.before(version))
         {
             if (name.equalsIgnoreCase("extend"))
             {
@@ -238,7 +236,7 @@ public class SaxTemplateParser
             }
         }
 
-        if (TAPESTRY_SCHEMA_URIS.contains(uri))
+        if (version != null)
         {
             if (name.equalsIgnoreCase("container"))
             {
@@ -260,7 +258,7 @@ public class SaxTemplateParser
             {
                 case START_ELEMENT:
 
-                    if (tokenStream.getNamespaceURI().equals(TAPESTRY_SCHEMA_5_1_0)
+                    if (T_5_1.before(NAMESPACE_URI_TO_VERSION.get(tokenStream.getNamespaceURI()))
                             && tokenStream.getLocalName().equalsIgnoreCase("replace"))
                     {
                         replace(state);
@@ -350,8 +348,9 @@ public class SaxTemplateParser
 
         String uri = tokenStream.getNamespaceURI();
         String name = tokenStream.getLocalName();
+        Version version = NAMESPACE_URI_TO_VERSION.get(uri);
 
-        if (TAPESTRY_SCHEMA_5_1_0.equals(uri))
+        if (T_5_1.before(version))
         {
 
             if (name.equalsIgnoreCase("remove"))
@@ -382,7 +381,7 @@ public class SaxTemplateParser
                 mustBeRoot(name);
         }
 
-        if (TAPESTRY_SCHEMA_URIS.contains(uri))
+        if (version != null)
         {
 
             if (name.equalsIgnoreCase("body"))
@@ -404,6 +403,12 @@ public class SaxTemplateParser
 
             if (name.equalsIgnoreCase("parameter"))
             {
+                if(T_5_3.before(version))
+                {
+                    throw new RuntimeException(
+                            String.format("The <parameter> element has been deprecated in Tapestry 5.3 in favour of '%s' namespace.", TAPESTRY_PARAMETERS_URI));
+                }
+
                 classicParameter(state);
 
                 return;
@@ -696,7 +701,7 @@ public class SaxTemplateParser
 
             String value = tokenStream.getAttributeValue(i);
 
-            if (TAPESTRY_SCHEMA_URIS.contains(uri))
+            if (NAMESPACE_URI_TO_VERSION.containsKey(uri))
             {
                 if (localName.equalsIgnoreCase(ID_ATTRIBUTE_NAME))
                 {
@@ -766,7 +771,7 @@ public class SaxTemplateParser
             // These URIs are strictly part of the server-side Tapestry template
             // and are not ever sent to the client.
 
-            if (TAPESTRY_SCHEMA_URIS.contains(uri))
+            if (NAMESPACE_URI_TO_VERSION.containsKey(uri))
                 continue;
 
             if (uri.equals(TAPESTRY_PARAMETERS_URI))
@@ -1113,6 +1118,32 @@ public class SaxTemplateParser
         if (startx < text.length())
             tokenAccumulator.add(new TextToken(text.substring(startx, text.length()),
                     textStartLocation));
+    }
+
+    static enum Version
+    {
+        T_5_0(5,0), T_5_1(5,1), T_5_3(5,3);
+
+        private int major;
+        private int minor;
+
+
+        private Version(int major, int minor)
+        {
+            this.major = major;
+            this.minor = minor;
+        }
+
+        public boolean before(Version other)
+        {
+            if(other == null)
+                return false;
+
+            if(this == other)
+                return true;
+
+            return major <= other.major && minor <= other.minor;
+        }
     }
 
 }

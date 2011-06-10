@@ -695,6 +695,8 @@ public class TemplateParserImplTest extends InternalBaseTestCase
                 { "misplaced_parameter.tml", "Block parameters are only allowed directly within component elements.",
                         5 },
 
+                { "parameter_namespace_element_deprecated.tml", "The <parameter> element has been deprecated in Tapestry 5.3 in favour of 'tapestry:parameter' namespace.", 4 },
+
         };
     }
 
