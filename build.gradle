@@ -9,6 +9,8 @@ testngVersion = '5.14.9'
 easymockVersion = '3.0'
 servletAPIVersion = '2.4'
 
+version = '5.3.0-SNAPSHOT'
+
 subprojects {
     apply plugin: 'java'
     apply plugin: 'groovy' // mostly for testing
@@ -20,10 +22,8 @@ subprojects {
     sourceCompatibility = '1.5'
     targetCompatibility = '1.5'
     
-    version = '5.3.0-SNAPSHOT'
-
-  	isSnapshot = version.endsWith("-SNAPSHOT")
-
+    version =  parent.version
+    
     group = 'org.apache.tapestry'
     
     repositories {
