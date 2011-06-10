@@ -2444,7 +2444,7 @@ public final class TapestryModule
                 "en,it,es,zh_CN,pt_PT,de,ru,hr,fi_FI,sv_SE,fr_FR,da,pt_BR,ja,el,bg,no_NB");
 
         configuration.add(SymbolConstants.TAPESTRY_VERSION,
-                VersionUtils.readVersionNumber("META-INF/maven/org.apache.tapestry/tapestry-core/pom.properties"));
+                VersionUtils.readVersionNumber("META-INF/gradle/org.apache.tapestry/tapestry-core/project.properties"));
 
         configuration.add(SymbolConstants.COOKIE_MAX_AGE, "7 d");
 

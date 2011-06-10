@@ -44,4 +44,21 @@ task generateGrammarSource {
   }
 }
 
+task generateProjectProperties(dependsOn: compileJava) {
+  description = "Generates META-INF/gradle/org.apache.tapestry/tapestry-core/project.properties similar to Maven's pom.properties."
+  def outputDir = new File("$processResources.destinationDir/META-INF/gradle/org.apache.tapestry/tapestry-core")
+  def outputFile = new File(outputDir, 'project.properties')
+
+  outputs.dir outputDir
+    
+  doLast {
+    outputDir.mkdirs()
+    outputFile << "version=${version}";
+    println "Generating $outputFile"
+  }
+
+}
+
+compileJava.options.fork(memoryMaximumSize: '512m')
 compileJava.dependsOn generateGrammarSource
+jar.dependsOn generateProjectProperties
