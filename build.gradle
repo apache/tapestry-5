@@ -165,3 +165,17 @@ task continuousIntegration(dependsOn: [subprojects.build, 'aggregateJavadoc'])
 task wrapper(type: Wrapper) {
 	gradleVersion = '1.0-milestone-3'
 }
+
+task distSourcesZip(type: Zip) {
+ classifier = "sources"
+ baseName = "apache-tapestry"
+ version = project.version
+ destinationDir = buildDir
+ 
+ subprojects.each {sp ->
+   into (sp.name) { from sp.projectDir ; include "LIC*" ; include "NOT*"}
+   sp.sourceSets.all.findAll { set -> set.name != "test" }.each { set -> 
+     into ("${sp.name}/src") { from set.allSource }
+   }
+ }
+}
