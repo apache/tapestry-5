@@ -138,31 +138,23 @@ task aggregateJavadoc(type: Javadoc) {
        exclude "org/apache/tapestry5/internal/plastic/asm/**"
    }
 
-   subprojects.each { subProject->
+   subprojects.each { sp -> 
+     sp.sourceSets.all.findAll { set -> set.name != "test" }.each { set ->
+       
+       source set.java
 
-       subProject.sourceSets.each { set ->
-    
-           if ("test" != set.name) {
-               source set.java
+       classpath += set.classes + set.compileClasspath
 
-               if (classpath) {
-                   classpath += set.classes + set.compileClasspath
-               }
-               else {
-                   classpath = set.classes + set.compileClasspath
-               }
-                              
-               // Some of the component .xdoc files refer to PNG images
-               // (we could also exclude .java and .xdoc)
-               copy {
-                 from set.java.srcDirs.toList()                 
-                 into javadocBuildDir.dir
-                 include '**/*.png'
-               }
-           }
-       }
+       // Some of the component .xdoc files refer to PNG images
+       // (we could also exclude .java and .xdoc)
+       copy {
+         from set.java.srcDirs.toList()                 
+         into javadocBuildDir.dir
+         include '**/*.png'
+       }       
+     }
    }
-}
+ }
 
 task clean(type: Delete) {
   delete buildDirName
