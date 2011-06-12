@@ -6,7 +6,7 @@ dependencies {
   compile project(':tapestry-json')
   compile project(":plastic")
   
-  provided project(':tapestry-test')
+  compile project(':tapestry-test')
 
   compile "javassist:javassist:3.12.1.GA"
 
