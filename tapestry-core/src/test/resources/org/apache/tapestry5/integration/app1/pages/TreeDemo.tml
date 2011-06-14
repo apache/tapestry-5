@@ -1,0 +1,15 @@
+<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+
+  <h1>Tree Demo</h1>
+
+  <t:tree t:id="fs" model="fileSystemTreeModel"/>
+
+  <p>
+    [
+    <t:pagelink page="treeDemo">Redraw</t:pagelink>
+    ]
+    [
+    <t:actionlink t:id="clear">clear expansions</t:actionlink>
+    ]
+  </p>
+</t:border>

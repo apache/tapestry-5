@@ -69,17 +69,20 @@ public class CoreJavaScriptStack implements JavaScriptStack
             ROOT + "/t5-core.js",
 
             ROOT + "/t5-arrays.js",
-            
+
             ROOT + "/t5-init.js",
-            
+
             ROOT + "/t5-pubsub.js",
 
-            ROOT + "/tapestry.js" };
+            ROOT + "/tapestry.js",
+
+            ROOT + "/tree.js" };
 
     // Because of changes to the logic of how stylesheets get incorporated, the default stylesheet
     // was removed, the logic for it is now in TapestryModule.contributeMarkupRenderer().
 
-    private static final String[] CORE_STYLESHEET = new String[0];
+    private static final String[] CORE_STYLESHEET = new String[]
+    { ROOT + "/tree.css" };
 
     public CoreJavaScriptStack(@Symbol(SymbolConstants.PRODUCTION_MODE)
     boolean productionMode,
