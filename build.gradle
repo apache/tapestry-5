@@ -13,6 +13,9 @@ version = '5.3.0-SNAPSHOT'
 
 allprojects {
     
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
+    
     repositories {
         mavenCentral()
                
@@ -26,8 +29,6 @@ subprojects {
   
   apply plugin: 'java'
   apply plugin: 'groovy' // mostly for testing
-  apply plugin: 'eclipse'
-  apply plugin: 'idea'
   apply plugin: 'maven'
   apply plugin: 'project-report'
   
