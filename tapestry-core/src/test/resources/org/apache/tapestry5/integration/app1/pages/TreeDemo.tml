@@ -2,7 +2,7 @@
 
   <h1>Tree Demo</h1>
 
-  <t:tree t:id="fs" model="fileSystemTreeModel"/>
+  <t:tree class="test-hook" t:id="tree" model="stuffModel"/>
 
   <p>
     [
