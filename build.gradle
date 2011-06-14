@@ -11,20 +11,7 @@ servletAPIVersion = '2.4'
 
 version = '5.3.0-SNAPSHOT'
 
-subprojects {
-    apply plugin: 'java'
-    apply plugin: 'groovy' // mostly for testing
-    apply plugin: 'eclipse'
-    apply plugin: 'idea'
-    apply plugin: 'maven'
-    apply plugin: 'project-report'
-    
-    sourceCompatibility = '1.5'
-    targetCompatibility = '1.5'
-    
-    version =  parent.version
-    
-    group = 'org.apache.tapestry'
+allprojects {
     
     repositories {
         mavenCentral()
@@ -32,73 +19,87 @@ subprojects {
         // All things JBoss/Javassist/Hibernate
         mavenRepo urls: "https://repository.jboss.org/nexus/content/repositories/releases/" 
     }
-    
-    configurations {
-      provided
-      deployerJars
-    }
-    
+}
 
-
-    // See http://jira.codehaus.org/browse/GRADLE-784
-    
-    sourceSets {
-      main { 
-        compileClasspath += configurations.provided 
-      }
-      test {
-        compileClasspath += configurations.provided
-        runtimeClasspath += configurations.provided
-      }
+subprojects {
+  version =  parent.version  
+  
+  apply plugin: 'java'
+  apply plugin: 'groovy' // mostly for testing
+  apply plugin: 'eclipse'
+  apply plugin: 'idea'
+  apply plugin: 'maven'
+  apply plugin: 'project-report'
+  
+  sourceCompatibility = '1.5'
+  targetCompatibility = '1.5'
+      
+  group = 'org.apache.tapestry'  
+  
+  configurations {
+    provided
+    deployerJars
+  }
+  
+  // See http://jira.codehaus.org/browse/GRADLE-784
+  
+  sourceSets {
+    main { 
+      compileClasspath += configurations.provided 
     }
-    
-
-    dependencies {
-        groovy "org.codehaus.groovy:groovy-all:1.7.4"
-        
-        deployerJars "org.apache.maven.wagon:wagon-http-lightweight:1.0-beta-6"
-    }
-    
     test {
-        useTestNG()
-        
-        options.suites("src/test/conf/testng.xml")
-        
-        maxHeapSize = "400M"
-        
-        // Turn off live service reloading
-
-        systemProperties["tapestry.service-reloading-enabled"] = "false"
-
-        jvmArgs("-XX:MaxPermSize=512m")        
+      compileClasspath += configurations.provided
+      runtimeClasspath += configurations.provided
     }
-    
-    task sourcesJar(type: Jar, dependsOn:classes) {
-       classifier = 'sources'
-       from sourceSets.main.allSource
-    }
+  }
+  
 
-    artifacts {
-       archives sourcesJar
-    }    
-    
-    uploadArchives {
-        repositories.mavenDeployer {
+  dependencies {
+      groovy "org.codehaus.groovy:groovy-all:1.7.4"
+      
+      deployerJars "org.apache.maven.wagon:wagon-http-lightweight:1.0-beta-6"
+  }
+  
+  test {
+      useTestNG()
+      
+      options.suites("src/test/conf/testng.xml")
+      
+      maxHeapSize = "400M"
+      
+      // Turn off live service reloading
+
+      systemProperties["tapestry.service-reloading-enabled"] = "false"
+
+      jvmArgs("-XX:MaxPermSize=512m")        
+  }
+  
+  task sourcesJar(type: Jar, dependsOn:classes) {
+     classifier = 'sources'
+     from sourceSets.main.allSource
+  }
+
+  artifacts {
+     archives sourcesJar
+  }    
+  
+  uploadArchives {
+      repositories.mavenDeployer {
+        
+          configuration = configurations.deployerJars
           
-            configuration = configurations.deployerJars
-            
-            // apacheDeployUserName and apacheDeployPassword should be specified in ~/.gradle/gradle.properties
+          // apacheDeployUserName and apacheDeployPassword should be specified in ~/.gradle/gradle.properties
 
-            snapshotRepository(url: "https://repository.apache.org/content/repositories/snapshots/") {
-              authentication(userName: apacheDeployUserName, password: apacheDeployPassword)
-            }
+          snapshotRepository(url: "https://repository.apache.org/content/repositories/snapshots/") {
+            authentication(userName: apacheDeployUserName, password: apacheDeployPassword)
+          }
 
-            repository(url: "https://repository.apache.org/service/local/staging/deploy/maven2/") {
-              authentication(userName: apacheDeployUserName, password: apacheDeployPassword)
-            }
-            
-        }
-    }
+          repository(url: "https://repository.apache.org/service/local/staging/deploy/maven2/") {
+            authentication(userName: apacheDeployUserName, password: apacheDeployPassword)
+          }
+          
+      }
+  }  
 }
 
 // Specific to top-level build, not set for subprojects:
@@ -111,7 +112,7 @@ dependencies {
   javadoc project(':tapestry-javadoc')
 }
 
-subprojects.each { evaluationDependsOn(it.name) }
+subprojects.each { project.evaluationDependsOn(it.name) }
 
 // Cribbed from https://github.com/hibernate/hibernate-core/blob/master/release/release.gradle#L19
 
@@ -132,9 +133,7 @@ task aggregateJavadoc(type: Javadoc) {
        bottom = "Copyright &copy; 2003-2011 <a href=\"http://tapestry.apache.org\">The Apache Software Foundation</a>."
        use = true
        links = [ 'http://download.oracle.com/javase/6/docs/api/', 'http://download.oracle.com/javaee/6/api/' ]
-       // Temporarily commented out tagletpath while we get some help
-       // with the Gradle dependency issue 
-       // addStringOption "tagletpath", configurations.javadoc.asPath
+       addStringOption "tagletpath", configurations.javadoc.asPath
        addStringOption "taglet", "org.apache.tapestry5.javadoc.TapestryDocTaglet"
        
        exclude "org/apache/tapestry5/internal/plastic/asm/**"
@@ -164,7 +163,7 @@ task clean(type: Delete) {
 
 // Temporarily commented out aggregateJavadoc while we get some help
 // with the Gradle dependency issue 
-task continuousIntegration(dependsOn: [subprojects.build /* , 'aggregateJavadoc' */])
+task continuousIntegration(dependsOn: [subprojects.build, 'aggregateJavadoc'])
 
 task wrapper(type: Wrapper) {
 	gradleVersion = '1.0-milestone-3'
