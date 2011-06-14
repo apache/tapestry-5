@@ -132,7 +132,9 @@ task aggregateJavadoc(type: Javadoc) {
        bottom = "Copyright &copy; 2003-2011 <a href=\"http://tapestry.apache.org\">The Apache Software Foundation</a>."
        use = true
        links = [ 'http://download.oracle.com/javase/6/docs/api/', 'http://download.oracle.com/javaee/6/api/' ]
-       addStringOption "tagletpath", configurations.javadoc.asPath
+       // Temporarily commented out tagletpath while we get some help
+       // with the Gradle dependency issue 
+       // addStringOption "tagletpath", configurations.javadoc.asPath
        addStringOption "taglet", "org.apache.tapestry5.javadoc.TapestryDocTaglet"
        
        exclude "org/apache/tapestry5/internal/plastic/asm/**"
@@ -160,7 +162,9 @@ task clean(type: Delete) {
   delete buildDirName
 }
 
-task continuousIntegration(dependsOn: [subprojects.build, 'aggregateJavadoc'])
+// Temporarily commented out aggregateJavadoc while we get some help
+// with the Gradle dependency issue 
+task continuousIntegration(dependsOn: [subprojects.build /* , 'aggregateJavadoc' */])
 
 task wrapper(type: Wrapper) {
 	gradleVersion = '1.0-milestone-3'
