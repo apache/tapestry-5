@@ -261,4 +261,38 @@ public class ZoneTests extends TapestryCoreTestCase
         select("//div[@id='select2ValueZone']//select", "4 post ajax");
     }
 
+    @Test
+    public void multi_zone_update_using_string_in_loop() {
+        openLinks("MultiZone String Body Demo");
+        String[] numbers = new String[]{
+                "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"
+        };
+
+        for (int i = 0; i <= 10; i++) {
+            assertText("row-" + i, numbers[i]);
+        }
+
+        click("click_7");
+        waitForElementToAppear("row-7");
+
+        // 7- are unchanged
+        for (int i = 0; i <= 7; i++) {
+            assertText("row-" + i, numbers[i]);
+        }
+        // 8+ are modified
+        for (int i = 8; i <= 10; i++) {
+            assertText("row-" + i, i + " is the integer value");
+        }
+
+        click("reset");
+        waitForElementToAppear("wholeLoopZone");
+
+        // all elements reset via AJAX
+        for (int i = 0, numbersLength = numbers.length; i < numbersLength; i++) {
+            assertText("row-" + i, numbers[i]);
+        }
+
+    }
+    
+
 }

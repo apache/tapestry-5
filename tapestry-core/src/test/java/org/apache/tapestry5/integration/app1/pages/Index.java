@@ -85,6 +85,9 @@ public class Index
 
                     new Item("ZoneFormUpdateDemo", "Zone/Form Update Demo", "Updating a Zone inside a Form"),
 
+                    new Item("MultiZoneStringBodyDemo", "MultiZone String Body Demo",
+                                               "Multi-zone updates in a loop using strings coerced into blocks"),
+
                     new Item("RenderNotificationDemo", "RenderNotification Demo", "Use of RenderNotification mixin"),
 
                     new Item("InjectMessagesDemo", "Inject Global Messages into Service Demo",
