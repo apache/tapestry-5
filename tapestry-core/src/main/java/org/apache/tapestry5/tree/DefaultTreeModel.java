@@ -14,16 +14,15 @@
 
 package org.apache.tapestry5.tree;
 
-import java.util.Collections;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A default implementation of TreeModel that starts with a {@link ValueEncoder} (for the element to string conversion),
@@ -156,7 +155,7 @@ public class DefaultTreeModel<T> implements TreeModel<T>
         if (result != null)
             return result;
 
-        Deque<TreeNode<T>> queue = new LinkedList<TreeNode<T>>(roots);
+        LinkedList<TreeNode<T>> queue = new LinkedList<TreeNode<T>>(roots);
 
         while (!queue.isEmpty())
         {
