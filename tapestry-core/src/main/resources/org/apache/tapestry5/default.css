@@ -205,6 +205,20 @@ DIV.t-beaneditor-row LABEL {
     vertical-align: middle;
 }
 
+DIV.t-checklist-row {
+    padding: 4px 0px 2px 0px;
+}
+
+DIV.t-checklist-row LABEL {
+    width: 150px;
+    display: block;
+    float: left;
+    text-align: right;
+    clear: left;
+    padding-right: 3px;
+    vertical-align: middle;
+}
+
 INPUT.t-number {
     text-align: right;
 }
