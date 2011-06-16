@@ -61,4 +61,8 @@ task generateProjectProperties(dependsOn: compileJava) {
 
 compileJava.options.fork(memoryMaximumSize: '512m')
 compileJava.dependsOn generateGrammarSource
+
+// Not sure why this is necessary:
+compileTestGroovy.dependsOn compileTestJava
+
 jar.dependsOn generateProjectProperties
