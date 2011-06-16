@@ -1,8 +1,5 @@
 description = "Apache Tapestry 5 Project"
 
-if (!project.hasProperty('apacheDeployUserName')) apacheDeployUserName = '*UNSET-USERNAME*'
-if (!project.hasProperty('apacheDeployPassword')) apacheDeployPassword = '*UNSET-PASSWORD*'
-
 jettyVersion = '7.0.0.v20091005'
 tomcatVersion = '6.0.30'
 testngVersion = '5.14.9'
@@ -10,6 +7,18 @@ easymockVersion = '3.0'
 servletAPIVersion = '2.4'
 
 version = '5.3.0-SNAPSHOT'
+
+doSign = !project.hasProperty('noSign') && project.hasProperty("signing.keyId")
+
+buildscript {
+  repositories {
+    mavenLocal()
+    mavenRepo name: "Gradle", urls: "http://repo.gradle.org/gradle/plugins-snapshots/"
+  }
+  dependencies {
+    classpath "org.gradle.plugins:gradle-signing-plugin:0.0.1-SNAPSHOT"
+  }
+}
 
 allprojects {
     
@@ -40,6 +49,13 @@ subprojects {
   configurations {
     provided
     deployerJars
+    
+    // meta -- non-code artifacts, such as sources and javadoc JARs
+    meta
+    
+    // published -- what gets uploaded to the Nexus repository
+    published.extendsFrom archives, meta
+    if (doSign) { published.extendsFrom signatures }    
   }
   
   // See http://jira.codehaus.org/browse/GRADLE-784
@@ -81,32 +97,60 @@ subprojects {
   }
 
   artifacts {
-     archives sourcesJar
+     meta sourcesJar
   }    
   
-  uploadArchives {
-      repositories.mavenDeployer {
+  if (doSign) {
+    apply plugin: 'signing'
+    // sign (create PGP signature for) archives (standard JARs)
+    // and meta (sources JARs)
+    signing { sign configurations.archives, configurations.meta }
+  }
+  
+  // apacheDeployUserName and apacheDeployPassword should be specified in ~/.gradle/gradle.properties
+  
+  deployUsernameProperty = "apacheDeployUserName"
+  deployPasswordProperty = "apacheDeployPassword"
+  canDeploy = [deployUsernameProperty, deployPasswordProperty].every { project.hasProperty(it) }
+  
+    
+  uploadPublished  {
+  
+    doFirst {
+      if (!canDeploy) { 
+        throw new InvalidUserDataException("Missing upload credentials. Set '$deployUsernameProperty' and '$deployPasswordProperty' project properties.")
+      }
+    }  
+    
+    if (canDeploy) {
+      repositories  {
         
-          configuration = configurations.deployerJars
-          
-          // apacheDeployUserName and apacheDeployPassword should be specified in ~/.gradle/gradle.properties
-
-          snapshotRepository(url: "https://repository.apache.org/content/repositories/snapshots/") {
-            authentication(userName: apacheDeployUserName, password: apacheDeployPassword)
-          }
+        project.deployer = repositories.mavenDeployer {
+        
+          if (doSign) {
+            beforeDeployment { MavenDeployment deployment ->
+              def signedPomArtifact = sign(deployment.pomArtifact).singleArtifact
+              // See http://issues.gradle.org/browse/GRADLE-1589
+              signedPomArtifact.type = "pom." + signing.type.extension
+              deployment.addArtifact(signedPomArtifact)
+            }
+          }          
 
           repository(url: "https://repository.apache.org/service/local/staging/deploy/maven2/") {
             authentication(userName: apacheDeployUserName, password: apacheDeployPassword)
-          }
-          
+          }        
+        }
       }
-  }  
+    }
+  }
 }
 
 // Specific to top-level build, not set for subprojects:
 
 configurations {
   javadoc
+  published.extendsFrom archives, meta
+  if (doSign) { published.extendsFrom signatures }
 }
 
 dependencies {
@@ -158,16 +202,20 @@ task aggregateJavadoc(type: Javadoc) {
    }
  }
 
+
 task clean(type: Delete) {
   delete buildDirName
 }
 
-// Temporarily commented out aggregateJavadoc while we get some help
-// with the Gradle dependency issue 
-task continuousIntegration(dependsOn: [subprojects.build, 'aggregateJavadoc'])
+task continuousIntegration(dependsOn: [subprojects.build, 'aggregateJavadoc'], 
+  description: "Task executed on Jenkins CI server after SVN commits")
+
+task generateRelease(dependsOn: [subprojects.clean, 'continuousIntegration', subprojects.uploadPublished, 'distSourcesZip'], 
+  description: "Generates and uploads a final release to Apache Nexus")
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '1.0-milestone-3'
+  gradleVersion = '1.0-milestone-3'
+  description = "Regenerates the Gradle Wrapper files"
 }
 
 task distSourcesZip(type: Zip) {
@@ -175,6 +223,7 @@ task distSourcesZip(type: Zip) {
   baseName = "apache-tapestry"
   version = project.version
   destinationDir = buildDir
+  description = "Creates a combined Zip file of all sub-project's sources"
 
   from project.projectDir
   exclude "**/.*/**"
