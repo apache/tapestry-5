@@ -937,4 +937,32 @@ public class FormTests extends TapestryCoreTestCase
         assertTextPresent("Password: ab");
         assertTextPresent("Password2: xyz");
     }
+
+        @Test
+    public void checklist_select() throws Exception
+    {
+        openLinks("Checklist Demo");
+
+        clickAndWait(SUBMIT);
+        assertTextPresent("You must provide a value for Color.");
+
+        check("//input[@value='Green']");
+
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("Selected colors: [Green]");
+
+        check("//input[@value='Red']");
+
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("Selected colors: [Green, Red]");
+
+        check("//input[@value='Blue']");
+        uncheck("//input[@value='Green']");
+
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("Selected colors: [Blue, Red]");
+    }
 }

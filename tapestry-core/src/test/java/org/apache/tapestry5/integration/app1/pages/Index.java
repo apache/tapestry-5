@@ -472,7 +472,10 @@ public class Index
                     new Item("AtInjectDemo", "@javax.inject.Inject Demo", "Using @javax.inject.Inject for injection"),
 
                     new Item("LinkQueryParameters", "Link Query Parameters Demo",
-                            "Providing Query Parameters directly to link components as a map of key=parameter name, value=parameter values")
+                            "Providing Query Parameters directly to link components as a map of key=parameter name, value=parameter values") ,
+
+                    new Item("ChecklistDemo", "Checklist Demo",
+                            "Use Checklist component")
 
             );
 
