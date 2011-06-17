@@ -163,7 +163,7 @@ subprojects.each { project.evaluationDependsOn(it.name) }
 
 javadocBuildDir = dir(buildDirName + "/documentation/javadocs")
 
-task aggregateJavadoc(type: Javadoc) {
+task aggregateJavadoc(type: Javadoc, group: "Documentation") {
 
    dependsOn configurations.javadoc
    
@@ -210,7 +210,8 @@ task clean(type: Delete) {
 task continuousIntegration(dependsOn: [subprojects.build, 'aggregateJavadoc'], 
   description: "Task executed on Jenkins CI server after SVN commits")
 
-task generateRelease(dependsOn: [subprojects.clean, 'continuousIntegration', subprojects.uploadPublished, 'distSourcesZip'], 
+task generateRelease(dependsOn: ['continuousIntegration', subprojects.uploadPublished, 'zippedSources', 'zippedJavadoc'], 
+  group: "Release artifact",
   description: "Generates and uploads a final release to Apache Nexus")
 
 task wrapper(type: Wrapper) {
@@ -218,18 +219,32 @@ task wrapper(type: Wrapper) {
   description = "Regenerates the Gradle Wrapper files"
 }
 
-task distSourcesZip(type: Zip) {
-  classifier = "sources"
+task zippedSources(type: Zip) {
+  description = "Creates a combined Zip file of all sub-project's sources"
+  group = "Release artifact"
+
+  destinationDir = buildDir
   baseName = "apache-tapestry"
   version = project.version
-  destinationDir = buildDir
-  description = "Creates a combined Zip file of all sub-project's sources"
+  classifier = "sources"
 
   from project.projectDir
   exclude "**/.*/**"
   exclude "**/bin/**"
   exclude "**/target/**"
   exclude "**/build/**"
-  exclude "**/test-output/**"  // Left around by TestNG sometimes
- 
+  exclude "**/test-output/**"  // Left around by TestNG sometimes 
+}
+
+task zippedJavadoc(type: Zip, dependsOn: aggregateJavadoc) {
+  description = "Zip archive of the project's aggregate JavaDoc"
+  group = "Release artifact"
+  
+  destinationDir = buildDir  
+  baseName = "apache-tapestry"
+  version = project.version  
+  classifier = "javadocs"
+  
+  from javadocBuildDir.dir
+  into "apidocs"
 }
