@@ -206,4 +206,17 @@ public class BeanEditorTests extends TapestryCoreTestCase
         
         assertText("//dd[2]", "Ultra Important");
     }
+
+    /** TAP5-1527 */
+    public void bean_editor_prepare_bubbling()
+    {
+        openLinks("BeanEditor Prepare Bubbling Demo");
+
+        type("name", "abcdef");
+        type("age", "10");
+
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("Name: abcdef", "Age: 10");
+    }
 }

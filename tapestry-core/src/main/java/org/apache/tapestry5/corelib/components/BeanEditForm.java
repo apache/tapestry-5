@@ -151,7 +151,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     @Environmental
     private TrackableComponentEventCallback eventCallback;
 
-    void onPrepareFromForm()
+    boolean onPrepareFromForm()
     {
         resources.triggerEvent(EventConstants.PREPARE, null, null);
 
@@ -163,6 +163,8 @@ public class BeanEditForm implements ClientElement, FormValidationControl
 
             BeanModelUtils.modify(model, add, include, exclude, reorder);
         }
+
+        return true;
     }
 
     /**

@@ -474,8 +474,9 @@ public class Index
                     new Item("LinkQueryParameters", "Link Query Parameters Demo",
                             "Providing Query Parameters directly to link components as a map of key=parameter name, value=parameter values") ,
 
-                    new Item("ChecklistDemo", "Checklist Demo",
-                            "Use Checklist component")
+                    new Item("ChecklistDemo", "Checklist Demo", "Use Checklist component")            ,
+
+                    new Item("BeanEditFormPrepareBubbling", "BeanEditor Prepare Bubbling Demo", "Prepare event bubbling")
 
             );
 
