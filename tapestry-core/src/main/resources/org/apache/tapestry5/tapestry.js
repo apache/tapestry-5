@@ -375,6 +375,8 @@ var Tapestry = {
 		Tapestry.error(Tapestry.Messages.communicationFailed + exception);
 
 		Tapestry.debug(Tapestry.Messages.ajaxFailure + exception, response);
+		
+		throw exception;
 	},
 
 	/**
@@ -435,7 +437,7 @@ var Tapestry = {
 				 * to mean the server didn't respond.
 				 */
 				if (!response.getStatus() || !response.request.success()) {
-					Tapestry.error(Tapestry.Messages.ajaxRequestUnsuccessful);
+					finalOptions.onFailure.call(this, response);
 					return;
 				}
 
