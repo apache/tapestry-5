@@ -1,4 +1,4 @@
-/* Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
+/* Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -515,8 +515,12 @@ var Tapestry = {
 			return path;
 		}
 
-		var l = window.location;
-		return l.protocol + "//" + l.host + path;
+    if (! Tapestry.buildURL) {
+      var l = window.location;
+      Tapestry.buildURL = l.protocol + "//" + l.host;
+    }
+    
+    return Tapestry.buildURL + path;
 	},
 
 	stripToLastSlash : function(URL) {
