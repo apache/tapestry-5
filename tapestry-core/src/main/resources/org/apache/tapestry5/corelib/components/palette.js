@@ -161,7 +161,7 @@ Tapestry.Palette = Class.create({
             return o.value;
         });
 
-        this.hidden.value = values.toJSON();
+        this.hidden.value = Object.toJSON(values);
     },
 
     moveUpClicked : function(event)

@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -700,7 +700,7 @@ public class FormTests extends TapestryCoreTestCase
 
         // Wait a moment for the page to initialize.
 
-        waitForCSSSelectedElementToAppear("//a[@id='fred']");
+        waitForElementToAppear("fred");
 
         click("//a[@id='fred']");
 

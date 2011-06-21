@@ -1909,7 +1909,7 @@ Tapestry.ZoneManager = Class.create( {
 			 * zones is an object of zone ids and zone content that will be
 			 * present in a multi-zone update response.
 			 */
-			Object.keys(reply.zones).each(function(zoneId) {
+			reply.zones && Object.keys(reply.zones).each(function(zoneId) {
 				var manager = Tapestry.findZoneManagerForZone(zoneId);
 
 				if (manager) {

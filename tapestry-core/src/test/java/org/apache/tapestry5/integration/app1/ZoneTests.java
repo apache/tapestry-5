@@ -180,7 +180,7 @@ public class ZoneTests extends TapestryCoreTestCase
 
         String now = getText("now");
 
-        waitForCSSSelectedElementToAppear("//a[@id='mySubmit']");
+        waitForElementToAppear("mySubmit");
 
         click("//a[@id='mySubmit']");
 
