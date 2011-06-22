@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.transform;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.List;
 
 import org.apache.tapestry5.ComponentResources;
@@ -389,7 +390,7 @@ public class BridgeClassTransformation implements ClassTransformation
 
                 public Class getResultType()
                 {
-                    return invocation.getReturnType();
+                    return method().getReturnType();
                 }
 
                 public Object getResult()
@@ -399,12 +400,12 @@ public class BridgeClassTransformation implements ClassTransformation
 
                 public Class getParameterType(int index)
                 {
-                    return invocation.getParameterType(index);
+                    return method().getParameterTypes()[index];
                 }
 
                 public int getParameterCount()
                 {
-                    return invocation.getParameterCount();
+                    return method().getParameterTypes().length;
                 }
 
                 public Object getParameter(int index)
@@ -414,7 +415,12 @@ public class BridgeClassTransformation implements ClassTransformation
 
                 public String getMethodName()
                 {
-                    return invocation.getMethodName();
+                    return method().getName();
+                }
+
+                private Method method()
+                {
+                    return invocation.getMethod();
                 }
 
                 public <T extends Annotation> T getMethodAnnotation(Class<T> annotationClass)

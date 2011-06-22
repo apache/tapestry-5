@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.plastic;
 
+import java.lang.reflect.Method;
+
 /**
  * A representation of the invocation of a method that allows the behavior of the method to be advised: either by
  * changing parameter values, or by changing the return value, or by catch or throwing different exceptions. Provides
@@ -82,15 +84,6 @@ public interface MethodInvocation extends MethodInvocationResult, AnnotationAcce
      */
     MethodInvocation setCheckedException(Exception exception);
 
-    /** Returns the name of the advised method. */
-    String getMethodName();
-
-    /** Returns the number of parameters passed to the advised method. */
-    int getParameterCount();
-
-    /** Returns the method's return type. */
-    Class getReturnType();
-
-    /** Returns the type of the indicated parameter. */
-    Class getParameterType(int index);
+    /** Returns the method being invoked. */
+    Method getMethod();
 }

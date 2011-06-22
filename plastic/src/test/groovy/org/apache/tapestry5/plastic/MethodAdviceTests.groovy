@@ -18,13 +18,9 @@ class MethodAdviceTests extends AbstractPlasticSpecification {
             findMethod(pc, "aSingleMethod").addAdvice ({
                 didInvoke = true
 
-                assert it.methodName == "aSingleMethod"
-                assert it.parameterCount == 1
+                assert it.method.name == "aSingleMethod"
 
                 assert it.getParameter(0) == 123
-
-                assert it.returnType == void.class
-                assert it.getParameterType(0) == int.class
 
                 assert it.hasAnnotation(Deprecated.class) == false
                 assert it.hasAnnotation(Maybe.class) == true

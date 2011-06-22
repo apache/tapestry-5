@@ -95,16 +95,6 @@ public abstract class AbstractMethodInvocation implements MethodInvocation
         return this;
     }
 
-    public String getMethodName()
-    {
-        return bundle.methodDescription.methodName;
-    }
-
-    public int getParameterCount()
-    {
-        return bundle.methodDescription.argumentTypes.length;
-    }
-
     public <T extends Annotation> boolean hasAnnotation(Class<T> annotationType)
     {
         return getAnnotation(annotationType) != null;
@@ -112,23 +102,14 @@ public abstract class AbstractMethodInvocation implements MethodInvocation
 
     public <T extends Annotation> T getAnnotation(Class<T> annotationType)
     {
-        return method().getAnnotation(annotationType);
+        return getMethod().getAnnotation(annotationType);
     }
 
-    public Method method()
+    public Method getMethod()
     {
         return bundle.getMethod(getInstance());
     }
 
-    public Class getReturnType()
-    {
-        return method().getReturnType();
-    }
-
-    public Class getParameterType(int index)
-    {
-        return method().getParameterTypes()[index];
-    }
-
+    /** This is implemented in a runtime-generated subclass. */
     protected abstract void proceedToAdvisedMethod();
 }

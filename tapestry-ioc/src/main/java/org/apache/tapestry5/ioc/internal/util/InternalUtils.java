@@ -1421,22 +1421,27 @@ public class InternalUtils
 
                     public Class getResultType()
                     {
-                        return invocation.getReturnType();
+                        return method().getReturnType();
+                    }
+
+                    private Method method()
+                    {
+                        return invocation.getMethod();
                     }
 
                     public Class getParameterType(int index)
                     {
-                        return invocation.getParameterType(index);
+                        return method().getParameterTypes()[index];
                     }
 
                     public int getParameterCount()
                     {
-                        return invocation.getParameterCount();
+                        return method().getParameterTypes().length;
                     }
 
                     public String getMethodName()
                     {
-                        return invocation.getMethodName();
+                        return method().getName();
                     }
 
                     public <T extends Annotation> T getMethodAnnotation(Class<T> annotationClass)
