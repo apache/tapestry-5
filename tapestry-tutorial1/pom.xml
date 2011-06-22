@@ -11,15 +11,15 @@
     </organization>
 
     <scm>
-        <connection>scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/tags/releases/5.2.1/tapestry-tutorial1</connection>
-        <url>scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/tags/releases/5.2.1/tapestry-tutorial1</url>
-      <developerConnection>scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/tags/releases/5.2.1/tutorial1</developerConnection>
+        <connection>scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/tags/releases/5.2.6/tapestry-tutorial1</connection>
+        <url>scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/tags/releases/5.2.6/tapestry-tutorial1</url>
+      <developerConnection>scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/tags/releases/5.2.6/tutorial1</developerConnection>
   </scm>
 
     <parent>
         <groupId>org.apache.tapestry</groupId>
         <artifactId>tapestry-project</artifactId>
-        <version>5.2.7-SNAPSHOT</version>
+        <version>5.2.6</version>
     </parent>
 
     <dependencies>
