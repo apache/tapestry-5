@@ -7,9 +7,14 @@
   <test name="Limited  Integration Tests">
     <parameter name="tapestry.web-app-folder" value="src/test/app1"/>
 
+<!--
     <packages>
       <package name="org.apache.tapestry5.integration.app1"/>
     </packages>
+-->
+    <classes>
+        <class name="org.apache.tapestry5.integration.app1.AjaxTests"/>
+    </classes>
   </test>
 
 </suite>

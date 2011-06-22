@@ -461,7 +461,9 @@ public class Index
                     new Item("DecorateComponentEventLinkDemo", "Decorate Component Event Link Demo",
                             "Decorating event links"),
 
-                    new Item("ValidatorMacroDemo", "Validator Macro Demo", "Using validator macros")
+                    new Item("ValidatorMacroDemo", "Validator Macro Demo", "Using validator macros"),
+    
+                    new Item("NestedFormFragment","Nested Form Fragment Demo","Nesting Form Fragments work properly")
 
             );
 
