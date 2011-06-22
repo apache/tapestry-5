@@ -25,6 +25,13 @@ allprojects {
     apply plugin: 'eclipse'
     apply plugin: 'idea'
     
+    ideaProject {
+        javaVersion = 1.5
+        beforeConfigured { project ->
+            project.modulePaths.clear()
+        }
+    }
+ 
     repositories {
         mavenCentral()
                
