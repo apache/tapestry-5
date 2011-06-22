@@ -5,14 +5,14 @@ antlrOutput = "$buildDir/generated-sources/antlr"
 
 configurations {
   antlr3
-} 
+}
 
 sourceSets.main.java.srcDir antlrOutput
 
 dependencies {
   compile project(':tapestry-ioc')
   compile project(':tapestry-json')
-  
+
   provided project(":tapestry-test")
   provided "javax.servlet:servlet-api:$servletAPIVersion"
 
@@ -33,11 +33,11 @@ task generateGrammarSource {
   outputs.dir file(antlrOutput)
 } << {
   mkdir(antlrOutput)
-  
+
   // Might have a problem here if the current directory has a space in its name
-  
+
   def grammars = fileTree(antlrSource).include("**/*.g")
-    
+
   ant.java(classname: 'org.antlr.Tool', fork: true, classpath: "${configurations.antlr3.asPath}") {
      arg(line: "-o ${antlrOutput}/org/apache/tapestry5/internal/antlr")
      arg(line: grammars.files.join(" "))
@@ -50,13 +50,22 @@ task generateProjectProperties(dependsOn: compileJava) {
   def outputFile = new File(outputDir, 'project.properties')
 
   outputs.dir outputDir
-    
+
   doLast {
     outputDir.mkdirs()
     outputFile << "version=${version}";
     println "Generating $outputFile"
   }
+}
 
+ideaModule {
+  excludeDirs -= buildDir
+
+  def generatedDir = file("$buildDir/generated-sources")
+
+  def buildMinusGeneratedDir = (buildDir.listFiles() - generatedDir) as Set<File>
+
+  excludeDirs += buildMinusGeneratedDir
 }
 
 compileJava.options.fork(memoryMaximumSize: '512m')
