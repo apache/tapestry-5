@@ -1259,6 +1259,10 @@ T5
 
 				element.observe(Tapestry.CHANGE_VISIBILITY_EVENT, function(
 						event) {
+                    //since events propogate up, you have you call event.stop() here to prevent hiding
+                    //container formFragments.
+                    event.stop();
+
 					var makeVisible = event.memo.visible;
 
 					if (makeVisible == element.visible())
@@ -1267,7 +1271,8 @@ T5
 					runAnimation(makeVisible);
 				});
 
-				element.observe(Tapestry.HIDE_AND_REMOVE_EVENT, function() {
+				element.observe(Tapestry.HIDE_AND_REMOVE_EVENT, function(event) {
+                    event.stop();
 					var effect = runAnimation(false);
 
 					effect.options.afterFinish = function() {

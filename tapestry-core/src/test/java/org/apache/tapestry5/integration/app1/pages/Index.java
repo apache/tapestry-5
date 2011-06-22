@@ -476,7 +476,9 @@ public class Index
 
                     new Item("ChecklistDemo", "Checklist Demo", "Use Checklist component")            ,
 
-                    new Item("BeanEditFormPrepareBubbling", "BeanEditor Prepare Bubbling Demo", "Prepare event bubbling")
+                    new Item("BeanEditFormPrepareBubbling", "BeanEditor Prepare Bubbling Demo", "Prepare event bubbling"),
+					
+					new Item("NestedFormFragment","Nested Form Fragment Demo","Nesting Form Fragments work properly")
 
             );
 

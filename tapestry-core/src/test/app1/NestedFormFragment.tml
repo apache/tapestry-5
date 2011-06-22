@@ -1,0 +1,23 @@
+<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"
+          xmlns:p="tapestry:parameter">
+
+<!-- note that since we won't be submitting the form, we can just bind visible parameters to literal values -->
+    <t:form>
+        <div t:type="formfragment" t:id="outerhide" visible="true">
+            <span id="outertext1">Outer Text</span>
+            <div t:type="formfragment" t:id="innerhide" visible="true">
+                <span id="innertext1">Inner Text</span>
+                <t:checkbox t:id="innertrigger1" value="true" t:mixins="triggerfragment" fragment="innerhide"/>
+            </div>
+        </div>
+
+        <div t:type="formfragment" t:id="outerremove" visible="true">
+            <span id="outertext2">Outer Text</span>
+            <div t:type="formfragment" t:id="innerremove" visible="true">
+                <span id="innertext2">Inner Text</span>
+                <t:checkbox t:id="innertrigger2" value="true"/>
+            </div>
+        </div>
+        
+    </t:form>
+</t:border>

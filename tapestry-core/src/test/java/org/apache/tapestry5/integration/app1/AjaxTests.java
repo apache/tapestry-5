@@ -80,6 +80,29 @@ public class AjaxTests extends TapestryCoreTestCase
         assertText("sub", "subvalue");
     }
 
+    //TAP5-1551 - triggering hide on the inner fragment was also hiding the outer fragment
+    @Test
+    public void nested_form_fragment()
+    {
+        openLinks("Nested Form Fragment Demo");
+        assertTrue(isVisible("outertext1"));
+        assertTrue(isVisible("innertext1"));
+        assertTrue(isChecked("innertrigger1"));
+        click("innertrigger1");
+        String condition = "selenium.browserbot.getCurrentWindow().$('innertrigger1').isDeepVisible() == false";
+        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
+        assertTrue(isVisible("outertext1"));
+		
+        //now make sure that hide_and_remove is properly handled, as well...
+        assertTrue(isVisible("outertext2"));
+        assertTrue(isVisible("innertext2"));
+        click("innertrigger2");
+        condition="!(selenium.browserbot.getCurrentWindow().$('innertrigger2'))";
+        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
+        assertFalse(isElementPresent("innertext2"));
+        assertTrue(isElementPresent("outertext2"));
+    }
+	
     @Test
     public void form_injector()
     {
