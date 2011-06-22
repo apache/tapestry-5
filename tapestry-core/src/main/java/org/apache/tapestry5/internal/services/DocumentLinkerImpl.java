@@ -223,16 +223,17 @@ public class DocumentLinkerImpl implements DocumentLinker
     }
 
     /**
-     * Adds a script link for each included script to the bottom of the container (the &lt;head&gt;).
-     * 
+     * Adds a script link for each included script to the top of the container (the &lt;head&gt;).
+     * and just after css
      * @param container
      *            element to add the script links to
      * @param scripts
      *            scripts to add
      */
     protected void addScriptLinksForIncludedScripts(Element container, List<String> scripts)
-    {
-        final Element scriptContainer = container.elementAt(0, "script-container");
+    {	
+    	// TAP5-1486 
+        final Element scriptContainer = container.elementAt(includedStylesheets.size(), "script-container");
 
         Worker<String> addScript = new Worker<String>()
         {
