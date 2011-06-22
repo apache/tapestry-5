@@ -15,7 +15,7 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.Translator;
-import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
+import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
 
 /**
