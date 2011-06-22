@@ -31,7 +31,7 @@ import org.apache.tapestry5.ioc.util.StrategyRegistry;
  * <p>
  * The contribution key must match the {@linkplain Translator#getType() translator type}.
  */
-@UsesConfiguration(Translator.class)
+@UsesMappedConfiguration(key=Class.class, value=Translator.class)
 @SuppressWarnings("unchecked")
 public interface TranslatorSource
 {
