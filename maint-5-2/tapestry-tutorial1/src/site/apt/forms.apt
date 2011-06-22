@@ -1,0 +1,485 @@
+ ---
+ Forms in Tapestry
+ ---
+ 
+Chapter 4: Forms in Tapestry
+
+  In the previous chapters, we saw how Tapestry can handle simple links, even links that pass information in the URL. In this chapter,
+  we'll see how Tapestry can do the same, and quite a bit more, for HTML forms.  
+  
+  Form support in Tapestry is deep and rich, more than can be covered in a single chapter. However, we can show the basics, including
+  some very common development patterns. To get started, let's create a simple address book application.
+  
+  We'll start with the entity data, a simple object to store the information we'll need. These classes go in an <<<entities>>> sub-package.  Unlike
+  the use of the <<<pages>>> sub-package (for page component classes), this is not enforced by Tapestry; it's just a convention (but
+  as we'll see shortly, a handy one).
+  
+  
+  <<src/main/java/org/apache/tapestry5/tutorial/entities/Address.java:>>
+  
+----
+package org.apache.tapestry5.tutorial.entities;
+
+import org.apache.tapestry5.tutorial.data.Honorific;
+
+public class Address
+{
+  private Honorific honorific;
+
+  private String firstName;
+
+  private String lastName;
+
+  private String street1;
+
+  private String street2;
+
+  private String city;
+
+  private String state;
+
+  private String zip;
+
+  private String email;
+
+  private String phone;
+
+  public String getCity()
+  {
+    return city;
+  }
+
+  public String getEmail()
+  {
+    return email;
+  }
+
+  public String getFirstName()
+  {
+    return firstName;
+  }
+
+  public Honorific getHonorific()
+  {
+    return honorific;
+  }
+
+  public String getLastName()
+  {
+    return lastName;
+  }
+
+  public String getPhone()
+  {
+    return phone;
+  }
+
+  public String getState()
+  {
+    return state;
+  }
+
+  public String getStreet1()
+  {
+    return street1;
+  }
+
+  public String getStreet2()
+  {
+    return street2;
+  }
+
+  public String getZip()
+  {
+    return zip;
+  }
+
+  public void setCity(String city)
+  {
+    this.city = city;
+  }
+
+  public void setEmail(String email)
+  {
+    this.email = email;
+  }
+
+  public void setFirstName(String firstName)
+  {
+    this.firstName = firstName;
+  }
+
+  public void setHonorific(Honorific honorific)
+  {
+    this.honorific = honorific;
+  }
+
+  public void setLastName(String lastName)
+  {
+    this.lastName = lastName;
+  }
+
+  public void setPhone(String phone)
+  {
+    this.phone = phone;
+  }
+
+  public void setState(String state)
+  {
+    this.state = state;
+  }
+
+  public void setStreet1(String street1)
+  {
+    this.street1 = street1;
+  }
+
+  public void setStreet2(String street2)
+  {
+    this.street2 = street2;
+  }
+
+  public void setZip(String zip)
+  {
+    this.zip = zip;
+  }
+}
+----
+
+  It's just a collection of getter and setter methods.  We also need to define the enum type, Honorific:
+  
+  <<src/main/java/org/apache/tapestry5/tutorial/data/Honorific.java:>>
+  
+---
+package org.apache.tapestry5.tutorial.data;
+
+public enum Honorific
+{
+  MR, MRS, MISS, DR
+}
+---
+
+* Address Pages
+
+  We're probably going to create a few pages related to addresses: pages for creating them, for editing them, for searching and listing them.
+  We'll create a sub-folder, address, to hold them.  Let's get started on the first of these pages, "address/Create"  (that's the real name, including
+  the slash --- we'll see in a minute how that maps to classes and templates).
+  
+  First, we'll update the Index.tml template, to create a link for creating a new page:
+  
+  <<src/main/webapp/Index.tml:>>
+
+----
+    <h1>Address Book</h1>
+
+    <ul>
+      <li><t:pagelink page="address/create">Create new address</t:pagelink></li>
+    </ul>
+----
+
+   Now we need the page, let's start with an empty shell, just to test our navigation.
+  
+  <<src/main/webapp/address/CreateAddress.tml:>>
+  
+---
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+  <head>
+    <title>Create New Address</title>
+  </head>
+  <body>
+
+    <h1>Create New Address</h1>
+
+    <em>coming soon ...</em>
+
+  </body>
+</html>
+---
+
+  And the corresponding class:
+  
+  <<src/main/java/org/apache/tapestry5/tutorial1/pages/address/CreateAddress.java:>>
+  
+----
+package org.apache.tapestry5.tutorial.pages.address;
+
+public class CreateAddress
+{
+
+}
+----
+   
+   So ... why is the class named "CreateAddress" and not simply "Create"?  Actually, we could have named it "Create", and 
+   the application would still work, but the longer <class> name is equally valid.  Tapestry noticed the redundancy in the
+   class name:  <<<org.apache.tapestry5.tutorial.pages.>>><address><<<.Create>>><Address> and just stripped it out.
+   
+   Eventually, your application will probably have more entities:  perhaps you'll have a "user/Create" page and a "payment/Create" page and an "account/Create" page.
+   Now, you <could> have a bunch of different classes named <<<Create>>> spread across a number of different packages.  That's legal Java, but it isn't ideal.  You may find yourself
+   accidentally editing the Java code for creating an Account when your really want to be editting the code for creating a Payment.
+   
+   Tapestry is encouraging you to use a more descriptive name: <<<Create>>><Address> not just <<<Create>>>, but it isn't making you pay the cost (in terms of longer,
+   uglier URLs).  The URL to access the page will still be http://localhost:8080/tutorial1/address/create.
+
+   Another note:  Index pages work in folders as well.  A class named org.apache.tapestry5.tutorial.pages.address.AddressIndex would be given the name
+   "address/Index".  However, Tapestry has special rules for pages named "Index" and the render URL would be
+   http://localhost:8080/tutorial1/address/ .  In other words, you can place Index pages in any folder and Tapestry will
+   build a short URL for that page ... and you <don't> have to keep naming the classes Index (it's confusing to have many classes with the same
+   name, even across multiple packages); instead, you can name each index page after the package
+   that contains it.  Tapestry users a smart <convention> to keep it all straight and generate short, to the point URLs.
+   
+* Using the BeanEditForm component
+
+  Time to start putting together the logic for this form.  In fact, let's use a magic trick ... the BeanEditForm component.  This component can analyze a class and create an editor UI for it all in one go.
+  Let's give it a try.
+  
+  Add the following to the CreateAddress template (replacing the "coming soon ..." message):
+  
+---
+  <t:beaneditform object="address"/>
+---
+
+  And match that up with a property in the CreateAddress class:
+  
+----
+  @Property
+  private Address address
+----
+   
+   When you refresh the page, you'll see the following:
+   
+[address-v1.png] Initial version of the create address form
+
+  <There have been minor changes to the default CSS since this screenshot was taken; for example, the labels are a bit
+   wider now.  In addition, the Honorific field (being optional) would include a blank option, rather than the first real selection, "Mr".>
+
+  Tapestry's done quite a bit of work here.  It has created a form that includes a field for each property.  Further, its seen that the
+  honorific property is an enumerated type, and presented that as a drop-down list.
+  
+  In addition, Tapestry has converted the property names ("city", "email", "firstName") to user presentable labels ("City", "Email", "First Name").
+  In fact, these are \<label\> elements, so clicking a label will move the cursor into the corresponding field.
+  
+  This is an awesome start; it's a presentable interface, quite nice in fact for a few  minute's work.  But it's far from perfect; let's get started
+  with some customizations.
+  
+* Changing field order
+
+  It looks like the fields are being displayed in alphabetical order, ("city" first, "zip" last).  That's not quite the reality, however:  If you check the listing
+  for the Address class, you'll see that the getter and setter methods are in alphabetical order (care of Eclipse, which generated all those methods from the fields).
+     
+  The BeanEditForm works in the order in which the <getter methods> are defined in the class.  Let's reorder them into a more reasonable order:
+  
+  * honorific
+  
+  * firstName
+  
+  * lastName
+  
+  * street1
+  
+  * street2
+  
+  * city
+  
+  * state
+  
+  * zip
+  
+  * email
+  
+  * phone
+  
+  []
+  
+  (This is also the order of in which the fields are defined.)
+  
+  Because Address is not a component class, it is necessary to restart Jetty to see the effects of these changes.
+  
+  Once Jetty is restarted, hit the browser's refresh button to see the fields in the correct order:
+  
+[address-v2.png] Create address form with fields in proper order
+
+* Customizing labels
+
+  Tapestry makes it pretty easy to customize the labels used on the fields.  It's just a matter of creating a <message catalog> for the page.
+  
+  In Tapestry, every page and component may have its own message catalog.  This is a standard Java properties file, and it is named the same
+  as the page or component class, with a ".properties" extension.  A message catalog consists of a series of lines, each line is a message key and a message value
+  separated with an equals sign.
+  
+  All it takes is to create a message entry with a particular name:  the name of the property suffixed with "-label". As elsewhere, Tapestry is forgiving of case.
+  
+  <<src/main/resources/org/apache/tapestry5/tutorial/pages/address/CreateAddress.properties:>>
+  
+----
+street1-label=Street 1
+street2-label=Street 2
+email-label=E-Mail
+zip-label=Zip Code
+phone-label=Phone Number
+----
+
+  Since this is a <new> file (and not a change to an existing file), you may have to restart Jetty to force Tapestry to pick up the change.
+  
+[address-v3.png] Create Address form with field labels corrected
+  
+   We can also customize the options in the drop down list.  All we have to do is add some more entries to the message catalog matching the enum names to the desired labels.
+   Update CreateAddress.properties and add:
+   
+----
+MR=Mr.
+MRS=Mrs.
+DR=Dr.
+----
+
+  Notice that we don't have to include an option for MISS, because that is converted to "Miss" anyway.  You might just want to include it for
+  sake of consistency ... the point is, each option label is searched for seperately.
+
+  Lastly, the default label on the submit button is "Create/Update" (BeanEditForm doesn't know how it is being used). Let's change that to "Create Address".
+  
+  That button is a component within the BeanEditForm component. It's not a property, so we can't just put a message into the 
+  message catalog, the way we can with the fields.  Fortunately, the BeanEditForm component includes a parameter expressly for
+  re-labelling the button. Simply change the CreateAddress component template:
+  
+----
+  <t:beaneditform submitlabel="Create Address" object="address"/>
+----
+
+  The default for the submitlabel parameter is "Create/Update", but here we're overriding that default to a specific value.
+
+  The final result shows the reformatting and relabeling:
+  
+[address-v5.png] Create Address form with proper labels
+
+  Before continuing on to validation, a side note about message catalogs. 
+  Message catalogs are not just for re-labeling fields and options; we'll see in later chapters how message catalogs are used in the context of
+  localization and internationalization. 
+  
+  Instead of putting the label for the submit button directly inside the template, we're going to provide a reference to the label; the actual
+  label will go in the message catalog. 
+  
+  In Tapestry, when binding a parameter, the value you provide may include a prefix.  The prefix guides Tapestry in how to interpret the rest of the
+  the parameter value ... is it the name of a property?  The id of a component? A message key?  Most fields have a default prefix, usually "prop:", that
+  is used when you fail to provide one (this helps to make the templates as terse as possible).
+  
+  Here we want to reference a message from the catalog, so we use the "message:" prefix:
+  
+----
+  <t:beaneditform submitlabel="message:submit-label" object="address"/>
+----
+
+  And then define the submit-label key in the message catalog:
+  
+---
+submit-label=Create Address
+----
+
+  At then end of the day, the exact same HTML is sent to the client, regardless of whether you include the label text directly in the template,
+  or indirectly in the message catalog. In the long term, the latter approach will work better if you later chose to internationalize your application.
+   
+*  Adding Validation
+
+  Before we worry about storing the Address object, we should make sure that the user provides reasonable values. For example,several of the fields should be required,
+  and phone numbers and email address have specific formats.
+  
+  The BeanEditForm checks for a Tapestry-specific annotation, @org.apache.tapestry5.beaneditor.Validate, on the getter <or> setter method of each property.
+
+  Update the getter methods for the lastName, firstName, street1, city, state and zip fields, 
+  adding a @Validate annotation to each:
+  
+----
+  @Validate("required")
+  public String getFirstName()
+  {
+    return firstName;
+  }
+----
+
+  What is that string, "required"?  That's how you specify the desired validation.  It is a series of names that identify what type of validation is desired.
+  A number of validators are built in, such as "required", "minLength" and "maxLength".  As elsewhere, Tapestry is case insensitive.  
+  
+  You can apply multiple validations, by seperating the validator names with commas.  Some validators can be configured (with an equals sign). Thus you might say "required,minLength=5" for
+  a field that must be specified, and must be at least five characters long.
+  
+  Restart the application, and refresh your browser, then hit the submit button.
+    
+[address-v6.png] Form with client side validations visible
+
+  This is a shot just after hitting the submit button; all the fields have been validated and pop-up error bubbles are displayed.  This looks a bit cluttered, but all the bubbles, except for the one
+  for the focus field (the field the user is actively typing into), will fade out after a moment.  As you tab from field to field, Tapestry will validate your input and briefly display the error bubble.  And <all> of this
+  is taking place on the client side, without any communication with the application.
+
+  Each field in error has been highlighted (it's a bit subtle) and marked with a red "X".  Further, the label
+  for each of the fields has also been highlighted in red, to even more clearly identify what's in error.  The cursor has also been moved to the first field
+  that's in error.
+  
+  Once all the errors are corrected, and the form does submit,
+  all validations are performed on the server side as well (just in
+  case the client has JavaScript disabled).
+
+  So ... how about some more interesting validation than just "required or not".  Tapestry has built in support for validating based on field length and several variations
+  of field value, including regular expressons.  Zip codes are pretty easy to express as a regular expression.
+  
+----
+  @Validate("required,regexp=\\d{5}(-\\d{4})?")
+  public String getZip()
+  {
+    return zip;
+  }    
+----
+
+  Let's give it a try; restart the application and enter an "abc" for the zip code.
+  
+[address-v7.png] Regexp validation
+
+  This is what you'll see after typing "abc" and tabbing out of the field, then tabbing back in. It's a little hard to capture all the animation
+  effects in a still photo.
+
+  In any case, that's the right validation behavior, but it's the wrong message. Your users are not going to know or care about regular expressions.
+
+  Fortunately, it's easy to customize validation messages.  All we need to know is the name of the
+  property ("zip") and the name of the validator ("regexp").  We can then put an entry into the CreateAddress message catalog:
+  
+----
+zip-regexp-message=Zip Codes are five or nine digits.  Example: 02134 or 90125-1655.
+----
+
+  Refresh the page and submit again:
+  
+[address-v8.png] Regexp validation with corrected message
+
+  This trick isn't limited to just the regexp validator, it works equally well with <any> validator.
+  
+  Let's go one step further.  Turns out, we can move the
+  regexp pattern to the message catalog as well.  If you only provide the name of the validator in the @Validate annotation, Tapestry will search the containing
+  page's message catalog of the constraint value, as well as the validation message.  The constraint value for the regexp validator is the regular expression to match against.
+  
+----
+  @Validate("required,regexp")
+  public String getZip()
+  {
+    return zip;
+  }
+----
+
+  Now, just put the regular expression  into the CreateAddress message catalog:
+  
+----
+zip-regexp=\\d{5}(-\\d{4})?
+zip-regexp-message=Zip Codes are five or nine digits.  Example: 02134 or 90125-1655.
+----
+
+  After a restart you'll see the ... the same behavior.  But when we start creating more complicated regular expressions, it'll be much, much nicer
+  to put them in the message catalog rather than inside the annotation value.  And inside the message catalog, you can change and tweak the regular expressions
+  without having to restart the application each time.
+ 
+  We could go a bit further here, adding more regular expression validation for
+  phone numbers and e-mail addresses. We're also far from done in terms of 
+  further customizations of the BeanEditForm component.
+  
+  By now you are likely curious about what happens <after> the form submits
+  successfully (without validation errors), so that's what we'll focus on next.
+  
+====
+
+  {{{forms2.html}Continue on to Chapter 5: Forms in Tapestry, Part Two}}
+  

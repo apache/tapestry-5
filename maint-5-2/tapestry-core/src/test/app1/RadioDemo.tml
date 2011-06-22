@@ -1,0 +1,52 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+  <h1>Radio Demo</h1>
+
+  <p>Choose a department and position:</p>
+
+  <t:form>
+    <t:errors/>
+
+    <t:radiogroup t:id="department" t:validate="required">
+      <t:loop source="departments" value="loopValue">
+        <p>
+          <t:radio t:id="radio" value="loopValue" label="prop:label"/>
+          <t:label for="radio"/>
+        </p>
+      </t:loop>
+    </t:radiogroup>
+
+    <br/>
+
+    <t:radiogroup t:id="position">
+      <p>
+        <t:radio t:id="radio1" value="literal:TEMP" label="Temp"/>
+        <t:label for="radio1"/>
+      </p>
+      <p>
+        <t:radio t:id="radio2" value="literal:LIFER" label="Lifer"/>
+        <t:label for="radio2"/>
+      </p>
+    </t:radiogroup>
+
+    <p>
+      <input type="submit" value="Update"/>
+    </p>
+  </t:form>
+
+
+  <t:if test="department">
+    <hr/>
+    Selected department: ${department}
+  </t:if>
+
+  <t:if test="position">
+    <hr/>
+    Selected position: ${position}
+  </t:if>
+
+  <p>
+    <t:actionlink t:id="reset">reset</t:actionlink>
+  </p>
+
+</html>

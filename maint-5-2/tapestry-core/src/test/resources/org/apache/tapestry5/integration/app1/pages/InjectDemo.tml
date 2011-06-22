@@ -1,0 +1,25 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <p>Demonstrates the use of the @Inject annotation.</p>
+    <p>WebRequest: ${request}</p>
+    <p>ComponentResources: ${resources}</p>
+    <p>BindingSource: ${bindingSource}</p>
+    <p>Injected Symbol: ${injectedSymbol}</p>
+    <p>Injection via Marker: ${greeting}</p>
+    <p>Injection via @InjectService:
+        <span id="viaInjectService">${musicLibrary.tracks.size()} tracks in music library</span>
+    </p>
+
+    <p>
+        ActionLinks used to demonstrate the use of @InjectPage:
+    </p>
+
+    <p>
+        <a t:id="fred" t:type="ActionLink">Fred</a>
+    </p>
+    <p>
+        <a t:id="barney" t:type="ActionLink">Barney</a>
+    </p>
+    <p>
+        <a t:id="wilma" t:type="ActionLink">Wilma</a>
+    </p>
+</html>

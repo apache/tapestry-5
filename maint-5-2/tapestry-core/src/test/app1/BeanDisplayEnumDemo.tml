@@ -1,0 +1,7 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    
+    <h1>BeanDisplay Enum Demo</h1>
+    
+    <t:beandisplay object="prop:object" />
+
+</html>

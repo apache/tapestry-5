@@ -1,0 +1,13 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd" xml:space="preserve">
+    <t:Fred t:id="fred">
+        fred's body
+        <t:remove>
+            Text, <!-- comments -->, <![CDATA[cdata text]]> and whitespace are simply excised.
+
+            <span>
+                <t:block id="asIfItDidNotExist"/>
+                <t:aGhostAPhantom/>
+            </span>
+        </t:remove>
+    </t:Fred>
+</html>

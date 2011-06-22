@@ -1,0 +1,10 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+    <head>
+        <title>
+            Rewrite Success, 2
+        </title>
+    </head>
+    <body>
+        URL Rewriting that relies on the RewriteContext evidently works.
+    </body>
+</html>

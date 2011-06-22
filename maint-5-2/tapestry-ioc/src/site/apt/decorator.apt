@@ -1,0 +1,342 @@
+ ----
+ Tapestry IoC Decorators
+ ----
+ 
+Tapestry IoC Decorators
+
+  <<Decoration has been replaced, in Tapestry 5.1, with {{{advice.html}advice}},
+  which is a simpler mechanism for accomplishing the same thing.>>
+
+  <Decoration> is the name of a popular design pattern.  Using decoration,
+  an existing object's behavior can be extended without changing the implementation
+  of the object.
+  
+  Instead, a new object is placed <around> the existing object.  The rest of the world
+  sees this new object, termed an <<interceptor>>.  The interceptor implements the
+  same  interface as the underlying object being decorated.
+  
+  A common example for this is the Java I/O library.  The abstract InputStream
+  base class has a very simple API for reading bytes from a stream (and a few
+  other things).  Subclasses of InputStream provide a wide array of other options
+  such as buffering, encryption or decryption, as well as control over the source
+  of data read by the stream.  All of these <concerns> are encapsulated in different
+  implementations of InputStream, and all can be connected together in a kind of
+  pipline, using the common InputStream API.
+  
+  Tapestry IoC uses a similar approach, where a one or more of interceptor objects,
+  all implementing the service interface, are strung together.  The service's
+  proxy (responsible for just-in-time instantiation of the service implementation)
+  is at one end of this pipeline, the core service implementation is at the other.
+  
+  For each method in the service interface, the interceptor object can perform
+  some operations before and after re-invoking the same method on the
+  core service implementation.  This is another design pattern: <delegation>.  An interceptor
+  can even catch exceptions thrown by the underlying implementation and react to them.
+  A sufficiently clever interceptor could retry a method if an exception is thrown, or
+  could "soften" a checked exception by wrapping it in a RuntimeException.
+  
+  Decorators often are used in the context of <cross-cutting concerns>, such as logging or
+  transaction management. This approach is a kind of <aspect oriented design>.
+  
+  One such cross cutting concern is lazy initialization of services.  In Apache HiveMind, services
+  are created only as needed, when a method of a service interface is first invoked.
+  This concern is supplied by the Tapestry IoC framework itself, but similar
+  concerns are easily implemented as decorations.
+  
+  Whereas the popular AspectJ framework changes the compiled bytecode of your
+  classes (it calls the process "weaving"),
+  with Tapestry IoC, the approach is to wrap your existing classes in new objects. These
+  wrapper objects are often dynamically created at runtime.
+  
+  It is also common to have <multiple> decorations on a single service. In this case,
+  a whole stack of interceptor objects will be created, each delegating to the next.
+  Tapestry IoC provides control over the order in which such decorations occur.
+  
+  Decorations are driven by service decoration methods. Often, a reusable service
+  exists to do the grunt work of creating and instantiating a new class.
+  
+Service Decoration Methods
+
++---------------------+
+package org.example.myapp.services;
+
+import org.apache.tapestry5.ioc.services.LoggingDecorator;
+import org.slf4j.Logger;
+
+public class MyAppModule
+{
+  public static Indexer build()
+  {
+    return new IndexerImpl();
+  }
+  
+  public static <T> T decorateIndexer(Class<T> serviceInterface, T delegate, 
+    String serviceId, Logger logger,
+    
+    LoggingDecorator decorator)
+  {
+    return decorator.build(serviceInterface, delegate, serviceId, logger);
+  } 
+}
++---------------------+
+
+   The method decorateIndexer() is a service decorator method because it starts with the
+   word "decorate".  In this simple case, only the myapp.Indexer service will be decorated,
+   even if there are other services in this module or others ... this is because
+   of the name match ("decorateIndexer" and "buildIndexer"), but we'll shortly see how
+   annotations can be used to target many services for decoration.
+   
+   We are using the parameterized types here (the \<T\>), to reinforce the fact that the delegate object
+   passed in (which will be the core service implementation, or some other interceptor)
+   must implement the service interface, and that the decorator method must return an
+   instance of the service interface.
+   
+   The values that may be provided to a decorator method are exactly the same as for a builder
+   method, with one addition:  The underlying service will be passed in
+   as a parameter of type java.lang.Object (after type erasure, the <<<T delegate>>> parameter
+   becomes <<<Object delegate>>>).
+
+
+   In the above example, the decorator method receives the core service implementation,
+   the service interface for the Indexer service, the Log for the Indexer service,
+   and an interceptor factory that generates logging interceptors.
+   
+   The "heavy lifting" is provided by the factory, which will create a new interceptor
+   that logs method entry before delegating to the core service implementation. The interceptor
+   will also log method parameters, return values, and even log exceptions.
+   
+   The return value of the method is the new interceptor. You may return null if your
+   decorator method decides not to decorate the supplied service.
+
+
+   Alternately, when targetting services whose type is known at compile time, you may provide
+   a parameter whose type matches the service interface.  For example, decorateIndexer() will
+   always be applied to the Indexer service, whose type (Indexer) is known. We could therefore rewrite
+   decorateIndexer() as:
+
++---------------------+
+  public static Indexer decorateIndexer(Indexer delegate, Logger logger, LoggingDecorator decorator)
+  {
+    return decorator.build(Indexer.class, delegate, "Indexer", logger);
+  }
++---------------------+
+
+
+
+   Of course, nothing stops you from combining building with decorating inside
+   the service builder method:
+   
+   
++---------------------+
+package org.example.myapp.services;
+
+import org.apache.tapestry5.ioc.services.LoggingDecorator;
+import org.slf4j.Logger;
+
+public class MyAppModule
+{
+  public static Indexer build(Logger logger, LoggingDecorator decorator)
+  {
+    return decorator.build(Indexer.class, logger,  new IndexerImpl());
+  } 
+}
++---------------------+   
+
+  But as we'll see, its possible to have a single decorator method work on many different
+  services by using annotations.
+  
+Targetting Multiple Services
+
+  By using the
+  {{{../apidocs/org/apache/tapestry5/ioc/annotations/Match.html}@Match annnotation}},
+  you may identify which services are to be decorated.
+  
+  The value specified in the Match annotation is one or more patterns. These patterns
+  are used to match services. Patterns take two forms: glob patterns and regular expressions.
+
+  In a glob pattern, a "*" at the start or end of a string
+  will match zero or more characters.              Regular expressions provide a lot more matching power, but require
+  a more involved syntax.
+
+  In either case, the matching is case insensitive.
+  
+  For example, to target all the services in your module:
+  
++---------------------+    
+  @Match("*")
+  public static <T> T decorateLogging(Class<T> serviceInterface, T delegate, 
+    String serviceId, Logger logger,
+    LoggingDecorator decorator)
+  {
+    return decorator.build(serviceInterface, delegate, serviceId, logger);
+  }   
++---------------------+  
+
+  You can use multiple patterns with @Match, in which case, the decorator will be applied
+  to a service that matches <any> of the patterns. For instance, if you only wanted
+  logging for your data access and business logic services, you might end up with
+  <<<@Match("Data*", "*Logic")>>> (based, of course, on how you name your services). 
+  
+  As the preceding example showed, a simple "glob" matching is supported, where a asterisk ('*')
+  may be used at the start or end of the match string to match any number of characters.
+  As elsewhere, matching is case insensitive.
+
+
+  Thus, <<<@Match("*")>>> is dangerous, because it will match every service in every
+  module.  
+  
+  <Note: It is not possible to decorate the services of the TapestryIOCModule.>
+  
+  <Note: Another idea will be other ways of matching services: base on inheritance of the
+  service interface and/or based on the presence of particular class annotations on the
+  service interface. None of this has been implemented yet, and can readily be accompllished
+  inside the decorator method (which will return null if it decides the service doesn't
+  need decoration).>
+  
+    
+Ordering of Decorators
+
+   In cases where multiple decorators will apply to a single service, you can control
+   the order in which decorators are applied using  an additional annotation:
+   {{{../apidocs/org/apache/tapestry5/ioc/annotations/Order.html}@Order}}.
+   
+   This annotation allows any number of {{{order.html}ordering constraints}}
+   to be specified for the decorator, to order it relative to
+   any other decorators.
+   
+   For example, you almost always want logging decorators to come first, so:
+   
++---------------------+    
+  @Match("*")
+  @Order("before:*")
+  public static <T> T decorateLogging(Class<T> serviceInterface, T delegate, 
+    String serviceId, Logger logger,
+    LoggingDecorator decorator)
+  {
+    return decorator.build(serviceInterface, delegate, serviceId, logger);
+  }   
++---------------------+     
+   
+   
+   "before:*" indicates that this decorator should come before any decorator in <any> module.
+   
+   <<Note:>> the ordering of decorators is in terms of the <effect> desired.
+   Internally, the decorators are invoked
+   last to first (since each once receives the "next" interceptor as its delegate).
+   So the core service implementation is created (via a service builder method)
+   and that is passed to the last decorator method. The interceptor created there
+   is passed to the the next-to-last decorator method, and so forth.
+
+   It should now be evident that the delegate passed into a decorator method is sometimes
+   the core service implementation, and some times an interceptor object created by some other
+   decorator method.
+
+Creating your own Decorators
+
+  Decorators are a limited form of Aspect Oriented Programming, so we have
+  borrowed some of that terminology here.
+
+  A decorator exists to create an <interceptor>.  The interceptor wraps around
+  the service (because these interceptors can get chained, we talk about the "delegate" and not the "service").
+
+  Each method of the interceptor will take <advice>.  Advice
+  is provided by a {{{../apidocs/org/apache/tapestry5/ioc/MethodAdvice.html}MethodAdvice}} instance.
+  The sole method, <<<advise()>>>, receives an
+   {{{../apidocs/org/apache/tapestry5/ioc/Invocation.html}Invocation}}.
+  MethodAdvice gives you a chance to see what the method invocation <is>; you can query
+  the name of the method, and the types and values of the parameters.
+
+  The MethodAdvice can override the parameters if necessary, then invoke <<<proceed()>>>.  This
+  call invokes the corresponding method on the original object, the delegate.
+
+  If the method call throws a runtime exception, that exception is not caught.  Your method advice can
+  put a try ... catch block around the call to proceed() if interested in catching runtime exceptions.
+
+  Checked exceptions are not thrown (since they are not part of the proceed() method's signature).  Instead
+  the invocation's <<<isFail()>>> method will return true.  You can then retrieve the exception or override it.
+
+  In the normal success case, you can ask for the return value and even override it before
+  returning from the advise() method.
+
+  In other words, you have total control.  Your MethodAdvice can query or change parameters, decide whether
+  it proceed into the original code, it can intercept exceptions that are thrown and replace them, and can
+  query or even replace the return value.
+
+  The
+  {{{../apidocs/org/apache/tapestry5/ioc/services/AspectDecorator.html}AspectDecorator}} service
+  is how you put your MethodAdvice into action.
+
+  By way of an example, we'll show an implementation of the LoggingDecorator service:
+
++----+
+public class LoggingDecoratorImpl implements LoggingDecorator
+{
+    private final AspectDecorator aspectDecorator;
+
+    private final ExceptionTracker exceptionTracker;
+
+    public LoggingDecoratorImpl(AspectDecorator aspectDecorator, ExceptionTracker exceptionTracker)
+    {
+        this.aspectDecorator = aspectDecorator;
+        this.exceptionTracker = exceptionTracker;
+    }
+
+    public <T> T build(Class<T> serviceInterface, T delegate, String serviceId, final Logger logger)
+    {
+        final ServiceLogger serviceLogger = new ServiceLogger(logger, exceptionTracker);
+
+        MethodAdvice advice = new MethodAdvice()
+        {
+            public void advise(Invocation invocation)
+            {
+                boolean debug = logger.isDebugEnabled();
+
+                if (debug) serviceLogger.entry(invocation);
+
+                try
+                {
+                    invocation.proceed();
+                }
+                catch (RuntimeException ex)
+                {
+                    if (debug) serviceLogger.fail(invocation, ex);
+
+                    throw ex;
+                }
+
+                if (!debug) return;
+
+                if (invocation.isFail())
+                {
+                    Exception thrown = invocation.getThrown(Exception.class);
+
+                    serviceLogger.fail(invocation, thrown);
+
+                    return;
+                }
+
+                serviceLogger.exit(invocation);
+            }
+        };
+
+        return aspectDecorator.build(serviceInterface, delegate, advice,
+                                      String.format("<Logging interceptor for %s(%s)>", serviceId,
+                                                    serviceInterface.getName()));
+    }
+}
++---+
+
+  <The actual code has been refactored slightly since this documentation was written.> 
+
+  Most of the logging logic occurs inside the ServiceLogger object, the MethodAdvice exists to call the right methods at
+  the right time.  A Logger doesn't <change> parameter values (or thrown exceptions, or the result), it just
+  captures and logs the data.
+
+  Notice that for runtime exceptions, we catch the exception, log it, and rethrow it.
+
+  For checked exceptions, we use isFail() and getThrown().
+
+  The AspectDecorator service can also be used in more complicated ways: it is possible to
+  only advise some of the methods and not others, or use different advice for different methods.  Check the
+  JavaDoc for more details.
+

@@ -1,0 +1,18 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<p>
+<form t:id="form1">
+	<input t:id="t1" t:type="TextField"/>
+	<span t:id="capitalize1"/>
+</form>	
+<form t:id="form2">
+	<span t:id="capitalize2"/>
+	<input t:id="t2" t:type="TextField"/>
+</form></p>
+<input type="submit" id="orphanedSubmit"/>
+<t:form t:id="form3">
+    <input t:id="submitImage" t:type="submit" image="prop:spacerImage"/>
+</t:form>
+<p>
+Value is: ${value}.
+</p>
+</html>

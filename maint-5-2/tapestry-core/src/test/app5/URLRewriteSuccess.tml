@@ -1,0 +1,13 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>Demo</title>
+    </head>
+    <body>
+        <p>
+            End of maze. URL rewriting works :).
+        </p>
+        <p>
+        	Login: ${login}
+        </p>
+    </body>
+</html>

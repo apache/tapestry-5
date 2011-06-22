@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <body>
+
+        <h1>Outside of zone</h1>
+
+        <p>Current time is
+            <span id="outernow">${now}</span>
+        </p>
+
+
+        <h2>Inside of zone</h2>
+        <t:zone t:id="zone">
+
+            <p>Current time is
+                <span id="innernow">${now}</span>
+            </p>
+
+            <t:if test="message">
+                <p id="message">${message}</p>
+            </t:if>
+
+            <t:form zone="zone">
+                <input type="submit" value="Update Zone"/>
+            </t:form>
+        </t:zone>
+    </body>
+
+
+</html>

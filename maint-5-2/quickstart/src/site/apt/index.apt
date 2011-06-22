@@ -1,0 +1,154 @@
+ ----
+ Quickstart Archetype
+ ----
+ 
+Quickstart Archetype
+
+  An
+  {{{http://maven.apache.org/plugins/maven-archetype-plugin/index.html}archetype}} is the Maven term for a project template.  Using a Maven archetype, you
+  can create an empty shell of your project in just seconds.
+  
+  What you end up with is a basic Maven project, ready to build and deploy.
+  
+  First, you must decide on your group id, artifact id, and version number. For example, let's choose <<org.example>> for our group id,
+  <<myapp>> for the artifactId, and <<1.0-SNAPSHOT>> for the version number.  We also need a root package name, which we'll create by combining the group id
+  and the artifact id.
+  
+  From the command line, you execute the following command:
+
+  <<<mvn archetype:generate -DarchetypeCatalog=http://tapestry.apache.org>>>
+
+  Maven uses the archetypeCatalog to get a list of available archetypes; in this case, you'll find options for all stable Tapestry versions as well as for the latest snapshot.
+  It will then ask you to enter the groupId, artifactId, version, and package.
+
++---+
+$ mvn archetype:generate -DarchetypeCatalog=http://tapestry.apache.org
+[INFO] Scanning for projects...
+[INFO] Searching repository for plugin with prefix: 'archetype'.
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Maven Default Project
+[INFO]    task-segment: [archetype:generate] (aggregator-style)
+[INFO] ------------------------------------------------------------------------
+[INFO] Preparing archetype:generate
+[INFO] No goals needed for project - skipping
+[INFO] Setting property: classpath.resource.loader.class => 'org.codehaus.plexus.velocity.ContextClassLoaderResourceLoader'.
+[INFO] Setting property: velocimacro.messages.on => 'false'.
+[INFO] Setting property: resource.loader => 'classpath'.
+[INFO] Setting property: resource.manager.logwhenfound => 'false'.
+[INFO] [archetype:generate]
+[INFO] Generating project in Interactive mode
+[INFO] No archetype defined. Using maven-archetype-quickstart (org.apache.maven.archetypes:maven-archetype-quickstart:1.0)
+Choose archetype:
+1: http://tapestry.apache.org -> quickstart (Tapestry 5.2.0-SNAPSHOT Quickstart Project)
+2: http://tapestry.apache.org -> quickstart (Tapestry 5.1.0.5 Quickstart Project)
+3: http://tapestry.apache.org -> quickstart (Tapestry 5.0.19 Quickstart Project)
+4: http://tapestry.apache.org -> tapestry-archetype (Tapestry 4.1.6 Archetype)
+Choose a number:  (1/2/3/4): 1
+[INFO] snapshot org.apache.tapestry:quickstart:5.2.0-SNAPSHOT: checking for updates from quickstart-repo
+Define value for groupId: : org.example
+Define value for artifactId: : myapp
+Define value for version:  1.0-SNAPSHOT: :
+Define value for package:  org.example: : org.example.myapp
+Confirm properties configuration:
+groupId: org.example
+artifactId: myapp
+version: 1.0-SNAPSHOT
+package: org.example.myapp
+ Y: :
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 16 seconds
+[INFO] Finished at: Sat Jan 31 14:29:27 PST 2009
+[INFO] Final Memory: 7M/14M
+[INFO] ------------------------------------------------------------------------
+$
++---+
+
+  <This first time you try this, you'll probably see a huge amount of messages about Maven downloading all sorts of plugins and JARs, in addition to what's above.>
+
+  Maven has combined your information to form a new directory containing your application.  It has created a Maven pom.xml, a web.xml, a log4j.properties file,
+  and a starting page (Index.tml and Index.java) with each file in its correct location. It also creates a starter Tapestry IoC module for the application (AppModule.java).  
+  
+  You can run the application directly, using the Jetty servlet container:
+  
++---+
+$ cd myapp
+~/work/myapp
+$ mvn jetty:run
+[INFO] Scanning for projects...
+[INFO] Searching repository for plugin with prefix: 'jetty'.
+[INFO] ------------------------------------------------------------------------
+[INFO] Building myapp Tapestry 5 Application
+[INFO]    task-segment: [jetty:run]
+[INFO] ------------------------------------------------------------------------
+[INFO] Preparing jetty:run
+[INFO] [resources:resources]
+[WARNING] Using platform encoding (MacRoman actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 3 resources
+[INFO] [compiler:compile]
+[INFO] Compiling 3 source files to /private/tmp/myapp/target/classes
+[INFO] [resources:testResources]
+[WARNING] Using platform encoding (MacRoman actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 1 resource
+[INFO] [compiler:testCompile]
+[INFO] Nothing to compile - all classes are up to date
+[INFO] [jetty:run]
+[INFO] Configuring Jetty for project: myapp Tapestry 5 Application
+[INFO] Webapp source directory = /private/tmp/myapp/src/main/webapp
+[INFO] web.xml file = /private/tmp/myapp/src/main/webapp/WEB-INF/web.xml
+[INFO] Classes = /private/tmp/myapp/target/classes
+2009-01-31 14:31:49.225::INFO:  Logging to STDERR via org.mortbay.log.StdErrLog
+[INFO] Context path = /myapp
+[INFO] Tmp directory =  determined at runtime
+[INFO] Web defaults = org/mortbay/jetty/webapp/webdefault.xml
+[INFO] Web overrides =  none
+[INFO] Webapp directory = /private/tmp/myapp/src/main/webapp
+[INFO] Starting jetty 6.1.9 ...
+2009-01-31 14:31:49.312::INFO:  jetty-6.1.9
+2009-01-31 14:31:49.502::INFO:  No Transaction manager found - if your webapp requires one, please configure one.
+[INFO] ioc.RegistryBuilder Adding module definition for class org.apache.tapestry5.ioc.services.TapestryIOCModule
+[INFO] ioc.RegistryBuilder Adding module definition for class org.apache.tapestry5.services.TapestryModule
+[INFO] ioc.RegistryBuilder Adding module definition for class org.apache.tapestry5.internal.services.InternalModule
+[INFO] ioc.RegistryBuilder Adding module definition for class org.example.myapp.services.AppModule
+[INFO] TapestryModule.ComponentClassResolver Available pages:
+              (blank): org.example.myapp.pages.Index
+      ExceptionReport: org.apache.tapestry5.corelib.pages.ExceptionReport
+                Index: org.example.myapp.pages.Index
+PropertyDisplayBlocks: org.apache.tapestry5.corelib.pages.PropertyDisplayBlocks
+   PropertyEditBlocks: org.apache.tapestry5.corelib.pages.PropertyEditBlocks
+        ServiceStatus: org.apache.tapestry5.corelib.pages.ServiceStatus
+
+[INFO] TapestryModule.ComponentClassResolver Available components:
+      ActionLink: org.apache.tapestry5.corelib.components.ActionLink
+      AddRowLink: org.apache.tapestry5.corelib.components.AddRowLink
+    AjaxFormLoop: org.apache.tapestry5.corelib.components.AjaxFormLoop
+             Any: org.apache.tapestry5.corelib.components.Any
+.
+.
+.
+                    ValidateBindingFactory: DEFINED
+             ValidationConstraintGenerator: DEFINED
+                  ValidationMessagesSource: DEFINED
+                        ValueEncoderSource: DEFINED
+
+82.89% unrealized services (126/152)
+
+2009-01-31 14:31:50.937::INFO:  Started SelectChannelConnector@0.0.0.0:8080
+[INFO] Started Jetty Server
++---+
+
+  <Again, the first time you do this, you'll see a large number of download messages.>
+  
+  You can now see your running application as {{{http://localhost:8080/myapp}http://localhost:8080/myapp}}
+  
+  You can hit Control-C to stop Jetty.
+  
+About Snapshots
+
+  By referencing the application catalog in http://tapestry.apache.org and choosing the first (SNAPSHOT) option,
+  you are directing Maven to download a snapshot version of the quickstart archetype; your application
+  will then be dependent on snapshot versions of the JARs. These are rebuilt every night, so you may see
+  Maven redownload the Tapestry JARs more often than you'd like. You can edit the generated pom.xml file
+  to switch to a more stable version of Tapestry 5, such as the most recent stable release, 5.1.0.5.
+  

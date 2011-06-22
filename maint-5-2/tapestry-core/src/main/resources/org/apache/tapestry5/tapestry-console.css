@@ -1,0 +1,27 @@
+/* The console is used to show debugging messages. */
+DIV.t-console {
+    position: fixed;
+    z-index: 1;
+    top: 2px;
+    left: 2px;
+}
+
+DIV.t-console DIV {
+    font-weight: bold;
+    padding: 0px 2px;
+}
+
+DIV.t-console DIV.t-err {
+    background-color: red;
+    color: white;
+}
+
+DIV.t-console DIV.t-warn {
+    background-color: yellow;
+    color: black;
+}
+
+DIV.t-console DIV.t-debug {
+    background-color: silver;
+    color: black;
+}

@@ -1,0 +1,79 @@
+<html xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+    <head>
+        <title>Tapestry IoC Services Status</title>
+        <style>
+            TR.defined {
+            color: #666666;
+            font-style: italic;
+            }
+
+            TR.virtual
+            {
+            color: blue;
+            }
+
+            TR.real
+            {
+            color: green;
+            }
+
+
+        </style>
+    </head>
+    <body>
+
+        <h1>Tapestry IoC Services Status</h1>
+
+        <p>${activity.size()} services defined in the IoC Registry.</p>
+
+        <t:unless test="productionMode">
+
+            <t:grid rowsperpage="100" model="model" rowClass="row.status" source="activity" row="row">
+
+                <p:serviceInterfaceCell>
+                    ${row.serviceInterface}
+                </p:serviceInterfaceCell>
+
+            </t:grid>
+
+            <p>
+                Explanation of status:
+                <dl>
+                    <dt>Builtin</dt>
+                    <dd>
+                        A fundamental service that exists even before the Registry is
+                        created.
+                    </dd>
+
+                    <dt>Defined</dt>
+                    <dd>
+                        The service is defined, but has not yet been referenced.
+                    </dd>
+
+                    <dt>Virtual</dt>
+                    <dd>
+                        The service has been referenced (usually for injection into
+                        another service) but has not yet been
+                        <em>realized</em>
+                        into an instantiated service. Realization occurs with the
+                        first method invocation on the proxy.
+                    </dd>
+
+                    <dt>Real</dt>
+                    <dd>
+                        The service has been realized: instantiated, dependencies
+                        injected, decorated with interceptors and is fully in
+                        operation.
+                    </dd>
+
+                </dl>
+            </p>
+
+            <p:else>
+                <p>
+                    <em>${message:service-status-hidden}</em>
+                </p>
+            </p:else>
+        </t:unless>
+    </body>
+</html>

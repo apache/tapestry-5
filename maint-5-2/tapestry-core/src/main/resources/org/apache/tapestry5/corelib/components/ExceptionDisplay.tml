@@ -1,0 +1,36 @@
+<div xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" class="t-exception-report">
+    <ul>
+        <t:loop source="stack" value="info">
+            <li>
+                <span class="t-exception-class-name">${info.className}</span>
+
+                <div t:type="if" test="info.message" class="t-exception-message">${info.message}</div>
+
+                <dl t:type="if" test="showPropertyList">
+                    <t:loop source="info.propertyNames" value="propertyName">
+                        <dt>${propertyName}</dt>
+                        <dd>
+                            <t:renderobject object="propertyValue"/>
+                        </dd>
+                    </t:loop>
+                    <t:if test="info.stackTrace">
+                        <dt>
+                            <span class="t-exception-stack-controls">
+                                <input type="checkbox" id="${toggleId}" checked="checked"/>
+                                <label for="${toggleId}">Hide uninteresting stack frames</label>
+                            </span>
+                            Stack trace
+                        </dt>
+                        <dd>
+                            <ul class="t-stack-trace">
+                                <li t:type="loop" source="info.stackTrace" value="frame" class="${frameClass}">
+                                    ${frame}
+                                </li>
+                            </ul>
+                        </dd>
+                    </t:if>
+                </dl>
+            </li>
+        </t:loop>
+    </ul>
+</div>

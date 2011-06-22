@@ -1,0 +1,19 @@
+<html t:type="Border"
+      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+
+    <h1>@DiscardAfter Demo</h1>
+
+    <t:form>
+
+        <t:textfield t:id="stringValue"/>
+
+        <t:submit t:id="keep" value="Keep Values"/>
+        <t:submit t:id="discard" value="Discard Values"/>
+        <t:submit t:id="discardWithCheckedException" value="Discard Values With Checked Exception"/>
+    </t:form>
+
+    <p>
+        Value is: '${stringValue}'
+    </p>
+</html>

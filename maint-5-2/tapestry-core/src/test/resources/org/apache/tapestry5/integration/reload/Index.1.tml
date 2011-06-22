@@ -1,0 +1,12 @@
+<html>
+    <body>
+        <dl>
+            <dt>Property:</dt>
+            <dd id="property">${number}</dd>
+            <dt>Template:</dt>
+            <dd id="template">Initial Template Version</dd>
+            <dt>Message:</dt>
+            <dd id="message">${message:greeting}</dd>
+        </dl>
+    </body>
+</html>

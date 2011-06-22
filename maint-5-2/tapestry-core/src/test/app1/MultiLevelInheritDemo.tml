@@ -1,0 +1,18 @@
+<html t:type="border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"
+      xmlns:p="tapestry:parameter">
+
+    <h1>Multi-Level Binding Inheritance Demo</h1>
+
+    <h2>Inherit a property</h2>
+
+    <dl id="viaproperty">
+        <t:inherittop t:id="prop" value="boundValue"/>
+    </dl>
+
+    <h2>Inherit a literal</h2>
+
+    <dl id="vialiteral">
+        <t:inherittop t:id="literal" value="literal:some text"/>
+    </dl>
+
+</html>

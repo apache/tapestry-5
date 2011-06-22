@@ -1,0 +1,96 @@
+ ----
+ Overriding Services
+ ----
+
+Overriding Services
+
+  Tapestry is designed to be easy to customize, and the IoC container is key to that customizability.
+
+  Part of Tapestry's core functionality is resolving injected objects; that is, when Tapestry is building an object
+  or service and sees a constructor parameter or a field, what value does it plug in?  Most of the time,
+  the injected object is a service defined elsewhere within the container (and, in fact, that actual instance
+  will be a proxy to the service, which may not have been fully realized yet).
+
+  However, there are cases where you might want to override how Tapestry operates in some specific way.
+
+  The strategy used to determine what object gets injected where is
+  {{{../injection.html}defined inside Tapestry IoC itself}}; thus we can take advantage of
+  several features of the IoC container in order to take control over specific injections.
+
+Overriding Services
+
+  In most cases, services are injected by matching just type; there no @InjectService annotation,
+  just a method or constructor parameter whose type matches the service's interface.
+
+  In this case, it is very easy to supply your own alternate implementation of a service.
+
+  <<AppModule.java>> (partial)
+
+----
+  public static void contributeServiceOverride(MappedConfiguration<Class,Object> configuration)
+  {
+    configuration.add(SomeServiceType.class, new SomeServiceType() { . . . });
+  }
+----
+
+  In this example, the service to be overriden is provided as an  inner class implementing the interface.
+
+  Sometimes you'll want to define the override as a service of its own: this is useful if you want
+  to inject a Logger specific to the service, or if the overriding implementation needs a configuration:
+
+
+  <<AppModule.java>> (partial)
+
+----
+  public static void bind(ServiceBinder binder)
+  {
+    binder.bind(SomeServiceType.class, SomeServiceTypeOverrideImpl.class).withId("Override");
+  }
+
+  public static void contributeServiceOverride(MappedConfiguration<Class,Object> configuration, @Local SomeServiceType override)
+  {
+    configuration.add(SomeServiceType.class, override);
+  }
+----
+
+  Here we're defining a service local to this module using the bind() method.
+
+  Every service in the IoC container must have a unique id, that's why we used the withId() method; if we we hadn't,
+  the default service id would have been "SomeServiceType" which is a likely conflict with the very service we're trying to
+  override.
+
+  We can inject our overriding implementation of SomeServiceType using the special
+  @{{{../../apidocs/org/apache/tapestry5/annotations/Local.html}Local}} annotation, which indicates that a service
+  within the same module only should be injected: otherwise there would be a problem because the override parameter
+  would need to be resolved using the MasterObjectProvider and, ultimately, the ServiceOverride service; this would cause
+  Tapestry to throw an exception indicating that ServiceOverride depends on itself.  We defuse that situation by using
+  @Local, which prevents the MasterObjectProvider service from being used to resolve the override parameter.
+
+Decorating Services
+
+  Another option is to {{{../deocrator.html}decorate}} the existing service.  Perhaps you want to extend some of the behavior
+  of the service but keep the rest.
+
+  Alternately, this approach is useful to override a service that is matched using marker annotations.
+
+  <<AppModule.java>> (partial)
+
+----
+  public SomeServiceType decorateSomeServiceType(SomeServiceType original)
+  {
+    return new SomeServiceType() { . . . };
+  }
+----
+
+  This decorate method is invoked because its name matches the service id of the original service, "SomeServiceType"
+  (you have to adjust the name to match the service id).
+
+  It is passed the original service and its job it to return an <interceptor>, and object that implements the same
+  interface, wrapping around the original service.
+
+  Note that the object passed in as original may be the core service implementation, or it may be some other
+  interceptor from some other decorator for the same service (often, such a parameter is named "delegate" to highlight
+  this ambiguity).
+
+
+

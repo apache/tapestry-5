@@ -1,0 +1,7 @@
+<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+          xmlns:p="tapestry:parameter">
+
+    <t:outputraw>
+        <p:unexpected>Informal parameter to component that does not support them.</p:unexpected>
+    </t:outputraw>
+</t:border>

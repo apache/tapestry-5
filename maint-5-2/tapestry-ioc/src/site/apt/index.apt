@@ -1,0 +1,216 @@
+ ----
+ Tapestry IoC Introduction
+ ----
+ 
+Tapestry Inversion of Control Container
+
+  The inner construction of the Tapestry framework is based on {{{http://www.martinfowler.com/articles/injection.html}inversion of control}},
+  a design approach that allows a working system to be fabricated from many small, easily testable pieces.
+  
+  An additional benefit of using IoC (Inversion of Control) is that, by breaking a complex system into small pieces, it becomes easier to
+  modify and extend the system, by overriding or replacing selected parts of the system.
+  
+  The use of IoC in Tapestry represents an evolution from Tapestry 3 to Tapestry 4 to Tapestry 5.  Tapestry 3 did not use IoC, though it included
+  some weaker mechanisms, such as extensions, that served a similar purpose.  To make large scale changes to the behavior of Tapestry 3 required
+  subclassing key classes and overriding methods.
+  
+  Tapestry 4 introduced the use of the {{{http://hivemind.apache.org/}Apache HiveMind}} IoC container.  In fact, the HiveMind project was created 
+  specifically for use as the IoC container for Tapestry 4.  Tapestry 4 has met its goals for extensibility and configurability, largely
+  because of HiveMind's flexibility.
+  
+  Tapestry 5 extends on this, replacing HiveMind with a new container specifically build for Tapestry 5,
+  designed for greater ease of use, expressiveness and performance. HiveMind itself has been subsequently shelved; T5 IoC
+  can be considered a streamlined and improved HiveMind. And T5 IoC can be used separately from the rest of Tapestry!
+  
+* Why Not Spring?
+
+  {{{http://www.springframework.org}Spring}} is the most successful IoC container project. The Spring project combines a very good IoC container,
+  integrated {{{http://aspectj.org}AspectJ}} support, and a large number of libraries built on top of the container. Spring is an excellent
+  <application> container, but lacks a number of features necessary for a <framework> container:
+  
+  * Spring beans can be wired together by name (or id), but it is not possible to introduce additional naming abstractions. Tapestry 4's 
+    "infrastructure:" abstraction was the key to allowing easy spot overrides of internal Tapestry services without having to
+    duplicate the large web of interrelated services (nearly 200 in Tapestry 4.0).
+        
+  * Although Spring allows beans to be intercepted, it does so in the form of a new bean, leaving the un-intercepted bean visible
+    (and subject to misuse).  Tapestry IoC "wraps" the service inside interceptors, preventing unintercepted access
+    to the core service implementation.
+  
+  * Spring's XML configuration files are quite verbose. This has improved with
+    Spring 2.0, but still far more verbose that T5 IoC module classes.
+    
+  * Spring has a simple map/list/value configuration scheme, but it is not distributed; it is part of a single bean definition. 
+    Tapestry 5 IoC allows a service configuration to be assembled from multiple modules. This is very important
+    for seamless extensibility of the framework, with zero configuration (just drop the module into the classpath and 
+    everything hooks together).
+  
+* Why Not HiveMind?
+
+  The difficulty of managing the release schedules of two complex frameworks has proven to be an issue. HiveMind's 2.0 release will
+  incorporate ideas similar to those present in Tapestry 5 IoC, 
+  but will also maintain legacy support for the existing XML-driven approach.
+  
+  The use of HiveMind is also related to one of the common criticisms of Tapestry 4: startup time. The time it takes to parse and
+  organize all that XML shows up as several seconds of startup time. It is <hoped> that creating a streamlined IoC container that is not
+  driven by XML will alleviate those issues.
+  
+  With the advent of new technologies (in particular, 
+  {{{http://java.sun.com/j2se/1.5.0/docs/guide/language/annotations.html}JDK 1.5 Annotations}}, 
+  and runtime class generation via 
+  {{{http://www.jboss.org/products/javassist}Javassist}})
+  some of the precepts of HiveMind have been undermined.  That is to say, in HiveMind (and Spring), all that XML is an awkward
+  way to describe a few basic Java operations: instantiating classes and invoking methods on those classes (to inject
+  dependencies into the instantiated instances).  The central concept in Tapestry IoC is to eliminate XML and build an equivalent
+  system around simple objects and methods.
+  
+  Tapestry IoC also represents many simplifications of HiveMind, representing lessons learned while creating both
+  HiveMind and Tapestry 4.  HiveMind itself has wound down (it is not longer in active development), with the user base
+  moving to Tapestry 5.
+
+* Why not Guice?
+
+  {{{http://code.google.com/p/google-guice/}Google Guice}} is a newcomer to the IoC landscape.  Guice and T5 IoC are very close and, in fact,
+  T5 IoC expressly borrows many great and innovative ideas from Guice. Guice abandons not only XML but even any concept of a service id ...
+  for injection, services are matched by type and perhaps filtered based on annotations.
+
+  Guice is still missing some core ideas needed in T5 IoC.  There's no concept of configurations or anything similar.
+  And there are limitations on injection based on scope (a request scoped value can't be injected into a global scope service; in T5 IoC, scope
+  is internal to the proxy and never an issue).
+  
+Goals
+
+  As with Tapestry 5 in general, the goal of Tapestry IoC is greater simplicity, greater power, and an avoidance of XML.
+  
+  Existing IoC containers such as HiveMind and Spring contain large amounts of XML configuration that exists to
+  describe how and when to instantiate a particular JavaBean, and how to provide that bean with its dependencies (either
+  by constructor injection, or by property injection).  Other XML is used to hook objects into some form of lifecycle ... 
+  typically callback methods invoked when the object is instantiated and configured, or when it is being discarded.
+
+  The core concept of Tapestry IoC is that
+  the Java language itself 
+  is the easiest and most succinct way to describe object creation and method invocation. Any approximation in
+  XML is ultimately more verbose and unwieldy.  As the {{{service.html#injection} examples}} show, a small amount of Java code and a
+  handful of naming conventions and annotations is far simpler
+  and easier than a big chunk of XML.
+
+  In addition, moving from XML to Java code encourages testing; you can unit test the 
+  service builder methods of your  module  class, but you can't realistically unit test an XML descriptor.
+  
+  Tapestry IoC modules are easily packaged into JAR files, supporting 
+  zero-configuration usage: just drop the JAR onto the classpath.
+  
+  Another goal is "developer friendliness". This is a true cross-cutting concern, and one not likely to be packaged
+  into an aspect any time soon. The Tapestry IoC framework is designed to be easy to use and easy to understand.
+  Further, when things go wrong, it actively attempts to help you via 
+	comprehensive checks and carefully composed error messages. Further,
+  all user-visible objects implement
+  {{{http://howardlewisship.com/blog/2003/08/importance-of-tostring.html}a reasonable toString() method}},
+  to help you understand what's going when you inevitably try to figure things out in the debugger. 
+  
+  In terms of building services using Tapestry IoC ... the objective here is "lightness", a term borrowed from the board
+  game {{{http://boardgamegeek.com/game/188}Go}}. In Go, two players place stones on an initially empty board, 
+  creating walls to enclose territory or eliminate the encroaching stones played by the opponent. The winner at the
+  end of the game controls the most territory, and it is the constant tension between taking territory and defending
+  existing territory that drives the game.   In Go, groups of playing stones are "light" (or have "good shape")
+  when the minimum number of them control the maximum area on the board.  Playing "heavy" just gives your opponent a free
+  chance to take control of another section of the board.
+  
+  In software development, we are also attempting to create complex systems
+  from simple pieces, but our tension is derived from the need to add functionality balanced against the need
+  to test and maintain existing code.  Too often in the world of software development, the need to add functionality
+  trumps all, and testing and maintenance is deferred ... until too late.
+  
+  IoC containers in general, and Tapestry IoC very specifically, exist to address this issue, to provide the foundations
+  for balancing the need to quickly add functionality against the need to test new functionality and maintain
+  existing functionality.  IoC containers provide the means to break large, complex, monolithic blocks into light, small, testable
+  pieces.   
+  
+  When building a registry of services, lightness refers to the proper division of responsibility, the seperation of
+  concerns, and the limiting of dependencies between different parts of the system. This style is often
+  called {{{http://www.ccs.neu.edu/research/demeter/demeter-method/LawOfDemeter/general-formulation.html}Law of Demeter}}.
+  Using an IoC container makes it easier to embrace this approach, since one critical concern, which objects are responsible for 
+  instantiating which others, is entirely managed by the container. With this lifecycle concern removed, it becomes very
+  easy to reduce complex chunks of code into small, testable, reusable services.
+  
+  "Light" means:
+  
+  * Small interfaces of two or three methods.
+  
+  * Small methods, with two or three parameters (because dependencies are injected in behind the scenes, rather than
+    passed into the method).
+    
+  * Anonymous communication via events, rather than explicit method invocations. The service implementation can
+    implement an event listener interface.
+  
+  []
+  
+  See {{{http://www.pragmaticprogrammer.com/ppbook/index.shtml}The Pragmatic Programmer}} for more insights into
+  building solid code.
+  
+Overview
+
+  The Tapestry IoC container takes over all the plumbing necessary for a highly scalable, extensible, thread-safe, testable
+  application.  Please see the {{{overview.html}overview}} for more details.  
+  
+Terminology
+
+  The basic unit in Tapestry IoC is a <<service>>.  A service consists of a <<service interface>> and a <<service implementation>>.
+  The service interface is an ordinary Java interface.  The service implementation is a Java object that implements the 
+  service interface.  Often there will
+  only be a single service per service interface, but in some situations, there may be many different services and service implementations
+  all sharing the same service interface.
+  
+  
+  Services are identified by a unique id.  Typically, a service id matches the unqualified name of the service interface, but
+  this is simply a convention.
+  
+  Services are aggregated into <<modules>>:
+      
+  * A module is defined by a <<module class>>, a specific class containing a mix of static or instance methods, used to define
+    services, decorate them (see below), or contribute to service configurations (again, more below).
+  
+  * Methods of the module class define the services provided by the module, 
+    and the same methods are responsible
+    for instantiating the service implementation.
+    
+  []
+  
+  The methods which define and construct services are called <<service builder methods>>.
+  
+  The <<registry>> is the outside world's view of the modules and services. From the registry, it is possible to obtain
+  a service, via its unique id or by its service interface.  Access by unique id is <caseless> (meaning, a match will be found
+  even the case of the search key doesn't match the case of the service id itself). 
+    
+    
+  Services may be <<decorated>> by <<service decorator methods>>.  These methods create
+  <<interceptor>> objects that wrap around core service implementations, adding behavior such
+  as logging, security access, or transaction management.  Interceptors implement the same
+  service interface as the service.
+  Control is given over the order in which decorators are applied to a service.
+  
+  A service may have a <<configuration>>. The configuration is either a map, a collection, or an ordered list. The service defines the type
+  of object allowed to be contributed into the configuration. The configuration is constructed
+  from <<contributions>> provided by one or more modules.   <<Service contributor methods>> are invoked to contribute objects into
+  configurations.
+    
+  Services are instantiated as needed. In this case, "need" translates to "when a method of the service is invoked".
+  A service is represented (to the outside world, or to other services) as a <<proxy>> that implements
+  the service interface. The first time a method is invoked on the proxy, the full service (consisting of the core service implementation wrapped with any interceptors) is
+  constructed. This occurs in a completely <<thread-safe>> manner. Just-in-time instantiation allows for more complex, more finely grained networks of services, and improves
+  startup time.
+
+  Instantiating a service, injecting dependencies, and decorating the service are all parts of service <<realization>>, the point
+  at which a service transitions from virtual (just a proxy) to real (fully instantiated and ready to operate). 
+
+  Services define a <<scope>> that controls when the service is constructed, as well as its visibility.  The default scope is <<singleton>>, meaning a single
+  global instance created as needed.  Other scopes allow service implementations to be bound to the current thread (i.e., the current
+  request in a servlet application).
+  
+  <<Dependencies>> are other services (or other objects) that are needed by a service implementation. These 
+  dependencies can be <<injected>> into a service builder method and provided, from there, to a service implementation via
+  its constructor, or via methods on the service implementation. These may also be referred to as <<collaborators>>, especially
+  in the context of writing unit tests.
+
+  The <<point of Injection>> is a field, method parameter, or constructor parameter that receives an injected value.
+  The type of service (or other dependency) is determined by the type of the field or parameter. Often,
+  annotations further identify what is to be injected, or in the case of field injection, that an injection is required.

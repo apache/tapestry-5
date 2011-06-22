@@ -1,0 +1,13 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>Index</title>
+    </head>
+    <body>
+        <h1>Index</h1>
+
+        <p>
+            Message:
+            <span id="message">${message}</span>
+        </p>
+    </body>
+</html>

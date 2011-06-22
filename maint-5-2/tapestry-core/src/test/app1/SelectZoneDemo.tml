@@ -1,0 +1,30 @@
+<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+	<p>Car Maker: ${carMaker}</p>
+	<p>Car Model: ${carModel}</p>
+	<t:form>
+		<p>
+			<t:errors />
+		</p>
+		<p>
+			<t:select t:id="carMaker" validate="required"
+				model="makeModel" zone="modelZone" encoder="makeEncoder" />
+		</p>
+
+		<t:zone t:id="modelZone">
+			<t:if test="carMaker">
+				<t:delegate to="modelBlock" />
+			</t:if>
+		</t:zone>
+
+		<t:block id="modelBlock">
+			<p id="carModelContainer">
+				<t:select t:id="carModel" model="availableModels" validate="required" blankOption="always" />
+			</p>
+		</t:block>
+		
+		<p>
+			<t:submit value="literal:Submit" />
+		</p>
+	</t:form>
+
+</t:border>

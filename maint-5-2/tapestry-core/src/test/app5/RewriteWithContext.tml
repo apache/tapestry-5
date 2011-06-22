@@ -1,0 +1,12 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+    <head>
+        <title>
+            Rewrite With Context
+        </title>
+    </head>
+    <body>
+        <a t:type="pagelink" t:id="thePageLink" page="RewriteSuccess2" class="page">Rewrite Page Link</a>
+        <a t:type="eventlink" t:id="theEventLink" event="click" class="event">Rewrite Component Event Link</a>
+        <a t:type="actionlink" t:id="theActingLink" class="action">Rewrite Action Link</a>
+    </body>
+</html>

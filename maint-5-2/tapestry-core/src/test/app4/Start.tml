@@ -1,0 +1,24 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>Start</title>
+    </head>
+
+    <body>
+
+        <h1>Start Page</h1>
+        
+        <p>Index Page Exists: ${indexPageExists}</p>
+        <p>Start Page Exists: ${startPageExists}</p>
+
+        <t:beaneditform object="this"/>
+
+        <hr/>
+
+        <p>
+            Click
+            <t:actionlink t:id="bypass">here</t:actionlink>
+            to bypass the form.
+        </p>
+    </body>
+
+</html>

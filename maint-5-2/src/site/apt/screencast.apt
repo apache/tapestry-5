@@ -1,0 +1,47 @@
+ ----
+ Tapestry Screencasts
+ ----
+ 
+  Screencasts are a great way to learn about a new tool or framework without having to download
+  a single thing to your computer.
+ 
+  Howard Lewis Ship has started creating a series of screencasts about Tapestry 5.
+  
+  <<These screencasts reflect the rapid evolution of the framework. Many things have changed and simplfied over the last few weeks and months. Watch these
+  in the manner intended ... as a preview of the flavor of Tapestry 5, not a reference for how to do things.>> 
+  
+Screencast #1
+
+  Howard demonstrates how to set up a new Tapestry 5 project inside Eclipse (using the 
+  Maven plugin). He also demonstrates 
+  {{{guide/reload.html}live class reloading}}.
+  
+  {{{http://howardlewisship.com/screencasts/tap5-classreload-oct2006/tap5-classreload-oct2006.html}Tapestry 5 Technology Preview -- 17 Oct 2006}} 5:04
+  
+  
+Screencast #2
+
+  Howard demonstrates the Loop, If and ActionLink components, touches on the
+  exception page, as well as transient and persistent page data.
+  
+  {{{http://howardlewisship.com/screencasts/actionlink-oct2006/actionlink-oct2006.html}Tapestry 5 Technology Preview #2 -- 20 Oct 2006}} 9:08
+  
+Screencast #3
+
+  Howard shows how to use Maven and the {{{tapestry-simple/index.html}tapestry-simple}} archetype to create a new Tapestry 5 project.
+  
+  {{{screencast_3.html}Tapestry 5 Screencast #3 -- 29 Jan 2007}} 4:52
+  
+Screencast #4
+
+  Howard demonstrates the BeanEditForm component to build a simple UI for collecting some registration data from the user.
+  
+  {{{screencast_4.html}Tapestry 5 Screencast #4 -- 15 Feb 2007}} 12:22  
+  
+Screencast #5
+
+  Howard shows off the powerful Grid component, used to view and navigate large data sets.
+  
+  {{{screencast_5.html}Tapestry 5 Screencast #5 -- 28 Feb 2007}} 10:46
+  
+  

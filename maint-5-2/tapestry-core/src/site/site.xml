@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- 
+   Copyright 2006, 2007, 2008 The Apache Software Foundation
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+
+<project name="Tapestry Core">
+    <bannerLeft>
+        <name>Tapestry 5</name>
+        <href>http://tapestry.apache.org/tapestry5/</href>
+        <src>images/tapestry_banner.gif</src>
+    </bannerLeft>
+    <bannerRight>
+        <name>Apache</name>
+        <href>http://www.apache.org</href>
+        <src>images/asf_logo_wide.gif</src>
+    </bannerRight>
+    <skin>
+        <groupId>org.apache.tapestry</groupId>
+        <artifactId>maven-skin</artifactId>
+        <version>1.1</version>
+    </skin>
+
+    <publishDate format="dd MMM yyyy"/>
+
+    <version/>
+
+    <body>
+
+
+        <menu ref="parent"/>
+        <!--
+
+       This is probably useful but it drives me crazy whenever I reload a page.
+
+                <head>
+                   <script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+                   <script type="text/javascript">_uacct = "UA-400821-1"; urchinTracker();</script>
+               </head>
+        -->
+        <menu name="Tapestry Core">
+            <item name="Introduction" href="/index.html"/>
+            <item name="Component Reference" href="ref/index.html"/>
+            <item name="Download" href="http://tapestry.apache.org/download.html"/>
+        </menu>
+
+
+        <menu ref="reports"/>
+
+    </body>
+</project>

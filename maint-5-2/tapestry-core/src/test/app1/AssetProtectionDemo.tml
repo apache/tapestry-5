@@ -1,0 +1,13 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+    <a href="${asset:context:availablefile.txt}">Available File</a>
+    <a href="${asset:context:WEB-INF/unavailable.css}">Unavailable CSS</a>
+    <a href="${asset:context:WEB-INF}">WEB-INF</a>
+    <a href="${asset:context:WEB-INF/}">WEB-INF/</a>
+    <a href="${asset:classpath:/org/apache/tapestry5/integration/app1/pages/unavailablefile.txt}">Unavailable File</a>
+    <a href="${asset:classpath:/org/apache/tapestry5/integration/app1/pages/availablefile2.txt}">Available File2</a>
+    <a href="${asset:context:META-INF}">META-INF</a>
+    <a href="${asset:context:META-INF/}">META-INF/</a>
+    <a href="${asset:context:META-INF/unavailable2.txt}">unavailable2.txt</a>
+    <a href="${asset:context:AssetProtectionDemo.tml}">tml file</a>
+    <a href="${asset:context:music/MusicDetails.tml}">nested tml file</a>
+</html>

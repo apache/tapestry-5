@@ -1,0 +1,24 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Null Field Strategy Demo</h1>
+
+    <p>
+        Demonstrates the use of the nulls parameter of TextField to change how null values are treated.
+    </p>
+
+
+    <t:form>
+        <t:errors/>
+        <t:textfield t:id="number" nulls="zero"/>
+        <br/>
+        <input type="submit" value="Update"/>
+    </t:form>
+
+    <hr/>
+
+    <p>
+        Number property value:
+        <span id="value">${number}</span>
+    </p>
+
+</html>

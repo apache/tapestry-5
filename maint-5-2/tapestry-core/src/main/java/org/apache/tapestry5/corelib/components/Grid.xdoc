@@ -1,0 +1,310 @@
+<document>
+    <body>
+        <section name="Related Components">
+            <ul>
+                <li>
+                    <a href="BeanEditForm.html">BeanEditForm</a>
+                </li>
+                <li>
+                    <a href="BeanDisplay.html">BeanDisplay</a>
+                </li>
+                <li>
+                    <a href="Loop.html"></a>
+                </li>
+            </ul>
+        </section>
+
+        <section name="Simple Example">
+
+            <p>
+                The Grid component is closely related to the BeanEditor component; they are both based on the same
+                underlying concept and share quite a bit of code.
+            </p>
+
+            <p>In this example, we'll display a list of users. We'll also show some basic customization, to convert a
+                column
+                from just text, to a clickable link.
+            </p>
+
+            <p>
+                <img src="grid_ref1.png"/>
+            </p>
+
+            <p>This example shows much of the default behavior, using a collection of randomly generated users.
+                The column order is determined by the order of the getter methods in the User class. The columns are
+                sortable, and
+                because there are more results than will fit on a single page, page navigation is included (the
+                navigation
+                disappears for small result sets).
+            </p>
+
+            <subsection name="User.java">
+                <source><![CDATA[
+public class User
+{
+    @NonVisual
+    private long id;
+
+    private String firstName;
+
+    private String lastName;
+
+    private int age;
+
+    public long getId() { return id; }
+
+    public void setId(long id) { this.id = id; }
+
+    public String getFirstName() { return firstName; }
+
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+
+    public String getLastName() { return lastName; }
+
+    public void setLastName(String lastName) { this.lastName = lastName; }
+
+    public int getAge() { return age; }
+
+    public void setAge(int age) { this.age = age; }
+}]]></source>
+
+                <p>The @NonVisual annotation prevents the id property from being displayed.</p>
+
+            </subsection>
+
+            <subsection name="UserList.tml">
+
+                <p>
+                    We want to make the user's last name a clickable link to a detail page for the user.
+                </p>
+
+
+                <source><![CDATA[
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+    <body>
+        <h1>List Users</h1>
+
+        <t:grid source="users" row="user">
+            <p:lastNameCell>
+                <t:pagelink page="user/view" context="user.id">${user.lastname}</t:pagelink>
+            </p:lastNameCell>
+            <p:empty>
+              <p>There are no users to display; you can <t:pagelink page="user/add">add some</a>.</p>
+            </p:empty>
+        </t:grid>
+    </body>
+</html>
+]]></source>
+
+
+                <p>
+                    The block parameter name
+                    <code><em>property</em>cell
+                    </code>
+                    is used to override the rendering of cells for one property. As usual, case is ignored. Here we
+                    use a PageLink component to link to a ViewUser page, passing the id of the user as
+                    activation context for the target page.
+                </p>
+
+                <p>
+                    The Grid component takes care of the &lt;td&gt; element, and the provided block parameter
+                    provides the content
+                    <em>inside</em>
+                    the &lt;td&gt;.
+                </p>
+
+                <p>
+                    For the block to know what is being rendered, we bind the row parameter of the Grid
+                    to the user property of the page. The Grid will keep updating this property
+                    just before it renders each row (using its own internal renderers, or the ones
+                    provided as parameters).
+                </p>
+
+                <p>
+                    The header for a column may be overridden in the same way, using a parameter name
+                    of
+                    <code><em>property</em>header
+                    </code>
+                    . The parameter block will provide the content
+                    inside the &lt;th&gt; element. The provided block is responsible for
+                    providing any links or icons related to sorting.
+                </p>
+
+                <p>
+                    Binding the Grid's empty parameter overrides the default message displayed when there
+                    is no data to display. As demonstrated above, it doesn't have to be simple text, the
+                    block can be a snippet of markup and components.
+                </p>
+
+            </subsection>
+
+            <subsection name="UserList.java">
+                <source><![CDATA[
+public class UserList
+{
+    @Inject
+    private UserDAO userDAO;
+
+    @Property
+    private User user;
+
+    public List<User> getUsers() { return userDAO.findAll(); }
+}]]></source>
+
+            </subsection>
+
+            <p>
+                The UserList class exists to provide access to the UserDAO service, and to act as a holder
+                for the user property, needed when the Grid is rendering. We need it here because we've
+                overridden the rendering of the lastName property.
+            </p>
+
+        </section>
+
+        <section name="Adding Columns Example">
+
+            <p>
+                Commonly, you may want to add a column to the Grid to support a computed property, or as a placeholder
+                for an action. We'll do the latter, adding a column for deleting a user.
+            </p>
+
+
+            <p>
+                <img src="grid_ref2.png"/>
+            </p>
+
+            <subsection name="UserList.tml">
+
+
+                <source><![CDATA[
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+    <body>
+        <h1>List Users</h1>
+
+        <t:grid source="users" row="user" add="delete">
+            <p:lastnamecell>
+                <t:pagelink page="user/view" context="user.id">${user.lastname}</t:pagelink>
+            </p:lastnameCell>
+            <p:deletecell>
+                <t:actionlink t:id="delete" context="user.id">Delete</t:actionlink>
+            </p:deletecell>
+            <p:empty>
+              <p>There are no users to display; you can <t:pagelink page="user/add">add some</a>.</p>
+            </p:empty>
+        </t:grid>
+    </body>
+</html>
+]]></source>
+
+                <p>
+                    We now explicitly provide a column for the "delete" property, which doesn't exist. In addition, a
+                    block
+                    for the "delete" property has been added that includes an ActionLink
+                    used to delete the user for the current row. This property is a
+                    <em>virtual</em>
+                    property because it doesn't correspond to a property
+                    of the data object, User.
+                </p>
+
+            </subsection>
+
+            <subsection name="UserList.java">
+                <source><![CDATA[
+public class UserList
+{
+    @Inject
+    private UserDAO userDAO;
+
+    @Property
+    private User user;
+
+    public List<User> getUsers() { return userDAO.findAll(); }
+
+    void onActionFromDelete(long userId)
+    {
+        userDAO.remove(userId);
+    }  
+}]]></source>
+
+
+                <p>
+                    The only addition here is an event handler method for when the delete link is clicked.
+                </p>
+
+
+            </subsection>
+
+            <subsection name="UserList.properties">
+                <source><![CDATA[
+delete-label=Delete user?]]></source>
+
+                <p>
+                    The normal column title for the "delete" property would be "Delete". Using the
+                    page's message catalog we can override that.
+                </p>
+            </subsection>
+
+
+        </section>
+
+
+        <section name="Notes">
+
+            <p>
+                Tapestry does a lot of work to help you with the source parameter. The parameter type
+                is GridDataSource, but Tapestry has built-in coercions from
+                Object[] and List. In more complicated cases, such as very large
+                queries against a database, you will want to provide your own implementation
+                of GridDataSource, to minimimze the sizes of queries and result sets.
+            </p>
+
+
+            <subsection name="CSS">
+
+                <p>The Grid component is designed to be customized via CSS. As it renders &lt;th&gt;, &lt;tr&gt; and
+                    &lt;td&gt; elements,
+                    it generates CSS class attributes for each element. You can then add customized CSS rules, even
+                    overriding the Tapestry defaults,
+                    to present the Grid as desired. This is often used to set the width of a column to a fixed value.
+                </p>
+
+                <dl>
+                    <dt>
+                        <em>propertyId</em>
+                    </dt>
+                    <dd>Added to &lt;th&gt; elements to allow customization of a particular column's header,
+                        and added to &lt;td&gt; elements to allow customization of a particular column's data cells.
+                    </dd>
+
+                    <dt>t-first</dt>
+                    <dd>Added to the first &lt;th&gt; and the first &lt;tr&gt; of the &lt;tbody&gt; (the data portion of
+                        the table).
+                    </dd>
+
+                    <dt>t-last</dt>
+                    <dd>Added to the last &lt;th&gt; and the last &lt;tr&gt;.</dd>
+
+                    <dt>t-sort-column-ascending</dt>
+                    <dd>Added to the &lt;th&gt; and all corresponding &lt;td&gt; elements for the column that is the
+                        current sort column (if any,
+                        for ascending sort).
+                    </dd>
+
+                    <dt>t-sort-column-descending</dt>
+                    <dd>As with t-soft-column-ascending, but for a descending sort.</dd>
+
+                </dl>
+
+                <p>
+                    The added CSS classes can get quite verbose; the Grid's lean parameter allows the propertyId CSS
+                    class attribute value to be omitted. Even in lean mode, the other
+                    CSS class attribute values are rendered.
+                </p>
+
+            </subsection>
+
+        </section>
+
+
+    </body>
+</document>

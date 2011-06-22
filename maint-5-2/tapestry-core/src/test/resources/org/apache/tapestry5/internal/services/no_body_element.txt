@@ -1,0 +1,2 @@
+<?xml version="1.0"?>
+<html><head><script src="foo.js" type="text/javascript"/></head><notbody><p>Ready to be updated with scripts.</p></notbody></html>

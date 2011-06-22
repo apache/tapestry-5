@@ -1,0 +1,8 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Tapestry Func">
+  <test name="Functional Programming Library">
+    <packages>
+      <package name="org.apache.tapestry5.func"/>
+    </packages>
+  </test>
+</suite>

@@ -1,0 +1,79 @@
+ ----
+ Logging
+ ----
+ 
+Logging in Tapestry
+
+	Logging in Tapestry is based on the
+	{{{http://www.slf4j.org/}Simple Logging Facade for Java (SLF4J)}}.  You can think of SLF4J as a leaner, meaner replacement
+	for {{{http://commons.apache.org/logging/}commons-logging}}.
+	
+	In theory, SLF4J is a wrapper around any of a number of logging systems, including 
+	{{{http://logging.apache.org/log4j/docs/}Log4J}}
+	or the built-in JDK logging.  In practice, it is almost always used with Log4J and no additional build configuration is needed. 
+	
+	Your application <will> need to provide a <<log4j.properties>> file (or its XML equivalent).  See 
+	{{{http://logging.apache.org/log4j/docs/manual.html}the Log4J manual}} for more information.
+
+Accessing Loggers
+
+  Loggers are a special kind of resource that is injected into a service.  In Tapestry IoC, Loggers an be injected into
+  service constructors, or into service builder methods.
+  
+  In Tapestry Core (the web framework), Loggers for components can be injected into component fields.
+  
+  This often confuses people, because the standard idiom is to create a Logger based on the class name and inject it into a static field.  In Tapestry, the Logger
+  is created on your code's behalf and provided to you, and stored into a final private field. 
+  
+  In terms of seperation of concerns, Tapestry's approach is superior ... the concern of creating loggers is offloaded
+  into the framework, and you code retains the concern of actually logging useful information.  However this is largely theoretical.
+  
+  For a pragamatic standpoint, injecting Loggers makes it easier to test <logging> code using the same techniques used to test other code: via the injection
+  of Mock Object implementations of the Logger interface.  This is something to consider when writing your own services, components and test.
+  
+Configuring Tapestry for other Logging Toolkits
+
+  The default configuration uses Log4J.
+  
+  If you need to use another logging system, that can be accomplished using Maven dependency control.
+  
+  You can exclude some of the dependencies that Tapestry introduces, and replace them with your own.  For example, to switch over to JDK logging, update your pom as follows:
+  
+----
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.tapestry</groupId>
+      <artifactId>tapestry-ioc</artifactId>
+      <version>5.0.x</version>
+      <exclusions>
+      
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
+        </exclusion>
+      
+        <exclusion>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</groupId>
+        </exclusion>
+
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+	  <artifactId>slf4j-jdk14</artifactId>
+	  <version>1.4.3</version>
+    </dependency>
+  </dependencies>
+----
+
+  This pulls out the log4j support normally included with Tapestry, and replaces it with the SLF4J library that wraps around JDK 1.4 logging.  
+
+  In all likelyhood, you'll replace <tapestry-ioc> with <tapestry-core> (assuming you are building a web application using Tapestry, rather than using Tapestry IoC as part of some other
+  application).  And, of course, version numbers change all the time!
+      
+  
+  
+	
+	

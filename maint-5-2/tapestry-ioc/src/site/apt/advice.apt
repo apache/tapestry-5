@@ -1,0 +1,148 @@
+  ---
+  Service Advisors
+  ---
+
+Service Advisors
+
+  Service advice represents a powerful meta-programming facility availble to services. In fact, it is a kind
+  of limited Aspect Oriented Programming.
+
+  Service advice allows you to intercept method invocations on your services; you have the abillity
+  to see what methods get invoked, what the parameters are. You can let the normal code do it work, and then
+  inspect or event adjust the return value, or any thrown exceptions.  And you can do this all in normal Java code.
+
+  A common example of method-level service advice is to log method entry and exit, complete with
+  parameter values, return values, and thrown exceptions. Other approaches include security checks, transaction
+  management, and other broadly spanning concerns.
+
+  Let's start with a (contrived) example. Let's say you have an existing set of services that have methods
+  that sometimes return null, and you want them to return an empty string instead because you are getting some NullPointerExceptions.
+
+  You could track down the implementation of each service and fix the logic that provides a return value ...
+  or you could advise the methods:
+
+----
+  @Match("*")
+  public static void adviseNonNull(MethodAdviceReciever receiver)
+  {
+    MethodAdvice advice = new MethodAdvice()
+    {
+      void advise(Invocation invocation)
+      {
+        invocation.proceed();
+
+        if (invocation.getResultType().equals(String.class) && invocation.getResult().equals(null))
+          invocation.overrideResult("");
+      }
+    };
+
+    receiver.adviseAllMethods(advice);
+  };
+----
+
+  This is a method that is placed in a module class. Note the terminology: <advise> is the verb ("to advise a method")
+  and <advice> is the noun ("with this advice"). The
+  {{{../apidocs/org/apache/tapestry5/ioc/MethodAdviceReceiver.html}MethodAdviceReceiver}}
+  is a wrapper around the service being advised: you can add advice to some or all methods of the service, and also
+  obtain the interface of the service.  It is automatically passed into service advisor methods.
+
+  The {{{injection.html}guide to injection}} describes what can be injected into a service advisor method.
+
+  Service advisor methods {must} have a parameter of type MethodAdviceReciever.
+
+  A service will often be advised multiple times; any method may have any number of advice objects applied to it.
+  Some methods may not get any advice. All of this is acceptible.
+
+  Service advisor methods are always void methods (this is different than {{{decorator.html}service decorator methods}}).
+
+  The {{{../apidocs/org/apache/tapestry5/ioc/annotations/Match.html}@Match}}
+  annotation indicates that this advice applies to all services (both your own, and those defined by Tapestry).
+  You will want to narrow down which services are actually targetted in most cases.
+
+  Note that some services, especially those built-in to Tapestry IoC, are marked as
+  {{{../apidocs/org/apache/tapestry5/ioc/annotations/PreventServiceDecoration.html}not subject to decoration}},
+  this applies to service advice as well as service decoration.
+
+  The {{{../apidocs/org/apache/tapestry5/ioc/MethodAdvice.html}MethodAdvice}} interface is very simple; it receives an
+  {{{../apidocs/org/apache/tapestry5/ioc/Invocation.html}Invocation}} representing a method call. Invocation
+  has methods for inspecting the type and value of the parameters, and for overriding the values of the parameters.
+
+  The call to proceed() allows the invocation to continue; that is, the original method is invoked.  If the method has been advised
+  multiple times, the call to proceed() may chain into the next MethodAdvice object.  In any case,
+  after invoking proceed(), you may inspect
+  and override the result (the return value).
+
+  Advice is pretty efficient, but it would still be better to apply it only to methods that make sense.
+  We can improve our service advisor method to only advise methods that return String:
+
+----
+  @Match("*")
+  public static void adviseNonNull(MethodAdviceReciever receiver)
+  {
+    MethodAdvice advice = new MethodAdvice()
+    {
+      void advise(Invocation invocation)
+      {
+        invocation.proceed();
+
+        if (invocation.getResult().equals(null))
+          invocation.overrideResult("");
+      }
+    };
+
+    for (Method m : receiver.getServiceInterface().getMethods())
+    {
+      if (m.getReturnType().equals(String.class))
+        reciever.adviseMethod(m, advice);
+    }
+  };
+----
+
+Built-in Advice
+
+Tapestry includes two built-in advisor services.
+
+* Logging Advice
+
+  Logging advice is built into Tapestry.  You can apply logging advice to your services very easily:
+
+---
+  @Match("*")
+  public static void adviseLogging(LoggingAdvisor loggingAdvisor, Logger logger, MethodAdviceReciever reciever)
+  {
+    loggingAdvisor.addLoggingAdvice(logger, reciever);
+  }
+---
+
+  {{{../apidocs/org/apache/tapestry5/ioc/services/LoggingAdvisor.html}LoggingAdvisor}} is
+  a built-in Tapestry IoC service.  This demonstrates how services can be injected into
+  service advisor methods.   The Logger parameter is the logger for the service being advised.
+
+* Lazy Advice
+
+  {{{../apidocs/org/apache/tapestry5/ioc/services/LazyAdvisor.html}LazyAdvisor}}
+  makes method invocations lazy: methods that return an interface (rather than a value)
+  will not execute immediately; instead, the method invocation is postponed
+  until a method of the return value is invoked.
+
+Matching And Orderering
+
+  Each service advice method gets a unique id, obtained by stripping the "advise" prefix from the method name.
+  Advice ids must be unique across all modules.
+
+  If the @Match annotation is omitted, the advice will match against a service with the same id.
+
+  In many cases, the order in which the advice is given is very important; for example, you may want
+  logging first, then transaction management, then security checks.  The
+  {{{../apidocs/org/apache/tapestry5/ioc/annotations/Order.html}@Order}} annotation allows you
+  to explictly set the order.  
+
+Decorators and Advice
+
+  {{{decorator.html}Service decorators}} are another way to achieve the same thing; service advisors are a more
+  recent addition, added in Tapestry 5.1.
+
+  It is not recommended that you mix advice and decoration.  If you do, decoration take precendence; all decorators
+  will be in effect before any advice (internally, they are two seperate steps, with advice being processed and the
+  result of that used by the decorators).
+

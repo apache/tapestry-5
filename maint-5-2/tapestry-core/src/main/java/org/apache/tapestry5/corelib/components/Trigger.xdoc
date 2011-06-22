@@ -1,0 +1,64 @@
+<document>
+    <body>
+
+        <section name="Examples">
+
+            <p>
+                In this example, we are showing how to trigger an event from the template of a page. When the following page is rendered
+                the both instances of the component Trigger publish an arbitrary event. 
+            </p>
+
+            <subsection name="TriggerDemo.tml">
+                <source><![CDATA[
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+    <body>
+        <h1>Trigger Demo</h1>
+        
+        <p> ... </p>
+
+        <t:trigger event="addAdditionalScriptLinks"/>
+
+        <p> ... </p>
+        
+        <t:trigger event="provideAdditionalMarkup"/>
+    </body>
+</html>
+]]></source>
+
+                <p>
+                    Inside the handler method for the event <em>addAdditionalScriptLinks</em> we add a link to a JavaScript file.
+                    The handler method for the event <em>provideAdditionalMarkup</em> provides some additional markup. 
+                    The MarkupWriter is passed as the event context.
+                </p>
+
+
+            </subsection>
+
+            <subsection name="TriggerDemo.java">
+                <source><![CDATA[
+public class TriggerDemo
+{
+    
+    @Environmental
+    private JavaScriptSupport jsSupport;
+    
+    @Inject @Path("context:js/scripts.js")
+    private Asset scripts;
+    
+    public void onAddAdditionalScriptLinks()
+    {
+       jsSupport.importJavaScriptLibrary(scripts);
+    }
+    
+    public void onProvideAdditionalMarkup(MarkupWriter writer)
+    {   
+        writer.writeRaw("Hello.");
+    }
+}
+]]></source>
+            </subsection>
+
+        </section>
+
+    </body>
+</document>

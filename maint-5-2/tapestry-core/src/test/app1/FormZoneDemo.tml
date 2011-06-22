@@ -1,0 +1,21 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xml:space="default">
+    <h1>Form Zone Demo</h1>
+
+    <t:form zone="valueZone">
+
+        <t:textfield t:id="longValue"/>
+        <br/>
+        <input type="submit" value="Submit"/>
+
+        <t:zone t:id="valueZone">
+            <t:if test="longValue">
+                <p>Submitted value:
+                    <span id="outputvalue">
+                        <t:outputraw value="longValue"/>
+                    </span>
+                </p>
+            </t:if>
+        </t:zone>
+    </t:form>
+
+</html>

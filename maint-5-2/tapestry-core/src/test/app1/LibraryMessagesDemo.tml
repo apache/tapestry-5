@@ -1,0 +1,13 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+  <h1>Library Messages Demo</h1>
+
+  <dl>
+    <dt>Library Message</dt>
+    <dd id="no-override">${message:pre-app}</dd>
+    <dt>Overriden Message</dt>
+    <dd id="override">${message:overridden-by-app}</dd>
+  </dl>
+
+</html>
+

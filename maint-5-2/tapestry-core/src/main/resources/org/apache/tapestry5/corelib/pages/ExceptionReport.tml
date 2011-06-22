@@ -1,0 +1,62 @@
+<html xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xmlns:p="tapestry:parameter">
+    <head>
+        <title>Application Exception</title>
+    </head>
+    <body>
+        <h1 class="t-exception-report">An unexpected application exception has occurred.</h1>
+
+        <t:if test="productionMode">
+            <p>${rootException.message}</p>
+            <p:else>
+                <t:exceptiondisplay exception="rootException"/>
+
+                <div class="t-env-data">
+
+                    <h2>Tapestry Framework</h2>
+                    <dl>
+                        <dt>Tapestry Version</dt>
+                        <dd>${tapestryVersion}</dd>
+                        <dt>Application Version</dt>
+                        <dd>${applicationVersion}</dd>
+                    </dl>
+
+                    <h2>Request</h2>
+                    <t:renderobject object="request"/>
+
+                    <t:if test="hasSession">
+                        <h2>Session</h2>
+                        <dl>
+                            <t:loop source="session.attributeNames" value="attributeName">
+                                <dt>${attributeName}</dt>
+                                <dd>
+                                    <t:renderobject object="attributeValue"/>
+                                </dd>
+                            </t:loop>
+                        </dl>
+                    </t:if>
+
+                    <h2>System Properties</h2>
+                    <dl>
+                        <t:loop source="systemProperties" value="propertyName">
+                            <dt>${propertyName}</dt>
+                            <dd>
+                                <t:if test="! complexProperty">
+                                    ${propertyValue}
+                                    <p:else>
+                                        <ul>
+                                            <li t:type="loop" source="complexPropertyValue" value="var:path">
+                                                ${var:path}
+                                            </li>
+                                        </ul>
+                                    </p:else>
+                                </t:if>
+                            </dd>
+                        </t:loop>
+                    </dl>
+
+                </div>
+            </p:else>
+        </t:if>
+    </body>
+
+</html>

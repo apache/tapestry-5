@@ -1,0 +1,38 @@
+<html t:type="Border"
+      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Grid Form Encoder Demo</h1>
+
+
+    <t:form>
+
+        <t:errors/>
+
+        <table t:id="grid" t:type="Grid" source="items" row="item" pagerposition="top"
+               add="id" reorder="id,title,urgency"
+               rowsperpage="5">
+
+            <t:parameter name="idCell">${item.id}</t:parameter>
+
+            <t:parameter name="titleCell">
+                <t:textfield t:id="title" value="item.title"/>
+            </t:parameter>
+
+            <t:parameter name="urgencyCell">
+                <t:select t:id="urgency" value="item.urgency"/>
+            </t:parameter>
+
+        </table>
+
+        <p>
+            <input type="submit" value="Update Items"/>
+        </p>
+    </t:form>
+
+
+    <p>
+        [
+        <a t:type="ActionLink" t:id="reset">reset</a>
+        ]
+    </p>
+</html>

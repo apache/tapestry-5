@@ -1,0 +1,94 @@
+ ---
+ Autoloading Modules
+ ---
+
+Autoloading Modules
+
+  An important part of Tapestry IoC is the autoloading of modules; this allows new features to be added to an application
+  just by "dropping in" a JAR that contains a module: the services in the module are automatically integrated
+  into the overall service registry, along with any configuration or other supporting code and resources.
+
+  An example of this is the {{{../tapestry-upload/index.html}tapestry-upload}} library, which introduces
+  an Upload component, along with supporting services related to handling file upload requests.
+
+  The core Tapestry IoC module is automatically included.  When using the Tapestry web framework, the core Tapestry module
+  is also included, as is an optional per-application module, plus any autoloaded modules.
+
+  Module autoloading isn't 100% free ... you must tell Tapestry IoC where the modules to load are located, which
+  can be done via a Manifest file entry, or via an annotation.
+
+JAR Manifest Entries
+
+  When setting up the registry, Tapestry can automatically locate modules packaged into JARs.
+  It does this by searching for a particular global manifest entry.
+
+  The manifest entry name is "Tapestry-Module-Classes".  The value is a comma-separated list
+  of fully qualified class names of module classes (this allows a single
+  JAR to contain multiple, related modules).  Whitespace is ignored.
+
+  Example:
+
++-----------------------------------------------------------------------------------+
+Manifest-Version: 1.0
+Tapestry-Module-Classes: org.example.mylib.LibModule, org.example.mylib.internal.InternalModule
++-----------------------------------------------------------------------------------+
+
+  If you are using Maven 2, then getting these entries into your JAR's manifest
+  is as simple as some configuration in your pom.xml:
+
++-----------------------------------------------------------------------------------+
+<project>
+  . . .
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Tapestry-Module-Classes>org.example.mylib.LibModule,
+                org.example.mylib.internal.InternalModule</Tapestry-Module-Classes>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  . . .
+</project>
++-----------------------------------------------------------------------------------+
+
+
+  More details are provided in the
+  {{{http://maven.apache.org/guides/mini/guide-manifest.html}Maven Manifest Guide}}.
+
+SubModule Annotation
+
+  Often, you will have several different modules working together that should all be loaded
+  as a unit.
+
+  One approach is to update the module ids into the manifest, as shown in the previous extension.
+
+  This can become tedious, and somewhat brittle in the face of refactorings (such as renaming of classes
+  or packages).
+
+  A better alternative is the
+  {{{../apidocs/org/apache/tapestry5/ioc/annotations/SubModule.html}@SubModule annotation}}.
+
+  The value for this annotation is a list of <additional> classes to be treated as module classes,
+  exactly as if they were identified in the manifest. Despite the name, there is no hierarchy of modules in
+  Tapestry IoC.
+
+  Example:
+
++----+
+@SubModule(
+{ InternalTransformModule.class })
+public final class InternalModule
+{
+  . . .
++----+
+
+  In general, your should only need to identify a single module in the JAR manifest, and make use of
+  @SubModule to pull in any additional module classes.

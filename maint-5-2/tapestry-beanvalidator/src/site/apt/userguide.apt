@@ -1,0 +1,73 @@
+ ----
+ User Guide
+ ----
+
+Validating Input Fields
+
+  After you included this library into your web app, you may use the JSR-303 annotations to validate the user's input. 
+  The JSR-303 annotations may even be combined with Tapestry's built-in annotation @Validate.
+
++----+
+public class Login
+{
+   @NotNull
+   @Property @Persist
+   private String userName;
+
+   @NotNull 
+   @Validate("minlength=10")
+   @Property @Persist
+   private String password;
+
+   void onSuccess()
+   {
+      // Login the user here
+   }
+}
++----+
+
+  Next you have to pass the object to validate into the Form's parameter <<validate>>. In the following example the Form's fields are bound to 
+  the properties of the page <<Login>>. That's why we pass <<this>>, thus the page instance, into the parameter <<validate>>. 
+  Since the parameter <<validate>> defaults to the container of the Form component, we can also remove <<validate="this">> in this example.
+
++----+
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+   <body>
+      <t:form validate="this">
+
+         <t:errors/>
+
+         <p>
+            <t:textfield t:id="userName"/>
+         </p>
+         
+         <p>
+            <t:textfield t:id="password"/>
+         </p>
+         
+         <p>
+            <input type="submit" value="Login"/>
+         </p>
+      <t:form>
+   </body>
+</html>
++----+
+
+Validating Beans with BeanEditForm
+
+  If you use the <<BeanEditForm>> it is even easier to validate your beans. The only thing you have to do is to annotate your beans with JSR-303 annotations. 
+  If you move from Tapestry's built-in validation mechanism to JSR-303 Bean Validation, you don't have to change your template at all.
+
++----+
+public class User
+{
+   @NotNull
+   private String userName;
+
+   @NotNull 
+   @Validate("minlength=10")
+   private String password;
+
+   ...
+}
++----+

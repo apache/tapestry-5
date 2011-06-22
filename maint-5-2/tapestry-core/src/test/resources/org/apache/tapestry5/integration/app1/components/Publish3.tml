@@ -1,0 +1,9 @@
+<dl xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+    xmlns:p="tapestry:parameter">
+    <dt>Where</dt>
+    <dd id="p3-where">${id}</dd>
+    <dt>Number</dt>
+    <dd id="p3-number">${number}</dd>
+    <dt>Value</dt>
+    <dd id="p3-value">${value}</dd>
+</dl>

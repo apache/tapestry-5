@@ -1,0 +1,190 @@
+ ----
+ Tapestry for Struts Programmers
+ ----
+ 
+Introduction
+	
+  There's no getting around it ... Struts is the 800lb gorilla of Java web application frameworks.
+  It was on the scene early, it got wide coverage and wide adoptions, and vast numbers of
+  applications have been written in it.
+  
+  Struts is an <action based> framework, and exists as a kind of thin wrapper on top of the
+  base Servlet API.  This is good as far as it goes, but Tapestry has always existed
+  as an example of why that view of the world is limited.
+    
+  Tapestry, especially Tapestry 5, represents a somewhat radical approach compared to
+  Struts. You will find it to be quite compelling ... but it also requires adjusting your
+  mindset to a completely different way of looking at building web applications.
+  
+Struts: Actions and Views
+
+  Tapestry and Struts approach the division of concerns represented by the Model-View-Controller
+  design pattern from very different angles.
+  
+  Struts maps incoming URLs to <actions>; these actions are objects that extends from the 
+  Action base class.
+  
+  What does an action do?  It reads query parameters in the request either directly,
+  or via an associated ActionForm object. It probably talks to your backend to read information
+  from a database, or write information out to it. It probably stores some information
+  in the request, information that will be needed by the <view> when it renders.
+  Finally, it returns the name of the view.
+  
+  The framework picks it up from there; it uses that view name to select
+  a template, usually a JavaServer page, 
+  and gets the template to render a response to the user.
+  
+  How does Struts find all this?  Lots of XML configuration; endless details for each
+  and every "page" to define the controller class, the map view names to JSPs, to link
+  views and actions to ActionForm classes.
+
+The Problem of Statelessness
+
+  Where does Struts (and similar frameworks) get things wrong?  The first issue is with
+  the management of <state>.
+  
+  Remember "<Beginning Object Oriented Programming 101>"?  Objects are generally defined
+  as a software construct that encapsulates behavior <and state>.
+  
+  Struts actions do not have internal state.  They can't -- they're singletons, one instance
+  shared by however many threads are operating within the servlet container.  Any internal state,
+  which is to say, any <instance variables>, would be immediately overwritten by some
+  other thread servicing a request for some other user.
+  
+  Struts approaches this problem by externalizing state: into the HttpServletRequest (for
+  state needed just by the view), or into
+  the HttpSession (for state that must persist from one request to the next). 
+  
+  Basically, what we have here is a crippled form of object oriented programming:
+  objects that have a single behavior, and have no internal state.
+  
+  As we'll see, Tapestry addresses both of these issues: in Tapestry, components
+  can have internal state, and they may have not just one, but many different behaviors.
+  
+Views: An Artifical Barrier
+
+  Action frameworks create a separation between the behavior logic, the code inside 
+  a Struts Action, and the view logic, which it typically a JavaServer Page.
+  
+  The <artificial barrier> is the lack of linkage between the template and the controller
+  (the Struts Action).  The only line of communication is the data in the HttpServletRequest
+  and HttpSession.
+  
+  There's a purpose to this design: it's all about the choice for the view. Because the
+  action may select one of several views, it's necessary to loosely couple the action
+  and the view.  The HttpServletRequest, and the named attributes stored in the request,
+  is the form of this loose coupling.
+  
+  This puts an onus on the action to stuff into the HttpServletRequest any and all data
+  that might be needed by the view as it renders a response. After all, there's no other
+  alternative, is there?
+  
+  Additionally, there's the issue of getting the action and the view, or views, to agree
+  on the name and type of every bit of state stored inside the HttpServletRequest or
+  HttpSession. Small changes to the controller, such as storing a different piece of data,
+  or using a different name, can have a ripple effect inside the view.
+  
+  This makes sense, doesn't it? After all, the result of an action (such as clicking a link
+  or submitting a form) may be some kind of success, or some kind of error. Or perhaps
+  you decide on the flavor of output based on the kind of client: HTML for the desktop or WML
+  for a phone.
+  
+  Perhaps in theory, but certainly not <in practice>. Errors are rarely presented as a whole
+  new view; they are usually presented as additional content within the same view. As to the
+  myth of a single application that vends out different markups for different clients ... 
+  that is just a myth. It's not just about output, but about every aspect of application development.
+  It's more than just what content shows up where ... it's about the very functionality offered
+  and the use cases supported, which are very different from one device to another. Pull back the covers
+  on any single application that supports such diverse clients and you'll find multiple applications, one
+  per device type, squeezed together as a not-so-coherent package.
+  
+Components: Its Not Just About Output
+
+  What happens when you have common <fixtures> to your application?  By fixtures,
+  we mean, bits of the view that are used in many places throughout the application.
+  This includes large chunks of functionality, such as a menu system used on every page,
+  down to tiny bits of functionality, like some kind of "widget" to format a date for output.
+  
+  JSPs provide two approaches for this kind of behavior: you can use JSP includes, to reuse
+  JSPs snippets across many larger JSPs.  Alternately, you can define and use JSP tags, which provide
+  a way to generate output using code, and provides mechanism for passing information from the 
+  HttpServletRequest into the JSP tag implementation.
+  Alas, in the real world, the vast majority of actions do have just a <single> view, named
+  "success" by convention. After all, even when an error occurs, you don't want to lose
+  all context ... if a user enters incorrect information into a form, then you want
+  to redisplay the form with the error messages. The view has to <adapt> to the state
+  determined by the request.
+  
+  But what happens when the "fixture" has its own behavior? It's own state?
+  
+  For example, maybe a fixture is a login form
+  that's displayed on every page until the user logs in.  The form may have a URL that
+  points to a login Action ... but how do you return to the same view after logging in?
+  A similar case may be a component that displays tabular data and supports paging. Such
+  a component will have links for navigation and sorting. How do the actions for those links
+  return the user to the same view after changing the set of displayed items?  
+  What if there's more than one such component in a single view?
+  
+  You end up writing more and more configuration and boilerplate code. 
+  You must define more and more JSP attributes
+  or other tricks in order to tell the appropriate action how to get the correct view after
+  performing the actions.
+  
+  You've run into the limitation of not having true web components on your side.
+  
+  With Tapestry, individual components can have their own interactions, blended seamlessly into the page, even
+  when the same component is used across multiple pages. Tapestry is able to keep everything organized
+  because it has its own view of the application, the component object model.
+  
+Tapestry: The Full Cycle Solution
+
+  What Tapestry offers is <structure>.  A well defined, fixed structure of pages and components within
+  pages. This structure is used in every aspect of Tapestry, including state management, output rendering,
+  and request dispatching.
+  
+  You don't have to worry about URLs. Incoming requests for Tapestry encode the
+  name of the page and the id of the component within the page, along with other information,
+  into the URL for you. Your code never has to pick apart a URL, you create
+  {{{guide/event.html}event handler methods}} to know when the user has clicked a link
+  or submitted a form, or done something more interesting using Ajax.  Tapestry has the structure it needs
+  to build all necessary information into the URL, and unpack that information in a later request.
+  
+  Tapestry is truly object oriented: you don't have to be concerned with singletons and multithreading; your 
+  pages and components have instance variables like any other plain Java object. Tapestry lets your write
+  your application using true object oriented techniques.
+
+  In terms of state management: Tapestry takes care of 
+  {{{guide/persist.html}persisting field values into the session}}. You don't have to figure out mnemonic,
+  unique names for session attributes, or write code to pull data out of the session or push it back in.
+  Tapestry is able to do this for you.
+
+  Further, in Tapestry pages and components are identical. They are <consistent>. Pages have templates, so
+  do components. Pages have transient and persistent fields. So do components. Pages have event handler methods,
+  so do components.  
+  
+  Tapestry doesn't have the idea of multiple views for a single page. However, processing within one page can easily "hand off" to
+  another <page>, in Java code, to provide the response to an action by the user.
+  
+Making the Transition
+
+  Don't expect there to be a magic tool to convert an existing application to Tapestry 5. The worlds
+  between Struts and other action oriented frameworks, and Tapestry, are just too far.  
+  
+  With Tapestry, you can start to think of your application in the same terms as your users ... as a collection
+  of pages that are connected together.  
+  
+  You don't create URLs and map them to singleton classes; you put a <component> in your page, and
+  add an {{{guide/event.html}event handling method}} to your class to be invoked when that component is triggered. Many components?
+  No problem, just add more event handler methods.
+  
+Leave Behind the Pain
+
+  Tired of constantly rebuilding and redeploying your application every time you make a change? Tapestry features
+  {{{guide/reload.html}live class reloading}}. Every time you make a change to your code or your templates, Tapestry picks up the
+  changes immediately ... no waiting!  Just think about how fast and easy building an application is without the expected
+  constraints; scripting language speed with all the power of Java.
+  
+  
+  
+  
+  

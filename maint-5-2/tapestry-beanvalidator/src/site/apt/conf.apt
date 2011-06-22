@@ -1,0 +1,45 @@
+  ----
+  Configuration
+  ----
+
+Configuring Bean Validator
+
+  The Tapestry Bean Validator Library is responsible for configuring and bootstrapping the <<javax.validation.Validator>> for you.
+  In order to use this library you have to choose an implementation of the JSR-303 specification like {{{https://www.hibernate.org/412.html}Hibernate Validator 4.x}}. 
+  This library is not specific to any implementation of JSR-303 and will work with any implementation of your choice. 
+
+* Bootstraping the Bean Validator
+
+  The service {{{../apidocs/org/apache/tapestry5/beanvalidator/BeanValidatorSource.html}BeanValidatorSource}} is responsible for 
+  bootstrapping the <<javax.validation.Validator>>. You can contribute a {{{../apidocs/org/apache/tapestry5/beanvalidator/BeanValidatorConfigurer.html}BeanValidatorConfigurer}}
+  to the configuration of this service in order to participate on the configuration of <<javax.validation.Validator>>.
+
++----+
+public static void contributeBeanValidatorSource(OrderedConfiguration<BeanValidatorConfigurer> configuration) 
+{
+   configuration.add("MyConfigurer", new BeanValidatorConfigurer() 
+   {
+      public void configure(javax.validation.Configuration<?> configuration) 
+      {
+         configuration.ignoreXmlConfiguration();
+      }
+   });
+}
++----+
+
+* Validation groups
+
+  In JSR-303 validation groups are used you to define a subset of the constraints validated at a given time. If no validation group is specified 
+  the default group <<javax.validation.groups.Default>> is taken. Per default Tapestry passes only this group to <<javax.validation.Validator>>. 
+  You can tell Tapstry pass more groups by contributing group classes into the configuration of the service {{{../apidocs/org/apache/tapestry5/beanvalidator/BeanValidatorGroupSource.html}BeanValidatorGroupSource}}.  
+
++----+
+public static void contributeBeanValidatorGroupSource(Configuration<Class> configuration) 
+{
+   configuration.add(MyGroup.class);
+}
++----+
+
+* Limitations
+
+  This library does not provide clientside validation yet.

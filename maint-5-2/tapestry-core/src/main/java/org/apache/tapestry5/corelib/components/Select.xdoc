@@ -1,0 +1,277 @@
+<document>
+    <body>
+        <section name="Simple Example">
+
+            <p>
+                A simple example, selecting one of three strings:
+            </p>
+
+            <subsection name="SelectColor.tml">
+                <source><![CDATA[
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <body>
+        <h1>Select Color</h1>
+
+        <t:form>
+
+            <t:label for="color"/>:
+            <t:select t:id="color" model="literal:Red,Green,Blue"/>
+
+            <br/>
+
+            <input type="submit" value="Continue"/>
+        </t:form>
+
+    </body>
+</html>]]></source>
+
+                <p>
+                    When the model parameter is a string, it is split apart at the commas.  When the model parameter is
+                    a List of Strings, each element is considered a selection option.
+                </p>
+
+                <p>
+                    When using this approach, you'll commonly put the list into the message catalog,
+                    and reference it using a "message:" binding.
+                </p>
+
+                <p>
+                    Here the label displayed to the user is the same as the value used to update the property, but that
+                    doesn't have to be the case. By specifying a value and a label, we can control the server side value
+                    without changing how the UI appears to the user:
+                </p>
+
+                <source>
+                    <![CDATA[
+            <t:select t:id="color" model="literal:FF0000=Red,00FF00=Green,0000FF=Blue"/>
+]]>
+                </source>
+
+
+            </subsection>
+
+<subsection name="SelectColor.java">
+
+<source><![CDATA[
+public class SelectColor
+{
+  @Validate("required")
+  public String color;
+
+}]]></source>
+
+    <p>
+        Placing the @Validate annotation on the field supplies the default validation for this field, here
+        it indicates that color is required.  This prevents the
+        Select component from including a blank option for the field (though this behavior too can be overridden).
+        Without the @Validate, it would be possible for the user to select a blank value, and null would
+        be assigned to the color property of SelectColor.  This might be appropriate for a search form, but
+        not for an edit form.
+    </p>
+
+</subsection>
+
+        </section>
+
+        <section name="Enum Example">
+
+            <p>Working with Enums is, amazingly, even easier (and more so than with the Radio component).</p>
+
+            <p>
+                Most of this example is the same as for the
+                <a href="Radio.html">Radio</a>
+                component, except that
+                we're using a single Select component instead of multiple Radio components:
+            </p>
+
+            <p>
+                <img src="select_ref2.png"/>
+            </p>
+
+            <subsection name="CardType.java">
+
+                <source><![CDATA[
+public enum CardType
+{
+    MASTER_CARD, VISA, AMERICAN_EXPRESS, DINERS_CLUB, DISCOVER
+}
+]]></source>
+
+            </subsection>
+
+            <subsection name="Payment.tml (partial)">
+
+                <p>
+                    In the Radio example, we used a Label and a Radio component for each enum value.
+                    With Select we use a single Label and a single Select component:
+                </p>
+
+                <source><![CDATA[
+    <t:label for="type"/>:
+    <t:select t:id="type"/>]]></source>
+
+
+                <p>
+                    Here again, Tapestry is binding the value parameter to the type property, based on the component's
+                    id.
+                    In addition, because the property type of the property in question is an enum, a SelectModel
+                    is automatically generated.
+                </p>
+
+            </subsection>
+
+            <subsection name="Payment.java (partial)">
+
+                <source><![CDATA[                                                                   
+public class Payment
+{
+    . . .
+
+    @Property
+    @Persist
+    @Validate("required")
+    private CardType type;
+
+
+    . . .
+}]]></source>
+
+
+            </subsection>
+
+            <subsection name="Payment.properties">
+
+                <p>
+                    Once again, we need to slightly customize Tapestry's guess at the label for the enum value
+                    DINERS_CLUB.
+                    In the Radio example, we overrode the label for the dinersClub<em>component</em>. Here there is just
+                    the Select component,
+                    but we still have an option: override how the DINERS_CLUB enum value is displayed:
+                </p>
+
+                <source><![CDATA[DINERS_CLUB=Diner's Club]]></source>
+
+                <p>Tapestry looks inside a component's message catalog for entries before "humanizing" the name. In the
+                    <em>very rare</em>
+                    event that there's a naming conflict, you may qualify the enum value with its class name:
+                </p>
+
+
+                <source><![CDATA[CardType.DINERS_CLUB=Diner's Club]]></source>
+
+                <p>And, of course, all of this is case insensitive. The use of case here helps to identify how the
+                    values
+                    are to be used.
+                </p>
+            </subsection>
+
+        </section>
+        
+        <section name="Chaining of Select components">
+        	There is often a requirement for chaining Select components. When a value of a Select component is changed 
+        	another Select should become visible. Let's consider the following example: you create an online shop for a car seller.
+        	A make is modeled as enumeration CarMaker.  
+        	
+        	<subsection name="CarMaker.java">
+                <source><![CDATA[                                                                   
+public enum CarMaker
+{
+    MERCEDES, AUDI, BMW;
+}]]></source>  
+			</subsection>
+			
+			<subsection name="SelectZoneDemo.tml">
+				The Select component 'carMaker' of the page SelectZoneDemo shows all available car makers. 
+				When a user selects a car maker, another Select component for selecting available models of the make should appear.
+				This can be accomplished by the parameter <em>zone</em> of the Select component 'carMaker'. When <em>zone</em> parameter is bound 
+				every change of the Select's value causes an Ajax request. In this case the Select component publishes the event <em>valuechanged</em> which can 
+				be used to provide the <em>model</em> for the second Select component.
+       	                <source><![CDATA[                                                                   
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+   <t:form>
+      <p>
+         <t:errors />
+      </p>
+      <p>
+         <t:select t:id="carMaker" validate="required"
+                   zone="modelZone" />
+      </p>
+      
+      <t:zone t:id="modelZone" id="modelZone">
+         <t:if test="carMaker">
+           <p>
+              <t:select t:id="carModel" model="availableModels" validate="required"/>
+           </p>
+         </t:if>
+      </t:zone>
+      
+      <p>
+         <t:submit value="literal:Submit" />
+      </p>
+   </t:form>
+
+</html>]]></source>
+        </subsection>
+        
+	    <subsection name="SelectZoneDemo.java">
+        		The event handler method for the event <em>valuechanged</em> is used to provide the available car models of the currently selected car maker.
+        		The new Select's value is passed as context. 
+        	                <source><![CDATA[                                                                   
+public class SelectZoneDemo
+{
+   
+   @Inject
+   private Messages messages;
+   
+   @Property
+   @Persist
+   private CarMaker carMaker;
+   
+   @Property
+   @Persist
+   private String carModel;
+
+   @InjectComponent
+   private Zone modelZone;
+   
+   @Property
+   @Persist
+   private List<String> availableModels;
+    
+    public Object onValueChanged(CarMaker maker) 
+    {
+       availableModels = findAvailableModels(maker);
+       
+       return modelZone.getBody();
+    }
+    
+    public List<String> findAvailableModels(final CarMaker maker) 
+    {
+      switch (maker) 
+      {
+         case AUDI:
+            return Arrays.asList("A4", "A6", "A8");
+         case BMW:
+            return Arrays.asList("3 Series", "5 Series", "7 Series");
+         case MERCEDES:
+            return Arrays.asList("C-Class", "E-Class", "S-Class");
+         default:
+            return Arrays.asList();
+       }
+    }    
+}]]></source>
+
+
+<p>
+The Select component is very smart for enum types; it can automatically create a SelectModel for a given Enum, and a default
+ValueEncoder.  Likewise, it can turn an array or List into a SelectModel automatically.  This streamlines the use of the Select
+in many situations ... but because the model and encode parameters are still present, allows you to override its behavior
+when needed.
+</p>
+
+			</subsection>
+        
+        </section>
+
+    </body>
+</document>

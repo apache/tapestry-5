@@ -1,0 +1,7 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <body>
+        <p>
+            Arrived on page<span id="page-name">${componentResources.pageName}</span>.
+        </p>
+    </body>
+</html>

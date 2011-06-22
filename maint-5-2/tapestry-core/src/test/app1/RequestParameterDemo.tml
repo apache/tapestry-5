@@ -1,0 +1,25 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+  <h1>@RequestParameter Annotation Demo</h1>
+
+  <p>
+    The current value is:
+    <span id="current">${value}</span>
+    .
+  </p>
+
+  <ul>
+    <li>
+      <a href="${workingLink}">Working Link</a>
+    </li>
+    <li>
+      <a href="${brokenLink}">Broken Link</a>
+    </li>
+    <li>
+      <a href="${nullLink}">Null Link</a>
+    </li>
+    <li>
+      <a href="${nullAllowedLink}">Null Allowed Link</a>
+    </li>
+  </ul>
+</html>

@@ -1,0 +1,13 @@
+<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"
+          xmlns:p="tapestry:parameter">
+    <t:extension-point id="header">
+        <h1 id="title">
+            <span t:id="titleDelegate"/>
+        </h1>
+    </t:extension-point>
+
+    <t:extension-point id="content">
+        <p id="pagecontent">Default Page Content</p>
+    </t:extension-point>
+
+</t:border>

@@ -1,0 +1,21 @@
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <t:formfragment t:id="fragment" element="prop:element" visible="true">
+        <t:delegate to="block:ajaxResponse"/>
+    </t:formfragment>
+
+    <t:block id="tail">
+        <t:forminjector element="prop:element" t:id="rowInjector" show="inherit:show" context="inherit:context">
+            <t:delegate to="prop:addRow"/>
+            <t:block id="defaultAddRow">
+                <t:addrowlink>Add row</t:addrowlink>
+            </t:block>
+        </t:forminjector>
+
+        <t:block id="ajaxResponse">
+            <t:delegate to="beforeBody"/>
+            <t:body/>
+            <t:delegate to="afterBody"/>
+        </t:block>
+    </t:block>
+</t:container>

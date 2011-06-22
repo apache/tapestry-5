@@ -1,0 +1,78 @@
+<document>
+    <body>
+        <section name="Related Components">
+            <ul>
+                <li>
+                    <a href="Form.html">Form</a>
+                </li>
+                <li>
+                    <a href="PasswordField.html">PasswordField</a>
+                </li>
+                <li>
+                    <a href="TextArea.html">TextArea</a>
+                </li>
+            </ul>
+        </section>
+
+        <section name="Examples">
+
+            <p>
+                Once again, we're basing the example on the order payment screen
+                from the
+                <a href="Radio.html">Radio</a>
+                examples. This time we're focusing in on
+                the text field used for entering the credit card number, and we're going to validate
+                that number using a regular expression:
+            </p>
+
+            <p>
+                <img src="textfield_ref.png"/>
+            </p>
+
+            <subsection name="Payment.tml (partial)">
+                <source><![CDATA[
+            <t:label for="cardNumber"/>:
+            <t:textfield t:id="cardNumber"  validate="required,regexp" size="20"/>]]></source>
+
+                <p>
+                    The validate parameter is used to specify validations for the field. When it is omitted,
+                    the @Validate annotation of the property is used (if present). In any case, this references
+                    two of the built-in validations: "required" and "regexp".
+                </p>
+
+                <p>
+                    This example presumes that the Payment page includes a property named "cardNumber".
+                </p>
+
+                <p>
+                    The "required" validation requires no extra configuration. On the other hand, "regexp"
+                    needs to know the regular expression to enforce ... and it should also have a
+                    user presentable message.
+                </p>
+
+            </subsection>
+
+
+            <subsection name="Payment.properties (partial)">
+                <source><![CDATA[
+cardnumber-regexp-message=Credit Card numbers consist of 16 digits
+cardnumber-regexp=\\d{4}(\\-?\\d{4}){3}]]></source>
+
+                <p>
+                    Tapestry uses the page's message catalog as a source of extra validation information.
+                    The key is the component id, the name of the validation. The value is given to the validator
+                    object ... here it's the regular expression for a credit card number (four sets of four digits,
+                    optionally seperated by dashes). The "-message" entry allows the normal error message
+                    for the validator to be overridden.
+                </p>
+            </subsection>
+
+        </section>
+
+        <section name="Notes">
+            <p>
+                These same approaches apply consistently to all form control element components.
+            </p>
+        </section>
+    </body>
+</document>

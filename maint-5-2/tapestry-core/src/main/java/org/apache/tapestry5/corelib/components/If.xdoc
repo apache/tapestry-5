@@ -1,0 +1,62 @@
+<document>
+    <body>
+        <section name="Examples">
+
+            <subsection name="Start.tml">
+
+                <source><![CDATA[
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd" xmlns:p="tapestry:parameter">
+    <body>
+        <h1>Welcome!</h1>
+
+        <t:if test="user">
+            Welcome back, ${user.firstName}
+            <p:else>
+                <t:pagelink name="login">Login</t:pagelink> /
+                <t:pagelink name="register">Register</t:pagelink>
+            </p:else>
+        </t:if>
+        
+        . . .
+
+</html>]]></source>
+
+                <p>
+                    Here, the main text is rendered if the user is logged in (the user property will
+                    be non-null after the user logs in). Otherwise, links to a login and register
+                    page are rendered.
+                </p>
+
+                <p>
+                    Note the use of the
+                    <code>p:</code>
+                    namespace (new in Tapestry 5.1). In 5.0, this would be
+                    <code>&lt;t:parameter name="else"&gt;</code>.
+                </p>
+
+            </subsection>
+
+
+        </section>
+
+        <section name="Notes">
+
+            <p>
+                Tapestry has many built in coercions to boolean:
+            </p>
+
+            <dl>
+                <dt>String</dt>
+                <dd>True if non-blank and not the literal string "false" (case insensitive)</dd>
+                <dt>Number</dt>
+                <dd>True if non-zero</dd>
+                <dt>Collection</dt>
+                <dd>True if non-empty</dd>
+                <dt>Object</dt>
+                <dd>True (as long as its not null)</dd>
+            </dl>
+
+
+        </section>
+    </body>
+</document>

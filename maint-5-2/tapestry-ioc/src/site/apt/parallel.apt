@@ -1,0 +1,56 @@
+  ---
+  Parallel Execution
+  ---
+
+Parallel Execution
+
+  The
+  {{{../apidocs/org/apache/tapestry5/ioc/services/ParallelExecutor.html}ParallelExecutor}}
+  allows a computation to occur in parallel.
+
+  It can be used in two ways.  First, with an explicit Future:
+
+----
+   Future<String> future = executor.invoke(new Invokable<String>() { ... });
+----
+
+   The executor will submit the Invokable to a thread pool for execution in the background.
+
+   The ultimate value of the Invokable is available from invoking get() on the Future; this will
+   block until the value is ready.
+
+   Other methods on  Future can cancel the execution, or get the value only if it is ready
+   within a timeout.
+
+   The thread pool is started automatically as needed, and will shutdown when the Registry
+   itself is shutdown.
+
+   Another alternative will return an object, not a Future:
+
+----
+  RSSFeed feed = executor.invoke(RSSFeed.class, new Invokable<RSSFeed>() { ... });
+----
+
+  This only works if the type is an interface.  A proxy for the interface is created around
+  the Future object; any invocation on the proxy will invoke get() on the Future.
+  
+
+Configuration
+
+  Configuraton symbols are defined in
+  {{{../apidocs/org/apache/tapestry5/ioc/IOCSymbols.html}IOCSymbols}}.
+
+  [tapestry.thread-pool-enabled]
+    If "true", the default, then the thread pool will operate. If "false", then
+    ParallelExecutor's implementation changes to invoke the Invokable immediately, not
+    in a pooled thread.
+
+  [tapestry.thread-pool.core-pool-size]
+    Minimum size of the thread pool. Defaults to 3.
+
+  [tapestry.thread-pool.max-pool-size]
+    Maximum number of threads (active or inactive) in the thread pool. Defaults to 20.
+
+  [tapestry.thread-pool.keep-alive]
+    Time to keep waiting threads alive. Defaults to "1 m" (one minute). 
+

@@ -1,0 +1,2 @@
+<?xml version="1.0"?>
+<no_html>Generator meta only added if root is html tag.</no_html>

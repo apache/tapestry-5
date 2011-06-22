@@ -1,0 +1,89 @@
+<document>
+    <body>
+
+        <section name="Related Components">
+            <ul>
+                <li>
+                    <a href="ActionLink.html">ActionLink</a>
+                </li>
+                <li>
+                    <a href="EventLink.html">EventLink</a>
+                </li>
+            </ul>
+        </section>
+
+        <section name="Examples">
+
+            <p>
+                We're continuing with the example introduced in the
+                <a href="Grid.html">Grid</a>
+                examples.
+            </p>
+
+            <p>
+                The UserList page renders a series of page links, passing the user id as the context:
+            </p>
+
+            <subsection name="UserList.html (partial)">
+                <source><![CDATA[
+        <t:grid source="users" row="user" model="model">
+            <p:lastnamecell>
+                <t:pagelink page="user/view" context="user.id">${user.lastname}</t:pagelink>
+            </p:lastnamecell>
+
+        </t:grid>]]></source>
+            </subsection>
+
+
+            <subsection name="ViewUser.java">
+
+                <p>
+                    The ViewUser page is responsible for converting that user id back into a User instance,
+                    by providing an event handler method for the "activate" event.
+                </p>
+
+                <source><![CDATA[
+public class ViewUser
+{
+    private User user;
+
+    @Inject
+    private UserDAO userDAO;
+
+    public User getUser()
+    {
+        return user;
+    }
+
+    void onActivate(long userId)
+    {
+        user = userDAO.findById(userId);
+    }
+}
+            ]]></source>
+
+            </subsection>
+
+            <subsection name="ViewUser.tml">
+                <source><![CDATA[
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <body>
+        <h1>View User</h1>
+
+        <t:beandisplay object="user"/>
+    </body>
+</html>]]></source>
+
+                <p>
+                    Rendering out the User object, using a
+                    <a href="BeanDisplay.html">BeanDisplay</a>
+                    component, is easy, and the template doesn't have to know or
+                    care about the page activation context; it just reads the user property.
+                </p>
+
+            </subsection>
+
+        </section>
+
+    </body>
+</document>

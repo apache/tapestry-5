@@ -1,0 +1,23 @@
+ ----
+ About Core Hibernate Support
+ ----
+
+Core Hibernate Support
+
+  This library contains basic Hibernate support package without dependencies on the
+  {{{../tapestry-core/}tapestry-core}} module
+  (the web framework part of Tapestry); it only requires
+  the
+  {{{../tapestry-ioc/}tapestry-ioc}} module.  This makes it useful in non-web applications, such as back-end processing.
+
+  The {{{../tapestry-hibernate/}tapestry-hibernate}} module extends this further, adding features to support the
+  creation of CRUD (Create/Read/Update/Delete) database applications in Tapestry.
+
+Licensing Issues
+
+  Hibernate is licensed under the Lesser GNU Public License. This is more restrictive license than the Apache Software
+  License used by the rest of Tapestry. The restrictions mostly apply to redistributing Hibernate, especially in
+  any altered form, and will likely be irrelvant to the vast majority of users, but you should be aware.
+
+  This library is compiled against version <<3.3.1.GA>> of Hibernate (and version 3.4.0.GA of hibernate-annotations),
+  but should work with more recent versions.

@@ -1,0 +1,20 @@
+<div class="t-data-grid" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <div t:id="pagerTop"/>
+
+    <table t:id="table">
+        <thead t:id="columns"/>
+        <tbody>
+            <tr t:id="rows"/>
+        </tbody>
+    </table>
+
+    <div t:id="pagerBottom"/>
+
+    <t:block>
+        <div t:id="pager"/>
+    </t:block>
+
+    <t:block id="empty">${message:no-grid-data-to-display}</t:block>
+
+</div>

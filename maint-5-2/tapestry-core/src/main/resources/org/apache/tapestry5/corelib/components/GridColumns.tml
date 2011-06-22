@@ -1,0 +1,16 @@
+<thead xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xml:space="default">
+    <tr>
+        <th t:type="Loop" source="columnNames" value="columnName" formstate="none" class="prop:headerClass"
+            index="index">
+            <t:delegate to="blockForColumn"/>
+            <t:block id="standardHeader">
+                <a t:id="sort">${columnModel.label}</a>
+                <t:if test="columnModel.sortable">
+                    <a t:id="sort2">
+                        <img src="${icon}" class="t-sort-icon" alt="${iconLabel}"/>
+                    </a>
+                </t:if>
+            </t:block>
+        </th>
+    </tr>
+</thead>

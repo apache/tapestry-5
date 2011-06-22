@@ -1,0 +1,40 @@
+ ----
+ Deployment Notes: Glassfish
+ ----
+
+Deployment Notes: Glassfish 2.1
+
+  Deploying Tapestry applications into Glassfish has one snag: a conflict in the
+  {{{http://en.wikipedia.org/wiki/StAX}StAX parser}} (used to parse component templates).
+  Tapestry must use the
+  {{{http://woodstox.codehaus.org/}Woodstox StAX parser}}, and Glassfish provides an alternate parser.
+
+  Fortunately, you can override Glassfish, and force it to use Woodstox as its default StAX parser.
+
+  First, copy and Woodstox and its dependencies into the Glassfish domain's <<<lib/ext>>> directory; these
+   files are:
+
+   * woodstox-core-asl-4.0.3.jar
+
+   * stax-api-1.0.1.jar
+
+   * stax2-api-3.0.1.jar
+
+   []
+
+  It is no longer necessary to include these files in a Tapestry WAR, though it doesn't cause problems
+  if they are left in.
+
+
+  Second, use Glassfish's console to configure some system properties:
+
+*---+---+
+|  javax.xml.stream.XMLEventFactory |       com.ctc.wstx.stax.WstxEventFactory
+*---+---+
+|  javax.xml.stream.XMLInputFactory |      com.ctc.wstx.stax.WstxInputFactory
+*---+---+
+|  javax.xml.stream.XMLOutputFactory |    com.ctc.wstx.stax.WstxOutputFactory
+*---+---+
+
+  You will be prompted to restart Glassfish.  Tapestry applications will now deploy properly.
+

@@ -1,0 +1,27 @@
+This product includes software developed by
+The Apache Software Foundation (http://www.apache.org/).
+
+This product makes use of the Javassist library, distributed under the terms of the Mozilla Public License.
+http://www.jboss.com/products/javassist
+
+This product includes the script.aculo.us JavaScript library, distributed under the terms of an MIT-style license.
+http://script.aculo.us
+
+This product includes the prototype JavaScript library, distributed under the terms of an MIT-style license.
+http://prototypejs.org/
+
+This product includes modified versions of Java classes from the JSON library, which is freely available.
+http://json.org/
+
+This product includes the WebFX DatePicker, a JavaScript library released under the Apache Software License 2.0
+http://webfx.eae.net/dhtml/datepicker/datepicker.html
+
+This product includes images from the Silk icon set, distributed under the terms of the Creative Commons Attribution 2.5 License.
+http://www.famfamfam.com/lab/icons/silk/
+
+This product uses a modified version of the Blackbird client-side console library, distributed under the terms of the
+MIT License.
+http://www.gscottolson.com/blackbirdjs/
+
+
+

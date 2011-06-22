@@ -1,0 +1,5 @@
+<t:content xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+    <p>
+        <t:extend>Not allowed to be nested!</t:extend>
+    </p>
+</t:content>

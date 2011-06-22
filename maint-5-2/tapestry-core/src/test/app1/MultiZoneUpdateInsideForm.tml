@@ -1,0 +1,16 @@
+<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd" xmlns:p="tapestry:parameter">
+
+  <h1>Multi Zone Update Inside Form Demo</h1>
+
+  <form t:type="Form" t:id="form" t:clientValidation="false" action="#">
+    <t:label for="selectValue1"/>
+    <select t:type="Select" t:id="selectValue1" t:validate="required" t:zone="select1ValueZone"/>
+    <t:zone t:id="select1ValueZone" visible="false">Show</t:zone>
+    <t:zone t:id="select2ValueZone">
+      <t:label for="selectValue2"/>
+      <select t:type="Select" t:id="selectValue2" t:validate="required"/>
+    </t:zone>
+    <br/>
+    <input type="submit" value="Upate Form"/>
+  </form>
+</t:border>

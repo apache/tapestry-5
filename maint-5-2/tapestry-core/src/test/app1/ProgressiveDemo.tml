@@ -1,0 +1,32 @@
+<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+          xmlns:p="tapestry:parameter">
+
+    <t:actionlink t:id="refresh">refresh</t:actionlink>
+
+    <t:progressiveDisplay t:id="disp1">
+        <p id="content1">
+            Progressive Display content #1.
+        </p>
+    </t:progressiveDisplay>
+
+    <t:progressivedisplay t:id="disp2" context="literal:Music Library">
+
+        <p>
+            Progressive display content #2.
+        </p>
+
+        <h3 id="content2">${context2}</h3>
+
+        <p>Time is ${now}.</p>
+
+        <t:progressivedisplay t:id="progressiveGrid" update="slidedown">
+
+        </t:progressivedisplay>
+    </t:progressivedisplay>
+
+
+    <t:block>
+        <t:grid inplace="true" t:id="music" source="musicLibrary.tracks"/>
+    </t:block>
+
+</t:border>

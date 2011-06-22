@@ -1,0 +1,33 @@
+ ----
+ Deployment Notes: Jetty
+ ----
+ 
+Deployment Notes: Jetty
+
+  {{{http://jetty.mortbay.com}Jetty}} is the easiest servlet container to deploy Tapestry into, it just plain works.
+  
+  The easiest way to develop Tapestry applications is to run Jetty <embedded> inside your IDE. If you use Eclipse,
+  then {{{http://jettylauncher.sourceforge.net/}the Jetty Launcher plugin}} is invaluable.  The
+  {{{tutorial1/}Tapestry 5 Tutorial}}  discusses installing and using Jetty Launcher.
+
+  Jetty Launcher  only works  with Jetty <<4 or 5>> and <<not>> Jetty 6.
+
+  A newer and better maintained and supported Eclipse plugin,
+  {{{http://code.google.com/p/run-jetty-run/}Run Jetty Run}} is now available. It allows Jetty to be used without
+  a separate Jetty install.
+
+* Logging
+
+  Tapestry, in its default configuration, expects Log4J version 1.2.12 or better
+  (it makes use of the 
+  {{{http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/Logger.html#isTraceEnabled()}isTraceEnabled()}} and
+  {{{http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/Logger.html#trace(java.lang.Object)}trace()}} methods,
+  introduced in version 1.2.12.
+  
+  You may have to replace the version of Log4J in your Jetty's ext directory with a newer version.
+
+  If you enable debugging output for your page and are using an older version of Log4J, you will see output
+  in the console an incredible amount of trace output concerning every aspect of rendering the page; this is because
+  with Log4J 1.2.11 and earlier, the trace output level is merged into the debug output level.
+
+  
