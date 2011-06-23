@@ -47,7 +47,7 @@ public interface ComponentClassResolver
      * @param pageName
      *            page name
      * @return fully qualified class name for the page
-     * @throws IllegalArgumentException
+     * @throws org.apache.tapestry5.ioc.util.UnknownValueException
      *             if the name does not match a known page class
      */
     String resolvePageNameToClassName(String pageName);
@@ -82,7 +82,7 @@ public interface ComponentClassResolver
      * Returns the canonical form of a page name. The canonical form uses character case matching the underlying class
      * name.
      * 
-     * @throws IllegalArgumentException
+     * @throws org.apache.tapestry5.ioc.util.UnknownValueException
      *             if the page name does not match a logical page name
      */
     String canonicalizePageName(String pageName);
@@ -94,7 +94,7 @@ public interface ComponentClassResolver
      * @param componentType
      *            a logical component type
      * @return fully qualified class name
-     * @throws IllegalArgumentException
+     * @throws org.apache.tapestry5.ioc.util.UnknownValueException
      *             if the component type can not be resolved
      */
     String resolveComponentTypeToClassName(String componentType);
@@ -106,7 +106,7 @@ public interface ComponentClassResolver
      * @param mixinType
      *            a logical mixin type
      * @return fully qualified class name
-     * @throws IllegalArgumentException
+     * @throws org.apache.tapestry5.ioc.util.UnknownValueException
      *             if the mixin type can not be resolved
      */
     String resolveMixinTypeToClassName(String mixinType);
