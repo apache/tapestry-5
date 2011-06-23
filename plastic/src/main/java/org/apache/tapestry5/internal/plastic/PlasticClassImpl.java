@@ -787,7 +787,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                 String signature = node.signature == null ? null : "(" + node.signature + ")V";
 
                 introduceAccessorMethod("void", "set" + capitalized, new String[]
-                { getTypeName() }, node.signature, new InstructionBuilderCallback()
+                { getTypeName() }, signature, new InstructionBuilderCallback()
                 {
                     public void doBuild(InstructionBuilder builder)
                     {

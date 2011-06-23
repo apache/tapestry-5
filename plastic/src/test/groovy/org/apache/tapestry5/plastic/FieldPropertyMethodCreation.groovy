@@ -82,8 +82,13 @@ class FieldPropertyMethodCreation extends AbstractPlasticSpecification
         assert o.ref == ref
         assert o.refValue == "Plastic"
 
-        o.class.getMethod("getRef").signature == "()Ljava/util/concurrent/atomic/AtomicReference<Ljava/lang/String;>;"
-        o.class.getMethod("setRef", AtomicReference.class).signature == "Ljava/util/concurrent/atomic/AtomicReference<Ljava/lang/String;>;"
+        def get = o.class.getMethod("getRef")
+        get.signature == "()Ljava/util/concurrent/atomic/AtomicReference<Ljava/lang/String;>;"
+        get.genericInfo != null
+
+        def set = o.class.getMethod("setRef", AtomicReference.class)
+        set.signature == "(Ljava/util/concurrent/atomic/AtomicReference<Ljava/lang/String;>;)V"
+        set.genericInfo != null
     }
 
     def "create getter that already exists"() {
