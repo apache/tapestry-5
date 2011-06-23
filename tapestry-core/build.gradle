@@ -58,7 +58,7 @@ task generateProjectProperties(dependsOn: compileJava) {
   }
 }
 
-ideaModule {
+ideaModule.doFirst {
   excludeDirs -= buildDir
 
   def generatedDir = file("$buildDir/generated-sources")
