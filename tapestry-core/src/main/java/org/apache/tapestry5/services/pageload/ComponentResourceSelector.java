@@ -53,7 +53,7 @@ public final class ComponentResourceSelector
      * Typically, the axis type is an enum type. Axis values are expected to be immutable, and to implement
      * {@code equals()} and {@code hashCode()}.
      * 
-     * @param axisName
+     * @param axisType
      *            non-blank axis key
      * @param axisValue
      *            non-null axis value
