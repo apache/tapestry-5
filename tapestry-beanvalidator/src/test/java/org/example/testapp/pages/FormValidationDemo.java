@@ -26,39 +26,45 @@ import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.internal.services.StringValueEncoder;
 import org.example.testapp.services.Foo;
 
-public class FormValidationDemo 
+public class FormValidationDemo
 {
 	@NotNull(groups=Foo.class)
 	@Validate("minlength=5")
 	@Property
 	@Persist
 	private String userName;
-	
+
 	@NotNull
 	@Property
 	@Persist
 	private String password;
-	
+
 	@NotNull
 	@Size(min=2, max=3)
 	@Property
 	@Persist
 	private Collection<String> languages;
-	
+
 	@NotNull
 	@Property
 	@Persist
-	private String color; 
-	
+	private String color;
+
+    @NotNull
+	@Size(min=3, max=4)
+	@Property
+	@Persist
+	private Collection<String> moreColors;
+
 	@NotNull
 	@Past
 	@Property
 	@Persist
-	private Date date; 
-	
+	private Date date;
+
 	public StringValueEncoder getStringValueEncoder()
 	{
 		return new StringValueEncoder();
 	}
-	
+
 }

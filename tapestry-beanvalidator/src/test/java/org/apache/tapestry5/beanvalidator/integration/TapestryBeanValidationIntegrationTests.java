@@ -37,6 +37,7 @@ public class TapestryBeanValidationIntegrationTests extends AbstractIntegrationT
         assertTextPresent("Secret Password may not be null");
         assertTextPresent("Programming Languages size must be between 2 and 3");
         assertTextPresent("Favorite Colors may not be null");
+        assertTextPresent("More Colors size must be between 3 and 4");
         assertTextPresent("Birth Day may not be null");
         
 
@@ -56,17 +57,23 @@ public class TapestryBeanValidationIntegrationTests extends AbstractIntegrationT
     	assertFalse(isTextPresent("Secret Password may not be null"));
     	assertFalse(isTextPresent("Programming Languages size must be between 2 and 3"));
     	assertFalse(isTextPresent("Favorite Colors may not be null"));
+        assertTextPresent("More Colors size must be between 3 and 4");
     	assertTextPresent("Birth Day must be in the past");
         
         //Test Tapestry validator
         
         type("loginName", "igor");
         type("birthDay", "6.04.1978");
+
+        check("//input[@value='White']");
+        check("//input[@value='Yellow']");
+        check("//input[@value='Orange']");
     	
     	clickAndWait(SUBMIT);
     	
     	assertTextPresent("You must provide at least 5 characters for Login Name.");
     	assertFalse(isTextPresent("Birth Day must be in the past"));
+    	assertFalse(isTextPresent("More Colors size must be between 3 and 4"));
         
         type("loginName", "igor123");
     	

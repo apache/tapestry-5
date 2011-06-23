@@ -150,6 +150,8 @@ public class Checklist extends AbstractField
 
         }
 
+        putPropertyNameIntoBeanValidationContext("selected");
+
         try
         {
             this.fieldValidationSupport.validate(selected, this.componentResources, this.validate);
@@ -159,6 +161,8 @@ public class Checklist extends AbstractField
         {
             this.tracker.recordError(this, e.getMessage());
         }
+
+        removePropertyNameFromBeanValidationContext();
     }
 
     Set<Object> getSelected()

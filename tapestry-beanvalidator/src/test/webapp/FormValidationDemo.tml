@@ -16,6 +16,10 @@
         	
         	<br/>
         	<t:select t:id="favoriteColors" model="literal:Red,Green,Blue" value="color"/>
+
+            <br/>
+            <label t:type="label" for="moreColors"/>
+        	<t:checklist t:id="moreColors" model="literal:White,Yellow,Orange,Pink" selected="moreColors" encoder="stringValueEncoder"/>
         	
         	<br/>
         	<t:datefield t:id="birthDay" value="date" format="dd.MM.yyyy"/>
