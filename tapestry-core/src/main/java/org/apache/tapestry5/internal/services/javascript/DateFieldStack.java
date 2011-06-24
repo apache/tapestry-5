@@ -75,7 +75,7 @@ public class DateFieldStack implements JavaScriptStack
 
         DateFormatSymbols symbols = new DateFormatSymbols(locale);
 
-        spec.put("months", new JSONArray(symbols.getMonths()));
+        spec.put("months", new JSONArray((Object[])symbols.getMonths()));
 
         StringBuilder days = new StringBuilder();
 
