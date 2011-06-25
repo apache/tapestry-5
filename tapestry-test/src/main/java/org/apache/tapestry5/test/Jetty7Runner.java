@@ -25,15 +25,23 @@ import org.eclipse.jetty.webapp.WebAppContext;
  */
 public class Jetty7Runner implements ServletContainerRunner
 {
-    private final Server jettyServer;
+    private Server jettyServer;
 
-    private final String description;
+    private String description;
 
-    private final int port;
+    private int port;
 
-    private final int sslPort;
+    private int sslPort;
 
-    public Jetty7Runner(String webappFolder, String contextPath, int port, int sslPort) throws Exception
+    public Jetty7Runner() {
+        // un-configured runner
+    }
+
+    public Jetty7Runner(String webappFolder, String contextPath, int port, int sslPort) throws Exception {
+        configure(webappFolder, contextPath, port, sslPort).start();
+    }
+
+    public Jetty7Runner configure(String webappFolder, String contextPath, int port, int sslPort) throws Exception
     {
         this.port = port;
 
@@ -68,7 +76,10 @@ public class Jetty7Runner implements ServletContainerRunner
         }
 
         jettyServer.setHandler(webapp);
+        return this;
+    }
 
+    public void start() throws Exception {
         jettyServer.start();
     }
 
@@ -90,6 +101,11 @@ public class Jetty7Runner implements ServletContainerRunner
         System.out.println("Jetty instance has stopped.");
     }
 
+    public Server getServer()
+    {
+        return jettyServer;
+    }
+
     @Override
     public String toString()
     {
@@ -100,7 +116,7 @@ public class Jetty7Runner implements ServletContainerRunner
      * Needed inside Maven multi-projects to expand a path relative to the module to a complete
      * path. If the path already is absolute and points to an existing directory, it will be used
      * unchanged.
-     * 
+     *
      * @param moduleLocalPath
      * @return expanded path
      * @see TapestryTestConstants#MODULE_BASE_DIR
