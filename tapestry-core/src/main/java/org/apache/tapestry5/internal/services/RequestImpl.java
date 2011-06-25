@@ -17,10 +17,8 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Session;
-import org.apache.tapestry5.services.SessionPersistedObjectAnalyzer;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Locale;
@@ -39,19 +37,20 @@ public class RequestImpl implements Request
 
     private final String requestEncoding;
 
-    private final SessionPersistedObjectAnalyzer analyzer;
+    private final SessionFactory sessionFactory;
 
     private boolean encodingSet;
 
-    HttpSession hsession;
-
     Session session;
 
-    public RequestImpl(HttpServletRequest request, String requestEncoding, SessionPersistedObjectAnalyzer analyzer)
+    public RequestImpl(
+            HttpServletRequest request,
+            String requestEncoding,
+            SessionFactory sessionFactory)
     {
         this.request = request;
         this.requestEncoding = requestEncoding;
-        this.analyzer = analyzer;
+        this.sessionFactory = sessionFactory;
     }
 
     public List<String> getParameterNames()
@@ -105,27 +104,15 @@ public class RequestImpl implements Request
 
     public Session getSession(boolean create)
     {
-        if (session != null)
+        if (session != null && session.isInvalidated())
         {
-            // The easy case is when the session was invalidated through the Tapestry Session
-            // object. The hard case is when the HttpSession was invalidated outside of Tapestry,
-            // in which case, request.getSession() will return a new HttpSession instance (or null)
-
-            if (session.isInvalidated() || hsession != request.getSession(false))
-            {
-                session = null;
-                hsession = null;
-            }
+            session = null;
         }
 
-        if (session == null)
+        if (session == null )
         {
-            hsession = request.getSession(create);
-
-            if (hsession != null)
-            {
-                session = new SessionImpl(hsession, analyzer);
-            }
+            // TAP5-1489 - Re-storage of session attributes at end of request should be configurable
+            session = sessionFactory.getSession(create);
         }
 
         return session;
@@ -149,8 +136,7 @@ public class RequestImpl implements Request
         try
         {
             request.setCharacterEncoding(requestEncoding);
-        }
-        catch (UnsupportedEncodingException ex)
+        } catch (UnsupportedEncodingException ex)
         {
             throw new RuntimeException(ex);
         }
@@ -198,7 +184,9 @@ public class RequestImpl implements Request
         return request.getLocalPort();
     }
 
-    /** @since 5.2.5 */
+    /**
+     * @since 5.2.5
+     */
     public int getServerPort()
     {
         return request.getServerPort();

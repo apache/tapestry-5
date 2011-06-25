@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,9 +17,11 @@ package org.apache.tapestry5;
 /**
  * An optional interface implemented by objects that are persisted in the {@link org.apache.tapestry5.services.Session}.
  * At the end of each request, any objects read from the session are re-stored into the session, to ensure that
- * in-memory changes are flushed to other servers in a cluster. Objects that implement this interface are expected to
- * track when they are dirty (have pending changes), so that the save back into the session can be avoided when not
- * necessary.
+ * in-memory changes are flushed to other persistent session stores (e.g. RDBMS, servers in a cluster, etc). Objects
+ * that implement this interface are expected to track when they are dirty (have pending changes), so that the save
+ * back into the session can be avoided when not necessary.
+ * <p>
+ * This method is accessed concurrently.
  *
  * @see org.apache.tapestry5.annotations.ImmutableSessionPersistedObject
  * @see org.apache.tapestry5.services.SessionPersistedObjectAnalyzer
@@ -28,10 +30,7 @@ package org.apache.tapestry5;
 public interface OptimizedSessionPersistedObject
 {
     /**
-     * Returns true if the object has in-memory changes.  It is the object's responsibility to set its internal flag to
-     * false, typically by implementing {@link javax.servlet.http.HttpSessionBindingListener}.
-     *
-     * @return
+     * @return true if the object has in-memory changes since the last time this method was called.
      */
-    boolean isSessionPersistedObjectDirty();
+    boolean checkAndResetDirtyMarker();
 }

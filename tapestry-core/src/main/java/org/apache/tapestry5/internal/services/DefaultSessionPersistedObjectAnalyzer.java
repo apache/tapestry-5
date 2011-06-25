@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,14 +28,14 @@ public class DefaultSessionPersistedObjectAnalyzer implements SessionPersistedOb
      * An object is dirty <em>unless</em> it has the {@link org.apache.tapestry5.annotations.ImmutableSessionPersistedObject}
      * annotation.
      *
-     * @param object to analyze
+     * @param sessionPersistedObject to analyze
      * @return false if immutable, true otherwise
      */
-    public boolean isDirty(Object object)
+    public boolean checkAndResetDirtyState(Object sessionPersistedObject)
     {
-        boolean immutable = object.getClass().getAnnotation(ImmutableSessionPersistedObject.class) != null;
+        boolean immutable = sessionPersistedObject.getClass().getAnnotation(ImmutableSessionPersistedObject.class) != null;
 
-        // Imuutable objects are always clean, others are assumed dirty.
+        // Immutable objects are always clean, others are assumed dirty.
         // Go implement OptimizedSessionPersistedObject if you don't like it.
 
         return !immutable;

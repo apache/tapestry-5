@@ -33,12 +33,13 @@ public class RequestImplTest extends InternalBaseTestCase
     public void get_session_doesnt_exist()
     {
         HttpServletRequest sr = mockHttpServletRequest();
+        SessionFactory sf = newMock(SessionFactory.class);
 
-        train_getSession(sr, false, null);
+        expect(sf.getSession(false)).andReturn(null);
 
         replay();
 
-        Request request = new RequestImpl(sr, CHARSET, null);
+        Request request = new RequestImpl(sr, CHARSET, sf);
 
         assertNull(request.getSession(false));
 
@@ -50,14 +51,15 @@ public class RequestImplTest extends InternalBaseTestCase
     {
         HttpServletRequest sr = mockHttpServletRequest();
         HttpSession ss = mockHttpSession();
+        SessionFactory sf = newMock(SessionFactory.class);
 
-        train_getSession(sr, true, ss);
+        expect(sf.getSession(true)).andReturn(new SessionImpl(sr, ss));
 
         train_getAttribute(ss, "foo", "bar");
 
         replay();
 
-        Request request = new RequestImpl(sr, CHARSET, null);
+        Request request = new RequestImpl(sr, CHARSET, sf);
         Session session = request.getSession(true);
 
         assertEquals(session.getAttribute("foo"), "bar");
@@ -202,11 +204,13 @@ public class RequestImplTest extends InternalBaseTestCase
         HttpSession hsession1 = mockHttpSession();
         HttpSession hsession2 = mockHttpSession();
 
-        train_getSession(sr, true, hsession1);
+        SessionFactory sf = newMock(SessionFactory.class);
+
+        expect(sf.getSession(true)).andReturn(new SessionImpl(sr,hsession1));
 
         replay();
 
-        Request request = new RequestImpl(sr, CHARSET, null);
+        Request request = new RequestImpl(sr, CHARSET, sf);
 
         Session session1 = request.getSession(true);
 
@@ -214,8 +218,11 @@ public class RequestImplTest extends InternalBaseTestCase
 
         hsession1.invalidate();
 
-        train_getSession(sr, false, hsession2);
-        train_getSession(sr, true, hsession2);
+        expect(sr.getSession(false)).andReturn(null);
+
+        SessionImpl session = new SessionImpl(sr, hsession2);
+        expect(sf.getSession(true)).andReturn(session);
+        expect(sf.getSession(true)).andReturn(session);
 
         replay();
 

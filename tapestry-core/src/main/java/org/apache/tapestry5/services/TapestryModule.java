@@ -355,14 +355,14 @@ public final class TapestryModule
     {
         private final RequestHandler handler;
         private final String applicationCharset;
-        private final SessionPersistedObjectAnalyzer analyzer;
+        private final SessionFactory sessionFactory;
 
         public HttpServletRequestHandlerTerminator(RequestHandler handler, String applicationCharset,
-                SessionPersistedObjectAnalyzer analyzer)
+                SessionFactory sessionFactory)
         {
             this.handler = handler;
             this.applicationCharset = applicationCharset;
-            this.analyzer = analyzer;
+            this.sessionFactory = sessionFactory;
         }
 
         public boolean service(HttpServletRequest servletRequest, HttpServletResponse servletResponse)
@@ -370,7 +370,7 @@ public final class TapestryModule
         {
             requestGlobals.storeServletRequestResponse(servletRequest, servletResponse);
 
-            Request request = new RequestImpl(servletRequest, applicationCharset, analyzer);
+            Request request = new RequestImpl(servletRequest, applicationCharset, sessionFactory);
             Response response = new ResponseImpl(servletRequest, servletResponse);
 
             // TAP5-257: Make sure that the "initial guess" for request/response
@@ -484,6 +484,7 @@ public final class TapestryModule
         binder.bind(ContextPathEncoder.class, ContextPathEncoderImpl.class);
         binder.bind(ApplicationStatePersistenceStrategy.class, SessionApplicationStatePersistenceStrategy.class)
                 .withId("SessionApplicationStatePersistenceStrategy");
+        binder.bind(SessionFactory.class, SessionFactoryImpl.class);
         binder.bind(AssetPathConverter.class, IdentityAssetPathConverter.class);
         binder.bind(NumericTranslatorSupport.class);
         binder.bind(ClientDataEncoder.class, ClientDataEncoderImpl.class);
@@ -1115,7 +1116,7 @@ public final class TapestryModule
      * Adds coercions:
      * <ul>
      * <li>String to {@link SelectModel}
-     * <li>Map to {@link oSelectModel}
+     * <li>Map to {@link SelectModel}
      * <li>Collection to {@link GridDataSource}
      * <li>null to {@link GridDataSource}
      * <li>List to {@link SelectModel}
@@ -1516,11 +1517,10 @@ public final class TapestryModule
     @Symbol(SymbolConstants.CHARSET)
     String applicationCharset,
 
-    @Primary
-    SessionPersistedObjectAnalyzer analyzer)
+    SessionFactory sessionFactory)
     {
         HttpServletRequestHandler terminator = new HttpServletRequestHandlerTerminator(handler, applicationCharset,
-                analyzer);
+                sessionFactory);
 
         return pipelineBuilder.build(logger, HttpServletRequestHandler.class, HttpServletRequestFilter.class,
                 configuration, terminator);
@@ -2457,6 +2457,8 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.PRODUCTION_MODE, true);
 
+        configuration.add(SymbolConstants.CLUSTERED_SESSIONS, true);
+
         configuration.add(SymbolConstants.COMPRESS_WHITESPACE, true);
 
         configuration.add(MetaDataConstants.SECURE_PAGE, false);
@@ -2704,7 +2706,7 @@ public final class TapestryModule
     }
 
     /**
-     * The master SessionPesistedObjectAnalyzer.
+     * The master SessionPersistedObjectAnalyzer.
      * 
      * @since 5.1.0.0
      */
@@ -2730,7 +2732,7 @@ public final class TapestryModule
 
         SessionPersistedObjectAnalyzer<Object> immutable = new SessionPersistedObjectAnalyzer<Object>()
         {
-            public boolean isDirty(Object object)
+            public boolean checkAndResetDirtyState(Object sessionPersistedObject)
             {
                 return false;
             }

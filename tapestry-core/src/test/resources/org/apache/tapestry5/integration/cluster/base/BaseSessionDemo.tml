@@ -1,0 +1,21 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+<head>
+    <title>Immutable Annotation Demo</title>
+</head>
+
+<body>
+<h1 id="serverName">${symbol:cluster.name}</h1>
+
+<div id="value">${data?.value}</div>
+
+<t:eventlink event="clear">Clear</t:eventlink>
+
+<t:eventlink event="createValue" context="'value1'">create1</t:eventlink>
+<t:eventlink event="createValue" context="'value2'">create2</t:eventlink>
+
+<t:eventlink event="changeValue" context="'value3'">update1</t:eventlink>
+<t:eventlink event="changeValue" context="'value4'">update2</t:eventlink>
+
+</body>
+
+</html>

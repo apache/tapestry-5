@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -84,8 +84,6 @@ public final class ValidationTrackerImpl extends BaseOptimizedSessionPersistedOb
 
     private void store(FieldTracker fieldTracker)
     {
-        markDirty();
-
         if (fieldTrackers == null)
             fieldTrackers = CollectionFactory.newList();
 
@@ -98,15 +96,17 @@ public final class ValidationTrackerImpl extends BaseOptimizedSessionPersistedOb
             fieldTrackers.add(fieldTracker);
             fieldToTracker.put(key, fieldTracker);
         }
+
+        markDirty();
     }
 
     public void clear()
     {
-        markDirty();
-
         extraErrors = null;
         fieldTrackers = null;
         fieldToTracker = null;
+
+        markDirty();
     }
 
     public String getError(Field field)
@@ -161,12 +161,12 @@ public final class ValidationTrackerImpl extends BaseOptimizedSessionPersistedOb
 
     public void recordError(String errorMessage)
     {
-        markDirty();
-
         if (extraErrors == null)
             extraErrors = CollectionFactory.newList();
 
         extraErrors.add(errorMessage);
+
+        markDirty();
     }
 
     public void recordInput(Field field, String input)

@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,10 +17,15 @@ package org.apache.tapestry5.services;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
 /**
- * Analyzes a session-persisted object, specifically to see if it is dirty or not.  The service implementation uses a
- * mapped configuration to form a {@linkplain org.apache.tapestry5.ioc.services.StrategyBuilder strategy} based on
- * object type. The service is injectable using the {@link org.apache.tapestry5.ioc.annotations.Primary} marker
- * annotation.
+ * Analyzes a session-persisted object, specifically to see if it is dirty or not.
+ * <p/>
+ * This service is provided to support applications which store mutable session attributes where the
+ * session is replicated to a slower medium (e.g. RDMBS, Cluster, etc) this can help alleviate excessive writes
+ * to the session store while ensuring changes are propagated.
+ * <p/>
+ * The service implementation uses a mapped configuration to form a
+ * {@linkplain org.apache.tapestry5.ioc.services.StrategyBuilder strategy} based on object type. The service may be
+ * injected using the {@link org.apache.tapestry5.ioc.annotations.Primary} marker annotation.
  *
  * @see org.apache.tapestry5.annotations.ImmutableSessionPersistedObject
  * @see org.apache.tapestry5.OptimizedSessionPersistedObject
@@ -30,11 +35,15 @@ import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 public interface SessionPersistedObjectAnalyzer<T>
 {
     /**
-     * Passed an object (never null) to see if it is dirty or not. Dirty objects that are stored in the session are
-     * re-stored into the session at the end of the request.
+     * Atomically check and reset the dirty state of the session persisted object.
+     * <p/>
+     * The implementer should take consideration for the fact that session attributes are accessed concurrently. A
+     * naive check/set algorithm may allow changes to go un-noticed.
      *
-     * @param object
-     * @return true if object needs to be re-stored into the session
+     * @param sessionPersistedObject the session attribute (never null)
+     * @return true if the object needs to be re-stored into the session
+     * @since 5.3.1
      */
-    boolean isDirty(T object);
+    boolean checkAndResetDirtyState(T sessionPersistedObject);
+
 }

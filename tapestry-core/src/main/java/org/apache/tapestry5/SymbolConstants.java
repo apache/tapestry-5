@@ -294,4 +294,16 @@ public class SymbolConstants
      * @since 5.3.0
      */
     public static final String MINIFICATION_ENABLED = "tapestry.enable-minification";
+
+    /**
+     * If "true" then at the end of each request the
+     * {@link org.apache.tapestry5.services.SessionPersistedObjectAnalyzer} will be called on each session persisted
+     * object that was accessed during the request.
+     * <p>
+     * This is provided as a performance enhancement for servers that do not use clustered sessions.
+     *
+     * @since 5.3.1
+     */
+    public static final String CLUSTERED_SESSIONS = "tapestry.clustered-sessions";
+
 }

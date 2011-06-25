@@ -23,6 +23,8 @@ dependencies {
 
   // Antlr3 tool path used with the antlr3 task
   antlr3 "org.antlr:antlr:3.3"
+
+  testRuntime "org.hsqldb:hsqldb:1.8.0.10"
 }
 
 // This may spin out as a plugin once we've got the details down pat

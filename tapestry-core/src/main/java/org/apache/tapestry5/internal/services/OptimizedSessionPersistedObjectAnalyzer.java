@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ import org.apache.tapestry5.services.SessionPersistedObjectAnalyzer;
 
 public class OptimizedSessionPersistedObjectAnalyzer implements SessionPersistedObjectAnalyzer<OptimizedSessionPersistedObject>
 {
-    public boolean isDirty(OptimizedSessionPersistedObject object)
+    public boolean checkAndResetDirtyState(OptimizedSessionPersistedObject sessionPersistedObject)
     {
-        return object.isSessionPersistedObjectDirty();
+        return sessionPersistedObject.checkAndResetDirtyMarker();
     }
 }

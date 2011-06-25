@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
@@ -37,7 +38,7 @@ public class SessionImplTest extends InternalBaseTestCase
 
         replay();
 
-        Session session = new SessionImpl(hs, null);
+        Session session = new SessionImpl(null, hs);
 
         assertEquals(session.getAttributeNames(), Arrays.asList("barney", "fred"));
 
@@ -54,7 +55,7 @@ public class SessionImplTest extends InternalBaseTestCase
 
         replay();
 
-        Session session = new SessionImpl(hs, null);
+        Session session = new SessionImpl(null, hs);
 
         assertEquals(session.getAttributeNames("f"), Arrays.asList("fanny", "fred"));
 
@@ -70,11 +71,44 @@ public class SessionImplTest extends InternalBaseTestCase
 
         replay();
 
-        Session session = new SessionImpl(hs, null);
+        Session session = new SessionImpl(null, hs);
 
         session.invalidate();
 
         verify();
+    }
+
+    @Test
+    public void http_session_invalidate()
+    {
+        HttpSession hs = mockHttpSession();
+
+        HttpServletRequest hsr = mockHttpServletRequest();
+
+        train_getSession(hsr, false, hs);
+
+        replay();
+
+        Session session = new SessionImpl(hsr, hs);
+
+        assertFalse(session.isInvalidated());
+
+        verify();
+
+        train_getSession(hsr, false, null);
+
+        replay();
+
+        assertTrue(session.isInvalidated());
+
+        verify();
+
+        train_getSession(hsr, false, mockHttpSession());
+
+        replay();
+
+        assertTrue(session.isInvalidated());
+
     }
 
     @Test
@@ -87,7 +121,7 @@ public class SessionImplTest extends InternalBaseTestCase
 
         replay();
 
-        Session session = new SessionImpl(hs, null);
+        Session session = new SessionImpl(null, hs);
 
         session.setMaxInactiveInterval(seconds);
 
@@ -104,7 +138,7 @@ public class SessionImplTest extends InternalBaseTestCase
 
         replay();
 
-        Session session = new SessionImpl(hs, null);
+        Session session = new SessionImpl(null, hs);
 
         assertEquals(session.getMaxInactiveInterval(), seconds);
 
@@ -115,6 +149,7 @@ public class SessionImplTest extends InternalBaseTestCase
     public void dirty_persisted_object_is_forced_to_update()
     {
         HttpSession hs = mockHttpSession();
+        HttpServletRequest hsr = mockHttpServletRequest();
         SessionPersistedObjectAnalyzer analyzer = newMock(SessionPersistedObjectAnalyzer.class);
         Object dirty = new Object();
 
@@ -122,15 +157,16 @@ public class SessionImplTest extends InternalBaseTestCase
 
         replay();
 
-        Session session = new SessionImpl(hs, analyzer);
+        Session session = new ClusteredSessionImpl(hsr, hs, analyzer);
 
         assertSame(session.getAttribute("dirty"), dirty);
 
         verify();
 
-        expect(analyzer.isDirty(dirty)).andReturn(true);
+        expect(analyzer.checkAndResetDirtyState(dirty)).andReturn(true);
 
-        hs.setAttribute("dirty", null);
+        train_getSession(hsr, false, hs);
+
         hs.setAttribute("dirty", dirty);
 
         replay();
