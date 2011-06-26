@@ -22,15 +22,15 @@ import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
  * any individual page or component. SSOs are also created on demand. SSOs are typically stored in the session, so that
  * they are specific to a particular client.
  * <p/>
- * The term "Application" is a hold-over from Tapestry 5.0, which used the {@link ApplicationState} annotation, and
- * called them "ASOs" (Application State Objects). This service would be better named "SessionStateManager" (but
- * renaming it would cause backwards compatibility issues).
+ * The term "Application" is a hold-over from Tapestry 5.0, which used the @ApplicationState (deprecated and deleted)
+ * annotation, and called them "ASOs" (Application State Objects). This service would be better named
+ * "SessionStateManager" (but renaming it would cause backwards compatibility issues).
  * <p/>
  * Tapestry has a built-in default strategy for storing SSOs (in the session) and instantiating them. If desired,
  * contributions to the service configuration can override the default behavior, either specifying an alternate storage
  * strategy, or an alternate {@linkplain org.apache.tapestry5.services.ApplicationStateCreator creation strategy}.
  * 
- * @see org.apache.tapestry5.annotations.ApplicationState
+ * @see org.apache.tapestry5.annotations.SessionState
  */
 @UsesMappedConfiguration(key = Class.class, value = ApplicationStateContribution.class)
 public interface ApplicationStateManager
@@ -42,7 +42,6 @@ public interface ApplicationStateManager
      * This
      * allows an SSO to keep references to Tapestry IoC services or other objects that can be injected.
      * 
-     * @param <T>
      * @param ssoClass
      *            identifies the SSO to access or create
      * @return the SSO instance
@@ -53,7 +52,6 @@ public interface ApplicationStateManager
      * For a given class, find the SSO for the class. The manager has a configuration that determines how an instance is
      * stored.
      * 
-     * @param <T>
      * @param ssoClass
      *            identifies the SSO to access or create
      * @return the SSO instance or null if it does not already exist
@@ -73,7 +71,6 @@ public interface ApplicationStateManager
      * Stores a new SSO, replacing the existing SSO (if any). Storing the value null will delete the SSO so that it may
      * be re-created later.
      * 
-     * @param <T>
      * @param ssoClass
      *            the type of SSO
      * @param SSO
