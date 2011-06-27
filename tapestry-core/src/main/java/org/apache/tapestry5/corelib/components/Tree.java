@@ -113,7 +113,7 @@ public class Tree
         public void render(MarkupWriter writer, RenderQueue queue)
         {
             writer.end();
-        };
+        }
     };
 
     private static RenderCommand RENDER_LABEL_SPAN = new RenderCommand()
@@ -121,7 +121,7 @@ public class Tree
         public void render(MarkupWriter writer, RenderQueue queue)
         {
             writer.element("span", "class", "t-tree-label");
-        };
+        }
     };
 
     /**
@@ -206,7 +206,7 @@ public class Tree
         };
     }
 
-    /** Renders an &lt;ul&gt; element and renders each node recusively inside the element. */
+    /** Renders an &lt;ul&gt; element and renders each node recursively inside the element. */
     private class RenderNodes implements RenderCommand
     {
         private final Flow<TreeNode> nodes;

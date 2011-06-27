@@ -33,6 +33,7 @@ import java.util.Map;
  * @param <T>
  * @since 5.3.0
  */
+@SuppressWarnings({"UnusedDeclaration"})
 public class DefaultTreeModel<T> implements TreeModel<T>
 {
     private final ValueEncoder<T> encoder;
@@ -48,7 +49,7 @@ public class DefaultTreeModel<T> implements TreeModel<T>
         public TreeNode<T> map(T value)
         {
             return new DefaultTreeNode(value);
-        };
+        }
     };
 
     private class DefaultTreeNode implements TreeNode<T>
@@ -101,8 +102,11 @@ public class DefaultTreeModel<T> implements TreeModel<T>
      * Creates a new model starting from a single root element.
      * 
      * @param encoder
+     *            used to convert values to strings and vice-versa
      * @param adapter
+     *            adapts elements to the tree
      * @param root
+     *            defines the root node of the model
      */
     public DefaultTreeModel(ValueEncoder<T> encoder, TreeModelAdapter<T> adapter, T root)
     {
