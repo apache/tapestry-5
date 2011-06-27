@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
-import org.apache.tapestry5.ioc.services.ClassFabUtils;
+import org.apache.tapestry5.plastic.PlasticUtils;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -127,7 +127,7 @@ public class InheritanceSearch implements Iterator<Class>, Iterable<Class>
      */
     private Class parentOf(Class clazz)
     {
-        if (clazz != void.class && clazz.isPrimitive()) return ClassFabUtils.getWrapperType(clazz);
+        if (clazz != void.class && clazz.isPrimitive()) return PlasticUtils.toWrapperType(clazz);
 
         if (clazz.isArray() && clazz != Object[].class)
         {

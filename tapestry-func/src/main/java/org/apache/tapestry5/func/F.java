@@ -47,7 +47,7 @@ public class F
     }
 
     /**
-     * A Predicate factory for equality of q Comparable element from a flow against a specified
+     * A Predicate factory for equality of an element from a flow against a specified
      * value.
      */
     public static <T> Predicate<T> eql(final T value)
@@ -57,7 +57,7 @@ public class F
             public boolean accept(T element)
             {
                 return element.equals(value);
-            };
+            }
         };
     }
 
@@ -169,7 +169,7 @@ public class F
             public String map(T value)
             {
                 return String.valueOf(value);
-            };
+            }
         };
     }
 
@@ -259,7 +259,7 @@ public class F
             public boolean accept(S object)
             {
                 return mapper.map(object);
-            };
+            }
         };
     }
 
@@ -271,7 +271,7 @@ public class F
         public Integer reduce(Integer accumulator, Integer value)
         {
             return accumulator + value;
-        };
+        }
     };
 
     /**
@@ -283,7 +283,7 @@ public class F
         public Integer map(Integer first, Integer second)
         {
             return first + second;
-        };
+        }
     };
 
     /**
@@ -402,7 +402,6 @@ public class F
      * Creates an infinite lazy flow from an initial value and a function to map from the current value to the
      * next value.
      * 
-     * @param <T>
      * @param initial
      *            initial value in flow
      * @param function
@@ -523,11 +522,10 @@ public class F
      * 
      * @since 5.3.0
      */
-    public static <A extends Comparable, B> Comparator<Tuple<A, B>> orderByFirst()
+    public static <A extends Comparable<A>, B> Comparator<Tuple<A, B>> orderByFirst()
     {
         return new Comparator<Tuple<A, B>>()
         {
-
             public int compare(Tuple<A, B> o1, Tuple<A, B> o2)
             {
                 return o1.first.compareTo(o2.first);
@@ -541,7 +539,7 @@ public class F
      * 
      * @since 5.3.0
      */
-    public static <A, B extends Comparable> Comparator<Tuple<A, B>> orderBySecond()
+    public static <A, B extends Comparable<B>> Comparator<Tuple<A, B>> orderBySecond()
     {
         return new Comparator<Tuple<A, B>>()
         {
@@ -555,7 +553,6 @@ public class F
     /**
      * Inverts a predicate.
      * 
-     * @param <T>
      * @param delegate
      *            the predicate to invert
      * @return a new predicate that is inverse to the existing predicate
@@ -577,9 +574,6 @@ public class F
     /**
      * Combines two mappers into a composite mapping from type A to type C via type B.
      * 
-     * @param <A>
-     * @param <B>
-     * @param <C>
      * @param abMapper
      *            maps from A to B
      * @param bcMapper
@@ -608,7 +602,6 @@ public class F
      * Combines any number of delegates as a logical and operation. Evaluation terminates
      * with the first delegate predicate that returns false.
      * 
-     * @param <T>
      * @param delegates
      *            to evaluate
      * @return combined delegate
@@ -635,7 +628,6 @@ public class F
      * Combines any number of delegates as a logical or operation. Evaluation terminates
      * with the first delegate predicate that returns true.
      * 
-     * @param <T>
      * @param delegates
      *            to evaluate
      * @return combined delegate

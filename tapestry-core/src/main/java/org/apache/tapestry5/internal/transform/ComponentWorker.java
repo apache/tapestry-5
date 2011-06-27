@@ -27,16 +27,11 @@ import org.apache.tapestry5.ioc.internal.services.StringLocation;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
-import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.model.MutableEmbeddedComponentModel;
 import org.apache.tapestry5.plastic.*;
-import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassResolver;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.ComponentValueProvider;
-import org.apache.tapestry5.services.TransformField;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
 
@@ -86,13 +81,13 @@ public class ComponentWorker implements ComponentClassTransformWorker2
 
         updateModelWithPublishedParameters(embedded, annotation);
 
-        convertAccessToField(transformation, field, id);
+        convertAccessToField(field, id);
 
         addMixinClasses(field, embedded);
         addMixinTypes(field, embedded);
     }
 
-    private void convertAccessToField(PlasticClass plasticClass, PlasticField field, String id)
+    private void convertAccessToField(PlasticField field, String id)
     {
         String fieldName = field.getName();
 

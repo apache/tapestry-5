@@ -14,15 +14,14 @@
 
 package org.apache.tapestry5.func;
 
+import org.apache.commons.lang.StringUtils;
+import org.testng.annotations.Test;
+
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import org.apache.commons.lang.StringUtils;
-import org.testng.annotations.Test;
 
 public class ZippedFlowTests extends BaseFuncTest
 {

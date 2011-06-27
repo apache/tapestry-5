@@ -29,7 +29,7 @@ import org.testng.annotations.AfterMethod;
  * <p/>
  * Provides a common mock factory method, {@link #newMock(Class)}. A single <em>standard</em> mock control is used for
  * all mock objects. Standard mocks do not care about the exact order in which methods are invoked, though they are as
- * rigourous as strict mocks when checking that parameters are the correct values.
+ * rigorous as strict mocks when checking that parameters are the correct values.
  * <p/>
  * This base class is created with the intention of use within a TestNG test suite; if using JUnit, you can get the same
  * functionality using {@link MockTester}.
@@ -45,19 +45,10 @@ import org.testng.annotations.AfterMethod;
  */
 public class TestBase extends TestUtils
 {
-    private static class ThreadLocalControl extends ThreadLocal<IMocksControl>
-    {
-        @Override
-        protected IMocksControl initialValue()
-        {
-            return EasyMock.createControl();
-        }
-    }
-
     private final MockTester tester = new MockTester();
 
     /**
-     * Returns the {@link IMocksControl} for this thread.
+     * @return the {@link IMocksControl} for this thread.
      */
     protected final IMocksControl getMocksControl()
     {
@@ -124,16 +115,15 @@ public class TestBase extends TestUtils
      * @param answer
      *            callback for the most recent method invocation
      */
-    protected static void setAnswer(IAnswer answer)
+    protected static void setAnswer(IAnswer<?> answer)
     {
         EasyMock.expectLastCall().andAnswer(answer);
     }
 
     /**
-     * Convienience for {@link EasyMock#expect(Object)}.
+     * Convenience for {@link EasyMock#expect(Object)}.
      * 
-     * @param <T>
-     * @param value
+     * @param value to expect
      * @return expectation setter, for setting return value, etc.
      */
     @SuppressWarnings("unchecked")
@@ -144,7 +134,9 @@ public class TestBase extends TestUtils
 
     /**
      * A factory method to create EasyMock Capture objects.
+     * @return new Capture
      */
+    @SuppressWarnings({"UnusedDeclaration"})
     protected static <T> Capture<T> newCapture()
     {
         return new Capture<T>();
