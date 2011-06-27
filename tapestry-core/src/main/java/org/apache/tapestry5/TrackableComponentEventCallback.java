@@ -23,8 +23,9 @@ import org.apache.tapestry5.services.Traditional;
 /**
  * Extends {@link ComponentEventCallback} with a way to determine if the underlying event has been aborted
  * due to a some event returning an acceptable, non-null value. The standard implementation of this
- * is a wrapper around either the {@linkplain Traditional traditional} or {@linkplain Ajax} versions
- * of the {@link ComponentEventResultProcessor} service, i.e., they allow for a navigational result.
+ * is a wrapper around either the {@linkplain Traditional traditional} or
+ * {@linkplain org.apache.tapestry5.services.Ajax ajax} versions of the {@link ComponentEventResultProcessor}
+ * service, i.e., they allow for a navigational result.
  * <p>
  * Instances of this are made available via the {@link Environmental} annotation.
  * 

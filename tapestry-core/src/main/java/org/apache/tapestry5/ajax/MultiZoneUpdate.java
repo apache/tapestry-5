@@ -45,7 +45,8 @@ public class MultiZoneUpdate
         this(zoneId, renderer, null);
     }
 
-    /** Alternate constructor that takes a ClientBodyElement (typically, a {@link Zone}). */
+    /** Alternate constructor that takes a ClientBodyElement (typically, a
+     * {@link org.apache.tapestry5.corelib.components.Zone}). */
     public MultiZoneUpdate(ClientBodyElement zone)
     {
         this(zone.getClientId(), zone.getBody());

@@ -32,7 +32,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
 /**
- * JavaScriptStack based on the information retrieved from {@link ClientInfrastructure}.
+ * JavaScriptStack for core components.
  * 
  * @since 5.2.0
  */

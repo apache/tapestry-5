@@ -489,9 +489,6 @@ public final class Element extends Node
     /**
      * Searchs for a child element with a particular name below this element. The path parameter is a slash separated
      * series of element names.
-     * 
-     * @param path
-     * @return
      */
     public Element find(String path)
     {

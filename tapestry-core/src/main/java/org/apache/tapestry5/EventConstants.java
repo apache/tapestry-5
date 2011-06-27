@@ -138,7 +138,7 @@ public class EventConstants
      * Event triggered by {@link org.apache.tapestry5.corelib.components.AjaxFormLoop} to inform the
      * container that a new row has been requested. The return value from the event handler must be the newly created
      * object, which must
-     * also be visible in the {@link encoder parameter}.
+     * also be visible in the {@link org.apache.tapestry5.corelib.components.AjaxFormLoop#encoder} parameter.
      */
     public static final String ADD_ROW = "addRow";
 
@@ -168,7 +168,7 @@ public class EventConstants
      * request completions of
      * the current input. The context is the partial string provided by the client.
      * 
-     * @SINCE 5.1.0.4
+     * @since 5.1.0.4
      */
     public static final String PROVIDE_COMPLETIONS = "provideCompletions";
 

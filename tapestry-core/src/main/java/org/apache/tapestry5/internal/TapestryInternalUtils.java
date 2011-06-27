@@ -122,9 +122,6 @@ public class TapestryInternalUtils
     /**
      * Converts a string to an {@link OptionModel}. The string is of the form "value=label". If the equals sign is
      * omitted, then the same value is used for both value and label.
-     * 
-     * @param input
-     * @return
      */
     public static OptionModel toOptionModel(String input)
     {
@@ -161,9 +158,6 @@ public class TapestryInternalUtils
 
     /**
      * Wraps the result of {@link #toOptionModels(String)} as a {@link SelectModel} (with no option groups).
-     * 
-     * @param input
-     * @return
      */
     public static SelectModel toSelectModel(String input)
     {
@@ -174,9 +168,6 @@ public class TapestryInternalUtils
 
     /**
      * Converts a map entry to an {@link OptionModel}.
-     * 
-     * @param input
-     * @return
      */
     public static OptionModel toOptionModel(Map.Entry input)
     {
@@ -206,9 +197,6 @@ public class TapestryInternalUtils
 
     /**
      * Wraps the result of {@link #toOptionModels(Map)} as a {@link SelectModel} (with no option groups).
-     * 
-     * @param input
-     * @return
      */
     public static <K, V> SelectModel toSelectModel(Map<K, V> input)
     {
@@ -219,9 +207,6 @@ public class TapestryInternalUtils
 
     /**
      * Converts an object to an {@link OptionModel}.
-     * 
-     * @param input
-     * @return
      */
     public static OptionModel toOptionModel(Object input)
     {
@@ -250,9 +235,6 @@ public class TapestryInternalUtils
 
     /**
      * Wraps the result of {@link #toOptionModels(List)} as a {@link SelectModel} (with no option groups).
-     * 
-     * @param input
-     * @return
      */
     public static <E> SelectModel toSelectModel(List<E> input)
     {
@@ -264,9 +246,6 @@ public class TapestryInternalUtils
     /**
      * Parses a key/value pair where the key and the value are seperated by an equals sign. The key and value are
      * trimmed of leading and trailing whitespace, and returned as a {@link KeyValue}.
-     * 
-     * @param input
-     * @return
      */
     public static KeyValue parseKeyValue(String input)
     {
@@ -348,6 +327,7 @@ public class TapestryInternalUtils
      * @param messages
      *            the messages to search for the label
      * @param prefix
+     *            prepended to key
      * @param value
      *            to get a label for
      * @return the label
@@ -383,7 +363,6 @@ public class TapestryInternalUtils
      * Determines if the two values are equal. They are equal if they are the exact same value (including if they are
      * both null). Otherwise standard equals() comparison is used.
      * 
-     * @param <T>
      * @param left
      *            value to compare, possibly null
      * @param right
@@ -396,7 +375,7 @@ public class TapestryInternalUtils
             return true;
 
         if (left == null)
-            return right == null;
+            return false;
 
         return left.equals(right);
     }
@@ -550,11 +529,11 @@ public class TapestryInternalUtils
     public static Orderable<String> mixinTypeAndOrder(String mixinDef)
     {
         int idx = mixinDef.indexOf("::");
-        if (idx == -1) { return new Orderable(mixinDef, mixinDef); }
+        if (idx == -1) { return new Orderable<String>(mixinDef, mixinDef); }
         String type = mixinDef.substring(0, idx);
         String[] constraints = splitMixinConstraints(mixinDef.substring(idx + 2));
 
-        return new Orderable(type, type, constraints);
+        return new Orderable<String>(type, type, constraints);
     }
 
     public static String[] splitMixinConstraints(String s)
@@ -563,7 +542,7 @@ public class TapestryInternalUtils
     }
 
     /**
-     * Common mapper, used primarily with {@link F#map(Mapper, java.util.Collection)}
+     * Common mapper, used primarily with {@link org.apache.tapestry5.func.Flow#map(org.apache.tapestry5.func.Mapper)}
      * 
      * @since 5.2.0
      */
@@ -572,7 +551,7 @@ public class TapestryInternalUtils
         public StylesheetLink map(Asset input)
         {
             return new StylesheetLink(input);
-        };
+        }
     };
 
     public static LinkCreationListener2 toLinkCreationListener2(final LinkCreationListener delegate)
