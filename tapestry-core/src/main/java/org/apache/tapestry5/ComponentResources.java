@@ -204,7 +204,7 @@ public interface ComponentResources extends ComponentResourcesCommon
     List<String> getInformalParameterNames();
 
 /**
-     * Reads an informal parameter and {@linkplain org.apache.tapestry5.ioc.services.TypeCoercer coercers) the bound
+     * Reads an informal parameter and {@linkplain org.apache.tapestry5.ioc.services.TypeCoercer coercers} the bound
      * value to the indicated type.
      *
      * @param name name of informal parameter
