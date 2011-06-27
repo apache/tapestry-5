@@ -1,4 +1,4 @@
-package org.apache.tapestry5.integrati.app1
+package org.apache.tapestry5.integration.app1
 
 import org.apache.tapestry5.integration.TapestryCoreTestCase
 import org.testng.annotations.Test
