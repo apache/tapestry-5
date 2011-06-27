@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -524,6 +524,9 @@ public final class TapestryIOCModule
     @Symbol(IOCSymbols.THREAD_POOL_ENABLED)
     boolean threadPoolEnabled,
 
+    @Symbol(IOCSymbols.THREAD_POOL_QUEUE_SIZE)
+    int queueSize,
+
     PerthreadManager perthreadManager,
 
     RegistryShutdownHub shutdownHub,
@@ -534,8 +537,10 @@ public final class TapestryIOCModule
         if (!threadPoolEnabled)
             return new NonParallelExecutor();
 
+        LinkedBlockingQueue workQueue = new LinkedBlockingQueue(queueSize);
+
         final ThreadPoolExecutor executorService = new ThreadPoolExecutor(coreSize, maxSize, keepAliveMillis,
-                TimeUnit.MILLISECONDS, new LinkedBlockingQueue());
+                TimeUnit.MILLISECONDS, workQueue);
 
         shutdownHub.addRegistryShutdownListener(new RegistryShutdownListener()
         {
@@ -550,11 +555,12 @@ public final class TapestryIOCModule
 
     @Contribute(SymbolProvider.class)
     @FactoryDefaults
-    public static void setupDefaultSymbols(MappedConfiguration<String, String> configuration)
+    public static void setupDefaultSymbols(MappedConfiguration<String, Object> configuration)
     {
-        configuration.add(IOCSymbols.THREAD_POOL_CORE_SIZE, "3");
-        configuration.add(IOCSymbols.THREAD_POOL_MAX_SIZE, "20");
+        configuration.add(IOCSymbols.THREAD_POOL_CORE_SIZE, 3);
+        configuration.add(IOCSymbols.THREAD_POOL_MAX_SIZE, 20);
         configuration.add(IOCSymbols.THREAD_POOL_KEEP_ALIVE, "1 m");
-        configuration.add(IOCSymbols.THREAD_POOL_ENABLED, "true");
+        configuration.add(IOCSymbols.THREAD_POOL_ENABLED, true);
+        configuration.add(IOCSymbols.THREAD_POOL_QUEUE_SIZE, 100);
     }
 }
