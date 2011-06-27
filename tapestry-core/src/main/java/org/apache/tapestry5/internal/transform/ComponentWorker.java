@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,11 +31,14 @@ import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.model.MutableEmbeddedComponentModel;
+import org.apache.tapestry5.plastic.*;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.ComponentValueProvider;
 import org.apache.tapestry5.services.TransformField;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 
 /**
  * Finds fields with the {@link org.apache.tapestry5.annotations.Component} annotation and updates
@@ -43,7 +46,7 @@ import org.apache.tapestry5.services.TransformField;
  * checks for the {@link Mixins} and {@link MixinClasses} annotations and uses them to update the {@link ComponentModel}
  * .
  */
-public class ComponentWorker implements ComponentClassTransformWorker
+public class ComponentWorker implements ComponentClassTransformWorker2
 {
     private final ComponentClassResolver resolver;
 
@@ -52,15 +55,15 @@ public class ComponentWorker implements ComponentClassTransformWorker
         this.resolver = resolver;
     }
 
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-        for (TransformField field : transformation.matchFieldsWithAnnotation(Component.class))
+        for (PlasticField field : plasticClass.getFieldsWithAnnotation(Component.class))
         {
-            transformField(transformation, model, field);
+            transformField(plasticClass, model, field);
         }
     }
 
-    private void transformField(ClassTransformation transformation, MutableComponentModel model, TransformField field)
+    private void transformField(PlasticClass transformation, MutableComponentModel model, PlasticField field)
     {
         Component annotation = field.getAnnotation(Component.class);
 
@@ -72,7 +75,7 @@ public class ComponentWorker implements ComponentClassTransformWorker
 
         String id = InternalUtils.isNonBlank(annotationId) ? annotationId : InternalUtils.stripMemberName(fieldName);
 
-        String type = field.getType();
+        String type = field.getTypeName();
 
         Location location = new StringLocation(String.format("%s.%s", transformation.getClassName(), fieldName), 0);
 
@@ -89,25 +92,27 @@ public class ComponentWorker implements ComponentClassTransformWorker
         addMixinTypes(field, embedded);
     }
 
-    private void convertAccessToField(ClassTransformation transformation, TransformField field, String id)
+    private void convertAccessToField(PlasticClass plasticClass, PlasticField field, String id)
     {
         String fieldName = field.getName();
 
-        ComponentValueProvider<FieldValueConduit> provider = createProviderForEmbeddedComponentConduit(fieldName, id);
+        ComputedValue<FieldConduit<?>> provider = createProviderForEmbeddedComponentConduit(fieldName, id);
 
-        field.replaceAccess(provider);
+        field.setComputedConduit(provider);
     }
 
-    private ComponentValueProvider<FieldValueConduit> createProviderForEmbeddedComponentConduit(final String fieldName,
+    private ComputedValue<FieldConduit<?>> createProviderForEmbeddedComponentConduit(final String fieldName,
             final String id)
     {
-        return new ComponentValueProvider<FieldValueConduit>()
+        return new ComputedValue<FieldConduit<?>>()
         {
-            public FieldValueConduit get(final ComponentResources resources)
+            public FieldConduit get(InstanceContext context)
             {
+                final ComponentResources resources = context.get(ComponentResources.class);
+
                 return new ReadOnlyFieldValueConduit(resources, fieldName)
                 {
-                    public Object get()
+                    public Object get(Object instance, InstanceContext context)
                     {
                         return resources.getEmbeddedComponent(id);
                     }
@@ -124,7 +129,7 @@ public class ComponentWorker implements ComponentClassTransformWorker
             embedded.setPublishedParameters(CollectionFactory.newList(TapestryInternalUtils.splitAtCommas(names)));
     }
 
-    private void addMixinClasses(TransformField field, MutableEmbeddedComponentModel model)
+    private void addMixinClasses(PlasticField field, MutableEmbeddedComponentModel model)
     {
         MixinClasses annotation = field.getAnnotation(MixinClasses.class);
 
@@ -146,7 +151,7 @@ public class ComponentWorker implements ComponentClassTransformWorker
         }
     }
 
-    private void addMixinTypes(TransformField field, MutableEmbeddedComponentModel model)
+    private void addMixinTypes(PlasticField field, MutableEmbeddedComponentModel model)
     {
         Mixins annotation = field.getAnnotation(Mixins.class);
 

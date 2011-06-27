@@ -1,4 +1,4 @@
-// Copyright 2008, 2010 The Apache Software Foundation
+// Copyright 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,21 +18,19 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.plastic.*;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.PageLifecycleAdapter;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.ComponentValueProvider;
-import org.apache.tapestry5.services.TransformField;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 
 /**
  * Recognizes the {@link org.apache.tapestry5.annotations.InjectComponent} annotation, and converts the field into a
  * read-only field containing the component. The id of the component may be explicitly stated or will be determined
  * from the field name.
  */
-public class InjectComponentWorker implements ComponentClassTransformWorker
+public class InjectComponentWorker implements ComponentClassTransformWorker2
 {
     private final class InjectedComponentFieldValueConduit extends ReadOnlyFieldValueConduit
     {
@@ -58,7 +56,7 @@ public class InjectComponentWorker implements ComponentClassTransformWorker
                     load();
 
                     resources.removePageLifecycleListener(this);
-                };
+                }
             });
         }
 
@@ -77,7 +75,7 @@ public class InjectComponentWorker implements ComponentClassTransformWorker
                                                 .getName(), fieldType.getName()));
         }
 
-        public Object get()
+        public Object get(Object instance, InstanceContext context)
         {
             return embedded;
         }
@@ -90,34 +88,36 @@ public class InjectComponentWorker implements ComponentClassTransformWorker
         this.classCache = classCache;
     }
 
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-        for (TransformField field : transformation.matchFieldsWithAnnotation(InjectComponent.class))
+        for (PlasticField field : plasticClass.getFieldsWithAnnotation(InjectComponent.class))
         {
             InjectComponent annotation = field.getAnnotation(InjectComponent.class);
 
             field.claim(annotation);
 
-            final String type = field.getType();
+            final String type = field.getTypeName();
 
             final String componentId = getComponentId(field, annotation);
 
             final String fieldName = field.getName();
 
-            ComponentValueProvider<FieldValueConduit> provider = new ComponentValueProvider<FieldValueConduit>()
+            ComputedValue<FieldConduit<?>> provider = new ComputedValue<FieldConduit<?>>()
             {
-                public FieldValueConduit get(final ComponentResources resources)
+                public FieldConduit<?> get(InstanceContext context)
                 {
+                    ComponentResources resources = context.get(ComponentResources.class);
+
                     return new InjectedComponentFieldValueConduit(resources, fieldName, type, componentId);
                 }
             };
 
-            field.replaceAccess(provider);
+            field.setComputedConduit(provider);
         }
 
     }
 
-    private String getComponentId(TransformField field, InjectComponent annotation)
+    private String getComponentId(PlasticField field, InjectComponent annotation)
     {
         String id = annotation.value();
 

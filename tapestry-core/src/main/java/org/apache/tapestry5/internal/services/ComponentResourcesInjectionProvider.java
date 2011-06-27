@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -51,11 +51,18 @@ public class ComponentResourcesInjectionProvider implements InjectionProvider
         {
             public FieldValueConduit get(final ComponentResources resources)
             {
-                return new ReadOnlyFieldValueConduit(resources, fieldName)
+                return new FieldValueConduit()
                 {
                     public Object get()
                     {
                         return resources;
+                    }
+
+                    public void set(Object newValue)
+                    {
+                        String componentClassName = resources.getComponentModel().getComponentClassName();
+                        throw new RuntimeException(String.format("Field %s.%s is read only.",
+                                componentClassName, fieldName));
                     }
                 };
             }

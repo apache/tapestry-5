@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -68,11 +68,17 @@ public class BlockInjectionProvider implements InjectionProvider
         {
             public FieldValueConduit get(final ComponentResources resources)
             {
-                return new ReadOnlyFieldValueConduit(resources, fieldName)
+                return new FieldValueConduit()
                 {
                     public Object get()
                     {
                         return resources.getBlock(blockId);
+                    }
+
+                    public void set(Object newValue)
+                    {
+                        String componentClassName = resources.getComponentModel().getComponentClassName();
+                        throw new RuntimeException(String.format("Field %s.%s is read only.", componentClassName, fieldName));
                     }
                 };
             }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,20 +17,18 @@ package org.apache.tapestry5.internal.transform;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.InjectContainer;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
-import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.plastic.*;
 import org.apache.tapestry5.runtime.Component;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.ComponentValueProvider;
-import org.apache.tapestry5.services.TransformField;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 
 /**
  * Identifies the {@link org.apache.tapestry5.annotations.InjectContainer} annotation and adds code
  * to initialize it to
  * the core component.
  */
-public class InjectContainerWorker implements ComponentClassTransformWorker
+public class InjectContainerWorker implements ComponentClassTransformWorker2
 {
     private final ComponentClassCache cache;
 
@@ -39,42 +37,42 @@ public class InjectContainerWorker implements ComponentClassTransformWorker
         this.cache = cache;
     }
 
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-        for (final TransformField field : transformation.matchFieldsWithAnnotation(InjectContainer.class))
+        for (final PlasticField field : plasticClass.getFieldsWithAnnotation(InjectContainer.class))
         {
-            transformField(model, field);
+            transformField(field);
         }
     }
 
-    private void transformField(MutableComponentModel model, TransformField field)
+    private void transformField(PlasticField field)
     {
         InjectContainer annotation = field.getAnnotation(InjectContainer.class);
 
         field.claim(annotation);
 
-        ComponentValueProvider<FieldValueConduit> provider = createFieldValueConduitProvider(field);
+        ComputedValue<FieldConduit<?>> provider = createFieldValueConduitProvider(field);
 
-        field.replaceAccess(provider);
+        field.setComputedConduit(provider);
     }
 
-    private ComponentValueProvider<FieldValueConduit> createFieldValueConduitProvider(TransformField field)
+    private ComputedValue<FieldConduit<?>> createFieldValueConduitProvider(PlasticField field)
     {
 
         final String fieldName = field.getName();
 
-        final String fieldTypeName = field.getType();
+        final String fieldTypeName = field.getTypeName();
 
-        return new ComponentValueProvider<FieldValueConduit>()
+        return new ComputedValue<FieldConduit<?>> ()
         {
-            public FieldValueConduit get(final ComponentResources resources)
+            public FieldConduit<?> get(InstanceContext context)
             {
                 final Class fieldType = cache.forName(fieldTypeName);
+                final ComponentResources resources = context.get(ComponentResources.class);
 
                 return new ReadOnlyFieldValueConduit(resources, fieldName)
                 {
-
-                    public Object get()
+                    public Object get(Object instance, InstanceContext context)
                     {
                         Component container = resources.getContainer();
 

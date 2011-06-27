@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,47 +14,54 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
-import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.ComponentValueProvider;
+import org.apache.tapestry5.plastic.*;
 import org.apache.tapestry5.services.Environment;
-import org.apache.tapestry5.services.TransformField;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 
 /**
  * Obtains a value from the {@link Environment} service based on the field type. This is triggered by the presence of
  * the {@link Environmental} annotation.
  */
 @SuppressWarnings("rawtypes")
-public class EnvironmentalWorker implements ComponentClassTransformWorker
+public class EnvironmentalWorker implements ComponentClassTransformWorker2
 {
     private final Environment environment;
 
     private final ComponentClassCache classCache;
 
+
     @SuppressWarnings("unchecked")
-    private final class EnvironmentalConduit extends ReadOnlyFieldValueConduit
+    private final class EnvironmentalConduit implements FieldConduit
     {
+        private final String componentClassName;
+
+        private final String fieldName;
+
         private final Class environmentalType;
 
         private final boolean required;
 
-        private EnvironmentalConduit(ComponentResources resources, String fieldName, final Class environmentalType,
+        private EnvironmentalConduit(String componentClassName, String fieldName, final Class environmentalType,
                 boolean required)
         {
-            super(resources, fieldName);
-
+            this.componentClassName = componentClassName;
+            this.fieldName = fieldName;
             this.environmentalType = environmentalType;
             this.required = required;
         }
 
-        public Object get()
+        public Object get(Object instance, InstanceContext context)
         {
             return required ? environment.peekRequired(environmentalType) : environment.peek(environmentalType);
+        }
+
+        public void set(Object instance, InstanceContext context, Object newValue)
+        {
+            throw new RuntimeException(String.format("Field %s.%s is read only.", componentClassName, fieldName));
         }
     }
 
@@ -65,15 +72,15 @@ public class EnvironmentalWorker implements ComponentClassTransformWorker
         this.classCache = classCache;
     }
 
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-        for (TransformField field : transformation.matchFieldsWithAnnotation(Environmental.class))
+        for (PlasticField field : plasticClass.getFieldsWithAnnotation(Environmental.class))
         {
-            transform(field);
+            transform(model.getComponentClassName(), field);
         }
     }
 
-    private void transform(TransformField field)
+    private void transform(final String componentClassName, PlasticField field)
     {
         Environmental annotation = field.getAnnotation(Environmental.class);
 
@@ -81,19 +88,25 @@ public class EnvironmentalWorker implements ComponentClassTransformWorker
 
         final String fieldName = field.getName();
 
-        final Class fieldType = classCache.forName(field.getType());
+        final Class fieldType = classCache.forName(field.getTypeName());
 
         final boolean required = annotation.value();
 
-        ComponentValueProvider<FieldValueConduit> provider = new ComponentValueProvider<FieldValueConduit>()
+        ComputedValue<FieldConduit<?>> provider = new ComputedValue<FieldConduit<?>>()
         {
-            public FieldValueConduit get(ComponentResources resources)
+            public FieldConduit<?> get(InstanceContext context)
             {
-                return new EnvironmentalConduit(resources, fieldName, fieldType, required);
+                return new EnvironmentalConduit(componentClassName, fieldName, fieldType, required);
+            }
+
+            public void set(Object instance, InstanceContext context, Object newValue)
+            {
+                throw new RuntimeException(
+                        String.format("Field %s of component %s is read only.", fieldName, componentClassName));
             }
         };
 
-        field.replaceAccess(provider);
+        field.setComputedConduit(provider);
     }
 
 }

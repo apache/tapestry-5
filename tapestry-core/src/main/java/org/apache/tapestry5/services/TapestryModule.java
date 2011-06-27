@@ -14,103 +14,24 @@
 
 package org.apache.tapestry5.services;
 
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.Block;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.EventContext;
-import org.apache.tapestry5.Field;
-import org.apache.tapestry5.FieldValidationSupport;
-import org.apache.tapestry5.FieldValidator;
-import org.apache.tapestry5.Link;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.MetaDataConstants;
-import org.apache.tapestry5.NullFieldStrategy;
-import org.apache.tapestry5.OptimizedSessionPersistedObject;
-import org.apache.tapestry5.PersistenceConstants;
-import org.apache.tapestry5.PropertyOverrides;
-import org.apache.tapestry5.RenderSupport;
-import org.apache.tapestry5.Renderable;
-import org.apache.tapestry5.SelectModel;
-import org.apache.tapestry5.StreamResponse;
-import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.TapestryConstants;
-import org.apache.tapestry5.Translator;
-import org.apache.tapestry5.ValidationDecorator;
-import org.apache.tapestry5.Validator;
-import org.apache.tapestry5.VersionUtils;
+import org.apache.tapestry5.*;
 import org.apache.tapestry5.ajax.MultiZoneUpdate;
-import org.apache.tapestry5.annotations.ActivationRequestParameter;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.annotations.ContentType;
-import org.apache.tapestry5.annotations.HeartbeatDeferred;
-import org.apache.tapestry5.annotations.Import;
-import org.apache.tapestry5.annotations.Meta;
-import org.apache.tapestry5.annotations.PageAttached;
-import org.apache.tapestry5.annotations.PageDetached;
-import org.apache.tapestry5.annotations.PageLoaded;
-import org.apache.tapestry5.annotations.PageReset;
-import org.apache.tapestry5.annotations.Path;
-import org.apache.tapestry5.annotations.Secure;
-import org.apache.tapestry5.annotations.Service;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.corelib.ClientValidation;
 import org.apache.tapestry5.grid.GridDataSource;
-import org.apache.tapestry5.internal.AssetConstants;
-import org.apache.tapestry5.internal.DefaultNullFieldStrategy;
-import org.apache.tapestry5.internal.DefaultValidationDecorator;
-import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.internal.InternalSymbols;
-import org.apache.tapestry5.internal.PropertyOverridesImpl;
-import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.internal.ZeroNullFieldStrategy;
+import org.apache.tapestry5.internal.*;
 import org.apache.tapestry5.internal.beaneditor.EnvironmentMessages;
 import org.apache.tapestry5.internal.beaneditor.MessagesConstraintGenerator;
 import org.apache.tapestry5.internal.beaneditor.PrimitiveFieldConstraintGenerator;
 import org.apache.tapestry5.internal.beaneditor.ValidateAnnotationConstraintGenerator;
-import org.apache.tapestry5.internal.bindings.AssetBindingFactory;
-import org.apache.tapestry5.internal.bindings.BlockBindingFactory;
-import org.apache.tapestry5.internal.bindings.ComponentBindingFactory;
-import org.apache.tapestry5.internal.bindings.ContextBindingFactory;
-import org.apache.tapestry5.internal.bindings.LiteralBindingFactory;
-import org.apache.tapestry5.internal.bindings.MessageBindingFactory;
-import org.apache.tapestry5.internal.bindings.NullFieldStrategyBindingFactory;
-import org.apache.tapestry5.internal.bindings.PropBindingFactory;
-import org.apache.tapestry5.internal.bindings.RenderVariableBindingFactory;
-import org.apache.tapestry5.internal.bindings.SymbolBindingFactory;
-import org.apache.tapestry5.internal.bindings.TranslateBindingFactory;
-import org.apache.tapestry5.internal.bindings.ValidateBindingFactory;
+import org.apache.tapestry5.internal.bindings.*;
 import org.apache.tapestry5.internal.dynamic.DynamicTemplateParserImpl;
 import org.apache.tapestry5.internal.grid.CollectionGridDataSource;
 import org.apache.tapestry5.internal.grid.NullDataSource;
 import org.apache.tapestry5.internal.gzip.GZipFilter;
-import org.apache.tapestry5.internal.renderers.AvailableValuesRenderer;
-import org.apache.tapestry5.internal.renderers.ComponentResourcesRenderer;
-import org.apache.tapestry5.internal.renderers.EventContextRenderer;
-import org.apache.tapestry5.internal.renderers.ListRenderer;
-import org.apache.tapestry5.internal.renderers.LocationRenderer;
-import org.apache.tapestry5.internal.renderers.ObjectArrayRenderer;
-import org.apache.tapestry5.internal.renderers.RequestRenderer;
+import org.apache.tapestry5.internal.renderers.*;
 import org.apache.tapestry5.internal.services.*;
 import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateFilter;
 import org.apache.tapestry5.internal.services.ajax.JavaScriptSupportImpl;
@@ -130,87 +51,17 @@ import org.apache.tapestry5.internal.services.meta.MetaAnnotationExtractor;
 import org.apache.tapestry5.internal.services.meta.MetaWorkerImpl;
 import org.apache.tapestry5.internal.services.templates.DefaultTemplateLocator;
 import org.apache.tapestry5.internal.services.templates.PageTemplateLocator;
-import org.apache.tapestry5.internal.transform.ActivationRequestParameterWorker;
-import org.apache.tapestry5.internal.transform.ApplicationStateWorker;
-import org.apache.tapestry5.internal.transform.BindParameterWorker;
-import org.apache.tapestry5.internal.transform.CCTWToCCTW2Coercion;
-import org.apache.tapestry5.internal.transform.CachedWorker;
-import org.apache.tapestry5.internal.transform.ComponentWorker;
-import org.apache.tapestry5.internal.transform.DiscardAfterWorker;
-import org.apache.tapestry5.internal.transform.EnvironmentalWorker;
-import org.apache.tapestry5.internal.transform.HeartbeatDeferredWorker;
-import org.apache.tapestry5.internal.transform.ImportWorker;
-import org.apache.tapestry5.internal.transform.InjectComponentWorker;
-import org.apache.tapestry5.internal.transform.InjectContainerWorker;
-import org.apache.tapestry5.internal.transform.InjectNamedWorker;
-import org.apache.tapestry5.internal.transform.InjectPageWorker;
-import org.apache.tapestry5.internal.transform.InjectServiceWorker;
-import org.apache.tapestry5.internal.transform.InjectWorker;
-import org.apache.tapestry5.internal.transform.InvokePostRenderCleanupOnResourcesWorker;
-import org.apache.tapestry5.internal.transform.LogWorker;
-import org.apache.tapestry5.internal.transform.MixinAfterWorker;
-import org.apache.tapestry5.internal.transform.MixinWorker;
-import org.apache.tapestry5.internal.transform.OnEventWorker;
-import org.apache.tapestry5.internal.transform.PageActivationContextWorker;
-import org.apache.tapestry5.internal.transform.PageLifecycleAnnotationWorker;
-import org.apache.tapestry5.internal.transform.PageResetAnnotationWorker;
-import org.apache.tapestry5.internal.transform.ParameterWorker;
-import org.apache.tapestry5.internal.transform.PersistWorker;
-import org.apache.tapestry5.internal.transform.PropertyWorker;
-import org.apache.tapestry5.internal.transform.RenderCommandWorker;
-import org.apache.tapestry5.internal.transform.RenderPhaseMethodWorker;
-import org.apache.tapestry5.internal.transform.RetainWorker;
-import org.apache.tapestry5.internal.transform.SessionAttributeWorker;
-import org.apache.tapestry5.internal.transform.SupportsInformalParametersWorker;
-import org.apache.tapestry5.internal.transform.UnclaimedFieldWorker;
+import org.apache.tapestry5.internal.transform.*;
 import org.apache.tapestry5.internal.translator.NumericTranslator;
 import org.apache.tapestry5.internal.translator.NumericTranslatorSupport;
 import org.apache.tapestry5.internal.translator.StringTranslator;
 import org.apache.tapestry5.internal.util.RenderableAsBlock;
 import org.apache.tapestry5.internal.util.StringRenderable;
 import org.apache.tapestry5.internal.validator.ValidatorMacroImpl;
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.Configuration;
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.Messages;
-import org.apache.tapestry5.ioc.MethodAdviceReceiver;
-import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.ObjectProvider;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.ScopeConstants;
-import org.apache.tapestry5.ioc.ServiceBinder;
-import org.apache.tapestry5.ioc.annotations.Autobuild;
-import org.apache.tapestry5.ioc.annotations.Contribute;
-import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.InjectService;
-import org.apache.tapestry5.ioc.annotations.Local;
-import org.apache.tapestry5.ioc.annotations.Marker;
-import org.apache.tapestry5.ioc.annotations.Match;
-import org.apache.tapestry5.ioc.annotations.Primary;
-import org.apache.tapestry5.ioc.annotations.Scope;
-import org.apache.tapestry5.ioc.annotations.SubModule;
-import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.annotations.*;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.Builtin;
-import org.apache.tapestry5.ioc.services.ChainBuilder;
-import org.apache.tapestry5.ioc.services.ClassFactory;
-import org.apache.tapestry5.ioc.services.Coercion;
-import org.apache.tapestry5.ioc.services.CoercionTuple;
-import org.apache.tapestry5.ioc.services.LazyAdvisor;
-import org.apache.tapestry5.ioc.services.MasterObjectProvider;
-import org.apache.tapestry5.ioc.services.PerThreadValue;
-import org.apache.tapestry5.ioc.services.PerthreadManager;
-import org.apache.tapestry5.ioc.services.PipelineBuilder;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
-import org.apache.tapestry5.ioc.services.PropertyAccess;
-import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
-import org.apache.tapestry5.ioc.services.ServiceOverride;
-import org.apache.tapestry5.ioc.services.StrategyBuilder;
-import org.apache.tapestry5.ioc.services.SymbolSource;
-import org.apache.tapestry5.ioc.services.ThreadLocale;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.ioc.services.*;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
@@ -224,8 +75,8 @@ import org.apache.tapestry5.services.ajax.MultiZoneUpdateEventResultProcessor;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
 import org.apache.tapestry5.services.assets.AssetsModule;
-import org.apache.tapestry5.services.dynamic.DynamicTemplateParser;
 import org.apache.tapestry5.services.dynamic.DynamicTemplate;
+import org.apache.tapestry5.services.dynamic.DynamicTemplateParser;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
@@ -242,16 +93,21 @@ import org.apache.tapestry5.services.pageload.PageLoadModule;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.util.StringToEnumCoercion;
-import org.apache.tapestry5.validator.Email;
-import org.apache.tapestry5.validator.Max;
-import org.apache.tapestry5.validator.MaxLength;
-import org.apache.tapestry5.validator.Min;
-import org.apache.tapestry5.validator.MinLength;
-import org.apache.tapestry5.validator.None;
-import org.apache.tapestry5.validator.Regexp;
-import org.apache.tapestry5.validator.Required;
-import org.apache.tapestry5.validator.ValidatorMacro;
+import org.apache.tapestry5.validator.*;
 import org.slf4j.Logger;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * The root module for Tapestry.
@@ -645,7 +501,9 @@ public final class TapestryModule
      * </ul>
      */
     @Contribute(ComponentClassTransformWorker2.class)
-    public static void provideTransformWorkers(OrderedConfiguration<ComponentClassTransformWorker2> configuration)
+    public static void provideTransformWorkers(
+            OrderedConfiguration<ComponentClassTransformWorker2> configuration,
+            ComponentClassResolver resolver)
     {
         configuration.add("Property", new PropertyWorker());
         configuration.addInstance("Import", ImportWorker.class, "after:SetupRender");
@@ -657,6 +515,17 @@ public final class TapestryModule
         configuration.addInstance("UnclaimedField", UnclaimedFieldWorker.class, "after:*");
 
         configuration.addInstance("OnEvent", OnEventWorker.class);
+
+        // These must come after Property, since they actually delete fields
+        // that may still have the annotation
+        configuration.addInstance("ApplicationState", ApplicationStateWorker.class, "after:Property");
+        configuration.addInstance("Environment", EnvironmentalWorker.class, "after:Property");
+
+        configuration.add("Component", new ComponentWorker(resolver));
+        configuration.add("Mixin", new MixinWorker(resolver));
+        configuration.addInstance("InjectPage", InjectPageWorker.class);
+        configuration.addInstance("InjectComponent", InjectComponentWorker.class);
+        configuration.addInstance("InjectContainer", InjectContainerWorker.class);
     }
 
     /**
@@ -725,14 +594,10 @@ public final class TapestryModule
         configuration.addInstance("InjectNamed", InjectNamedWorker.class);
 
         configuration.add("MixinAfter", new MixinAfterWorker());
-        configuration.add("Component", new ComponentWorker(resolver));
-        configuration.add("Mixin", new MixinWorker(resolver));
         configuration
                 .addInstance("ActivationRequestParameter", ActivationRequestParameterWorker.class, "after:OnEvent");
         configuration.add("SupportsInformalParameters", new SupportsInformalParametersWorker());
-        configuration.addInstance("InjectPage", InjectPageWorker.class);
-        configuration.addInstance("InjectContainer", InjectContainerWorker.class);
-        configuration.addInstance("InjectComponent", InjectComponentWorker.class);
+
         configuration.add("RenderCommand", new RenderCommandWorker());
 
         // Default values for parameters are often some form of injection, so
@@ -765,10 +630,6 @@ public final class TapestryModule
 
         configuration.add("InvokePostRenderCleanupOnResources", new InvokePostRenderCleanupOnResourcesWorker());
 
-        // These must come after Property, since they actually delete fields
-        // that may still have the annotation
-        configuration.addInstance("ApplicationState", ApplicationStateWorker.class, "after:Property");
-        configuration.addInstance("Environment", EnvironmentalWorker.class, "after:Property");
 
         configuration.addInstance("Log", LogWorker.class);
 
@@ -1470,8 +1331,8 @@ public final class TapestryModule
 
     /**
      * Analyzes properties to determine the data types, used to
-     * {@linkplain #contributeBeanBlockSource(org.apache.tapestry5.ioc.Configuration)} locale
-     * display and edit blocks} for properties. The default behaviors
+     * {@linkplain #provideDefaultBeanBlocks(org.apache.tapestry5.ioc.Configuration)} locale
+     * display and edit blocks for properties. The default behaviors
      * look for a {@link org.apache.tapestry5.beaneditor.DataType} annotation
      * before deriving the data type from the property type.
      */

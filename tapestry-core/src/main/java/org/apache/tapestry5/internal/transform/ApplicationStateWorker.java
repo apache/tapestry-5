@@ -14,23 +14,26 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import java.util.List;
-
 import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
-import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.plastic.FieldConduit;
+import org.apache.tapestry5.plastic.InstanceContext;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.services.ApplicationStateManager;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.TransformField;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
+
+import java.util.List;
 
 /**
- * Looks for the {@link ApplicationState} and {@link org.apache.tapestry5.annotations.SessionState} annotations and
+ * Looks for the {@link org.apache.tapestry5.annotations.SessionState} annotations and
  * converts read and write access on such fields into calls to the {@link ApplicationStateManager}.
  */
-public class ApplicationStateWorker implements ComponentClassTransformWorker
+public class ApplicationStateWorker implements ComponentClassTransformWorker2
 {
     private final ApplicationStateManager applicationStateManager;
 
@@ -43,31 +46,31 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
         this.componentClassCache = componentClassCache;
     }
 
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-        for (TransformField field : transformation.matchFieldsWithAnnotation(SessionState.class))
+        for (PlasticField field : plasticClass.getFieldsWithAnnotation(SessionState.class))
         {
             SessionState annotation = field.getAnnotation(SessionState.class);
 
-            transform(transformation, field, annotation.create());
+            transform(plasticClass, field, annotation.create());
 
             field.claim(annotation);
         }
     }
 
     @SuppressWarnings("unchecked")
-    private void transform(ClassTransformation transformation, TransformField field, final boolean create)
+    private void transform(PlasticClass transformation, PlasticField field, final boolean create)
     {
-        final Class fieldClass = componentClassCache.forName(field.getType());
+        final Class fieldClass = componentClassCache.forName(field.getTypeName());
 
-        field.replaceAccess(new FieldValueConduit()
+        field.setConduit(new FieldConduit()
         {
-            public void set(Object newValue)
+            public void set(Object instance, InstanceContext context, Object newValue)
             {
                 applicationStateManager.set(fieldClass, newValue);
             }
 
-            public Object get()
+            public Object get(Object instance, InstanceContext context)
             {
                 return create ? applicationStateManager.get(fieldClass) : applicationStateManager
                         .getIfExists(fieldClass);
@@ -76,25 +79,25 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
 
         final String expectedName = field.getName() + "Exists";
 
-        List<TransformField> fields = transformation.matchFields(new Predicate<TransformField>()
+        List<PlasticField> fields = F.flow(transformation.getAllFields()).filter(new Predicate<PlasticField>()
         {
-            public boolean accept(TransformField field)
+            public boolean accept(PlasticField field)
             {
-                return field.getType().equals("boolean") && field.getName().equalsIgnoreCase(expectedName);
+                return field.getTypeName().equals("boolean") && field.getName().equalsIgnoreCase(expectedName);
             }
-        });
+        }).toList();
 
-        for (TransformField existsField : fields)
+        for (PlasticField existsField : fields)
         {
             existsField.claim(this);
 
-            String className = transformation.getClassName();
+            final String className = transformation.getClassName();
 
-            String fieldName = existsField.getName();
+            final String fieldName = existsField.getName();
 
-            existsField.replaceAccess(new ReadOnlyFieldValueConduit(className, fieldName)
+            existsField.setConduit(new ReadOnlyFieldValueConduit(className, fieldName)
             {
-                public Object get()
+                public Object get(Object instance, InstanceContext context)
                 {
                     return applicationStateManager.exists(fieldClass);
                 }

@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,15 +15,16 @@
 package org.apache.tapestry5.internal.transform;
 
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.ioc.services.FieldValueConduit;
+import org.apache.tapestry5.plastic.FieldConduit;
+import org.apache.tapestry5.plastic.InstanceContext;
 
 /**
- * An implementation of {@link FieldValueConduit} for a read-only component field. Subclasses
- * provide an implementation of the {@link #get()} method.
- * 
+ * An implementation of {@link FieldConduit} for a read-only component field. Subclasses
+ * provide an implementation of the {@link #get(Object, org.apache.tapestry5.plastic.InstanceContext)} method.
+ *
  * @since 5.2.0
  */
-public abstract class ReadOnlyFieldValueConduit implements FieldValueConduit
+public abstract class ReadOnlyFieldValueConduit implements FieldConduit
 {
     private final String qualifiedFieldName;
 
@@ -42,7 +43,7 @@ public abstract class ReadOnlyFieldValueConduit implements FieldValueConduit
         this(resources.getComponentModel().getComponentClassName(), fieldName);
     }
 
-    public final void set(Object newValue)
+    public void set(Object instance, InstanceContext context, Object newValue)
     {
         throw new RuntimeException(String.format("Field %s is read only.", qualifiedFieldName));
     }

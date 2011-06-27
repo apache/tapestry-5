@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,13 +18,11 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Mixin;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.plastic.*;
 import org.apache.tapestry5.services.ComponentClassResolver;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.ComponentValueProvider;
-import org.apache.tapestry5.services.TransformField;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 
 /**
  * Supports the {@link org.apache.tapestry5.annotations.Mixin} annotation, which allows a mixin to
@@ -33,7 +31,7 @@ import org.apache.tapestry5.services.TransformField;
  * and contain a
  * reference to the mixin instance.
  */
-public class MixinWorker implements ComponentClassTransformWorker
+public class MixinWorker implements ComponentClassTransformWorker2
 {
     private final ComponentClassResolver resolver;
 
@@ -42,15 +40,15 @@ public class MixinWorker implements ComponentClassTransformWorker
         this.resolver = resolver;
     }
 
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-        for (TransformField field : transformation.matchFieldsWithAnnotation(Mixin.class))
+        for (PlasticField field : plasticClass.getFieldsWithAnnotation(Mixin.class))
         {
             replaceFieldWithMixin(model, field);
         }
     }
 
-    private void replaceFieldWithMixin(MutableComponentModel model, TransformField field)
+    private void replaceFieldWithMixin(MutableComponentModel model, PlasticField field)
     {
         Mixin annotation = field.getAnnotation(Mixin.class);
 
@@ -60,7 +58,7 @@ public class MixinWorker implements ComponentClassTransformWorker
 
         String[] order = annotation.order();
 
-        String fieldType = field.getType();
+        String fieldType = field.getTypeName();
 
         String mixinClassName = InternalUtils.isBlank(mixinType) ? fieldType : resolver
                 .resolveMixinTypeToClassName(mixinType);
@@ -70,25 +68,26 @@ public class MixinWorker implements ComponentClassTransformWorker
         replaceFieldAccessWithMixin(field, mixinClassName);
     }
 
-    private void replaceFieldAccessWithMixin(TransformField field, String mixinClassName)
+    private void replaceFieldAccessWithMixin(PlasticField field, String mixinClassName)
     {
-        ComponentValueProvider<FieldValueConduit> provider = createMixinFieldProvider(field.getName(), mixinClassName);
+        ComputedValue<FieldConduit<?>> provider = createMixinFieldProvider(field.getName(), mixinClassName);
 
-        field.replaceAccess(provider);
+        field.setComputedConduit(provider);
     }
 
-    private ComponentValueProvider<FieldValueConduit> createMixinFieldProvider(final String fieldName,
+    private ComputedValue<FieldConduit<?>> createMixinFieldProvider(final String fieldName,
             final String mixinClassName)
     {
-        return new ComponentValueProvider<FieldValueConduit>()
+        return new ComputedValue<FieldConduit<?>>()
         {
-            public FieldValueConduit get(ComponentResources resources)
+            public FieldConduit get(InstanceContext context)
             {
+                ComponentResources resources = context.get(ComponentResources.class);
                 final InternalComponentResources icr = (InternalComponentResources) resources;
 
                 return new ReadOnlyFieldValueConduit(resources, fieldName)
                 {
-                    public Object get()
+                    public Object get(Object instance, InstanceContext context)
                     {
                         return icr.getMixinByClassName(mixinClassName);
                     }

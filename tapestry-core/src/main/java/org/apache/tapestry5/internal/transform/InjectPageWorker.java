@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,22 +17,20 @@ package org.apache.tapestry5.internal.transform;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.plastic.*;
 import org.apache.tapestry5.runtime.PageLifecycleAdapter;
-import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.ComponentClassResolver;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.ComponentSource;
-import org.apache.tapestry5.services.ComponentValueProvider;
-import org.apache.tapestry5.services.TransformField;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 
 /**
  * Peforms transformations that allow pages to be injected into components.
  * 
  * @see org.apache.tapestry5.annotations.InjectPage
  */
-public class InjectPageWorker implements ComponentClassTransformWorker
+public class InjectPageWorker implements ComponentClassTransformWorker2
 {
     private final class InjectedPageConduit extends ReadOnlyFieldValueConduit
     {
@@ -57,7 +55,7 @@ public class InjectPageWorker implements ComponentClassTransformWorker
             });
         }
 
-        public Object get()
+        public Object get(Object instance, InstanceContext context)
         {
             if (page == null)
                 page = componentSource.getPage(injectedPageName);
@@ -76,15 +74,15 @@ public class InjectPageWorker implements ComponentClassTransformWorker
         this.resolver = resolver;
     }
 
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-        for (TransformField field : transformation.matchFieldsWithAnnotation(InjectPage.class))
+        for (PlasticField field : plasticClass.getFieldsWithAnnotation(InjectPage.class))
         {
             addInjectedPage(field);
         }
     }
 
-    private void addInjectedPage(TransformField field)
+    private void addInjectedPage(PlasticField field)
     {
         InjectPage annotation = field.getAnnotation(InjectPage.class);
 
@@ -95,16 +93,17 @@ public class InjectPageWorker implements ComponentClassTransformWorker
         final String fieldName = field.getName();
 
         final String injectedPageName = InternalUtils.isBlank(pageName) ? resolver
-                .resolvePageClassNameToPageName(field.getType()) : pageName;
+                .resolvePageClassNameToPageName(field.getTypeName()) : pageName;
 
-        ComponentValueProvider<FieldValueConduit> provider = new ComponentValueProvider<FieldValueConduit>()
+        ComputedValue<FieldConduit<?>> provider = new ComputedValue<FieldConduit<?>>()
         {
-            public FieldValueConduit get(ComponentResources resources)
+            public FieldConduit<?> get(InstanceContext context)
             {
+                ComponentResources resources = context.get(ComponentResources.class);
                 return new InjectedPageConduit(resources, fieldName, injectedPageName);
             }
         };
 
-        field.replaceAccess(provider);
+        field.setComputedConduit(provider);
     }
 }
