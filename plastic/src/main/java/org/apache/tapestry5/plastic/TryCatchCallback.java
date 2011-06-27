@@ -15,7 +15,7 @@
 package org.apache.tapestry5.plastic;
 
 /**
- * A callback used with {@link InstructionBuilder#startTryCatch(InstructionBuilderCallback, TryCatchCallback)}.
+ * A callback used with {@link InstructionBuilder#startTryCatch(TryCatchCallback)}.
  */
 public interface TryCatchCallback
 {

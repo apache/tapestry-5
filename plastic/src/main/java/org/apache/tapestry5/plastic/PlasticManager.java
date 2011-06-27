@@ -37,7 +37,7 @@ public class PlasticManager implements PlasticClassListenerHub
     /**
      * A builder object for configuring the PlasticManager before instantiating it. Assumes a no-op
      * {@link PlasticManagerDelegate} and an empty set of controlled packages, which is appropriate
-     * when simply {@linkplain PlasticManager#createProxy(Class, PlasticClassTransformer) creating proxy objects).
+     * when simply {@linkplain PlasticManager#createProxy(Class, PlasticClassTransformer) creating proxy objects}.
      * The builder object is internally mutable and uses a fluid API (each method returns the same instance).
      */
     public static class PlasticManagerBuilder extends Lockable

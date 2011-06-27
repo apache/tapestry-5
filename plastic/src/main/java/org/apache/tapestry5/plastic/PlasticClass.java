@@ -21,7 +21,7 @@ import java.util.Set;
 
 /**
  * The representation of a class while it is being instrumented and transformed. PlasticClass allows
- * for an imperative style of development: the PlastiClass is provided to other objects; they can query it
+ * for an imperative style of development: the PlasticClass is provided to other objects; they can query it
  * for relevant fields or methods, and invoke methods that modify the class in various ways. Ultimately, the
  * end result is a {@link ClassInstantiator} used to create instances of the fully instrumented and transformed class.
  * <p>

@@ -17,14 +17,12 @@ package org.apache.tapestry5.plastic;
 /**
  * Allows a portion of a method to be marked so that exception and finally handlers can be provided.
  * 
- * @see InstructionBuilder#startTryCatch(InstructionBuilderCallback, TryCatchCallback)
+ * @see InstructionBuilder#startTryCatch(TryCatchCallback)
  */
 public interface TryCatchBlock
 {
     /**
      * Invoked first, to generate the code in which exceptions may be caught.
-     * 
-     * @param callback
      */
     void addTry(InstructionBuilderCallback callback);
 
@@ -45,7 +43,7 @@ public interface TryCatchBlock
     void addCatch(String exceptionClassName, InstructionBuilderCallback callback);
 
     /**
-     * As with {@link #addCatch(String, org.jplastic.core.InstructionBuilder.Callback))}, but the exception caught is
+     * As with {@link #addCatch(String, InstructionBuilderCallback)}, but the exception caught is
      * null, which acts as a finally block in the Java language. This must be called last (after
      * {@link #addTry(InstructionBuilderCallback)} and any calls to
      * {@link #addCatch(String, InstructionBuilderCallback)}.

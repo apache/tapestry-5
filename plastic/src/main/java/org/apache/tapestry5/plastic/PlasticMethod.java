@@ -20,7 +20,7 @@ import java.util.List;
  * A method of a {@linkplain PlasticClass transformed class}.
  * <p>
  * No methods of this object should be invoked after the class transformation is
- * {@linkplain PlasticClass#createInstantiator() completed}.
+ * {@linkplain PlasticClassTransformation#createInstantiator() completed}.
  */
 public interface PlasticMethod extends AnnotationAccess
 {

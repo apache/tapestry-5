@@ -15,9 +15,9 @@
 package org.apache.tapestry5;
 
 /**
- * Callback interface for a {@linkplain org.apache.tapestry5.runtime.Event render phase event) or
+ * Callback interface for a {@linkplain org.apache.tapestry5.runtime.Event render phase event} or
  * 
- * @link org.apache.tapestry5.runtime.ComponentEvent}, notified when a non-null value is returned from some event
+ * {@link org.apache.tapestry5.runtime.ComponentEvent}, notified when a non-null value is returned from some event
  *       handler method.
  */
 public interface ComponentEventCallback<T>
