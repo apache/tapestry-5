@@ -36,7 +36,9 @@ public class IOCSymbols
      * The default is 100.
      * 
      * @since 5.3
-     * @see http://www.bigsoft.co.uk/blog/index.php/2009/11/27/rules-of-a-threadpoolexecutor-pool-size
+     * @see <a href="http://www.bigsoft.co.uk/blog/index.php/2009/11/27/rules-of-a-threadpoolexecutor-pool-size">
+     *     Rules of a ThreadPoolExecutor pool size
+     *     </a>
      */
     public static final String THREAD_POOL_QUEUE_SIZE = "tapestry.thread-pool.queue-size";
 
