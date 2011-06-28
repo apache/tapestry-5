@@ -50,7 +50,8 @@ public interface ComponentEventLinkTransformer
      * query parameter or cookie) and setting the locale for the request.
      * <p>
      * This method will be invoked from the {@link ComponentEventDispatcher} and a non-null value returned from this
-     * method will prevent the default {@link ComponentEventLinkEncoder#decodeComponentEventRequest(Request)} method
+     * method will prevent the default
+     * {@link org.apache.tapestry5.services.ComponentEventLinkEncoder#decodeComponentEventRequest(Request)} method
      * from being invoked.
      * 
      * @return decoded parameters, or null to proceed normally
