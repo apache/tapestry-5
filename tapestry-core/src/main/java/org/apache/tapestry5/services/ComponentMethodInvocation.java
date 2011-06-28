@@ -15,10 +15,6 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.ioc.Invocation;
-import org.apache.tapestry5.plastic.MethodAdvice;
-import org.apache.tapestry5.plastic.MethodInvocation;
-import org.apache.tapestry5.plastic.PlasticClass;
-import org.apache.tapestry5.plastic.PlasticMethod;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.ComponentResourcesAware;
 
@@ -28,8 +24,12 @@ import org.apache.tapestry5.runtime.ComponentResourcesAware;
  * the {@link org.apache.tapestry5.ComponentResources} of the component for which a method is being advised.
  * 
  * @deprecated Deprecated in 5.3
- * @see {@link PlasticClass}, {@link PlasticMethod}, {@link MethodAdvice}, {@link MethodInvocation}
+ * @see org.apache.tapestry5.plastic.PlasticClass
+ * @see org.apache.tapestry5.plastic.PlasticMethod
+ * @see org.apache.tapestry5.plastic.MethodAdvice
+ * @see org.apache.tapestry5.plastic.MethodInvocation
  */
+@SuppressWarnings({"deprecation"})
 public interface ComponentMethodInvocation extends Invocation, ComponentResourcesAware
 {
     /**

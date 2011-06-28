@@ -15,8 +15,6 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.plastic.ComputedValue;
-import org.apache.tapestry5.plastic.PlasticField;
 
 /**
  * An object used to provide a value of a specific type to a component (represented by an
@@ -28,8 +26,10 @@ import org.apache.tapestry5.plastic.PlasticField;
  *            type of object provided
  * @since 5.2.0
  * @deprecated Deprecated in 5.3.0, using Plastic equivalents
- * @see {@link PlasticField}, {@link ComputedValue}
+ * @see org.apache.tapestry5.plastic.PlasticField
+ * @see org.apache.tapestry5.plastic.ComputedValue
  */
+@SuppressWarnings("deprecation")
 public interface ComponentValueProvider<T>
 {
     /**
