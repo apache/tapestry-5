@@ -97,7 +97,7 @@ public interface ClassFactory
      *            type of proxy
      * @param proxyInterface
      *            proxy interface class
-     * @parame delegateCreator
+     * @param delegateCreator
      *         creates the delegate
      * @param description
      *            used for the toString() method
@@ -115,9 +115,9 @@ public interface ClassFactory
      *            type of proxy
      * @param proxyInterface
      *            proxy interface class
-     * @parame delegateClass
+     * @param delegateClass
      *         delegate class
-     * @parame delegateCreator
+     * @param delegateCreator
      *         creates the delegate
      * @param description
      *            used for the toString() method
