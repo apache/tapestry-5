@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -134,11 +134,6 @@ public class LinkSourceImpl implements LinkSource, LinkCreationHub
         assert listener != null;
 
         addListener(TapestryInternalUtils.toLinkCreationListener2(listener));
-    }
-
-    public void removeListener(LinkCreationListener listener)
-    {
-        throw new UnsupportedOperationException("Removing listeners from LinkSource is not longer supported.");
     }
 
     public void addListener(LinkCreationListener2 listener)

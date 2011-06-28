@@ -100,7 +100,7 @@ public class LinkSourceImplTest extends InternalBaseTestCase
         train_collectPageActivationContext(collector, pageName, 3);
 
         EventContext pageActivationContext = new ArrayEventContext(typeCoercer, 3);
-        PageRenderRequestParameters parameters = new PageRenderRequestParameters(pageName, pageActivationContext);
+        PageRenderRequestParameters parameters = new PageRenderRequestParameters(pageName, pageActivationContext, false);
 
         expect(linkEncoder.createPageRenderLink(parameters)).andReturn(link);
 
@@ -121,7 +121,7 @@ public class LinkSourceImplTest extends InternalBaseTestCase
     private void testPageLinkCreation(String pageName, boolean overrideContext, Object... context)
     {
         PageActivationContextCollector collector = mockPageActivationContextCollector();
-        LinkCreationListener listener = mockLinkCreationListener();
+        LinkCreationListener2 listener = mockLinkCreationListener2();
         ComponentEventLinkEncoder linkEncoder = mockComponentEventLinkEncoder();
         Link link = mockLink();
         ComponentClassResolver resolver = mockComponentClassResolver();
@@ -143,7 +143,7 @@ public class LinkSourceImplTest extends InternalBaseTestCase
 
         expect(linkEncoder.createPageRenderLink(parameters)).andReturn(link);
 
-        listener.createdPageRenderLink(link);
+        listener.createdPageRenderLink(link, parameters);
 
         replay();
 
@@ -202,11 +202,6 @@ public class LinkSourceImplTest extends InternalBaseTestCase
         assertSame(returnedLink, link);
 
         verify();
-    }
-
-    private LinkCreationListener2 mockLinkCreationListener2()
-    {
-        return newMock(LinkCreationListener2.class);
     }
 
     protected final ComponentEventLinkEncoder mockComponentEventLinkEncoder()
@@ -276,7 +271,7 @@ public class LinkSourceImplTest extends InternalBaseTestCase
         Page primaryPage = mockPage();
         PageRenderQueue queue = mockPageRenderQueue();
         PageActivationContextCollector collector = mockPageActivationContextCollector();
-        LinkCreationListener listener = mockLinkCreationListener();
+        LinkCreationListener2 listener = mockLinkCreationListener2();
         ComponentEventLinkEncoder linkEncoder = mockComponentEventLinkEncoder();
         Link link = mockLink();
 
@@ -295,7 +290,7 @@ public class LinkSourceImplTest extends InternalBaseTestCase
 
         expect(linkEncoder.createComponentEventLink(parameters, forForm)).andReturn(link);
 
-        listener.createdComponentEventLink(link);
+        listener.createdComponentEventLink(link, parameters);
 
         replay();
 

@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import org.apache.tapestry5.services.LinkCreationListener2;
 /**
  * A source for {@link org.apache.tapestry5.Link} objects.
  * 
- * @see org.apache.tapestry5.services.LinkCreationListener
+ * @see org.apache.tapestry5.services.LinkCreationListener2
  * @since 5.1.0.0
  */
 @UsesOrderedConfiguration(LinkCreationListener2.class)
@@ -34,7 +34,9 @@ public interface LinkSource
      * request (that is, bound to the current request's session, if any).
      * 
      * @param page
+     *            the page holding the component
      * @param nestedId
+     *            the component's qualified id (a sequence of simple ids, separated by dots).
      * @param eventType
      *            the type of event to trigger
      * @param forForm
@@ -67,7 +69,7 @@ public interface LinkSource
     Link createPageRenderLink(String pageName, boolean override, Object... pageActivationContext);
 
     /**
-     * Returns the hub, used to register and de-register {@link org.apache.tapestry5.services.LinkCreationListener}s.
+     * Returns the hub, used to register and de-register {@link org.apache.tapestry5.services.LinkCreationListener2}s.
      * 
      * @return the hub
      */

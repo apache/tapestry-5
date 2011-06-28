@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,9 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Link;
-import org.apache.tapestry5.services.LinkCreationListener;
-import org.apache.tapestry5.services.PersistentFieldChange;
-import org.apache.tapestry5.services.PersistentFieldStrategy;
+import org.apache.tapestry5.services.*;
 
 import java.util.Collection;
 
@@ -26,7 +24,7 @@ import java.util.Collection;
  * ClientPersistentFieldStorage}. This division of layer allows this service to be a true singleton, and a listener to
  * the {@link LinkSource}, and allow per-request state to be isolated inside the other service.
  */
-public class ClientPersistentFieldStrategy implements PersistentFieldStrategy, LinkCreationListener
+public class ClientPersistentFieldStrategy implements PersistentFieldStrategy, LinkCreationListener2
 {
     private final ClientPersistentFieldStorage storage;
 
@@ -45,12 +43,12 @@ public class ClientPersistentFieldStrategy implements PersistentFieldStrategy, L
         storage.postChange(pageName, componentId, fieldName, newValue);
     }
 
-    public void createdComponentEventLink(Link link)
+    public void createdComponentEventLink(Link link, ComponentEventRequestParameters parameters)
     {
         storage.updateLink(link);
     }
 
-    public void createdPageRenderLink(Link link)
+    public void createdPageRenderLink(Link link, PageRenderRequestParameters parameters)
     {
         storage.updateLink(link);
     }
