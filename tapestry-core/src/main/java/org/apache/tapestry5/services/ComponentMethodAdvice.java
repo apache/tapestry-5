@@ -14,10 +14,6 @@
 
 package org.apache.tapestry5.services;
 
-import org.apache.tapestry5.plastic.MethodAdvice;
-import org.apache.tapestry5.plastic.PlasticClass;
-import org.apache.tapestry5.plastic.PlasticMethod;
-
 /**
  * An object that receives control around an "advised" method of a component. The advise can query or even replace
  * method parameters. After invoking {@link org.apache.tapestry5.services.ComponentMethodInvocation#proceed()}, the
@@ -26,8 +22,11 @@ import org.apache.tapestry5.plastic.PlasticMethod;
  * @see TransformMethod#addAdvice(ComponentMethodAdvice)
  * @see ComponentInstanceOperation
  * @deprecated Deprecated in 5.3
- * @see {@link PlasticClass}, {@link PlasticMethod}, {@link MethodAdvice}
+ * @see org.apache.tapestry5.plastic.PlasticClass
+ * @see org.apache.tapestry5.plastic.PlasticMethod
+ * @see org.apache.tapestry5.plastic.MethodAdvice
  */
+@SuppressWarnings({"deprecation"})
 public interface ComponentMethodAdvice
 {
     void advise(ComponentMethodInvocation invocation);
