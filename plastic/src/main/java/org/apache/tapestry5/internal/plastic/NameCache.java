@@ -40,7 +40,7 @@ public class NameCache
         protected String convert(Class input)
         {
             return toInternalName(input.getName());
-        };
+        }
     };
 
     private final Cache<MethodDescription, String> md2desc = new Cache<MethodDescription, String>()
@@ -67,7 +67,7 @@ public class NameCache
         protected String convert(Class type)
         {
             return PlasticUtils.toTypeName(type);
-        };
+        }
     };
 
     public String toInternalName(String className)

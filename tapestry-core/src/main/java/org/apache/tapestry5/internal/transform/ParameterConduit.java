@@ -50,7 +50,7 @@ public interface ParameterConduit extends FieldValueConduit
     /**
      * Determines if the parameter is actually bound.
      * 
-     * @return
+     * @return true if bound
      */
     boolean isBound();
 

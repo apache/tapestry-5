@@ -1,4 +1,4 @@
-// Copyright 2008, 2010 The Apache Software Foundation
+// Copyright 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.ClassFabUtils;
-import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.ComponentLayer;
 import org.apache.tapestry5.services.InvalidationListener;
@@ -27,14 +27,14 @@ public class ComponentClassCacheImpl implements ComponentClassCache, Invalidatio
 {
     private final Map<String, Class> cache = CollectionFactory.newConcurrentMap();
 
-    private final ClassFactory classFactory;
+    private final PlasticProxyFactory plasticFactory;
 
     private final TypeCoercer typeCoercer;
 
     public ComponentClassCacheImpl(@ComponentLayer
-    ClassFactory classFactory, TypeCoercer typeCoercer)
+    PlasticProxyFactory plasticFactory, TypeCoercer typeCoercer)
     {
-        this.classFactory = classFactory;
+        this.plasticFactory = plasticFactory;
         this.typeCoercer = typeCoercer;
     }
 
@@ -72,21 +72,10 @@ public class ComponentClassCacheImpl implements ComponentClassCache, Invalidatio
 
     private Class lookupClassForType(String className)
     {
-        if (className.equals("void"))
-            return void.class;
-
-        if (ClassFabUtils.isPrimitiveType(className))
-            return ClassFabUtils.getPrimitiveType(className);
-
-        // This step is necessary to handle primitives arrays.
-
-        String jvmName = ClassFabUtils.toJVMBinaryName(className);
-
-        ClassLoader componentLoader = classFactory.getClassLoader();
-
+        ClassLoader componentLoader = plasticFactory.getClassLoader();
         try
         {
-            return Class.forName(jvmName, true, componentLoader);
+            return PlasticInternalUtils.toClass(componentLoader, className);
         }
         catch (ClassNotFoundException ex)
         {

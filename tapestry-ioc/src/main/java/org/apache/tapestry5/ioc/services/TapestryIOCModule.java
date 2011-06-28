@@ -349,7 +349,7 @@ public final class TapestryIOCModule
         {
             public Boolean coerce(Long input)
             {
-                return input.longValue() != 0;
+                return !input.equals(0L);
             }
         });
 
@@ -537,7 +537,7 @@ public final class TapestryIOCModule
         if (!threadPoolEnabled)
             return new NonParallelExecutor();
 
-        LinkedBlockingQueue workQueue = new LinkedBlockingQueue(queueSize);
+        LinkedBlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<Runnable>(queueSize);
 
         final ThreadPoolExecutor executorService = new ThreadPoolExecutor(coreSize, maxSize, keepAliveMillis,
                 TimeUnit.MILLISECONDS, workQueue);

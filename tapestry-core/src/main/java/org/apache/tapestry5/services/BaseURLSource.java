@@ -32,7 +32,7 @@ import org.apache.tapestry5.ioc.services.ServiceOverride;
  * context to be available. If you contribute specific values for the specified SymbolConstants, it's safe to use 
  * the default implementation of this service outside of request context, for example in a batch job. For 
  * {@link org.apache.tapestry5.SymbolConstants#HOSTNAME}, a value starting with a dollar sign ($) will be resolved 
- * using {@link java.langSystem#getEnv()} - contributing "$HOSTNAME" for {@link org.apache.tapestry5.SymbolConstants#HOSTNAME}
+ * using {@link java.lang.System#getenv()} - contributing "$HOSTNAME" for {@link org.apache.tapestry5.SymbolConstants#HOSTNAME}
  * is the most sensible choice for a dynamic value that doesn't use 
  * {@link org.apache.tapestry5.services.Request#getServerName()}.
  */

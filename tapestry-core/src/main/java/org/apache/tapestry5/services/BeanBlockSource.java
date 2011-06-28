@@ -30,7 +30,7 @@ import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
  * org.apache.tapestry5.services.BeanBlockOverrideSource} service allows these to be overridden.
  *
  * @see org.apache.tapestry5.services.DataTypeAnalyzer
- * @see org.apache.tapestry5.services.TapestryModule#contributeBeanBlockSource(org.apache.tapestry5.ioc.Configuration)
+ * @see org.apache.tapestry5.services.TapestryModule#provideDefaultBeanBlocks(org.apache.tapestry5.ioc.Configuration)
  */
 @UsesConfiguration(BeanBlockContribution.class)
 public interface BeanBlockSource

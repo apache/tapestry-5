@@ -33,7 +33,7 @@ public class BeanBlockContribution
 
     /**
      * @deprecated Use {@link DisplayBlockContribution#DisplayBlockContribution(String, String, String)} or
-     *             {@link EditBlockContribution#EditorBlockContribution(String, String, String)} instead. To be
+     *             {@link EditBlockContribution#EditBlockContribution(String, String, String)} instead. To be
      *             removed after Tapestry 5.2.
      */
     public BeanBlockContribution(String dataType, String pageName, String blockId, boolean edit)

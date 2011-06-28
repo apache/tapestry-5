@@ -14,10 +14,10 @@
 
 package org.apache.tapestry5.plastic;
 
+import org.apache.tapestry5.internal.plastic.PrimitiveType;
+
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicLong;
-
-import org.apache.tapestry5.internal.plastic.PrimitiveType;
 
 /**
  * Utilities for user code making use of Plastic.

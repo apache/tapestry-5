@@ -237,8 +237,8 @@ public class PlasticInternalUtils
      * Strips out leading and trailing underscores, leaving the real property name.
      * In addition, "m_foo" is converted to "foo".
      * 
-     * @param fieldName
-     * @return
+     * @param fieldName to convert
+     * @return the property name
      */
     public static String toPropertyName(String fieldName)
     {

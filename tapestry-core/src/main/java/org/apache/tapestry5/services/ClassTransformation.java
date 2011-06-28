@@ -54,8 +54,8 @@ import org.slf4j.Logger;
  * The majority of methods concern the <em>declared</em> members (field and methods) of a specific class, rather than
  * any fields or methods inherited from a base class.
  * 
- * @see org.apache.tapestry5.services.TapestryModule#contributeComponentClassTransformWorker(org.apache.tapestry5.ioc.OrderedConfiguration,
- *      org.apache.tapestry5.ioc.ObjectLocator, InjectionProvider, ComponentClassResolver)
+ * @see org.apache.tapestry5.services.TapestryModule#provideOldStyleCassTransformWorkers(
+ * org.apache.tapestry5.ioc.OrderedConfiguration, org.apache.tapestry5.services.meta.MetaWorker, ComponentClassResolver)
  * @deprecated In 5.3
  * @see {@link PlasticClass}
  */
@@ -153,7 +153,6 @@ public interface ClassTransformation extends AnnotationProvider
     /**
      * Returns true if the indicated name is a private instance field.
      * 
-     * @param fieldName
      * @return true if field exists
      */
     boolean isField(String fieldName);
@@ -199,7 +198,6 @@ public interface ClassTransformation extends AnnotationProvider
      * will be passed the {@link ComponentResources} and will return the final value; thus
      * each component <em>instance</em> will receive a matching unique instance via the provider.
      * 
-     * @param <T>
      * @param type
      *            type of value to inject
      * @param suggestedName

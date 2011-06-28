@@ -15,7 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 /**
- * Identifies type of {@link XMLToken}.
+ * Identifies type of {@link org.apache.tapestry5.internal.services.XMLToken}.
  * 
  * @since 5.2.0
  */

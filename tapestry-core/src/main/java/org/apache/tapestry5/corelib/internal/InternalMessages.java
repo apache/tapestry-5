@@ -16,7 +16,7 @@ package org.apache.tapestry5.corelib.internal;
 
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
-import org.apache.tapestry5.ioc.services.ClassFabUtils;
+import org.apache.tapestry5.plastic.PlasticUtils;
 
 public final class InternalMessages
 {
@@ -34,8 +34,8 @@ public final class InternalMessages
 
     public static String failureInstantiatingObject(Class objectType, String componentId, Throwable cause)
     {
-        return MESSAGES.format("failure-instantitating-object", ClassFabUtils
-                .toJavaClassName(objectType), componentId, cause);
+        return MESSAGES.format("failure-instantitating-object",
+                PlasticUtils.toTypeName(objectType), componentId, cause);
     }
 
     public static String conflictingEncodingType(String existing, String conflicting)

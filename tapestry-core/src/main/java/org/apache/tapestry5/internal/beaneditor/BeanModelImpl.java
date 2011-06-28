@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
 
 package org.apache.tapestry5.internal.beaneditor;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.tapestry5.PropertyConduit;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.PropertyModel;
@@ -26,11 +23,14 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
+import org.apache.tapestry5.plastic.PlasticUtils;
 import org.apache.tapestry5.services.PropertyConduitSource;
+
+import java.util.List;
+import java.util.Map;
 
 public class BeanModelImpl<T> implements BeanModel<T>
 {
@@ -256,7 +256,7 @@ public class BeanModelImpl<T> implements BeanModel<T>
     public String toString()
     {
         StringBuilder builder = new StringBuilder("BeanModel[");
-        builder.append(ClassFabUtils.toJavaClassName(beanType));
+        builder.append(PlasticUtils.toTypeName(beanType));
 
         builder.append(" properties:");
         String sep = "";
