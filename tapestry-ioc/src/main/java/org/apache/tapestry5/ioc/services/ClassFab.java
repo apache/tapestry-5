@@ -69,7 +69,6 @@ public interface ClassFab
      *            defines the name, return type, parameters and exceptions thrown
      * @param body
      *            The body of the method.
-     * @return a method fabricator, used to add catch handlers.
      * @throws RuntimeException
      *             if a method with that signature has already been added, or if there is a Javassist
      *             compilation error
