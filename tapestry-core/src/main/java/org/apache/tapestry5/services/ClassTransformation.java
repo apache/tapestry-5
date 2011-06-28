@@ -57,7 +57,7 @@ import org.slf4j.Logger;
  * @see org.apache.tapestry5.services.TapestryModule#provideOldStyleCassTransformWorkers(
  * org.apache.tapestry5.ioc.OrderedConfiguration, org.apache.tapestry5.services.meta.MetaWorker, ComponentClassResolver)
  * @deprecated In 5.3
- * @see {@link PlasticClass}
+ * @see PlasticClass
  */
 public interface ClassTransformation extends AnnotationProvider
 {
@@ -132,7 +132,7 @@ public interface ClassTransformation extends AnnotationProvider
     /**
      * Locates a declared field by its field name. The field must exist.
      * 
-     * @param name
+     * @param fieldName
      *            of declared field
      * @return field information
      * @throws RuntimeException
