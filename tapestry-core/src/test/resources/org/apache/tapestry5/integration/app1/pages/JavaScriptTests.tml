@@ -8,6 +8,8 @@
 
   <div id="tests">
 
+    <h2>Arrays</h2>
+
     <div>
       <p> Checks for T5.arrays.isEmpty()
         </p>
@@ -137,6 +139,76 @@
         [1, 3, 3, 3, 5, 5, 5, 5, 5])            
   </pre>
     </div>
+
+    <div>
+      <p>filter() a list.</p>
+      <pre>
+        assertEqual(filter(function(value) {
+        return value % 2 === 0;
+        }, [1, 2, 3, 4, 5, 6, 7, 8, 9]), [2, 4, 6, 8])
+    </pre>
+    </div>
+
+    <div>
+      <p>
+        Check that filter passes an optional index argument.
+    </p>
+      <pre>
+        assertEqual(filter(function(value, index) {
+        return value % 2 === 0 || index % 3 === 0;
+        }, [1, 2, 3, 4, 5, 6, 7,
+        8, 9]),
+        [1, 2, 4, 6, 7, 8])
+    </pre>
+    </div>
+
+    <div>
+      <p>remove() elements from a list.</p>
+      <pre>
+        assertEqual(remove(function(value, index) {
+        return value % 2 !== 0 &amp;&amp; index % 3 !== 0;
+        }, [1, 2, 3,
+        4,
+        5, 6, 7, 8, 9]),
+        [1, 2, 4, 6, 7, 8])
+        </pre>
+    </div>
+
+    <div>
+      <p>first() on empty list returns null.</p>
+      <pre>
+        assertEqual(first(null, null), null)
+    </pre>
+    </div>
+
+    <div>
+      <p>first() match</p>
+
+      <pre>
+        assertEqual(first(function(value) { return value &gt; 3; }, [1, 2, 3, 4, 5]), 4)
+</pre>
+    </div>
+
+    <div>
+      <p>first() passes the index as the second value.</p>
+
+      <pre>
+        assertEqual(first(function(value, index) { return index &gt; 2 }, [1, 2, 3, 4, 5]), 4)
+</pre>
+
+      <div>
+        <p>extractProperty() returns a function to extract a named property.</p>
+        <pre>
+          var fn = T5.arrays.extractProperty('name')
+
+          assertEqual(fn({name: 'Tapestry', id: 5}), 'Tapestry')
+    </pre>
+      </div>
+
+    </div>
+
+    <h2>Publish / Subscribe</h2>
+
 
     <div>
       <p> Ensure that the message object passed to pub() is delivered to the listener.</p>
