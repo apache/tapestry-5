@@ -5,26 +5,33 @@ dependencies {
   compile project(':tapestry-annotations')
   compile project(':tapestry-json')
   compile project(":plastic")
-  
+
   provided project(':tapestry-test')
 
   compile "javassist:javassist:3.12.1.GA"
 
   compile "javax.inject:javax.inject:1"
-  
+
   compile "org.slf4j:slf4j-api:1.6.1"
   compile "log4j:log4j:1.2.14"
   compile "org.slf4j:slf4j-log4j12:1.6.1"
-    
+
   compile "org.testng:testng:$testngVersion", { transitive = false }
 }
 
-ideaModule {
-    scopes.COMPILE.plus += configurations.provided
+configure(install.repositories.mavenInstaller) {
+  pom.whenConfigured {pom ->
+    pom.dependencies.find {dep ->
+      dep.groupId == 'org.apache.tapestry' && dep.artifactId == 'tapestry-annotations'
+    }.artifactId = 'tapestry5-annotations'
+  }
 }
 
-test
-{
-    // Override the master build.gradle
-    systemProperties.remove("tapestry.service-reloading-enabled")
+ideaModule {
+  scopes.COMPILE.plus += configurations.provided
+}
+
+test {
+  // Override the master build.gradle
+  systemProperties.remove("tapestry.service-reloading-enabled")
 }
