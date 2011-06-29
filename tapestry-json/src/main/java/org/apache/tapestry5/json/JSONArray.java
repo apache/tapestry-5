@@ -174,6 +174,20 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
     }
 
     /**
+     * Remove the object associated with the index.
+     *
+     * @param index
+     *            The index must be between 0 and length() - 1.
+     * @return An object removed.
+     * @throws RuntimeException
+     *             If there is no value for the index.
+     */
+    public Object remove(int index)
+    {
+        return list.remove(index);
+    }
+
+    /**
      * Get the boolean value associated with an index. The string values "true" and "false" are converted to boolean.
      * 
      * @param index
