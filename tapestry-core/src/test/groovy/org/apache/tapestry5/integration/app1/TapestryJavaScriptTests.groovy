@@ -9,7 +9,7 @@ class TapestryJavaScriptTests extends TapestryCoreTestCase {
     void basic_javascript_tests() {
         openLinks "JavaScript Unit Tests"
 
-        def caption = getText("//div[@class='js-results']/p[@class='caption']")
+        def caption = getText("//div[@class='js-results']/p[contains(@class,'caption')]")
 
         def matches = caption =~ /(\d+) failed/
 
