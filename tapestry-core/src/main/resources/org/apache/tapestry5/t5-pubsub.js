@@ -13,10 +13,13 @@
  * limitations under the License.
  */
 
-T5.extend(T5, function() {
+T5.define("pubsub", function() {
 
-	var map = T5.map;
-	var mapcat = T5.mapcat;
+	var arrays = T5.arrays;
+
+	var map = arrays.map;
+	var mapcat = arrays.mapcat;
+	var without = arrays.without;
 
 	var subscribersVersion = 0;
 
@@ -47,7 +50,7 @@ T5.extend(T5, function() {
 	function doPublish(listeners, message) {
 
 		return map(function(fn) {
-			fn(message);
+			return fn(message);
 		}, listeners);
 	}
 
@@ -110,7 +113,7 @@ T5.extend(T5, function() {
 	function unsubscribe(selector, listenerfn) {
 		var listeners = subscribers[selector];
 
-		var editted = T5.without(listenerfn, listeners);
+		var editted = without(listenerfn, listeners);
 
 		if (editted !== listeners) {
 			subscribers[selector] = editted;
@@ -151,8 +154,17 @@ T5.extend(T5, function() {
 	}
 
 	return {
-		createPublisher : createPublisher,
-		pub : publish,
-		sub : subscribe
+		create : createPublisher,
+		publish : publish,
+		subscribe : subscribe
 	};
+});
+
+/**
+ * Create aliases on T5 directly: pub -&gt; pubsub.publish and sub -&gt;
+ * pubsub.subscribe.
+ */
+T5.extend(T5, {
+	pub : T5.pubsub.publish,
+	sub : T5.pubsub.subscribe
 });

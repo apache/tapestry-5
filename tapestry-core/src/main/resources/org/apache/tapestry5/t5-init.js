@@ -1,4 +1,4 @@
-/* Copyright  2011 The Apache Software Foundation
+/* Copyright 2011 The Apache Software Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ T5.extend(T5, function() {
 		Initializer : {},
 
 		/**
-		 * A convienience method for extending the T5.Initializer namespace.
+		 * A convenience method for extending the T5.Initializer namespace.
 		 * 
 		 * @param source
 		 *            object or function used to extend T5.Initializer

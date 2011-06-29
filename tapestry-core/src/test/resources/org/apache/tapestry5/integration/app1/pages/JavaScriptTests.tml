@@ -224,10 +224,10 @@
 
   <script>
 <![CDATA[
-    map = T5.map
-    mapcat = T5.mapcat
-    reduce = T5.reduce
-    without = T5.without
+    map = T5.arrays.map
+    mapcat = T5.arrays.mapcat
+    reduce = T5.arrays.reduce
+    without = T5.arrays.without
 
     pub = T5.pub
     sub = T5.sub

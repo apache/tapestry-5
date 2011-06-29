@@ -16,7 +16,7 @@
 /**
  * Extends T5 with new utility functions.
  */
-T5.extend(T5, function() {
+T5.define("arrays", function() {
 
 	function isNonEmpty(array) {
 		if (array === null || array === undefined)
@@ -24,6 +24,12 @@ T5.extend(T5, function() {
 
 		return array.length > 0;
 	}
+
+	function isEmpty(array) {
+		return !isNonEmpty(array);
+	}
+
+	var concat = Array.prototype.concat;
 
 	/**
 	 * Iterates over an array, invoking a function for each array element.
@@ -88,8 +94,6 @@ T5.extend(T5, function() {
 		return accumulator;
 	}
 
-	var concat = Array.prototype.concat;
-
 	/**
 	 * A variation of map, where the mapperfn is expected to return an array of
 	 * values (not a single value). The result arrays are concatenated, to
@@ -133,11 +137,88 @@ T5.extend(T5, function() {
 		return array;
 	}
 
+	/**
+	 * Filters the array, returning a new array containing just those elements
+	 * for which the filterfn returns true.
+	 * 
+	 * @param filterfn
+	 *            function of one or two parameters: element and index. Returns
+	 *            true to include element in result.
+	 * @param array
+	 *            to filter
+	 */
+	function filter(filterfn, array) {
+		var result = [];
+
+		each(function(element, index) {
+			if (filterfn(element, index)) {
+				result.push(element);
+			}
+		}, array);
+
+		return result;
+	}
+
+	/**
+	 * Filters the array, returning a new array containing just those elements
+	 * for which the filterfn returns false.
+	 * 
+	 * @param filterfn
+	 *            function of one or two parameters: element and index. Returns
+	 *            true to include element in result.
+	 * @param array
+	 *            to filter
+	 */
+	function remove(filterfn, array) {
+		return filter(function(element, index) {
+			return !filterfn(element, index);
+		}, array);
+	}
+
+	/**
+	 * Returns the first element that passes the filterfn, or null if not found.
+	 * 
+	 * @param filterfn
+	 *            function of one or two parameters: element and index. Returns
+	 *            true if the element is a match.
+	 * @param arary
+	 *            to scan
+	 * @return first element for which the function indicates a match, or null
+	 * 
+	 */
+	function first(filterfn, array) {
+		if (isNonEmpty(array)) {
+			for ( var index = 0; index < array.length; index++) {
+				if (filterfn(array[index], index)) {
+					return array[index];
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns a function for use with map() or filter(), that extracts a
+	 * specific property, by name, from the elements.
+	 */
+	function extractProperty(name) {
+		return function(element) {
+			return element[name];
+		}
+	}
+
 	return {
 		each : each,
+		extractProperty : extractProperty,
+		filter : filter,
+		first : first,
+		isEmpty : isEmpty,
+		isNonEmpty : isNonEmpty,
 		map : map,
 		mapcat : mapcat,
 		reduce : reduce,
+		remove : remove,
 		without : without
 	};
 });

@@ -1,4 +1,4 @@
-/* Copyright  2011 The Apache Software Foundation
+/* Copyright 2011 The Apache Software Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,11 +30,31 @@ var T5 = {
 	 * @param source
 	 *            source object for properties, or function returning source
 	 *            object
+	 * @returns the destination object
 	 */
 	extend : function(destination, source) {
 		if (Object.isFunction(source))
 			source = source();
 
-		Object.extend(destination, source);
+		// Prototype:
+		return Object.extend(destination, source);
+	},
+
+	/**
+	 * Defines a new namespace under the T5 object.
+	 * 
+	 * @param name
+	 *            string name of the namespace
+	 * @param source
+	 *            source object for properties (or function returning source
+	 *            object)
+	 * @return the namespace object
+	 */
+	define : function(name, source) {
+		var namespace = {};
+		T5[name] = namespace;
+
+		return this.extend(namespace, source);
 	}
+
 }
