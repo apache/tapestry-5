@@ -9,9 +9,11 @@ class TapestryJavaScriptTests extends TapestryCoreTestCase {
     void basic_javascript_tests() {
         openLinks "JavaScript Unit Tests"
 
-        def resultClass = getAttribute("//table[@class='js-results']/caption/@class")
-        
-        if (resultClass == 'failures') {
+        def caption = getText("//div[@class='js-results']/p[@class='caption']")
+
+        def matches = caption =~ /(\d+) failed/
+
+        if (matches[0][1] != "0"){
             fail "Some JavaScript unit tests failed"
         }
     }

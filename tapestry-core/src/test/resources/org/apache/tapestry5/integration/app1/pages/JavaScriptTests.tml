@@ -6,250 +6,210 @@
     This page executes a number of JavaScript tests.
   </p>
 
-  <table id="results-table">
+  <div id="tests">
 
-    <tr>
-      <td>
-        <pre>
-          assertEqual(isEmpty(null), true)
-          assertEqual(isEmpty(undefined), true)
-          assertEqual(isEmpty([]), true)
-          assertEqual(isEmpty([1]), false)
+    <div>
+      <p> Checks for T5.arrays.isEmpty()
+        </p>
+      <pre>
+        assertEqual(isEmpty(null), true)
+        assertEqual(isEmpty(undefined), true)
+        assertEqual(isEmpty([]), true)
+        assertEqual(isEmpty([1]), false)
     </pre>
-      </td>
-      <td>
-        Checks for T5.arrays.isEmpty()
-    </td>
-    </tr>
-    
-        <tr>
-      <td>
-        <pre>
-          assertEqual(isNonEmpty(null), false)
-          assertEqual(isNonEmpty(undefined), false)
-          assertEqual(isNonEmpty([]), false)
-          assertEqual(isNonEmpty([1]), true)
-    </pre>
-      </td>
-      <td>
-        Checks for T5.arrays.isNonEmpty()
-    </td>
-    </tr>
 
-    <tr>
-      <td>
+    </div>
+    <div>
+      <p> Checks for T5.arrays.isNonEmpty()
+        </p>
+      <pre>
+        assertEqual(isNonEmpty(null), false)
+        assertEqual(isNonEmpty(undefined), false)
+        assertEqual(isNonEmpty([]),
+        false)
+        assertEqual(isNonEmpty([1]), true)
+    </pre>
+    </div>
+    <div>
+      <p> Map() on null returns an empty array        
+        </p>
+      <pre>
         assertEqual(map(null, null), [])
-    </td>
-      <td>
-        Map() on null returns an empty array
-    </td>
-    </tr>
+        </pre>
+    </div>
 
-    <tr>
-      <td>
-        assertEqual(map(null, undefined), [])
-    </td>
-      <td>
-        Map() on undefined returns an empty array
-    </td>
-    </tr>
+    <div>
+      <p> Map() on undefined returns an empty array    
+    </p>
+      <pre>
+        assertEqual(map(null, undefined), [])    
+    </pre>
+    </div>
 
-    <tr>
-      <td>
+    <div>
+      <p>Map() on empty array returns an empty array</p>
+      <pre>
         assertEqual(map(null, []), [])
-    </td>
-      <td>Map() on empty array returns an empty array</td>
-    </tr>
+      </pre>
+    </div>
 
-    <tr>
-      <td>
-        assertEqual(map(function(e) { return e + 100; }, [1, 2, 3]), [101, 102, 103])
-        </td>
-      <td>
-        The normal use of map().
-        </td>
-    </tr>
 
-    <tr>
-      <td>
-        <pre>
-          assertEqual(map(function(e, index) { return (e + 100) + "@" + index; }, [1, 2, 3]),
-          ["101@0", "102@1",
-          "103@2"])            
+    <div>
+      <p> The normal use of map().
+    </p>
+      <pre>
+        assertEqual(map(function(e) { return e + 100; }, [1, 2, 3]), [101, 102, 103])   
+    </pre>
+    </div>
+
+    <div>
+      <p> Optional second parameter to map() is an index number.    </p>
+      <pre>
+        assertEqual(map(function(e, index) { return (e + 100) + "@" + index; }, [1, 2, 3]),
+        ["101@0", "102@1",
+        "103@2"])                
+    </pre>
+    </div>
+
+    <div>
+      <p> The initial value is returned, as is, when no reducing occurs due to empty/null/undefined list.
+    </p>
+      <pre>
+        var initial = { };
+        assertSame(reduce(function() { }, initial, []), initial);   
+    </pre>
+    </div>
+
+    <div>
+      <p> Show that the index of each element is passed to the reducer function.</p>
+      <pre>
+        assertEqual(reduce(function(o, value, index) {
+        o[value] = index; return o;
+        }, {}, ["fred", "barney",
+        "wilma"]),
+        { fred: 0, barney: 1, wilma: 2 })
         </pre>
-      </td>
-      <td>
-        The normal use of map().
-        </td>
-    </tr>
 
-    <tr>
-      <td>
-        <pre>
-          var initial = { };
-          assertSame(reduce(function() { }, initial, []), initial);
+    </div>
+
+    <div>
+      <p> Removing a value that does not exist in the array returns the array unchanged.
+    </p>
+      <pre>
+        var initial = [1, 2, 3]
+        assertSame(without(9, initial), initial)
         </pre>
-      </td>
-      <td>
-        The initial value is returned, as is, when no reducing occurs due to empty/null/undefined list.
-        </td>
-    </tr>
+    </div>
 
-    <tr>
-
-      <td>
-        <pre>
-          assertEqual(reduce(function(o, value, index) {
-          o[value] = index;
-
-          return o;
-          }, {}, ["fred", "barney",
-          "wilma"]),
-          { fred: 0, barney: 1, wilma: 2 })
-        </pre>
-      </td>
-      <td>
-        Show that the index of each element is passed to the reducer function.</td>
-    </tr>
-
-    <tr>
-      <td>
-        <pre>
-          var initial = [1, 2, 3]
-          assertSame(without(9, initial), initial)
-        </pre>
-      </td>
-      <td>
-        Removing a value that does not exist in the array returns the array unchanged
-        </td>
-    </tr>
-
-    <tr>
-      <td>
+    <div>
+      <p> Multiple matches should all be removed.</p>
+      <pre>
         assertEqual(without(2, [1, 2, 2, 3, 4, 2, 5]), [1, 3, 4, 5])
-        </td>
-      <td>
-        Multiple matches should all be removed
-        </td>
-    </tr>
+</pre>
+    </div>
 
-    <tr>
-      <td>
-        <pre>
-          var initial = [1, 2, 3]
-          without(2, initial)
-          assertEqual(initial, [1, 2, 3])
+    <div>
+      <p> The array should not be changed even if values are removed from the result.
+</p>
+      <pre>
+        var initial = [1, 2, 3]
+        without(2, initial)
+        assertEqual(initial, [1, 2, 3])
+</pre>
+    </div>
+
+    <div>
+      <p>mapcat() on empty/null/undefined returns empty list.
+    </p>
+      <pre>
+        assertEqual(mapcat(null,null), [])</pre>
+    </div>
+
+    <div>
+      <p> Basic execution of mapcat().
+  </p>
+      <pre>
+        assertEqual(mapcat(function (value) {
+        var out = []
+        for (var i = 0; i &lt; value; i++) { out.push(value); }
+        return out;
+        }, [1, 3, 5]),
+        [1, 3, 3, 3, 5, 5, 5, 5, 5])            
+  </pre>
+    </div>
+
+    <div>
+      <p> Ensure that the message object passed to pub() is delivered to the listener.</p>
+      <pre>
+        var message = { }
+        var rcvd;
+
+        sub("foo", function(m) { rcvd = m; })
+
+        pub("foo", message)
+
+        assertSame(rcvd, message)        
+        </pre>
+    </div>
+
+    <div>
+      <p>Check that the function returned from sub() can be used to cancel message reciept.</p>
+      <pre>
+        var count = 0;
+
+        pub("foo"); assertEqual(count, 0)
+
+        var unsub = sub("foo", function() { count++; } )
+
+        pub("foo");
+        assertEqual(count, 1)
+
+        pub("foo"); assertEqual(count, 2)
+
+        pub("bar"); assertEqual(count, 2)
+
+        unsub()
+
+        pub("foo");
+        assertEqual(count, 2)
           </pre>
-      </td>
-      <td>
-        The array should not be changed even if values are removed from the result
-        </td>
-    </tr>
+    </div>
 
-    <tr>
-      <td>assertEqual(mapcat(null,null), [])</td>
-      <td>mapcat() on empty/null/undefined returns empty list</td>
-    </tr>
+    <div>
+      <p> Check that messages are published to less specific selectors after more specific.
+</p>
+      <pre>
+        var pubs = []
 
-    <tr>
-      <td>
-        <pre>
-          assertEqual(mapcat(function (value) {
-          var out = []
-          for (var i = 0; i &lt; value; i++) { out.push(value); }
-          return out;
-          }, [1, 3, 5]),
-          [1, 3, 3, 3, 5, 5, 5, 5, 5])            
-            </pre>
-      </td>
-      <td>
-        Basic execution of mapcat().
-      </td>
-    </tr>
+        sub("foo/bar", function() { pubs.push("foo/bar"); })
+        sub("foo", function() {
+        pubs.push("foo");
+        })
 
-    <tr>
-      <td>
-        <pre>
-          var message = { }
-          var rcvd;
+        pub("foo/bar")
 
-          sub("foo", function(m) { rcvd = m; })
-
-          pub("foo", message)
-
-          assertSame(rcvd,
-          message)        
+        assertEqual(pubs, ["foo/bar", "foo"])                
         </pre>
-      </td>
-      <td>
-        Ensure that the message object passed to pub() is delivered to the listener.</td>
-    </tr>
+    </div>
 
-    <tr>
-      <td>
-        <pre>
-          var count = 0;
+    <div>
+      <p>Check that messages to less specific selectors do not invoke listeners of more specific selectors.   </p>
+      <pre>
+        var pubs = []
 
-          pub("foo"); assertEqual(count, 0)
+        sub("foo/bar", function() { pubs.push("foo/bar"); })
 
-          var unsub = sub("foo", function() { count++; } )
+        sub("foo", function() {
+        pubs.push("foo");
+        })
 
-          pub("foo");
-          assertEqual(count, 1)
+        pub("foo")
 
-          pub("foo"); assertEqual(count, 2)
-
-          pub("bar"); assertEqual(count, 2)
-
-          unsub()
-
-          pub("foo");
-          assertEqual(count, 2)
-          </pre>
-      </td>
-      <td>
-        Check that the function returned from sub() can be used to cancel message reciept</td>
-    </tr>
-
-    <tr>
-      <td>
-        <pre>
-          var pubs = []
-
-          sub("foo/bar", function() { pubs.push("foo/bar"); })
-          sub("foo", function() {
-          pubs.push("foo");
-          })
-
-          pub("foo/bar")
-
-          assertEqual(pubs, ["foo/bar", "foo"])                
+        assertEqual(pubs, ["foo"])                        
         </pre>
-      </td>
-      <td>
-        Check that messages are published to less specific selectors after more specific.
-        </td>
-    </tr>
+    </div>
 
-    <tr>
-      <td>
-        <pre>
-          var pubs = []
-
-          sub("foo/bar", function() { pubs.push("foo/bar"); })
-          sub("foo", function() {
-          pubs.push("foo");
-          })
-
-          pub("foo")
-
-          assertEqual(pubs, ["foo"])                
-        </pre>
-      </td>
-      <td>
-        Check that messages to less specific selectors do not invoke listeners of more specific selectors.        </td>
-    </tr>
-  </table>
+  </div>
 
   <script>
 <![CDATA[
@@ -259,6 +219,9 @@
     mapcat = T5.arrays.mapcat
     reduce = T5.arrays.reduce
     without = T5.arrays.without
+    filter = T5.arrays.filter
+    remove = T5.arrays.remove
+    first = T5.arrays.first
 
     pub = T5.pub
     sub = T5.sub
@@ -267,7 +230,7 @@
     assertEqual = JST.assertEqual
     assertSame = JST.assertSame
 
-    JST.runTestSuite("results-table");
+    JST.runTestSuite("tests");
     ]]>
   </script>
 </html>

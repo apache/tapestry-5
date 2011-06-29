@@ -44,10 +44,10 @@ var JST = (function() {
 	var $fail = {};
 
 	function fail(text) {
-		resultElement.next().insert({
+		resultElement.insert({
 			top : "FAIL - ",
-			bottom : "<hr>" + text
-		}).up().addClassName("fail");
+			after : "<hr>" + text
+		}).up("div").addClassName("fail");
 
 		throw $fail;
 	}
@@ -79,32 +79,32 @@ var JST = (function() {
 		var passCount = 0;
 		var failCount = 0;
 
-		$(elementId).insert({
-			top : "<thead><th>Test</th><th>Description</th></tr></thead>"
-		});
-
-		$(elementId).addClassName("js-results").select("tbody tr:odd").each(
+		$(elementId).addClassName("js-results").select("div:odd").each(
 				function(e) {
 					e.addClassName("odd");
 				});
 
-		$(elementId).select("tbody tr").each(function(row) {
+		$(elementId).select("div").each(function(test) {
 
-			row.addClassName("active");
+			test.addClassName("active");
 
-			row.scrollTo();
+			test.scrollTo();
 
-			resultElement = $(row).select("td")[0];
+			resultElement = test.down("p");
 			resultNoted = false;
 
+			var testCode = test.down("pre").textContent;
+
 			try {
-				eval(resultElement.textContent);
+				eval(testCode);
 
 				passCount++;
 
-				resultElement.next().insert({
+				resultElement.insert({
 					top : "PASS - "
-				}).up().addClassName("pass");
+				});
+
+				test.addClassName("pass");
 
 			} catch (e) {
 				failCount++;
@@ -112,21 +112,23 @@ var JST = (function() {
 				if (e !== $fail) {
 					resultElement.next().insert({
 						top : "EXCEPTION - ",
-						bottom : "<hr>" + toString(e)
-					}).up().addClassName("exception");
+						after : "<hr><pre>" + toString(e) + "</pre>"
+					});
+
+					test.addClassName("fail");
 				}
 			}
 
-			row.removeClassName("active");
+			test.removeClassName("active");
 		});
 
 		$(elementId)
 				.insert(
 						{
-							bottom : "<caption class='#{class}'>Results: #{pass} pass / #{fail} fail</caption>"
+							top : "<p class='caption #{class}'>Results: #{pass} passed / #{fail} failed</p>"
 									.interpolate({
-										class : failCount == 0 ? "success"
-												: "failures",
+										class : failCount == 0 ? "pass"
+												: "fail",
 										pass : passCount,
 										fail : failCount
 									})

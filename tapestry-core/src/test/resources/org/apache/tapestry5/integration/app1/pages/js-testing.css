@@ -1,36 +1,26 @@
 
-TABLE.js-results { width: 100%; }
-
-TABLE.js-results THEAD TR
+DIV.js-results .caption
 {
     font-weight: bold;
-    background-color: black;
+    background-color: #e5e5e5;
     color: white;
 }
 
-TABLE.js-results TR.odd
+DIV.js-results DIV.odd
 {
   background-color: #e5e5e5;
 }
 
-TABLE.js-results TR.active
+DIV.js-results .active
 {
   font-weight: bold;
   background-color: #ffff00;
 }
 
-TABLE.js-results TR.pass {
+DIV.js-results .pass {
     color: green;    
 }
 
-TABLE.js-results CAPTION {
-  font-weight: bold;
+DIV.js-results .fail {
+    color: red;    
 }
-
-TABLE.js-results CAPTION.success { color: green; }
-
-TABLE.js-results CAPTION.failures { color: red; }
-
-TABLE.js-results TR.fail { color: red; }
-
-TABLE.js-results TR.exception { color: red; font-family: italic; }
