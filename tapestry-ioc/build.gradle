@@ -2,7 +2,7 @@ description = "A code-centric, high-performance, simple Inversion of Control con
 
 dependencies {
   compile project(':tapestry-func')
-  compile project(':tapestry-annotations')
+  compile project(':tapestry5-annotations')
   compile project(':tapestry-json')
   compile project(":plastic")
 

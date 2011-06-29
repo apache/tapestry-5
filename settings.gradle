@@ -1,4 +1,4 @@
-include "plastic", "tapestry-annotations", "tapestry-test", "tapestry-func", "tapestry-ioc", "tapestry-json", "tapestry-core"
+include "plastic", "tapestry5-annotations", "tapestry-test", "tapestry-func", "tapestry-ioc", "tapestry-json", "tapestry-core"
 include "tapestry-hibernate-core", "tapestry-hibernate", "tapestry-jmx", "tapestry-upload", "tapestry-spring"
 include "tapestry-beanvalidator", "tapestry-yuicompressor", "tapestry-jpa"
 include "tapestry-javadoc"
