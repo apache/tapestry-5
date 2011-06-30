@@ -47,7 +47,7 @@ var JST = (function() {
 		resultElement.insert({
 			top : "FAIL - ",
 			after : "<hr>" + text
-		}).up("div").addClassName("fail");
+		}).up("div").addClassName("fail").scrollTo();
 
 		throw $fail;
 	}
@@ -89,8 +89,6 @@ var JST = (function() {
 
 					test.addClassName("active");
 
-					test.scrollTo();
-
 					resultElement = test.down("p");
 					resultNoted = false;
 
@@ -118,7 +116,7 @@ var JST = (function() {
 												+ toString(e) + "</div>"
 									});
 
-							test.addClassName("fail");
+							test.addClassName("fail").scrollTo();
 						}
 					}
 
@@ -136,6 +134,10 @@ var JST = (function() {
 										fail : failCount
 									})
 						});
+
+		if (failCount == 0) {
+			$(elementId).down("p").scrollTo();
+		}
 	}
 
 	function runTestSuite(elementId) {
