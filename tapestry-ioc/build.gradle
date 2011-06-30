@@ -22,7 +22,7 @@ dependencies {
 configure(install.repositories.mavenInstaller) {
   pom.whenConfigured {pom ->
     pom.dependencies.find {dep ->
-      dep.groupId == 'org.apache.tapestry' && dep.artifactId == 'tapestry-annotations'
+      dep.groupId == 'org.apache.tapestry' && dep.artifactId == 'tapestry5-annotations'
     }.artifactId = 'tapestry5-annotations'
   }
 }
