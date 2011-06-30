@@ -16,6 +16,22 @@
 T5.define("dom", function() {
 
 	/**
+	 * Locates an element. If element is a string, then
+	 * document.getElementById() is used to resolve a client element id to a DOM
+	 * element. If the id does not exist, then null will be returned.
+	 * <p>
+	 * If element is not a string, it is presumed to already by a DOM element,
+	 * and is returned.
+	 */
+	function locate(element) {
+		if (typeof element == "string") {
+			return document.getElementById(element);
+		}
+
+		return element; // may be null, otherwise presumed to be a DOM node
+	}
+
+	/**
 	 * Tree-walks the children of the element; for each dhild, ensure that all
 	 * event handlers, listeners and PubSub publishers for the child are
 	 * removed.
@@ -53,6 +69,8 @@ T5.define("dom", function() {
 		}
 
 		// Get rid of any Prototype event handlers as well.
+		// May generalize this to be a published message instead, for 
+		// cross-library compatibility.
 		Event.stopObserving(element);
 
 		purgeChildren(element);
@@ -81,6 +99,14 @@ T5.define("dom", function() {
 
 	return {
 		remove : remove,
-		purgeChildren : purgeChildren
+		purgeChildren : purgeChildren,
+		locate : locate
 	};
+});
+
+/**
+ * Create a T5.$() synonym for T5.dom.locate().
+ */
+T5.extend(T5, {
+	$ : T5.dom.locate
 });

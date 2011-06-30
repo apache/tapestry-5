@@ -285,7 +285,8 @@
         document.body.insert({bottom: element})
 
         sub("bar", null, function() { pubs.push("general") })
-        sub("bar", element, function() { pubs.push("specific") } )
+        sub("bar", element,
+        function() { pubs.push("specific") } )
 
         pub("bar", element, {})
 
@@ -301,12 +302,36 @@
 
         pubs = []
 
-        pub("bar", document.body, {})
+        pub("bar",
+        document.body, {})
 
         assertEqual(pubs, ["general"])
       </pre>
     </div>
 
+    <div>
+      <p>Publish/subscribe via client id rather than element.</p>
+
+      <pre>
+        var element = new Element("span",{ id: "zaphod" }).update("Published Message Source Zaphod")
+
+        document.body.insert({bottom:
+        element})
+
+        var pubs = []
+
+        sub("bar", "zaphod",
+        function() {
+        pubs.push("specific") } )
+
+        pub("bar",
+        "zaphod", {})
+
+        assertEqual(pubs, ["specific"])
+
+        T5.dom.remove(element)  
+    </pre>
+    </div>
 
   </div>
 

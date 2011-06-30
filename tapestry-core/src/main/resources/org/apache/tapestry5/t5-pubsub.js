@@ -16,6 +16,11 @@ T5.define("pubsub", function() {
 	// Element keys: topic, element, publisherfn
 	var publishers = [];
 
+	// Necessary since T5.dom depends on T5.pubsub
+	function $(element) {
+		return T5.$(element);
+	}
+
 	function purgePublisherCache(topic) {
 		each(function(publisher) {
 			if (publisher.topic === topic) {
@@ -53,7 +58,8 @@ T5.define("pubsub", function() {
 	 *            a topic name, which must not be blank
 	 * @param element
 	 *            a DOM element, which may be null to subscribe to all messages
-	 *            for the topic
+	 *            for the topic. If a string, then T5.$() is used to locate the
+	 *            DOM element with the matching client id.
 	 * @param listenerfn
 	 *            function invoked when a message for the topic is published.
 	 *            The function is invoked only if the supplied selector element
@@ -66,7 +72,7 @@ T5.define("pubsub", function() {
 
 		var subscriber = {
 			topic : topic,
-			element : element,
+			element : $(element),
 			listenerfn : listenerfn
 		};
 
@@ -111,10 +117,17 @@ T5.define("pubsub", function() {
 	 *            used to select listeners
 	 * @param element
 	 *            the DOM element used as the source of the published message
-	 *            (also used to select listeners)
+	 *            (also used to select listeners). Passed through T5.$(), the
+	 *            result must not be null.
 	 * @return publisher function used to publish a message
 	 */
 	function createPublisher(topic, element) {
+
+		element = $(element);
+
+		if (element == null) {
+			throw "Element may not be null when creating a publisher.";
+		}
 
 		var existing = first(function(publisher) {
 			return publisher.topic === topic && publisher.element === element;
