@@ -19,14 +19,6 @@ dependencies {
   compile "org.testng:testng:$testngVersion", { transitive = false }
 }
 
-configure(install.repositories.mavenInstaller) {
-  pom.whenConfigured {pom ->
-    pom.dependencies.find {dep ->
-      dep.groupId == 'org.apache.tapestry' && dep.artifactId == 'tapestry5-annotations'
-    }.artifactId = 'tapestry5-annotations'
-  }
-}
-
 ideaModule {
   scopes.COMPILE.plus += configurations.provided
 }
