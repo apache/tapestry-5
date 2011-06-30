@@ -205,6 +205,16 @@
     </pre>
       </div>
 
+      <div>
+        <p>
+          Extract a property from an array.
+</p>
+
+        <pre>
+          assertEqual(extract('id', [ { id: 7, name: "Fred" }, { id: 22, name: "Barney" }]), [7, 22])    
+    </pre>
+      </div>
+
     </div>
 
     <h2>Publish / Subscribe</h2>
@@ -338,7 +348,7 @@
   <script>
 <![CDATA[
     isEmpty = T5.arrays.isEmpty
-    isNonEmpty = T5.arrays.isNonEmpty;
+    isNonEmpty = T5.arrays.isNonEmpty
     map = T5.arrays.map
     mapcat = T5.arrays.mapcat
     reduce = T5.arrays.reduce
@@ -346,6 +356,7 @@
     filter = T5.arrays.filter
     remove = T5.arrays.remove
     first = T5.arrays.first
+    extract = T5.arrays.extract
 
     pub = T5.pub
     sub = T5.sub

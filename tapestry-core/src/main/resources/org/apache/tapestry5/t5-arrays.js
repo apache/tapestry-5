@@ -208,8 +208,16 @@ T5.define("arrays", function() {
 		}
 	}
 
+	/**
+	 * Extracts the named property from each element in the input array.
+	 */
+	function extract(propertyName, array) {
+		return map(extractProperty(propertyName), array);
+	}
+
 	return {
 		each : each,
+		extract : extract,
 		extractProperty : extractProperty,
 		filter : filter,
 		first : first,
