@@ -24,3 +24,7 @@ DIV.js-results .pass {
 DIV.js-results .fail {
     color: red;    
 }
+
+DIV.js-results .exception {
+    font-weight: bold;
+}

@@ -84,43 +84,46 @@ var JST = (function() {
 					e.addClassName("odd");
 				});
 
-		$(elementId).select("div").each(function(test) {
+		$(elementId).select("div").each(
+				function(test) {
 
-			test.addClassName("active");
+					test.addClassName("active");
 
-			test.scrollTo();
+					test.scrollTo();
 
-			resultElement = test.down("p");
-			resultNoted = false;
+					resultElement = test.down("p");
+					resultNoted = false;
 
-			var testCode = test.down("pre").textContent;
+					var testCode = test.down("pre").textContent;
 
-			try {
-				eval(testCode);
+					try {
+						eval(testCode);
 
-				passCount++;
+						passCount++;
 
-				resultElement.insert({
-					top : "PASS - "
+						resultElement.insert({
+							top : "PASS - "
+						});
+
+						test.addClassName("pass");
+
+					} catch (e) {
+						failCount++;
+
+						if (e !== $fail) {
+							resultElement.next().insert(
+									{
+										top : "EXCEPTION - ",
+										after : "<hr><div class='exception'>"
+												+ toString(e) + "</div>"
+									});
+
+							test.addClassName("fail");
+						}
+					}
+
+					test.removeClassName("active");
 				});
-
-				test.addClassName("pass");
-
-			} catch (e) {
-				failCount++;
-
-				if (e !== $fail) {
-					resultElement.next().insert({
-						top : "EXCEPTION - ",
-						after : "<hr><pre>" + toString(e) + "</pre>"
-					});
-
-					test.addClassName("fail");
-				}
-			}
-
-			test.removeClassName("active");
-		});
 
 		$(elementId)
 				.insert(
