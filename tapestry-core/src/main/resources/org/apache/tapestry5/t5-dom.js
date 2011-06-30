@@ -15,6 +15,11 @@
 
 T5.define("dom", function() {
 
+	/**
+	 * Tree-walks the children of the element; for each dhild, ensure that all
+	 * event handlers, listeners and PubSub publishers for the child are
+	 * removed.
+	 */
 	function purgeChildren(element) {
 		var children = element.childNodes;
 
