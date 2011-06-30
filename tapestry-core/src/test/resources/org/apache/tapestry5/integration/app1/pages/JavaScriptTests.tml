@@ -216,9 +216,9 @@
         var message = { }
         var rcvd;
 
-        sub("foo", function(m) { rcvd = m; })
+        sub("foo", document, function(m) { rcvd = m; })
 
-        pub("foo", message)
+        pub("foo", document, message)
 
         assertSame(rcvd, message)        
         </pre>
@@ -229,57 +229,52 @@
       <pre>
         var count = 0;
 
-        pub("foo"); assertEqual(count, 0)
+        pub("foo", document); assertEqual(count, 0)
 
-        var unsub = sub("foo", function() { count++; } )
+        var unsub = sub("foo", document, function() {
+        count++; } )
 
-        pub("foo");
+        pub("foo", document);
         assertEqual(count, 1)
 
-        pub("foo"); assertEqual(count, 2)
+        pub("foo", document); assertEqual(count, 2)
 
-        pub("bar"); assertEqual(count, 2)
+        pub("bar",
+        document); assertEqual(count, 2)
 
         unsub()
 
-        pub("foo");
+        pub("foo", document);
         assertEqual(count, 2)
           </pre>
     </div>
 
     <div>
-      <p> Check that messages are published to less specific selectors after more specific.
-</p>
+      <p> Ensure that messages are delivered to specific listeners before general listeners. 
+      </p>
       <pre>
         var pubs = []
 
-        sub("foo/bar", function() { pubs.push("foo/bar"); })
-        sub("foo", function() {
-        pubs.push("foo");
+        sub("foo", null, function() { pubs.push("general1") })
+
+        sub("foo", document, function() {
+        pubs.push("specific1") })
+
+        sub("foo", null, function() { pubs.push("general2") })
+
+        sub("foo", document, function()
+        {
+        pubs.push("specific2")
         })
 
-        pub("foo/bar")
+        pub("foo", document, {})
 
-        assertEqual(pubs, ["foo/bar", "foo"])                
+        assertEqual(pubs, ["specific1", "specific2",
+        "general1",
+        "general2"])                
         </pre>
     </div>
 
-    <div>
-      <p>Check that messages to less specific selectors do not invoke listeners of more specific selectors.   </p>
-      <pre>
-        var pubs = []
-
-        sub("foo/bar", function() { pubs.push("foo/bar"); })
-
-        sub("foo", function() {
-        pubs.push("foo");
-        })
-
-        pub("foo")
-
-        assertEqual(pubs, ["foo"])                        
-        </pre>
-    </div>
 
   </div>
 

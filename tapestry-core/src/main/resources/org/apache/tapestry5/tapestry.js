@@ -375,7 +375,7 @@ var Tapestry = {
 		Tapestry.error(Tapestry.Messages.communicationFailed + exception);
 
 		Tapestry.debug(Tapestry.Messages.ajaxFailure + exception, response);
-		
+
 		throw exception;
 	},
 
@@ -616,7 +616,7 @@ var Tapestry = {
 			before : replaceHTML
 		});
 
-		Tapestry.remove(element);
+		T5.dom.remove(element);
 	},
 
 	/**
@@ -626,60 +626,12 @@ var Tapestry = {
 	 * have references back to the element.
 	 * 
 	 * @since 5.2.0
+	 * @deprecated Since 5.3, use T5.dom.remove() instead
 	 */
-	remove : function(element) {
-		Tapestry.purge(element);
+	remove : T5.dom.remove,
 
-		Element.remove(element);
-	},
-
-	/**
-	 * Purges the element of any event handlers (necessary in IE to ensure that
-	 * memory leaks do not occur, and harmless in other browsers). The element
-	 * is purged, then any children of the element are purged.
-	 */
-	purge : function(element) {
-
-		/* Adapted from http://javascript.crockford.com/memory/leak.html */
-		var attrs = element.attributes;
-		if (attrs) {
-			var i, name;
-			for (i = attrs.length - 1; i >= 0; i--) {
-				if (attrs[i]) {
-					name = attrs[i].name;
-					/* Looking for onclick, etc. */
-					if (typeof element[name] == 'function') {
-						element[name] = null;
-					}
-				}
-			}
-		}
-
-		/* Get rid of any Prototype event handlers as well. */
-		Event.stopObserving(element);
-
-		Tapestry.purgeChildren(element);
-	},
-
-	/**
-	 * Invokes purge() on all the children of the element.
-	 */
-	purgeChildren : function(element) {
-
-		var children = element.childNodes;
-
-		if (children) {
-			var l = children.length, i, child;
-
-			for (i = 0; i < l; i++) {
-				var child = children[i];
-
-				/* Just purge element nodes, not text, etc. */
-				if (child.nodeType == 1)
-					Tapestry.purge(children[i]);
-			}
-		}
-	}
+	/** @deprecated Since 5.3, use T5.dom.purgeChildren instead */
+	purgeChildren : T5.dom.purgeChildren
 };
 
 Element.addMethods({
@@ -1259,9 +1211,10 @@ T5
 
 				element.observe(Tapestry.CHANGE_VISIBILITY_EVENT, function(
 						event) {
-                    //since events propogate up, you have you call event.stop() here to prevent hiding
-                    //container formFragments.
-                    event.stop();
+					// since events propogate up, you have you call event.stop()
+					// here to prevent hiding
+					// container formFragments.
+					event.stop();
 
 					var makeVisible = event.memo.visible;
 
@@ -1271,14 +1224,15 @@ T5
 					runAnimation(makeVisible);
 				});
 
-				element.observe(Tapestry.HIDE_AND_REMOVE_EVENT, function(event) {
-                    event.stop();
-					var effect = runAnimation(false);
+				element.observe(Tapestry.HIDE_AND_REMOVE_EVENT,
+						function(event) {
+							event.stop();
+							var effect = runAnimation(false);
 
-					effect.options.afterFinish = function() {
-						Tapestry.remove(element);
-					};
-				});
+							effect.options.afterFinish = function() {
+								Tapestry.remove(element);
+							};
+						});
 
 				if (!spec.alwaysSubmit) {
 					form.observe(Tapestry.FORM_PREPARE_FOR_SUBMIT_EVENT,

@@ -1,162 +1,205 @@
-/* Copyright 2011 The Apache Software Foundation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 T5.define("pubsub", function() {
 
 	var arrays = T5.arrays;
-
-	var map = arrays.map;
-	var mapcat = arrays.mapcat;
+	var first = arrays.first;
 	var without = arrays.without;
+	var filter = arrays.filter;
+	var remove = arrays.remove;
+	var map = arrays.map;
+	var each = arrays.each;
 
-	var subscribersVersion = 0;
+	// Element keys: topic, element, listenerfn
+	// May be multiple elements with some topic/element pair
+	// element property may be undefined
+	var subscribers = [];
 
-	var subscribers = {};
-	var publishers = {};
+	// Element keys: topic, element, publisherfn
+	var publishers = [];
+
+	function purgePublisherCache(topic) {
+		each(function(publisher) {
+			if (publisher.topic === topic) {
+				publisher.listeners = undefined;
+			}
+		}, publishers);
+	}
+
+	function findListeners(topic, element) {
+		var gross = filter(function(subscriber) {
+			return subscriber.topic === topic;
+		}, subscribers);
+
+		var primary = filter(function(subscriber) {
+			return subscriber.element === element;
+		}, gross);
+
+		var secondary = filter(function(subscriber) {
+			// Match where the element is null or undefined
+			return !subscriber.element;
+		}, gross);
+
+		// Return the listenerfn property from each match.
+		return map(arrays.extractProperty("listenerfn"), primary
+				.concat(secondary));
+	}
 
 	/**
-	 * Expands a selector into a array of strings representing the containers of
-	 * the selector (by stripping off successive terms, breaking at slashes).
+	 * Subscribes a listener function to the selector. The listener function
+	 * will be invoked when a message for the given topic is published. If an
+	 * element is specified, then the listener will only be invoked when the
+	 * subscribed element matches the published element.
+	 * 
+	 * @param topic
+	 *            a topic name, which must not be blank
+	 * @param element
+	 *            a DOM element, which may be null to subscribe to all messages
+	 *            for the topic
+	 * @param listenerfn
+	 *            function invoked when a message for the topic is published.
+	 *            The function is invoked only if the supplied selector element
+	 *            is undefined OR exactly matches the source element node. The
+	 *            return value of the listenerfn will be accumulated in an array
+	 *            and returned to the publisher.
+	 * @return a function of no arguments used to unsubscribe the listener
 	 */
-	function expandSelector(selector) {
-		var result = [];
-		var current = selector;
+	function subscribe(topic, element, listenerfn) {
 
-		while (true) {
-			result.push(current);
-			var slashx = current.lastIndexOf('/');
+		var subscriber = {
+			topic : topic,
+			element : element,
+			listenerfn : listenerfn
+		};
 
-			if (slashx < 0)
-				break;
+		subscribers.push(subscriber);
+		purgePublisherCache(subscriber.topic);
 
-			current = current.substring(0, slashx);
+		// To prevent memory leaks via closure:
+
+		topic = null;
+		element = null;
+		listenerfn = null;
+
+		// Return a function to unsubscribe
+		return function() {
+			subscribers = without(subscriber, subscribers);
+			purgePublisherCache(subscriber.topic);
 		}
-
-		return result;
-	}
-
-	function doPublish(listeners, message) {
-
-		return map(function(fn) {
-			return fn(message);
-		}, listeners);
 	}
 
 	/**
-	 * Creates a publisher for a selector. The selector is a string consisting
-	 * of individual terms separated by slashes. A publisher sends a message to
-	 * listener functions. Publishers are cached internally.
+	 * Creates a publish function for the indicated topic name and DOM element.
 	 * 
 	 * <p>
-	 * The returned publisher function is used to publish a message. It takes a
-	 * single argument, the message object. The message object is passed to all
-	 * listener functions matching the selector. The return value from the
-	 * publisher function is all the return values from the listener functions.
+	 * The returned function is used to publish a message. Messages are
+	 * published synchronously. The publish function will invoke listener
+	 * functions for matching subscribers (subscribers to the same topic). Exact
+	 * subscribers (matching the specific element) are invoked first, then
+	 * general subscribers (not matching any specific element). The return value
+	 * for the publish function is an array of all the return values from all
+	 * invoked listener functions.
 	 * 
-	 * @return publisher function
+	 * <p>
+	 * There is not currently a way to explicitly remove a publisher; however,
+	 * when the DOM element is removed properly, all publishers and subscribers
+	 * for the specific element will be removed as well.
+	 * 
+	 * <p>
+	 * Publish functions are cached, repeated calls with the same topic and
+	 * element return the same publish function.
+	 * 
+	 * @param topic
+	 *            used to select listeners
+	 * @param element
+	 *            the DOM element used as the source of the published message
+	 *            (also used to select listeners)
+	 * @return publisher function used to publish a message
 	 */
-	function createPublisher(selector) {
+	function createPublisher(topic, element) {
 
-		var publisher = publishers[selector];
+		var existing = first(function(publisher) {
+			return publisher.topic === topic && publisher.element === element;
+		}, publishers);
 
-		if (publisher === undefined) {
-			var selectors = expandSelector(selector);
+		if (existing) {
+			return existing.publisherfn;
+		}
 
-			var listeners = null;
+		var publisher = {
+			topic : topic,
+			element : element,
+			publisherfn : function(message) {
 
-			var subscribersVersionSnapshot = -1;
-
-			var publisher = function(message) {
-
-				// Recalculate the listeners whenever the subscribers map
-				// has changed.
-
-				if (subscribersVersionSnapshot !== subscribersVersion) {
-					listeners = mapcat(function(selector) {
-						return subscribers[selector] || [];
-					}, selectors);
-
-					subscribersVersionSnapshot = subscribersVersion;
+				if (publisher.listeners == undefined) {
+					publisher.listeners = findListeners(publisher.topic,
+							publisher.element);
 				}
 
-				return doPublish(listeners, message);
-			};
+				// TODO: pass a second object to each function to allow for
+				// control over message propagation, supply listener with access
+				// to source element.
 
-			publishers[selector] = publisher;
-		}
+				return map(function(listenerfn) {
+					return listenerfn(message);
+				}, publisher.listeners);
+			}
+		};
 
-		return publisher;
+		publishers.push(publisher);
+
+		// If only there was an event or something that would inform us when the
+		// element was removed. Certainly, IE doesn't support that! Have to rely
+		// on T5.dom.remove() to inform us.
+
+		// Mark the element to indicate it requires cleanup once removed from
+		// the DOM.
+
+		element.t5pubsub = true;
+
+		// Don't want to hold a reference via closure:
+
+		topic = null;
+		element = null;
+
+		return publisher.publisherfn;
 	}
 
 	/**
-	 * Creates a publisher for the selector (or uses a previously cached
-	 * publisher) and publishes the message, returning the combined results of
-	 * all the listener functions.
+	 * Creates a publisher and immediately publishes the message, return the
+	 * array of results.
 	 */
-	function publish(selector, message) {
-
-		return createPublisher(selector)(message);
-	}
-
-	function unsubscribe(selector, listenerfn) {
-		var listeners = subscribers[selector];
-
-		var editted = without(listenerfn, listeners);
-
-		if (editted !== listeners) {
-			subscribers[selector] = editted;
-
-			subscribersVersion++;
-		}
+	function publish(topic, element, message) {
+		return createPublisher(topic, element)(message);
 	}
 
 	/**
-	 * Subscribes a listener function to a selector. The selector is a string
-	 * consisting of individual terms separated by slashes. A publisher will
-	 * send a message object to a selector; matching listener functions are
-	 * invoked, and are passed the message object.
-	 * <p>
-	 * The return value is a function, of no parameters, used to unsubscribe the
-	 * listener function.
-	 * 
+	 * Invoked whenever an element is about to be removed from the DOM to remove
+	 * any publishers or subscribers for the element.
 	 */
-	function subscribe(selector, listenerfn) {
+	function cleanup(element) {
+		subscribers = remove(function(subscriber) {
+			return subscriber.element === element
+		}, subscribers);
 
-		var listeners = subscribers[selector];
+		// A little evil to modify the publisher object at the same time it is
+		// being removed.
 
-		if (listeners === undefined) {
-			listeners = [];
-			subscribers[selector] = listeners;
-		}
+		publishers = remove(function(publisher) {
+			var match = publisher.element === element;
 
-		listeners.push(listenerfn);
+			if (match) {
+				publisher.listeners = undefined;
+				publisher.element = undefined;
+			}
 
-		// Indicate that subscribers has changed, so publishers need to
-		// recalculate their listeners.
-
-		subscribersVersion++;
-
-		return function() {
-			unsubscribe(selector, listenerfn);
-		}
+			return match;
+		});
 	}
 
 	return {
-		create : createPublisher,
+		createPublisher : createPublisher,
+		subscribe : subscribe,
 		publish : publish,
-		subscribe : subscribe
+		cleanupRemovedElement : cleanup
 	};
 });
 
