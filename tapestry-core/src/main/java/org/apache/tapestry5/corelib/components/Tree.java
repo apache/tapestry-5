@@ -14,21 +14,17 @@
 
 package org.apache.tapestry5.corelib.components;
 
+import java.util.Arrays;
 import java.util.List;
 
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.Block;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.Link;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.Persist;
-import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.corelib.internal.InternalFormSupport;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Flow;
 import org.apache.tapestry5.func.Worker;
+import org.apache.tapestry5.internal.util.CaptureResultCallback;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.RenderCommand;
@@ -49,6 +45,7 @@ import org.apache.tapestry5.tree.TreeNode;
  */
 @SuppressWarnings(
 { "rawtypes", "unchecked", "unused" })
+@Events({EventConstants.NODE_SELECTED, EventConstants.NODE_UNSELECTED})
 public class Tree
 {
     /**
@@ -162,29 +159,33 @@ public class Tree
                 boolean hasChildren = !node.isLeaf() && node.getHasChildren();
                 boolean expanded = hasChildren && expansionModel.isExpanded(node);
 
+                String clientId = jss.allocateClientId(resources);
+
+                 JSONObject spec = new JSONObject("clientId", clientId);
+
+                e.attribute("id", clientId);
+
                 if (hasChildren)
                 {
-                    String clientId = jss.allocateClientId(resources);
-
-                    e.attribute("id", clientId);
-
                     Link expandChildren = resources.createEventLink("expandChildren", node.getId());
                     Link markExpanded = resources.createEventLink("markExpanded", node.getId());
                     Link markCollapsed = resources.createEventLink("markCollapsed", node.getId());
 
-                    JSONObject spec = new JSONObject("clientId", clientId,
-
-                    "expandChildrenURL", expandChildren.toString(),
-
-                    "markExpandedURL", markExpanded.toString(),
-
-                    "markCollapsedURL", markCollapsed.toString());
+                    spec.put("expandChildrenURL", expandChildren.toString())
+                            .put( "markExpandedURL", markExpanded.toString())
+                            .put("markCollapsedURL", markCollapsed.toString());
 
                     if (expanded)
                         spec.put("expanded", true);
-
-                    jss.addInitializerCall("treeNode", spec);
                 }
+                else
+                {
+                    Link toggleLeaf = resources.createEventLink("toggleLeaf", node.getId());
+
+                    spec.put("toggleLeafURL", toggleLeaf.toString());
+                }
+
+                jss.addInitializerCall("treeNode", spec);
 
                 writer.end(); // span.tx-tree-icon
 
@@ -259,6 +260,37 @@ public class Tree
     Object onMarkCollapsed(String nodeId)
     {
         expansionModel.markCollapsed(model.getById(nodeId));
+
+        return new JSONObject();
+    }
+
+    Object onToggleLeaf(String nodeId)
+    {
+        TreeNode node = model.getById(nodeId);
+
+        String event;
+
+        if(expansionModel.isSelected(node))
+        {
+            expansionModel.unselect(node);
+
+            event = EventConstants.NODE_UNSELECTED;
+        }
+        else
+        {
+            expansionModel.select(node);
+
+            event = EventConstants.NODE_SELECTED;
+        }
+
+        CaptureResultCallback<Object> callback = CaptureResultCallback.create();
+
+        resources.triggerEvent(event, new Object [] { nodeId }, callback);
+
+        final Object result = callback.getResult();
+
+        if(result != null)
+            return result;
 
         return new JSONObject();
     }

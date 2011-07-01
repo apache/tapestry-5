@@ -42,6 +42,12 @@ public interface TreeExpansionModel<T>
     /** Marks the node as collapsed (not expanded). */
     void markCollapsed(TreeNode<T> node);
 
+    boolean isSelected(TreeNode<T> node);
+
+    void select(TreeNode<T> node);
+
+    void unselect(TreeNode<T> node);
+
     /** Marks all nodes as collapsed. */
     void clear();
 }

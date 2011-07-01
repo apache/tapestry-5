@@ -30,34 +30,73 @@ public class DefaultTreeExpansionModel<T> extends BaseOptimizedSessionPersistedO
 {
     private final Set<String> expandedIds = CollectionFactory.newSet();
 
+    private final Set<String> selectedIds = CollectionFactory.newSet();
+
     public boolean isExpanded(TreeNode<T> node)
     {
-        assert node != null;
-
-        return expandedIds.contains(node.getId());
+        return contains(expandedIds, node);
     }
 
     public void markExpanded(TreeNode<T> node)
     {
-        assert node != null;
-
-        if (expandedIds.add(node.getId()))
-            markDirty();
+        add(expandedIds, node);
     }
 
     public void markCollapsed(TreeNode<T> node)
     {
-        assert node != null;
+        remove(expandedIds, node);
+    }
 
-        if (expandedIds.remove(node.getId()))
-            markDirty();
+    public boolean isSelected(TreeNode<T> node)
+    {
+        return contains(selectedIds, node);
+    }
+
+    public void select(TreeNode<T> node)
+    {
+         add(selectedIds, node);
+    }
+
+    public void unselect(TreeNode<T> node)
+    {
+        remove(selectedIds, node);
     }
 
     public void clear()
     {
-        if (!expandedIds.isEmpty())
+        clearSet(expandedIds);
+
+        clearSet(selectedIds);
+    }
+
+    private void add(Set<String> ids, TreeNode<T> node)
+    {
+        assert node != null;
+
+        if (ids.add(node.getId()))
+            markDirty();
+    }
+
+    private void remove(Set<String> ids, TreeNode<T> node)
+    {
+        assert node != null;
+
+        if (ids.remove(node.getId()))
+            markDirty();
+    }
+
+    private boolean contains(Set<String> ids, TreeNode<T> node)
+    {
+        assert node != null;
+
+        return ids.contains(node.getId());
+    }
+
+    private void clearSet(Set<String> set)
+    {
+        if (!set.isEmpty())
         {
-            expandedIds.clear();
+            set.clear();
             markDirty();
         }
     }

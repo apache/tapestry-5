@@ -209,4 +209,20 @@ public class EventConstants
      */
     public static final String PREALLOCATE_FORM_CONTROL_NAMES = "preallocateFormControlNames";
 
+    /**
+     * Event  triggered by the {@link org.apache.tapestry5.corelib.components.Tree}
+     * component when a leaf node is selected.
+     *
+     * @since 5.3.1
+     */
+    public static final String NODE_SELECTED = "nodeSelected";
+
+    /**
+     *  Event  triggered by the {@link org.apache.tapestry5.corelib.components.Tree}
+     *  component when a leaf node is unselected.
+     *
+     *  @since 5.3.1
+     */
+    public static final String NODE_UNSELECTED = "nodeUnselected";
+
 }

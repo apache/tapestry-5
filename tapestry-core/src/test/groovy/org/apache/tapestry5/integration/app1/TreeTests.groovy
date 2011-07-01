@@ -19,10 +19,6 @@ import org.testng.annotations.Test
 
 class TreeTests extends SeleniumTestCase
 {
-    /**
-     * Haven't figured out how to get Selenium to click the actual elements, never mine
-     * coordinate the wait for the Ajax. So far its just been manual testing.
-     */
     @Test
     void basics() {
 
@@ -32,20 +28,41 @@ class TreeTests extends SeleniumTestCase
 
         clickAndWait "link=clear expansions"
 
-        if (false) {
-            click "//span[@class='t-tree-icon'][2]"
+        //Click on Games
+        click "//div[@class='t-tree-container test-hook']/ul/li[2]/span[@class='t-tree-icon']"
 
-            sleep 100
+        waitForCSSSelectedElementToAppear "span.t-tree-expanded"
 
-            click "//span[@class='t-tree-icon'][3]"
+        assertTextPresent "Board Games"
 
-            sleep 100
+        //Click on Board Games
+        click "//div[@class='t-tree-container test-hook']/ul/li[2]/ul/li/span[@class='t-tree-icon']"
 
-            assertTextPresent "Agricola"
+        //Assert the leafs are displayed
+        waitForCondition "window.\$\$(\"span.t-leaf-node\").size() >= 5", "45000"
 
-            clickAndWait "link=Redraw"
+        clickAndWait "link=Redraw"
 
-            assertTextPresent "Agricola"
-        }
+        assertTextPresent "Settlers of Catan", "Agricola"
+    }
+
+    @Test
+    void selectLeaf() {
+
+        openBaseURL()
+
+        clickAndWait "link=Tree Component Demo"
+
+        clickAndWait "link=clear expansions"
+
+        click "//span[@class='t-tree-icon']"
+
+        waitForCSSSelectedElementToAppear "span.t-leaf-node"
+
+        assertTextPresent "Oscar", "Gromit", "Max", "Roger", "Cooper"
+
+        click "//span[@class='t-tree-icon t-leaf-node']"
+
+        waitForCSSSelectedElementToAppear "span.t-selected-leaf-node-label"
     }
 }

@@ -63,6 +63,8 @@ T5.extendInitializer(function() {
 	function initializer(spec) {
 		var loaded = spec.expanded;
 		var expanded = spec.expanded;
+        var selected = false;
+
 		if (expanded) {
 			$(spec.clientId).addClassName("t-tree-expanded")
 		}
@@ -95,16 +97,41 @@ T5.extendInitializer(function() {
 
 		}
 
+        function toggleLeafHandler(reply) {
+           var response = reply.responseJSON;
+
+                $(spec.clientId).update("");
+
+                Tapestry.loadScriptsInReply(response, function() {
+                    loading = false;
+                    loaded = true;
+                    expanded = true;
+                    selected = !selected;
+                });
+        }
+
 		function doLoad() {
 			if (loading)
 				return;
 
 			loading = true;
 
-			$(spec.clientId).addClassName("t-empty-node");
+            if(spec.expandChildrenURL)
+            {
+			    $(spec.clientId).addClassName("t-empty-node");
+            }
+            else
+            {
+                $(spec.clientId).next("span.t-tree-label").addClassName("t-selected-leaf-node-label");
+            }
 			$(spec.clientId).update("<span class='t-ajax-wait'/>");
 
-			Tapestry.ajaxRequest(spec.expandChildrenURL, successHandler);
+            var requestURL = spec.expandChildrenURL? spec.expandChildrenURL:spec.toggleLeafURL;
+
+            var handler =  spec.expandChildrenURL? successHandler: toggleLeafHandler;
+
+			Tapestry.ajaxRequest(requestURL, handler);
+
 		}
 
 		$(spec.clientId).observe("click", function(event) {
@@ -116,6 +143,25 @@ T5.extendInitializer(function() {
 
 				return;
 			}
+
+            if(spec.toggleLeafURL)
+            {
+                var label = $(spec.clientId).next("span.t-tree-label");
+
+                if(selected)
+                {
+                    label.removeClassName("t-selected-leaf-node-label");
+                }
+                else
+                {
+                     label.addClassName("t-selected-leaf-node-label");
+                }
+                selected = !selected;
+
+                Tapestry.ajaxRequest(spec.toggleLeafURL, {});
+
+                return;
+            }
 
 			// Children have been loaded, just a matter of toggling
 			// between showing or hiding the children.

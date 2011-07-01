@@ -51,6 +51,10 @@ SPAN.t-tree-icon.t-leaf-node {
   background-position: -32px -16px;
 }
 
+SPAN.t-tree-label.t-selected-leaf-node-label {
+  font-weight: bold;
+}
+
 SPAN.t-tree-icon.t-empty-node {
   cursor: default;
   background-position: -32px 0px !important;
