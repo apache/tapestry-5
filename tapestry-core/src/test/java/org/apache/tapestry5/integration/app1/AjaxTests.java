@@ -143,7 +143,7 @@ public class AjaxTests extends TapestryCoreTestCase
 
         // Wait for the console to appear
 
-        waitForCSSSelectedElementToAppear("#t-console li");
+        waitForCSSSelectedElementToAppear("div.t-console div");
 
         assertTextPresent("Communication with the server failed: Server-side exception.");
     }

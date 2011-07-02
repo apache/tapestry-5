@@ -2349,8 +2349,7 @@ public final class TapestryModule
         configuration.add("tapestry.datepicker.path", "org/apache/tapestry5/datepicker_106");
         configuration.add(SymbolConstants.DATEPICKER, "classpath:${tapestry.datepicker.path}");
 
-        configuration.add("tapestry.blackbird.path", "org/apache/tapestry5/blackbird_1_0");
-        configuration.add(SymbolConstants.BLACKBIRD, "classpath:${tapestry.blackbird.path}");
+        configuration.add(SymbolConstants.BLACKBIRD, "");
 
         configuration.add(SymbolConstants.PERSISTENCE_STRATEGY, PersistenceConstants.SESSION);
 
