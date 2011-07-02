@@ -40,33 +40,33 @@ import java.util.List;
 
 /**
  * A JSONArray is an ordered sequence of values. Its external text form is a string wrapped in square brackets with
- * commas separating the values. The internal form is an object having <code>get</code> and <code>opt</code> methods for
- * accessing the values by index, and <code>put</code> methods for adding or replacing values. The values can be any of
- * these types: <code>Boolean</code>, <code>JSONArray</code>, <code>JSONObject</code>, <code>Number</code>,
- * <code>String</code>, or the <code>JSONObject.NULL object</code>.
+ * commas separating the values. The internal form is an object having {@code get} and {@code opt} methods for
+ * accessing the values by index, and {@code put} methods for adding or replacing values. The values can be any of
+ * these types: {@code Boolean}, {@code JSONArray}, {@code JSONObject}, {@code Number},
+ * {@code String}, or the {@code JSONObject.NULL object}.
  * <p/>
- * The constructor can convert a JSON text into a Java object. The <code>toString</code> method converts to JSON text.
+ * The constructor can convert a JSON text into a Java object. The {@code toString} method converts to JSON text.
  * <p/>
- * A <code>get</code> method returns a value if one can be found, and throws an exception if one cannot be found. An
- * <code>opt</code> method returns a default value instead of throwing an exception, and so is useful for obtaining
+ * A {@code get} method returns a value if one can be found, and throws an exception if one cannot be found. An
+ * {@code opt} method returns a default value instead of throwing an exception, and so is useful for obtaining
  * optional values.
  * <p/>
- * The generic <code>get()</code> and <code>opt()</code> methods return an object which you can cast or query for type.
- * There are also typed <code>get</code> and <code>opt</code> methods that do type checking and type coersion for you.
+ * The generic {@code get()} and {@code opt()} methods return an object which you can cast or query for type.
+ * There are also typed {@code get} and {@code opt} methods that do type checking and type coersion for you.
  * <p/>
- * The texts produced by the <code>toString</code> methods strictly conform to JSON syntax rules. The constructors are
+ * The texts produced by the {@code toString} methods strictly conform to JSON syntax rules. The constructors are
  * more forgiving in the texts they will accept:
  * <ul>
- * <li>An extra <code>,</code>&nbsp;<small>(comma)</small> may appear just before the closing bracket.</li>
- * <li>The <code>null</code> value will be inserted when there is <code>,</code>&nbsp;<small>(comma)</small> elision.</li>
- * <li>Strings may be quoted with <code>'</code>&nbsp;<small>(single quote)</small>.</li>
+ * <li>An extra {@code ,}&nbsp;<small>(comma)</small> may appear just before the closing bracket.</li>
+ * <li>The {@code null} value will be inserted when there is {@code ,}&nbsp;<small>(comma)</small> elision.</li>
+ * <li>Strings may be quoted with {@code '}&nbsp;<small>(single quote)</small>.</li>
  * <li>Strings do not need to be quoted at all if they do not begin with a quote or single quote, and if they do not
  * contain leading or trailing spaces, and if they do not contain any of these characters:
- * <code>{ } [ ] / \ : , = ; #</code> and if they do not look like numbers and if they are not the reserved words
- * <code>true</code>, <code>false</code>, or <code>null</code>.</li>
- * <li>Values can be separated by <code>;</code> <small>(semicolon)</small> as well as by <code>,</code>
+ * {@code { } [ ] / \ : , = ; #} and if they do not look like numbers and if they are not the reserved words
+ * {@code true}, {@code false}, or {@code null}.</li>
+ * <li>Values can be separated by {@code ;} <small>(semicolon)</small> as well as by {@code ,}
  * <small>(comma)</small>.</li>
- * <li>Numbers may have the <code>0-</code> <small>(octal)</small> or <code>0x-</code> <small>(hex)</small> prefix.</li>
+ * <li>Numbers may have the {@code 0-} <small>(octal)</small> or {@code 0x-} <small>(hex)</small> prefix.</li>
  * <li>Comments written in the slashshlash, slashstar, and hash conventions will be ignored.</li>
  * </ul>
  * 
