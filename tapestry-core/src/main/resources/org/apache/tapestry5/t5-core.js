@@ -14,9 +14,11 @@
  */
 
 /**
- * The master T5 namespace.
+ * The master T5 namespace. A few critical functions are added directly to T5,
+ * but mostly it is used as a containing namespace for namespaces defined by
+ * other modules.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 var T5 = {
 	/**
@@ -33,8 +35,9 @@ var T5 = {
 	 * @returns the destination object
 	 */
 	extend : function(destination, source) {
-		if (Object.isFunction(source))
+		if (typeof source == "function") {
 			source = source();
+		}
 
 		// Prototype:
 		return Object.extend(destination, source);
