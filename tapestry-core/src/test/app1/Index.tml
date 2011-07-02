@@ -130,6 +130,10 @@
       -- error reporting for adding a duplicate mixin to a component
     </li>
     <li>
+       <a href="ZoneRefreshDemo">Zone Refresh Demo</a>
+       -- refreshes zone after 5 seconds
+    </li>
+    <li>
       <a href="UnsupportedParameterBlockDemo">Unsupported Parameter Block Demo</a>
       -- informal block parameter to a component that does not support informal parameters
     </li>

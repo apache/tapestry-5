@@ -13,6 +13,7 @@
       <package name="org.apache.tapestry5.integration.pagelevel"/>
       <package name="org.apache.tapestry5.corelib.base"/>
       <package name="org.apache.tapestry5.corelib.components"/>
+      <package name="org.apache.tapestry5.corelib.mixins"/>
       <package name="org.apache.tapestry5.corelib.internal"/>
     </packages>
   </test>

@@ -1,0 +1,20 @@
+<html xmlns:t='http://tapestry.apache.org/schema/tapestry_5_1_0.xsd'>
+   <head>
+   </head>
+
+   <body>
+      Counter 1:
+      <span t:type='zone' t:mixins='zonerefresh' t:period='1' id='zone' t:id='zone'>
+         ${counter}
+      </span>
+
+      <br />
+      Counter 2 :
+      <span t:type='zone' t:mixins='zonerefresh' t:period='1' t:id='zone2' id='zone2'>${counter2}</span>
+      <br />
+      Counter 3 :
+      <span t:type='zone' t:mixins='zonerefresh' t:period='1' t:id='zone3' id='zone3'>${counter3}</span>
+      and
+      <span t:type='zone' t:id='zone4' id='zone4'>${counter3}</span>
+   </body>
+</html>

@@ -224,5 +224,13 @@ public class EventConstants
      *  @since 5.3.1
      */
     public static final String NODE_UNSELECTED = "nodeUnselected";
+    
+    /**
+     * Event triggered by {@link org.apache.tapestry5.corelib.mixins.ZoneRefresh ZoneRefresh} to refresh the 
+     * {@link org.apache.tapestry5.corelib.components.Zone Zone}
+     * 
+     * @since 5.3.1
+     */
+   public static final String REFRESH = "refresh";
 
 }
