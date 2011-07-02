@@ -17,7 +17,7 @@
  * Defines Tapestry Ajax support, which includes sending requests and receiving
  * replies, but also includes default handlers for errors and failures, and
  * processing of Tapestry's partial page render response (a common response for
- * many types of Ajax requests).
+ * many types of Ajax requests).             `
  */
 T5.define("ajax", function() {
 
@@ -62,7 +62,7 @@ T5.define("ajax", function() {
 	 */
 	function request(url, options) {
 		
-		return T5.spi.ajaxRequest(url, 
+  throw "not yet implemented";
 	}
 
 	return {
