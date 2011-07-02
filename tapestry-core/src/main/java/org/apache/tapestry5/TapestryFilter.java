@@ -18,6 +18,7 @@ import org.apache.tapestry5.internal.ServletContextSymbolProvider;
 import org.apache.tapestry5.internal.TapestryAppInitializer;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.def.ModuleDef;
+import org.apache.tapestry5.ioc.internal.services.SystemPropertiesSymbolProvider;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.services.HttpServletRequestHandler;
 import org.apache.tapestry5.services.ServletApplicationInitializer;
@@ -79,11 +80,23 @@ public class TapestryFilter implements Filter
     {
         config = filterConfig;
 
-        ServletContext context = config.getServletContext();
+        final ServletContext context = config.getServletContext();
 
         String filterName = config.getFilterName();
 
-        SymbolProvider provider = new ServletContextSymbolProvider(context);
+        SymbolProvider provider = new SymbolProvider()
+        {
+            SymbolProvider contextProvider = new ServletContextSymbolProvider(context);
+            SymbolProvider systemProvider = new SystemPropertiesSymbolProvider();
+
+            public String valueForSymbol(String symbolName)
+            {
+                String contextValue = contextProvider.valueForSymbol(symbolName);
+                if ( contextValue != null ) return contextValue;
+
+                return systemProvider.valueForSymbol(symbolName);
+            }
+        };
 
         String executionMode = System.getProperty("tapestry.execution-mode", "production");
 
