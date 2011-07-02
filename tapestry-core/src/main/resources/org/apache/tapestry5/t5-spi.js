@@ -26,4 +26,14 @@
  */
 T5.define("spi", {
 
+	/**
+	 * Peforms an ajax request, as per T5.ajax.request(). Supplied by the SPI
+	 * implementation.
+	 * 
+	 * @param url
+	 *            URL for Ajax request
+	 * @param options
+	 *            additional options defined by T5.ajax.request().
+	 */
+	ajaxRequest : undefined
 });
