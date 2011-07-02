@@ -14,22 +14,36 @@
 
 T5.define("console", function() {
 
-  var console;
+  //FireFox throws an exception is you reference the console when it is not enabled.
 
-  function updateConsole(className, message) {
-    if (!console) {
-      var console = new Element("div", { "class" : "t-console" });
+  var nativeConsoleExists = false;
+  var nativeConsole = {};
 
-      $(document.body).insert({top: console});
+  try {
+    if (console) {
+      nativeConsole = console;
+      nativeConsoleExists = true;
+    }
+  }
+  catch (e) {
+  }
+
+  var floatingConsole;
+
+  function float(className, message) {
+    if (!floatingConsole) {
+      floatingConsole = new Element("div", { "class" : "t-console" });
+
+      $(document.body).insert({top: floatingConsole});
     }
 
-    var div = new Element("div", { 'class' : className }).update(message).hide();
+    var div = new Element("div", { 'class' : "t-console-entry " + className }).update(message).hide();
 
-    console.insert({ top: div });
+    floatingConsole.insert({ top: div });
 
     new Effect.Appear(div, { duration: .25 });
 
-    var effect = new Effect.Fade(div, { delay: T5.console.DURATION,
+    var effect = new Effect.Fade(div, { delay:  T5.console.DURATION,
       afterFinish: function () {
         T5.dom.remove(div);
       }
@@ -41,11 +55,20 @@ T5.define("console", function() {
     });
   }
 
-  // TODO: replace this with a curry
-
-  function withClassName(className) {
+  function level(className, consolefn) {
     return function (message) {
-      updateConsole(className, message);
+      float(className, message);
+
+      consolefn && consolefn(message);
+    }
+  }
+
+  function error(message) {
+    float("t-err", message);
+
+    if (nativeConsoleExists) {
+      console.error(message);
+      console.trace();
     }
   }
 
@@ -53,9 +76,9 @@ T5.define("console", function() {
     /** Time, in seconds, that floating console messages are displayed to the user. */
     DURATION  : 10,
 
-    debug : withClassName("t-debug"),
-    info : withClassName("t-info"),
-    warn : withClassName("t-warn"),
-    error : withClassName("t-error")
+    debug : level("t-debug", nativeConsole.debug),
+    info : level("t-info", nativeConsole.info),
+    warn : level("t-warn", nativeConsole.warn),
+    error : error
   };
 });

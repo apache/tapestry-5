@@ -6,9 +6,12 @@ DIV.t-console {
     left: 2px;
 }
 
-DIV.t-console DIV {
-    font-weight: bold;
-    padding: 0px 2px;
+DIV.t-console-entry {
+  font-weight: bold;
+  padding: 0px 2px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-bottom: 5px;
 }
 
 DIV.t-console DIV.t-err {
