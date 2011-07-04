@@ -14,4 +14,8 @@
 
 import org.apache.tapestry5.test.Jetty7Runner
 
-new Jetty7Runner("src/test/app1", "/", 8080, 9999).start()
+if (this.args.length != 1) {
+  fail "Expects one argument: the path to the web context to execute."
+}
+
+new Jetty7Runner(this.args[0], "/", 8080, 9999).start()
