@@ -14,10 +14,9 @@
 
 T5.define("console", function() {
 
-  //FireFox throws an exception is you reference the console when it is not enabled.
+  // FireFox throws an exception is you reference the console when it is not enabled.
 
-  var nativeConsoleExists = false;
-  var nativeConsole = {};
+  var nativeConsoleExists = false, nativeConsole = {}, floatingConsole;
 
   try {
     if (console) {
@@ -28,9 +27,7 @@ T5.define("console", function() {
   catch (e) {
   }
 
-  var floatingConsole;
-
-  function float(className, message) {
+  function display(className, message) {
     if (!floatingConsole) {
       floatingConsole = new Element("div", { "class" : "t-console" });
 
@@ -57,14 +54,14 @@ T5.define("console", function() {
 
   function level(className, consolefn) {
     return function (message) {
-      float(className, message);
+      display(className, message);
 
       consolefn && consolefn(message);
     }
   }
 
   function error(message) {
-    float("t-err", message);
+    display("t-err", message);
 
     if (nativeConsoleExists) {
       console.error(message);
