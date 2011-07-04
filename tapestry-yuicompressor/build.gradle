@@ -2,7 +2,7 @@ description = "Integrates YUI Compressor to minimize JavaScript and CSS resource
 
 dependencies {
   compile project(':tapestry-core') 
-  compile "com.yahoo.platform.yui:yuicompressor:2.4.2"
+  compile "com.yahoo.platform.yui:yuicompressor:2.4.6"
     
   testCompile project(':tapestry-test')
 }
