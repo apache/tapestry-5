@@ -130,8 +130,12 @@
       -- error reporting for adding a duplicate mixin to a component
     </li>
     <li>
-       <a href="ZoneRefreshDemo">Zone Refresh Demo</a>
-       -- refreshes zone after 5 seconds
+       <a href="ZoneRefreshWithHandlerReturningVoid">Zone Refresh With Event Handler Returning Void</a>
+       -- refreshes zone with an event handler returning void
+    </li>
+        <li>
+       <a href="ZoneRefreshWithHandlerReturningZone">Zone Refresh With Event Handler Returning Zone</a>
+       -- refreshes zone with an event handler returning zone
     </li>
     <li>
       <a href="UnsupportedParameterBlockDemo">Unsupported Parameter Block Demo</a>

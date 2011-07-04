@@ -20,37 +20,33 @@ import org.testng.annotations.Test;
 public class ZoneRefreshTest extends SeleniumTestCase
 {
    @Test
-   public void test_if_zone_with_void_event_handler_works() throws Exception
+   public void test_if_zone_with_event_handler_returning_void_works() throws Exception
    {
       openBaseURL();
-      clickAndWait("link=Zone Refresh Demo");
+      clickAndWait("link=Zone Refresh With Event Handler Returning Void");
       checkZoneValues("zone", 3);
    }
-   
+
    @Test
-   public void test_if_zone_with_single_zone_event_handler_works() throws Exception
+   public void test_if_zone_with_event_handler_returning_zone_works() throws Exception
    {
       openBaseURL();
-      clickAndWait("link=Zone Refresh Demo");
-      checkZoneValues("zone2", 3);
+      clickAndWait("link=Zone Refresh With Event Handler Returning Zone");
+      checkZoneValues("zone", 3);
    }
-   
-   @Test
-   public void test_if_zone_with_multiple_zone_event_handler_works() throws Exception
-   {
-      openBaseURL();
-      clickAndWait("link=Zone Refresh Demo");
-      checkZoneValues("zone4", 3);
-   }
-   
 
    private void checkZoneValues(String zone, int times) throws Exception
    {
-      Thread.sleep(300);
-      for(int i = 0; i < times; ++i)
+      for(int i = 1; i <= times; ++i)
       {
+         //Wait for ajax call to begin
+         waitForCondition("selenium.browserbot.getCurrentWindow().Ajax.activeRequestCount != 0", "20000");
+         
+         //Wait for ajax call from end
+         waitForCondition("selenium.browserbot.getCurrentWindow().Ajax.activeRequestCount == 0", "20000");
+         
+         //Check the value changed
          assertText(zone, String.valueOf(i));
-         Thread.sleep(1000);
       }
    }
 

@@ -101,7 +101,7 @@ public class ZoneRefresh
          return callback.getResult();
       }
       
-      return zone;
+      return zone.getBody();
    }
 
 }

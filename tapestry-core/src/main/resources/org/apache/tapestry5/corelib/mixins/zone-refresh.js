@@ -13,63 +13,45 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // 
-if (!Tapestry.ZoneRefresh)
-{
-   Tapestry.ZoneRefresh = {};
-}
+Tapestry.ZONE_REFRESH_EVENT = "tapestry:zonerefresh";
 
 Tapestry.Initializer.zoneRefresh = function(params)
 {
-   //  Ensure a valid period. Not required as PeriodicalUpdater already takes care of it
-   // but will will skip unnecessary steps
-   if(params.period <= 0)
+   var zoneRefreshId = params.id + "_refresh";
+   
+   // This will prevent any more instantiation of  PeriodicalExecuter
+   if($(zoneRefreshId))
    {
-      return;   
-   }
-         
-   // If the timer is already present, don't create a new one
-   if (Tapestry.ZoneRefresh[params.id])
-   {
-      // Timer already in use
       return;
    }
+   
+   // Create a new element and place it at the end of the document. Then we use
+   // it for refreshing the zone
+   var zoneRefresh = document.createElement("div");
+   zoneRefresh.id = zoneRefreshId;
+   
+   // Link zoneRefresh element to zone
+   $T(zoneRefresh).zoneId = params.id;
+   document.body.appendChild(zoneRefresh);
+   
+   // Connect event to zone
+   Tapestry.Initializer.updateZoneOnEvent(Tapestry.ZONE_REFRESH_EVENT, zoneRefresh, params.id, params.URL);
 
-   // Set zone
-   var element = $(params.id);
-   $T(element).zoneId = params.id;
-
-   // Function to be called for each refresh
-   var keepUpdatingZone = function(e)
+   //Create timer
+   var timer = new PeriodicalExecuter(function(e)
    {
-      try 
-      {
-         var zoneManager = Tapestry.findZoneManager(element);
-         zoneManager.updateFromURL(params.URL);
-      }
-      catch(e)
-      {
-         e.stop();
-         Tapestry.error(Tapestry.Messages.invocationException, {
-            fname : "Tapestry.Initializer.zoneRefresh",
-            params : params,
-            exception : e
-            });
-      }
-   };
+      zoneRefresh.fire(Tapestry.ZONE_REFRESH_EVENT);
+   }, params.period);
 
-   // Create and store the executor
-   Tapestry.ZoneRefresh[params.id] = new PeriodicalExecuter(keepUpdatingZone, params.period);
+   
+   //Clear the timer before unload
+   Event.observe(window, "beforeunload", function()
+   {
+      if(timer)
+      {
+         timer.stop();   
+      }
+   })
 };
 
-// Before unload clear all the timers
-Event.observe(window, "beforeunload", function()
-{
-   if (Tapestry.ZoneRefresh)
-   {
-      for ( var propertyName in Tapestry.ZoneRefresh)
-      {
-         var property = Tapestry.ZoneRefresh[propertyName];
-         property.stop();
-      }
-   }
-});
+

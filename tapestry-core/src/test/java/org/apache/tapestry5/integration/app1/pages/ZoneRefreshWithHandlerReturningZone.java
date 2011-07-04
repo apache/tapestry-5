@@ -15,55 +15,31 @@ package org.apache.tapestry5.integration.app1.pages;
 
 import org.apache.tapestry5.ajax.MultiZoneUpdate;
 import org.apache.tapestry5.annotations.InjectComponent;
-import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.corelib.components.Zone;
 
-public class ZoneRefreshDemo
+public class ZoneRefreshWithHandlerReturningZone
 {
    @Persist
    @Property
    private int counter;
    
-   @Persist
-   @Property
-   private int counter2;
-   
-   @Persist
-   @Property
-   private int counter3;
+   @InjectComponent
+   private Zone zone;
    
    @InjectComponent
    private Zone zone2;
-   
-   @InjectComponent
-   private Zone zone3;
-   
-   @InjectComponent
-   private Zone zone4;
+
    
    void setupRender()
    {
       counter = 0;
-      counter2 = 0;
-      counter3 = 0;
    }
    
-   void onRefreshFromZone()
-   {
+   Object onRefreshFromZone(){
       counter++;
-   }
-   
-   Zone onRefreshFromZone2()
-   {
-      counter2++;
-      return zone2;
-   }
-   
-   Object onRefreshFromZone3(){
-      counter3++;
-      return new MultiZoneUpdate(zone3).add(zone4);
+      return new MultiZoneUpdate(zone).add(zone2);
    }
 
 }
-
