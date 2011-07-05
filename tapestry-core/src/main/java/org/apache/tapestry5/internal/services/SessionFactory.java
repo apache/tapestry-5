@@ -16,6 +16,13 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.services.Session;
 
+/**
+ * Encapsulates logic for accessing the {@link Session} (a wrapper around the {@link javax.servlet.http.HttpSession}).
+ *
+ * @since 5.3
+ * @see SessionImpl
+ * @see ClusteredSessionImpl
+ */
 public interface SessionFactory
 {
     Session getSession(boolean create);

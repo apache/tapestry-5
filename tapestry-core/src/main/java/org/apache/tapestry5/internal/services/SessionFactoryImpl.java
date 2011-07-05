@@ -22,10 +22,6 @@ import org.apache.tapestry5.services.SessionPersistedObjectAnalyzer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-/**
- * User: josh_canfield
- * Date: 6/25/11
- */
 public class SessionFactoryImpl implements SessionFactory
 {
     private boolean clustered;
@@ -47,7 +43,10 @@ public class SessionFactoryImpl implements SessionFactory
     {
         final HttpSession httpSession = request.getSession(create);
 
-        if (httpSession == null ) return null;
+        if (httpSession == null)
+        {
+            return null;
+        }
 
         if (clustered)
         {

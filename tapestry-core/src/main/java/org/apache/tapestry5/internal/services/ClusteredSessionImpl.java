@@ -23,6 +23,8 @@ import java.util.Map;
 
 /**
  * A thin wrapper around {@link javax.servlet.http.HttpSession}.
+ *
+ * @since 5.3
  */
 public class ClusteredSessionImpl extends SessionImpl
 {
