@@ -92,21 +92,21 @@ public final class InternalConstants
      * useful when the code opening the response stream wants to explicitly control whether GZIP
      * compression occurs or
      * not.
-     * 
+     *
      * @since 5.1.0.0
      */
     public static final String SUPPRESS_COMPRESSION = "tapestry.supress-compression";
 
     /**
      * Name of response header for content encoding.
-     * 
+     *
      * @since 5.1.0.0
      */
     public static final String CONTENT_ENCODING_HEADER = "Content-Encoding";
 
     /**
      * Response content encoding value indicating use of GZIP compression.
-     * 
+     *
      * @since 5.1.0.0
      */
     public static final String GZIP_CONTENT_ENCODING = "gzip";
@@ -128,16 +128,24 @@ public final class InternalConstants
     /**
      * Name of the core {@link JavaScriptStack}, which supplies the basic JavaScript infrastructure
      * on the client.
-     * 
+     *
      * @since 5.2.0
      */
     public static final String CORE_STACK_NAME = "core";
 
     /**
      * The names of the standard controlled subpackages.
-     * 
+     *
      * @since 5.3
      */
     public static final String[] SUBPACKAGES =
-    { PAGES_SUBPACKAGE, COMPONENTS_SUBPACKAGE, MIXINS_SUBPACKAGE, BASE_SUBPACKAGE };
+            {PAGES_SUBPACKAGE, COMPONENTS_SUBPACKAGE, MIXINS_SUBPACKAGE, BASE_SUBPACKAGE};
+
+    /**
+     * The element name for a submit input element used to cancel the form (rather than
+     * submit it normally).
+     *
+     * @since 5.3
+     */
+    public static final String CANCEL_NAME = "cancel";
 }

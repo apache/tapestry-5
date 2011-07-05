@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ public class SubmitTest extends InternalBaseTestCase
 
         // Also: test for the alternate, JavaScript oriented way, of determining the
         // element/component that triggered the submission.
-        train_getParameter(request, Form.SUBMITTING_ELEMENT_ID, "xyz");
+        train_getParameter(request, Form.SUBMITTING_ELEMENT_ID, "[ 'xyz', 'pdq' ]");
 
         replay();
 

@@ -1550,7 +1550,7 @@ Tapestry.FormEventManager = Class.create({
 				this.submitHidden = hiddens.first();
 		}
 
-		this.submitHidden.value = element == null ? null : $(element).id;
+		this.submitHidden.value = element == null ? null : Object.toJSON([$(element).id, $(element).name]);
 	},
 
 	handleSubmit : function(domevent) {

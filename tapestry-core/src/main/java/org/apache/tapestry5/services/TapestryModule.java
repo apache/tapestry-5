@@ -2377,7 +2377,7 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.BLACKBIRD_ENABLED, false);
 
-        configuration.add(InternalSymbols.PRE_SELECTED_FORM_NAMES, "reset,submit,select,id,method,action,onsubmit");
+        configuration.add(InternalSymbols.PRE_SELECTED_FORM_NAMES, "reset,submit,select,id,method,action,onsubmit," + InternalConstants.CANCEL_NAME);
 
         configuration.add(SymbolConstants.COMPONENT_RENDER_TRACING_ENABLED, false);
 

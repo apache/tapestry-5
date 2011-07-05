@@ -1,5 +1,5 @@
 <form t:id="form" validate="object"
-      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
     <t:errors/>
 
     <div class="t-beaneditor">

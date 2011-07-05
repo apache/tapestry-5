@@ -14,48 +14,15 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.CSSClassConstants;
-import org.apache.tapestry5.ClientElement;
-import org.apache.tapestry5.ComponentAction;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.EventConstants;
-import org.apache.tapestry5.EventContext;
-import org.apache.tapestry5.Field;
-import org.apache.tapestry5.FormValidationControl;
-import org.apache.tapestry5.Link;
-import org.apache.tapestry5.MarkupConstants;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.PersistenceConstants;
-import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.TrackableComponentEventCallback;
-import org.apache.tapestry5.ValidationDecorator;
-import org.apache.tapestry5.ValidationException;
-import org.apache.tapestry5.ValidationTracker;
-import org.apache.tapestry5.ValidationTrackerImpl;
-import org.apache.tapestry5.ValidationTrackerWrapper;
-import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.Events;
-import org.apache.tapestry5.annotations.HeartbeatDeferred;
-import org.apache.tapestry5.annotations.Log;
-import org.apache.tapestry5.annotations.Mixin;
-import org.apache.tapestry5.annotations.OnEvent;
-import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.corelib.ClientValidation;
 import org.apache.tapestry5.corelib.internal.ComponentActionSink;
 import org.apache.tapestry5.corelib.internal.FormSupportImpl;
 import org.apache.tapestry5.corelib.internal.InternalFormSupport;
 import org.apache.tapestry5.corelib.mixins.RenderInformals;
 import org.apache.tapestry5.dom.Element;
-import org.apache.tapestry5.internal.BeanValidationContext;
-import org.apache.tapestry5.internal.BeanValidationContextImpl;
-import org.apache.tapestry5.internal.InternalSymbols;
-import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.internal.*;
 import org.apache.tapestry5.internal.services.HeartbeatImpl;
 import org.apache.tapestry5.internal.util.AutofocusValidationDecorator;
 import org.apache.tapestry5.ioc.Location;
@@ -66,39 +33,52 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.ioc.util.IdAllocator;
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.Component;
-import org.apache.tapestry5.services.ClientBehaviorSupport;
-import org.apache.tapestry5.services.ClientDataEncoder;
-import org.apache.tapestry5.services.ComponentSource;
-import org.apache.tapestry5.services.Environment;
-import org.apache.tapestry5.services.FormSupport;
-import org.apache.tapestry5.services.Heartbeat;
-import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.slf4j.Logger;
 
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+
 /**
  * An HTML form, which will enclose other components to render out the various
  * types of fields.
- * <p/>
+ * <p>
  * A Form emits many notification events. When it renders, it fires a
  * {@link org.apache.tapestry5.EventConstants#PREPARE_FOR_RENDER} notification, followed by a
- * {@link EventConstants#PREPARE} notification.
- * <p/>
+ * {@link EventConstants#PREPARE} notification.</p>
+ * <p>
  * When the form is submitted, the component emits several notifications: first a
  * {@link EventConstants#PREPARE_FOR_SUBMIT}, then a {@link EventConstants#PREPARE}: these allow the page to update its
- * state as necessary to prepare for the form submission, then (after components enclosed by the form have operated), a
- * {@link EventConstants#VALIDATE} event is emitted, to allow for cross-form validation. After that, either a
+ * state as necessary to prepare for the form submission.</p>
+ * <p>
+ * The Form component determines if the form was cancelled (see {@link org.apache.tapestry5.corelib.SubmitMode#CANCEL}. If so,
+ * an {@link EventConstants#CANCELED} event is emitted.</p>
+ * <p>
+ * Next come notifications to contained components (or more accurately, the execution of stored {@link ComponentAction}s), to allow each component to retrieve and validate
+ * submitted values, and update server-side properties.  This is based on the {@code t:formdata} query parameter,
+ * which contains serialized object data (generated when the form initially renders).
+ * </p>
+ * <p>Once the form data is processed, the next step is to emit the
+ * {@link EventConstants#VALIDATE}, which allows for cross-form validation. After that, either a
  * {@link EventConstants#SUCCESS} OR {@link EventConstants#FAILURE} event (depending on whether the
  * {@link ValidationTracker} has recorded any errors). Lastly, a {@link EventConstants#SUBMIT} event, for any listeners
- * that care only about form submission, regardless of success or failure.
- * <p/>
- * For all of these notifications, the event context is derived from the <strong>context</strong> parameter. This
+ * that care only about form submission, regardless of success or failure.</p>
+ * <p>
+ * For all of these notifications, the event context is derived from the <strong>context</strong> component parameter. This
  * context is encoded into the form's action URI (the parameter is not read when the form is submitted, instead the
  * values encoded into the form are used).
- * 
+ * </p>
+ * <p>
+ * While rendering, or processing a Form submission, the Form component places a {@link FormSupport} object into the {@linkplain Environment environment},
+ * so that enclosed components can coordinate with the Form component.
+ * </p>
+ *
  * @tapestrydoc
  * @see BeanEditForm
  * @see Errors
@@ -106,8 +86,8 @@ import org.slf4j.Logger;
  * @see Label
  */
 @Events(
-{ EventConstants.PREPARE_FOR_RENDER, EventConstants.PREPARE, EventConstants.PREPARE_FOR_SUBMIT,
-        EventConstants.VALIDATE, EventConstants.SUBMIT, EventConstants.FAILURE, EventConstants.SUCCESS })
+        {EventConstants.PREPARE_FOR_RENDER, EventConstants.PREPARE, EventConstants.PREPARE_FOR_SUBMIT,
+                EventConstants.VALIDATE, EventConstants.SUBMIT, EventConstants.FAILURE, EventConstants.SUCCESS})
 public class Form implements ClientElement, FormValidationControl
 {
     /**
@@ -119,7 +99,8 @@ public class Form implements ClientElement, FormValidationControl
     /**
      * Used by {@link Submit}, etc., to identify which particular client-side element (by element id)
      * was responsible for the submission. An empty hidden field is created, as needed, to store this value.
-     * 
+     * Starting in Tapestry 5.3, this is a JSONArray with two values: the client id followed by the client name.
+     *
      * @since 5.2.0
      */
     public static final String SUBMITTING_ELEMENT_ID = "t:submit";
@@ -162,7 +143,7 @@ public class Form implements ClientElement, FormValidationControl
      * cursor into the form. The field to
      * receive focus is the first rendered field that is in error, or required,
      * or present (in that order of priority).
-     * 
+     *
      * @see SymbolConstants#FORM_CLIENT_LOGIC_ENABLED
      */
     @Parameter
@@ -190,7 +171,7 @@ public class Form implements ClientElement, FormValidationControl
      * Prefix value used when searching for validation messages and constraints.
      * The default is the Form component's
      * id. This is overridden by {@link org.apache.tapestry5.corelib.components.BeanEditForm}.
-     * 
+     *
      * @see org.apache.tapestry5.services.FormSupport#getFormValidationId()
      */
     @Parameter
@@ -289,10 +270,10 @@ public class Form implements ClientElement, FormValidationControl
      * persistent field and be stored into the session). This means that if no errors are recorded,
      * the tracker parameter is not updated and (in the default case) no data is stored into the
      * session.
-     * 
-     * @see <a href="https://issues.apache.org/jira/browse/TAP5-979">TAP5-979</a>
+     *
      * @return a tracker ready to receive data (possibly a previously stored tracker with field
      *         input and errors)
+     * @see <a href="https://issues.apache.org/jira/browse/TAP5-979">TAP5-979</a>
      */
     private ValidationTracker getWrappedTracker()
     {
@@ -442,23 +423,23 @@ public class Form implements ClientElement, FormValidationControl
      * Creates an {@link org.apache.tapestry5.corelib.internal.InternalFormSupport} for
      * this Form. This method is used
      * by {@link org.apache.tapestry5.corelib.components.FormInjector}.
-     * <p>
+     * <p/>
      * This method may also be invoked as the handler for the "internalCreateRenderTimeFormSupport" event.
-     * 
+     *
      * @param clientId
-     *            the client-side id for the rendered form
-     *            element
+     *         the client-side id for the rendered form
+     *         element
      * @param actionSink
-     *            used to collect component actions that will, ultimately, be
-     *            written as the t:formdata hidden
-     *            field
+     *         used to collect component actions that will, ultimately, be
+     *         written as the t:formdata hidden
+     *         field
      * @param allocator
-     *            used to allocate unique ids
+     *         used to allocate unique ids
      * @return form support object
      */
     @OnEvent("internalCreateRenderTimeFormSupport")
     InternalFormSupport createRenderTimeFormSupport(String clientId, ComponentActionSink actionSink,
-            IdAllocator allocator)
+                                                    IdAllocator allocator)
     {
         return new FormSupportImpl(resources, clientId, actionSink, clientBehaviorSupport,
                 clientValidation != ClientValidation.NONE, allocator, validationId);
@@ -497,7 +478,7 @@ public class Form implements ClientElement, FormValidationControl
     }
 
     @SuppressWarnings(
-    { "unchecked", "InfiniteLoopStatement" })
+            {"unchecked", "InfiniteLoopStatement"})
     @Log
     Object onAction(EventContext context) throws IOException
     {
@@ -524,6 +505,14 @@ public class Form implements ClientElement, FormValidationControl
                 return true;
 
             resources.triggerContextEvent(EventConstants.PREPARE, context, eventCallback);
+
+            if (isFormCancelled())
+            {
+                resources.triggerContextEvent(EventConstants.CANCELED, context, eventCallback);
+                if (eventCallback.isAborted())
+                    return true;
+            }
+
 
             environment.push(BeanValidationContext.class, new BeanValidationContextImpl(validate));
 
@@ -565,8 +554,7 @@ public class Form implements ClientElement, FormValidationControl
             resources.triggerContextEvent(EventConstants.SUBMIT, context, eventCallback);
 
             return eventCallback.isAborted();
-        }
-        finally
+        } finally
         {
             environment.pop(Heartbeat.class);
             environment.pop(FormSupport.class);
@@ -579,13 +567,39 @@ public class Form implements ClientElement, FormValidationControl
         }
     }
 
+    private boolean isFormCancelled()
+    {
+        // The "cancel" query parameter is reserved for this purpose; if it is present then the form was canceled on the
+        // client side.  For image submits, there will be two parameters: "cancel.x" and "cancel.y".
+
+        if (request.getParameter(InternalConstants.CANCEL_NAME) != null ||
+                request.getParameter(InternalConstants.CANCEL_NAME + ".x") != null)
+        {
+            return true;
+        }
+
+        // When JavaScript is involved, it's more complicated. In fact, this is part of HLS's desire
+        // to have all forms submit via XHR when JavaScript is present, since it would provide
+        // an opportunity to get the submitting element's value into the request properly.
+
+        String raw = request.getParameter(SUBMITTING_ELEMENT_ID);
+
+        if (raw != null &&
+                new JSONArray(raw).getString(1).equals(InternalConstants.CANCEL_NAME))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+
     private void fireValidateEvent(String eventName, EventContext context, TrackableComponentEventCallback callback)
     {
         try
         {
             resources.triggerContextEvent(eventName, context, callback);
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             ValidationException ve = ExceptionUtils.findCause(ex, ValidationException.class);
 
@@ -645,18 +659,15 @@ public class Form implements ClientElement, FormValidationControl
 
                     component = null;
                 }
-            }
-            catch (EOFException ex)
+            } catch (EOFException ex)
             {
                 // Expected
-            }
-            catch (Exception ex)
+            } catch (Exception ex)
             {
                 Location location = component == null ? null : component.getComponentResources().getLocation();
 
                 throw new TapestryException(ex.getMessage(), location, ex);
-            }
-            finally
+            } finally
             {
                 InternalUtils.close(ois);
             }
@@ -732,9 +743,8 @@ public class Form implements ClientElement, FormValidationControl
         {
 
             activePageResources.triggerEvent(EventConstants.PREALLOCATE_FORM_CONTROL_NAMES, new Object[]
-            { idAllocator }, null);
-        }
-        catch (RuntimeException ex)
+                    {idAllocator}, null);
+        } catch (RuntimeException ex)
         {
             logger.error(
                     String.format("Unable to obtrain form control names to preallocate: %s",

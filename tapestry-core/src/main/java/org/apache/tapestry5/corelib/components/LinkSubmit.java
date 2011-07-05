@@ -14,19 +14,14 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.ClientElement;
-import org.apache.tapestry5.ComponentAction;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.EventConstants;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.TrackableComponentEventCallback;
+import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.SubmitMode;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
@@ -38,7 +33,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * Generates a client-side hyperlink that submits the enclosing form. If the link is clicked in the browser, the
  * component will trigger an event ({@linkplain EventConstants#SELECTED selected} by default) , just like {@link Submit}
  * .
- * 
+ *
  * @tapestrydoc
  */
 @SupportsInformalParameters
@@ -62,7 +57,7 @@ public class LinkSubmit implements ClientElement
      * Defines the mode, or client-side behavior, for the submit. The default is {@link SubmitMode#NORMAL}; clicking the
      * button submits the form with validation. {@link SubmitMode#CANCEL} indicates the client-side validation
      * should be omitted (though server-side validation still occurs).
-     * 
+     *
      * @since 5.2.0
      */
     @Parameter(allowNull = false, defaultPrefix = BindingConstants.LITERAL)
@@ -80,7 +75,7 @@ public class LinkSubmit implements ClientElement
     /**
      * The list of values that will be made available to event handler method of this component when the form is
      * submitted.
-     * 
+     *
      * @since 5.2.0
      */
     @Parameter
@@ -126,7 +121,9 @@ public class LinkSubmit implements ClientElement
     {
         this.clientId = clientId;
 
-        if (clientId.equals(request.getParameter(Form.SUBMITTING_ELEMENT_ID)))
+        String raw = request.getParameter(Form.SUBMITTING_ELEMENT_ID);
+
+        if (raw != null && new JSONArray(raw).getString(0).equals(clientId))
         {
             Runnable notification = new Runnable()
             {
@@ -153,7 +150,7 @@ public class LinkSubmit implements ClientElement
 
             writer.element("span",
 
-            "id", clientId);
+                    "id", clientId);
 
             resources.renderInformalParameters(writer);
         }

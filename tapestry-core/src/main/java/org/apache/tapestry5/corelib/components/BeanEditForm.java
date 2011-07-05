@@ -14,21 +14,8 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import java.io.IOException;
-
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.ClientElement;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.EventConstants;
-import org.apache.tapestry5.Field;
-import org.apache.tapestry5.FormValidationControl;
-import org.apache.tapestry5.TrackableComponentEventCallback;
-import org.apache.tapestry5.annotations.Component;
-import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.Events;
-import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -49,12 +36,12 @@ import org.apache.tapestry5.services.BeanModelSource;
  * <p/>
  * BeanEditForm contains a {@link org.apache.tapestry5.corelib.components.Form} component and will trigger all the
  * events of a Form.
- * 
+ *
+ * @tapestrydoc
  * @see org.apache.tapestry5.beaneditor.BeanModel
  * @see org.apache.tapestry5.services.BeanModelSource
  * @see org.apache.tapestry5.corelib.components.PropertyEditor
  * @see org.apache.tapestry5.beaneditor.DataType
- * @tapestrydoc
  * @see Form
  * @see Errors
  * @see BeanEditor
@@ -124,7 +111,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      * If set to true, then the form will include an additional button after the submit button labeled "Cancel".
      * The cancel button will submit the form, bypassing client-side validation. The BeanEditForm will fire a
      * {@link EventConstants#CANCELED} event (before the form's {@link EventConstants#VALIDATE} event).
-     * 
+     *
      * @since 5.2.0
      */
     @Property
@@ -146,10 +133,6 @@ public class BeanEditForm implements ClientElement, FormValidationControl
 
     @Inject
     private BeanModelSource beanModelSource;
-
-    @SuppressWarnings("unchecked")
-    @Environmental
-    private TrackableComponentEventCallback eventCallback;
 
     boolean onPrepareFromForm()
     {
@@ -198,14 +181,5 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     public void recordError(String errorMessage)
     {
         form.recordError(errorMessage);
-    }
-
-    boolean onSelectedFromCancel() throws IOException
-    {
-        resources.triggerEvent(EventConstants.CANCELED, null, eventCallback);
-
-        // Prevent further event handlers.
-
-        return true;
     }
 }

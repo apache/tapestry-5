@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,16 +20,19 @@ import org.apache.tapestry5.corelib.components.Submit;
 
 /**
  * Defines the client and server-side behavior of a {@link Submit} or {@link LinkSubmit} component.
- * 
+ *
  * @since 5.2.0
  */
 public enum SubmitMode
 {
-    /** Submit the form normally, with full validation on the client and server side. */
+    /**
+     * Submit the form normally, with full validation on the client and server side.
+     */
     NORMAL,
 
     /**
-     * Cancel the form; bypass client-side form validation. Validation still occurs
+     * Cancel the form; bypass client-side form validation. Fires the {@link EventConstants#CANCELED} event.
+     * If the event handler for that event allows the submission to proceed, then server-side validation still occurs
      * on the server, though generally the data is discarded by the event listener
      * (listening to the Submit component's {@link EventConstants#SELECTED} event).
      */

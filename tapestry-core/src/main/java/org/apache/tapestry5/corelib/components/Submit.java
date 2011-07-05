@@ -20,8 +20,9 @@ import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.SubmitMode;
-import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
 import org.apache.tapestry5.services.Request;
@@ -31,7 +32,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * Corresponds to &lt;input type="submit"&gt; or &lt;input type="image"&gt;, a client-side element that can force the
  * enclosing form to submit. The submit responsible for the form submission will post a notification that allows the
  * application to know that it was the responsible entity. The notification is named "selected" and has no context.
- * 
+ *
  * @tapestrydoc
  */
 @SupportsInformalParameters
@@ -64,7 +65,7 @@ public class Submit implements ClientElement
     /**
      * The list of values that will be made available to event handler method of this component when the form is
      * submitted.
-     * 
+     *
      * @since 5.1.0.0
      */
     @Parameter
@@ -72,7 +73,7 @@ public class Submit implements ClientElement
 
     /**
      * If provided, the component renders an input tag with type "image". Otherwise "submit".
-     * 
+     *
      * @since 5.1.0.0
      */
     @Parameter(defaultPrefix = BindingConstants.ASSET)
@@ -82,7 +83,7 @@ public class Submit implements ClientElement
      * Defines the mode, or client-side behavior, for the submit. The default is {@link SubmitMode#NORMAL}; clicking the
      * button submits the form with validation. {@link SubmitMode#CANCEL} indicates the client-side validation
      * should be omitted (though server-side validation still occurs).
-     * 
+     *
      * @since 5.2.0
      */
     @Parameter(allowNull = false, defaultPrefix = BindingConstants.LITERAL)
@@ -138,7 +139,11 @@ public class Submit implements ClientElement
     {
         clientId = javascriptSupport.allocateClientId(resources);
 
-        String name = formSupport.allocateControlName(resources.getId());
+        boolean isCancel = mode == SubmitMode.CANCEL;
+
+        String name =
+                isCancel ? InternalConstants.CANCEL_NAME :
+                        formSupport.allocateControlName(resources.getId());
 
         // Save the element, to see if an id is later requested.
 
@@ -146,29 +151,36 @@ public class Submit implements ClientElement
 
         writer.element("input",
 
-        "type", type,
+                "type", type,
 
-        "name", name,
+                "name", name,
 
-        "id", clientId);
+                "id", clientId);
 
         if (disabled)
+        {
             writer.attributes("disabled", "disabled");
+        }
 
         if (image != null)
+        {
             writer.attributes("src", image.toClientURL());
+        }
 
         formSupport.store(this, new ProcessSubmission(clientId, name));
 
         resources.renderInformalParameters(writer);
+
+        if (isCancel)
+        {
+            javascriptSupport.addInitializerCall("cancelButton", getClientId());
+        }
+
     }
 
     void afterRender(MarkupWriter writer)
     {
         writer.end();
-
-        if (mode == SubmitMode.CANCEL)
-            javascriptSupport.addInitializerCall("cancelButton", getClientId());
     }
 
     void processSubmission(String clientId, String elementName)
@@ -199,8 +211,13 @@ public class Submit implements ClientElement
     {
         // Case #1: via JavaScript, the client id is passed up.
 
-        if (clientId.equals(request.getParameter(Form.SUBMITTING_ELEMENT_ID)))
+        String raw = request.getParameter(Form.SUBMITTING_ELEMENT_ID);
+
+        if (raw != null &&
+                new JSONArray(raw).getString(0).equals(clientId))
+        {
             return true;
+        }
 
         // Case #2: No JavaScript, look for normal semantic (non-null value for the element's name).
         // If configured as an image submit, look for a value for the x position. Ah, the ugliness
@@ -215,7 +232,7 @@ public class Submit implements ClientElement
 
     /**
      * Returns the component's client id. This must be called after the component has rendered.
-     * 
+     *
      * @return client id for the component
      */
     public String getClientId()

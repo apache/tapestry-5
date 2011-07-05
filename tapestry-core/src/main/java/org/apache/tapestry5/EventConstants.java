@@ -48,14 +48,14 @@ public class EventConstants
 
     /**
      * Invoked before {@link #PREPARE} when rendering out the form.
-     * 
+     *
      * @see org.apache.tapestry5.corelib.components.Form
      */
     public static final String PREPARE_FOR_RENDER = "prepareForRender";
 
     /**
      * Invoked before {@link #PREPARE} when the form is submitted.
-     * 
+     *
      * @see org.apache.tapestry5.corelib.components.Form
      */
     public static final String PREPARE_FOR_SUBMIT = "prepareForSubmit";
@@ -63,7 +63,7 @@ public class EventConstants
     /**
      * Invoked to let the containing component(s) prepare for the form rendering or the form
      * submission.
-     * 
+     *
      * @see org.apache.tapestry5.corelib.components.Form
      */
     public static final String PREPARE = "prepare";
@@ -72,14 +72,17 @@ public class EventConstants
      * Event type for a notification after the form has submitted. This event notification occurs on
      * any form submit,
      * without respect to "success" or "failure".
-     * 
+     *
      * @see org.apache.tapestry5.corelib.components.Form
      */
     public static final String SUBMIT = "submit";
 
     /**
-     * Event type associated with clicking the cancel button inside a {@link BeanEditForm}.
-     * 
+     * Event triggered when a client-side form is canceled. This occurs after page activation, and after
+     * the prepare events for the form, but before any stored {@link ComponentAction}s for the form are triggered.
+     *
+     * @see org.apache.tapestry5.corelib.SubmitMode#CANCEL
+     *
      * @since 5.2.0
      */
     public static final String CANCELED = "canceled";
@@ -88,7 +91,7 @@ public class EventConstants
      * Event type for a notification after the form has submitted, when there are no errors in the
      * validation tracker.
      * This occurs before the {@link #SUBMIT} event.
-     * 
+     *
      * @see org.apache.tapestry5.corelib.components.Form
      */
     public static final String SUCCESS = "success";
@@ -148,7 +151,7 @@ public class EventConstants
      * all the values that were supplied from the client during a form submission. The event handler
      * method should have
      * a single parameter, of type Object[] or type List, to receive the values.
-     * 
+     *
      * @since 5.1.0.0
      */
     public static final String SYNCHRONIZE_VALUES = "synchronizeValues";
@@ -158,7 +161,7 @@ public class EventConstants
      * container of what context (if any) is available. The event handler may return a renderable
      * object or null. If
      * null is returned, the component renders its own body as the partial markup response.
-     * 
+     *
      * @since 5.1.0.1
      */
     public static final String PROGRESSIVE_DISPLAY = "progressiveDisplay";
@@ -167,7 +170,7 @@ public class EventConstants
      * Event triggered by an {@link org.apache.tapestry5.corelib.mixins.Autocomplete} mixin to
      * request completions of
      * the current input. The context is the partial string provided by the client.
-     * 
+     *
      * @since 5.1.0.4
      */
     public static final String PROVIDE_COMPLETIONS = "provideCompletions";
@@ -176,7 +179,7 @@ public class EventConstants
      * Event triggered by {@link org.apache.tapestry5.corelib.components.Select} component to inform
      * its
      * container that Select's value has changed.
-     * 
+     *
      * @since 5.2.0
      */
     public static final String VALUE_CHANGED = "valueChanged";
@@ -185,7 +188,7 @@ public class EventConstants
      * Event triggered during page render link generation. The first context parameter is the {@link Link} object, the
      * second is the {@link PageRenderRequestParameters} from which the Link
      * was created. The event is triggered on the actively rendering page.
-     * 
+     *
      * @since 5.2.0
      */
     public static final String DECORATE_PAGE_RENDER_LINK = "decoratePageRenderLink";
@@ -195,7 +198,7 @@ public class EventConstants
      * the second is the {@link ComponentEventRequestParameters} from which the Link
      * was created. The event is triggered on the actively rendering page, not necessarily the page
      * containing the component.
-     * 
+     *
      * @since 5.2.0
      */
     public static final String DECORATE_COMPONENT_EVENT_LINK = "decorateComponentEventLink";
@@ -204,7 +207,7 @@ public class EventConstants
      * Name of a event triggered by the form component on the {@linkplain ComponentSource#getActivePage() active page}
      * to allow it to pre-allocate the names of any query parameters that might be used by the page for its own purposes
      * and should not be allocated to components. An {@link IdAllocator} is passed as the event context.
-     * 
+     *
      * @since 5.2.0
      */
     public static final String PREALLOCATE_FORM_CONTROL_NAMES = "preallocateFormControlNames";
@@ -218,19 +221,18 @@ public class EventConstants
     public static final String NODE_SELECTED = "nodeSelected";
 
     /**
-     *  Event  triggered by the {@link org.apache.tapestry5.corelib.components.Tree}
-     *  component when a leaf node is unselected.
+     * Event  triggered by the {@link org.apache.tapestry5.corelib.components.Tree}
+     * component when a leaf node is unselected.
      *
-     *  @since 5.3
-     */
-    public static final String NODE_UNSELECTED = "nodeUnselected";
-    
-    /**
-     * Event triggered by {@link org.apache.tapestry5.corelib.mixins.ZoneRefresh ZoneRefresh} to refresh the 
-     * {@link org.apache.tapestry5.corelib.components.Zone Zone}
-     * 
      * @since 5.3
      */
-   public static final String REFRESH = "refresh";
+    public static final String NODE_UNSELECTED = "nodeUnselected";
 
+    /**
+     * Event triggered by {@link org.apache.tapestry5.corelib.mixins.ZoneRefresh ZoneRefresh} to refresh the
+     * {@link org.apache.tapestry5.corelib.components.Zone Zone}
+     *
+     * @since 5.3
+     */
+    public static final String REFRESH = "refresh";
 }
