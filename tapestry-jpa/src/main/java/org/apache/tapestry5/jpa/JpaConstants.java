@@ -17,7 +17,7 @@ package org.apache.tapestry5.jpa;
 /**
  * Defines constants used inside the Tapestry JPA integration.
  *
- * @since 5.3.0
+ * @since 5.3
  */
 public class JpaConstants
 {

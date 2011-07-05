@@ -42,7 +42,7 @@ public interface SessionPersistedObjectAnalyzer<T>
      *
      * @param sessionPersistedObject the session attribute (never null)
      * @return true if the object needs to be re-stored into the session
-     * @since 5.3.1
+     * @since 5.3
      */
     boolean checkAndResetDirtyState(T sessionPersistedObject);
 

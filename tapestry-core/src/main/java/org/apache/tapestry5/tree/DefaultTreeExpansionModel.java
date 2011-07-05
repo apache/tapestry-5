@@ -23,7 +23,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
  * Manages a Set of String {@link TreeNode} ids.
  * 
  * @param <T>
- * @since 5.3.0
+ * @since 5.3
  * @see TreeModel
  */
 public class DefaultTreeExpansionModel<T> extends BaseOptimizedSessionPersistedObject implements TreeExpansionModel<T>

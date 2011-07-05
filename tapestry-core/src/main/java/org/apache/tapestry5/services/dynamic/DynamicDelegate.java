@@ -22,7 +22,7 @@ import org.apache.tapestry5.corelib.components.Dynamic;
  * Used by implementations of {@link DynamicTemplate} to obtain {@link Block}s as replacements
  * for elements within the template. The Blocks are passed to the {@link Dynamic} component as informal parameters.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public interface DynamicDelegate
 {

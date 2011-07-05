@@ -28,7 +28,7 @@ import org.apache.tapestry5.services.ComponentClassTransformWorker;
  * chain of command}. For compatibility with the code compiled for Tapestry 5.2, contributions of type
  * {@link ComponentClassTransformWorker} are type coerced into this type automatically.
  * 
- * @since 5.3.0
+ * @since 5.3
  * @see PlasticClass
  */
 @UsesOrderedConfiguration(ComponentClassTransformWorker2.class)

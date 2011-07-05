@@ -23,7 +23,7 @@ import org.apache.tapestry5.services.dynamic.DynamicTemplate;
 /**
  * A close cousin to {@link RenderCommand} used inside a {@link DynamicTemplate}.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public interface DynamicTemplateElement
 {

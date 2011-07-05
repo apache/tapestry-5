@@ -47,10 +47,10 @@ public interface ServiceResources extends ObjectLocator, AnnotationAccess
     OperationTracker getTracker();
 
     /**
-     * Returns null (as of 5.3.0).
+     * Returns null (as of 5.3).
      * 
      * @since 5.2.0
-     * @deprecated Deprecated in 5.3.0 with no replacement. May be removed in 5.4.
+     * @deprecated Deprecated in 5.3 with no replacement. May be removed in 5.4.
      */
     Class getImplementationClass();
 }

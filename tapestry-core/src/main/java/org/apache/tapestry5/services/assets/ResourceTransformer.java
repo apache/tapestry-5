@@ -22,7 +22,7 @@ import java.io.InputStream;
  * stream that can be used on the client side. Examples of this are languages that "compile" to
  * JavaScript, or any of a few higher-level versions of CSS that are compiled to standard CSS.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public interface ResourceTransformer
 {

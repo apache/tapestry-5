@@ -262,7 +262,7 @@ public class LinkImplTest extends InternalBaseTestCase
     /**
      * TAP5-922
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     @Test
     public void null_parameter_value()

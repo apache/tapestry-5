@@ -22,7 +22,7 @@ import org.apache.tapestry5.services.InvalidationListener;
  * This was necessary due to some refactoring that made {@link ComponentClassResolver} and ComponentInstantiatorSource
  * mutually dependent.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public interface InternalComponentInvalidationEventHub extends InvalidationEventHub
 {

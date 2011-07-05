@@ -28,7 +28,7 @@ import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 /**
  * JavaScript resource minimizer based on the YUI {@link JavaScriptCompressor}.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public class JavaScriptResourceMinimizer extends AbstractMinimizer
 {

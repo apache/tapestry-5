@@ -22,7 +22,7 @@ import java.util.Map;
  * 
  * @param <A>
  * @param <B>
- * @since 5.3.0
+ * @since 5.3
  */
 public interface ZippedFlow<A, B> extends FlowOperations<Tuple<A, B>, ZippedFlow<A, B>>
 {

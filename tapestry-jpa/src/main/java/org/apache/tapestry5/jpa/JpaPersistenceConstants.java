@@ -19,7 +19,7 @@ import org.apache.tapestry5.PersistenceConstants;
 /**
  * Constants for persistent field strategies.
  *
- * @since 5.3.0
+ * @since 5.3
  */
 public class JpaPersistenceConstants
 {

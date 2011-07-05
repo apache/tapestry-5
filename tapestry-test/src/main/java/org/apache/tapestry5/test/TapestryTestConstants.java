@@ -116,7 +116,7 @@ public class TapestryTestConstants
 
     /**
      * {@link XmlTest} parameter holding the servlet container to run for the integration tests.
-     * @since 5.3.0
+     * @since 5.3
      */
     public static final String SERVLET_CONTAINER_PARAMETER = "tapestry.servlet-container";
 }

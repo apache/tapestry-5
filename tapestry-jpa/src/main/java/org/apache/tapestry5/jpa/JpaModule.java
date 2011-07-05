@@ -68,7 +68,7 @@ import org.slf4j.Logger;
 /**
  * Defines core services for JPA support.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public class JpaModule
 {

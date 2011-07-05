@@ -23,7 +23,7 @@ import javax.persistence.spi.PersistenceUnitInfo;
 /**
  * Responsible for creating an EntityManager as needed.
  *
- * @since 5.3.0
+ * @since 5.3
  */
 public interface EntityManagerSource
 {

@@ -38,7 +38,7 @@ import org.apache.tapestry5.services.AssetSource;
  * <p>
  * A limitation of this implementation is that the contributed assets are not localized at all.
  * 
- * @since 5.3.0
+ * @since 5.3
  * @see StackExtension
  */
 @UsesOrderedConfiguration(StackExtension.class)

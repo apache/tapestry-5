@@ -17,7 +17,7 @@ package org.apache.tapestry5.services.javascript;
 /**
  * A contribution to an extensible {@link JavaScriptStack}. Such a stack is created in terms of all the contributions.
  * 
- * @since 5.3.0
+ * @since 5.3
  * @see ExtensibleJavaScriptStack
  */
 public class StackExtension

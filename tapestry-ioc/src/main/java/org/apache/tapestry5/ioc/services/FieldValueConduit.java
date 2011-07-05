@@ -21,7 +21,7 @@ import org.apache.tapestry5.plastic.PlasticField;
  * Used as a replacement for a field.
  * 
  * @since 5.2.0
- * @deprecated Deprecated in 5.3.0, using Plastic equivalents
+ * @deprecated Deprecated in 5.3, using Plastic equivalents
  * @see {@link PlasticField}, {@link FieldConduit}
  */
 public interface FieldValueConduit

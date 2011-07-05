@@ -30,7 +30,7 @@ import org.apache.tapestry5.services.TransformField;
 /**
  * Processes the combination of {@link javax.inject.Inject} and {@link javax.inject.Named} annotations.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public class InjectNamedWorker implements ComponentClassTransformWorker
 {

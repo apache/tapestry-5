@@ -136,7 +136,7 @@ public final class InternalConstants
     /**
      * The names of the standard controlled subpackages.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     public static final String[] SUBPACKAGES =
     { PAGES_SUBPACKAGE, COMPONENTS_SUBPACKAGE, MIXINS_SUBPACKAGE, BASE_SUBPACKAGE };

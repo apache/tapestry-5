@@ -27,7 +27,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
  * convention for locating resources. The primary axis is {@link Locale} (Tapestry 5.2 and earlier used a Locale
  * instance as the selector), but Tapestry 5.3 adds support for additional axes.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public final class ComponentResourceSelector
 {

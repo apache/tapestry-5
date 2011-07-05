@@ -20,7 +20,7 @@ import org.apache.tapestry5.services.AssetSource;
 /**
  * Defines the types of extensions to a JavaScript stack that can be contributed to an extensible JavaScript stack.
  * 
- * @since 5.3.0
+ * @since 5.3
  * @see StackExtension
  * @see ExtensibleJavaScriptStack
  */

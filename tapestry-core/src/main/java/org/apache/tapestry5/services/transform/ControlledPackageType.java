@@ -6,7 +6,7 @@ package org.apache.tapestry5.services.transform;
  * components)
  * may be supported in the future.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public enum ControlledPackageType
 {

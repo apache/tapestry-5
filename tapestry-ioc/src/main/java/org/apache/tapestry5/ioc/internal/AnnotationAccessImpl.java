@@ -21,7 +21,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 /**
  * Standard AnnotationAccess for a specific type.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public class AnnotationAccessImpl implements AnnotationAccess
 {

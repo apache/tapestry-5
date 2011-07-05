@@ -42,7 +42,7 @@ public interface MBeanSupport
      *            the MBean instance
      * @param name
      *            string name used to create an {@link ObjectName}
-     * @since 5.3.0
+     * @since 5.3
      */
     void register(Object bean, String name);
 

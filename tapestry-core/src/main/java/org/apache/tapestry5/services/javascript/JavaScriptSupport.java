@@ -109,7 +109,7 @@ public interface JavaScriptSupport
      *            name of client-side function (within Tapestry.Initializer namespace) to execute
      * @param parameter
      *            array of parameters to pass to the client-side function
-     * @since 5.3.0
+     * @since 5.3
      */
     void addInitializerCall(String functionName, JSONArray parameter);
 
@@ -122,7 +122,7 @@ public interface JavaScriptSupport
      *            name of client-side function (within Tapestry.Initializer namespace) to execute
      * @param parameter
      *            array of parameters to pass to the client-side function
-     * @since 5.3.0
+     * @since 5.3
      */
     void addInitializerCall(InitializationPriority priority, String functionName, JSONArray parameter);
 

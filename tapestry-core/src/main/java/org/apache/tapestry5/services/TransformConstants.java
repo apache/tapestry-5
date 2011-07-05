@@ -61,7 +61,7 @@ public final class TransformConstants
      * .
      * 
      * @see org.apache.tapestry5.annotations.OnEvent
-     * @since 5.3.0
+     * @since 5.3
      */
     public static final MethodDescription DISPATCH_COMPONENT_EVENT_DESCRIPTION = PlasticUtils.getMethodDescription(
             Component.class, "dispatchComponentEvent", ComponentEvent.class);
@@ -77,7 +77,7 @@ public final class TransformConstants
     /**
      * Description for {@link org.apache.tapestry5.runtime.PageLifecycleListener#containingPageDidLoad()}.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     public static final MethodDescription CONTAINING_PAGE_DID_LOAD_DESCRIPTION = PlasticUtils.getMethodDescription(
             PageLifecycleListener.class, "containingPageDidLoad");
@@ -120,7 +120,7 @@ public final class TransformConstants
      * Description for {@link org.apache.tapestry5.runtime.Component#setupRender(MarkupWriter, Event)}.
      * 
      * @see org.apache.tapestry5.annotations.SetupRender
-     * @since 5.3.0
+     * @since 5.3
      */
     public static final MethodDescription SETUP_RENDER_DESCRIPTION = PlasticUtils.getMethodDescription(Component.class,
             "setupRender", RENDER_PHASE_METHOD_PARAMETER_TYPES);

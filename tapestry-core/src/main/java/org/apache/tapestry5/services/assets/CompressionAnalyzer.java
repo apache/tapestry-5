@@ -22,7 +22,7 @@ import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
  * <p>
  * The configuration maps content types to boolean values (true for compressable).
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 @UsesMappedConfiguration(boolean.class)
 public interface CompressionAnalyzer

@@ -24,7 +24,7 @@ import org.apache.tapestry5.ioc.MethodAdviceReceiver;
  * transaction}; runtime exceptions will {@linkplain javax.persistence.EntityTransaction#rollback()
  * roll back the transaction}.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public interface JpaTransactionAdvisor
 {

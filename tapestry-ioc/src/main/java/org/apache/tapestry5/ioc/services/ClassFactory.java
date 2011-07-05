@@ -23,7 +23,7 @@ import java.lang.reflect.Method;
 /**
  * Service used when dynamically creating new classes.
  * 
- * @deprecated In 5.3.0, use {@link PlasticProxyFactory} instead
+ * @deprecated In 5.3, use {@link PlasticProxyFactory} instead
  */
 public interface ClassFactory
 {

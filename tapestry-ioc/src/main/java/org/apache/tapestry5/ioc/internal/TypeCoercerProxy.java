@@ -20,7 +20,7 @@ import org.apache.tapestry5.ioc.services.TypeCoercer;
  * A simplified version of {@link TypeCoercer} used to defer the instantiation of the actual TypeCoercer
  * service until necessary.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public interface TypeCoercerProxy
 {

@@ -26,7 +26,7 @@ import java.util.*;
  * different signatures (due to the fact that declared thrown exceptions can vary slightly for the "same" method).
  * 
  * @see org.apache.tapestry5.ioc.services.MethodSignature#isOverridingSignatureOf(MethodSignature)
- * @deprecated In 5.3.0, to be removed in a later release
+ * @deprecated In 5.3, to be removed in a later release
  */
 public class MethodIterator
 {

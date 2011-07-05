@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 /**
  * Base class for resource minimizers.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public abstract class AbstractMinimizer implements ResourceMinimizer
 {

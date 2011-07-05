@@ -56,7 +56,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      * An XPath expression for locating a submit element (very commonly used
      * with {@link #clickAndWait(String)}.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     public static final String SUBMIT = "//input[@type='submit']";
 
@@ -66,7 +66,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      * has added some methods to the interface. This field will not be set until the test case instance
      * has gone through its full initialization.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     protected Selenium selenium;
 
@@ -1264,7 +1264,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      *            identifies the field
      * @param expected
      *            expected value for the field
-     * @since 5.3.0
+     * @since 5.3
      */
     protected final void assertFieldValue(String locator, String expected)
     {
@@ -1284,7 +1284,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      * Opens the base URL, then clicks through a series of links to get to a desired application
      * state.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     protected final void openLinks(String... linkText)
     {
@@ -1299,7 +1299,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     /**
      * Sleeps for the indicated number of seconds.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     protected final void sleep(long millis)
     {
@@ -1319,7 +1319,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      * 
      * @param cssRule
      *            used to locate the element
-     * @since 5.3.0
+     * @since 5.3
      */
     protected void waitForCSSSelectedElementToAppear(String cssRule)
     {
@@ -1334,7 +1334,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      * 
      * @param elementId
      *            identifies the element
-     * @since 5.3.0
+     * @since 5.3
      */
     protected final void waitForElementToAppear(String elementId)
     {
@@ -1349,7 +1349,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      * 
      * @param elementId
      *            client-side id of element
-     * @since 5.3.0
+     * @since 5.3
      */
     protected final void waitForElementToDisappear(String elementId)
     {
@@ -1361,7 +1361,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     /**
      * Asserts that the current page's title matches the expected value.
      * 
-     * @since 5.3.0
+     * @since 5.3
      * @param expected
      *            value for title
      */

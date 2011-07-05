@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Used with {@link DefaultTreeModel} to define how to extract labels and child nodes from a value.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public interface TreeModelAdapter<T>
 {

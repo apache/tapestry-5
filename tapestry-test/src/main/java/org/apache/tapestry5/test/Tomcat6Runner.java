@@ -28,7 +28,7 @@ import java.io.File;
 /**
  * Launches an instance of Tomcat 6.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public class Tomcat6Runner implements ServletContainerRunner
 {

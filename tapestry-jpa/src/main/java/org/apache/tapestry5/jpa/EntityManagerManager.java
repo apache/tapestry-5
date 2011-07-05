@@ -26,7 +26,7 @@ import javax.persistence.EntityManager;
  *
  * The implementation of this service is per-thread.
  *
- * @since 5.3.0
+ * @since 5.3
  */
 public interface EntityManagerManager
 {

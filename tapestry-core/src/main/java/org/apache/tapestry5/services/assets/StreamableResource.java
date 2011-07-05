@@ -23,7 +23,7 @@ import org.apache.tapestry5.ioc.Resource;
 /**
  * An object, derived from a {@link Resource}, that can be streamed (ultimately, to a client web browser).
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public interface StreamableResource
 {

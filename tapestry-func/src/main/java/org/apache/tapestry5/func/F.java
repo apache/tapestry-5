@@ -336,7 +336,7 @@ public class F
      * @param map
      *            source of tuples
      * @return zipped flow created from map
-     * @since 5.3.0
+     * @since 5.3
      */
     public static <A, B> ZippedFlow<A, B> zippedFlow(Map<A, B> map)
     {
@@ -454,7 +454,7 @@ public class F
     /**
      * A Predicate factory for matching String elements with a given prefix.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     public static Predicate<String> startsWith(String prefix)
     {
@@ -464,14 +464,14 @@ public class F
     /**
      * As {@link #startsWith(String)}, but ignores case.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     public static Predicate<String> startsWithIgnoringCase(String prefix)
     {
         return startsWith(prefix, true);
     }
 
-    /** @since 5.3.0 */
+    /** @since 5.3 */
     private static Predicate<String> startsWith(final String prefix, final boolean ignoreCase)
     {
         return new Predicate<String>()
@@ -486,7 +486,7 @@ public class F
     /**
      * A Predicate factory for matching String elements with a given suffix.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     public static Predicate<String> endsWith(String suffix)
     {
@@ -496,14 +496,14 @@ public class F
     /**
      * As with {@link #endsWith(String)} but ignores case.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     public static Predicate<String> endsWithIgnoringCase(String suffix)
     {
         return endsWith(suffix, true);
     }
 
-    /** @since 5.3.0 */
+    /** @since 5.3 */
     private static Predicate<String> endsWith(final String suffix, final boolean ignoreCase)
     {
         return new Predicate<String>()
@@ -520,7 +520,7 @@ public class F
      * Creates a Comparator for the Tuples of a {@link ZippedFlow} that sorts the Tuple elements based on the first
      * value in the Tuple.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     public static <A extends Comparable<A>, B> Comparator<Tuple<A, B>> orderByFirst()
     {
@@ -537,7 +537,7 @@ public class F
      * Creates a Comparator for the Tuples of a {@link ZippedFlow} that sorts the Tuple elements based on the first
      * value in the Tuple.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     public static <A, B extends Comparable<B>> Comparator<Tuple<A, B>> orderBySecond()
     {
@@ -556,7 +556,7 @@ public class F
      * @param delegate
      *            the predicate to invert
      * @return a new predicate that is inverse to the existing predicate
-     * @since 5.3.0
+     * @since 5.3
      */
     public static <T> Predicate<T> not(final Predicate<? super T> delegate)
     {
@@ -605,7 +605,7 @@ public class F
      * @param delegates
      *            to evaluate
      * @return combined delegate
-     * @since 5.3.0
+     * @since 5.3
      */
     public static <T> Predicate<T> and(final Predicate<? super T>... delegates)
     {
@@ -631,7 +631,7 @@ public class F
      * @param delegates
      *            to evaluate
      * @return combined delegate
-     * @since 5.3.0
+     * @since 5.3
      */
     public static <T> Predicate<T> or(final Predicate<? super T>... delegates)
     {
@@ -653,7 +653,7 @@ public class F
     /**
      * Combines several compatible workers together into a composite.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     public static <T> Worker<T> combine(final Worker<? super T>... delegates)
     {

@@ -22,7 +22,7 @@ import java.util.List;
  * 
  * @param <T>
  *            type of node
- * @since 5.3.0
+ * @since 5.3
  */
 public interface TreeNode<T>
 {

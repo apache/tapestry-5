@@ -21,7 +21,7 @@ import org.apache.tapestry5.services.dynamic.DynamicDelegate;
 /**
  * Represents an dynamically calculated attribute within a {@link DynamicTemplateElement}.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 class DynamicTemplateAttribute
 {

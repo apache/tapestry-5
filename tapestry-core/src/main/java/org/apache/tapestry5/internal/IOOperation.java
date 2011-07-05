@@ -20,7 +20,7 @@ import java.io.IOException;
  * This interface is similar to {@link Runnable}, except that
  * the operation may throw an {@link IOException}.
  * 
- * @since 5.3.0
+ * @since 5.3
  * @see TapestryInternalUtils#performIO(org.apache.tapestry5.ioc.OperationTracker, String, IOOperation)
  */
 public interface IOOperation

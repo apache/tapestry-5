@@ -26,7 +26,7 @@ import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
  * The service configuration maps a MIME content type (e.g., "text/javascript") to an appropriate implementation of this
  * interface. The master service has the @{@link Primary} marker interface.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 @UsesMappedConfiguration(ResourceMinimizer.class)
 public interface ResourceMinimizer

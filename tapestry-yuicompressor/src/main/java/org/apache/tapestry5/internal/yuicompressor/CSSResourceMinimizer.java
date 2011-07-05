@@ -26,7 +26,7 @@ import com.yahoo.platform.yui.compressor.CssCompressor;
 /**
  * Uses {@link CssCompressor} to reduce the size of CSS content.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public class CSSResourceMinimizer extends AbstractMinimizer
 {

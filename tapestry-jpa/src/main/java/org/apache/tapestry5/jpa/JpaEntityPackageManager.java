@@ -23,7 +23,7 @@ import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
  * <p/>
  * The service's configuration is the names of Java packages to search for JPA entities.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 @UsesConfiguration(String.class)
 public interface JpaEntityPackageManager

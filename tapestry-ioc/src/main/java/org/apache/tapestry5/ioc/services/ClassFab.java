@@ -40,7 +40,7 @@ package org.apache.tapestry5.ioc.services;
  * <p/>
  * ClassFab instances are created by a {@link org.apache.tapestry5.ioc.services.ClassFactory}.
  * 
- * @deprecated In 5.3.0, use {@link PlasticProxyFactory} instead
+ * @deprecated In 5.3, use {@link PlasticProxyFactory} instead
  */
 public interface ClassFab
 {

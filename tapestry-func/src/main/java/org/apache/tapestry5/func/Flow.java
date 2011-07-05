@@ -96,7 +96,7 @@ public interface Flow<T> extends FlowOperations<T, Flow<T>>
      * @param otherFlow
      *            contains elements to match with elements in this flow
      * @return flow of tuples combining values from this flow with values form the other flow
-     * @since 5.3.0
+     * @since 5.3
      */
     <X> ZippedFlow<T, X> zipWith(Flow<X> otherFlow);
 

@@ -213,7 +213,7 @@ public class EventConstants
      * Event  triggered by the {@link org.apache.tapestry5.corelib.components.Tree}
      * component when a leaf node is selected.
      *
-     * @since 5.3.1
+     * @since 5.3
      */
     public static final String NODE_SELECTED = "nodeSelected";
 
@@ -221,7 +221,7 @@ public class EventConstants
      *  Event  triggered by the {@link org.apache.tapestry5.corelib.components.Tree}
      *  component when a leaf node is unselected.
      *
-     *  @since 5.3.1
+     *  @since 5.3
      */
     public static final String NODE_UNSELECTED = "nodeUnselected";
     
@@ -229,7 +229,7 @@ public class EventConstants
      * Event triggered by {@link org.apache.tapestry5.corelib.mixins.ZoneRefresh ZoneRefresh} to refresh the 
      * {@link org.apache.tapestry5.corelib.components.Zone Zone}
      * 
-     * @since 5.3.1
+     * @since 5.3
      */
    public static final String REFRESH = "refresh";
 

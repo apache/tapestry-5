@@ -41,7 +41,7 @@ import org.apache.tapestry5.tree.TreeNode;
  * to track which nodes have been expanded. The Tree component uses special tricks to support recursive rendering
  * of the Tree as necessary.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 @SuppressWarnings(
 { "rawtypes", "unchecked", "unused" })

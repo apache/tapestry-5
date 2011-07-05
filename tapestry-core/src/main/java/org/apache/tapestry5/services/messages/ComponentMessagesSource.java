@@ -55,7 +55,7 @@ public interface ComponentMessagesSource
      * @param componentModel
      * @param locale
      * @return the message catalog for the component, in the indicated selector
-     * @since 5.3.0
+     * @since 5.3
      */
     Messages getMessages(ComponentModel componentModel, ComponentResourceSelector selector);
 

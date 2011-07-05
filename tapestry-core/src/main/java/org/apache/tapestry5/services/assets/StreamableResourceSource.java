@@ -24,7 +24,7 @@ import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
  * {@linkplain ResourceTransformer transforming} resources based on file extension. In addition,
  * service decorators added to the service may provide additional processing (compression, minimization, and caching).
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 @UsesMappedConfiguration(ResourceTransformer.class)
 public interface StreamableResourceSource

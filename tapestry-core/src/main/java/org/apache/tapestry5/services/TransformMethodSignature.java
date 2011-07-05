@@ -53,7 +53,7 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
     }
 
     /**
-     * @since 5.3.0
+     * @since 5.3
      */
     public TransformMethodSignature(int modifiers, String type, String signature, String name, String[] parameterTypes,
             String[] exceptionTypes)

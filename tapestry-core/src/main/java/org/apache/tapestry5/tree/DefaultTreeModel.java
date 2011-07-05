@@ -31,7 +31,7 @@ import java.util.Map;
  * This implementation is <em>not</em> thread safe.
  * 
  * @param <T>
- * @since 5.3.0
+ * @since 5.3
  */
 @SuppressWarnings({"UnusedDeclaration"})
 public class DefaultTreeModel<T> implements TreeModel<T>

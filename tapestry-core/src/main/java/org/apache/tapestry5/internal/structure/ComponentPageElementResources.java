@@ -34,7 +34,7 @@ public interface ComponentPageElementResources extends ContextValueEncoder, Oper
     /**
      * Returns the selector associated with this resources.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     ComponentResourceSelector getSelector();
 

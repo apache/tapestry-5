@@ -22,7 +22,7 @@ import org.apache.tapestry5.ioc.AnnotationAccess;
  * and on the class (or method implementation in the class); the implementation annotation always
  * has precedence over the interface annotation.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public interface ServiceDef3 extends ServiceDef2, AnnotationAccess
 {

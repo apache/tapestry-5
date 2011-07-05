@@ -22,7 +22,7 @@ import org.apache.tapestry5.corelib.components.Tree;
  * ids} to identify expanded nodes. The expansion model is updated whenever folders are expanded or
  * collapsed on the client side.
  * 
- * @since 5.3.0
+ * @since 5.3
  * @see Tree
  */
 public interface TreeExpansionModel<T>

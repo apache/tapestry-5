@@ -26,7 +26,7 @@ import org.apache.tapestry5.model.ComponentModel;
  * one or more {@linkplain ComponentResourceSelector#getAxis(Class) axes}; this is the approach used to skin
  * Tapestry applications.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public interface ComponentResourceLocator
 {

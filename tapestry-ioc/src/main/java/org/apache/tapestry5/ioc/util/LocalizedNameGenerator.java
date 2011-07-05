@@ -29,7 +29,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
  * <p/>
  * This class is not threadsafe.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public class LocalizedNameGenerator implements Iterator<String>, Iterable<String>
 {

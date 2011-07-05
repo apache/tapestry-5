@@ -28,7 +28,7 @@ import org.apache.tapestry5.plastic.PlasticClassTransformer;
  * A service used to create proxies of varying types. As a secondary concern, manages to identify the
  * location of methods and constructors, which is important for exception reporting.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public interface PlasticProxyFactory extends PlasticClassListenerHub
 {

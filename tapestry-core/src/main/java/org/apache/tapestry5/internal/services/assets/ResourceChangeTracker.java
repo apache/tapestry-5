@@ -24,7 +24,7 @@ import org.apache.tapestry5.services.UpdateListener;
  * Tracks resources (at least, resources that can change because they are on the file system) and
  * acts as an {@link UpdateListener} to check for changes and notify its listeners.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public interface ResourceChangeTracker extends InvalidationEventHub
 {

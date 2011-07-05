@@ -19,7 +19,7 @@ import org.apache.tapestry5.ioc.Resource;
 /**
  * Parses a dynamic template based on a resource or an input stream.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public interface DynamicTemplateParser
 {

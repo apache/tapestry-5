@@ -130,7 +130,7 @@ public interface ComponentClassResolver
      * as components).
      * 
      * @return a mapping from package name to {@link ControlledPackageType}.
-     * @since 5.3.0
+     * @since 5.3
      */
     Map<String, ControlledPackageType> getControlledPackageMapping();
 
@@ -139,7 +139,7 @@ public interface ComponentClassResolver
      * 
      * @param pageClassName
      * @return true if a page class
-     * @since 5.3.0
+     * @since 5.3
      */
     boolean isPage(final String pageClassName);
 }

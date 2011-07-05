@@ -20,7 +20,7 @@ import org.apache.tapestry5.ioc.services.TypeCoercer;
 /**
  * A proxy for the {@link TypeCoercer}
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public final class TypeCoercerProxyImpl implements TypeCoercerProxy
 {

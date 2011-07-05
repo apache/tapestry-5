@@ -120,7 +120,7 @@ public interface Invocation
      *            annotation type
      * @return method's annotation for the specified annotation type if
      *         present on this element, else null
-     * @since 5.3.0
+     * @since 5.3
      */
     <T extends Annotation> T getMethodAnnotation(Class<T> annotationClass);
 }

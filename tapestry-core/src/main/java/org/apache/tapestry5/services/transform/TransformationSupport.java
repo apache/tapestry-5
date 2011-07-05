@@ -19,7 +19,7 @@ import org.apache.tapestry5.plastic.PlasticClass;
 /**
  * Additional utilities, beyond {@link PlasticClass}, needed when transforming.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public interface TransformationSupport
 {

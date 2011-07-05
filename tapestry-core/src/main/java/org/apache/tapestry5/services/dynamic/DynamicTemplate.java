@@ -22,7 +22,7 @@ import org.apache.tapestry5.runtime.RenderCommand;
  * a component to significantly alter its presentation at runtime. An external
  * template file provides most of the rendered content.
  * 
- * @since 5.3.0
+ * @since 5.3
  * @see DynamicTemplateParser
  */
 public interface DynamicTemplate

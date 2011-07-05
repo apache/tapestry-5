@@ -21,7 +21,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptStack;
  * Defines additional features desired when accessing the content of a {@link Resource} as
  * a {@link StreamableResource}.
  * 
- * @since 5.3.0
+ * @since 5.3
  * @see StreamableResourceSource#getStreamableResource(Resource, StreamableResourceProcessing)
  */
 public enum StreamableResourceProcessing

@@ -117,7 +117,7 @@ interface ComponentAssembler
     /**
      * Returns the selector for which the component is being assembled.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     ComponentResourceSelector getSelector();
 }

@@ -19,7 +19,7 @@ package org.apache.tapestry5.func;
  * 
  * @param <A>
  * @param <B>
- * @since 5.3.0
+ * @since 5.3
  */
 public class Tuple<A, B>
 {

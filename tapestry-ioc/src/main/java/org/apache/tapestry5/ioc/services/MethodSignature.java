@@ -31,7 +31,7 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
  * This version of MethodSignature works with <em>loaded</em> classes, and it usually used in the context of
  * {@link org.apache.tapestry5.ioc.services.ClassFab} to create new classes and subclasses.
  * 
- * @deprecated In 5.3.0, to be removed in a later release
+ * @deprecated In 5.3, to be removed in a later release
  */
 @SuppressWarnings("all")
 public class MethodSignature
@@ -87,7 +87,7 @@ public class MethodSignature
     /**
      * If this signature was created from a method, return that method.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     public Method getMethod()
     {

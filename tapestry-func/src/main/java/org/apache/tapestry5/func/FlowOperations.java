@@ -23,7 +23,7 @@ import java.util.Set;
  *            the type of data in the flow
  * @param <FT>
  *            the type of flow (either Flow<T> or ZippedFlow<Tuple<T, ?>)
- * @since 5.3.0
+ * @since 5.3
  */
 public interface FlowOperations<T, FT> extends Iterable<T>
 {
@@ -128,7 +128,7 @@ public interface FlowOperations<T, FT> extends Iterable<T>
      * Removes null elements from the flow (null tuples from a ZippedFlow), leaving just the
      * non-null elements. This is a lazy operation.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     FT removeNulls();
 }

@@ -28,7 +28,7 @@ import org.apache.tapestry5.corelib.components.Tree;
  * 
  * @param <T>
  *            type of data in the tree
- * @since 5.3.0
+ * @since 5.3
  * @see TreeSelectionModel
  */
 public interface TreeModel<T>

@@ -37,7 +37,7 @@ import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.services.Core;
 
 /**
- * @since 5.3.0
+ * @since 5.3
  */
 @Marker(Core.class)
 public class AssetsModule

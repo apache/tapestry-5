@@ -238,7 +238,7 @@ public class InternalModule
     /**
      * Contributes packages identified by {@link ComponentClassResolver#getControlledPackageMapping()}.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     @Contribute(ComponentInstantiatorSource.class)
     public static void configureControlledPackagesFromComponentClassResolver(

@@ -25,7 +25,7 @@ import org.apache.tapestry5.plastic.PlasticMethod;
  * 
  * @since 5.2.0
  * @see TransformMethod#getAccess()
- * @deprecated Deprecated in 5.3.0
+ * @deprecated Deprecated in 5.3
  * @see {@link PlasticClass}, {@link {@link PlasticMethod}, {@link MethodHandle}
  */
 public interface MethodAccess

@@ -27,7 +27,7 @@ import org.apache.tapestry5.ioc.util.UnknownValueException;
  * enumerated type. The {@link Enum#name() name} is used as the key to identify the enum instance, in a case-insensitive
  * fashion.
  * <p>
- * Moved from tapestry-core to tapestry-ioc is release 5.3.0, but kept in same package for compatibility.
+ * Moved from tapestry-core to tapestry-ioc is release 5.3, but kept in same package for compatibility.
  * 
  * @param <T>
  *            the type of enumeration

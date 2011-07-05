@@ -23,7 +23,7 @@ import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.services.Core;
 
 /**
- * @since 5.3.0
+ * @since 5.3
  */
 @Marker(Core.class)
 public class PageLoadModule

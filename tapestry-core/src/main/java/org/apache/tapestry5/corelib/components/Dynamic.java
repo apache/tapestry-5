@@ -43,7 +43,7 @@ import org.apache.tapestry5.services.dynamic.DynamicTemplateParser;
  * bit less efficient than putting such expansions inside a referenced Block, but this should not be a big concern
  * outside of some kind of tight rendering loop.
  * 
- * @since 5.3.0
+ * @since 5.3
  * @see DynamicTemplate
  * @see DynamicTemplateParser
  * @tapestrydoc

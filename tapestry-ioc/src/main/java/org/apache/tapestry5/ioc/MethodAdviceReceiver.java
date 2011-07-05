@@ -51,14 +51,14 @@ public interface MethodAdviceReceiver extends AnnotationAccess
      *            advice is allowed for a single method; the advice will be executed in the order it is added.
      * @param advice
      *            the advice for this particular method. Advice must be threadsafe.
-     * @since 5.3.0
+     * @since 5.3
      */
     void adviseMethod(Method method, org.apache.tapestry5.plastic.MethodAdvice advice);
 
     /**
      * Advises <em>all</em> methods of the interface with the given advice.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     void adviseAllMethods(org.apache.tapestry5.plastic.MethodAdvice advice);
 

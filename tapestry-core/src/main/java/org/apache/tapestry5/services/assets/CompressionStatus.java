@@ -19,7 +19,7 @@ import org.apache.tapestry5.services.Response;
 /**
  * Indicates how the content inside a {@link StreamableResource} is (potentially) compressed.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public enum CompressionStatus
 {

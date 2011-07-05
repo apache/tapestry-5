@@ -18,7 +18,7 @@ package org.apache.tapestry5.test;
  * Used as a wrapper around code that runs a web server as part of a {@link SeleniumTestCase}, so that
  * the server may be shut down at the end of the test.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public interface ServletContainerRunner
 {

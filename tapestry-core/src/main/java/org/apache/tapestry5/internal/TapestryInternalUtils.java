@@ -571,7 +571,7 @@ public class TapestryInternalUtils
         };
     }
 
-    /** @since 5.3.0 */
+    /** @since 5.3 */
     public static String toFileSuffix(String fileName)
     {
         int dotx = fileName.lastIndexOf('.');

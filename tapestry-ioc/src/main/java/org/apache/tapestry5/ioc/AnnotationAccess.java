@@ -20,7 +20,7 @@ package org.apache.tapestry5.ioc;
  * and on the class (or method implementation in the class); the implementation annotation always
  * has precedence over the interface annotation.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public interface AnnotationAccess
 {

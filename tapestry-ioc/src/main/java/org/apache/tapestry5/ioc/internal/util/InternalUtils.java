@@ -111,7 +111,7 @@ public class InternalUtils
     private static final Pattern NAME_PATTERN = Pattern.compile("^[_|$]*([\\p{javaJavaIdentifierPart}]+?)[_|$]*$",
             Pattern.CASE_INSENSITIVE);
 
-    /** @since 5.3.0 */
+    /** @since 5.3 */
     public static AnnotationProvider NULL_ANNOTATION_PROVIDER = new NullAnnotationProvider();
 
     /**
@@ -890,7 +890,7 @@ public class InternalUtils
                             constructor));
     }
 
-    /** @since 5.3.0 */
+    /** @since 5.3 */
     public static final Mapper<Class, AnnotationProvider> CLASS_TO_AP_MAPPER = new Mapper<Class, AnnotationProvider>()
     {
         public AnnotationProvider map(final Class element)
@@ -900,7 +900,7 @@ public class InternalUtils
 
     };
 
-    /** @since 5.3.0 */
+    /** @since 5.3 */
     public static AnnotationProvider toAnnotationProvider(final Class element)
     {
         return new AnnotationProvider()
@@ -912,7 +912,7 @@ public class InternalUtils
         };
     };
 
-    /** @since 5.3.0 */
+    /** @since 5.3 */
     public static final Mapper<Method, AnnotationProvider> METHOD_TO_AP_MAPPER = new Mapper<Method, AnnotationProvider>()
     {
         public AnnotationProvider map(final Method element)
@@ -940,7 +940,7 @@ public class InternalUtils
         }
     }
 
-    /** @since 5.3.0 */
+    /** @since 5.3 */
     public static ServiceDef3 toServiceDef3(ServiceDef sd)
     {
         if (sd instanceof ServiceDef3)
@@ -1335,7 +1335,7 @@ public class InternalUtils
      * 
      * @param annotated
      *            annotated element to get annotations from
-     * @since 5.3.0
+     * @since 5.3
      */
     public static String getServiceId(AnnotatedElement annotated)
     {

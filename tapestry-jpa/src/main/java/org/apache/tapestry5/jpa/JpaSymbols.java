@@ -17,7 +17,7 @@ package org.apache.tapestry5.jpa;
 /**
  * Configuration symbols, for use with contributions to {@link org.apache.tapestry5.ioc.services.ApplicationDefaults}.
  *
- * @since 5.3.0
+ * @since 5.3
  */
 public class JpaSymbols
 {
@@ -26,7 +26,7 @@ public class JpaSymbols
     /**
      * If "true", then JPA will be started up at application launch, rather than lazily.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     public static final String EARLY_START_UP = "tapestry.jpa.early-startup";
 
@@ -34,7 +34,7 @@ public class JpaSymbols
      * If true, then "entity" persistence strategy is used to store JPA entities as
      * {@code Session State Objects}.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     public static final String ENTITY_SESSION_STATE_PERSISTENCE_STRATEGY_ENABLED = "tapestry.jpa.entity-session-state-persistence-strategy-enabled";
     
@@ -42,7 +42,7 @@ public class JpaSymbols
      * The location of the persistence configuration file, located on the classpath. This
      * will normally be <code>/META-INF/persistence.xml</code>.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     public static final String PERSISTENCE_DESCRIPTOR = "tapestry.jpa.persistence-descriptor";
 }

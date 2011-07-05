@@ -44,7 +44,7 @@ public interface ResourceStreamer
      * 
      * @param resource
      * @throws IOException
-     * @since 5.3.0
+     * @since 5.3
      */
     void streamResource(StreamableResource resource) throws IOException;
 }

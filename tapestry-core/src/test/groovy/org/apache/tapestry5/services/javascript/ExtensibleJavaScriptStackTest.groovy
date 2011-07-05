@@ -19,7 +19,7 @@ import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
-/** @since 5.3.0 */
+/** @since 5.3 */
 class ExtensibleJavaScriptStackTest extends TapestryTestCase {
 
     @Test

@@ -263,7 +263,7 @@ public class SymbolConstants
      * also
      * contribute "$HOSTNAME" as the value to make it the same as the environment variable HOSTNAME.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     public static final String HOSTNAME = "tapestry.hostname";
 
@@ -272,7 +272,7 @@ public class SymbolConstants
      * value from
      * the request.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     public static final String HOSTPORT = "tapestry.hostport";
 
@@ -281,7 +281,7 @@ public class SymbolConstants
      * i.e. use
      * the value from the request.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     public static final String HOSTPORT_SECURE = "tapestry.hostport-secure";
 
@@ -293,7 +293,7 @@ public class SymbolConstants
      * Note that Tapestry's default implementation of {@link ResourceMinimizer} does nothing; minification is provided
      * by add-on libraries.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     public static final String MINIFICATION_ENABLED = "tapestry.enable-minification";
 
@@ -304,7 +304,7 @@ public class SymbolConstants
      * <p>
      * This is provided as a performance enhancement for servers that do not use clustered sessions.
      *
-     * @since 5.3.1
+     * @since 5.3
      */
     public static final String CLUSTERED_SESSIONS = "tapestry.clustered-sessions";
 

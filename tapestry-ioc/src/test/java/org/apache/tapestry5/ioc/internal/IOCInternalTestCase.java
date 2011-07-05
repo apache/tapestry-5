@@ -156,7 +156,7 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
         return newMock(ServiceActivityTracker.class);
     }
 
-    /** @since 5.3.0 */
+    /** @since 5.3 */
     protected final TypeCoercerProxy mockTypeCoercerProxy()
     {
         return newMock(TypeCoercerProxy.class);

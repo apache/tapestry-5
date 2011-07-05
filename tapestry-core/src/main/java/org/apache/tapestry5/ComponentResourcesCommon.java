@@ -119,7 +119,7 @@ public interface ComponentResourcesCommon extends Locatable
     /**
      * Returns the selector used when constructing the component and its containing page.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     ComponentResourceSelector getResourceSelector();
 

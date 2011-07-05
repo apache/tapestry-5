@@ -60,7 +60,7 @@ import org.slf4j.Logger;
  * A re-implementation of {@link ClassTransformation} around an instance of {@link PlasticClass}, acting as a bridge
  * for code written against the 5.2 and earlier APIs to work with the 5.3 API.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 @SuppressWarnings("deprecation")
 public class BridgeClassTransformation implements ClassTransformation

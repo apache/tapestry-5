@@ -25,7 +25,7 @@ import org.apache.tapestry5.ComponentResources;
  * @param <T>
  *            type of object provided
  * @since 5.2.0
- * @deprecated Deprecated in 5.3.0, using Plastic equivalents
+ * @deprecated Deprecated in 5.3, using Plastic equivalents
  * @see org.apache.tapestry5.plastic.PlasticField
  * @see org.apache.tapestry5.plastic.ComputedValue
  */

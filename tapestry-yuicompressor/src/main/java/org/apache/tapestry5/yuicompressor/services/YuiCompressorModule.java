@@ -26,7 +26,7 @@ import com.yahoo.platform.yui.compressor.YUICompressor;
 /**
  * Sets up Tapestry to compress JavaScript assets using {@link YUICompressor}.
  * 
- * @since 5.3.0
+ * @since 5.3
  */
 public class YuiCompressorModule
 {

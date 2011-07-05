@@ -35,7 +35,7 @@ public interface PageSource
      * created page instances. Introduced to handle the case where a page has a {@link DynamicTemplate}, but the
      * underlying {@link Resource} is noticed to have changed.
      * 
-     * @since 5.3.0
+     * @since 5.3
      */
     void clearCache();
 
