@@ -1378,4 +1378,16 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             throw ex;
         }
     }
+
+    /**
+     * Waits until all active XHR requests are completed.
+     *
+     * @since 5.3
+     *
+     * @param timeout timeout to wait for
+     */
+    protected final void waitForAjaxRequestsToComplete(String timeout)
+    {
+        waitForCondition("selenium.browserbot.getCurrentWindow().Ajax.activeRequestCount == 0", timeout);
+    }
 }
