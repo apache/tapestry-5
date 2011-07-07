@@ -92,9 +92,9 @@ public class EnvironmentalWorker implements ComponentClassTransformWorker2
 
         final boolean required = annotation.value();
 
-        ComputedValue<FieldConduit<?>> provider = new ComputedValue<FieldConduit<?>>()
+        ComputedValue<FieldConduit<Object>> provider = new ComputedValue<FieldConduit<Object>>()
         {
-            public FieldConduit<?> get(InstanceContext context)
+            public FieldConduit<Object> get(InstanceContext context)
             {
                 return new EnvironmentalConduit(componentClassName, fieldName, fieldType, required);
             }

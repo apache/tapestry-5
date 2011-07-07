@@ -51,21 +51,21 @@ public class InjectContainerWorker implements ComponentClassTransformWorker2
 
         field.claim(annotation);
 
-        ComputedValue<FieldConduit<?>> provider = createFieldValueConduitProvider(field);
+        ComputedValue<FieldConduit<Object>> provider = createFieldValueConduitProvider(field);
 
         field.setComputedConduit(provider);
     }
 
-    private ComputedValue<FieldConduit<?>> createFieldValueConduitProvider(PlasticField field)
+    private ComputedValue<FieldConduit<Object>> createFieldValueConduitProvider(PlasticField field)
     {
 
         final String fieldName = field.getName();
 
         final String fieldTypeName = field.getTypeName();
 
-        return new ComputedValue<FieldConduit<?>> ()
+        return new ComputedValue<FieldConduit<Object>> ()
         {
-            public FieldConduit<?> get(InstanceContext context)
+            public FieldConduit<Object> get(InstanceContext context)
             {
                 final Class fieldType = cache.forName(fieldTypeName);
                 final ComponentResources resources = context.get(ComponentResources.class);

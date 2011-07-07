@@ -14,59 +14,16 @@
 
 package org.apache.tapestry5.internal.plastic;
 
+import org.apache.tapestry5.internal.plastic.asm.Opcodes;
+import org.apache.tapestry5.internal.plastic.asm.Type;
+import org.apache.tapestry5.internal.plastic.asm.tree.*;
+import org.apache.tapestry5.plastic.*;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.tapestry5.internal.plastic.asm.Opcodes;
-import org.apache.tapestry5.internal.plastic.asm.Type;
-import org.apache.tapestry5.internal.plastic.asm.tree.AbstractInsnNode;
-import org.apache.tapestry5.internal.plastic.asm.tree.AnnotationNode;
-import org.apache.tapestry5.internal.plastic.asm.tree.ClassNode;
-import org.apache.tapestry5.internal.plastic.asm.tree.FieldInsnNode;
-import org.apache.tapestry5.internal.plastic.asm.tree.FieldNode;
-import org.apache.tapestry5.internal.plastic.asm.tree.InsnList;
-import org.apache.tapestry5.internal.plastic.asm.tree.MethodInsnNode;
-import org.apache.tapestry5.internal.plastic.asm.tree.MethodNode;
-import org.apache.tapestry5.internal.plastic.asm.tree.VarInsnNode;
-import org.apache.tapestry5.plastic.AnnotationAccess;
-import org.apache.tapestry5.plastic.ClassInstantiator;
-import org.apache.tapestry5.plastic.ClassType;
-import org.apache.tapestry5.plastic.ComputedValue;
-import org.apache.tapestry5.plastic.Condition;
-import org.apache.tapestry5.plastic.FieldConduit;
-import org.apache.tapestry5.plastic.FieldHandle;
-import org.apache.tapestry5.plastic.InstanceContext;
-import org.apache.tapestry5.plastic.InstructionBuilder;
-import org.apache.tapestry5.plastic.InstructionBuilderCallback;
-import org.apache.tapestry5.plastic.LocalVariable;
-import org.apache.tapestry5.plastic.LocalVariableCallback;
-import org.apache.tapestry5.plastic.MethodAdvice;
-import org.apache.tapestry5.plastic.MethodDescription;
-import org.apache.tapestry5.plastic.MethodHandle;
-import org.apache.tapestry5.plastic.MethodInvocation;
-import org.apache.tapestry5.plastic.MethodInvocationResult;
-import org.apache.tapestry5.plastic.MethodParameter;
-import org.apache.tapestry5.plastic.PlasticClass;
-import org.apache.tapestry5.plastic.PlasticField;
-import org.apache.tapestry5.plastic.PlasticMethod;
-import org.apache.tapestry5.plastic.PlasticUtils;
-import org.apache.tapestry5.plastic.PropertyAccessType;
-import org.apache.tapestry5.plastic.SwitchBlock;
-import org.apache.tapestry5.plastic.SwitchCallback;
-import org.apache.tapestry5.plastic.TransformationOption;
-import org.apache.tapestry5.plastic.TryCatchBlock;
-import org.apache.tapestry5.plastic.TryCatchCallback;
+import java.util.*;
 
 @SuppressWarnings("all")
 public class PlasticClassImpl extends Lockable implements PlasticClass, InternalPlasticClassTransformation, Opcodes
@@ -337,8 +294,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                     if (Modifier.isPrivate(providerDescriptor.modifiers))
                     {
                         builder.invokeSpecial(className, providerDescriptor);
-                    }
-                    else
+                    } else
                     {
                         builder.invokeVirtual(className, delegateType, providerDescriptor.methodName);
                     }
@@ -704,7 +660,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             return this;
         }
 
-        public PlasticField setConduit(FieldConduit<?> conduit)
+        public <F> PlasticField setConduit(FieldConduit<F> conduit)
         {
             assert conduit != null;
 
@@ -728,7 +684,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             return this;
         }
 
-        public PlasticField setComputedConduit(ComputedValue<FieldConduit<?>> computedConduit)
+        public <F> PlasticField setComputedConduit(ComputedValue<FieldConduit<F>> computedConduit)
         {
             assert computedConduit != null;
 
@@ -787,7 +743,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                 String signature = node.signature == null ? null : "(" + node.signature + ")V";
 
                 introduceAccessorMethod("void", "set" + capitalized, new String[]
-                { getTypeName() }, signature, new InstructionBuilderCallback()
+                        {getTypeName()}, signature, new InstructionBuilderCallback()
                 {
                     public void doBuild(InstructionBuilder builder)
                     {
@@ -802,7 +758,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         }
 
         private void introduceAccessorMethod(String returnType, String name, String[] parameterTypes, String signature,
-                InstructionBuilderCallback callback)
+                                             InstructionBuilderCallback callback)
         {
             MethodDescription description = new MethodDescription(ACC_PUBLIC, returnType, name, parameterTypes,
                     signature, null);
@@ -882,8 +838,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                     // Dupe this under the wide value, then pop the wide value
 
                     builder.dupeWide().loadThis().dupe(2).pop();
-                }
-                else
+                } else
                 {
                     builder.dupe().loadThis().swap();
                 }
@@ -986,7 +941,9 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             }
         }
 
-        /** Invoked with the object instance on the stack and cast to the right type. */
+        /**
+         * Invoked with the object instance on the stack and cast to the right type.
+         */
         void extendShimGet(SwitchBlock switchBlock)
         {
             if (getAccess == null)
@@ -1065,7 +1022,9 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         private final String invocationClassName;
 
-        /** The new method that uses the original instructions from the advisedMethodNode. */
+        /**
+         * The new method that uses the original instructions from the advisedMethodNode.
+         */
         private final String newMethodName;
 
         private final String[] constructorTypes;
@@ -1084,7 +1043,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
             invocationClassNode.visit(V1_5, ACC_PUBLIC | ACC_FINAL, nameCache.toInternalName(invocationClassName),
                     null, ABSTRACT_METHOD_INVOCATION_INTERNAL_NAME, new String[]
-                    { nameCache.toInternalName(MethodInvocation.class) });
+                    {nameCache.toInternalName(MethodInvocation.class)});
 
             constructorTypes = createFieldsAndConstructor();
 
@@ -1182,8 +1141,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             if (isVoid)
             {
                 builder.loadNull().returnResult();
-            }
-            else
+            } else
             {
                 builder.loadThis().getField(invocationClassName, RETURN_VALUE, description.returnType)
                         .boxPrimitive(description.returnType).returnResult();
@@ -1199,8 +1157,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                 builder.throwException(IllegalArgumentException.class, String
                         .format("Method %s of class %s is void, setting a return value is not allowed.", description,
                                 className));
-            }
-            else
+            } else
             {
                 builder.loadThis().loadArgument(0);
                 builder.castOrUnbox(description.returnType);
@@ -1219,8 +1176,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             if (description.argumentTypes.length == 0)
             {
                 indexOutOfRange(builder);
-            }
-            else
+            } else
             {
                 builder.loadArgument(0);
                 builder.startSwitch(0, description.argumentTypes.length - 1, new SwitchCallback()
@@ -1262,8 +1218,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             if (description.argumentTypes.length == 0)
             {
                 indexOutOfRange(builder);
-            }
-            else
+            } else
             {
                 builder.loadArgument(0).startSwitch(0, description.argumentTypes.length - 1, new SwitchCallback()
                 {
@@ -1315,7 +1270,9 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             classNode.methods.add(mn);
         }
 
-        /** Invoke the "new" method, and deal with the return value and/or thrown exceptions. */
+        /**
+         * Invoke the "new" method, and deal with the return value and/or thrown exceptions.
+         */
         private void createProceedToAdvisedMethod()
         {
             InstructionBuilder builder = newMethod("proceedToAdvisedMethod", void.class);
@@ -1472,7 +1429,8 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
      * Methods that require special attention inside {@link #createInstantiator()} because they
      * have method advice.
      */
-    private final Set<PlasticMethodImpl> advisedMethods = PlasticInternalUtils.newSet();;
+    private final Set<PlasticMethodImpl> advisedMethods = PlasticInternalUtils.newSet();
+    ;
 
     private final NameCache nameCache = new NameCache();
 
@@ -1540,7 +1498,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
      * @param parentStaticContext
      */
     public PlasticClassImpl(ClassNode classNode, PlasticClassPool pool, MethodBundle parentMethodBundle,
-            StaticContext parentStaticContext)
+                            StaticContext parentStaticContext)
     {
         this.classNode = classNode;
         this.pool = pool;
@@ -1568,8 +1526,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                 {
                     originalConstructor = node;
                     fieldTransformMethods.add(node);
-                }
-                else
+                } else
                 {
                     node.instructions.clear();
 
@@ -1656,8 +1613,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             constructorBuilder.loadThis().loadArgument(0).loadArgument(1);
             constructorBuilder.invokeConstructor(superClassName, StaticContext.class.getName(),
                     InstanceContext.class.getName());
-        }
-        else
+        } else
         {
             // Assumes the base class includes a visible constructor that takes no arguments.
             // TODO: Do a proper check for this case and throw a meaningful exception
@@ -1731,8 +1687,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             Constructor ctor = clazz.getConstructor(StaticContext.class, InstanceContext.class);
 
             return new ClassInstantiatorImpl(clazz, ctor, staticContext);
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             throw new RuntimeException(String.format("Unable to create ClassInstantiator for class %s: %s",
                     clazz.getName(), PlasticInternalUtils.toMessage(ex)), ex);
@@ -1863,7 +1818,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     }
 
     public PlasticMethod introducePrivateMethod(String typeName, String suggestedName, String[] argumentTypes,
-            String[] exceptionTypes)
+                                                String[] exceptionTypes)
     {
         check();
 
@@ -2137,8 +2092,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             Class shimClass = pool.realize(className, ClassType.SUPPORT, shimClassNode);
 
             return (PlasticClassHandleShim) shimClass.newInstance();
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             throw new RuntimeException(
                     String.format("Unable to instantiate shim class %s for plastic class %s: %s",
@@ -2306,9 +2260,11 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return instanceContextFieldName;
     }
 
-    /** Creates a new private final field and initializes its value (using the StaticContext). */
+    /**
+     * Creates a new private final field and initializes its value (using the StaticContext).
+     */
     private String createAndInitializeFieldFromStaticContext(String suggestedFieldName, String fieldType,
-            Object injectedFieldValue)
+                                                             Object injectedFieldValue)
     {
         String name = makeUnique(fieldNames, suggestedFieldName);
 
@@ -2441,7 +2397,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     /**
      * True if the node has any visible annotations, or it has visible annotations on any
      * parameter.
-     * 
+     *
      * @param mn
      * @return true if any annotations present
      */

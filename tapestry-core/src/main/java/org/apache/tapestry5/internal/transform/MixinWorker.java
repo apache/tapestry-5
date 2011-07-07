@@ -70,15 +70,15 @@ public class MixinWorker implements ComponentClassTransformWorker2
 
     private void replaceFieldAccessWithMixin(PlasticField field, String mixinClassName)
     {
-        ComputedValue<FieldConduit<?>> provider = createMixinFieldProvider(field.getName(), mixinClassName);
+        ComputedValue<FieldConduit<Object>> provider = createMixinFieldProvider(field.getName(), mixinClassName);
 
         field.setComputedConduit(provider);
     }
 
-    private ComputedValue<FieldConduit<?>> createMixinFieldProvider(final String fieldName,
+    private ComputedValue<FieldConduit<Object>> createMixinFieldProvider(final String fieldName,
             final String mixinClassName)
     {
-        return new ComputedValue<FieldConduit<?>>()
+        return new ComputedValue<FieldConduit<Object>>()
         {
             public FieldConduit get(InstanceContext context)
             {

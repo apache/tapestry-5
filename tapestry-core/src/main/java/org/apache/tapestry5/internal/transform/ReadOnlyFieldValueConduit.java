@@ -24,7 +24,7 @@ import org.apache.tapestry5.plastic.InstanceContext;
  *
  * @since 5.2.0
  */
-public abstract class ReadOnlyFieldValueConduit implements FieldConduit
+public abstract class ReadOnlyFieldValueConduit implements FieldConduit<Object>
 {
     private final String qualifiedFieldName;
 

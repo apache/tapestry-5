@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import java.util.List;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.BindParameter;
@@ -23,26 +22,26 @@ import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
-import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.ComponentValueProvider;
-import org.apache.tapestry5.services.TransformField;
+import org.apache.tapestry5.plastic.*;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
+
+import java.util.List;
 
 /**
  * Responsible for identifying, via the {@link org.apache.tapestry5.annotations.BindParameter} annotation, mixin fields
  * that should be bound to a core-component parameter value.
- * 
+ *
  * @since 5.2.0
  */
-public class BindParameterWorker implements ComponentClassTransformWorker
+public class BindParameterWorker implements ComponentClassTransformWorker2
 {
-    private final class BoundParameterFieldValueConduit implements FieldValueConduit
+    private final class BoundParameterFieldValueConduit implements FieldConduit<Object>
     {
         private final String containerParameterName;
 
@@ -54,7 +53,7 @@ public class BindParameterWorker implements ComponentClassTransformWorker
         private ParameterConduit conduit;
 
         private BoundParameterFieldValueConduit(String containerParameterName,
-                InternalComponentResources containerResources, Class fieldType)
+                                                InternalComponentResources containerResources, Class fieldType)
         {
             this.containerParameterName = containerParameterName;
             this.containerResources = containerResources;
@@ -78,22 +77,23 @@ public class BindParameterWorker implements ComponentClassTransformWorker
             return conduit;
         }
 
-        public void set(Object newValue)
-        {
-            getParameterConduit().set(newValue);
-        }
 
-        @SuppressWarnings("unchecked")
-        public Object get()
+        public Object get(Object instance, InstanceContext context)
         {
             // For the moment, this results in two passes through the TypeCoercer; we'll look
             // to optimize that in the future. The first pass is deep inside ParameterConduit (coercing
             // to the component parameter field type), the second is here (usually the same type so no
             // real coercion necessary).
 
-            Object result = getParameterConduit().get();
+            Object result = getParameterConduit().get(instance, context);
 
             return typeCoercer.coerce(result, fieldType);
+        }
+
+        public void set(Object instance, InstanceContext context, Object newValue)
+        {
+            getParameterConduit().set(instance, context, newValue);
+
         }
     }
 
@@ -107,13 +107,15 @@ public class BindParameterWorker implements ComponentClassTransformWorker
         this.componentClassCache = componentClassCache;
     }
 
-    public void transform(final ClassTransformation transformation, MutableComponentModel model)
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-        for (TransformField field : transformation.matchFieldsWithAnnotation(BindParameter.class))
+        for (PlasticField field : plasticClass.getFieldsWithAnnotation(BindParameter.class))
+        {
             convertFieldIntoContainerBoundParameter(field);
+        }
     }
 
-    private void convertFieldIntoContainerBoundParameter(TransformField field)
+    private void convertFieldIntoContainerBoundParameter(PlasticField field)
     {
         BindParameter annotation = field.getAnnotation(BindParameter.class);
 
@@ -121,34 +123,35 @@ public class BindParameterWorker implements ComponentClassTransformWorker
 
         final String[] possibleNames = annotation.value();
 
-        final String fieldTypeName = field.getType();
+        final String fieldTypeName = field.getTypeName();
 
         final String fieldName = field.getName();
 
-        ComponentValueProvider<FieldValueConduit> provider = new ComponentValueProvider<FieldValueConduit>()
+        ComputedValue<FieldConduit<Object>> computedConduit = new ComputedValue<FieldConduit<Object>>()
         {
-            public FieldValueConduit get(final ComponentResources resources)
+            public FieldConduit<Object> get(InstanceContext context)
             {
+                ComponentResources resources = context.get(ComponentResources.class);
+
                 try
                 {
-                    return createFieldValueConduit(resources, fieldTypeName, fieldName, possibleNames);
-                }
-                catch (Exception ex)
+                    return createConduit(resources, fieldTypeName, fieldName, possibleNames);
+                } catch (Exception ex)
                 {
                     throw new TapestryException(String.format(
                             "Failure binding parameter field '%s' of mixin %s (type %s): %s", fieldName, resources
-                                    .getCompleteId(), resources.getComponentModel().getComponentClassName(),
+                            .getCompleteId(), resources.getComponentModel().getComponentClassName(),
                             InternalUtils.toMessage(ex)), ex);
                 }
             }
 
         };
 
-        field.replaceAccess(provider);
+        field.setComputedConduit(computedConduit);
     }
 
-    private FieldValueConduit createFieldValueConduit(final ComponentResources resources, final String fieldTypeName,
-            final String fieldName, final String[] possibleNames)
+    private FieldConduit<Object> createConduit(final ComponentResources resources, final String fieldTypeName,
+                                               final String fieldName, final String[] possibleNames)
     {
         if (!resources.isMixin())
             throw new TapestryException(TransformMessages.bindParameterOnlyOnMixin(fieldName, resources), null);
@@ -185,11 +188,11 @@ public class BindParameterWorker implements ComponentClassTransformWorker
 
         String message = String.format("Containing component %s does not contain a formal parameter %s %s.",
 
-        model.getComponentClassName(),
+                model.getComponentClassName(),
 
-        guesses.size() == 1 ? "matching" : "matching any of",
+                guesses.size() == 1 ? "matching" : "matching any of",
 
-        InternalUtils.joinSorted(guesses));
+                InternalUtils.joinSorted(guesses));
 
         throw new UnknownValueException(message, new AvailableValues("Formal parameters", model
                 .getDeclaredParameterNames()));

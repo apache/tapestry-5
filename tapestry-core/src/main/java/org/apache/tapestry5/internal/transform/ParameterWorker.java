@@ -14,11 +14,10 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import java.util.List;
-
 import org.apache.tapestry5.Binding;
-import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.func.Flow;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.bindings.LiteralBinding;
@@ -29,47 +28,23 @@ import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.plastic.*;
 import org.apache.tapestry5.services.BindingSource;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
-import org.apache.tapestry5.services.ComponentMethodAdvice;
-import org.apache.tapestry5.services.ComponentMethodInvocation;
-import org.apache.tapestry5.services.ComponentValueProvider;
-import org.apache.tapestry5.services.FieldAccess;
-import org.apache.tapestry5.services.MethodAccess;
-import org.apache.tapestry5.services.MethodInvocationResult;
-import org.apache.tapestry5.services.TransformConstants;
-import org.apache.tapestry5.services.TransformField;
-import org.apache.tapestry5.services.TransformMethod;
-import org.apache.tapestry5.services.TransformMethodSignature;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Comparator;
 
 /**
  * Responsible for identifying parameters via the {@link org.apache.tapestry5.annotations.Parameter} annotation on
  * component fields. This is one of the most complex of the transformations.
  */
-public class ParameterWorker implements ComponentClassTransformWorker
+public class ParameterWorker implements ComponentClassTransformWorker2
 {
     private final Logger logger = LoggerFactory.getLogger(ParameterWorker.class);
-
-    private final class InvokeResetOnParameterConduit implements ComponentMethodAdvice
-    {
-        private final FieldAccess conduitAccess;
-
-        private InvokeResetOnParameterConduit(FieldAccess conduitAccess)
-        {
-            this.conduitAccess = conduitAccess;
-        }
-
-        public void advise(ComponentMethodInvocation invocation)
-        {
-            getConduit(invocation, conduitAccess).reset();
-
-            invocation.proceed();
-        }
-    }
 
     /**
      * Contains the per-thread state about a parameter, as stored (using
@@ -89,50 +64,6 @@ public class ParameterWorker implements ComponentClassTransformWorker
         }
     }
 
-    private final class InvokeParameterDefaultMethod implements ComponentMethodAdvice
-    {
-        private final FieldAccess conduitAccess;
-
-        private final MethodAccess defaultMethodAccess;
-
-        private InvokeParameterDefaultMethod(FieldAccess conduitAccess, MethodAccess defaultMethodAccess)
-        {
-            this.conduitAccess = conduitAccess;
-            this.defaultMethodAccess = defaultMethodAccess;
-        }
-
-        public void advise(ComponentMethodInvocation invocation)
-        {
-            logger.debug(String.format("%s invoking default method %s", invocation.getComponentResources()
-                    .getCompleteId(), defaultMethodAccess));
-
-            MethodInvocationResult result = defaultMethodAccess.invoke(invocation.getInstance());
-
-            result.rethrow();
-
-            getConduit(invocation, conduitAccess).setDefault(result.getReturnValue());
-
-            invocation.proceed();
-        }
-    }
-
-    private final class InvokeLoadOnParmeterConduit implements ComponentMethodAdvice
-    {
-        private final FieldAccess conduitAccess;
-
-        private InvokeLoadOnParmeterConduit(FieldAccess conduitAccess)
-        {
-            this.conduitAccess = conduitAccess;
-        }
-
-        public void advise(ComponentMethodInvocation invocation)
-        {
-            getConduit(invocation, conduitAccess).load();
-
-            invocation.proceed();
-        }
-    }
-
     private final ComponentClassCache classCache;
 
     private final BindingSource bindingSource;
@@ -144,7 +75,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
     private final PerthreadManager perThreadManager;
 
     public ParameterWorker(ComponentClassCache classCache, BindingSource bindingSource,
-            ComponentDefaultProvider defaultProvider, TypeCoercer typeCoercer, PerthreadManager perThreadManager)
+                           ComponentDefaultProvider defaultProvider, TypeCoercer typeCoercer, PerthreadManager perThreadManager)
     {
         this.classCache = classCache;
         this.bindingSource = bindingSource;
@@ -153,41 +84,39 @@ public class ParameterWorker implements ComponentClassTransformWorker
         this.perThreadManager = perThreadManager;
     }
 
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+    private final Comparator<PlasticField> byPrincipalThenName = new Comparator<PlasticField>()
     {
-        transformFields(transformation, model, true);
-        transformFields(transformation, model, false);
-    }
-
-    private void transformFields(ClassTransformation transformation, MutableComponentModel model, boolean principal)
-    {
-        for (TransformField field : matchParameterFields(transformation, principal))
+        public int compare(PlasticField o1, PlasticField o2)
         {
-            convertFieldIntoParameter(transformation, model, field);
+            boolean principal1 = o1.getAnnotation(Parameter.class).principal();
+            boolean principal2 = o2.getAnnotation(Parameter.class).principal();
+
+            if (principal1 == principal2)
+            {
+                return o1.getName().compareTo(o2.getName());
+            }
+
+            return principal1 ? -1 : 1;
+        }
+    };
+
+
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
+    {
+        Flow<PlasticField> parametersFields = F.flow(plasticClass.getFieldsWithAnnotation(Parameter.class)).sort(byPrincipalThenName);
+
+        for (PlasticField field : parametersFields)
+        {
+            convertFieldIntoParameter(plasticClass, model, field);
         }
     }
 
-    private List<TransformField> matchParameterFields(ClassTransformation transformation, final boolean principal)
-    {
-        Predicate<TransformField> predicate = new Predicate<TransformField>()
-        {
-            public boolean accept(TransformField field)
-            {
-                Parameter annotation = field.getAnnotation(Parameter.class);
-
-                return annotation != null && annotation.principal() == principal;
-            }
-        };
-
-        return transformation.matchFields(predicate);
-    }
-
-    private void convertFieldIntoParameter(ClassTransformation transformation, MutableComponentModel model,
-            TransformField field)
+    private void convertFieldIntoParameter(PlasticClass plasticClass, MutableComponentModel model,
+                                           PlasticField field)
     {
         Parameter annotation = field.getAnnotation(Parameter.class);
 
-        String fieldType = field.getType();
+        String fieldType = field.getTypeName();
 
         String parameterName = getParameterName(field.getName(), annotation.name());
 
@@ -196,53 +125,46 @@ public class ParameterWorker implements ComponentClassTransformWorker
         model.addParameter(parameterName, annotation.required(), annotation.allowNull(), annotation.defaultPrefix(),
                 annotation.cache());
 
-        ComponentValueProvider<ParameterConduit> provider = createParameterConduitProvider(parameterName, fieldType,
-                annotation);
+        MethodHandle defaultMethodHandle = findDefaultMethodHandle(plasticClass, parameterName);
 
-        TransformField conduitField = transformation.addIndirectInjectedField(ParameterConduit.class, parameterName
-                + "$conduit", provider);
+        ComputedValue<FieldConduit<Object>> computedParameterConduit = createComputedParameterConduit(parameterName, fieldType,
+                annotation, defaultMethodHandle);
 
-        FieldAccess conduitAccess = conduitField.getAccess();
-
-        addCodeForParameterDefaultMethod(transformation, parameterName, conduitAccess);
-
-        field.replaceAccess(conduitField);
-
-        invokeLoadOnParameterConduitAtPageLoad(transformation, conduitAccess);
-
-        invokeResetOnParameterConduitAtPostRenderCleanup(transformation, conduitAccess);
+        field.setComputedConduit(computedParameterConduit);
     }
 
-    private void invokeResetOnParameterConduitAtPostRenderCleanup(ClassTransformation transformation,
-            final FieldAccess conduitAccess)
+
+    private MethodHandle findDefaultMethodHandle(PlasticClass plasticClass, String parameterName)
     {
-        ComponentMethodAdvice advice = new InvokeResetOnParameterConduit(conduitAccess);
+        final String methodName = "default" + parameterName;
 
-        addMethodAdvice(transformation, TransformConstants.POST_RENDER_CLEANUP_SIGNATURE, advice);
-    }
+        Predicate<PlasticMethod> predicate = new Predicate<PlasticMethod>()
+        {
+            public boolean accept(PlasticMethod method)
+            {
+                return method.getDescription().argumentTypes.length == 0
+                        && method.getDescription().methodName.equalsIgnoreCase(methodName);
+            }
+        };
 
-    private void addMethodAdvice(ClassTransformation transformation, TransformMethodSignature methodSignature,
-            ComponentMethodAdvice advice)
-    {
-        transformation.getOrCreateMethod(methodSignature).addAdvice(advice);
-    }
+        Flow<PlasticMethod> matches = F.flow(plasticClass.getMethods()).filter(predicate);
 
-    private void invokeLoadOnParameterConduitAtPageLoad(ClassTransformation transformation, FieldAccess conduitAccess)
-    {
-        ComponentMethodAdvice pageLoadAdvice = new InvokeLoadOnParmeterConduit(conduitAccess);
+        // This will match exactly 0 or 1 (unless the user does something really silly)
+        // methods, and if it matches, we know the name of the method.
 
-        addPageLoadAdvice(transformation, pageLoadAdvice);
+        return matches.isEmpty() ? null : matches.first().getHandle();
     }
 
     @SuppressWarnings("all")
-    private ComponentValueProvider<ParameterConduit> createParameterConduitProvider(final String parameterName,
-            final String fieldTypeName, final Parameter annotation)
+    private ComputedValue<FieldConduit<Object>> createComputedParameterConduit(final String parameterName,
+                                                                               final String fieldTypeName, final Parameter annotation,
+                                                                               final MethodHandle defaultMethodHandle)
     {
-        return new ComponentValueProvider<ParameterConduit>()
+        return new ComputedValue<FieldConduit<Object>>()
         {
-            public ParameterConduit get(ComponentResources resources)
+            public ParameterConduit get(InstanceContext context)
             {
-                final InternalComponentResources icr = (InternalComponentResources) resources;
+                final InternalComponentResources icr = context.get(InternalComponentResources.class);
 
                 final Class fieldType = classCache.forName(fieldTypeName);
 
@@ -290,7 +212,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
                         return loaded;
                     }
 
-                    public void set(Object newValue)
+                    public void set(Object instance, InstanceContext context, Object newValue)
                     {
                         ParameterState state = getState();
 
@@ -328,8 +250,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
                             Object boundValue = parameterBinding.get();
 
                             result = typeCoercer.coerce(boundValue, fieldType);
-                        }
-                        catch (RuntimeException ex)
+                        } catch (RuntimeException ex)
                         {
                             throw new TapestryException(String.format(
                                     "Failure reading parameter '%s' of component %s: %s", parameterName,
@@ -337,7 +258,9 @@ public class ParameterWorker implements ComponentClassTransformWorker
                         }
 
                         if (result != null || annotation.allowNull())
+                        {
                             return result;
+                        }
 
                         throw new TapestryException(
                                 String.format(
@@ -351,15 +274,16 @@ public class ParameterWorker implements ComponentClassTransformWorker
                         // with no side effects.
 
                         if (parameterBinding == null)
+                        {
                             return;
+                        }
 
                         try
                         {
                             Object coerced = typeCoercer.coerce(newValue, parameterBinding.getBindingType());
 
                             parameterBinding.set(coerced);
-                        }
-                        catch (RuntimeException ex)
+                        } catch (RuntimeException ex)
                         {
                             throw new TapestryException(String.format(
                                     "Failure writing parameter '%s' of component %s: %s", parameterName,
@@ -377,26 +301,37 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
                     public void load()
                     {
-                        logger.debug(String.format("%s loading parameter %s", icr.getCompleteId(), parameterName));
+                        if (logger.isDebugEnabled())
+                        {
+                            logger.debug(String.format("%s loading parameter %s", icr.getCompleteId(), parameterName));
+                        }
 
                         // If it's bound at this point, that's because of an explicit binding
                         // in the template or @Component annotation.
 
                         if (!icr.isBound(parameterName))
                         {
-                            logger.debug(String.format("%s parameter %s not yet bound", icr.getCompleteId(),
-                                    parameterName));
+                            if (logger.isDebugEnabled())
+                            {
+                                logger.debug(String.format("%s parameter %s not yet bound", icr.getCompleteId(),
+                                        parameterName));
+                            }
 
                             // Otherwise, construct a default binding, or use one provided from
                             // the component.
 
                             Binding binding = getDefaultBindingForParameter();
 
-                            logger.debug(String.format("%s parameter %s bound to default %s", icr.getCompleteId(),
-                                    parameterName, binding));
+                            if (logger.isDebugEnabled())
+                            {
+                                logger.debug(String.format("%s parameter %s bound to default %s", icr.getCompleteId(),
+                                        parameterName, binding));
+                            }
 
                             if (binding != null)
+                            {
                                 icr.bindParameter(parameterName, binding);
+                            }
                         }
 
                         parameterBinding = icr.getBinding(parameterName);
@@ -413,13 +348,19 @@ public class ParameterWorker implements ComponentClassTransformWorker
                         return parameterBinding != null;
                     }
 
-                    public Object get()
+                    public Object get(Object instance, InstanceContext context)
                     {
-                        if (!isLoaded()) { return defaultValue; }
+                        if (!isLoaded())
+                        {
+                            return defaultValue;
+                        }
 
                         ParameterState state = getState();
 
-                        if (state.cached || !isBound()) { return state.value; }
+                        if (state.cached || !isBound())
+                        {
+                            return state.value;
+                        }
 
                         // Read the parameter's binding and cast it to the
                         // field's type.
@@ -428,8 +369,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
                         // If the value is invariant, we can cache it until at least the end of the request (before
                         // 5.2, it would be cached forever in the pooled instance).
-                        // Otherwise, we
-                        // we may want to cache it for the remainder of the component render (if the
+                        // Otherwise, we we may want to cache it for the remainder of the component render (if the
                         // component is currently rendering).
 
                         if (invariant || (annotation.cache() && icr.isRendering()))
@@ -444,88 +384,68 @@ public class ParameterWorker implements ComponentClassTransformWorker
                     private Binding getDefaultBindingForParameter()
                     {
                         if (InternalUtils.isNonBlank(annotation.value()))
+                        {
                             return bindingSource.newBinding("default " + parameterName, icr,
                                     annotation.defaultPrefix(), annotation.value());
+                        }
 
                         if (annotation.autoconnect())
+                        {
                             return defaultProvider.defaultBinding(parameterName, icr);
+                        }
 
-                        // Return (if not null) the binding from the setDefault() method which is
-                        // set via a default method on the component, or from the field's initial
-                        // value.
+                        // Invoke the default method and install any value or Binding returned there.
+
+                        invokeDefaultMethod();
 
                         return parameterBinding;
                     }
 
-                    public void setDefault(Object value)
+                    private void invokeDefaultMethod()
                     {
-                        if (value == null)
-                            return;
-
-                        if (value instanceof Binding)
+                        if (defaultMethodHandle == null)
                         {
-                            parameterBinding = (Binding) value;
                             return;
                         }
 
-                        parameterBinding = new LiteralBinding(null, "default " + parameterName, value);
+                        if (logger.isDebugEnabled())
+                        {
+                            logger.debug(String.format("%s invoking method %s to obtain default for parameter %s",
+                                    icr.getCompleteId(), defaultMethodHandle, parameterName));
+                        }
+
+                        MethodInvocationResult result = defaultMethodHandle.invoke(icr.getComponent());
+
+                        result.rethrow();
+
+                        Object defaultValue = result.getReturnValue();
+
+                        if (defaultValue == null)
+                        {
+                            return;
+                        }
+
+                        if (defaultValue instanceof Binding)
+                        {
+                            parameterBinding = (Binding) defaultValue;
+                            return;
+                        }
+
+                        parameterBinding = new LiteralBinding(null, "default " + parameterName, defaultValue);
                     }
+
+
                 };
             }
         };
     }
 
-    private ParameterConduit getConduit(ComponentMethodInvocation invocation, FieldAccess access)
-    {
-        return (ParameterConduit) access.read(invocation.getInstance());
-    }
-
-    private void addCodeForParameterDefaultMethod(ClassTransformation transformation, final String parameterName,
-            final FieldAccess conduitAccess)
-    {
-        final String methodName = "default" + parameterName;
-
-        Predicate<TransformMethod> predicate = new Predicate<TransformMethod>()
-        {
-            public boolean accept(TransformMethod method)
-            {
-                return method.getSignature().getParameterTypes().length == 0
-                        && method.getName().equalsIgnoreCase(methodName);
-            }
-        };
-
-        List<TransformMethod> matches = transformation.matchMethods(predicate);
-
-        // This will match exactly 0 or 1 (unless the user does something really silly)
-        // methods, and if it matches, we know the name of the method.
-
-        if (matches.isEmpty())
-            return;
-
-        TransformMethod defaultMethod = matches.get(0);
-
-        captureDefaultValueFromDefaultMethod(transformation, defaultMethod, conduitAccess);
-    }
-
-    private void captureDefaultValueFromDefaultMethod(ClassTransformation transformation,
-            TransformMethod defaultMethod, final FieldAccess conduitAccess)
-    {
-        final MethodAccess access = defaultMethod.getAccess();
-
-        ComponentMethodAdvice advice = new InvokeParameterDefaultMethod(conduitAccess, access);
-
-        addPageLoadAdvice(transformation, advice);
-    }
-
-    private void addPageLoadAdvice(ClassTransformation transformation, ComponentMethodAdvice advice)
-    {
-        addMethodAdvice(transformation, TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, advice);
-    }
-
     private static String getParameterName(String fieldName, String annotatedName)
     {
         if (InternalUtils.isNonBlank(annotatedName))
+        {
             return annotatedName;
+        }
 
         return InternalUtils.stripMemberName(fieldName);
     }

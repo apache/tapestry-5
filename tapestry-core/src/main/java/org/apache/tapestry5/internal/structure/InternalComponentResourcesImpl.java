@@ -14,18 +14,8 @@
 
 package org.apache.tapestry5.internal.structure;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.tapestry5.Binding;
-import org.apache.tapestry5.Block;
-import org.apache.tapestry5.ComponentEventCallback;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.EventContext;
-import org.apache.tapestry5.Link;
-import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.bindings.InternalPropBinding;
 import org.apache.tapestry5.internal.services.Instantiator;
@@ -42,10 +32,16 @@ import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.runtime.PageLifecycleAdapter;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.slf4j.Logger;
+
+import java.lang.annotation.Annotation;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * The bridge between a component and its {@link ComponentPageElement}, that supplies all kinds of
@@ -132,9 +128,26 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         }
     }
 
+
+    private static Worker<ParameterConduit> RESET_PARAMETER_CONDUIT = new Worker<ParameterConduit>()
+    {
+        public void work(ParameterConduit value)
+        {
+            value.reset();
+        }
+    };
+
+    private static Worker<ParameterConduit> LOAD_PARAMETER_CONDUIT = new Worker<ParameterConduit>()
+    {
+        public void work(ParameterConduit value)
+        {
+            value.load();
+        }
+    };
+
     public InternalComponentResourcesImpl(Page page, ComponentPageElement element,
-            ComponentResources containerResources, ComponentPageElementResources elementResources, String completeId,
-            String nestedId, Instantiator componentInstantiator, boolean mixin)
+                                          ComponentResources containerResources, ComponentPageElementResources elementResources, String completeId,
+                                          String nestedId, Instantiator componentInstantiator, boolean mixin)
     {
         this.page = page;
         this.element = element;
@@ -309,8 +322,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         try
         {
             page.persistFieldChange(this, fieldName, newValue);
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             throw new TapestryException(StructureMessages.fieldPersistFailure(getCompleteId(), fieldName, ex),
                     getLocation(), ex);
@@ -511,6 +523,8 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
         if (variablesMap != null)
             variablesMap.clear();
+
+        resetParameterConduits();
     }
 
     public void addPageLifecycleListener(PageLifecycleListener listener)
@@ -528,6 +542,25 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         page.addResetListener(listener);
     }
 
+
+
+    private synchronized void resetParameterConduits()
+    {
+        if (conduits != null)
+        {
+            conduits.eachValue(RESET_PARAMETER_CONDUIT);
+        }
+    }
+
+    private synchronized void loadParameterConduits()
+    {
+        // Don't need the conduits != null, because this method will only be invoked
+        // when conduits is non-null.
+
+        conduits.eachValue(LOAD_PARAMETER_CONDUIT);
+    }
+
+
     public synchronized ParameterConduit getParameterConduit(String parameterName)
     {
         return NamedSet.get(conduits, parameterName);
@@ -536,19 +569,37 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     public synchronized void setParameterConduit(String parameterName, ParameterConduit conduit)
     {
         if (conduits == null)
+        {
             conduits = NamedSet.create();
+
+            page.addLifecycleListener(new PageLifecycleAdapter()
+            {
+                @Override
+                public void containingPageDidLoad()
+                {
+                    loadParameterConduits();
+                }
+            });
+
+        }
 
         conduits.put(parameterName, conduit);
     }
+
 
     public String getPropertyName(String parameterName)
     {
         Binding binding = getBinding(parameterName);
 
         if (binding == null)
+        {
             return null;
+        }
 
-        if (binding instanceof InternalPropBinding) { return ((InternalPropBinding) binding).getPropertyName(); }
+        if (binding instanceof InternalPropBinding)
+        {
+            return ((InternalPropBinding) binding).getPropertyName();
+        }
 
         return null;
     }

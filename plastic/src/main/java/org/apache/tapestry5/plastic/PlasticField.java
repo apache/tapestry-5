@@ -107,13 +107,13 @@ public interface PlasticField extends AnnotationAccess
      * <p>
      * Normally, once a conduit is in place, the field will never be actually read or written. This is problematic for
      * debugging, so {@link TransformationOption#FIELD_WRITEBEHIND} is useful when operating in a non-production mode.
-     * 
+     *
      * @return the field for further manipulation
      * @throws IllegalStateException
      *             if the field already has an injection or a conduit
      * @return this field for further manipulation
      */
-    PlasticField setConduit(FieldConduit<?> conduit);
+    <F> PlasticField setConduit(FieldConduit<F> conduit);
 
     /**
      * Sets the conduit for the field to a value computed when the class is instantiated
@@ -122,7 +122,7 @@ public interface PlasticField extends AnnotationAccess
      *            object that will compute the actual conduit to be used
      * @return this field for further manipulation
      */
-    PlasticField setComputedConduit(ComputedValue<FieldConduit<?>> computedConduit);
+   <F>  PlasticField setComputedConduit(ComputedValue<FieldConduit<F>> computedConduit);
 
     /**
      * Creates access to the field, using the default property name derived from the name of the field.

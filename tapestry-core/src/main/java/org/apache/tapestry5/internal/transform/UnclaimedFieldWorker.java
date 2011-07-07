@@ -94,18 +94,18 @@ public final class UnclaimedFieldWorker implements ComponentClassTransformWorker
         if (Modifier.isFinal(field.getModifiers()))
             return;
 
-        ComputedValue<FieldConduit<?>> computed = createComputedFieldConduit(field);
+        ComputedValue<FieldConduit<Object>> computed = createComputedFieldConduit(field);
 
         field.setComputedConduit(computed);
     }
 
-    private ComputedValue<FieldConduit<?>> createComputedFieldConduit(PlasticField field)
+    private ComputedValue<FieldConduit<Object>> createComputedFieldConduit(PlasticField field)
     {
         final String fieldType = field.getTypeName();
 
-        return new ComputedValue<FieldConduit<?>>()
+        return new ComputedValue<FieldConduit<Object>>()
         {
-            public FieldConduit<?> get(InstanceContext context)
+            public FieldConduit<Object> get(InstanceContext context)
             {
                 Object fieldDefaultValue = classCache.defaultValueForType(fieldType);
                 InternalComponentResources resources = context.get(InternalComponentResources.class);

@@ -27,7 +27,7 @@ import org.apache.tapestry5.services.transform.TransformationSupport;
 
 /**
  * Peforms transformations that allow pages to be injected into components.
- * 
+ *
  * @see org.apache.tapestry5.annotations.InjectPage
  */
 public class InjectPageWorker implements ComponentClassTransformWorker2
@@ -39,7 +39,7 @@ public class InjectPageWorker implements ComponentClassTransformWorker2
         private Object page;
 
         private InjectedPageConduit(ComponentResources resources, String fieldName,
-                String injectedPageName)
+                                    String injectedPageName)
         {
             super(resources, fieldName);
 
@@ -95,9 +95,9 @@ public class InjectPageWorker implements ComponentClassTransformWorker2
         final String injectedPageName = InternalUtils.isBlank(pageName) ? resolver
                 .resolvePageClassNameToPageName(field.getTypeName()) : pageName;
 
-        ComputedValue<FieldConduit<?>> provider = new ComputedValue<FieldConduit<?>>()
+        ComputedValue<FieldConduit<Object>> provider = new ComputedValue<FieldConduit<Object>>()
         {
-            public FieldConduit<?> get(InstanceContext context)
+            public FieldConduit<Object> get(InstanceContext context)
             {
                 ComponentResources resources = context.get(ComponentResources.class);
                 return new InjectedPageConduit(resources, fieldName, injectedPageName);

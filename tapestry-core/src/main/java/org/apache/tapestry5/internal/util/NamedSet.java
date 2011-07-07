@@ -14,23 +14,24 @@
 
 package org.apache.tapestry5.internal.util;
 
-import java.util.Collections;
-import java.util.Set;
-
 import org.apache.commons.collections.map.CaseInsensitiveMap;
+import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * Simple, thread-safe associative array that relates a name to a value. Names are case-insensitive.
  * This is optimized to use less memory (than a {@link CaseInsensitiveMap} (it uses a singly-liked list),
  * though the cost of a lookup is more expensive. However, this is a good match against many of the structures inside
  * a page instance, where most lookups occur only during page constructions, and the number of values is often small.
- * <p>
- * We use simply synchronization, as uncontested synchronized locks are very, very cheap.
- * 
+ * <p/>
+ * We use simple synchronization, as uncontested synchronized locks are very, very cheap.
+ *
  * @param <T>
- *            the type of value stored
+ *         the type of value stored
  */
 public class NamedSet<T>
 {
@@ -89,9 +90,9 @@ public class NamedSet<T>
 
     /**
      * Gets the value for the provided name.
-     * 
+     *
      * @param name
-     *            used to locate the value
+     *         used to locate the value
      * @return the value, or null if not found
      */
     public synchronized T get(String name)
@@ -100,7 +101,10 @@ public class NamedSet<T>
 
         while (cursor != null)
         {
-            if (cursor.name.equalsIgnoreCase(name)) { return cursor.value; }
+            if (cursor.name.equalsIgnoreCase(name))
+            {
+                return cursor.value;
+            }
 
             cursor = cursor.next;
         }
@@ -111,11 +115,11 @@ public class NamedSet<T>
     /**
      * Stores a new value into the set, replacing any previous value with the same name. Name comparisons are case
      * insensitive.
-     * 
+     *
      * @param name
-     *            to store the value. May not be blank.
+     *         to store the value. May not be blank.
      * @param newValue
-     *            non-null value to store
+     *         non-null value to store
      */
     public synchronized void put(String name, T newValue)
     {
@@ -151,12 +155,32 @@ public class NamedSet<T>
     }
 
     /**
+     * Iterates over the values, passing each in turn to the supplied worker.
+     *
+     * @param worker
+     *         performs an operation on, or using, the value
+     */
+    public synchronized void eachValue(Worker<T> worker)
+    {
+        assert worker != null;
+
+        NamedRef<T> cursor = first;
+
+        while (cursor != null)
+        {
+            worker.work(cursor.value);
+            cursor = cursor.next;
+        }
+    }
+
+
+    /**
      * Puts a new value, but only if it does not already exist.
-     * 
+     *
      * @param name
-     *            name to store (comparisons are case insensitive) may not be blank
+     *         name to store (comparisons are case insensitive) may not be blank
      * @param newValue
-     *            non-null value to store
+     *         non-null value to store
      * @return true if value stored, false if name already exists
      */
     public synchronized boolean putIfNew(String name, T newValue)
@@ -169,7 +193,10 @@ public class NamedSet<T>
 
         while (cursor != null)
         {
-            if (cursor.name.equalsIgnoreCase(name)) { return false; }
+            if (cursor.name.equalsIgnoreCase(name))
+            {
+                return false;
+            }
 
             prev = cursor;
             cursor = cursor.next;
@@ -185,7 +212,9 @@ public class NamedSet<T>
         return true;
     }
 
-    /** Convienience method for creating a new, empty set. */
+    /**
+     * Convienience method for creating a new, empty set.
+     */
     public static <T> NamedSet<T> create()
     {
         return new NamedSet<T>();
@@ -193,12 +222,12 @@ public class NamedSet<T>
 
     /**
      * Convienience method for getting a value from a set that may be null.
-     * 
+     *
      * @param <T>
      * @param set
-     *            set to search, may be null
+     *         set to search, may be null
      * @param name
-     *            name to lookup
+     *         name to lookup
      * @return value from set, or null if not found, or if set is null
      */
     public static <T> T get(NamedSet<T> set, String name)
@@ -217,7 +246,9 @@ public class NamedSet<T>
         return set.getNames();
     }
 
-    /** Returns the values in the set, returning an empty set if the NamedSet is null. */
+    /**
+     * Returns the values in the set, returning an empty set if the NamedSet is null.
+     */
     public static <T> Set<T> getValues(NamedSet<T> set)
     {
         if (set == null)

@@ -40,7 +40,7 @@ public class InjectComponentWorker implements ComponentClassTransformWorker2
         private Component embedded;
 
         private InjectedComponentFieldValueConduit(final ComponentResources resources, String fieldName, String type,
-                String componentId)
+                                                   String componentId)
         {
             super(resources, fieldName);
 
@@ -72,7 +72,7 @@ public class InjectComponentWorker implements ComponentClassTransformWorker2
                                 .format(
                                         "Unable to inject component '%s' into field %s of component %s.  Class %s is not assignable to a field of type %s.",
                                         componentId, fieldName, resources.getCompleteId(), embedded.getClass()
-                                                .getName(), fieldType.getName()));
+                                        .getName(), fieldType.getName()));
         }
 
         public Object get(Object instance, InstanceContext context)
@@ -102,9 +102,9 @@ public class InjectComponentWorker implements ComponentClassTransformWorker2
 
             final String fieldName = field.getName();
 
-            ComputedValue<FieldConduit<?>> provider = new ComputedValue<FieldConduit<?>>()
+            ComputedValue<FieldConduit<Object>> provider = new ComputedValue<FieldConduit<Object>>()
             {
-                public FieldConduit<?> get(InstanceContext context)
+                public FieldConduit<Object> get(InstanceContext context)
                 {
                     ComponentResources resources = context.get(ComponentResources.class);
 

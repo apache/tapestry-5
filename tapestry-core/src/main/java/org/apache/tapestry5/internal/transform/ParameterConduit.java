@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,33 +20,23 @@ import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.bindings.LiteralBinding;
 import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.plastic.FieldConduit;
 import org.apache.tapestry5.runtime.Component;
 
 /**
  * A facade around {@link Binding} and {@link InternalComponentResources} that is used to instrument
- * fields with the {@link Parameter} annotation. Extends {@link FieldValueConduit} so that
+ * fields with the {@link Parameter} annotation. Extends {@link FieldConduit} so that
  * the get() method implicitly coerces the value to the field's type.
  * <p>
- * {@link #get()} will read from the underlying {@link Binding} and used the {@link TypeCoercer} coerce the value to the
+ * {@link #get(Object, org.apache.tapestry5.plastic.InstanceContext)} will read from the underlying {@link Binding} and used the {@link TypeCoercer} coerce the value to the
  * parameter field's type. get() also includes a null value check (as per {@link Parameter#allowNull()}.
  * <p>
- * {@link #set(Object)} pushes the value into the binding.
+ * {@link #set(Object, org.apache.tapestry5.plastic.InstanceContext, Object)} pushes the value into the binding.
  * 
  * @since 5.2.0
  */
-public interface ParameterConduit extends FieldValueConduit
+public interface ParameterConduit extends FieldConduit<Object>
 {
-    /**
-     * Sets the default value for the parameter based on either the current value of the field,
-     * or on result from a default method. This is only used if the parameter is not otherwise
-     * bound.
-     * 
-     * @param defaultValue
-     *            an object (which will be wrapped as a {@link LiteralBinding}, or
-     *            a {@link Binding} instance
-     */
-    void setDefault(Object defaultValue);
-
     /**
      * Determines if the parameter is actually bound.
      * 

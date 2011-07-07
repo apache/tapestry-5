@@ -91,17 +91,17 @@ public class ComponentWorker implements ComponentClassTransformWorker2
     {
         String fieldName = field.getName();
 
-        ComputedValue<FieldConduit<?>> provider = createProviderForEmbeddedComponentConduit(fieldName, id);
+        ComputedValue<FieldConduit<Object>> computedConduit = createProviderForEmbeddedComponentConduit(fieldName, id);
 
-        field.setComputedConduit(provider);
+        field.setComputedConduit(computedConduit);
     }
 
-    private ComputedValue<FieldConduit<?>> createProviderForEmbeddedComponentConduit(final String fieldName,
+    private ComputedValue<FieldConduit<Object>> createProviderForEmbeddedComponentConduit(final String fieldName,
             final String id)
     {
-        return new ComputedValue<FieldConduit<?>>()
+        return new ComputedValue<FieldConduit<Object>>()
         {
-            public FieldConduit get(InstanceContext context)
+            public FieldConduit<Object> get(InstanceContext context)
             {
                 final ComponentResources resources = context.get(ComponentResources.class);
 

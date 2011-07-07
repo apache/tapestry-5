@@ -122,7 +122,7 @@ public class BridgeClassTransformation implements ClassTransformation
         };
     }
 
-    private static FieldConduit<?> toFieldConduit(final FieldValueConduit fieldValueConduit)
+    private static FieldConduit<Object> toFieldConduit(final FieldValueConduit fieldValueConduit)
     {
         return new FieldConduit<Object>()
         {
@@ -218,7 +218,7 @@ public class BridgeClassTransformation implements ClassTransformation
         }
 
         private static final class WrapCVP_FieldValueConduit_as_CV_FieldConduit implements
-                ComputedValue<FieldConduit<?>>
+                ComputedValue<FieldConduit<Object>>
         {
             private final ComponentValueProvider<FieldValueConduit> conduitProvider;
 
@@ -228,7 +228,7 @@ public class BridgeClassTransformation implements ClassTransformation
                 this.conduitProvider = conduitProvider;
             }
 
-            public FieldConduit<?> get(InstanceContext context)
+            public FieldConduit<Object> get(InstanceContext context)
             {
                 ComponentResources resources = context.get(ComponentResources.class);
 
