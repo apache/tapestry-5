@@ -14,34 +14,41 @@
 
 package org.apache.tapestry5.tree;
 
-import org.apache.tapestry5.corelib.components.Tree;
-
 /**
- * Tracks which nodes of a {@link TreeModel} are currently expanded. The {@linkplain DefaultTreeExpansionModel default
+ * Tracks which nodes of a {@link TreeModel} are currently selected. The {@linkplain DefaultTreeExpansionModel default
  * implementation} simply stores a set of {@linkplain TreeNode#getId() unique node
  * ids} to identify expanded nodes. The expansion model is updated whenever folders are expanded or
  * collapsed on the client side.
- * 
+ *
+ * @param <T> type of node
+ *
  * @since 5.3
- * @see Tree
+ * @see org.apache.tapestry5.corelib.components.Tree
  */
-public interface TreeExpansionModel<T>
+public interface TreeSelectionModel<T>
 {
+
     /**
-     * Returns true if the node has been previously {@linkplain #markExpanded(TreeNode) expanded}.
-     * 
-     * @param node
-     *            node to check for expansion
-     * @return
+     * Returns {@code true}, if the given node is selected.
+     *
+     * @param node node to check
      */
-    boolean isExpanded(TreeNode<T> node);
+    boolean isSelected(TreeNode<T> node);
 
-    /** Marks the node as expanded. */
-    void markExpanded(TreeNode<T> node);
+    /**
+     * Selects a node.
+     *
+     * @param node node to select
+     */
+    void select(TreeNode<T> node);
 
-    /** Marks the node as collapsed (not expanded). */
-    void markCollapsed(TreeNode<T> node);
+    /**
+     * Unselects a node.
+     *
+     * @param node node to unselect
+     */
+    void unselect(TreeNode<T> node);
 
-    /** Marks all nodes as collapsed. */
+    /** Clears the selection. */
     void clear();
 }

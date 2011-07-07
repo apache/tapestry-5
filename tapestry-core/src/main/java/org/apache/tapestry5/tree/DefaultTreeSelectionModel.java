@@ -14,50 +14,48 @@
 
 package org.apache.tapestry5.tree;
 
-import java.util.Set;
-
 import org.apache.tapestry5.BaseOptimizedSessionPersistedObject;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
-/**
- * Manages a Set of String {@link TreeNode} ids.
- * 
- * @param <T>
- * @since 5.3
- * @see TreeModel
- */
-public class DefaultTreeExpansionModel<T> extends BaseOptimizedSessionPersistedObject implements TreeExpansionModel<T>
-{
-    private final Set<String> expandedIds = CollectionFactory.newSet();
+import java.util.Set;
 
-    public boolean isExpanded(TreeNode<T> node)
+/**
+ * Default implementation of {@link TreeSelectionModel}.
+ *
+ * @param <T> type of node
+ */
+public class DefaultTreeSelectionModel<T> extends BaseOptimizedSessionPersistedObject implements TreeSelectionModel<T>
+{
+    private final Set<String> selectedIds = CollectionFactory.newSet();
+
+    public boolean isSelected(TreeNode<T> node)
     {
         assert node != null;
 
-        return expandedIds.contains(node.getId());
+        return selectedIds.contains(node.getId());
     }
 
-    public void markExpanded(TreeNode<T> node)
+    public void select(TreeNode<T> node)
     {
         assert node != null;
 
-        if (expandedIds.add(node.getId()))
+        if (selectedIds.add(node.getId()))
             markDirty();
     }
 
-    public void markCollapsed(TreeNode<T> node)
+    public void unselect(TreeNode<T> node)
     {
         assert node != null;
 
-        if (expandedIds.remove(node.getId()))
+        if (selectedIds.remove(node.getId()))
             markDirty();
     }
 
     public void clear()
     {
-        if (!expandedIds.isEmpty())
+        if (!selectedIds.isEmpty())
         {
-            expandedIds.clear();
+            selectedIds.clear();
             markDirty();
         }
     }

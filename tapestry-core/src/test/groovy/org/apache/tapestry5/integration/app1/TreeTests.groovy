@@ -31,7 +31,7 @@ class TreeTests extends SeleniumTestCase
         //Click on Games
         click "//div[@class='t-tree-container test-hook']/ul/li[2]/span[@class='t-tree-icon']"
 
-        waitForCondition "selenium.browserbot.getCurrentWindow().Ajax.activeRequestCount == 0", PAGE_LOAD_TIMEOUT
+        waitForAjaxRequestsToComplete  PAGE_LOAD_TIMEOUT
 
         assertTextPresent "Board Games"
 
@@ -39,7 +39,7 @@ class TreeTests extends SeleniumTestCase
         click "//div[@class='t-tree-container test-hook']/ul/li[2]/ul/li/span[@class='t-tree-icon']"
 
         //Assert the leafs are displayed
-        waitForCondition "window.\$\$(\"span.t-leaf-node\").size() >= 5", "45000"
+        waitForAjaxRequestsToComplete  PAGE_LOAD_TIMEOUT
 
         clickAndWait "link=Redraw"
 

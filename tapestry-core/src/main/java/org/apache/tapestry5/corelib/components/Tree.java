@@ -30,16 +30,13 @@ import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
-import org.apache.tapestry5.tree.DefaultTreeExpansionModel;
-import org.apache.tapestry5.tree.TreeExpansionModel;
-import org.apache.tapestry5.tree.TreeModel;
-import org.apache.tapestry5.tree.TreeNode;
+import org.apache.tapestry5.tree.*;
 
 /**
- * A component used to render a recursive tree structure, with expandable/collapsable nodes. The data that is displayed
+ * A component used to render a recursive tree structure, with expandable/collapsable/selectable nodes. The data that is displayed
  * by the component is provided as a {@link TreeModel}. A secondary model, the {@link TreeExpansionModel}, is used
- * to track which nodes have been expanded. The Tree component uses special tricks to support recursive rendering
- * of the Tree as necessary.
+ * to track which nodes have been expanded. The {@link TreeSelectionModel} is used to track node selections.
+ * The Tree component uses special tricks to support recursive rendering of the Tree as necessary.
  * 
  * @since 5.3
  */
@@ -81,6 +78,15 @@ public class Tree
     private TreeExpansionModel expansionModel;
 
     /**
+     * Used to control the Tree's selections. By default, a persistent field inside the Tree
+     * component stores a {@link DefaultTreeSelectionModel}. This parameter may be bound when more
+     * control over the implementation of the selection model, or how it is stored, is
+     * required.
+     */
+    @Parameter(allowNull = false, value = "defaultTreeSelectionModel")
+    private TreeSelectionModel selectionModel;
+
+    /**
      * Optional parameter used to inform the container about the value of the currently rendering TreeNode; this
      * is often preferable to the TreeNode, and like the node parameter, is primarily used when the label parameter
      * it bound.
@@ -104,6 +110,9 @@ public class Tree
 
     @Persist
     private TreeExpansionModel defaultTreeExpansionModel;
+
+    @Persist
+    private TreeSelectionModel defaultTreeSelectionModel;
 
     private static RenderCommand RENDER_CLOSE_TAG = new RenderCommand()
     {
@@ -270,15 +279,15 @@ public class Tree
 
         String event;
 
-        if(expansionModel.isSelected(node))
+        if(selectionModel.isSelected(node))
         {
-            expansionModel.unselect(node);
+            selectionModel.unselect(node);
 
             event = EventConstants.NODE_UNSELECTED;
         }
         else
         {
-            expansionModel.select(node);
+            selectionModel.select(node);
 
             event = EventConstants.NODE_SELECTED;
         }
@@ -303,6 +312,14 @@ public class Tree
         return defaultTreeExpansionModel;
     }
 
+    public TreeSelectionModel getDefaultTreeSelectionModel()
+    {
+        if(defaultTreeSelectionModel == null)
+            defaultTreeSelectionModel = new DefaultTreeSelectionModel();
+
+        return defaultTreeSelectionModel;
+    }
+
     /**
      * Returns the actual {@link TreeExpansionModel} in use for this Tree component,
      * as per the expansionModel parameter. This is often, but not always, the same
@@ -311,6 +328,16 @@ public class Tree
     public TreeExpansionModel getExpansionModel()
     {
         return expansionModel;
+    }
+
+    /**
+     * Returns the actual {@link TreeSelectionModel} in use for this Tree component,
+     * as per the {@link #selectionModel} parameter. This is often, but not always, the same
+     * as {@link #getDefaultTreeSelectionModel()}.
+     */
+    public TreeSelectionModel getSelectionModel()
+    {
+        return selectionModel;
     }
 
     public Object getRenderRootNodes()
