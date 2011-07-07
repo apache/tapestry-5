@@ -616,7 +616,6 @@ public final class TapestryModule
         configuration.add("RenderCommand", new RenderCommandWorker());
 
 
-
         configuration.addInstance("RenderPhase", RenderPhaseMethodWorker.class);
 
         // Ideally, these should be ordered pretty late in the process to make
@@ -998,6 +997,7 @@ public final class TapestryModule
      * <li>{@link Asset} to {@link Resource}</li>
      * <li>String to {@link JSONObject}</li>
      * <li>String to {@link JSONArray}</li>
+     * <li>{@link ValueEncoder} to {@link ValueEncoderFactory}</li>
      * </ul>
      */
     public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration,
@@ -1174,6 +1174,14 @@ public final class TapestryModule
         configuration.add(CoercionTuple.create(String.class, JSONObject.class, new StringToJSONObject()));
 
         configuration.add(CoercionTuple.create(String.class, JSONArray.class, new StringToJSONArray()));
+
+        configuration.add(CoercionTuple.create(ValueEncoder.class, ValueEncoderFactory.class, new Coercion<ValueEncoder, ValueEncoderFactory>()
+        {
+            public ValueEncoderFactory coerce(ValueEncoder input)
+            {
+                return new GenericValueEncoderFactory(input);
+            }
+        }));
     }
 
     /**
@@ -2212,7 +2220,7 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes {@link ValueEncoderFactory}s for types:
+     * Contributes {@link ValueEncoder}s or {@link ValueEncoderFactory}s for types:
      * <ul>
      * <li>Object
      * <li>String
@@ -2220,10 +2228,10 @@ public final class TapestryModule
      * </ul>
      */
     @SuppressWarnings("all")
-    public static void contributeValueEncoderSource(MappedConfiguration<Class, ValueEncoderFactory> configuration)
+    public static void contributeValueEncoderSource(MappedConfiguration<Class, Object> configuration)
     {
         configuration.addInstance(Object.class, TypeCoercedValueEncoderFactory.class);
-        configuration.add(String.class, GenericValueEncoderFactory.create(new StringValueEncoder()));
+        configuration.add(String.class, new StringValueEncoder());
         configuration.add(Enum.class, new EnumValueEncoderFactory());
     }
 
