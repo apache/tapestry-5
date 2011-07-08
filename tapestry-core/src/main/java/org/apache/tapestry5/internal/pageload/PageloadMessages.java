@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -69,11 +69,6 @@ final class PageloadMessages
     public static String tokenNotImplemented(TokenType type)
     {
         return MESSAGES.format("token_not_implemented", type.toString());
-    }
-
-    public static String parameterNotSupported(String completeId, String parameterName)
-    {
-        return MESSAGES.format("parameter_not_supported", completeId, parameterName);
     }
 
     public static String redundantEmbeddedComponentTypes(String embeddedId, String embeddedType, String modelType)

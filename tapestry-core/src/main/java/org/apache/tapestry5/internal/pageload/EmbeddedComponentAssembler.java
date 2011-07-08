@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@ package org.apache.tapestry5.internal.pageload;
 
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.ioc.Locatable;
+
+import java.util.Set;
 
 /**
  * Encapsulates logic related to assembling an embedded component within a {@link org.apache.tapestry5.internal.pageload.ComponentAssembler}.
@@ -39,7 +41,8 @@ interface EmbeddedComponentAssembler extends Locatable
      * This method should only be called at page-assembly time as it requires some data that is collected during
      * ComponentAssembly construction in order to handle published parameters of embedded components.
      *
-     * @param parameterName simple or qualified parameter name
+     * @param parameterName
+     *         simple or qualified parameter name
      * @return object that can bind the parameter
      */
     ParameterBinder createParameterBinder(String parameterName);
@@ -59,7 +62,15 @@ interface EmbeddedComponentAssembler extends Locatable
     /**
      * Adds mixins to the newly created embedded element.
      *
-     * @param newElement new element requiring mixins
+     * @param newElement
+     *         new element requiring mixins
      */
     void addMixinsToElement(ComponentPageElement newElement);
+
+    /**
+     * Returns the names of all formal parameters.
+     *
+     * @since 5.3
+     */
+    Set<String> getFormalParameterNames();
 }

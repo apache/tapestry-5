@@ -30,32 +30,30 @@ import java.util.List;
 /**
  * Have to start somewhere!
  */
-public class Index
-{
+public class Index {
     @Persist(PersistenceConstants.FLASH)
     private String alert;
 
-    public static class Item implements Comparable<Item>
-    {
+    public static class Item implements Comparable<Item> {
         public final String pageName;
         public final String label;
         public final String description;
 
-        public Item(String pageName, String label, String description)
-        {
+        public Item(String pageName, String label, String description) {
             this.pageName = pageName;
             this.label = label;
             this.description = description;
         }
 
-        public int compareTo(Item o)
-        {
+        public int compareTo(Item o) {
             return label.compareTo(o.label);
         }
     }
 
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
+
+                    new Item("InvalidFormalParameterDemo", "Unmatched Formal Parameter with @Component", "Parameters specified with @Component annotation must match formal parameters"),
 
                     new Item("NullBindingToPrimitive", "Null Bound to Primitive Demo", "Correct exception when a primitive parameter is bound to null"),
 
@@ -484,8 +482,7 @@ public class Index
 
             );
 
-    static
-    {
+    static {
         Collections.sort(ITEMS);
     }
 
@@ -498,39 +495,32 @@ public class Index
     @Inject
     private ComponentResources resources;
 
-    public List<Item> getItems()
-    {
+    public List<Item> getItems() {
         return ITEMS;
     }
 
-    Object onActionFromSecurePage()
-    {
+    Object onActionFromSecurePage() {
         return securePage.initialize("Triggered from Index");
     }
 
-    public Link getInjectDemoLink()
-    {
+    public Link getInjectDemoLink() {
         return resources.createPageLink(InjectDemo.class, false);
     }
 
-    public List getDemoContext()
-    {
+    public List getDemoContext() {
         return Arrays.asList(1, 2, 3);
     }
 
     /* This will fail, because component classes are not instantiable. */
-    public Object onActionFromInstantiatePage()
-    {
+    public Object onActionFromInstantiatePage() {
         return new Music();
     }
 
-    public void setAlert(String alert)
-    {
+    public void setAlert(String alert) {
         this.alert = alert;
     }
 
-    public String getAlert()
-    {
+    public String getAlert() {
         return alert;
     }
 }

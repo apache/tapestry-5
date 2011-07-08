@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.internal.pageload;
 
-import java.util.Map;
-
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.ComponentInstantiatorSource;
 import org.apache.tapestry5.internal.services.Instantiator;
@@ -29,6 +27,10 @@ import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
+
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssembler
 {
@@ -60,24 +62,24 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
     /**
      * @param assemblerSource
      * @param instantiatorSource
-     *            used to access component models
+     *         used to access component models
      * @param componentClassResolver
-     *            used to convert mixin types to component models
+     *         used to convert mixin types to component models
      * @param componentClassName
-     *            class name of embedded component
+     *         class name of embedded component
      * @param selector
-     *            used to select template and other resources
+     *         used to select template and other resources
      * @param embeddedModel
-     *            embedded model (may be null for components defined in the template)
+     *         embedded model (may be null for components defined in the template)
      * @param templateMixins
-     *            list of mixins from the t:mixins element (possibly null)
+     *         list of mixins from the t:mixins element (possibly null)
      * @param location
-     *            location of components element in its container's template
+     *         location of components element in its container's template
      */
     public EmbeddedComponentAssemblerImpl(ComponentAssemblerSource assemblerSource,
-            ComponentInstantiatorSource instantiatorSource, ComponentClassResolver componentClassResolver,
-            String componentClassName, ComponentResourceSelector selector, EmbeddedComponentModel embeddedModel,
-            String templateMixins, Location location)
+                                          ComponentInstantiatorSource instantiatorSource, ComponentClassResolver componentClassResolver,
+                                          String componentClassName, ComponentResourceSelector selector, EmbeddedComponentModel embeddedModel,
+                                          String templateMixins, Location location)
     {
         this.assemblerSource = assemblerSource;
         this.instantiatorSource = instantiatorSource;
@@ -186,11 +188,13 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
         if (dotx >= 0)
         {
             String mixinId = parameterName.substring(0, dotx);
-            if (!mixinIdToInstantiator.containsKey(mixinId)) { throw new TapestryException(
-                    PageloadMessages.mixinidForParamnotfound(parameterName, mixinIdToInstantiator.keySet()), location,
-                    null); }
-        }
-        else
+            if (!mixinIdToInstantiator.containsKey(mixinId))
+            {
+                throw new TapestryException(
+                        PageloadMessages.mixinidForParamnotfound(parameterName, mixinIdToInstantiator.keySet()), location,
+                        null);
+            }
+        } else
         {
             // Unqualified parameter name. May be a reference not to a parameter of this component, but a published
             // parameter of a component embedded in this component. The ComponentAssembler for this component
@@ -250,5 +254,10 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
     public Location getLocation()
     {
         return location;
+    }
+
+    public Set<String> getFormalParameterNames()
+    {
+        return new HashSet<String>(componentModel.getParameterNames());
     }
 }

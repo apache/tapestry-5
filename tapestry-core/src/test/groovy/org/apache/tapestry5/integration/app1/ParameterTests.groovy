@@ -25,7 +25,6 @@ class ParameterTests extends TapestryCoreTestCase {
     /**
      * https://issues.apache.org/jira/browse/TAP5-1227
      */
-
     @Test
     void null_bound_to_primitive_field_is_an_error() {
         openLinks "Null Bound to Primitive Demo"
@@ -33,4 +32,15 @@ class ParameterTests extends TapestryCoreTestCase {
         assertTextPresent "Parameter 'value' of component NullBindingToPrimitive:showint is bound to null. This parameter is not allowed to be null."
     }
 
+   /**
+     * https://issues.apache.org/jira/browse/TAP5-1428
+     */
+    @Test
+    void parameter_specified_with_component_annotation_must_match_a_formal_parameter() {
+        openLinks "Unmatched Formal Parameter with @Component"
+
+        assertTextPresent "Component InvalidFormalParameterDemo:counter does not include a formal parameter 'step' (and does not support informal parameters).",
+                "Formal parameters", "end", "start", "value"
+
+    }
 }
