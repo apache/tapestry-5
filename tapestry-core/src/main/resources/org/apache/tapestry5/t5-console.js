@@ -14,68 +14,74 @@
 
 T5.define("console", function() {
 
-  // FireFox throws an exception is you reference the console when it is not enabled.
+    // FireFox throws an exception is you reference the console when it is not enabled.
 
-  var nativeConsoleExists = false, nativeConsole = {}, floatingConsole;
+    var nativeConsoleExists = false, nativeConsole = {}, floatingConsole;
 
-  try {
-    if (console) {
-      nativeConsole = console;
-      nativeConsoleExists = true;
+    try {
+        if (console) {
+            nativeConsole = console;
+            nativeConsoleExists = true;
+        }
     }
-  }
-  catch (e) {
-  }
-
-  function display(className, message) {
-    if (!floatingConsole) {
-      floatingConsole = new Element("div", { "class" : "t-console" });
-
-      $(document.body).insert({top: floatingConsole});
+    catch (e) {
     }
 
-    var div = new Element("div", { 'class' : "t-console-entry " + className }).update(message).hide();
+    function display(className, message) {
+        if (!floatingConsole) {
+            floatingConsole = new Element("div", { "class" : "t-console" });
 
-    floatingConsole.insert({ top: div });
+            $(document.body).insert({top: floatingConsole});
+        }
 
-    new Effect.Appear(div, { duration: .25 });
+        var div = new Element("div", { 'class' : "t-console-entry " + className }).update(message).hide();
 
-    var effect = new Effect.Fade(div, { delay:  T5.console.DURATION,
-      afterFinish: function () {
-        T5.dom.remove(div);
-      }
-    });
+        floatingConsole.insert({ top: div });
 
-    div.observe("click", function() {
-      effect.cancel();
-      T5.dom.remove(div);
-    });
-  }
+        new Effect.Appear(div, { duration: .25 });
 
-  function level(className, consolefn) {
-    return function (message) {
-      display(className, message);
+        var effect = new Effect.Fade(div, { delay:  T5.console.DURATION,
+            afterFinish: function () {
+                T5.dom.remove(div);
+            }
+        });
 
-      consolefn && consolefn(message);
+        div.observe("click", function() {
+            effect.cancel();
+            T5.dom.remove(div);
+        });
     }
-  }
 
-  function error(message) {
-    display("t-err", message);
+    function level(className, consolefn) {
+        return function (message) {
+            display(className, message);
 
-    if (nativeConsoleExists) {
-      console.error(message);
-      console.trace();
+            consolefn && consolefn.call(console, message);
+        }
     }
-  }
 
-  return {
-    /** Time, in seconds, that floating console messages are displayed to the user. */
-    DURATION  : 10,
+    function error(message) {
+        display("t-err", message);
 
-    debug : level("t-debug", nativeConsole.debug),
-    info : level("t-info", nativeConsole.info),
-    warn : level("t-warn", nativeConsole.warn),
-    error : error
-  };
+        if (nativeConsoleExists) {
+            console.error(message);
+
+            // Chrome doesn't automatically output a trace with the error message.
+            // FireFox does.
+
+            if (! Prototype.Browser.Gecko) {
+                console.trace();
+            }
+        }
+    }
+
+    return {
+        /** Time, in seconds, that floating console messages are displayed to the user. */
+        DURATION  : 10,
+
+        debug : level("t-debug", nativeConsole.debug),
+        info : level("t-info", nativeConsole.info),
+        warn : level("t-warn", nativeConsole.warn),
+        error : error
+    };
 });

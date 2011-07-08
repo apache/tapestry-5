@@ -1,0 +1,18 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+<h1>Client Console Demo</h1>
+
+<div>
+    <label for="debug">Debug:</label> <input id="debug" size="50"/>
+</div>
+<div>
+    <label for="info">Info:</label> <input id="info" size="50"/>
+</div>
+<div>
+    <label for="warn">Warn:</label> <input id="warn" size="50"/>
+</div>
+<div>
+    <label for="error">Error:</label> <input id="error" size="50"/>
+</div>
+
+</html>
+

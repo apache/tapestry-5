@@ -53,6 +53,8 @@ public class Index {
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
 
+                    new Item("ClientConsoleDemo", "Client Console Demo", "Demo for the JavaScript client-side console"),
+
                     new Item("InvalidFormalParameterDemo", "Unmatched Formal Parameter with @Component", "Parameters specified with @Component annotation must match formal parameters"),
 
                     new Item("NullBindingToPrimitive", "Null Bound to Primitive Demo", "Correct exception when a primitive parameter is bound to null"),
