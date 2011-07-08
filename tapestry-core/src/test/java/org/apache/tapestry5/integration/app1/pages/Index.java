@@ -14,10 +14,6 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.PersistenceConstants;
@@ -26,6 +22,10 @@ import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Have to start somewhere!
@@ -57,6 +57,8 @@ public class Index
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
 
+                    new Item("NullBindingToPrimitive", "Null Bound to Primitive Demo", "Correct exception when a primitive parameter is bound to null"),
+
                     new Item("TreeDemo", "Tree Component Demo", "Demo of Tree Component"),
 
                     new Item("InvalidExpressionInDynamicTemplate", "Invalid Dynamic Expression",
@@ -86,7 +88,7 @@ public class Index
                     new Item("ZoneFormUpdateDemo", "Zone/Form Update Demo", "Updating a Zone inside a Form"),
 
                     new Item("MultiZoneStringBodyDemo", "MultiZone String Body Demo",
-                                               "Multi-zone updates in a loop using strings coerced into blocks"),
+                            "Multi-zone updates in a loop using strings coerced into blocks"),
 
                     new Item("RenderNotificationDemo", "RenderNotification Demo", "Use of RenderNotification mixin"),
 
@@ -472,13 +474,13 @@ public class Index
                     new Item("AtInjectDemo", "@javax.inject.Inject Demo", "Using @javax.inject.Inject for injection"),
 
                     new Item("LinkQueryParameters", "Link Query Parameters Demo",
-                            "Providing Query Parameters directly to link components as a map of key=parameter name, value=parameter values") ,
+                            "Providing Query Parameters directly to link components as a map of key=parameter name, value=parameter values"),
 
-                    new Item("ChecklistDemo", "Checklist Demo", "Use Checklist component")            ,
+                    new Item("ChecklistDemo", "Checklist Demo", "Use Checklist component"),
 
                     new Item("BeanEditFormPrepareBubbling", "BeanEditor Prepare Bubbling Demo", "Prepare event bubbling"),
-					
-					new Item("NestedFormFragment","Nested Form Fragment Demo","Nesting Form Fragments work properly")
+
+                    new Item("NestedFormFragment", "Nested Form Fragment Demo", "Nesting Form Fragments work properly")
 
             );
 

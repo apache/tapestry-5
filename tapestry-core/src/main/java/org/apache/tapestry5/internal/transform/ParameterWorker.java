@@ -160,6 +160,10 @@ public class ParameterWorker implements ComponentClassTransformWorker2
                                                                                final String fieldTypeName, final Parameter annotation,
                                                                                final MethodHandle defaultMethodHandle)
     {
+        boolean primitive = PlasticUtils.isPrimitive(fieldTypeName);
+
+        final boolean allowNull = annotation.allowNull() && !primitive;
+
         return new ComputedValue<FieldConduit<Object>>()
         {
             public ParameterConduit get(InstanceContext context)
@@ -257,15 +261,15 @@ public class ParameterWorker implements ComponentClassTransformWorker2
                                     icr.getCompleteId(), InternalUtils.toMessage(ex)), parameterBinding, ex);
                         }
 
-                        if (result != null || annotation.allowNull())
+                        if (result == null && !allowNull)
                         {
-                            return result;
+                            throw new TapestryException(
+                                    String.format(
+                                            "Parameter '%s' of component %s is bound to null. This parameter is not allowed to be null.",
+                                            parameterName, icr.getCompleteId()), parameterBinding, null);
                         }
 
-                        throw new TapestryException(
-                                String.format(
-                                        "Parameter '%s' of component %s is bound to null. This parameter is not allowed to be null.",
-                                        parameterName, icr.getCompleteId()), parameterBinding, null);
+                        return result;
                     }
 
                     private void writeToBinding(Object newValue)
