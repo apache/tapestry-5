@@ -132,4 +132,15 @@ public class PlasticUtils
     {
         return new MethodDescription(getMethod(declaringClass, name, parameterTypes));
     }
+
+    /**
+     * Determines if the provided type name is a primitive type.
+     *
+     * @param typeName Java type name, such as "boolean" or "java.lang.String"
+     * @return true if primitive
+     */
+    public static boolean isPrimitive(String typeName)
+    {
+        return PrimitiveType.getByName(typeName) != null;
+    }
 }
