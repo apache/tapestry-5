@@ -36,7 +36,7 @@ class PeriodicExecutorTests extends IOCTestCase
 
         def schedule = new IntervalSchedule(10)
 
-        PeriodicJob job = r.getService(PeriodicExecutor.class).addJob(schedule, { count++; })
+        PeriodicJob job = r.getService(PeriodicExecutor.class).addJob(schedule, "count incrementer", { count++; })
 
         while (count < 10)
         {

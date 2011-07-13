@@ -52,18 +52,26 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable, Registr
 
         private final Schedule schedule;
 
+        private final String name;
+
         private final Runnable runnableJob;
 
         private boolean executing, canceled;
 
         private long nextExecution;
 
-        public Job(Schedule schedule, Runnable runnableJob)
+        public Job(Schedule schedule, String name, Runnable runnableJob)
         {
             this.schedule = schedule;
+            this.name = name;
             this.runnableJob = runnableJob;
 
             nextExecution = schedule.firstExecution();
+        }
+
+        public String getName()
+        {
+            return name;
         }
 
         public synchronized long getNextExecution()
@@ -98,6 +106,9 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable, Registr
         public synchronized String toString()
         {
             StringBuilder builder = new StringBuilder("PeriodicJob[#").append(jobId);
+
+
+            builder.append(", (").append(name).append(")");
 
             if (executing)
             {
@@ -158,9 +169,9 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable, Registr
 
         public Void invoke()
         {
-            if (logger.isDebugEnabled())
+            if (logger.isInfoEnabled())
             {
-                logger.debug(this + " starting execution");
+                logger.info(String.format("Executing job #%d (%s)", jobId, name));
             }
 
             try
@@ -201,12 +212,13 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable, Registr
     }
 
 
-    public synchronized PeriodicJob addJob(Schedule schedule, Runnable job)
+    public synchronized PeriodicJob addJob(Schedule schedule, String name, Runnable job)
     {
         assert schedule != null;
+        assert name != null;
         assert job != null;
 
-        Job periodicJob = new Job(schedule, job);
+        Job periodicJob = new Job(schedule, name, job);
 
         jobs.add(periodicJob);
 
