@@ -26,6 +26,9 @@ public interface PeriodicJob
      */
     boolean isExecuting();
 
+    /** Has this job been canceled. */
+    boolean isCanceled();
+
     /**
      * Cancels the job. If currently executing, the Job will finish (this includes awaiting execution). If not currently
      * executing, the job is discarded immediately.
