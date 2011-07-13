@@ -1,7 +1,0 @@
-<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
-    <h1>Read SessionAttribute Demo</h1>
-    
-    <p>read ${favoriteTrack.title}</p>
-    <p>read ${anotherTrack.title}</p>
-        
-</html>

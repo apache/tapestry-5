@@ -1,9 +1,0 @@
-<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
-    <h1>@SessionAttribute Demo</h1>
-    
-    <p>${favoriteTrack.title}</p>
-    <p>${anotherTrack.title}</p>
-    
-    <t:pagelink page="ReadSessionAttribute">Read SessionAttribute</t:pagelink>
-        
-</html>

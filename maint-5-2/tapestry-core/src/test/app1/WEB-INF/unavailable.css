@@ -1,3 +1,0 @@
-/*the originally contributed regex to open up context assets resulted in
- * .css, .jpeg, etc. files in WEB-INF being accessible. This css file is just here for 
- * integration testing purposes to make sure that's not the case now.*/

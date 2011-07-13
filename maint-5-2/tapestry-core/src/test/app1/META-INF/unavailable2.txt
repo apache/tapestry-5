@@ -1,1 +1,0 @@
-This file is in META-INF so it should not be available.

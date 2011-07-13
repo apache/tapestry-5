@@ -1,2 +1,0 @@
-<html><head></head><body><p>Ready to be updated with scripts.</p><script type="text/javascript">for (var i = 0; i < 5; i++)  { doIt(i); }
-</script></body></html>

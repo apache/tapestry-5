@@ -1,5 +1,0 @@
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
-    <p>
-        <a id="mylink" t:type="ActionLink">Click me</a>
-    </p>
-</html>

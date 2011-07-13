@@ -1,9 +1,0 @@
-<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
-
-	<t:textoutput value="foo"/>
-	
-	<t:unavailablecomponent/>
-	
-	<t:textoutput value="bar"/>
-
-</t:container>
