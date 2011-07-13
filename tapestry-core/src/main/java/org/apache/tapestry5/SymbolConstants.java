@@ -21,7 +21,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptStack;
 
 /**
  * Defines the names of symbols used to configure Tapestry.
- * 
+ *
  * @see org.apache.tapestry5.ioc.services.SymbolSource
  */
 public class SymbolConstants
@@ -36,7 +36,7 @@ public class SymbolConstants
      * A version of {@link #PRODUCTION_MODE} as a symbol reference. This can be used as the default value
      * of other symbols, to indicate that their default matches whatever PRODUCTION_MODE is set to, which is quite
      * common.
-     * 
+     *
      * @since 5.2.0
      */
     public static final String PRODUCTION_MODE_VALUE = String.format("${%s}", PRODUCTION_MODE);
@@ -45,7 +45,7 @@ public class SymbolConstants
      * If set to "true", then action requests will render a page markup response immediately, rather than sending a
      * redirect to render the response. "Action request" is an outdated term for "component event request" (i.e., most
      * links and all form submissions).
-     * 
+     *
      * @deprecated In 5.3, to be removed (along with the support it implies) in 5.4
      */
     public static final String SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS = "tapestry.suppress-redirect-from-action-requests";
@@ -111,7 +111,7 @@ public class SymbolConstants
     /**
      * Identifies the default persistence strategy for all pages that do not provide an override (using this value as
      * {@link org.apache.tapestry5.annotations.Meta key}).
-     * 
+     *
      * @since 5.1.0.0
      */
     public static final String PERSISTENCE_STRATEGY = "tapestry.persistence-strategy";
@@ -119,7 +119,7 @@ public class SymbolConstants
     /**
      * Minimum output stream size, in bytes, before output is compressed using GZIP. Shorter streams are not compressed.
      * Tapestry buffers this amount and switches to a GZIP output stream as needed. The default is "100".
-     * 
+     *
      * @see #GZIP_COMPRESSION_ENABLED
      * @since 5.1.0.0
      */
@@ -131,17 +131,17 @@ public class SymbolConstants
      * value is semi-random and different for each execution, which will adversely affect client caching, but is
      * reasonable
      * for development.
-     * 
-     * @since 5.1.0.0
+     *
      * @see AssetDispatcher
      * @see AssetPathConstructor
+     * @since 5.1.0.0
      */
     public static final String APPLICATION_VERSION = "tapestry.application-version";
 
     /**
      * Used to omit the normal Tapestry framework generator meta tag. The meta tag is rendered by default, but clients
      * who do not wish to advertise their use of Tapestry may set this symbol to "true".
-     * 
+     *
      * @since 5.1.0.0
      */
     public static final String OMIT_GENERATOR_META = "tapestry.omit-generator-meta";
@@ -150,7 +150,7 @@ public class SymbolConstants
      * If "true" (the default) then GZip compression is enabled for dynamic requests and for static assets. If you are
      * using a server that handles GZip compression for you, or you don't want to ue the extra processing power
      * necessary to GZIP requests, then override this to "false".
-     * 
+     *
      * @see #MIN_GZIP_SIZE
      * @since 5.1.0.0
      */
@@ -160,7 +160,7 @@ public class SymbolConstants
      * If "true" (which itself defaults to production mode), then the {@link org.apache.tapestry5.annotations.Secure}
      * annotation will be honored. If "false" (i.e., development mode), then the annotation and related HTTP/HTTPS
      * logic is ignored.
-     * 
+     *
      * @since 5.1.0.1
      */
     public static final String SECURE_ENABLED = "tapestry.secure-enabled";
@@ -172,7 +172,7 @@ public class SymbolConstants
      * {@link org.apache.tapestry5.services.LinkCreationListener2} (registered with the
      * {@link org.apache.tapestry5.services.LinkCreationHub}) in order to add the locale as a query parameter (or
      * provide some alternate means of persisting the locale between requests).
-     * 
+     *
      * @since 5.1.0.1
      */
     public static final String ENCODE_LOCALE_INTO_PATH = "tapestry.encode-locale-into-path";
@@ -180,14 +180,14 @@ public class SymbolConstants
     /**
      * If "true" then JavaScript files in a {@link JavaScriptStack} will be combined into a single virtual JavaScript
      * file. Defaults to "true" in production mode.
-     * 
+     *
      * @since 5.1.0.2
      */
     public static final String COMBINE_SCRIPTS = "tapestry.combine-scripts";
 
     /**
      * If "true" then Blackbird JavaScript console is enabled.
-     * 
+     *
      * @since 5.2.0
      * @deprecated in 5.3, with no replacement (due to removal of Blackbird console entirely)
      */
@@ -196,42 +196,42 @@ public class SymbolConstants
     /**
      * The default time interval that cookies created by Tapestry will be kept in the client web browser. The default is
      * "7 d" (that is, seven days).
-     * 
+     *
      * @since 5.2.0
      */
     public static final String COOKIE_MAX_AGE = "tapestry.default-cookie-max-age";
 
     /**
      * The logical name of the start page, the page that is rendered for the root URL.
-     * 
+     *
      * @since 5.2.0
      */
     public static final String START_PAGE_NAME = "tapestry.start-page-name";
 
     /**
      * The default stylesheet automatically injected into every rendered HTML page.
-     * 
+     *
      * @since 5.2.0
      */
     public static final String DEFAULT_STYLESHEET = "tapestry.default-stylesheet";
 
     /**
      * The Asset path to the embedded copy of script.aculo.us packaged with Tapestry.
-     * 
+     *
      * @since 5.2.0
      */
     public static final String SCRIPTACULOUS = "tapestry.scriptaculous";
 
     /**
      * The Asset path to the embedded datepicker.
-     * 
+     *
      * @since 5.2.0
      */
     public static final String DATEPICKER = "tapestry.datepicker";
 
     /**
      * The Asset path to the embedded copy of blackbird packaged with Tapestry.
-     * 
+     *
      * @since 5.2.0
      * @deprecated in 5.3 with no replacement
      */
@@ -240,7 +240,7 @@ public class SymbolConstants
     /**
      * If "true", then JSON page initialization content is compressed; if "false"
      * then extra white space is added (pretty printing). Defaults to "true" in production mode.
-     * 
+     *
      * @since 5.2.0
      */
     public static final String COMPACT_JSON = "tapestry.compact-json";
@@ -251,7 +251,7 @@ public class SymbolConstants
      * allowing more visibility into which components rendered which markup. Defaults to "false". Component render
      * tracing may be
      * enabled per-request by the presence of a request parameter "t:component-trace" with a value of "true".
-     * 
+     *
      * @since 5.2.5
      */
     public static final String COMPONENT_RENDER_TRACING_ENABLED = "tapestry.component-render-tracing-enabled";
@@ -262,7 +262,7 @@ public class SymbolConstants
      * in which case system will use request.getServerName(). Not the same as environment variable HOSTNAME, but you can
      * also
      * contribute "$HOSTNAME" as the value to make it the same as the environment variable HOSTNAME.
-     * 
+     *
      * @since 5.3
      */
     public static final String HOSTNAME = "tapestry.hostname";
@@ -271,7 +271,7 @@ public class SymbolConstants
      * The hostport that application should use when constructing an absolute URL. The default is "0", i.e. use the port
      * value from
      * the request.
-     * 
+     *
      * @since 5.3
      */
     public static final String HOSTPORT = "tapestry.hostport";
@@ -280,7 +280,7 @@ public class SymbolConstants
      * The secure (https) hostport that application should use when constructing an absolute URL. The default is "0",
      * i.e. use
      * the value from the request.
-     * 
+     *
      * @since 5.3
      */
     public static final String HOSTPORT_SECURE = "tapestry.hostport-secure";
@@ -289,10 +289,10 @@ public class SymbolConstants
      * If "true", then resources (individually or when aggregated into stacks) will be minimized via the
      * {@link ResourceMinimizer} service. If "false", then minification is disabled. Tracks production mode
      * (minification is normally disabled in development mode).
-     * <p>
+     * <p/>
      * Note that Tapestry's default implementation of {@link ResourceMinimizer} does nothing; minification is provided
      * by add-on libraries.
-     * 
+     *
      * @since 5.3
      */
     public static final String MINIFICATION_ENABLED = "tapestry.enable-minification";
@@ -301,11 +301,27 @@ public class SymbolConstants
      * If "true" then at the end of each request the
      * {@link org.apache.tapestry5.services.SessionPersistedObjectAnalyzer} will be called on each session persisted
      * object that was accessed during the request.
-     * <p>
+     * <p/>
      * This is provided as a performance enhancement for servers that do not use clustered sessions.
      *
      * @since 5.3
      */
     public static final String CLUSTERED_SESSIONS = "tapestry.clustered-sessions";
 
+    /**
+     * The interval (in milliseconds) at which the {@link org.apache.tapestry5.internal.services.PageSource} checks for
+     * inactive pages that can be discarded. The default is "5 m" (every five minutes).
+     *
+     * @since 5.3
+     */
+    public static final String PAGE_SOURCE_CHECK_INTERVAL = "tapestry.page-source-check-interval";
+
+    /**
+     * The maximum amount of time, in milliseconds, that an instantiated page instance may be kept in memory
+     * before being discarded. The frequency of checks for such pages is determined by {@link #PAGE_SOURCE_CHECK_INTERVAL}.
+     * The default is "15 m" (fifteen minutes).
+     *
+     * @since 5.3
+     */
+    public static final String PAGE_SOURCE_ACTIVE_WINDOW = "tapestry.page-cache-active-window";
 }

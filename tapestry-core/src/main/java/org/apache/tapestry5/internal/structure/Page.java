@@ -21,8 +21,6 @@ import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.slf4j.Logger;
 
-import java.util.Locale;
-
 /**
  * Represents a unique page within the application. Pages are part of the <em>internal</em> structure of a Tapestry
  * application; end developers who refer to "page" are really referring to the {@link #getRootComponent() root
@@ -81,11 +79,11 @@ public interface Page
      * containingPageDidDetach().
      * <p/>
      * The page pool should discard pages that are dirty, rather than store them into the pool.
-     * <p>
+     * <p/>
      * Under Tapestry 5.2 and pool-less pages, the result is ignored; all mutable state is expected to be discarded
      * automatically from the {@link PerthreadManager}. A future release of Tapestry will likely convert this method to
      * type void.
-     * 
+     *
      * @return true if the page is "dirty", false otherwise
      * @see org.apache.tapestry5.runtime.PageLifecycleListener#containingPageDidDetach()
      */
@@ -95,7 +93,7 @@ public interface Page
      * Invoked to inform the page that it is attached to the current request. This occurs when a
      * page is first referenced within a request. If the page was created from scratch for this request, the call
      * to {@link #loaded()} will preceded the call to {@link #attached()}.
-     * <p>
+     * <p/>
      * First all listeners have {@link PageLifecycleListener#restoreStateBeforePageAttach()} invoked, followed by
      * {@link PageLifecycleListener#containingPageDidAttach()}.
      */
@@ -103,7 +101,7 @@ public interface Page
 
     /**
      * Inform the page that it is now completely loaded.
-     * 
+     *
      * @see org.apache.tapestry5.runtime.PageLifecycleListener#containingPageDidLoad()
      */
     void loaded();
@@ -115,7 +113,7 @@ public interface Page
 
     /**
      * Removes a listener that was previously added.
-     * 
+     *
      * @since 5.2.0
      */
     void removeLifecycleListener(PageLifecycleListener listener);
@@ -133,32 +131,26 @@ public interface Page
      * names in the nested id are matched without regards to case. A nested id of '' (the empty
      * string) returns the root
      * element of the page.
-     * 
-     * @throws IllegalArgumentException
-     *             if the nestedId does not correspond to a component
+     *
+     * @throws IllegalArgumentException if the nestedId does not correspond to a component
      */
     ComponentPageElement getComponentElementByNestedId(String nestedId);
 
     /**
      * Posts a change to a persistent field.
-     * 
-     * @param resources
-     *            the component resources for the component or mixin containing the field whose
-     *            value changed
-     * @param fieldName
-     *            the name of the field
-     * @param newValue
-     *            the new value for the field
+     *
+     * @param resources the component resources for the component or mixin containing the field whose
+     *                  value changed
+     * @param fieldName the name of the field
+     * @param newValue  the new value for the field
      */
     void persistFieldChange(ComponentResources resources, String fieldName, Object newValue);
 
     /**
      * Gets a change for a field within the component.
-     * 
-     * @param nestedId
-     *            the nested component id of the component containing the field
-     * @param fieldName
-     *            the name of the persistent field
+     *
+     * @param nestedId  the nested component id of the component containing the field
+     * @param fieldName the name of the persistent field
      * @return the value, or null if no value is stored
      */
     Object getFieldChange(String nestedId, String fieldName);
@@ -173,16 +165,15 @@ public interface Page
 
     /**
      * Adds a new listener for page reset events.
-     * 
-     * @param listener
-     *            will receive notifications when the page is accessed from a different page
+     *
+     * @param listener will receive notifications when the page is accessed from a different page
      * @since 5.2.0
      */
     void addResetListener(PageResetListener listener);
 
     /**
      * Returns true if there are any {@link PageResetListener} listeners.
-     * 
+     *
      * @since 5.2.0
      */
     boolean hasResetListeners();
@@ -191,4 +182,13 @@ public interface Page
      * Invoked to notify {@link PageResetListener} listeners.
      */
     void pageReset();
+
+    /**
+     * Returns time, in milliseconds, that the page was last attached. This is used by the {@link PagePool} to
+     * cull unused pages from memory.
+     *
+     * @return milliseconds time of last {@link #attached()}} call
+     * @since 5.3
+     */
+    long getLastAttachTime();
 }

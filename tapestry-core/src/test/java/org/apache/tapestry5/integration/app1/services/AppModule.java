@@ -14,9 +14,19 @@
 
 package org.apache.tapestry5.integration.app1.services;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.integration.app1.data.ToDoItem;
+import org.apache.tapestry5.integration.app1.data.Track;
+import org.apache.tapestry5.internal.services.GenericValueEncoderFactory;
+import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.Marker;
+import org.apache.tapestry5.ioc.annotations.Value;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.services.ServiceOverride;
+import org.apache.tapestry5.services.*;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.lang.annotation.Documented;
@@ -26,31 +36,9 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.ValueEncoder;
-import org.apache.tapestry5.integration.app1.data.DateHolder;
-import org.apache.tapestry5.integration.app1.data.ToDoItem;
-import org.apache.tapestry5.integration.app1.data.Track;
-import org.apache.tapestry5.internal.services.GenericValueEncoderFactory;
-import org.apache.tapestry5.ioc.Configuration;
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.ServiceBinder;
-import org.apache.tapestry5.ioc.annotations.Contribute;
-import org.apache.tapestry5.ioc.annotations.Marker;
-import org.apache.tapestry5.ioc.annotations.Value;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.ServiceOverride;
-import org.apache.tapestry5.services.BaseURLSource;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.RequestFilter;
-import org.apache.tapestry5.services.RequestHandler;
-import org.apache.tapestry5.services.ResourceDigestGenerator;
-import org.apache.tapestry5.services.Response;
-import org.apache.tapestry5.services.ValueEncoderFactory;
-import org.slf4j.Logger;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * I was just dying to see how fast requests are!
@@ -63,7 +51,7 @@ public class AppModule
      * interface.
      */
     @Target(
-    { PARAMETER, FIELD })
+            {PARAMETER, FIELD})
     @Retention(RUNTIME)
     @Documented
     public @interface Local
@@ -115,8 +103,7 @@ public class AppModule
                 try
                 {
                     return handler.service(request, response);
-                }
-                finally
+                } finally
                 {
                     long elapsed = System.nanoTime() - startTime;
 
@@ -128,8 +115,8 @@ public class AppModule
 
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration,
 
-    @Local
-    RequestFilter filter)
+                                         @Local
+                                         RequestFilter filter)
     {
         configuration.add("Timing", filter);
     }
@@ -156,7 +143,8 @@ public class AppModule
 
         configuration.add("app.injected-symbol", "Symbol contributed to ApplicationDefaults");
 
-        configuration.add(SymbolConstants.BLACKBIRD_ENABLED, "true");
+        configuration.add(SymbolConstants.PAGE_SOURCE_ACTIVE_WINDOW, "30s");
+        configuration.add(SymbolConstants.PAGE_SOURCE_CHECK_INTERVAL, "15s");
     }
 
     public static void contributeIgnoredPathsFilter(Configuration<String> configuration)
@@ -242,7 +230,7 @@ public class AppModule
     }
 
     public static void contributeValueEncoderSource(MappedConfiguration<Class, ValueEncoderFactory> configuration,
-            final MusicLibrary library, final ToDoDatabase todoDatabase)
+                                                    final MusicLibrary library, final ToDoDatabase todoDatabase)
     {
         ValueEncoder<Track> trackEncoder = new ValueEncoder<Track>()
         {
@@ -286,7 +274,7 @@ public class AppModule
     }
 
     public static void contributeComponentMessagesSource(@Value("context:WEB-INF/pre-app.properties")
-    Resource preappResource, OrderedConfiguration<Resource> configuration)
+                                                         Resource preappResource, OrderedConfiguration<Resource> configuration)
     {
         configuration.add("PreApp", preappResource, "before:AppCatalog");
     }

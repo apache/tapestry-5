@@ -14,19 +14,33 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.util.Map;
-
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.ioc.annotations.IntermediateType;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.services.cron.IntervalSchedule;
+import org.apache.tapestry5.ioc.services.cron.PeriodicExecutor;
+import org.apache.tapestry5.ioc.util.TimeInterval;
 import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
+import org.slf4j.Logger;
+
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
 
 public class PageSourceImpl implements PageSource, InvalidationListener
 {
     private final ComponentRequestSelectorAnalyzer selectorAnalyzer;
 
     private final PageLoader pageLoader;
+
+    private final long activeWindow;
+
+    private final Logger logger;
 
     private static final class CachedPageKey
     {
@@ -61,10 +75,57 @@ public class PageSourceImpl implements PageSource, InvalidationListener
 
     private final Map<CachedPageKey, Page> pageCache = CollectionFactory.newConcurrentMap();
 
-    public PageSourceImpl(PageLoader pageLoader, ComponentRequestSelectorAnalyzer selectorAnalyzer)
+    public PageSourceImpl(PageLoader pageLoader, ComponentRequestSelectorAnalyzer selectorAnalyzer,
+
+                          @Symbol(SymbolConstants.PAGE_SOURCE_ACTIVE_WINDOW)
+                          @IntermediateType(TimeInterval.class)
+                          long activeWindow, Logger logger)
     {
         this.pageLoader = pageLoader;
         this.selectorAnalyzer = selectorAnalyzer;
+        this.activeWindow = activeWindow;
+        this.logger = logger;
+    }
+
+    @PostInjection
+    public void startJanitor(PeriodicExecutor executor, @Symbol(SymbolConstants.PAGE_SOURCE_CHECK_INTERVAL)
+    @IntermediateType(TimeInterval.class)
+    long checkInterval)
+    {
+        executor.addJob(new IntervalSchedule(checkInterval), "PagePool cleanup", new Runnable()
+        {
+            public void run()
+            {
+                prune();
+            }
+        });
+    }
+
+    private void prune()
+    {
+        Iterator<Page> iterator = pageCache.values().iterator();
+
+        int count = 0;
+
+        long cutoff = System.currentTimeMillis() - activeWindow;
+
+        while (iterator.hasNext())
+        {
+            Page page = iterator.next();
+
+            if (page.getLastAttachTime() <= cutoff)
+            {
+                count++;
+                iterator.remove();
+            }
+        }
+
+        if (count > 0)
+        {
+            logger.info(String.format("Pruned %d page %s that had not been accessed since %s.", count,
+                    count == 1 ? "instance" : "instances",
+                    new Date(cutoff)));
+        }
     }
 
     public synchronized void objectWasInvalidated()

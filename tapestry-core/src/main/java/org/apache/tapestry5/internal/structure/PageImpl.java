@@ -14,10 +14,6 @@
 
 package org.apache.tapestry5.internal.structure;
 
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.services.PersistentFieldManager;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -29,6 +25,10 @@ import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.services.PersistentFieldBundle;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.slf4j.Logger;
+
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 public class PageImpl implements Page
 {
@@ -50,6 +50,8 @@ public class PageImpl implements Page
 
     private final Map<String, ComponentPageElement> idToComponent = CollectionFactory.newCaseInsensitiveMap();
 
+    private volatile long lastAttach = System.currentTimeMillis();
+
     /**
      * Obtained from the {@link org.apache.tapestry5.internal.services.PersistentFieldManager} when
      * first needed,
@@ -60,17 +62,13 @@ public class PageImpl implements Page
     private static final Pattern SPLIT_ON_DOT = Pattern.compile("\\.");
 
     /**
-     * @param name
-     *            canonicalized page name
-     * @param selector
-     *            used to locate resources
-     * @param persistentFieldManager
-     *            for access to cross-request persistent values
-     * @param perThreadManager
-     *            for managing per-request mutable state
+     * @param name                   canonicalized page name
+     * @param selector               used to locate resources
+     * @param persistentFieldManager for access to cross-request persistent values
+     * @param perThreadManager       for managing per-request mutable state
      */
     public PageImpl(String name, ComponentResourceSelector selector, PersistentFieldManager persistentFieldManager,
-            PerthreadManager perThreadManager)
+                    PerthreadManager perThreadManager)
     {
         this.name = name;
         this.selector = selector;
@@ -154,8 +152,7 @@ public class PageImpl implements Page
             try
             {
                 listener.containingPageDidDetach();
-            }
-            catch (RuntimeException ex)
+            } catch (RuntimeException ex)
             {
                 getLogger().error(StructureMessages.detachFailure(listener, ex), ex);
                 result = true;
@@ -179,6 +176,8 @@ public class PageImpl implements Page
 
     public void attached()
     {
+        lastAttach = System.currentTimeMillis();
+
         for (PageLifecycleListener listener : lifecycleListeners)
             listener.restoreStateBeforePageAttach();
 
@@ -231,6 +230,11 @@ public class PageImpl implements Page
         {
             l.containingPageDidReset();
         }
+    }
+
+    public long getLastAttachTime()
+    {
+        return lastAttach;
     }
 
     public boolean hasResetListeners()

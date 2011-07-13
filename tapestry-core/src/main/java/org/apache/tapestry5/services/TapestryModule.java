@@ -1264,10 +1264,9 @@ public final class TapestryModule
      * href="https://issues.apache.org/jira/browse/TAP5-79">TAP5-79</a> for details. There are no longer any built-in
      * contributions to the configuration.
      *
-     * @param configuration
-     *         contributions of special factories for some constants, each
-     *         contributed factory may return a
-     *         binding if applicable, or null otherwise
+     * @param configuration contributions of special factories for some constants, each
+     *                      contributed factory may return a
+     *                      binding if applicable, or null otherwise
      */
     public BindingFactory buildPropBindingFactory(List<BindingFactory> configuration, @Autobuild
     PropBindingFactory service)
@@ -2269,8 +2268,7 @@ public final class TapestryModule
      * <p/>
      * This contributes "class", "properties" and "tml" (the template extension).
      *
-     * @param configuration
-     *         collection of extensions
+     * @param configuration collection of extensions
      */
     public static void contributeResourceDigestGenerator(Configuration<String> configuration)
     {
@@ -2394,6 +2392,9 @@ public final class TapestryModule
         configuration.add(SymbolConstants.HOSTNAME, "");
         configuration.add(SymbolConstants.HOSTPORT, 0);
         configuration.add(SymbolConstants.HOSTPORT_SECURE, 0);
+
+        configuration.add(SymbolConstants.PAGE_SOURCE_CHECK_INTERVAL, "5 m");
+        configuration.add(SymbolConstants.PAGE_SOURCE_ACTIVE_WINDOW, "15 m");
     }
 
     /**
@@ -2707,8 +2708,7 @@ public final class TapestryModule
      * even if a user overrides the default
      * service implementation.
      *
-     * @param defaultSource
-     *         The serivce to decorate
+     * @param defaultSource The serivce to decorate
      * @param environment
      * @return
      */
