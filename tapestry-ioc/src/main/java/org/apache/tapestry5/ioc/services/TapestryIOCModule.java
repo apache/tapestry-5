@@ -14,76 +14,30 @@
 
 package org.apache.tapestry5.ioc.services;
 
-import static org.apache.tapestry5.ioc.OrderConstraintBuilder.after;
-import static org.apache.tapestry5.ioc.OrderConstraintBuilder.before;
+import org.apache.tapestry5.func.Flow;
+import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.annotations.*;
+import org.apache.tapestry5.ioc.internal.services.*;
+import org.apache.tapestry5.ioc.internal.services.cron.PeriodicExecutorImpl;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.cron.PeriodicExecutor;
+import org.apache.tapestry5.ioc.util.TimeInterval;
+import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.UpdateListenerHub;
 
 import java.io.File;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.tapestry5.func.Flow;
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.Configuration;
-import org.apache.tapestry5.ioc.IOCSymbols;
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.ObjectProvider;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
-import org.apache.tapestry5.ioc.ScopeConstants;
-import org.apache.tapestry5.ioc.ServiceBinder;
-import org.apache.tapestry5.ioc.ServiceLifecycle;
-import org.apache.tapestry5.ioc.ServiceLifecycle2;
-import org.apache.tapestry5.ioc.annotations.Contribute;
-import org.apache.tapestry5.ioc.annotations.IntermediateType;
-import org.apache.tapestry5.ioc.annotations.Local;
-import org.apache.tapestry5.ioc.annotations.Marker;
-import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
-import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.services.AspectDecoratorImpl;
-import org.apache.tapestry5.ioc.internal.services.AutobuildObjectProvider;
-import org.apache.tapestry5.ioc.internal.services.ChainBuilderImpl;
-import org.apache.tapestry5.ioc.internal.services.ClassNameLocatorImpl;
-import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
-import org.apache.tapestry5.ioc.internal.services.DefaultImplementationBuilderImpl;
-import org.apache.tapestry5.ioc.internal.services.ExceptionAnalyzerImpl;
-import org.apache.tapestry5.ioc.internal.services.ExceptionTrackerImpl;
-import org.apache.tapestry5.ioc.internal.services.LazyAdvisorImpl;
-import org.apache.tapestry5.ioc.internal.services.LoggingAdvisorImpl;
-import org.apache.tapestry5.ioc.internal.services.LoggingDecoratorImpl;
-import org.apache.tapestry5.ioc.internal.services.MapSymbolProvider;
-import org.apache.tapestry5.ioc.internal.services.MasterObjectProviderImpl;
-import org.apache.tapestry5.ioc.internal.services.NonParallelExecutor;
-import org.apache.tapestry5.ioc.internal.services.ParallelExecutorImpl;
-import org.apache.tapestry5.ioc.internal.services.PerThreadServiceLifecycle;
-import org.apache.tapestry5.ioc.internal.services.PipelineBuilderImpl;
-import org.apache.tapestry5.ioc.internal.services.PropertyAccessImpl;
-import org.apache.tapestry5.ioc.internal.services.PropertyShadowBuilderImpl;
-import org.apache.tapestry5.ioc.internal.services.RegistryStartup;
-import org.apache.tapestry5.ioc.internal.services.ServiceOverrideImpl;
-import org.apache.tapestry5.ioc.internal.services.StrategyBuilderImpl;
-import org.apache.tapestry5.ioc.internal.services.SymbolObjectProvider;
-import org.apache.tapestry5.ioc.internal.services.SymbolSourceImpl;
-import org.apache.tapestry5.ioc.internal.services.SystemPropertiesSymbolProvider;
-import org.apache.tapestry5.ioc.internal.services.ThreadLocaleImpl;
-import org.apache.tapestry5.ioc.internal.services.ThunkCreatorImpl;
-import org.apache.tapestry5.ioc.internal.services.TypeCoercerImpl;
-import org.apache.tapestry5.ioc.internal.services.UpdateListenerHubImpl;
-import org.apache.tapestry5.ioc.internal.services.ValueObjectProvider;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.util.TimeInterval;
-import org.apache.tapestry5.json.JSONArray;
-import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.UpdateListenerHub;
+import static org.apache.tapestry5.ioc.OrderConstraintBuilder.after;
+import static org.apache.tapestry5.ioc.OrderConstraintBuilder.before;
 
 /**
  * Defines the base set of services for the Tapestry IOC container.
@@ -120,6 +74,7 @@ public final class TapestryIOCModule
         binder.bind(LazyAdvisor.class, LazyAdvisorImpl.class);
         binder.bind(ThunkCreator.class, ThunkCreatorImpl.class);
         binder.bind(UpdateListenerHub.class, UpdateListenerHubImpl.class).preventReloading();
+        binder.bind(PeriodicExecutor.class, PeriodicExecutorImpl.class);
     }
 
     /**
@@ -445,7 +400,7 @@ public final class TapestryIOCModule
             public Object[] coerce(Object input)
             {
                 return new Object[]
-                { input };
+                        {input};
             }
         });
 
@@ -491,7 +446,7 @@ public final class TapestryIOCModule
     }
 
     private static <S, T> void add(Configuration<CoercionTuple> configuration, Class<S> sourceType,
-            Class<T> targetType, Coercion<S, T> coercion)
+                                   Class<T> targetType, Coercion<S, T> coercion)
     {
         CoercionTuple<S, T> tuple = new CoercionTuple<S, T>(sourceType, targetType, coercion);
 
@@ -500,11 +455,11 @@ public final class TapestryIOCModule
 
     @Contribute(SymbolSource.class)
     public static void setupStandardSymbolProviders(OrderedConfiguration<SymbolProvider> configuration,
-            @ApplicationDefaults
-            SymbolProvider applicationDefaults,
+                                                    @ApplicationDefaults
+                                                    SymbolProvider applicationDefaults,
 
-            @FactoryDefaults
-            SymbolProvider factoryDefaults)
+                                                    @FactoryDefaults
+                                                    SymbolProvider factoryDefaults)
     {
         configuration.add("SystemProperties", new SystemPropertiesSymbolProvider(), "before:*");
         configuration.add("ApplicationDefaults", applicationDefaults, "after:SystemProperties");
@@ -512,26 +467,26 @@ public final class TapestryIOCModule
     }
 
     public static ParallelExecutor buildDeferredExecution(@Symbol(IOCSymbols.THREAD_POOL_CORE_SIZE)
-    int coreSize,
+                                                          int coreSize,
 
-    @Symbol(IOCSymbols.THREAD_POOL_MAX_SIZE)
-    int maxSize,
+                                                          @Symbol(IOCSymbols.THREAD_POOL_MAX_SIZE)
+                                                          int maxSize,
 
-    @Symbol(IOCSymbols.THREAD_POOL_KEEP_ALIVE)
-    @IntermediateType(TimeInterval.class)
-    int keepAliveMillis,
+                                                          @Symbol(IOCSymbols.THREAD_POOL_KEEP_ALIVE)
+                                                          @IntermediateType(TimeInterval.class)
+                                                          int keepAliveMillis,
 
-    @Symbol(IOCSymbols.THREAD_POOL_ENABLED)
-    boolean threadPoolEnabled,
+                                                          @Symbol(IOCSymbols.THREAD_POOL_ENABLED)
+                                                          boolean threadPoolEnabled,
 
-    @Symbol(IOCSymbols.THREAD_POOL_QUEUE_SIZE)
-    int queueSize,
+                                                          @Symbol(IOCSymbols.THREAD_POOL_QUEUE_SIZE)
+                                                          int queueSize,
 
-    PerthreadManager perthreadManager,
+                                                          PerthreadManager perthreadManager,
 
-    RegistryShutdownHub shutdownHub,
+                                                          RegistryShutdownHub shutdownHub,
 
-    ThunkCreator thunkCreator)
+                                                          ThunkCreator thunkCreator)
     {
 
         if (!threadPoolEnabled)
