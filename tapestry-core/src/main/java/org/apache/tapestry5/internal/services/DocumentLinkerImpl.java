@@ -116,11 +116,26 @@ public class DocumentLinkerImpl implements DocumentLinker
         if (!omitGeneratorMetaTag && isHtmlRoot)
         {
             Element head = findOrCreateElement(root, "head", true);
-            head.element("meta", "name", "generator", "content", tapestryBanner);
+
+            Element existingMeta = head.find("meta");
+
+            addElementBefore(head, existingMeta, "meta", "name", "generator", "content", tapestryBanner);
         }
 
         addScriptElements(root);
     }
+
+    private static void addElementBefore(Element container, Element insertionPoint, String name, String... namesAndValues)
+    {
+        if (insertionPoint == null)
+        {
+            container.element(name, namesAndValues);
+            return;
+        }
+
+        insertionPoint.elementBefore(name, namesAndValues);
+    }
+
 
     private void addScriptElements(Element root)
     {
@@ -245,11 +260,7 @@ public class DocumentLinkerImpl implements DocumentLinker
         {
             public void work(String scriptURL)
             {
-                Element e =
-                        insertionPoint == null ? headElement.element("script") :
-                                insertionPoint.elementBefore("script");
-
-                e.attributes("type", "text/javascript", "src", scriptURL);
+                addElementBefore(headElement, insertionPoint, "script", "type", "text/javascript", "src", scriptURL);
             }
         };
 
