@@ -14,21 +14,15 @@
 
 package org.apache.tapestry5.dom;
 
-import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.util.PrintOutCollector;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.Stack;
+
+import java.io.PrintWriter;
+import java.util.*;
 
 /**
  * An element that will render with a begin tag and attributes, a body, and an end tag. Also acts as a factory for
@@ -93,12 +87,10 @@ public final class Element extends Node
 
     /**
      * Adds an attribute to the element, but only if the attribute name does not already exist.
-     * 
-     * @param name
-     *            the name of the attribute to add
-     * @param value
-     *            the value for the attribute. A value of null is allowed, and no attribute will be added to the
-     *            element.
+     *
+     * @param name  the name of the attribute to add
+     * @param value the value for the attribute. A value of null is allowed, and no attribute will be added to the
+     *              element.
      */
     public Element attribute(String name, String value)
     {
@@ -107,14 +99,11 @@ public final class Element extends Node
 
     /**
      * Adds a namespaced attribute to the element, but only if the attribute name does not already exist.
-     * 
-     * @param namespace
-     *            the namespace to contain the attribute, or null
-     * @param name
-     *            the name of the attribute to add
-     * @param value
-     *            the value for the attribute. A value of null is allowed, and no attribute will be added to the
-     *            element.
+     *
+     * @param namespace the namespace to contain the attribute, or null
+     * @param name      the name of the attribute to add
+     * @param value     the value for the attribute. A value of null is allowed, and no attribute will be added to the
+     *                  element.
      */
     public Element attribute(String namespace, String name, String value)
     {
@@ -169,9 +158,8 @@ public final class Element extends Node
 
     /**
      * Convenience for invoking {@link #attribute(String, String)} multiple times.
-     * 
-     * @param namesAndValues
-     *            alternating attribute names and attribute values
+     *
+     * @param namesAndValues alternating attribute names and attribute values
      */
     public Element attributes(String... namesAndValues)
     {
@@ -190,9 +178,8 @@ public final class Element extends Node
     /**
      * Forces changes to a number of attributes. The new attributes <em>overwrite</em> previous values. Overriding an
      * attribute's value to null will remove the attribute entirely.
-     * 
-     * @param namesAndValues
-     *            alternating attribute names and attribute values
+     *
+     * @param namesAndValues alternating attribute names and attribute values
      * @return this element
      */
     public Element forceAttributes(String... namesAndValues)
@@ -204,11 +191,9 @@ public final class Element extends Node
      * Forces changes to a number of attributes in the global namespace. The new attributes <em>overwrite</em> previous
      * values. Overriding attribute's value to null will remove the attribute entirely.
      * TAP5-708: don't use element namespace for attributes
-     * 
-     * @param namespace
-     *            the namespace or null
-     * @param namesAndValues
-     *            alternating attribute name and value
+     *
+     * @param namespace      the namespace or null
+     * @param namesAndValues alternating attribute name and value
      * @return this element
      */
     public Element forceAttributesNS(String namespace, String... namesAndValues)
@@ -228,11 +213,9 @@ public final class Element extends Node
 
     /**
      * Creates and returns a new Element node as a child of this node.
-     * 
-     * @param name
-     *            the name of the element to create
-     * @param namesAndValues
-     *            alternating attribute names and attribute values
+     *
+     * @param name           the name of the element to create
+     * @param namesAndValues alternating attribute names and attribute values
      */
     public Element element(String name, String... namesAndValues)
     {
@@ -245,12 +228,30 @@ public final class Element extends Node
     }
 
     /**
+     * Inserts a new element before this element.
+     *
+     * @param name           element name
+     * @param namesAndValues attribute names and values
+     * @return the new element
+     * @since 5.3
+     */
+    public Element elementBefore(String name, String... namesAndValues)
+    {
+        assert InternalUtils.isNonBlank(name);
+
+        Element sibling = container.element(name, namesAndValues);
+
+        sibling.moveBefore(this);
+
+        return sibling;
+    }
+
+
+    /**
      * Creates and returns a new Element within a namespace as a child of this node.
-     * 
-     * @param namespace
-     *            namespace to contain the element, or null
-     * @param name
-     *            element name to create within the namespace
+     *
+     * @param namespace namespace to contain the element, or null
+     * @param name      element name to create within the namespace
      * @return the newly created element
      */
     public Element elementNS(String namespace, String name)
@@ -261,9 +262,10 @@ public final class Element extends Node
 
     /**
      * Creates a new element, as a child of the current index, at the indicated index.
-     * @param index to insert at
-     * @param name              element name
-     * @param namesAndValues                attribute name / attribute value pairs
+     *
+     * @param index          to insert at
+     * @param name           element name
+     * @param namesAndValues attribute name / attribute value pairs
      * @return the new element
      */
     public Element elementAt(int index, String name, String... namesAndValues)
@@ -300,9 +302,8 @@ public final class Element extends Node
     /**
      * Adds and returns a new text node (the text node is returned so that {@link Text#write(String)} or [@link
      * {@link Text#writef(String, Object[])} may be invoked .
-     * 
-     * @param text
-     *            initial text for the node
+     *
+     * @param text initial text for the node
      * @return the new Text node
      */
     public Text text(String text)
@@ -312,9 +313,8 @@ public final class Element extends Node
 
     /**
      * Adds and returns a new CDATA node.
-     * 
-     * @param content
-     *            the content to be rendered by the node
+     *
+     * @param content the content to be rendered by the node
      * @return the newly created node
      */
     public CData cdata(String content)
@@ -426,9 +426,8 @@ public final class Element extends Node
      * Tries to find an element under this element (including itself) whose id is specified.
      * Performs a width-first
      * search of the document tree.
-     * 
-     * @param id
-     *            the value of the id attribute of the element being looked for
+     *
+     * @param id the value of the id attribute of the element being looked for
      * @return the element if found. null if not found.
      */
     public Element getElementById(final String id)
@@ -438,13 +437,11 @@ public final class Element extends Node
 
     /**
      * Tries to find an element under this element (including itself) whose given attribute has a given value.
-     * 
-     * @since 5.2.3
-     * @param attributeName
-     *            the name of the attribute of the element being looked for
-     * @param attributeValue
-     *            the value of the attribute of the element being looked for
+     *
+     * @param attributeName  the name of the attribute of the element being looked for
+     * @param attributeValue the value of the attribute of the element being looked for
      * @return the element if found. null if not found.
+     * @since 5.2.3
      */
     public Element getElementByAttributeValue(final String attributeName, final String attributeValue)
     {
@@ -463,11 +460,10 @@ public final class Element extends Node
 
     /**
      * Tries to find an element under this element (including itself) accepted by the given predicate.
-     * 
-     * @since 5.2.3
-     * @param predicate
-     *            Predicate to accept the element
+     *
+     * @param predicate Predicate to accept the element
      * @return the element if found. null if not found.
+     * @since 5.2.3
      */
     public Element getElement(Predicate<Element> predicate)
     {
@@ -595,9 +591,8 @@ public final class Element extends Node
     /**
      * Adds one or more CSS class names to the "class" attribute. No check for duplicates is made. Note that CSS class
      * names are case insensitive on the client.
-     * 
-     * @param className
-     *            one or more CSS class names
+     *
+     * @param className one or more CSS class names
      * @return the element for further configuration
      */
     public Element addClassName(String... className)
@@ -626,11 +621,9 @@ public final class Element extends Node
      * Defines a namespace for this element, mapping a URI to a prefix. This will affect how namespaced elements and
      * attributes nested within the element are rendered, and will also cause <code>xmlns:</code> attributes (to define
      * the namespace and prefix) to be rendered.
-     * 
-     * @param namespace
-     *            URI of the namespace
-     * @param namespacePrefix
-     *            prefix
+     *
+     * @param namespace       URI of the namespace
+     * @param namespacePrefix prefix
      * @return this element
      */
     public Element defineNamespace(String namespace, String namespacePrefix)
@@ -676,7 +669,7 @@ public final class Element extends Node
 
     /**
      * Removes all children from this element.
-     * 
+     *
      * @return the element, for method chaining
      */
     public Element removeChildren()
@@ -691,7 +684,7 @@ public final class Element extends Node
      * Creates the URI to namespace prefix map for this element, which reflects namespace mappings from containing
      * elements. In addition, automatic namespaces are defined for any URIs that are not explicitly mapped (this occurs
      * sometimes in Ajax partial render scenarios).
-     * 
+     *
      * @return a mapping from namespace URI to namespace prefix
      */
     private Map<String, String> createNamespaceURIToPrefix(Map<String, String> containerNamespaceURIToPrefix)
@@ -783,7 +776,7 @@ public final class Element extends Node
 
     /**
      * Returns true if the element has no children, or has only text children that contain only whitespace.
-     * 
+     *
      * @since 5.1.0.0
      */
     public boolean isEmpty()
@@ -813,9 +806,8 @@ public final class Element extends Node
     /**
      * Depth-first visitor traversal of this Element and its Element children. The traversal order is the same as render
      * order.
-     * 
-     * @param visitor
-     *            callback
+     *
+     * @param visitor callback
      * @since 5.1.0.0
      */
     public void visit(Visitor visitor)
@@ -876,8 +868,7 @@ public final class Element extends Node
         {
             newChild.nextSibling = firstChild;
             firstChild = newChild;
-        }
-        else
+        } else
         {
             Node cursor = firstChild;
             for (int i = 1; i < index; i++)
@@ -929,7 +920,7 @@ public final class Element extends Node
      * Returns an unmodifiable list of children for this element. Only {@link org.apache.tapestry5.dom.Element}s will
      * have children. Also, note that unlike W3C DOM, attributes are not represented as
      * {@link org.apache.tapestry5.dom.Node}s.
-     * 
+     *
      * @return unmodifiable list of children nodes
      */
     @SuppressWarnings("unchecked")
@@ -1025,7 +1016,7 @@ public final class Element extends Node
      * {@link org.apache.tapestry5.dom.Attribute}s. The order of the attributes within the collection is not specified.
      * Modifying the collection will not affect the attributes (use {@link #forceAttributes(String[])} to change
      * existing attribute values, and {@link #attribute(String, String, String)} to add new attribute values.
-     * 
+     *
      * @return attribute collection
      */
     public Collection<Attribute> getAttributes()
