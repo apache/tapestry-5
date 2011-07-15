@@ -14,9 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.dom.Node;
@@ -26,6 +23,9 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
+
+import java.util.List;
+import java.util.Map;
 
 public class DocumentLinkerImpl implements DocumentLinker
 {
@@ -46,12 +46,9 @@ public class DocumentLinkerImpl implements DocumentLinker
     private boolean hasDynamicScript;
 
     /**
-     * @param omitGeneratorMetaTag
-     *            via symbol configuration
-     * @param tapestryVersion
-     *            version of Tapestry framework (for meta tag)
-     * @param compactJSON
-     *            should JSON content be compact or pretty printed?
+     * @param omitGeneratorMetaTag via symbol configuration
+     * @param tapestryVersion      version of Tapestry framework (for meta tag)
+     * @param compactJSON          should JSON content be compact or pretty printed?
      */
     public DocumentLinkerImpl(boolean omitGeneratorMetaTag, String tapestryVersion, boolean compactJSON)
     {
@@ -99,9 +96,8 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     /**
      * Updates the supplied Document, possibly adding &lt;head&gt; or &lt;body&gt; elements.
-     * 
-     * @param document
-     *            to be updated
+     *
+     * @param document to be updated
      */
     public void updateDocument(Document document)
     {
@@ -151,6 +147,15 @@ public class DocumentLinkerImpl implements DocumentLinker
             addDynamicScriptBlock(findOrCreateElement(root, "body", false));
     }
 
+    /**
+     * Finds an element by name, or creates it. Returns the element (if found), or creates a new element
+     * with the given name, and returns it. The new element will be positioned at the top or bottom of the root element.
+     *
+     * @param root         element to search
+     * @param childElement element name of child
+     * @param atTop        if not found, create new element at top of root, or at bottom
+     * @return the located element, or null
+     */
     private Element findOrCreateElement(Element root, String childElement, boolean atTop)
     {
         Element container = root.find(childElement);
@@ -165,9 +170,8 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     /**
      * Adds the dynamic script block, which is, ultimately, a call to the client-side Tapestry.onDOMLoaded() function.
-     * 
-     * @param body
-     *            element to add the dynamic scripting to
+     *
+     * @param body element to add the dynamic scripting to
      */
     protected void addDynamicScriptBlock(Element body)
     {
@@ -225,14 +229,13 @@ public class DocumentLinkerImpl implements DocumentLinker
     /**
      * Adds a script link for each included script to the top of the container (the &lt;head&gt;).
      * and just after css
-     * @param container
-     *            element to add the script links to
-     * @param scripts
-     *            scripts to add
+     *
+     * @param container element to add the script links to
+     * @param scripts   scripts to add
      */
     protected void addScriptLinksForIncludedScripts(Element container, List<String> scripts)
-    {	
-    	// TAP5-1486 
+    {
+        // TAP5-1486
         final Element scriptContainer = container.elementAt(includedStylesheets.size(), "script-container");
 
         Worker<String> addScript = new Worker<String>()
@@ -251,11 +254,9 @@ public class DocumentLinkerImpl implements DocumentLinker
     /**
      * Locates the head element under the root ("html") element, creating it if necessary, and adds the stylesheets to
      * it.
-     * 
-     * @param root
-     *            element of document
-     * @param stylesheets
-     *            to add to the document
+     *
+     * @param root        element of document
+     * @param stylesheets to add to the document
      */
     protected void addStylesheetsToHead(Element root, List<StylesheetLink> stylesheets)
     {
