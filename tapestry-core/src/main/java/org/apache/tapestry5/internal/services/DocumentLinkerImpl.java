@@ -16,7 +16,6 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
-import org.apache.tapestry5.dom.Node;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -137,11 +136,11 @@ public class DocumentLinkerImpl implements DocumentLinker
         if (!rootElementName.equals("html"))
             throw new RuntimeException(ServicesMessages.documentMissingHTMLRoot(rootElementName));
 
-        Element container = findOrCreateElement(root, "head", true);
+        Element head = findOrCreateElement(root, "head", true);
 
         // TAPESTRY-2364
 
-        addScriptLinksForIncludedScripts(container, scripts);
+        addScriptLinksForIncludedScripts(head, scripts);
 
         if (hasDynamicScript)
             addDynamicScriptBlock(findOrCreateElement(root, "body", false));
@@ -227,28 +226,34 @@ public class DocumentLinkerImpl implements DocumentLinker
     }
 
     /**
-     * Adds a script link for each included script to the top of the container (the &lt;head&gt;).
-     * and just after css
+     * Adds a script link for each included script to the top of the the {@code <head>} element.
+     * The new elements are inserted just before the first {@code <script>} tag, or appended at
+     * the end.
      *
-     * @param container element to add the script links to
-     * @param scripts   scripts to add
+     * @param headElement element to add the script links to
+     * @param scripts     scripts URLs to add as {@code <script>} elements
      */
-    protected void addScriptLinksForIncludedScripts(Element container, List<String> scripts)
+    protected void addScriptLinksForIncludedScripts(final Element headElement, List<String> scripts)
     {
         // TAP5-1486
-        final Element scriptContainer = container.elementAt(includedStylesheets.size(), "script-container");
+
+        // Find the first existing <script> tag if it exists.
+
+        final Element insertionPoint = headElement.find("script");
 
         Worker<String> addScript = new Worker<String>()
         {
             public void work(String scriptURL)
             {
-                scriptContainer.element("script", "type", "text/javascript", "src", scriptURL);
+                Element e =
+                        insertionPoint == null ? headElement.element("script") :
+                                insertionPoint.elementBefore("script");
+
+                e.attributes("type", "text/javascript", "src", scriptURL);
             }
         };
 
         F.flow(scripts).each(addScript);
-
-        scriptContainer.pop();
     }
 
     /**
@@ -284,21 +289,5 @@ public class DocumentLinkerImpl implements DocumentLinker
             stylesheets.get(i).add(container);
 
         container.pop();
-    }
-
-    Element findExistingElement(Element container, String elementName)
-    {
-        for (Node n : container.getChildren())
-        {
-            if (n instanceof Element)
-            {
-                Element e = (Element) n;
-
-                if (e.getName().equalsIgnoreCase(elementName))
-                    return e;
-            }
-        }
-
-        return null;
     }
 }
