@@ -259,6 +259,13 @@ public final class Element extends Node
         return newChild(new Element(this, namespace, name));
     }
 
+    /**
+     * Creates a new element, as a child of the current index, at the indicated index.
+     * @param index to insert at
+     * @param name              element name
+     * @param namesAndValues                attribute name / attribute value pairs
+     * @return the new element
+     */
     public Element elementAt(int index, String name, String... namesAndValues)
     {
         assert InternalUtils.isNonBlank(name);
