@@ -16,8 +16,6 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
-import org.apache.tapestry5.func.F;
-import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
@@ -125,15 +123,14 @@ public class DocumentLinkerImpl implements DocumentLinker
         addScriptElements(root);
     }
 
-    private static void addElementBefore(Element container, Element insertionPoint, String name, String... namesAndValues)
+    private static Element addElementBefore(Element container, Element insertionPoint, String name, String... namesAndValues)
     {
         if (insertionPoint == null)
         {
-            container.element(name, namesAndValues);
-            return;
+            return container.element(name, namesAndValues);
         }
 
-        insertionPoint.elementBefore(name, namesAndValues);
+        return insertionPoint.elementBefore(name, namesAndValues);
     }
 
 
@@ -254,17 +251,23 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         // Find the first existing <script> tag if it exists.
 
-        final Element insertionPoint = headElement.find("script");
+        Element container = createTemporaryContainer(headElement, "script", "script-container");
 
-        Worker<String> addScript = new Worker<String>()
+        for (String script : scripts)
         {
-            public void work(String scriptURL)
-            {
-                addElementBefore(headElement, insertionPoint, "script", "type", "text/javascript", "src", scriptURL);
-            }
-        };
+            container.element("script", "type", "text/javascript", "src", script);
+        }
 
-        F.flow(scripts).each(addScript);
+        container.pop();
+    }
+
+    private static Element createTemporaryContainer(Element headElement, String existingElementName, String newElementName)
+    {
+        Element existingScript = headElement.find(existingElementName);
+
+        // Create temporary container for the new <script> elements
+
+        return addElementBefore(headElement, existingScript, newElementName);
     }
 
     /**
@@ -279,7 +282,9 @@ public class DocumentLinkerImpl implements DocumentLinker
         int count = stylesheets.size();
 
         if (count == 0)
+        {
             return;
+        }
 
         // This only applies when the document is an HTML document. This may need to change in the
         // future, perhaps configurable, to allow for html and xhtml and perhaps others. Does SVG
@@ -289,15 +294,19 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         // Not an html document, don't add anything.
         if (!rootElementName.equals("html"))
+        {
             return;
+        }
 
         Element head = findOrCreateElement(root, "head", true);
 
         // Create a temporary container element.
-        Element container = head.elementAt(0, "stylesheet-link-container");
+        Element container = createTemporaryContainer(head, "style", "stylesheet-container");
 
         for (int i = 0; i < count; i++)
+        {
             stylesheets.get(i).add(container);
+        }
 
         container.pop();
     }
