@@ -14,26 +14,9 @@
 
 package org.apache.tapestry5.jpa;
 
-import java.util.Collection;
-import java.util.Map;
-
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.Metamodel;
-import javax.persistence.spi.PersistenceUnitInfo;
-
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.internal.jpa.CommitAfterWorker;
-import org.apache.tapestry5.internal.jpa.EntityApplicationStatePersistenceStrategy;
-import org.apache.tapestry5.internal.jpa.EntityManagerManagerImpl;
-import org.apache.tapestry5.internal.jpa.EntityManagerObjectProvider;
-import org.apache.tapestry5.internal.jpa.EntityManagerSourceImpl;
-import org.apache.tapestry5.internal.jpa.EntityPersistentFieldStrategy;
-import org.apache.tapestry5.internal.jpa.JpaTransactionAdvisorImpl;
-import org.apache.tapestry5.internal.jpa.JpaValueEncoder;
-import org.apache.tapestry5.internal.jpa.PackageNamePersistenceUnitConfigurer;
-import org.apache.tapestry5.internal.jpa.PersistenceContextWorker;
+import org.apache.tapestry5.internal.jpa.*;
 import org.apache.tapestry5.internal.services.PersistentFieldManager;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.LoggerSource;
@@ -65,9 +48,16 @@ import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.apache.tapestry5.services.ValueEncoderSource;
 import org.slf4j.Logger;
 
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.Metamodel;
+import javax.persistence.spi.PersistenceUnitInfo;
+import java.util.Collection;
+import java.util.Map;
+
 /**
  * Defines core services for JPA support.
- * 
+ *
  * @since 5.3
  */
 public class JpaModule
@@ -81,15 +71,15 @@ public class JpaModule
 
     public static EntityManagerSource buildEntityManagerSource(final Logger logger,
 
-    @Symbol(JpaSymbols.PERSISTENCE_DESCRIPTOR)
-    Resource persistenceDescriptor,
+                                                               @Symbol(JpaSymbols.PERSISTENCE_DESCRIPTOR)
+                                                               Resource persistenceDescriptor,
 
-    @Local
-    PersistenceUnitConfigurer persistenceUnitConfigurer,
+                                                               @Local
+                                                               PersistenceUnitConfigurer persistenceUnitConfigurer,
 
-    final Map<String, PersistenceUnitConfigurer> configuration,
+                                                               final Map<String, PersistenceUnitConfigurer> configuration,
 
-    final RegistryShutdownHub hub)
+                                                               final RegistryShutdownHub hub)
     {
         final EntityManagerSourceImpl ems = new EntityManagerSourceImpl(logger, persistenceDescriptor,
                 persistenceUnitConfigurer, configuration);
@@ -112,7 +102,7 @@ public class JpaModule
 
     @Scope(ScopeConstants.PERTHREAD)
     public static EntityManagerManager buildEntityManagerManager(final EntityManagerSource entityManagerSource,
-            final PerthreadManager perthreadManager, final Logger logger)
+                                                                 final PerthreadManager perthreadManager, final Logger logger)
     {
         final EntityManagerManagerImpl service = new EntityManagerManagerImpl(entityManagerSource, logger);
 
@@ -124,8 +114,8 @@ public class JpaModule
     @Contribute(JpaEntityPackageManager.class)
     public static void provideEntityPackages(Configuration<String> configuration,
 
-    @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
-    String appRootPackage)
+                                             @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
+                                             String appRootPackage)
     {
         configuration.add(appRootPackage + ".entities");
     }
@@ -171,10 +161,10 @@ public class JpaModule
 
     @Contribute(ValueEncoderSource.class)
     public static void provideValueEncoders(final MappedConfiguration<Class, ValueEncoderFactory> configuration,
-            @Symbol(JpaSymbols.PROVIDE_ENTITY_VALUE_ENCODERS)
-            final boolean provideEncoders, final EntityManagerSource entityManagerSource,
-            final EntityManagerManager entityManagerManager, final TypeCoercer typeCoercer,
-            final PropertyAccess propertyAccess, final LoggerSource loggerSource)
+                                            @Symbol(JpaSymbols.PROVIDE_ENTITY_VALUE_ENCODERS)
+                                            final boolean provideEncoders, final EntityManagerSource entityManagerSource,
+                                            final EntityManagerManager entityManagerManager, final TypeCoercer typeCoercer,
+                                            final PropertyAccess propertyAccess, final LoggerSource loggerSource)
     {
 
         if (!provideEncoders)
@@ -184,24 +174,22 @@ public class JpaModule
         {
             final EntityManagerFactory emf = entityManagerSource.getEntityManagerFactory(info.getPersistenceUnitName());
 
-            for (final String className : info.getManagedClassNames())
+            final Metamodel metamodel = emf.getMetamodel();
+
+            for (final EntityType<?> entity : metamodel.getEntities())
             {
-                final Metamodel metamodel = emf.getMetamodel();
-
-                final Class<?> clazz = loadClass(info, className);
-
-                final EntityType<?> entity = metamodel.entity(clazz);
+                final Class<?> javaType = entity.getJavaType();
 
                 final ValueEncoderFactory factory = new ValueEncoderFactory()
                 {
                     public ValueEncoder create(final Class type)
                     {
                         return new JpaValueEncoder(entity, entityManagerManager, info.getPersistenceUnitName(),
-                                propertyAccess, typeCoercer, loggerSource.getLogger(clazz));
+                                propertyAccess, typeCoercer, loggerSource.getLogger(javaType));
                     }
                 };
 
-                configuration.add(clazz, factory);
+                configuration.add(javaType, factory);
             }
         }
     }
@@ -219,12 +207,15 @@ public class JpaModule
 
         for (final PersistenceUnitInfo info : entityManagerSource.getPersistenceUnitInfos())
         {
-            for (final String className : info.getManagedClassNames())
-            {
-                final Class<?> clazz = loadClass(info, className);
+            final EntityManagerFactory emf = entityManagerSource.getEntityManagerFactory(info.getPersistenceUnitName());
 
-                configuration.add(clazz, new ApplicationStateContribution(JpaPersistenceConstants.ENTITY));
+            final Metamodel metamodel = emf.getMetamodel();
+
+            for (EntityType<?> entity : metamodel.getEntities())
+            {
+                configuration.add(entity.getJavaType(), new ApplicationStateContribution(JpaPersistenceConstants.ENTITY));
             }
+
         }
     }
 
@@ -237,17 +228,5 @@ public class JpaModule
 
         entityManagerManager.getEntityManagers();
 
-    }
-
-    private static Class loadClass(final PersistenceUnitInfo info, final String className)
-    {
-        try
-        {
-            return info.getClassLoader().loadClass(className);
-        }
-        catch (final ClassNotFoundException e)
-        {
-            throw new RuntimeException(e);
-        }
     }
 }
