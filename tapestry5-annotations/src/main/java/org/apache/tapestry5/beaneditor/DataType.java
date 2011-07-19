@@ -23,6 +23,8 @@ import java.lang.annotation.*;
  * Used to explicitly set the data type used to select an editor (or display) block.  Normally, the data type is
  * determined from the type of the property (for example, property type java.lang.String would map to data type "text").
  * This annotation may be attached to a getter or setter method, or the matching field.
+ *
+ * @see DataTypeConstants
  */
 @Target({ ElementType.FIELD, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)

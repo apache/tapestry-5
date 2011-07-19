@@ -18,6 +18,7 @@ import org.apache.tapestry5.*;
 import org.apache.tapestry5.ajax.MultiZoneUpdate;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.annotations.ContentType;
+import org.apache.tapestry5.beaneditor.DataTypeConstants;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.corelib.ClientValidation;
 import org.apache.tapestry5.grid.GridDataSource;
@@ -682,36 +683,36 @@ public final class TapestryModule
 
         configuration.add(Object.class, "");
 
-        configuration.add(String.class, "text");
-        configuration.add(Number.class, "number");
-        configuration.add(Enum.class, "enum");
-        configuration.add(Boolean.class, "boolean");
-        configuration.add(Date.class, "date");
-        configuration.add(Calendar.class, "calendar");
+        configuration.add(String.class, DataTypeConstants.TEXT);
+        configuration.add(Number.class, DataTypeConstants.NUMBER);
+        configuration.add(Enum.class, DataTypeConstants.ENUM);
+        configuration.add(Boolean.class, DataTypeConstants.BOOLEAN);
+        configuration.add(Date.class, DataTypeConstants.DATE);
+        configuration.add(Calendar.class, DataTypeConstants.CALENDAR);
     }
 
     @Contribute(BeanBlockSource.class)
     public static void provideDefaultBeanBlocks(Configuration<BeanBlockContribution> configuration)
     {
-        addEditBlock(configuration, "text");
-        addEditBlock(configuration, "number");
-        addEditBlock(configuration, "enum");
-        addEditBlock(configuration, "boolean");
-        addEditBlock(configuration, "date");
-        addEditBlock(configuration, "password");
-        addEditBlock(configuration, "calendar");
+        addEditBlock(configuration, DataTypeConstants.TEXT);
+        addEditBlock(configuration, DataTypeConstants.NUMBER);
+        addEditBlock(configuration, DataTypeConstants.ENUM);
+        addEditBlock(configuration, DataTypeConstants.BOOLEAN);
+        addEditBlock(configuration, DataTypeConstants.DATE);
+        addEditBlock(configuration, DataTypeConstants.PASSWORD);
+        addEditBlock(configuration, DataTypeConstants.CALENDAR);
 
         // longtext uses a text area, not a text field
 
-        addEditBlock(configuration, "longtext");
+        addEditBlock(configuration, DataTypeConstants.LONG_TEXT);
 
-        addDisplayBlock(configuration, "enum");
-        addDisplayBlock(configuration, "date");
-        addDisplayBlock(configuration, "calendar");
+        addDisplayBlock(configuration, DataTypeConstants.ENUM);
+        addDisplayBlock(configuration, DataTypeConstants.DATE);
+        addDisplayBlock(configuration, DataTypeConstants.CALENDAR);
 
         // Password and long text have special output needs.
-        addDisplayBlock(configuration, "password");
-        addDisplayBlock(configuration, "longtext");
+        addDisplayBlock(configuration, DataTypeConstants.PASSWORD);
+        addDisplayBlock(configuration, DataTypeConstants.LONG_TEXT);
     }
 
     private static void addEditBlock(Configuration<BeanBlockContribution> configuration, String dataType)
@@ -1600,8 +1601,7 @@ public final class TapestryModule
      * partial page renders.
      * Supports an ordered configuration of {@link org.apache.tapestry5.services.PartialMarkupRendererFilter}s.
      *
-     * @see #contributePartialMarkupRenderer(org.apache.tapestry5.ioc.OrderedConfiguration, org.apache.tapestry5.Asset,
-     *      org.apache.tapestry5.ioc.services.SymbolSource, AssetSource)
+     * @see #contributePartialMarkupRenderer(org.apache.tapestry5.ioc.OrderedConfiguration, org.apache.tapestry5.Asset, org.apache.tapestry5.services.javascript.JavaScriptStackSource, org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathConstructor, org.apache.tapestry5.ioc.services.SymbolSource, AssetSource)
      */
     public PartialMarkupRenderer buildPartialMarkupRenderer(Logger logger,
                                                             List<PartialMarkupRendererFilter> configuration, @Autobuild
