@@ -1,18 +1,18 @@
 <html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
-  <h1>JavaScript Tests</h1>
+<h1>JavaScript Tests</h1>
 
-  <p>
+<p>
     This page executes a number of JavaScript tests.
-  </p>
+</p>
 
-  <div id="tests">
+<div id="tests">
 
-    <h2>Arrays</h2>
+<h2>Arrays</h2>
 
-    <div>
-      <p> Checks for T5.arrays.isEmpty()
-        </p>
+<div>
+    <p> Checks for T5.arrays.isEmpty()
+    </p>
       <pre>
         assertEqual(isEmpty(null), true)
         assertEqual(isEmpty(undefined), true)
@@ -20,10 +20,10 @@
         assertEqual(isEmpty([1]), false)
     </pre>
 
-    </div>
-    <div>
-      <p> Checks for T5.arrays.isNonEmpty()
-        </p>
+</div>
+<div>
+    <p> Checks for T5.arrays.isNonEmpty()
+    </p>
       <pre>
         assertEqual(isNonEmpty(null), false)
         assertEqual(isNonEmpty(undefined), false)
@@ -31,59 +31,59 @@
         false)
         assertEqual(isNonEmpty([1]), true)
     </pre>
-    </div>
-    <div>
-      <p> Map() on null returns an empty array        
-        </p>
+</div>
+<div>
+    <p> Map() on null returns an empty array
+    </p>
       <pre>
         assertEqual(map(null, null), [])
         </pre>
-    </div>
+</div>
 
-    <div>
-      <p> Map() on undefined returns an empty array    
+<div>
+    <p> Map() on undefined returns an empty array
     </p>
       <pre>
         assertEqual(map(null, undefined), [])    
     </pre>
-    </div>
+</div>
 
-    <div>
-      <p>Map() on empty array returns an empty array</p>
+<div>
+    <p>Map() on empty array returns an empty array</p>
       <pre>
         assertEqual(map(null, []), [])
       </pre>
-    </div>
+</div>
 
 
-    <div>
-      <p> The normal use of map().
+<div>
+    <p> The normal use of map().
     </p>
       <pre>
         assertEqual(map(function(e) { return e + 100; }, [1, 2, 3]), [101, 102, 103])   
     </pre>
-    </div>
+</div>
 
-    <div>
-      <p> Optional second parameter to map() is an index number.    </p>
+<div>
+    <p> Optional second parameter to map() is an index number. </p>
       <pre>
         assertEqual(map(function(e, index) { return (e + 100) + "@" + index; }, [1, 2, 3]),
         ["101@0", "102@1",
         "103@2"])                
     </pre>
-    </div>
+</div>
 
-    <div>
-      <p> The initial value is returned, as is, when no reducing occurs due to empty/null/undefined list.
+<div>
+    <p> The initial value is returned, as is, when no reducing occurs due to empty/null/undefined list.
     </p>
       <pre>
         var initial = { };
         assertSame(reduce(function() { }, initial, []), initial);   
     </pre>
-    </div>
+</div>
 
-    <div>
-      <p> Show that the index of each element is passed to the reducer function.</p>
+<div>
+    <p> Show that the index of each element is passed to the reducer function.</p>
       <pre>
         assertEqual(reduce(function(o, value, index) {
         o[value] = index; return o;
@@ -92,44 +92,44 @@
         { fred: 0, barney: 1, wilma: 2 })
         </pre>
 
-    </div>
+</div>
 
-    <div>
-      <p> Removing a value that does not exist in the array returns the array unchanged.
+<div>
+    <p> Removing a value that does not exist in the array returns the array unchanged.
     </p>
       <pre>
         var initial = [1, 2, 3]
         assertSame(without(9, initial), initial)
         </pre>
-    </div>
+</div>
 
-    <div>
-      <p> Multiple matches should all be removed.</p>
+<div>
+    <p> Multiple matches should all be removed.</p>
       <pre>
         assertEqual(without(2, [1, 2, 2, 3, 4, 2, 5]), [1, 3, 4, 5])
 </pre>
-    </div>
+</div>
 
-    <div>
-      <p> The array should not be changed even if values are removed from the result.
-</p>
+<div>
+    <p> The array should not be changed even if values are removed from the result.
+    </p>
       <pre>
         var initial = [1, 2, 3]
         without(2, initial)
         assertEqual(initial, [1, 2, 3])
 </pre>
-    </div>
+</div>
 
-    <div>
-      <p>mapcat() on empty/null/undefined returns empty list.
+<div>
+    <p>mapcat() on empty/null/undefined returns empty list.
     </p>
       <pre>
         assertEqual(mapcat(null,null), [])</pre>
-    </div>
+</div>
 
-    <div>
-      <p> Basic execution of mapcat().
-  </p>
+<div>
+    <p> Basic execution of mapcat().
+    </p>
       <pre>
         assertEqual(mapcat(function (value) {
         var out = []
@@ -138,19 +138,19 @@
         }, [1, 3, 5]),
         [1, 3, 3, 3, 5, 5, 5, 5, 5])            
   </pre>
-    </div>
+</div>
 
-    <div>
-      <p>filter() a list.</p>
+<div>
+    <p>filter() a list.</p>
       <pre>
         assertEqual(filter(function(value) {
         return value % 2 === 0;
         }, [1, 2, 3, 4, 5, 6, 7, 8, 9]), [2, 4, 6, 8])
     </pre>
-    </div>
+</div>
 
-    <div>
-      <p>
+<div>
+    <p>
         Check that filter passes an optional index argument.
     </p>
       <pre>
@@ -160,10 +160,10 @@
         8, 9]),
         [1, 2, 4, 6, 7, 8])
     </pre>
-    </div>
+</div>
 
-    <div>
-      <p>remove() elements from a list.</p>
+<div>
+    <p>remove() elements from a list.</p>
       <pre>
         assertEqual(remove(function(value, index) {
         return value % 2 !== 0 &amp;&amp; index % 3 !== 0;
@@ -172,56 +172,56 @@
         5, 6, 7, 8, 9]),
         [1, 2, 4, 6, 7, 8])
         </pre>
-    </div>
+</div>
 
-    <div>
-      <p>first() on empty list returns null.</p>
+<div>
+    <p>first() on empty list returns null.</p>
       <pre>
         assertEqual(first(null, null), null)
     </pre>
-    </div>
+</div>
 
-    <div>
-      <p>first() match</p>
+<div>
+    <p>first() match</p>
 
       <pre>
         assertEqual(first(function(value) { return value &gt; 3; }, [1, 2, 3, 4, 5]), 4)
 </pre>
-    </div>
+</div>
 
-    <div>
-      <p>first() passes the index as the second value.</p>
+<div>
+    <p>first() passes the index as the second value.</p>
 
       <pre>
         assertEqual(first(function(value, index) { return index &gt; 2 }, [1, 2, 3, 4, 5]), 4)
 </pre>
 
-      <div>
+    <div>
         <p>extractProperty() returns a function to extract a named property.</p>
         <pre>
           var fn = T5.arrays.extractProperty('name')
 
           assertEqual(fn({name: 'Tapestry', id: 5}), 'Tapestry')
     </pre>
-      </div>
+    </div>
 
-      <div>
+    <div>
         <p>
-          Extract a property from an array.
-</p>
+            Extract a property from an array.
+        </p>
 
         <pre>
           assertEqual(extract('id', [ { id: 7, name: "Fred" }, { id: 22, name: "Barney" }]), [7, 22])    
     </pre>
-      </div>
-
     </div>
 
-    <h2>Publish / Subscribe</h2>
+</div>
+
+<h2>Publish / Subscribe</h2>
 
 
-    <div>
-      <p> Ensure that the message object passed to pub() is delivered to the listener.</p>
+<div>
+    <p> Ensure that the message object passed to pub() is delivered to the listener.</p>
       <pre>
         var message = { }
         var rcvd;
@@ -232,10 +232,21 @@
 
         assertSame(rcvd, message)        
         </pre>
-    </div>
+</div>
 
-    <div>
-      <p>Check that the function returned from sub() can be used to cancel message reciept.</p>
+<div>
+    <p> Ensure that the second object to a listener is the source object.</p>
+      <pre>
+        var unsub = sub("foo", null, function(message, element) { assertSame(element, document); })
+
+        pub("foo", document, null)
+
+        unsub()
+        </pre>
+</div>
+
+<div>
+    <p>Check that the function returned from sub() can be used to cancel message receipt.</p>
       <pre>
         var count = 0;
 
@@ -257,11 +268,11 @@
         pub("foo", document);
         assertEqual(count, 2)
           </pre>
-    </div>
+</div>
 
-    <div>
-      <p> Ensure that messages are delivered to specific listeners before general listeners. 
-      </p>
+<div>
+    <p> Ensure that messages are delivered to specific listeners before general listeners.
+    </p>
       <pre>
         var pubs = []
 
@@ -283,10 +294,10 @@
         "general1",
         "general2"])                
         </pre>
-    </div>
+</div>
 
-    <div>
-      <p>Removing an element also removes publishers and subscribers for the element.</p>
+<div>
+    <p>Removing an element also removes publishers and subscribers for the element.</p>
       <pre>
         var pubs = []
 
@@ -317,10 +328,10 @@
 
         assertEqual(pubs, ["general"])
       </pre>
-    </div>
+</div>
 
-    <div>
-      <p>Publish/subscribe via client id rather than element.</p>
+<div>
+    <p>Publish/subscribe via client id rather than element.</p>
 
       <pre>
         var element = new Element("span",{ id: "zaphod" }).update("Published Message Source Zaphod")
@@ -341,12 +352,12 @@
 
         T5.dom.remove(element)  
     </pre>
-    </div>
+</div>
 
-  </div>
+</div>
 
-  <script>
-<![CDATA[
+<script>
+    <![CDATA[
     isEmpty = T5.arrays.isEmpty
     isNonEmpty = T5.arrays.isNonEmpty
     map = T5.arrays.map
@@ -367,6 +378,6 @@
 
     JST.runTestSuite("tests");
     ]]>
-  </script>
+</script>
 </html>
 

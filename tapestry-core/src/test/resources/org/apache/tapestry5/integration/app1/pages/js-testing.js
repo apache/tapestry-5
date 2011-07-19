@@ -106,6 +106,9 @@ var JST = (function() {
 						test.addClassName("pass");
 
 					} catch (e) {
+
+                        Tapestry.error(e)
+
 						failCount++;
 
 						if (e !== $fail) {
