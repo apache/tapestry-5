@@ -15,98 +15,107 @@
 
 T5.define("dom", function() {
 
-	/**
-	 * Locates an element. If element is a string, then
-	 * document.getElementById() is used to resolve a client element id to a DOM
-	 * element. If the id does not exist, then null will be returned.
-	 * <p>
-	 * If element is not a string, it is presumed to already by a DOM element,
-	 * and is returned.
-	 */
-	function locate(element) {
-		if (typeof element == "string") {
-			return document.getElementById(element);
-		}
+    var removeEventHandlers;
 
-		return element; // may be null, otherwise presumed to be a DOM node
-	}
+    // Necessary to lazy-instantiate femoveEventHandlers publisher function,
+    // due to load order of these namespaces.
+    function doRemoveEventHandlers(element) {
+        if (!removeEventHandlers) {
+            removeEventHandlers = T5.pubsub.createPublisher(T5.events.REMOVE_EVENT_HANDLERS, document);
+        }
 
-	/**
-	 * Tree-walks the children of the element; for each dhild, ensure that all
-	 * event handlers, listeners and PubSub publishers for the child are
-	 * removed.
-	 */
-	function purgeChildren(element) {
-		var children = element.childNodes;
+        removeEventHandlers(element);
+    }
 
-		if (children) {
-			var l = children.length, i, child;
+    /**
+     * Locates an element. If element is a string, then
+     * document.getElementById() is used to resolve a client element id to a DOM
+     * element. If the id does not exist, then null will be returned.
+     * <p>
+     * If element is not a string, it is presumed to already by a DOM element,
+     * and is returned.
+     */
+    function locate(element) {
+        if (typeof element == "string") {
+            return document.getElementById(element);
+        }
 
-			for (i = 0; i < l; i++) {
-				var child = children[i];
+        return element; // may be null, otherwise presumed to be a DOM node
+    }
 
-				/* Just purge element nodes, not text, etc. */
-				if (child.nodeType == 1)
-					purge(children[i]);
-			}
-		}
-	}
+    /**
+     * Tree-walks the children of the element; for each dhild, ensure that all
+     * event handlers, listeners and PubSub publishers for the child are
+     * removed.
+     */
+    function purgeChildren(element) {
+        var children = element.childNodes;
 
-	// Adapted from http://javascript.crockford.com/memory/leak.html
-	function purge(element) {
-		var attrs = element.attributes;
-		if (attrs) {
-			var i, name;
-			for (i = attrs.length - 1; i >= 0; i--) {
-				if (attrs[i]) {
-					name = attrs[i].name;
-					/* Looking for onclick, etc. */
-					if (typeof element[name] == 'function') {
-						element[name] = null;
-					}
-				}
-			}
-		}
+        if (children) {
+            var l = children.length, i, child;
 
-		// Get rid of any Prototype event handlers as well.
-		// May generalize this to be a published message instead, for 
-		// cross-library compatibility.
-		Event.stopObserving(element);
+            for (i = 0; i < l; i++) {
+                var child = children[i];
 
-		purgeChildren(element);
+                /* Just purge element nodes, not text, etc. */
+                if (child.nodeType == 1)
+                    purge(children[i]);
+            }
+        }
+    }
 
-		if (element.t5pubsub) {
-			// TODO: Execute this deferred?
-			T5.pubsub.cleanupRemovedElement(element);
-		}
-	}
+    // Adapted from http://javascript.crockford.com/memory/leak.html
+    function purge(element) {
+        var attrs = element.attributes;
+        if (attrs) {
+            var i, name;
+            for (i = attrs.length - 1; i >= 0; i--) {
+                if (attrs[i]) {
+                    name = attrs[i].name;
+                    /* Looking for onclick, etc. */
+                    if (typeof element[name] == 'function') {
+                        element[name] = null;
+                    }
+                }
+            }
+        }
 
-	/**
-	 * Removes an element and all of its direct and indirect children. The
-	 * element is first purged, to ensure that Internet Explorer doesn't leak
-	 * memory if event handlers associated with the element (or its children)
-	 * have references back to the element. This also removes all Prototype
-	 * event handlers, and uses T5.pubsub.cleanupRemovedElement() to delete and
-	 * publishers or subscribers for any removed elements.
-	 * 
-	 */
-	function remove(element) {
-		purge(element);
+        purgeChildren(element);
 
-		// Remove the element, and all children, in one go.
-		Element.remove(element);
-	}
+        if (element.t5pubsub) {
+            // TODO: Execute this deferred?
+            T5.pubsub.cleanupRemovedElement(element);
+        }
 
-	return {
-		remove : remove,
-		purgeChildren : purgeChildren,
-		locate : locate
-	};
+        doRemoveEventHandlers(element);
+    }
+
+    /**
+     * Removes an element and all of its direct and indirect children. The
+     * element is first purged, to ensure that Internet Explorer doesn't leak
+     * memory if event handlers associated with the element (or its children)
+     * have references back to the element. This also removes all Prototype
+     * event handlers, and uses T5.pubsub.cleanupRemovedElement() to delete and
+     * publishers or subscribers for any removed elements.
+     *
+     */
+    function remove(element) {
+        purge(element);
+
+        // Remove the element, and all children, in one go.
+        Element.remove(element);
+    }
+
+    return {
+        remove : remove,
+        purgeChildren : purgeChildren,
+        locate : locate
+    };
 });
 
 /**
  * Create a T5.$() synonym for T5.dom.locate().
  */
 T5.extend(T5, {
-	$ : T5.dom.locate
+    $ : T5.dom.locate
 });

@@ -61,7 +61,8 @@ public class CoreJavaScriptStack implements JavaScriptStack {
 
                   // Uses functions defined by the prior three.
                   // Order is important, there are some dependencies
-                  // going on here.
+                  // going on here. Switching over to a more managed module system
+                  // is starting to look like a really nice idea!
 
                   ROOT + "/t5-core.js",
 
@@ -76,6 +77,8 @@ public class CoreJavaScriptStack implements JavaScriptStack {
                   ROOT + "/t5-init.js",
 
                   ROOT + "/t5-pubsub.js",
+
+                  ROOT + "/t5-events.js",
 
                   ROOT + "/t5-dom.js",
 

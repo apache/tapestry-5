@@ -1,5 +1,4 @@
-T5.define("pubsub", function()
-{
+T5.define("pubsub", function() {
 
     var arrays = T5.arrays;
     var first = arrays.first;
@@ -18,36 +17,28 @@ T5.define("pubsub", function()
     var publishers = [];
 
     // Necessary since T5.dom depends on T5.pubsub
-    function $(element)
-    {
+    function $(element) {
         return T5.$(element);
     }
 
-    function purgePublisherCache(topic)
-    {
-        each(function(publisher)
-        {
-            if (publisher.topic === topic)
-            {
+    function purgePublisherCache(topic) {
+        each(function(publisher) {
+            if (publisher.topic === topic) {
                 publisher.listeners = undefined;
             }
         }, publishers);
     }
 
-    function findListeners(topic, element)
-    {
-        var gross = filter(function(subscriber)
-        {
+    function findListeners(topic, element) {
+        var gross = filter(function(subscriber) {
             return subscriber.topic === topic;
         }, subscribers);
 
-        var primary = filter(function(subscriber)
-        {
+        var primary = filter(function(subscriber) {
             return subscriber.element === element;
         }, gross);
 
-        var secondary = filter(function(subscriber)
-        {
+        var secondary = filter(function(subscriber) {
             // Match where the element is null or undefined
             return !subscriber.element;
         }, gross);
@@ -82,8 +73,7 @@ T5.define("pubsub", function()
      *            events, the document object is used as the element.
      * @return a function of no arguments used to unsubscribe the listener
      */
-    function subscribe(topic, element, listenerfn)
-    {
+    function subscribe(topic, element, listenerfn) {
 
         var subscriber = {
             topic : topic,
@@ -101,8 +91,7 @@ T5.define("pubsub", function()
         listenerfn = null;
 
         // Return a function to unsubscribe
-        return function()
-        {
+        return function() {
             subscribers = without(subscriber, subscribers);
             purgePublisherCache(subscriber.topic);
         }
@@ -139,40 +128,33 @@ T5.define("pubsub", function()
      *            the second parameter.
      * @return publisher function used to publish a message
      */
-    function createPublisher(topic, element)
-    {
+    function createPublisher(topic, element) {
 
         element = $(element);
 
-        if (element == null)
-        {
+        if (element == null) {
             throw "Element may not be null when creating a publisher.";
         }
 
-        var existing = first(function(publisher)
-        {
+        var existing = first(function(publisher) {
             return publisher.topic === topic && publisher.element === element;
         }, publishers);
 
-        if (existing)
-        {
+        if (existing) {
             return existing.publisherfn;
         }
 
         var publisher = {
             topic : topic,
             element : element,
-            publisherfn : function(message)
-            {
+            publisherfn : function(message) {
 
-                if (publisher.listeners == undefined)
-                {
+                if (publisher.listeners == undefined) {
                     publisher.listeners = findListeners(publisher.topic,
                         publisher.element);
                 }
 
-                return map(function(listenerfn)
-                {
+                return map(function(listenerfn) {
                     return listenerfn(message, publisher.element);
                 }, publisher.listeners);
             }
@@ -201,8 +183,7 @@ T5.define("pubsub", function()
      * Creates a publisher and immediately publishes the message, return the
      * array of results.
      */
-    function publish(topic, element, message)
-    {
+    function publish(topic, element, message) {
         return createPublisher(topic, element)(message);
     }
 
@@ -210,22 +191,18 @@ T5.define("pubsub", function()
      * Invoked whenever an element is about to be removed from the DOM to remove
      * any publishers or subscribers for the element.
      */
-    function cleanup(element)
-    {
-        subscribers = remove(function(subscriber)
-        {
+    function cleanup(element) {
+        subscribers = remove(function(subscriber) {
             return subscriber.element === element
         }, subscribers);
 
         // A little evil to modify the publisher object at the same time it is
         // being removed.
 
-        publishers = remove(function(publisher)
-        {
+        publishers = remove(function(publisher) {
             var match = publisher.element === element;
 
-            if (match)
-            {
+            if (match) {
                 publisher.listeners = undefined;
                 publisher.element = undefined;
             }

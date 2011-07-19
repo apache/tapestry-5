@@ -14,19 +14,15 @@
  */
 
 /**
- * Adapts Tapestry's SPI (Service Provider Interface) to make use of the
- * Prototype JavaScript library. May also make modifications to Prototype to
- * work with Tapestry.
+ * Defines the names of events used with the publish/subscribe framework.
  */
-T5.extend(T5.spi, function() {
+T5.define("events", {
 
-    document.observe("dom:loaded", function() {
-        T5.sub(T5.events.REMOVE_EVENT_HANDLERS, null, function(element) {
-                Event.stopObserving(element);
-            }
-        );
-    });
+    /**
+     * Published as an element is being removed from the DOM, to allow framework-specific
+     * approaches to removing any event listeners for the element. This is published on the document object,
+     * and the message is the DOM element for which event handlers should be removed.
+     */
+    REMOVE_EVENT_HANDLERS : "tapestry:remove-event-handlers"
 
-    return {};
 });
-
