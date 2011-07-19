@@ -21,16 +21,16 @@ T5.extend(T5, function() {
 		 * The T5.Initializer namespace, which contains functions used to
 		 * perform page load initializations.
 		 */
-		Initializer : {},
+		initializers : {},
 
 		/**
 		 * A convenience method for extending the T5.Initializer namespace.
 		 * 
 		 * @param source
-		 *            object or function used to extend T5.Initializer
+		 *            object or function used to extend T5.initializers
 		 */
-		extendInitializer : function(source) {
-			T5.extend(T5.Initializer, source);
+		extendInitializers : function(source) {
+			T5.extend(T5.initializers, source);
 		}
 	};
 });

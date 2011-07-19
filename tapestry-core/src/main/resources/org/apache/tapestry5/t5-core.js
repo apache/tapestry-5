@@ -17,47 +17,46 @@
  * The master T5 namespace. A few critical functions are added directly to T5,
  * but mostly it is used as a containing namespace for namespaces defined by
  * other modules.
- * 
+ *
  * @since 5.3
  */
 var T5 = {
-	/**
-	 * Extends an object using a source. In the simple case, the source object's
-	 * properties are overlaid on top of the destination object. In the typical
-	 * case, the source parameter is a function that returns the source object
-	 * ... this is to facilitate modularity and encapsulation.
-	 * 
-	 * @param destination
-	 *            object to receive new or updated properties
-	 * @param source
-	 *            source object for properties, or function returning source
-	 *            object
-	 * @returns the destination object
-	 */
-	extend : function(destination, source) {
-		if (typeof source == "function") {
-			source = source();
-		}
+    /**
+     * Extends an object using a source. In the simple case, the source object's
+     * properties are overlaid on top of the destination object. In the typical
+     * case, the source parameter is a function that returns the source object
+     * ... this is to facilitate modularity and encapsulation.
+     *
+     * @param destination
+     *            object to receive new or updated properties
+     * @param source
+     *            source object for properties, or function returning source
+     *            object
+     * @returns the destination object
+     */
+    extend : function(destination, source) {
+        if (typeof source == "function") {
+            source = source();
+        }
 
-		// Prototype:
-		return Object.extend(destination, source);
-	},
+        // Prototype:
+        return Object.extend(destination, source);
+    },
 
-	/**
-	 * Defines a new namespace under the T5 object.
-	 * 
-	 * @param name
-	 *            string name of the namespace
-	 * @param source
-	 *            source object for properties (or function returning source
-	 *            object)
-	 * @return the namespace object
-	 */
-	define : function(name, source) {
-		var namespace = {};
-		T5[name] = namespace;
+    /**
+     * Defines a new namespace under the T5 object.
+     *
+     * @param name
+     *            string name of the namespace
+     * @param source
+     *            source object for properties (or function returning source
+     *            object)
+     * @return the namespace object
+     */
+    define : function(name, source) {
+        var namespace = {};
+        T5[name] = namespace;
 
-		return this.extend(namespace, source);
-	}
-
+        return this.extend(namespace, source);
+    }
 }

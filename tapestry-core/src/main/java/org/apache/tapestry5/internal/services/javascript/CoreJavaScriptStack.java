@@ -59,7 +59,8 @@ public class CoreJavaScriptStack implements JavaScriptStack {
 
                   "${tapestry.scriptaculous}/effects.js",
 
-                  // Uses functions defined by the prior three.
+                  // Below uses functions defined by the prior three.
+
                   // Order is important, there are some dependencies
                   // going on here. Switching over to a more managed module system
                   // is starting to look like a really nice idea!
@@ -85,6 +86,8 @@ public class CoreJavaScriptStack implements JavaScriptStack {
                   ROOT + "/t5-console.js",
 
                   ROOT + "/t5-ajax.js",
+
+                  ROOT + "/t5-formfragment.js",
 
                   ROOT + "/tapestry.js",
 

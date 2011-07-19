@@ -30,7 +30,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * {@link org.apache.tapestry5.corelib.components.Radio} component that will link the input field and a
  * {@link org.apache.tapestry5.corelib.components.FormFragment}, making the field control the client-side visibility of
  * the FormFragment. See a full example with {@link FormFragment}'s documentation.
- * 
+ *
  * @tapestrydoc
  */
 public class TriggerFragment
@@ -47,7 +47,7 @@ public class TriggerFragment
     /**
      * If true then the client-side logic is inverted; the fragment is made visible when the checkbox is NOT checked.
      * The default is false (the fragment is visible when the checkbox IS checked).
-     * 
+     *
      * @since 5.2.0
      */
     @Parameter
@@ -59,8 +59,7 @@ public class TriggerFragment
     @HeartbeatDeferred
     void beginRender()
     {
-        JSONObject spec = new JSONObject("triggerId", container.getClientId(), "fragmentId", fragment.getClientId());
-        spec.put("invert", invert);
+        JSONObject spec = new JSONObject("triggerId", container.getClientId(), "fragmentId", fragment.getClientId()).put("invert", invert);
 
         javascriptSupport.addInitializerCall("linkTriggerToFormFragment", spec);
     }

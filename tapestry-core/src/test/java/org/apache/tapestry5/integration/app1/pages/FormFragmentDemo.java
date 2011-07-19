@@ -29,7 +29,7 @@ public class FormFragmentDemo
     private boolean subscribeToEmail, codeVisible, subVisible = true;
 
     @Component(parameters =
-    { "clientValidation=false" })
+            {"clientValidation=false"})
     private Form form;
 
     @InjectPage
