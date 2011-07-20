@@ -14,18 +14,14 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.MarkupWriterListener;
+import org.apache.tapestry5.dom.*;
+
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.List;
-
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.MarkupWriterListener;
-import org.apache.tapestry5.dom.DefaultMarkupModel;
-import org.apache.tapestry5.dom.Document;
-import org.apache.tapestry5.dom.Element;
-import org.apache.tapestry5.dom.MarkupModel;
-import org.apache.tapestry5.dom.Text;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class MarkupWriterImpl implements MarkupWriter
 {
@@ -83,8 +79,7 @@ public class MarkupWriterImpl implements MarkupWriter
         if (current == null)
         {
             document.cdata(content);
-        }
-        else
+        } else
         {
             current.cdata(content);
         }
@@ -98,8 +93,8 @@ public class MarkupWriterImpl implements MarkupWriter
         {
             currentText =
                     current == null
-                    ? document.text(text)
-                    : current.text(text);
+                            ? document.text(text)
+                            : current.text(text);
 
             return;
         }
@@ -120,10 +115,10 @@ public class MarkupWriterImpl implements MarkupWriter
         ensureCurrentElement();
 
         int i = 0;
-        
+
         int length = namesAndValues.length;
-        
-        if(length % 2 != 0)
+
+        if (length % 2 != 0)
             throw new IllegalArgumentException(ServicesMessages.markupWriterAttributeNameOrValueOmitted(current.getName(), namesAndValues));
 
         while (i < length)
@@ -157,8 +152,7 @@ public class MarkupWriterImpl implements MarkupWriter
                         existingRootElement.getName()));
 
             current = document.newRootElement(name);
-        }
-        else
+        } else
         {
             current = current.element(name);
         }
@@ -179,8 +173,7 @@ public class MarkupWriterImpl implements MarkupWriter
         if (current == null)
         {
             document.raw(text);
-        }
-        else
+        } else
         {
             current.raw(text);
         }
@@ -206,8 +199,7 @@ public class MarkupWriterImpl implements MarkupWriter
         if (current == null)
         {
             document.comment(text);
-        }
-        else
+        } else
         {
             current.comment(text);
         }
@@ -246,7 +238,13 @@ public class MarkupWriterImpl implements MarkupWriter
     public void addListener(MarkupWriterListener listener)
     {
         assert listener != null;
-        if (listeners == null) listeners = CollectionFactory.newList();
+
+        if (listeners == null)
+        {
+            // TAP5-XXX: Using a copy-on-write list means we don't have to make defensive copies
+            // while iterating the listeners (to protect against listeners that add or remove listeners).
+            listeners = new CopyOnWriteArrayList<MarkupWriterListener>();
+        }
 
         listeners.add(listener);
     }
@@ -261,7 +259,7 @@ public class MarkupWriterImpl implements MarkupWriter
     {
         if (isEmpty(listeners)) return;
 
-        for (MarkupWriterListener l : CollectionFactory.newList(listeners))
+        for (MarkupWriterListener l : listeners)
         {
             l.elementDidStart(current);
         }
@@ -276,7 +274,7 @@ public class MarkupWriterImpl implements MarkupWriter
     {
         if (isEmpty(listeners)) return;
 
-        for (MarkupWriterListener l : CollectionFactory.newList(listeners))
+        for (MarkupWriterListener l : listeners)
         {
             l.elementDidEnd(current);
         }
