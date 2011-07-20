@@ -426,15 +426,12 @@ public class Form implements ClientElement, FormValidationControl
      * <p/>
      * This method may also be invoked as the handler for the "internalCreateRenderTimeFormSupport" event.
      *
-     * @param clientId
-     *         the client-side id for the rendered form
-     *         element
-     * @param actionSink
-     *         used to collect component actions that will, ultimately, be
-     *         written as the t:formdata hidden
-     *         field
-     * @param allocator
-     *         used to allocate unique ids
+     * @param clientId   the client-side id for the rendered form
+     *                   element
+     * @param actionSink used to collect component actions that will, ultimately, be
+     *                   written as the t:formdata hidden
+     *                   field
+     * @param allocator  used to allocate unique ids
      * @return form support object
      */
     @OnEvent("internalCreateRenderTimeFormSupport")
@@ -497,10 +494,10 @@ public class Form implements ClientElement, FormValidationControl
 
         heartbeat.begin();
 
+        boolean didPushBeanValidationContext = false;
+
         try
         {
-            environment.push(BeanValidationContext.class, new BeanValidationContextImpl(validate));
-
             resources.triggerContextEvent(EventConstants.PREPARE_FOR_SUBMIT, context, eventCallback);
 
             if (eventCallback.isAborted())
@@ -516,6 +513,10 @@ public class Form implements ClientElement, FormValidationControl
                 if (eventCallback.isAborted())
                     return true;
             }
+
+            environment.push(BeanValidationContext.class, new BeanValidationContextImpl(validate));
+
+            didPushBeanValidationContext = true;
 
             executeStoredActions();
 
@@ -559,7 +560,10 @@ public class Form implements ClientElement, FormValidationControl
 
             environment.pop(ValidationTracker.class);
 
-            environment.pop(BeanValidationContext.class);
+            if (didPushBeanValidationContext)
+            {
+                environment.pop(BeanValidationContext.class);
+            }
 
             activeTracker = null;
         }
