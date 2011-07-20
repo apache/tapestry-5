@@ -655,7 +655,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         for (final ContributionDef def : contributions)
         {
             final OrderedConfiguration<T> validating = new ValidatingOrderedConfigurationWrapper<T>(valueType,
-                    resources, typeCoercerProxy, orderer, overrides, def, serviceId);
+                    resources, typeCoercerProxy, orderer, overrides, def);
 
             String description = IOCMessages.invokingMethod(def);
 

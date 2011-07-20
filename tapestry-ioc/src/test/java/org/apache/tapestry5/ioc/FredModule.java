@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -93,10 +93,8 @@ public class FredModule
 
     public void contributeOrderedNames(OrderedConfiguration<String> configuration)
     {
-        // Order "FRED" after "BARNEY"
-
-        configuration.add("fred", "FRED", "after:barney");
         configuration.add("barney", "BARNEY");
+        configuration.add("fred", "FRED");
     }
 
     public void contributeUnorderedNames(Configuration<String> configuration)

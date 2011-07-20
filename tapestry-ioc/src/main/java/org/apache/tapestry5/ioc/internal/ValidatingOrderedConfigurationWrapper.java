@@ -14,18 +14,18 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import java.util.Map;
-
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.Orderer;
 
+import java.util.Map;
+
 /**
  * Wraps a {@link java.util.List} as a {@link org.apache.tapestry5.ioc.OrderedConfiguration}, implementing validation of
  * values provided to an {@link org.apache.tapestry5.ioc.OrderedConfiguration}.
- * 
+ *
  * @param <T>
  */
 public class ValidatingOrderedConfigurationWrapper<T> extends AbstractConfigurationImpl<T> implements
@@ -35,17 +35,18 @@ public class ValidatingOrderedConfigurationWrapper<T> extends AbstractConfigurat
 
     private final Orderer<T> orderer;
 
-    private final String serviceId;
-
     private final Class<T> expectedType;
 
     private final Map<String, OrderedConfigurationOverride<T>> overrides;
 
     private final ContributionDef contribDef;
 
+    // Used to supply a default ordering constraint when none is supplied.
+    private String priorId;
+
     public ValidatingOrderedConfigurationWrapper(Class<T> expectedType, ObjectLocator locator,
-            TypeCoercerProxy typeCoercer, Orderer<T> orderer, Map<String, OrderedConfigurationOverride<T>> overrides,
-            ContributionDef contribDef, String serviceId)
+                                                 TypeCoercerProxy typeCoercer, Orderer<T> orderer, Map<String, OrderedConfigurationOverride<T>> overrides,
+                                                 ContributionDef contribDef)
     {
         super(expectedType, locator);
         this.typeCoercer = typeCoercer;
@@ -53,7 +54,6 @@ public class ValidatingOrderedConfigurationWrapper<T> extends AbstractConfigurat
         this.orderer = orderer;
         this.overrides = overrides;
         this.contribDef = contribDef;
-        this.serviceId = serviceId;
         this.expectedType = expectedType;
     }
 
@@ -61,7 +61,18 @@ public class ValidatingOrderedConfigurationWrapper<T> extends AbstractConfigurat
     {
         T coerced = object == null ? null : typeCoercer.coerce(object, expectedType);
 
+        // https://issues.apache.org/jira/browse/TAP5-1565
+        // Order each added contribution after the previously added contribution
+        // (in the same method) if no other constraint is supplied.
+        if (constraints.length == 0 && priorId != null)
+        {
+            // Ugly: reassigning parameters is yuck.
+            constraints = new String[]{"after:" + priorId};
+        }
+
         orderer.add(id, coerced, constraints);
+
+        priorId = id;
     }
 
     public void override(String id, T object, String... constraints)

@@ -46,7 +46,7 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
         replay();
 
         OrderedConfiguration<Runnable> wrapper = new ValidatingOrderedConfigurationWrapper<Runnable>(Runnable.class,
-                null, tc, orderer, null, null, "Service");
+                null, tc, orderer, null, null);
 
         wrapper.add("id", contribution, "after:pre", "before:post");
 
@@ -76,7 +76,7 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
         replay();
 
         OrderedConfiguration<Map> wrapper = new ValidatingOrderedConfigurationWrapper<Map>(Map.class, locator, tc,
-                orderer, null, null, "Service");
+                orderer, null, null);
 
         wrapper.addInstance("id", HashMap.class, "after:pre", "before:post");
 
@@ -94,7 +94,7 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
         replay();
 
         OrderedConfiguration<Runnable> wrapper = new ValidatingOrderedConfigurationWrapper<Runnable>(Runnable.class,
-                null, null, orderer, null, null, "Service");
+                null, null, orderer, null, null);
 
         wrapper.add("id", null);
 
