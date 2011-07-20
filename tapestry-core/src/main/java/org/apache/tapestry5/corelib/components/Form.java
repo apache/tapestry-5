@@ -499,12 +499,16 @@ public class Form implements ClientElement, FormValidationControl
 
         try
         {
+            environment.push(BeanValidationContext.class, new BeanValidationContextImpl(validate));
+
             resources.triggerContextEvent(EventConstants.PREPARE_FOR_SUBMIT, context, eventCallback);
 
             if (eventCallback.isAborted())
                 return true;
 
             resources.triggerContextEvent(EventConstants.PREPARE, context, eventCallback);
+            if (eventCallback.isAborted())
+                return true;
 
             if (isFormCancelled())
             {
@@ -512,12 +516,6 @@ public class Form implements ClientElement, FormValidationControl
                 if (eventCallback.isAborted())
                     return true;
             }
-
-
-            environment.push(BeanValidationContext.class, new BeanValidationContextImpl(validate));
-
-            if (eventCallback.isAborted())
-                return true;
 
             executeStoredActions();
 
