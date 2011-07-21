@@ -130,8 +130,7 @@ public final class TransformConstants
      * @see org.apache.tapestry5.annotations.SetupRender
      * @since 5.3
      */
-    public static final MethodDescription SETUP_RENDER_DESCRIPTION = PlasticUtils.getMethodDescription(Component.class,
-            "setupRender", RENDER_PHASE_METHOD_PARAMETER_TYPES);
+    public static final MethodDescription SETUP_RENDER_DESCRIPTION = renderPhaseDescription("setupRender");
 
     /**
      * Signature for {@link org.apache.tapestry5.runtime.Component#beginRender(MarkupWriter, Event)}.
