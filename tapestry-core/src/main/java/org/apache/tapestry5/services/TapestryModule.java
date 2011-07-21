@@ -510,12 +510,16 @@ public final class TapestryModule
      * <dt>SupportsInformalParameters</dt>
      * <dd>Checks for the annotation</dd>
      * <dt>RenderPhase</dt>
-     * <dd>Link in render phaes methods</dd>
+     * <dd>Link in render phase methods</dd>
+     * <dt>Meta</dt>
+     * <dd>Checks for meta data annotations and adds it to the component model</dd>
      * </dl>
      */
     @Contribute(ComponentClassTransformWorker2.class)
+    @Primary
     public static void provideTransformWorkers(
             OrderedConfiguration<ComponentClassTransformWorker2> configuration,
+            MetaWorker metaWorker,
             ComponentClassResolver resolver)
     {
         configuration.add("Property", new PropertyWorker());
@@ -552,6 +556,8 @@ public final class TapestryModule
 
         configuration.addInstance("Import", ImportWorker.class);
 
+        configuration.add("Meta", metaWorker);
+
         // This one is always last. Any additional private fields that aren't
         // annotated will
         // be converted to clear out at the end of the request.
@@ -581,8 +587,6 @@ public final class TapestryModule
      * annotation</dd>
      * <dt>InjectBlock</dt>
      * <dd>Allows a block from the template to be injected into a field</dd>
-     * <dt>Meta</dt>
-     * <dd>Checks for meta data annotations and adds it to the component model</dd>
      * <dt>ApplicationState</dt>
      * <dd>Converts fields that reference application state objects
      * <dt>Cached</dt>
@@ -598,16 +602,12 @@ public final class TapestryModule
      * </dl>
      */
     @Contribute(ComponentClassTransformWorker2.class)
-    public static void provideOldStyleCassTransformWorkers(
-            OrderedConfiguration<ComponentClassTransformWorker> configuration,
-
-            MetaWorker metaWorker,
-
-            ComponentClassResolver resolver)
+    @Primary
+    public static void provideOldStyleClassTransformWorkers(
+            OrderedConfiguration<ComponentClassTransformWorker> configuration)
     {
         configuration.addInstance("Cached", CachedWorker.class);
 
-        configuration.add("Meta", metaWorker);
 
         configuration.addInstance("Inject", InjectWorker.class);
         configuration.addInstance("InjectService", InjectServiceWorker.class);

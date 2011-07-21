@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,13 +14,15 @@
 
 package org.apache.tapestry5.internal.services.meta;
 
-import java.lang.annotation.Annotation;
-import java.util.Map;
-
 import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.plastic.PlasticClass;
 import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.meta.MetaDataExtractor;
 import org.apache.tapestry5.services.meta.MetaWorker;
+import org.apache.tapestry5.services.transform.TransformationSupport;
+
+import java.lang.annotation.Annotation;
+import java.util.Map;
 
 @SuppressWarnings("unchecked")
 public class MetaWorkerImpl implements MetaWorker
@@ -32,11 +34,11 @@ public class MetaWorkerImpl implements MetaWorker
         this.configuration = configuration;
     }
 
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
         for (Class c : configuration.keySet())
         {
-            Annotation annotation = transformation.getAnnotation(c);
+            Annotation annotation = plasticClass.getAnnotation(c);
 
             if (annotation != null)
             {
