@@ -505,6 +505,8 @@ public final class TapestryModule
      * <dd>Manages unclaimed fields, storing their value in a {@link PerThreadValue}</dd>
      * <dt>OnEvent</dt>
      * <dd>Handle the @OnEvent annotation, and related naming convention</dd>
+     * <dt>RenderCommand</dt>
+     * <dd>Ensures all components also implement {@link org.apache.tapestry5.runtime.RenderCommand}</dd>
      * </ul>
      */
     @Contribute(ComponentClassTransformWorker2.class)
@@ -515,6 +517,7 @@ public final class TapestryModule
         configuration.add("Property", new PropertyWorker());
         configuration.addInstance("Import", ImportWorker.class, "after:SetupRender");
 
+        configuration.add("RenderCommand", new RenderCommandWorker());
 
         configuration.addInstance("OnEvent", OnEventWorker.class);
 
@@ -574,8 +577,6 @@ public final class TapestryModule
      * <dd>Checks for meta data annotations and adds it to the component model</dd>
      * <dt>ApplicationState</dt>
      * <dd>Converts fields that reference application state objects
-     * <dt>RenderCommand</dt>
-     * <dd>Ensures all components also implement {@link org.apache.tapestry5.runtime.RenderCommand}</dd>
      * <dt>RenderPhase</dt>
      * <dd>Link in render phaes methods</dd>
      * <dt>InvokePostRenderCleanupOnResources</dt>
@@ -613,9 +614,6 @@ public final class TapestryModule
         configuration
                 .addInstance("ActivationRequestParameter", ActivationRequestParameterWorker.class, "after:OnEvent");
         configuration.add("SupportsInformalParameters", new SupportsInformalParametersWorker());
-
-        configuration.add("RenderCommand", new RenderCommandWorker());
-
 
         configuration.addInstance("RenderPhase", RenderPhaseMethodWorker.class);
 

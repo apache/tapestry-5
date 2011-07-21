@@ -431,11 +431,6 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return element.getElementName(defaultElementName);
     }
 
-    public void queueRender(RenderQueue queue)
-    {
-        queue.push(element);
-    }
-
     public Block getBlock(String blockId)
     {
         return element.getBlock(blockId);
@@ -604,4 +599,9 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return null;
     }
 
+    /** @since 5.3 */
+    public void render(MarkupWriter writer, RenderQueue queue)
+    {
+        queue.push(element);
+    }
 }

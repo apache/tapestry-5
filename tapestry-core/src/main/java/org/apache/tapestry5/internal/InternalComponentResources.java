@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.structure.PageResetListener;
 import org.apache.tapestry5.internal.transform.ParameterConduit;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
+import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 
 /**
@@ -29,7 +30,7 @@ import org.apache.tapestry5.runtime.RenderQueue;
  * to the framework and not exposed in any public APIs.
  */
 public interface InternalComponentResources extends ComponentResources,
-        InternalComponentResourcesCommon
+        InternalComponentResourcesCommon, RenderCommand
 {
     /**
      * Get the current persisted value of the field.
@@ -59,10 +60,6 @@ public interface InternalComponentResources extends ComponentResources,
      */
     void postRenderCleanup();
 
-    /**
-     * Invoked to make the receiver queue itself to be rendered.
-     */
-    void queueRender(RenderQueue queue);
 
     /**
      * Delegates to {@link Page#addResetListener(org.apache.tapestry5.internal.structure.PageResetListener)}.
