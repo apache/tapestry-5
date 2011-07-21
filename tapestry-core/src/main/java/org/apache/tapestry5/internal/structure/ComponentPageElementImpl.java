@@ -14,31 +14,8 @@
 
 package org.apache.tapestry5.internal.structure;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.tapestry5.Binding;
-import org.apache.tapestry5.Block;
-import org.apache.tapestry5.BlockNotFoundException;
-import org.apache.tapestry5.ComponentEventCallback;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.EventContext;
-import org.apache.tapestry5.Link;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.Renderable;
-import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.TapestryMarkers;
-import org.apache.tapestry5.annotations.AfterRender;
-import org.apache.tapestry5.annotations.AfterRenderBody;
-import org.apache.tapestry5.annotations.AfterRenderTemplate;
-import org.apache.tapestry5.annotations.BeforeRenderTemplate;
-import org.apache.tapestry5.annotations.BeginRender;
-import org.apache.tapestry5.annotations.CleanupRender;
-import org.apache.tapestry5.annotations.SetupRender;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.AbstractEventContext;
 import org.apache.tapestry5.internal.InternalComponentResources;
@@ -61,15 +38,12 @@ import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.ParameterModel;
 import org.apache.tapestry5.runtime.Component;
-import org.apache.tapestry5.runtime.ComponentEvent;
-import org.apache.tapestry5.runtime.ComponentEventException;
-import org.apache.tapestry5.runtime.Event;
-import org.apache.tapestry5.runtime.PageLifecycleListener;
-import org.apache.tapestry5.runtime.RenderCommand;
-import org.apache.tapestry5.runtime.RenderQueue;
+import org.apache.tapestry5.runtime.*;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.slf4j.Logger;
+
+import java.util.*;
 
 /**
  * Implements {@link RenderCommand} and represents a component within an overall page. Much of a
@@ -81,7 +55,7 @@ import org.slf4j.Logger;
  * lifecycle listener}. This could be done inside the constructors, but that tends to complicate unit tests, so its done
  * by {@link org.apache.tapestry5.internal.services.PageElementFactoryImpl}. There's still a bit of refactoring in this
  * class (and its many inner classes) that can improve overall efficiency.
- * <p>
+ * <p/>
  * Modified for Tapestry 5.2 to adjust for the no-pooling approach (shared instances with externalized mutable state).
  */
 public class ComponentPageElementImpl extends BaseLocatable implements ComponentPageElement, PageLifecycleListener
@@ -204,7 +178,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
                         break;
                 }
             }
-            catch (RuntimeException ex)
+            // This used to be RuntimeException, but with TAP5-1508 changes to RenderPhaseMethodWorker, we now
+            // let ordinary exceptions bubble up as well.
+            catch (Exception ex)
             {
                 throw new TapestryException(ex.getMessage(), getLocation(), ex);
             }
@@ -576,28 +552,21 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     /**
      * Constructor for other components embedded within the root component or at deeper levels of
      * the hierarchy.
-     * 
-     * @param page
-     *            ultimately containing this component
-     * @param container
-     *            component immediately containing this component (may be null for a root component)
-     * @param id
-     *            unique (within the container) id for this component (may be null for a root
-     *            component)
-     * @param elementName
-     *            the name of the element which represents this component in the template, or null
-     *            for
-     *            &lt;comp&gt; element or a page component
-     * @param instantiator
-     *            used to create the new component instance and access the component's model
-     * @param location
-     *            location of the element (within a template), used as part of exception reporting
-     * @param elementResources
-     *            Provides access to common methods of various services
+     *
+     * @param page             ultimately containing this component
+     * @param container        component immediately containing this component (may be null for a root component)
+     * @param id               unique (within the container) id for this component (may be null for a root
+     *                         component)
+     * @param elementName      the name of the element which represents this component in the template, or null
+     *                         for
+     *                         &lt;comp&gt; element or a page component
+     * @param instantiator     used to create the new component instance and access the component's model
+     * @param location         location of the element (within a template), used as part of exception reporting
+     * @param elementResources Provides access to common methods of various services
      */
     ComponentPageElementImpl(Page page, ComponentPageElement container, String id, String nestedId, String completeId,
-            String elementName, Instantiator instantiator, Location location,
-            ComponentPageElementResources elementResources, Request request, SymbolSource symbolSource)
+                             String elementName, Instantiator instantiator, Location location,
+                             ComponentPageElementResources elementResources, Request request, SymbolSource symbolSource)
     {
         super(location);
 
@@ -633,7 +602,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
      * Constructor for the root component of a page.
      */
     public ComponentPageElementImpl(Page page, Instantiator instantiator,
-            ComponentPageElementResources elementResources, Request request, SymbolSource symbolSource)
+                                    ComponentPageElementResources elementResources, Request request, SymbolSource symbolSource)
     {
         this(page, null, null, null, page.getName(), null, instantiator, null, elementResources, request, symbolSource);
     }
@@ -690,7 +659,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     }
 
     public ComponentPageElement newChild(String id, String nestedId, String completeId, String elementName,
-            Instantiator instantiator, Location location)
+                                         Instantiator instantiator, Location location)
     {
         ComponentPageElementImpl child = new ComponentPageElementImpl(page, this, id, nestedId, completeId,
                 elementName, instantiator, location, elementResources, request, symbolSource);
@@ -754,8 +723,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             if (mixinAfterOrderer == null)
                 mixinAfterOrderer = new Orderer<Component>(getLogger());
             mixinAfterOrderer.add(mixinId, resources.getComponent(), order);
-        }
-        else
+        } else
         {
             if (mixinBeforeOrderer == null)
                 mixinBeforeOrderer = new Orderer<Component>(getLogger());
@@ -959,8 +927,11 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         for (InternalComponentResources resources : NamedSet.getValues(mixinIdToComponentResources))
         {
-            if (resources.getComponentModel().getComponentClassName().equals(mixinClassName)) { return resources
-                    .getComponent(); }
+            if (resources.getComponentModel().getComponentClassName().equals(mixinClassName))
+            {
+                return resources
+                        .getComponent();
+            }
         }
 
         return null;
@@ -1004,19 +975,17 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     /**
      * Invokes a callback on the component instances (the core component plus any mixins).
-     * 
-     * @param reverse
-     *            if true, the callbacks are in the reverse of the normal order (this is associated
-     *            with AfterXXX
-     *            phases)
-     * @param callback
-     *            the object to receive each component instance
+     *
+     * @param reverse  if true, the callbacks are in the reverse of the normal order (this is associated
+     *                 with AfterXXX
+     *                 phases)
+     * @param callback the object to receive each component instance
      */
     private void invoke(boolean reverse, ComponentCallback callback)
     {
         try
         { // Optimization: In the most general case (just the one component, no mixins)
-          // invoke the callback on the component and be done ... no iterators, no nothing.
+            // invoke the callback on the component and be done ... no iterators, no nothing.
 
             if (components == null)
             {
@@ -1033,8 +1002,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
                 if (callback.isEventAborted())
                     return;
             }
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             throw new TapestryException(ex.getMessage(), getLocation(), ex);
         }
@@ -1106,7 +1074,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     }
 
     public boolean triggerContextEvent(final String eventType, final EventContext context,
-            final ComponentEventCallback callback)
+                                       final ComponentEventCallback callback)
     {
         assert InternalUtils.isNonBlank(eventType);
         assert context != null;
@@ -1175,8 +1143,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
                 if (event.isAborted())
                     return result;
-            }
-            catch (RuntimeException ex)
+            } catch (RuntimeException ex)
             {
                 // An exception in an event handler method
                 // while we're trying to handle a previous exception!

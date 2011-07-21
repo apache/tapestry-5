@@ -205,7 +205,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         openLinks("InstanceMixin");
 
         final String[] dates =
-        { "Jun 13, 1999", "Jul 15, 2001", "Dec 4, 2005" };
+                {"Jun 13, 1999", "Jul 15, 2001", "Dec 4, 2005"};
 
         for (String date : dates)
         {
@@ -476,7 +476,8 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertText("css=li.param1", "param1: value1");
         assertText("css=li.param2", "param2: 10");
 
-        openLinkParameterTest();;
+        openLinkParameterTest();
+        ;
         clickAndWait("link=Event Link With Parameters");
         assertText("css=li.param1", "param1: value1");
         assertText("css=li.param2", "param2: 10");
@@ -814,7 +815,10 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     {
         openLinks("Render Phase Method Exception Demo");
 
-        assertTextPresent("Render queue error in BeginRender[RenderPhaseMethodExceptionDemo]: java.sql.SQLException: Simulated JDBC exception while rendering.");
+        // Part of TAP5-1508 changed how the exceptiopn gets reported.
+        assertTextPresent("Render queue error in BeginRender[RenderPhaseMethodExceptionDemo]: Simulated JDBC exception while rendering.",
+                "java.sql.SQLException");
+
     }
 
     /**
@@ -919,7 +923,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
     /**
      * TAPESTRY-2078
-     * <p>
+     * <p/>
      * Update 4/29/11: Not sure this is necessary as exceptions seem to be reported properly without the old heroics.
      */
     @Test
@@ -1236,21 +1240,21 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
     /**
      * asserts that the "echo value" mixins are properly functioning (ie
-     * 
+     *
      * @BindParameter, and mixin ordering).
-     *                 each integer value specifies the echo mixin number (echovalue => 1,
-     *                 echovalue2 => 2, echovalue3 => 3; 0 is the original value)
-     *                 from which the specified echo mixin is expected to "receive" its value.
-     *                 So if echo1From is 2, then the "original value"
-     *                 printed by echo1 is expected to be the value set by echo2. If a given
-     *                 "from" is < 0, checking the corresponding mixin values is disabled.
+     * each integer value specifies the echo mixin number (echovalue => 1,
+     * echovalue2 => 2, echovalue3 => 3; 0 is the original value)
+     * from which the specified echo mixin is expected to "receive" its value.
+     * So if echo1From is 2, then the "original value"
+     * printed by echo1 is expected to be the value set by echo2. If a given
+     * "from" is < 0, checking the corresponding mixin values is disabled.
      */
 
     private void assertEchoMixins(String fieldName, String originalValue, int echo1From, int echo2From, int echo3From,
-            int fieldFrom, boolean isField)
+                                  int fieldFrom, boolean isField)
     {
         String[] vals =
-        { originalValue, "temporaryvaluefromechovaluemixin", "3", "world" };
+                {originalValue, "temporaryvaluefromechovaluemixin", "3", "world"};
         String before = fieldName + "_before";
         String after = fieldName + "_after";
         if (echo1From > -1)
@@ -1458,7 +1462,9 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertText("//h1", "Tapestry Integration Test Application");
     }
 
-    /** TAP5-815 */
+    /**
+     * TAP5-815
+     */
     @Test
     public void test_asset_protection()
     {
@@ -1487,7 +1493,9 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertTextPresent("This file should be available to clients.");
     }
 
-    /** TAP5-964 */
+    /**
+     * TAP5-964
+     */
     @Test
     public void failure_inside_default_object_renderer()
     {
@@ -1498,7 +1506,9 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
                 "Exception rendering description for object of type org.apache.tapestry5.integration.app1.data.NullToString: (java.lang.NullPointerException) NPE from NullToString");
     }
 
-    /** TAP5-966 */
+    /**
+     * TAP5-966
+     */
 
     @Test
     public void module_loading()
@@ -1508,7 +1518,9 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertText("message", "TestOnly service message");
     }
 
-    /** TAP5-948 */
+    /**
+     * TAP5-948
+     */
     @Test
     public void page_reset_annotation()
     {
@@ -1534,7 +1546,9 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertText("current", "0");
     }
 
-    /** TAP5-948 */
+    /**
+     * TAP5-948
+     */
     @Test
     public void page_reset_annotation_on_bad_method()
     {
@@ -1545,7 +1559,9 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
                 "is invalid: methods with the @PageReset annotation must return void, and have no parameters.");
     }
 
-    /** TAP5-1056 */
+    /**
+     * TAP5-1056
+     */
     @Test
     public void injection_of_application_message_catalog_into_service()
     {
@@ -1554,7 +1570,9 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertText("status", "Application Catalog Working");
     }
 
-    /** TAP5-1121 */
+    /**
+     * TAP5-1121
+     */
     @Test
     public void discard_after()
     {
@@ -1587,7 +1605,9 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertTextPresent("Value is: 'barney quux'");
     }
 
-    /** TAP5-1080 */
+    /**
+     * TAP5-1080
+     */
     @Test
     public void context_lost_on_secure_page_redirect()
     {
@@ -1596,7 +1616,9 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertText("context", "mycontext");
     }
 
-    /** TAP5-424 */
+    /**
+     * TAP5-424
+     */
     @Test
     public void multiple_resources_contributed_to_global_message_catalog()
     {
@@ -1606,7 +1628,9 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertText("id=override", "[app]");
     }
 
-    /** TAP5-1254 */
+    /**
+     * TAP5-1254
+     */
     @Test
     public void decorate_page_render_link()
     {
@@ -1617,7 +1641,9 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertTextPresent("Page Render Link Decorated: true");
     }
 
-    /** TAP5-1254 */
+    /**
+     * TAP5-1254
+     */
     @Test
     public void decorate_component_event_link()
     {
