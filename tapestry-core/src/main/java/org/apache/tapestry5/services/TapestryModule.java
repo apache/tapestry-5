@@ -492,13 +492,13 @@ public final class TapestryModule
 
     /**
      * Adds a number of standard component class transform workers:
-     * <ul>
+     * <dl>
      * <dt>Parameter</dt>
      * <dd>Identifies parameters based on the {@link org.apache.tapestry5.annotations.Parameter} annotation</dd>
      * <dt>BindParameter</dt>
      * <dd>Support for the {@link BindParameter} annotation</dd>
      * <dt>Property</dt>
-     * <dd>Generates accessor methods if {@link org.apache.tapestry5.annotations.Property} annotation is present</dd> *
+     * <dd>Generates accessor methods if {@link org.apache.tapestry5.annotations.Property} annotation is present</dd>
      * <dt>Import</dt>
      * <dd>Supports the {@link Import} annotation</dd>
      * <dt>UnclaimedField</dt>
@@ -509,7 +509,9 @@ public final class TapestryModule
      * <dd>Ensures all components also implement {@link org.apache.tapestry5.runtime.RenderCommand}</dd>
      * <dt>SupportsInformalParameters</dt>
      * <dd>Checks for the annotation</dd>
-     * </ul>
+     * <dt>RenderPhase</dt>
+     * <dd>Link in render phaes methods</dd>
+     * </dl>
      */
     @Contribute(ComponentClassTransformWorker2.class)
     public static void provideTransformWorkers(
@@ -546,6 +548,8 @@ public final class TapestryModule
 
         configuration.add("SupportsInformalParameters", new SupportsInformalParametersWorker());
 
+        configuration.addInstance("RenderPhase", RenderPhaseMethodWorker.class);
+
         // This one is always last. Any additional private fields that aren't
         // annotated will
         // be converted to clear out at the end of the request.
@@ -579,8 +583,6 @@ public final class TapestryModule
      * <dd>Checks for meta data annotations and adds it to the component model</dd>
      * <dt>ApplicationState</dt>
      * <dd>Converts fields that reference application state objects
-     * <dt>RenderPhase</dt>
-     * <dd>Link in render phaes methods</dd>
      * <dt>Cached</dt>
      * <dd>Checks for the {@link org.apache.tapestry5.annotations.Cached} annotation</dd>
      * <dt>Log</dt>
@@ -612,8 +614,6 @@ public final class TapestryModule
         configuration.add("MixinAfter", new MixinAfterWorker());
         configuration
                 .addInstance("ActivationRequestParameter", ActivationRequestParameterWorker.class, "after:OnEvent");
-
-        configuration.addInstance("RenderPhase", RenderPhaseMethodWorker.class);
 
         // Ideally, these should be ordered pretty late in the process to make
         // sure there are no
