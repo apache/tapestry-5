@@ -12,8 +12,13 @@ class MethodAdviceTests extends AbstractPlasticSpecification {
         setup:
 
         def didInvoke = false
+        def methodId;
 
         def mgr = createMgr( { PlasticClass pc ->
+
+            def method = findMethod(pc, "aSingleMethod")
+
+            methodId = method.methodIdentifier
 
             findMethod(pc, "aSingleMethod").addAdvice ({
                 didInvoke = true
@@ -38,6 +43,8 @@ class MethodAdviceTests extends AbstractPlasticSpecification {
         then:
 
         didInvoke == false
+
+        methodId == "testsubjects.SingleMethod.aSingleMethod(int)"
 
         when:
 

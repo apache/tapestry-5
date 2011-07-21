@@ -183,6 +183,13 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             return parentMethodBundle.isImplemented(node.name, node.desc);
         }
 
+        public String getMethodIdentifier()
+        {
+            return String.format("%s.%s",
+                    className,
+                    description.toShortString());
+        }
+
         public MethodHandle getHandle()
         {
             check();

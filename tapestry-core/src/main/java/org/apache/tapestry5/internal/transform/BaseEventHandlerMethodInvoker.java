@@ -42,8 +42,7 @@ public class BaseEventHandlerMethodInvoker implements EventHandlerMethodInvoker
         this.componentId = componentId;
 
         handle = method.getHandle();
-        identifier = String.format("%s.%s", method.getPlasticClass().getClassName(), method.getDescription()
-                .toShortString());
+        identifier = method.getMethodIdentifier();
     }
 
     public void invokeEventHandlerMethod(ComponentEvent event, Object instance)

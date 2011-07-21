@@ -122,9 +122,7 @@ public class RenderPhaseMethodWorker implements ComponentClassTransformWorker2
                 // First, tell the Event object what method is being invoked.
 
                 builder.loadArgument(1);
-                builder.loadConstant(
-                        String.format("%s.%s", plasticClass.getClassName(),
-                                method.getDescription().toShortString()));
+                builder.loadConstant( method.getMethodIdentifier());
                 builder.invoke(Event.class, void.class, "setMethodDescription", String.class);
 
                 builder.loadThis();
