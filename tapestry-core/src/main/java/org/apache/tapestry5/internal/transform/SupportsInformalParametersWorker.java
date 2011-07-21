@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,20 +16,21 @@ package org.apache.tapestry5.internal.transform;
 
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 
 /**
  * Checks for the {@link SupportsInformalParameters} annotation, settting the corresponding flag on the model if
  * present.
  */
-public class SupportsInformalParametersWorker implements ComponentClassTransformWorker
+public class SupportsInformalParametersWorker implements ComponentClassTransformWorker2
 {
-
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-        if (transformation.getAnnotation(SupportsInformalParameters.class) != null)
+        if (plasticClass.hasAnnotation(SupportsInformalParameters.class))
+        {
             model.enableSupportsInformalParameters();
+        }
     }
-
 }

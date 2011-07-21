@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,25 +17,31 @@ package org.apache.tapestry5.internal.transform;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.plastic.PlasticClass;
 import org.testng.annotations.Test;
 
 public class SupportsInformalParametersWorkerTest extends InternalBaseTestCase
 {
 
+    private PlasticClass mockPlasticClass()
+    {
+        return newMock(PlasticClass.class);
+    }
+
     @Test
     public void annotation_present()
     {
-        ClassTransformation ct = mockClassTransformation();
-        MutableComponentModel model = mockMutableComponentModel();
-        SupportsInformalParameters annotation = newMock(SupportsInformalParameters.class);
+        PlasticClass plasticClass = mockPlasticClass();
 
-        train_getAnnotation(ct, SupportsInformalParameters.class, annotation);
+        MutableComponentModel model = mockMutableComponentModel();
+
+        expect(plasticClass.hasAnnotation(SupportsInformalParameters.class)).andReturn(true);
+
         model.enableSupportsInformalParameters();
 
         replay();
 
-        new SupportsInformalParametersWorker().transform(ct, model);
+        new SupportsInformalParametersWorker().transform(plasticClass, null, model);
 
         verify();
     }
@@ -43,14 +49,15 @@ public class SupportsInformalParametersWorkerTest extends InternalBaseTestCase
     @Test
     public void annotation_missing()
     {
-        ClassTransformation ct = mockClassTransformation();
+        PlasticClass plasticClass = mockPlasticClass();
+
         MutableComponentModel model = mockMutableComponentModel();
 
-        train_getAnnotation(ct, SupportsInformalParameters.class, null);
+        expect(plasticClass.hasAnnotation(SupportsInformalParameters.class)).andReturn(false);
 
         replay();
 
-        new SupportsInformalParametersWorker().transform(ct, model);
+        new SupportsInformalParametersWorker().transform(plasticClass, null, model);
 
         verify();
 

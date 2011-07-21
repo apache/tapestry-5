@@ -507,6 +507,8 @@ public final class TapestryModule
      * <dd>Handle the @OnEvent annotation, and related naming convention</dd>
      * <dt>RenderCommand</dt>
      * <dd>Ensures all components also implement {@link org.apache.tapestry5.runtime.RenderCommand}</dd>
+     * <dt>SupportsInformalParameters</dt>
+     * <dd>Checks for the annotation</dd>
      * </ul>
      */
     @Contribute(ComponentClassTransformWorker2.class)
@@ -542,6 +544,8 @@ public final class TapestryModule
 
         configuration.addInstance("BindParameter", BindParameterWorker.class, "after:Parameter");
 
+        configuration.add("SupportsInformalParameters", new SupportsInformalParametersWorker());
+
         // This one is always last. Any additional private fields that aren't
         // annotated will
         // be converted to clear out at the end of the request.
@@ -571,8 +575,6 @@ public final class TapestryModule
      * annotation</dd>
      * <dt>InjectBlock</dt>
      * <dd>Allows a block from the template to be injected into a field</dd>
-     * <dt>SupportsInformalParameters</dt>
-     * <dd>Checks for the annotation</dd>
      * <dt>Meta</dt>
      * <dd>Checks for meta data annotations and adds it to the component model</dd>
      * <dt>ApplicationState</dt>
@@ -613,7 +615,6 @@ public final class TapestryModule
         configuration.add("MixinAfter", new MixinAfterWorker());
         configuration
                 .addInstance("ActivationRequestParameter", ActivationRequestParameterWorker.class, "after:OnEvent");
-        configuration.add("SupportsInformalParameters", new SupportsInformalParametersWorker());
 
         configuration.addInstance("RenderPhase", RenderPhaseMethodWorker.class);
 
