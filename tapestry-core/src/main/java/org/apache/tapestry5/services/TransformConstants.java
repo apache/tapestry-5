@@ -137,53 +137,123 @@ public final class TransformConstants
      * Signature for {@link org.apache.tapestry5.runtime.Component#beginRender(MarkupWriter, Event)}.
      *
      * @see org.apache.tapestry5.annotations.BeginRender
+     * @deprecated Deprecated in Tapestry 5.3, use {@link #BEGIN_RENDER_DESCRIPTION}
      */
     public static final TransformMethodSignature BEGIN_RENDER_SIGNATURE = renderPhaseSignature("beginRender");
+
+    /**
+     * Description for {@link org.apache.tapestry5.runtime.Component#beginRender(MarkupWriter, Event)}.
+     *
+     * @see org.apache.tapestry5.annotations.BeginRender
+     * @since 5.3
+     */
+    public static final MethodDescription BEGIN_RENDER_DESCRIPTION = renderPhaseDescription("beginRender");
 
     /**
      * Signature for {@link org.apache.tapestry5.runtime.Component#beforeRenderTemplate(MarkupWriter, Event)}.
      *
      * @see org.apache.tapestry5.annotations.BeforeRenderTemplate
+     * @deprecated Deprecated in Tapestry 5.3, use {@link #BEFORE_RENDER_TEMPLATE_DESCRIPTION}
      */
     public static final TransformMethodSignature BEFORE_RENDER_TEMPLATE_SIGNATURE = renderPhaseSignature("beforeRenderTemplate");
+
+    /**
+     * Description for {@link org.apache.tapestry5.runtime.Component#beforeRenderTemplate(MarkupWriter, Event)}.
+     *
+     * @see org.apache.tapestry5.annotations.BeforeRenderTemplate
+     * @since 5.3
+     */
+    public static final MethodDescription BEFORE_RENDER_TEMPLATE_DESCRIPTION = renderPhaseDescription("beforeRenderTemplate");
 
     /**
      * Signature for {@link org.apache.tapestry5.runtime.Component#afterRenderTemplate(MarkupWriter, Event)}.
      *
      * @see org.apache.tapestry5.annotations.BeforeRenderTemplate
+     * @deprecated Deprecated in Tapestry 5.3, use {@link #AFTER_RENDER_TEMPLATE_DESCRIPTION}
      */
     public static final TransformMethodSignature AFTER_RENDER_TEMPLATE_SIGNATURE = renderPhaseSignature("afterRenderTemplate");
+
+    /**
+     * Description for {@link org.apache.tapestry5.runtime.Component#afterRenderTemplate(MarkupWriter, Event)}.
+     *
+     * @see org.apache.tapestry5.annotations.BeforeRenderTemplate
+     * @since 5.3
+     */
+    public static final MethodDescription AFTER_RENDER_TEMPLATE_DESCRIPTION = renderPhaseDescription("afterRenderTemplate");
 
     /**
      * Signature for {@link org.apache.tapestry5.runtime.Component#beforeRenderBody(MarkupWriter, Event)}.
      *
      * @see org.apache.tapestry5.annotations.BeforeRenderBody
+     * @deprecated Deprecated in Tapestry 5.3, use {@link #BEFORE_RENDER_BODY_DESCRIPTION}
      */
     public static final TransformMethodSignature BEFORE_RENDER_BODY_SIGNATURE = renderPhaseSignature("beforeRenderBody");
+
+    /**
+     * Description for {@link org.apache.tapestry5.runtime.Component#beforeRenderBody(MarkupWriter, Event)}.
+     *
+     * @see org.apache.tapestry5.annotations.BeforeRenderBody
+     * @since 5.3
+     */
+    public static final MethodDescription BEFORE_RENDER_BODY_DESCRIPTION = renderPhaseDescription("beforeRenderBody");
 
     /**
      * Signature for {@link org.apache.tapestry5.runtime.Component#afterRenderBody(MarkupWriter, Event)}.
      *
      * @see org.apache.tapestry5.annotations.AfterRenderBody
+     * @deprecated Deprecated in Tapestry 5.3, use {@link #AFTER_RENDER_BODY_DESCRIPTION}
      */
     public static final TransformMethodSignature AFTER_RENDER_BODY_SIGNATURE = renderPhaseSignature("afterRenderBody");
+
+
+    /**
+     * Description for {@link org.apache.tapestry5.runtime.Component#afterRenderBody(MarkupWriter, Event)}.
+     *
+     * @see org.apache.tapestry5.annotations.AfterRenderBody
+     * @since 5.3
+     */
+    public static final MethodDescription AFTER_RENDER_BODY_DESCRIPTION = renderPhaseDescription("afterRenderBody");
 
     /**
      * Signature for {@link org.apache.tapestry5.runtime.Component#afterRender(MarkupWriter, Event)}
      *
      * @see org.apache.tapestry5.annotations.AfterRender
+     * @deprecated Deprecated in Tapestry 5.3, use {@link #AFTER_RENDER_DESCRIPTION}
      */
     public static final TransformMethodSignature AFTER_RENDER_SIGNATURE = renderPhaseSignature("afterRender");
+
+    /**
+     * Description for {@link org.apache.tapestry5.runtime.Component#afterRender(MarkupWriter, Event)}
+     *
+     * @see org.apache.tapestry5.annotations.AfterRender
+     * @since 5.3
+     */
+    public static final MethodDescription AFTER_RENDER_DESCRIPTION = renderPhaseDescription("afterRender");
 
     /**
      * Signature for {@link org.apache.tapestry5.runtime.Component#cleanupRender(MarkupWriter, Event)}.
      *
      * @see org.apache.tapestry5.annotations.CleanupRender
+     * @deprecated Deprecated in Tapestry 5.3, use {@link #CLEANUP_RENDER_DESCRIPTION}
      */
     public static final TransformMethodSignature CLEANUP_RENDER_SIGNATURE = renderPhaseSignature("cleanupRender");
+
+    /**
+     * Description for {@link org.apache.tapestry5.runtime.Component#cleanupRender(MarkupWriter, Event)}.
+     *
+     * @see org.apache.tapestry5.annotations.CleanupRender
+     * @since 5.3
+     */
+    public static final MethodDescription CLEANUP_RENDER_DESCRIPTION = renderPhaseDescription("cleanupRender");
 
     private static TransformMethodSignature renderPhaseSignature(String name)
     {
         return new TransformMethodSignature(Modifier.PUBLIC, "void", name, RENDER_PHASE_METHOD_PARAMETERS, null);
     }
+
+    private static MethodDescription renderPhaseDescription(String name)
+    {
+        return new MethodDescription(Modifier.PUBLIC, "void", name, RENDER_PHASE_METHOD_PARAMETERS, null, null);
+    }
+
 }
