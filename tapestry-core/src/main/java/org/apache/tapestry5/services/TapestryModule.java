@@ -519,7 +519,6 @@ public final class TapestryModule
             ComponentClassResolver resolver)
     {
         configuration.add("Property", new PropertyWorker());
-        configuration.addInstance("Import", ImportWorker.class, "after:SetupRender");
 
         configuration.add("RenderCommand", new RenderCommandWorker());
 
@@ -537,18 +536,21 @@ public final class TapestryModule
         configuration.addInstance("InjectContainer", InjectContainerWorker.class);
 
         // Default values for parameters are often some form of injection, so
-        // make sure
-        // that Parameter fields are processed after injections.
+        // make sure that Parameter fields are processed after injections.
 
-        configuration.addInstance("Parameter", ParameterWorker.class, "after:Inject*");
+        configuration.addInstance("Parameter", ParameterWorker.class);
+
         // bind parameter should always go after parameter to make sure all
         // parameters have been properly setup.
-
-        configuration.addInstance("BindParameter", BindParameterWorker.class, "after:Parameter");
+        configuration.addInstance("BindParameter", BindParameterWorker.class);
 
         configuration.add("SupportsInformalParameters", new SupportsInformalParametersWorker());
 
         configuration.addInstance("RenderPhase", RenderPhaseMethodWorker.class);
+
+        // Import advises methods, usually render phase methods, so it must come after RenderPhase.
+
+        configuration.addInstance("Import", ImportWorker.class);
 
         // This one is always last. Any additional private fields that aren't
         // annotated will
