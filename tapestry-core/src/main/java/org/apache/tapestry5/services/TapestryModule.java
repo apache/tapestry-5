@@ -581,9 +581,6 @@ public final class TapestryModule
      * <dd>Converts fields that reference application state objects
      * <dt>RenderPhase</dt>
      * <dd>Link in render phaes methods</dd>
-     * <dt>InvokePostRenderCleanupOnResources</dt>
-     * <dd>Makes sure {@link org.apache.tapestry5.internal.InternalComponentResources#postRenderCleanup()} is invoked
-     * after a component finishes rendering</dd>
      * <dt>Cached</dt>
      * <dd>Checks for the {@link org.apache.tapestry5.annotations.Cached} annotation</dd>
      * <dt>Log</dt>
@@ -631,9 +628,6 @@ public final class TapestryModule
         configuration.addInstance("Persist", PersistWorker.class);
 
         configuration.addInstance("DiscardAfter", DiscardAfterWorker.class);
-
-        configuration.add("InvokePostRenderCleanupOnResources", new InvokePostRenderCleanupOnResourcesWorker());
-
 
         configuration.addInstance("Log", LogWorker.class);
 

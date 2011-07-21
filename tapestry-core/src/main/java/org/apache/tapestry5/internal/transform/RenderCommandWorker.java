@@ -23,12 +23,14 @@ import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.plastic.PlasticUtils;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
+import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
 
 /**
  * Ensures that all components implement {@link RenderCommand} by delegating to
  * {@link InternalComponentResources#render(org.apache.tapestry5.MarkupWriter, org.apache.tapestry5.runtime.RenderQueue)}.
+ * This is also responsible for invoking {@link org.apache.tapestry5.internal.InternalComponentResources#postRenderCleanup()}
  */
 public class RenderCommandWorker implements ComponentClassTransformWorker2
 {
@@ -49,5 +51,7 @@ public class RenderCommandWorker implements ComponentClassTransformWorker2
         PlasticField resourcesField = plasticClass.introduceField(InternalComponentResources.class, "resources").injectFromInstanceContext();
 
         plasticClass.introduceMethod(RENDER_DESCRIPTION).delegateTo(resourcesField);
+
+        plasticClass.introduceMethod(TransformConstants.POST_RENDER_CLEANUP_DESCRIPTION).delegateTo(resourcesField);
     }
 }
