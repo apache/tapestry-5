@@ -1,4 +1,4 @@
-// Copyright 2008, 2010 The Apache Software Foundation
+// Copyright 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import java.lang.reflect.Modifier;
-import java.util.List;
-
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ComponentResources;
@@ -25,14 +22,19 @@ import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.runtime.Component;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.plastic.*;
+import org.apache.tapestry5.services.BindingSource;
+import org.apache.tapestry5.services.TransformConstants;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
+
+import java.util.List;
 
 /**
  * Caches method return values for methods annotated with {@link Cached}.
  */
 @SuppressWarnings("all")
-public class CachedWorker implements ComponentClassTransformWorker
+public class CachedWorker implements ComponentClassTransformWorker2
 {
     private final BindingSource bindingSource;
 
@@ -40,13 +42,10 @@ public class CachedWorker implements ComponentClassTransformWorker
 
     interface MethodResultCacheFactory
     {
-        MethodResultCache create(Component instance);
+        MethodResultCache create(Object instance);
     }
 
-    /**
-     * Handles the watching of a binding (usually a property or property expression), invalidating the
-     * cache early if the watched binding's value changes.
-     */
+
     private class SimpleMethodResultCache implements MethodResultCache
     {
         private boolean cached;
@@ -75,6 +74,21 @@ public class CachedWorker implements ComponentClassTransformWorker
         }
     }
 
+    /**
+     * When there is no watch, all cached methods look the same.
+     */
+    private final MethodResultCacheFactory nonWatchFactory = new MethodResultCacheFactory()
+    {
+        public MethodResultCache create(Object instance)
+        {
+            return new SimpleMethodResultCache();
+        }
+    };
+
+    /**
+     * Handles the watching of a binding (usually a property or property expression), invalidating the
+     * cache early if the watched binding's value changes.
+     */
     private class WatchedBindingMethodResultCache extends SimpleMethodResultCache
     {
         private final Binding binding;
@@ -108,65 +122,63 @@ public class CachedWorker implements ComponentClassTransformWorker
         this.perThreadManager = perthreadManager;
     }
 
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
-    {
-        List<TransformMethod> methods = transformation.matchMethodsWithAnnotation(Cached.class);
 
-        for (TransformMethod method : methods)
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
+    {
+        List<PlasticMethod> methods = plasticClass.getMethodsWithAnnotation(Cached.class);
+
+        for (PlasticMethod method : methods)
         {
             validateMethod(method);
 
-            adviseMethod(transformation, method);
+            adviseMethod(plasticClass, method);
         }
     }
 
-    private void adviseMethod(ClassTransformation transformation, TransformMethod method)
+    private void adviseMethod(PlasticClass plasticClass, PlasticMethod method)
     {
         // The key needs to reflect not just the method name, but also the containing
         // page and component (otherwise, there would be unwanted sharing of cache
         // between different instances of the same component within or across pages). This
         // name can't be calculated until page instantiation time.
 
-        FieldAccess fieldAccess = createPerThreadValueField(transformation, method);
+        PlasticField cacheField =
+                plasticClass.introduceField(PerThreadValue.class, "cache$" + method.getDescription().methodName);
 
-        Cached annotation = method.getAnnotation(Cached.class);
-
-        MethodResultCacheFactory factory = createFactory(transformation, annotation.watch(), method);
-
-        ComponentMethodAdvice advice = createAdvice(fieldAccess, factory);
-
-        method.addAdvice(advice);
-    }
-
-    private FieldAccess createPerThreadValueField(ClassTransformation transformation, TransformMethod method)
-    {
-        TransformField field = transformation.createField(Modifier.PROTECTED, PerThreadValue.class.getName(),
-                "perThreadMethodCache$" + method.getName());
-
-        // Each instance of the component will get a new PerThreadValue.
-        field.injectIndirect(new ComponentValueProvider<PerThreadValue<MethodResultCache>>()
+        cacheField.injectComputed(new ComputedValue<PerThreadValue>()
         {
-            public PerThreadValue<MethodResultCache> get(ComponentResources resources)
+            public PerThreadValue get(InstanceContext context)
             {
+                // Each instance will get a new PerThreadValue
                 return perThreadManager.createValue();
             }
         });
 
-        return field.getAccess();
+        Cached annotation = method.getAnnotation(Cached.class);
+
+
+        MethodResultCacheFactory factory = createFactory(plasticClass, annotation.watch(), method);
+
+        MethodAdvice advice = createAdvice(cacheField, factory);
+
+        method.addAdvice(advice);
     }
 
-    private ComponentMethodAdvice createAdvice(final FieldAccess perThreadValueAccess,
-            final MethodResultCacheFactory factory)
+
+    private MethodAdvice createAdvice(PlasticField cacheField,
+                                      final MethodResultCacheFactory factory)
     {
-        return new ComponentMethodAdvice()
+        final FieldHandle fieldHandle = cacheField.getHandle();
+
+        return new MethodAdvice()
         {
-            public void advise(ComponentMethodInvocation invocation)
+            public void advise(MethodInvocation invocation)
             {
                 MethodResultCache cache = getOrCreateCache(invocation);
 
                 if (cache.isCached())
                 {
-                    invocation.overrideResult(cache.get());
+                    invocation.setReturnValue(cache.get());
                     return;
                 }
 
@@ -174,78 +186,87 @@ public class CachedWorker implements ComponentClassTransformWorker
 
                 invocation.rethrow();
 
-                cache.set(invocation.getResult());
+                cache.set(invocation.getReturnValue());
             }
 
-            private MethodResultCache getOrCreateCache(ComponentMethodInvocation invocation)
+            private MethodResultCache getOrCreateCache(MethodInvocation invocation)
             {
-                Component instance = invocation.getInstance();
+                Object instance = invocation.getInstance();
 
-                PerThreadValue<MethodResultCache> value = (PerThreadValue<MethodResultCache>) perThreadValueAccess
-                        .read(instance);
+                // The PerThreadValue is created in the instance constructor.
 
+                PerThreadValue<MethodResultCache> value = (PerThreadValue<MethodResultCache>) fieldHandle
+                        .get(instance);
+
+                // But it will be empty when first created, or at the start of a new request.
                 if (value.exists())
+                {
                     return value.get();
+                }
+
+                // Use the factory to create a MethodResultCache for the combination of instance, method, and thread.
 
                 return value.set(factory.create(instance));
             }
         };
     }
 
-    private MethodResultCacheFactory createFactory(ClassTransformation transformation, final String watch,
-            TransformMethod method)
+
+    private MethodResultCacheFactory createFactory(PlasticClass plasticClass, final String watch,
+                                                   PlasticMethod method)
     {
+        // When there's no watch, a shared factory that just returns a new SimpleMethodResultCache
+        // will suffice.
         if (watch.equals(""))
-            return new MethodResultCacheFactory()
-            {
-                public MethodResultCache create(Component instance)
-                {
-                    return new SimpleMethodResultCache();
-                }
-            };
+        {
+            return nonWatchFactory;
+        }
+
+        // Because of the watch, its necessary to create a factory for instances of this component and method.
+
+        final FieldHandle bindingFieldHandle = plasticClass.introduceField(Binding.class, "cache$watchBinding$" + method.getDescription().methodName).getHandle();
+
 
         // Each component instance will get its own Binding instance. That handles both different locales,
-        // and reuse of a component (with a cached method) within a page or across pages.
+        // and reuse of a component (with a cached method) within a page or across pages. However, the binding can't be initialized
+        // until the page loads.
 
-        TransformField bindingField = transformation.createField(Modifier.PROTECTED, Binding.class.getName(),
-                "cache$watchBinding$" + method.getName());
 
-        final FieldAccess bindingAccess = bindingField.getAccess();
+        plasticClass.introduceMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_DESCRIPTION).addAdvice(new MethodAdvice()
+        {
+            public void advise(MethodInvocation invocation)
+            {
+                ComponentResources resources = invocation.getInstanceContext().get(ComponentResources.class);
 
-        transformation.getOrCreateMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE).addAdvice(
-                new ComponentMethodAdvice()
-                {
-                    public void advise(ComponentMethodInvocation invocation)
-                    {
-                        Binding binding = bindingSource.newBinding("@Cached watch", invocation.getComponentResources(),
-                                BindingConstants.PROP, watch);
+                Binding binding = bindingSource.newBinding("@Cached watch", resources,
+                        BindingConstants.PROP, watch);
 
-                        bindingAccess.write(invocation.getInstance(), binding);
+                bindingFieldHandle.set(invocation.getInstance(), binding);
 
-                        invocation.proceed();
-                    }
-                });
+                invocation.proceed();
+            }
+        });
 
         return new MethodResultCacheFactory()
         {
-            public MethodResultCache create(Component instance)
+            public MethodResultCache create(Object instance)
             {
-                Binding binding = (Binding) bindingAccess.read(instance);
+                Binding binding = (Binding) bindingFieldHandle.get(instance);
 
                 return new WatchedBindingMethodResultCache(binding);
             }
         };
     }
 
-    private void validateMethod(TransformMethod method)
+    private void validateMethod(PlasticMethod method)
     {
-        TransformMethodSignature signature = method.getSignature();
+        MethodDescription description = method.getDescription();
 
-        if (signature.getReturnType().equals("void"))
+        if (description.returnType.equals("void"))
             throw new IllegalArgumentException(String.format(
                     "Method %s may not be used with @Cached because it returns void.", method.getMethodIdentifier()));
 
-        if (signature.getParameterTypes().length != 0)
+        if (description.argumentTypes.length != 0)
             throw new IllegalArgumentException(String.format(
                     "Method %s may not be used with @Cached because it has parameters.", method.getMethodIdentifier()));
     }

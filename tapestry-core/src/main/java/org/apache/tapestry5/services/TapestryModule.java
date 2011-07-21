@@ -515,6 +515,8 @@ public final class TapestryModule
      * <dd>Allows fields to retain their values between requests</dd>
      * <dt>Meta</dt>
      * <dd>Checks for meta data annotations and adds it to the component model</dd>
+     * <dt>Cached</dt>
+     * <dd>Checks for the {@link org.apache.tapestry5.annotations.Cached} annotation</dd>
      * </dl>
      */
     @Contribute(ComponentClassTransformWorker2.class)
@@ -563,6 +565,8 @@ public final class TapestryModule
         configuration.add("Retain", new RetainWorker());
 
 
+        configuration.addInstance("Cached", CachedWorker.class);
+
         // This one is always last. Any additional private fields that aren't
         // annotated will
         // be converted to clear out at the end of the request.
@@ -592,8 +596,6 @@ public final class TapestryModule
      * <dd>Allows a block from the template to be injected into a field</dd>
      * <dt>ApplicationState</dt>
      * <dd>Converts fields that reference application state objects
-     * <dt>Cached</dt>
-     * <dd>Checks for the {@link org.apache.tapestry5.annotations.Cached} annotation</dd>
      * <dt>Log</dt>
      * <dd>Checks for the {@link org.apache.tapestry5.annotations.Log} annotation</dd>
      * <dt>PageReset
@@ -609,7 +611,6 @@ public final class TapestryModule
     public static void provideOldStyleClassTransformWorkers(
             OrderedConfiguration<ComponentClassTransformWorker> configuration)
     {
-        configuration.addInstance("Cached", CachedWorker.class);
 
 
         configuration.addInstance("Inject", InjectWorker.class);
