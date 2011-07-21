@@ -24,13 +24,11 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.*;
 import org.apache.tapestry5.runtime.Event;
-import org.apache.tapestry5.services.*;
-import org.apache.tapestry5.services.MethodInvocationResult;
+import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
 
 import java.lang.annotation.Annotation;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -45,78 +43,6 @@ import java.util.Set;
 @SuppressWarnings("all")
 public class RenderPhaseMethodWorker implements ComponentClassTransformWorker2
 {
-    private final class RenderPhaseMethodAdvice implements ComponentMethodAdvice
-    {
-        private final boolean reverse;
-
-        private final List<Invoker> invokers;
-
-        private RenderPhaseMethodAdvice(boolean reverse, List<Invoker> invokers)
-        {
-            this.reverse = reverse;
-            this.invokers = invokers;
-        }
-
-        public void advise(ComponentMethodInvocation invocation)
-        {
-            if (!reverse)
-                invocation.proceed();
-
-            // All render phase methods take the same two parameters (writer and event)
-
-            Event event = (Event) invocation.getParameter(1);
-
-            if (event.isAborted())
-                return;
-
-            Object instance = invocation.getInstance();
-            MarkupWriter writer = (MarkupWriter) invocation.getParameter(0);
-
-            for (Invoker invoker : invokers)
-            {
-                invoker.invoke(instance, writer, event);
-
-                if (event.isAborted())
-                    return;
-            }
-
-            // Parent class implementation goes last.
-
-            if (reverse)
-                invocation.proceed();
-        }
-    }
-
-    private class Invoker
-    {
-        private final String methodIdentifier;
-
-        private final MethodAccess access;
-
-        Invoker(String methodIdentifier, MethodAccess access)
-        {
-            this.methodIdentifier = methodIdentifier;
-            this.access = access;
-        }
-
-        void invoke(Object instance, MarkupWriter writer, Event event)
-        {
-            event.setMethodDescription(methodIdentifier);
-
-            // As currently implemented, MethodAccess objects ignore excess parameters.
-
-            MethodInvocationResult result = access.invoke(instance, writer);
-
-            result.rethrow();
-
-            event.storeResult(result.getReturnValue());
-        }
-
-    }
-
-    private final Map<Class<? extends Annotation>, TransformMethodSignature> annotationToSignature = CollectionFactory
-            .newMap();
-
     private final Map<Class<? extends Annotation>, MethodDescription> annotationToDescription = CollectionFactory.newMap();
 
     private final Map<String, Class<? extends Annotation>> nameToAnnotation = CollectionFactory.newCaseInsensitiveMap();
@@ -124,18 +50,9 @@ public class RenderPhaseMethodWorker implements ComponentClassTransformWorker2
     private final Set<Class<? extends Annotation>> reverseAnnotations = CollectionFactory.newSet(AfterRenderBody.class,
             AfterRenderTemplate.class, AfterRender.class, CleanupRender.class);
 
-    private final Set<TransformMethodSignature> lifecycleMethods = CollectionFactory.newSet();
-    private final Set<MethodDescription> lifecycleMethods2 = CollectionFactory.newSet();
+    private final Set<MethodDescription> lifecycleMethods = CollectionFactory.newSet();
 
     {
-        annotationToSignature.put(SetupRender.class, TransformConstants.SETUP_RENDER_SIGNATURE);
-        annotationToSignature.put(BeginRender.class, TransformConstants.BEGIN_RENDER_SIGNATURE);
-        annotationToSignature.put(BeforeRenderTemplate.class, TransformConstants.BEFORE_RENDER_TEMPLATE_SIGNATURE);
-        annotationToSignature.put(BeforeRenderBody.class, TransformConstants.BEFORE_RENDER_BODY_SIGNATURE);
-        annotationToSignature.put(AfterRenderBody.class, TransformConstants.AFTER_RENDER_BODY_SIGNATURE);
-        annotationToSignature.put(AfterRenderTemplate.class, TransformConstants.AFTER_RENDER_TEMPLATE_SIGNATURE);
-        annotationToSignature.put(AfterRender.class, TransformConstants.AFTER_RENDER_SIGNATURE);
-        annotationToSignature.put(CleanupRender.class, TransformConstants.CLEANUP_RENDER_SIGNATURE);
 
         annotationToDescription.put(SetupRender.class, TransformConstants.SETUP_RENDER_DESCRIPTION);
         annotationToDescription.put(BeginRender.class, TransformConstants.BEGIN_RENDER_DESCRIPTION);
@@ -146,29 +63,22 @@ public class RenderPhaseMethodWorker implements ComponentClassTransformWorker2
         annotationToDescription.put(AfterRender.class, TransformConstants.AFTER_RENDER_DESCRIPTION);
         annotationToDescription.put(CleanupRender.class, TransformConstants.CLEANUP_RENDER_DESCRIPTION);
 
-
-        for (Entry<Class<? extends Annotation>, TransformMethodSignature> me : annotationToSignature.entrySet())
-        {
-            lifecycleMethods.add(me.getValue());
-        }
-
         for (Entry<Class<? extends Annotation>, MethodDescription> me : annotationToDescription.entrySet())
         {
             nameToAnnotation.put(me.getValue().methodName, me.getKey());
-            lifecycleMethods2.add(me.getValue());
+            lifecycleMethods.add(me.getValue());
         }
 
     }
 
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+
+    private InstructionBuilderCallback JUST_RETURN = new InstructionBuilderCallback()
     {
-        Map<Class, List<TransformMethod>> methods = mapRenderPhaseAnnotationToMethods(transformation);
-
-        for (Class renderPhaseAnnotation : methods.keySet())
+        public void doBuild(InstructionBuilder builder)
         {
-            mapMethodsToRenderPhase(transformation, model, renderPhaseAnnotation, methods.get(renderPhaseAnnotation));
+            builder.returnDefaultValue();
         }
-    }
+    };
 
     public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
@@ -180,28 +90,7 @@ public class RenderPhaseMethodWorker implements ComponentClassTransformWorker2
 
             model.addRenderPhase(renderPhaseAnnotation);
         }
-
     }
-
-    private void mapMethodsToRenderPhase(ClassTransformation transformation, MutableComponentModel model,
-                                         Class annotationType, List<TransformMethod> methods)
-    {
-        ComponentMethodAdvice renderPhaseAdvice = createAdviceForMethods(annotationType, methods);
-
-        TransformMethodSignature renderPhaseSignature = annotationToSignature.get(annotationType);
-
-        transformation.getOrCreateMethod(renderPhaseSignature).addAdvice(renderPhaseAdvice);
-
-        model.addRenderPhase(annotationType);
-    }
-
-    private InstructionBuilderCallback JUST_RETURN = new InstructionBuilderCallback()
-    {
-        public void doBuild(InstructionBuilder builder)
-        {
-            builder.returnDefaultValue();
-        }
-    };
 
     private void mapMethodsToRenderPhase(final PlasticClass plasticClass, final boolean isRoot, Class annotationType, List<PlasticMethod> methods)
     {
@@ -217,12 +106,15 @@ public class RenderPhaseMethodWorker implements ComponentClassTransformWorker2
                 reverse ? F.flow(methods).reverse()
                         : F.flow(methods);
 
+        // You'd think we'd need to catch non-RuntimeExceptions thrown by invoked methods ... turns out
+        // that the distinction between checked and non-checked exception is a concern only of the Java compiler,
+        // not the runtime or JVM. This did require a small change to ComponentPageElementImpl, to catch Exception (previously
+        // it caught RuntimeException).
         interfaceMethod.changeImplementation(new InstructionBuilderCallback()
         {
             private void addSuperCall(InstructionBuilder builder)
             {
                 builder.loadThis().loadArguments().invokeSpecial(plasticClass.getSuperClassName(), interfaceMethodDescription);
-
             }
 
             private void invokeMethod(InstructionBuilder builder, PlasticMethod method)
@@ -286,77 +178,6 @@ public class RenderPhaseMethodWorker implements ComponentClassTransformWorker2
     }
 
 
-    private ComponentMethodAdvice createAdviceForMethods(Class annotationType, List<TransformMethod> methods)
-    {
-        boolean reverse = reverseAnnotations.contains(annotationType);
-
-        List<Invoker> invokers = toInvokers(annotationType, methods, reverse);
-
-        return new RenderPhaseMethodAdvice(reverse, invokers);
-    }
-
-    private List<Invoker> toInvokers(Class annotationType, List<TransformMethod> methods, boolean reverse)
-    {
-        List<Invoker> result = CollectionFactory.newList();
-
-        for (TransformMethod method : methods)
-        {
-            MethodAccess methodAccess = toMethodAccess(method);
-
-            Invoker invoker = new Invoker(method.getMethodIdentifier(), methodAccess);
-
-            result.add(invoker);
-        }
-
-        if (reverse)
-            Collections.reverse(result);
-
-        return result;
-    }
-
-    private MethodAccess toMethodAccess(TransformMethod method)
-    {
-        validateAsRenderPhaseMethod(method);
-
-        return method.getAccess();
-    }
-
-    private void validateAsRenderPhaseMethod(TransformMethod method)
-    {
-        String[] parameterTypes = method.getSignature().getParameterTypes();
-
-        switch (parameterTypes.length)
-        {
-            case 0:
-                break;
-
-            case 1:
-                if (parameterTypes[0].equals(MarkupWriter.class.getName()))
-                    break;
-            default:
-                throw new RuntimeException(
-                        String
-                                .format(
-                                        "Method %s is not a valid render phase method: it should take no parameters, or take a single parameter of type MarkupWriter.",
-                                        method.getMethodIdentifier()));
-        }
-    }
-
-    private Map<Class, List<TransformMethod>> mapRenderPhaseAnnotationToMethods(final ClassTransformation transformation)
-    {
-        Map<Class, List<TransformMethod>> map = CollectionFactory.newMap();
-
-        List<TransformMethod> matches = matchAllMethodsNotOverriddenFromBaseClass(transformation);
-
-        for (TransformMethod method : matches)
-        {
-            addMethodToRenderPhaseCategoryMap(map, method);
-        }
-
-        return map;
-    }
-
-
     private Map<Class, List<PlasticMethod>> mapRenderPhaseAnnotationToMethods(PlasticClass plasticClass)
     {
         Map<Class, List<PlasticMethod>> map = CollectionFactory.newMap();
@@ -372,15 +193,6 @@ public class RenderPhaseMethodWorker implements ComponentClassTransformWorker2
     }
 
 
-    private void addMethodToRenderPhaseCategoryMap(Map<Class, List<TransformMethod>> map, TransformMethod method)
-    {
-        Class categorized = categorizeMethod(method);
-
-        if (categorized != null)
-            InternalUtils.addToMapList(map, categorized, method);
-    }
-
-
     private void addMethodToRenderPhaseCategoryMap(Map<Class, List<PlasticMethod>> map, PlasticMethod method)
     {
         Class categorized = categorizeMethod(method);
@@ -393,16 +205,6 @@ public class RenderPhaseMethodWorker implements ComponentClassTransformWorker2
         }
     }
 
-    private Class categorizeMethod(TransformMethod method)
-    {
-        for (Class annotationClass : annotationToSignature.keySet())
-        {
-            if (method.getAnnotation(annotationClass) != null)
-                return annotationClass;
-        }
-
-        return nameToAnnotation.get(method.getName());
-    }
 
     private Class categorizeMethod(PlasticMethod method)
     {
@@ -413,18 +215,6 @@ public class RenderPhaseMethodWorker implements ComponentClassTransformWorker2
         }
 
         return nameToAnnotation.get(method.getDescription().methodName);
-    }
-
-    private List<TransformMethod> matchAllMethodsNotOverriddenFromBaseClass(final ClassTransformation transformation)
-    {
-        return transformation.matchMethods(new Predicate<TransformMethod>()
-        {
-            public boolean accept(TransformMethod method)
-            {
-                return !method.isOverride() && !lifecycleMethods.contains(method.getSignature());
-            }
-        });
-
     }
 
     private void validateAsRenderPhaseMethod(PlasticMethod method)
@@ -454,9 +244,8 @@ public class RenderPhaseMethodWorker implements ComponentClassTransformWorker2
         {
             public boolean accept(PlasticMethod method)
             {
-                return !method.isOverride() && !lifecycleMethods2.contains(method.getDescription());
+                return !method.isOverride() && !lifecycleMethods.contains(method.getDescription());
             }
         });
     }
-
 }
