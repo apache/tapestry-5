@@ -18,34 +18,11 @@ import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.jpa.*;
 import org.apache.tapestry5.internal.services.PersistentFieldManager;
-import org.apache.tapestry5.ioc.Configuration;
-import org.apache.tapestry5.ioc.LoggerSource;
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.ObjectProvider;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.ScopeConstants;
-import org.apache.tapestry5.ioc.ServiceBinder;
-import org.apache.tapestry5.ioc.annotations.Contribute;
-import org.apache.tapestry5.ioc.annotations.Local;
-import org.apache.tapestry5.ioc.annotations.Scope;
-import org.apache.tapestry5.ioc.annotations.Startup;
-import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.services.FactoryDefaults;
-import org.apache.tapestry5.ioc.services.MasterObjectProvider;
-import org.apache.tapestry5.ioc.services.PerthreadManager;
-import org.apache.tapestry5.ioc.services.PropertyAccess;
-import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
-import org.apache.tapestry5.ioc.services.SymbolProvider;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
-import org.apache.tapestry5.services.ApplicationStateContribution;
-import org.apache.tapestry5.services.ApplicationStateManager;
-import org.apache.tapestry5.services.ApplicationStatePersistenceStrategy;
-import org.apache.tapestry5.services.ApplicationStatePersistenceStrategySource;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.PersistentFieldStrategy;
-import org.apache.tapestry5.services.ValueEncoderFactory;
-import org.apache.tapestry5.services.ValueEncoderSource;
+import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.annotations.*;
+import org.apache.tapestry5.ioc.services.*;
+import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.slf4j.Logger;
 
 import javax.persistence.EntityManagerFactory;
@@ -134,11 +111,11 @@ public class JpaModule
         configuration.addInstance(JpaPersistenceConstants.ENTITY, EntityApplicationStatePersistenceStrategy.class);
     }
 
-    public static void contributeComponentClassTransformWorker(
-            final OrderedConfiguration<ComponentClassTransformWorker> configuration)
+    @Contribute(ComponentClassTransformWorker2.class)
+    @Primary
+    public static void provideClassTransformWorkers(OrderedConfiguration<ComponentClassTransformWorker2> configuration)
     {
         configuration.addInstance("PersistenceContext", PersistenceContextWorker.class, "after:Property");
-
         configuration.addInstance("JPACommitAfter", CommitAfterWorker.class, "after:Log");
     }
 

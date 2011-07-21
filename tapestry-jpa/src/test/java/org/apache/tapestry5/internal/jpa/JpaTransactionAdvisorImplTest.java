@@ -97,7 +97,7 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         advisor.addTransactionCommitAdvice(builder);
 
         final VoidService interceptor = builder.build();
-        
+
         expect(manager.getEntityManagers()).andReturn(managers);
 
         replay();
@@ -106,15 +106,14 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         {
             interceptor.persistenceUnitNameMissing();
             TestBase.unreachable();
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
-               Assert.assertEquals(e.getMessage(), "Unable to locate a single EntityManager.  " +
-                       "Please provide the persistence unit name as defined in the persistence.xml using the @PersistenceContext annotation");
+            Assert.assertEquals(e.getMessage(), "Unable to locate a single EntityManager. " +
+                    "You must provide the persistence unit name as defined in the persistence.xml using the @PersistenceContext annotation.");
         }
         verify();
     }
-    
+
     @Test
     public void persistence_unit_name_missing_single_unit_configured()
     {
@@ -132,7 +131,7 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         advisor.addTransactionCommitAdvice(builder);
 
         final VoidService interceptor = builder.build();
-        
+
         expect(manager.getEntityManagers()).andReturn(managers);
         train_getTransaction(em, transaction, true);
         delegate.persistenceUnitNameMissing();
@@ -163,25 +162,25 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         expect(manager.getEntityManagers()).andReturn(managers);
 
         replay();
+
         try
         {
             interceptor.persistenceUnitMissing();
             TestBase.unreachable();
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
-               Assert.assertEquals(e.getMessage(), "Unable to locate a single EntityManager.  " +
-                       "Please provide the persistence unit name as defined in the persistence.xml using the @PersistenceContext annotation");
+            assertMessageContains(e, "Unable to locate a single EntityManager");
         }
+
         verify();
     }
-    
+
     @Test
     public void persistence_unit_missing_single_unit_configured()
     {
         final VoidService delegate = newMock(VoidService.class);
         final EntityManagerManager manager = newMock(EntityManagerManager.class);
-        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(manager);        
+        final JpaTransactionAdvisor advisor = newJpaTransactionAdvisor(manager);
         final EntityTransaction transaction = newMock(EntityTransaction.class);
         EntityManager em = newMock(EntityManager.class);
         Map<String, EntityManager> managers = CollectionFactory.newMap();
@@ -310,8 +309,7 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         {
             interceptor.perform();
             TestBase.unreachable();
-        }
-        catch (final RuntimeException ex)
+        } catch (final RuntimeException ex)
         {
             Assert.assertSame(ex, re);
         }
@@ -337,8 +335,10 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         final Performer interceptor = builder.build();
 
         train_getActiveTransaction(manager, entityManager, transaction);
+
         delegate.perform();
-        TestBase.setThrowable(se);
+        setThrowable(se);
+
         train_commitActiveTransaction(transaction);
 
         replay();
@@ -347,9 +347,9 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
         try
         {
             interceptor.perform();
-            TestBase.unreachable();
-        }
-        catch (final SQLException ex)
+
+            unreachable();
+        } catch (final SQLException ex)
         {
             Assert.assertSame(ex, se);
         }
@@ -408,26 +408,26 @@ public class JpaTransactionAdvisorImplTest extends IOCTestCase
     }
 
     private void train_getAndBeginTransaction(final EntityManagerManager manager,
-            final EntityManager entityManager, final EntityTransaction transaction)
+                                              final EntityManager entityManager, final EntityTransaction transaction)
     {
         train_getTransaction(manager, entityManager, transaction, false);
         transaction.begin();
     }
 
     private void train_getActiveTransaction(final EntityManagerManager manager,
-            final EntityManager entityManager, final EntityTransaction transaction)
+                                            final EntityManager entityManager, final EntityTransaction transaction)
     {
         train_getTransaction(manager, entityManager, transaction, true);
     }
 
     private void train_getTransaction(final EntityManagerManager manager,
-            final EntityManager entityManager, final EntityTransaction transaction,
-            final boolean isActive)
+                                      final EntityManager entityManager, final EntityTransaction transaction,
+                                      final boolean isActive)
     {
         expect(manager.getEntityManager(UNIT_NAME)).andReturn(entityManager);
         train_getTransaction(entityManager, transaction, isActive);
     }
-    
+
     private void train_getTransaction(
             final EntityManager entityManager, final EntityTransaction transaction,
             final boolean isActive)

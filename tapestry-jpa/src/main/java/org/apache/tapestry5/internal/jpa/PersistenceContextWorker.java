@@ -14,57 +14,42 @@
 
 package org.apache.tapestry5.internal.jpa;
 
-import javax.persistence.PersistenceContext;
-
-import org.apache.tapestry5.ioc.services.FieldValueConduit;
+import org.apache.tapestry5.internal.transform.ReadOnlyFieldValueConduit;
 import org.apache.tapestry5.jpa.EntityManagerManager;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.TransformField;
+import org.apache.tapestry5.plastic.InstanceContext;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticField;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 
-public class PersistenceContextWorker implements ComponentClassTransformWorker
+import javax.persistence.PersistenceContext;
+
+public class PersistenceContextWorker implements ComponentClassTransformWorker2
 {
     private final EntityManagerManager entityManagerManager;
 
     public PersistenceContextWorker(final EntityManagerManager entityManagerManager)
     {
-        super();
         this.entityManagerManager = entityManagerManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void transform(final ClassTransformation transformation,
-            final MutableComponentModel model)
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-
-        for (final TransformField field : transformation
-                .matchFieldsWithAnnotation(PersistenceContext.class))
+        for (final PlasticField field : plasticClass
+                .getFieldsWithAnnotation(PersistenceContext.class))
         {
             final PersistenceContext annotation = field.getAnnotation(PersistenceContext.class);
 
             field.claim(annotation);
 
-            field.replaceAccess(new FieldValueConduit()
+            field.setConduit(new ReadOnlyFieldValueConduit(plasticClass.getClassName(), field.getName())
             {
-
-                public Object get()
+                public Object get(Object instance, InstanceContext context)
                 {
                     return JpaInternalUtils.getEntityManager(entityManagerManager, annotation);
                 }
-
-                public void set(final Object newValue)
-                {
-                    throw new UnsupportedOperationException(String.format(
-                            "It is not possible to assign a new value to '%s' field",
-                            field.getName()));
-
-                }
             });
         }
-
     }
-
 }

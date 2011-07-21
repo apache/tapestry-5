@@ -14,32 +14,40 @@
 
 package org.apache.tapestry5.internal.jpa;
 
-import java.lang.reflect.Method;
-
 import org.apache.tapestry5.ioc.MethodAdviceReceiver;
 import org.apache.tapestry5.jpa.EntityManagerManager;
 import org.apache.tapestry5.jpa.JpaTransactionAdvisor;
 import org.apache.tapestry5.jpa.annotations.CommitAfter;
+import org.apache.tapestry5.plastic.MethodAdvice;
+
+import javax.persistence.PersistenceContext;
+import java.lang.reflect.Method;
 
 public class JpaTransactionAdvisorImpl implements JpaTransactionAdvisor
 {
+    private final EntityManagerManager manager;
 
-    private final CommitAfterMethodAdvice advice;
+    private final MethodAdvice shared;
 
-    public JpaTransactionAdvisorImpl(final EntityManagerManager manager)
+
+    public JpaTransactionAdvisorImpl(EntityManagerManager manager)
     {
-        advice = new CommitAfterMethodAdvice(manager);
+        this.manager = manager;
+
+        shared = new CommitAfterMethodAdvice(manager, null);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public void addTransactionCommitAdvice(final MethodAdviceReceiver receiver)
     {
         for (final Method m : receiver.getInterface().getMethods())
         {
             if (m.getAnnotation(CommitAfter.class) != null)
             {
+                PersistenceContext annotation = receiver.getMethodAnnotation(m, PersistenceContext.class);
+
+                MethodAdvice advice =
+                        annotation == null ? shared : new CommitAfterMethodAdvice(manager, annotation);
+
                 receiver.adviseMethod(m, advice);
             }
         }

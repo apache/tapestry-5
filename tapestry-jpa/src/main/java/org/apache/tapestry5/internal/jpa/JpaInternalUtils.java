@@ -14,18 +14,17 @@
 
 package org.apache.tapestry5.internal.jpa;
 
-import java.util.Map;
-import java.util.Set;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.jpa.EntityManagerManager;
+import org.apache.tapestry5.jpa.JpaConstants;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
-
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.jpa.EntityManagerManager;
-import org.apache.tapestry5.jpa.JpaConstants;
+import java.util.Map;
+import java.util.Set;
 
 public class JpaInternalUtils
 {
@@ -63,7 +62,10 @@ public class JpaInternalUtils
             {
                 if (entityType.getJavaType() == entity.getClass())
                 {
-                    if (em.contains(entity)) { return em; }
+                    if (em.contains(entity))
+                    {
+                        return em;
+                    }
                 }
             }
         }
@@ -75,9 +77,9 @@ public class JpaInternalUtils
     }
 
     public static EntityManager getEntityManager(EntityManagerManager entityManagerManager,
-            PersistenceContext annotation)
-    {        
-        String unitName = annotation == null? null: annotation.unitName();
+                                                 PersistenceContext annotation)
+    {
+        String unitName = annotation == null ? null : annotation.unitName();
 
         if (InternalUtils.isNonBlank(unitName))
             return entityManagerManager.getEntityManager(unitName);
@@ -87,7 +89,7 @@ public class JpaInternalUtils
         if (entityManagers.size() == 1)
             return entityManagers.values().iterator().next();
 
-        throw new RuntimeException("Unable to locate a single EntityManager.  " +
-                "Please provide the persistence unit name as defined in the persistence.xml using the @PersistenceContext annotation");
+        throw new RuntimeException("Unable to locate a single EntityManager. " +
+                "You must provide the persistence unit name as defined in the persistence.xml using the @PersistenceContext annotation.");
     }
 }

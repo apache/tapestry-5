@@ -14,28 +14,29 @@
 
 package org.apache.tapestry5.internal.jpa;
 
+import org.apache.tapestry5.jpa.EntityManagerManager;
+import org.apache.tapestry5.plastic.MethodAdvice;
+import org.apache.tapestry5.plastic.MethodInvocation;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 
-import org.apache.tapestry5.ioc.Invocation;
-import org.apache.tapestry5.ioc.MethodAdvice;
-import org.apache.tapestry5.jpa.EntityManagerManager;
-
 public class CommitAfterMethodAdvice implements MethodAdvice
 {
-
     private final EntityManagerManager manager;
 
-    public CommitAfterMethodAdvice(final EntityManagerManager manager)
+    private final PersistenceContext annotation;
+
+    public CommitAfterMethodAdvice(final EntityManagerManager manager, PersistenceContext annotation)
     {
-        super();
         this.manager = manager;
+        this.annotation = annotation;
     }
 
-    public void advise(final Invocation invocation)
+    public void advise(final MethodInvocation invocation)
     {
-        final EntityTransaction transaction = getTransaction(invocation);
+        final EntityTransaction transaction = getTransaction();
 
         if (transaction != null && !transaction.isActive())
         {
@@ -45,8 +46,7 @@ public class CommitAfterMethodAdvice implements MethodAdvice
         try
         {
             invocation.proceed();
-        }
-        catch (final RuntimeException e)
+        } catch (final RuntimeException e)
         {
             if (transaction != null && transaction.isActive())
             {
@@ -65,11 +65,8 @@ public class CommitAfterMethodAdvice implements MethodAdvice
 
     }
 
-    private EntityTransaction getTransaction(final Invocation invocation)
+    private EntityTransaction getTransaction()
     {
-        final PersistenceContext annotation = invocation
-                .getMethodAnnotation(PersistenceContext.class);
-
         EntityManager em = JpaInternalUtils.getEntityManager(manager, annotation);
 
         if (em == null)

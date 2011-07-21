@@ -17,36 +17,38 @@ package org.apache.tapestry5.internal.jpa;
 import org.apache.tapestry5.jpa.EntityManagerManager;
 import org.apache.tapestry5.jpa.annotations.CommitAfter;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.ComponentMethodAdvice;
-import org.apache.tapestry5.services.ComponentMethodInvocation;
-import org.apache.tapestry5.services.TransformMethod;
+import org.apache.tapestry5.plastic.MethodAdvice;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticMethod;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 
-public class CommitAfterWorker implements ComponentClassTransformWorker
+import javax.persistence.PersistenceContext;
+
+public class CommitAfterWorker implements ComponentClassTransformWorker2
 {
-    private final CommitAfterMethodAdvice advice;
 
-    public CommitAfterWorker(final EntityManagerManager manager)
+    private final MethodAdvice shared;
+
+    private final EntityManagerManager manager;
+
+    public CommitAfterWorker(EntityManagerManager manager)
     {
-        advice = new CommitAfterMethodAdvice(manager);
+        this.manager = manager;
+
+        shared = new CommitAfterMethodAdvice(manager, null);
     }
 
-    public void transform(final ClassTransformation transformation,
-            final MutableComponentModel model)
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-        for (final TransformMethod method : transformation
-                .matchMethodsWithAnnotation(CommitAfter.class))
+        for (final PlasticMethod method : plasticClass
+                .getMethodsWithAnnotation(CommitAfter.class))
         {
-            method.addAdvice(new ComponentMethodAdvice()
-            {
+            PersistenceContext annotation = method.getAnnotation(PersistenceContext.class);
 
-                public void advise(final ComponentMethodInvocation invocation)
-                {
-                    advice.advise(invocation);
+            MethodAdvice advice = annotation == null ? shared : new CommitAfterMethodAdvice(manager, annotation);
 
-                }
-            });
+            method.addAdvice(advice);
         }
     }
 }
