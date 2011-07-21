@@ -14,34 +14,29 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import java.util.List;
-
 import org.apache.tapestry5.annotations.Retain;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.TransformField;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticField;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 
 /**
  * Identifies fields with the {@link org.apache.tapestry5.annotations.Retain} annotation, and "claims" them so that no
  * special work will occur on them. Retain has been deprecated in Tapestry 5.2 and will likely be removed in the future.
  */
-public final class RetainWorker implements ComponentClassTransformWorker
+public final class RetainWorker implements ComponentClassTransformWorker2
 {
     /**
-     * Claims each field with the {@link org.apache.tapestry5.annotations.Retain} annotation, claiming it using the
-     * annotation as the tag.
+     * Claims each field with the {@link org.apache.tapestry5.annotations.Retain}  , claiming it using the
+     * annotation class (not the annotation instance, to avoid
+     * instantiating the annotation) as the tag.
      */
-    @SuppressWarnings("deprecation")
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-        List<TransformField> fields = transformation.matchFieldsWithAnnotation(Retain.class);
-
-        for (TransformField field : fields)
+        for (PlasticField field : plasticClass.getFieldsWithAnnotation(Retain.class))
         {
-            Retain annotation = field.getAnnotation(Retain.class);
-
-            field.claim(annotation);
+            field.claim(Retain.class);
         }
     }
 }

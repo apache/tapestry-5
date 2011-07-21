@@ -511,6 +511,8 @@ public final class TapestryModule
      * <dd>Checks for the annotation</dd>
      * <dt>RenderPhase</dt>
      * <dd>Link in render phase methods</dd>
+     * <dt>Retain</dt>
+     * <dd>Allows fields to retain their values between requests</dd>
      * <dt>Meta</dt>
      * <dd>Checks for meta data annotations and adds it to the component model</dd>
      * </dl>
@@ -558,6 +560,9 @@ public final class TapestryModule
 
         configuration.add("Meta", metaWorker);
 
+        configuration.add("Retain", new RetainWorker());
+
+
         // This one is always last. Any additional private fields that aren't
         // annotated will
         // be converted to clear out at the end of the request.
@@ -568,8 +573,6 @@ public final class TapestryModule
     /**
      * Adds a number of standard component class transform workers:
      * <dl>
-     * <dt>Retain</dt>
-     * <dd>Allows fields to retain their values between requests</dd>
      * <dt>Persist</dt>
      * <dd>Allows fields to store their their value persistently between requests</dd>
      * <dt>Component</dt>
@@ -626,7 +629,6 @@ public final class TapestryModule
         add(configuration, PageAttached.class, TransformConstants.CONTAINING_PAGE_DID_ATTACH_SIGNATURE, "pageAttached");
         add(configuration, PageDetached.class, TransformConstants.CONTAINING_PAGE_DID_DETACH_SIGNATURE, "pageDetached");
 
-        configuration.add("Retain", new RetainWorker());
         configuration.addInstance("Persist", PersistWorker.class);
 
         configuration.addInstance("DiscardAfter", DiscardAfterWorker.class);
