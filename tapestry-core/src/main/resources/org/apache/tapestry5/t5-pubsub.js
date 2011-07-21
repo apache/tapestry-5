@@ -68,9 +68,9 @@ T5.define("pubsub", function() {
      *            and returned to the publisher.
      *
      *            The listener function is passed a message object as the first parameter; this is provided
-     *            on each call to the topic's publish function. The second parameter is the element
-     *            defined by the publisher (this is useful when subscribed to all elements). For truly global
-     *            events, the document object is used as the element.
+     *            on each call to the topic's publish function. The second parameter is an object with two
+     *            properties:  An element property to identify the source of the message, and a cancel() function property
+     *            that prevents further listeners from being invoked.
      * @return a function of no arguments used to unsubscribe the listener
      */
     function subscribe(topic, element, listenerfn) {
@@ -109,6 +109,12 @@ T5.define("pubsub", function() {
      * general subscribers (not matching any specific element). The return value
      * for the publish function is an array of all the return values from all
      * invoked listener functions.
+     *
+     * <p>
+     * Listener functions are passed the message object and a second (optional) object.
+     * The second object contains two keys:  The first, "element", identifies the element for which the publisher was created, i.e.,
+     * the source of the message. The second, "cancel", is a function used to prevent further listeners
+     * from being invoked.
      *
      * <p>
      * There is not currently a way to explicitly remove a publisher; however,
@@ -154,9 +160,29 @@ T5.define("pubsub", function() {
                         publisher.element);
                 }
 
-                return map(function(listenerfn) {
-                    return listenerfn(message, publisher.element);
-                }, publisher.listeners);
+                var canceled = false;
+
+                var meta = {
+                    element : publisher.element,
+                    cancel : function() {
+                        canceled = true;
+                    }
+                };
+
+                var result = [];
+
+                for (var i = 0; i < publisher.listeners.length; i++) {
+
+                    var listenerfn = publisher.listeners[i];
+
+                    result.push(listenerfn(message, meta));
+
+                    if (canceled) {
+                        break;
+                    }
+                }
+
+                return result;
             }
         };
 

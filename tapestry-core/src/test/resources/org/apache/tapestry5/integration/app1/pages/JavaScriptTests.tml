@@ -237,7 +237,7 @@
 <div>
     <p> Ensure that the second object to a listener is the source object.</p>
       <pre>
-        var unsub = sub("foo", null, function(message, element) { assertSame(element, document); })
+        var unsub = sub("foo", null, function(message, meta) { assertSame(meta.element, document); })
 
         pub("foo", document, null)
 
@@ -352,6 +352,22 @@
 
         T5.dom.remove(element)  
     </pre>
+</div>
+
+<div>
+    <p>Listeners invocations can be cancelled.</p>
+
+        <pre>
+            var pubs = []
+
+            sub("bazz", null, function() { pubs.push("first"); })
+            sub("bazz", null, function(message, meta) { pubs.push("second"); meta.cancel(); })
+            sub("bazz", null, function() { pubs.push("third"); })
+
+            pub("bazz", {})
+
+            assertEqual(pubs, ["first", "second" ]);
+        </pre>
 </div>
 
 </div>
