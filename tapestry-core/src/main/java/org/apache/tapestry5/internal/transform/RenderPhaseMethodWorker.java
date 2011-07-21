@@ -221,11 +221,8 @@ public class RenderPhaseMethodWorker implements ComponentClassTransformWorker2
         {
             private void addSuperCall(InstructionBuilder builder)
             {
-                // At the top of the inheritance, there's no need to call super (this is a pretty standard case).
-                if (!isRoot)
-                {
-                    builder.loadThis().loadArguments().invokeSpecial(plasticClass.getSuperClassName(), interfaceMethodDescription);
-                }
+                builder.loadThis().loadArguments().invokeSpecial(plasticClass.getSuperClassName(), interfaceMethodDescription);
+
             }
 
             private void invokeMethod(InstructionBuilder builder, PlasticMethod method)
@@ -264,9 +261,13 @@ public class RenderPhaseMethodWorker implements ComponentClassTransformWorker2
 
             public void doBuild(InstructionBuilder builder)
             {
-                if (!reverse)
+                if (!reverse && !isRoot)
                 {
                     addSuperCall(builder);
+
+                    builder.loadArgument(1).invoke(Event.class, boolean.class, "isAborted");
+
+                    builder.when(Condition.NON_ZERO, JUST_RETURN);
                 }
 
                 for (PlasticMethod invokedMethod : orderedMethods)
@@ -274,7 +275,7 @@ public class RenderPhaseMethodWorker implements ComponentClassTransformWorker2
                     invokeMethod(builder, invokedMethod);
                 }
 
-                if (reverse)
+                if (reverse && !isRoot)
                 {
                     addSuperCall(builder);
                 }
