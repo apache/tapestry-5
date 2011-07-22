@@ -27,6 +27,7 @@ import org.apache.tapestry5.ioc.LoggerSource;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.ServiceOverride;
@@ -173,6 +174,7 @@ public class HibernateModule
      * {@link org.apache.tapestry5.hibernate.annotations.CommitAfter} annotation.
      */
     @Contribute(ComponentClassTransformWorker2.class)
+    @Primary
     public static void provideCommitAfterAnnotationSupport(
             OrderedConfiguration<ComponentClassTransformWorker2> configuration)
     {
