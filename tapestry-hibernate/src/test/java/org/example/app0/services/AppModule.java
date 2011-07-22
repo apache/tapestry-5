@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.example.app0.services;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.hibernate.HibernateCoreModule;
 import org.apache.tapestry5.hibernate.HibernateModule;
 import org.apache.tapestry5.hibernate.HibernateSymbols;
 import org.apache.tapestry5.hibernate.HibernateTransactionDecorator;
@@ -24,7 +25,8 @@ import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.Match;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 
-@SubModule(HibernateModule.class)
+// @SubModule just needed for developers running these tests within the IDE
+@SubModule({HibernateModule.class, HibernateCoreModule.class})
 public class AppModule
 {
     public static void bind(ServiceBinder binder)
@@ -40,7 +42,7 @@ public class AppModule
 
     @Match("*DAO")
     public static <T> T decorateTransactionally(HibernateTransactionDecorator decorator, Class<T> serviceInterface,
-            T delegate, ServiceResources resources)
+                                                T delegate, ServiceResources resources)
     {
         return decorator.build(serviceInterface, delegate, resources.getServiceId());
     }
