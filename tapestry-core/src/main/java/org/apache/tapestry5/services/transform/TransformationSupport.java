@@ -15,17 +15,17 @@
 package org.apache.tapestry5.services.transform;
 
 import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.services.ComponentEventHandler;
 
 /**
  * Additional utilities, beyond {@link PlasticClass}, needed when transforming.
- * 
+ *
  * @since 5.3
  */
 public interface TransformationSupport
 {
     /**
-     * @param typeName
-     *            Java type name (which may be a primitive type or array, or fully qualified class name)
+     * @param typeName Java type name (which may be a primitive type or array, or fully qualified class name)
      * @return corresponding Java Class
      */
     Class toClass(String typeName);
@@ -33,8 +33,20 @@ public interface TransformationSupport
     /**
      * Returns true if the class being transformed is a root class: it does not inherit
      * from another transformed class, but instead inherits from Object.
-     * 
+     *
      * @return true if root
      */
     boolean isRootTransformation();
+
+    /**
+     * Adds an event handler. Added event handlers execute <em>before</em> calls to super-class event handlers,
+     * or calls to event handler methods.
+     *
+     * @param eventType            type of event
+     * @param minContextValues     number of context values required to activate the handler
+     * @param operationDescription Used with {@link org.apache.tapestry5.ioc.OperationTracker} when invoking the handler
+     * @param handler              code to execute when the event matches
+     */
+    void addEventHandler(String eventType, int minContextValues, String operationDescription, ComponentEventHandler handler);
+
 }

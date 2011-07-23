@@ -14,9 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.InternalComponentResources;
@@ -42,29 +39,19 @@ import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.plastic.ClassInstantiator;
-import org.apache.tapestry5.plastic.InstructionBuilder;
-import org.apache.tapestry5.plastic.InstructionBuilderCallback;
-import org.apache.tapestry5.plastic.MethodDescription;
-import org.apache.tapestry5.plastic.PlasticClass;
-import org.apache.tapestry5.plastic.PlasticClassEvent;
-import org.apache.tapestry5.plastic.PlasticClassListener;
-import org.apache.tapestry5.plastic.PlasticField;
-import org.apache.tapestry5.plastic.PlasticManager;
+import org.apache.tapestry5.plastic.*;
 import org.apache.tapestry5.plastic.PlasticManager.PlasticManagerBuilder;
-import org.apache.tapestry5.plastic.PlasticManagerDelegate;
-import org.apache.tapestry5.plastic.PlasticUtils;
-import org.apache.tapestry5.plastic.TransformationOption;
 import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.runtime.ComponentEvent;
 import org.apache.tapestry5.runtime.ComponentResourcesAware;
-import org.apache.tapestry5.services.ComponentClassResolver;
-import org.apache.tapestry5.services.InvalidationListener;
-import org.apache.tapestry5.services.UpdateListener;
-import org.apache.tapestry5.services.UpdateListenerHub;
+import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.ControlledPackageType;
 import org.apache.tapestry5.services.transform.TransformationSupport;
 import org.slf4j.Logger;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A wrapper around a {@link PlasticManager} that allows certain classes to be modified as they are loaded.
@@ -91,7 +78,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
     private final InternalComponentInvalidationEventHub invalidationHub;
 
     private final boolean productionMode;
-    
+
     private final ComponentClassResolver resolver;
 
     // These change whenever the invalidation event hub sends an invalidation notification
@@ -111,28 +98,28 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
     public ComponentInstantiatorSourceImpl(Logger logger,
 
-    LoggerSource loggerSource,
+                                           LoggerSource loggerSource,
 
-    @Builtin
-    PlasticProxyFactory proxyFactory,
+                                           @Builtin
+                                           PlasticProxyFactory proxyFactory,
 
-    @Primary
-    ComponentClassTransformWorker2 transformerChain,
+                                           @Primary
+                                           ComponentClassTransformWorker2 transformerChain,
 
-    InternalRequestGlobals internalRequestGlobals,
+                                           InternalRequestGlobals internalRequestGlobals,
 
-    ClasspathURLConverter classpathURLConverter,
+                                           ClasspathURLConverter classpathURLConverter,
 
-    OperationTracker tracker,
+                                           OperationTracker tracker,
 
-    Map<String, ControlledPackageType> configuration,
+                                           Map<String, ControlledPackageType> configuration,
 
-    @Symbol(SymbolConstants.PRODUCTION_MODE)
-    boolean productionMode,
-    
-    ComponentClassResolver resolver,
+                                           @Symbol(SymbolConstants.PRODUCTION_MODE)
+                                           boolean productionMode,
 
-    InternalComponentInvalidationEventHub invalidationHub)
+                                           ComponentClassResolver resolver,
+
+                                           InternalComponentInvalidationEventHub invalidationHub)
     {
         this.parent = proxyFactory.getClassLoader();
         this.transformerChain = transformerChain;
@@ -298,7 +285,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
                         if (isRoot
                                 && !(parentClassName.equals("java.lang.Object") || parentClassName
-                                        .equals("groovy.lang.GroovyObjectSupport")))
+                                .equals("groovy.lang.GroovyObjectSupport")))
                         {
                             String suggestedPackageName = buildSuggestedPackageName(className);
 
@@ -324,7 +311,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
                         boolean isPage = resolver.isPage(className);
 
-                        MutableComponentModel model = new MutableComponentModelImpl(className, logger, baseResource,
+                        final MutableComponentModel model = new MutableComponentModelImpl(className, logger, baseResource,
                                 parentModel, isPage);
 
                         transformerChain.transform(plasticClass, new TransformationSupport()
@@ -334,8 +321,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                                 try
                                 {
                                     return PlasticInternalUtils.toClass(manager.getClassLoader(), typeName);
-                                }
-                                catch (ClassNotFoundException ex)
+                                } catch (ClassNotFoundException ex)
                                 {
                                     throw new RuntimeException(String.format(
                                             "Unable to convert type '%s' to a Class: %s", typeName,
@@ -346,6 +332,50 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                             public boolean isRootTransformation()
                             {
                                 return isRoot;
+                            }
+
+                            public void addEventHandler(final String eventType, final int minContextValues, final String operationDescription, final ComponentEventHandler handler)
+                            {
+                                assert InternalUtils.isNonBlank(eventType);
+                                assert minContextValues >= 0;
+                                assert handler != null;
+
+                                MethodAdvice advice = new MethodAdvice()
+                                {
+                                    public void advise(MethodInvocation invocation)
+                                    {
+                                        final ComponentEvent event = (ComponentEvent) invocation.getParameter(0);
+
+                                        boolean matches = event.matches(eventType, "", minContextValues);
+
+                                        if (matches)
+                                        {
+                                            final Component instance = (Component) invocation.getInstance();
+
+                                            tracker.invoke(operationDescription, new Invokable<Object>()
+                                            {
+                                                public Object invoke()
+                                                {
+                                                    handler.handleEvent(instance, event);
+
+                                                    return null;
+                                                }
+                                            });
+                                        }
+
+                                        // Order of operations is key here. This logic takes precedence; base class event dispatch and event handler methods
+                                        // in the class come AFTER.
+
+                                        invocation.proceed();
+
+                                        if (matches)
+                                        {
+                                            invocation.setReturnValue(true);
+                                        }
+                                    }
+                                };
+
+                                plasticClass.introduceMethod(TransformConstants.DISPATCH_COMPONENT_EVENT_DESCRIPTION).addAdvice(advice);
                             }
                         }, model);
 
