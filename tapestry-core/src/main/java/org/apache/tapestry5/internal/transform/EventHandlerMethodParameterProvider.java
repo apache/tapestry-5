@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,23 +15,21 @@
 package org.apache.tapestry5.internal.transform;
 
 import org.apache.tapestry5.runtime.ComponentEvent;
-import org.apache.tapestry5.services.MethodAccess;
 
 /**
  * Supplies one parameter value when invoking a component event handler method. In general,
  * this involves extracting a value form the event's context and coercing it to a type
  * appropriate to the parameter.
- * <p>
- * These values are accumulated and used to invoke the event handler method via
- * {@link MethodAccess#invoke(Object, Object...)}.
- * 
+ * <p/>
+ * These values are accumulated and used to invoke the event handler method.
+ *
  * @since 5.2.0
  */
-public interface EventHandlerMethodParameterSource
+public interface EventHandlerMethodParameterProvider
 {
     /**
      * Extract the value and coerce it to the correct type.
-     * 
+     *
      * @return value that can be passed as a method parameter
      */
     Object valueForEventHandlerMethodParameter(ComponentEvent event);
