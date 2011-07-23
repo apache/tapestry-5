@@ -314,70 +314,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                         final MutableComponentModel model = new MutableComponentModelImpl(className, logger, baseResource,
                                 parentModel, isPage);
 
-                        transformerChain.transform(plasticClass, new TransformationSupport()
-                        {
-                            public Class toClass(String typeName)
-                            {
-                                try
-                                {
-                                    return PlasticInternalUtils.toClass(manager.getClassLoader(), typeName);
-                                } catch (ClassNotFoundException ex)
-                                {
-                                    throw new RuntimeException(String.format(
-                                            "Unable to convert type '%s' to a Class: %s", typeName,
-                                            InternalUtils.toMessage(ex)), ex);
-                                }
-                            }
-
-                            public boolean isRootTransformation()
-                            {
-                                return isRoot;
-                            }
-
-                            public void addEventHandler(final String eventType, final int minContextValues, final String operationDescription, final ComponentEventHandler handler)
-                            {
-                                assert InternalUtils.isNonBlank(eventType);
-                                assert minContextValues >= 0;
-                                assert handler != null;
-
-                                MethodAdvice advice = new MethodAdvice()
-                                {
-                                    public void advise(MethodInvocation invocation)
-                                    {
-                                        final ComponentEvent event = (ComponentEvent) invocation.getParameter(0);
-
-                                        boolean matches = event.matches(eventType, "", minContextValues);
-
-                                        if (matches)
-                                        {
-                                            final Component instance = (Component) invocation.getInstance();
-
-                                            tracker.invoke(operationDescription, new Invokable<Object>()
-                                            {
-                                                public Object invoke()
-                                                {
-                                                    handler.handleEvent(instance, event);
-
-                                                    return null;
-                                                }
-                                            });
-                                        }
-
-                                        // Order of operations is key here. This logic takes precedence; base class event dispatch and event handler methods
-                                        // in the class come AFTER.
-
-                                        invocation.proceed();
-
-                                        if (matches)
-                                        {
-                                            invocation.setReturnValue(true);
-                                        }
-                                    }
-                                };
-
-                                plasticClass.introduceMethod(TransformConstants.DISPATCH_COMPONENT_EVENT_DESCRIPTION).addAdvice(advice);
-                            }
-                        }, model);
+                        transformerChain.transform(plasticClass, new TransformationSupportImpl(plasticClass, isRoot), model);
 
                         classToModel.put(className, model);
                     }
@@ -436,4 +373,78 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
             logger.debug(event.getDissasembledBytecode());
     }
 
+    private class TransformationSupportImpl implements TransformationSupport
+    {
+        private final PlasticClass plasticClass;
+
+        private final boolean root;
+
+        public TransformationSupportImpl(PlasticClass plasticClass, boolean root)
+        {
+            this.plasticClass = plasticClass;
+            this.root = root;
+        }
+
+        public Class toClass(String typeName)
+        {
+            try
+            {
+                return PlasticInternalUtils.toClass(manager.getClassLoader(), typeName);
+            } catch (ClassNotFoundException ex)
+            {
+                throw new RuntimeException(String.format(
+                        "Unable to convert type '%s' to a Class: %s", typeName,
+                        InternalUtils.toMessage(ex)), ex);
+            }
+        }
+
+        public boolean isRootTransformation()
+        {
+            return root;
+        }
+
+        public void addEventHandler(final String eventType, final int minContextValues, final String operationDescription, final ComponentEventHandler handler)
+        {
+            assert InternalUtils.isNonBlank(eventType);
+            assert minContextValues >= 0;
+            assert handler != null;
+
+            MethodAdvice advice = new MethodAdvice()
+            {
+                public void advise(MethodInvocation invocation)
+                {
+                    final ComponentEvent event = (ComponentEvent) invocation.getParameter(0);
+
+                    boolean matches = event.matches(eventType, "", minContextValues);
+
+                    if (matches)
+                    {
+                        final Component instance = (Component) invocation.getInstance();
+
+                        tracker.invoke(operationDescription, new Invokable<Object>()
+                        {
+                            public Object invoke()
+                            {
+                                handler.handleEvent(instance, event);
+
+                                return null;
+                            }
+                        });
+                    }
+
+                    // Order of operations is key here. This logic takes precedence; base class event dispatch and event handler methods
+                    // in the class come AFTER.
+
+                    invocation.proceed();
+
+                    if (matches)
+                    {
+                        invocation.setReturnValue(true);
+                    }
+                }
+            };
+
+            plasticClass.introduceMethod(TransformConstants.DISPATCH_COMPONENT_EVENT_DESCRIPTION).addAdvice(advice);
+        }
+    }
 }
