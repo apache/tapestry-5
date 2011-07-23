@@ -319,9 +319,11 @@ public class OnEventWorker implements ComponentClassTransformWorker2
     }
 
 
-    private EventHandlerMethodParameterProvider createQueryParameterProvider(final PlasticMethod method, final int parameterIndex, final String parameterName,
+    private EventHandlerMethodParameterProvider createQueryParameterProvider(PlasticMethod method, final int parameterIndex, final String parameterName,
                                                                              final String parameterTypeName, final boolean allowBlank)
     {
+        final String methodIdentifier = method.getMethodIdentifier();
+
         return new EventHandlerMethodParameterProvider()
         {
             @SuppressWarnings("unchecked")
@@ -354,7 +356,7 @@ public class OnEventWorker implements ComponentClassTransformWorker2
                     throw new RuntimeException(
                             String.format(
                                     "Unable process query parameter '%s' as parameter #%d of event handler method %s: %s",
-                                    parameterName, parameterIndex + 1, method.getMethodIdentifier(),
+                                    parameterName, parameterIndex + 1, methodIdentifier,
                                     InternalUtils.toMessage(ex)), ex);
                 }
             }
