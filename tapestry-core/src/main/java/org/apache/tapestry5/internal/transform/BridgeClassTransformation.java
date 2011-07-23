@@ -14,52 +14,28 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.List;
-
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.plastic.ComputedValue;
-import org.apache.tapestry5.plastic.FieldConduit;
-import org.apache.tapestry5.plastic.FieldHandle;
-import org.apache.tapestry5.plastic.InstanceContext;
-import org.apache.tapestry5.plastic.MethodAdvice;
-import org.apache.tapestry5.plastic.MethodDescription;
-import org.apache.tapestry5.plastic.MethodHandle;
-import org.apache.tapestry5.plastic.MethodInvocation;
-import org.apache.tapestry5.plastic.PlasticClass;
-import org.apache.tapestry5.plastic.PlasticField;
-import org.apache.tapestry5.plastic.PlasticMethod;
-import org.apache.tapestry5.plastic.PlasticUtils;
+import org.apache.tapestry5.plastic.*;
 import org.apache.tapestry5.runtime.Component;
-import org.apache.tapestry5.runtime.ComponentEvent;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentEventHandler;
-import org.apache.tapestry5.services.ComponentInstanceOperation;
-import org.apache.tapestry5.services.ComponentMethodAdvice;
-import org.apache.tapestry5.services.ComponentMethodInvocation;
-import org.apache.tapestry5.services.ComponentValueProvider;
-import org.apache.tapestry5.services.FieldAccess;
-import org.apache.tapestry5.services.MethodAccess;
+import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.MethodInvocationResult;
-import org.apache.tapestry5.services.TransformConstants;
-import org.apache.tapestry5.services.TransformField;
-import org.apache.tapestry5.services.TransformMethod;
-import org.apache.tapestry5.services.TransformMethodSignature;
 import org.apache.tapestry5.services.transform.TransformationSupport;
 import org.slf4j.Logger;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * A re-implementation of {@link ClassTransformation} around an instance of {@link PlasticClass}, acting as a bridge
  * for code written against the 5.2 and earlier APIs to work with the 5.3 API.
- * 
+ *
  * @since 5.3
  */
 @SuppressWarnings("deprecation")
@@ -555,7 +531,7 @@ public class BridgeClassTransformation implements ClassTransformation
     };
 
     public BridgeClassTransformation(PlasticClass plasticClass, TransformationSupport support,
-            MutableComponentModel model)
+                                     MutableComponentModel model)
     {
         this.plasticClass = plasticClass;
         this.support = support;
@@ -606,7 +582,10 @@ public class BridgeClassTransformation implements ClassTransformation
     {
         for (PlasticField f : plasticClass.getAllFields())
         {
-            if (f.getName().equals(fieldName)) { return toTransformField(f); }
+            if (f.getName().equals(fieldName))
+            {
+                return toTransformField(f);
+            }
         }
 
         throw new IllegalArgumentException(String.format("Class %s does not contain a field named '%s'.",
@@ -642,7 +621,7 @@ public class BridgeClassTransformation implements ClassTransformation
     }
 
     public <T> TransformField addIndirectInjectedField(Class<T> type, String suggestedName,
-            ComponentValueProvider<T> provider)
+                                                       ComponentValueProvider<T> provider)
     {
 
         PlasticField field = plasticClass.introduceField(type, suggestedName).injectComputed(toComputedValue(provider));
@@ -692,48 +671,9 @@ public class BridgeClassTransformation implements ClassTransformation
         }).isEmpty();
     }
 
-    // TODO: This is very handy, there should be an additional object passed around that encapsulates
-    // this kind of logic.
-
     public void addComponentEventHandler(String eventType, int minContextValues, String methodDescription,
-            ComponentEventHandler handler)
+                                         ComponentEventHandler handler)
     {
-        assert InternalUtils.isNonBlank(eventType);
-        assert InternalUtils.isNonBlank(methodDescription);
-        assert handler != null;
-
-        model.addEventHandler(eventType);
-
-        plasticClass.introduceMethod(TransformConstants.DISPATCH_COMPONENT_EVENT_DESCRIPTION).addAdvice(
-                createEventHandlerAdvice(eventType, minContextValues, methodDescription, handler));
-
+        support.addEventHandler(eventType, minContextValues, methodDescription, handler);
     }
-
-    private static MethodAdvice createEventHandlerAdvice(final String eventType, final int minContextValues,
-            final String methodDescription, final ComponentEventHandler handler)
-    {
-        return new MethodAdvice()
-        {
-            public void advise(MethodInvocation invocation)
-            {
-                // Invoke the super-class implementation first.
-
-                invocation.proceed();
-
-                ComponentEvent event = (ComponentEvent) invocation.getParameter(0);
-
-                if (!event.isAborted() && event.matches(eventType, "", minContextValues))
-                {
-                    event.setMethodDescription(methodDescription);
-
-                    handler.handleEvent((Component) invocation.getInstance(), event);
-
-                    // Ensure that the caller knows that some event handler method
-                    // was invoked.
-                    invocation.setReturnValue(true);
-                }
-            }
-        };
-    }
-
 }
