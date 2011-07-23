@@ -27,7 +27,9 @@ class ActivationRequestParameterTests extends TapestryCoreTestCase
         assertText "click-count", ""
         assertText "click-count-set", "false"
         assertText "message", ""
-        
+
+        // Part of this is testing that @ActivationRequestParameter processing occurs before ordinary event handler method
+        // invocations.
         clickAndWait "link=increment count"
         
         assertText "click-count", "1"

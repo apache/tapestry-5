@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import org.apache.tapestry5.services.*;
  * Hooks the activate event handler on the component (presumably, a page) to
  * extract query parameters, and hooks the link decoration events to extract values
  * and add them to the {@link Link}.
- * 
+ *
  * @see ActivationRequestParameter
  * @since 5.2.0
  */
@@ -43,7 +43,7 @@ public class ActivationRequestParameterWorker implements ComponentClassTransform
     private final ValueEncoderSource valueEncoderSource;
 
     public ActivationRequestParameterWorker(Request request, ComponentClassCache classCache,
-            ValueEncoderSource valueEncoderSource)
+                                            ValueEncoderSource valueEncoderSource)
     {
         this.request = request;
         this.classCache = classCache;
@@ -59,7 +59,7 @@ public class ActivationRequestParameterWorker implements ComponentClassTransform
     }
 
     private void mapFieldToQueryParameter(TransformField field, ClassTransformation transformation,
-            MutableComponentModel model)
+                                          MutableComponentModel model)
     {
         ActivationRequestParameter annotation = field.getAnnotation(ActivationRequestParameter.class);
 
@@ -77,6 +77,8 @@ public class ActivationRequestParameterWorker implements ComponentClassTransform
         setValueFromInitializeEventHandler(transformation, access, parameterName, encoder);
         decorateLinks(transformation, access, parameterName, encoder);
         preallocateName(transformation, parameterName);
+
+        model.addEventHandler(EventConstants.ACTIVATE);
     }
 
     private static void preallocateName(ClassTransformation transformation, final String parameterName)
@@ -98,7 +100,7 @@ public class ActivationRequestParameterWorker implements ComponentClassTransform
 
     @SuppressWarnings("all")
     private void setValueFromInitializeEventHandler(ClassTransformation transformation, final FieldAccess access,
-            final String parameterName, final ValueEncoder encoder)
+                                                    final String parameterName, final ValueEncoder encoder)
     {
         ComponentEventHandler handler = new ComponentEventHandler()
         {
@@ -115,13 +117,38 @@ public class ActivationRequestParameterWorker implements ComponentClassTransform
             }
         };
 
-        transformation.addComponentEventHandler(EventConstants.ACTIVATE, 0,
-                "ActivationRequestParameterWorker activate event handler", handler);
+        ComponentMethodAdvice advice = new ComponentMethodAdvice()
+        {
+            public void advise(ComponentMethodInvocation invocation)
+            {
+                // Handle this synthetic event FIRST, before any super-class or event handler method calls.  It's especially important that this execute before
+                // any onActivate() event handler method.
+
+                ComponentEvent event = (ComponentEvent) invocation.getParameter(0);
+
+                if (event.matches(EventConstants.ACTIVATE, "", 0))
+                {
+                    String clientValue = request.getParameter(parameterName);
+
+                    if (clientValue != null)
+                    {
+
+                        Object value = encoder.toValue(clientValue);
+
+                        access.write(invocation.getInstance(), value);
+                    }
+                }
+
+                invocation.proceed();
+            }
+        };
+
+        transformation.getOrCreateMethod(TransformConstants.DISPATCH_COMPONENT_EVENT).addAdvice(advice);
     }
 
     @SuppressWarnings("all")
     private static void decorateLinks(ClassTransformation transformation, final FieldAccess access,
-            final String parameterName, final ValueEncoder encoder)
+                                      final String parameterName, final ValueEncoder encoder)
     {
         ComponentEventHandler handler = new ComponentEventHandler()
         {
