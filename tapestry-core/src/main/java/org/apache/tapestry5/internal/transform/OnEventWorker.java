@@ -14,34 +14,30 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.RequestParameter;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Flow;
-import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
-import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.plastic.MethodAdvice;
-import org.apache.tapestry5.plastic.MethodDescription;
-import org.apache.tapestry5.plastic.MethodInvocation;
-import org.apache.tapestry5.plastic.PlasticClass;
-import org.apache.tapestry5.plastic.PlasticMethod;
+import org.apache.tapestry5.plastic.*;
 import org.apache.tapestry5.runtime.ComponentEvent;
+import org.apache.tapestry5.runtime.Event;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.ValueEncoderSource;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Provides implementations of the
@@ -55,6 +51,150 @@ public class OnEventWorker implements ComponentClassTransformWorker2
     private final ValueEncoderSource valueEncoderSource;
 
     private final ComponentClassCache classCache;
+
+    private final OperationTracker operationTracker;
+
+    private final InstructionBuilderCallback RETURN_TRUE = new InstructionBuilderCallback()
+    {
+        public void doBuild(InstructionBuilder builder)
+        {
+            builder.loadConstant(true).returnResult();
+        }
+    };
+
+    /**
+     * Encapsulates information needed to invoke a method as an event handler method, including the logic
+     * to construct parameter values, and match the method against the {@link ComponentEvent}.
+     */
+    class EventHandlerMethod
+    {
+        final PlasticMethod method;
+
+        final MethodDescription description;
+
+        final String eventType, componentId;
+
+        final EventHandlerMethodParameterSource parameterSource;
+
+        int minContextValues = 0;
+
+        EventHandlerMethod(PlasticMethod method)
+        {
+            this.method = method;
+            description = method.getDescription();
+
+            parameterSource = buildSource();
+
+            String methodName = method.getDescription().methodName;
+
+            OnEvent onEvent = method.getAnnotation(OnEvent.class);
+
+            eventType = extractEventType(methodName, onEvent);
+            componentId = extractComponentId(methodName, onEvent);
+        }
+
+        void buildMatchAndInvocation(InstructionBuilder builder, final LocalVariable resultVariable)
+        {
+            final PlasticField sourceField =
+                    parameterSource == null ? null
+                            : method.getPlasticClass().introduceField(EventHandlerMethodParameterSource.class, description.methodName + "$parameterSource").inject(parameterSource);
+
+            builder.loadArgument(0).loadConstant(eventType).loadConstant(componentId).loadConstant(minContextValues);
+            builder.invoke(ComponentEvent.class, boolean.class, "matches", String.class, String.class, int.class);
+
+            builder.when(Condition.NON_ZERO, new InstructionBuilderCallback()
+            {
+                public void doBuild(InstructionBuilder builder)
+                {
+                    builder.loadArgument(0).loadConstant(method.getMethodIdentifier()).invoke(Event.class, void.class, "setMethodDescription", String.class);
+
+                    builder.loadThis();
+
+                    int count = description.argumentTypes.length;
+
+                    for (int i = 0; i < count; i++)
+                    {
+                        builder.loadThis().getField(sourceField).loadArgument(0).loadConstant(i);
+
+                        builder.invoke(EventHandlerMethodParameterSource.class, Object.class, "get",
+                                ComponentEvent.class, int.class);
+
+                        builder.castOrUnbox(description.argumentTypes[i]);
+                    }
+
+                    builder.invokeVirtual(method);
+
+                    if (!method.isVoid())
+                    {
+                        builder.boxPrimitive(description.returnType);
+                        builder.loadArgument(0).swap();
+
+                        builder.invoke(Event.class, boolean.class, "storeResult", Object.class);
+
+                        // storeResult() returns true if the method is aborted. Return true since, certainly,
+                        // a method was invoked.
+                        builder.when(Condition.NON_ZERO, RETURN_TRUE);
+                    }
+
+                    // Set the result to true, to indicate that some method was invoked.
+
+                    builder.loadConstant(true).storeVariable(resultVariable);
+                }
+            });
+        }
+
+
+        private EventHandlerMethodParameterSource buildSource()
+        {
+            final String[] parameterTypes = method.getDescription().argumentTypes;
+
+            if (parameterTypes.length == 0)
+            {
+                return null;
+            }
+
+            final List<EventHandlerMethodParameterProvider> providers = CollectionFactory.newList();
+
+            int contextIndex = 0;
+
+            for (int i = 0; i < parameterTypes.length; i++)
+            {
+                String type = parameterTypes[i];
+
+                EventHandlerMethodParameterProvider provider = parameterTypeToProvider.get(type);
+
+                if (provider != null)
+                {
+                    providers.add(provider);
+                    continue;
+                }
+
+                RequestParameter parameterAnnotation = method.getParameters().get(i).getAnnotation(RequestParameter.class);
+
+                if (parameterAnnotation != null)
+                {
+                    String parameterName = parameterAnnotation.value();
+
+                    providers.add(createQueryParameterProvider(method, i, parameterName, type,
+                            parameterAnnotation.allowBlank()));
+                    continue;
+                }
+
+                // Note: probably safe to do the conversion to Class early (class load time)
+                // as parameters are rarely (if ever) component classes.
+
+                providers.add(createEventContextProvider(type, contextIndex++));
+            }
+
+
+            minContextValues = contextIndex;
+
+            EventHandlerMethodParameterProvider[] providerArray = providers.toArray(new EventHandlerMethodParameterProvider[providers.size()]);
+
+            return new EventHandlerMethodParameterSource(method.getMethodIdentifier(), operationTracker, providerArray);
+        }
+    }
+
 
     /**
      * Stores a couple of special parameter type mappings that are used when matching the entire event context
@@ -94,11 +234,12 @@ public class OnEventWorker implements ComponentClassTransformWorker2
         });
     }
 
-    public OnEventWorker(Request request, ValueEncoderSource valueEncoderSource, ComponentClassCache classCache)
+    public OnEventWorker(Request request, ValueEncoderSource valueEncoderSource, ComponentClassCache classCache, OperationTracker operationTracker)
     {
         this.request = request;
         this.valueEncoderSource = valueEncoderSource;
         this.classCache = classCache;
+        this.operationTracker = operationTracker;
     }
 
     public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
@@ -106,78 +247,52 @@ public class OnEventWorker implements ComponentClassTransformWorker2
         Flow<PlasticMethod> methods = matchEventHandlerMethods(plasticClass);
 
         if (methods.isEmpty())
+        {
             return;
+        }
 
-        Flow<EventHandlerMethodInvoker> invokers = toInvokers(plasticClass.getClassName(), methods);
-
-        updateModelWithHandledEvents(model, invokers);
-
-        adviseDispatchComponentEventMethod(plasticClass, invokers);
+        implementDispatchComponentEvent(plasticClass, support.isRootTransformation(), methods, model);
     }
 
-    private void adviseDispatchComponentEventMethod(PlasticClass plasticClass, Flow<EventHandlerMethodInvoker> invokers)
+
+    private void implementDispatchComponentEvent(final PlasticClass plasticClass, final boolean isRoot, final Flow<PlasticMethod> eventMethods, final MutableComponentModel model)
     {
-        MethodAdvice advice = createDispatchComponentEventAdvice(invokers);
-
-        plasticClass.introduceMethod(TransformConstants.DISPATCH_COMPONENT_EVENT_DESCRIPTION).addAdvice(advice);
-    }
-
-    private MethodAdvice createDispatchComponentEventAdvice(Flow<EventHandlerMethodInvoker> invokers)
-    {
-        final EventHandlerMethodInvoker[] invokersArray = invokers.toArray(EventHandlerMethodInvoker.class);
-
-        return new MethodAdvice()
+        plasticClass.introduceMethod(TransformConstants.DISPATCH_COMPONENT_EVENT_DESCRIPTION).changeImplementation(new InstructionBuilderCallback()
         {
-            public void advise(MethodInvocation invocation)
+            public void doBuild(InstructionBuilder builder)
             {
-                // Invoke the super-class implementation first. If no super-class,
-                // this will do nothing and return false.
-
-                invocation.proceed();
-
-                ComponentEvent event = (ComponentEvent) invocation.getParameter(0);
-
-                if (invokeEventHandlers(event, invocation.getInstance()))
-                    invocation.setReturnValue(true);
-            }
-
-            private boolean invokeEventHandlers(ComponentEvent event, Object instance)
-            {
-                // If the super-class aborted the event (some super-class method return non-null),
-                // then it's all over, don't even check for handlers in this class.
-
-                if (event.isAborted())
-                    return false;
-
-                boolean didInvokeSomeHandler = false;
-
-                for (EventHandlerMethodInvoker invoker : invokersArray)
+                builder.startVariable("boolean", new LocalVariableCallback()
                 {
-                    if (event.matches(invoker.getEventType(), invoker.getComponentId(),
-                            invoker.getMinContextValueCount()))
+                    public void doBuild(LocalVariable resultVariable, InstructionBuilder builder)
                     {
-                        didInvokeSomeHandler = true;
+                        if (!isRoot)
+                        {
+                            // As a subclass, there will be a base class implementation (possibly empty).
 
-                        invoker.invokeEventHandlerMethod(event, instance);
+                            builder.loadThis().loadArguments().invokeSpecial(plasticClass.getSuperClassName(), TransformConstants.DISPATCH_COMPONENT_EVENT_DESCRIPTION);
 
-                        if (event.isAborted())
-                            break;
+                            // First store the result of the super() call into the variable.
+                            builder.storeVariable(resultVariable);
+                            builder.loadArgument(0).invoke(Event.class, boolean.class, "isAborted");
+                            builder.when(Condition.NON_ZERO, RETURN_TRUE);
+                        } else
+                        {
+                            // No event handler method has yet been invoked.
+                            builder.loadConstant(false).storeVariable(resultVariable);
+                        }
+
+                        for (PlasticMethod method : eventMethods)
+                        {
+                            EventHandlerMethod eventHandlerMethod = new EventHandlerMethod(method);
+
+                            eventHandlerMethod.buildMatchAndInvocation(builder, resultVariable);
+
+                            model.addEventHandler(eventHandlerMethod.eventType);
+                        }
+
+                        builder.loadVariable(resultVariable).returnResult();
                     }
-                }
-
-                return didInvokeSomeHandler;
-            }
-        };
-    }
-
-    private void updateModelWithHandledEvents(final MutableComponentModel model,
-            Flow<EventHandlerMethodInvoker> invokers)
-    {
-        invokers.each(new Worker<EventHandlerMethodInvoker>()
-        {
-            public void work(EventHandlerMethodInvoker value)
-            {
-                model.addEventHandler(value.getEventType());
+                });
             }
         });
     }
@@ -200,80 +315,12 @@ public class OnEventWorker implements ComponentClassTransformWorker2
             {
                 return method.hasAnnotation(OnEvent.class);
             }
-
         });
     }
 
-    private Flow<EventHandlerMethodInvoker> toInvokers(final String componentClassName, Flow<PlasticMethod> methods)
-    {
-        return methods.map(new Mapper<PlasticMethod, EventHandlerMethodInvoker>()
-        {
-            public EventHandlerMethodInvoker map(PlasticMethod element)
-            {
-                return toInvoker(componentClassName, element);
-            }
-        });
-    }
 
-    private EventHandlerMethodInvoker toInvoker(final String componentClassName, PlasticMethod method)
-    {
-        OnEvent annotation = method.getAnnotation(OnEvent.class);
-
-        final MethodDescription description = method.getDescription();
-
-        String methodName = description.methodName;
-
-        String eventType = extractEventType(methodName, annotation);
-        String componentId = extractComponentId(methodName, annotation);
-
-        String[] parameterTypes = description.argumentTypes;
-
-        if (parameterTypes.length == 0)
-            return new BaseEventHandlerMethodInvoker(method, eventType, componentId);
-
-        final List<EventHandlerMethodParameterProvider> providers = CollectionFactory.newList();
-
-        // I'd refactor a bit more of this if Java had covariant return types.
-
-        int contextIndex = 0;
-
-        for (int i = 0; i < parameterTypes.length; i++)
-        {
-            String type = parameterTypes[i];
-
-            EventHandlerMethodParameterProvider provider = parameterTypeToProvider.get(type);
-
-            if (provider != null)
-            {
-                providers.add(provider);
-                continue;
-            }
-
-            RequestParameter parameterAnnotation = method.getParameters().get(i).getAnnotation(RequestParameter.class);
-
-            if (parameterAnnotation != null)
-            {
-                String parameterName = parameterAnnotation.value();
-
-                providers.add(createQueryParameterSource(componentClassName, description, i, parameterName, type,
-                        parameterAnnotation.allowBlank()));
-                continue;
-            }
-
-            // Note: probably safe to do the conversion to Class early (class load time)
-            // as parameters are rarely (if ever) component classes.
-
-            final int parameterIndex = contextIndex++;
-
-            providers.add(createEventContextSource(type, parameterIndex));
-        }
-
-        return createInvoker(method, eventType, componentId, contextIndex, providers);
-    }
-
-    private EventHandlerMethodParameterProvider createQueryParameterSource(final String componentClassName,
-            final MethodDescription description, final int parameterIndex, final String parameterName,
-            final String parameterTypeName, final boolean allowBlank)
+    private EventHandlerMethodParameterProvider createQueryParameterProvider(final PlasticMethod method, final int parameterIndex, final String parameterName,
+                                                                             final String parameterTypeName, final boolean allowBlank)
     {
         return new EventHandlerMethodParameterProvider()
         {
@@ -302,48 +349,19 @@ public class OnEventWorker implements ComponentClassTransformWorker2
                                         parameterName, parameterType.getName()));
 
                     return value;
-                }
-                catch (Exception ex)
+                } catch (Exception ex)
                 {
                     throw new RuntimeException(
                             String.format(
-                                    "Unable process query parameter '%s' as parameter #%d of event handler method %s (in class %s): %s",
-                                    parameterName, parameterIndex + 1, description, componentClassName,
+                                    "Unable process query parameter '%s' as parameter #%d of event handler method %s: %s",
+                                    parameterName, parameterIndex + 1, method.getMethodIdentifier(),
                                     InternalUtils.toMessage(ex)), ex);
                 }
             }
         };
     }
 
-    private EventHandlerMethodInvoker createInvoker(PlasticMethod method, String eventType, String componentId,
-            final int minContextCount, final List<EventHandlerMethodParameterProvider> providers)
-    {
-        return new BaseEventHandlerMethodInvoker(method, eventType, componentId)
-        {
-            final int count = providers.size();
-
-            @Override
-            public int getMinContextValueCount()
-            {
-                return minContextCount;
-            }
-
-            @Override
-            protected Object[] constructParameters(ComponentEvent event)
-            {
-                Object[] parameters = new Object[count];
-
-                for (int i = 0; i < count; i++)
-                {
-                    parameters[i] = providers.get(i).valueForEventHandlerMethodParameter(event);
-                }
-
-                return parameters;
-            }
-        };
-    }
-
-    private EventHandlerMethodParameterProvider createEventContextSource(final String type, final int parameterIndex)
+    private EventHandlerMethodParameterProvider createEventContextProvider(final String type, final int parameterIndex)
     {
         return new EventHandlerMethodParameterProvider()
         {
