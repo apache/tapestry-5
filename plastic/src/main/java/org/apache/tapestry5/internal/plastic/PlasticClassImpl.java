@@ -146,6 +146,9 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         private int methodIndex = -1;
 
+        // Lazily initialized
+        private String methodIdentifier;
+
         public PlasticMethodImpl(MethodNode node)
         {
             super(node.visibleAnnotations);
@@ -175,23 +178,36 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         public int compareTo(PlasticMethodImpl o)
         {
+            check();
+
             return description.compareTo(o.description);
         }
 
         public boolean isOverride()
         {
+            check();
+
             return parentMethodBundle.isImplemented(node.name, node.desc);
         }
 
         public String getMethodIdentifier()
         {
-            return String.format("%s.%s",
-                    className,
-                    description.toShortString());
+            check();
+
+            if (methodIdentifier == null)
+            {
+                methodIdentifier = String.format("%s.%s",
+                        className,
+                        description.toShortString());
+            }
+
+            return methodIdentifier;
         }
 
         public boolean isVoid()
         {
+            check();
+
             return description.returnType.equals("void");
         }
 
