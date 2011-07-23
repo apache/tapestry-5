@@ -515,6 +515,7 @@ public final class TapestryModule
      * <dd>Allows fields to retain their values between requests</dd>
      * <dt>Meta</dt>
      * <dd>Checks for meta data annotations and adds it to the component model</dd>
+     * <dt>PageActivationContext</dt> <dd>Support for {@link PageActivationContext} annotation</dd>
      * <dt>Cached</dt>
      * <dd>Checks for the {@link org.apache.tapestry5.annotations.Cached} annotation</dd>
      * </dl>
@@ -564,6 +565,7 @@ public final class TapestryModule
 
         configuration.add("Retain", new RetainWorker());
 
+        configuration.add("PageActivationContext", new PageActivationContextWorker(), "after:OnEvent");
 
         configuration.addInstance("Cached", CachedWorker.class);
 
@@ -637,8 +639,6 @@ public final class TapestryModule
         configuration.addInstance("Log", LogWorker.class);
 
         configuration.addInstance("PageReset", PageResetAnnotationWorker.class);
-
-        configuration.add("PageActivationContext", new PageActivationContextWorker(), "after:OnEvent");
 
         configuration.addInstance("SessionAttribute", SessionAttributeWorker.class);
 

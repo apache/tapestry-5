@@ -22,6 +22,7 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
+import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.services.TransformField;
 
 public class TransformMessages
@@ -38,6 +39,18 @@ public class TransformMessages
         List<String> names = CollectionFactory.newList();
 
         for (TransformField field : fields)
+        {
+            names.add(field.getName());
+        }
+
+        return MESSAGES.format("illegal-number-of-page-activation-context-handlers", InternalUtils.joinSorted(names));
+    }
+
+        public static String illegalNumberOfPageActivationContextHandlers2(List<PlasticField> fields)
+    {
+        List<String> names = CollectionFactory.newList();
+
+        for (PlasticField field : fields)
         {
             names.add(field.getName());
         }
