@@ -190,6 +190,11 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                     description.toShortString());
         }
 
+        public boolean isVoid()
+        {
+            return description.returnType.equals("void");
+        }
+
         public MethodHandle getHandle()
         {
             check();

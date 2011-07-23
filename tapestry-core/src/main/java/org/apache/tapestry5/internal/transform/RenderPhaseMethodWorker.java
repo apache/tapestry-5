@@ -138,7 +138,7 @@ public class RenderPhaseMethodWorker implements ComponentClassTransformWorker2
 
                 // Non-void methods will pass a value to the event.
 
-                if (!method.getDescription().returnType.equals("void"))
+                if (!method.isVoid())
                 {
                     builder.boxPrimitive(method.getDescription().returnType);
                     builder.loadArgument(1).swap();

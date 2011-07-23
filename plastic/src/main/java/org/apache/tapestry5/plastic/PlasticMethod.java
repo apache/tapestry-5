@@ -115,4 +115,11 @@ public interface PlasticMethod extends AnnotationAccess
      * @see org.apache.tapestry5.plastic.MethodDescription#toShortString()
      */
     String getMethodIdentifier();
+
+    /**
+     * Returns true if this method is type void.
+     *
+     * @return true for void methods.
+     */
+    boolean isVoid();
 }
