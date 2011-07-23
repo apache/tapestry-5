@@ -1143,7 +1143,12 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
                 if (event.isAborted())
                     return result;
-            } catch (RuntimeException ex)
+            }
+
+            // As with render phase methods, dispatchEvent() can now simply throw arbitrary exceptions
+            // (the distinction between RuntimeException and checked Exception is entirely in the compiler,
+            // not the JVM).
+            catch (Exception ex)
             {
                 // An exception in an event handler method
                 // while we're trying to handle a previous exception!
