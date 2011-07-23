@@ -314,7 +314,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                         final MutableComponentModel model = new MutableComponentModelImpl(className, logger, baseResource,
                                 parentModel, isPage);
 
-                        transformerChain.transform(plasticClass, new TransformationSupportImpl(plasticClass, isRoot), model);
+                        transformerChain.transform(plasticClass, new TransformationSupportImpl(plasticClass, isRoot, model), model);
 
                         classToModel.put(className, model);
                     }
@@ -379,10 +379,13 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
         private final boolean root;
 
-        public TransformationSupportImpl(PlasticClass plasticClass, boolean root)
+        private final MutableComponentModel model;
+
+        public TransformationSupportImpl(PlasticClass plasticClass, boolean root, MutableComponentModel model)
         {
             this.plasticClass = plasticClass;
             this.root = root;
+            this.model = model;
         }
 
         public Class toClass(String typeName)
@@ -408,6 +411,8 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
             assert InternalUtils.isNonBlank(eventType);
             assert minContextValues >= 0;
             assert handler != null;
+
+            model.addEventHandler(eventType);
 
             MethodAdvice advice = new MethodAdvice()
             {
