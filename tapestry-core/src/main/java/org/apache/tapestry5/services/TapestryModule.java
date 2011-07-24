@@ -752,6 +752,9 @@ public final class TapestryModule
      * <dd>Access to properties of resources (log, messages, etc.)</dd>
      * <dt>Asset</dt>
      * <dd>injection of assets (triggered via {@link Path} annotation), with the path relative to the component class</dd>
+     * <dt>Service</dt>
+     * <dd>Ordered last, for use when Inject is present and nothing else works, matches field type against Tapestry IoC
+     * services</dd>
      * </dl>
      */
     @Contribute(InjectionProvider2.class)
@@ -763,6 +766,10 @@ public final class TapestryModule
         configuration.add("Block", new BlockInjectionProvider(), "before:Default");
         configuration.add("CommonResources", new CommonResourcesInjectionProvider(), "after:Default");
         configuration.add("Asset", new AssetInjectionProvider(symbolSource, assetSource), "before:Default");
+        // This needs to be the last one, since it matches against services
+        // and might blow up if there is no match.
+        configuration.addInstance("Service", ServiceInjectionProvider.class, "after:*");
+
     }
 
     /**
@@ -772,9 +779,6 @@ public final class TapestryModule
      * <dd>based on {@link MasterObjectProvider}</dd>
      * <dt>ComponentResources</dt>
      * <dd>give component access to its resources</dd>
-     * <dt>Service</dt>
-     * <dd>ordered last, for use when Inject is present and nothing else works, matches field type against Tapestry IoC
-     * services</dd>
      * </dl>
      */
     @Contribute(InjectionProvider2.class)
@@ -788,9 +792,6 @@ public final class TapestryModule
         configuration.add("ComponentResources", new ComponentResourcesInjectionProvider());
 
 
-        // This needs to be the last one, since it matches against services
-        // and might blow up if there is no match.
-        configuration.add("Service", new ServiceInjectionProvider(locator), "after:*");
     }
 
     /**

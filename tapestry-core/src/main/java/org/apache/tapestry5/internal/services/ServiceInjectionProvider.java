@@ -17,31 +17,34 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.InjectionProvider;
+import org.apache.tapestry5.plastic.PlasticField;
+import org.apache.tapestry5.services.transform.InjectionProvider2;
 
 /**
  * A very late worker related to the {@link Inject} annotation that, when all other forms of injection have failed,
  * matches the field type to a service interface.
  */
-public class ServiceInjectionProvider implements InjectionProvider
+public class ServiceInjectionProvider implements InjectionProvider2
 {
     private final ObjectLocator locator;
 
-    public ServiceInjectionProvider(ObjectLocator locator)
+    private final ComponentClassCache classCache;
+
+    public ServiceInjectionProvider(ObjectLocator locator, ComponentClassCache classCache)
     {
         this.locator = locator;
+        this.classCache = classCache;
     }
 
-    @SuppressWarnings("unchecked")
-    public boolean provideInjection(String fieldName, Class fieldType, ObjectLocator locator,
-            ClassTransformation transformation, MutableComponentModel componentModel)
+    public boolean provideInjection(PlasticField field, ObjectLocator locator, MutableComponentModel componentModel)
     {
+        Class fieldType = classCache.forName(field.getTypeName());
+
         Object inject = this.locator.getService(fieldType);
 
         assert inject != null;
 
-        transformation.getField(fieldName).inject(inject);
+        field.inject(inject);
 
         // If we make it this far without an exception, then we were successful
         // and should claim the field.
