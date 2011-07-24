@@ -745,6 +745,8 @@ public final class TapestryModule
 
     /**
      * <dl>
+     * <dt>Default</dt>
+     * <dd>based on {@link MasterObjectProvider}</dd>
      * <dt>Named</dt> <dd>Handles fields with the {@link javax.inject.Named} annotation</dd>
      * <dt>Block</dt>
      * <dd>injects fields of type {@link Block}</dd>
@@ -762,33 +764,16 @@ public final class TapestryModule
 
                                                          AssetSource assetSource)
     {
-        configuration.addInstance("Named", InjectNamedProvider.class, "before:Default");
-        configuration.add("Block", new BlockInjectionProvider(), "before:Default");
-        configuration.add("CommonResources", new CommonResourcesInjectionProvider(), "after:Default");
-        configuration.add("Asset", new AssetInjectionProvider(symbolSource, assetSource), "before:Default");
+        configuration.addInstance("Named", InjectNamedProvider.class);
+        configuration.add("Block", new BlockInjectionProvider());
+        configuration.add("Asset", new AssetInjectionProvider(symbolSource, assetSource));
+
+        configuration.addInstance("Default", DefaultInjectionProvider.class);
+
+        configuration.add("CommonResources", new CommonResourcesInjectionProvider());
         // This needs to be the last one, since it matches against services
         // and might blow up if there is no match.
         configuration.addInstance("Service", ServiceInjectionProvider.class, "after:*");
-
-    }
-
-    /**
-     * Contributes the base set of injection providers:
-     * <dl>
-     * <dt>Default</dt>
-     * <dd>based on {@link MasterObjectProvider}</dd>
-     * <dt>ComponentResources</dt>
-     * <dd>give component access to its resources</dd>
-     * </dl>
-     */
-    @Contribute(InjectionProvider2.class)
-    public static void provideOldStyleInjectionProvider(OrderedConfiguration<InjectionProvider> configuration,
-
-                                                        MasterObjectProvider masterObjectProvider,
-
-                                                        ObjectLocator locator)
-    {
-        configuration.add("Default", new DefaultInjectionProvider(masterObjectProvider, locator));
     }
 
     /**

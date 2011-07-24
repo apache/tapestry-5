@@ -14,37 +14,42 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.services.MasterObjectProvider;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.InjectionProvider;
-import org.apache.tapestry5.services.TransformField;
+import org.apache.tapestry5.plastic.PlasticField;
+import org.apache.tapestry5.services.transform.InjectionProvider2;
+
+import java.lang.annotation.Annotation;
 
 /**
  * Worker for the {@link org.apache.tapestry5.ioc.annotations.Inject} annotation that delegates out to the master
  * {@link org.apache.tapestry5.ioc.services.MasterObjectProvider} to access the value. This worker must be scheduled
  * after certain other workers, such as {@link BlockInjectionProvider} (which is keyed off a combination of type and
  * the Inject annotation).
- * 
+ *
  * @see org.apache.tapestry5.ioc.services.MasterObjectProvider
  */
-public class DefaultInjectionProvider implements InjectionProvider
+public class DefaultInjectionProvider implements InjectionProvider2
 {
     private final MasterObjectProvider masterObjectProvider;
 
     private final ObjectLocator locator;
 
-    public DefaultInjectionProvider(MasterObjectProvider masterObjectProvider, ObjectLocator locator)
+    private final ComponentClassCache classCache;
+
+    private final static String MESSAGES_TYPE = Messages.class.getName();
+
+    public DefaultInjectionProvider(MasterObjectProvider masterObjectProvider, ObjectLocator locator, ComponentClassCache classCache)
     {
         this.masterObjectProvider = masterObjectProvider;
         this.locator = locator;
+        this.classCache = classCache;
     }
 
-    @SuppressWarnings("unchecked")
-    public boolean provideInjection(String fieldName, Class fieldType, ObjectLocator locator,
-            final ClassTransformation transformation, MutableComponentModel componentModel)
+    public boolean provideInjection(final PlasticField field, ObjectLocator locator, MutableComponentModel componentModel)
     {
         // I hate special cases, but we have a conflict between the ObjectProvider contributed so as to inject
         // the global application messages into services, and the injection of per-component Messages into components.
@@ -52,12 +57,20 @@ public class DefaultInjectionProvider implements InjectionProvider
         // to inject the wrong Messages (the global application messages, not the component messages) ... so we
         // make a special check here.
 
-        if (fieldType.equals(Messages.class))
+        if (field.getTypeName().equals(MESSAGES_TYPE))
+        {
             return false;
+        }
 
-        TransformField field = transformation.getField(fieldName);
+        Class fieldType = classCache.forName(field.getTypeName());
 
-        Object injectionValue = masterObjectProvider.provide(fieldType, field, this.locator, false);
+        Object injectionValue = masterObjectProvider.provide(fieldType, new AnnotationProvider()
+        {
+            public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
+            {
+                return field.getAnnotation(annotationClass);
+            }
+        }, this.locator, false);
 
         // Null means that no ObjectProvider could provide the value. We have set up the chain of
         // command so that InjectResources can give it a try next. Later, we'll try to match against
