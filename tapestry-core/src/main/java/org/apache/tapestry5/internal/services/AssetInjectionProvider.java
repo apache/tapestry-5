@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.util.Locale;
-
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Path;
@@ -23,18 +21,20 @@ import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.plastic.ComputedValue;
+import org.apache.tapestry5.plastic.InstanceContext;
+import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.services.AssetSource;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentValueProvider;
-import org.apache.tapestry5.services.InjectionProvider;
-import org.apache.tapestry5.services.TransformField;
+import org.apache.tapestry5.services.transform.InjectionProvider2;
+
+import java.util.Locale;
 
 /**
  * Performs injection of assets, based on the presence of the {@link Path} annotation. This is more
  * useful than the
  * general {@link AssetObjectProvider}, because relative assets are supported.
  */
-public class AssetInjectionProvider implements InjectionProvider
+public class AssetInjectionProvider implements InjectionProvider2
 {
     private final SymbolSource symbolSource;
 
@@ -46,32 +46,32 @@ public class AssetInjectionProvider implements InjectionProvider
         this.assetSource = assetSource;
     }
 
-    public boolean provideInjection(String fieldName, Class fieldType, ObjectLocator locator,
-            ClassTransformation transformation, MutableComponentModel componentModel)
+    public boolean provideInjection(PlasticField field, ObjectLocator locator, MutableComponentModel componentModel)
     {
-        TransformField field = transformation.getField(fieldName);
-
         Path path = field.getAnnotation(Path.class);
 
         if (path == null)
+        {
             return false;
+        }
 
         final String expanded = symbolSource.expandSymbols(path.value());
 
         final Resource baseResource = componentModel.getBaseResource();
 
-        ComponentValueProvider<Asset> provider = new ComponentValueProvider<Asset>()
+        ComputedValue<Asset> computedAsset = new ComputedValue<Asset>()
         {
-
-            public Asset get(ComponentResources resources)
+            public Asset get(InstanceContext context)
             {
+                ComponentResources resources = context.get(ComponentResources.class);
+
                 Locale locale = resources.getLocale();
 
                 return assetSource.getAsset(baseResource, expanded, locale);
             }
         };
 
-        field.injectIndirect(provider);
+        field.injectComputed(computedAsset);
 
         return true;
     }

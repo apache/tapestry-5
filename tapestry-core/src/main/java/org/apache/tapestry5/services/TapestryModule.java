@@ -750,14 +750,19 @@ public final class TapestryModule
      * <dd>injects fields of type {@link Block}</dd>
      * <dt>CommonResources</dt>
      * <dd>Access to properties of resources (log, messages, etc.)</dd>
+     * <dt>Asset</dt>
+     * <dd>injection of assets (triggered via {@link Path} annotation), with the path relative to the component class</dd>
      * </dl>
      */
     @Contribute(InjectionProvider2.class)
-    public static void provideStandardInjectionProviders(OrderedConfiguration<InjectionProvider2> configuration)
+    public static void provideStandardInjectionProviders(OrderedConfiguration<InjectionProvider2> configuration, SymbolSource symbolSource,
+
+                                                         AssetSource assetSource)
     {
         configuration.addInstance("Named", InjectNamedProvider.class, "before:Default");
         configuration.add("Block", new BlockInjectionProvider(), "before:Default");
         configuration.add("CommonResources", new CommonResourcesInjectionProvider(), "after:Default");
+        configuration.add("Asset", new AssetInjectionProvider(symbolSource, assetSource), "before:Default");
     }
 
     /**
@@ -767,8 +772,6 @@ public final class TapestryModule
      * <dd>based on {@link MasterObjectProvider}</dd>
      * <dt>ComponentResources</dt>
      * <dd>give component access to its resources</dd>
-     * <dt>Asset</dt>
-     * <dd>injection of assets (triggered via {@link Path} annotation), with the path relative to the component class</dd>
      * <dt>Service</dt>
      * <dd>ordered last, for use when Inject is present and nothing else works, matches field type against Tapestry IoC
      * services</dd>
@@ -779,21 +782,10 @@ public final class TapestryModule
 
                                                         MasterObjectProvider masterObjectProvider,
 
-                                                        ObjectLocator locator,
-
-                                                        SymbolSource symbolSource,
-
-                                                        AssetSource assetSource)
+                                                        ObjectLocator locator)
     {
         configuration.add("Default", new DefaultInjectionProvider(masterObjectProvider, locator));
         configuration.add("ComponentResources", new ComponentResourcesInjectionProvider());
-
-        // This comes after default, to deal with conflicts between injecting a
-        // String as the
-        // component id, and injecting a string with @Symbol or @Value.
-
-
-        configuration.add("Asset", new AssetInjectionProvider(symbolSource, assetSource), "before:Default");
 
 
         // This needs to be the last one, since it matches against services
