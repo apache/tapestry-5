@@ -36,6 +36,8 @@ public interface PageLifecycleListener
     /**
      * Invoked when a page is first attached to the current request, giving components a chance to initialize for the
      * current request.
+     *
+     * @deprecated In Tapestry 5.3, with no replacement (attach logic no longer meaningful now that pages are singletons).
      */
     void containingPageDidAttach();
 
