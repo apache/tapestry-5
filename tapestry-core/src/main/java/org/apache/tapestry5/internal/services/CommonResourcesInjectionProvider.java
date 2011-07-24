@@ -90,8 +90,6 @@ public class CommonResourcesInjectionProvider implements InjectionProvider2
         {
             return resources.getLogger();
         }
-
-        ;
     };
 
     private static ResourceProvider<String> completeIdProvider = new ResourceProvider<String>()
@@ -102,9 +100,18 @@ public class CommonResourcesInjectionProvider implements InjectionProvider2
         }
     };
 
+    private static ResourceProvider<ComponentResources> resourcesProvider = new ResourceProvider<ComponentResources>()
+    {
+        public ComponentResources get(ComponentResources resources)
+        {
+            return resources;
+        }
+    };
+
     private static final Map<String, ResourceProvider> configuration = CollectionFactory.newMap();
 
     {
+        configuration.put(ComponentResources.class.getName(), resourcesProvider);
         configuration.put(ComponentResourceSelector.class.getName(), selectorProvider);
         configuration.put(Messages.class.getName(), messagesProvider);
         configuration.put(Locale.class.getName(), localeProvider);

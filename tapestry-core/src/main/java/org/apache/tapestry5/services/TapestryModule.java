@@ -789,9 +789,6 @@ public final class TapestryModule
                                                         ObjectLocator locator)
     {
         configuration.add("Default", new DefaultInjectionProvider(masterObjectProvider, locator));
-        configuration.add("ComponentResources", new ComponentResourcesInjectionProvider());
-
-
     }
 
     /**
