@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,133 +14,123 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import java.util.List;
-
 import org.apache.tapestry5.annotations.PageReset;
-import org.apache.tapestry5.func.Predicate;
+import org.apache.tapestry5.func.*;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.structure.PageResetListener;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.runtime.Component;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.plastic.*;
+import org.apache.tapestry5.services.TransformConstants;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 
 /**
  * Implementation of the {@link PageReset} annotation. Makes the component implement {@link PageResetListener}.
- * 
+ *
  * @since 5.2.0
  */
-public class PageResetAnnotationWorker implements ComponentClassTransformWorker
+public class PageResetAnnotationWorker implements ComponentClassTransformWorker2
 {
     private static final String META_KEY = "tapestry.page-reset-listener";
 
-    private static final TransformMethodSignature CONTAINING_PAGE_DID_RESET = new TransformMethodSignature(
-            "containingPageDidReset");
-
-    private final ComponentMethodAdvice registerAsListenerAdvice = new ComponentMethodAdvice()
+    private final MethodAdvice REGISTER_AS_LISTENER = new MethodAdvice()
     {
-        public void advise(ComponentMethodInvocation invocation)
+        public void advise(MethodInvocation invocation)
         {
             invocation.proceed();
 
-            InternalComponentResources icr = (InternalComponentResources) invocation.getComponentResources();
+            InternalComponentResources resources = invocation.getInstanceContext().get(InternalComponentResources.class);
 
-            icr.addPageResetListener((PageResetListener) invocation.getInstance());
+            resources.addPageResetListener((PageResetListener) invocation.getInstance());
         }
     };
 
-    public void transform(final ClassTransformation transformation, MutableComponentModel model)
+    private final Predicate<PlasticMethod> METHOD_MATCHER = new Predicate<PlasticMethod>()
     {
-        List<TransformMethod> methods = matchPageResetMethods(transformation);
-
-        if (methods.isEmpty())
-            return;
-
-        makeComponentRegisterAsPageResetListenerAtPageLoad(transformation, model);
-
-        adviseContainingPageDidResetMethod(transformation, methods);
-    }
-
-    private void adviseContainingPageDidResetMethod(ClassTransformation transformation, List<TransformMethod> methods)
-    {
-        List<MethodAccess> methodAccess = convertToMethodAccess(methods);
-
-        ComponentInstanceOperation advice = createMethodAccessAdvice(methodAccess);
-
-        transformation.getOrCreateMethod(CONTAINING_PAGE_DID_RESET).addOperationAfter(advice);
-    }
-
-    private ComponentInstanceOperation createMethodAccessAdvice(final List<MethodAccess> methodAccess)
-    {
-        return new ComponentInstanceOperation()
+        public boolean accept(PlasticMethod method)
         {
+            return method.getDescription().methodName.equalsIgnoreCase("pageReset") ||
+                    method.hasAnnotation(PageReset.class);
+        }
+    };
 
-            public void invoke(Component instance)
+    private final Worker<PlasticMethod> METHOD_VALIDATOR = new Worker<PlasticMethod>()
+    {
+        public void work(PlasticMethod method)
+        {
+            boolean valid = method.isVoid() && method.getParameters().isEmpty();
+
+            if (!valid)
             {
-                for (MethodAccess access : methodAccess)
-                {
-                    MethodInvocationResult result = access.invoke(instance);
+                throw new RuntimeException(
+                        String.format(
+                                "Method %s is invalid: methods with the @PageReset annotation must return void, and have no parameters.",
+                                method.getMethodIdentifier()));
+            }
+        }
+    };
 
-                    result.rethrow();
+    private final Mapper<PlasticMethod, MethodHandle> TO_HANDLE = new Mapper<PlasticMethod, MethodHandle>()
+    {
+        public MethodHandle map(PlasticMethod method)
+        {
+            return method.getHandle();
+        }
+    };
+
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
+    {
+        Flow<PlasticMethod> methods = findResetMethods(plasticClass);
+
+        if (!methods.isEmpty())
+        {
+            registerAsPageResetListenerAtPageLoad(plasticClass, model);
+
+            invokeMethodsOnPageReset(plasticClass, methods);
+        }
+    }
+
+    private void invokeMethodsOnPageReset(PlasticClass plasticClass, Flow<PlasticMethod> methods)
+    {
+        final MethodHandle[] handles = methods.map(TO_HANDLE).toArray(MethodHandle.class);
+
+        plasticClass.introduceMethod(TransformConstants.CONTAINING_PAGE_DID_RESET_DESCRIPTION).addAdvice(new MethodAdvice()
+        {
+            public void advise(MethodInvocation invocation)
+            {
+                invocation.proceed();
+
+                Object instance = invocation.getInstance();
+
+                for (MethodHandle handle : handles)
+                {
+                    handle.invoke(instance);
                 }
             }
-        };
+        });
     }
 
-    private List<MethodAccess> convertToMethodAccess(List<TransformMethod> methods)
+    private void registerAsPageResetListenerAtPageLoad(PlasticClass plasticClass, MutableComponentModel model)
     {
-        List<MethodAccess> result = CollectionFactory.newList();
 
-        for (TransformMethod method : methods)
-        {
-            result.add(toMethodAccess(method));
-        }
-
-        return result;
-    }
-
-    private void makeComponentRegisterAsPageResetListenerAtPageLoad(final ClassTransformation transformation,
-            MutableComponentModel model)
-    {
         // The meta key tracks whether this has already occurred; it is only necessary for a base class
         // (subclasses, even if they include pageReset methods, do not need to re-register if the base class
         // already has).
 
         if (model.getMeta(META_KEY) != null)
+        {
             return;
+        }
 
-        transformation.addImplementedInterface(PageResetListener.class);
+        plasticClass.introduceInterface(PageResetListener.class);
 
-        transformation.getOrCreateMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE).addAdvice(
-                registerAsListenerAdvice);
+        plasticClass.introduceMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_DESCRIPTION).addAdvice(REGISTER_AS_LISTENER);
 
         model.setMeta(META_KEY, "true");
     }
 
-    private List<TransformMethod> matchPageResetMethods(final ClassTransformation transformation)
+    private Flow<PlasticMethod> findResetMethods(PlasticClass plasticClass)
     {
-        return transformation.matchMethods(new Predicate<TransformMethod>()
-        {
-            public boolean accept(TransformMethod method)
-            {
-                return method.getName().equalsIgnoreCase("pageReset") || method.getAnnotation(PageReset.class) != null;
-            }
-        });
-    }
-
-    private MethodAccess toMethodAccess(TransformMethod method)
-    {
-        TransformMethodSignature sig = method.getSignature();
-
-        boolean valid = sig.getParameterTypes().length == 0 && sig.getReturnType().equals("void");
-
-        if (!valid)
-            throw new RuntimeException(
-                    String
-                            .format(
-                                    "Method %s is invalid: methods with the @PageReset annotation must return void, and have no parameters.",
-                                    method.getMethodIdentifier()));
-
-        return method.getAccess();
+        return F.flow(plasticClass.getMethods()).filter(METHOD_MATCHER).each(METHOD_VALIDATOR);
     }
 }

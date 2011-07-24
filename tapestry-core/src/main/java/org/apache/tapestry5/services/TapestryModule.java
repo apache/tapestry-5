@@ -518,6 +518,9 @@ public final class TapestryModule
      * <dt>PageActivationContext</dt> <dd>Support for {@link PageActivationContext} annotation</dd>
      * <dt>DiscardAfter</dt> <dd>Support for {@link DiscardAfter} method annotation </dd>
      * <dt>MixinAfter</dt> <dd>Support for the {@link MixinAfter} mixin class annotation</dd>
+     * <dt>PageReset</dt>
+     * <dd>Checks for the {@link PageReset} annotation</dd>
+     * <p/>
      * <dt>Cached</dt>
      * <dd>Checks for the {@link org.apache.tapestry5.annotations.Cached} annotation</dd>
      * </dl>
@@ -575,6 +578,8 @@ public final class TapestryModule
 
         configuration.addInstance("DiscardAfter", DiscardAfterWorker.class);
 
+        configuration.addInstance("PageReset", PageResetAnnotationWorker.class);
+
         // This one is always last. Any additional private fields that aren't
         // annotated will
         // be converted to clear out at the end of the request.
@@ -606,8 +611,6 @@ public final class TapestryModule
      * <dd>Converts fields that reference application state objects
      * <dt>Log</dt>
      * <dd>Checks for the {@link org.apache.tapestry5.annotations.Log} annotation</dd>
-     * <dt>PageReset
-     * <dd>Checks for the {@link PageReset} annotation
      * <dt>HeartbeatDeferred
      * <dd>Support for the {@link HeartbeatDeferred} annotation
      * <dt>ActivationRequestParameter
@@ -640,8 +643,6 @@ public final class TapestryModule
         configuration.addInstance("Persist", PersistWorker.class);
 
         configuration.addInstance("Log", LogWorker.class);
-
-        configuration.addInstance("PageReset", PageResetAnnotationWorker.class);
 
         configuration.addInstance("SessionAttribute", SessionAttributeWorker.class);
 

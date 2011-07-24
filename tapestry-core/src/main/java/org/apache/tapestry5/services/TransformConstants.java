@@ -15,6 +15,7 @@
 package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.internal.structure.PageResetListener;
 import org.apache.tapestry5.plastic.MethodDescription;
 import org.apache.tapestry5.plastic.PlasticUtils;
 import org.apache.tapestry5.runtime.Component;
@@ -81,6 +82,16 @@ public final class TransformConstants
      */
     public static final MethodDescription CONTAINING_PAGE_DID_LOAD_DESCRIPTION = PlasticUtils.getMethodDescription(
             PageLifecycleListener.class, "containingPageDidLoad");
+
+    /**
+     * Description for {@link org.apache.tapestry5.internal.structure.PageResetListener#containingPageDidReset()}. Note that the {@link PageResetListener}
+     * interface is not automatically implemeneted by components. ]
+     *
+     * @see org.apache.tapestry5.annotations.PageReset
+     * @see org.apache.tapestry5.internal.transform.PageResetAnnotationWorker
+     * @since 5.3
+     */
+    public static final MethodDescription CONTAINING_PAGE_DID_RESET_DESCRIPTION = PlasticUtils.getMethodDescription(PageResetListener.class, "containingPageDidReset");
 
     /**
      * Signature for {@link org.apache.tapestry5.runtime.Component#postRenderCleanup()}.
