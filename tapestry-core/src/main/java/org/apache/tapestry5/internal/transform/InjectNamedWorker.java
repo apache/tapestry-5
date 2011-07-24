@@ -14,29 +14,38 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
+import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.func.Flow;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.TransformField;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticField;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * Processes the combination of {@link javax.inject.Inject} and {@link javax.inject.Named} annotations.
- * 
+ *
  * @since 5.3
  */
-public class InjectNamedWorker implements ComponentClassTransformWorker
+public class InjectNamedWorker implements ComponentClassTransformWorker2
 {
     private final ObjectLocator locator;
 
     private final ComponentClassCache cache;
+
+    private final Predicate<PlasticField> MATCHER = new Predicate<PlasticField>()
+    {
+        public boolean accept(PlasticField field)
+        {
+            return field.hasAnnotation(Inject.class) && field.hasAnnotation(Named.class);
+        }
+    };
 
     public InjectNamedWorker(ObjectLocator locator, ComponentClassCache cache)
     {
@@ -44,26 +53,17 @@ public class InjectNamedWorker implements ComponentClassTransformWorker
         this.cache = cache;
     }
 
-    @SuppressWarnings("unchecked")
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-    	
-    	List<TransformField> fields = transformation.matchFields(new Predicate<TransformField>() 
-    	{
+        Flow<PlasticField> fields = F.flow(plasticClass.getAllFields()).filter(MATCHER);
 
-			public boolean accept(TransformField field) 
-			{
-				return field.getAnnotation(Inject.class) != null && field.getAnnotation(Named.class) != null;
-			}
-		});
-    	
-        for (TransformField field : fields)
+        for (PlasticField field : fields)
         {
-        	Named annotation = field.getAnnotation(Named.class);
+            Named annotation = field.getAnnotation(Named.class);
 
             field.claim(annotation);
 
-            Class fieldType = cache.forName(field.getType());
+            Class fieldType = cache.forName(field.getTypeName());
 
             Object service = locator.getService(annotation.value(), fieldType);
 

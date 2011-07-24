@@ -521,7 +521,8 @@ public final class TapestryModule
      * <dt>MixinAfter</dt> <dd>Support for the {@link MixinAfter} mixin class annotation</dd>
      * <dt>PageReset</dt>
      * <dd>Checks for the {@link PageReset} annotation</dd>
-     * <p/>
+     * <dt>Mixin</dt>
+     * <dd>Adds a mixin as part of a component's implementation</dd>
      * <dt>Cached</dt>
      * <dd>Checks for the {@link org.apache.tapestry5.annotations.Cached} annotation</dd>
      * <dt>ActivationRequestParameter</dt>
@@ -530,6 +531,13 @@ public final class TapestryModule
      * <dd>Support for annotations {@link PageLoaded}, {@link PageAttached}, {@link PageDetached}</dd>
      * <dt>InjectService</dt>
      * <dd>Handles the {@link org.apache.tapestry5.ioc.annotations.InjectService} annotation</dd>
+     * <dt>InjectNamed</dt> <dd>Handles fields with the {@link javax.inject.Inject} and {@link javax.inject.Named} annotations</dd>
+     * <dt>Component</dt>
+     * <dd>Defines embedded components based on the {@link org.apache.tapestry5.annotations.Component} annotation</dd>
+     * <dt>Environment</dt>
+     * <dd>Allows fields to contain values extracted from the {@link org.apache.tapestry5.services.Environment} service</dd>
+     * <dt>ApplicationState</dt>
+     * <dd>Converts fields that reference application state objects
      * </dl>
      */
     @Contribute(ComponentClassTransformWorker2.class)
@@ -593,6 +601,7 @@ public final class TapestryModule
 
         configuration.addInstance("PageReset", PageResetAnnotationWorker.class);
         configuration.addInstance("InjectService", InjectServiceWorker.class);
+        configuration.addInstance("InjectNamed", InjectNamedWorker.class);
 
 
         // This one is always last. Any additional private fields that aren't
@@ -607,16 +616,8 @@ public final class TapestryModule
      * <dl>
      * <dt>Persist</dt>
      * <dd>Allows fields to store their their value persistently between requests</dd>
-     * <dt>Component</dt>
-     * <dd>Defines embedded components based on the {@link org.apache.tapestry5.annotations.Component} annotation</dd>
-     * <dt>Mixin</dt>
-     * <dd>Adds a mixin as part of a component's implementation</dd>
-     * <dt>Environment</dt>
-     * <dd>Allows fields to contain values extracted from the {@link org.apache.tapestry5.services.Environment} service</dd>
      * <dt>Inject</dt>
      * <dd>Used with the {@link org.apache.tapestry5.ioc.annotations.Inject} annotation, when a value is supplied</dd>
-     * <dt>ApplicationState</dt>
-     * <dd>Converts fields that reference application state objects
      * <dt>Log</dt>
      * <dd>Checks for the {@link org.apache.tapestry5.annotations.Log} annotation</dd>
      * <dt>HeartbeatDeferred
@@ -629,7 +630,6 @@ public final class TapestryModule
             OrderedConfiguration<ComponentClassTransformWorker> configuration)
     {
         configuration.addInstance("Inject", InjectWorker.class);
-        configuration.addInstance("InjectNamed", InjectNamedWorker.class);
 
         configuration.addInstance("Persist", PersistWorker.class);
 
