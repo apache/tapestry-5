@@ -1,0 +1,29 @@
+<t:layout xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd" xmlns:tx="tapestry-library:tapx">
+
+  <p id="message">${message}</p>
+
+  <t:form t:id="form">
+    <t:errors/>
+
+    <table>
+      <tr>
+        <td>
+          <t:label for="kf"/>
+        </td>
+        <td>
+          <t:kaptchaimage t:id="ki"/>
+          <br/>
+          <t:kaptchafield label="Security Check" t:id="kf" image="ki"/>
+        </td>
+      </tr>
+      <tr>
+        <td>
+        </td>
+        <td>
+          <input type="submit" value="Go"/>
+        </td>
+      </tr>
+    </table>
+  </t:form>
+
+</t:layout>

@@ -1,0 +1,18 @@
+description = "Kaptcha image support"
+
+dependencies {
+    compile project(':tapestry-core')
+    compile "com.google.code.kaptcha:kaptcha:2.3"
+    
+    testCompile project(':tapestry-test')
+}
+
+repositories {
+  mavenRepo urls: "http://howardlewisship.com/repository/"
+}
+
+jar {
+    manifest {
+        attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.kaptcha.services.KaptchaModule'
+    }
+}
