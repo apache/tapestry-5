@@ -523,6 +523,8 @@ public final class TapestryModule
      * <p/>
      * <dt>Cached</dt>
      * <dd>Checks for the {@link org.apache.tapestry5.annotations.Cached} annotation</dd>
+     * <dt>ActivationRequestParameter</dt>
+     * <dd>Support for the {@link ActivationRequestParameter} annotation</dd>
      * </dl>
      */
     @Contribute(ComponentClassTransformWorker2.class)
@@ -573,6 +575,8 @@ public final class TapestryModule
         configuration.add("Retain", new RetainWorker());
 
         configuration.add("PageActivationContext", new PageActivationContextWorker(), "after:OnEvent");
+        configuration
+                .addInstance("ActivationRequestParameter", ActivationRequestParameterWorker.class, "after:OnEvent");
 
         configuration.addInstance("Cached", CachedWorker.class);
 
@@ -613,8 +617,6 @@ public final class TapestryModule
      * <dd>Checks for the {@link org.apache.tapestry5.annotations.Log} annotation</dd>
      * <dt>HeartbeatDeferred
      * <dd>Support for the {@link HeartbeatDeferred} annotation
-     * <dt>ActivationRequestParameter
-     * <dd>Support for the {@link ActivationRequestParameter} annotation
      * </dl>
      */
     @Contribute(ComponentClassTransformWorker2.class)
@@ -622,14 +624,10 @@ public final class TapestryModule
     public static void provideOldStyleClassTransformWorkers(
             OrderedConfiguration<ComponentClassTransformWorker> configuration)
     {
-
-
         configuration.addInstance("Inject", InjectWorker.class);
         configuration.addInstance("InjectService", InjectServiceWorker.class);
         configuration.addInstance("InjectNamed", InjectNamedWorker.class);
 
-        configuration
-                .addInstance("ActivationRequestParameter", ActivationRequestParameterWorker.class, "after:OnEvent");
 
         // Ideally, these should be ordered pretty late in the process to make
         // sure there are no

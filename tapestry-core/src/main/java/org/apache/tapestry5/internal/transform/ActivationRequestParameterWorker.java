@@ -21,9 +21,16 @@ import org.apache.tapestry5.annotations.ActivationRequestParameter;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.plastic.FieldHandle;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.ComponentEvent;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.ComponentEventHandler;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.ValueEncoderSource;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 
 /**
  * Hooks the activate event handler on the component (presumably, a page) to
@@ -34,7 +41,7 @@ import org.apache.tapestry5.services.*;
  * @since 5.2.0
  */
 @SuppressWarnings("all")
-public class ActivationRequestParameterWorker implements ComponentClassTransformWorker
+public class ActivationRequestParameterWorker implements ComponentClassTransformWorker2
 {
     private final Request request;
 
@@ -50,16 +57,15 @@ public class ActivationRequestParameterWorker implements ComponentClassTransform
         this.valueEncoderSource = valueEncoderSource;
     }
 
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-        for (TransformField field : transformation.matchFieldsWithAnnotation(ActivationRequestParameter.class))
+        for (PlasticField field : plasticClass.getFieldsWithAnnotation(ActivationRequestParameter.class))
         {
-            mapFieldToQueryParameter(field, transformation, model);
+            mapFieldToQueryParameter(field, support);
         }
     }
 
-    private void mapFieldToQueryParameter(TransformField field, ClassTransformation transformation,
-                                          MutableComponentModel model)
+    private void mapFieldToQueryParameter(PlasticField field, TransformationSupport support)
     {
         ActivationRequestParameter annotation = field.getAnnotation(ActivationRequestParameter.class);
 
@@ -68,20 +74,23 @@ public class ActivationRequestParameterWorker implements ComponentClassTransform
         // Assumption: the field type is not one that's loaded by the component class loader, so it's safe
         // to convert to a hard type during class transformation.
 
-        Class fieldType = classCache.forName(field.getType());
+        Class fieldType = classCache.forName(field.getTypeName());
 
         ValueEncoder encoder = valueEncoderSource.getValueEncoder(fieldType);
 
-        FieldAccess access = field.getAccess();
+        FieldHandle handle = field.getHandle();
 
-        setValueFromInitializeEventHandler(transformation, access, parameterName, encoder);
-        decorateLinks(transformation, access, parameterName, encoder);
-        preallocateName(transformation, parameterName);
+        String fieldName = String.format("%s.%s", field.getPlasticClass().getClassName(), field.getName());
 
-        model.addEventHandler(EventConstants.ACTIVATE);
+        setValueFromInitializeEventHandler(support, fieldName, handle, parameterName, encoder);
+
+        decorateLinks(support, fieldName, handle, parameterName, encoder);
+
+        preallocateName(support, parameterName);
     }
 
-    private static void preallocateName(ClassTransformation transformation, final String parameterName)
+
+    private static void preallocateName(TransformationSupport support, final String parameterName)
     {
         ComponentEventHandler handler = new ComponentEventHandler()
         {
@@ -93,13 +102,13 @@ public class ActivationRequestParameterWorker implements ComponentClassTransform
             }
         };
 
-        transformation.addComponentEventHandler(EventConstants.PREALLOCATE_FORM_CONTROL_NAMES, 1,
+        support.addEventHandler(EventConstants.PREALLOCATE_FORM_CONTROL_NAMES, 1,
                 "ActivationRequestParameterWorker preallocate form control name '" + parameterName + "' event handler",
                 handler);
     }
 
     @SuppressWarnings("all")
-    private void setValueFromInitializeEventHandler(ClassTransformation transformation, final FieldAccess access,
+    private void setValueFromInitializeEventHandler(TransformationSupport support, String fieldName, final FieldHandle handle,
                                                     final String parameterName, final ValueEncoder encoder)
     {
         ComponentEventHandler handler = new ComponentEventHandler()
@@ -113,51 +122,29 @@ public class ActivationRequestParameterWorker implements ComponentClassTransform
 
                 Object value = encoder.toValue(clientValue);
 
-                access.write(instance, value);
+                handle.set(instance, value);
             }
         };
 
-        ComponentMethodAdvice advice = new ComponentMethodAdvice()
-        {
-            public void advise(ComponentMethodInvocation invocation)
-            {
-                // Handle this synthetic event FIRST, before any super-class or event handler method calls.  It's especially important that this execute before
-                // any onActivate() event handler method.
+        support.addEventHandler(EventConstants.ACTIVATE, 0,
+                String.format("Restoring field %s from query parameter '%s'", fieldName, parameterName), handler);
 
-                ComponentEvent event = (ComponentEvent) invocation.getParameter(0);
-
-                if (event.matches(EventConstants.ACTIVATE, "", 0))
-                {
-                    String clientValue = request.getParameter(parameterName);
-
-                    if (clientValue != null)
-                    {
-
-                        Object value = encoder.toValue(clientValue);
-
-                        access.write(invocation.getInstance(), value);
-                    }
-                }
-
-                invocation.proceed();
-            }
-        };
-
-        transformation.getOrCreateMethod(TransformConstants.DISPATCH_COMPONENT_EVENT).addAdvice(advice);
     }
 
     @SuppressWarnings("all")
-    private static void decorateLinks(ClassTransformation transformation, final FieldAccess access,
+    private static void decorateLinks(TransformationSupport support, String fieldName, final FieldHandle handle,
                                       final String parameterName, final ValueEncoder encoder)
     {
         ComponentEventHandler handler = new ComponentEventHandler()
         {
             public void handleEvent(Component instance, ComponentEvent event)
             {
-                Object value = access.read(instance);
+                Object value = handle.get(instance);
 
                 if (value == null)
+                {
                     return;
+                }
 
                 Link link = event.getEventContext().get(Link.class, 0);
 
@@ -167,14 +154,14 @@ public class ActivationRequestParameterWorker implements ComponentClassTransform
             }
         };
 
-        transformation.addComponentEventHandler(EventConstants.DECORATE_COMPONENT_EVENT_LINK, 0,
-                "ActivationRequestParameterWorker decorate component event link event handler", handler);
+        support.addEventHandler(EventConstants.DECORATE_COMPONENT_EVENT_LINK, 0,
+                String.format("ActivationRequestParameterWorker decorate component event link event handler for field %s as query parameter '%s'", fieldName, parameterName), handler);
 
-        transformation.addComponentEventHandler(EventConstants.DECORATE_PAGE_RENDER_LINK, 0,
-                "ActivationRequestParameterWorker decorate page render link event handler", handler);
+        support.addEventHandler(EventConstants.DECORATE_PAGE_RENDER_LINK, 0, String.format(
+                "ActivationRequestParameterWorker decorate page render link event handler for field %s as query parameter '%s'", fieldName, parameterName), handler);
     }
 
-    private String getParameterName(TransformField field, ActivationRequestParameter annotation)
+    private String getParameterName(PlasticField field, ActivationRequestParameter annotation)
     {
         if (annotation.value().equals(""))
             return field.getName();
