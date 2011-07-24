@@ -14,19 +14,21 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.PerThreadValue;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.plastic.*;
-import org.apache.tapestry5.runtime.PageLifecycleAdapter;
+import org.apache.tapestry5.plastic.InstanceContext;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.ComponentSource;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
 
 /**
- * Peforms transformations that allow pages to be injected into components.
+ * Performs transformations that allow pages to be injected into components.
  *
  * @see org.apache.tapestry5.annotations.InjectPage
  */
@@ -36,31 +38,24 @@ public class InjectPageWorker implements ComponentClassTransformWorker2
     {
         private final String injectedPageName;
 
-        private Object page;
+        private final PerThreadValue<Object> pageValue = perThreadManager.createValue();
 
-        private InjectedPageConduit(ComponentResources resources, String fieldName,
+        private InjectedPageConduit(String className, String fieldName,
                                     String injectedPageName)
         {
-            super(resources, fieldName);
+            super(className, fieldName);
 
             this.injectedPageName = injectedPageName;
-
-            resources.addPageLifecycleListener(new PageLifecycleAdapter()
-            {
-                @Override
-                public void containingPageDidDetach()
-                {
-                    page = null;
-                }
-            });
         }
 
         public Object get(Object instance, InstanceContext context)
         {
-            if (page == null)
-                page = componentSource.getPage(injectedPageName);
+            if (!pageValue.exists())
+            {
+                pageValue.set(componentSource.getPage(injectedPageName));
+            }
 
-            return page;
+            return pageValue.get();
         }
     }
 
@@ -68,10 +63,13 @@ public class InjectPageWorker implements ComponentClassTransformWorker2
 
     private final ComponentClassResolver resolver;
 
-    public InjectPageWorker(ComponentSource componentSource, ComponentClassResolver resolver)
+    private final PerthreadManager perThreadManager;
+
+    public InjectPageWorker(ComponentSource componentSource, ComponentClassResolver resolver, PerthreadManager perThreadManager)
     {
         this.componentSource = componentSource;
         this.resolver = resolver;
+        this.perThreadManager = perThreadManager;
     }
 
     public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
@@ -90,20 +88,11 @@ public class InjectPageWorker implements ComponentClassTransformWorker2
 
         String pageName = annotation.value();
 
-        final String fieldName = field.getName();
+        String fieldName = field.getName();
 
-        final String injectedPageName = InternalUtils.isBlank(pageName) ? resolver
+        String injectedPageName = InternalUtils.isBlank(pageName) ? resolver
                 .resolvePageClassNameToPageName(field.getTypeName()) : pageName;
 
-        ComputedValue<FieldConduit<Object>> provider = new ComputedValue<FieldConduit<Object>>()
-        {
-            public FieldConduit<Object> get(InstanceContext context)
-            {
-                ComponentResources resources = context.get(ComponentResources.class);
-                return new InjectedPageConduit(resources, fieldName, injectedPageName);
-            }
-        };
-
-        field.setComputedConduit(provider);
+        field.setConduit(new InjectedPageConduit(field.getPlasticClass().getClassName(), fieldName, injectedPageName));
     }
 }
