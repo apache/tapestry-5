@@ -46,10 +46,6 @@ public class InjectWorker implements ComponentClassTransformWorker2
     {
         public boolean accept(PlasticField field)
         {
-            // For the moment, InjectNamedWorker handles javax.inject.Inject w/ Named, and this code
-            // handles javax.inject.Inject otherwise. InjectNamedWorker runs *first* so if we can see
-            // an unclaimed field, with javax.inject.Inject, it is safe to continue.
-
             return field.hasAnnotation(Inject.class) ||
                     field.hasAnnotation(javax.inject.Inject.class);
         }

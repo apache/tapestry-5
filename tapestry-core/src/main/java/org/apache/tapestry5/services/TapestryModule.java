@@ -532,7 +532,6 @@ public final class TapestryModule
      * <dd>Support for annotations {@link PageLoaded}, {@link PageAttached}, {@link PageDetached}</dd>
      * <dt>InjectService</dt>
      * <dd>Handles the {@link org.apache.tapestry5.ioc.annotations.InjectService} annotation</dd>
-     * <dt>InjectNamed</dt> <dd>Handles fields with the {@link javax.inject.Inject} and {@link javax.inject.Named} annotations</dd>
      * <dt>Component</dt>
      * <dd>Defines embedded components based on the {@link org.apache.tapestry5.annotations.Component} annotation</dd>
      * <dt>Environment</dt>
@@ -613,7 +612,6 @@ public final class TapestryModule
         configuration.addInstance("PageReset", PageResetAnnotationWorker.class);
         configuration.addInstance("InjectService", InjectServiceWorker.class);
 
-        configuration.addInstance("InjectNamed", InjectNamedWorker.class);
         configuration.addInstance("Inject", InjectWorker.class);
 
         configuration.addInstance("Persist", PersistWorker.class);
@@ -746,6 +744,17 @@ public final class TapestryModule
     }
 
     /**
+     * <dl>
+     * <dt>Named</dt> <dd>Handles fields with the {@link javax.inject.Named} annotation</dd>
+     * </dl>
+     */
+    @Contribute(InjectionProvider2.class)
+    public static void provideStandardInjectionProviders(OrderedConfiguration<InjectionProvider2> configuration)
+    {
+        configuration.addInstance("Named", InjectNamedProvider.class, "before:Default");
+    }
+
+    /**
      * Contributes the base set of injection providers:
      * <dl>
      * <dt>Default</dt>
@@ -763,15 +772,16 @@ public final class TapestryModule
      * services</dd>
      * </dl>
      */
-    public static void contributeInjectionProvider(OrderedConfiguration<InjectionProvider> configuration,
+    @Contribute(InjectionProvider2.class)
+    public static void provideOldStyleInjectionProvider(OrderedConfiguration<InjectionProvider> configuration,
 
-                                                   MasterObjectProvider masterObjectProvider,
+                                                        MasterObjectProvider masterObjectProvider,
 
-                                                   ObjectLocator locator,
+                                                        ObjectLocator locator,
 
-                                                   SymbolSource symbolSource,
+                                                        SymbolSource symbolSource,
 
-                                                   AssetSource assetSource)
+                                                        AssetSource assetSource)
     {
         configuration.add("Default", new DefaultInjectionProvider(masterObjectProvider, locator));
 
