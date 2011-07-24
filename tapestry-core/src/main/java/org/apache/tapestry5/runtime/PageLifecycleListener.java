@@ -1,4 +1,4 @@
-// Copyright 2006, 2009 The Apache Software Foundation
+// Copyright 2006, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ public interface PageLifecycleListener
      * this is primarily used to restore persisted fields.
      *
      * @since 5.1.0.1
+     * @deprecated In Tapestry 5.3, with no replacement (persisted fields now lazily restore their state)
      */
     void restoreStateBeforePageAttach();
 }
