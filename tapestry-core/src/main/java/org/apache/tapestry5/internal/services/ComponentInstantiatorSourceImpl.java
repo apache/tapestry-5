@@ -420,7 +420,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                 {
                     final ComponentEvent event = (ComponentEvent) invocation.getParameter(0);
 
-                    boolean matches = event.matches(eventType, "", minContextValues);
+                    boolean matches = !event.isAborted() && event.matches(eventType, "", minContextValues);
 
                     if (matches)
                     {
