@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,71 +14,56 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import java.util.List;
-
-import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
-import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.runtime.PageLifecycleAdapter;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.ComponentValueProvider;
-import org.apache.tapestry5.services.TransformField;
+import org.apache.tapestry5.plastic.*;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 
 /**
  * Converts fields with the {@link org.apache.tapestry5.annotations.Persist} annotation into persistent fields.
  */
-public class PersistWorker implements ComponentClassTransformWorker
+public class PersistWorker implements ComponentClassTransformWorker2
 {
-    class PersistentFieldConduit implements FieldValueConduit
+    class PersistentFieldConduit implements FieldConduit<Object>
     {
         private final InternalComponentResources resources;
 
         private final String name;
 
-        private final PerThreadValue<Object> fieldValue;
+        private final PerThreadValue<Object> fieldValue = perThreadManager.createValue();
 
         private final Object defaultValue;
 
         public PersistentFieldConduit(InternalComponentResources resources, String name,
-                PerThreadValue<Object> fieldValue, Object defaultValue)
+                                      Object defaultValue)
         {
             this.resources = resources;
             this.name = name;
-            this.fieldValue = fieldValue;
             this.defaultValue = defaultValue;
-
-            resources.addPageLifecycleListener(new PageLifecycleAdapter()
-            {
-                @Override
-                public void restoreStateBeforePageAttach()
-                {
-                    restoreStateAtPageAttach();
-                }
-            });
         }
 
-        public Object get()
+        public Object get(Object instance, InstanceContext context)
         {
-            return fieldValue.get(defaultValue);
+            if (!fieldValue.exists())
+            {
+                Object persistedValue = resources.hasFieldChange(name) ? resources.getFieldChange(name) : defaultValue;
+
+                fieldValue.set(persistedValue);
+            }
+
+            return fieldValue.get();
         }
 
-        public void set(Object newValue)
+        public void set(Object instance, InstanceContext context, Object newValue)
         {
             resources.persistFieldChange(name, newValue);
 
             fieldValue.set(newValue);
-        }
-
-        private void restoreStateAtPageAttach()
-        {
-            if (resources.hasFieldChange(name))
-                fieldValue.set(resources.getFieldChange(name));
         }
     }
 
@@ -92,17 +77,15 @@ public class PersistWorker implements ComponentClassTransformWorker
         this.perThreadManager = perThreadManager;
     }
 
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-        List<TransformField> fieldsWithAnnotation = transformation.matchFieldsWithAnnotation(Persist.class);
-
-        for (TransformField field : fieldsWithAnnotation)
+        for (PlasticField field : plasticClass.getFieldsWithAnnotation(Persist.class))
         {
             makeFieldPersistent(field, model);
         }
     }
 
-    private void makeFieldPersistent(TransformField field, MutableComponentModel model)
+    private void makeFieldPersistent(PlasticField field, MutableComponentModel model)
     {
         Persist annotation = field.getAnnotation(Persist.class);
 
@@ -112,20 +95,20 @@ public class PersistWorker implements ComponentClassTransformWorker
 
         final Object defaultValue = determineDefaultValueFromFieldType(field);
 
-        ComponentValueProvider<FieldValueConduit> provider = new ComponentValueProvider<FieldValueConduit>()
+        ComputedValue<FieldConduit<Object>> computed = new ComputedValue<FieldConduit<Object>>()
         {
-            public FieldValueConduit get(ComponentResources resources)
+            public FieldConduit<Object> get(InstanceContext context)
             {
-                return new PersistentFieldConduit((InternalComponentResources) resources, logicalFieldName,
-                        perThreadManager.createValue(), defaultValue);
+                InternalComponentResources resources = context.get(InternalComponentResources.class);
+                return new PersistentFieldConduit(resources, logicalFieldName, defaultValue);
             }
         };
 
-        field.replaceAccess(provider);
+        field.setComputedConduit(computed);
     }
 
-    private Object determineDefaultValueFromFieldType(TransformField field)
+    private Object determineDefaultValueFromFieldType(PlasticField field)
     {
-        return classCache.defaultValueForType(field.getType());
+        return classCache.defaultValueForType(field.getTypeName());
     }
 }

@@ -537,7 +537,9 @@ public final class TapestryModule
      * <dt>Environment</dt>
      * <dd>Allows fields to contain values extracted from the {@link org.apache.tapestry5.services.Environment} service</dd>
      * <dt>ApplicationState</dt>
-     * <dd>Converts fields that reference application state objects
+     * <dd>Converts fields that reference application state objects</dd>
+     * <dt>Persist</dt>
+     * <dd>Allows fields to store their their value persistently between requests via {@link Persist}</dd>
      * </dl>
      */
     @Contribute(ComponentClassTransformWorker2.class)
@@ -603,6 +605,8 @@ public final class TapestryModule
         configuration.addInstance("InjectService", InjectServiceWorker.class);
         configuration.addInstance("InjectNamed", InjectNamedWorker.class);
 
+        configuration.addInstance("Persist", PersistWorker.class);
+
 
         // This one is always last. Any additional private fields that aren't
         // annotated will
@@ -614,8 +618,6 @@ public final class TapestryModule
     /**
      * Adds a number of standard component class transform workers:
      * <dl>
-     * <dt>Persist</dt>
-     * <dd>Allows fields to store their their value persistently between requests</dd>
      * <dt>Inject</dt>
      * <dd>Used with the {@link org.apache.tapestry5.ioc.annotations.Inject} annotation, when a value is supplied</dd>
      * <dt>Log</dt>
@@ -630,8 +632,6 @@ public final class TapestryModule
             OrderedConfiguration<ComponentClassTransformWorker> configuration)
     {
         configuration.addInstance("Inject", InjectWorker.class);
-
-        configuration.addInstance("Persist", PersistWorker.class);
 
         configuration.addInstance("Log", LogWorker.class);
 
