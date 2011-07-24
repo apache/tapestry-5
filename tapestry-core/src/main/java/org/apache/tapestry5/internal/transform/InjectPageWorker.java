@@ -34,7 +34,7 @@ import org.apache.tapestry5.services.transform.TransformationSupport;
  */
 public class InjectPageWorker implements ComponentClassTransformWorker2
 {
-    private final class InjectedPageConduit extends ReadOnlyFieldValueConduit
+    private final class InjectedPageConduit extends ReadOnlyComponentFieldConduit
     {
         private final String injectedPageName;
 

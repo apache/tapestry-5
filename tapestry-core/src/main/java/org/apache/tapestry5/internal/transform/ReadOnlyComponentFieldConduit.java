@@ -24,21 +24,21 @@ import org.apache.tapestry5.plastic.InstanceContext;
  *
  * @since 5.2.0
  */
-public abstract class ReadOnlyFieldValueConduit implements FieldConduit<Object>
+public abstract class ReadOnlyComponentFieldConduit implements FieldConduit<Object>
 {
     private final String qualifiedFieldName;
 
-    public ReadOnlyFieldValueConduit(String qualifiedFieldName)
+    public ReadOnlyComponentFieldConduit(String qualifiedFieldName)
     {
         this.qualifiedFieldName = qualifiedFieldName;
     }
 
-    public ReadOnlyFieldValueConduit(String className, String fieldName)
+    public ReadOnlyComponentFieldConduit(String className, String fieldName)
     {
         this(String.format("%s.%s", className, fieldName));
     }
 
-    public ReadOnlyFieldValueConduit(ComponentResources resources, String fieldName)
+    public ReadOnlyComponentFieldConduit(ComponentResources resources, String fieldName)
     {
         this(resources.getComponentModel().getComponentClassName(), fieldName);
     }

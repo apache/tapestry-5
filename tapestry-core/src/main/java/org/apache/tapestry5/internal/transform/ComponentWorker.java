@@ -105,7 +105,7 @@ public class ComponentWorker implements ComponentClassTransformWorker2
             {
                 final ComponentResources resources = context.get(ComponentResources.class);
 
-                return new ReadOnlyFieldValueConduit(resources, fieldName)
+                return new ReadOnlyComponentFieldConduit(resources, fieldName)
                 {
                     public Object get(Object instance, InstanceContext context)
                     {

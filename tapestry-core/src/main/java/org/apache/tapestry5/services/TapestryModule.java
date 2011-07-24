@@ -746,12 +746,15 @@ public final class TapestryModule
     /**
      * <dl>
      * <dt>Named</dt> <dd>Handles fields with the {@link javax.inject.Named} annotation</dd>
+     * <dt>Block</dt>
+     * <dd>injects fields of type {@link Block}</dd>
      * </dl>
      */
     @Contribute(InjectionProvider2.class)
     public static void provideStandardInjectionProviders(OrderedConfiguration<InjectionProvider2> configuration)
     {
         configuration.addInstance("Named", InjectNamedProvider.class, "before:Default");
+        configuration.add("Block", new BlockInjectionProvider(), "before:Default");
     }
 
     /**
@@ -759,8 +762,6 @@ public final class TapestryModule
      * <dl>
      * <dt>Default</dt>
      * <dd>based on {@link MasterObjectProvider}</dd>
-     * <dt>Block</dt>
-     * <dd>injects fields of type Block</dd>
      * <dt>ComponentResources</dt>
      * <dd>give component access to its resources</dd>
      * <dt>CommonResources</dt>
@@ -795,7 +796,6 @@ public final class TapestryModule
 
         configuration.add("Asset", new AssetInjectionProvider(symbolSource, assetSource), "before:Default");
 
-        configuration.add("Block", new BlockInjectionProvider(), "before:Default");
 
         // This needs to be the last one, since it matches against services
         // and might blow up if there is no match.

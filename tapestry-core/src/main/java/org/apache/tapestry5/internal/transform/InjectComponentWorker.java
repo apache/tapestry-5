@@ -32,7 +32,7 @@ import org.apache.tapestry5.services.transform.TransformationSupport;
  */
 public class InjectComponentWorker implements ComponentClassTransformWorker2
 {
-    private final class InjectedComponentFieldValueConduit extends ReadOnlyFieldValueConduit
+    private final class InjectedComponentFieldValueConduit extends ReadOnlyComponentFieldConduit
     {
         private final ComponentResources resources;
         private final String fieldName, componentId, type;

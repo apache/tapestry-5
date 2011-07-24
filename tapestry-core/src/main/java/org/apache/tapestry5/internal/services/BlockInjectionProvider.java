@@ -17,18 +17,15 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Id;
-import org.apache.tapestry5.internal.transform.ReadOnlyFieldValueConduit;
+import org.apache.tapestry5.internal.transform.ReadOnlyComponentFieldConduit;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentValueProvider;
-import org.apache.tapestry5.services.InjectionProvider;
-import org.apache.tapestry5.services.TransformConstants;
-import org.apache.tapestry5.services.TransformField;
-import org.apache.tapestry5.services.TransformMethod;
+import org.apache.tapestry5.plastic.FieldConduit;
+import org.apache.tapestry5.plastic.InstanceContext;
+import org.apache.tapestry5.plastic.PlasticField;
+import org.apache.tapestry5.services.transform.InjectionProvider2;
 
 /**
  * Identifies fields of type {@link Block} that have the {@link Inject} annotation and converts them
@@ -40,56 +37,46 @@ import org.apache.tapestry5.services.TransformMethod;
  * Must be scheduled before {@link DefaultInjectionProvider} because it uses the same annotation, Inject, with a
  * different interpretation.
  */
-public class BlockInjectionProvider implements InjectionProvider
+public class BlockInjectionProvider implements InjectionProvider2
 {
+    private static final String BLOCK_TYPE_NAME = Block.class.getName();
 
-    public boolean provideInjection(final String fieldName, Class fieldType, ObjectLocator locator,
-            ClassTransformation transformation, MutableComponentModel componentModel)
+    public boolean provideInjection(PlasticField field, ObjectLocator locator, MutableComponentModel componentModel)
     {
-        if (!fieldType.equals(Block.class))
+        if (!field.getTypeName().equals(BLOCK_TYPE_NAME))
+        {
             return false;
-
-        TransformField field = transformation.getField(fieldName);
+        }
 
         Id annotation = field.getAnnotation(Id.class);
 
-        String blockId = getBlockId(fieldName, annotation);
+        String blockId = getBlockId(field.getName(), annotation);
 
-        ComponentValueProvider<FieldValueConduit> provider = cxreateProvider(fieldName, blockId);
+        FieldConduit<Object> conduit = createConduit(field, blockId);
 
-        field.replaceAccess(provider);
+        field.setConduit(conduit);
 
         return true; // claim the field
     }
 
-    private ComponentValueProvider<FieldValueConduit> cxreateProvider(final String fieldName, final String blockId)
+    private FieldConduit<Object> createConduit(PlasticField field, final String blockId)
     {
-        return new ComponentValueProvider<FieldValueConduit>()
-        {
-            public FieldValueConduit get(final ComponentResources resources)
-            {
-                return new FieldValueConduit()
-                {
-                    public Object get()
-                    {
-                        return resources.getBlock(blockId);
-                    }
+        final String className = field.getPlasticClass().getClassName();
+        final String fieldName = field.getName();
 
-                    public void set(Object newValue)
-                    {
-                        String componentClassName = resources.getComponentModel().getComponentClassName();
-                        throw new RuntimeException(String.format("Field %s.%s is read only.", componentClassName, fieldName));
-                    }
-                };
+        return new ReadOnlyComponentFieldConduit(className, fieldName)
+        {
+            public Object get(Object instance, InstanceContext context)
+            {
+                ComponentResources resources = context.get(ComponentResources.class);
+
+                return resources.getBlock(blockId);
             }
         };
     }
 
     private String getBlockId(String fieldName, Id annotation)
     {
-        if (annotation != null)
-            return annotation.value();
-
-        return InternalUtils.stripMemberName(fieldName);
+        return annotation != null ? annotation.value() : InternalUtils.stripMemberName(fieldName);
     }
 }

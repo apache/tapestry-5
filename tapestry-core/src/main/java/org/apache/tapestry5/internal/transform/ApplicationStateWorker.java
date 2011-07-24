@@ -95,7 +95,7 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker2
 
             final String fieldName = existsField.getName();
 
-            existsField.setConduit(new ReadOnlyFieldValueConduit(className, fieldName)
+            existsField.setConduit(new ReadOnlyComponentFieldConduit(className, fieldName)
             {
                 public Object get(Object instance, InstanceContext context)
                 {

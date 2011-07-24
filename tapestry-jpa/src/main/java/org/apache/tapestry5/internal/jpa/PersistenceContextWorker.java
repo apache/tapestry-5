@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.jpa;
 
-import org.apache.tapestry5.internal.transform.ReadOnlyFieldValueConduit;
+import org.apache.tapestry5.internal.transform.ReadOnlyComponentFieldConduit;
 import org.apache.tapestry5.jpa.EntityManagerManager;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.InstanceContext;
@@ -43,7 +43,7 @@ public class PersistenceContextWorker implements ComponentClassTransformWorker2
 
             field.claim(annotation);
 
-            field.setConduit(new ReadOnlyFieldValueConduit(plasticClass.getClassName(), field.getName())
+            field.setConduit(new ReadOnlyComponentFieldConduit(plasticClass.getClassName(), field.getName())
             {
                 public Object get(Object instance, InstanceContext context)
                 {

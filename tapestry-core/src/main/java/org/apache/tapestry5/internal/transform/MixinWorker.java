@@ -85,7 +85,7 @@ public class MixinWorker implements ComponentClassTransformWorker2
                 ComponentResources resources = context.get(ComponentResources.class);
                 final InternalComponentResources icr = (InternalComponentResources) resources;
 
-                return new ReadOnlyFieldValueConduit(resources, fieldName)
+                return new ReadOnlyComponentFieldConduit(resources, fieldName)
                 {
                     public Object get(Object instance, InstanceContext context)
                     {

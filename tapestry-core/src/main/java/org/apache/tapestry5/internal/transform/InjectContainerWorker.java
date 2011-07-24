@@ -70,7 +70,7 @@ public class InjectContainerWorker implements ComponentClassTransformWorker2
                 final Class fieldType = cache.forName(fieldTypeName);
                 final ComponentResources resources = context.get(ComponentResources.class);
 
-                return new ReadOnlyFieldValueConduit(resources, fieldName)
+                return new ReadOnlyComponentFieldConduit(resources, fieldName)
                 {
                     public Object get(Object instance, InstanceContext context)
                     {
