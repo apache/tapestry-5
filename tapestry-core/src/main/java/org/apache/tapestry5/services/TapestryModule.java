@@ -96,6 +96,7 @@ import org.apache.tapestry5.services.meta.MetaWorker;
 import org.apache.tapestry5.services.pageload.PageLoadModule;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.InjectionProvider2;
 import org.apache.tapestry5.util.StringToEnumCoercion;
 import org.apache.tapestry5.validator.*;
 import org.slf4j.Logger;
@@ -546,6 +547,8 @@ public final class TapestryModule
      * <dd>Checks for the {@link org.apache.tapestry5.annotations.Log} annotation</dd>
      * <dt>HeartbeatDeferred
      * <dd>Support for the {@link HeartbeatDeferred} annotation, which defers method invocation to the end of the {@link Heartbeat}
+     * <dt>Inject</dt>
+     * <dd>Used with the {@link org.apache.tapestry5.ioc.annotations.Inject} annotation, when a value is supplied</dd>
      * </dl>
      */
     @Contribute(ComponentClassTransformWorker2.class)
@@ -609,7 +612,9 @@ public final class TapestryModule
 
         configuration.addInstance("PageReset", PageResetAnnotationWorker.class);
         configuration.addInstance("InjectService", InjectServiceWorker.class);
+
         configuration.addInstance("InjectNamed", InjectNamedWorker.class);
+        configuration.addInstance("Inject", InjectWorker.class);
 
         configuration.addInstance("Persist", PersistWorker.class);
 
@@ -624,21 +629,6 @@ public final class TapestryModule
         // be converted to clear out at the end of the request.
 
         configuration.addInstance("UnclaimedField", UnclaimedFieldWorker.class, "after:*");
-    }
-
-    /**
-     * Adds a number of standard component class transform workers:
-     * <dl>
-     * <dt>Inject</dt>
-     * <dd>Used with the {@link org.apache.tapestry5.ioc.annotations.Inject} annotation, when a value is supplied</dd>
-     * </dl>
-     */
-    @Contribute(ComponentClassTransformWorker2.class)
-    @Primary
-    public static void provideOldStyleClassTransformWorkers(
-            OrderedConfiguration<ComponentClassTransformWorker> configuration)
-    {
-        configuration.addInstance("Inject", InjectWorker.class);
     }
 
     /**
@@ -988,6 +978,7 @@ public final class TapestryModule
      * <li>String to {@link Pattern}</li>
      * <li>String to {@link DateFormat}</li>
      * <li>{@link ComponentClassTransformWorker} to {@link ComponentClassTransformWorker2}</li>
+     * <li>{@link InjectionProvider} to {@link InjectionProvider2}</li>
      * <li>{@link Resource} to {@link DynamicTemplate}</li>
      * <li>{@link Asset} to {@link Resource}</li>
      * <li>String to {@link JSONObject}</li>
@@ -1005,6 +996,9 @@ public final class TapestryModule
 
                                              @Core
                                              final AssetSource assetSource,
+
+                                             @Core
+                                             final ComponentClassCache classCache,
 
                                              @Core
                                              final DynamicTemplateParser dynamicTemplateParser)
@@ -1177,6 +1171,9 @@ public final class TapestryModule
                 return new GenericValueEncoderFactory(input);
             }
         }));
+
+        configuration.add(CoercionTuple.create(InjectionProvider.class, InjectionProvider2.class,
+                new InjectionProviderToInjectionProvider2(classCache)));
     }
 
     /**
@@ -1358,11 +1355,13 @@ public final class TapestryModule
      * configuration can be extended to allow for different automatic injections
      * (based on some combination of field
      * type and field name).
+     * <p/>
+     * Note that contributions to this service may be old-style {@link InjectionProvider}, which will
+     * be coerced to {@link InjectionProvider2}.
      */
-
-    public InjectionProvider buildInjectionProvider(List<InjectionProvider> configuration)
+    public InjectionProvider2 buildInjectionProvider(List<InjectionProvider2> configuration)
     {
-        return chainBuilder.build(InjectionProvider.class, configuration);
+        return chainBuilder.build(InjectionProvider2.class, configuration);
     }
 
     /**

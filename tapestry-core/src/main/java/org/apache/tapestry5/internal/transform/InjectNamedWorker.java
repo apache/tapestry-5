@@ -30,6 +30,8 @@ import javax.inject.Named;
 
 /**
  * Processes the combination of {@link javax.inject.Inject} and {@link javax.inject.Named} annotations.
+ * <p/>
+ * TODO: This likely can be converted into an {@link org.apache.tapestry5.services.transform.InjectionProvider2}.
  *
  * @since 5.3
  */
@@ -55,7 +57,7 @@ public class InjectNamedWorker implements ComponentClassTransformWorker2
 
     public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-        Flow<PlasticField> fields = F.flow(plasticClass.getAllFields()).filter(MATCHER);
+        Flow<PlasticField> fields = F.flow(plasticClass.getUnclaimedFields()).filter(MATCHER);
 
         for (PlasticField field : fields)
         {

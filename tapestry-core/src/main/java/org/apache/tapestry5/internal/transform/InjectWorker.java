@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,94 +14,79 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
-
-import javax.inject.Named;
-
+import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.InjectionProvider;
-import org.apache.tapestry5.services.TransformField;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticField;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.InjectionProvider2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 
 /**
  * Performs injection triggered by any field annotated with the {@link org.apache.tapestry5.ioc.annotations.Inject}
  * annotation or the {@link javax.inject.Inject} annotation.
  * <p/>
- * The implementation of this worker mostly delegates to a chain of command of
- * {@link org.apache.tapestry5.services.InjectionProvider}s.
+ * The implementation of this worker mostly delegates to a chain of command of {@link InjectionProvider2}.
  */
-public class InjectWorker implements ComponentClassTransformWorker
+public class InjectWorker implements ComponentClassTransformWorker2
 {
     private final ObjectLocator locator;
 
     // Really, a chain of command
 
-    private final InjectionProvider injectionProvider;
+    private final InjectionProvider2 injectionProvider;
 
     private final OperationTracker tracker;
 
-    public InjectWorker(ObjectLocator locator, InjectionProvider injectionProvider, OperationTracker tracker)
+    private final Predicate<PlasticField> MATCHER = new Predicate<PlasticField>()
+    {
+        public boolean accept(PlasticField field)
+        {
+            // For the moment, InjectNamedWorker handles javax.inject.Inject w/ Named, and this code
+            // handles javax.inject.Inject otherwise. InjectNamedWorker runs *first* so if we can see
+            // an unclaimed field, with javax.inject.Inject, it is safe to continue.
+
+            return field.hasAnnotation(Inject.class) ||
+                    field.hasAnnotation(javax.inject.Inject.class);
+        }
+    };
+
+    public InjectWorker(ObjectLocator locator, InjectionProvider2 injectionProvider, OperationTracker tracker)
     {
         this.locator = locator;
         this.injectionProvider = injectionProvider;
         this.tracker = tracker;
     }
 
-    public final void transform(final ClassTransformation transformation, final MutableComponentModel model)
+    public void transform(final PlasticClass plasticClass, TransformationSupport support, final MutableComponentModel model)
     {
-    	List<TransformField> fields = matchFields(transformation);
-    	
-        for (final TransformField field : fields)
+        for (final PlasticField field : F.flow(plasticClass.getUnclaimedFields()).filter(MATCHER))
         {
-        	final String fieldName = field.getName();
-        	
-            tracker.run("Injecting field " + fieldName, new Runnable()
+            final String fieldName = field.getName();
+
+            tracker.run(String.format("Injecting field  %s.%s", plasticClass.getClassName(), fieldName), new Runnable()
             {
                 public void run()
                 {
-
-                    Inject inject = field.getAnnotation(Inject.class);
-                    
-                    Annotation annotation = inject == null? field.getAnnotation(javax.inject.Inject.class): inject;
-
                     try
                     {
-                        String fieldType = field.getType();
-
-                        Class type = transformation.toClass(fieldType);
-
-                        boolean success = injectionProvider.provideInjection(fieldName, type, locator, transformation,
-                                model);
+                        boolean success = injectionProvider.provideInjection(field, locator, model);
 
                         if (success)
-                            field.claim(annotation);
-                    }
-                    catch (RuntimeException ex)
+                        {
+                            field.claim("@Inject");
+                        }
+                    } catch (RuntimeException ex)
                     {
-                        throw new RuntimeException(TransformMessages.fieldInjectionError(transformation.getClassName(),
+                        throw new RuntimeException(TransformMessages.fieldInjectionError(plasticClass.getClassName(),
                                 fieldName, ex), ex);
                     }
                 }
             });
         }
-    }
-    
-    private List<TransformField> matchFields(final ClassTransformation transformation)
-    {	
-    	Predicate<TransformField> predicate = new Predicate<TransformField>()
-    	{
-			public boolean accept(TransformField field) 
-			{
-				return field.getAnnotation(Inject.class) != null 
-						|| (field.getAnnotation(javax.inject.Inject.class) != null && field.getAnnotation(Named.class) == null);
-			}
-		};
-    	return transformation.matchFields(predicate);
     }
 }
