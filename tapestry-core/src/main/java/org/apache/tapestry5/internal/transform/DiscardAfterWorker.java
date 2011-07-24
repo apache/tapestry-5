@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,48 +13,38 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import java.util.List;
-
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.DiscardAfter;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.ComponentMethodAdvice;
-import org.apache.tapestry5.services.ComponentMethodInvocation;
-import org.apache.tapestry5.services.TransformMethod;
+import org.apache.tapestry5.plastic.MethodAdvice;
+import org.apache.tapestry5.plastic.MethodInvocation;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticMethod;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 
-public class DiscardAfterWorker implements ComponentClassTransformWorker
+public class DiscardAfterWorker implements ComponentClassTransformWorker2
 {
-
-    private static final ComponentMethodAdvice advice = new ComponentMethodAdvice()
+    private static final MethodAdvice advice = new MethodAdvice()
     {
-
-        public void advise(ComponentMethodInvocation invocation)
+        public void advise(MethodInvocation invocation)
         {
             invocation.proceed();
 
-            if (invocation.isFail())
+            if (invocation.didThrowCheckedException())
                 return;
 
-            ComponentResources resources = invocation.getComponentResources();
+            ComponentResources resources = invocation.getInstanceContext().get(ComponentResources.class);
 
             resources.discardPersistentFieldChanges();
         }
-
     };
 
-    public void transform(final ClassTransformation transformation, final MutableComponentModel model)
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-        final List<TransformMethod> methods = transformation.matchMethodsWithAnnotation(DiscardAfter.class);
-
-        if (methods.isEmpty())
-            return;
-
-        for (final TransformMethod method : methods)
+        for (PlasticMethod method : plasticClass.getMethodsWithAnnotation(DiscardAfter.class))
         {
             method.addAdvice(advice);
         }
-
     }
 }

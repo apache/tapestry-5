@@ -516,6 +516,7 @@ public final class TapestryModule
      * <dt>Meta</dt>
      * <dd>Checks for meta data annotations and adds it to the component model</dd>
      * <dt>PageActivationContext</dt> <dd>Support for {@link PageActivationContext} annotation</dd>
+     * <dt>DiscardAfter</dt> <dd>Support for {@link DiscardAfter} method annotation </dd>
      * <dt>Cached</dt>
      * <dd>Checks for the {@link org.apache.tapestry5.annotations.Cached} annotation</dd>
      * </dl>
@@ -568,6 +569,8 @@ public final class TapestryModule
         configuration.add("PageActivationContext", new PageActivationContextWorker(), "after:OnEvent");
 
         configuration.addInstance("Cached", CachedWorker.class);
+
+        configuration.addInstance("DiscardAfter", DiscardAfterWorker.class);
 
         // This one is always last. Any additional private fields that aren't
         // annotated will
@@ -633,8 +636,6 @@ public final class TapestryModule
         add(configuration, PageDetached.class, TransformConstants.CONTAINING_PAGE_DID_DETACH_SIGNATURE, "pageDetached");
 
         configuration.addInstance("Persist", PersistWorker.class);
-
-        configuration.addInstance("DiscardAfter", DiscardAfterWorker.class);
 
         configuration.addInstance("Log", LogWorker.class);
 
