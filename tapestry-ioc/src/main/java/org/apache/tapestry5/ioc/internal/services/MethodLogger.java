@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,16 +14,17 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.Invocation;
 import org.apache.tapestry5.ioc.services.ExceptionTracker;
+import org.apache.tapestry5.plastic.MethodInvocation;
 import org.slf4j.Logger;
 
-import static java.lang.String.format;
 import java.util.Iterator;
+
+import static java.lang.String.format;
 
 /**
  * Used by {@link org.apache.tapestry5.ioc.internal.services.LoggingDecoratorImpl} to delegate out logging behavior to a
- * seperate object.
+ * separate object.
  */
 public final class MethodLogger
 {
@@ -55,13 +56,13 @@ public final class MethodLogger
      *
      * @param invocation identifies method invoked as well as parameters passed to method
      */
-    public void entry(Invocation invocation)
+    public void entry(MethodInvocation invocation)
     {
         StringBuilder buffer = new StringBuilder(BUFFER_SIZE);
 
-        buffer.append(format("[%s] %s(", ENTER, invocation.getMethodName()));
+        buffer.append(format("[%s] %s(", ENTER, invocation.getMethod().getName()));
 
-        for (int i = 0; i < invocation.getParameterCount(); i++)
+        for (int i = 0; i < invocation.getMethod().getParameterTypes().length; i++)
         {
             if (i > 0) buffer.append(", ");
 
@@ -137,16 +138,16 @@ public final class MethodLogger
      *
      * @param invocation identifies method invocation and  result value
      */
-    public void exit(Invocation invocation)
+    public void exit(MethodInvocation invocation)
     {
         StringBuilder buffer = new StringBuilder(BUFFER_SIZE);
 
-        buffer.append(format("[%s] %s", EXIT, invocation.getMethodName()));
+        buffer.append(format("[%s] %s", EXIT, invocation.getMethod().getName()));
 
-        if (invocation.getResultType() != void.class)
+        if (invocation.getMethod().getReturnType() != void.class)
         {
             buffer.append(" [");
-            convert(buffer, invocation.getResult());
+            convert(buffer, invocation.getReturnValue());
             buffer.append(']');
         }
 
@@ -159,12 +160,12 @@ public final class MethodLogger
      * @param invocation identifies method invocation which failed
      * @param t          exception throws by method invocation
      */
-    public void fail(Invocation invocation, Throwable t)
+    public void fail(MethodInvocation invocation, Throwable t)
     {
         logger.debug(
                 format("[%s] %s -- %s", FAIL,
-                       invocation.getMethodName(),
-                       t.getClass().getName()),
+                        invocation.getMethod().getName(),
+                        t.getClass().getName()),
                 exceptionTracker.exceptionLogged(t) ? null : t);
     }
 }

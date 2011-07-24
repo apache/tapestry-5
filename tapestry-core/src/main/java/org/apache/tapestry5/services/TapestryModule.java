@@ -542,6 +542,8 @@ public final class TapestryModule
      * <dd>Allows fields to store their their value persistently between requests via {@link Persist}</dd>
      * <dt>SessionAttribute</dt>
      * <dd>Support for the {@link SessionAttribute}</dd>
+     * <dt>Log</dt>
+     * <dd>Checks for the {@link org.apache.tapestry5.annotations.Log} annotation</dd>
      * </dl>
      */
     @Contribute(ComponentClassTransformWorker2.class)
@@ -611,6 +613,8 @@ public final class TapestryModule
 
         configuration.addInstance("SessionAttribute", SessionAttributeWorker.class);
 
+        configuration.addInstance("Log", LogWorker.class);
+
         // This one is always last. Any additional private fields that aren't
         // annotated will
         // be converted to clear out at the end of the request.
@@ -623,8 +627,6 @@ public final class TapestryModule
      * <dl>
      * <dt>Inject</dt>
      * <dd>Used with the {@link org.apache.tapestry5.ioc.annotations.Inject} annotation, when a value is supplied</dd>
-     * <dt>Log</dt>
-     * <dd>Checks for the {@link org.apache.tapestry5.annotations.Log} annotation</dd>
      * <dt>HeartbeatDeferred
      * <dd>Support for the {@link HeartbeatDeferred} annotation
      * </dl>
@@ -635,8 +637,6 @@ public final class TapestryModule
             OrderedConfiguration<ComponentClassTransformWorker> configuration)
     {
         configuration.addInstance("Inject", InjectWorker.class);
-
-        configuration.addInstance("Log", LogWorker.class);
 
         configuration.addInstance("HeartbeatDeferred", HeartbeatDeferredWorker.class, "after:RenderPhase");
     }

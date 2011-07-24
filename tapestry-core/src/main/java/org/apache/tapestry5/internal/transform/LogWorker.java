@@ -15,11 +15,14 @@
 package org.apache.tapestry5.internal.transform;
 
 import org.apache.tapestry5.annotations.Log;
-import org.apache.tapestry5.ioc.MethodAdvice;
 import org.apache.tapestry5.ioc.internal.services.LoggingAdvice;
 import org.apache.tapestry5.ioc.services.ExceptionTracker;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.plastic.MethodAdvice;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticMethod;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 
 import java.util.List;
 
@@ -28,7 +31,7 @@ import java.util.List;
  * logging. This is similar to what the {@link org.apache.tapestry5.ioc.services.LoggingDecorator} does for service
  * interface methods.
  */
-public class LogWorker implements ComponentClassTransformWorker
+public class LogWorker implements ComponentClassTransformWorker2
 {
     private final ExceptionTracker exceptionTracker;
 
@@ -37,28 +40,20 @@ public class LogWorker implements ComponentClassTransformWorker
         this.exceptionTracker = exceptionTracker;
     }
 
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-        List<TransformMethod> methods = transformation.matchMethodsWithAnnotation(Log.class);
+        List<PlasticMethod> methods = plasticClass.getMethodsWithAnnotation(Log.class);
 
         if (methods.isEmpty())
+        {
             return;
+        }
 
-        // Re-use the logging advice from LoggingDecorator
         final MethodAdvice loggingAdvice = new LoggingAdvice(model.getLogger(), exceptionTracker);
 
-        // ... but wrap it for use at the component level.
-        ComponentMethodAdvice advice = new ComponentMethodAdvice()
+        for (PlasticMethod method : methods)
         {
-            public void advise(ComponentMethodInvocation invocation)
-            {
-                loggingAdvice.advise(invocation);
-            }
-        };
-
-        for (TransformMethod method : methods)
-        {
-            method.addAdvice(advice);
+            method.addAdvice(loggingAdvice);
         }
     }
 }
