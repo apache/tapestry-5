@@ -517,6 +517,7 @@ public final class TapestryModule
      * <dd>Checks for meta data annotations and adds it to the component model</dd>
      * <dt>PageActivationContext</dt> <dd>Support for {@link PageActivationContext} annotation</dd>
      * <dt>DiscardAfter</dt> <dd>Support for {@link DiscardAfter} method annotation </dd>
+     * <dt>MixinAfter</dt> <dd>Support for the {@link MixinAfter} mixin class annotation</dd>
      * <dt>Cached</dt>
      * <dd>Checks for the {@link org.apache.tapestry5.annotations.Cached} annotation</dd>
      * </dl>
@@ -533,6 +534,8 @@ public final class TapestryModule
         configuration.add("RenderCommand", new RenderCommandWorker());
 
         configuration.addInstance("OnEvent", OnEventWorker.class);
+
+        configuration.add("MixinAfter", new MixinAfterWorker());
 
         // These must come after Property, since they actually delete fields
         // that may still have the annotation
@@ -622,7 +625,6 @@ public final class TapestryModule
         configuration.addInstance("InjectService", InjectServiceWorker.class);
         configuration.addInstance("InjectNamed", InjectNamedWorker.class);
 
-        configuration.add("MixinAfter", new MixinAfterWorker());
         configuration
                 .addInstance("ActivationRequestParameter", ActivationRequestParameterWorker.class, "after:OnEvent");
 

@@ -17,7 +17,7 @@ package org.apache.tapestry5.internal.transform;
 import org.apache.tapestry5.annotations.MixinAfter;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.ClassTransformation;
+import org.apache.tapestry5.plastic.PlasticClass;
 import org.testng.annotations.Test;
 
 public class MixinAfterWorkerTest extends InternalBaseTestCase
@@ -25,14 +25,14 @@ public class MixinAfterWorkerTest extends InternalBaseTestCase
     @Test
     public void annotation_not_present()
     {
-        ClassTransformation transformation = mockClassTransformation();
+        PlasticClass pc = newMock(PlasticClass.class);
         MutableComponentModel model = mockMutableComponentModel();
 
-        train_getAnnotation(transformation, MixinAfter.class, null);
+        expect(pc.hasAnnotation(MixinAfter.class)).andReturn(false);
 
         replay();
 
-        new MixinAfterWorker().transform(transformation, model);
+        new MixinAfterWorker().transform(pc, null, model);
 
         verify();
     }
@@ -40,16 +40,17 @@ public class MixinAfterWorkerTest extends InternalBaseTestCase
     @Test
     public void annotation_present()
     {
-        ClassTransformation transformation = mockClassTransformation();
+        PlasticClass pc = newMock(PlasticClass.class);
         MutableComponentModel model = mockMutableComponentModel();
-        MixinAfter annotation = newMock(MixinAfter.class);
 
-        train_getAnnotation(transformation, MixinAfter.class, annotation);
+
+        expect(pc.hasAnnotation(MixinAfter.class)).andReturn(true);
+
         model.setMixinAfter(true);
 
         replay();
 
-        new MixinAfterWorker().transform(transformation, model);
+        new MixinAfterWorker().transform(pc, null, model);
 
         verify();
     }
