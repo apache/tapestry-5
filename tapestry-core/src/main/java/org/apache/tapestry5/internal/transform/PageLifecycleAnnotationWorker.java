@@ -1,4 +1,4 @@
-// Copyright 2007, 2010 The Apache Software Foundation
+// Copyright 2007, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,97 +14,93 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
-
+import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.func.Flow;
 import org.apache.tapestry5.func.Predicate;
+import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.ComponentMethodAdvice;
-import org.apache.tapestry5.services.ComponentMethodInvocation;
-import org.apache.tapestry5.services.MethodAccess;
-import org.apache.tapestry5.services.MethodInvocationResult;
-import org.apache.tapestry5.services.TransformMethod;
-import org.apache.tapestry5.services.TransformMethodSignature;
+import org.apache.tapestry5.plastic.*;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
+
+import java.lang.annotation.Annotation;
 
 /**
  * Similar to {@link org.apache.tapestry5.internal.transform.RenderPhaseMethodWorker} but applies to annotations/methods
  * related to the overall page lifecycle. Page lifecycle methods are always void and take no parameters.
  */
-public class PageLifecycleAnnotationWorker implements ComponentClassTransformWorker
+public class PageLifecycleAnnotationWorker implements ComponentClassTransformWorker2
 {
     private final Class<? extends Annotation> methodAnnotationClass;
 
-    private final TransformMethodSignature lifecycleMethodSignature;
+    private final MethodDescription lifecycleMethodDescription;
 
     private final String methodAlias;
 
+    private final Predicate<PlasticMethod> MATCHER = new Predicate<PlasticMethod>()
+    {
+        public boolean accept(PlasticMethod method)
+        {
+            return method.getDescription().methodName.equalsIgnoreCase(methodAlias)
+                    || method.hasAnnotation(methodAnnotationClass);
+        }
+    };
+
+    private final Worker<PlasticMethod> VALIDATE = new Worker<PlasticMethod>()
+    {
+        public void work(PlasticMethod method)
+        {
+            if (!method.isVoid())
+                throw new RuntimeException(String.format("Method %s is a lifecycle method and should return void.", method
+                        .getMethodIdentifier()));
+
+            if (!method.getParameters().isEmpty())
+                throw new RuntimeException(String.format("Method %s is a lifecycle method and should take no parameters.",
+                        method.getMethodIdentifier()));
+
+        }
+    };
+
     public PageLifecycleAnnotationWorker(Class<? extends Annotation> methodAnnotationClass,
-            TransformMethodSignature lifecycleMethodSignature, String methodAlias)
+                                         MethodDescription lifecycleMethodDescription, String methodAlias)
     {
         this.methodAnnotationClass = methodAnnotationClass;
-        this.lifecycleMethodSignature = lifecycleMethodSignature;
+        this.lifecycleMethodDescription = lifecycleMethodDescription;
         this.methodAlias = methodAlias;
     }
 
-    public void transform(final ClassTransformation transformation, MutableComponentModel model)
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-        for (TransformMethod method : matchLifecycleMethods(transformation))
+        for (PlasticMethod method : matchLifecycleMethods(plasticClass))
         {
-            invokeMethodWithinLifecycle(transformation, method);
+            invokeMethodWithinLifecycle(plasticClass, method);
         }
     }
 
-    private void invokeMethodWithinLifecycle(final ClassTransformation transformation, TransformMethod method)
+
+    private void invokeMethodWithinLifecycle(PlasticClass plasticClass, PlasticMethod method)
     {
-        validateMethodSignature(method);
+        MethodHandle handle = method.getHandle();
 
-        final MethodAccess access = method.getAccess();
-
-        ComponentMethodAdvice advice = createAdviceToInvokeMethod(access);
-
-        transformation.getOrCreateMethod(lifecycleMethodSignature).addAdvice(advice);
+        plasticClass.introduceMethod(lifecycleMethodDescription).addAdvice(createAdvice(handle));
     }
 
-    private ComponentMethodAdvice createAdviceToInvokeMethod(final MethodAccess access)
+    private MethodAdvice createAdvice(final MethodHandle handle)
     {
-        return new ComponentMethodAdvice()
+        return new MethodAdvice()
         {
-            public void advise(ComponentMethodInvocation invocation)
+            public void advise(MethodInvocation invocation)
             {
                 invocation.proceed();
 
-                MethodInvocationResult result = access.invoke(invocation.getInstance());
-
-                result.rethrow();
+                handle.invoke(invocation.getInstance()).rethrow();
             }
         };
     }
 
-    private void validateMethodSignature(TransformMethod method)
+
+    private Flow<PlasticMethod> matchLifecycleMethods(PlasticClass plasticClass)
     {
-        TransformMethodSignature signature = method.getSignature();
-
-        if (!signature.getReturnType().equals("void"))
-            throw new RuntimeException(String.format("Method %s is a lifecycle method and should return void.", method
-                    .getMethodIdentifier()));
-
-        if (signature.getParameterTypes().length > 0)
-            throw new RuntimeException(String.format("Method %s is a lifecycle method and should take no parameters.",
-                    method.getMethodIdentifier()));
-    }
-
-    private List<TransformMethod> matchLifecycleMethods(final ClassTransformation transformation)
-    {
-        return transformation.matchMethods(new Predicate<TransformMethod>()
-        {
-
-            public boolean accept(TransformMethod method)
-            {
-                return method.getName().equalsIgnoreCase(methodAlias)
-                        || method.getAnnotation(methodAnnotationClass) != null;
-            }
-        });
+        return F.flow(plasticClass.getMethods()).filter(MATCHER).each(VALIDATE);
     }
 }

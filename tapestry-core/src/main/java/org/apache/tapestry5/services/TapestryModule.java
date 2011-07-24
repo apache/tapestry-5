@@ -70,6 +70,7 @@ import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.plastic.MethodDescription;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.ComponentResourcesAware;
 import org.apache.tapestry5.runtime.RenderCommand;
@@ -525,6 +526,8 @@ public final class TapestryModule
      * <dd>Checks for the {@link org.apache.tapestry5.annotations.Cached} annotation</dd>
      * <dt>ActivationRequestParameter</dt>
      * <dd>Support for the {@link ActivationRequestParameter} annotation</dd>
+     * <dt>PageLoaded, PageAttached, PageDetached</dt>
+     * <dd>Support for annotations {@link PageLoaded}, {@link PageAttached}, {@link PageDetached}</dd>
      * </dl>
      */
     @Contribute(ComponentClassTransformWorker2.class)
@@ -582,7 +585,12 @@ public final class TapestryModule
 
         configuration.addInstance("DiscardAfter", DiscardAfterWorker.class);
 
+        add(configuration, PageLoaded.class, TransformConstants.CONTAINING_PAGE_DID_LOAD_DESCRIPTION);
+        add(configuration, PageAttached.class, TransformConstants.CONTAINING_PAGE_DID_ATTACH_DESCRIPTION);
+        add(configuration, PageDetached.class, TransformConstants.CONTAINING_PAGE_DID_DETACH_DESCRIPTION);
+
         configuration.addInstance("PageReset", PageResetAnnotationWorker.class);
+
 
         // This one is always last. Any additional private fields that aren't
         // annotated will
@@ -628,15 +636,6 @@ public final class TapestryModule
         configuration.addInstance("InjectService", InjectServiceWorker.class);
         configuration.addInstance("InjectNamed", InjectNamedWorker.class);
 
-
-        // Ideally, these should be ordered pretty late in the process to make
-        // sure there are no
-        // side effects with other workers that do work inside the page
-        // lifecycle methods.
-
-        add(configuration, PageLoaded.class, TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, "pageLoaded");
-        add(configuration, PageAttached.class, TransformConstants.CONTAINING_PAGE_DID_ATTACH_SIGNATURE, "pageAttached");
-        add(configuration, PageDetached.class, TransformConstants.CONTAINING_PAGE_DID_DETACH_SIGNATURE, "pageDetached");
 
         configuration.addInstance("Persist", PersistWorker.class);
 
@@ -1200,14 +1199,13 @@ public final class TapestryModule
         configuration.addInstance("Messages", MessagesConstraintGenerator.class);
     }
 
-    private static void add(OrderedConfiguration<ComponentClassTransformWorker> configuration,
-                            Class<? extends Annotation> annotationClass, TransformMethodSignature lifecycleMethodSignature,
-                            String methodAlias)
+    private static void add(OrderedConfiguration<ComponentClassTransformWorker2> configuration,
+                            Class<? extends Annotation> annotationClass, MethodDescription description)
     {
-        ComponentClassTransformWorker worker = new PageLifecycleAnnotationWorker(annotationClass,
-                lifecycleMethodSignature, methodAlias);
-
         String name = TapestryInternalUtils.lastTerm(annotationClass.getName());
+
+        ComponentClassTransformWorker2 worker = new PageLifecycleAnnotationWorker(annotationClass,
+                description, name);
 
         configuration.add(name, worker);
     }

@@ -109,15 +109,33 @@ public final class TransformConstants
 
     /**
      * Signature for {@link org.apache.tapestry5.runtime.PageLifecycleListener#containingPageDidDetach()}.
+     *
+     * @deprecated Deprecated in Tapestry 5.3, use {@link #CONTAINING_PAGE_DID_DETACH_DESCRIPTION}
      */
     public static final TransformMethodSignature CONTAINING_PAGE_DID_DETACH_SIGNATURE = new TransformMethodSignature(
             "containingPageDidDetach");
 
     /**
+     * Description for {@link org.apache.tapestry5.runtime.PageLifecycleListener#containingPageDidDetach()}.
+     *
+     * @since 5.3
+     */
+    public static final MethodDescription CONTAINING_PAGE_DID_DETACH_DESCRIPTION = PlasticUtils.getMethodDescription(PageLifecycleListener.class, "containingPageDidDetach");
+
+    /**
      * Signature for {@link org.apache.tapestry5.runtime.PageLifecycleListener#containingPageDidAttach()}.
+     *
+     * @deprecated Deprecated in Tapestry 5.3, use {@link #CONTAINING_PAGE_DID_ATTACH_DESCRIPTION}
      */
     public static final TransformMethodSignature CONTAINING_PAGE_DID_ATTACH_SIGNATURE = new TransformMethodSignature(
             "containingPageDidAttach");
+
+    /**
+     * Description for {@link org.apache.tapestry5.runtime.PageLifecycleListener#containingPageDidAttach()}.
+     *
+     * @since 5.3
+     */
+    public static final MethodDescription CONTAINING_PAGE_DID_ATTACH_DESCRIPTION = PlasticUtils.getMethodDescription(PageLifecycleListener.class, "containingPageDidAttach");
 
     /**
      * Signature for {@link org.apache.tapestry5.runtime.PageLifecycleListener#restoreStateBeforePageAttach()}
