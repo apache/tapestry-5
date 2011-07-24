@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.util.Map;
-
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
@@ -27,10 +25,12 @@ import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.slf4j.Logger;
 
+import java.util.Map;
+
 /**
- * In Tapestry 5.1, there implementation of this worked with the page pool (a pool of page instances, reserved
+ * In Tapestry 5.1, the implementation of this worked with the page pool (a pool of page instances, reserved
  * to individual requests/threads). Page pooling was deprecated in 5.2 and removed in 5.3.
- * 
+ *
  * @since 5.2
  */
 @Scope(ScopeConstants.PERTHREAD)
@@ -64,8 +64,7 @@ public class NonPoolingRequestPageCacheImpl implements RequestPageCache, ThreadC
             try
             {
                 page.detached();
-            }
-            catch (Throwable t)
+            } catch (Throwable t)
             {
                 logger.error(String.format("Error detaching page %s: %s", page, InternalUtils.toMessage(t)), t);
             }
@@ -85,8 +84,7 @@ public class NonPoolingRequestPageCacheImpl implements RequestPageCache, ThreadC
             try
             {
                 page.attached();
-            }
-            catch (Throwable t)
+            } catch (Throwable t)
             {
                 throw new RuntimeException(String.format("Unable to attach page %s: %s", canonical,
                         InternalUtils.toMessage(t)), t);
