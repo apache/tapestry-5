@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,23 +15,25 @@
 package org.apache.tapestry5.internal.transform;
 
 import org.apache.tapestry5.annotations.SessionAttribute;
-import org.apache.tapestry5.ioc.services.FieldValueConduit;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.plastic.FieldConduit;
+import org.apache.tapestry5.plastic.InstanceContext;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Session;
-import org.apache.tapestry5.services.TransformField;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 
 /**
  * Looks for the {@link SessionAttribute} annotation and converts read and write access on such
  * fields into calls to the {@link Session#getAttribute(String)} and {@link Session#setAttribute(String, Object)}.
  */
-public class SessionAttributeWorker implements ComponentClassTransformWorker
+public class SessionAttributeWorker implements ComponentClassTransformWorker2
 {
     private final Request request;
 
-    private class SessionKeyConduit implements FieldValueConduit
+    private class SessionKeyConduit implements FieldConduit<Object>
     {
         private final String key;
 
@@ -40,20 +42,26 @@ public class SessionAttributeWorker implements ComponentClassTransformWorker
             this.key = key;
         }
 
+        public Object get(Object instance, InstanceContext context)
+        {
+            Session session = getSession();
+
+            if (session == null)
+            {
+                return null;
+            }
+
+            return session.getAttribute(key);
+        }
+
+        public void set(Object instance, InstanceContext context, Object newValue)
+        {
+            request.getSession(true).setAttribute(key, newValue);
+        }
+
         private Session getSession()
         {
-            return request.getSession(true);
-        }
-
-        public Object get()
-        {
-            // TODO: caching, and not creating the session unnecessarily
-            return getSession().getAttribute(key);
-        }
-
-        public void set(Object newValue)
-        {
-            getSession().setAttribute(key, newValue);
+            return request.getSession(false);
         }
     }
 
@@ -62,15 +70,16 @@ public class SessionAttributeWorker implements ComponentClassTransformWorker
         this.request = request;
     }
 
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-        for (TransformField field : transformation.matchFieldsWithAnnotation(SessionAttribute.class))
+        for (PlasticField field : plasticClass.getFieldsWithAnnotation(SessionAttribute.class))
         {
             convertFieldToSessionAccess(field);
         }
     }
 
-    private void convertFieldToSessionAccess(TransformField field)
+    private void convertFieldToSessionAccess(PlasticField field)
     {
         SessionAttribute annotation = field.getAnnotation(SessionAttribute.class);
 
@@ -78,10 +87,10 @@ public class SessionAttributeWorker implements ComponentClassTransformWorker
 
         String key = determineSessionKey(field, annotation.value());
 
-        field.replaceAccess(new SessionKeyConduit(key));
+        field.setConduit(new SessionKeyConduit(key));
     }
 
-    private String determineSessionKey(TransformField field, String value)
+    private String determineSessionKey(PlasticField field, String value)
     {
         return value.equals("") ? field.getName() : value;
     }

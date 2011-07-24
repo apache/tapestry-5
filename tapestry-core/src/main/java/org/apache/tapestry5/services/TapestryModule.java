@@ -540,6 +540,8 @@ public final class TapestryModule
      * <dd>Converts fields that reference application state objects</dd>
      * <dt>Persist</dt>
      * <dd>Allows fields to store their their value persistently between requests via {@link Persist}</dd>
+     * <dt>SessionAttribute</dt>
+     * <dd>Support for the {@link SessionAttribute}</dd>
      * </dl>
      */
     @Contribute(ComponentClassTransformWorker2.class)
@@ -607,6 +609,7 @@ public final class TapestryModule
 
         configuration.addInstance("Persist", PersistWorker.class);
 
+        configuration.addInstance("SessionAttribute", SessionAttributeWorker.class);
 
         // This one is always last. Any additional private fields that aren't
         // annotated will
@@ -634,8 +637,6 @@ public final class TapestryModule
         configuration.addInstance("Inject", InjectWorker.class);
 
         configuration.addInstance("Log", LogWorker.class);
-
-        configuration.addInstance("SessionAttribute", SessionAttributeWorker.class);
 
         configuration.addInstance("HeartbeatDeferred", HeartbeatDeferredWorker.class, "after:RenderPhase");
     }
