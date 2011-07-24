@@ -14,14 +14,15 @@
 
 package org.apache.tapestry5.annotations;
 
+import org.apache.tapestry5.ioc.annotations.UseWith;
+
 import java.lang.annotation.Documented;
-import static java.lang.annotation.ElementType.METHOD;
 import java.lang.annotation.Retention;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
-import org.apache.tapestry5.ioc.annotations.UseWith;
 
 /**
  * Method annotation used for methods that should be invoked when the page is detached at the end of a request, before
@@ -32,14 +33,15 @@ import org.apache.tapestry5.ioc.annotations.UseWith;
  * <p/>
  * To be clear: methods with this annotation (or name) are still invoked even in Tapestry 5.2, which does away with the
  * page pool.
- * 
+ *
  * @see PageAttached
+ * @deprecated In Tapestry 5.3, with no replacement (detach logic no longer meaningful now that pages are singletons).
  */
 @Target(METHOD)
 @Retention(RUNTIME)
 @Documented
 @UseWith(
-{ COMPONENT, MIXIN, PAGE })
+        {COMPONENT, MIXIN, PAGE})
 public @interface PageDetached
 {
 

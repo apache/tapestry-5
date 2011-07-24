@@ -28,6 +28,8 @@ public interface PageLifecycleListener
     /**
      * Invoked when the page is detached, allowing components a chance to clear out any temporary or client specific
      * state.
+     *
+     * @deprecated In Tapestry 5.3, with no replacement (detach logic no longer meaningful now that pages are singletons).
      */
     void containingPageDidDetach();
 
