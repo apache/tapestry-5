@@ -748,6 +748,8 @@ public final class TapestryModule
      * <dt>Named</dt> <dd>Handles fields with the {@link javax.inject.Named} annotation</dd>
      * <dt>Block</dt>
      * <dd>injects fields of type {@link Block}</dd>
+     * <dt>CommonResources</dt>
+     * <dd>Access to properties of resources (log, messages, etc.)</dd>
      * </dl>
      */
     @Contribute(InjectionProvider2.class)
@@ -755,6 +757,7 @@ public final class TapestryModule
     {
         configuration.addInstance("Named", InjectNamedProvider.class, "before:Default");
         configuration.add("Block", new BlockInjectionProvider(), "before:Default");
+        configuration.add("CommonResources", new CommonResourcesInjectionProvider(), "after:Default");
     }
 
     /**
@@ -764,8 +767,6 @@ public final class TapestryModule
      * <dd>based on {@link MasterObjectProvider}</dd>
      * <dt>ComponentResources</dt>
      * <dd>give component access to its resources</dd>
-     * <dt>CommonResources</dt>
-     * <dd>access to properties of resources (log, messages, etc.)</dd>
      * <dt>Asset</dt>
      * <dd>injection of assets (triggered via {@link Path} annotation), with the path relative to the component class</dd>
      * <dt>Service</dt>
@@ -785,14 +786,12 @@ public final class TapestryModule
                                                         AssetSource assetSource)
     {
         configuration.add("Default", new DefaultInjectionProvider(masterObjectProvider, locator));
-
         configuration.add("ComponentResources", new ComponentResourcesInjectionProvider());
 
         // This comes after default, to deal with conflicts between injecting a
         // String as the
         // component id, and injecting a string with @Symbol or @Value.
 
-        configuration.add("CommonResources", new CommonResourcesInjectionProvider(), "after:Default");
 
         configuration.add("Asset", new AssetInjectionProvider(symbolSource, assetSource), "before:Default");
 

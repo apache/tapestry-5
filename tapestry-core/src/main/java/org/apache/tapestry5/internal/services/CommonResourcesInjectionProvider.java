@@ -14,26 +14,50 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.util.Locale;
-import java.util.Map;
-
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.internal.transform.ReadOnlyComponentFieldConduit;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentValueProvider;
-import org.apache.tapestry5.services.InjectionProvider;
+import org.apache.tapestry5.plastic.InstanceContext;
+import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
+import org.apache.tapestry5.services.transform.InjectionProvider2;
 import org.slf4j.Logger;
+
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Allows for a number of anonymous injections based on the type of field that is to be injected.
  */
-public class CommonResourcesInjectionProvider implements InjectionProvider
+public class CommonResourcesInjectionProvider implements InjectionProvider2
 {
-    private static ComponentValueProvider<ComponentResourceSelector> selectorProvider = new ComponentValueProvider<ComponentResourceSelector>()
+    interface ResourceProvider<T>
+    {
+        T get(ComponentResources resources);
+    }
+
+    static class ResourceConduit extends ReadOnlyComponentFieldConduit
+    {
+        private final ResourceProvider<?> provider;
+
+        ResourceConduit(String className, String fieldName, ResourceProvider<?> provider)
+        {
+            super(className, fieldName);
+            this.provider = provider;
+        }
+
+        public Object get(Object instance, InstanceContext context)
+        {
+            ComponentResources resources = context.get(ComponentResources.class);
+
+            return provider.get(resources);
+        }
+    }
+
+    private static ResourceProvider<ComponentResourceSelector> selectorProvider = new ResourceProvider<ComponentResourceSelector>()
     {
         public ComponentResourceSelector get(ComponentResources resources)
         {
@@ -41,7 +65,7 @@ public class CommonResourcesInjectionProvider implements InjectionProvider
         }
     };
 
-    private static ComponentValueProvider<Messages> messagesProvider = new ComponentValueProvider<Messages>()
+    private static ResourceProvider<Messages> messagesProvider = new ResourceProvider<Messages>()
     {
 
         public Messages get(ComponentResources resources)
@@ -50,7 +74,7 @@ public class CommonResourcesInjectionProvider implements InjectionProvider
         }
     };
 
-    private static ComponentValueProvider<Locale> localeProvider = new ComponentValueProvider<Locale>()
+    private static ResourceProvider<Locale> localeProvider = new ResourceProvider<Locale>()
     {
 
         public Locale get(ComponentResources resources)
@@ -59,16 +83,18 @@ public class CommonResourcesInjectionProvider implements InjectionProvider
         }
     };
 
-    private static ComponentValueProvider<Logger> loggerProvider = new ComponentValueProvider<Logger>()
+    private static ResourceProvider<Logger> loggerProvider = new ResourceProvider<Logger>()
     {
 
         public Logger get(ComponentResources resources)
         {
             return resources.getLogger();
-        };
+        }
+
+        ;
     };
 
-    private static ComponentValueProvider<String> completeIdProvider = new ComponentValueProvider<String>()
+    private static ResourceProvider<String> completeIdProvider = new ResourceProvider<String>()
     {
         public String get(ComponentResources resources)
         {
@@ -76,26 +102,26 @@ public class CommonResourcesInjectionProvider implements InjectionProvider
         }
     };
 
-    private static final Map<Class, ComponentValueProvider> configuration = CollectionFactory.newMap();
+    private static final Map<String, ResourceProvider> configuration = CollectionFactory.newMap();
 
     {
-        configuration.put(ComponentResourceSelector.class, selectorProvider);
-        configuration.put(Messages.class, messagesProvider);
-        configuration.put(Locale.class, localeProvider);
-        configuration.put(Logger.class, loggerProvider);
-        configuration.put(String.class, completeIdProvider);
+        configuration.put(ComponentResourceSelector.class.getName(), selectorProvider);
+        configuration.put(Messages.class.getName(), messagesProvider);
+        configuration.put(Locale.class.getName(), localeProvider);
+        configuration.put(Logger.class.getName(), loggerProvider);
+        configuration.put(String.class.getName(), completeIdProvider);
     }
 
-    @SuppressWarnings("unchecked")
-    public boolean provideInjection(String fieldName, Class fieldType, ObjectLocator locator,
-            ClassTransformation transformation, MutableComponentModel componentModel)
+    public boolean provideInjection(PlasticField field, ObjectLocator locator, MutableComponentModel componentModel)
     {
-        ComponentValueProvider provider = configuration.get(fieldType);
+        ResourceProvider provider = configuration.get(field.getTypeName());
 
         if (provider == null)
+        {
             return false;
+        }
 
-        transformation.getField(fieldName).injectIndirect(provider);
+        field.setConduit(new ResourceConduit(field.getPlasticClass().getClassName(), field.getName(), provider));
 
         return true;
     }
