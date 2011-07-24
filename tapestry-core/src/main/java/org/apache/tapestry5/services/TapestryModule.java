@@ -528,6 +528,8 @@ public final class TapestryModule
      * <dd>Support for the {@link ActivationRequestParameter} annotation</dd>
      * <dt>PageLoaded, PageAttached, PageDetached</dt>
      * <dd>Support for annotations {@link PageLoaded}, {@link PageAttached}, {@link PageDetached}</dd>
+     * <dt>InjectService</dt>
+     * <dd>Handles the {@link org.apache.tapestry5.ioc.annotations.InjectService} annotation</dd>
      * </dl>
      */
     @Contribute(ComponentClassTransformWorker2.class)
@@ -590,6 +592,7 @@ public final class TapestryModule
         add(configuration, PageDetached.class, TransformConstants.CONTAINING_PAGE_DID_DETACH_DESCRIPTION);
 
         configuration.addInstance("PageReset", PageResetAnnotationWorker.class);
+        configuration.addInstance("InjectService", InjectServiceWorker.class);
 
 
         // This one is always last. Any additional private fields that aren't
@@ -612,13 +615,6 @@ public final class TapestryModule
      * <dd>Allows fields to contain values extracted from the {@link org.apache.tapestry5.services.Environment} service</dd>
      * <dt>Inject</dt>
      * <dd>Used with the {@link org.apache.tapestry5.ioc.annotations.Inject} annotation, when a value is supplied</dd>
-     * <dt>InjectService</dt>
-     * <dd>Handles the {@link org.apache.tapestry5.ioc.annotations.InjectService} annotation</dd>
-     * <dt>InjectPage</dt>
-     * <dd>Adds code to allow access to other pages via the {@link org.apache.tapestry5.annotations.InjectPage} field
-     * annotation</dd>
-     * <dt>InjectBlock</dt>
-     * <dd>Allows a block from the template to be injected into a field</dd>
      * <dt>ApplicationState</dt>
      * <dd>Converts fields that reference application state objects
      * <dt>Log</dt>
@@ -633,9 +629,7 @@ public final class TapestryModule
             OrderedConfiguration<ComponentClassTransformWorker> configuration)
     {
         configuration.addInstance("Inject", InjectWorker.class);
-        configuration.addInstance("InjectService", InjectServiceWorker.class);
         configuration.addInstance("InjectNamed", InjectNamedWorker.class);
-
 
         configuration.addInstance("Persist", PersistWorker.class);
 

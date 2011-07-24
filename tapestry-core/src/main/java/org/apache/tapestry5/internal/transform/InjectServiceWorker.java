@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,16 +18,17 @@ import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.ClassTransformation;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
-import org.apache.tapestry5.services.TransformField;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticField;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 
 /**
  * Processes the {@link org.apache.tapestry5.ioc.annotations.InjectService} annotation.
- * 
+ *
  * @since 5.1.0.0
  */
-public class InjectServiceWorker implements ComponentClassTransformWorker
+public class InjectServiceWorker implements ComponentClassTransformWorker2
 {
     private final ObjectLocator locator;
 
@@ -39,16 +40,15 @@ public class InjectServiceWorker implements ComponentClassTransformWorker
         this.cache = cache;
     }
 
-    @SuppressWarnings("unchecked")
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-        for (TransformField field : transformation.matchFieldsWithAnnotation(InjectService.class))
+        for (PlasticField field : plasticClass.getFieldsWithAnnotation(InjectService.class))
         {
             InjectService annotation = field.getAnnotation(InjectService.class);
 
             field.claim(annotation);
 
-            Class fieldType = cache.forName(field.getType());
+            Class fieldType = cache.forName(field.getTypeName());
 
             Object service = locator.getService(annotation.value(), fieldType);
 
