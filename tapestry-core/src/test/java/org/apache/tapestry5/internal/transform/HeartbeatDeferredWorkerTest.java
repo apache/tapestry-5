@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,36 +14,51 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import java.lang.reflect.Modifier;
-
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.services.TransformMethod;
-import org.apache.tapestry5.services.TransformMethodSignature;
+import org.apache.tapestry5.plastic.MethodDescription;
+import org.apache.tapestry5.plastic.PlasticMethod;
+import org.apache.tapestry5.plastic.PlasticUtils;
 import org.testng.annotations.Test;
 
 public class HeartbeatDeferredWorkerTest extends InternalBaseTestCase
 {
     private final HeartbeatDeferredWorker worker = new HeartbeatDeferredWorker(null);
 
+    public String shouldReturnVoid()
+    {
+        return null;
+    }
+
+    public void noCheckedException() throws Exception
+    {
+    }
+
     @Test
     public void non_void_method_will_fail()
     {
-        testFailure(new TransformMethodSignature(Modifier.PUBLIC, "java.lang.String", "shouldReturnVoid", null, null),
+        testFailure(
+                PlasticUtils.getMethodDescription(getClass(), "shouldReturnVoid"),
                 "as it is not a void method");
     }
 
     @Test
     public void checked_exceptions_will_fail()
     {
-        testFailure(new TransformMethodSignature(Modifier.PUBLIC, "void", "noCheckedExceptions", null, new String[]
-        { "java.lang.Exception" }), "as it throws checked exceptions");
+        testFailure(PlasticUtils.getMethodDescription(getClass(), "noCheckedException"),
+                "as it throws checked exceptions");
     }
 
-    private void testFailure(TransformMethodSignature transformMethodSignature, String messageFragment)
+    private void testFailure(MethodDescription description, String messageFragment)
     {
-        TransformMethod method = newMock(TransformMethod.class);
+        PlasticMethod method = newMock(PlasticMethod.class);
 
-        expect(method.getSignature()).andReturn(transformMethodSignature).atLeastOnce();
+        boolean isVoid = description.returnType.equals("void");
+        expect(method.isVoid()).andReturn(isVoid);
+
+        if (isVoid)
+        {
+            expect(method.getDescription()).andReturn(description).atLeastOnce();
+        }
 
         expect(method.getMethodIdentifier()).andReturn("<MethodId>");
 
@@ -53,8 +68,7 @@ public class HeartbeatDeferredWorkerTest extends InternalBaseTestCase
         {
             worker.deferMethodInvocations(method);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertMessageContains(ex, messageFragment);
         }

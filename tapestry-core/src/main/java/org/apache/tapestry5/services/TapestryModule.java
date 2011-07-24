@@ -544,6 +544,8 @@ public final class TapestryModule
      * <dd>Support for the {@link SessionAttribute}</dd>
      * <dt>Log</dt>
      * <dd>Checks for the {@link org.apache.tapestry5.annotations.Log} annotation</dd>
+     * <dt>HeartbeatDeferred
+     * <dd>Support for the {@link HeartbeatDeferred} annotation, which defers method invocation to the end of the {@link Heartbeat}
      * </dl>
      */
     @Contribute(ComponentClassTransformWorker2.class)
@@ -615,6 +617,8 @@ public final class TapestryModule
 
         configuration.addInstance("Log", LogWorker.class);
 
+        configuration.addInstance("HeartbeatDeferred", HeartbeatDeferredWorker.class, "after:RenderPhase");
+
         // This one is always last. Any additional private fields that aren't
         // annotated will
         // be converted to clear out at the end of the request.
@@ -627,8 +631,6 @@ public final class TapestryModule
      * <dl>
      * <dt>Inject</dt>
      * <dd>Used with the {@link org.apache.tapestry5.ioc.annotations.Inject} annotation, when a value is supplied</dd>
-     * <dt>HeartbeatDeferred
-     * <dd>Support for the {@link HeartbeatDeferred} annotation
      * </dl>
      */
     @Contribute(ComponentClassTransformWorker2.class)
@@ -637,8 +639,6 @@ public final class TapestryModule
             OrderedConfiguration<ComponentClassTransformWorker> configuration)
     {
         configuration.addInstance("Inject", InjectWorker.class);
-
-        configuration.addInstance("HeartbeatDeferred", HeartbeatDeferredWorker.class, "after:RenderPhase");
     }
 
     /**
