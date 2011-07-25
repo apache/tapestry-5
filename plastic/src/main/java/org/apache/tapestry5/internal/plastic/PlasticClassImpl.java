@@ -42,8 +42,6 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     private static final String ABSTRACT_METHOD_INVOCATION_INTERNAL_NAME = PlasticInternalUtils
             .toInternalName(AbstractMethodInvocation.class.getName());
 
-    private static final String OBJECT_INTERNAL_NAME = Type.getInternalName(Object.class);
-
     private static final String HANDLE_SHIM_BASE_CLASS_INTERNAL_NAME = Type
             .getInternalName(PlasticClassHandleShim.class);
 
@@ -59,6 +57,9 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     private static final Method STATIC_CONTEXT_GET_METHOD = toMethod(StaticContext.class, "get", int.class);
 
     private static final Method COMPUTED_VALUE_GET_METHOD = toMethod(ComputedValue.class, "get", InstanceContext.class);
+
+    private static final Method CONSTRUCTOR_CALLBACK_METHOD = toMethod(ConstructorCallback.class, "onConstruct",
+            Object.class, InstanceContext.class);
 
     private static String toDesc(String internalName)
     {
@@ -1449,6 +1450,8 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
     private final Set<String> methodNames = new HashSet<String>();
 
+    private final List<ConstructorCallback> constructorCallbacks = new ArrayList<ConstructorCallback>();
+
     // All non-introduced instance fields
 
     private final List<PlasticFieldImpl> fields;
@@ -1726,33 +1729,64 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     {
         if (originalConstructor != null)
         {
-            // Convert the original constructor into a private method invoked from the
-            // generated constructor.
-
-            String initializerName = makeUnique(methodNames, "initializeInstance");
-
-            int originalAccess = originalConstructor.access;
-
-            originalConstructor.access = ACC_PRIVATE;
-            originalConstructor.name = initializerName;
-
-            stripOutSuperConstructorCall(originalConstructor);
-
-            constructorBuilder.loadThis().invokeVirtual(className, "void", initializerName);
-
-            // And replace it with a constructor that throws an exception
-
-            MethodNode replacementConstructor = new MethodNode(originalAccess, CONSTRUCTOR_NAME, NOTHING_TO_VOID, null,
-                    null);
-
-            newBuilder(replacementConstructor).throwException(IllegalStateException.class, invalidConstructorMessage());
-
-            classNode.methods.add(replacementConstructor);
+            convertOriginalConstructorToMethod();
         }
+
+        invokeCallbacks();
 
         constructorBuilder.returnResult();
 
         classNode.methods.add(newConstructor);
+    }
+
+    private void invokeCallbacks()
+    {
+        for (ConstructorCallback callback : constructorCallbacks)
+        {
+            invokeCallback(callback);
+        }
+    }
+
+    private void invokeCallback(ConstructorCallback callback)
+    {
+        int index = staticContext.store(callback);
+
+        // First, load the callback
+
+        constructorBuilder.loadArgument(0).loadConstant(index).invoke(STATIC_CONTEXT_GET_METHOD).castOrUnbox(ConstructorCallback.class.getName());
+
+        // Load this and the InstanceContext
+        constructorBuilder.loadThis().loadArgument(1);
+
+        constructorBuilder.invoke(CONSTRUCTOR_CALLBACK_METHOD);
+    }
+
+
+    /**
+     * Convert the original constructor into a private method invoked from the
+     * generated constructor.
+     */
+    private void convertOriginalConstructorToMethod()
+    {
+        String initializerName = makeUnique(methodNames, "initializeInstance");
+
+        int originalAccess = originalConstructor.access;
+
+        originalConstructor.access = ACC_PRIVATE;
+        originalConstructor.name = initializerName;
+
+        stripOutSuperConstructorCall(originalConstructor);
+
+        constructorBuilder.loadThis().invokeVirtual(className, "void", initializerName);
+
+        // And replace it with a constructor that throws an exception
+
+        MethodNode replacementConstructor = new MethodNode(originalAccess, CONSTRUCTOR_NAME, NOTHING_TO_VOID, null,
+                null);
+
+        newBuilder(replacementConstructor).throwException(IllegalStateException.class, invalidConstructorMessage());
+
+        classNode.methods.add(replacementConstructor);
     }
 
     private void stripOutSuperConstructorCall(MethodNode cons)
@@ -2454,6 +2488,17 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     public String getSuperClassName()
     {
         return superClassName;
+    }
+
+    public PlasticClass onConstruct(ConstructorCallback callback)
+    {
+        check();
+
+        assert callback != null;
+
+        constructorCallbacks.add(callback);
+
+        return this;
     }
 
 }
