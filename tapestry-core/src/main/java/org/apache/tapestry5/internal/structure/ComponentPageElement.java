@@ -22,14 +22,17 @@ import org.apache.tapestry5.internal.InternalComponentResources;
 import org.apache.tapestry5.internal.InternalComponentResourcesCommon;
 import org.apache.tapestry5.internal.services.Instantiator;
 import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.runtime.*;
+import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.runtime.ComponentEvent;
+import org.apache.tapestry5.runtime.RenderCommand;
+import org.apache.tapestry5.runtime.RenderQueue;
 import org.slf4j.Logger;
 
 /**
  * Defines an element of a page that is a component elements that are, in fact, components (rather than just static
  * markup).
  */
-public interface ComponentPageElement extends ComponentResourcesCommon, InternalComponentResourcesCommon, RenderCommand, BodyPageElement, PageLifecycleListener
+public interface ComponentPageElement extends ComponentResourcesCommon, InternalComponentResourcesCommon, RenderCommand, BodyPageElement
 {
     /**
      * Returns the core component associated with this page element (as opposed to any mixins attached to the

@@ -15,7 +15,9 @@
 package org.apache.tapestry5.runtime;
 
 /**
- * A set of methods that allow components to know about page-level operations.
+ * A set of methods that allow components to know about page-level operations. When this interface is
+ * {@linkplain org.apache.tapestry5.plastic.PlasticClass#introduceInterface(Class)} introduced}, the component will
+ * automatically register itself as a listener with the page.
  */
 public interface PageLifecycleListener
 {

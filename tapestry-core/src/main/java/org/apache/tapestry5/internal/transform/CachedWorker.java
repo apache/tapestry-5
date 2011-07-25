@@ -23,6 +23,7 @@ import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.*;
+import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.services.BindingSource;
 import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
@@ -231,7 +232,7 @@ public class CachedWorker implements ComponentClassTransformWorker2
         // and reuse of a component (with a cached method) within a page or across pages. However, the binding can't be initialized
         // until the page loads.
 
-
+        plasticClass.introduceInterface(PageLifecycleListener.class);
         plasticClass.introduceMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_DESCRIPTION).addAdvice(new MethodAdvice()
         {
             public void advise(MethodInvocation invocation)

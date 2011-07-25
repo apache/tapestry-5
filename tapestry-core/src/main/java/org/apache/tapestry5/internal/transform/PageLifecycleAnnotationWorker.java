@@ -20,6 +20,7 @@ import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.*;
+import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
 
@@ -71,7 +72,16 @@ public class PageLifecycleAnnotationWorker implements ComponentClassTransformWor
 
     public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-        for (PlasticMethod method : matchLifecycleMethods(plasticClass))
+        Flow<PlasticMethod> methods = matchLifecycleMethods(plasticClass);
+
+        if (methods.isEmpty())
+        {
+            return;
+        }
+
+        plasticClass.introduceInterface(PageLifecycleListener.class);
+
+        for (PlasticMethod method : methods)
         {
             invokeMethodWithinLifecycle(plasticClass, method);
         }
@@ -97,7 +107,6 @@ public class PageLifecycleAnnotationWorker implements ComponentClassTransformWor
             }
         };
     }
-
 
     private Flow<PlasticMethod> matchLifecycleMethods(PlasticClass plasticClass)
     {

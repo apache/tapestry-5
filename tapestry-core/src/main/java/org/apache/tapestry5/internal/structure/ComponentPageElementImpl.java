@@ -58,7 +58,7 @@ import java.util.*;
  * <p/>
  * Modified for Tapestry 5.2 to adjust for the no-pooling approach (shared instances with externalized mutable state).
  */
-public class ComponentPageElementImpl extends BaseLocatable implements ComponentPageElement, PageLifecycleListener
+public class ComponentPageElementImpl extends BaseLocatable implements ComponentPageElement
 {
     /**
      * Placeholder for the body used when the component has no real content.
@@ -77,38 +77,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     }
 
     private static final Block PLACEHOLDER_BLOCK = new PlaceholderBlock();
-
-    private static final ComponentCallback RESTORE_STATE_BEFORE_PAGE_ATTACH = new LifecycleNotificationComponentCallback()
-    {
-        public void run(Component component)
-        {
-            component.restoreStateBeforePageAttach();
-        }
-    };
-
-    private static final ComponentCallback CONTAINING_PAGE_DID_ATTACH = new LifecycleNotificationComponentCallback()
-    {
-        public void run(Component component)
-        {
-            component.containingPageDidAttach();
-        }
-    };
-
-    private static final ComponentCallback CONTAINING_PAGE_DID_DETACH = new LifecycleNotificationComponentCallback()
-    {
-        public void run(Component component)
-        {
-            component.containingPageDidDetach();
-        }
-    };
-
-    private static final ComponentCallback CONTAINING_PAGE_DID_LOAD = new LifecycleNotificationComponentCallback()
-    {
-        public void run(Component component)
-        {
-            component.containingPageDidLoad();
-        }
-    };
 
     private static final ComponentCallback POST_RENDER_CLEANUP = new LifecycleNotificationComponentCallback()
     {
@@ -596,6 +564,17 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         renderEvent = elementResources.createPerThreadValue();
         rendering = elementResources.createPerThreadValue();
+
+        page.addLifecycleListener(new PageLifecycleAdapter()
+        {
+            @Override
+            public void containingPageDidLoad()
+            {
+                pageLoaded();
+
+                ComponentPageElementImpl.this.page.removeLifecycleListener(this);
+            }
+        });
     }
 
     /**
@@ -781,22 +760,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         }
     }
 
-    public void restoreStateBeforePageAttach()
-    {
-        invoke(false, RESTORE_STATE_BEFORE_PAGE_ATTACH);
-    }
-
-    public void containingPageDidAttach()
-    {
-        invoke(false, CONTAINING_PAGE_DID_ATTACH);
-    }
-
-    public void containingPageDidDetach()
-    {
-        invoke(false, CONTAINING_PAGE_DID_DETACH);
-    }
-
-    public void containingPageDidLoad()
+    private void pageLoaded()
     {
         // If this component has mixins, order them according to:
         // mixins.
@@ -823,11 +787,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         // For some parameters, bindings (from defaults) are provided inside the callback method, so
         // that is invoked first, before we check for unbound parameters.
 
-        invoke(false, CONTAINING_PAGE_DID_LOAD);
         verifyRequiredParametersAreBound();
-
-        // We assume that by the time we start to render, the structure (i.e., mixins) is nailed
-        // down. We could add a lock, but that seems wasteful.
 
         initializeRenderPhases();
 

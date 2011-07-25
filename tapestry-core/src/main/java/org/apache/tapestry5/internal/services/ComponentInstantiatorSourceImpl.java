@@ -44,6 +44,7 @@ import org.apache.tapestry5.plastic.PlasticManager.PlasticManagerBuilder;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.ComponentEvent;
 import org.apache.tapestry5.runtime.ComponentResourcesAware;
+import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.ControlledPackageType;
@@ -64,8 +65,6 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
     private final URLChangeTracker changeTracker;
 
     private final ClassLoader parent;
-
-    private final InternalRequestGlobals internalRequestGlobals;
 
     private final ComponentClassTransformWorker2 transformerChain;
 
@@ -96,6 +95,16 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
     private final Map<String, ComponentModel> classToModel = CollectionFactory.newMap();
 
+    private final ConstructorCallback REGISTER_AS_PAGE_LIFECYCLE_LISTENER = new ConstructorCallback()
+    {
+        public void onConstruct(Object instance, InstanceContext context)
+        {
+            InternalComponentResources resources = context.get(InternalComponentResources.class);
+
+            resources.addPageLifecycleListener((PageLifecycleListener) instance);
+        }
+    };
+
     public ComponentInstantiatorSourceImpl(Logger logger,
 
                                            LoggerSource loggerSource,
@@ -105,8 +114,6 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
                                            @Primary
                                            ComponentClassTransformWorker2 transformerChain,
-
-                                           InternalRequestGlobals internalRequestGlobals,
 
                                            ClasspathURLConverter classpathURLConverter,
 
@@ -125,7 +132,6 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
         this.transformerChain = transformerChain;
         this.logger = logger;
         this.loggerSource = loggerSource;
-        this.internalRequestGlobals = internalRequestGlobals;
         this.changeTracker = new URLChangeTracker(classpathURLConverter);
         this.tracker = tracker;
         this.invalidationHub = invalidationHub;
@@ -244,14 +250,6 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                 });
     }
 
-    // synchronized may be overkill, but that's ok.
-    public synchronized void addPackage(String packageName)
-    {
-        assert InternalUtils.isNonBlank(packageName);
-
-        controlledPackageNames.add(packageName);
-    }
-
     public boolean exists(String className)
     {
         return parent.getResource(PlasticInternalUtils.toClassPath(className)) != null;
@@ -311,10 +309,17 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
                         boolean isPage = resolver.isPage(className);
 
+                        boolean superClassImplementsPageLifecycle = plasticClass.isInterfaceImplemented(PageLifecycleListener.class);
+
                         final MutableComponentModel model = new MutableComponentModelImpl(className, logger, baseResource,
                                 parentModel, isPage);
 
                         transformerChain.transform(plasticClass, new TransformationSupportImpl(plasticClass, isRoot, model), model);
+
+                        if (!superClassImplementsPageLifecycle && plasticClass.isInterfaceImplemented(PageLifecycleListener.class))
+                        {
+                            plasticClass.onConstruct(REGISTER_AS_PAGE_LIFECYCLE_LISTENER);
+                        }
 
                         classToModel.put(className, model);
                     }

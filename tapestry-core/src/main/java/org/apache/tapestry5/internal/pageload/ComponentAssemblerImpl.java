@@ -105,8 +105,6 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
             pageAssembly.componentName.push(new ComponentName(pageAssembly.page.getName()));
 
-            pageAssembly.page.addLifecycleListener(newElement);
-
             addRootComponentMixins(newElement);
 
             pushNewElement(pageAssembly, newElement);
@@ -173,8 +171,6 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
                     ComponentPageElement newElement = container.newChild(embeddedId, embeddedName.nestedId,
                             embeddedName.completeId, elementName, instantiator, location);
-
-                    pageAssembly.page.addLifecycleListener(newElement);
 
                     pushNewElement(pageAssembly, newElement);
 

@@ -33,15 +33,13 @@ public class PageResetAnnotationWorker implements ComponentClassTransformWorker2
 {
     private static final String META_KEY = "tapestry.page-reset-listener";
 
-    private final MethodAdvice REGISTER_AS_LISTENER = new MethodAdvice()
+    private final ConstructorCallback REGISTER_AS_LISTENER = new ConstructorCallback()
     {
-        public void advise(MethodInvocation invocation)
+        public void onConstruct(Object instance, InstanceContext context)
         {
-            invocation.proceed();
+            InternalComponentResources resources = context.get(InternalComponentResources.class);
 
-            InternalComponentResources resources = invocation.getInstanceContext().get(InternalComponentResources.class);
-
-            resources.addPageResetListener((PageResetListener) invocation.getInstance());
+            resources.addPageResetListener((PageResetListener) instance);
         }
     };
 
@@ -84,7 +82,11 @@ public class PageResetAnnotationWorker implements ComponentClassTransformWorker2
 
         if (!methods.isEmpty())
         {
-            registerAsPageResetListenerAtPageLoad(plasticClass, model);
+            if (!plasticClass.isInterfaceImplemented(PageResetListener.class))
+            {
+                plasticClass.introduceInterface(PageResetListener.class);
+                plasticClass.onConstruct(REGISTER_AS_LISTENER);
+            }
 
             invokeMethodsOnPageReset(plasticClass, methods);
         }
@@ -108,25 +110,6 @@ public class PageResetAnnotationWorker implements ComponentClassTransformWorker2
                 }
             }
         });
-    }
-
-    private void registerAsPageResetListenerAtPageLoad(PlasticClass plasticClass, MutableComponentModel model)
-    {
-
-        // The meta key tracks whether this has already occurred; it is only necessary for a base class
-        // (subclasses, even if they include pageReset methods, do not need to re-register if the base class
-        // already has).
-
-        if (model.getMeta(META_KEY) != null)
-        {
-            return;
-        }
-
-        plasticClass.introduceInterface(PageResetListener.class);
-
-        plasticClass.introduceMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_DESCRIPTION).addAdvice(REGISTER_AS_LISTENER);
-
-        model.setMeta(META_KEY, "true");
     }
 
     private Flow<PlasticMethod> findResetMethods(PlasticClass plasticClass)
