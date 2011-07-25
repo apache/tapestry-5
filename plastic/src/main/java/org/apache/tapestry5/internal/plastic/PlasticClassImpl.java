@@ -188,7 +188,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         {
             check();
 
-            return parentMethodBundle.isImplemented(node.name, node.desc);
+            return parentInheritanceData.isImplemented(node.name, node.desc);
         }
 
         public String getMethodIdentifier()
@@ -794,7 +794,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
             String desc = nameCache.toDesc(description);
 
-            if (methodBundle.isImplemented(name, desc))
+            if (inheritanceData.isImplemented(name, desc))
                 throw new IllegalArgumentException(String.format(
                         "Unable to create new accessor method %s on class %s as the method is already implemented.",
                         description.toString(), className));
@@ -1045,7 +1045,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         private final ClassNode invocationClassNode;
 
-        private final List<MethodAdvice> advice = new ArrayList<MethodAdvice>();
+        private final List<MethodAdvice> advice = PlasticInternalUtils.newList();
 
         private final boolean isVoid;
 
@@ -1095,7 +1095,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                 invocationClassNode.visitField(ACC_PUBLIC, RETURN_VALUE, nameCache.toDesc(description.returnType),
                         null, null);
 
-            List<String> consTypes = new ArrayList<String>();
+            List<String> consTypes = PlasticInternalUtils.newList();
             consTypes.add(Object.class.getName());
             consTypes.add(InstanceContext.class.getName());
             consTypes.add(MethodInvocationBundle.class.getName());
@@ -1450,7 +1450,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
     private final Set<String> methodNames = new HashSet<String>();
 
-    private final List<ConstructorCallback> constructorCallbacks = new ArrayList<ConstructorCallback>();
+    private final List<ConstructorCallback> constructorCallbacks = PlasticInternalUtils.newList();
 
     // All non-introduced instance fields
 
@@ -1472,7 +1472,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
     private final StaticContext staticContext;
 
-    private final MethodBundle parentMethodBundle, methodBundle;
+    private final InheritanceData parentInheritanceData, inheritanceData;
 
     // MethodNodes in which field transformations should occur; this is most existing and
     // introduced methods, outside of special access methods.
@@ -1525,10 +1525,10 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     /**
      * @param classNode
      * @param pool
-     * @param parentMethodBundle
+     * @param parentInheritanceData
      * @param parentStaticContext
      */
-    public PlasticClassImpl(ClassNode classNode, PlasticClassPool pool, MethodBundle parentMethodBundle,
+    public PlasticClassImpl(ClassNode classNode, PlasticClassPool pool, InheritanceData parentInheritanceData,
                             StaticContext parentStaticContext)
     {
         this.classNode = classNode;
@@ -1542,8 +1542,13 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         annotationAccess = new DelegatingAnnotationAccess(pool.createAnnotationAccess(classNode.visibleAnnotations),
                 pool.createAnnotationAccess(superClassName));
 
-        this.parentMethodBundle = parentMethodBundle;
-        methodBundle = parentMethodBundle.createChild(className);
+        this.parentInheritanceData = parentInheritanceData;
+        inheritanceData = parentInheritanceData.createChild(className);
+
+        for (String interfaceName : (List<String>) classNode.interfaces)
+        {
+            inheritanceData.addInterface(interfaceName);
+        }
 
         methods = new ArrayList(classNode.methods.size());
 
@@ -1575,7 +1580,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             {
                 if (!Modifier.isPrivate(node.access))
                 {
-                    methodBundle.addMethod(node.name, node.desc);
+                    inheritanceData.addMethod(node.name, node.desc);
                 }
 
                 methodNames.add(node.name);
@@ -1594,12 +1599,12 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             description2method.put(pmi.getDescription(), pmi);
 
             if (isInheritableMethod(node))
-                methodBundle.addMethod(node.name, node.desc);
+                inheritanceData.addMethod(node.name, node.desc);
 
             methodNames.add(node.name);
         }
 
-        methodNames.addAll(parentMethodBundle.methodNames());
+        methodNames.addAll(parentInheritanceData.methodNames());
 
         Collections.sort(methods);
 
@@ -1637,7 +1642,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         // Start by calling the super-class no args constructor
 
-        if (parentMethodBundle.isTransformed())
+        if (parentInheritanceData.isTransformed())
         {
             // If the parent is transformed, our first step is always to invoke its constructor.
 
@@ -1706,7 +1711,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         completeConstructor();
 
-        transformedClass = pool.realizeTransformedClass(classNode, methodBundle, staticContext);
+        transformedClass = pool.realizeTransformedClass(classNode, inheritanceData, staticContext);
 
         return createInstantiatorFromClass(transformedClass);
     }
@@ -2004,7 +2009,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         methodNames.add(methodNode.name);
 
         if (!Modifier.isPrivate(methodNode.access))
-            methodBundle.addMethod(methodNode.name, methodNode.desc);
+            inheritanceData.addMethod(methodNode.name, methodNode.desc);
     }
 
     private PlasticMethod createNewMethod(MethodDescription description)
@@ -2024,7 +2029,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         MethodNode methodNode = new MethodNode(description.modifiers, description.methodName, desc,
                 description.genericSignature, exceptions);
-        boolean isOverride = methodBundle.isImplemented(methodNode.name, desc);
+        boolean isOverride = inheritanceData.isImplemented(methodNode.name, desc);
 
         if (isOverride)
             createOverrideOfBaseClassImpl(description, methodNode);
@@ -2413,10 +2418,11 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         String interfaceName = nameCache.toInternalName(interfaceType);
 
-        // I suppose this means that a subclass may restate that it implements an interface from a base class.
-
-        if (!classNode.interfaces.contains(interfaceName))
+        if (!inheritanceData.isInterfaceImplemented(interfaceName))
+        {
             classNode.interfaces.add(interfaceName);
+            inheritanceData.addInterface(interfaceName);
+        }
 
         Set<PlasticMethod> introducedMethods = new HashSet<PlasticMethod>();
 
@@ -2453,36 +2459,17 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
     public boolean isMethodImplemented(MethodDescription description)
     {
-        return methodBundle.isImplemented(description.methodName, nameCache.toDesc(description));
+        return inheritanceData.isImplemented(description.methodName, nameCache.toDesc(description));
     }
 
-    /**
-     * True if the node has any visible annotations, or it has visible annotations on any
-     * parameter.
-     *
-     * @param mn
-     * @return true if any annotations present
-     */
-    private static boolean hasAnnotations(MethodNode mn)
+    public boolean isInterfaceImplemented(Class interfaceType)
     {
-        if (nonEmpty(mn.visibleAnnotations))
-            return true;
+        assert interfaceType != null;
+        assert interfaceType.isInterface();
 
-        if (mn.visibleParameterAnnotations != null)
-        {
-            for (List pa : mn.visibleParameterAnnotations)
-            {
-                if (nonEmpty(pa))
-                    return true;
-            }
-        }
+        String interfaceName = nameCache.toInternalName(interfaceType);
 
-        return false;
-    }
-
-    private static boolean nonEmpty(List l)
-    {
-        return l != null && !l.isEmpty();
+        return inheritanceData.isInterfaceImplemented(interfaceName);
     }
 
     public String getSuperClassName()

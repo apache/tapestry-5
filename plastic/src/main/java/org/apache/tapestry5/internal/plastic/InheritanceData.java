@@ -14,36 +14,34 @@
 
 package org.apache.tapestry5.internal.plastic;
 
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Used to track which methods are implemented by a base class, which is often needed when transforming
  * a subclass.
  */
-public class MethodBundle
+public class InheritanceData
 {
-    private final MethodBundle parent;
+    private final InheritanceData parent;
 
     private final Set<String> methodNames = PlasticInternalUtils.newSet();
     private final Set<String> methods = PlasticInternalUtils.newSet();
+    private final Set<String> interfaceNames = PlasticInternalUtils.newSet();
 
-    public MethodBundle()
+    public InheritanceData()
     {
         this(null);
     }
 
-    private MethodBundle(MethodBundle parent)
+    private InheritanceData(InheritanceData parent)
     {
         this.parent = parent;
     }
 
     /**
      * Is this bundle for a transformed class, or for a base class (typically Object)?
-     * 
-     * @return
-     *         true if this bundle is for transformed class, false otherwise
+     *
+     * @return true if this bundle is for transformed class, false otherwise
      */
     public boolean isTransformed()
     {
@@ -53,24 +51,21 @@ public class MethodBundle
     /**
      * Returns a new MethodBundle that represents the methods of a child class
      * of this bundle. The returned bundle will always be {@linkplain #isTransformed() transformed}.
-     * 
-     * @param childClassName
-     *            name of subclass
+     *
+     * @param childClassName name of subclass
      * @return new method bundle
      */
-    public MethodBundle createChild(String childClassName)
+    public InheritanceData createChild(String childClassName)
     {
-        return new MethodBundle(this);
+        return new InheritanceData(this);
     }
 
     /**
      * Adds a new instance method. Only non-private, non-abstract methods should be added (that is, methods which might
      * be overridden in subclasses). This can later be queried to see if any base class implements the method.
-     * 
-     * @param name
-     *            name of method
-     * @param desc
-     *            method descriptor
+     *
+     * @param name name of method
+     * @param desc method descriptor
      */
     public void addMethod(String name, String desc)
     {
@@ -82,11 +77,9 @@ public class MethodBundle
 
     /**
      * Returns true if a transformed parent class contains the indicated method.
-     * 
-     * @param name
-     *            method name
-     * @param desc
-     *            method descriptor
+     *
+     * @param name method name
+     * @param desc method descriptor
      * @return the <em>internal name</em> of the implementing base class for this method,
      *         or null if no base class implements the method
      */
@@ -95,12 +88,38 @@ public class MethodBundle
         return checkForMethod(toValue(name, desc));
     }
 
+
     private boolean checkForMethod(String value)
     {
         if (methods.contains(value))
             return true;
 
         return parent == null ? false : parent.checkForMethod(value);
+    }
+
+    /**
+     * Returns true if the class represented by this data, or any parent data, implements
+     * the named interface.
+     */
+    public boolean isInterfaceImplemented(String name)
+    {
+        InheritanceData cursor = this;
+
+        while (cursor != null)
+        {
+            if (cursor.interfaceNames.contains(name))
+            {
+                return true;
+            }
+
+            cursor = cursor.parent;
+        }
+
+        return false;
+    }
+
+    public void addInterface(String name) {
+        interfaceNames.add(name);
     }
 
     /**
@@ -119,7 +138,7 @@ public class MethodBundle
     {
         Set<String> result = PlasticInternalUtils.newSet();
 
-        MethodBundle cursor = this;
+        InheritanceData cursor = this;
 
         while (cursor != null)
         {

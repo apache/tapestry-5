@@ -182,6 +182,14 @@ public interface PlasticClass extends AnnotationAccess
     boolean isMethodImplemented(MethodDescription description);
 
     /**
+     * Returns true if this class, or a super-class, implements the indicated interface.
+     *
+     * @param interfaceType
+     * @return true if the interface is implemented
+     */
+    boolean isInterfaceImplemented(Class interfaceType);
+
+    /**
      * Returns the name of the super-class of the class being transformed.
      */
     String getSuperClassName();

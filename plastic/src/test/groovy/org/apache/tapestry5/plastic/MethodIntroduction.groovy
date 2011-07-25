@@ -1,15 +1,18 @@
 package org.apache.tapestry5.plastic
 
 
-class MethodIntroduction extends AbstractPlasticSpecification {
+class MethodIntroduction extends AbstractPlasticSpecification
+{
 
     static final String CLASS_NAME = "testsubjects.ChildClass"
 
-    def instanceWithIntroducedMethod(MethodDescription md, isOverride) {
-        def mgr = createMgr ({ PlasticClass pc ->
-            if (pc.className == CLASS_NAME) {
+    def instanceWithIntroducedMethod(MethodDescription md, isOverride)
+    {
+        def mgr = createMgr({ PlasticClass pc ->
+            if (pc.className == CLASS_NAME)
+            {
                 def method = pc.introduceMethod(md)
-                
+
                 assert method.override == isOverride
             }
         } as PlasticClassTransformer)
@@ -17,7 +20,8 @@ class MethodIntroduction extends AbstractPlasticSpecification {
         return mgr.getClassInstantiator(CLASS_NAME).newInstance()
     }
 
-    def "introduce method not present in base class"() {
+    def "introduce method not present in base class"()
+    {
 
         def o = instanceWithIntroducedMethod(new MethodDescription(returnType, methodName), false)
 
@@ -38,19 +42,20 @@ class MethodIntroduction extends AbstractPlasticSpecification {
 
         where:
 
-        returnType          | methodName    | access             | expectedValue    | expectedType
+        returnType         | methodName  | access             | expectedValue | expectedType
 
-        "java.lang.String"  | "getString"   | { it.getString() } | null             | null
-        "java.util.Date[]"  | "getDates"    | { it.getDates() }  | null             | null
-        "int"               | "getInt"      | { it.getInt() }    | 0                | Integer.class
-        "int[]"             | "getInts"     | { it.getInts() }   | null             | null
-        "char"              | "getChar"     | { it.getChar() }   | 0                | Character.class
-        "float"             | "getFloat"    | { it.getFloat() }  | 0f               | Float.class
-        "long"              | "getLong"     | { it.getLong() }   | 0l               | Long.class
-        "double"            | "getDouble"   | { it.getDouble() } | 0d               | Double.class
+        "java.lang.String" | "getString" | { it.getString() } | null          | null
+        "java.util.Date[]" | "getDates"  | { it.getDates() }  | null          | null
+        "int"              | "getInt"    | { it.getInt() }    | 0             | Integer.class
+        "int[]"            | "getInts"   | { it.getInts() }   | null          | null
+        "char"             | "getChar"   | { it.getChar() }   | 0             | Character.class
+        "float"            | "getFloat"  | { it.getFloat() }  | 0f            | Float.class
+        "long"             | "getLong"   | { it.getLong() }   | 0l            | Long.class
+        "double"           | "getDouble" | { it.getDouble() } | 0d            | Double.class
     }
 
-    def "introduce void method override"() {
+    def "introduce void method override"()
+    {
 
         setup:
 
@@ -65,28 +70,31 @@ class MethodIntroduction extends AbstractPlasticSpecification {
         true
     }
 
-    def "introduce primitive method override"() {
+    def "introduce primitive method override"()
+    {
         setup:
 
-        def o = instanceWithIntroducedMethod (new MethodDescription("int", "primitiveMethod", "int"), true)
+        def o = instanceWithIntroducedMethod(new MethodDescription("int", "primitiveMethod", "int"), true)
 
         expect:
 
         o.primitiveMethod(97) == 97
     }
 
-    def "introduce object method override"() {
+    def "introduce object method override"()
+    {
 
         setup:
 
-        def o = instanceWithIntroducedMethod (new MethodDescription("java.lang.String", "objectMethod", "java.lang.String"), true)
+        def o = instanceWithIntroducedMethod(new MethodDescription("java.lang.String", "objectMethod", "java.lang.String"), true)
 
         expect:
 
         o.objectMethod("plastic") == "plastic"
     }
 
-    def "introduce interface"() {
+    def "introduce interface"()
+    {
 
         def introduced
 
@@ -110,5 +118,35 @@ class MethodIntroduction extends AbstractPlasticSpecification {
         introduced.size() == 1
         introduced[0].methodName == "run"
     }
+
+    def "check for introduced interface is visible in subclasses"()
+    {
+        setup:
+
+        boolean present;
+
+        def mgr = createMgr({
+            PlasticClass pc ->
+            if (pc.className.contains("Base"))
+            {
+                pc.introduceInterface(Serializable.class)
+            }
+
+            if (pc.className.contains("Child"))
+            {
+                present = pc.isInterfaceImplemented(Serializable.class)
+            }
+
+        } as PlasticClassTransformer)
+
+        when:
+
+        mgr.getClassInstantiator("testsubjects.ChildClass")
+
+        then:
+
+        present == true
+    }
+
 }
 

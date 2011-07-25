@@ -54,7 +54,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
     private final Map<String, ClassInstantiator> instantiators = PlasticInternalUtils.newMap();
 
-    private final MethodBundle emptyMethodBundle = new MethodBundle();
+    private final InheritanceData emptyInheritanceData = new InheritanceData();
 
     private final StaticContext emptyStaticContext = new StaticContext();
 
@@ -73,13 +73,13 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
     static class BaseClassDef
     {
-        final MethodBundle methodBundle;
+        final InheritanceData inheritanceData;
 
         final StaticContext staticContext;
 
-        public BaseClassDef(MethodBundle methodBundle, StaticContext staticContext)
+        public BaseClassDef(InheritanceData inheritanceData, StaticContext staticContext)
         {
-            this.methodBundle = methodBundle;
+            this.inheritanceData = inheritanceData;
             this.staticContext = staticContext;
         }
     }
@@ -116,12 +116,12 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
         return loader;
     }
 
-    public synchronized Class realizeTransformedClass(ClassNode classNode, MethodBundle methodBundle,
+    public synchronized Class realizeTransformedClass(ClassNode classNode, InheritanceData inheritanceData,
             StaticContext staticContext)
     {
         Class result = realize(PlasticInternalUtils.toClassName(classNode.name), ClassType.PRIMARY, classNode);
 
-        baseClassDefs.put(result.getName(), new BaseClassDef(methodBundle, staticContext));
+        baseClassDefs.put(result.getName(), new BaseClassDef(inheritanceData, staticContext));
 
         return result;
     }
@@ -363,10 +363,10 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
             assert def != null;
 
-            return new PlasticClassImpl(classNode, this, def.methodBundle, def.staticContext);
+            return new PlasticClassImpl(classNode, this, def.inheritanceData, def.staticContext);
         }
 
-        return new PlasticClassImpl(classNode, this, emptyMethodBundle, emptyStaticContext);
+        return new PlasticClassImpl(classNode, this, emptyInheritanceData, emptyStaticContext);
     }
 
     /**
