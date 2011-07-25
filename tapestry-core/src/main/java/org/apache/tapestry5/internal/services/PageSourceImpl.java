@@ -117,14 +117,17 @@ public class PageSourceImpl implements PageSource, InvalidationListener
             {
                 count++;
                 iterator.remove();
+
+                logger.info(String.format("Pruned page %s (%s), not accessed since %s.",
+                        page.getName(),
+                        page.getSelector().toShortString(),
+                        new Date(page.getLastAttachTime())));
             }
         }
 
         if (count > 0)
         {
-            logger.info(String.format("Pruned %d page %s that had not been accessed since %s.", count,
-                    count == 1 ? "instance" : "instances",
-                    new Date(cutoff)));
+            logger.info(String.format("Pruned %d page %s.", count, count == 1 ? "instance" : "instances"));
         }
     }
 

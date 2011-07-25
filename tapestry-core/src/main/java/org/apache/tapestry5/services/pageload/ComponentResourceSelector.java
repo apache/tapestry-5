@@ -14,11 +14,11 @@
 
 package org.apache.tapestry5.services.pageload;
 
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
-
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 /**
  * Encapsulates the information that is used when locating a template or message catalog associated with a component.
@@ -26,7 +26,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
  * more <em>axes</em> that are combined with a {@link ComponentResourceLocator} implementation to enforce a naming
  * convention for locating resources. The primary axis is {@link Locale} (Tapestry 5.2 and earlier used a Locale
  * instance as the selector), but Tapestry 5.3 adds support for additional axes.
- * 
+ *
  * @since 5.3
  */
 public final class ComponentResourceSelector
@@ -37,7 +37,7 @@ public final class ComponentResourceSelector
 
     public ComponentResourceSelector(Locale locale)
     {
-        this(locale, Collections.<Class, Object> emptyMap());
+        this(locale, Collections.<Class, Object>emptyMap());
     }
 
     private ComponentResourceSelector(Locale locale, Map<Class, Object> axis)
@@ -52,11 +52,9 @@ public final class ComponentResourceSelector
      * Returns a <em>new</em> selector with the given axis data. It is not allowed to redefine an existing axis type.
      * Typically, the axis type is an enum type. Axis values are expected to be immutable, and to implement
      * {@code equals()} and {@code hashCode()}.
-     * 
-     * @param axisType
-     *            non-blank axis key
-     * @param axisValue
-     *            non-null axis value
+     *
+     * @param axisType  non-blank axis key
+     * @param axisValue non-null axis value
      * @return
      */
     public <T> ComponentResourceSelector withAxis(Class<T> axisType, T axisValue)
@@ -76,7 +74,7 @@ public final class ComponentResourceSelector
 
     /**
      * Returns a previously stored axis value, or null if no axis value of the specified type has been stored.
-     * 
+     *
      * @param <T>
      * @param axisType
      * @return value or null
@@ -86,7 +84,9 @@ public final class ComponentResourceSelector
         return axisType.cast(axis.get(axisType));
     }
 
-    /** Returns true if the object is another selector with the same locale and set of axis. */
+    /**
+     * Returns true if the object is another selector with the same locale and set of axis.
+     */
     @Override
     public boolean equals(Object obj)
     {
@@ -110,7 +110,18 @@ public final class ComponentResourceSelector
     @Override
     public String toString()
     {
-        StringBuilder builder = new StringBuilder("ComponentResourcesSelector[");
+        return String.format("ComponentResourceSelector[%s]", toShortString());
+    }
+
+    /**
+     * Returns a string identifying the locale, and any additional axis types and values.  Example,
+     * "en" or "fr com.example.Skin=RED".
+     *
+     * @return
+     */
+    public String toShortString()
+    {
+        StringBuilder builder = new StringBuilder();
 
         builder.append(locale.toString());
 
@@ -125,6 +136,6 @@ public final class ComponentResourceSelector
             sep = ", ";
         }
 
-        return builder.append("]").toString();
+        return builder.toString();
     }
 }

@@ -41,9 +41,9 @@ class ComponentResourceSelectorTests extends Assert
 
     @Test
     void to_string() {
-        assert english.toString() == "ComponentResourcesSelector[en]";
+        assert english.toString() == "ComponentResourceSelector[en]";
 
-        assert english.withAxis(AnnotationUseContext.class, AnnotationUseContext.COMPONENT).toString() == "ComponentResourcesSelector[en org.apache.tapestry5.ioc.annotations.AnnotationUseContext=COMPONENT]"
+        assert english.withAxis(AnnotationUseContext.class, AnnotationUseContext.COMPONENT).toString() == "ComponentResourceSelector[en org.apache.tapestry5.ioc.annotations.AnnotationUseContext=COMPONENT]"
     }
 
     @Test

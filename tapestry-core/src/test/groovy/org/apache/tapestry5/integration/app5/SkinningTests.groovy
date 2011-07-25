@@ -66,10 +66,10 @@ class SkinningTests extends TapestryCoreTestCase
     {
         openLinks "reset session", "English"
         
-        assertText "selector", "ComponentResourcesSelector[en]"
+        assertText "selector", "ComponentResourceSelector[en]"
         
         clickAndWait "link=French"
         
-        assertText "selector", "ComponentResourcesSelector[fr]"        
+        assertText "selector", "ComponentResourceSelector[fr]"
     }
 }
