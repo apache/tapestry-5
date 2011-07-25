@@ -41,9 +41,6 @@ public final class TransformConstants
     private static final String[] RENDER_PHASE_METHOD_PARAMETERS =
             {MarkupWriter.class.getName(), Event.class.getName()};
 
-    private static final Class[] RENDER_PHASE_METHOD_PARAMETER_TYPES =
-            {MarkupWriter.class, Event.class};
-
     /**
      * Signature for
      * {@link org.apache.tapestry5.runtime.Component#dispatchComponentEvent(org.apache.tapestry5.runtime.ComponentEvent)}
@@ -85,7 +82,7 @@ public final class TransformConstants
 
     /**
      * Description for {@link org.apache.tapestry5.internal.structure.PageResetListener#containingPageDidReset()}. Note that the {@link PageResetListener}
-     * interface is not automatically implemeneted by components. ]
+     * interface is not automatically implemented by components. ]
      *
      * @see org.apache.tapestry5.annotations.PageReset
      * @see org.apache.tapestry5.internal.transform.PageResetAnnotationWorker
@@ -119,6 +116,7 @@ public final class TransformConstants
      * Description for {@link org.apache.tapestry5.runtime.PageLifecycleListener#containingPageDidDetach()}.
      *
      * @since 5.3
+     * @deprecated Deprecated in 5.3, with {@link org.apache.tapestry5.annotations.PageDetached}.
      */
     public static final MethodDescription CONTAINING_PAGE_DID_DETACH_DESCRIPTION = PlasticUtils.getMethodDescription(PageLifecycleListener.class, "containingPageDidDetach");
 
@@ -134,6 +132,7 @@ public final class TransformConstants
      * Description for {@link org.apache.tapestry5.runtime.PageLifecycleListener#containingPageDidAttach()}.
      *
      * @since 5.3
+     * @deprecated Deprecated in 5.3, along with {@link org.apache.tapestry5.annotations.PageAttached}.
      */
     public static final MethodDescription CONTAINING_PAGE_DID_ATTACH_DESCRIPTION = PlasticUtils.getMethodDescription(PageLifecycleListener.class, "containingPageDidAttach");
 
@@ -141,6 +140,7 @@ public final class TransformConstants
      * Signature for {@link org.apache.tapestry5.runtime.PageLifecycleListener#restoreStateBeforePageAttach()}
      *
      * @since 5.1.0.1
+     * @deprecated Deprecated in 5.3, with no replacement.
      */
     public static final TransformMethodSignature RESTORE_STATE_BEFORE_PAGE_ATTACH_SIGNATURE = new TransformMethodSignature(
             "restoreStateBeforePageAttach");
