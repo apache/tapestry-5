@@ -80,7 +80,7 @@ public class PageImpl implements Page
     @Override
     public String toString()
     {
-        return String.format("Page[%s %s]", name, selector);
+        return String.format("Page[%s %s]", name, selector.toShortString());
     }
 
     public synchronized ComponentPageElement getComponentElementByNestedId(String nestedId)
