@@ -1,4 +1,4 @@
-// Copyright 2007, 2010 The Apache Software Foundation
+// Copyright 2007, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,12 +34,7 @@ package org.apache.tapestry5.json;
  * SOFTWARE.
  */
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A JSONObject is an unordered collection of name/value pairs. Its external form is a string wrapped in curly braces
@@ -59,7 +54,7 @@ import java.util.Set;
  * <p/>
  * The <code>put</code> methods adds values to an object. For example,
  * <p/>
- * 
+ * <p/>
  * <pre>
  * myString = new JSONObject().put(&quot;JSON&quot;, &quot;Hello, World!&quot;).toString();
  * </pre>
@@ -91,12 +86,12 @@ import java.util.Set;
  * Finally, support for the {@link org.apache.tapestry5.json.JSONLiteral} type has been added, which allow the exact
  * output to be controlled; useful when a JSONObject is being used as a configuration object, and must contain values
  * that are not simple data, such as an inline function (technically making the result not JSON).
- * 
+ *
  * @author JSON.org
  * @version 2
  */
 @SuppressWarnings(
-{ "CloneDoesntCallSuperClone" })
+        {"CloneDoesntCallSuperClone"})
 public final class JSONObject extends JSONCollection
 {
 
@@ -108,9 +103,8 @@ public final class JSONObject extends JSONCollection
     {
         /**
          * A Null object is equal to the null value and to itself.
-         * 
-         * @param object
-         *            An object to test for nullness.
+         *
+         * @param object An object to test for nullness.
          * @return true if the object parameter is the JSONObject.NULL object or null.
          */
         @Override
@@ -121,7 +115,7 @@ public final class JSONObject extends JSONCollection
 
         /**
          * Get the "null" string value.
-         * 
+         *
          * @return The string "null".
          */
         @Override
@@ -157,7 +151,7 @@ public final class JSONObject extends JSONCollection
 
     /**
      * Constructs a new JSONObject using a series of String keys and values.
-     * 
+     *
      * @since 5.2.0
      */
     public JSONObject(String... keysAndValues)
@@ -173,13 +167,10 @@ public final class JSONObject extends JSONCollection
     /**
      * Construct a JSONObject from a subset of another JSONObject. An array of strings is used to identify the keys that
      * should be copied. Missing keys are ignored.
-     * 
-     * @param source
-     *            A JSONObject.
-     * @param propertyNames
-     *            The strings to copy.
-     * @throws RuntimeException
-     *             If a value is a non-finite number.
+     *
+     * @param source        A JSONObject.
+     * @param propertyNames The strings to copy.
+     * @throws RuntimeException If a value is a non-finite number.
      */
     public JSONObject(JSONObject source, String... propertyNames)
     {
@@ -194,15 +185,17 @@ public final class JSONObject extends JSONCollection
 
     /**
      * Construct a JSONObject from a JSONTokener.
-     * 
-     * @param x
-     *            A JSONTokener object containing the source string. @ If there is a syntax error in the source string.
+     *
+     * @param x A JSONTokener object containing the source string. @ If there is a syntax error in the source string.
      */
     JSONObject(JSONTokener x)
     {
         String key;
 
-        if (x.nextClean() != '{') { throw x.syntaxError("A JSONObject text must begin with '{'"); }
+        if (x.nextClean() != '{')
+        {
+            throw x.syntaxError("A JSONObject text must begin with '{'");
+        }
 
         while (true)
         {
@@ -229,8 +222,10 @@ public final class JSONObject extends JSONCollection
                 {
                     x.back();
                 }
+            } else if (c != ':')
+            {
+                throw x.syntaxError("Expected a ':' after a key");
             }
-            else if (c != ':') { throw x.syntaxError("Expected a ':' after a key"); }
             put(key, x.nextValue());
 
             /*
@@ -241,7 +236,10 @@ public final class JSONObject extends JSONCollection
             {
                 case ';':
                 case ',':
-                    if (x.nextClean() == '}') { return; }
+                    if (x.nextClean() == '}')
+                    {
+                        return;
+                    }
                     x.back();
                     break;
                 case '}':
@@ -254,12 +252,10 @@ public final class JSONObject extends JSONCollection
 
     /**
      * Construct a JSONObject from a string. This is the most commonly used JSONObject constructor.
-     * 
-     * @param string
-     *            A string beginning with <code>{</code>&nbsp;<small>(left brace)</small> and ending with <code>}</code>
-     *            &nbsp;<small>(right brace)</small>.
-     * @throws RuntimeException
-     *             If there is a syntax error in the source string.
+     *
+     * @param string A string beginning with <code>{</code>&nbsp;<small>(left brace)</small> and ending with <code>}</code>
+     *               &nbsp;<small>(right brace)</small>.
+     * @throws RuntimeException If there is a syntax error in the source string.
      */
     public JSONObject(String string)
     {
@@ -270,11 +266,9 @@ public final class JSONObject extends JSONCollection
      * Accumulate values under a key. It is similar to the put method except that if there is already an object stored
      * under the key then a JSONArray is stored under the key to hold all of the accumulated values. If there is already
      * a JSONArray, then the new value is appended to it. In contrast, the put method replaces the previous value.
-     * 
-     * @param key
-     *            A key string.
-     * @param value
-     *            An object to be accumulated under the key.
+     *
+     * @param key   A key string.
+     * @param value An object to be accumulated under the key.
      * @return this.
      * @throws {@link RuntimeException} If the value is an invalid number or if the key is null.
      */
@@ -310,11 +304,9 @@ public final class JSONObject extends JSONCollection
      * Append values to the array under a key. If the key does not exist in the JSONObject, then the key is put in the
      * JSONObject with its value being a JSONArray containing the value parameter. If the key was already associated
      * with a JSONArray, then the value parameter is appended to it.
-     * 
-     * @param key
-     *            A key string.
-     * @param value
-     *            An object to be accumulated under the key.
+     *
+     * @param key   A key string.
+     * @param value An object to be accumulated under the key.
      * @return this. @ If the key is null or if the current value associated with the key is not a JSONArray.
      */
     public JSONObject append(String key, Object value)
@@ -324,12 +316,10 @@ public final class JSONObject extends JSONCollection
         if (o == null)
         {
             put(key, new JSONArray().put(value));
-        }
-        else if (o instanceof JSONArray)
+        } else if (o instanceof JSONArray)
         {
             put(key, ((JSONArray) o).put(value));
-        }
-        else
+        } else
         {
             throw new RuntimeException("JSONObject[" + quote(key) + "] is not a JSONArray.");
         }
@@ -339,14 +329,16 @@ public final class JSONObject extends JSONCollection
 
     /**
      * Produce a string from a double. The string "null" will be returned if the number is not finite.
-     * 
-     * @param d
-     *            A double.
+     *
+     * @param d A double.
      * @return A String.
      */
     static String doubleToString(double d)
     {
-        if (Double.isInfinite(d) || Double.isNaN(d)) { return "null"; }
+        if (Double.isInfinite(d) || Double.isNaN(d))
+        {
+            return "null";
+        }
 
         // Shave off trailing zeros and decimal point, if possible.
 
@@ -367,28 +359,29 @@ public final class JSONObject extends JSONCollection
 
     /**
      * Get the value object associated with a key.
-     * 
-     * @param key
-     *            A key string.
-     * @return The object associated with the key. @ if the key is not found.
+     *
+     * @param key A key string.
+     * @return The object associated with the key.
+     * @throws RuntimeException if the key is not found.
      * @see #opt(String)
      */
     public Object get(String key)
     {
         Object o = opt(key);
-        if (o == null) { throw new RuntimeException("JSONObject[" + quote(key) + "] not found."); }
+        if (o == null)
+        {
+            throw new RuntimeException("JSONObject[" + quote(key) + "] not found.");
+        }
 
         return o;
     }
 
     /**
      * Get the boolean value associated with a key.
-     * 
-     * @param key
-     *            A key string.
+     *
+     * @param key A key string.
      * @return The truth.
-     * @throws RuntimeException
-     *             if the value is not a Boolean or the String "true" or "false".
+     * @throws RuntimeException if the value does not exist, is not a Boolean or the String "true" or "false".
      */
     public boolean getBoolean(String key)
     {
@@ -413,10 +406,9 @@ public final class JSONObject extends JSONCollection
 
     /**
      * Get the double value associated with a key.
-     * 
-     * @param key
-     *            A key string.
-     * @return The numeric value. @ if the key is not found or if the value is not a Number object and cannot be
+     *
+     * @param key A key string.
+     * @return The numeric value. @throws RuntimeException if the key is not found or if the value is not a Number object and cannot be
      *         converted to a number.
      */
     public double getDouble(String key)
@@ -431,8 +423,7 @@ public final class JSONObject extends JSONCollection
             // This is a bit sloppy for the case where value is not a string.
 
             return Double.valueOf((String) value);
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             throw new RuntimeException("JSONObject[" + quote(key) + "] is not a number.");
         }
@@ -440,10 +431,10 @@ public final class JSONObject extends JSONCollection
 
     /**
      * Get the int value associated with a key. If the number value is too large for an int, it will be clipped.
-     * 
-     * @param key
-     *            A key string.
-     * @return The integer value. @ if the key is not found or if the value cannot be converted to an integer.
+     *
+     * @param key A key string.
+     * @return The integer value.
+     * @throws RuntimeException if the key is not found or if the value cannot be converted to an integer.
      */
     public int getInt(String key)
     {
@@ -458,44 +449,46 @@ public final class JSONObject extends JSONCollection
 
     /**
      * Get the JSONArray value associated with a key.
-     * 
-     * @param key
-     *            A key string.
+     *
+     * @param key A key string.
      * @return A JSONArray which is the value.
-     * @throws RuntimeException
-     *             if the key is not found or if the value is not a JSONArray.
+     * @throws RuntimeException if the key is not found or if the value is not a JSONArray.
      */
     public JSONArray getJSONArray(String key)
     {
         Object o = get(key);
-        if (o instanceof JSONArray) { return (JSONArray) o; }
+        if (o instanceof JSONArray)
+        {
+            return (JSONArray) o;
+        }
 
         throw new RuntimeException("JSONObject[" + quote(key) + "] is not a JSONArray.");
     }
 
     /**
      * Get the JSONObject value associated with a key.
-     * 
-     * @param key
-     *            A key string.
+     *
+     * @param key A key string.
      * @return A JSONObject which is the value.
-     * @throws RuntimeException
-     *             if the key is not found or if the value is not a JSONObject.
+     * @throws RuntimeException if the key is not found or if the value is not a JSONObject.
      */
     public JSONObject getJSONObject(String key)
     {
         Object o = get(key);
-        if (o instanceof JSONObject) { return (JSONObject) o; }
+        if (o instanceof JSONObject)
+        {
+            return (JSONObject) o;
+        }
 
         throw new RuntimeException("JSONObject[" + quote(key) + "] is not a JSONObject.");
     }
 
     /**
      * Get the long value associated with a key. If the number value is too long for a long, it will be clipped.
-     * 
-     * @param key
-     *            A key string.
-     * @return The long value. @ if the key is not found or if the value cannot be converted to a long.
+     *
+     * @param key A key string.
+     * @return The long value.
+     * @throws RuntimeException if the key is not found or if the value cannot be converted to a long.
      */
     public long getLong(String key)
     {
@@ -505,12 +498,10 @@ public final class JSONObject extends JSONCollection
 
     /**
      * Get the string associated with a key.
-     * 
-     * @param key
-     *            A key string.
+     *
+     * @param key A key string.
      * @return A string which is the value.
-     * @throws RuntimeException
-     *             if the key is not found.
+     * @throws RuntimeException if the key is not found.
      */
     public String getString(String key)
     {
@@ -519,9 +510,8 @@ public final class JSONObject extends JSONCollection
 
     /**
      * Determine if the JSONObject contains a specific key.
-     * 
-     * @param key
-     *            A key string.
+     *
+     * @param key A key string.
      * @return true if the key exists in the JSONObject.
      */
     public boolean has(String key)
@@ -531,9 +521,8 @@ public final class JSONObject extends JSONCollection
 
     /**
      * Determine if the value associated with the key is null or if there is no value.
-     * 
-     * @param key
-     *            A key string.
+     *
+     * @param key A key string.
      * @return true if there is no value associated with the key or if the value is the JSONObject.NULL object.
      */
     public boolean isNull(String key)
@@ -543,7 +532,7 @@ public final class JSONObject extends JSONCollection
 
     /**
      * Get an enumeration of the keys of the JSONObject. Caution: the set should not be modified.
-     * 
+     *
      * @return An iterator of the keys.
      */
     public Set<String> keys()
@@ -553,7 +542,7 @@ public final class JSONObject extends JSONCollection
 
     /**
      * Get the number of keys stored in the JSONObject.
-     * 
+     *
      * @return The number of keys in the JSONObject.
      */
     public int length()
@@ -563,7 +552,7 @@ public final class JSONObject extends JSONCollection
 
     /**
      * Produce a JSONArray containing the names of the elements of this JSONObject.
-     * 
+     *
      * @return A JSONArray containing the key strings, or null if the JSONObject is empty.
      */
     public JSONArray names()
@@ -580,9 +569,8 @@ public final class JSONObject extends JSONCollection
 
     /**
      * Produce a string from a Number.
-     * 
-     * @param n
-     *            A Number
+     *
+     * @param n A Number
      * @return A String. @ If n is a non-finite number.
      */
     static String numberToString(Number n)
@@ -610,9 +598,8 @@ public final class JSONObject extends JSONCollection
 
     /**
      * Get an optional value associated with a key.
-     * 
-     * @param key
-     *            A key string.
+     *
+     * @param key A key string.
      * @return An object which is the value, or null if there is no value.
      * @see #get(String)
      */
@@ -624,15 +611,12 @@ public final class JSONObject extends JSONCollection
     /**
      * Put a key/value pair in the JSONObject. If the value is null, then the key will be removed from the JSONObject if
      * it is present.
-     * 
-     * @param key
-     *            A key string.
-     * @param value
-     *            An object which is the value. It should be of one of these types: Boolean, Double, Integer,
-     *            JSONArray, JSONObject, JSONLiteral, Long, String, or the JSONObject.NULL object.
+     *
+     * @param key   A key string.
+     * @param value An object which is the value. It should be of one of these types: Boolean, Double, Integer,
+     *              JSONArray, JSONObject, JSONLiteral, Long, String, or the JSONObject.NULL object.
      * @return this.
-     * @throws RuntimeException
-     *             If the value is non-finite number or if the key is null.
+     * @throws RuntimeException If the value is non-finite number or if the key is null.
      */
     public JSONObject put(String key, Object value)
     {
@@ -642,8 +626,7 @@ public final class JSONObject extends JSONCollection
         {
             testValidity(value);
             properties.put(key, value);
-        }
-        else
+        } else
         {
             remove(key);
         }
@@ -655,14 +638,16 @@ public final class JSONObject extends JSONCollection
      * Produce a string in double quotes with backslash sequences in all the right places. A backslash will be inserted
      * within </, allowing JSON text to be delivered in HTML. In JSON text, a string cannot contain a control character
      * or an unescaped quote or backslash.
-     * 
-     * @param string
-     *            A String
+     *
+     * @param string A String
      * @return A String correctly formatted for insertion in a JSON text.
      */
     public static String quote(String string)
     {
-        if (string == null || string.length() == 0) { return "\"\""; }
+        if (string == null || string.length() == 0)
+        {
+            return "\"\"";
+        }
 
         char b;
         char c = 0;
@@ -710,8 +695,7 @@ public final class JSONObject extends JSONCollection
                     {
                         t = "000" + Integer.toHexString(c);
                         buffer.append("\\u").append(t.substring(t.length() - 4));
-                    }
-                    else
+                    } else
                     {
                         buffer.append(c);
                     }
@@ -723,9 +707,8 @@ public final class JSONObject extends JSONCollection
 
     /**
      * Remove a name and its value, if present.
-     * 
-     * @param key
-     *            The name to be removed.
+     *
+     * @param key The name to be removed.
      * @return The value that was associated with the name, or null if there was no value.
      */
     public Object remove(String key)
@@ -734,14 +717,13 @@ public final class JSONObject extends JSONCollection
     }
 
     private static final Class[] ALLOWED = new Class[]
-    { String.class, Boolean.class, Number.class, JSONObject.class, JSONArray.class, JSONString.class,
-            JSONLiteral.class, Null.class };
+            {String.class, Boolean.class, Number.class, JSONObject.class, JSONArray.class, JSONString.class,
+                    JSONLiteral.class, Null.class};
 
     /**
      * Throw an exception if the object is an NaN or infinite number, or not a type which may be stored.
-     * 
-     * @param value
-     *            The object to test. @ If o is a non-finite number.
+     *
+     * @param value The object to test. @ If o is a non-finite number.
      */
     @SuppressWarnings("unchecked")
     static void testValidity(Object value)
@@ -798,8 +780,11 @@ public final class JSONObject extends JSONCollection
         {
             Double asDouble = (Double) value;
 
-            if (asDouble.isInfinite() || asDouble.isNaN()) { throw new RuntimeException(
-                    "JSON does not allow non-finite numbers."); }
+            if (asDouble.isInfinite() || asDouble.isNaN())
+            {
+                throw new RuntimeException(
+                        "JSON does not allow non-finite numbers.");
+            }
 
             return;
         }
@@ -808,8 +793,11 @@ public final class JSONObject extends JSONCollection
         {
             Float asFloat = (Float) value;
 
-            if (asFloat.isInfinite() || asFloat.isNaN()) { throw new RuntimeException(
-                    "JSON does not allow non-finite numbers."); }
+            if (asFloat.isInfinite() || asFloat.isNaN())
+            {
+                throw new RuntimeException(
+                        "JSON does not allow non-finite numbers.");
+            }
 
         }
 
@@ -817,7 +805,7 @@ public final class JSONObject extends JSONCollection
 
     /**
      * Prints the JSONObject using the session.
-     * 
+     *
      * @since 5.2.0
      */
     void print(JSONPrintSession session)
@@ -855,7 +843,7 @@ public final class JSONObject extends JSONCollection
     /**
      * Prints a value (a JSONArray or JSONObject, or a value stored in an array or object) using
      * the session.
-     * 
+     *
      * @since 5.2.0
      */
     static void printValue(JSONPrintSession session, Object value)
