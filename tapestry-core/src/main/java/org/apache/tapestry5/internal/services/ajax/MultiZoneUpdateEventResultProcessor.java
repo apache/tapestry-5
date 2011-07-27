@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services.ajax;
+package org.apache.tapestry5.internal.services.ajax;
 
 import java.io.IOException;
 import java.util.Map;
@@ -24,6 +24,8 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
+import org.apache.tapestry5.services.ajax.SetupZonesFilter;
+import org.apache.tapestry5.services.ajax.SingleZonePartialRendererFilter;
 
 /**
  * Handler for {@link org.apache.tapestry5.ajax.MultiZoneUpdate} responses from a component event handler method. Works
@@ -35,6 +37,7 @@ import org.apache.tapestry5.services.ComponentEventResultProcessor;
  * and "zones".
  * 
  * @since 5.1.0.1
+ * @deprecated Deprecated in 5.3
  */
 public class MultiZoneUpdateEventResultProcessor implements ComponentEventResultProcessor<MultiZoneUpdate>
 {

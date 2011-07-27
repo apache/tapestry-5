@@ -19,7 +19,6 @@ import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.services.PartialMarkupRendererFilter;
-import org.apache.tapestry5.services.ajax.MultiZoneUpdateEventResultProcessor;
 
 /**
  * A wrapper around {@link org.apache.tapestry5.runtime.RenderQueue}, but referencable as a (per-thread) service. This
@@ -65,7 +64,7 @@ public interface PageRenderQueue
 
     /**
      * Forces the partialRenderInitialized flag to true, even if there isn't a root render command.
-     * This is used by the {@link MultiZoneUpdateEventResultProcessor} which doesn't add a render command
+     * This is used by the {@link org.apache.tapestry5.internal.services.ajax.MultiZoneUpdateEventResultProcessor} which doesn't add a render command
      * until after rendering starts (care-of a stack of filters).
      * 
      * @since 5.2.2
