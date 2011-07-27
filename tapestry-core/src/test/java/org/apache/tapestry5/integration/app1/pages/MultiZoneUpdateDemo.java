@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
-import java.util.Date;
-
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.ajax.MultiZoneUpdate;
@@ -24,6 +22,9 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.internal.services.StringValueEncoder;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
+
+import java.util.Date;
 
 public class MultiZoneUpdateDemo
 {
@@ -36,6 +37,9 @@ public class MultiZoneUpdateDemo
     @InjectComponent
     private Zone wilmaZone;
 
+    @Inject
+    private AjaxResponseRenderer ajaxResponseRenderer;
+
     public Date getNow()
     {
         return new Date();
@@ -45,14 +49,19 @@ public class MultiZoneUpdateDemo
     {
         wilmaMessage = "His Wife, Wilma.";
 
-        return new MultiZoneUpdate("fred", fredBlock).add("barney", barneyBlock).add("dino", "His dog, Dino.")
+        // Do one the new way
+        ajaxResponseRenderer.render("fred", fredBlock);
+
+        // Do the rest the old way, to test backwards compatibility
+
+        return new MultiZoneUpdate("barney", barneyBlock).add("dino", "His dog, Dino.")
                 .add(wilmaZone);
     }
 
     public String[] getOptions()
     {
         return new String[]
-        { "Red", "Green", "Blue" };
+                {"Red", "Green", "Blue"};
     }
 
     public ValueEncoder getEncoder()
