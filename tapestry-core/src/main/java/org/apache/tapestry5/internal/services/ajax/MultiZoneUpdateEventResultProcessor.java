@@ -14,16 +14,15 @@
 
 package org.apache.tapestry5.internal.services.ajax;
 
-import java.io.IOException;
-import java.util.Map;
-
 import org.apache.tapestry5.ajax.MultiZoneUpdate;
-import org.apache.tapestry5.internal.services.PageRenderQueue;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
-import org.apache.tapestry5.services.ajax.SetupZonesFilter;
+import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * Handler for {@link org.apache.tapestry5.ajax.MultiZoneUpdate} responses from a component event handler method. Works
@@ -33,30 +32,24 @@ import org.apache.tapestry5.services.ajax.SetupZonesFilter;
  * JavaScript and CSS are collected for all zones rendered in the request (not for each individual zone). The final
  * response will have some combination of "script", "scripts", "stylesheets", "content" (which is expected to be blank)
  * and "zones".
- * 
+ *
  * @since 5.1.0.1
  * @deprecated Deprecated in 5.3
  */
 public class MultiZoneUpdateEventResultProcessor implements ComponentEventResultProcessor<MultiZoneUpdate>
 {
-    private final PageRenderQueue queue;
-
     private final TypeCoercer typeCoercer;
 
-    private final AjaxFormUpdateController ajaxFormUpdateController;
+    private final AjaxResponseRenderer ajaxResponseRenderer;
 
-    public MultiZoneUpdateEventResultProcessor(PageRenderQueue queue, TypeCoercer typeCoercer,
-            AjaxFormUpdateController ajaxFormUpdateController)
+    public MultiZoneUpdateEventResultProcessor(TypeCoercer typeCoercer, AjaxResponseRenderer ajaxResponseRenderer)
     {
-        this.queue = queue;
         this.typeCoercer = typeCoercer;
-        this.ajaxFormUpdateController = ajaxFormUpdateController;
+        this.ajaxResponseRenderer = ajaxResponseRenderer;
     }
 
     public void processResultValue(final MultiZoneUpdate value) throws IOException
     {
-        queue.forcePartialRenderInitialized();
-        queue.addPartialMarkupRendererFilter(new SetupZonesFilter());
 
         Map<String, Object> map = value.getZoneToRenderMap();
 
@@ -64,10 +57,13 @@ public class MultiZoneUpdateEventResultProcessor implements ComponentEventResult
         {
             Object provided = map.get(zoneId);
 
+            // The AjaxResponseRenderer will convert the object to a RenderCommand, but does nothing special if there's a failure
+            // (because the stack trace will clearly identify what's going on). We do the conversion here so that we can relate
+            // a failure to a zone id. It will just be a pass-thru on the second type coercion.
+
             RenderCommand zoneRenderCommand = toRenderer(zoneId, provided);
 
-            queue.addPartialMarkupRendererFilter(new SingleZonePartialRendererFilter(zoneId, zoneRenderCommand, queue,
-                    ajaxFormUpdateController));
+            ajaxResponseRenderer.render(zoneId, zoneRenderCommand);
         }
     }
 
@@ -76,8 +72,7 @@ public class MultiZoneUpdateEventResultProcessor implements ComponentEventResult
         try
         {
             return typeCoercer.coerce(provided, RenderCommand.class);
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             throw new IllegalArgumentException(String.format("Failure converting renderer for zone '%s': %s", zoneId,
                     InternalUtils.toMessage(ex)), ex);

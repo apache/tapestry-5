@@ -17,7 +17,6 @@ package org.apache.tapestry5.internal.services.ajax;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.services.PageRenderQueue;
-import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateController;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
@@ -27,7 +26,7 @@ import org.apache.tapestry5.services.ajax.CombinedRenderCommand;
 
 /**
  * Responsible for capturing the content for a single zone and storing it into the JSON reply object.
- * 
+ *
  * @see org.apache.tapestry5.ajax.MultiZoneUpdate
  * @since 5.1.0.1
  */
@@ -42,7 +41,7 @@ public class SingleZonePartialRendererFilter implements PartialMarkupRendererFil
     private final AjaxFormUpdateController ajaxFormUpdateController;
 
     public SingleZonePartialRendererFilter(String zoneId, RenderCommand zoneRenderCommand, PageRenderQueue queue,
-            AjaxFormUpdateController ajaxFormUpdateController)
+                                           AjaxFormUpdateController ajaxFormUpdateController)
     {
         this.zoneId = zoneId;
         this.zoneRenderCommand = zoneRenderCommand;
@@ -76,6 +75,11 @@ public class SingleZonePartialRendererFilter implements PartialMarkupRendererFil
                         String zoneUpdateContent = zoneContainer.getChildMarkup();
 
                         zoneContainer.remove();
+
+                        if (!reply.has("zones"))
+                        {
+                            reply.put("zones", new JSONObject());
+                        }
 
                         reply.getJSONObject("zones").put(zoneId, zoneUpdateContent);
                     }

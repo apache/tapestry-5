@@ -35,6 +35,7 @@ import org.apache.tapestry5.internal.gzip.GZipFilter;
 import org.apache.tapestry5.internal.renderers.*;
 import org.apache.tapestry5.internal.services.*;
 import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateFilter;
+import org.apache.tapestry5.internal.services.ajax.AjaxResponseRendererImpl;
 import org.apache.tapestry5.internal.services.ajax.JavaScriptSupportImpl;
 import org.apache.tapestry5.internal.services.ajax.MultiZoneUpdateEventResultProcessor;
 import org.apache.tapestry5.internal.services.assets.AssetPathConstructorImpl;
@@ -76,6 +77,7 @@ import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.ComponentResourcesAware;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
+import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
 import org.apache.tapestry5.services.assets.AssetsModule;
@@ -362,6 +364,7 @@ public final class TapestryModule
         binder.bind(LinkTransformer.class, LinkTransformerImpl.class);
         binder.bind(SelectModelFactory.class, SelectModelFactoryImpl.class);
         binder.bind(DynamicTemplateParser.class, DynamicTemplateParserImpl.class);
+        binder.bind(AjaxResponseRenderer.class, AjaxResponseRendererImpl.class);
     }
 
     // ========================================================================
