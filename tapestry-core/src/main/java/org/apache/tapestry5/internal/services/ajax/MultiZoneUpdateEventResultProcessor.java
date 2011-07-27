@@ -19,17 +19,15 @@ import java.util.Map;
 
 import org.apache.tapestry5.ajax.MultiZoneUpdate;
 import org.apache.tapestry5.internal.services.PageRenderQueue;
-import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateController;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
 import org.apache.tapestry5.services.ajax.SetupZonesFilter;
-import org.apache.tapestry5.services.ajax.SingleZonePartialRendererFilter;
 
 /**
  * Handler for {@link org.apache.tapestry5.ajax.MultiZoneUpdate} responses from a component event handler method. Works
- * by adding {@link org.apache.tapestry5.services.ajax.SingleZonePartialRendererFilter}s for each zone to the
+ * by adding {@link SingleZonePartialRendererFilter}s for each zone to the
  * {@linkplain org.apache.tapestry5.internal.services.PageRenderQueue#addPartialMarkupRendererFilter(org.apache.tapestry5.services.PartialMarkupRendererFilter)
  * filter stack}. Each zone writes its content as a string in the zones object of the reply, keyed on its id.
  * JavaScript and CSS are collected for all zones rendered in the request (not for each individual zone). The final

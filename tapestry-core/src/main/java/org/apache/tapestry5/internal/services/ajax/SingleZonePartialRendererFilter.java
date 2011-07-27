@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services.ajax;
+package org.apache.tapestry5.internal.services.ajax;
 
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.dom.Element;
@@ -23,6 +23,7 @@ import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.PartialMarkupRenderer;
 import org.apache.tapestry5.services.PartialMarkupRendererFilter;
+import org.apache.tapestry5.services.ajax.CombinedRenderCommand;
 
 /**
  * Responsible for capturing the content for a single zone and storing it into the JSON reply object.

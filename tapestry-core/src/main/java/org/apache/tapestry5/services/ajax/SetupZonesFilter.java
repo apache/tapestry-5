@@ -21,7 +21,7 @@ import org.apache.tapestry5.services.PartialMarkupRendererFilter;
 
 /**
  * Creates a "zones" object in the JSON reply, ready for the
- * {@link org.apache.tapestry5.services.ajax.SingleZonePartialRendererFilter}s
+ * {@link org.apache.tapestry5.internal.services.ajax.SingleZonePartialRendererFilter}s
  * to store values into.
  * 
  * @since 5.1.0.1
