@@ -32,7 +32,7 @@ public class AjaxResponseRendererImpl implements AjaxResponseRenderer
         this.javaScriptSupport = javaScriptSupport;
     }
 
-    public void render(String clientId, Object renderer)
+    public void addRender(String clientId, Object renderer)
     {
         assert InternalUtils.isNonBlank(clientId);
         assert renderer != null;
@@ -43,20 +43,23 @@ public class AjaxResponseRendererImpl implements AjaxResponseRenderer
         queue.addPartialMarkupRendererFilter(new SingleZonePartialRendererFilter(clientId, command, queue, ajaxFormUpdateController));
     }
 
-    public void render(ClientBodyElement zone)
+    public void addRender(ClientBodyElement zone)
     {
         assert zone != null;
 
-        render(zone.getClientId(), zone.getBody());
+        addRender(zone.getClientId(), zone.getBody());
     }
 
-    public void callback(final JavaScriptCallback callback)
+    public void addCallback(final JavaScriptCallback callback)
     {
         queue.forcePartialRenderInitialized();
         queue.addPartialMarkupRendererFilter(new PartialMarkupRendererFilter()
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {
+                // We set things up so that the support object is invoked pretty late.
+                renderer.renderMarkup(writer, reply);
+
                 callback.run(javaScriptSupport);
             }
         });

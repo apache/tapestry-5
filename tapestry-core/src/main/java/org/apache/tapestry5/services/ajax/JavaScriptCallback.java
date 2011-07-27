@@ -17,7 +17,7 @@ package org.apache.tapestry5.services.ajax;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
- * A callback used with {@link AjaxResponseRenderer#callback(JavaScriptCallback)}.
+ * A callback used with {@link AjaxResponseRenderer#addCallback(JavaScriptCallback)}.
  *
  * @since 5.3
  */

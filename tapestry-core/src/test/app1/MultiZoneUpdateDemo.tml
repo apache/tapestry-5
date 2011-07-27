@@ -5,6 +5,8 @@
 
   <span id="now">${now}</span>
 
+  <span id="message"/>
+
   <div class="t-data-grid" style="{width: 100%;}">
 
     <table class="t-data-grid">

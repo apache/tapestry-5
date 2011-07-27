@@ -63,7 +63,7 @@ public class MultiZoneUpdateEventResultProcessor implements ComponentEventResult
 
             RenderCommand zoneRenderCommand = toRenderer(zoneId, provided);
 
-            ajaxResponseRenderer.render(zoneId, zoneRenderCommand);
+            ajaxResponseRenderer.addRender(zoneId, zoneRenderCommand);
         }
     }
 
