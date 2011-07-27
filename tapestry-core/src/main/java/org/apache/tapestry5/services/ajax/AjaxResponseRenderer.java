@@ -18,7 +18,8 @@ import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.annotations.Scope;
 
 /**
- * Manages the rendering of a partial page render as part of an Ajax response.
+ * Manages the rendering of a partial page render as part of an Ajax response. This replaces
+ * the {@link org.apache.tapestry5.ajax.MultiZoneUpdate}.
  */
 @Scope(ScopeConstants.PERTHREAD)
 public class AjaxResponseRenderer
