@@ -40,6 +40,13 @@
 | 2004-01-10 | Adding type on the buttons to ensure they are not submit       |
 |            | buttons. Minor CSS change for CSS2                             |
 | 2006-05-28 | Changed license to Apache Software License 2.0.                |
+| 2011-07-27 | Separated "selected date" and "calendar date" concepts.        |
+|            | Selected date is the date specifically selected by the user to |
+|            | put into the form field.  Calendar date reflects the currently |
+|            | displayed month. These are often, but not always, the same     |
+|            | value.  Separating them simplifies a lot of logic and resolves |
+|            | TAP5-1409. Also somewhat smarter for whether to trigger        |
+|            | onselect when clicking "today" (and/or "none")                 |
 |-----------------------------------------------------------------------------|
 | Created 2001-10-?? | All changes are in the log above. | Updated 2006-05-28 |
 \----------------------------------------------------------------------------*/
@@ -52,13 +59,22 @@ function DatePicker(oDate)
     // check arguments
     if (arguments.length == 0)
     {
-        this._selectedDate = new Date;
-        this._none = false;
+        this._selectedDate = null;
+        this._calendarDate = new Date;
+        this._selectedInited = false;
     }
     else
     {
-        this._selectedDate = oDate || new Date();
-        this._none = oDate == null;
+        this._selectedDate = oDate;
+        if (!oDate) 
+        {
+            this._calendarDate = new Date;
+        } else 
+        {
+            this._calendarDate = new Date(oDate);
+        }
+        this._selectedInited = true;
+        
     }
 
     this._matrix = [[],[],[],[],[],[],[]];
@@ -66,8 +82,6 @@ function DatePicker(oDate)
     this._showToday = true;
     this._firstWeekDay = 0;	// start week with monday according to standards
     this._redWeekDay = 6;	// sunday is the default red day.
-
-    this._dontChangeNone = false;
 }
 
 // two static fields describing the name of the months abd days
@@ -213,15 +227,11 @@ DatePicker.prototype.create = function (doc)
 	// buttons
     this._previousMonth.onclick = function ()
     {
-        dp._dontChangeNone = true;
         dp.goToPreviousMonth();
-        dp._dontChangeNone = false;
     };
     this._nextMonth.onclick = function ()
     {
-        dp._dontChangeNone = true;
         dp.goToNextMonth();
-        dp._dontChangeNone = false;
     };
     this._todayButton.onclick = function ()
     {
@@ -229,6 +239,7 @@ DatePicker.prototype.create = function (doc)
     };
     this._noneButton.onclick = function ()
     {
+        //this should always clear the date and trigger onselected... 
         dp.setDate(null, true);
     };
 
@@ -253,13 +264,13 @@ DatePicker.prototype.create = function (doc)
         if (el == null || el.tagName == null || el.tagName.toLowerCase() != "td")
             return;
 
-        var d = new Date(dp._selectedDate);
+        var d = new Date(dp._calendarDate);
         var n = Number(el.firstChild.data);
         if (isNaN(n) || n <= 0 || n == null)
             return;
 
         d.setDate(n);
-        dp.setDate(d, true);
+        dp.setDate(d);
     };
 
 	// show popup
@@ -276,7 +287,7 @@ DatePicker.prototype.create = function (doc)
 
         if (kc < 37 || kc > 40) return true;
 
-        var d = new Date(dp._selectedDate).valueOf();
+        var d = new Date(dp._calendarDate).valueOf();
         if (kc == 37) // left
             d -= 24 * 60 * 60 * 1000;
         else if (kc == 39) // right
@@ -286,7 +297,7 @@ DatePicker.prototype.create = function (doc)
         else if (kc == 40) // down
             d += 7 * 24 * 60 * 60 * 1000;
 
-        dp.setDate(new Date(d), false);
+        dp.setCalendarDate(new Date(d));
         return false;
     }
 
@@ -295,41 +306,79 @@ DatePicker.prototype.create = function (doc)
     {
         if (e == null) e = doc.parentWindow.event;
         var n = - e.wheelDelta / 120;
-        var d = new Date(dp._selectedDate);
+        var d = new Date(dp._calendarDate);
         var m = d.getMonth() + n;
         d.setMonth(m);
 
 
-        dp._dontChangeNone = true;
-        dp.setDate(d, false);
-        dp._dontChangeNone = false;
+        dp.setCalendarDate(d);
 
         return false;
     }
 
+    doc.onclick  =  function (e) {
+        var targ;
+        
+         // find event
+        if (e == null) e = doc.parentWindow.event;
+        
+        if (e.target) targ = e.target;
+        else if (e.srcElement) targ = e.srcElement;
+        // find classname 'datePicker' as parent
+        var insideDatePicker = null;
+        var parent = targ.parentNode;
+        while (parent != null) {
+            if (parent.className == 'datePicker') {
+                insideDatePicker = parent;
+                break;
+            }
+            parent = parent.parentNode;
+        }
+        
+        if (Tapestry.DateField.activeDateField !=  null) {
+        
+            if (insideDatePicker == null && targ.className != 't-calendar-trigger') {
+                Tapestry.DateField.activeDateField.hidePopup();
+                Tapestry.DateField.activeDateField = null;
+            }
+        }
+    }
     return this._el;
 };
 
-DatePicker.prototype.setDate = function (oDate, isSelection)
+DatePicker.prototype.setCalendarDate = function(oDate)
 {
-
+    if (oDate != null) 
+    {
+        //note that calendarDate should never be null!
+        this._calendarDate = oDate;
+    }
     this._hideLabelPopup();
+    this._setTopLabel();
+    this._updateTable();
+}
+
+DatePicker.prototype.setDate = function (oDate, forceOnSelect)
+{
 
 	// if null then set None
     if (oDate == null)
     {
-        if (!this._none)
+        //if _selectedDate isn't null, then this is an actual change...
+        //but if it /is/ null, we have to see if we were inited or not. If we weren't inited, then we're 
+        //setting this to null now, and we shouldn't fire a select...
+        //but the problem occurs on subsequent... hm...
+        if (this._selectedDate != null)
         {
-            this._none = true;
-            this._setTopLabel();
-            this._updateTable();
-
+            this._selectedDate = null;
             if (typeof this.onchange == "function")
                 this.onchange();
-        }
-
-        if (isSelection)
             this.onselect();
+        } else if (forceOnSelect)
+            this.onselect();
+        //note: setDate must inherently set the calendar date
+        this._selectedInited=true;
+        this.setCalendarDate(null);
 
         return;
     }
@@ -340,38 +389,31 @@ DatePicker.prototype.setDate = function (oDate, isSelection)
         oDate = new Date(oDate);
     }
 
-
 	// do not update if not really changed
-    if (this._selectedDate.getDate() != oDate.getDate() ||
-        this._selectedDate.getMonth() != oDate.getMonth() ||
-        this._selectedDate.getFullYear() != oDate.getFullYear() ||
-        this._none)
+    if (this._selectedDate == null || !this._datesAreSame(this._selectedDate, oDate))
     {
-
-        if (!this._dontChangeNone)
-            this._none = false;
-
         this._selectedDate = new Date(oDate);
-
-        this._setTopLabel();
-        this._updateTable();
-
+    
         if (typeof this.onchange == "function")
             this.onchange();
 
-        if (isSelection)
+        //so if _selectedInited is false, then the value is different only because we set the value programmatically, post-initialization.
+        //that handles the creation + set event. Subsequent reveals will set it to whatever _selectedDate already was, so it's handled.
+        if (this._selectedInited)
             this.onselect();
-    }
-
-    if (!this._dontChangeNone)
-        this._none = false;
+        else
+            this._selectedInited=true;
+    } else if (forceOnSelect)
+        this.onselect();
+    //note: setDate must inherently set the calendar date
+    this.setCalendarDate(oDate);
 
 }
 
 
 DatePicker.prototype.getDate = function ()
 {
-    if (this._none) return null;
+    if (!this._selectedDate) return null;
     return new Date(this._selectedDate);	// create a new instance
 }
 
@@ -451,8 +493,8 @@ DatePicker.prototype._updateTable = function ()
     }
 
 	// Set the tmpDate to this month
-    var tmpDate = new Date(this._selectedDate.getFullYear(),
-            this._selectedDate.getMonth(), 1);
+    var tmpDate = new Date(this._calendarDate.getFullYear(),
+            this._calendarDate.getMonth(), 1);
     var today = new Date();
 	// go thorugh all days this month and store the text
     // and the class name in the cells matrix
@@ -462,16 +504,14 @@ DatePicker.prototype._updateTable = function ()
 		// convert to ISO, Monday is 0 and 6 is Sunday
         var weekDay = ( tmpDate.getDay() + 6 ) % 7;
         var colIndex = ( weekDay - this._firstWeekDay + 7 ) % 7;
-        if (tmpDate.getMonth() == this._selectedDate.getMonth())
+        if (tmpDate.getMonth() == this._calendarDate.getMonth())
         {
 
-            var isToday = tmpDate.getDate() == today.getDate() &&
-                          tmpDate.getMonth() == today.getMonth() &&
-                          tmpDate.getFullYear() == today.getFullYear();
+            var isToday = this._datesAreSame(tmpDate, today);
 
             cells[currentWeek][colIndex] = { text: "", className: "" };
 
-            if (this._selectedDate.getDate() == tmpDate.getDate() && !this._none)
+            if (this._datesAreSame(this._selectedDate, tmpDate)) 
                 cells[currentWeek][colIndex].className += "selected ";
             if (isToday)
                 cells[currentWeek][colIndex].className += "today ";
@@ -526,36 +566,42 @@ DatePicker.prototype._updateTable = function ()
 // sets the label showing the year and selected month
 DatePicker.prototype._setTopLabel = function ()
 {
-    var str = this._selectedDate.getFullYear() + " " + DatePicker.months[ this._selectedDate.getMonth() ];
+    var str = this._calendarDate.getFullYear() + " " + DatePicker.months[ this._calendarDate.getMonth() ];
     if (this._topLabel != null)
         this._topLabel.lastChild.data = str;
 }
 
 DatePicker.prototype.goToNextMonth = function ()
 {
-    var d = new Date(this._selectedDate);
+    var d = new Date(this._calendarDate);
     d.setDate(Math.min(d.getDate(), DatePicker.getDaysPerMonth(d.getMonth() + 1,
             d.getFullYear()))); // no need to catch dec -> jan for the year
     d.setMonth(d.getMonth() + 1);
-    this.setDate(d);
+    this.setCalendarDate(d);
 }
 
 DatePicker.prototype.goToPreviousMonth = function ()
 {
-    var d = new Date(this._selectedDate);
+    var d = new Date(this._calendarDate);
     d.setDate(Math.min(d.getDate(), DatePicker.getDaysPerMonth(d.getMonth() - 1,
             d.getFullYear()))); // no need to catch jan -> dec for the year
     d.setMonth(d.getMonth() - 1);
-    this.setDate(d);
+    this.setCalendarDate(d);
 }
 
 DatePicker.prototype.goToToday = function ()
 {
-    if (this._none)
-        // change the selectedDate to force update if none was true
-        this._selectedDate = new Date(this._selectedDate + 10000000000);
-    this._none = false;
-    this.setDate(new Date(), true);
+    //note: small tweak here so that clicking the "Today" button will properly update the selected date and trigger selected
+    //but note that we want this behavior iff "today" is already selected and visible. 
+    //For instance: If you're looking at some date months away from today and want to jump back to today AND today is the selectedDate
+    //then we don't want that to close the calendar.
+    var today = new Date();
+    var forceOnSelect=false;
+    if (this._selectedDate == null || (this._datesAreSame(today, this._selectedDate) && this._calendarDate.getMonth() == today.getMonth() && this._calendarDate.getFullYear() == today.getFullYear())) {
+        //then go ahead and force the selection...
+        forceOnSelect=true;
+    }
+    this.setDate(new Date(), forceOnSelect);//note that setDate calls setCalendarDate...
 }
 
 DatePicker.prototype.setShowToday = function (bShowToday)
@@ -622,22 +668,12 @@ DatePicker.prototype.getRedWeekDay = function ()
 DatePicker.prototype._showLabelPopup = function ()
 {
 
-    /*
-     this._labelPopup document.createElement( "DIV" );
-     div.className = "month-popup";
-     div.noWrap = true;
-     el.unselectable = div.unselectable = "on";
-     el.onselectstart = div.onselectstart = function () { return false; };
-     */
-
     var dateContext = function (dp, d)
     {
         return function (e)
         {
-            dp._dontChangeNone = true;
             dp._hideLabelPopup();
-            dp.setDate(d);
-            dp._dontChangeNone = false;
+            dp.setCalendarDate(d);
             return false;
         };
     };
@@ -651,8 +687,8 @@ DatePicker.prototype._showLabelPopup = function ()
     var a, tmp, tmp2;
     for (var i = -3; i < 4; i++)
     {
-        tmp = new Date(this._selectedDate);
-        tmp2 = new Date(this._selectedDate);	// need another tmp to catch year change when checking leap
+        tmp = new Date(this._calendarDate);
+        tmp2 = new Date(this._calendarDate);	// need another tmp to catch year change when checking leap
         tmp2.setDate(1);
         tmp2.setMonth(tmp2.getMonth() + i);
         tmp.setDate(Math.min(tmp.getDate(), DatePicker.getDaysPerMonth(tmp.getMonth() + i,
@@ -677,6 +713,17 @@ DatePicker.prototype._hideLabelPopup = function ()
     if (this._labelPopup.parentNode)
         this._labelPopup.parentNode.removeChild(this._labelPopup);
 };
+
+DatePicker.prototype._datesAreSame = function(d1,d2)
+{
+    if (d1 == null && d2 == null)
+        return true;
+    else if (d1 == null)
+        return false;
+    else if (d2 == null)
+        return false;
+    return d1.getDate() == d2.getDate() && d1.getMonth() == d2.getMonth() && d1.getFullYear() == d2.getFullYear();    
+}
 
 DatePicker._daysPerMonth = [31,28,31,30,31,30,31,31,30,31,30,31];
 DatePicker.getDaysPerMonth = function (nMonth, nYear)

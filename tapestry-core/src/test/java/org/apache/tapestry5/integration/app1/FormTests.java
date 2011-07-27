@@ -18,6 +18,9 @@ import org.apache.tapestry5.corelib.components.Form;
 import org.apache.tapestry5.integration.TapestryCoreTestCase;
 import org.testng.annotations.Test;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Tests for the {@link Form} component as well as many form control components.
  */
@@ -243,6 +246,96 @@ public class FormTests extends TapestryCoreTestCase
         click("id=asteroidImpact-trigger");
 
         assertBubbleMessage("asteroidImpact", "Unparseable date: \"<script>alert('T5 is great'); </script>\"");
+    }
+
+    // TAP5-1409
+    @Test
+    public void datefield_select_newmonth_samedate()
+    {
+        openLinks("DateField Demo", "clear", "english");
+        //start with a known date...
+        type("asteroidImpact", "05/28/2046");
+
+        click("id=asteroidImpact-trigger");
+        waitForCSSSelectedElementToAppear("div.datePicker");
+        assertEquals(getText("css=td.selected"), "28");
+
+        //move to the next month.
+        click("css=button.nextButton");
+        //first, make sure that NOTHING shows as selected! The selected date is still 5/28/46
+        String selectedGoneCondition = "window.$$(\"td.selected\").size() == 0";
+        waitForCondition(selectedGoneCondition, PAGE_LOAD_TIMEOUT);
+
+        //make sure it's still selected if we navigate back...
+        click("css=button.previousButton");
+        waitForCSSSelectedElementToAppear("td.selected");
+
+        click("css=button.nextButton");
+        waitForCondition(selectedGoneCondition, PAGE_LOAD_TIMEOUT);
+
+        click("xpath=//td[text()='28']");
+        String pickerGoneCondition = "!selenium.isVisible('css=div.datePicker')";
+        waitForCondition(pickerGoneCondition, PAGE_LOAD_TIMEOUT);
+
+        assertFieldValue("asteroidImpact", "6/28/2046");
+
+        //a few other behaviors to check on as a side-effect of implementing the fix for 1409:
+        //1) If today is selected and it's the current month, pressing the "Today" button should close the popup
+        //2) If today is selected and we're on some other month, pressing the "Today" button should just take us
+        //   back to the today.
+        //3) If today is not selected, pressing the "Today" button should set the date and close the popup.
+        //4) Pressing the "None" button should always close the popup and result in no date.
+
+        //#3
+        click("id=asteroidImpact-trigger");
+        waitForCSSSelectedElementToAppear("div.datePicker");
+        click("css=button.todayButton");
+        waitForCondition(pickerGoneCondition, PAGE_LOAD_TIMEOUT);
+
+        String value = getValue("asteroidImpact");
+        assertEquals(value, new SimpleDateFormat("M/d/yyyy").format(new Date()));
+
+        //#2...
+        click("id=asteroidImpact-trigger");
+        waitForCSSSelectedElementToAppear("div.datePicker");
+        click("css=button.nextButton");
+        waitForCondition(selectedGoneCondition, PAGE_LOAD_TIMEOUT);
+
+        click("css=button.todayButton");
+        waitForCSSSelectedElementToAppear("td.selected");
+
+        //#1
+        click("css=button.todayButton");
+        waitForCondition(pickerGoneCondition, PAGE_LOAD_TIMEOUT);
+        assertEquals(getValue("asteroidImpact"), value);
+
+        //#4...
+        click("id=asteroidImpact-trigger");
+        waitForCSSSelectedElementToAppear("div.datePicker");
+        click("css=button.noneButton");
+        waitForCondition(pickerGoneCondition, PAGE_LOAD_TIMEOUT);
+        assertEquals(getValue("asteroidImpact"), "");
+
+        click("id=asteroidImpact-trigger");
+        waitForCSSSelectedElementToAppear("div.datePicker");
+        assertFalse(isElementPresent("css=td.selected"));
+        click("css=button.noneButton");
+        waitForCondition(pickerGoneCondition, PAGE_LOAD_TIMEOUT);
+        assertEquals(getValue("asteroidImpact"), "");
+    }
+
+    // TAP4-1408
+    @Test
+    public void datefield_clickoutside_closes()
+    {
+        openLinks("DateField Demo", "clear", "english");
+        type("asteroidImpact", "05/28/2046");
+
+        click("id=asteroidImpact-trigger");
+        waitForCSSSelectedElementToAppear("div.datePicker");
+
+        click("id=asteroidImpact");
+        waitForCondition("!selenium.isVisible('css=div.datePicker')", PAGE_LOAD_TIMEOUT);
     }
 
     @Test
