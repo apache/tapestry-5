@@ -33,7 +33,6 @@ public class AlertStorage extends BaseOptimizedSessionPersistedObject implements
     public synchronized void add(Alert alert)
     {
         assert alert != null;
-        assert alert.duration.persistent;
 
         alerts.add(alert);
 
