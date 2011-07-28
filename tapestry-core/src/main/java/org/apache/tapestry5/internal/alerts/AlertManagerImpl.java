@@ -17,6 +17,8 @@ package org.apache.tapestry5.internal.alerts;
 import org.apache.tapestry5.alerts.*;
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
+import org.apache.tapestry5.services.ajax.JavaScriptCallback;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 public class AlertManagerImpl implements AlertManager
@@ -25,13 +27,13 @@ public class AlertManagerImpl implements AlertManager
 
     private final Request request;
 
-    private final JavaScriptSupport javaScriptSupport;
+    private final AjaxResponseRenderer ajaxResponseRenderer;
 
-    public AlertManagerImpl(ApplicationStateManager asm, Request request, JavaScriptSupport javaScriptSupport)
+    public AlertManagerImpl(ApplicationStateManager asm, Request request, AjaxResponseRenderer ajaxResponseRenderer)
     {
         this.asm = asm;
         this.request = request;
-        this.javaScriptSupport = javaScriptSupport;
+        this.ajaxResponseRenderer = ajaxResponseRenderer;
     }
 
     public void info(String message)
@@ -51,13 +53,19 @@ public class AlertManagerImpl implements AlertManager
 
     public void alert(Duration duration, Severity severity, String message)
     {
-        Alert alert = new Alert(duration, severity, message);
+        final Alert alert = new Alert(duration, severity, message);
 
         boolean ajax = request.isXHR();
 
         if (ajax)
         {
-            javaScriptSupport.addInitializerCall("addAlert", alert.toJSON());
+            ajaxResponseRenderer.addCallback(new JavaScriptCallback()
+            {
+                public void run(JavaScriptSupport javascriptSupport)
+                {
+                    javascriptSupport.addInitializerCall("addAlert", alert.toJSON());
+                }
+            });
         }
 
         // In Ajax mode, ony persistent alerts need to be stored for later requests (so that they can
