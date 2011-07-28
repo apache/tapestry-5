@@ -50,4 +50,27 @@ class AlertsTests extends SeleniumTestCase
 
         assertText "css=.t-alert-container", ""
     }
+
+    @Test
+    void ajax_update_and_remove()
+    {
+        openLinks "Alerts Demo", "reset"
+
+        select "css=#ajax select[name=\"severity\"]", "Error"
+        select "css=#ajax select[name=\"duration\"]", "Until Dismissed"
+        type "css=#ajax input[name=\"message\"]", "ajax error until"
+
+        click "//input[@value='Ajax Update']"
+
+        sleep 100
+
+        assertTextPresent "ajax error until"
+
+        click "link=Dismiss all"
+
+        // Check that the alert container is now empty
+
+        assertText "css=.t-alert-container", ""
+    }
+
 }
