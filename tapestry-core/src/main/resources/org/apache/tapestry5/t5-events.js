@@ -23,6 +23,21 @@ T5.define("events", {
      * approaches to removing any event listeners for the element. This is published on the document object,
      * and the message is the DOM element for which event handlers should be removed.
      */
-    REMOVE_EVENT_HANDLERS : "tapestry:remove-event-handlers"
+    REMOVE_EVENT_HANDLERS : "tapestry:remove-event-handlers",
+
+    /** Event used to display a new alert to the user. The message is the alert specification, with keys:
+     * <dl>
+     *  <dt>id</dt>
+     *  <dd>unique numeric id for the alert, if the alert is persistent on the server (omitted for non-persistent
+     *  alerts)</dd>
+     *  <dt>transient</dt>
+     *  <dd>If true (may be omitted), then the alert will automatically dismiss itself after a period of time.</dd>
+     *  <dt>class</dt>
+     *  <dd>The CSS class, which should be 't-info', 't-warn' or 't-error'.</dd>
+     *  <dt>message</dt>
+     *  <dd>The alert message content.</dd>
+     *  </dl>
+     */
+    ADD_ALERT : "tapestry:add-alert"
 
 });

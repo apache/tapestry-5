@@ -106,10 +106,41 @@ T5.define("dom", function() {
         Element.remove(element);
     }
 
+    /**
+     * Removes all children form the element, properly purging child elements
+     * of any listeners, etc.
+     * @param element to purge
+     */
+    function removeChildren(element) {
+        purgeChildren(element);
+        element.innerHTML = '';
+    }
+
+    /**
+     * Observes an event on an element; when the event is triggered, the event
+     * is published as a message.  Listeners to the topic may cancel the event.
+     * @param element element or element id
+     * @param eventName name of event to observe
+     * @param topic topic name used to publish the event
+     */
+    function publishEvent(element, eventName, topic) {
+        var publisher = T5.pubsub.createPublisher(topic, element);
+
+        T5.dom.observe(element, eventName, function(event) {
+            publisher(event);
+        });
+    }
+
     return {
         remove : remove,
+        removeChildren : removeChildren,
         purgeChildren : purgeChildren,
-        locate : locate
+        locate : locate,
+        observe : T5.spi.observe,
+        find : T5.spi.find,
+        hide : T5.spi.hide,
+        show : T5.spi.show,
+        publishEvent : publishEvent
     };
 });
 

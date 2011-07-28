@@ -1,0 +1,9 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Alerts Demo</h1>
+
+<h2>Traditional Form</h2>
+
+    <t:beaneditform t:id="traditional" object="this"/>
+
+</html>

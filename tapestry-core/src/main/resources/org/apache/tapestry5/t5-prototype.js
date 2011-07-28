@@ -20,6 +20,19 @@
  */
 T5.extend(T5.spi, function() {
 
+    function observe(element, eventName, listener) {
+
+        var handler = $(element).on(eventName, listener);
+
+        element = null;
+        eventName = null;
+        listener = null;
+
+        return function() {
+            handler.stop();
+        };
+    }
+
     document.observe("dom:loaded", function() {
         T5.sub(T5.events.REMOVE_EVENT_HANDLERS, null, function(element) {
                 Event.stopObserving(element);
@@ -27,6 +40,11 @@ T5.extend(T5.spi, function() {
         );
     });
 
-    return {};
+    return {
+        observe : observe,
+        find : Element.down,
+        show : Element.show,
+        hide : Element.hide
+    };
 });
 

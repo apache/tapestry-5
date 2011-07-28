@@ -89,6 +89,8 @@ public class CoreJavaScriptStack implements JavaScriptStack {
 
                   ROOT + "/t5-formfragment.js",
 
+                  ROOT + "/t5-alerts.js",
+
                   ROOT + "/tapestry.js",
 
                   ROOT + "/tapestry-console.js",
@@ -102,6 +104,8 @@ public class CoreJavaScriptStack implements JavaScriptStack {
   private static final String[] CORE_STYLESHEET = new String[]
           {
                   ROOT + "/tapestry-console.css",
+
+                  ROOT + "/t5-alerts.css",
 
                   ROOT + "/tree.css"
           };

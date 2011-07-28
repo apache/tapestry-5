@@ -47,7 +47,7 @@ T5.define("ajax", function() {
 	 * <dd>A function invoked if there's an exception processing the Ajax
 	 * request, the function is passed the exception
 	 * <dt>success
-	 * <dd>A function invoked when the Ajax response is returned succesfully.
+	 * <dd>A function invoked when the Ajax response is returned successfully.
 	 * The function is passed the transport object.
 	 * <dt>method
 	 * <dd>The type of request, 'get' or 'post'. 'post' is the default.

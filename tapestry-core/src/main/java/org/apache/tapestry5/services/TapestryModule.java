@@ -16,6 +16,7 @@ package org.apache.tapestry5.services;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.ajax.MultiZoneUpdate;
+import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.annotations.ContentType;
 import org.apache.tapestry5.beaneditor.DataTypeConstants;
@@ -23,6 +24,7 @@ import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.corelib.ClientValidation;
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.internal.*;
+import org.apache.tapestry5.internal.alerts.AlertManagerImpl;
 import org.apache.tapestry5.internal.beaneditor.EnvironmentMessages;
 import org.apache.tapestry5.internal.beaneditor.MessagesConstraintGenerator;
 import org.apache.tapestry5.internal.beaneditor.PrimitiveFieldConstraintGenerator;
@@ -365,6 +367,7 @@ public final class TapestryModule
         binder.bind(SelectModelFactory.class, SelectModelFactoryImpl.class);
         binder.bind(DynamicTemplateParser.class, DynamicTemplateParserImpl.class);
         binder.bind(AjaxResponseRenderer.class, AjaxResponseRendererImpl.class);
+        binder.bind(AlertManager.class, AlertManagerImpl.class);
     }
 
     // ========================================================================

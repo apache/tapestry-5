@@ -17,7 +17,7 @@
  * Defines the SPI (service provider interface). This represents an abstract
  * layer between Tapestry's JavaScript and an underlying framework (such as
  * Prototype and JQuery).
- * 
+ *
  * <p>
  * The SPI defines placeholders for functions whose implementations are provided
  * elsehwere. In some cases, an SPI may define a function in terms of other SPI
@@ -26,14 +26,43 @@
  */
 T5.define("spi", {
 
-	/**
-	 * Peforms an ajax request, as per T5.ajax.request(). Supplied by the SPI
-	 * implementation.
-	 * 
-	 * @param url
-	 *            URL for Ajax request
-	 * @param options
-	 *            additional options defined by T5.ajax.request().
-	 */
-	ajaxRequest : undefined
+    /**
+     * Observes a DOM event.
+     *
+     *  @param element DOM element or element id
+     *  @param event name of event to observe
+     *  @param listener function to be invoked; the function is passed the DOM event object
+     *  @return cancel function to stop observing the event with the listener
+     */
+    observe : undefined,
+
+    /**
+     * Find the first child element matching a CSS selector.
+     *
+     * @param element DOM element or element id
+     * @param selector CSS selector to locate
+     */
+    find : undefined,
+
+    /** Hides an element making it invisible.
+     * @param element DOM element or element id
+     */
+    hide : undefined,
+
+    /** Reveals an element, making it visible again.
+     *
+     * @param element DOM element or element id
+     */
+    show : undefined,
+
+    /**
+     * Performs an ajax request, as per T5.ajax.request(). Supplied by the SPI
+     * implementation.
+     *
+     * @param url
+     *            URL for Ajax request
+     * @param options
+     *            additional options defined by T5.ajax.request().
+     */
+    ajaxRequest : undefined
 });
