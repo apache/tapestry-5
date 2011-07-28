@@ -5,7 +5,7 @@ DIV.t-error {
     margin: 4px 0px;
 }
 
-DIV.t-error DIV {
+DIV.t-error DIV.t-banner {
     padding: 2px;
     display: block;
     margin: 0px;

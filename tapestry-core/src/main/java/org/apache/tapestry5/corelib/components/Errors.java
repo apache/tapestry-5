@@ -65,7 +65,7 @@ public class Errors
         writer.element("div", "class", className);
 
         // Inner div for the banner text
-        writer.element("div");
+        writer.element("div", "class", "t-banner");
         writer.write(banner);
         writer.end();
 
