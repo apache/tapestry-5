@@ -22,30 +22,33 @@ import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Have to start somewhere!
  */
-public class Index {
+public class Index
+{
     @Persist(PersistenceConstants.FLASH)
     private String alert;
 
-    public static class Item implements Comparable<Item> {
+    public static class Item implements Comparable<Item>
+    {
         public final String pageName;
         public final String label;
         public final String description;
 
-        public Item(String pageName, String label, String description) {
+        public Item(String pageName, String label, String description)
+        {
             this.pageName = pageName;
             this.label = label;
             this.description = description;
         }
 
-        public int compareTo(Item o) {
+        public int compareTo(Item o)
+        {
             return label.compareTo(o.label);
         }
     }
@@ -484,7 +487,8 @@ public class Index {
 
             );
 
-    static {
+    static
+    {
         Collections.sort(ITEMS);
     }
 
@@ -497,32 +501,55 @@ public class Index {
     @Inject
     private ComponentResources resources;
 
-    public List<Item> getItems() {
-        return ITEMS;
+    @Property
+    private String key;
+
+    @Property
+    private Map<String, List<Item>> alphaKeyItems;
+
+    void setupRender()
+    {
+        alphaKeyItems = new TreeMap<String, List<Item>>();
+
+        for (Item item : ITEMS)
+        {
+            InternalUtils.addToMapList(alphaKeyItems, item.label.substring(0, 1), item);
+        }
     }
 
-    Object onActionFromSecurePage() {
+    public List<Item> itemsForKey()
+    {
+        return alphaKeyItems.get(key);
+    }
+
+    Object onActionFromSecurePage()
+    {
         return securePage.initialize("Triggered from Index");
     }
 
-    public Link getInjectDemoLink() {
+    public Link getInjectDemoLink()
+    {
         return resources.createPageLink(InjectDemo.class, false);
     }
 
-    public List getDemoContext() {
+    public List getDemoContext()
+    {
         return Arrays.asList(1, 2, 3);
     }
 
     /* This will fail, because component classes are not instantiable. */
-    public Object onActionFromInstantiatePage() {
+    public Object onActionFromInstantiatePage()
+    {
         return new Music();
     }
 
-    public void setAlert(String alert) {
+    public void setAlert(String alert)
+    {
         this.alert = alert;
     }
 
-    public String getAlert() {
+    public String getAlert()
+    {
         return alert;
     }
 }
