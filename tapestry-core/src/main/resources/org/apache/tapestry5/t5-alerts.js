@@ -87,10 +87,13 @@ T5.extendInitializers(function() {
                     // TODO: Switch this to T5.ajax.sendRequest when implemented/available
 
                     // Send a request, we don't care about the response.
-                    Tapestry.ajaxRequest(spec.dismissURL,
-                        { parameters: {
-                            id : alertSpec.id
-                        }});
+
+                    if (alertSpec.id) {
+                        Tapestry.ajaxRequest(spec.dismissURL,
+                            { parameters: {
+                                id : alertSpec.id
+                            }});
+                    }
                 });
 
             });
