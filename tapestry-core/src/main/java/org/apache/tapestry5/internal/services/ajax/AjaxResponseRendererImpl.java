@@ -57,10 +57,9 @@ public class AjaxResponseRendererImpl implements AjaxResponseRenderer
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {
-                // We set things up so that the support object is invoked pretty late.
-                renderer.renderMarkup(writer, reply);
-
                 callback.run(javaScriptSupport);
+
+                renderer.renderMarkup(writer, reply);
             }
         });
     }
