@@ -1,0 +1,7 @@
+<t:layout xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd" xmlns:tx="tapestry-library:tapx">
+
+    <p id="message">${message}</p>
+
+    <form t:id="form"/>
+
+</t:layout>

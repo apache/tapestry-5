@@ -1,0 +1,14 @@
+<div xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+
+    <t:block id="kaptcha">
+        <t:label for="kaptchaField"/>
+
+        <img t:id="kaptchaImage"/>
+
+        <div class="t-kaptcha-field">
+            <input t:id="kaptchaField"/>
+        </div>
+
+    </t:block>
+
+</div>

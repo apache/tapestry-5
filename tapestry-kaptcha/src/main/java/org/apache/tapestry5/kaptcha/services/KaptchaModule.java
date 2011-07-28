@@ -14,19 +14,23 @@
 
 package org.apache.tapestry5.kaptcha.services;
 
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Value;
+import org.apache.tapestry5.ioc.services.ThreadLocale;
+import org.apache.tapestry5.kaptcha.internal.services.KaptchaDataTypeAnalyzer;
 import org.apache.tapestry5.kaptcha.internal.services.KaptchaProducerImpl;
-import org.apache.tapestry5.services.ComponentClassResolver;
-import org.apache.tapestry5.services.LibraryMapping;
+import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 
 /**
- *  Defines core services for Kaptcha support.
+ * Defines core services for Kaptcha support.
  *
  * @since 5.3
  */
@@ -50,5 +54,46 @@ public class KaptchaModule
             Resource coreCatalog)
     {
         configuration.add("TapestryKaptcha", coreCatalog, "before:AppCatalog");
+    }
+
+    public static void contributeDataTypeAnalyzer(OrderedConfiguration<DataTypeAnalyzer> configuration)
+    {
+        configuration.add("Kaptcha", new KaptchaDataTypeAnalyzer(), "after:Annotation");
+    }
+
+    @Contribute(BeanBlockSource.class)
+    public static void provideDefaultBeanBlocks(Configuration<BeanBlockContribution> configuration)
+    {
+        configuration.add(new EditBlockContribution("kaptcha", "KaptchaEditBlocks", "kaptcha"));
+
+    }
+
+    @Contribute(MarkupRenderer.class)
+    public void provideMarkupRenderer(
+            OrderedConfiguration<MarkupRendererFilter> configuration,
+
+            final AssetSource assetSource,
+
+            final ThreadLocale threadLocale,
+
+            final Environment environment)
+    {
+        MarkupRendererFilter importKaptchaCss = new MarkupRendererFilter()
+        {
+            public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
+            {
+                JavaScriptSupport javaScriptSupport = environment.peek(JavaScriptSupport.class);
+
+                Asset css = assetSource.getAsset(null, "org/apache/tapestry5/kaptcha/kaptcha.css",
+                        threadLocale.getLocale());
+
+                javaScriptSupport.importStylesheet(css);
+
+                renderer.renderMarkup(writer);
+            }
+        };
+
+
+        configuration.add("KaptchaAssets", importKaptchaCss, "after:*");
     }
 }

@@ -38,4 +38,26 @@ public class KaptchaIntegrationTest extends SeleniumTestCase
         assertTextPresent("Kaptcha passed.");
 
     }
+
+
+    @Test
+    public void bean_editor()
+    {
+        open("/kaptchabeaneditformdemo");
+
+        type("kaptcha", "invalid input");
+
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("You must provide a value for Name", "You must provide a value for Password", "Enter the text displayed in the image.");
+
+        type("name", "admin");
+        type("password", "secret");
+        type("kaptcha", "i8cookies");
+
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("Kaptcha passed.");
+
+    }
 }
