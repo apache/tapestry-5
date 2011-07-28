@@ -1,9 +1,29 @@
 <html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
-    <h1>Alerts Demo</h1>
+<h1>Alerts Demo</h1>
 
 <h2>Traditional Form</h2>
 
-    <t:beaneditform t:id="traditional" object="this"/>
+<div id="traditional">
+
+    <t:beaneditform t:id="traditional" object="this" submitLabel="Traditional Update"/>
+</div>
+
+<h2>Ajax Form</h2>
+
+<div id="ajax">
+
+    <t:zone t:id="formZone">
+
+        <t:beaneditform t:id="ajax" object="this" zone="^" submitLabel="Ajax Update"/>
+
+    </t:zone>
+</div>
+
+<p>
+    [
+    <t:actionlink t:id="reset">reset</t:actionlink>
+    ]
+</p>
 
 </html>
