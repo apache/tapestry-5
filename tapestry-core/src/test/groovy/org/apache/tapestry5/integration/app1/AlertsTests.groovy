@@ -41,5 +41,13 @@ class AlertsTests extends SeleniumTestCase
         clickAndWait "link=Back to index"
 
         assertTextPresent "trad warn until"
+
+        // Click the first and only dismiss icon
+
+        click "css=.t-dismiss"
+
+        // Check that the alert container is now empty
+
+        assertText "css=.t-alert-container", ""
     }
 }
