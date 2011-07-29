@@ -75,7 +75,9 @@ T5.extendInitializers(function() {
                     }
                 }
 
-                if (alertSpec.transient) {
+                // transient is a reserved word in JavaScript, which cause YUICompressor
+                // to fail.
+                if (alertSpec['transient']) {
                     setTimeout(removeAlert, T5.alerts.TRANSIENT_DELAY);
                 }
 
