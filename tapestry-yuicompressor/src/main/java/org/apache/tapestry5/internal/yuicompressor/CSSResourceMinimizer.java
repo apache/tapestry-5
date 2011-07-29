@@ -14,18 +14,18 @@
 
 package org.apache.tapestry5.internal.yuicompressor;
 
+import com.yahoo.platform.yui.compressor.CssCompressor;
+import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.services.assets.StreamableResource;
+import org.slf4j.Logger;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 
-import org.apache.tapestry5.ioc.OperationTracker;
-import org.slf4j.Logger;
-
-import com.yahoo.platform.yui.compressor.CssCompressor;
-
 /**
  * Uses {@link CssCompressor} to reduce the size of CSS content.
- * 
+ *
  * @since 5.3
  */
 public class CSSResourceMinimizer extends AbstractMinimizer
@@ -36,9 +36,17 @@ public class CSSResourceMinimizer extends AbstractMinimizer
     }
 
     @Override
-    protected void doMinimize(Reader input, Writer output) throws IOException
+    protected void doMinimize(StreamableResource input, Writer output) throws IOException
     {
-        new CssCompressor(input).compress(output, -1);
+        Reader reader = toReader(input);
+
+        try
+        {
+            new CssCompressor(reader).compress(output, -1);
+        } finally
+        {
+            reader.close();
+        }
     }
 
 }

@@ -14,31 +14,48 @@
 
 package org.apache.tapestry5.internal.yuicompressor;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-
+import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.services.assets.StreamableResource;
 import org.mozilla.javascript.ErrorReporter;
 import org.mozilla.javascript.EvaluatorException;
 import org.slf4j.Logger;
 
-import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.Set;
 
 /**
  * JavaScript resource minimizer based on the YUI {@link JavaScriptCompressor}.
- * 
+ *
  * @since 5.3
  */
 public class JavaScriptResourceMinimizer extends AbstractMinimizer
 {
-    private final ErrorReporter errorReporter;
+    private final Logger logger;
+
+    private final static int RANGE = 5;
+
+    private enum Where
+    {
+        EXACT, NEAR, FAR
+    }
 
     public JavaScriptResourceMinimizer(final Logger logger, OperationTracker tracker)
     {
         super(logger, tracker, "JavaScript");
 
-        errorReporter = new ErrorReporter()
+        this.logger = logger;
+    }
+
+    protected void doMinimize(StreamableResource resource, Writer output) throws IOException
+    {
+        final Set<Integer> errorLines = CollectionFactory.newSet();
+
+        ErrorReporter errorReporter = new ErrorReporter()
         {
             private String format(String message, int line, int lineOffset)
             {
@@ -50,11 +67,13 @@ public class JavaScriptResourceMinimizer extends AbstractMinimizer
 
             public void warning(String message, String sourceName, int line, String lineSource, int lineOffset)
             {
+                errorLines.add(line);
+
                 logger.warn(format(message, line, lineOffset));
             }
 
             public EvaluatorException runtimeError(String message, String sourceName, int line, String lineSource,
-                    int lineOffset)
+                                                   int lineOffset)
             {
                 error(message, sourceName, line, lineSource, lineOffset);
 
@@ -63,16 +82,92 @@ public class JavaScriptResourceMinimizer extends AbstractMinimizer
 
             public void error(String message, String sourceName, int line, String lineSource, int lineOffset)
             {
+                errorLines.add(line);
+
                 logger.error(format(message, line, lineOffset));
             }
+
         };
+
+
+        Reader reader = toReader(resource);
+
+        try
+        {
+            JavaScriptCompressor compressor = new JavaScriptCompressor(reader, errorReporter);
+            compressor.compress(output, -1, true, false, false, false);
+        } catch (EvaluatorException ex)
+        {
+            logInputLines(resource, errorLines);
+
+            throw ex;
+        }
+
+        reader.close();
+    }
+
+    private void logInputLines(StreamableResource resource, Set<Integer> lines)
+    {
+        int last = -1;
+
+        try
+        {
+            LineNumberReader lnr = new LineNumberReader(toReader(resource));
+
+            while (true)
+            {
+                String line = lnr.readLine();
+
+                if (line == null) break;
+
+                int lineNumber = lnr.getLineNumber();
+
+                Where where = where(lineNumber, lines);
+
+                if (where == Where.FAR)
+                {
+                    continue;
+                }
+
+                // Add a blank line to separate non-consecutive parts of the content.
+                if (last > 0 && last + 1 != lineNumber)
+                {
+                    logger.error("");
+                }
+
+                String formatted = String.format("%s%6d %s",
+                        where == Where.EXACT ? "*" : " ",
+                        lineNumber,
+                        line);
+
+                logger.error(formatted);
+
+                last = lineNumber;
+            }
+
+            lnr.close();
+
+        } catch (IOException ex)
+        { // Ignore.
+        }
 
     }
 
-    protected void doMinimize(Reader input, Writer output) throws IOException
+    private Where where(int lineNumber, Set<Integer> lines)
     {
-        JavaScriptCompressor compressor = new JavaScriptCompressor(input, errorReporter);
+        if (lines.contains(lineNumber))
+        {
+            return Where.EXACT;
+        }
 
-        compressor.compress(output, -1, true, false, false, false);
+        for (int line : lines)
+        {
+            if (Math.abs(lineNumber - line) < RANGE)
+            {
+                return Where.NEAR;
+            }
+        }
+
+        return Where.FAR;
     }
 }

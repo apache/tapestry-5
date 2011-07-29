@@ -14,14 +14,6 @@
 
 package org.apache.tapestry5.internal.yuicompressor;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
-
 import org.apache.tapestry5.internal.IOOperation;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.assets.BytestreamCache;
@@ -34,9 +26,12 @@ import org.apache.tapestry5.services.assets.StreamableResource;
 import org.mozilla.javascript.EvaluatorException;
 import org.slf4j.Logger;
 
+import javax.management.RuntimeErrorException;
+import java.io.*;
+
 /**
  * Base class for resource minimizers.
- * 
+ *
  * @since 5.3
  */
 public abstract class AbstractMinimizer implements ResourceMinimizer
@@ -56,13 +51,9 @@ public abstract class AbstractMinimizer implements ResourceMinimizer
         this.resourceType = resourceType;
     }
 
-    public StreamableResource minimize(StreamableResource input) throws IOException
+    public StreamableResource minimize(final StreamableResource input) throws IOException
     {
         long startNanos = System.nanoTime();
-
-        InputStream inputStream = input.openStream();
-
-        final Reader reader = toReader(inputStream);
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream(1000);
 
@@ -74,17 +65,16 @@ public abstract class AbstractMinimizer implements ResourceMinimizer
             {
                 try
                 {
-                    doMinimize(reader, writer);
-                }
-                catch (EvaluatorException ex)
+                    doMinimize(input, writer);
+                } catch (RuntimeErrorException ex)
                 {
                     throw new RuntimeException(String.format("Unable to minimize %s: %s", resourceType,
                             InternalUtils.toMessage(ex)), ex);
                 }
+
             }
         });
 
-        inputStream.close();
         writer.close();
 
         // The content is minimized, but can still be (GZip) compressed.
@@ -105,18 +95,18 @@ public abstract class AbstractMinimizer implements ResourceMinimizer
         return output;
     }
 
-    private Reader toReader(InputStream input) throws IOException
+    protected Reader toReader(StreamableResource input) throws IOException
     {
-        return new InputStreamReader(input, "UTF-8");
+        InputStream is = input.openStream();
+
+        return new InputStreamReader(is, "UTF-8");
     }
 
     /**
      * Implemented in subclasses to do the actual work.
-     * 
-     * @param input
-     *            content to minimize
-     * @param output
-     *            writer for minimized version of input
+     *
+     * @param resource content to minimize
+     * @param output   writer for minimized version of input
      */
-    protected abstract void doMinimize(Reader input, Writer output) throws IOException;
+    protected abstract void doMinimize(StreamableResource resource, Writer output) throws IOException;
 }
