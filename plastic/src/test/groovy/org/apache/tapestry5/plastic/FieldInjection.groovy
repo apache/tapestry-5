@@ -14,11 +14,14 @@
 
 package org.apache.tapestry5.plastic
 
+import java.util.logging.Logger
+import testannotations.KindaInject
 import testsubjects.StringPropertyHolder
 
 class FieldInjection extends AbstractPlasticSpecification
 {
-    def "injection of a reference value"() {
+    def "injection of a reference value"()
+    {
         String injected = "Value injected into the Empty class"
 
         def pc = mgr.getPlasticClass("testsubjects.Empty")
@@ -29,13 +32,14 @@ class FieldInjection extends AbstractPlasticSpecification
 
         def ins = pc.createInstantiator()
 
-        def o  = ins.newInstance()
+        def o = ins.newInstance()
 
         expect:
         o.stringValue.is(injected)
     }
 
-    def "computed injection"() {
+    def "computed injection"()
+    {
 
         def instanceType
 
@@ -57,7 +61,7 @@ class FieldInjection extends AbstractPlasticSpecification
         o.value.is(injected)
         instanceType.is(o.getClass())
 
-        ! instanceType.is(StringPropertyHolder.class) // it's a new class with the same name
+        !instanceType.is(StringPropertyHolder.class) // it's a new class with the same name
 
         when:
         o.value = "attempt to update"
@@ -66,7 +70,8 @@ class FieldInjection extends AbstractPlasticSpecification
         thrown(IllegalStateException)
     }
 
-    def "injection from instance context"() {
+    def "injection from instance context"()
+    {
 
         String injected = "InstanceContext value injected into the StringPropertyHolder class"
 
@@ -87,7 +92,8 @@ class FieldInjection extends AbstractPlasticSpecification
         thrown(IllegalStateException)
     }
 
-    def "injection of primitive value"() {
+    def "injection of primitive value"()
+    {
 
         def pc = mgr.getPlasticClass("testsubjects.Empty")
 
@@ -97,14 +103,15 @@ class FieldInjection extends AbstractPlasticSpecification
 
         def ins = pc.createInstantiator()
 
-        def o  = ins.newInstance()
+        def o = ins.newInstance()
 
         expect:
         o.pi == Math.PI
     }
 
 
-    def "injected field is read-only"() {
+    def "injected field is read-only"()
+    {
 
         def pc = mgr.getPlasticClass("testsubjects.InjectFieldSubject")
 
@@ -135,7 +142,8 @@ class FieldInjection extends AbstractPlasticSpecification
         thrown(IllegalStateException)
     }
 
-    def "injected field is read-only, even via handle"() {
+    def "injected field is read-only, even via handle"()
+    {
         def pc = mgr.getPlasticClass("testsubjects.InjectFieldSubject")
         def f = pc.allFields.first();
         def h = f.handle
@@ -156,7 +164,8 @@ class FieldInjection extends AbstractPlasticSpecification
         e.message == "Field value of class testsubjects.InjectFieldSubject is read-only."
     }
 
-    def "a field may only be injected once"() {
+    def "a field may only be injected once"()
+    {
         def pc = mgr.getPlasticClass("testsubjects.StringHolder")
         def f = pc.allFields.first();
 
@@ -172,4 +181,6 @@ class FieldInjection extends AbstractPlasticSpecification
 
         e.message == "Unable to inject a value into field value of class testsubjects.StringHolder, as it already has an injection."
     }
+
+
 }

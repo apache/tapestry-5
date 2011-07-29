@@ -14,9 +14,13 @@
 
 package org.apache.tapestry5.plastic
 
+import testannotations.KindaInject
+import testinterfaces.Logger
+
 class FieldConduitTests extends AbstractPlasticSpecification
 {
-    def "setting a field invokes the conduit"() {
+    def "setting a field invokes the conduit"()
+    {
 
         FieldConduit fc = Mock()
 
@@ -49,7 +53,8 @@ class FieldConduitTests extends AbstractPlasticSpecification
         o.@value == 0
     }
 
-    def "use of computed conduit"() {
+    def "use of computed conduit"()
+    {
         FieldConduit fc = Mock()
 
         def pc = mgr.getPlasticClass("testsubjects.IntFieldHolder")
@@ -67,7 +72,8 @@ class FieldConduitTests extends AbstractPlasticSpecification
         1 * fc.set(_, _, 456)
     }
 
-    def "field initializations are visible to the conduit"() {
+    def "field initializations are visible to the conduit"()
+    {
         FieldConduit fc = Mock()
 
         def pc = mgr.getPlasticClass("testsubjects.LongFieldHolder")
@@ -90,16 +96,17 @@ class FieldConduitTests extends AbstractPlasticSpecification
      * synthetic static methods (package private visibility).  This ensures that those methods are
      * also subject to field access transformations.
      */
-    def "inner class access methods are routed through field conduit"() {
+    def "inner class access methods are routed through field conduit"()
+    {
 
         FieldConduit fc = Mock()
 
         def mgr = PlasticManager.withContextClassLoader().delegate(
                 [
-                    transform: { PlasticClass pc ->
-                        pc.allFields.first().setConduit(fc)
-                    },
-                    configureInstantiator: { className, instantiator -> instantiator }
+                        transform: { PlasticClass pc ->
+                            pc.allFields.first().setConduit(fc)
+                        },
+                        configureInstantiator: { className, instantiator -> instantiator }
                 ] as PlasticManagerDelegate).packages(["testsubjects"]).create()
 
 
@@ -124,7 +131,8 @@ class FieldConduitTests extends AbstractPlasticSpecification
         1 * fc.get(o, _) >> "plastic"
     }
 
-    def "verify writebehind on normal field"() {
+    def "verify writebehind on normal field"()
+    {
         FieldConduit fc = Mock()
 
         def mgr = PlasticManager.withContextClassLoader().enable(TransformationOption.FIELD_WRITEBEHIND).create()
@@ -157,8 +165,9 @@ class FieldConduitTests extends AbstractPlasticSpecification
 
         o.m_value == 1097
     }
-    
-    def "verify writebehind on wide field"() {
+
+    def "verify writebehind on wide field"()
+    {
         FieldConduit fc = Mock()
 
         def mgr = PlasticManager.withContextClassLoader().enable(TransformationOption.FIELD_WRITEBEHIND).create()
@@ -191,4 +200,42 @@ class FieldConduitTests extends AbstractPlasticSpecification
 
         o.m_value == 987654321L
     }
+
+    def "ensure same field name and conduit is not a conflict between base class and sub class"()
+    {
+        def logger = Mock(Logger)
+
+        FieldConduit conduit = Mock(FieldConduit)
+        PlasticClassTransformer transformer = { PlasticClass pc ->
+            pc.getFieldsWithAnnotation(KindaInject.class).each({
+                PlasticField field -> field.setConduit(conduit)
+            })
+        } as PlasticClassTransformer
+
+        when:
+
+        def mgr = createMgr(transformer);
+        mgr.addPlasticClassListener({ PlasticClassEvent event ->
+
+            print(event.getDissasembledBytecode())
+
+        } as PlasticClassListener)
+
+        def o = mgr.getClassInstantiator("testsubjects.InjectSubClass").newInstance()
+
+        assert o.subClassLogger == logger
+
+        then:
+
+        1 * conduit.get(_, _) >> logger
+
+        when:
+
+        assert o.baseClassLogger == logger
+
+        then:
+
+        1 * conduit.get(_, _) >> logger
+    }
+
 }
