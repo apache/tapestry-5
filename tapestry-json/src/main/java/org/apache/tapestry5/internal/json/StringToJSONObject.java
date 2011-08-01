@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright  2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.internal.services.json;
+package org.apache.tapestry5.internal.json;
 
 import org.apache.tapestry5.ioc.services.Coercion;
-import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.json.JSONObject;
 
 /**
  * @since 5.3
  */
-public class StringToJSONArray implements Coercion<String,JSONArray> {
-    public JSONArray coerce(String input) {
-        return new JSONArray(input);
+public class StringToJSONObject  implements Coercion<String,JSONObject> {
+    public JSONObject coerce(String input) {
+        return new JSONObject(input);
     }
 }

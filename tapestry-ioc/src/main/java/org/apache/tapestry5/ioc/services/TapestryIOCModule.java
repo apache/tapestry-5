@@ -23,8 +23,6 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.cron.PeriodicExecutor;
 import org.apache.tapestry5.ioc.util.TimeInterval;
-import org.apache.tapestry5.json.JSONArray;
-import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.UpdateListenerHub;
 
 import java.io.File;
@@ -179,8 +177,6 @@ public final class TapestryIOCModule
      * <li>Collection to Object[] (via the toArray() method)
      * <li>{@link Flow} to List</li>
      * <li>{@link Flow} to Boolean (false if empty)</li>
-     * <li>{@link String} to {@link JSONObject}</li>
-     * <li>{@link String} to {@link JSONArray}</li>
      * </ul>
      */
     @Contribute(TypeCoercer.class)
@@ -428,21 +424,6 @@ public final class TapestryIOCModule
             }
         });
 
-        add(configuration, String.class, JSONArray.class, new Coercion<String, JSONArray>()
-        {
-            public JSONArray coerce(String input)
-            {
-                return new JSONArray(input);
-            }
-        });
-
-        add(configuration, String.class, JSONObject.class, new Coercion<String, JSONObject>()
-        {
-            public JSONObject coerce(String input)
-            {
-                return new JSONObject(input);
-            }
-        });
     }
 
     private static <S, T> void add(Configuration<CoercionTuple> configuration, Class<S> sourceType,

@@ -48,8 +48,6 @@ import org.apache.tapestry5.internal.services.javascript.CoreJavaScriptStack;
 import org.apache.tapestry5.internal.services.javascript.DateFieldStack;
 import org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathConstructor;
 import org.apache.tapestry5.internal.services.javascript.JavaScriptStackSourceImpl;
-import org.apache.tapestry5.internal.services.json.StringToJSONArray;
-import org.apache.tapestry5.internal.services.json.StringToJSONObject;
 import org.apache.tapestry5.internal.services.linktransform.LinkTransformerImpl;
 import org.apache.tapestry5.internal.services.linktransform.LinkTransformerInterceptor;
 import org.apache.tapestry5.internal.services.messages.PropertiesFileParserImpl;
@@ -971,8 +969,6 @@ public final class TapestryModule
      * <li>{@link InjectionProvider} to {@link InjectionProvider2}</li>
      * <li>{@link Resource} to {@link DynamicTemplate}</li>
      * <li>{@link Asset} to {@link Resource}</li>
-     * <li>String to {@link JSONObject}</li>
-     * <li>String to {@link JSONArray}</li>
      * <li>{@link ValueEncoder} to {@link ValueEncoderFactory}</li>
      * </ul>
      */
@@ -1149,10 +1145,6 @@ public final class TapestryModule
         configuration.add(CoercionTuple.create(String.class, ClientValidation.class, stringToClientValidationCoercion));
 
         configuration.add(CCTWToCCTW2Coercion.TUPLE);
-
-        configuration.add(CoercionTuple.create(String.class, JSONObject.class, new StringToJSONObject()));
-
-        configuration.add(CoercionTuple.create(String.class, JSONArray.class, new StringToJSONArray()));
 
         configuration.add(CoercionTuple.create(ValueEncoder.class, ValueEncoderFactory.class, new Coercion<ValueEncoder, ValueEncoderFactory>()
         {
