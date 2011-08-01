@@ -81,12 +81,17 @@ public class Alerts implements ClientElement
 
     Object onDismiss(@RequestParameter(value = "id", allowBlank = true) Long alertId)
     {
-        if (alertId != null)
+        // If the alert was created inside an Ajax request and AlertStorage did not previously
+        // exist, it can be null when the dismiss event comes up from the client.
+        if (storage != null)
         {
-            storage.dismiss(alertId);
-        } else
-        {
-            storage.dismissAll();
+            if (alertId != null)
+            {
+                storage.dismiss(alertId);
+            } else
+            {
+                storage.dismissAll();
+            }
         }
 
         return new JSONObject();
