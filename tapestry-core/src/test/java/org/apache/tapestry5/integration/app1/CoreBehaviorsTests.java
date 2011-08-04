@@ -651,6 +651,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         clickAndWait("link=bad");
         assertTextPresent(
                 "An unexpected application exception has occurred.",
+                "Handling result from method org.apache.tapestry5.integration.app1.pages.ReturnTypes.onActionFromBadReturnValue().",
                 "A component event handler method returned the value 20. Return type java.lang.Integer can not be handled.",
                 "context:ReturnTypes.tml, line 50");
         goBack();

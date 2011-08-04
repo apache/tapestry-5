@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentEventCallback;
 import org.apache.tapestry5.TapestryMarkers;
+import org.apache.tapestry5.ioc.Invokable;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.runtime.Event;
 import org.slf4j.Logger;
 
@@ -32,12 +34,16 @@ public class EventImpl implements Event
 
     private final boolean debugEnabled;
 
+    protected final OperationTracker tracker;
+
     /**
      * @param handler informed of return values from methods, deems when the event is aborted
      * @param logger  used to log method invocations
+     * @param tracker
      */
-    public EventImpl(ComponentEventCallback handler, Logger logger)
+    public EventImpl(ComponentEventCallback handler, Logger logger, OperationTracker tracker)
     {
+        this.tracker = tracker;
         assert handler != null;
         this.handler = handler;
         this.logger = logger;
@@ -60,7 +66,7 @@ public class EventImpl implements Event
     }
 
     @SuppressWarnings("unchecked")
-    public boolean storeResult(Object result)
+    public boolean storeResult(final Object result)
     {
         // Given that this method is *only* invoked from code
         // that is generated at runtime and proven to be correct,
@@ -68,11 +74,24 @@ public class EventImpl implements Event
         // let's check anyway.
 
         if (aborted)
+        {
             throw new IllegalStateException(ServicesMessages.componentEventIsAborted(methodDescription));
+        }
 
 
         if (result != null)
-            aborted |= handler.handleResult(result);
+        {
+            boolean handleResult =
+                    tracker.invoke(String.format("Handling result from method %s.", methodDescription), new Invokable<Boolean>()
+                    {
+                        public Boolean invoke()
+                        {
+                            return handler.handleResult(result);
+                        }
+                    });
+
+            aborted |= handleResult;
+        }
 
         return aborted;
     }

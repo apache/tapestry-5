@@ -433,7 +433,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         public void render(MarkupWriter writer, RenderQueue queue)
         {
-            rendering.set(false);
+            renderingValue.set(false);
 
             Element current = writer.getElement();
 
@@ -499,9 +499,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     private final Page page;
 
-    private final PerThreadValue<RenderPhaseEvent> renderEvent;
+    private final PerThreadValue<RenderPhaseEvent> renderPhaseEventValue;
 
-    private final PerThreadValue<Boolean> rendering;
+    private final PerThreadValue<Boolean> renderingValue;
 
     // should be okay since it's a shadow service object
     private final Request request;
@@ -562,8 +562,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         eventLogger = elementResources.getEventLogger(coreResources.getLogger());
 
-        renderEvent = elementResources.createPerThreadValue();
-        rendering = elementResources.createPerThreadValue();
+        renderPhaseEventValue = elementResources.createPerThreadValue();
+        renderingValue = elementResources.createPerThreadValue();
 
         page.addLifecycleListener(new PageLifecycleAdapter()
         {
@@ -975,7 +975,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     public boolean isRendering()
     {
-        return rendering.get(false);
+        return renderingValue.get(false);
     }
 
     /**
@@ -996,7 +996,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         // TODO: Check for recursive rendering.
 
-        rendering.set(true);
+        renderingValue.set(true);
 
         queue.startComponent(coreResources);
 
@@ -1263,7 +1263,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     protected RenderPhaseEvent createRenderEvent(RenderQueue queue)
     {
-        RenderPhaseEvent result = renderEvent.get();
+        RenderPhaseEvent result = renderPhaseEventValue.get();
 
         if (result != null)
             return result;
@@ -1272,9 +1272,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         // This assumes that the queue will not change during the current request,
         // which should be valid.
 
-        result = new RenderPhaseEvent(new RenderPhaseEventHandler(queue), eventLogger);
+        result = new RenderPhaseEvent(new RenderPhaseEventHandler(queue), eventLogger, elementResources);
 
-        renderEvent.set(result);
+        renderPhaseEventValue.set(result);
 
         return result;
     }

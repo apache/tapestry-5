@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,15 +15,16 @@
 package org.apache.tapestry5.internal.structure;
 
 import org.apache.tapestry5.internal.services.EventImpl;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.slf4j.Logger;
 
 public class RenderPhaseEvent extends EventImpl
 {
     private final RenderPhaseEventHandler handler;
 
-    public RenderPhaseEvent(RenderPhaseEventHandler handler, Logger logger)
+    public RenderPhaseEvent(RenderPhaseEventHandler handler, Logger logger, OperationTracker tracker)
     {
-        super(handler, logger);
+        super(handler, logger, tracker);
 
         this.handler = handler;
 

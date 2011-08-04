@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,30 +19,34 @@ import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.TapestryMarkers;
 import org.apache.tapestry5.internal.structure.ComponentPageElementResources;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.runtime.ComponentEvent;
 import org.easymock.EasyMock;
+import org.easymock.IAnswer;
+import org.slf4j.Logger;
+import org.testng.annotations.Test;
+
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.isA;
-import org.slf4j.Logger;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
 
 public class ComponentEventImplTest extends InternalBaseTestCase
 {
-    private TypeCoercer coercer;
 
-    @BeforeClass
-    public void setup_coercer()
+    private ComponentPageElementResources mockResources()
     {
-        coercer = getObject(TypeCoercer.class, null);
-    }
+        ComponentPageElementResources resources = newMock(ComponentPageElementResources.class);
 
-    @AfterClass
-    public void cleanup_coercer()
-    {
-        coercer = null;
+        expect(resources.invoke(EasyMock.isA(String.class), EasyMock.isA(Invokable.class))).andAnswer(new IAnswer<Object>()
+        {
+            public Object answer() throws Throwable
+            {
+                Invokable inv = (Invokable) EasyMock.getCurrentArguments()[1];
+
+                return inv.invoke();
+            }
+        });
+
+        return resources;
     }
 
     @Test
@@ -66,7 +70,9 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         verify();
     }
 
-    /** @since 5.2.0 */
+    /**
+     * @since 5.2.0
+     */
     @Test
     public void no_match_one_event_is_aborted()
     {
@@ -74,6 +80,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         EventContext context = mockEventContext();
         Logger logger = mockLogger();
         Object result = new Object();
+        ComponentPageElementResources resources = mockResources();
 
         train_isDebugEnabled(logger, false);
 
@@ -81,7 +88,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null, logger);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, resources, logger);
 
         event.storeResult(result);
 
@@ -199,8 +206,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         try
         {
             event.coerceContext(1, "java.lang.Integer");
-        }
-        catch (IllegalArgumentException ex)
+        } catch (IllegalArgumentException ex)
         {
             assertEquals(ex.getMessage(),
                     "Method foo.Bar.baz() has more parameters than there are context values for this component event.");
@@ -236,8 +242,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         {
             event.coerceContext(0, "java.lang.Integer");
             unreachable();
-        }
-        catch (IllegalArgumentException ex)
+        } catch (IllegalArgumentException ex)
         {
             // Different JVMs will report the conversion error slightly differently,
             // so we don't try to check that part of the error message.
@@ -258,6 +263,8 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         train_isDebugEnabled(logger, true);
         EasyMock.expectLastCall().atLeastOnce();
 
+        ComponentPageElementResources resources = mockResources();
+
         logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class));
 
         ComponentEventCallback handler = mockComponentEventHandler();
@@ -266,7 +273,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, null, logger);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, resources, logger);
 
         event.setMethodDescription(methodDescription);
 
@@ -286,6 +293,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         String methodDescription = "foo.Bar.baz()";
         ComponentEventCallback handler = mockComponentEventHandler();
         Logger logger = mockLogger();
+        ComponentPageElementResources resources = mockResources();
 
         train_isDebugEnabled(logger, true);
         logger.debug(eq(TapestryMarkers.EVENT_HANDLER_METHOD), isA(String.class));
@@ -294,7 +302,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, null, logger);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, resources, logger);
 
         event.setMethodDescription(methodDescription);
 
@@ -334,6 +342,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         Object result = new Object();
         ComponentEventCallback handler = mockComponentEventHandler();
         Logger logger = mockLogger();
+        ComponentPageElementResources resources = mockResources();
 
         train_isDebugEnabled(logger, true);
         EasyMock.expectLastCall().atLeastOnce();
@@ -346,7 +355,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, null, logger);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, resources, logger);
 
         event.setMethodDescription("foo.Bar.baz()");
         event.storeResult(result);
@@ -356,8 +365,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
             event.setMethodDescription("foo.Bar.biff()");
             event.storeResult(null);
             unreachable();
-        }
-        catch (IllegalStateException ex)
+        } catch (IllegalStateException ex)
         {
             assertEquals(ex.getMessage(), ServicesMessages.componentEventIsAborted("foo.Bar.biff()"));
         }
