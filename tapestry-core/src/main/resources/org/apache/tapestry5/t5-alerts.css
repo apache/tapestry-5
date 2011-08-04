@@ -7,6 +7,8 @@ DIV.t-alert-controls {
     cursor: pointer;
     background: #e8e8e8 url("silk/delete.png") no-repeat;
     border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
     margin-bottom: 5px;
     padding-left: 22px;
     padding-right: 5px;
@@ -17,9 +19,12 @@ DIV.t-alert-control A:hover {
 }
 
 DIV.t-alert-container DIV.t-error {
-    background: #f27674 url("silk/cancel.png") no-repeat !important;
+    background: red url("silk/cancel.png") no-repeat;
     font-weight: bold;
+    color: white;
     border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
     margin-bottom: 5px;
     padding-left: 22px;
 }
@@ -28,15 +33,20 @@ DIV.t-alert-container DIV.t-warn {
     background: #f4da5b url("silk/error.png") no-repeat;
     font-weight: bold;
     border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
     margin-bottom: 5px;
     padding-left: 22px;
 }
 
 DIV.t-alert-container DIV.t-info {
-    background: #8bd3e5 url("silk/information.png") no-repeat;
+    background: green url("silk/information.png") no-repeat;
     border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
     margin-bottom: 5px;
     padding-left: 22px;
+    color: white;
 }
 
 DIV.t-dismiss {
