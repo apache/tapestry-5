@@ -6,7 +6,7 @@ testngVersion = '5.14.9'
 easymockVersion = '3.0'
 servletAPIVersion = '2.4'
 
-version = '5.3-alpha-9'
+version = '5.3-alpha-10'
 
 doSign = !project.hasProperty('noSign') && project.hasProperty("signing.keyId")
 
