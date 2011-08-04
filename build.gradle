@@ -77,7 +77,10 @@ subprojects {
     }
   }
   
-
+  ideaModule {
+    scopes.PROVIDED.plus += configurations.provided
+  }
+  
   dependencies {
       groovy "org.codehaus.groovy:groovy-all:1.7.4"
       
@@ -208,7 +211,6 @@ task aggregateJavadoc(type: Javadoc, group: "Documentation") {
      }
    }
  }
-
 
 task clean(type: Delete) {
   delete buildDirName
