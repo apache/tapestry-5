@@ -142,7 +142,7 @@ public class InheritanceData
 
         while (cursor != null)
         {
-            result.addAll(methodNames);
+            result.addAll(cursor.methodNames);
             cursor = cursor.parent;
         }
 

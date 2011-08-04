@@ -366,6 +366,8 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
             return new PlasticClassImpl(classNode, this, def.inheritanceData, def.staticContext);
         }
 
+        // When the base class is Object, or otherwise not in a transformed package,
+        // then start with the empty
         return new PlasticClassImpl(classNode, this, emptyInheritanceData, emptyStaticContext);
     }
 
