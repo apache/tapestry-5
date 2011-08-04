@@ -3,10 +3,7 @@ package testsubjects;
 import testannotations.KindaInject;
 import testinterfaces.Logger;
 
-/**
- *
- */
-public class InjectSubClass extends InjectBaseClass
+public class InjectSubClass extends InjectMidClass
 {
     @KindaInject
     private Logger logger;
