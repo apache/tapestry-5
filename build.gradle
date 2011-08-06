@@ -6,10 +6,7 @@ testngVersion = '5.14.9'
 easymockVersion = '3.0'
 servletAPIVersion = '2.4'
 
-version = '5.3-SNAPSHOT'
-
-stagingUrl = "https://repository.apache.org/service/local/staging/deploy/maven2/"
-snapshotUrl = "https://repository.apache.org/service/local/snapshots/deploy/maven2/"
+version = '5.3-alpha-10'
 
 doSign = !project.hasProperty('noSign') && project.hasProperty("signing.keyId")
 
@@ -122,9 +119,10 @@ subprojects {
   
   // apacheDeployUserName and apacheDeployPassword should be specified in ~/.gradle/gradle.properties
   
-  deployUsernameProperty = isSnapshot() ? "snapshotDeployUserName" : "apacheDeployUserName"
-  deployPasswordProperty = isSnapshot() ? "snapshotDeployPassword" : "apacheDeployPassword"
+  deployUsernameProperty = "apacheDeployUserName"
+  deployPasswordProperty = "apacheDeployPassword"
   canDeploy = [deployUsernameProperty, deployPasswordProperty].every { project.hasProperty(it) }
+  
     
   uploadPublished  {
   
@@ -148,13 +146,9 @@ subprojects {
             }
           }          
 
-          repository(url: stagingUrl) {
-            authentication(userName: project.getProperty(deployUsernameProperty), password: project.getProperty(deployPasswordProperty))
-          }
-		  
-		  snapshotRepository(url: snapshotUrl) {
-            authentication(userName: project.getProperty(deployUsernameProperty), password: project.getProperty(deployPasswordProperty))
-          }
+          repository(url: "https://repository.apache.org/service/local/staging/deploy/maven2/") {
+            authentication(userName: apacheDeployUserName, password: apacheDeployPassword)
+          }        
         }
       }
     }
@@ -222,7 +216,7 @@ task clean(type: Delete) {
   delete buildDirName
 }
 
-task continuousIntegration(dependsOn: [subprojects.build, 'aggregateJavadoc', subprojects.uploadPublished], 
+task continuousIntegration(dependsOn: [subprojects.build, 'aggregateJavadoc'], 
   description: "Task executed on Jenkins CI server after SVN commits")
 
 task generateRelease(dependsOn: ['continuousIntegration', subprojects.uploadPublished, 'zippedSources', 'zippedJavadoc'], 
@@ -262,8 +256,4 @@ task zippedJavadoc(type: Zip, dependsOn: aggregateJavadoc) {
   
   from javadocBuildDir.dir
   into "apidocs"
-}
-
-boolean isSnapshot() {
-  project.version.contains('SNAPSHOT')
 }
