@@ -24,6 +24,8 @@ T5.define("ajax", function() {
 	var $ = T5.$;
 	var spi = T5.spi;
 
+    function noop() { }
+
 	function defaultFailure(transport) {
 	}
 	
@@ -68,7 +70,7 @@ T5.define("ajax", function() {
 	return {
 		defaultFailure : defaultFailure,
 		defaultException : defaultException,
-		defaultSuccess : T5.func.empty,
+		defaultSuccess : noop,
 		request : request
 	};
 });

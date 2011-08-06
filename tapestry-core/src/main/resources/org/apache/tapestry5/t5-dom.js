@@ -36,7 +36,8 @@ T5.define("dom", function() {
      * and is returned.
      */
     function locate(element) {
-        if (typeof element == "string") {
+
+        if (_.isString(element)) {
             return document.getElementById(element);
         }
 
@@ -83,8 +84,7 @@ T5.define("dom", function() {
         purgeChildren(element);
 
         if (element.t5pubsub) {
-            // TODO: Execute this deferred?
-            T5.pubsub.cleanupRemovedElement(element);
+            _.defer(function() { T5.pubsub.cleanupRemovedElement(element) });
         }
 
         doRemoveEventHandlers(element);

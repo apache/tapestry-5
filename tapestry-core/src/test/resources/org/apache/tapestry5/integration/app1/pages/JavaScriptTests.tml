@@ -87,39 +87,6 @@
         </pre>
 </div>
 
-<div>
-    <p>Removing an element also removes publishers and subscribers for the element.</p>
-      <pre>
-        var pubs = []
-
-        var element = new Element("span").update("Published Message Source")
-
-        document.body.insert({bottom: element})
-
-        sub("bar", null, function() { pubs.push("general") })
-        sub("bar", element,
-        function() { pubs.push("specific") } )
-
-        pub("bar", element, {})
-
-        assertEqual(pubs, ["specific", "general"])
-
-        T5.dom.remove(element)
-
-        pubs = []
-
-        pub("bar", element, {})
-
-        assertEqual(pubs, ["general"])
-
-        pubs = []
-
-        pub("bar",
-        document.body, {})
-
-        assertEqual(pubs, ["general"])
-      </pre>
-</div>
 
 <div>
     <p>Publish/subscribe via client id rather than element.</p>
