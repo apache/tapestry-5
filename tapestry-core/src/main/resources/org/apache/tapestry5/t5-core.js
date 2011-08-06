@@ -35,12 +35,11 @@ var T5 = {
      * @returns the destination object
      */
     extend : function(destination, source) {
-        if (typeof source == "function") {
+        if (_.isFunction(source)) {
             source = source();
         }
 
-        // Prototype:
-        return Object.extend(destination, source);
+        return _.extend(destination, source);
     },
 
     /**
