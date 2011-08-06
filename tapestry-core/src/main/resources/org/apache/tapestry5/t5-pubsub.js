@@ -1,13 +1,5 @@
 T5.define("pubsub", function() {
 
-    var arrays = T5.arrays;
-    var first = arrays.first;
-    var without = arrays.without;
-    var filter = arrays.filter;
-    var remove = arrays.remove;
-    var map = arrays.map;
-    var each = arrays.each;
-
     // Element keys: topic, element, listenerfn
     // May be multiple elements with some topic/element pair
     // element property may be undefined
@@ -22,30 +14,29 @@ T5.define("pubsub", function() {
     }
 
     function purgePublisherCache(topic) {
-        each(function(publisher) {
+        _.each(publishers, function(publisher) {
             if (publisher.topic === topic) {
                 publisher.listeners = undefined;
             }
-        }, publishers);
+        });
     }
 
     function findListeners(topic, element) {
-        var gross = filter(function(subscriber) {
+        var gross = _.select(subscribers, function(subscriber) {
             return subscriber.topic === topic;
-        }, subscribers);
+        });
 
-        var primary = filter(function(subscriber) {
+        var primary = _.select(gross, function(subscriber) {
             return subscriber.element === element;
-        }, gross);
+        });
 
-        var secondary = filter(function(subscriber) {
+        var secondary = _.select(gross, function(subscriber) {
             // Match where the element is null or undefined
             return !subscriber.element;
-        }, gross);
+        });
 
         // Return the listenerfn property from each match.
-        return map(arrays.extractProperty("listenerfn"), primary
-            .concat(secondary));
+        return _(primary).chain().union(secondary).pluck("listenerfn").value();
     }
 
     /**
@@ -92,7 +83,7 @@ T5.define("pubsub", function() {
 
         // Return a function to unsubscribe
         return function() {
-            subscribers = without(subscriber, subscribers);
+            subscribers = _.without(subscribers, subscriber);
             purgePublisherCache(subscriber.topic);
         }
     }
@@ -142,9 +133,9 @@ T5.define("pubsub", function() {
             throw "Element may not be null when creating a publisher.";
         }
 
-        var existing = first(function(publisher) {
+        var existing = _.detect(publishers, function(publisher) {
             return publisher.topic === topic && publisher.element === element;
-        }, publishers);
+        });
 
         if (existing) {
             return existing.publisherfn;
@@ -218,14 +209,14 @@ T5.define("pubsub", function() {
      * any publishers or subscribers for the element.
      */
     function cleanup(element) {
-        subscribers = remove(function(subscriber) {
+        subscribers = _.reject(subscribers, function(subscriber) {
             return subscriber.element === element
-        }, subscribers);
+        });
 
         // A little evil to modify the publisher object at the same time it is
         // being removed.
 
-        publishers = remove(function(publisher) {
+        publishers = _.reject(publishers, function(publisher) {
             var match = publisher.element === element;
 
             if (match) {

@@ -10,5 +10,5 @@ Tapestry.onDOMLoaded(function() {
 
     }
 
-    T5.arrays.each(wire, ["debug", "info", "warn", "error"]);
+    _.each(["debug", "info", "warn", "error"], wire);
 });

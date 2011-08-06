@@ -53,6 +53,8 @@ public class CoreJavaScriptStack implements JavaScriptStack {
           {
                   // Core scripts added to any page that uses scripting
 
+                  "${tapestry.underscore}",
+
                   "${tapestry.scriptaculous}/prototype.js",
 
                   "${tapestry.scriptaculous}/scriptaculous.js",
@@ -72,8 +74,6 @@ public class CoreJavaScriptStack implements JavaScriptStack {
                   ROOT + "/t5-spi.js",
 
                   ROOT + "/t5-prototype.js",
-
-                  ROOT + "/t5-arrays.js",
 
                   ROOT + "/t5-init.js",
 
