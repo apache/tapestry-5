@@ -14,21 +14,26 @@
 
 package org.apache.tapestry5.internal.transform;
 
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.RequestParameter;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Flow;
+import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.*;
 import org.apache.tapestry5.runtime.ComponentEvent;
 import org.apache.tapestry5.runtime.Event;
+import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.ValueEncoderSource;
@@ -61,6 +66,53 @@ public class OnEventWorker implements ComponentClassTransformWorker2
             builder.loadConstant(true).returnResult();
         }
     };
+
+    class ComponentIdValidator
+    {
+        final String componentId;
+
+        final String methodIdentifier;
+
+        ComponentIdValidator(String componentId, String methodIdentifier)
+        {
+            this.componentId = componentId;
+            this.methodIdentifier = methodIdentifier;
+        }
+
+        void validate(ComponentResources resources)
+        {
+            try
+            {
+                resources.getEmbeddedComponent(componentId);
+            } catch (UnknownValueException ex)
+            {
+                throw new TapestryException(String.format("Method %s references component id '%s' which does not exist.",
+                        methodIdentifier, componentId), resources.getLocation(), ex);
+            }
+        }
+    }
+
+    class ValidateComponentIds implements MethodAdvice
+    {
+        final ComponentIdValidator[] validators;
+
+        ValidateComponentIds(ComponentIdValidator[] validators)
+        {
+            this.validators = validators;
+        }
+
+        public void advise(MethodInvocation invocation)
+        {
+            ComponentResources resources = invocation.getInstanceContext().get(ComponentResources.class);
+
+            for (ComponentIdValidator validator : validators)
+            {
+                validator.validate(resources);
+            }
+
+            invocation.proceed();
+        }
+    }
 
     /**
      * Encapsulates information needed to invoke a method as an event handler method, including the logic
@@ -251,11 +303,54 @@ public class OnEventWorker implements ComponentClassTransformWorker2
             return;
         }
 
-        implementDispatchComponentEvent(plasticClass, support.isRootTransformation(), methods, model);
+        addEventHandlingLogic(plasticClass, support.isRootTransformation(), methods, model);
     }
 
 
-    private void implementDispatchComponentEvent(final PlasticClass plasticClass, final boolean isRoot, final Flow<PlasticMethod> eventMethods, final MutableComponentModel model)
+    private void addEventHandlingLogic(final PlasticClass plasticClass, final boolean isRoot, final Flow<PlasticMethod> plasticMethods, final MutableComponentModel model)
+    {
+        Flow<EventHandlerMethod> eventHandlerMethods = plasticMethods.map(new Mapper<PlasticMethod, EventHandlerMethod>()
+        {
+            public EventHandlerMethod map(PlasticMethod element)
+            {
+                return new EventHandlerMethod(element);
+            }
+        });
+
+        implementDispatchMethod(plasticClass, isRoot, model, eventHandlerMethods);
+
+        addComponentIdValidationLogicOnPageLoad(plasticClass, eventHandlerMethods);
+    }
+
+    private void addComponentIdValidationLogicOnPageLoad(PlasticClass plasticClass, Flow<EventHandlerMethod> eventHandlerMethods)
+    {
+        ComponentIdValidator[] validators = extractComponentIdValidators(eventHandlerMethods);
+
+
+        if (validators.length > 0)
+        {
+            plasticClass.introduceInterface(PageLifecycleListener.class);
+            plasticClass.introduceMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_DESCRIPTION).addAdvice(new ValidateComponentIds(validators));
+        }
+    }
+
+    private ComponentIdValidator[] extractComponentIdValidators(Flow<EventHandlerMethod> eventHandlerMethods)
+    {
+        return eventHandlerMethods.map(new Mapper<EventHandlerMethod, ComponentIdValidator>()
+        {
+            public ComponentIdValidator map(EventHandlerMethod element)
+            {
+                if (element.componentId.equals(""))
+                {
+                    return null;
+                }
+
+                return new ComponentIdValidator(element.componentId, element.method.getMethodIdentifier());
+            }
+        }).removeNulls().toArray(ComponentIdValidator.class);
+    }
+
+    private void implementDispatchMethod(final PlasticClass plasticClass, final boolean isRoot, final MutableComponentModel model, final Flow<EventHandlerMethod> eventHandlerMethods)
     {
         plasticClass.introduceMethod(TransformConstants.DISPATCH_COMPONENT_EVENT_DESCRIPTION).changeImplementation(new InstructionBuilderCallback()
         {
@@ -281,13 +376,11 @@ public class OnEventWorker implements ComponentClassTransformWorker2
                             builder.loadConstant(false).storeVariable(resultVariable);
                         }
 
-                        for (PlasticMethod method : eventMethods)
+                        for (EventHandlerMethod method : eventHandlerMethods)
                         {
-                            EventHandlerMethod eventHandlerMethod = new EventHandlerMethod(method);
+                            method.buildMatchAndInvocation(builder, resultVariable);
 
-                            eventHandlerMethod.buildMatchAndInvocation(builder, resultVariable);
-
-                            model.addEventHandler(eventHandlerMethod.eventType);
+                            model.addEventHandler(method.eventType);
                         }
 
                         builder.loadVariable(resultVariable).returnResult();
