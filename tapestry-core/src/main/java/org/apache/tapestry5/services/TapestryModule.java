@@ -2371,6 +2371,8 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.PAGE_SOURCE_CHECK_INTERVAL, "5 m");
         configuration.add(SymbolConstants.PAGE_SOURCE_ACTIVE_WINDOW, "15 m");
+
+        configuration.add(SymbolConstants.UNKNOWN_COMPONENT_ID_CHECK_ENABLED, true);
     }
 
     /**

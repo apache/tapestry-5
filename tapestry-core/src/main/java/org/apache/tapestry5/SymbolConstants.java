@@ -48,6 +48,7 @@ public class SymbolConstants
      *
      * @deprecated In 5.3, to be removed (along with the support it implies) in 5.4
      */
+    @Deprecated
     public static final String SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS = "tapestry.suppress-redirect-from-action-requests";
 
     /**
@@ -324,4 +325,19 @@ public class SymbolConstants
      * @since 5.3
      */
     public static final String PAGE_SOURCE_ACTIVE_WINDOW = "tapestry.page-cache-active-window";
+
+    /**
+     * The fix for <a href="https://issues.apache.org/jira/browse/TAP5-1596">TAP5-1596</a> means that component ids referenced
+     * by event handler methods (either the nameing convention, or the {@link org.apache.tapestry5.annotations.OnEvent} annotation)
+     * can cause a page load error if there is no matching component in the component's template. Although this is correct behavior,
+     * it can make the upgrade from 5.2 to 5.3 difficult if an existing app had some "left over" event handler methods. Changing
+     * this symbol to {@code false} is a temporary approach to resolving this problem.
+     * <p>
+     * This symbol will be <em>ignored</em> in release 5.4 and removed in 5.5.
+     *
+     * @since 5.3
+     * @deprecated Deprecated in 5.3, a future release will always enforce that component ids referenced by event handler methods actually exist.
+     */
+    @Deprecated
+    public static final String UNKNOWN_COMPONENT_ID_CHECK_ENABLED = "tapestry.compatibility.unknown-component-id-check-enabled";
 }

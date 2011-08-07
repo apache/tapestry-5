@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.transform;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.OnEvent;
 import org.apache.tapestry5.annotations.RequestParameter;
@@ -25,6 +26,7 @@ import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
@@ -58,6 +60,8 @@ public class OnEventWorker implements ComponentClassTransformWorker2
     private final ComponentClassCache classCache;
 
     private final OperationTracker operationTracker;
+
+    private final boolean componentIdCheck;
 
     private final InstructionBuilderCallback RETURN_TRUE = new InstructionBuilderCallback()
     {
@@ -286,12 +290,16 @@ public class OnEventWorker implements ComponentClassTransformWorker2
         });
     }
 
-    public OnEventWorker(Request request, ValueEncoderSource valueEncoderSource, ComponentClassCache classCache, OperationTracker operationTracker)
+    public OnEventWorker(Request request, ValueEncoderSource valueEncoderSource, ComponentClassCache classCache, OperationTracker operationTracker,
+
+                         @Symbol(SymbolConstants.UNKNOWN_COMPONENT_ID_CHECK_ENABLED)
+                         boolean componentIdCheck)
     {
         this.request = request;
         this.valueEncoderSource = valueEncoderSource;
         this.classCache = classCache;
         this.operationTracker = operationTracker;
+        this.componentIdCheck = componentIdCheck;
     }
 
     public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
