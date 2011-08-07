@@ -17,7 +17,7 @@
                         <dt>
                             <span class="t-exception-stack-controls">
                                 <input type="checkbox" id="${toggleId}" checked="checked"/>
-                                <label for="${toggleId}">Hide uninteresting stack frames</label>
+                                <label for="${toggleId}">Filter stack frames</label>
                             </span>
                             Stack trace
                         </dt>
