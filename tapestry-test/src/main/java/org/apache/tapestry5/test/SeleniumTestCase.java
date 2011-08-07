@@ -180,7 +180,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         CommandProcessor httpCommandProcessor = new HttpCommandProcessor("localhost",
                 RemoteControlConfiguration.DEFAULT_PORT, browserStartCommand, baseURL);
 
-        ErrorReporter errorReporter = new ErrorReporterImpl(httpCommandProcessor, testContext);
+        final ErrorReporterImpl errorReporter = new ErrorReporterImpl(httpCommandProcessor, testContext);
 
         ErrorReportingCommandProcessor commandProcessor = new ErrorReportingCommandProcessor(httpCommandProcessor,
                 errorReporter);
@@ -203,6 +203,13 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
                     selenium.stop();
                     seleniumServer.stop();
                     stopWebServer.run();
+
+                    // Output, at the end of the Test, any html capture or screen shots (this makes it much easier
+                    // to locate them at the end of the run; there's such a variance on where they end up based
+                    // on whether the tests are running from inside an IDE or via one of the command line
+                    // builds.
+
+                    errorReporter.writeOutputPaths();
                 }
                 finally
                 {

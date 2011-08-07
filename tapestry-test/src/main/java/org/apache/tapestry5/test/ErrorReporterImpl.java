@@ -14,16 +14,17 @@
 
 package org.apache.tapestry5.test;
 
+import com.thoughtworks.selenium.CommandProcessor;
+import org.testng.ITestContext;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-
-import org.testng.ITestContext;
-
-import com.thoughtworks.selenium.CommandProcessor;
 
 public class ErrorReporterImpl implements ErrorReporter
 {
@@ -35,16 +36,40 @@ public class ErrorReporterImpl implements ErrorReporter
 
     private final Set<String> previousNames = new HashSet<String>();
 
+    private final List<File> outputPaths = new ArrayList<File>();
+
     public ErrorReporterImpl(CommandProcessor commandProcessor, ITestContext testContext)
     {
         this.commandProcessor = commandProcessor;
         this.testContext = testContext;
     }
 
+    public void writeOutputPaths()
+    {
+        if (outputPaths.isEmpty())
+        {
+            return;
+        }
+
+        System.err.println("Page captures written to:");
+
+        for (File file : outputPaths)
+        {
+            try
+            {
+                System.err.println("  " + file.getCanonicalPath());
+            } catch (IOException e)
+            {
+                // Ignored. Like, what's going to happen?
+            }
+        }
+
+    }
+
     public void writeErrorReport()
     {
         String htmlSource = commandProcessor.getString("getHtmlSource", new String[]
-        {});
+                {});
 
         File dir = new File(testContext.getOutputDirectory());
 
@@ -58,13 +83,12 @@ public class ErrorReporterImpl implements ErrorReporter
         if (previousNames.contains(baseFileName))
         {
             baseFileName += "-" + uid++;
-        }
-        else
+        } else
         {
             previousNames.add(baseFileName);
         }
 
-        File report = new File(dir, baseFileName + "-page-content.html");
+        File report = new File(dir, baseFileName + ".html");
 
         System.err.println("Writing current page's HTML source to: " + report);
 
@@ -74,19 +98,22 @@ public class ErrorReporterImpl implements ErrorReporter
 
             fw.write(htmlSource);
 
+            outputPaths.add(report);
+
             fw.close();
-        }
-        catch (IOException ex)
+        } catch (IOException ex)
         {
             // Ignore.
         }
 
-        File capture = new File(dir, baseFileName + "-screen-capture.png");
+        File capture = new File(dir, baseFileName + ".png");
 
         System.err.println("Writing current page screenshot to: " + capture);
 
         commandProcessor.doCommand("captureEntirePageScreenshot", new String[]
-        { capture.getAbsolutePath(), "background=white" });
+                {capture.getAbsolutePath(), "background=white"});
+
+        outputPaths.add(capture);
     }
 
 }
