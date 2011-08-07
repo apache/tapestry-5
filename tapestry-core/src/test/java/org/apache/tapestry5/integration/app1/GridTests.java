@@ -29,7 +29,7 @@ public class GridTests extends TapestryCoreTestCase
     @Test
     public void basic_grid()
     {
-        openLinks("Grid Demo");
+        openLinks("Grid Demo", "reset the Grid");
 
         // "Sort Rating" via the header cell override (TAPESTRY-2081)
 

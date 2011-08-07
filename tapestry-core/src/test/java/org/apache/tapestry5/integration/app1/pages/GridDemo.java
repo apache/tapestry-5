@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,8 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Grid;
 import org.apache.tapestry5.integration.app1.data.Track;
 import org.apache.tapestry5.integration.app1.services.MusicLibrary;
@@ -27,24 +28,20 @@ public class GridDemo
     @Inject
     private MusicLibrary library;
 
+    @Property
     private Track track;
 
-    @Component
+    @InjectComponent
     private Grid grid;
-
-    public Track getTrack()
-    {
-        return track;
-    }
-
-    public void setTrack(Track track)
-    {
-        this.track = track;
-    }
 
     public List<Track> getTracks()
     {
         return library.getTracks();
+    }
+
+    void onActionFromReset()
+    {
+        grid.reset();
     }
 
     void onActionFromSortRating()

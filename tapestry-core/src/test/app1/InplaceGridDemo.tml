@@ -7,7 +7,7 @@
         <span id="lastupdate">${date}</span>
     </p>
 
-    <table t:id="grid" source="tracks" row="track" inplace="true">
+    <table t:type="grid" t:id="grid" source="tracks" row="track" inplace="true">
         <t:parameter name="ratingheader">
             <t:actionlink t:id="sortRating">Sort Rating</t:actionlink>
         </t:parameter>
