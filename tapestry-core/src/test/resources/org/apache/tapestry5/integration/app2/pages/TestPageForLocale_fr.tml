@@ -1,3 +1,7 @@
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 <p id="id1">French page</p>
+<t:block>
+    <!-- This needs to be present in the template since there is an event handler method for it, even though it is not used in the French version of the page. -->
+    <p t:type="ActionLink" t:id="changeLocale" t:mixins="forceid">Change locale</p>
+</t:block>
 </html>
