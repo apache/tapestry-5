@@ -79,7 +79,7 @@ public interface ComponentResources extends ComponentResourcesCommon
      * 
      * @param embeddedId
      *            selects the embedded component (case is ignored)
-     * @throws IllegalArgumentException
+     * @throws org.apache.tapestry5.ioc.util.UnknownValueException
      *             if this component does not contain a component with the given id
      */
 
