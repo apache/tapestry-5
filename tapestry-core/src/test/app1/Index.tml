@@ -21,7 +21,8 @@
 
 
 <t:loop source="alphaKeyItems.keySet()" value="key">
-    <h3 name="ix_${key}">${key}</h3>
+    <h3>${key}</h3>
+    <a name="ix_${key}"/>
 
     <ul>
         <li t:type="loop" source="itemsForKey()" value="item">
