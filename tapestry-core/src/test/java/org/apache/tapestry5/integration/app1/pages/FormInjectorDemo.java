@@ -113,11 +113,6 @@ public class FormInjectorDemo
         sum += item.getValue();
     }
 
-    void onActionFromReset()
-    {
-        DB.clear();
-    }
-
     Object onPassivate()
     {
         return "FakePageActivationContextValue";
