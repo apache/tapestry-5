@@ -14,33 +14,20 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Member;
-import java.lang.reflect.Method;
-import java.util.List;
-
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
 import org.apache.tapestry5.internal.plastic.asm.Type;
-import org.apache.tapestry5.internal.plastic.asm.tree.AbstractInsnNode;
-import org.apache.tapestry5.internal.plastic.asm.tree.ClassNode;
-import org.apache.tapestry5.internal.plastic.asm.tree.InsnList;
-import org.apache.tapestry5.internal.plastic.asm.tree.LineNumberNode;
-import org.apache.tapestry5.internal.plastic.asm.tree.MethodNode;
+import org.apache.tapestry5.internal.plastic.asm.tree.*;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
-import org.apache.tapestry5.plastic.ClassInstantiator;
-import org.apache.tapestry5.plastic.InstructionBuilder;
-import org.apache.tapestry5.plastic.InstructionBuilderCallback;
-import org.apache.tapestry5.plastic.PlasticClass;
-import org.apache.tapestry5.plastic.PlasticClassListener;
-import org.apache.tapestry5.plastic.PlasticClassTransformation;
-import org.apache.tapestry5.plastic.PlasticClassTransformer;
-import org.apache.tapestry5.plastic.PlasticField;
-import org.apache.tapestry5.plastic.PlasticManager;
-import org.apache.tapestry5.plastic.PlasticMethod;
+import org.apache.tapestry5.plastic.*;
 import org.slf4j.Logger;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
+import java.util.List;
 
 public class PlasticProxyFactoryImpl implements PlasticProxyFactory
 {
@@ -145,13 +132,8 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
 
         String constructorDescription = builder.toString();
 
-        Location location = getMemberLocation(constructor, "<init>", Type.getConstructorDescriptor(constructor),
+        return getMemberLocation(constructor, "<init>", Type.getConstructorDescriptor(constructor),
                 constructorDescription);
-
-        if (location != null)
-            return location;
-
-        return new StringLocation(builder.toString(), 0);
     }
 
     public Location getMemberLocation(Member member, String methodName, String memberTypeDesc, String textDescription)
@@ -170,8 +152,13 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
             {
                 int lineNumber = findFirstLineNumber(mn.instructions);
 
+                // If debugging info is not available, we may lose the line number data, in which case,
+                // just generate the Location from the textDescription.
+
                 if (lineNumber < 1)
-                    return null;
+                {
+                    break;
+                }
 
                 String description = String.format("%s (at %s:%d)", textDescription, classNode.sourceFile, lineNumber);
 
@@ -181,14 +168,17 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
 
         // Didn't find it. Odd.
 
-        return null;
+        return new StringLocation(textDescription, 0);
     }
 
     private int findFirstLineNumber(InsnList instructions)
     {
         for (AbstractInsnNode node = instructions.getFirst(); node != null; node = node.getNext())
         {
-            if (node instanceof LineNumberNode) { return ((LineNumberNode) node).line; }
+            if (node instanceof LineNumberNode)
+            {
+                return ((LineNumberNode) node).line;
+            }
         }
 
         return -1;

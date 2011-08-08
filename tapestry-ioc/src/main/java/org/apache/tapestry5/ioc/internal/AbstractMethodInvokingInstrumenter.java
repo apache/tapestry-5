@@ -14,15 +14,10 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.Invokable;
-import org.apache.tapestry5.ioc.ModuleBuilderSource;
-import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.ioc.ServiceResources;
+import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InjectionResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.slf4j.Logger;
 
@@ -32,7 +27,7 @@ import java.util.Map;
 
 /**
  * Based class for service decorators and service advisors that work by invoking a module method.
- * 
+ *
  * @since 5.1.0.0
  */
 public class AbstractMethodInvokingInstrumenter
@@ -54,7 +49,7 @@ public class AbstractMethodInvokingInstrumenter
     private final Logger logger;
 
     public AbstractMethodInvokingInstrumenter(ModuleBuilderSource moduleSource, Method method,
-            ServiceResources resources, PlasticProxyFactory proxyFactory)
+                                              ServiceResources resources, PlasticProxyFactory proxyFactory)
     {
         this.moduleSource = moduleSource;
         this.method = method;
@@ -76,7 +71,9 @@ public class AbstractMethodInvokingInstrumenter
     @Override
     public String toString()
     {
-        return proxyFactory.getMethodLocation(method).toString();
+        Location location = proxyFactory.getMethodLocation(method);
+
+        return location.toString();
     }
 
     private Object getModuleInstance()
@@ -108,12 +105,10 @@ public class AbstractMethodInvokingInstrumenter
                             injectionResources, resources.getTracker());
 
                     result = method.invoke(getModuleInstance(), parameters);
-                }
-                catch (InvocationTargetException ite)
+                } catch (InvocationTargetException ite)
                 {
                     failure = ite.getTargetException();
-                }
-                catch (Exception ex)
+                } catch (Exception ex)
                 {
                     failure = ex;
                 }
