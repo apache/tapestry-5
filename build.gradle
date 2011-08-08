@@ -53,6 +53,12 @@ subprojects {
   
   sourceCompatibility = '1.5'
   targetCompatibility = '1.5'
+
+  // This may be temporary, to help track down/verify the ProQuest production deployment
+  // issue.
+  compileJava {
+    debug = false
+  }
       
   group = 'org.apache.tapestry'  
   
