@@ -31,6 +31,8 @@ class TreeTests extends SeleniumTestCase
         //Click on Games
         click "//div[@class='t-tree-container test-hook']/ul/li[2]/span[@class='t-tree-icon']"
 
+        sleep 25 // See if that helps with the intermittent test suite failures on the CI server
+
         waitForAjaxRequestsToComplete  PAGE_LOAD_TIMEOUT
 
         assertTextPresent "Board Games"
