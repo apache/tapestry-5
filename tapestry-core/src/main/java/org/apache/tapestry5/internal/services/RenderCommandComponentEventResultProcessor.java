@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.io.IOException;
-
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateController;
@@ -25,10 +23,12 @@ import org.apache.tapestry5.services.ComponentEventResultProcessor;
 import org.apache.tapestry5.services.PartialMarkupRenderer;
 import org.apache.tapestry5.services.PartialMarkupRendererFilter;
 
+import java.io.IOException;
+
 /**
  * Processor for objects that implement {@link RenderCommand} (such as
- * {@link org.apache.tapestry5.internal.structure.BlockImpl}).
- * 
+ * {@link org.apache.tapestry5.internal.structure.BlockImpl}), used with an Ajax component event.
+ *
  * @see AjaxPartialResponseRenderer#renderPartialPageMarkup()
  */
 public class RenderCommandComponentEventResultProcessor implements ComponentEventResultProcessor<RenderCommand>,
@@ -38,17 +38,24 @@ public class RenderCommandComponentEventResultProcessor implements ComponentEven
 
     private final AjaxFormUpdateController ajaxFormUpdateController;
 
+    private final AjaxPartialResponseRenderer partialRenderer;
+
     public RenderCommandComponentEventResultProcessor(PageRenderQueue pageRenderQueue,
-            AjaxFormUpdateController ajaxFormUpdateController)
+                                                      AjaxFormUpdateController ajaxFormUpdateController, AjaxPartialResponseRenderer partialRenderer)
     {
         this.pageRenderQueue = pageRenderQueue;
         this.ajaxFormUpdateController = ajaxFormUpdateController;
+        this.partialRenderer = partialRenderer;
     }
 
-    public void processResultValue(final RenderCommand value) throws IOException
+    public void processResultValue(RenderCommand value) throws IOException
     {
         pageRenderQueue.addPartialMarkupRendererFilter(this);
         pageRenderQueue.initializeForPartialPageRender(value);
+
+        // And render the content right now.
+
+        partialRenderer.renderPartialPageMarkup();
     }
 
     /**
@@ -56,7 +63,7 @@ public class RenderCommandComponentEventResultProcessor implements ComponentEven
      * <ul>
      * <li>It creates an outer element to capture the partial page content that will be rendered</li>
      * <li>It does setup and cleanup with the {@link AjaxFormUpdateController}</li>
-     * <li>It extracts the child markup and stuff it into the reply's "content" property.</li>
+     * <li>It extracts the child markup and stuffs it into the reply's "content" property.</li>
      * </ul>
      */
     public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)

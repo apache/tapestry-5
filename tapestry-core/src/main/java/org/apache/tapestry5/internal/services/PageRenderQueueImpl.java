@@ -23,6 +23,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.util.Stack;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.RenderCommand;
+import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.PartialMarkupRenderer;
 import org.apache.tapestry5.services.PartialMarkupRendererFilter;
 import org.slf4j.Logger;
@@ -35,6 +36,14 @@ import org.slf4j.Logger;
 @Scope(ScopeConstants.PERTHREAD)
 public class PageRenderQueueImpl implements PageRenderQueue
 {
+    public static final RenderCommand NOOP_RENDER_COMMAND = new RenderCommand()
+    {
+        public void render(MarkupWriter writer, RenderQueue queue)
+        {
+            // Do nothing. The command is just to let the filters do their thing.
+        }
+    };
+
     private final LoggerSource loggerSource;
 
     private Page page;
@@ -88,6 +97,11 @@ public class PageRenderQueueImpl implements PageRenderQueue
     public void forcePartialRenderInitialized()
     {
         partialRenderInitialized = true;
+
+        if (rootCommand == null)
+        {
+            rootCommand = NOOP_RENDER_COMMAND;
+        }
     }
 
     public void initializeForPartialPageRender(RenderCommand rootCommand)

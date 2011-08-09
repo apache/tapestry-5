@@ -38,6 +38,9 @@ public class AlertsDemo
     @SessionState
     private AlertStorage storage;
 
+    @Property
+    private boolean redirectToIndex;
+
     void onSuccessFromTraditional()
     {
         alertManager.info("Traditional form submission");
@@ -48,6 +51,11 @@ public class AlertsDemo
     {
         alertManager.info("Ajax form submission");
         alertManager.alert(duration, severity, message);
+
+        if (redirectToIndex)
+        {
+            return Index.class;
+        }
 
         return formZone.getBody();
     }

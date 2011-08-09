@@ -62,19 +62,15 @@ public class EnvironmentImplTest extends TapestryTestCase
     public void clear()
     {
         Environment e = new EnvironmentImpl();
-        Runnable r1 = mockRunnable();
-        Runnable r2 = mockRunnable();
 
-        replay();
-
-        e.push(Runnable.class, r1);
-        e.push(Runnable.class, r2);
-
-        e.clear();
-
-        assertNull(e.peek(Runnable.class));
-
-        verify();
+        try
+        {
+            e.clear();
+            unreachable();
+        } catch (IllegalStateException ex)
+        {
+            assertMessageContains(ex, "no longer supported");
+        }
     }
 
     @Test
@@ -86,8 +82,7 @@ public class EnvironmentImplTest extends TapestryTestCase
         {
             e.pop(Runnable.class);
             unreachable();
-        }
-        catch (NoSuchElementException ex)
+        } catch (NoSuchElementException ex)
         {
         }
     }
@@ -123,8 +118,7 @@ public class EnvironmentImplTest extends TapestryTestCase
         {
             e.peekRequired(List.class);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertEquals(
                     ex.getMessage(),

@@ -73,4 +73,23 @@ class AlertsTests extends SeleniumTestCase
         assertText "css=.t-alert-container", ""
     }
 
+    @Test
+    void ajax_update_with_redirect() {
+
+        openLinks "Alerts Demo", "reset"
+
+        select "css=#ajax select[name=\"severity\"]", "Error"
+        select "css=#ajax select[name=\"duration\"]", "Single"
+        type "css=#ajax input[name=\"message\"]", "ajax error single"
+        check "css=#ajax input[type='checkbox']"
+
+        click "//input[@value='Ajax Update']"
+
+        sleep 100
+
+        assertTextPresent "ajax error single"
+
+        click "link=Dismiss all"
+    }
+
 }

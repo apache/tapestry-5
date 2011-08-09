@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2011` The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,14 +14,15 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
+import org.apache.tapestry5.ioc.util.Stack;
 import org.apache.tapestry5.services.Environment;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A non-threadsafe implementation (expects to use the "perthread" service lifecyle).
@@ -32,7 +33,13 @@ public class EnvironmentImpl implements Environment, ThreadCleanupListener
     // My generics mojo breaks down when we talk about the key and the value being related
     // types.
 
-    private final Map<Class, LinkedList> typeToStack = CollectionFactory.newMap();
+    private Map<Class, LinkedList> typeToStack = CollectionFactory.newMap();
+
+    // Support for cloak/decloak.  Cloaking pushes the current typeToStack map onto the stack
+    // and creates a new, empyt, Map to replace it. Decloaking discards the current map
+    // and replaces it with the top map on the stack.
+
+    private final Stack<Map<Class, LinkedList>> cloakStack = CollectionFactory.newStack();
 
     private final OneShotLock lock = new OneShotLock();
 
@@ -100,13 +107,23 @@ public class EnvironmentImpl implements Environment, ThreadCleanupListener
 
     public void clear()
     {
-        lock.check();
-
-        typeToStack.clear();
+        throw new IllegalStateException("Environment.clear() is no longer supported.");
     }
 
     public void threadDidCleanup()
     {
         lock.lock();
+    }
+
+    public void cloak()
+    {
+        cloakStack.push(typeToStack);
+
+        typeToStack = CollectionFactory.newMap();
+    }
+
+    public void decloak()
+    {
+        typeToStack = cloakStack.pop();
     }
 }

@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services.ajax;
 
 import org.apache.tapestry5.ajax.MultiZoneUpdate;
+import org.apache.tapestry5.internal.services.AjaxPartialResponseRenderer;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.runtime.RenderCommand;
@@ -42,10 +43,13 @@ public class MultiZoneUpdateEventResultProcessor implements ComponentEventResult
 
     private final AjaxResponseRenderer ajaxResponseRenderer;
 
-    public MultiZoneUpdateEventResultProcessor(TypeCoercer typeCoercer, AjaxResponseRenderer ajaxResponseRenderer)
+    private final AjaxPartialResponseRenderer partialRenderer;
+
+    public MultiZoneUpdateEventResultProcessor(TypeCoercer typeCoercer, AjaxResponseRenderer ajaxResponseRenderer, AjaxPartialResponseRenderer partialRenderer)
     {
         this.typeCoercer = typeCoercer;
         this.ajaxResponseRenderer = ajaxResponseRenderer;
+        this.partialRenderer = partialRenderer;
     }
 
     public void processResultValue(final MultiZoneUpdate value) throws IOException
@@ -65,6 +69,8 @@ public class MultiZoneUpdateEventResultProcessor implements ComponentEventResult
 
             ajaxResponseRenderer.addRender(zoneId, zoneRenderCommand);
         }
+
+        partialRenderer.renderPartialPageMarkup();
     }
 
     private RenderCommand toRenderer(String zoneId, Object provided)

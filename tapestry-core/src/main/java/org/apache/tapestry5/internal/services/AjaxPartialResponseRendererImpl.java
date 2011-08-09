@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,10 +21,7 @@ import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.MarkupWriterFactory;
-import org.apache.tapestry5.services.PartialMarkupRenderer;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.*;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -43,20 +40,22 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
 
     private final boolean compactJSON;
 
+    private final Environment environment;
+
     public AjaxPartialResponseRendererImpl(MarkupWriterFactory factory,
 
-    Request request,
+                                           Request request,
 
-    Response response,
+                                           Response response,
 
-    PartialMarkupRenderer partialMarkupRenderer,
+                                           PartialMarkupRenderer partialMarkupRenderer,
 
-    @Inject
-    @Symbol(SymbolConstants.CHARSET)
-    String outputEncoding,
+                                           @Inject
+                                           @Symbol(SymbolConstants.CHARSET)
+                                           String outputEncoding,
 
-    @Symbol(SymbolConstants.COMPACT_JSON)
-    boolean compactJSON)
+                                           @Symbol(SymbolConstants.COMPACT_JSON)
+                                           boolean compactJSON, Environment environment)
     {
         this.factory = factory;
         this.request = request;
@@ -64,10 +63,13 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
         this.partialMarkupRenderer = partialMarkupRenderer;
         this.outputEncoding = outputEncoding;
         this.compactJSON = compactJSON;
+        this.environment = environment;
     }
 
     public void renderPartialPageMarkup() throws IOException
     {
+        environment.cloak();
+
         // This is a complex area as we are trying to keep public and private services properly
         // separated, and trying to keep stateless and stateful (i.e., perthread scope) services
         // separated. So we inform the stateful queue service what it needs to do here ...
@@ -89,5 +91,7 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
         reply.print(pw, compactJSON);
 
         pw.close();
+
+        environment.decloak();
     }
 }

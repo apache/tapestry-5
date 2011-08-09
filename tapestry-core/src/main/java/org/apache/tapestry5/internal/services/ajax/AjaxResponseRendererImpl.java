@@ -39,6 +39,9 @@ public class AjaxResponseRendererImpl implements AjaxResponseRenderer
 
         RenderCommand command = typeCoercer.coerce(renderer, RenderCommand.class);
 
+        // When a filter is added, it is assumed that some partial render will occur. This covers the case where
+        // a MultiZoneUpdate or a null is returned from the Ajax event handler method.
+
         queue.forcePartialRenderInitialized();
         queue.addPartialMarkupRendererFilter(new SingleZonePartialRendererFilter(clientId, command, queue, ajaxFormUpdateController));
     }

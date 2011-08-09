@@ -6,7 +6,7 @@
 
 <div id="traditional">
 
-    <t:beaneditform t:id="traditional" object="this" submitLabel="Traditional Update"/>
+    <t:beaneditform t:id="traditional" object="this" exclude="redirectToIndex" submitLabel="Traditional Update"/>
 </div>
 
 <h2>Ajax Form</h2>

@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,18 +36,18 @@ import org.apache.tapestry5.services.StreamPageContent;
  */
 public class StreamPageContentResultProcessor implements ComponentEventResultProcessor<StreamPageContent>
 {
+    private final PageRenderRequestHandler handler;
 
-    @Inject
-    private PageRenderRequestHandler handler;
+    private final ComponentClassResolver resolver;
 
-    @Inject
-    private ComponentClassResolver resolver;
+    private final TypeCoercer typeCoercer;
 
-    @Inject
-    private TypeCoercer typeCoercer;
-
-    @Inject
-    private Request request;
+    public StreamPageContentResultProcessor(PageRenderRequestHandler handler, ComponentClassResolver resolver, TypeCoercer typeCoercer)
+    {
+        this.handler = handler;
+        this.resolver = resolver;
+        this.typeCoercer = typeCoercer;
+    }
 
     public void processResultValue(final StreamPageContent value) throws IOException
     {

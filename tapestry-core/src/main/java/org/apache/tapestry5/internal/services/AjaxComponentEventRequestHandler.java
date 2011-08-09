@@ -14,9 +14,8 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.TrackableComponentEventCallback;
 import org.apache.tapestry5.ContentType;
-import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.TrackableComponentEventCallback;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
@@ -52,8 +51,8 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
 
     public AjaxComponentEventRequestHandler(RequestPageCache cache, Request request, PageRenderQueue queue, @Ajax
     ComponentEventResultProcessor resultProcessor, PageActivator pageActivator,
-            PageContentTypeAnalyzer pageContentTypeAnalyzer, Environment environment,
-            AjaxPartialResponseRenderer partialRenderer)
+                                            PageContentTypeAnalyzer pageContentTypeAnalyzer, Environment environment,
+                                            AjaxPartialResponseRenderer partialRenderer)
     {
         this.cache = cache;
         this.queue = queue;
@@ -118,19 +117,19 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
         environment.pop(TrackableComponentEventCallback.class);
         environment.pop(ComponentEventResultProcessor.class);
 
-        if (queue.isPartialRenderInitialized())
+
+        // If the result processor was passed a value, then it will already have rendered. Otherise it was not passed a value,
+        // but it's still possible that we still want to do a partial page render ... if filters were added to the render queue.
+        // In that event, run the partial page render now and return.
+
+        if ((!resultProcessorInvoked.get()) && queue.isPartialRenderInitialized())
         {
             partialRenderer.renderPartialPageMarkup();
             return;
         }
 
-        // If some other form of return value that's not a partial page render was send through to the
-        // Ajax ComponentEventResultProcessor, then there's nothing more to do.
-
-        if (resultProcessorInvoked.get())
-            return;
-
         // Send an empty JSON reply if no value was returned from the component event handler method.
+        // This is the typical behavior when an Ajax component event handler returns null.
 
         JSONObject reply = new JSONObject();
 

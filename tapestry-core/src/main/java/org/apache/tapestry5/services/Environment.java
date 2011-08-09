@@ -69,7 +69,24 @@ public interface Environment
     <T> T push(Class<T> type, T instance);
 
     /**
-     * Clears all stacks; used when initializing the Environment before a render.
+     * Clears all stacks; no longer used by Tapestry.
+     *
+     * @deprecated Deprecated in 5.3 with no replacement.
      */
     void clear();
+
+    /**
+     * Hides all current environment values, making the Environment object appear empty, until
+     * a call to {@link #decloak()}} restores the original state.
+     *
+     * @since 5.3
+     */
+    void cloak();
+
+    /**
+     * Restores state previously hidden by {@link #cloak()}}.
+     *
+     * @since 5.3
+     */
+    void decloak();
 }

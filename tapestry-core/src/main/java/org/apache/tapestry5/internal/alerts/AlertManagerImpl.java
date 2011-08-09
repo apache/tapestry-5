@@ -15,6 +15,8 @@
 package org.apache.tapestry5.internal.alerts;
 
 import org.apache.tapestry5.alerts.*;
+import org.apache.tapestry5.ioc.services.PerThreadValue;
+import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.services.ApplicationStateManager;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
@@ -29,11 +31,15 @@ public class AlertManagerImpl implements AlertManager
 
     private final AjaxResponseRenderer ajaxResponseRenderer;
 
-    public AlertManagerImpl(ApplicationStateManager asm, Request request, AjaxResponseRenderer ajaxResponseRenderer)
+    private final PerThreadValue<Boolean> needAlertStorageCleanup;
+
+    public AlertManagerImpl(ApplicationStateManager asm, Request request, AjaxResponseRenderer ajaxResponseRenderer, PerthreadManager perThreadManager)
     {
         this.asm = asm;
         this.request = request;
         this.ajaxResponseRenderer = ajaxResponseRenderer;
+
+        needAlertStorageCleanup = perThreadManager.createValue();
     }
 
     public void info(String message)
@@ -55,27 +61,56 @@ public class AlertManagerImpl implements AlertManager
     {
         final Alert alert = new Alert(duration, severity, message);
 
-        boolean ajax = request.isXHR();
+        if (request.isXHR())
+        {
+            addCallbackForAlert(alert);
+        }
 
-        if (ajax)
+        // Add it to the storage; this is always done, even in an Ajax request, because we may end up
+        // redirecting to a new page, rather than doing a partial page update on the current page ... in which
+        // case we need the alerts stored persistently until we render the new page.
+
+        getAlertStorage().add(alert);
+    }
+
+    private void addCallbackForAlert(final Alert alert)
+    {
+        ajaxResponseRenderer.addCallback(new JavaScriptCallback()
+        {
+            public void run(JavaScriptSupport javascriptSupport)
+            {
+                javascriptSupport.addInitializerCall("addAlert", alert.toJSON());
+            }
+        });
+
+        addAlertStorageCleanupCallback();
+    }
+
+    private void addAlertStorageCleanupCallback()
+    {
+        // Add a callback that exists just to clear the non-persistent alerts.
+        // Only one of these is needed.
+
+        if (needAlertStorageCleanup.get(true))
         {
             ajaxResponseRenderer.addCallback(new JavaScriptCallback()
             {
                 public void run(JavaScriptSupport javascriptSupport)
                 {
-                    javascriptSupport.addInitializerCall("addAlert", alert.toJSON());
+                    // In an Ajax request, the Alerts are added, just so that they can be removed if not persistent.
+                    // Again, this is for the rare case where there's a redirect to another page.
+
+                    getAlertStorage().dismissNonPersistent();
                 }
             });
-        }
 
-        // In Ajax mode, ony persistent alerts need to be stored for later requests (so that they can
-        // be re-presented until explicitly dismissed). In traditional mode, the alerts are added here
-        // to the AlertStorage and then later, during the render, the Alerts component will take
-        // care of JavaScript initialization for them.
-        if (!ajax || duration.persistent)
-        {
-            asm.get(AlertStorage.class).add(alert);
+            needAlertStorageCleanup.set(false);
         }
+    }
+
+    private AlertStorage getAlertStorage()
+    {
+        return asm.get(AlertStorage.class);
     }
 
 }
