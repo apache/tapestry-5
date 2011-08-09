@@ -7,7 +7,7 @@ easymockVersion = '3.0'
 servletAPIVersion = '2.4'
 
 // Provided so that Jenkins can override the normal version number for nightly builds.
-version = System.getProperty('project-version', '5.3-alpha-11')
+version = System.getProperty('project-version', '5.3-alpha-12')
 
 stagingUrl = "https://repository.apache.org/service/local/staging/deploy/maven2/"
 snapshotUrl = "https://repository.apache.org/content/repositories/snapshots"
