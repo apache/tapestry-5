@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -74,9 +74,6 @@ public class RenderQueueImpl implements RenderQueue
         }
         catch (RuntimeException ex)
         {
-            // This will likely leave the page in a dirty state, and it will not go back into the
-            // page pool.
-
             String message = ServicesMessages.renderQueueError(command, ex);
 
             logger.error(message, ex);
