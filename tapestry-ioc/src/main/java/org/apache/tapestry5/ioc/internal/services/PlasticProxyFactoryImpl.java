@@ -31,8 +31,6 @@ import java.util.List;
 
 public class PlasticProxyFactoryImpl implements PlasticProxyFactory
 {
-    private final Logger logger;
-
     private final PlasticManager manager;
 
     private final ClassLoader loader;
@@ -40,7 +38,6 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
     public PlasticProxyFactoryImpl(ClassLoader parentClassLoader, Logger logger)
     {
         this.loader = parentClassLoader;
-        this.logger = logger;
 
         manager = PlasticManager.withClassLoader(parentClassLoader).create();
 
@@ -141,10 +138,10 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
         ClassNode classNode = readClassNode(member.getDeclaringClass());
 
         if (classNode == null)
-            return null;
-
-        if (classNode.sourceFile == null)
-            return null;
+        {
+            throw new RuntimeException(String.format("Unable to read class file for %s (to gather line number information).",
+                    textDescription));
+        }
 
         for (MethodNode mn : (List<MethodNode>) classNode.methods)
         {
