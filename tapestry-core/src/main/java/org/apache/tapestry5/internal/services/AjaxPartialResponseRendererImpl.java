@@ -70,28 +70,32 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
     {
         environment.cloak();
 
-        // This is a complex area as we are trying to keep public and private services properly
-        // separated, and trying to keep stateless and stateful (i.e., perthread scope) services
-        // separated. So we inform the stateful queue service what it needs to do here ...
+        try
+        {
+            // This is a complex area as we are trying to keep public and private services properly
+            // separated, and trying to keep stateless and stateful (i.e., perthread scope) services
+            // separated. So we inform the stateful queue service what it needs to do here ...
 
-        ContentType pageContentType = (ContentType) request.getAttribute(InternalConstants.CONTENT_TYPE_ATTRIBUTE_NAME);
+            ContentType pageContentType = (ContentType) request.getAttribute(InternalConstants.CONTENT_TYPE_ATTRIBUTE_NAME);
 
-        ContentType contentType = new ContentType(InternalConstants.JSON_MIME_TYPE, outputEncoding);
+            ContentType contentType = new ContentType(InternalConstants.JSON_MIME_TYPE, outputEncoding);
 
-        MarkupWriter writer = factory.newPartialMarkupWriter(pageContentType);
+            MarkupWriter writer = factory.newPartialMarkupWriter(pageContentType);
 
-        JSONObject reply = new JSONObject();
+            JSONObject reply = new JSONObject();
 
-        // ... and here, the pipeline eventually reaches the PRQ to let it render the root render command.
+            // ... and here, the pipeline eventually reaches the PRQ to let it render the root render command.
 
-        partialMarkupRenderer.renderMarkup(writer, reply);
+            partialMarkupRenderer.renderMarkup(writer, reply);
 
-        PrintWriter pw = response.getPrintWriter(contentType.toString());
+            PrintWriter pw = response.getPrintWriter(contentType.toString());
 
-        reply.print(pw, compactJSON);
+            reply.print(pw, compactJSON);
 
-        pw.close();
-
-        environment.decloak();
+            pw.close();
+        } finally
+        {
+            environment.decloak();
+        }
     }
 }
