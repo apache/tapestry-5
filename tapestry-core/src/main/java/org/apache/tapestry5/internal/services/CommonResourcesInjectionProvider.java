@@ -111,12 +111,17 @@ public class CommonResourcesInjectionProvider implements InjectionProvider2
     private static final Map<String, ResourceProvider> configuration = CollectionFactory.newMap();
 
     {
-        configuration.put(ComponentResources.class.getName(), resourcesProvider);
-        configuration.put(ComponentResourceSelector.class.getName(), selectorProvider);
-        configuration.put(Messages.class.getName(), messagesProvider);
-        configuration.put(Locale.class.getName(), localeProvider);
-        configuration.put(Logger.class.getName(), loggerProvider);
-        configuration.put(String.class.getName(), completeIdProvider);
+        add(ComponentResources.class, resourcesProvider);
+        add(ComponentResourceSelector.class, selectorProvider);
+        add(Messages.class, messagesProvider);
+        add(Locale.class, localeProvider);
+        add(Logger.class, loggerProvider);
+        add(String.class, completeIdProvider);
+    }
+
+    private static void add(Class type, ResourceProvider provider)
+    {
+        configuration.put(type.getName(), provider);
     }
 
     public boolean provideInjection(PlasticField field, ObjectLocator locator, MutableComponentModel componentModel)
