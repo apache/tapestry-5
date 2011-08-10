@@ -219,11 +219,7 @@ class FieldConduitTests extends AbstractPlasticSpecification
         // Needed this when debugging an issue:
         if (false)
         {
-            mgr.addPlasticClassListener({ PlasticClassEvent event ->
-
-                print(event.getDissasembledBytecode())
-
-            } as PlasticClassListener)
+            enableBytecodeDebugging(mgr)
         }
 
         def o = mgr.getClassInstantiator("testsubjects.InjectSubClass").newInstance()

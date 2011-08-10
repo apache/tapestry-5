@@ -221,12 +221,15 @@ class MethodAdviceTests extends AbstractPlasticSpecification
 
             pc.getMethodsWithAnnotation(MethodAnnotation.class).each({ m ->
                 m.addAdvice(justProceed)
+                m.addAdvice(justProceed)
             })
 
             pc.getFieldsWithAnnotation(FieldAnnotation.class).each({ f ->
                 f.setConduit(fc)
             })
         } as PlasticClassTransformer)
+
+        if (false) { enableBytecodeDebugging(mgr) }
 
         def o = mgr.getClassInstantiator("testsubjects.FieldConduitInsideAdvisedMethod").with(MagicContainer.class, container).newInstance()
 
