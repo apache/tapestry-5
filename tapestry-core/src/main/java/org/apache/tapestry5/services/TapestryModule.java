@@ -2621,6 +2621,8 @@ public final class TapestryModule
      * <dd>Checks for <code>sun.reflect</code> (which are omitted)
      * <dt>TapestryAOP</dt>
      * <dd>Omits stack frames for classes related to Tapestry AOP (such as advice, etc.)</dd>
+     * <dt>OperationTracker</dt>
+     * <dd>Omits stack frames related to {@link OperationTracker}</dd>
      * </dl>
      *
      * @since 5.1.0.0
@@ -2634,6 +2636,7 @@ public final class TapestryModule
         configuration.add("SunReflect", new PrefixCheckStackTraceElementAnalyzer(
                 StackTraceElementClassConstants.OMITTED, "sun.reflect."));
         configuration.addInstance("TapestryAOP", TapestryAOPStackFrameAnalyzer.class, "before:Application");
+        configuration.add("OperationTracker", new RegexpStackTraceElementAnalyzer(Pattern.compile("internal\\.(RegistryImpl|PerThreadOperationTracker|OperationTrackerImpl)\\.invoke\\("), StackTraceElementClassConstants.OMITTED));
     }
 
     /**
