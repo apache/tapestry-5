@@ -324,7 +324,7 @@ public class SymbolConstants
      *
      * @since 5.3
      */
-    public static final String PAGE_SOURCE_ACTIVE_WINDOW = "tapestry.page-cache-active-window";
+    public static final String PAGE_SOURCE_ACTIVE_WINDOW = "tapestry.page-source-active-window";
 
     /**
      * The fix for <a href="https://issues.apache.org/jira/browse/TAP5-1596">TAP5-1596</a> means that component ids referenced
