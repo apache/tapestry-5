@@ -221,7 +221,6 @@ class MethodAdviceTests extends AbstractPlasticSpecification
 
             pc.getMethodsWithAnnotation(MethodAnnotation.class).each({ m ->
                 m.addAdvice(justProceed)
-                m.addAdvice(justProceed)
             })
 
             pc.getFieldsWithAnnotation(FieldAnnotation.class).each({ f ->
@@ -241,4 +240,42 @@ class MethodAdviceTests extends AbstractPlasticSpecification
 
         1 * container.magic() >> "via context and mock"
     }
+
+    def "method advice on method that accesses a field with a conduit (more complex structure)"()
+    {
+        MagicContainer container = Mock()
+
+        FieldConduit fc = [get: { instance, context ->
+
+            return context.get(MagicContainer.class)
+
+        }, set: { instance, context -> }] as FieldConduit
+
+        MethodAdvice justProceed = { inv -> inv.proceed() } as MethodAdvice
+
+        def mgr = createMgr({ PlasticClass pc ->
+
+            pc.getMethodsWithAnnotation(MethodAnnotation.class).each({ m ->
+                m.addAdvice(justProceed)
+            })
+
+            pc.getFieldsWithAnnotation(FieldAnnotation.class).each({ f ->
+                f.setConduit(fc)
+            })
+        } as PlasticClassTransformer)
+
+        if (false) { enableBytecodeDebugging(mgr) }
+
+        def o = mgr.getClassInstantiator("testsubjects.FieldConduitAdvisedMethodComplexCase").with(MagicContainer.class, container).newInstance()
+
+        when:
+
+        o.magic == "via context"
+
+        then:
+
+        1 * container.magic() >> "via context"
+
+    }
+
 }
