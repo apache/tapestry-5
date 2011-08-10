@@ -1,0 +1,12 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+
+    <t:delegate to="block:zen"/>
+
+    <t:block id="zen">
+
+            <t:actionlink t:id="goForBroke">go for broke</t:actionlink>
+
+    </t:block>
+
+
+</html>
