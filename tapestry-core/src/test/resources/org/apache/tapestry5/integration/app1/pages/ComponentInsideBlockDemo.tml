@@ -1,12 +1,26 @@
 <html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
 
-    <t:delegate to="block:zen"/>
+<h2 id="testtitle">Component Inside Block</h2>
 
-    <t:block id="zen">
+<p>
+    Test to show that TAP5-1600 is not valid.
+</p>
 
-            <t:actionlink t:id="goForBroke">go for broke</t:actionlink>
+<t:delegate to="block:zen"/>
 
-    </t:block>
+<t:block id="zen">
+
+    <t:actionlink t:id="goForBroke">go for broke</t:actionlink>
+
+</t:block>
+
+<t:block id="never">
+
+    <t:form t:id="neverForm">
+        <input type="submit" value="Never Form Submit"/>
+    </t:form>
+
+</t:block>
 
 
 </html>
