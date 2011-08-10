@@ -328,7 +328,7 @@ public class SymbolConstants
 
     /**
      * The fix for <a href="https://issues.apache.org/jira/browse/TAP5-1596">TAP5-1596</a> means that component ids referenced
-     * by event handler methods (either the nameing convention, or the {@link org.apache.tapestry5.annotations.OnEvent} annotation)
+     * by event handler methods (either the naming convention, or the {@link org.apache.tapestry5.annotations.OnEvent} annotation)
      * can cause a page load error if there is no matching component in the component's template. Although this is correct behavior,
      * it can make the upgrade from 5.2 to 5.3 difficult if an existing app had some "left over" event handler methods. Changing
      * this symbol to {@code false} is a temporary approach to resolving this problem.
