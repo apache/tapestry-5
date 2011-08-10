@@ -30,7 +30,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 {
     private static final String NOTHING_TO_VOID = "()V";
 
-    private static final String CONSTRUCTOR_NAME = "<init>";
+    static final String CONSTRUCTOR_NAME = "<init>";
 
     private static final String OBJECT_INT_TO_OBJECT = "(Ljava/lang/Object;I)Ljava/lang/Object;";
 
@@ -39,13 +39,13 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     private static final String OBJECT_INT_OBJECT_ARRAY_TO_METHOD_INVOCATION_RESULT = String.format(
             "(Ljava/lang/Object;I[Ljava/lang/Object;)%s", toDesc(Type.getInternalName(MethodInvocationResult.class)));
 
-    private static final String ABSTRACT_METHOD_INVOCATION_INTERNAL_NAME = PlasticInternalUtils
+    static final String ABSTRACT_METHOD_INVOCATION_INTERNAL_NAME = PlasticInternalUtils
             .toInternalName(AbstractMethodInvocation.class.getName());
 
     private static final String HANDLE_SHIM_BASE_CLASS_INTERNAL_NAME = Type
             .getInternalName(PlasticClassHandleShim.class);
 
-    private static final String STATIC_CONTEXT_INTERNAL_NAME = Type.getInternalName(StaticContext.class);
+    static final String STATIC_CONTEXT_INTERNAL_NAME = Type.getInternalName(StaticContext.class);
 
     private static final String INSTANCE_CONTEXT_INTERNAL_NAME = Type.getInternalName(InstanceContext.class);
 
@@ -54,9 +54,9 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     private static final String CONSTRUCTOR_DESC = String.format("(L%s;L%s;)V", STATIC_CONTEXT_INTERNAL_NAME,
             INSTANCE_CONTEXT_INTERNAL_NAME);
 
-    private static final Method STATIC_CONTEXT_GET_METHOD = toMethod(StaticContext.class, "get", int.class);
+    static final Method STATIC_CONTEXT_GET_METHOD = toMethod(StaticContext.class, "get", int.class);
 
-    private static final Method COMPUTED_VALUE_GET_METHOD = toMethod(ComputedValue.class, "get", InstanceContext.class);
+    static final Method COMPUTED_VALUE_GET_METHOD = toMethod(ComputedValue.class, "get", InstanceContext.class);
 
     private static final Method CONSTRUCTOR_CALLBACK_METHOD = toMethod(ConstructorCallback.class, "onConstruct",
             Object.class, InstanceContext.class);
@@ -71,7 +71,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return PlasticUtils.getMethod(declaringClass, methodName, parameterTypes);
     }
 
-    private static <T> T safeArrayDeref(T[] array, int index)
+    static <T> T safeArrayDeref(T[] array, int index)
     {
         if (array == null)
             return null;
@@ -79,1364 +79,13 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return array[index];
     }
 
-    private class PlasticMember implements AnnotationAccess
-    {
-        private final AnnotationAccess annotationAccess;
-
-        PlasticMember(List<AnnotationNode> visibleAnnotations)
-        {
-            annotationAccess = pool.createAnnotationAccess(visibleAnnotations);
-        }
-
-        public <T extends Annotation> boolean hasAnnotation(Class<T> annotationType)
-        {
-            check();
-
-            return annotationAccess.hasAnnotation(annotationType);
-        }
-
-        public <T extends Annotation> T getAnnotation(Class<T> annotationType)
-        {
-            check();
-
-            return annotationAccess.getAnnotation(annotationType);
-        }
-
-    }
-
-    private class MethodParameterImpl extends PlasticMember implements MethodParameter
-    {
-        private final String type;
-
-        private final int index;
-
-        MethodParameterImpl(List<AnnotationNode> visibleAnnotations, String type, int index)
-        {
-            super(visibleAnnotations);
-
-            this.type = type;
-            this.index = index;
-        }
-
-        public String getType()
-        {
-            check();
-
-            return type;
-        }
-
-        public int getIndex()
-        {
-            check();
-
-            return index;
-        }
-    }
-
-    private class PlasticMethodImpl extends PlasticMember implements PlasticMethod, Comparable<PlasticMethodImpl>
-    {
-        private final MethodNode node;
-
-        private MethodDescription description;
-
-        private MethodHandleImpl handle;
-
-        private MethodAdviceManager adviceManager;
-
-        private List<MethodParameter> parameters;
-
-        private int methodIndex = -1;
-
-        // Lazily initialized
-        private String methodIdentifier;
-
-        public PlasticMethodImpl(MethodNode node)
-        {
-            super(node.visibleAnnotations);
-
-            this.node = node;
-            this.description = PlasticInternalUtils.toMethodDescription(node);
-        }
-
-        public String toString()
-        {
-            return String.format("PlasticMethod[%s in class %s]", description, className);
-        }
-
-        public PlasticClass getPlasticClass()
-        {
-            check();
-
-            return PlasticClassImpl.this;
-        }
-
-        public MethodDescription getDescription()
-        {
-            check();
-
-            return description;
-        }
-
-        public int compareTo(PlasticMethodImpl o)
-        {
-            check();
-
-            return description.compareTo(o.description);
-        }
-
-        public boolean isOverride()
-        {
-            check();
-
-            return parentInheritanceData.isImplemented(node.name, node.desc);
-        }
-
-        public String getMethodIdentifier()
-        {
-            check();
-
-            if (methodIdentifier == null)
-            {
-                methodIdentifier = String.format("%s.%s",
-                        className,
-                        description.toShortString());
-            }
-
-            return methodIdentifier;
-        }
-
-        public boolean isVoid()
-        {
-            check();
-
-            return description.returnType.equals("void");
-        }
-
-        public MethodHandle getHandle()
-        {
-            check();
-
-            if (handle == null)
-            {
-                methodIndex = nextMethodIndex++;
-                handle = new MethodHandleImpl(className, description.toString(), methodIndex);
-                shimMethods.add(this);
-            }
-
-            return handle;
-        }
-
-        public PlasticMethod changeImplementation(InstructionBuilderCallback callback)
-        {
-            check();
-
-            // If the method is currently abstract, clear that flag.
-            if (Modifier.isAbstract(node.access))
-            {
-                node.access = node.access & ~ACC_ABSTRACT;
-                description = description.withModifiers(node.access);
-            }
-
-            node.instructions.clear();
-
-            newBuilder(description, node).doCallback(callback);
-
-            // With the implementation changed, it is necessary to intercept field reads/writes.
-            // The node may not already have been in the fieldTransformMethods Set if it was
-            // an introduced method.
-
-            fieldTransformMethods.add(node);
-
-            return this;
-        }
-
-        public PlasticMethod addAdvice(MethodAdvice advice)
-        {
-            check();
-
-            assert advice != null;
-
-            if (adviceManager == null)
-            {
-                adviceManager = new MethodAdviceManager(description, node);
-                advisedMethods.add(this);
-            }
-
-            adviceManager.add(advice);
-
-            return this;
-        }
-
-        public PlasticMethod delegateTo(final PlasticField field)
-        {
-            check();
-
-            assert field != null;
-
-            // TODO: Ensure that the field is a field of this class.
-
-            // TODO: Better handling error case where delegating to a primitive or object array.
-
-            // TODO: Is there a easy way to ensure that the type has the necessary method? I don't
-            // like that errors along those lines may be deferred until execution time.
-
-            changeImplementation(new InstructionBuilderCallback()
-            {
-                public void doBuild(InstructionBuilder builder)
-                {
-                    // Load the field
-
-                    builder.loadThis().getField(field);
-                    builder.loadArguments();
-
-                    invokeDelegateAndReturnResult(builder, field.getTypeName());
-                }
-            });
-
-            return this;
-        }
-
-        public PlasticMethod delegateTo(PlasticMethod delegateProvidingMethod)
-        {
-            check();
-
-            assert delegateProvidingMethod != null;
-
-            // TODO: ensure same class, ensure not primitive/array type
-            final MethodDescription providerDescriptor = delegateProvidingMethod.getDescription();
-            final String delegateType = providerDescriptor.returnType;
-
-            if (delegateType.equals("void") || providerDescriptor.argumentTypes.length > 0)
-                throw new IllegalArgumentException(
-                        String.format(
-                                "Method %s is not usable as a delegate provider; it must be a void method that takes no arguments.",
-                                delegateProvidingMethod));
-
-            changeImplementation(new InstructionBuilderCallback()
-            {
-                public void doBuild(InstructionBuilder builder)
-                {
-                    // Load the field
-
-                    builder.loadThis();
-
-                    if (Modifier.isPrivate(providerDescriptor.modifiers))
-                    {
-                        builder.invokeSpecial(className, providerDescriptor);
-                    } else
-                    {
-                        builder.invokeVirtual(className, delegateType, providerDescriptor.methodName);
-                    }
-
-                    builder.loadArguments();
-
-                    invokeDelegateAndReturnResult(builder, delegateType);
-                }
-            });
-
-            return this;
-        }
-
-        public List<MethodParameter> getParameters()
-        {
-            if (parameters == null)
-            {
-                parameters = PlasticInternalUtils.newList();
-
-                for (int i = 0; i < description.argumentTypes.length; i++)
-                {
-
-                    parameters.add(new MethodParameterImpl(safeArrayDeref(node.visibleParameterAnnotations, i),
-                            safeArrayDeref(description.argumentTypes, i), i));
-                }
-            }
-
-            return parameters;
-        }
-
-        private void rewriteMethodForAdvice()
-        {
-            adviceManager.rewriteOriginalMethod();
-        }
-
-        private boolean isPrivate()
-        {
-            return Modifier.isPrivate(node.access);
-        }
-
-        /**
-         * If a MethodHandle has been requested and the method itself is private, then create a non-private
-         * access method. Returns the access method name (which is different from the method name itself only
-         * for private methods, where an access method is created).
-         */
-        private String setupMethodHandleAccess()
-        {
-            if (isPrivate())
-                return createAccessMethod();
-            else
-                return node.name;
-        }
-
-        private String createAccessMethod()
-        {
-            String name = String.format("%s$access%s", node.name, PlasticUtils.nextUID());
-
-            // Kind of awkward that exceptions are specified as String[] when what we have handy is List<String>
-            MethodNode mn = new MethodNode(ACC_SYNTHETIC | ACC_FINAL, name, node.desc, node.signature, null);
-            // But it is safe enough for the two nodes to share
-            mn.exceptions = node.exceptions;
-
-            InstructionBuilder builder = newBuilder(mn);
-
-            builder.loadThis();
-            builder.loadArguments();
-            builder.invokeSpecial(className, description);
-            builder.returnResult();
-
-            addMethod(mn);
-
-            return name;
-        }
-
-        void installShim(PlasticClassHandleShim shim)
-        {
-            handle.shim = shim;
-        }
-
-        /**
-         * The properly cast target instance will be on the stack.
-         */
-        void extendShimInvoke(SwitchBlock block)
-        {
-            final String accessMethodName = setupMethodHandleAccess();
-
-            block.addCase(methodIndex, false, new InstructionBuilderCallback()
-            {
-                public void doBuild(InstructionBuilder builder)
-                {
-                    builder.startTryCatch(new TryCatchCallback()
-                    {
-                        public void doBlock(TryCatchBlock block)
-                        {
-                            block.addTry(new InstructionBuilderCallback()
-                            {
-                                public void doBuild(InstructionBuilder builder)
-                                {
-                                    // The third argument is an Object array; get each
-                                    for (int i = 0; i < description.argumentTypes.length; i++)
-                                    {
-                                        String argumentType = description.argumentTypes[i];
-
-                                        builder.loadArgument(2);
-                                        builder.loadArrayElement(i, Object.class.getName());
-                                        builder.castOrUnbox(argumentType);
-                                    }
-
-                                    builder.invokeVirtual(className, description.returnType, accessMethodName,
-                                            description.argumentTypes);
-
-                                    // TODO: hate see "void" just there.
-
-                                    if (description.returnType.equals("void"))
-                                        builder.loadNull();
-                                    else
-                                        builder.boxPrimitive(description.returnType);
-
-                                    builder.newInstance(SuccessMethodInvocationResult.class).dupe(1).swap();
-                                    builder.invokeConstructor(SuccessMethodInvocationResult.class, Object.class);
-                                    builder.returnResult();
-                                }
-                            });
-
-                            for (String exceptionType : description.checkedExceptionTypes)
-                            {
-                                block.addCatch(exceptionType, new InstructionBuilderCallback()
-                                {
-                                    public void doBuild(InstructionBuilder builder)
-                                    {
-                                        builder.newInstance(FailureMethodInvocationResult.class).dupe(1).swap();
-                                        builder.invokeConstructor(FailureMethodInvocationResult.class, Throwable.class);
-                                        builder.returnResult();
-                                    }
-                                });
-                            }
-                        }
-                    });
-                }
-            });
-        }
-
-        private void invokeDelegateAndReturnResult(InstructionBuilder builder, String delegateType)
-        {
-            // The trick is that you have to be careful to use the right opcode based on the field type
-            // (interface vs. ordinary object).
-
-            final TypeCategory typeCategory = pool.getTypeCategory(delegateType);
-
-            if (typeCategory == TypeCategory.INTERFACE)
-                builder.invokeInterface(delegateType, description.returnType, description.methodName,
-                        description.argumentTypes);
-            else
-                builder.invokeVirtual(delegateType, description.returnType, description.methodName,
-                        description.argumentTypes);
-
-            builder.returnResult();
-        }
-
-    }
-
-    private class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable<PlasticFieldImpl>
-    {
-        private final FieldNode node;
-
-        private final String typeName;
-
-        private Object tag;
-
-        private FieldHandleImpl handle;
-
-        // Names of methods to get or set the value of the field, invoked
-        // from the generated FieldAccess object. With a FieldConduit,
-        // these also represent the names of the methods that replace field access
-        // in non-introduced methods
-
-        private MethodNode getAccess, setAccess;
-
-        private FieldState state = FieldState.INITIAL;
-
-        private int fieldIndex = -1;
-
-        public PlasticFieldImpl(FieldNode node)
-        {
-            super(node.visibleAnnotations);
-
-            this.node = node;
-            this.typeName = Type.getType(node.desc).getClassName();
-        }
-
-        public String toString()
-        {
-            return String.format("PlasticField[%s %s %s (in class %s)]", Modifier.toString(node.access), typeName,
-                    node.name, className);
-        }
-
-        public String getGenericSignature()
-        {
-            return node.signature;
-        }
-
-        public int getModifiers()
-        {
-            return node.access;
-        }
-
-        public int compareTo(PlasticFieldImpl o)
-        {
-            return this.node.name.compareTo(o.node.name);
-        }
-
-        public PlasticClass getPlasticClass()
-        {
-            check();
-
-            return PlasticClassImpl.this;
-        }
-
-        public FieldHandle getHandle()
-        {
-            check();
-
-            if (handle == null)
-            {
-                fieldIndex = nextFieldIndex++;
-
-                // The shim gets assigned later
-
-                handle = new FieldHandleImpl(className, node.name, fieldIndex);
-
-                shimFields.add(this);
-            }
-
-            return handle;
-        }
-
-        public PlasticField claim(Object tag)
-        {
-            assert tag != null;
-
-            check();
-
-            if (this.tag != null)
-                throw new IllegalStateException(String.format(
-                        "Field %s of class %s can not be claimed by %s as it is already claimed by %s.", node.name,
-                        className, tag, this.tag));
-
-            this.tag = tag;
-
-            // Force the list of unclaimed fields to be recomputed on next access
-
-            unclaimedFields = null;
-
-            return this;
-        }
-
-        public boolean isClaimed()
-        {
-            check();
-
-            return tag != null;
-        }
-
-        public String getName()
-        {
-            check();
-
-            return node.name;
-        }
-
-        public String getTypeName()
-        {
-            check();
-
-            return typeName;
-        }
-
-        private void verifyInitialState(String operation)
-        {
-            if (state != FieldState.INITIAL)
-                throw new IllegalStateException(String.format("Unable to %s field %s of class %s, as it already %s.",
-                        operation, node.name, className, state.description));
-        }
-
-        public PlasticField inject(Object value)
-        {
-            check();
-
-            verifyInitialState("inject a value into");
-
-            assert value != null;
-
-            initializeFieldFromStaticContext(node.name, typeName, value);
-
-            makeReadOnly();
-
-            state = FieldState.INJECTED;
-
-            return this;
-        }
-
-        public PlasticField injectComputed(ComputedValue<?> computedValue)
-        {
-            check();
-
-            verifyInitialState("inject a computed value into");
-
-            assert computedValue != null;
-
-            initializeComputedField(computedValue);
-
-            makeReadOnly();
-
-            state = FieldState.INJECTED;
-
-            return this;
-        }
-
-        private void initializeComputedField(ComputedValue<?> computedValue)
-        {
-            int index = staticContext.store(computedValue);
-
-            constructorBuilder.loadThis(); // for the putField()
-
-            // Get the ComputedValue out of the StaticContext and onto the stack
-
-            constructorBuilder.loadArgument(0).loadConstant(index);
-            constructorBuilder.invoke(STATIC_CONTEXT_GET_METHOD).checkcast(ComputedValue.class);
-
-            // Add the InstanceContext to the stack
-
-            constructorBuilder.loadArgument(1);
-            constructorBuilder.invoke(COMPUTED_VALUE_GET_METHOD).castOrUnbox(typeName);
-
-            constructorBuilder.putField(className, node.name, typeName);
-        }
-
-        public PlasticField injectFromInstanceContext()
-        {
-            check();
-
-            verifyInitialState("inject instance context value into");
-
-            // Easiest to load this, for the putField(), early, in case the field is
-            // wide (long or double primitive)
-
-            constructorBuilder.loadThis();
-
-            // Add the InstanceContext to the stack
-
-            constructorBuilder.loadArgument(1);
-            constructorBuilder.loadConstant(typeName);
-
-            constructorBuilder.invokeStatic(PlasticInternalUtils.class, Object.class, "getFromInstanceContext",
-                    InstanceContext.class, String.class).castOrUnbox(typeName);
-
-            constructorBuilder.putField(className, node.name, typeName);
-
-            makeReadOnly();
-
-            state = FieldState.INJECTED;
-
-            return this;
-        }
-
-        public <F> PlasticField setConduit(FieldConduit<F> conduit)
-        {
-            assert conduit != null;
-
-            check();
-
-            verifyInitialState("set the FieldConduit for");
-
-            // First step: define a field to store the conduit and add constructor logic
-            // to initialize it
-
-            String conduitFieldName = createAndInitializeFieldFromStaticContext(node.name + "_FieldConduit",
-                    FieldConduit.class.getName(), conduit);
-
-            replaceFieldReadAccess(conduitFieldName);
-            replaceFieldWriteAccess(conduitFieldName);
-
-            // TODO: Do we keep the field or not? It will now always be null/0/false.
-
-            state = FieldState.CONDUIT;
-
-            return this;
-        }
-
-        public <F> PlasticField setComputedConduit(ComputedValue<FieldConduit<F>> computedConduit)
-        {
-            assert computedConduit != null;
-
-            check();
-
-            verifyInitialState("set the computed FieldConduit for");
-
-            // First step: define a field to store the conduit and add constructor logic
-            // to initialize it
-
-            PlasticField conduitField = introduceField(FieldConduit.class, node.name + "_FieldConduit").injectComputed(
-                    computedConduit);
-
-            replaceFieldReadAccess(conduitField.getName());
-            replaceFieldWriteAccess(conduitField.getName());
-
-            // TODO: Do we keep the field or not? It will now always be null/0/false.
-
-            state = FieldState.CONDUIT;
-
-            return this;
-        }
-
-        public PlasticField createAccessors(PropertyAccessType accessType)
-        {
-            check();
-
-            return createAccessors(accessType, PlasticInternalUtils.toPropertyName(node.name));
-        }
-
-        public PlasticField createAccessors(PropertyAccessType accessType, String propertyName)
-        {
-            check();
-
-            assert accessType != null;
-            assert PlasticInternalUtils.isNonBlank(propertyName);
-
-            String capitalized = PlasticInternalUtils.capitalize(propertyName);
-
-            if (accessType != PropertyAccessType.WRITE_ONLY)
-            {
-                String signature = node.signature == null ? null : "()" + node.signature;
-
-                introduceAccessorMethod(getTypeName(), "get" + capitalized, null, signature,
-                        new InstructionBuilderCallback()
-                        {
-                            public void doBuild(InstructionBuilder builder)
-                            {
-                                builder.loadThis().getField(PlasticFieldImpl.this).returnResult();
-                            }
-                        });
-            }
-
-            if (accessType != PropertyAccessType.READ_ONLY)
-            {
-                String signature = node.signature == null ? null : "(" + node.signature + ")V";
-
-                introduceAccessorMethod("void", "set" + capitalized, new String[]
-                        {getTypeName()}, signature, new InstructionBuilderCallback()
-                {
-                    public void doBuild(InstructionBuilder builder)
-                    {
-                        builder.loadThis().loadArgument(0);
-                        builder.putField(className, node.name, getTypeName());
-                        builder.returnResult();
-                    }
-                });
-            }
-
-            return this;
-        }
-
-        private void introduceAccessorMethod(String returnType, String name, String[] parameterTypes, String signature,
-                                             InstructionBuilderCallback callback)
-        {
-            MethodDescription description = new MethodDescription(ACC_PUBLIC, returnType, name, parameterTypes,
-                    signature, null);
-
-            String desc = nameCache.toDesc(description);
-
-            if (inheritanceData.isImplemented(name, desc))
-                throw new IllegalArgumentException(String.format(
-                        "Unable to create new accessor method %s on class %s as the method is already implemented.",
-                        description.toString(), className));
-
-            introduceMethod(description, callback);
-        }
-
-        private void replaceFieldWriteAccess(String conduitFieldName)
-        {
-            String setAccessName = makeUnique(methodNames, "set_" + node.name);
-
-            setAccess = new MethodNode(ACC_SYNTHETIC | ACC_FINAL, setAccessName, "(" + node.desc + ")V", null, null);
-
-            InstructionBuilder builder = newBuilder(setAccess);
-
-            pushFieldConduitOntoStack(conduitFieldName, builder);
-
-            builder.loadThis();
-
-            pushInstanceContextFieldOntoStack(builder);
-
-            // Take the value passed to this method and push it onto the stack.
-
-            builder.loadArgument(0);
-            builder.boxPrimitive(typeName);
-
-            builder.invoke(FieldConduit.class, void.class, "set", Object.class, InstanceContext.class, Object.class);
-
-            if (isWriteBehindEnabled())
-            {
-                builder.loadThis().loadArgument(0).putField(className, node.name, typeName);
-            }
-
-            builder.returnResult();
-
-            addMethod(setAccess);
-
-            fieldToWriteMethod.put(node.name, setAccess);
-        }
-
-        private void replaceFieldReadAccess(String conduitFieldName)
-        {
-            boolean writeBehindEnabled = isWriteBehindEnabled();
-
-            String getAccessName = makeUnique(methodNames, "getfieldvalue_" + node.name);
-
-            getAccess = new MethodNode(ACC_SYNTHETIC | ACC_FINAL, getAccessName, "()" + node.desc, null, null);
-
-            InstructionBuilder builder = newBuilder(getAccess);
-
-            // Get the correct FieldConduit object on the stack
-
-            pushFieldConduitOntoStack(conduitFieldName, builder);
-
-            builder.loadThis();
-
-            // Now push the instance context on the stack
-
-            pushInstanceContextFieldOntoStack(builder);
-
-            builder.invoke(FieldConduit.class, Object.class, "get", Object.class, InstanceContext.class).castOrUnbox(
-                    typeName);
-
-            if (writeBehindEnabled)
-            {
-                // Dupe the value, then push this, then swap
-
-                if (isWide())
-                {
-                    // Dupe this under the wide value, then pop the wide value
-
-                    builder.dupeWide().loadThis().dupe(2).pop();
-                } else
-                {
-                    builder.dupe().loadThis().swap();
-                }
-
-                // At which point the stack is the result value, this, the result value
-
-                builder.putField(className, node.name, typeName);
-
-                // And now it is just the result value
-            }
-
-            builder.returnResult();
-
-            addMethod(getAccess);
-
-            fieldToReadMethod.put(node.name, getAccess);
-        }
-
-        private boolean isWriteBehindEnabled()
-        {
-            return pool.isEnabled(TransformationOption.FIELD_WRITEBEHIND);
-        }
-
-        private boolean isWide()
-        {
-            PrimitiveType pt = PrimitiveType.getByName(typeName);
-
-            return pt != null && pt.isWide();
-        }
-
-        private void pushFieldConduitOntoStack(String conduitFileName, InstructionBuilder builder)
-        {
-            builder.loadThis();
-            builder.getField(className, conduitFileName, FieldConduit.class);
-        }
-
-        private void makeReadOnly()
-        {
-            String setAccessName = makeUnique(methodNames, "setfieldvalue_" + node.name);
-
-            setAccess = new MethodNode(ACC_SYNTHETIC | ACC_FINAL, setAccessName, "(" + node.desc + ")V", null, null);
-
-            String message = String.format("Field %s of class %s is read-only.", node.name, className);
-
-            newBuilder(setAccess).throwException(IllegalStateException.class, message);
-
-            addMethod(setAccess);
-
-            fieldToWriteMethod.put(node.name, setAccess);
-
-            node.access |= ACC_FINAL;
-        }
-
-        /**
-         * Adds a static setter method, allowing an external FieldAccess implementation
-         * to directly set the value of the field.
-         */
-        private MethodNode addShimSetAccessMethod()
-        {
-            String name = makeUnique(methodNames, "shimset_" + node.name);
-
-            // Takes two Object parameters (instance, and value) and returns void.
-
-            MethodNode mn = new MethodNode(ACC_SYNTHETIC | ACC_FINAL, name, "(" + node.desc + ")V", null, null);
-
-            InstructionBuilder builder = newBuilder(mn);
-
-            builder.loadThis().loadArgument(0).putField(className, node.name, typeName);
-            builder.returnResult();
-
-            addMethod(mn);
-
-            fieldTransformMethods.add(mn);
-
-            return mn;
-        }
-
-        private MethodNode addShimGetAccessMethod()
-        {
-            String name = makeUnique(methodNames, "shimget_" + node.name);
-
-            MethodNode mn = new MethodNode(ACC_SYNTHETIC | ACC_FINAL, name, "()" + node.desc, null, null);
-
-            InstructionBuilder builder = newBuilder(mn);
-
-            builder.loadThis().getField(className, node.name, typeName).returnResult();
-
-            addMethod(mn);
-
-            fieldTransformMethods.add(mn);
-
-            return mn;
-        }
-
-        void installShim(PlasticClassHandleShim shim)
-        {
-            if (handle != null)
-            {
-                handle.shim = shim;
-            }
-        }
-
-        /**
-         * Invoked with the object instance on the stack and cast to the right type.
-         */
-        void extendShimGet(SwitchBlock switchBlock)
-        {
-            if (getAccess == null)
-            {
-                getAccess = addShimGetAccessMethod();
-            }
-
-            final String methodToInvoke = getAccess.name;
-
-            shimInvokedMethods.add(getAccess);
-
-            switchBlock.addCase(fieldIndex, false, new InstructionBuilderCallback()
-            {
-                public void doBuild(InstructionBuilder builder)
-                {
-                    builder.invokeVirtual(className, typeName, methodToInvoke).boxPrimitive(typeName).returnResult();
-                }
-            });
-        }
-
-        /**
-         * Invoked with the object instance on the stack and cast to the right type, then the
-         * new field value (as Object, needing to be cast or unboxed).
-         */
-        void extendShimSet(SwitchBlock switchBlock)
-        {
-            // If no conduit has yet been specified, then we need a set access method for the shim to invoke.
-
-            if (setAccess == null)
-            {
-                setAccess = addShimSetAccessMethod();
-            }
-
-            shimInvokedMethods.add(setAccess);
-
-            final String methodToInvoke = setAccess.name;
-
-            switchBlock.addCase(fieldIndex, true, new InstructionBuilderCallback()
-            {
-
-                public void doBuild(InstructionBuilder builder)
-                {
-                    builder.castOrUnbox(typeName);
-                    builder.invokeVirtual(className, "void", methodToInvoke, typeName);
-                    // Should not be necessary, as its always a void method, and we can
-                    // drop to the bottom of the method.
-                    // builder.returnResult();
-                }
-            });
-        }
-
-    }
-
-    /**
-     * Responsible for tracking the advice added to a method, as well as creating the MethodInvocation
-     * class for the method and ultimately rewriting the original method to instnatiate the MethodInvocation
-     * and handle the success or failure result.
-     */
-    class MethodAdviceManager
-    {
-        private final static String RETURN_VALUE = "returnValue";
-
-        private final MethodDescription description;
-
-        /**
-         * The method to which advice is added; it must be converted to instantiate the
-         * MethodInvocation subclass, then unpack the return value and/or re-throw checked exceptions.
-         */
-        private final MethodNode advisedMethodNode;
-
-        private final ClassNode invocationClassNode;
-
-        private final List<MethodAdvice> advice = PlasticInternalUtils.newList();
-
-        private final boolean isVoid;
-
-        private final String invocationClassName;
-
-        /**
-         * The new method that uses the original instructions from the advisedMethodNode.
-         */
-        private final String newMethodName;
-
-        private final String[] constructorTypes;
-
-        protected MethodAdviceManager(MethodDescription description, MethodNode methodNode)
-        {
-            this.description = description;
-            this.advisedMethodNode = methodNode;
-
-            isVoid = description.returnType.equals("void");
-
-            invocationClassName = String.format("%s$Invocation_%s_%s", className, description.methodName,
-                    PlasticUtils.nextUID());
-
-            invocationClassNode = new ClassNode();
-
-            invocationClassNode.visit(V1_5, ACC_PUBLIC | ACC_FINAL, nameCache.toInternalName(invocationClassName),
-                    null, ABSTRACT_METHOD_INVOCATION_INTERNAL_NAME, new String[]
-                    {nameCache.toInternalName(MethodInvocation.class)});
-
-            constructorTypes = createFieldsAndConstructor();
-
-            createReturnValueAccessors();
-
-            createSetParameter();
-
-            createGetParameter();
-
-            newMethodName = String.format("advised$%s_%s", description.methodName, PlasticUtils.nextUID());
-
-            createNewMethod();
-
-            createProceedToAdvisedMethod();
-        }
-
-        private String[] createFieldsAndConstructor()
-        {
-            if (!isVoid)
-                invocationClassNode.visitField(ACC_PUBLIC, RETURN_VALUE, nameCache.toDesc(description.returnType),
-                        null, null);
-
-            List<String> consTypes = PlasticInternalUtils.newList();
-            consTypes.add(Object.class.getName());
-            consTypes.add(InstanceContext.class.getName());
-            consTypes.add(MethodInvocationBundle.class.getName());
-
-            for (int i = 0; i < description.argumentTypes.length; i++)
-            {
-                String type = description.argumentTypes[i];
-
-                invocationClassNode.visitField(ACC_PRIVATE, "p" + i, nameCache.toDesc(type), null, null);
-
-                consTypes.add(type);
-            }
-
-            String[] constructorTypes = consTypes.toArray(new String[consTypes.size()]);
-
-            MethodNode cons = new MethodNode(ACC_PUBLIC, CONSTRUCTOR_NAME, nameCache.toMethodDescriptor("void",
-                    constructorTypes), null, null);
-
-            InstructionBuilder builder = newBuilder(cons);
-
-            // First three arguments go to the super-class
-
-            builder.loadThis();
-            builder.loadArgument(0);
-            builder.loadArgument(1);
-            builder.loadArgument(2);
-            builder.invokeConstructor(AbstractMethodInvocation.class, Object.class, InstanceContext.class,
-                    MethodInvocationBundle.class);
-
-            for (int i = 0; i < description.argumentTypes.length; i++)
-            {
-                String name = "p" + i;
-                String type = description.argumentTypes[i];
-
-                builder.loadThis();
-                builder.loadArgument(3 + i);
-                builder.putField(invocationClassName, name, type);
-            }
-
-            builder.returnResult();
-
-            invocationClassNode.methods.add(cons);
-
-            return constructorTypes;
-        }
-
-        public void add(MethodAdvice advice)
-        {
-            this.advice.add(advice);
-        }
-
-        private void createReturnValueAccessors()
-        {
-            addReturnValueSetter();
-            createReturnValueGetter();
-        }
-
-        private InstructionBuilder newMethod(String name, Class returnType, Class... argumentTypes)
-        {
-            MethodNode mn = new MethodNode(ACC_PUBLIC, name, nameCache.toMethodDescriptor(returnType, argumentTypes),
-                    null, null);
-
-            invocationClassNode.methods.add(mn);
-
-            return newBuilder(mn);
-        }
-
-        private void createReturnValueGetter()
-        {
-            InstructionBuilder builder = newMethod("getReturnValue", Object.class);
-
-            if (isVoid)
-            {
-                builder.loadNull().returnResult();
-            } else
-            {
-                builder.loadThis().getField(invocationClassName, RETURN_VALUE, description.returnType)
-                        .boxPrimitive(description.returnType).returnResult();
-            }
-        }
-
-        private void addReturnValueSetter()
-        {
-            InstructionBuilder builder = newMethod("setReturnValue", MethodInvocation.class, Object.class);
-
-            if (isVoid)
-            {
-                builder.throwException(IllegalArgumentException.class, String
-                        .format("Method %s of class %s is void, setting a return value is not allowed.", description,
-                                className));
-            } else
-            {
-                builder.loadThis().loadArgument(0);
-                builder.castOrUnbox(description.returnType);
-                builder.putField(invocationClassName, RETURN_VALUE, description.returnType);
-
-                builder.loadThis().invoke(AbstractMethodInvocation.class, void.class, "clearCheckedException");
-
-                builder.loadThis().returnResult();
-            }
-        }
-
-        private void createGetParameter()
-        {
-            InstructionBuilder builder = newMethod("getParameter", Object.class, int.class);
-
-            if (description.argumentTypes.length == 0)
-            {
-                indexOutOfRange(builder);
-            } else
-            {
-                builder.loadArgument(0);
-                builder.startSwitch(0, description.argumentTypes.length - 1, new SwitchCallback()
-                {
-
-                    public void doSwitch(SwitchBlock block)
-                    {
-                        for (int i = 0; i < description.argumentTypes.length; i++)
-                        {
-                            final int index = i;
-
-                            block.addCase(i, false, new InstructionBuilderCallback()
-                            {
-
-                                public void doBuild(InstructionBuilder builder)
-                                {
-                                    String type = description.argumentTypes[index];
-
-                                    builder.loadThis();
-                                    builder.getField(invocationClassName, "p" + index, type).boxPrimitive(type)
-                                            .returnResult();
-                                }
-                            });
-                        }
-                    }
-                });
-            }
-        }
-
-        private void indexOutOfRange(InstructionBuilder builder)
-        {
-            builder.throwException(IllegalArgumentException.class, "Parameter index out of range.");
-        }
-
-        private void createSetParameter()
-        {
-            InstructionBuilder builder = newMethod("setParameter", MethodInvocation.class, int.class, Object.class);
-
-            if (description.argumentTypes.length == 0)
-            {
-                indexOutOfRange(builder);
-            } else
-            {
-                builder.loadArgument(0).startSwitch(0, description.argumentTypes.length - 1, new SwitchCallback()
-                {
-
-                    public void doSwitch(SwitchBlock block)
-                    {
-                        for (int i = 0; i < description.argumentTypes.length; i++)
-                        {
-                            final int index = i;
-
-                            block.addCase(i, true, new InstructionBuilderCallback()
-                            {
-
-                                public void doBuild(InstructionBuilder builder)
-                                {
-                                    String type = description.argumentTypes[index];
-
-                                    builder.loadThis();
-                                    builder.loadArgument(1).castOrUnbox(type);
-                                    builder.putField(invocationClassName, "p" + index, type);
-                                }
-                            });
-                        }
-                    }
-                });
-
-                builder.loadThis().returnResult();
-            }
-        }
-
-        private void createNewMethod()
-        {
-            String[] exceptions = (String[]) (advisedMethodNode.exceptions == null ? null
-                    : advisedMethodNode.exceptions.toArray(new String[0]));
-
-            // Remove the private flag, so that the MethodInvocation implementation (in the same package)
-            // can directly access the method without an additional access method.
-
-            MethodNode mn = new MethodNode(advisedMethodNode.access & ~ACC_PRIVATE, newMethodName,
-                    advisedMethodNode.desc, advisedMethodNode.signature, exceptions);
-
-            // Copy everything else about the advisedMethodNode over to the new node
-
-            advisedMethodNode.accept(mn);
-
-            // Add this new method, with the same implementation as the original method, to the
-            // PlasticClass
-
-            classNode.methods.add(mn);
-        }
-
-        /**
-         * Invoke the "new" method, and deal with the return value and/or thrown exceptions.
-         */
-        private void createProceedToAdvisedMethod()
-        {
-            InstructionBuilder builder = newMethod("proceedToAdvisedMethod", void.class);
-
-            if (!isVoid)
-                builder.loadThis();
-
-            builder.loadThis().invoke(AbstractMethodInvocation.class, Object.class, "getInstance").checkcast(className);
-
-            // Load up each parameter
-            for (int i = 0; i < description.argumentTypes.length; i++)
-            {
-                String type = description.argumentTypes[i];
-
-                builder.loadThis().getField(invocationClassName, "p" + i, type);
-            }
-
-            builder.startTryCatch(new TryCatchCallback()
-            {
-                public void doBlock(TryCatchBlock block)
-                {
-                    block.addTry(new InstructionBuilderCallback()
-                    {
-
-                        public void doBuild(InstructionBuilder builder)
-                        {
-                            builder.invokeVirtual(className, description.returnType, newMethodName,
-                                    description.argumentTypes);
-
-                            if (!isVoid)
-                                builder.putField(invocationClassName, RETURN_VALUE, description.returnType);
-
-                            builder.returnResult();
-                        }
-                    });
-
-                    for (String exceptionName : description.checkedExceptionTypes)
-                    {
-                        block.addCatch(exceptionName, new InstructionBuilderCallback()
-                        {
-                            public void doBuild(InstructionBuilder builder)
-                            {
-                                builder.loadThis().swap();
-                                builder.invoke(AbstractMethodInvocation.class, MethodInvocation.class,
-                                        "setCheckedException", Exception.class);
-
-                                builder.returnResult();
-                            }
-                        });
-                    }
-                }
-            });
-        }
-
-        private void rewriteOriginalMethod()
-        {
-            pool.realize(className, ClassType.METHOD_INVOCATION, invocationClassNode);
-
-            String fieldName = String.format("methodinvocationbundle_%s_%s", description.methodName,
-                    PlasticUtils.nextUID());
-
-            MethodAdvice[] adviceArray = advice.toArray(new MethodAdvice[advice.size()]);
-            MethodInvocationBundle bundle = new MethodInvocationBundle(description, adviceArray);
-
-            classNode.visitField(ACC_PRIVATE | ACC_FINAL, fieldName, nameCache.toDesc(constructorTypes[2]), null, null);
-            initializeFieldFromStaticContext(fieldName, constructorTypes[2], bundle);
-
-            // Ok, here's the easy part: replace the method invocation with instantiating the invocation class
-
-            advisedMethodNode.instructions.clear();
-            advisedMethodNode.tryCatchBlocks.clear();
-
-            if (advisedMethodNode.localVariables != null)
-                advisedMethodNode.localVariables.clear();
-
-            InstructionBuilder builder = newBuilder(description, advisedMethodNode);
-
-            builder.newInstance(invocationClassName).dupe();
-
-            // Now load up the parameters to the constructor
-
-            builder.loadThis();
-            builder.loadThis().getField(className, getInstanceContextFieldName(), constructorTypes[1]);
-            builder.loadThis().getField(className, fieldName, constructorTypes[2]);
-
-            // Load up the actual method parameters
-
-            builder.loadArguments();
-            builder.invokeConstructor(invocationClassName, constructorTypes);
-
-            // That leaves an instance of the invocation class on the stack. If the method is void
-            // and throws no checked exceptions, then the variable actually isn't used. This code
-            // should be refactored a bit once there are tests for those cases.
-
-            builder.startVariable(invocationClassName, new LocalVariableCallback()
-            {
-                public void doBuild(final LocalVariable invocation, InstructionBuilder builder)
-                {
-                    builder.dupe().storeVariable(invocation);
-
-                    builder.invoke(AbstractMethodInvocation.class, MethodInvocation.class, "proceed");
-
-                    if (description.checkedExceptionTypes.length > 0)
-                    {
-                        builder.invoke(MethodInvocation.class, boolean.class, "didThrowCheckedException");
-
-                        builder.when(Condition.NON_ZERO, new InstructionBuilderCallback()
-                        {
-                            public void doBuild(InstructionBuilder builder)
-                            {
-                                builder.loadVariable(invocation).loadTypeConstant(Exception.class);
-                                builder.invokeVirtual(invocationClassName, Throwable.class.getName(),
-                                        "getCheckedException", Class.class.getName());
-                                builder.throwException();
-                            }
-                        });
-                    }
-
-                    if (!isVoid)
-                        builder.loadVariable(invocation).getField(invocationClassName, RETURN_VALUE,
-                                description.returnType);
-
-                    builder.returnResult();
-                }
-            });
-        }
-    }
-
     // Now past the inner classes; these are the instance variables of PlasticClassImpl proper:
 
-    private final ClassNode classNode;
+    final ClassNode classNode;
 
-    private final PlasticClassPool pool;
+    final PlasticClassPool pool;
 
-    private final String className;
+    final String className;
 
     private final String superClassName;
 
@@ -1448,7 +97,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
     private final Map<MethodDescription, PlasticMethod> description2method = new HashMap<MethodDescription, PlasticMethod>();
 
-    private final Set<String> methodNames = new HashSet<String>();
+    final Set<String> methodNames = new HashSet<String>();
 
     private final List<ConstructorCallback> constructorCallbacks = PlasticInternalUtils.newList();
 
@@ -1460,40 +109,40 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
      * Methods that require special attention inside {@link #createInstantiator()} because they
      * have method advice.
      */
-    private final Set<PlasticMethodImpl> advisedMethods = PlasticInternalUtils.newSet();
+    final Set<PlasticMethodImpl> advisedMethods = PlasticInternalUtils.newSet();
     ;
 
-    private final NameCache nameCache = new NameCache();
+    final NameCache nameCache = new NameCache();
 
     // This is generated from fields, as necessary
-    private List<PlasticField> unclaimedFields;
+    List<PlasticField> unclaimedFields;
 
     private final Set<String> fieldNames = PlasticInternalUtils.newSet();
 
-    private final StaticContext staticContext;
+    final StaticContext staticContext;
 
-    private final InheritanceData parentInheritanceData, inheritanceData;
+    final InheritanceData parentInheritanceData, inheritanceData;
 
     // MethodNodes in which field transformations should occur; this is most existing and
     // introduced methods, outside of special access methods.
 
-    private final Set<MethodNode> fieldTransformMethods = PlasticInternalUtils.newSet();
+    final Set<MethodNode> fieldTransformMethods = PlasticInternalUtils.newSet();
 
     // Tracks any methods that the Shim class uses to gain access to fields; used to ensure that
     // such methods are not optimized away incorrectly.
-    private final Set<MethodNode> shimInvokedMethods = PlasticInternalUtils.newSet();
+    final Set<MethodNode> shimInvokedMethods = PlasticInternalUtils.newSet();
 
     /**
      * Maps a field name to a replacement method that should be invoked instead of reading the
      * field.
      */
-    private final Map<String, MethodNode> fieldToReadMethod = PlasticInternalUtils.newMap();
+    final Map<String, MethodNode> fieldToReadMethod = PlasticInternalUtils.newMap();
 
     /**
      * Maps a field name to a replacement method that should be invoked instead of writing the
      * field.
      */
-    private final Map<String, MethodNode> fieldToWriteMethod = PlasticInternalUtils.newMap();
+    final Map<String, MethodNode> fieldToWriteMethod = PlasticInternalUtils.newMap();
 
     /**
      * This normal no-arguments constructor, or null. By the end of the transformation
@@ -1503,24 +152,24 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
     private final MethodNode newConstructor;
 
-    private final InstructionBuilder constructorBuilder;
+    final InstructionBuilder constructorBuilder;
 
     private String instanceContextFieldName;
 
     private Class<?> transformedClass;
 
     // Indexes used to identify fields or methods in the shim
-    private int nextFieldIndex = 0;
+    int nextFieldIndex = 0;
 
-    private int nextMethodIndex = 0;
+    int nextMethodIndex = 0;
 
     // Set of fields that need to contribute to the shim and gain access to it
 
-    private final Set<PlasticFieldImpl> shimFields = PlasticInternalUtils.newSet();
+    final Set<PlasticFieldImpl> shimFields = PlasticInternalUtils.newSet();
 
     // Set of methods that need to contribute to the shim and gain access to it
 
-    private final Set<PlasticMethodImpl> shimMethods = PlasticInternalUtils.newSet();
+     final Set<PlasticMethodImpl> shimMethods = PlasticInternalUtils.newSet();
 
     /**
      * @param classNode
@@ -1591,15 +240,19 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             }
 
             if (!Modifier.isAbstract(node.access))
+            {
                 fieldTransformMethods.add(node);
+            }
 
-            PlasticMethodImpl pmi = new PlasticMethodImpl(node);
+            PlasticMethodImpl pmi = new PlasticMethodImpl(this, node);
 
             methods.add(pmi);
             description2method.put(pmi.getDescription(), pmi);
 
             if (isInheritableMethod(node))
+            {
                 inheritanceData.addMethod(node.name, node.desc);
+            }
 
             methodNames.add(node.name);
         }
@@ -1630,7 +283,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
                                 "Field %s of class %s is not private. Class transformation requires that all instance fields be private.",
                                 node.name, className));
 
-            fields.add(new PlasticFieldImpl(node));
+            fields.add(new PlasticFieldImpl(this, node));
         }
 
         Collections.sort(fields);
@@ -1917,7 +570,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         fieldNames.add(name);
 
-        PlasticFieldImpl newField = new PlasticFieldImpl(fieldNode);
+        PlasticFieldImpl newField = new PlasticFieldImpl(this, fieldNode);
 
         return newField;
     }
@@ -1929,7 +582,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return introduceField(nameCache.toTypeName(fieldType), suggestedName);
     }
 
-    private String makeUnique(Set<String> values, String input)
+    String makeUnique(Set<String> values, String input)
     {
         return values.contains(input) ? input + "$" + PlasticUtils.nextUID() : input;
     }
@@ -2002,7 +655,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return introduceMethod(new MethodDescription(method));
     }
 
-    private void addMethod(MethodNode methodNode)
+    void addMethod(MethodNode methodNode)
     {
         classNode.methods.add(methodNode);
 
@@ -2038,7 +691,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         addMethod(methodNode);
 
-        return new PlasticMethodImpl(methodNode);
+        return new PlasticMethodImpl(this, methodNode);
     }
 
     private void createNewMethodImpl(MethodDescription methodDescription, MethodNode methodNode)
@@ -2304,7 +957,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         }
     }
 
-    private String getInstanceContextFieldName()
+    String getInstanceContextFieldName()
     {
         if (instanceContextFieldName == null)
         {
@@ -2330,8 +983,8 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     /**
      * Creates a new private final field and initializes its value (using the StaticContext).
      */
-    private String createAndInitializeFieldFromStaticContext(String suggestedFieldName, String fieldType,
-                                                             Object injectedFieldValue)
+    String createAndInitializeFieldFromStaticContext(String suggestedFieldName, String fieldType,
+                                                     Object injectedFieldValue)
     {
         String name = makeUnique(fieldNames, suggestedFieldName);
 
@@ -2349,7 +1002,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
      * context and the class constructor updated to assign the value from the context (which includes casting and
      * possibly unboxing).
      */
-    private void initializeFieldFromStaticContext(String fieldName, String fieldType, Object injectedFieldValue)
+    void initializeFieldFromStaticContext(String fieldName, String fieldType, Object injectedFieldValue)
     {
         int index = staticContext.store(injectedFieldValue);
 
@@ -2366,7 +1019,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         constructorBuilder.putField(className, fieldName, fieldType);
     }
 
-    private void pushInstanceContextFieldOntoStack(InstructionBuilder builder)
+    void pushInstanceContextFieldOntoStack(InstructionBuilder builder)
     {
         builder.loadThis().getField(className, getInstanceContextFieldName(), InstanceContext.class);
     }
@@ -2396,12 +1049,12 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return className;
     }
 
-    private InstructionBuilderImpl newBuilder(MethodNode mn)
+    InstructionBuilderImpl newBuilder(MethodNode mn)
     {
         return newBuilder(PlasticInternalUtils.toMethodDescription(mn), mn);
     }
 
-    private InstructionBuilderImpl newBuilder(MethodDescription description, MethodNode mn)
+    InstructionBuilderImpl newBuilder(MethodDescription description, MethodNode mn)
     {
         return new InstructionBuilderImpl(description, mn, nameCache);
     }
