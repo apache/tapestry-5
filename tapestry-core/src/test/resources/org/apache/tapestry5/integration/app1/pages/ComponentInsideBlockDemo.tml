@@ -6,7 +6,7 @@
     Test to show that TAP5-1600 is not valid.
 </p>
 
-<t:delegate to="block:zen"/>
+<t:delegate to="blockToRender"/>
 
 <t:block id="zen">
 
