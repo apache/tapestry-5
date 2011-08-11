@@ -42,14 +42,14 @@ public class ServiceBuilderMethodInvoker extends AbstractServiceCreator
      */
     public Object createObject()
     {
-        // Defer getting (and possibly instantitating) the module instance until the last possible
+        // Defer getting (and possibly instantiating) the module instance until the last possible
         // moment. If the method is static, there's no need to even get the builder.
 
         final Object moduleInstance = InternalUtils.isStatic(builderMethod) ? null : resources.getModuleBuilder();
 
         final OperationTracker tracker = resources.getTracker();
 
-        return tracker.invoke(String.format("Invoking " + creatorDescription), new Invokable<Object>()
+        return tracker.invoke(String.format("Constructing service implementation via " + creatorDescription), new Invokable<Object>()
         {
             public Object invoke()
             {

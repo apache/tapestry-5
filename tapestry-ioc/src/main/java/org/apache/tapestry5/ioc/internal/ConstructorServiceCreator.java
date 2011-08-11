@@ -45,7 +45,7 @@ public class ConstructorServiceCreator extends AbstractServiceCreator
 
     public Object createObject()
     {
-        return resources.getTracker().invoke("Invoking " + creatorDescription, new Invokable<Object>()
+        return resources.getTracker().invoke("Invoking constructor " + creatorDescription, new Invokable<Object>()
         {
             public Object invoke()
             {

@@ -305,7 +305,7 @@ public class ModuleImpl implements Module
                         return creator.createObject();
                     }
 
-                    creator = new OperationTrackingObjectCreator(registry, "Invoking " + creator.toString(), creator);
+                    creator = new OperationTrackingObjectCreator(registry, "Invoking service creator " + creator.toString(), creator);
 
                     creator = new LifecycleWrappedServiceCreator(lifecycle, resources, creator);
 
