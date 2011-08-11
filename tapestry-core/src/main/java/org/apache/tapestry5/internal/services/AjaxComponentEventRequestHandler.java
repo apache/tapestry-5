@@ -81,14 +81,14 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
             }
         };
 
-        if (pageActivator.activatePage(activePage.getRootElement().getComponentResources(), parameters
-                .getPageActivationContext(), interceptor))
-            return;
-
         // If we end up doing a partial render, the page render queue service needs to know the
         // page that will be rendered (for logging purposes, if nothing else).
 
         queue.setRenderingPage(activePage);
+
+        if (pageActivator.activatePage(activePage.getRootElement().getComponentResources(), parameters
+                .getPageActivationContext(), interceptor))
+            return;
 
         ContentType contentType = pageContentTypeAnalyzer.findContentType(activePage);
 

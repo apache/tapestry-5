@@ -51,7 +51,7 @@ public class RenderCommandComponentEventResultProcessor implements ComponentEven
     public void processResultValue(RenderCommand value) throws IOException
     {
         pageRenderQueue.addPartialMarkupRendererFilter(this);
-        pageRenderQueue.initializeForPartialPageRender(value);
+        pageRenderQueue.addPartialRenderer(value);
 
         // And render the content right now.
 

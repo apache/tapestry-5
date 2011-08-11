@@ -28,7 +28,7 @@ public interface AjaxPartialResponseRenderer
 {
     /**
      * Used to render a partial response as part of an Ajax action request. A call to {@link
-     * org.apache.tapestry5.internal.services.PageRenderQueue#initializeForPartialPageRender(org.apache.tapestry5.runtime.RenderCommand)}
+     * PageRenderQueue#addPartialRenderer(org.apache.tapestry5.runtime.RenderCommand)}
      * should precede this call.
      */
     void renderPartialPageMarkup() throws IOException;

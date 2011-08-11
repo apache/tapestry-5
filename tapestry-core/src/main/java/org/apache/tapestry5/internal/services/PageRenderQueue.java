@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,50 +43,34 @@ public interface PageRenderQueue
     Page getRenderingPage();
 
     /**
-     * Initializes the queue for rendering of a portion of a page.
+     * Adds a rendering command to the queue of rendering commands. This must not be invoked until after
+     * the {@linkplain #setRenderingPage(org.apache.tapestry5.internal.structure.Page) rendering page has been identified}.
+     *
+     * @param renderer responsible for rendering a portion of the final markup
      */
-    void initializeForPartialPageRender(RenderCommand rootCommand);
+    void addPartialRenderer(RenderCommand renderer);
 
     /**
-     * Obtains the value previously supplied to
-     * {@link #initializeForPartialPageRender(org.apache.tapestry5.runtime.RenderCommand)}.
-     * This allows the "natural" renderer to be substituted or otherwise manipulated.
-     * 
-     * @return the root renderer
-     */
-    RenderCommand getRootRenderCommand();
-
-    /**
-     * Returns true if {@link #initializeForPartialPageRender(org.apache.tapestry5.runtime.RenderCommand)} has been
-     * invoked.
+     * Returns true if either {@link #addPartialRenderer(org.apache.tapestry5.runtime.RenderCommand)} or
+     * {@link #addPartialMarkupRendererFilter(org.apache.tapestry5.services.PartialMarkupRendererFilter)}
+     * has been invoked.
      */
     boolean isPartialRenderInitialized();
 
     /**
-     * Forces the partialRenderInitialized flag to true, even if there isn't a root render command.
-     * This is used by the {@link org.apache.tapestry5.internal.services.ajax.MultiZoneUpdateEventResultProcessor} which doesn't add a render command
-     * until after rendering starts (care-of a stack of filters).
-     * 
-     * @since 5.2.2
-     */
-    void forcePartialRenderInitialized();
-
-    /**
-     * Render to the write, as setup by the initialize method.
-     * 
-     * @param writer
-     *            to write markup to
+     * Render to the markup writer, as setup by the {@link #initializeForCompletePage(org.apache.tapestry5.internal.structure.Page)} or
+     * {@link #addPartialRenderer(org.apache.tapestry5.runtime.RenderCommand)} methods.
+     *
+     * @param writer to write markup to
      */
     void render(MarkupWriter writer);
 
     /**
      * Performs a partial markup render, as configured via
-     * {@link #initializeForPartialPageRender(org.apache.tapestry5.runtime.RenderCommand)}.
-     * 
-     * @param writer
-     *            to which markup should be written
-     * @param reply
-     *            JSONObject which will contain the partial response
+     * {@link #addPartialRenderer(org.apache.tapestry5.runtime.RenderCommand)}.
+     *
+     * @param writer to which markup should be written
+     * @param reply  JSONObject which will contain the partial response
      */
     void renderPartial(MarkupWriter writer, JSONObject reply);
 
@@ -98,9 +82,8 @@ public interface PageRenderQueue
      * Filters are added to the <em>end</em> of the pipeline (after all permanent contributions).
      * <p/>
      * Filters will be executed in the order in which they are added.
-     * 
-     * @param filter
-     *            to add to the pipeline
+     *
+     * @param filter to add to the pipeline
      */
     void addPartialMarkupRendererFilter(PartialMarkupRendererFilter filter);
 }

@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,8 @@ import org.apache.tapestry5.services.PartialMarkupRenderer;
 import org.apache.tapestry5.services.PartialMarkupRendererFilter;
 
 /**
- * Responsible for capturing the content for a single zone and storing it into the JSON reply object.
+ * Responsible for capturing the content for a single zone and storing it into the JSON reply object. As a {@link PartialMarkupRendererFilter} , this
+ * has access to the {@link JSONObject} for the reply, and can {@linkplain PageRenderQueue#addPartialRenderer(org.apache.tapestry5.runtime.RenderCommand) add renderers that generate and package the markup content}.
  *
  * @see org.apache.tapestry5.ajax.MultiZoneUpdate
  * @see org.apache.tapestry5.services.ajax.AjaxResponseRenderer#addRender(String, Object)
@@ -92,9 +93,7 @@ public class SingleZonePartialRendererFilter implements PartialMarkupRendererFil
             }
         };
 
-        RenderCommand existing = queue.getRootRenderCommand();
-
-        queue.initializeForPartialPageRender(mergeRenderCommands(existing, forZone));
+        queue.addPartialRenderer(forZone);
 
         renderer.renderMarkup(writer, reply);
     }

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.util.Stack;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.RenderCommand;
-import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.PartialMarkupRenderer;
 import org.apache.tapestry5.services.PartialMarkupRendererFilter;
 import org.slf4j.Logger;
@@ -36,23 +35,15 @@ import org.slf4j.Logger;
 @Scope(ScopeConstants.PERTHREAD)
 public class PageRenderQueueImpl implements PageRenderQueue
 {
-    public static final RenderCommand NOOP_RENDER_COMMAND = new RenderCommand()
-    {
-        public void render(MarkupWriter writer, RenderQueue queue)
-        {
-            // Do nothing. The command is just to let the filters do their thing.
-        }
-    };
-
     private final LoggerSource loggerSource;
 
     private Page page;
 
-    private RenderCommand rootCommand;
-
     private boolean partialRenderInitialized;
 
     private final Stack<PartialMarkupRendererFilter> filters = CollectionFactory.newStack();
+
+    private RenderQueueImpl queue;
 
     private static class Bridge implements PartialMarkupRenderer
     {
@@ -79,14 +70,22 @@ public class PageRenderQueueImpl implements PageRenderQueue
 
     public void initializeForCompletePage(Page page)
     {
-        this.page = page;
-        rootCommand = page.getRootElement();
+        setRenderingPage(page);
+
+        queue.push(page.getRootElement());
     }
 
     public void setRenderingPage(Page page)
     {
         assert page != null;
+
         this.page = page;
+
+        String name = "tapestry.render." + page.getLogger().getName();
+
+        Logger logger = loggerSource.getLogger(name);
+
+        queue = new RenderQueueImpl(logger);
     }
 
     public boolean isPartialRenderInitialized()
@@ -94,31 +93,23 @@ public class PageRenderQueueImpl implements PageRenderQueue
         return partialRenderInitialized;
     }
 
-    public void forcePartialRenderInitialized()
+    private void partialRenderInitialized()
     {
-        partialRenderInitialized = true;
-
-        if (rootCommand == null)
-        {
-            rootCommand = NOOP_RENDER_COMMAND;
-        }
-    }
-
-    public void initializeForPartialPageRender(RenderCommand rootCommand)
-    {
-        assert rootCommand != null;
-
         if (page == null)
-            throw new IllegalStateException("Page must be specified before root render command.");
-
-        this.rootCommand = rootCommand;
+        {
+            throw new IllegalStateException("Page must be specified before initializing for partial page render.");
+        }
 
         partialRenderInitialized = true;
     }
 
-    public RenderCommand getRootRenderCommand()
+    public void addPartialRenderer(RenderCommand renderer)
     {
-        return rootCommand;
+        assert renderer != null;
+
+        partialRenderInitialized();
+
+        queue.push(renderer);
     }
 
     public Page getRenderingPage()
@@ -128,14 +119,6 @@ public class PageRenderQueueImpl implements PageRenderQueue
 
     public void render(MarkupWriter writer)
     {
-        String name = "tapestry.render." + page.getLogger().getName();
-
-        Logger logger = loggerSource.getLogger(name);
-
-        RenderQueueImpl queue = new RenderQueueImpl(logger);
-
-        queue.push(rootCommand);
-
         // Run the queue until empty.
 
         queue.run(writer);
@@ -144,6 +127,8 @@ public class PageRenderQueueImpl implements PageRenderQueue
     public void addPartialMarkupRendererFilter(PartialMarkupRendererFilter filter)
     {
         assert filter != null;
+
+        partialRenderInitialized();
 
         filters.push(filter);
     }

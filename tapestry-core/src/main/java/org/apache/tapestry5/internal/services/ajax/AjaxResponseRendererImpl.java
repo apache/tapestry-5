@@ -73,12 +73,6 @@ public class AjaxResponseRendererImpl implements AjaxResponseRenderer
     {
         assert filter != null;
 
-        // When a filter is added, it is assumed that some partial render will occur. This covers the case where
-        // a MultiZoneUpdate or a null is returned from the Ajax event handler method, so there is not actual
-        // renderer (a default no-op renderer is supplied).
-
-        queue.forcePartialRenderInitialized();
-
         queue.addPartialMarkupRendererFilter(filter);
 
         return this;
