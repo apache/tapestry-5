@@ -371,7 +371,7 @@ var Tapestry = {
      * Default function for handling a communication error during an Ajax
      * request.
      */
-    ajaxExceptionHander : function(response, exception) {
+    ajaxExceptionHandler : function(response, exception) {
         Tapestry.error(Tapestry.Messages.communicationFailed + exception);
 
         Tapestry.debug(Tapestry.Messages.ajaxFailure + exception, response);
