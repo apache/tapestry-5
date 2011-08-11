@@ -1058,7 +1058,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         waitForCSSSelectedElementToAppear("div.t-console div.t-err");
 
         assertText(
-                "css=div.t-err", "Communication with the server failed: Request event 'action' (on component UnhandledEventDemo:ajax) was not handled; you must provide a matching event handler method in the component or in one of its containers.");
+                "css=div.t-console div.t-err", "Communication with the server failed: Request event 'action' (on component UnhandledEventDemo:ajax) was not handled; you must provide a matching event handler method in the component or in one of its containers.");
     }
 
     /**
