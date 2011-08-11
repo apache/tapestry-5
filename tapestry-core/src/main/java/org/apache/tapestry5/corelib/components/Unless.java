@@ -19,14 +19,14 @@ import org.apache.tapestry5.corelib.base.AbstractConditional;
 
 /**
  * A close relative of the {@link org.apache.tapestry5.corelib.components.If} component that inverts the meaning of its
- * test.  This is easier than an If component with the negate parameter set to true.
+ * test. This is easier than an {@link org.apache.tapestry5.corelib.components.If} component with the negate parameter set to {@code true}.
  * 
  * @tapestrydoc
  */
 public class Unless extends AbstractConditional
 {
     /**
-     * If true, then the body of the If component is rendered. If false, the body is omitted.
+     * If true, then the body of the component is omitted. If false, the body is rendered.
      */
     @Parameter(required = true)
     private boolean test;
