@@ -444,7 +444,7 @@ public class FormTests extends TapestryCoreTestCase
         {
             String locator = String.format("%s/@disabled", path);
 
-            assertAttribute(locator, "disabled");
+            assertAttribute(locator, "true");
         }
     }
 
