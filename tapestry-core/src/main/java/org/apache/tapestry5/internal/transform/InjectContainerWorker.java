@@ -58,12 +58,11 @@ public class InjectContainerWorker implements ComponentClassTransformWorker2
 
     private ComputedValue<FieldConduit<Object>> createFieldValueConduitProvider(PlasticField field)
     {
-
         final String fieldName = field.getName();
 
         final String fieldTypeName = field.getTypeName();
 
-        return new ComputedValue<FieldConduit<Object>> ()
+        return new ComputedValue<FieldConduit<Object>>()
         {
             public FieldConduit<Object> get(InstanceContext context)
             {
@@ -79,9 +78,9 @@ public class InjectContainerWorker implements ComponentClassTransformWorker2
                         if (!fieldType.isInstance(container))
                         {
                             String message = String.format(
-                                    "Component %s is not assignable to field %s.%s (of type %s).", container
-                                            .getComponentResources().getCompleteId(), resources.getComponentModel()
-                                            .getComponentClassName(), fieldName, fieldTypeName);
+                                    "Component %s (type %s) is not assignable to field %s.%s (of type %s).", container
+                                    .getComponentResources().getCompleteId(), container.getClass().getName(), resources.getComponentModel()
+                                    .getComponentClassName(), fieldName, fieldTypeName);
 
                             throw new RuntimeException(message);
                         }

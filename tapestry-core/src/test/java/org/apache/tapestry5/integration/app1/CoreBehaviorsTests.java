@@ -140,7 +140,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         // And exception message:
 
-        assertTextPresent("Component InjectContainerMismatch is not assignable to field org.apache.tapestry5.corelib.mixins.RenderDisabled.field (of type org.apache.tapestry5.Field).");
+        assertTextPresent("Component InjectContainerMismatch (type org.apache.tapestry5.integration.app1.pages.InjectContainerMismatch) is not assignable to field org.apache.tapestry5.corelib.mixins.RenderDisabled.field (of type org.apache.tapestry5.Field).");
     }
 
     @Test
