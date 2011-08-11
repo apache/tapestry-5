@@ -1196,4 +1196,8 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
     {
         selenium.open(url, ignoreResponseCode);
     }
+
+    public Number getCssCount(String str) {
+        return selenium.getCssCount(str);
+    }
 }

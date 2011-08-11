@@ -1397,4 +1397,8 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     {
         waitForCondition("selenium.browserbot.getCurrentWindow().Ajax.activeRequestCount == 0", timeout);
     }
+
+    public Number getCssCount(String str) {
+        return selenium.getCssCount(str);
+    }
 }

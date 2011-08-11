@@ -48,4 +48,8 @@ public class SanityCheckTestSuite extends SeleniumTestCase
     {
         assertNotNull(context.getAttribute(TapestryTestConstants.COMMAND_PROCESSOR_ATTRIBUTE));
     }
+
+    public Number getCssCount(String str) {
+        return selenium.getCssCount(str);
+    }
 }

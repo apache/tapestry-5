@@ -1,7 +1,8 @@
 description = "Utilities for unit and integration testing of Tapestry applications"
 
 dependencies {
-  compile "org.seleniumhq.selenium.server:selenium-server:1.0.3:standalone@jar"
+  compile "org.seleniumhq.selenium:selenium-java:2.3.1"
+  compile "org.seleniumhq.selenium:selenium-server:2.3.1"
   compile "jetty:org.mortbay.jetty:5.1.12"
     
   compile "org.testng:testng:$testngVersion"
