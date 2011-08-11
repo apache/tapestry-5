@@ -15,11 +15,12 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Request;
@@ -30,9 +31,9 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * {@linkplain org.apache.tapestry5.ValueEncoder#toClient(Object) encoded} when rendered, then decoded when the form is
  * submitted,
  * and the value parameter updated.
- * 
- * @since 5.1.0.2
+ *
  * @tapestrydoc
+ * @since 5.1.0.2
  */
 @SupportsInformalParameters
 public class Hidden implements ClientElement
@@ -42,6 +43,14 @@ public class Hidden implements ClientElement
      */
     @Parameter(required = true, autoconnect = true, principal = true)
     private Object value;
+
+    /**
+     * Defines how nulls on the server side, or sent from the client side, are treated. The selected strategy may
+     * replace the nulls with some other value. The default strategy leaves nulls alone.  Another built-in strategy,
+     * zero, replaces nulls with the value 0.
+     */
+    @Parameter(defaultPrefix = BindingConstants.NULLFIELDSTRATEGY, value = "default")
+    private NullFieldStrategy nulls;
 
     /**
      * Value encoder for the value, usually determined automatically from the type of the property bound to the value
@@ -94,7 +103,9 @@ public class Hidden implements ClientElement
     boolean beginRender(MarkupWriter writer)
     {
         if (formSupport == null)
+        {
             throw new RuntimeException("The Hidden component must be enclosed by a Form component.");
+        }
 
         controlName = formSupport.allocateControlName(resources.getId());
 
@@ -102,7 +113,9 @@ public class Hidden implements ClientElement
 
         formSupport.store(this, new ProcessSubmission(controlName));
 
-        String encoded = encoder.toClient(value);
+        Object toEncode = value == null ? nulls.replaceToClient() : value;
+
+        String encoded = toEncode == null ? "" : encoder.toClient(toEncode);
 
         hiddenInputElement = writer.element("input", "type", "hidden", "name", controlName, "value", encoded);
 
@@ -117,7 +130,9 @@ public class Hidden implements ClientElement
     {
         String encoded = request.getParameter(controlName);
 
-        Object decoded = encoder.toValue(encoded);
+        String toDecode = InternalUtils.isBlank(encoded) ? nulls.replaceFromClient() : encoded;
+
+        Object decoded = toDecode == null ? null : encoder.toValue(toDecode);
 
         value = decoded;
     }
