@@ -1382,6 +1382,16 @@ Tapestry.ErrorPopup = Class.create({
         if (this.animation)
             return;
 
+        if (Prototype.Browser.IE) {
+            this.outerDiv.show();
+
+            var bound = _.bind(this.hideIfNotFocused, this);
+
+            _.delay(bound, 100);
+
+            return;
+        }
+
         this.animation = new Effect.Appear(this.outerDiv, {
             queue : this.queue,
             afterFinish : function() {
@@ -1393,6 +1403,15 @@ Tapestry.ErrorPopup = Class.create({
         });
     },
 
+    /** Used in IE to hide the field if not the focus field. */
+    hideIfNotFocused : function() {
+
+        if (this.field != Tapestry.currentFocusField) {
+            this.outerDiv.hide();
+        }
+    },
+
+
     stopAnimation : function() {
         if (this.animation)
             this.animation.cancel();
@@ -1403,6 +1422,11 @@ Tapestry.ErrorPopup = Class.create({
     fadeOut : function() {
         if (this.animation)
             return;
+
+        if (Prototype.IE) {
+            this.outerDiv.hide();
+            return;
+        }
 
         this.animation = new Effect.Fade(this.outerDiv, {
             queue : this.queue,
