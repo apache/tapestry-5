@@ -97,9 +97,4 @@ public class SingleZonePartialRendererFilter implements PartialMarkupRendererFil
 
         renderer.renderMarkup(writer, reply);
     }
-
-    private RenderCommand mergeRenderCommands(RenderCommand existingCommand, RenderCommand newCommand)
-    {
-        return existingCommand == null ? newCommand : new CombinedRenderCommand(existingCommand, newCommand);
-    }
 }
