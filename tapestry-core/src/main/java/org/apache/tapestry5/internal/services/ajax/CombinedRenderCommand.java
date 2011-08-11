@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services.ajax;
+package org.apache.tapestry5.internal.services.ajax;
 
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.runtime.RenderCommand;

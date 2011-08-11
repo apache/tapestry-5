@@ -10,6 +10,7 @@ import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.services.PartialMarkupRenderer;
 import org.apache.tapestry5.services.PartialMarkupRendererFilter;
 import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
+import org.apache.tapestry5.services.ajax.JSONCallback;
 import org.apache.tapestry5.services.ajax.JavaScriptCallback;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
@@ -32,31 +33,30 @@ public class AjaxResponseRendererImpl implements AjaxResponseRenderer
         this.javaScriptSupport = javaScriptSupport;
     }
 
-    public void addRender(String clientId, Object renderer)
+    public AjaxResponseRenderer addRender(String clientId, Object renderer)
     {
         assert InternalUtils.isNonBlank(clientId);
         assert renderer != null;
 
         RenderCommand command = typeCoercer.coerce(renderer, RenderCommand.class);
 
-        // When a filter is added, it is assumed that some partial render will occur. This covers the case where
-        // a MultiZoneUpdate or a null is returned from the Ajax event handler method.
+        addFilter(new SingleZonePartialRendererFilter(clientId, command, queue, ajaxFormUpdateController));
 
-        queue.forcePartialRenderInitialized();
-        queue.addPartialMarkupRendererFilter(new SingleZonePartialRendererFilter(clientId, command, queue, ajaxFormUpdateController));
+        return this;
     }
 
-    public void addRender(ClientBodyElement zone)
+    public AjaxResponseRenderer addRender(ClientBodyElement zone)
     {
         assert zone != null;
 
         addRender(zone.getClientId(), zone.getBody());
+
+        return this;
     }
 
-    public void addCallback(final JavaScriptCallback callback)
+    public AjaxResponseRenderer addCallback(final JavaScriptCallback callback)
     {
-        queue.forcePartialRenderInitialized();
-        queue.addPartialMarkupRendererFilter(new PartialMarkupRendererFilter()
+        addFilter(new PartialMarkupRendererFilter()
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {
@@ -65,5 +65,37 @@ public class AjaxResponseRendererImpl implements AjaxResponseRenderer
                 renderer.renderMarkup(writer, reply);
             }
         });
+
+        return this;
+    }
+
+    public AjaxResponseRenderer addFilter(PartialMarkupRendererFilter filter)
+    {
+        assert filter != null;
+
+        // When a filter is added, it is assumed that some partial render will occur. This covers the case where
+        // a MultiZoneUpdate or a null is returned from the Ajax event handler method, so there is not actual
+        // renderer (a default no-op renderer is supplied).
+
+        queue.forcePartialRenderInitialized();
+
+        queue.addPartialMarkupRendererFilter(filter);
+
+        return this;
+    }
+
+    public AjaxResponseRenderer addCallback(final JSONCallback callback)
+    {
+        addFilter(new PartialMarkupRendererFilter()
+        {
+            public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
+            {
+                callback.run(reply);
+
+                renderer.renderMarkup(writer, reply);
+            }
+        });
+
+        return this;
     }
 }

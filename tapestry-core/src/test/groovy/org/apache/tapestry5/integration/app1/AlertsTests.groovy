@@ -89,10 +89,6 @@ class AlertsTests extends SeleniumTestCase
 
         waitForCSSSelectedElementToAppear "div.t-error"
 
-        // Ah, Selenium, I love you. You make my day go so quicky. In any case, this should work
-        // clear as day, but doesn't, so it's commented out. I guess this just goes to manual
-        // testing.
-
         assertText "css=div.t-error div.t-message-container", "ajax error single"
 
         click "link=Dismiss all"

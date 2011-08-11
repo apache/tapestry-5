@@ -22,12 +22,12 @@ import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.PartialMarkupRenderer;
 import org.apache.tapestry5.services.PartialMarkupRendererFilter;
-import org.apache.tapestry5.services.ajax.CombinedRenderCommand;
 
 /**
  * Responsible for capturing the content for a single zone and storing it into the JSON reply object.
  *
  * @see org.apache.tapestry5.ajax.MultiZoneUpdate
+ * @see org.apache.tapestry5.services.ajax.AjaxResponseRenderer#addRender(String, Object)
  * @since 5.1.0.1
  */
 public class SingleZonePartialRendererFilter implements PartialMarkupRendererFilter
