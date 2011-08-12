@@ -104,14 +104,6 @@ public class AjaxTests extends TapestryCoreTestCase
     }
 
     @Test
-    public void explicit_visible_bounds()
-    {
-        openLinks("Form Fragment Explicit Visible Bounds Demo");
-
-
-    }
-	
-    @Test
     public void form_injector()
     {
         openLinks("FormInjector Demo");
