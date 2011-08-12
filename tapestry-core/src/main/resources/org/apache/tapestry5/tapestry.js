@@ -1295,6 +1295,8 @@ Tapestry.ErrorPopup = Class.create({
 
     BUBBLE_HEIGHT : "39px",
 
+    IE_FADE_TIME : 500,
+
     initialize : function(field) {
         this.field = $(field);
 
@@ -1344,7 +1346,7 @@ Tapestry.ErrorPopup = Class.create({
 
             /*
              * If this field is not the focus field after a focus change, then
-             * it's bubble, if visible, should fade out. This covers tabbing
+             * its bubble, if visible, should fade out. This covers tabbing
              * from one form to another.
              */
             this.fadeOut();
@@ -1387,7 +1389,7 @@ Tapestry.ErrorPopup = Class.create({
 
             var bound = _.bind(this.hideIfNotFocused, this);
 
-            _.delay(bound, 100);
+            _.delay(bound, this.IE_FADE_TIME);
 
             return;
         }
@@ -1423,8 +1425,12 @@ Tapestry.ErrorPopup = Class.create({
         if (this.animation)
             return;
 
-        if (Prototype.IE) {
-            this.outerDiv.hide();
+        if (Prototype.Browser.IE) {
+
+            var div = this.outerDiv;
+
+            _.delay(function() { div.hide(); }, this.IE_FADE_TIME);
+
             return;
         }
 
