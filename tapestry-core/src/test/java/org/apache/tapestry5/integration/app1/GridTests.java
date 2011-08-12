@@ -307,4 +307,15 @@ public class GridTests extends TapestryCoreTestCase
             assertTextPresent("ToDo #" + i);
     }
 
+    /**
+     * TAP5-450
+     */
+    @Test
+    public void rel_nofollow_present_in_sort_links()
+    {
+        openLinks("Grid Demo", "reset the Grid");
+
+        assertAttribute("//a[contains(@href,'columns:sort')]/@rel", "nofollow");
+    }
+
 }
