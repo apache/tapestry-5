@@ -576,6 +576,7 @@ public final class TapestryModule
 
         configuration.add("Component", new ComponentWorker(resolver));
         configuration.add("Mixin", new MixinWorker(resolver));
+        configuration.add("EmbeddedMixin", new EmbeddedMixinWorker());
         configuration.addInstance("InjectPage", InjectPageWorker.class);
         configuration.addInstance("InjectComponent", InjectComponentWorker.class);
         configuration.addInstance("InjectContainer", InjectContainerWorker.class);

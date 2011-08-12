@@ -87,6 +87,14 @@ public interface MutableComponentModel extends ComponentModel
      * @since 5.2.0.0
      */
     void addMixinClassName(String mixinClassName, String... order);
+    
+    /**
+     * Relevant for mixins only. Adds an embedded mixin to the component's implementation, 
+     * optionally specifying ordering constraints, as per OrderedConfiguration.
+     * 
+     * @since 5.3
+     */
+    void addEmbeddedMixinClassName(String mixinClassName, String embeddedComponentId, String... order);
 
     /**
      * Sets the internal flag to indicate that this model (and all models that extend from it) support informal
