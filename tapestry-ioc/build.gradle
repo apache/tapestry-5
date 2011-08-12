@@ -15,11 +15,7 @@ dependencies {
   compile "log4j:log4j:1.2.14"
   compile "org.slf4j:slf4j-log4j12:1.6.1"
 
-  compile "org.testng:testng:$testngVersion", { transitive = false }
-}
-
-ideaModule {
-  scopes.COMPILE.plus += configurations.provided
+  provided "org.testng:testng:$testngVersion", { transitive = false }
 }
 
 test {
