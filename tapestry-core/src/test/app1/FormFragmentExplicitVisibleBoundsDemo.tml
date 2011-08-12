@@ -1,0 +1,12 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd" xmlns:p="tapestry:parameter">
+    <t:form>
+        <div id="tab1">
+            <t:formfragment>
+
+            </t:formfragment>
+        </div>
+        <div id="tab2">
+
+        </div>
+    </t:form>
+</html>

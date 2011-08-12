@@ -102,6 +102,14 @@ public class AjaxTests extends TapestryCoreTestCase
         assertFalse(isElementPresent("innertext2"));
         assertTrue(isElementPresent("outertext2"));
     }
+
+    @Test
+    public void explicit_visible_bounds()
+    {
+        openLinks("Form Fragment Explicit Visible Bounds Demo");
+
+
+    }
 	
     @Test
     public void form_injector()
