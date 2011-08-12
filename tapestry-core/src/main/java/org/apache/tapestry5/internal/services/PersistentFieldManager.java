@@ -52,4 +52,15 @@ public interface PersistentFieldManager
      * @param pageName logical name of page whose persistent field data is to be discarded
      */
     void discardChanges(String pageName);
+    
+    /**
+     * Discards changes on the indicated page for a specific strategy only. This will not affect pages that have already 
+     * been attached to this request, but will affect subsequent page attachments in this and later requests.
+     *
+     * @param pageName logical name of page whose persistent field data is to be discarded
+     * 
+     * @param strategyName name of the strategy of which field data is to be discarded
+     */
+    void discardChanges(String pageName, String strategyName);
+    
 }
