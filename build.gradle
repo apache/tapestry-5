@@ -1,5 +1,9 @@
 description = "Apache Tapestry 5 Project"
 
+// Remember that after generating a release, this should be incremented. Also don't forget to
+// tag the release in Subversion.
+tapestryVersion = "5.3-alpha-12"
+
 jettyVersion = '7.0.0.v20091005'
 tomcatVersion = '6.0.30'
 testngVersion = '5.14.9'
@@ -7,7 +11,7 @@ easymockVersion = '3.0'
 servletAPIVersion = '2.4'
 
 // Provided so that Jenkins can override the normal version number for nightly builds.
-version = System.getProperty('project-version', '5.3-alpha-12')
+version = System.getProperty('project-version', tapestryVersion)
 
 stagingUrl = "https://repository.apache.org/service/local/staging/deploy/maven2/"
 snapshotUrl = "https://repository.apache.org/content/repositories/snapshots"
