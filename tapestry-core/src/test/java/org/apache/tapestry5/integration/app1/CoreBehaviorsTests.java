@@ -126,6 +126,16 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertTextPresent("[value provided by a template expansion]");
     }
 
+    @Test
+    public void maps_in_expansions() throws Exception
+    {
+        openLinks("Map Expressions in Expansions Demo");
+
+        assertText("emptymap", "{}");
+        assertText("stringmap", "{A:1}");
+        assertText("numberkeysmap", "{1:one}");
+    }
+
     /**
      * {@link org.apache.tapestry5.internal.transform.InjectContainerWorker} is
      * largely tested by the forms tests

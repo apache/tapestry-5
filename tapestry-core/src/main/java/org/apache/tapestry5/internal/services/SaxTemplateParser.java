@@ -129,7 +129,7 @@ public class SaxTemplateParser
     // expansions on the same text line into a single large
     // but invalid expansion.
 
-    private static final Pattern EXPANSION_PATTERN = Pattern.compile("\\$\\{\\s*(.*?)\\s*}");
+    private static final Pattern EXPANSION_PATTERN = Pattern.compile("\\$\\{\\s*(((?!\\$\\{).)*)\\s*}");
 
     private static final Set<String> MUST_BE_ROOT = CollectionFactory.newSet("extend", "container");
 

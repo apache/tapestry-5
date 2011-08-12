@@ -489,7 +489,9 @@ public class Index
 
                     new Item("BeanEditFormPrepareBubbling", "BeanEditor Prepare Bubbling Demo", "Prepare event bubbling"),
 
-                    new Item("NestedFormFragment", "Nested Form Fragment Demo", "Nesting Form Fragments work properly")
+                    new Item("NestedFormFragment", "Nested Form Fragment Demo", "Nesting Form Fragments work properly"),
+
+                    new Item("MapExpressionInExpansions", "Map Expressions in Expansions Demo", "Maps can be used in expansions")
 
             );
 

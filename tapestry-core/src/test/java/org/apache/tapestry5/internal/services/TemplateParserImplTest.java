@@ -565,6 +565,29 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     }
 
     @Test
+    public void expansions_with_maps()
+    {
+        List<TemplateToken> tokens= tokens("expansions_with_maps.tml");
+
+        System.out.println(tokens);
+        assertEquals(tokens.size(), 11);
+
+        //note that a single expansion on a line and two expansions on a line are tested individually elsewhere,
+        //so we group them together here just to cover all of the bases when using maps.
+        ExpansionToken expansion = get(tokens, 2);
+        assertEquals(expansion.getExpression(), "{}", "Empty map parsed incorrectly in an expansion");
+
+        expansion = get(tokens, 4);
+        assertEquals(expansion.getExpression(), "{'a': 'b'}", "Non-empty map parsed incorrectly in an expansion");
+
+        expansion = get(tokens, 6);
+        assertEquals(expansion.getExpression(), "{'one': 1}", "First expansion in a line with two expansions parsed incorrectly");
+
+        expansion = get(tokens, 8);
+        assertEquals(expansion.getExpression(), "{'two': 2}", "Second expansion in a line with two expansions parsed incorrectly");
+    }
+
+    @Test
     public void parameter_element()
     {
         List<TemplateToken> tokens = tokens("parameter_element.tml");
