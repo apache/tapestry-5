@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Archiver-Version: Tapestry Gradle Archiver
+Created-By: Tapestry Gradle build
+Built-By: hlship
+Build-Jdk: 1.6.0_24
+Specification-Title: Tapestry 5 Quickstart Archetype
+Specification-Version: @quickstartVersion@
+Specification-Vendor: Apache Software Foundation
+Implementation-Title: Tapestry 5 Quickstart Archetype
+Implementation-Version: @quickstartVersion@
+Implementation-Vendor-Id: org.apache.tapestry
+Implementation-Vendor: Apache Software Foundation
+

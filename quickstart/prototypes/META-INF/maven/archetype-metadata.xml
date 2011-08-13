@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<archetype-descriptor name="Tapestry 5 Quickstart Project">
+    <fileSets>
+        <fileSet filtered="true" packaged="true">
+            <directory>src/main/java</directory>
+            <includes>
+                <include>**/*.java</include>
+            </includes>
+        </fileSet>
+
+        <!-- Currently just a placeholder. -->
+        <fileSet filtered="true" packaged="false">
+            <directory>src/test/java</directory>
+        </fileSet>
+
+        <fileSet filtered="true">
+            <directory>src/main/webapp</directory>
+            <excludes>
+                <exclude>*.ico</exclude>
+                <exclude>**/*.jpg</exclude>
+                <exclude>**/*.gif</exclude>
+            </excludes>
+        </fileSet>
+
+        <!-- Don't want to filter binary files. -->
+
+        <fileSet filtered="false">
+            <directory>src/main/webapp</directory>
+            <includes>
+                <include>*.ico</include>
+                <include>**/*.jpg</include>
+                <include>**/*.gif</include>
+            </includes>
+        </fileSet>
+
+        <!-- This needs to stay at the root. -->
+        <fileSet filtered="true" packaged="false">
+            <directory>src/main/resources</directory>
+            <includes>
+                <include>log4j.properties</include>
+            </includes>
+        </fileSet>
+
+        <!-- The rest should be packaged. -->
+        <fileSet filtered="true" packaged="true">
+            <directory>src/main/resources</directory>
+            <excludes>
+                <exclude>log4j.properties</exclude>
+            </excludes>
+        </fileSet>
+
+        <fileSet filtered="true" packaged="false">
+            <directory>src/test/resources</directory>
+        </fileSet>
+
+        <fileSet filtered="true" packaged="false">
+            <directory>src/test/conf</directory>
+        </fileSet>
+
+        <fileSet filtered="true" packaged="false">
+            <directory>src/site</directory>
+        </fileSet>
+
+    </fileSets>
+</archetype-descriptor>

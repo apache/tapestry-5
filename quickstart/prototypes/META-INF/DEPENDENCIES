@@ -1,0 +1,19 @@
+// ------------------------------------------------------------------
+// Transitive dependencies of this project determined from the
+// maven pom organized by organization.
+// ------------------------------------------------------------------
+
+Tapestry 5 Quickstart Archetype
+
+
+From: 'an unknown organization'
+  - TestNG (http://testng.org) org.testng:testng:jar:@testngVersion@
+    License: Apache License, Version 2.0  (http://apache.org/licenses/LICENSE-2.0)
+
+From: 'JUnit' (http://www.junit.org)
+  - JUnit (http://junit.org) junit:junit:jar:3.8.1
+    License: Common Public License Version 1.0  (http://www.opensource.org/licenses/cpl1.0.txt)
+
+
+
+

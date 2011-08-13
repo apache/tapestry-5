@@ -1,0 +1,24 @@
+<html t:type="layout" title="${artifactId} Index"
+      t:sidebarTitle="Current Time"
+      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"
+      xmlns:p="tapestry:parameter">
+    #set( $D = '$' )
+    <!-- Most of the page content, including <head>, <body>, etc. tags, comes from Layout.tml -->
+
+    <p>${D}{message:greeting}</p>
+
+    <p:sidebar>
+
+        <p>
+            Just to prove this is live:
+        </p>
+
+        <p>The current time is: ${D}{currentTime}.</p>
+
+
+        <p>
+            [<t:pagelink page="Index">refresh</t:pagelink>]
+        </p>
+    </p:sidebar>
+
+</html>
