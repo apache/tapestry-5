@@ -1,0 +1,14 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xml:space="default">
+    <h1>Form Focus Field Demo</h1>
+
+    <t:form t:id="focusform" name="focusform" t:mixins="formfieldfocus" t:focusfield="gainFocus">
+
+        <t:label for="requiredValue" />
+        <t:textfield t:id="requiredValue" t:validate="required"/>
+        <br/>
+        <t:label for="gainFocus" />
+        <t:textfield t:id="gainFocus" t:value="gainFocusValue" />
+
+    </t:form>
+
+</html>

@@ -491,7 +491,9 @@ public class Index
 
                     new Item("NestedFormFragment", "Nested Form Fragment Demo", "Nesting Form Fragments work properly"),
 
-                    new Item("MapExpressionInExpansions", "Map Expressions in Expansions Demo", "Maps can be used in expansions")
+                    new Item("MapExpressionInExpansions", "Map Expressions in Expansions Demo", "Maps can be used in expansions"),
+
+                    new Item("FormFieldFocusDemo", "FormFieldFocus Demo", "Setting the Form focus on a specific field")
 
             );
 
