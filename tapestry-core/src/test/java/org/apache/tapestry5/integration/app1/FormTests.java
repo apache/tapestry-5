@@ -254,7 +254,7 @@ public class FormTests extends TapestryCoreTestCase
     {
         openLinks("DateField Demo", "clear", "english");
         //start with a known date...
-        type("asteroidImpact", "05/28/2046");
+        type("asteroidImpact", "05/28/2035");
 
         click("id=asteroidImpact-trigger");
         waitForCSSSelectedElementToAppear("div.datePicker");
@@ -277,7 +277,7 @@ public class FormTests extends TapestryCoreTestCase
         String pickerGoneCondition = "!selenium.isVisible('css=div.datePicker')";
         waitForCondition(pickerGoneCondition, PAGE_LOAD_TIMEOUT);
 
-        assertFieldValue("asteroidImpact", "6/28/2046");
+        assertFieldValue("asteroidImpact", "6/28/2035");
 
         //a few other behaviors to check on as a side-effect of implementing the fix for 1409:
         //1) If today is selected and it's the current month, pressing the "Today" button should close the popup
@@ -414,31 +414,31 @@ public class FormTests extends TapestryCoreTestCase
         openLinks("Disabled Fields");
 
         String[] paths = new String[]
-        { "//input[@id='textfield']",
+                {"//input[@id='textfield']",
 
-        "//input[@id='passwordfield']",
+                        "//input[@id='passwordfield']",
 
-        "//textarea[@id='textarea']",
+                        "//textarea[@id='textarea']",
 
-        "//input[@id='checkbox']",
+                        "//input[@id='checkbox']",
 
-        "//select[@id='select']",
+                        "//select[@id='select']",
 
-        "//input[@id='radio1']",
+                        "//input[@id='radio1']",
 
-        "//input[@id='radio2']",
+                        "//input[@id='radio2']",
 
-        "//input[@id='datefield']",
+                        "//input[@id='datefield']",
 
-        "//select[@id='palette-avail']",
+                        "//select[@id='palette-avail']",
 
-        "//button[@id='palette-select']",
+                        "//button[@id='palette-select']",
 
-        "//button[@id='palette-deselect']",
+                        "//button[@id='palette-deselect']",
 
-        "//select[@id='palette']",
+                        "//select[@id='palette']",
 
-        "//input[@id='submit']" };
+                        "//input[@id='submit']"};
 
         for (String path : paths)
         {
@@ -939,7 +939,9 @@ public class FormTests extends TapestryCoreTestCase
         assertFalse(isTextPresent("You must provide a value for Password"));
     }
 
-    /** TAP5-1024 */
+    /**
+     * TAP5-1024
+     */
     @Test
     public void use_of_cancel_mode_on_submit_button()
     {
@@ -959,7 +961,7 @@ public class FormTests extends TapestryCoreTestCase
 
         assertText("message", "onSelectedFromCancelLink() invoked.");
     }
-    
+
     @Test
     public void validation_decoration_for_select() throws Exception
     {
@@ -980,7 +982,7 @@ public class FormTests extends TapestryCoreTestCase
 
         assertTextPresent("Selected color: Green");
     }
-    
+
     /**
      * TAP5-1098.
      */
@@ -995,14 +997,14 @@ public class FormTests extends TapestryCoreTestCase
 
         assertTextPresent("Selected track: The Calling, Synaesthetic");
     }
-    
+
     @Test
     public void validation_macro() throws Exception
     {
         openLinks("Validator Macro Demo");
 
         clickAndWait(SUBMIT);
-        
+
         assertTextPresent("You must provide a value for Password.");
         assertTextPresent("You must provide a value for Password2.");
 
@@ -1010,10 +1012,10 @@ public class FormTests extends TapestryCoreTestCase
         type("password2", "x");
 
         clickAndWait(SUBMIT);
-        
+
         assertTextPresent("You may provide at most 3 characters for Password.");
         assertTextPresent("You must provide at least 2 characters for Password2.");
-        
+
         type("password", "a");
         type("password2", "wxyz");
 
@@ -1021,7 +1023,7 @@ public class FormTests extends TapestryCoreTestCase
 
         assertTextPresent("You must provide at least 2 characters for Password.");
         assertTextPresent("You may provide at most 3 characters for Password2.");
-        
+
         type("password", "ab");
         type("password2", "xyz");
 
@@ -1031,7 +1033,7 @@ public class FormTests extends TapestryCoreTestCase
         assertTextPresent("Password2: xyz");
     }
 
-        @Test
+    @Test
     public void checklist_select() throws Exception
     {
         openLinks("Checklist Demo");
