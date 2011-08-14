@@ -14,22 +14,17 @@
 
 package org.apache.tapestry5.internal.jpa;
 
-import java.util.List;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.persistence.SharedCacheMode;
-import javax.persistence.ValidationMode;
-import javax.persistence.spi.PersistenceUnitTransactionType;
-import javax.sql.DataSource;
-
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.jpa.TapestryPersistenceUnitInfo;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
+
+import javax.persistence.SharedCacheMode;
+import javax.persistence.ValidationMode;
+import javax.persistence.spi.PersistenceUnitTransactionType;
+import java.util.List;
 
 public class PersistenceContentHandler implements ContentHandler
 {
@@ -80,7 +75,7 @@ public class PersistenceContentHandler implements ContentHandler
     }
 
     public void startElement(final String namespaceURI, final String localName, final String qName,
-            final Attributes atts) throws SAXException
+                             final Attributes atts) throws SAXException
     {
         if (NAMESPACE_URI.equals(namespaceURI))
         {
@@ -97,8 +92,7 @@ public class PersistenceContentHandler implements ContentHandler
                     persistenceUnitInfo.transactionType(PersistenceUnitTransactionType
                             .valueOf(transactionType));
                 }
-            }
-            else if (ELEMENT_PROPERTY.equals(localName))
+            } else if (ELEMENT_PROPERTY.equals(localName))
             {
                 final String name = atts.getValue(ATTRIBUTE_NAME);
                 final String value = atts.getValue(ATTRIBUTE_VALUE);
@@ -119,38 +113,34 @@ public class PersistenceContentHandler implements ContentHandler
             if (ELEMENT_PROVIDER.equals(localName))
             {
                 persistenceUnitInfo.persistenceProviderClassName(string);
-            }
-            else if (ELEMENT_CLASS.equals(localName))
+            } else if (ELEMENT_CLASS.equals(localName))
             {
                 persistenceUnitInfo.addManagedClassName(string);
-            }
-            else if (ELEMENT_CACHING.equals(localName))
+            } else if (ELEMENT_CACHING.equals(localName))
             {
                 persistenceUnitInfo.sharedCacheMode(toEnum(SharedCacheMode.class, string));
-            }
-            else if (ELEMENT_VALIDATION_MODE.equals(localName))
+            } else if (ELEMENT_VALIDATION_MODE.equals(localName))
             {
                 persistenceUnitInfo.validationMode(toEnum(ValidationMode.class, string));
-            }
-            else if (ELEMENT_MAPPING_FILE.equals(localName))
+            } else if (ELEMENT_MAPPING_FILE.equals(localName))
             {
                 persistenceUnitInfo.addMappingFileName(string);
-            }
-            else if (ELEMENT_NON_JTA_DATA_SOURCE.equals(localName))
+            } else if (ELEMENT_NON_JTA_DATA_SOURCE.equals(localName))
             {
                 persistenceUnitInfo.nonJtaDataSource(string);
-            }
-            else if (ELEMENT_JTA_DATA_SOURCE.equals(localName))
+            } else if (ELEMENT_JTA_DATA_SOURCE.equals(localName))
             {
                 persistenceUnitInfo.jtaDataSource(string);
-            }
-            else if (ELEMENT_PERSISTENCE_UNIT.equals(localName))
+            } else if (ELEMENT_PERSISTENCE_UNIT.equals(localName))
             {
                 if (persistenceUnitInfo != null)
                 {
                     persistenceUnits.add(persistenceUnitInfo);
                     persistenceUnitInfo = null;
                 }
+            } else if (ELEMENT_EXCLUDE_UNLISTED_CLASSES.equals(localName))
+            {
+                persistenceUnitInfo.excludeUnlistedClasses(Boolean.valueOf(string));
             }
         }
     }
@@ -162,8 +152,7 @@ public class PersistenceContentHandler implements ContentHandler
         if (characters == null)
         {
             characters = new StringBuilder(s);
-        }
-        else
+        } else
         {
             characters.append(s);
         }

@@ -1,0 +1,31 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+<body>
+<p>
+    User name:
+			<span id="userName">
+				<t:if test="user">${user.firstName}</t:if>
+			</span>
+</p>
+<p>
+    Item name:
+			<span id="itemName">
+				<t:if test="item">${item.name}</t:if>
+			</span>
+</p>
+<p>
+    Thang name:
+			<span id="thangName">
+				<t:if test="thang">${thang.name}</t:if>
+			</span>
+</p>
+<p>
+    <t:eventlink event="createUser">create user</t:eventlink>
+</p>
+<p>
+    <t:eventlink event="createItem">create item</t:eventlink>
+</p>
+<p>
+    <t:eventlink event="createThang">create thang</t:eventlink>
+</p>
+</body>
+</html>

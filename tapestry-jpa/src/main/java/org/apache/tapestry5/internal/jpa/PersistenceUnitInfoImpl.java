@@ -14,12 +14,8 @@
 
 package org.apache.tapestry5.internal.jpa;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.jpa.TapestryPersistenceUnitInfo;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -29,8 +25,12 @@ import javax.persistence.ValidationMode;
 import javax.persistence.spi.ClassTransformer;
 import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.DataSource;
-
-import org.apache.tapestry5.jpa.TapestryPersistenceUnitInfo;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
 public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
 {
@@ -52,9 +52,9 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
 
     private boolean excludeUnlistedClasses = true;
 
-    private final List<String> managedClassNames = new ArrayList<String>();
+    private final Set<String> managedClassNames = CollectionFactory.newSet();
 
-    private final List<String> mappingFilesNames = new ArrayList<String>();
+    private final Set<String> mappingFilesNames = CollectionFactory.newSet();
 
     private final Properties properties = new Properties();
 
@@ -139,7 +139,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
      */
     public TapestryPersistenceUnitInfo jtaDataSource(final String jtaDataSource)
     {
-        this.jtaDataSource =  lookupDataSource(jtaDataSource);
+        this.jtaDataSource = lookupDataSource(jtaDataSource);
 
         return this;
     }
@@ -149,7 +149,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
      */
     public List<String> getMappingFileNames()
     {
-        return Collections.unmodifiableList(mappingFilesNames);
+        return Collections.unmodifiableList(CollectionFactory.newList(mappingFilesNames));
     }
 
     /**
@@ -166,6 +166,13 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     public TapestryPersistenceUnitInfo addProperty(String name, String value)
     {
         getProperties().put(name, value);
+
+        return this;
+    }
+
+    public TapestryPersistenceUnitInfo excludeUnlistedClasses(boolean exclude)
+    {
+        this.excludeUnlistedClasses = exclude;
 
         return this;
     }
@@ -191,7 +198,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
      */
     public List<String> getManagedClassNames()
     {
-        return Collections.unmodifiableList(managedClassNames);
+        return Collections.unmodifiableList(CollectionFactory.newList(managedClassNames));
     }
 
     /**
@@ -314,8 +321,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
             final Context envContext = (Context) initContext.lookup("java:comp/env");
 
             return (DataSource) envContext.lookup(name);
-        }
-        catch (final NamingException e)
+        } catch (final NamingException e)
         {
             throw new RuntimeException(e);
         }
