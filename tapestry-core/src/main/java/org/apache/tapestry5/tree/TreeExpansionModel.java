@@ -21,7 +21,7 @@ import org.apache.tapestry5.corelib.components.Tree;
  * implementation} simply stores a set of {@linkplain TreeNode#getId() unique node
  * ids} to identify expanded nodes. The expansion model is updated whenever folders are expanded or
  * collapsed on the client side.
- * 
+ *
  * @since 5.3
  * @see Tree
  */
@@ -29,10 +29,10 @@ public interface TreeExpansionModel<T>
 {
     /**
      * Returns true if the node has been previously {@linkplain #markExpanded(TreeNode) expanded}.
-     * 
+     *
      * @param node
      *            node to check for expansion
-     * @return
+     * @return  true if expanded
      */
     boolean isExpanded(TreeNode<T> node);
 

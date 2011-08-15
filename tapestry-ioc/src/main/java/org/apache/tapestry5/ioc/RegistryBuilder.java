@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,11 +13,6 @@
 // limitations under the License.
 
 package org.apache.tapestry5.ioc;
-
-import java.lang.reflect.AnnotatedElement;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
 
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.ioc.def.ModuleDef;
@@ -34,6 +29,11 @@ import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.services.TapestryIOCModule;
 import org.slf4j.Logger;
+
+import java.lang.reflect.AnnotatedElement;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Used to construct the IoC {@link org.apache.tapestry5.ioc.Registry}. This class is <em>not</em> thread-safe. The
@@ -106,7 +106,7 @@ public final class RegistryBuilder
 
     /**
      * Adds a number of modules (as module classes) to the registry, returning the builder for further configuration.
-     * 
+     *
      * @see org.apache.tapestry5.ioc.annotations.SubModule
      */
     public RegistryBuilder add(Class... moduleClasses)
@@ -145,7 +145,7 @@ public final class RegistryBuilder
     /**
      * Adds a modle class (specified by fully qualified class name) to the registry, returning the builder
      * for further configuration.
-     * 
+     *
      * @see org.apache.tapestry5.ioc.annotations.SubModule
      */
     public RegistryBuilder add(String classname)
@@ -157,8 +157,7 @@ public final class RegistryBuilder
             Class builderClass = Class.forName(classname, true, classLoader);
 
             add(builderClass);
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             throw new RuntimeException(String.format("Failure loading Tapestry IoC module class %s: %s", classname,
                     InternalUtils.toMessage(ex), ex));
@@ -194,11 +193,9 @@ public final class RegistryBuilder
      * Constructs the registry, adds a {@link ModuleDef} and a number of modules (as module classes) to the registry and
      * performs registry startup. The returned registry is ready to use. The caller is must not invoke
      * {@link org.apache.tapestry5.ioc.Registry#performRegistryStartup()}.
-     * 
-     * @param moduleDef
-     *            {@link ModuleDef} to add
-     * @param moduleClasses
-     *            modules (as module classes) to add
+     *
+     * @param moduleDef     {@link ModuleDef} to add
+     * @param moduleClasses modules (as module classes) to add
      * @return {@link Registry}
      * @since 5.2.0
      */
@@ -222,11 +219,8 @@ public final class RegistryBuilder
      * Constructs the registry, adds a number of modules (as module classes) to the registry and
      * performs registry startup. The returned registry is ready to use. The caller is must not invoke
      * {@link org.apache.tapestry5.ioc.Registry#performRegistryStartup()}.
-     * 
-     * @param moduleDef
-     *            {@link ModuleDef} to add
-     * @param moduleClasses
-     *            modules (as module classes) to add
+     *
+     * @param moduleClasses modules (as module classes) to add
      * @return {@link Registry}
      * @since 5.2.0
      */

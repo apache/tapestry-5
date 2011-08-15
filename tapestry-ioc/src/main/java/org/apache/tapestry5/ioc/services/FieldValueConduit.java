@@ -19,26 +19,26 @@ import org.apache.tapestry5.plastic.PlasticField;
 
 /**
  * Used as a replacement for a field.
- * 
+ *
+ * @see PlasticField
+ * @see FieldConduit
  * @since 5.2.0
  * @deprecated Deprecated in 5.3, using Plastic equivalents
- * @see {@link PlasticField}, {@link FieldConduit}
  */
 public interface FieldValueConduit
 {
 
     /**
      * Reads the current value of the field.
-     * 
+     *
      * @return current value (possibly null)
      */
     Object get();
 
     /**
      * Sets the value of the field
-     * 
-     * @param newValue
-     *            to be captured
+     *
+     * @param newValue to be captured
      */
     void set(Object newValue);
 

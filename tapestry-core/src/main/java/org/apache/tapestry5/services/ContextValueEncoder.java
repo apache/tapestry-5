@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@ package org.apache.tapestry5.services;
 /**
  * Used to convert values used in event contexts to client string representations and back.
  *
- * @See org.apache.tapestry5.ValueEncoder
+ * @see org.apache.tapestry5.ValueEncoder
  * @see org.apache.tapestry5.ioc.services.TypeCoercer
  */
 public interface ContextValueEncoder
 {
     /**
-     * Converts a context value into a client-side string (that will utltimately be encoded into a URL).
+     * Converts a context value into a client-side string (that will ultimately be encoded into a URL).
      *
      * @param value to convert (may not be null)
      * @return string representation of the value

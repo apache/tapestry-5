@@ -18,7 +18,7 @@ import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.ComponentEvent;
 
 /**
- * Interface used with  {@link org.apache.tapestry5.services.transform.TransformationSupport#addEventHandler(String, int, ComponentEventHandler)}} (and, in the old
+ * Interface used with  {@link org.apache.tapestry5.services.transform.TransformationSupport#addEventHandler(String, int, String, ComponentEventHandler)}} (and, in the old
  * API, {@link ClassTransformation#addComponentEventHandler(String, int, String, ComponentEventHandler)}).
  *
  * @since 5.2.0

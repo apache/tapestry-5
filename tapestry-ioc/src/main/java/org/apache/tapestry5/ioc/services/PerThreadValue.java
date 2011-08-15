@@ -15,16 +15,22 @@
 package org.apache.tapestry5.ioc.services;
 
 /**
- * A wrapper around {@link PerthreadManager#get(Object)} and {@link PerthreadManager#put(Object, Object)}.
- * 
+ * Provides access to per-thread (and, by extension, per-request) data, managed by the {@link PerthreadManager}.
+ * A PerThreadValue stores a particular type of information.
+ *
+ * @see org.apache.tapestry5.ioc.services.PerthreadManager#createValue()
  * @since 5.2.0
  */
 public interface PerThreadValue<T>
 {
-    /** Is a value stored (even null)? */
+    /**
+     * Is a value stored (even null)?
+     */
     boolean exists();
 
-    /** Reads the current per-thread value, or returns null if no value has been stored. */
+    /**
+     * Reads the current per-thread value, or returns null if no value has been stored.
+     */
     T get();
 
     /**
@@ -33,6 +39,8 @@ public interface PerThreadValue<T>
      */
     T get(T defaultValue);
 
-    /** Sets the current per-thread value, then returns that value. */
+    /**
+     * Sets the current per-thread value, then returns that value.
+     */
     T set(T newValue);
 }

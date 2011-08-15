@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 29011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ import org.apache.tapestry5.internal.TapestryInternalUtils;
 
 /**
  * Provides options to describe options associated with importing a stylesheet onto a page.
- * 
+ *
  * @since 5.2.0
  */
 public class StylesheetOptions
@@ -49,8 +49,8 @@ public class StylesheetOptions
      * The Internet Explorer condition associated with the link. When non-blank, the
      * &lt;link&gt; element will be written inside a specially formatted comment interpreted
      * by Internet Explorer. Usually null.
-     * 
-     * @see http://en.wikipedia.org/wiki/Conditional_comment
+     *
+     * @see <a href="http://en.wikipedia.org/wiki/Conditional_comment">http://en.wikipedia.org/wiki/Conditional_comment</a>
      */
     public String getCondition()
     {

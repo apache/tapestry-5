@@ -22,11 +22,13 @@ import org.apache.tapestry5.plastic.PlasticMethod;
  * Represents a bridge to an object method, when that method may not be public. A MethodAccess object
  * encapsulates the approach for invoking the method and capturing the result (either the return value,
  * or the checked exception that is thrown).
- * 
- * @since 5.2.0
+ *
  * @see TransformMethod#getAccess()
+ * @see PlasticClass
+ * @see PlasticMethod
+ * @see MethodHandle
+ * @since 5.2.0
  * @deprecated Deprecated in 5.3
- * @see {@link PlasticClass}, {@link {@link PlasticMethod}, {@link MethodHandle}
  */
 public interface MethodAccess
 {
@@ -34,11 +36,9 @@ public interface MethodAccess
      * Invoke the method on the target, passing a number of arguments to the method.
      * If the method throws a RuntimeException, that is passed through unchanged.
      * If the method throws a checked exception, that will be reflected in the invocation result.
-     * 
-     * @param target
-     *            object on which to invoke a method
-     * @param arguments
-     *            arguments to pass to the method
+     *
+     * @param target    object on which to invoke a method
+     * @param arguments arguments to pass to the method
      */
     MethodInvocationResult invoke(Object target, Object... arguments);
 }

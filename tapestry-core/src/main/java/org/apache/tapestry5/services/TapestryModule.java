@@ -957,7 +957,7 @@ public final class TapestryModule
      * <li>Collection to {@link GridDataSource}
      * <li>null to {@link GridDataSource}
      * <li>List to {@link SelectModel}
-     * <li>{@link .ComponentResourcesAware} (typically, a component) to {@link ComponentResources}
+     * <li>{@link ComponentResourcesAware} (typically, a component) to {@link ComponentResources}
      * <li> {@link ComponentResources} to {@link PropertyOverrides}
      * <li>String to {@link Renderable}
      * <li>{@link Renderable} to {@link Block}
@@ -2690,9 +2690,8 @@ public final class TapestryModule
      * even if a user overrides the default
      * service implementation.
      *
-     * @param defaultSource The serivce to decorate
+     * @param defaultSource The service to decorate
      * @param environment
-     * @return
      */
     public static FieldValidatorDefaultSource decorateFieldValidatorDefaultSource(
             final FieldValidatorDefaultSource defaultSource, final Environment environment)

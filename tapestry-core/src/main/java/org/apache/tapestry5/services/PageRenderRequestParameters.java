@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010The Apache Software Foundation
+// Copyright 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,16 +30,22 @@ public class PageRenderRequestParameters
 
     private final EventContext activationContext;
 
-    /** @since 5.2.0 */
+    /**
+     * @since 5.2.0
+     */
     private final boolean loopback;
 
-    /** @deprecated Use {@link #PageRenderRequestParameters(String, EventContext, boolean)  */
+    /**
+     * @deprecated Use {@link #PageRenderRequestParameters(String, EventContext, boolean)}.
+     */
     public PageRenderRequestParameters(String logicalPageName, EventContext activationContext)
     {
         this(logicalPageName, activationContext, false);
     }
 
-    /** @since 5.2.0 */
+    /**
+     * @since 5.2.0
+     */
     public PageRenderRequestParameters(String logicalPageName, EventContext activationContext, boolean loopback)
     {
         assert logicalPageName != null;
@@ -80,10 +86,10 @@ public class PageRenderRequestParameters
 
     /**
      * Is this request a loopback (a request for the same page that rendered it in the first place)?
-     * 
-     * @since 5.2.0
+     *
      * @see TapestryConstants#PAGE_LOOPBACK_PARAMETER_NAME
      * @see PageResetListener
+     * @since 5.2.0
      */
     public boolean isLoopback()
     {

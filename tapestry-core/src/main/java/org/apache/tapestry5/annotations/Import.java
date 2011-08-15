@@ -14,66 +14,57 @@
 
 package org.apache.tapestry5.annotations;
 
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.COMPONENT;
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.MIXIN;
-import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.PAGE;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import org.apache.tapestry5.ioc.annotations.UseWith;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
+
+import java.lang.annotation.*;
+
+import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.*;
 
 /**
  * Annotations to control the importing of JavaScript stacks and libraries as well as stylesheets. This annotation may
  * be placed on a class, in which case importing will occur as part of the {@link SetupRender} render phase.
  * Alternately, the annotation maybe placed on any method (though typically it will be placed on a render phase
  * method) and the import operations will be associated of that method.
- * <p>
- * Assets are localized during the {@link org.apache.tapestry5.runtime.Component#containingPageDidLoad()} lifecycle
+ * <p/>
+ * Assets are localized during the {@link org.apache.tapestry5.runtime.PageLifecycleAdapter#containingPageDidLoad()} lifecycle
  * method.
- * 
+ *
  * @see JavaScriptSupport
  * @since 5.2.0
  */
 @Target(
-{ ElementType.TYPE, ElementType.METHOD })
+        {ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @UseWith(
-{ COMPONENT, MIXIN, PAGE })
+        {COMPONENT, MIXIN, PAGE})
 public @interface Import
 {
     /**
      * JavaScript Stacks to import. Stacks are imported before individual libraries. Note that
      * stacks themselves may have {@linkplain JavaScriptStack#getStacks() dependencies on other
      * stacks}.
-     * 
+     *
      * @see JavaScriptStack
      * @see JavaScriptSupport#importStack(String)
      */
-    String[] stack() default
-    {};
+    String[] stack() default {};
 
     /**
      * JavaScript libraries to import. Each value is an asset path; symbols in each path are expanded. The library may
      * be localized.
-     * 
+     *
      * @see JavaScriptSupport#importJavaScriptLibrary(org.apache.tapestry5.Asset)
      */
-    String[] library() default
-    {};
+    String[] library() default {};
 
     /**
      * Stylesheets to import. Each value is an asset path; symbols in each path are expanded. The stylesheet may be
      * localized. The stylesheet is imported with no options.
-     * 
+     *
      * @see JavaScriptSupport#importStylesheet(org.apache.tapestry5.Asset)
      */
-    String[] stylesheet() default
-    {};
+    String[] stylesheet() default {};
 }

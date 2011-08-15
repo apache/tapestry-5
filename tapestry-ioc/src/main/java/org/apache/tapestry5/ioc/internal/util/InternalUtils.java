@@ -1296,7 +1296,7 @@ public class InternalUtils
     }
 
     /**
-     * Wraps a {@lihk Coercion} as a {@link Mapper}.
+     * Wraps a {@link Coercion} as a {@link Mapper}.
      * 
      * @since 5.2.0
      */

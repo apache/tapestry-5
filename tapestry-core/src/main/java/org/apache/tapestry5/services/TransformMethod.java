@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -76,7 +76,6 @@ public interface TransformMethod extends AnnotationProvider, Comparable<Transfor
      * and line number
      * information (when available).
      * 
-     * @param signature
      * @return a string that identifies the class, method name, types of parameters, source file and
      *         source line number
      */

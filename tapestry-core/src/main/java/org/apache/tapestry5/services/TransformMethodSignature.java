@@ -252,7 +252,6 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
      * of the method and the
      * types of any parameters, omitting return type, exceptions and modifiers.
      *
-     * @return
      */
     public String getMediumDescription()
     {

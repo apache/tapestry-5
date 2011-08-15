@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import java.util.List;
 
 /**
- * Creates a pipeline from a service inteface and an ordered list of filters. Each filter is defined in terms of a
+ * Creates a pipeline from a service interface and an ordered list of filters. Each filter is defined in terms of a
  * filter interface: the filter interface is a variant of the service interface, where each method has an additional
  * parameter that is an instance of the service interface. Typically, this service parameter (often named "delegate") is
  * either the first or the last parameter of each method.
@@ -33,7 +33,7 @@ import java.util.List;
  * terminator. In fact, it may be indirectly invoking methods on the next filter in the pipeline via a bridge instance.
  * <p/>
  * The builder is fairly smart about matching up service interface methods to filter interface methods, but keeping it
- * simple is also a good idea.
+ * simple is also a good idea.  By convention, the final parameter of each filter method is the delegate object (the bridge or terminator).
  */
 public interface PipelineBuilder
 {
@@ -43,8 +43,8 @@ public interface PipelineBuilder
      * @param <S>              service type
      * @param <F>              filter type
      * @param logger           logs any warnings generated when constructing the pipeline
-     * @param serviceInterface
-     * @param filterInterface
+     * @param serviceInterface defines the interface for the pipeline
+     * @param filterInterface  the filter interface, contributed into the pipeline
      * @param filters          sorted list of filters
      * @param terminator       end of the pipeline
      * @return an object that encapsulates the filters and the terminator
@@ -55,13 +55,13 @@ public interface PipelineBuilder
      * Creates a pipeline from just the filters. A {@link DefaultImplementationBuilder default implementation} is
      * created as the terminator.
      *
-     * @param <S>
-     * @param <F>
-     * @param logger
-     * @param serviceInterface
-     * @param filterInterface
-     * @param filters
-     * @return
+     * @param <S>              service type
+     * @param <F>              filter type
+     * @param logger           logs any warnings generated when constructing the pipeline
+     * @param serviceInterface defines the interface for the pipeline
+     * @param filterInterface  the filter interface, contributed into the pipeline
+     * @param filters          sorted list of filters
+     * @return an object that encapsulates the filters and the default implementation
      */
     <S, F> S build(Logger logger, Class<S> serviceInterface, Class<F> filterInterface, List<F> filters);
 

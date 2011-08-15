@@ -55,7 +55,7 @@ public final class ComponentResourceSelector
      *
      * @param axisType  non-blank axis key
      * @param axisValue non-null axis value
-     * @return
+     * @return new selector including axis value
      */
     public <T> ComponentResourceSelector withAxis(Class<T> axisType, T axisValue)
     {
@@ -116,8 +116,6 @@ public final class ComponentResourceSelector
     /**
      * Returns a string identifying the locale, and any additional axis types and values.  Example,
      * "en" or "fr com.example.Skin=RED".
-     *
-     * @return
      */
     public String toShortString()
     {

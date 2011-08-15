@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,17 +24,17 @@ import org.apache.tapestry5.ioc.services.PropertyAdapter;
  * the value of the property, or what kind of interface to use for editing the value of the property. Common property
  * types are "text", "enum", "checkbox", but the list is extensible.
  * <p/>
- * <p>Different strategies for identifying the data type are encapsulated in the DataTypeAnalyzer service, forming a
+ * Different strategies for identifying the data type are encapsulated in the DataTypeAnalyzer service, forming a
  * chain of command.
  * <p/>
  * The DefaultDataTypeAnalyzer service maps property types to data type names.
  * <p/>
  * The DataTypeAnalyzer service is an extensible {@linkplain org.apache.tapestry5.ioc.services.ChainBuilder chain of
- * command), that (by default) includes {@link org.apache.tapestry5.internal.services.AnnotationDataTypeAnalyzer} and
- * the DefaultDataTypeAnalyzer service (ordered last).   It uses an ordered configuration.
+ * command}), that (by default) includes {@link org.apache.tapestry5.internal.services.AnnotationDataTypeAnalyzer} and
+ * the {@link org.apache.tapestry5.internal.services.DefaultDataTypeAnalyzer} service (ordered last).   It uses an ordered configuration.
  *
- * @see Grid
- * @see BeanEditForm
+ * @see org.apache.tapestry5.corelib.components.Grid
+ * @see org.apache.tapestry5.corelib.components.BeanEditForm
  * @see BeanBlockSource
  */
 @UsesOrderedConfiguration(DataTypeAnalyzer.class)

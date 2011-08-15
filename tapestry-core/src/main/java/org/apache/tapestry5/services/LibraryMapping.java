@@ -32,8 +32,6 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
  * <dt>base</dt>
  * <dd>contains base classes</dd>
  * </dl>
- * 
- * @see org.apache.tapestry5.services.TapestryModule#contributeComponentClassResolver(org.apache.tapestry5.ioc.Configuration)
  */
 public final class LibraryMapping
 {
@@ -43,21 +41,19 @@ public final class LibraryMapping
      * Maps a virtual folder to a package that contains sub-packages for components, pages, etc. The special pathPrefix
      * "" (the empty string) identifies the application. Tapestry defines a special pathPrefix, "core", for the core
      * components.
-     * <p>
+     * <p/>
      * Note that it <em>is</em> allowed to contribute mutiple LibraryMappings with the same prefix to the
      * {@link ComponentClassResolver}, and the results are merged (though conflicts, where the same simple name appears
      * under multiple root packages, is not currently checked for).
-     * 
-     * @param virtualFolderName
-     *            identifies the virtual folder "containing" the pages and components of the library. Prior to Tapestry
-     *            5.2, the name could include a slash, but this is now expressly forbidden.
-     * @param rootPackage
-     *            The root package to search.
+     *
+     * @param virtualFolderName identifies the virtual folder "containing" the pages and components of the library. Prior to Tapestry
+     *                          5.2, the name could include a slash, but this is now expressly forbidden.
+     * @param rootPackage       The root package to search.
      */
     public LibraryMapping(String virtualFolderName, String rootPackage)
     {
         assert InternalUtils.isNonBlank(rootPackage);
-        
+
         if (virtualFolderName.contains("/"))
             throw new RuntimeException(
                     "LibraryMapping path prefixes may no longer contain slashes (as of Tapestry 5.2).");
