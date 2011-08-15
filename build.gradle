@@ -199,7 +199,7 @@ task aggregateJavadoc(type: Javadoc, group: "Documentation") {
    destinationDir = javadocBuildDir.dir
    configure(options) {
        // overview = new File( projectDir, 'src/javadoc/package.html' )
-       // stylesheetFile = new File( projectDir, 'src/javadoc/stylesheet.css' )
+       stylesheetFile = new File( projectDir, 'src/javadoc/stylesheet.css' )
        windowTitle = 'Tapestry API Documentation'
        docTitle = "Tapestry JavaDoc ($project.version)"
        bottom = "Copyright &copy; 2003-2011 <a href=\"http://tapestry.apache.org\">The Apache Software Foundation</a>."
@@ -228,6 +228,13 @@ task aggregateJavadoc(type: Javadoc, group: "Documentation") {
      }
    }
  }
+ 
+ aggregateJavadoc.doLast {
+    copy {
+        from new File( projectDir, 'src/javadoc/images' )
+        into new File( javadocBuildDir.dir, "/images" )
+    }
+}
 
 task clean(type: Delete) {
   delete buildDirName
