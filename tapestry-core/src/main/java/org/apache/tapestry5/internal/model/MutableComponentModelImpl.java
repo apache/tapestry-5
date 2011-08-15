@@ -59,13 +59,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
     private List<String> mixinClassNames;
 
-    private List<String> embeddedMixinClassNames;
-
     private Map<String, String[]> mixinOrders;
-
-    private Map<String, String[]> embeddedMixinOrders;
-
-    private Map<String, String> embeddedMixinToComponentId;
 
     private boolean informalParametersSupported;
 
@@ -284,52 +278,6 @@ public final class MutableComponentModelImpl implements MutableComponentModel
         return result;
     }
 
-    public void addEmbeddedMixinClassName(String mixinClassName, String embeddedComponentId, String... order)
-    {
-        if (embeddedMixinClassNames == null)
-            embeddedMixinClassNames = CollectionFactory.newList();
-        
-        if (embeddedMixinToComponentId == null)
-            embeddedMixinToComponentId = CollectionFactory.newMap();
-
-        embeddedMixinClassNames.add(mixinClassName);
-        embeddedMixinToComponentId.put(mixinClassName, embeddedComponentId);
-        if (order != null && order.length > 0)
-        {
-            if (embeddedMixinOrders == null)
-                embeddedMixinOrders = CollectionFactory.newCaseInsensitiveMap();
-            embeddedMixinOrders.put(mixinClassName, order);
-        }
-    }
-    
-    public List<String> getEmbeddedMixinClassNames()
-    {
-        List<String> result = CollectionFactory.newList();
-        
-        if (embeddedMixinClassNames != null)
-            result.addAll(embeddedMixinClassNames);
-
-        if (parentModel != null)
-            result.addAll(parentModel.getEmbeddedMixinClassNames());
-
-        return result;
-    }
-    
-    public String[] getOrderForEmbeddedMixin(String mixinClassName)
-    {
-        return InternalUtils.get(embeddedMixinOrders, mixinClassName);
-    }
-
-    public String getComponentIdForEmbeddedMixin(String mixinClassName)
-    {
-        String componentId = InternalUtils.get(embeddedMixinToComponentId, mixinClassName);
-        
-        if(parentModel == null)
-            return componentId;
-        
-        return parentModel.getComponentIdForEmbeddedMixin(mixinClassName);
-    }
-    
     public void enableSupportsInformalParameters()
     {
         informalParametersSupported = true;

@@ -29,7 +29,6 @@ import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,7 +43,7 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
     private final ComponentModel componentModel;
 
     private final Location location;
-    
+
     private final Map<String, Instantiator> mixinIdToInstantiator = CollectionFactory.newCaseInsensitiveMap();
     private final Map<String, String[]> mixinsIdToOrderConstraints = CollectionFactory.newCaseInsensitiveMap();
 
@@ -60,8 +59,6 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
 
     private Map<String, Boolean> bound;
 
-    private List<String> mixinClassNames;
-    
     /**
      * @param assemblerSource
      * @param instantiatorSource
@@ -91,15 +88,11 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
 
         componentModel = getModel(componentClassName);
 
-        mixinClassNames = CollectionFactory.newList();
-
         // Add the implementation mixins defined by the component model.
-        
+
         for (String className : componentModel.getMixinClassNames())
         {
             addMixin(className, componentModel.getOrderForMixin(className));
-            
-            mixinClassNames.add(className);
         }
 
         // If there's an embedded model (i.e., there was an @Component annotation)
@@ -110,8 +103,6 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
             for (String className : embeddedModel.getMixinClassNames())
             {
                 addMixin(className, embeddedModel.getConstraintsForMixin(className));
-                
-                mixinClassNames.add(className);
             }
         }
 
@@ -123,10 +114,8 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
             String className = componentClassResolver.resolveMixinTypeToClassName(order.getId());
 
             addMixin(className, order.getConstraints());
-            
-            mixinClassNames.add(className);
-        }        
-        
+        }
+
         informalParametersMixinId = prescanMixins();
 
     }
@@ -233,7 +222,7 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
         if (componentModel.getSupportsInformalParameters())
             return new ParameterBinderImpl(null, parameterName, null);
 
-       // Otherwise, informal parameter and not supported by the component or any mixin.
+        // Otherwise, informal parameter and not supported by the component or any mixin.
 
         return null;
     }
@@ -270,10 +259,5 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
     public Set<String> getFormalParameterNames()
     {
         return new HashSet<String>(componentModel.getParameterNames());
-    }
-
-    public List<String> getMixinClassNames()
-    {
-        return mixinClassNames;
     }
 }
