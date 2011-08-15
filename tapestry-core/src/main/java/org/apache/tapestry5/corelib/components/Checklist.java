@@ -29,6 +29,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * @tapestrydoc
+ */
 public class Checklist extends AbstractField
 {
 
