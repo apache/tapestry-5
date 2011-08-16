@@ -391,9 +391,13 @@ var Tapestry = {
 
         Tapestry.debug(Tapestry.Messages.ajaxFailure + message, response);
 
-        // Assuming here that it is text/html. Should we check?
+        var contentType = response.getResponseHeader("content-type")
 
-        T5.ajax.showExceptionDialog(response.responseText)
+        var isHTML = contentType && (contentType.split(';')[0] === "text/html");
+
+        if (isHTML) {
+            T5.ajax.showExceptionDialog(response.responseText)
+        }
     },
 
     /**
@@ -1433,7 +1437,9 @@ Tapestry.ErrorPopup = Class.create({
 
             var div = this.outerDiv;
 
-            _.delay(function() { div.hide(); }, this.IE_FADE_TIME);
+            _.delay(function() {
+                div.hide();
+            }, this.IE_FADE_TIME);
 
             return;
         }
