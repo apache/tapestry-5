@@ -496,9 +496,8 @@ DIV.t-exception-container {
     background: white;
     border: 1px solid black;
     position: fixed;
-    width: 80%;
-    top: 30px;
-    left: 10%;
+    top: 50px;
+    left: 50px;
     -moz-box-shadow: 6px 6px 3px #888;
     -webkit-box-shadow: 6px 6px 3px #888;
     box-shadow: 6px 6px 3px #888;
@@ -511,12 +510,12 @@ DIV.t-exception-frame {
 DIV.t-exception-container .t-exception-close {
     display: block;
     float: right;
-    margin-left: 3px;
-    margin-bottom: 3px;
+    margin: 5px;
+    padding-right: 2px;
+    padding-left: 22px;
+    height: 18px;
     cursor: pointer;
-    width: 16px;
-    height: 16px;
-    background: url("silk/delete.png");
+    background: #e8e8e8 url("silk/delete.png") no-repeat;
     border-radius: 5px;
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;

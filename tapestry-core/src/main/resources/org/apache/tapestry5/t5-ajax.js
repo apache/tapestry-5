@@ -38,6 +38,14 @@ T5.define("ajax", function() {
 
     }
 
+    function resizeExceptionDialog() {
+        // Very Prototype specific!
+        var dims = document.viewport.getDimensions();
+
+        iframe.width = dims.width - 100;
+        iframe.height = dims.height - (100 + 20);
+    }
+
     /**
      * When there's a server-side failure, Tapestry sends back the exception report page as HTML.
      * This function creates and displays a dialog that presents that content to the user using
@@ -72,6 +80,17 @@ T5.define("ajax", function() {
                 writeToErrorIFrame("");
                 T5.dom.hide(exceptionContainer);
             });
+
+            // Call it now to set initial width/height.
+
+            resizeExceptionDialog();
+
+            // Very Prototype specific:
+
+            // See http://groups.google.com/group/prototype-scriptaculous/browse_thread/thread/1b0ce3e94020121f/cdbab773fd8e7a4b
+            // debounced to handle the rate at which IE sends the resizes (every pixel!)
+
+            Event.observe(window, "resize", _.debounce(resizeExceptionDialog, 20));
         }
 
 
