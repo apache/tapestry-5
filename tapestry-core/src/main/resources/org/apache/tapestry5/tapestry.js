@@ -390,6 +390,10 @@ var Tapestry = {
         Tapestry.error(Tapestry.Messages.communicationFailed + message);
 
         Tapestry.debug(Tapestry.Messages.ajaxFailure + message, response);
+
+        // Assuming here that it is text/html. Should we check?
+
+        T5.ajax.showExceptionDialog(response.responseText)
     },
 
     /**

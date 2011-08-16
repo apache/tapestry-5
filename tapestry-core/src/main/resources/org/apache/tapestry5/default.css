@@ -481,15 +481,43 @@ DIV.t-page-loading-banner {
     border-bottom: 2px solid black;
 }
 
-SPAN.t-render-object-error
-{
-  font-weight: bold;
-  font: italic;
-  color: red;
+SPAN.t-render-object-error {
+    font-weight: bold;
+    font: italic;
+    color: red;
 }
 
-DIV.t-available-values UL LI
-{
-  list-style-type : disc;
-  margin-left: 0px;
+DIV.t-available-values UL LI {
+    list-style-type: disc;
+    margin-left: 0px;
+}
+
+DIV.t-exception-container {
+    background: white;
+    border: 1px solid black;
+    position: fixed;
+    width: 80%;
+    top: 30px;
+    left: 10%;
+    -moz-box-shadow: 6px 6px 3px #888;
+    -webkit-box-shadow: 6px 6px 3px #888;
+    box-shadow: 6px 6px 3px #888;
+
+}
+
+DIV.t-exception-frame {
+}
+
+DIV.t-exception-container .t-exception-close {
+    display: block;
+    float: right;
+    margin-left: 3px;
+    margin-bottom: 3px;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    background: url("silk/delete.png");
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
 }

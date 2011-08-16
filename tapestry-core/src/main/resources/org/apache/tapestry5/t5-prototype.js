@@ -40,11 +40,20 @@ T5.extend(T5.spi, function() {
         );
     });
 
+    function appendMarkup(element, markup) {
+        var element = $(element);
+
+        element.insert({ bottom: markup });
+
+        return element;
+    }
+
     return {
         observe : observe,
         find : Element.down,
         show : Element.show,
-        hide : Element.hide
+        hide : Element.hide,
+        appendMarkup : appendMarkup
     };
 });
 

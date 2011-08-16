@@ -140,6 +140,7 @@ T5.define("dom", function() {
         find : T5.spi.find,
         hide : T5.spi.hide,
         show : T5.spi.show,
+        appendMarkup : T5.spi.appendMarkup,
         publishEvent : publishEvent
     };
 });

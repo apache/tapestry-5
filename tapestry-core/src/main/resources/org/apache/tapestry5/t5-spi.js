@@ -41,6 +41,7 @@ T5.define("spi", {
      *
      * @param element DOM element or element id
      * @param selector CSS selector to locate
+     * @return the element, or undefined if not found
      */
     find : undefined,
 
@@ -54,6 +55,15 @@ T5.define("spi", {
      * @param element DOM element or element id
      */
     show : undefined,
+
+    /**
+     * Appends new markup to an existing element's body.
+     *
+     * @param element DOM element or element id
+     * @param markup new content as markup string
+     * @return element
+     */
+    appendMarkup: undefined,
 
     /**
      * Performs an ajax request, as per T5.ajax.request(). Supplied by the SPI
