@@ -22,11 +22,12 @@ package org.apache.tapestry5.ioc.services.cron;
 public interface PeriodicExecutor
 {
     /**
-     * Adds a job to be executed. The job is executed in a thread pool (via {@link org.apache.tapestry5.ioc.services.ParallelExecutor#invoke(org.apache.tapestry5.ioc.Invokable)}}, as determined by the schedule.
+     * Adds a job to be executed. The job is executed in a thread pool (via {@link org.apache.tapestry5.ioc.services.ParallelExecutor#invoke(org.apache.tapestry5.ioc.Invokable)}), as determined by the schedule.
      *
      * @param schedule defines when the job will next execute
      * @param name     a name used in debugging output related to the job
-     * @param job      a Runnable object that represents the work to be done  @return a PeriodicJob that can be used to query when the job executes, or to cancel its execution
+     * @param job      a Runnable object that represents the work to be done
+     * @returns a PeriodicJob that can be used to query when the job executes, or to cancel its execution
      */
     PeriodicJob addJob(Schedule schedule, String name, Runnable job);
 }
