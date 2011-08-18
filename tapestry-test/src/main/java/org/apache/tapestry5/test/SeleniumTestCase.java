@@ -1366,6 +1366,35 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     }
 
     /**
+     * Waits for the element specified by the selector to become visible
+     * Note that waitForElementToAppear waits for the element to be present in the dom, visible or not. waitForVisible
+     * waits for an element that already exists in the dom to become visible.
+     * @param selector
+     *              element selector
+     * @since 5.3
+     */
+    protected final void waitForVisible(String selector)
+    {
+        String condition = String.format("selenium.isVisible(\"%s\")", selector);
+
+        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
+    }
+
+    /**
+     * Waits for the element specified by the selector to become invisible
+     * Note that waitForElementToDisappear waits for the element to be absent from the dom, visible or not. waitForInvisible
+     * waits for an existing element to become invisible.
+     * @param selector
+     *              element selector
+     * @since 5.3
+     */
+    protected final void waitForInvisible(String selector)
+    {
+        String condition = String.format("!selenium.isVisible(\"%s\")", selector);
+
+        waitForCondition(condition, PAGE_LOAD_TIMEOUT);
+    }
+    /**
      * Asserts that the current page's title matches the expected value.
      * 
      * @since 5.3

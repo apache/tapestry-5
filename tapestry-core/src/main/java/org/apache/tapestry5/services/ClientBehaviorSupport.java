@@ -63,7 +63,7 @@ public interface ClientBehaviorSupport
      *            or null for the default
      * @param hideFunctionName
      *            name of the function used to make the SubForm invisible, or null for the default
-     * @deprecated Use {@link #addFormFragment(String,boolean,String,String)} instead
+     * @deprecated Use {@link #addFormFragment(String,boolean,String,String,String)} instead
      */
     void addFormFragment(String clientId, String showFunctionName, String hideFunctionName);
 
@@ -80,8 +80,28 @@ public interface ClientBehaviorSupport
      *            or null for the default
      * @param hideFunctionName
      *            name of the function used to make the SubForm invisible, or null for the default
+     * @deprecated Use {@link #addFormFragment(String,boolean,String,String,String)} instead
      */
     void addFormFragment(String clientId, boolean alwaysSubmit, String showFunctionName, String hideFunctionName);
+
+    /**
+     * Adds a new client-side Tapestry.FormFragment object. FormFragment's are used to make parts of a client-side form
+     * visible or invisible, which involves interactions with both the server-side and client-side validation.
+     *
+     * @param clientId
+     *            client-side id of the element that will be made visible or invisible
+     * @param alwaysSubmit
+     *            if true, the fragment ignores client-side visiblility and always submits its values
+     * @param showFunctionName
+     *            name of function (of the Tapestry.ElementEffect object) used to make the SubForm visible,
+     *            or null for the default
+     * @param hideFunctionName
+     *            name of the function used to make the SubForm invisible, or null for the default
+     * @param visibilityBoundFunctionName
+     *            name of the function used to bound the isDeepVisible search, or null for the default
+     * @since 5.3
+     */
+    void addFormFragment(String clientId, boolean alwaysSubmit, String showFunctionName, String hideFunctionName, String visibilityBoundFunctionName);
 
     /**
      * Adds a new client-side Tapestry.FormInjector object. FormInjectors are used to extend an existing Form with new

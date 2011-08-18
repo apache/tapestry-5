@@ -293,7 +293,7 @@ public class FormTests extends TapestryCoreTestCase
         waitForCondition(pickerGoneCondition, PAGE_LOAD_TIMEOUT);
 
         String value = getValue("asteroidImpact");
-        assertEquals(value, new SimpleDateFormat("M/d/yyyy").format(new Date()));
+        assertFieldValue("asteroidImpact", new SimpleDateFormat("M/d/yyyy").format(new Date()));
 
         //#2...
         click("id=asteroidImpact-trigger");
@@ -307,21 +307,21 @@ public class FormTests extends TapestryCoreTestCase
         //#1
         click("css=button.todayButton");
         waitForCondition(pickerGoneCondition, PAGE_LOAD_TIMEOUT);
-        assertEquals(getValue("asteroidImpact"), value);
+        assertFieldValue("asteroidImpact", value);
 
         //#4...
         click("id=asteroidImpact-trigger");
         waitForCSSSelectedElementToAppear("div.datePicker");
         click("css=button.noneButton");
         waitForCondition(pickerGoneCondition, PAGE_LOAD_TIMEOUT);
-        assertEquals(getValue("asteroidImpact"), "");
+        assertFieldValue("asteroidImpact", "");
 
         click("id=asteroidImpact-trigger");
         waitForCSSSelectedElementToAppear("div.datePicker");
         assertFalse(isElementPresent("css=td.selected"));
         click("css=button.noneButton");
         waitForCondition(pickerGoneCondition, PAGE_LOAD_TIMEOUT);
-        assertEquals(getValue("asteroidImpact"), "");
+        assertFieldValue("asteroidImpact", "");
     }
 
     // TAP4-1408

@@ -18,6 +18,7 @@ import org.apache.tapestry5.Field;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.corelib.data.InsertPosition;
 import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.json.JSONLiteral;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ClientBehaviorSupport;
 import org.apache.tapestry5.services.Environment;
@@ -57,10 +58,10 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
         javascriptSupport.addInitializerCall("zone", spec);
     }
 
-    private void addFunction(JSONObject spec, String key, String showFunctionName)
+    private void addFunction(JSONObject spec, String key, String functionName)
     {
-        if (showFunctionName != null)
-            spec.put(key, showFunctionName.toLowerCase());
+        if (functionName != null)
+            spec.put(key, functionName.toLowerCase());
     }
 
     public void linkZone(String linkId, String elementId, Link eventLink)
@@ -75,15 +76,26 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
      */
     public void addFormFragment(String clientId, String showFunctionName, String hideFunctionName)
     {
-        addFormFragment(clientId, false, showFunctionName, hideFunctionName);
+        addFormFragment(clientId, false, showFunctionName, hideFunctionName, null);
     }
 
+    /**
+     * @deprecated Use {@link #addFormFragment(String, boolean, String, String, String)} instead
+     */
     public void addFormFragment(String clientId, boolean alwaysSubmit, String showFunctionName, String hideFunctionName)
+    {
+        addFormFragment(clientId, false, showFunctionName, hideFunctionName, null);
+    }
+
+    public void addFormFragment(String clientId, boolean alwaysSubmit, String showFunctionName, String hideFunctionName, String visibilityBoundFunctionName)
     {
         JSONObject spec = new JSONObject("element", clientId);
 
         addFunction(spec, "show", showFunctionName);
         addFunction(spec, "hide", hideFunctionName);
+
+        if (visibilityBoundFunctionName != null)
+            spec.put("bound", new JSONLiteral(visibilityBoundFunctionName));
 
         if (alwaysSubmit)
             spec.put("alwaysSubmit", true);

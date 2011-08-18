@@ -7,14 +7,15 @@ T5.extendInitializers(function() {
         var hidden = $(spec.element + "-hidden");
         var form = $(hidden.form);
 
+        var opts = (spec.bound && { bound: spec.bound }) || {};
         if (! spec.alwaysSubmit) {
-            hidden.disabled = !  element.isDeepVisible();
+            hidden.disabled = !  element.isDeepVisible(opts);
         }
 
         function updateUI(makeVisible) {
 
             if (! spec.alwaysSubmit) {
-                hidden.disabled = ! (makeVisible && element.parentNode.isDeepVisible());
+                hidden.disabled = ! (makeVisible && element.parentNode.isDeepVisible(opts));
             }
 
             var effect = makeVisible ? Tapestry.ElementEffect[spec.show]

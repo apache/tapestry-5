@@ -1,12 +1,34 @@
 <html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd" xmlns:p="tapestry:parameter">
+<script type="text/javascript">
+    function visibleSearchDone(el)
+    {
+        return el.id == "container1" || el.id == "container2";
+    }
+</script>
     <t:form>
-        <div id="tab1">
-            <t:formfragment>
+        <t:errors/>
+        <div id="tab1" style="${tab1style}">
+            <h1>Tab 1</h1>
+            <div id="container1">
+                <t:checkbox t:id="frag1check" value="frag1visible" t:mixins="triggerfragment" fragment="fragment1"/>
 
-            </t:formfragment>
+                <t:formfragment t:id="fragment1" t:visible="frag1visible" visibleBound="visibleSearchDone">
+                    <t:textfield t:id="value1" validate="required"/>
+                </t:formfragment>
+            </div>
         </div>
-        <div id="tab2">
-
+        <div id="tab2" style="${tab2style}">
+            <h1>Tab 2</h1>
+            <div id="container2">
+                <t:checkbox t:id="frag2check" value="frag2visible" t:mixins="triggerfragment" fragment="fragment2"/>
+                <t:formfragment t:id="fragment2" t:visible="frag2visible" visibleBound="visibleSearchDone">
+                    <t:textfield t:id="value2"/>
+                </t:formfragment>
+            </div>
         </div>
+        <a id="tab1display" href="#" onclick="Tapestry.ajaxRequest('${tab1Link}', {onSuccess: function() { $('tab2').hide();$('tab1').show();}}); return false;">Show Tab 1</a>
+        <a id="tab2display" href="#" onclick="Tapestry.ajaxRequest('${tab2Link}', {onSuccess: function() { $('tab1').hide();$('tab2').show();}}); return false;">Show Tab 2</a>
+        <a t:id="clearState" t:type="actionlink">Clear Saved State</a>
+        <t:submit t:id="saveform"/>
     </t:form>
 </html>

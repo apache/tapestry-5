@@ -108,6 +108,17 @@ public class FormFragment implements ClientElement
     @Parameter(name = "id", defaultPrefix = BindingConstants.LITERAL)
     private String idParameter;
 
+    /**
+     * A javascript function that overrides the default visibility search bound.
+     * Tapestry normally ensures that not only the form fragment but all parent elements up to the containing form
+     * are visible when determining whether to submit the contents of a form fragment.  This behavior can be modified by
+     * supplying a javascript function that receives the "current" element in the chain.  Returning true will stop the
+     * search (and report "isDeepVisible" as true).  Returning false will continue the search up the chain.
+     * @since 5.3
+     */
+    @Parameter(defaultPrefix = BindingConstants.LITERAL, allowNull = false)
+    private String visibleBound;
+
     @Inject
     private Environment environment;
 
@@ -159,7 +170,7 @@ public class FormFragment implements ClientElement
         if (!visible)
             element.addClassName(CSSClassConstants.INVISIBLE);
 
-        clientBehaviorSupport.addFormFragment(clientId, alwaysSubmit, show, hide);
+        clientBehaviorSupport.addFormFragment(clientId, alwaysSubmit, show, hide, visibleBound);
 
         componentActions = new ComponentActionSink(logger, clientDataEncoder);
 

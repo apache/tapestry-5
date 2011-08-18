@@ -104,6 +104,83 @@ public class AjaxTests extends TapestryCoreTestCase
     }
 
     @Test
+    public void form_fragment_explicit_visible_bounds()
+    {
+        openLinks("Form Fragment Explicit Visible Bounds Demo");
+
+        //make sure we're on tab 1...
+        switchTabs(1);
+        type("value1", "Some text to check");
+        switchTabs(2);
+
+        type("value2", "Some other text to check");
+
+        clickAndWait("saveform");
+
+        assertTrue(isVisible("tab2"));
+
+        assertFieldValue("value2", "Some other text to check");
+
+        switchTabs(1);
+
+        assertFieldValue("value1", "Some text to check");
+
+        //make sure they don't save if not revealed...
+        type("value1", "new text that shouldn't save");
+        click("frag1check");
+        waitForInvisible("value1");
+
+        clickAndWait("saveform");
+        assertTrue(isVisible("tab1"));
+        assertFalse(isVisible("value1"));
+        click("frag1check");
+        waitForVisible("value1");
+        assertFieldValue("value1", "Some text to check");
+
+        switchTabs(2);
+        assertFieldValue("value2", "Some other text to check");
+        clickAndWait("link=Clear Saved State");
+    }
+
+    @Test
+    public void form_fragment_visible_bound_validation()
+    {
+        openLinks("Form Fragment Explicit Visible Bounds Demo");
+        //make sure we're on the correct tab...
+        switchTabs(1);
+        //and that value1 is blank...
+        type("value1", "");
+        assertFieldValue("value1", "");
+        //submitting should result in error in value1...
+        click("saveform");
+        assertBubbleMessage("value1", "You must provide a value for Value1.");
+
+        //still wind up being able to submit here b/c there's no (good) way to highlight the error in the invisible tab.
+        //but the form should return with errors.
+        switchTabs(2);
+        clickAndWait("saveform");
+        assertTextPresent("You must provide a value for Value1.");
+
+        switchTabs(1);
+        click("frag1check");
+        waitForInvisible("value1");
+
+        clickAndWait("saveform");
+        assertFalse(isTextPresent("You must provide a value for Value1."));
+
+        switchTabs(1);
+        clickAndWait("saveform");
+        assertFalse(isTextPresent("You must provide a value for Value1."));
+        clickAndWait("link=Clear Saved State");
+    }
+
+    private void switchTabs(int tab)
+    {
+        click("link=Show Tab " + tab);
+        waitForVisible("tab" + tab);
+    }
+
+    @Test
     public void form_injector()
     {
         openLinks("FormInjector Demo");

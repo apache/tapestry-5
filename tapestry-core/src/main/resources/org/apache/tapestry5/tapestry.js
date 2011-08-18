@@ -654,17 +654,22 @@ Element.addMethods({
      *
      * @param element
      *            to search up from
+     * @param options
+     *            Optional map of options. Only used key currently is "bound" which should be a javascript function name
+     *            that determines whether the current element bounds the search. The default is to stop the search when
+     *            the
      * @return true if visible (and containers visible), false if it or
      *         container are not visible
      */
-    isDeepVisible : function(element) {
+    isDeepVisible : function(element, options) {
         var current = $(element);
+        var boundFunc = (options && options.bound) || function(el) { return el.tagName == "FORM"};
 
         while (true) {
             if (!current.visible())
                 return false;
 
-            if (current.tagName == "FORM")
+            if (boundFunc(current))
                 break;
 
             current = $(current.parentNode);
