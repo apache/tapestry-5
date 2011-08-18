@@ -28,6 +28,9 @@ import javax.persistence.spi.PersistenceProviderResolver;
 import javax.persistence.spi.PersistenceProviderResolverHolder;
 import javax.persistence.spi.PersistenceUnitInfo;
 
+import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.func.Mapper;
+import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -55,14 +58,48 @@ public class EntityManagerSourceImpl implements EntityManagerSource, RegistryShu
 
         List<TapestryPersistenceUnitInfo> persistenceUnitInfos = parsePersistenceUnitInfos(persistenceDescriptor);
 
-         final Map<String, PersistenceUnitConfigurer> remainingConfigurations = configure(configuration, persistenceUnitInfos);
+        final Map<String, PersistenceUnitConfigurer> remainingConfigurations = configure(configuration, persistenceUnitInfos);
 
         configureRemaining(persistenceUnitInfos, remainingConfigurations);
 
-        if(persistenceUnitInfos.size() == 1)
+        if(persistenceUnitInfos.size() == 1) 
+        {
             packageNamePersistenceUnitConfigurer.configure(persistenceUnitInfos.get(0));
+        }
+        else
+        {
+            validateUnitInfos(persistenceUnitInfos);
+        }
 
         this.persistenceUnitInfos = persistenceUnitInfos;
+    }
+
+    private void validateUnitInfos(List<TapestryPersistenceUnitInfo> persistenceUnitInfos)
+    {
+        final List<String> affectedUnits = F.flow(persistenceUnitInfos).filter(new Predicate<TapestryPersistenceUnitInfo>()
+        {
+            public boolean accept(TapestryPersistenceUnitInfo info)
+            {
+                return !info.excludeUnlistedClasses();
+            }
+        }).map(new Mapper<TapestryPersistenceUnitInfo, String>()
+        {
+            public String map(TapestryPersistenceUnitInfo info)
+            {
+                return info.getPersistenceUnitName();
+            }
+        }).toList();
+
+        if(0 < affectedUnits.size())
+        {
+            throw new RuntimeException(
+                    String.format(
+                            "Persistence units '%s' are configured to include managed classes that have not been explicitly listed. " +
+                            "This is forbidden when multiple persistence units are used in the same application. " +
+                            "Please configure persistence units to exclude unlisted managed classes (e.g. by removing <exclude-unlisted-classes> element) " +
+                            "and include them explicitly.",
+                            InternalUtils.join(affectedUnits)));
+        }
     }
 
     private List<TapestryPersistenceUnitInfo> parsePersistenceUnitInfos(Resource persistenceDescriptor)
