@@ -16,22 +16,32 @@ package org.apache.tapestry5.services.javascript;
 
 /**
  * A contribution to an extensible {@link JavaScriptStack}. Such a stack is created in terms of all the contributions.
- * 
- * @since 5.3
+ *
  * @see ExtensibleJavaScriptStack
+ * @since 5.3
  */
 public class StackExtension
 {
-    /** The type of extension. */
+    /**
+     * The type of extension.
+     */
     public final StackExtensionType type;
 
-    /** The value contributed; will have symbols expanded, then be converted to the appropriate type. */
+    /**
+     * The value contributed; will have symbols expanded, then be converted to the appropriate type.
+     */
     public final String value;
 
     public StackExtension(StackExtensionType type, String value)
     {
         this.type = type;
         this.value = value;
+    }
+
+    @Override
+    public String toString()
+    {
+        return String.format("StackExtension[%s %s]", type.name(), value);
     }
 
 }
