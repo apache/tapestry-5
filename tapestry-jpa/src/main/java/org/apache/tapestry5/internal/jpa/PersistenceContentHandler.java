@@ -113,25 +113,36 @@ public class PersistenceContentHandler implements ContentHandler
             if (ELEMENT_PROVIDER.equals(localName))
             {
                 persistenceUnitInfo.persistenceProviderClassName(string);
-            } else if (ELEMENT_CLASS.equals(localName))
+            }
+            else if (ELEMENT_CLASS.equals(localName))
             {
                 persistenceUnitInfo.addManagedClassName(string);
-            } else if (ELEMENT_CACHING.equals(localName))
+            }
+            else if (ELEMENT_CACHING.equals(localName))
             {
                 persistenceUnitInfo.sharedCacheMode(toEnum(SharedCacheMode.class, string));
-            } else if (ELEMENT_VALIDATION_MODE.equals(localName))
+            }
+            else if (ELEMENT_VALIDATION_MODE.equals(localName))
             {
                 persistenceUnitInfo.validationMode(toEnum(ValidationMode.class, string));
-            } else if (ELEMENT_MAPPING_FILE.equals(localName))
+            }
+            else if (ELEMENT_MAPPING_FILE.equals(localName))
             {
                 persistenceUnitInfo.addMappingFileName(string);
-            } else if (ELEMENT_NON_JTA_DATA_SOURCE.equals(localName))
+            }
+            else if (ELEMENT_JAR_FILE.equals(localName))
+            {
+                persistenceUnitInfo.addJarFileUrl(string);
+            }
+            else if (ELEMENT_NON_JTA_DATA_SOURCE.equals(localName))
             {
                 persistenceUnitInfo.nonJtaDataSource(string);
-            } else if (ELEMENT_JTA_DATA_SOURCE.equals(localName))
+            }
+            else if (ELEMENT_JTA_DATA_SOURCE.equals(localName))
             {
                 persistenceUnitInfo.jtaDataSource(string);
-            } else if (ELEMENT_PERSISTENCE_UNIT.equals(localName))
+            }
+            else if (ELEMENT_PERSISTENCE_UNIT.equals(localName))
             {
                 if (persistenceUnitInfo != null)
                 {

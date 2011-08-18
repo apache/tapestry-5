@@ -18,6 +18,7 @@ import javax.persistence.SharedCacheMode;
 import javax.persistence.ValidationMode;
 import javax.persistence.spi.PersistenceUnitInfo;
 import javax.persistence.spi.PersistenceUnitTransactionType;
+import java.net.URL;
 
 /**
  * Tapestry's mutable extension of {@link PersistenceUnitInfo} interface used for XML-less configuration
@@ -111,6 +112,26 @@ public interface TapestryPersistenceUnitInfo extends PersistenceUnitInfo
      *         mapping file name to add
      */
     TapestryPersistenceUnitInfo addMappingFileName(String fileName);
+
+    /**
+     * Add a URLs for the jar file or exploded jar file directory that the persistence provider must examine
+     * for managed classes of the persistence unit. Corresponds to a <code>jar-file</code> element in the
+     * <code>persistence.xml</code> file.
+     *
+     * @param url
+     *         url to add
+     */
+    TapestryPersistenceUnitInfo addJarFileUrl(URL url);
+
+    /**
+     * Add a URLs for the jar file or exploded jar file directory that the persistence provider must examine
+     * for managed classes of the persistence unit. Corresponds to a <code>jar-file</code> element in the
+     * <code>persistence.xml</code> file.
+     *
+     * @param url
+     *         url to add
+     */
+    TapestryPersistenceUnitInfo addJarFileUrl(String url);
 
     /**
      * Add a property. Corresponds to a <code>property</code> element in the <code>persistence.xml</code> file.

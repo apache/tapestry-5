@@ -25,6 +25,7 @@ import javax.persistence.ValidationMode;
 import javax.persistence.spi.ClassTransformer;
 import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.DataSource;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
@@ -55,6 +56,8 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
     private final Set<String> managedClassNames = CollectionFactory.newSet();
 
     private final Set<String> mappingFilesNames = CollectionFactory.newSet();
+
+    private final List<URL> jarFileUrls = CollectionFactory.newList();
 
     private final Properties properties = new Properties();
 
@@ -163,6 +166,34 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public TapestryPersistenceUnitInfo addJarFileUrl(URL url)
+    {
+        jarFileUrls.add(url);
+
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public TapestryPersistenceUnitInfo addJarFileUrl(String url)
+    {
+        try
+        {
+            return addJarFileUrl(new URL(getPersistenceUnitRootUrl(), url));
+        } catch (MalformedURLException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
     public TapestryPersistenceUnitInfo addProperty(String name, String value)
     {
         getProperties().put(name, value);
@@ -170,6 +201,10 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
         return this;
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
     public TapestryPersistenceUnitInfo excludeUnlistedClasses(boolean exclude)
     {
         this.excludeUnlistedClasses = exclude;
@@ -182,7 +217,7 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
      */
     public List<URL> getJarFileUrls()
     {
-        return Arrays.asList();
+        return Collections.unmodifiableList(jarFileUrls);
     }
 
     /**
