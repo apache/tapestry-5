@@ -21,7 +21,11 @@ import org.apache.tapestry5.ioc.RegistryBuilder;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.*;
+import org.apache.tapestry5.ioc.services.ServiceActivity;
+import org.apache.tapestry5.ioc.services.ServiceActivityScoreboard;
+import org.apache.tapestry5.ioc.services.Status;
+import org.apache.tapestry5.ioc.services.SymbolProvider;
+import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.services.TapestryModule;
 import org.slf4j.Logger;
 
@@ -57,14 +61,14 @@ public class TapestryAppInitializer
 
     /**
      * @param logger
-     *            logger for output confirmation
+     *         logger for output confirmation
      * @param appPackage
-     *            root package name to search for pages and components
+     *         root package name to search for pages and components
      * @param appName
-     *            the name of the application (i.e., the name of the application servlet)
+     *         the name of the application (i.e., the name of the application servlet)
      * @param aliasMode
-     *            ignored (was used in 5.2)
-     * @deprecated Use {@link #TapestryAppInitializer(Logger,String,String)} instead. To be removed
+     *         ignored (was used in 5.2)
+     * @deprecated Use {@link #TapestryAppInitializer(Logger, String, String)} instead. To be removed
      *             in 5.4.
      */
     public TapestryAppInitializer(Logger logger, String appPackage, String appName, String aliasMode)
@@ -74,11 +78,11 @@ public class TapestryAppInitializer
 
     /**
      * @param logger
-     *            logger for output confirmation
+     *         logger for output confirmation
      * @param appPackage
-     *            root package name to search for pages and components
+     *         root package name to search for pages and components
      * @param appName
-     *            the name of the application (i.e., the name of the application servlet)
+     *         the name of the application (i.e., the name of the application servlet)
      */
     public TapestryAppInitializer(Logger logger, String appPackage, String appName)
     {
@@ -88,41 +92,41 @@ public class TapestryAppInitializer
 
     /**
      * @param logger
-     *            logger for output confirmation
+     *         logger for output confirmation
      * @param appProvider
-     *            provides symbols for the application (normally, from the ServletContext init
-     *            parameters)
+     *         provides symbols for the application (normally, from the ServletContext init
+     *         parameters)
      * @param appName
-     *            the name of the application (i.e., the name of the application servlet)
+     *         the name of the application (i.e., the name of the application servlet)
      * @param aliasMode
-     *            ignored (was used in 5.2 and earlier)
+     *         ignored (was used in 5.2 and earlier)
      * @param executionModes
-     *            an optional, comma-separated list of execution modes, each of which is used
-     *            to find a list of additional module classes to load (key
-     *            <code>tapestry.<em>name</em>-modules</code> in appProvider, i.e., the servlet
-     *            context)
-     * @deprecated Use {@link #TapestryAppInitializer(Logger,SymbolProvider,String,String)} instead.
+     *         an optional, comma-separated list of execution modes, each of which is used
+     *         to find a list of additional module classes to load (key
+     *         <code>tapestry.<em>name</em>-modules</code> in appProvider, i.e., the servlet
+     *         context)
+     * @deprecated Use {@link #TapestryAppInitializer(Logger, SymbolProvider, String, String)} instead.
      *             To be removed in 5.4.
      */
     public TapestryAppInitializer(Logger logger, SymbolProvider appProvider, String appName, String aliasMode,
-            String executionModes)
+                                  String executionModes)
     {
         this(logger, appProvider, appName, executionModes);
     }
 
     /**
      * @param logger
-     *            logger for output confirmation
+     *         logger for output confirmation
      * @param appProvider
-     *            provides symbols for the application (normally, from the ServletContext init
-     *            parameters)
+     *         provides symbols for the application (normally, from the ServletContext init
+     *         parameters)
      * @param appName
-     *            the name of the application (i.e., the name of the application servlet)
+     *         the name of the application (i.e., the name of the application servlet)
      * @param executionModes
-     *            an optional, comma-separated list of execution modes, each of which is used
-     *            to find a list of additional module classes to load (key
-     *            <code>tapestry.<em>name</em>-modules</code> in appProvider, i.e., the servlet
-     *            context)
+     *         an optional, comma-separated list of execution modes, each of which is used
+     *         to find a list of additional module classes to load (key
+     *         <code>tapestry.<em>name</em>-modules</code> in appProvider, i.e., the servlet
+     *         context)
      */
     public TapestryAppInitializer(Logger logger, SymbolProvider appProvider, String appName, String executionModes)
     {
@@ -156,8 +160,7 @@ public class TapestryAppInitializer
             Class moduleClass = Thread.currentThread().getContextClassLoader().loadClass(className);
 
             builder.add(moduleClass);
-        }
-        catch (ClassNotFoundException ex)
+        } catch (ClassNotFoundException ex)
         {
             // That's OK, not all applications will have a module class, even though any
             // non-trivial application will.
@@ -181,7 +184,7 @@ public class TapestryAppInitializer
 
     /**
      * Adds additional modules.
-     * 
+     *
      * @param moduleDefs
      */
     public void addModules(ModuleDef... moduleDefs)
@@ -263,6 +266,13 @@ public class TapestryAppInitializer
 
         f.format("\n%4.2f%% unrealized services (%d/%d)\n", 100. * unrealized / serviceActivity.size(), unrealized,
                 serviceActivity.size());
+
+        buffer.append("\n\n");
+        buffer.append(" ______                  __             ____\n");
+        buffer.append("/_  __/__ ____  ___ ___ / /_______ __  / __/\n");
+        buffer.append(" / / / _ `/ _ \\/ -_|_-</ __/ __/ // / /__ \\ \n");
+        buffer.append("/_/  \\_,_/ .__/\\__/___/\\__/_/  \\_, / /____/\n");
+        buffer.append("        /_/                   /___/       \n\n");
 
         logger.info(buffer.toString());
     }
