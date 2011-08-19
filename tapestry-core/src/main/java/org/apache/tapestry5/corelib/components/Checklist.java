@@ -30,6 +30,13 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * Multiple selection component, used as an alternative to the {@link Palette} component. 
+ * Generates a UI consisting of a list of check boxes. 
+ * 
+ * @since 5.3
+ * 
+ * @see Form
+ * @see Palette
  * @tapestrydoc
  */
 public class Checklist extends AbstractField

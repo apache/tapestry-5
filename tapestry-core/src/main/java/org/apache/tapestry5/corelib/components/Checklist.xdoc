@@ -1,0 +1,116 @@
+<document>
+    <body>
+        <section name="Examples">
+
+            <p>
+                For this example, we'll implement a page from an e-commerce order wizard; the page collects information
+                about special handling for the order:
+            </p>
+
+            <p>
+                <br/>
+                <img src="checklist_ref.png"/>
+            </p>
+
+            <subsection name="SpecialHandling.java">
+
+            <p>
+                Now let's see how the component can be used.
+            </p>
+            
+                <source><![CDATA[
+public enum SpecialHandling
+{
+    EXPRESS_SERVICE, GIFT_WRAP, GIFT_BASKET, CUSTOM_ENGRAVING, SHIPPING_INSURANCE,
+    EXTENDED_WARRANTY
+}]]>        </source>
+
+                <p>
+                    In this contrived example, the possible types of special handling are defined using
+                    an enum. It's more likely, in the real world, that this would be defined in terms
+                    of a database entity.
+                </p>
+            </subsection>
+
+            <subsection name="OrderHandling.tml">
+                <source><![CDATA[
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+    <body>
+        <h1>Special Handling</h1>
+
+        <t:form>
+
+            <t:checklist t:id="handling" encoder="encoder" model="model"/>
+
+            <br/>
+
+            <input type="submit" value="Continue"/>
+
+        </t:form>
+
+    </body>
+</html>]]></source>
+
+                <p>
+                    Here we are able to omit the selected parameter (the list of selected items) because the Checklist
+                    component's id matches a property of the page.
+                </p>
+
+                <p>
+                    The model parameter will define the available options that can be selected. The encoder parameter
+                    will define how to translate server side values (the enum values) into client side strings and back.
+                </p>
+
+            </subsection>
+
+            <subsection name="OrderHandling.java">
+                <source><![CDATA[
+public class OrderHandling {
+    @Property
+    @Persist
+    private List<SpecialHandling> handling;
+
+    @Inject
+    private Messages messages;
+
+    public ValueEncoder getEncoder() {
+        return new EnumValueEncoder(SpecialHandling.class);
+    }
+
+    public SelectModel getModel() {
+        return new EnumSelectModel(SpecialHandling.class, messages);
+    }
+}]]></source>
+
+                <p>
+                    Tapestry has built-in public classes that help convert enum types into value encoders
+                    and select models.
+                </p>
+
+                <p>
+                    Injecting a Messages object gives a component access to its own message catalog.
+                </p>
+
+                <p>
+                    The Checklist component will read the handling property when rendering (it's ok for it to be null).
+                    When the form is submitted, it will create a new List and update the handling property.
+                </p>
+
+            </subsection>
+        </section>
+
+        <section name="Notes">
+
+            <p>The Checklist component can be customized through CSS. Following CSS rules are used:</p>
+
+
+            <dl>
+                    <dt>t-checklist-row</dt>
+                    <dd>Each checkbox and its label is enclosed by a div element whose css attribute is set to t-checklist-row.</dd>
+
+            </dl>
+
+        </section>
+
+    </body>
+</document>
