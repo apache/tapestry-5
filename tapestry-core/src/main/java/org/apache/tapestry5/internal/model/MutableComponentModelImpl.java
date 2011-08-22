@@ -365,7 +365,12 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
     public String[] getOrderForMixin(String mixinClassName)
     {
-        return InternalUtils.get(mixinOrders, mixinClassName);
+        final String[] orders = InternalUtils.get(mixinOrders, mixinClassName);
+
+        if ( orders == null && parentModel != null )
+            return parentModel.getOrderForMixin(mixinClassName);
+
+        return orders;
     }
 
     public boolean isPage()

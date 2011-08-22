@@ -403,6 +403,28 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
     }
 
     @Test
+    public void mixin_order_remembered()
+    {
+        Resource r = mockResource();
+        Logger logger = mockLogger();
+
+        replay();
+
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
+
+        MutableEmbeddedComponentModel fred = model.addEmbeddedComponent("fred", "Fred", COMPONENT_CLASS_NAME, false,
+                                                                        null);
+
+        fred.addMixin("zip.zop.Zoom", "before:*", "after:foo.bar.Baz");
+        fred.addMixin("foo.bar.Baz");
+
+        assertEquals(fred.getConstraintsForMixin("zip.zop.Zoom"), new String[] {"before:*", "after:foo.bar.Baz"});
+        assertEquals(fred.getConstraintsForMixin("foo.bar.Baz"), new String[0]);
+
+        verify();
+    }
+
+    @Test
     public void mixin_name_conflict()
     {
         Resource r = mockResource();
@@ -622,6 +644,55 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         child.addMixinClassName("Barney");
 
         assertEquals(child.getMixinClassNames(), Arrays.asList("Barney", "Fred", "Wilma"));
+
+        verify();
+    }
+
+    @Test
+    public void get_order_for_mixin_with_parent_model()
+    {
+        Resource r = mockResource();
+        Logger logger = mockLogger();
+
+        replay();
+
+        MutableComponentModel parent = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
+
+        parent.addMixinClassName("Wilma", "before:Fred");
+
+        MutableComponentModel child = new MutableComponentModelImpl(CLASS_NAME, logger, r, parent, false);
+
+        child.addMixinClassName("Fred", "after:Barney");
+        child.addMixinClassName("Barney");
+
+        assertEquals(child.getOrderForMixin("Wilma"), new String[] {"before:Fred"});
+        assertEquals(child.getOrderForMixin("Fred"), new String[] {"after:Barney"});
+        assertEquals(child.getOrderForMixin("Barney"), null);
+
+        verify();
+    }
+
+    @Test
+    public void get_order_for_mixin_with_collision_in_parent_model()
+    {
+        Resource r = mockResource();
+        Logger logger = mockLogger();
+
+        replay();
+
+        MutableComponentModel parent = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
+
+        parent.addMixinClassName("Wilma", "before:Fred");
+
+        MutableComponentModel child = new MutableComponentModelImpl(CLASS_NAME, logger, r, parent, false);
+
+        child.addMixinClassName("Wilma", "before:*");
+        child.addMixinClassName("Fred", "after:Barney");
+        child.addMixinClassName("Barney");
+
+        assertEquals(child.getOrderForMixin("Wilma"), new String[] {"before:*"});
+        assertEquals(child.getOrderForMixin("Fred"), new String[] {"after:Barney"});
+        assertEquals(child.getOrderForMixin("Barney"), null);
 
         verify();
     }
