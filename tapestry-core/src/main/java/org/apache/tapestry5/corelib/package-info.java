@@ -12,5 +12,5 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** Root package for Tapestry, containing a common interfaces and data types used throughout the framework. */
-package org.apache.tapestry5;
+/** Root package for Tapestry's core library. */
+package org.apache.tapestry5.corelib;
