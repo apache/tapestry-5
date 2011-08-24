@@ -68,6 +68,9 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * <p/>
  * Option groups within the {@link SelectModel} will be rendered, but are not supported by many browsers, and are not
  * fully handled on the client side.
+ * <p/>
+ * For an alternative component that can be used for similar purposes, see
+ * {@link Checklist}.
  * 
  * @see Form
  * @see Select
@@ -179,7 +182,10 @@ public class Palette extends AbstractField
     private Asset deselect;
 
     /**
-     * Encoder used to translate between server-side objects and client-side strings.
+     * A ValueEncoder used to convert server-side objects (provided from the
+     * "source" parameter) into unique client-side strings (typically IDs) and
+     * back. Note: this component does NOT support ValueEncoders configured to
+     * be provided automatically by Tapestry.
      */
     @Parameter(required = true, allowNull = false)
     private ValueEncoder<Object> encoder;

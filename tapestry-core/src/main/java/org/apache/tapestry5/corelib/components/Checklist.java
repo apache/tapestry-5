@@ -30,8 +30,10 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Multiple selection component, used as an alternative to the {@link Palette} component. 
- * Generates a UI consisting of a list of check boxes. 
+ * A list of checkboxes, allowing selection of multiple items in a list. 
+ * <p/>
+ * For an alternative component that can be used for similar purposes, see
+ * {@link Palette}.
  * 
  * @since 5.3
  * 
@@ -60,8 +62,10 @@ public class Checklist extends AbstractField
     private List<Object> selected;
 
     /**
-     * Encoder used to translate between server-side objects and client-side
-     * strings.
+     * A ValueEncoder used to convert server-side objects (provided from the
+     * "source" parameter) into unique client-side strings (typically IDs) and
+     * back. Note: this component does NOT support ValueEncoders configured to
+     * be provided automatically by Tapestry.
      */
     @Parameter(required = true, allowNull = false)
     private ValueEncoder<Object> encoder;

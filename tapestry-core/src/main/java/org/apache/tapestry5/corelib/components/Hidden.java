@@ -27,11 +27,15 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
- * Used to record a page property as a value into the form. The value is
- * {@linkplain org.apache.tapestry5.ValueEncoder#toClient(Object) encoded} when rendered, then decoded when the form is
- * submitted,
- * and the value parameter updated.
- *
+ * Used to record a page property as a value into the form. The value is encoded
+ * when the form is rendered, then decoded after the form is submitted back to
+ * the server, and the "value" parameter updated.
+ * <p/>
+ * The encoding and decoding is done via a {@link org.apache.tapestry5.ValueEncoder},
+ * therefore you must either bind the "encoder" parameter to a ValueEncoder or
+ * use an entity type for the "value" parameter for which Tapestry can provide a
+ * ValueEncoder automatically.
+ * 
  * @tapestrydoc
  * @since 5.1.0.2
  */
@@ -53,8 +57,11 @@ public class Hidden implements ClientElement
     private NullFieldStrategy nulls;
 
     /**
-     * Value encoder for the value, usually determined automatically from the type of the property bound to the value
-     * parameter.
+     * A ValueEncoder used to convert the server-side object provided by the
+     * "value" parameter into a unique client-side string (typically an ID) and
+     * back. Note: this parameter may be OMITTED if Tapestry is configured to
+     * provide a ValueEncoder automatically for the type of property bound to
+     * the "value" parameter. 
      */
     @Parameter(required = true)
     private ValueEncoder encoder;

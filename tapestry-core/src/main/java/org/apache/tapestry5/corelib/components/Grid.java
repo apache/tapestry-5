@@ -58,10 +58,15 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * <p/>
  * A Grid may operate inside a {@link org.apache.tapestry5.corelib.components.Form}. By overriding the cell renderers of
  * properties, the default output-only behavior can be changed to produce a complex form with individual control for
- * editing properties of each row. This is currently workable but less than ideal -- if the order of rows provided by
+ * editing properties of each row. There is a big caveat here: if the order of rows provided by
  * the {@link org.apache.tapestry5.grid.GridDataSource} changes between render and form submission, then there's the
- * possibility that data will be applied to the wrong server-side objects. In general, when using Grid and Form
- * together, you want to provide the Grid with a {@link org.apache.tapestry5.ValueEncoder} (via the encoder parameter).
+ * possibility that data will be applied to the wrong server-side objects.
+ * <p/>
+ * For this reason, when using Grid and Form together, you should generally
+ * provide the Grid with a {@link org.apache.tapestry5.ValueEncoder} (via the
+ * encoder parameter), or use an entity type for the "row" parameter for which
+ * Tapestry can provide a ValueEncoder automatically. This will allow Tapestry
+ * to use a unique ID for each row that doesn't change when rows are reordered.
  * 
  * @see org.apache.tapestry5.beaneditor.BeanModel
  * @see org.apache.tapestry5.services.BeanModelSource

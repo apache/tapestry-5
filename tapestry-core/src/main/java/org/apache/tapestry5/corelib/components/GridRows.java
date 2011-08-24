@@ -46,10 +46,17 @@ import java.util.List;
 /**
  * Renders out a series of rows within the table.
  * <p/>
- * Inside a {@link Form}, a series of row index numbers are stored into the form ( {@linkplain FormSupport#store(Object,
- * ComponentAction) as ComponentActions}). This is not ideal ... in a situation where the data set can shift between the
- * form render and the form submission, this can cause unexpected results, including applying changes to the wrong
- * objects.
+ * Inside a {@link Form}, a series of row index numbers are stored into the form
+ * ( {@linkplain FormSupport#store(Object, ComponentAction) as
+ * ComponentActions}). This can be a problem in situations where the data set
+ * can shift between the form render and the form submission, with a risk of
+ * applying changes to the wrong objects.
+ * <p/>
+ * For this reason, when using GridRows inside a Form, you should generally
+ * provide a {@link org.apache.tapestry5.ValueEncoder} (via the encoder
+ * parameter), or use an entity type for the "row" parameter for which
+ * Tapestry can provide a ValueEncoder automatically. This will allow Tapestry
+ * to use a unique ID for each row that doesn't change when rows are reordered.
  * 
  * @tapestrydoc
  */
@@ -170,9 +177,14 @@ public class GridRows
     private boolean volatileState;
 
     /**
-     * Changes how state is recorded into the form to store the {@linkplain org.apache.tapestry5.ValueEncoder#toClient(Object)
-     * client value} for each row (rather than the index), and restore the {@linkplain
-     * org.apache.tapestry5.ValueEncoder#toValue(String) row values} from the client value.
+     * A ValueEncoder used to convert server-side objects (provided by the
+     * "row" parameter) into unique client-side strings (typically IDs) and
+     * back. In general, when using Grid and Form together, you should either
+     * provide the encoder parameter or use a "row" type for which Tapestry is
+     * configured to provide a ValueEncoder automatically. Otherwise Tapestry
+     * must fall back to using the plain index of each row, rather
+     * than the ValueEncoder-provided unique ID, for recording state into the
+     * form.
      */
     @Parameter
     private ValueEncoder encoder;

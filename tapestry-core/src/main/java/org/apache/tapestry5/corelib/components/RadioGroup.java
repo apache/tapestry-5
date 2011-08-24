@@ -64,8 +64,11 @@ public class RadioGroup implements Field
     private String clientId;
 
     /**
-     * Allows a specific implementation of {@link org.apache.tapestry5.ValueEncoder} to be supplied. This is used to
-     * create client-side string values for the different radio button values.
+     * A ValueEncoder used to convert server-side objects (provided by the
+     * selected Radio componnent's "value" parameter) into unique client-side
+     * strings (typically IDs) and back. Note: this parameter may be OMITTED if
+     * Tapestry is configured to provide a ValueEncoder automatically for the
+     * type of property bound to the "value" parameter. 
      */
     @Parameter(required = true, allowNull = false)
     private ValueEncoder encoder;

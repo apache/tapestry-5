@@ -39,7 +39,7 @@ import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
 
 /**
- * Basic looping class; loops over a number of items (provided by its source parameter), rendering its body for each
+ * A basic looping component; loops over a number of items (provided by its source parameter), rendering its body for each
  * one. When a Loop is inside a {@link Form}, it records quite a bit of state into the Form to coordinate access
  * to the same (or equivalent) objects during the form submission as during the render. This is controlled by
  * the formState parameter (of type {@link LoopFormState}) and can be 'none' (nothing stored into the form), 'values'
@@ -232,9 +232,14 @@ public class Loop<T>
     private Iterable<T> source;
 
     /**
-     * Optional value converter; if provided (or defaulted) and inside a form and not volatile, then each iterated value
-     * is converted and stored into the form. A default for this is calculated from the type of the property bound to
-     * the value parameter.
+     * A ValueEncoder used to convert server-side objects (provided by the
+     * "value" parameter) into unique client-side strings (typically IDs) and
+     * back. In general, when using a non-volatile Loop in a Form, you should
+     * either provide a ValueEncoder with the encoder parameter or use a "value"
+     * type for which Tapestry is configured to provide a ValueEncoder
+     * automatically. Otherwise Tapestry must fall back to using the plain
+     * index of each loop iteration, rather than the ValueEncoder-provided
+     * unique ID, for recording state into the form.
      */
     @Parameter
     private ValueEncoder<T> encoder;

@@ -45,7 +45,7 @@ import org.apache.tapestry5.util.EnumSelectModel;
  * decorations will go around the entire &lt;select&gt; element.
  * <p/>
  * A core part of this component is the {@link ValueEncoder} (the encoder parameter) that is used to convert between
- * server-side values and client-side strings. In many cases, a {@link ValueEncoder} can be generated automatically from
+ * server-side values and unique client-side strings. In some cases, a {@link ValueEncoder} can be generated automatically from
  * the type of the value parameter. The {@link ValueEncoderSource} service provides an encoder in these situations; it
  * can be overriden by binding the encoder parameter, or extended by contributing a {@link ValueEncoderFactory} into the
  * service's configuration.
@@ -74,8 +74,11 @@ public class Select extends AbstractField
     }
 
     /**
-     * Allows a specific implementation of {@link ValueEncoder} to be supplied. This is used to create client-side
-     * string values for the different options.
+     * A ValueEncoder used to convert the server-side object provided by the
+     * "value" parameter into a unique client-side string (typically an ID) and
+     * back. Note: this parameter may be OMITTED if Tapestry is configured to
+     * provide a ValueEncoder automatically for the type of property bound to
+     * the "value" parameter. 
      * 
      * @see ValueEncoderSource
      */

@@ -40,9 +40,15 @@ import org.apache.tapestry5.services.PartialMarkupRendererFilter;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
- * A special form of the {@link org.apache.tapestry5.corelib.components.Loop} component that adds Ajax support to
- * handle adding new rows and removing existing rows dynamically. Expects that the values being iterated over are
- * entities that can be identified via a {@link org.apache.tapestry5.ValueEncoder}.
+ * A special form of the {@link org.apache.tapestry5.corelib.components.Loop}
+ * component that adds Ajax support to handle adding new rows and removing
+ * existing rows dynamically.
+ * <p/>
+ * This component expects that the values being iterated over are entities that
+ * can be identified via a {@link org.apache.tapestry5.ValueEncoder}, therefore
+ * you must either bind the "encoder" parameter to a ValueEncoder or use an
+ * entity type for the "value" parameter for which Tapestry can provide a
+ * ValueEncoder automatically.
  * <p/>
  * Works with {@link org.apache.tapestry5.corelib.components.AddRowLink} and
  * {@link org.apache.tapestry5.corelib.components.RemoveRowLink} components.
@@ -115,8 +121,11 @@ public class AjaxFormLoop
     private Block tail;
 
     /**
-     * Required parameter used to convert server-side objects (provided from the source) into client-side ids and back.
-     * A default encoder may be calculated from the type of property bound to the value parameter.
+     * A ValueEncoder used to convert server-side objects (provided by the
+     * "source" parameter) into unique client-side strings (typically IDs) and
+     * back. Note: this parameter may be OMITTED if Tapestry is configured to
+     * provide a ValueEncoder automatically for the type of property bound to
+     * the "value" parameter. 
      */
     @Parameter(required = true, allowNull = false)
     private ValueEncoder<Object> encoder;
