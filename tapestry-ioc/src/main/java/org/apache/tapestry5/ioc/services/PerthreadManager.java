@@ -29,28 +29,27 @@ public interface PerthreadManager
 {
     /**
      * Adds a listener to the hub. All listeners are discarded at the {@link #cleanup()}.
-     * 
-     * @param listener
-     *            to add
+     *
+     * @param listener to add
      */
     void addThreadCleanupListener(ThreadCleanupListener listener);
 
     /**
-     * Immediately performs a cleanup of the thread, notifying all listeners then discarding the thread locale and the
-     * map it stores.
+     * Immediately performs a cleanup of the thread, notifying all listeners, then discarding all per-thread data
+     * stored by the manager.
      */
     void cleanup();
 
     /**
      * Creates a value using a unique internal key.
-     * 
+     *
      * @since 5.2.0
      */
     <T> PerThreadValue<T> createValue();
 
     /**
      * Invokes {@link Runnable#run()}, providing a try...finally to {@linkplain #cleanup() cleanup} after.
-     * 
+     *
      * @since 5.2.0
      */
     void run(Runnable runnable);
