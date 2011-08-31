@@ -493,6 +493,8 @@ public class Index
 
                     new Item("MapExpressionInExpansions", "Map Expressions in Expansions Demo", "Maps can be used in expansions"),
 
+                    new Item("ExpressionInJsFunction", "Expressions in JS Functions Demo", "Expressions can be used inside javascript functions"),
+
                     new Item("FormFieldFocusDemo", "FormFieldFocus Demo", "Setting the Form focus on a specific field"),
 
                     new Item("FormFragmentExplicitVisibleBoundsDemo", "Form Fragment Explicit Visible Bounds Demo", "Check for form fragment parent visibility can be bounded to")

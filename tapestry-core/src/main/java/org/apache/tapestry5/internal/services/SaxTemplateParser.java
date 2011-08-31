@@ -130,6 +130,10 @@ public class SaxTemplateParser
     // but invalid expansion.
 
     private static final Pattern EXPANSION_PATTERN = Pattern.compile("\\$\\{\\s*(((?!\\$\\{).)*)\\s*}");
+    private static final char EXPANSION_STRING_DELIMITTER='\'';
+    private static final char OPEN_BRACE='{';
+    private static final char CLOSE_BRACE='}';
+    //private static final Pattern EXPANSION_PATTERN = Pattern.compile("\\$\\{\\");
 
     private static final Set<String> MUST_BE_ROOT = CollectionFactory.newSet("extend", "container");
 
@@ -1090,7 +1094,6 @@ public class SaxTemplateParser
         // TAPESTRY-2028 means that the whitespace has likely been stripped out
         // of the text
         // already anyway.
-
         while (matcher.find())
         {
             int matchStart = matcher.start();
@@ -1098,19 +1101,66 @@ public class SaxTemplateParser
             if (matchStart != startx)
             {
                 String prefix = text.substring(startx, matchStart);
-
                 tokenAccumulator.add(new TextToken(prefix, textStartLocation));
             }
 
             // Group 1 includes the real text of the expansion, with whitespace
             // around the
             // expression (but inside the curly braces) excluded.
-
+            // But note that we run into a problem.  The original 
+            // EXPANSION_PATTERN used a reluctant quantifier to match the 
+            // smallest instance of ${} possible.  But if you have ${'}'} or 
+            // ${{'key': 'value'}} (maps, cf TAP5-1605) then you run into issues
+            // b/c the expansion becomes {'key': 'value' which is wrong.
+            // A fix to use greedy matching with negative lookahead to prevent 
+            // ${...}...${...} all matching a single expansion is close, but 
+            // has issues when an expansion is used inside a javascript function
+            // (see TAP5-1620). The solution is to use the greedy 
+            // EXPANSION_PATTERN as before to bound the search for a single 
+            // expansion, then check for {} consistency, ignoring opening and 
+            // closing braces that occur within '' (the property expression 
+            // language doesn't support "" for strings). That should include: 
+            // 'This string has a } in it' and 'This string has a { in it.'
+            // Note also that the property expression language doesn't support
+            // escaping the string character ('), so we don't have to worry 
+            // about that. 
             String expression = matcher.group(1);
+            //count of 'open' braces. Expression ends when it hits 0. In most cases,
+            // it should end up as 1 b/c "expression" is everything inside ${}, so 
+            // the following will typically not find the end of the expression.
+            int openBraceCount=1;
+            int expressionEnd = expression.length();
+            boolean inQuote=false;
+            for(int i=0;i<expression.length();i++) {
+                char c = expression.charAt(i);
+                //basically, if we're inQuote, we ignore everything until we hit the quote end, so we only care if the character matches the quote start (meaning we're at the end of the quote).
+                //note that I don't believe expression support escaped quotes...
+                if (c==EXPANSION_STRING_DELIMITTER) {
+                    inQuote = !inQuote;
+                    continue;
+                } else if (inQuote) {
+                    continue;
+                } else if (c == CLOSE_BRACE) {
+                    openBraceCount--;
+                    if (openBraceCount == 0) {
+                        expressionEnd = i;
+                        break;
+                    }
+                } else if (c == OPEN_BRACE) {
+                    openBraceCount++;
+                }
+            }
+            if (expressionEnd <  expression.length()) {
+                //then we gobbled up some } that we shouldn't have... like the closing } of a javascript
+                //function.
+                tokenAccumulator.add(new ExpansionToken(expression.substring(0,expressionEnd), textStartLocation));
+                //can't just assign to 
+                startx=matcher.start(1) + expressionEnd + 1;
+            } else {
+                tokenAccumulator.add(new ExpansionToken(expression, textStartLocation));
 
-            tokenAccumulator.add(new ExpansionToken(expression, textStartLocation));
-
-            startx = matcher.end();
+                startx = matcher.end();
+            }
         }
 
         // Catch anything after the final regexp match.

@@ -136,6 +136,19 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertText("numberkeysmap", "{1:one}");
     }
 
+    @Test
+    public void expressions_in_js_functions() throws Exception
+    {
+        openLinks("Expressions in JS Functions Demo");
+
+        click("button1");
+        waitForCondition("selenium.getValue('target') == 'test1'", PAGE_LOAD_TIMEOUT);
+
+        click("button2");
+        waitForCondition("selenium.getValue('target') == '{key=test2}'", PAGE_LOAD_TIMEOUT);
+
+    }
+
     /**
      * {@link org.apache.tapestry5.internal.transform.InjectContainerWorker} is
      * largely tested by the forms tests

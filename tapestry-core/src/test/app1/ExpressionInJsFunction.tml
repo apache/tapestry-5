@@ -1,0 +1,22 @@
+<html t:type="border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd" xmlns:p="tapestry:parameter">
+
+<script>
+    function test_func() {
+      $('target').setValue(${'"test1"'});
+    };
+
+    function test_func_with_map() {
+      $('target').setValue('${{'key':'test2'}}');
+    };
+
+</script>
+
+    <h1>Expansions within a JS function</h1>
+
+<t:form>
+    <input id="target"/>
+    <input id="button1" type="button" onclick="test_func();" value="test1"/>
+    <input id="button2" type="button" onclick="test_func_with_map();" value="test2"/>
+</t:form>
+
+</html>
