@@ -55,7 +55,7 @@ task generateProjectProperties(dependsOn: compileJava) {
 
   doLast {
     outputDir.mkdirs()
-    outputFile << "version=${version}";
+    outputFile << "version=${project.version}";
     println "Generating $outputFile"
   }
 }

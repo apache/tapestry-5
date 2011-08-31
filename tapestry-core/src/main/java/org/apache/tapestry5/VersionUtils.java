@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,9 +26,9 @@ public class VersionUtils
 {
 
     /**
-     * Reads a version number from a properties file on the classpath.  These files are generally created by Maven.  For
-     * example, tapestry-core's properties file is <code>META-INF/maven/org.apache.tapestry/tapestry-core/pom.properties</code>.
-     * The Maven generated properties files include the artifact id and group id as well as the version.
+     * Reads a version number from a properties file on the classpath.  These files are generally created by Gradle.  For
+     * example, tapestry-core's properties file is <code>META-INF/gradle/org.apache.tapestry/tapestry-core/pom.properties</code>.
+     * The Gradle generated properties files include the version and possibly others properties.
      * <p/>
      * The resource is located using the Thread's context class loader.
      *
@@ -62,7 +62,7 @@ public class VersionUtils
 
             String version = properties.getProperty("version");
 
-            // Since the file, if it exists, is created by Maven and will have the key, I can't see
+            // Since the file, if it exists, is created by Gradle and will have the key, I can't see
             // how version would EVER be null, unless there's a problem reading the properties.
 
             if (version != null) result = version;
