@@ -14,19 +14,15 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.tapestry5.EventConstants;
-import org.apache.tapestry5.EventContext;
-import org.apache.tapestry5.Link;
-import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.TapestryConstants;
+import org.apache.tapestry5.*;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.*;
+
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 {
@@ -48,6 +44,8 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
     private final boolean encodeLocaleIntoPath;
 
+    private final String applicationFolder;
+
     private static final int BUFFER_SIZE = 100;
 
     private static final char SLASH = '/';
@@ -62,16 +60,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
     // path is most likely a page render request. After the optional event name,
     // the next piece is the action context, which is the remainder of the path.
 
-    private final Pattern PATH_PATTERN = Pattern.compile(
-
-    "^/" + // The leading slash is recognized but skipped
-            "(((\\w+)/)*(\\w+))" + // A series of folder names leading up to the page name, forming
-            // the logical page name
-            "(\\.(\\w+(\\.\\w+)*))?" + // The first dot separates the page name from the nested
-            // component id
-            "(\\:(\\w+))?" + // A colon, then the event type
-            "(/(.*))?", // A slash, then the action context
-            Pattern.COMMENTS);
+    private final Pattern PATH_PATTERN;
 
     // Constants for the match groups in the above pattern.
     private static final int LOGICAL_PAGE_NAME = 1;
@@ -80,10 +69,10 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
     private static final int CONTEXT = 11;
 
     public ComponentEventLinkEncoderImpl(ComponentClassResolver componentClassResolver,
-            ContextPathEncoder contextPathEncoder, LocalizationSetter localizationSetter, Request request,
-            Response response, RequestSecurityManager requestSecurityManager, BaseURLSource baseURLSource,
-            PersistentLocale persistentLocale, @Symbol(SymbolConstants.ENCODE_LOCALE_INTO_PATH)
-            boolean encodeLocaleIntoPath)
+                                         ContextPathEncoder contextPathEncoder, LocalizationSetter localizationSetter, Request request,
+                                         Response response, RequestSecurityManager requestSecurityManager, BaseURLSource baseURLSource,
+                                         PersistentLocale persistentLocale, @Symbol(SymbolConstants.ENCODE_LOCALE_INTO_PATH)
+    boolean encodeLocaleIntoPath, @Symbol(SymbolConstants.APPLICATION_FOLDER) String applicationFolder)
     {
         this.componentClassResolver = componentClassResolver;
         this.contextPathEncoder = contextPathEncoder;
@@ -94,6 +83,21 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         this.baseURLSource = baseURLSource;
         this.persistentLocale = persistentLocale;
         this.encodeLocaleIntoPath = encodeLocaleIntoPath;
+        this.applicationFolder = applicationFolder;
+
+        String folderPattern = applicationFolder.equals("") ? "" : SLASH + applicationFolder;
+
+        PATH_PATTERN = Pattern.compile(
+
+                "^/" + // The leading slash is recognized but skipped
+                        folderPattern + // The folder containing the application (TAP5-743)
+                        "(((\\w+)/)*(\\w+))" + // A series of folder names leading up to the page name, forming
+                        // the logical page name (may include the locale name)
+                        "(\\.(\\w+(\\.\\w+)*))?" + // The first dot separates the page name from the nested
+                        // component id
+                        "(\\:(\\w+))?" + // A colon, then the event type
+                        "(/(.*))?", // A slash, then the action context
+                Pattern.COMMENTS);
     }
 
     public Link createPageRenderLink(PageRenderRequestParameters parameters)
@@ -106,7 +110,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
         builder.append(request.getContextPath());
 
-        encodeLocale(builder);
+        encodeAppFolderAndLocale(builder);
 
         builder.append(SLASH);
 
@@ -125,6 +129,25 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         return link;
     }
 
+    private void encodeAppFolderAndLocale(StringBuilder builder)
+    {
+        if (!applicationFolder.equals(""))
+        {
+            builder.append(SLASH).append(applicationFolder);
+        }
+
+        if (encodeLocaleIntoPath)
+        {
+            Locale locale = persistentLocale.get();
+
+            if (locale != null)
+            {
+                builder.append(SLASH);
+                builder.append(locale.toString());
+            }
+        }
+    }
+
     private String encodePageName(String pageName)
     {
         if (pageName.equalsIgnoreCase("index"))
@@ -136,20 +159,6 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
             return encoded;
 
         return encoded.substring(0, encoded.length() - 6);
-    }
-
-    private void encodeLocale(StringBuilder builder)
-    {
-        if (encodeLocaleIntoPath)
-        {
-            Locale locale = persistentLocale.get();
-
-            if (locale != null)
-            {
-                builder.append(SLASH);
-                builder.append(locale.toString());
-            }
-        }
     }
 
     public Link createComponentEventLink(ComponentEventRequestParameters parameters, boolean forForm)
@@ -167,7 +176,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
         builder.append(request.getContextPath());
 
-        encodeLocale(builder);
+        encodeAppFolderAndLocale(builder);
 
         builder.append(SLASH);
         builder.append(activePageName.toLowerCase());
@@ -277,7 +286,9 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
         // Ignore trailing slashes in the path.
         while (extendedName.endsWith("/"))
+        {
             extendedName = extendedName.substring(0, extendedName.length() - 1);
+        }
 
         int slashx = extendedName.indexOf('/');
 

@@ -14,11 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.io.IOException;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
@@ -28,10 +23,14 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Map;
+
 /**
  * Recognizes requests where the path begins with "/asset/" and delivers the content therein as a bytestream. Also
  * handles requests that are simply polling for a change to the file.
- * 
+ *
  * @see ResourceStreamer
  * @see ClasspathAssetAliasManager
  * @see AssetRequestHandler
@@ -45,12 +44,16 @@ public class AssetDispatcher implements Dispatcher
 
     public AssetDispatcher(Map<String, AssetRequestHandler> configuration,
 
-    @Symbol(SymbolConstants.APPLICATION_VERSION)
-    String applicationVersion)
+                           @Symbol(SymbolConstants.APPLICATION_VERSION)
+                           String applicationVersion,
+
+                           @Symbol(SymbolConstants.APPLICATION_FOLDER) String applicationFolder)
     {
         this.configuration = configuration;
 
-        this.pathPrefix = RequestConstants.ASSET_PATH_PREFIX + applicationVersion + "/";
+        String folder = applicationFolder.equals("") ? "" : "/" + applicationFolder;
+
+        this.pathPrefix = folder + RequestConstants.ASSET_PATH_PREFIX + applicationVersion + "/";
     }
 
     public boolean dispatch(Request request, Response response) throws IOException

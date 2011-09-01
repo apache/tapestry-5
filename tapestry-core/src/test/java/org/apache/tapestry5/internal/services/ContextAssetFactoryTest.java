@@ -54,7 +54,7 @@ public class ContextAssetFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        AssetFactory factory = new ContextAssetFactory(new AssetPathConstructorImpl(request, "4.5.6"), context,
+        AssetFactory factory = new ContextAssetFactory(new AssetPathConstructorImpl(request, "4.5.6", ""), context,
                 new IdentityAssetPathConverter());
 
         Asset asset = factory.createAsset(r);

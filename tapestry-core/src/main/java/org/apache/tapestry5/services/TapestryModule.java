@@ -2373,6 +2373,8 @@ public final class TapestryModule
         configuration.add(SymbolConstants.PAGE_SOURCE_ACTIVE_WINDOW, "15 m");
 
         configuration.add(SymbolConstants.UNKNOWN_COMPONENT_ID_CHECK_ENABLED, true);
+
+        configuration.add(SymbolConstants.APPLICATION_FOLDER, "");
     }
 
     /**

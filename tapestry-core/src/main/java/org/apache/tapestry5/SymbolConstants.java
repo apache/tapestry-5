@@ -304,6 +304,9 @@ public class SymbolConstants
      * object that was accessed during the request.
      * <p/>
      * This is provided as a performance enhancement for servers that do not use clustered sessions.
+     * <p/>
+     * The default is {@code true}, to preserve 5.2 behavior. For non-clustered applications (the majority), this value should be
+     * overridden to {@code false}. A future release of Tapestry may change the default.
      *
      * @since 5.3
      */
@@ -332,7 +335,7 @@ public class SymbolConstants
      * can cause a page load error if there is no matching component in the component's template. Although this is correct behavior,
      * it can make the upgrade from 5.2 to 5.3 difficult if an existing app had some "left over" event handler methods. Changing
      * this symbol to {@code false} is a temporary approach to resolving this problem.
-     * <p>
+     * <p/>
      * This symbol will be <em>ignored</em> in release 5.4 and removed in 5.5.
      *
      * @since 5.3
@@ -340,4 +343,21 @@ public class SymbolConstants
      */
     @Deprecated
     public static final String UNKNOWN_COMPONENT_ID_CHECK_ENABLED = "tapestry.compatibility.unknown-component-id-check-enabled";
+
+    /**
+     * The name of a folder in which the Tapestry application executes. Prior to 5.3, a Tapestry application always responded to all
+     * URLs in the context under the context root; by setting this to the name of a folder, the T5 URLs will be inside that folder only, and should
+     * match a corresponding entry in the {@code web.xml} configuration file.  This is useful when running multiple servlets within the same web application (such as when migrating
+     * from Tapestry 4 or some other framework, to Tapestry 5).
+     * <p>Effectively, if this symbol is set to a value, that folder name will be placed after the context path
+     * (typically "/") and before the locale, page name, or other prefix.  For example, if this symbol is set to "app", the {@code web.xml <url-pattern>} should be set to {@code /app/*}, and Tapestry will
+     * only be in invoked by the servlet container for requests inside the virtual {@code app} folder.
+     * <p/>
+     * This also affects the search for page templates (which are allowed within the web context). When set to a non-blank value, page templates are searched for in the folder, rather than in the root context.
+     * <p/>
+     * The default value is the empty string, which preserves Tapestry 5.2 behavior (and continues to be appropriate for most applications).
+     *
+     * @since 5.3
+     */
+    public static final String APPLICATION_FOLDER = "tapestry.application-folder";
 }

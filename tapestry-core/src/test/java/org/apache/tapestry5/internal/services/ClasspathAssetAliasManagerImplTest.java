@@ -86,7 +86,7 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
         replay();
 
         ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(new AssetPathConstructorImpl(request,
-                APP_VERSION), configuration());
+                APP_VERSION, ""), configuration());
 
         String expectedPath = "/ctx" + RequestConstants.ASSET_PATH_PREFIX + APP_VERSION + "/" + expectedClientURL;
         assertEquals(manager.toClientURL(resourcePath), expectedPath);
