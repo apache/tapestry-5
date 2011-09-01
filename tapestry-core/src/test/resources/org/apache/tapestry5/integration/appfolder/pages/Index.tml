@@ -1,4 +1,8 @@
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+<head>
+    <title>Index Page</title>
+</head>
+<body>
 
 <h1>App Folder Demo Application</h1>
 
@@ -15,5 +19,5 @@
 <p>
     <t:actionlink t:id="showAlert">show index page alert</t:actionlink>
 </p>
-
+</body>
 </html>

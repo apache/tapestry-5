@@ -1,9 +1,11 @@
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+<head><title>Context Template</title></head>
+<body>
 
 <h1>Context Template Demo</h1>
 
 <img src="${context:images/t5-logo.png}" alt="Logo"/>
 
 <t:pagelink page="index">back to index</t:pagelink>
-
+</body>
 </html>

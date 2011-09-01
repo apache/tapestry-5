@@ -8,93 +8,100 @@
 <!-- The suite may no longer be run in parallel, because of some tricky issues related to locking of class loaders. Running 
   in parallel causes thread deadlocks, when unmanaged tests run at the same time as Selenium-based integration tests. See TAPESTRY-2561. -->
 <suite name="Tapestry Core" annotations="1.5" verbose="2">
-  <test name="Component Unit Tests" enabled="true">
-    <packages>
-      <package name="org.apache.tapestry5.integration.pagelevel"/>
-      <package name="org.apache.tapestry5.corelib.base"/>
-      <package name="org.apache.tapestry5.corelib.components"/>
-      <package name="org.apache.tapestry5.corelib.mixins"/>
-      <package name="org.apache.tapestry5.corelib.internal"/>
-    </packages>
-  </test>
+    <test name="Component Unit Tests" enabled="true">
+        <packages>
+            <package name="org.apache.tapestry5.integration.pagelevel"/>
+            <package name="org.apache.tapestry5.corelib.base"/>
+            <package name="org.apache.tapestry5.corelib.components"/>
+            <package name="org.apache.tapestry5.corelib.mixins"/>
+            <package name="org.apache.tapestry5.corelib.internal"/>
+        </packages>
+    </test>
 
-  <test name="Service Unit Tests" enabled="true">
-    <packages>
-      <package name="org.apache.tapestry5.root"/>
-      <package name="org.apache.tapestry5.dom"/>
-      <package name="org.apache.tapestry5.runtime"/>
-      <package name="org.apache.tapestry5.services"/>
-      <package name="org.apache.tapestry5.services.javascript"/>
-      <package name="org.apache.tapestry5.util"/>
-      <package name="org.apache.tapestry5.validator"/>
-      <package name="org.apache.tapestry5.internal"/>
-      <package name="org.apache.tapestry5.internal.beaneditor"/>
-      <package name="org.apache.tapestry5.internal.bindings"/>
-      <package name="org.apache.tapestry5.internal.grid"/>
-      <package name="org.apache.tapestry5.internal.model"/>
-      <package name="org.apache.tapestry5.internal.pageload"/>
-      <package name="org.apache.tapestry5.internal.services"/>
-      <package name="org.apache.tapestry5.internal.services.assets"/>
-      <package name="org.apache.tapestry5.internal.services.messages"/>
-      <package name="org.apache.tapestry5.internal.services.meta"/>
-      <package name="org.apache.tapestry5.internal.services.templates"/>
-      <package name="org.apache.tapestry5.internal.structure"/>
-      <package name="org.apache.tapestry5.internal.test"/>
-      <package name="org.apache.tapestry5.internal.transform"/>
-      <package name="org.apache.tapestry5.internal.translator"/>
-      <package name="org.apache.tapestry5.internal.util"/>
-      <package name="org.apache.tapestry5.internal.services.ajax"/>
-    </packages>
-  </test>
+    <test name="Service Unit Tests" enabled="true">
+        <packages>
+            <package name="org.apache.tapestry5.root"/>
+            <package name="org.apache.tapestry5.dom"/>
+            <package name="org.apache.tapestry5.runtime"/>
+            <package name="org.apache.tapestry5.services"/>
+            <package name="org.apache.tapestry5.services.javascript"/>
+            <package name="org.apache.tapestry5.util"/>
+            <package name="org.apache.tapestry5.validator"/>
+            <package name="org.apache.tapestry5.internal"/>
+            <package name="org.apache.tapestry5.internal.beaneditor"/>
+            <package name="org.apache.tapestry5.internal.bindings"/>
+            <package name="org.apache.tapestry5.internal.grid"/>
+            <package name="org.apache.tapestry5.internal.model"/>
+            <package name="org.apache.tapestry5.internal.pageload"/>
+            <package name="org.apache.tapestry5.internal.services"/>
+            <package name="org.apache.tapestry5.internal.services.assets"/>
+            <package name="org.apache.tapestry5.internal.services.messages"/>
+            <package name="org.apache.tapestry5.internal.services.meta"/>
+            <package name="org.apache.tapestry5.internal.services.templates"/>
+            <package name="org.apache.tapestry5.internal.structure"/>
+            <package name="org.apache.tapestry5.internal.test"/>
+            <package name="org.apache.tapestry5.internal.transform"/>
+            <package name="org.apache.tapestry5.internal.translator"/>
+            <package name="org.apache.tapestry5.internal.util"/>
+            <package name="org.apache.tapestry5.internal.services.ajax"/>
+        </packages>
+    </test>
 
-  <!-- We break these out by which of the test applications they apply to. We have a bunch. -->
-  <test name="Core Integration Tests" enabled="true">
-    <parameter name="tapestry.web-app-folder" value="src/test/app1"/>
+    <!-- We break these out by which of the test applications they apply to. We have a bunch. -->
+    <test name="Core Integration Tests" enabled="true">
+        <parameter name="tapestry.web-app-folder" value="src/test/app1"/>
 
-    <packages>
-      <package name="org.apache.tapestry5.integration.app1"/>
-    </packages>
-  </test>
+        <packages>
+            <package name="org.apache.tapestry5.integration.app1"/>
+        </packages>
+    </test>
 
-  <test name="Additional Integration Tests" enabled="true">
-    <parameter name="tapestry.web-app-folder" value="src/test/app3"/>
+    <test name="Additional Integration Tests" enabled="true">
+        <parameter name="tapestry.web-app-folder" value="src/test/app3"/>
 
-    <packages>
-      <package name="org.apache.tapestry5.integration.app3"/>
-    </packages>
-  </test>
+        <packages>
+            <package name="org.apache.tapestry5.integration.app3"/>
+        </packages>
+    </test>
 
-  <test name="Immediate Mode Integration Tests" enabled="true">
-    <parameter name="tapestry.web-app-folder" value="src/test/app4"/>
+    <test name="Immediate Mode Integration Tests" enabled="true">
+        <parameter name="tapestry.web-app-folder" value="src/test/app4"/>
 
-    <packages>
-      <package name="org.apache.tapestry5.integration.app4"/>
-    </packages>
-  </test>
+        <packages>
+            <package name="org.apache.tapestry5.integration.app4"/>
+        </packages>
+    </test>
 
-  <test name="Live Reload Tests" enabled="true">
-    <packages>
-      <package name="org.apache.tapestry5.integration.reload"/>
-    </packages>
-  </test>
+    <test name="Live Reload Tests" enabled="true">
+        <packages>
+            <package name="org.apache.tapestry5.integration.reload"/>
+        </packages>
+    </test>
 
-  <test name="LinkTransformer Tests" enabled="true">
-    <parameter name="tapestry.web-app-folder" value="src/test/linktrans"/>
-    <packages>
-      <package name="org.apache.tapestry5.integration.linktrans"/>
-    </packages>
-  </test>
+    <test name="LinkTransformer Tests" enabled="true">
+        <parameter name="tapestry.web-app-folder" value="src/test/linktrans"/>
+        <packages>
+            <package name="org.apache.tapestry5.integration.linktrans"/>
+        </packages>
+    </test>
 
-  <test name="App Skinning Tests" enabled="true">
-    <parameter name="tapestry.web-app-folder" value="src/test/app5"/>
-    <packages>
-      <package name="org.apache.tapestry5.integration.app5"/>
-    </packages>
-  </test>
+    <test name="App Skinning Tests" enabled="true">
+        <parameter name="tapestry.web-app-folder" value="src/test/app5"/>
+        <packages>
+            <package name="org.apache.tapestry5.integration.app5"/>
+        </packages>
+    </test>
 
-  <test name="PageTester Tests" enabled="true">
-    <packages>
-      <package name="org.apache.tapestry5.integration.pagetester"/>
-    </packages>
-  </test>
+    <test name="AppFolder Tests" enabled="true">
+        <parameter name="tapestry.web-app-folder" value="src/test/appfolder"/>
+        <packages>
+            <package name="org.apache.tapestry5.integration.appfolder"/>
+        </packages>
+    </test>
+
+    <test name="PageTester Tests" enabled="true">
+        <packages>
+            <package name="org.apache.tapestry5.integration.pagetester"/>
+        </packages>
+    </test>
 </suite>
