@@ -15,15 +15,51 @@
 package org.apache.tapestry5;
 
 /**
- * Used to convert server side values to client-side strings.  This is used when generating a {@link
- * org.apache.tapestry5.EventContext} as part of a URL, or when components (such as {@link
- * org.apache.tapestry5.corelib.components.Select}) generated other client-side strings.
+ * A ValueEncoder is used to convert server side objects to unique client-side
+ * strings (typically IDs) and back. This mechanism is widely used in Tapestry
+ * to allow you to work more seamlessly with objects rather than manually
+ * managing the encoding and decoding process throughout your application.
+ * 
+ * Tapestry uses a ValueEncoder when generating an
+ * {@link org.apache.tapestry5.EventContext} as part of a URL, and when
+ * components (such as {@link org.apache.tapestry5.corelib.components.Select})
+ * need to generate unique client-side strings to be rendered within form
+ * elements.
  * <p/>
- * Often a custom implementation is needed for entity type objects, where the {@link #toClient(Object)} method extracts
- * a primary key, and the {@link #toValue(String)} re-acquires the corresponding entity object.
- *
+ * Tapestry can automatically generate ValueEncoders for enums as well as
+ * Collections of any object types for which a coercion can be found from a
+ * formatted String, such as primitives, primitive wrappers, Dates, Calendars,
+ * "name=value" strings, and any types for which a custom coercion has been
+ * contributed.  
+ * <p/>
+ * Custom ValueEncoder implementations will need to be supplied for entity type
+ * objects. In such cases the {@link #toClient(Object)} method typically returns
+ * an object's database primary key, and the {@link #toValue(String)}
+ * re-acquires the corresponding entity object, perhaps by doing a database
+ * lookup by that ID.
+ * <p/>
+ * Some optional modules, such as Tapestry's own Hibernate and JPA modules, can
+ * automatically create a ValueEncoder for each of your entity types and then
+ * configure Tapestry to use them whenever a ValueEncoder is needed for those
+ * types. If you don't use one of those modules, you can still configure
+ * Tapestry to automatically use your custom ValueEncoder implementations by
+ * having your ValueEncoder implement the
+ * {@link org.apache.tapestry5.services.ValueEncoderFactory} interface and then
+ * contributing a ValueEncoderSource that adds your encoder, like this, in your
+ * application's module class:
+ * 
+* <pre>
+ * public static void contributeValueEncoderSource(
+ * 		MappedConfiguration&lt;Class&lt;Color&gt;, ValueEncoderFactory&lt;Color&gt;&gt; configuration)
+ * {
+ * 	configuration.addInstance(Color.class, ColorEncoder.class);
+ * }
+ * </pre>
+ * 
  * @see SelectModel
  * @see org.apache.tapestry5.services.ValueEncoderSource
+ * @see org.apache.tapestry5.services.services.ValueEncoderFactory
+ * @see org.apache.tapestry5.annotations.PageActivationContext.java
  */
 public interface ValueEncoder<V>
 {
