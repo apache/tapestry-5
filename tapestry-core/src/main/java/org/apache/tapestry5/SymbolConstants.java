@@ -356,6 +356,9 @@ public class SymbolConstants
      * This also affects the search for page templates (which are allowed within the web context). When set to a non-blank value, page templates are searched for in the folder, rather than in the root context.
      * <p/>
      * The default value is the empty string, which preserves Tapestry 5.2 behavior (and continues to be appropriate for most applications).
+     * <p/>
+     * Note that while Tapestry is case-insensitive, the servlet container is not, so the configured value must exactly match
+     * the folder name inside the {@code <url-parameter>} value, including case.
      *
      * @since 5.3
      */
