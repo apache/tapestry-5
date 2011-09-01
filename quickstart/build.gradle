@@ -17,6 +17,47 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 generatedDir = new File(buildDir, 'quickstart-generated')
 
+/*
+ * An example on how to scp the generated archetype-catalog.xml to the tapestry.apache.org
+ * site, we need a nice way to hook it in the right place
+ */
+//configurations {
+//    scpTask
+//}
+//
+//dependencies {
+//    scpTask 'org.apache.ant:ant-jsch:1.8.2', 'com.jcraft:jsch:0.1.42'
+//}
+//
+//
+//task publishArchetypeCatalog(dependsOn: 'archetype') {
+//    description = 'Update archetype on minotaur'
+//
+//    // As with properties to deploy to the maven repositories (staging or central)
+//    // minotaurDeployUsername and minotaurDeployPassword should be specified in
+//    // ~/.gradle/gradle.properties
+//    // "minotaurDeployUsername"
+//    // "minotaurDeployPassword"
+//    // "minotaurSshPassphrase"
+//
+//    scpToDir = minotaurDeployUserName + "@people.apache.org:/tmp"
+//
+//    println scpToDir
+//
+//    ant.taskdef(name: 'scp', classname: 'org.apache.tools.ant.taskdefs.optional.ssh.Scp',
+//            classpath: configurations.scpTask.asPath)
+//
+//    ant.scp(todir: scpToDir,
+//            keyfile: '${user.home}/.ssh/id_rsa',
+//            // passphrase: minotaurSshPassphrase,
+//            // password: minotaurDeployPassword,
+//            verbose: 'true') {
+//        fileset(dir: generatedDir) {
+//            include(name: '**/archetype-catalog.xml')
+//        }
+//    }
+//}
+
 task generateArchetype(type: Copy) {
     srcDir = file('prototypes')
 
