@@ -2,8 +2,18 @@
 
 <h1>App Folder Demo Application</h1>
 
+<t:alerts/>
+
 <img src="${context:images/t5-logo.png}" alt="Logo"/>
 
-<t:pagelink page="contexttemplate">context template demo</t:pagelink>
+<p>
+
+    <t:pagelink page="contexttemplate">context template demo</t:pagelink>
+
+</p>
+
+<p>
+    <t:actionlink t:id="showAlert">show index page alert</t:actionlink>
+</p>
 
 </html>

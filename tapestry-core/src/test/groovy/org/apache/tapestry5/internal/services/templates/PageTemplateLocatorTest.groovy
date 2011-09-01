@@ -25,7 +25,7 @@ class PageTemplateLocatorTest extends InternalBaseTestCase
 
         replay()
 
-        closure.call(new PageTemplateLocator(root, resolver))
+        closure.call(new PageTemplateLocator(root, resolver, ""))
 
         verify()
     }

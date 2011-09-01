@@ -46,6 +46,8 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
     private final String applicationFolder;
 
+    private final String applicationFolderPrefix;
+
     private static final int BUFFER_SIZE = 100;
 
     private static final char SLASH = '/';
@@ -60,7 +62,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
     // path is most likely a page render request. After the optional event name,
     // the next piece is the action context, which is the remainder of the path.
 
-    private final Pattern PATH_PATTERN;
+    private final Pattern COMPONENT_EVENT_REQUEST_PATH_PATTERN;
 
     // Constants for the match groups in the above pattern.
     private static final int LOGICAL_PAGE_NAME = 1;
@@ -85,12 +87,16 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         this.encodeLocaleIntoPath = encodeLocaleIntoPath;
         this.applicationFolder = applicationFolder;
 
-        String folderPattern = applicationFolder.equals("") ? "" : SLASH + applicationFolder;
+        boolean hasAppFolder = applicationFolder.equals("");
 
-        PATH_PATTERN = Pattern.compile(
+        applicationFolderPrefix = hasAppFolder ? null : SLASH + applicationFolder + SLASH;
+
+        String applicationFolderPattern = hasAppFolder ? "" : applicationFolder + SLASH;
+
+        COMPONENT_EVENT_REQUEST_PATH_PATTERN = Pattern.compile(
 
                 "^/" + // The leading slash is recognized but skipped
-                        folderPattern + // The folder containing the application (TAP5-743)
+                        applicationFolderPattern + // The folder containing the application (TAP5-743)
                         "(((\\w+)/)*(\\w+))" + // A series of folder names leading up to the page name, forming
                         // the logical page name (may include the locale name)
                         "(\\.(\\w+(\\.\\w+)*))?" + // The first dot separates the page name from the nested
@@ -221,7 +227,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
     public ComponentEventRequestParameters decodeComponentEventRequest(Request request)
     {
-        Matcher matcher = PATH_PATTERN.matcher(request.getPath());
+        Matcher matcher = COMPONENT_EVENT_REQUEST_PATH_PATTERN.matcher(request.getPath());
 
         if (!matcher.matches())
             return null;
@@ -278,6 +284,19 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         // activation context begins. Further, strip out the leading slash.
 
         String path = request.getPath();
+
+
+        if (applicationFolderPrefix != null)
+        {
+            int prefixLength = applicationFolderPrefix.length();
+
+            assert path.substring(0, prefixLength).equalsIgnoreCase(applicationFolderPrefix);
+
+            // Strip off the folder prefix (i.e., "/foldername"), leaving the rest of the path (i.e., "/en/pagename").
+
+            path = path.substring(prefixLength - 1);
+        }
+
 
         // TAPESTRY-1343: Sometimes path is the empty string (it should always be at least a slash,
         // but Tomcat may return the empty string for a root context request).
