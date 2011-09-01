@@ -2809,12 +2809,14 @@ public final class TapestryModule
      */
     public static void contributeComponentTemplateLocator(OrderedConfiguration<ComponentTemplateLocator> configuration,
                                                           @ContextProvider
-                                                          AssetFactory contextAssetFactory, ComponentClassResolver componentClassResolver)
+                                                          AssetFactory contextAssetFactory,
+                                                          @Symbol(SymbolConstants.APPLICATION_FOLDER) String applicationFolder,
+                                                          ComponentClassResolver componentClassResolver)
     {
         configuration.add("Default", new DefaultTemplateLocator());
         configuration
-                .add("Page", new PageTemplateLocator(contextAssetFactory.getRootResource(), componentClassResolver),
-                        "after:Default");
+                .add("Page", new PageTemplateLocator(contextAssetFactory.getRootResource(), componentClassResolver, applicationFolder));
+
     }
 
     /**

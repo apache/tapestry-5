@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.internal.services.templates;
 
-import java.util.Locale;
-
 import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -23,9 +21,11 @@ import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
 
+import java.util.Locale;
+
 /**
  * The special case for pages, where the template is searched for in the web application context.
- * 
+ *
  * @since 5.2.0
  */
 public class PageTemplateLocator implements ComponentTemplateLocator
@@ -34,15 +34,22 @@ public class PageTemplateLocator implements ComponentTemplateLocator
 
     private final ComponentClassResolver resolver;
 
-    public PageTemplateLocator(Resource contextRoot, ComponentClassResolver resolver)
+    private final String prefix;
+
+    public PageTemplateLocator(Resource contextRoot, ComponentClassResolver resolver, String applicationFolder)
     {
         this.contextRoot = contextRoot;
         this.resolver = resolver;
+
+        prefix = applicationFolder.equals("") ? "" : applicationFolder + "/";
     }
 
     public Resource locateTemplate(ComponentModel model, Locale locale)
     {
-        if (!model.isPage()) { return null; }
+        if (!model.isPage())
+        {
+            return null;
+        }
 
         String className = model.getComponentClassName();
 
@@ -60,7 +67,7 @@ public class PageTemplateLocator implements ComponentTemplateLocator
             logicalName = logicalName.substring(0, slashx + 1) + simpleClassName;
         }
 
-        String path = String.format("%s.%s", logicalName, TapestryConstants.TEMPLATE_EXTENSION);
+        String path = prefix + logicalName + "." + TapestryConstants.TEMPLATE_EXTENSION;
 
         return contextRoot.forFile(path).forLocale(locale);
     }
