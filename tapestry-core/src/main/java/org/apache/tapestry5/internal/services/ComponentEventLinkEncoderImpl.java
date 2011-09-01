@@ -89,7 +89,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
         boolean hasAppFolder = applicationFolder.equals("");
 
-        applicationFolderPrefix = hasAppFolder ? null : SLASH + applicationFolder + SLASH;
+        applicationFolderPrefix = hasAppFolder ? null : SLASH + applicationFolder;
 
         String applicationFolderPattern = hasAppFolder ? "" : applicationFolder + SLASH;
 
@@ -292,9 +292,17 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
             assert path.substring(0, prefixLength).equalsIgnoreCase(applicationFolderPrefix);
 
+            // This checks that the character after the prefix is a slash ... the extra complexity
+            // only seems to occur in Selenium. There's some ambiguity about what to do with a request for
+            // the application folder that doesn't end with a slash. Manuyal with Chrome and IE 8 shows that such
+            // requests are passed through with a training slash,  automated testing with Selenium and FireFox
+            // can include requests for the folder without the trailing slash.
+
+            assert path.length() <= prefixLength || path.charAt(prefixLength) == '/';
+
             // Strip off the folder prefix (i.e., "/foldername"), leaving the rest of the path (i.e., "/en/pagename").
 
-            path = path.substring(prefixLength - 1);
+            path = path.substring(prefixLength);
         }
 
 
