@@ -274,8 +274,8 @@ public class FormTests extends TapestryCoreTestCase
         waitForCondition(selectedGoneCondition, PAGE_LOAD_TIMEOUT);
 
         click("xpath=//td[text()='28']");
-        String pickerGoneCondition = "!selenium.isVisible('css=div.datePicker')";
-        waitForCondition(pickerGoneCondition, PAGE_LOAD_TIMEOUT);
+        String pickerGoneSelector="css=div.datePicker";
+        waitForInvisible(pickerGoneSelector);
 
         assertFieldValue("asteroidImpact", "6/28/2035");
 
@@ -290,7 +290,7 @@ public class FormTests extends TapestryCoreTestCase
         click("id=asteroidImpact-trigger");
         waitForCSSSelectedElementToAppear("div.datePicker");
         click("css=button.todayButton");
-        waitForCondition(pickerGoneCondition, PAGE_LOAD_TIMEOUT);
+        waitForInvisible(pickerGoneSelector);
 
         String value = getValue("asteroidImpact");
         assertFieldValue("asteroidImpact", new SimpleDateFormat("M/d/yyyy").format(new Date()));
@@ -306,21 +306,21 @@ public class FormTests extends TapestryCoreTestCase
 
         //#1
         click("css=button.todayButton");
-        waitForCondition(pickerGoneCondition, PAGE_LOAD_TIMEOUT);
+        waitForInvisible(pickerGoneSelector);
         assertFieldValue("asteroidImpact", value);
 
         //#4...
         click("id=asteroidImpact-trigger");
         waitForCSSSelectedElementToAppear("div.datePicker");
         click("css=button.noneButton");
-        waitForCondition(pickerGoneCondition, PAGE_LOAD_TIMEOUT);
+        waitForInvisible(pickerGoneSelector);
         assertFieldValue("asteroidImpact", "");
 
         click("id=asteroidImpact-trigger");
         waitForCSSSelectedElementToAppear("div.datePicker");
         assertFalse(isElementPresent("css=td.selected"));
         click("css=button.noneButton");
-        waitForCondition(pickerGoneCondition, PAGE_LOAD_TIMEOUT);
+        waitForInvisible(pickerGoneSelector);
         assertFieldValue("asteroidImpact", "");
     }
 
@@ -335,7 +335,17 @@ public class FormTests extends TapestryCoreTestCase
         waitForCSSSelectedElementToAppear("div.datePicker");
 
         click("id=asteroidImpact");
-        waitForCondition("!selenium.isVisible('css=div.datePicker')", PAGE_LOAD_TIMEOUT);
+        waitForInvisible("css=div.datePicker");
+
+        //also make sure that clicking the month label /doesn't/ close the picker
+        click("id=asteroidImpact-trigger");
+        waitForCSSSelectedElementToAppear("div.datePicker");
+        click("css=a.topLabel");
+        waitForCSSSelectedElementToAppear("div.labelPopup");
+        click("css=div.labelPopup a");
+
+        waitForCondition("!selenium.isElementPresent('css=div.labelPopup')", PAGE_LOAD_TIMEOUT);
+        assertTrue(isVisible("css=div.datePicker"));
     }
 
     @Test
