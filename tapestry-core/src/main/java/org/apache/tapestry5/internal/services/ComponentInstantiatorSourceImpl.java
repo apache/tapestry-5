@@ -95,6 +95,9 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
     private final Map<String, ComponentModel> classToModel = CollectionFactory.newMap();
 
+    private final MethodDescription GET_COMPONENT_RESOURCES = PlasticUtils.getMethodDescription(
+            ComponentResourcesAware.class, "getComponentResources");
+
     private final ConstructorCallback REGISTER_AS_PAGE_LIFECYCLE_LISTENER = new ConstructorCallback()
     {
         public void onConstruct(Object instance, InstanceContext context)
@@ -325,9 +328,6 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                     }
                 });
     }
-
-    private MethodDescription GET_COMPONENT_RESOURCES = PlasticUtils.getMethodDescription(
-            ComponentResourcesAware.class, "getComponentResources");
 
     private void implementComponentInterface(PlasticClass plasticClass)
     {

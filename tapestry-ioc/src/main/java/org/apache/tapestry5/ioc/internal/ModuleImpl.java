@@ -14,7 +14,16 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import static java.lang.String.format;
+import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.annotations.Local;
+import org.apache.tapestry5.ioc.def.*;
+import org.apache.tapestry5.ioc.internal.services.JustInTimeObjectCreator;
+import org.apache.tapestry5.ioc.internal.util.*;
+import org.apache.tapestry5.ioc.services.AspectDecorator;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
+import org.apache.tapestry5.ioc.services.Status;
+import org.apache.tapestry5.plastic.*;
+import org.slf4j.Logger;
 
 import java.io.ObjectStreamException;
 import java.io.Serializable;
@@ -22,40 +31,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import org.apache.tapestry5.ioc.*;
-import org.apache.tapestry5.ioc.annotations.Local;
-import org.apache.tapestry5.ioc.def.ContributionDef;
-import org.apache.tapestry5.ioc.def.ContributionDef2;
-import org.apache.tapestry5.ioc.def.DecoratorDef;
-import org.apache.tapestry5.ioc.def.ModuleDef;
-import org.apache.tapestry5.ioc.def.ModuleDef2;
-import org.apache.tapestry5.ioc.def.ServiceDef;
-import org.apache.tapestry5.ioc.def.ServiceDef2;
-import org.apache.tapestry5.ioc.def.ServiceDef3;
-import org.apache.tapestry5.ioc.internal.services.JustInTimeObjectCreator;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.ConcurrentBarrier;
-import org.apache.tapestry5.ioc.internal.util.InjectionResources;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.internal.util.MapInjectionResources;
-import org.apache.tapestry5.ioc.services.AspectDecorator;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
-import org.apache.tapestry5.ioc.services.Status;
-import org.apache.tapestry5.plastic.ClassInstantiator;
-import org.apache.tapestry5.plastic.InstructionBuilder;
-import org.apache.tapestry5.plastic.InstructionBuilderCallback;
-import org.apache.tapestry5.plastic.MethodDescription;
-import org.apache.tapestry5.plastic.PlasticClass;
-import org.apache.tapestry5.plastic.PlasticClassTransformer;
-import org.apache.tapestry5.plastic.PlasticField;
-import org.apache.tapestry5.plastic.PlasticMethod;
-import org.slf4j.Logger;
+import static java.lang.String.format;
 
 @SuppressWarnings("all")
 public class ModuleImpl implements Module
@@ -93,13 +71,15 @@ public class ModuleImpl implements Module
      */
     private final static ConcurrentBarrier BARRIER = new ConcurrentBarrier();
 
-    /** "Magic" method related to Externalizable that allows the Proxy object to replace itself with the token. */
+    /**
+     * "Magic" method related to Externalizable that allows the Proxy object to replace itself with the token.
+     */
     private static final MethodDescription WRITE_REPLACE = new MethodDescription(Modifier.PRIVATE, "java.lang.Object",
             "writeReplace", null, null, new String[]
-            { ObjectStreamException.class.getName() });
+            {ObjectStreamException.class.getName()});
 
     public ModuleImpl(InternalRegistry registry, ServiceActivityTracker tracker, ModuleDef moduleDef,
-            PlasticProxyFactory proxyFactory, Logger logger)
+                      PlasticProxyFactory proxyFactory, Logger logger)
     {
         this.registry = registry;
         this.tracker = tracker;
@@ -131,8 +111,7 @@ public class ModuleImpl implements Module
         try
         {
             return serviceInterface.cast(service);
-        }
-        catch (ClassCastException ex)
+        } catch (ClassCastException ex)
         {
             // This may be overkill: I don't know how this could happen
             // given that the return type of the method determines
@@ -186,11 +165,9 @@ public class ModuleImpl implements Module
 
     /**
      * Locates the service proxy for a particular service (from the service definition).
-     * 
-     * @param def
-     *            defines the service
-     * @param eagerLoadProxies
-     *            collection into which proxies for eager loaded services are added (or null)
+     *
+     * @param def              defines the service
+     * @param eagerLoadProxies collection into which proxies for eager loaded services are added (or null)
      * @return the service proxy
      */
     private Object findOrCreate(final ServiceDef3 def, final Collection<EagerLoadServiceProxy> eagerLoadProxies)
@@ -255,9 +232,8 @@ public class ModuleImpl implements Module
 
     /**
      * Creates the service and updates the cache of created services.
-     * 
-     * @param eagerLoadProxies
-     *            a list into which any eager loaded proxies should be added
+     *
+     * @param eagerLoadProxies a list into which any eager loaded proxies should be added
      */
     private Object create(final ServiceDef3 def, final Collection<EagerLoadServiceProxy> eagerLoadProxies)
     {
@@ -265,7 +241,11 @@ public class ModuleImpl implements Module
 
         final Logger logger = registry.getServiceLogger(serviceId);
 
-        String description = IOCMessages.creatingService(serviceId);
+        final Class serviceInterface = def.getServiceInterface();
+
+        String description = String.format("Creating %s service %s",
+                serviceInterface.isInterface() ? "proxy for" : "non-proxied instance of",
+                serviceId);
 
         if (logger.isDebugEnabled())
             logger.debug(description);
@@ -286,13 +266,12 @@ public class ModuleImpl implements Module
 
                     ObjectCreator creator = def.createServiceCreator(resources);
 
-                    Class serviceInterface = def.getServiceInterface();
-
-                    ServiceLifecycle2 lifecycle = registry.getServiceLifecycle(def.getServiceScope());
 
                     // For non-proxyable services, we immediately create the service implementation
                     // and return it. There's no interface to proxy, which throws out the possibility of
                     // deferred instantiation, service lifecycles, and decorators.
+
+                    ServiceLifecycle2 lifecycle = registry.getServiceLifecycle(def.getServiceScope());
 
                     if (!serviceInterface.isInterface())
                     {
@@ -305,7 +284,7 @@ public class ModuleImpl implements Module
                         return creator.createObject();
                     }
 
-                    creator = new OperationTrackingObjectCreator(registry, "Invoking service creator " + creator.toString(), creator);
+                    creator = new OperationTrackingObjectCreator(registry, String.format("Realizing service %s via %s", serviceId, creator), creator);
 
                     creator = new LifecycleWrappedServiceCreator(lifecycle, resources, creator);
 
@@ -343,8 +322,7 @@ public class ModuleImpl implements Module
                     tracker.setStatus(serviceId, Status.VIRTUAL);
 
                     return proxy;
-                }
-                catch (Exception ex)
+                } catch (Exception ex)
                 {
                     throw new RuntimeException(IOCMessages.errorBuildingService(serviceId, def, ex), ex);
                 }
@@ -453,16 +431,13 @@ public class ModuleImpl implements Module
             InternalUtils.injectIntoFields(result, locator, resources, registry);
 
             return result;
-        }
-        catch (InvocationTargetException ex)
+        } catch (InvocationTargetException ex)
         {
             fail = ex.getTargetException();
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             fail = ex;
-        }
-        finally
+        } finally
         {
             insideConstructor = false;
         }
@@ -483,7 +458,7 @@ public class ModuleImpl implements Module
     }
 
     private Object createProxyInstance(final ObjectCreator creator, final ServiceProxyToken token,
-            final Class serviceInterface, final Class serviceImplementation, final String description)
+                                       final Class serviceInterface, final Class serviceImplementation, final String description)
     {
         ClassInstantiator instantiator = proxyFactory.createProxy(serviceInterface, new PlasticClassTransformer()
         {
@@ -546,8 +521,7 @@ public class ModuleImpl implements Module
             if (serviceDef.getServiceId().equalsIgnoreCase(def.getServiceId()))
             {
                 result.add(def);
-            }
-            else
+            } else
             {
                 if (markerMatched(serviceDef, def))
                 {

@@ -14,81 +14,31 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.inject.Named;
-
-import org.apache.tapestry5.func.F;
-import org.apache.tapestry5.func.Flow;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
-import org.apache.tapestry5.ioc.AdvisorDef;
-import org.apache.tapestry5.ioc.AdvisorDef2;
-import org.apache.tapestry5.ioc.AnnotationAccess;
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.Configuration;
-import org.apache.tapestry5.ioc.IOCConstants;
-import org.apache.tapestry5.ioc.Invokable;
-import org.apache.tapestry5.ioc.Locatable;
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.ModuleBuilderSource;
-import org.apache.tapestry5.ioc.ObjectCreator;
-import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
-import org.apache.tapestry5.ioc.ServiceAdvisor;
-import org.apache.tapestry5.ioc.ServiceBuilderResources;
-import org.apache.tapestry5.ioc.ServiceDecorator;
-import org.apache.tapestry5.ioc.ServiceLifecycle;
-import org.apache.tapestry5.ioc.ServiceLifecycle2;
-import org.apache.tapestry5.ioc.ServiceResources;
-import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.InjectResource;
-import org.apache.tapestry5.ioc.annotations.InjectService;
-import org.apache.tapestry5.ioc.annotations.PostInjection;
-import org.apache.tapestry5.ioc.annotations.ServiceId;
-import org.apache.tapestry5.ioc.def.ContributionDef;
-import org.apache.tapestry5.ioc.def.ContributionDef2;
-import org.apache.tapestry5.ioc.def.DecoratorDef;
-import org.apache.tapestry5.ioc.def.DecoratorDef2;
-import org.apache.tapestry5.ioc.def.ModuleDef;
-import org.apache.tapestry5.ioc.def.ModuleDef2;
-import org.apache.tapestry5.ioc.def.ServiceDef;
-import org.apache.tapestry5.ioc.def.ServiceDef2;
-import org.apache.tapestry5.ioc.def.ServiceDef3;
+import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.annotations.*;
+import org.apache.tapestry5.ioc.def.*;
 import org.apache.tapestry5.ioc.internal.NullAnnotationProvider;
-import org.apache.tapestry5.ioc.internal.services.AnnotationProviderChain;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.plastic.MethodAdvice;
 import org.apache.tapestry5.plastic.MethodInvocation;
+import org.apache.tapestry5.plastic.PlasticUtils;
+
+import javax.inject.Named;
+import java.io.Closeable;
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.reflect.*;
+import java.net.URL;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Utilities used within various internal implementations of the tapestry-ioc module.
@@ -96,7 +46,9 @@ import org.apache.tapestry5.plastic.MethodInvocation;
 @SuppressWarnings("all")
 public class InternalUtils
 {
-    /** @since 5.2.2 */
+    /**
+     * @since 5.2.2
+     */
     public static final boolean SERVICE_CLASS_RELOADING_ENABLED = Boolean.parseBoolean(System.getProperty(
             IOCConstants.SERVICE_CLASS_RELOADING_ENABLED, "true"));
 
@@ -111,18 +63,18 @@ public class InternalUtils
     private static final Pattern NAME_PATTERN = Pattern.compile("^[_|$]*([\\p{javaJavaIdentifierPart}]+?)[_|$]*$",
             Pattern.CASE_INSENSITIVE);
 
-    /** @since 5.3 */
+    /**
+     * @since 5.3
+     */
     public static AnnotationProvider NULL_ANNOTATION_PROVIDER = new NullAnnotationProvider();
 
     /**
      * Converts a method to a user presentable string using a {@link PlasticProxyFactory} to obtain a {@link Location}
      * (where possible). {@link #asString(Method)} is used under the covers, to present a detailed, but not excessive,
      * description of the class, method and parameters.
-     * 
-     * @param method
-     *            method to convert to a string
-     * @param proxyFactory
-     *            used to obtain the {@link Location}
+     *
+     * @param method       method to convert to a string
+     * @param proxyFactory used to obtain the {@link Location}
      * @return the method formatted for presentation to the user
      */
     public static String asString(Method method, PlasticProxyFactory proxyFactory)
@@ -135,7 +87,7 @@ public class InternalUtils
     /**
      * Converts a method to a user presentable string consisting of the containing class name, the method name, and the
      * short form of the parameter list (the class name of each parameter type, shorn of the package name portion).
-     * 
+     *
      * @param method
      * @return short string representation
      */
@@ -218,12 +170,10 @@ public class InternalUtils
 
     /**
      * Finds a specific annotation type within an array of annotations.
-     * 
+     *
      * @param <T>
-     * @param annotations
-     *            to search
-     * @param annotationClass
-     *            to match
+     * @param annotations     to search
+     * @param annotationClass to match
      * @return the annotation instance, if found, or null otherwise
      */
     public static <T extends Annotation> T findAnnotation(Annotation[] annotations, Class<T> annotationClass)
@@ -238,7 +188,7 @@ public class InternalUtils
     }
 
     private static Object calculateInjection(Class injectionType, Type genericType, final Annotation[] annotations,
-            ObjectLocator locator, InjectionResources resources)
+                                             ObjectLocator locator, InjectionResources resources)
     {
         AnnotationProvider provider = new AnnotationProvider()
         {
@@ -262,7 +212,10 @@ public class InternalUtils
 
         Named named = provider.getAnnotation(Named.class);
 
-        if (named != null) { return locator.getService(named.value(), injectionType); }
+        if (named != null)
+        {
+            return locator.getService(named.value(), injectionType);
+        }
 
         // In the absence of @InjectService, try some autowiring. First, does the
         // parameter type match one of the resources (the parameter defaults)?
@@ -282,7 +235,7 @@ public class InternalUtils
     }
 
     public static Object[] calculateParametersForMethod(Method method, ObjectLocator locator,
-            InjectionResources resources, OperationTracker tracker)
+                                                        InjectionResources resources, OperationTracker tracker)
     {
 
         return calculateParameters(locator, resources, method.getParameterTypes(), method.getGenericParameterTypes(),
@@ -290,7 +243,7 @@ public class InternalUtils
     }
 
     public static Object[] calculateParametersForConstructor(Constructor constructor, ObjectLocator locator,
-            InjectionResources resources, OperationTracker tracker)
+                                                             InjectionResources resources, OperationTracker tracker)
     {
 
         return calculateParameters(locator, resources, constructor.getParameterTypes(),
@@ -298,8 +251,8 @@ public class InternalUtils
     }
 
     public static Object[] calculateParameters(final ObjectLocator locator, final InjectionResources resources,
-            Class[] parameterTypes, final Type[] genericTypes, Annotation[][] parameterAnnotations,
-            OperationTracker tracker)
+                                               Class[] parameterTypes, final Type[] genericTypes, Annotation[][] parameterAnnotations,
+                                               OperationTracker tracker)
     {
         int parameterCount = parameterTypes.length;
 
@@ -331,18 +284,14 @@ public class InternalUtils
     /**
      * Injects into the fields (of all visibilities) when the {@link org.apache.tapestry5.ioc.annotations.Inject} or
      * {@link org.apache.tapestry5.ioc.annotations.InjectService} annotations are present.
-     * 
-     * @param object
-     *            to be initialized
-     * @param locator
-     *            used to resolve external dependencies
-     * @param resources
-     *            provides injection resources for fields
-     * @param tracker
-     *            track operations
+     *
+     * @param object    to be initialized
+     * @param locator   used to resolve external dependencies
+     * @param resources provides injection resources for fields
+     * @param tracker   track operations
      */
     public static void injectIntoFields(final Object object, final ObjectLocator locator,
-            final InjectionResources resources, OperationTracker tracker)
+                                        final InjectionResources resources, OperationTracker tracker)
     {
         Class clazz = object.getClass();
 
@@ -352,9 +301,11 @@ public class InternalUtils
 
             for (final Field f : fields)
             {
-                // Ignore all static fields.
+                // Ignore all static and final fields.
 
-                if (Modifier.isStatic(f.getModifiers()))
+                int fieldModifiers = f.getModifiers();
+
+                if (Modifier.isStatic(fieldModifiers) || Modifier.isFinal(fieldModifiers))
                     continue;
 
                 final AnnotationProvider ap = new AnnotationProvider()
@@ -365,8 +316,9 @@ public class InternalUtils
                     }
                 };
 
-                String description = String.format("Calculating injection value for field '%s' (%s)", f.getName(),
-                        ClassFabUtils.toJavaClassName(f.getType()));
+                String description = String.format("Calculating possible injection value for field %s.%s (%s)",
+                        clazz.getName(), f.getName(),
+                        PlasticUtils.toTypeName(f.getType()));
 
                 tracker.run(description, new Runnable()
                 {
@@ -406,8 +358,7 @@ public class InternalUtils
                             if (named == null)
                             {
                                 inject(object, f, locator.getObject(fieldType, ap));
-                            }
-                            else
+                            } else
                             {
                                 inject(object, f, locator.getService(named.value(), fieldType));
                             }
@@ -426,7 +377,7 @@ public class InternalUtils
     }
 
     public static void invokePostInjectionMethods(final Object object, final ObjectLocator locator,
-            final InjectionResources injectionResources, final OperationTracker tracker)
+                                                  final InjectionResources injectionResources, final OperationTracker tracker)
     {
         for (final Method m : object.getClass().getMethods())
         {
@@ -447,12 +398,10 @@ public class InternalUtils
                                 injectionResources, tracker);
 
                         m.invoke(object, parameters);
-                    }
-                    catch (InvocationTargetException ex)
+                    } catch (InvocationTargetException ex)
                     {
                         fail = ex.getTargetException();
-                    }
-                    catch (Exception ex)
+                    } catch (Exception ex)
                     {
                         fail = ex;
                     }
@@ -475,8 +424,7 @@ public class InternalUtils
             field.set(target, value);
 
             // Is there a need to setAccessible back to false?
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             throw new RuntimeException(String.format("Unable to set field '%s' of %s to %s: %s", field.getName(),
                     target, value, toMessage(ex)));
@@ -494,11 +442,9 @@ public class InternalUtils
     /**
      * Joins together some number of elements. If a value in the list is the empty string, it is replaced with the
      * string "(blank)".
-     * 
-     * @param elements
-     *            objects to be joined together
-     * @param separator
-     *            used between elements when joining
+     *
+     * @param elements  objects to be joined together
+     * @param separator used between elements when joining
      */
     public static String join(List elements, String separator)
     {
@@ -536,7 +482,7 @@ public class InternalUtils
 
     /**
      * Creates a sorted copy of the provided elements, then turns that into a comma separated list.
-     * 
+     *
      * @return the elements converted to strings, sorted, joined with comma ... or "(none)" if the elements are null or
      *         empty
      */
@@ -570,7 +516,10 @@ public class InternalUtils
 
     public static boolean isEmptyCollection(Object input)
     {
-        if (input instanceof Collection) { return ((Collection) input).isEmpty(); }
+        if (input instanceof Collection)
+        {
+            return ((Collection) input).isEmpty();
+        }
 
         return false;
     }
@@ -612,9 +561,8 @@ public class InternalUtils
 
     /**
      * Extracts the string keys from a map and returns them in sorted order. The keys are converted to strings.
-     * 
-     * @param map
-     *            the map to extract keys from (may be null)
+     *
+     * @param map the map to extract keys from (may be null)
      * @return the sorted keys, or the empty set if map is null
      */
 
@@ -643,11 +591,10 @@ public class InternalUtils
 
     /**
      * Gets a value from a map (which may be null).
-     * 
+     *
      * @param <K>
      * @param <V>
-     * @param map
-     *            the map to extract from (may be null)
+     * @param map the map to extract from (may be null)
      * @param key
      * @return the value from the map, or null if the map is null
      */
@@ -723,9 +670,8 @@ public class InternalUtils
      * is not determined which will be returned (don't build a class like that!). In addition, if a constructor is
      * annotated with {@link org.apache.tapestry5.ioc.annotations.Inject}, it will be used (no check for multiple such
      * constructors is made, only at most a single constructor should have the annotation).
-     * 
-     * @param clazz
-     *            to search for a constructor for
+     *
+     * @param clazz to search for a constructor for
      * @return the constructor to be used to instantiate the class, or null if no appropriate constructor was found
      */
     public static Constructor findAutobuildConstructor(Class clazz)
@@ -783,7 +729,7 @@ public class InternalUtils
     }
 
     private static <T extends Annotation> Constructor findConstructorByAnnotation(Constructor[] constructors,
-            Class<T> annotationClass)
+                                                                                  Class<T> annotationClass)
     {
         for (Constructor c : constructors)
         {
@@ -797,17 +743,12 @@ public class InternalUtils
     /**
      * Adds a value to a specially organized map where the values are lists of objects. This somewhat simulates a map
      * that allows multiple values for the same key.
-     * 
-     * @param map
-     *            to store value into
-     * @param key
-     *            for which a value is added
-     * @param value
-     *            to add
-     * @param <K>
-     *            the type of key
-     * @param <V>
-     *            the type of the list
+     *
+     * @param map   to store value into
+     * @param key   for which a value is added
+     * @param value to add
+     * @param <K>   the type of key
+     * @param <V>   the type of the list
      */
     public static <K, V> void addToMapList(Map<K, List<V>> map, K key, V value)
     {
@@ -824,9 +765,8 @@ public class InternalUtils
 
     /**
      * Validates that the marker annotation class had a retention policy of runtime.
-     * 
-     * @param markerClass
-     *            the marker annotation class
+     *
+     * @param markerClass the marker annotation class
      */
     public static void validateMarkerAnnotation(Class markerClass)
     {
@@ -850,8 +790,7 @@ public class InternalUtils
             try
             {
                 stream.close();
-            }
-            catch (IOException ex)
+            } catch (IOException ex)
             {
                 // Ignore.
             }
@@ -859,9 +798,8 @@ public class InternalUtils
 
     /**
      * Extracts the message from an exception. If the exception's message is null, returns the exceptions class name.
-     * 
-     * @param exception
-     *            to extract message from
+     *
+     * @param exception to extract message from
      * @return message or class name
      */
     public static String toMessage(Throwable exception)
@@ -890,7 +828,9 @@ public class InternalUtils
                             constructor));
     }
 
-    /** @since 5.3 */
+    /**
+     * @since 5.3
+     */
     public static final Mapper<Class, AnnotationProvider> CLASS_TO_AP_MAPPER = new Mapper<Class, AnnotationProvider>()
     {
         public AnnotationProvider map(final Class element)
@@ -900,7 +840,9 @@ public class InternalUtils
 
     };
 
-    /** @since 5.3 */
+    /**
+     * @since 5.3
+     */
     public static AnnotationProvider toAnnotationProvider(final Class element)
     {
         return new AnnotationProvider()
@@ -910,9 +852,13 @@ public class InternalUtils
                 return annotationClass.cast(element.getAnnotation(annotationClass));
             }
         };
-    };
+    }
 
-    /** @since 5.3 */
+    ;
+
+    /**
+     * @since 5.3
+     */
     public static final Mapper<Method, AnnotationProvider> METHOD_TO_AP_MAPPER = new Mapper<Method, AnnotationProvider>()
     {
         public AnnotationProvider map(final Method element)
@@ -929,18 +875,18 @@ public class InternalUtils
         try
         {
             return containingClass.getMethod(methodName, parameterTypes);
-        }
-        catch (SecurityException ex)
+        } catch (SecurityException ex)
         {
             throw new RuntimeException(ex);
-        }
-        catch (NoSuchMethodException ex)
+        } catch (NoSuchMethodException ex)
         {
             return null;
         }
     }
 
-    /** @since 5.3 */
+    /**
+     * @since 5.3
+     */
     public static ServiceDef3 toServiceDef3(ServiceDef sd)
     {
         if (sd instanceof ServiceDef3)
@@ -1093,7 +1039,9 @@ public class InternalUtils
         };
     }
 
-    /** @since 5.1.0.2 */
+    /**
+     * @since 5.1.0.2
+     */
     public static ServiceLifecycle2 toServiceLifecycle2(final ServiceLifecycle lifecycle)
     {
         if (lifecycle instanceof ServiceLifecycle2)
@@ -1118,9 +1066,11 @@ public class InternalUtils
         };
     }
 
-    /** @since 5.2.0 */
+    /**
+     * @since 5.2.0
+     */
     public static <T extends Comparable<T>> List<T> matchAndSort(Collection<? extends T> collection,
-            Predicate<T> predicate)
+                                                                 Predicate<T> predicate)
     {
         assert predicate != null;
 
@@ -1159,19 +1109,19 @@ public class InternalUtils
             }
 
             public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources,
-                    Configuration configuration)
+                                   Configuration configuration)
             {
                 contribution.contribute(moduleSource, resources, configuration);
             }
 
             public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources,
-                    OrderedConfiguration configuration)
+                                   OrderedConfiguration configuration)
             {
                 contribution.contribute(moduleSource, resources, configuration);
             }
 
             public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources,
-                    MappedConfiguration configuration)
+                                   MappedConfiguration configuration)
             {
                 contribution.contribute(moduleSource, resources, configuration);
             }
@@ -1225,6 +1175,11 @@ public class InternalUtils
                 return null;
             }
 
+            @Override
+            public String toString()
+            {
+                return advisor.toString();
+            }
         };
     }
 
@@ -1269,6 +1224,11 @@ public class InternalUtils
                 return null;
             }
 
+            @Override
+            public String toString()
+            {
+                return decorator.toString();
+            }
         };
     }
 
@@ -1276,7 +1236,7 @@ public class InternalUtils
      * Determines if the indicated class is stored as a locally accessible file
      * (and not, typically, as a file inside a JAR). This is related to automatic
      * reloading of services.
-     * 
+     *
      * @since 5.2.0
      */
     public static boolean isLocalFile(Class clazz)
@@ -1297,7 +1257,7 @@ public class InternalUtils
 
     /**
      * Wraps a {@link Coercion} as a {@link Mapper}.
-     * 
+     *
      * @since 5.2.0
      */
     public static <S, T> Mapper<S, T> toMapper(final Coercion<S, T> coercion)
@@ -1319,7 +1279,7 @@ public class InternalUtils
     /**
      * Generates a unique value for the current execution of the application. This initial UUID value
      * is not easily predictable; subsequent UUIDs are allocated in ascending series.
-     * 
+     *
      * @since 5.2.0
      */
     public static long nextUUID()
@@ -1332,16 +1292,18 @@ public class InternalUtils
      * If present, its value is returned. Otherwise {@link Named} annotation is checked. If present, its value is
      * returned.
      * If neither of the annotations is present, <code>null</code> value is returned
-     * 
-     * @param annotated
-     *            annotated element to get annotations from
+     *
+     * @param annotated annotated element to get annotations from
      * @since 5.3
      */
     public static String getServiceId(AnnotatedElement annotated)
     {
         ServiceId serviceIdAnnotation = annotated.getAnnotation(ServiceId.class);
 
-        if (serviceIdAnnotation != null) { return serviceIdAnnotation.value(); }
+        if (serviceIdAnnotation != null)
+        {
+            return serviceIdAnnotation.value();
+        }
 
         Named namedAnnotation = annotated.getAnnotation(Named.class);
 
@@ -1349,7 +1311,10 @@ public class InternalUtils
         {
             String value = namedAnnotation.value();
 
-            if (InternalUtils.isNonBlank(value)) { return value; }
+            if (InternalUtils.isNonBlank(value))
+            {
+                return value;
+            }
         }
 
         return null;
@@ -1358,13 +1323,12 @@ public class InternalUtils
     /**
      * Converts old-style Tapestry IoC {@link org.apache.tapestry5.ioc.MethodAdvice} to modern
      * Plastic {@link MethodAdvice}.
-     * 
-     * @param iocMethodAdvice
-     *            old style advice
+     *
+     * @param iocMethodAdvice old style advice
      * @return new style advice
      */
     public static MethodAdvice toPlasticMethodAdvice(final org.apache.tapestry5.ioc.MethodAdvice iocMethodAdvice,
-            final AnnotationProvider methodAnnotationProvider)
+                                                     final AnnotationProvider methodAnnotationProvider)
     {
         assert iocMethodAdvice != null;
 

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -52,11 +52,6 @@ final class IOCMessages
     {
         return MESSAGES.format("decorator-method-wrong-return-type", asString(method), method
                 .getReturnType().getCanonicalName());
-    }
-
-    public static String builderLocked()
-    {
-        return MESSAGES.get("builder-locked");
     }
 
     static String serviceWrongInterface(String serviceId, Class actualInterface, Class requestedInterface)
@@ -113,11 +108,6 @@ final class IOCMessages
     {
         return MESSAGES.format("decorator-returned-wrong-type", asString(method), serviceId, returned,
                                serviceInterface.getName());
-    }
-
-    static String creatingService(String serviceId)
-    {
-        return MESSAGES.format("creating-service", serviceId);
     }
 
     static String invokingMethod(String methodId)

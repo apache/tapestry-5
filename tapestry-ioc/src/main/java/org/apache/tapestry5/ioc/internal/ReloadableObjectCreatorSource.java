@@ -14,12 +14,12 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import java.lang.reflect.Method;
-
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.services.UpdateListenerHub;
+
+import java.lang.reflect.Method;
 
 /**
  * Responsible for creating a {@link ReloadableServiceImplementationObjectCreator} for a service implementation.
@@ -38,7 +38,7 @@ public class ReloadableObjectCreatorSource implements ObjectCreatorSource
     private final boolean eagerLoad;
 
     public ReloadableObjectCreatorSource(PlasticProxyFactory proxyFactory, Method bindMethod,
-            Class serviceInterfaceClass, Class serviceImplementationClass, boolean eagerLoad)
+                                         Class serviceInterfaceClass, Class serviceImplementationClass, boolean eagerLoad)
     {
         this.proxyFactory = proxyFactory;
         this.bindMethod = bindMethod;
@@ -47,6 +47,7 @@ public class ReloadableObjectCreatorSource implements ObjectCreatorSource
         this.eagerLoad = eagerLoad;
     }
 
+
     public ObjectCreator constructCreator(final ServiceBuilderResources resources)
     {
         return new ObjectCreator()
@@ -54,6 +55,12 @@ public class ReloadableObjectCreatorSource implements ObjectCreatorSource
             public Object createObject()
             {
                 return createReloadableProxy(resources);
+            }
+
+            @Override
+            public String toString()
+            {
+                return proxyFactory.getMethodLocation(bindMethod).toString();
             }
         };
     }

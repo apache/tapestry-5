@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 
 /**
  * Core implementation that manages a logger and catches and reports exception.
- * 
+ *
  * @see org.apache.tapestry5.ioc.internal.PerThreadOperationTracker
  */
 public class OperationTrackerImpl implements OperationTracker
@@ -43,6 +43,7 @@ public class OperationTrackerImpl implements OperationTracker
     {
         assert InternalUtils.isNonBlank(description);
         assert operation != null;
+
         invoke(description, new Invokable<Void>()
         {
             public Void invoke()
@@ -58,29 +59,45 @@ public class OperationTrackerImpl implements OperationTracker
     {
         assert InternalUtils.isNonBlank(description);
         assert operation != null;
+
+        long startNanos = System.nanoTime();
+
+        if (logger.isDebugEnabled())
+        {
+            logger.debug(String.format("[%3d] --> %s", operations.getDepth() + 1, description));
+        }
+
         operations.push(description);
 
         try
         {
-            return operation.invoke();
-        }
-        catch (RuntimeException ex)
+            T result = operation.invoke();
+
+            if (logger.isDebugEnabled())
+            {
+                long elapsedNanos = System.nanoTime() - startNanos;
+                double elapsedMillis = ((double) elapsedNanos) / 1000000.d;
+
+                logger.debug(String.format("[%3d] <-- %s [%,.2f ms]", operations.getDepth(), description, elapsedMillis));
+            }
+
+            return result;
+
+        } catch (RuntimeException ex)
         {
             logAndRethrow(ex);
 
             throw ex;
-        }
-        catch (Error ex)
+        } catch (Error ex)
         {
             if (!logged)
             {
                 log(ex);
                 logged = true;
             }
-            
+
             throw ex;
-        }
-        finally
+        } finally
         {
             operations.pop();
 
@@ -89,6 +106,8 @@ public class OperationTrackerImpl implements OperationTracker
             if (operations.isEmpty())
                 logged = false;
         }
+
+
     }
 
     private void logAndRethrow(Throwable ex)
