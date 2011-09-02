@@ -58,8 +58,8 @@ package org.apache.tapestry5;
  * 
  * @see SelectModel
  * @see org.apache.tapestry5.services.ValueEncoderSource
- * @see org.apache.tapestry5.services.services.ValueEncoderFactory
- * @see org.apache.tapestry5.annotations.PageActivationContext.java
+ * @see org.apache.tapestry5.services.ValueEncoderFactory
+ * @see org.apache.tapestry5.annotations.PageActivationContext
  */
 public interface ValueEncoder<V>
 {
