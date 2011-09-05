@@ -190,7 +190,7 @@ public class FormTests extends TapestryCoreTestCase
 
         click(update); // but don't wait
 
-        waitForCondition("selenium.browserbot.getCurrentWindow().document.getElementById('zipCode:errorpopup')", "5000");
+        waitForCondition("selenium.browserbot.getCurrentWindow().document.getElementById('zipCode_errorpopup')", "5000");
 
         assertTextPresent("A zip code consists of five or nine digits, eg: 02134 or 90125-4472.");
 
@@ -567,11 +567,11 @@ public class FormTests extends TapestryCoreTestCase
 
         click(SUBMIT);
 
-        waitForElementToAppear("amount:errorpopup");
-        waitForElementToAppear("quantity:errorpopup");
+        waitForElementToAppear("amount_errorpopup");
+        waitForElementToAppear("quantity_errorpopup");
 
-        assertText("//div[@id='amount:errorpopup']/span", "You must provide a numeric value for Amount.");
-        assertText("//div[@id='quantity:errorpopup']/span", "Provide quantity as a number.");
+        assertText("//div[@id='amount_errorpopup']/span", "You must provide a numeric value for Amount.");
+        assertText("//div[@id='quantity_errorpopup']/span", "Provide quantity as a number.");
     }
 
     /**
@@ -745,9 +745,9 @@ public class FormTests extends TapestryCoreTestCase
 
         click(SUBMIT);
 
-        waitForElementToAppear("longValue:errorpopup");
+        waitForElementToAppear("longValue_errorpopup");
 
-        assertText("//div[@id='longValue:errorpopup']/span", "You must provide an integer value for Long Value.");
+        assertText("//div[@id='longValue_errorpopup']/span", "You must provide an integer value for Long Value.");
 
         type("longValue", "37");
 
@@ -807,7 +807,7 @@ public class FormTests extends TapestryCoreTestCase
 
         click("//a[@id='fred']");
 
-        waitForElementToAppear("name:errorpopup");
+        waitForElementToAppear("name_errorpopup");
 
         assertTextPresent("You must provide a value for Name.");
 

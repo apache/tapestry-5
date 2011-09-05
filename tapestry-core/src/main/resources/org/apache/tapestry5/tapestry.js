@@ -1315,7 +1315,7 @@ Tapestry.ErrorPopup = Class.create({
 
         this.innerSpan = new Element("span");
         this.outerDiv = $(new Element("div", {
-            'id' : this.field.id + ":errorpopup",
+            'id' : this.field.id + "_errorpopup",
             'class' : 't-error-popup'
         })).update(this.innerSpan).hide();
 

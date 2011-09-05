@@ -208,7 +208,7 @@ public class TapestryBeanValidationIntegrationTests extends AbstractIntegrationT
     
     protected final void assertBubbleMessage(String fieldId, String expected)
     {
-        String popupId = fieldId + ":errorpopup";
+        String popupId = fieldId + "_errorpopup";
 
         waitForElementToAppear(popupId);
 
