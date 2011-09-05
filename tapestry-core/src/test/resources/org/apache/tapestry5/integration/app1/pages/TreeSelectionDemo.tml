@@ -1,0 +1,28 @@
+<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+
+    <h1>Tree Selection Demo</h1>
+
+    <t:tree class="test-hook" t:id="tree" model="stuffModel" selectionModel="selectionModel"/>
+
+    <p>
+        [
+        <t:pagelink page="treeSelectionDemo">Redraw</t:pagelink>
+        ]
+        [
+        <t:actionlink t:id="clearAll">clear all</t:actionlink>
+        ]
+    </p>
+
+    <h2>Selections</h2>
+
+    <ul>
+
+        <t:loop source="selectedObjects" value="selectedObject">
+
+            <li>${selectedObject.name}</li>
+        </t:loop>
+
+    </ul>
+
+
+</t:border>

@@ -14,12 +14,8 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
-import org.apache.tapestry5.corelib.internal.InternalFormSupport;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Flow;
@@ -31,17 +27,22 @@ import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.tree.*;
+import org.slf4j.Logger;
+
+import java.util.List;
 
 /**
  * A component used to render a recursive tree structure, with expandable/collapsable/selectable nodes. The data that is displayed
  * by the component is provided as a {@link TreeModel}. A secondary model, the {@link TreeExpansionModel}, is used
- * to track which nodes have been expanded. The {@link TreeSelectionModel} is used to track node selections.
+ * to track which nodes have been expanded. The optional {@link TreeSelectionModel} is used to track node selections (as currently
+ * implemented, only leaf nodes may be selected).
+ * <p/>
  * The Tree component uses special tricks to support recursive rendering of the Tree as necessary.
- * 
+ *
  * @since 5.3
  */
 @SuppressWarnings(
-{ "rawtypes", "unchecked", "unused" })
+        {"rawtypes", "unchecked", "unused"})
 @Events({EventConstants.NODE_SELECTED, EventConstants.NODE_UNSELECTED})
 public class Tree
 {
@@ -78,12 +79,13 @@ public class Tree
     private TreeExpansionModel expansionModel;
 
     /**
-     * Used to control the Tree's selections. By default, a persistent field inside the Tree
-     * component stores a {@link DefaultTreeSelectionModel}. This parameter may be bound when more
-     * control over the implementation of the selection model, or how it is stored, is
-     * required.
+     * Used to control the Tree's selections. When this parameter is bound, then the client-side Tree
+     * will track what is selected or not selected, and communicate this (via Ajax requests) up to
+     * the server, where it will be recorded into the model. On the client-side, the Tree component will
+     * add or remove the {@code t-selected-leaf-node-label} CSS class from {@code span.t-tree-label}
+     * for the node.
      */
-    @Parameter(allowNull = false, value = "defaultTreeSelectionModel")
+    @Parameter
     private TreeSelectionModel selectionModel;
 
     /**
@@ -111,9 +113,6 @@ public class Tree
     @Persist
     private TreeExpansionModel defaultTreeExpansionModel;
 
-    @Persist
-    private TreeSelectionModel defaultTreeSelectionModel;
-
     private static RenderCommand RENDER_CLOSE_TAG = new RenderCommand()
     {
         public void render(MarkupWriter writer, RenderQueue queue)
@@ -130,15 +129,16 @@ public class Tree
         }
     };
 
+    @Inject
+    private Logger logger;
+
     /**
      * Renders a single node (which may be the last within its containing node).
      * This is a mix of immediate rendering, and queuing up various Blocks and Render commands
      * to do the rest. May recursively render child nodes of the active node.
-     * 
-     * @param node
-     *            to render
-     * @param isLast
-     *            if true, add "t-last" attribute to the LI element
+     *
+     * @param node   to render
+     * @param isLast if true, add "t-last" attribute to the LI element
      * @return command to render the node
      */
     private RenderCommand toRenderCommand(final TreeNode node, final boolean isLast)
@@ -170,9 +170,15 @@ public class Tree
 
                 String clientId = jss.allocateClientId(resources);
 
-                 JSONObject spec = new JSONObject("clientId", clientId);
+                JSONObject spec = new JSONObject("clientId", clientId);
 
                 e.attribute("id", clientId);
+
+                logger.info(String.format("Selection model for %s is %s.",
+                        resources.getCompleteId(),
+                        selectionModel));
+
+                spec.put("leaf", node.isLeaf());
 
                 if (hasChildren)
                 {
@@ -181,17 +187,31 @@ public class Tree
                     Link markCollapsed = resources.createEventLink("markCollapsed", node.getId());
 
                     spec.put("expandChildrenURL", expandChildren.toString())
-                            .put( "markExpandedURL", markExpanded.toString())
+                            .put("markExpandedURL", markExpanded.toString())
                             .put("markCollapsedURL", markCollapsed.toString());
 
                     if (expanded)
                         spec.put("expanded", true);
-                }
-                else
+                } else
                 {
-                    Link toggleLeaf = resources.createEventLink("toggleLeaf", node.getId());
+                    if (selectionModel != null)
+                    {
+                        // May need to address this in the future; in other tree implementations I've constructed,
+                        // folders are selectable, and selections even propagate up and down the tree.
 
-                    spec.put("toggleLeafURL", toggleLeaf.toString());
+                        Link selectLeaf = resources.createEventLink("select", node.getId());
+
+                        spec.put("selectURL", selectLeaf.toString());
+                        if (selectionModel.isSelected(node))
+                        {
+                            spec.put("selected", true);
+                        }
+
+                        logger.info(String.format("%s rendered node %s as selectable", resources.getCompleteId(), node.getId()));
+                    } else
+                    {
+                        logger.info(String.format("%s rendered node %s as NOT selectable", resources.getCompleteId(), node.getId()));
+                    }
                 }
 
                 jss.addInitializerCall("treeNode", spec);
@@ -204,6 +224,7 @@ public class Tree
                 queue.push(RENDER_CLOSE_TAG); // li
 
                 if (expanded)
+
                 {
                     queue.push(new RenderNodes(node.getChildren()));
                 }
@@ -213,10 +234,14 @@ public class Tree
                 queue.push(RENDER_LABEL_SPAN);
 
             }
-        };
+        }
+
+                ;
     }
 
-    /** Renders an &lt;ul&gt; element and renders each node recursively inside the element. */
+    /**
+     * Renders an &lt;ul&gt; element and renders each node recursively inside the element.
+     */
     private class RenderNodes implements RenderCommand
     {
         private final Flow<TreeNode> nodes;
@@ -243,6 +268,7 @@ public class Tree
                 }
             });
         }
+
     }
 
     public String getContainerClass()
@@ -273,32 +299,31 @@ public class Tree
         return new JSONObject();
     }
 
-    Object onToggleLeaf(String nodeId)
+    Object onSelect(String nodeId, @RequestParameter("t:selected") boolean selected)
     {
         TreeNode node = model.getById(nodeId);
 
         String event;
 
-        if(selectionModel.isSelected(node))
+        if (selected)
+        {
+            selectionModel.select(node);
+
+            event = EventConstants.NODE_SELECTED;
+        } else
         {
             selectionModel.unselect(node);
 
             event = EventConstants.NODE_UNSELECTED;
         }
-        else
-        {
-            selectionModel.select(node);
-
-            event = EventConstants.NODE_SELECTED;
-        }
 
         CaptureResultCallback<Object> callback = CaptureResultCallback.create();
 
-        resources.triggerEvent(event, new Object [] { nodeId }, callback);
+        resources.triggerEvent(event, new Object[]{nodeId}, callback);
 
         final Object result = callback.getResult();
 
-        if(result != null)
+        if (result != null)
             return result;
 
         return new JSONObject();
@@ -310,14 +335,6 @@ public class Tree
             defaultTreeExpansionModel = new DefaultTreeExpansionModel();
 
         return defaultTreeExpansionModel;
-    }
-
-    public TreeSelectionModel getDefaultTreeSelectionModel()
-    {
-        if(defaultTreeSelectionModel == null)
-            defaultTreeSelectionModel = new DefaultTreeSelectionModel();
-
-        return defaultTreeSelectionModel;
     }
 
     /**
@@ -345,7 +362,9 @@ public class Tree
         return new RenderNodes(model.getRootNodes());
     }
 
-    /** Clears the tree's {@link TreeExpansionModel}. */
+    /**
+     * Clears the tree's {@link TreeExpansionModel}.
+     */
     public void clearExpansions()
     {
         expansionModel.clear();

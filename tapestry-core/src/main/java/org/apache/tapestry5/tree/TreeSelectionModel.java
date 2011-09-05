@@ -15,15 +15,16 @@
 package org.apache.tapestry5.tree;
 
 /**
- * Tracks which nodes of a {@link TreeModel} are currently selected. The {@linkplain DefaultTreeExpansionModel default
+ * Tracks which <em>leaf</em> nodes of a {@link TreeModel} are currently selected. The {@linkplain DefaultTreeSelectionModel default
  * implementation} simply stores a set of {@linkplain TreeNode#getId() unique node
- * ids} to identify expanded nodes. The expansion model is updated whenever folders are expanded or
- * collapsed on the client side.
+ * ids} to identify selected nodes. The selection model is updated whenever the user clicks on the label for a leaf node.
+ * <p/>
+ * In the future, new methods may be added that will support selection of folders as well as leafs, and define the rules for
+ * how selections and de-selections propagate down to children or up to parents.
  *
  * @param <T> type of node
- *
- * @since 5.3
  * @see org.apache.tapestry5.corelib.components.Tree
+ * @since 5.3
  */
 public interface TreeSelectionModel<T>
 {
@@ -49,6 +50,8 @@ public interface TreeSelectionModel<T>
      */
     void unselect(TreeNode<T> node);
 
-    /** Clears the selection. */
+    /**
+     * Clears the selection.
+     */
     void clear();
 }

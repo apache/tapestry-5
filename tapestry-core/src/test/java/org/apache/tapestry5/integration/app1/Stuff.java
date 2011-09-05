@@ -14,10 +14,13 @@
 
 package org.apache.tapestry5.integration.app1;
 
+import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.tree.DefaultTreeModel;
+import org.apache.tapestry5.tree.TreeModel;
+
 import java.util.List;
 import java.util.UUID;
-
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
 public class Stuff
 {
@@ -63,5 +66,30 @@ public class Stuff
         }
 
         return null;
+    }
+
+    public static final Stuff ROOT = new Stuff("<root>");
+
+    static
+    {
+        ROOT.addChild(new Stuff("Pets").addChildrenNamed("Oscar", "Gromit", "Max", "Roger", "Cooper"));
+        ROOT.addChild(new Stuff("Games").addChild(
+                new Stuff("Board Games").addChildrenNamed("Settlers of Catan", "Agricola", "Ra", "Risk", "Dvonn"))
+                .addChild(new Stuff("Card Games").addChildrenNamed("Magic the Gathering", "Dominion", "Mu")));
+
+        Stuff numbers = new Stuff("Numbers");
+
+        for (int i = 0; i < 10000; i++)
+        {
+            numbers.addChild(new Stuff(Integer.toString(i)));
+        }
+
+        ROOT.addChild(numbers);
+    }
+
+    public static TreeModel<Stuff> createTreeModel() {
+        ValueEncoder<Stuff> encoder = new StuffValueEncoder();
+
+        return new DefaultTreeModel<Stuff>(encoder, new StuffTreeModelAdapter(), Stuff.ROOT.children);
     }
 }

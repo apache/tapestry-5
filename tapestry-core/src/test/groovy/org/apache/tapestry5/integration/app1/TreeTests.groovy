@@ -20,7 +20,8 @@ import org.testng.annotations.Test
 class TreeTests extends SeleniumTestCase
 {
     @Test
-    void basics() {
+    void basics()
+    {
 
         openBaseURL()
 
@@ -33,7 +34,7 @@ class TreeTests extends SeleniumTestCase
 
         sleep 25 // See if that helps with the intermittent test suite failures on the CI server
 
-        waitForAjaxRequestsToComplete  PAGE_LOAD_TIMEOUT
+        waitForAjaxRequestsToComplete PAGE_LOAD_TIMEOUT
 
         assertTextPresent "Board Games"
 
@@ -41,7 +42,7 @@ class TreeTests extends SeleniumTestCase
         click "//div[@class='t-tree-container test-hook']/ul/li[2]/ul/li/span[@class='t-tree-icon']"
 
         //Assert the leafs are displayed
-        waitForAjaxRequestsToComplete  PAGE_LOAD_TIMEOUT
+        waitForAjaxRequestsToComplete PAGE_LOAD_TIMEOUT
 
         clickAndWait "link=Redraw"
 
@@ -49,13 +50,14 @@ class TreeTests extends SeleniumTestCase
     }
 
     @Test
-    void selectLeaf() {
+    void select_node()
+    {
 
         openBaseURL()
 
-        clickAndWait "link=Tree Component Demo"
+        clickAndWait "link=Tree Component Selection Demo"
 
-        clickAndWait "link=clear expansions"
+        clickAndWait "link=clear all"
 
         click "//span[@class='t-tree-icon']"
 
@@ -63,7 +65,14 @@ class TreeTests extends SeleniumTestCase
 
         assertTextPresent "Oscar", "Gromit", "Max", "Roger", "Cooper"
 
-        click "//span[@class='t-tree-icon t-leaf-node']"
+        // Click the first selectable node, probably Oscar
+        click "css=span.t-selectable"
+
+        waitForCSSSelectedElementToAppear "span.t-selected-leaf-node-label"
+
+        clickAndWait "link=Redraw"
+
+        // Make sure it is still there after a redraw
 
         waitForCSSSelectedElementToAppear "span.t-selected-leaf-node-label"
     }

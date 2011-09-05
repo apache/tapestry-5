@@ -20,7 +20,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import java.util.Set;
 
 /**
- * Default implementation of {@link TreeSelectionModel}.
+ * Default implementation of {@link TreeSelectionModel}. This is simply a wrapper around a set of node ids.
  *
  * @param <T> type of node
  */

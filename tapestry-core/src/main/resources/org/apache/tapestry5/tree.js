@@ -76,14 +76,14 @@ T5.extendInitializers(function() {
     }
 
     function initializer(spec) {
-        var loaded = spec.expanded;
+        var loaded = spec.expanded || spec.leaf;
         var expanded = spec.expanded;
-        var selected = false;
+        var loading = false;
 
         if (expanded) {
             $(spec.clientId).addClassName("t-tree-expanded")
         }
-        var loading = false;
+
 
         function successHandler(reply) {
             // Remove the Ajax load indicator
@@ -112,63 +112,25 @@ T5.extendInitializers(function() {
 
         }
 
-        function toggleLeafHandler(reply) {
-            var response = reply.responseJSON;
-
-            $(spec.clientId).update("");
-
-            Tapestry.loadScriptsInReply(response, function() {
-                loading = false;
-                loaded = true;
-                expanded = true;
-                selected = !selected;
-            });
-        }
-
         function doLoad() {
             if (loading)
                 return;
 
             loading = true;
 
-            if (spec.expandChildrenURL) {
-                $(spec.clientId).addClassName("t-empty-node");
-            }
-            else {
-                $(spec.clientId).next("span.t-tree-label").addClassName("t-selected-leaf-node-label");
-            }
+            $(spec.clientId).addClassName("t-empty-node");
+
             $(spec.clientId).update("<span class='t-ajax-wait'/>");
 
-            var requestURL = spec.expandChildrenURL ? spec.expandChildrenURL : spec.toggleLeafURL;
-
-            var handler = spec.expandChildrenURL ? successHandler : toggleLeafHandler;
-
-            Tapestry.ajaxRequest(requestURL, handler);
-
+            Tapestry.ajaxRequest(spec.expandChildrenURL, successHandler);
         }
 
         $(spec.clientId).observe("click", function(event) {
             event.stop();
 
-            if (!loaded) {
+            if (!loaded && spec.expandChildrenURL) {
 
                 doLoad();
-
-                return;
-            }
-
-            if (spec.toggleLeafURL) {
-                var label = $(spec.clientId).next("span.t-tree-label");
-
-                if (selected) {
-                    label.removeClassName("t-selected-leaf-node-label");
-                }
-                else {
-                    label.addClassName("t-selected-leaf-node-label");
-                }
-                selected = !selected;
-
-                Tapestry.ajaxRequest(spec.toggleLeafURL, {});
 
                 return;
             }
@@ -182,10 +144,48 @@ T5.extendInitializers(function() {
 
             var url = expanded ? spec.markCollapsedURL : spec.markExpandedURL;
 
+            // Send request, ignore response.
+
             Tapestry.ajaxRequest(url, {});
 
             expanded = !expanded;
         });
+
+
+        if (spec.selectURL) {
+
+            var selected = spec.selected;
+
+            var label = $(spec.clientId).next("span.t-tree-label");
+
+            label.addClassName("t-selectable");
+
+            if (selected) {
+                label.addClassName("t-selected-leaf-node-label");
+            }
+
+            label.observe("click", function(event) {
+                event.stop();
+
+
+                selected = ! selected;
+
+
+                if (selected) {
+                    label.addClassName("t-selected-leaf-node-label");
+                }
+                else {
+                    label.removeClassName("t-selected-leaf-node-label");
+                }
+
+                // TODO: In the future, we may want to select children when a parent is selected,
+                // or vice-versa. There's a lot of use cases. These will be directed from new methods
+                // on the TreeSelectionModel interface and encoded into the response. For now,
+                // the response is empty and ignored.
+
+                Tapestry.ajaxRequest(spec.selectURL, { parameters: { "t:selected": selected } });
+            });
+        }
     }
 
     return {
