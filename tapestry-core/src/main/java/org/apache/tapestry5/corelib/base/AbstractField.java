@@ -46,8 +46,10 @@ public abstract class AbstractField implements Field
     private String label;
 
     /**
-     * If true, then the field will render out with a disabled attribute (to turn off client-side behavior). Further, a
-     * disabled field ignores any value in the request when the form is submitted.
+     * If true, then the field will render out with a disabled attribute
+     * (to turn off client-side behavior). When the form is submitted, disabled
+     * fields' values are ignored (not even validated), and the component's
+     * events, if any, are not fired.
      */
     @Parameter("false")
     private boolean disabled;
