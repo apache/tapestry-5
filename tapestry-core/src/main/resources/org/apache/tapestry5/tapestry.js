@@ -1052,7 +1052,7 @@ T5.extendInitializers({
             /*
              * After the form is validated and prepared, this code will
              * process the form submission via an Ajax call. The
-             * original submit event wilpl have been cancelled.
+             * original submit event will have been cancelled.
              */
 
             element
