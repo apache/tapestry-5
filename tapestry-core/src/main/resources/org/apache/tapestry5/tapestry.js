@@ -663,7 +663,9 @@ Element.addMethods({
      */
     isDeepVisible : function(element, options) {
         var current = $(element);
-        var boundFunc = (options && options.bound) || function(el) { return el.tagName == "FORM"};
+        var boundFunc = (options && options.bound) || function(el) {
+            return el.tagName == "FORM"
+        };
 
         while (true) {
             if (!current.visible())
@@ -980,6 +982,10 @@ T5.extendInitializers({
 
         $(spec.clientId).writeAttribute("href", "#");
 
+        if (spec.cancel) {
+            $(spec.clientId).writeAttribute("name", "cancel");
+        }
+
         $(spec.clientId).observeAction("click", function(event) {
 
             var form = $(spec.form);
@@ -1046,7 +1052,7 @@ T5.extendInitializers({
             /*
              * After the form is validated and prepared, this code will
              * process the form submission via an Ajax call. The
-             * original submit event will have been cancelled.
+             * original submit event wilpl have been cancelled.
              */
 
             element

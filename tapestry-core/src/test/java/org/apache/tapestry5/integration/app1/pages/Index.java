@@ -114,6 +114,8 @@ public class Index
 
                     new Item("CancelDemo", "Cancel Demo", "Use of the cancel option with Submit"),
 
+                    new Item("CanceledEventDemo", "Canceled Event Demo", "Triggering of the canceled event from a form."),
+
                     new Item("PageResetDemo", "PageReset Annotation Demo",
                             "Use of PageReset annotation to re-initialize page state"),
 

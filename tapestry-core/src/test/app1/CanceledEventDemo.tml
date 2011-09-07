@@ -1,0 +1,16 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+<h1>Canceled Event Demo</h1>
+
+<t:form t:id="form">
+    <t:errors/>
+    <t:label for="requiredText"/>
+    <t:textfield t:id="requiredText"/>
+
+    <br/>
+
+    <t:submit mode="cancel" value="Cancel Form"/>
+    <t:linksubmit mode="cancel">Cancel Form</t:linksubmit>
+
+</t:form>
+</html>

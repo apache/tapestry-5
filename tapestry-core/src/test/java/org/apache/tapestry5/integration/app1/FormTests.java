@@ -274,7 +274,7 @@ public class FormTests extends TapestryCoreTestCase
         waitForCondition(selectedGoneCondition, PAGE_LOAD_TIMEOUT);
 
         click("xpath=//td[text()='28']");
-        String pickerGoneSelector="css=div.datePicker";
+        String pickerGoneSelector = "css=div.datePicker";
         waitForInvisible(pickerGoneSelector);
 
         assertFieldValue("asteroidImpact", "6/28/2035");
@@ -423,6 +423,8 @@ public class FormTests extends TapestryCoreTestCase
     {
         openLinks("Disabled Fields");
 
+        // The couple of places where there's a _0 suffix is related to
+        // the fix for https://issues.apache.org/jira/browse/TAP5-1632
         String[] paths = new String[]
                 {"//input[@id='textfield']",
 
@@ -432,7 +434,7 @@ public class FormTests extends TapestryCoreTestCase
 
                         "//input[@id='checkbox']",
 
-                        "//select[@id='select']",
+                        "//select[@id='select_0']",
 
                         "//input[@id='radio1']",
 
@@ -448,7 +450,7 @@ public class FormTests extends TapestryCoreTestCase
 
                         "//select[@id='palette']",
 
-                        "//input[@id='submit']"};
+                        "//input[@id='submit_0']"};
 
         for (String path : paths)
         {

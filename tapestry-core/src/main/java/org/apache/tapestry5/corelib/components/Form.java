@@ -49,22 +49,22 @@ import java.io.ObjectInputStream;
  * An HTML form, which will enclose other components to render out the various
  * types of fields.
  * <p>
- * A Form emits many notification events. When it renders, it fires a
+ * A Form triggers many notification events. When it renders, it triggers a
  * {@link org.apache.tapestry5.EventConstants#PREPARE_FOR_RENDER} notification, followed by a
  * {@link EventConstants#PREPARE} notification.</p>
  * <p>
- * When the form is submitted, the component emits several notifications: first a
+ * When the form is submitted, the component triggers several notifications: first a
  * {@link EventConstants#PREPARE_FOR_SUBMIT}, then a {@link EventConstants#PREPARE}: these allow the page to update its
  * state as necessary to prepare for the form submission.</p>
  * <p>
- * The Form component determines if the form was cancelled (see {@link org.apache.tapestry5.corelib.SubmitMode#CANCEL}. If so,
- * an {@link EventConstants#CANCELED} event is emitted.</p>
+ * The Form component then determines if the form was cancelled (see {@link org.apache.tapestry5.corelib.SubmitMode#CANCEL}). If so,
+ * a {@link EventConstants#CANCELED} event is triggered.</p>
  * <p>
  * Next come notifications to contained components (or more accurately, the execution of stored {@link ComponentAction}s), to allow each component to retrieve and validate
  * submitted values, and update server-side properties.  This is based on the {@code t:formdata} query parameter,
  * which contains serialized object data (generated when the form initially renders).
  * </p>
- * <p>Once the form data is processed, the next step is to emit the
+ * <p>Once the form data is processed, the next step is to trigger the
  * {@link EventConstants#VALIDATE}, which allows for cross-form validation. After that, either a
  * {@link EventConstants#SUCCESS} OR {@link EventConstants#FAILURE} event (depending on whether the
  * {@link ValidationTracker} has recorded any errors). Lastly, a {@link EventConstants#SUBMIT} event, for any listeners
@@ -87,7 +87,7 @@ import java.io.ObjectInputStream;
  */
 @Events(
         {EventConstants.PREPARE_FOR_RENDER, EventConstants.PREPARE, EventConstants.PREPARE_FOR_SUBMIT,
-                EventConstants.VALIDATE, EventConstants.SUBMIT, EventConstants.FAILURE, EventConstants.SUCCESS})
+                EventConstants.VALIDATE, EventConstants.SUBMIT, EventConstants.FAILURE, EventConstants.SUCCESS, EventConstants.CANCELED})
 public class Form implements ClientElement, FormValidationControl
 {
     /**
@@ -729,6 +729,9 @@ public class Form implements ClientElement, FormValidationControl
         for (String name : TapestryInternalUtils.splitAtCommas(preselectedFormNames))
         {
             idAllocator.allocateId(name);
+            // See https://issues.apache.org/jira/browse/TAP5-1632
+            javascriptSupport.allocateClientId(name);
+
         }
 
         Component activePage = componentSource.getActivePage();

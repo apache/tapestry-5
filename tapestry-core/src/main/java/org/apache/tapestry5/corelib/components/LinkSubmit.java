@@ -166,6 +166,11 @@ public class LinkSubmit implements ClientElement
 
             spec.put("validate", mode == SubmitMode.NORMAL);
 
+            if (mode == SubmitMode.CANCEL)
+            {
+                spec.put("cancel", true);
+            }
+
             javascriptSupport.addInitializerCall(InitializationPriority.EARLY, "linkSubmit", spec);
         }
     }
