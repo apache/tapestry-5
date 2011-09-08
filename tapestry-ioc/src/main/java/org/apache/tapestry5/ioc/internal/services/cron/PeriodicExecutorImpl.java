@@ -127,7 +127,7 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable, Registr
         }
 
         /**
-         * Starts execution of the job; this sets the executing flag, calculates the next excecution time,
+         * Starts execution of the job; this sets the executing flag, calculates the next execution time,
          * and uses the ParallelExecutor to run the job.
          */
         synchronized void start()
@@ -142,17 +142,17 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable, Registr
 
             parallelExecutor.invoke(this);
 
-            if (logger.isDebugEnabled())
+            if (logger.isTraceEnabled())
             {
-                logger.debug(this + " sent for execution");
+                logger.trace(this + " sent for execution");
             }
         }
 
         synchronized void cleanupAfterExecution()
         {
-            if (logger.isDebugEnabled())
+            if (logger.isTraceEnabled())
             {
-                logger.debug(this + " execution complete");
+                logger.trace(this + " execution complete");
             }
 
             executing = false;
@@ -169,9 +169,9 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable, Registr
 
         public Void invoke()
         {
-            if (logger.isInfoEnabled())
+            if (logger.isDebugEnabled())
             {
-                logger.info(String.format("Executing job #%d (%s)", jobId, name));
+                logger.debug(String.format("Executing job #%d (%s)", jobId, name));
             }
 
             try
@@ -247,9 +247,9 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable, Registr
             {
                 long delay = nextExecution - System.currentTimeMillis();
 
-                if (logger.isDebugEnabled())
+                if (logger.isTraceEnabled())
                 {
-                    logger.debug(String.format("Sleeping for %,d ms", delay));
+                    logger.trace(String.format("Sleeping for %,d ms", delay));
                 }
 
                 if (delay > 0)
@@ -262,10 +262,7 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable, Registr
                 // Ignored; the thread is interrupted() to shut it down,
                 // or to have it execute a new batch.
 
-                if (logger.isDebugEnabled())
-                {
-                    logger.debug("Interrupted");
-                }
+                logger.trace("Interrupted");
             }
         }
     }
