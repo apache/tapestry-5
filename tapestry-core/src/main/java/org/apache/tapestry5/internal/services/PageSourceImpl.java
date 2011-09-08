@@ -14,22 +14,13 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.structure.Page;
-import org.apache.tapestry5.ioc.annotations.IntermediateType;
-import org.apache.tapestry5.ioc.annotations.PostInjection;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.cron.IntervalSchedule;
-import org.apache.tapestry5.ioc.services.cron.PeriodicExecutor;
-import org.apache.tapestry5.ioc.util.TimeInterval;
 import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
-import org.slf4j.Logger;
 
-import java.util.Date;
-import java.util.Iterator;
+import java.lang.ref.SoftReference;
 import java.util.Map;
 
 public class PageSourceImpl implements PageSource, InvalidationListener
@@ -37,10 +28,6 @@ public class PageSourceImpl implements PageSource, InvalidationListener
     private final ComponentRequestSelectorAnalyzer selectorAnalyzer;
 
     private final PageLoader pageLoader;
-
-    private final long activeWindow;
-
-    private final Logger logger;
 
     private static final class CachedPageKey
     {
@@ -73,67 +60,17 @@ public class PageSourceImpl implements PageSource, InvalidationListener
         }
     }
 
-    private final Map<CachedPageKey, Page> pageCache = CollectionFactory.newConcurrentMap();
+    private final Map<CachedPageKey, SoftReference<Page>> pageCache = CollectionFactory.newConcurrentMap();
 
-    public PageSourceImpl(PageLoader pageLoader, ComponentRequestSelectorAnalyzer selectorAnalyzer,
-
-                          @Symbol(SymbolConstants.PAGE_SOURCE_ACTIVE_WINDOW)
-                          @IntermediateType(TimeInterval.class)
-                          long activeWindow, Logger logger)
+    public PageSourceImpl(PageLoader pageLoader, ComponentRequestSelectorAnalyzer selectorAnalyzer)
     {
         this.pageLoader = pageLoader;
         this.selectorAnalyzer = selectorAnalyzer;
-        this.activeWindow = activeWindow;
-        this.logger = logger;
     }
 
-    @PostInjection
-    public void startJanitor(PeriodicExecutor executor, @Symbol(SymbolConstants.PAGE_SOURCE_CHECK_INTERVAL)
-    @IntermediateType(TimeInterval.class)
-    long checkInterval)
+    public void objectWasInvalidated()
     {
-        executor.addJob(new IntervalSchedule(checkInterval), "PagePool cleanup", new Runnable()
-        {
-            public void run()
-            {
-                prune();
-            }
-        });
-    }
-
-    private void prune()
-    {
-        Iterator<Page> iterator = pageCache.values().iterator();
-
-        int count = 0;
-
-        long cutoff = System.currentTimeMillis() - activeWindow;
-
-        while (iterator.hasNext())
-        {
-            Page page = iterator.next();
-
-            if (page.getLastAttachTime() <= cutoff)
-            {
-                count++;
-                iterator.remove();
-
-                logger.info(String.format("Pruned page %s (%s), not accessed since %s.",
-                        page.getName(),
-                        page.getSelector().toShortString(),
-                        new Date(page.getLastAttachTime())));
-            }
-        }
-
-        if (count > 0)
-        {
-            logger.info(String.format("Pruned %d page %s.", count, count == 1 ? "instance" : "instances"));
-        }
-    }
-
-    public synchronized void objectWasInvalidated()
-    {
-        pageCache.clear();
+        clearCache();
     }
 
     public Page getPage(String canonicalPageName)
@@ -142,22 +79,31 @@ public class PageSourceImpl implements PageSource, InvalidationListener
 
         CachedPageKey key = new CachedPageKey(canonicalPageName, selector);
 
-        if (!pageCache.containsKey(key))
+        // The while loop looks superfluous, but it helps to ensure that the Page instance,
+        // with all of its mutable construction-time state, is properly published to other
+        // threads (at least, as I understand Brian Goetz's explanation, it should be).
+
+        while (true)
         {
+            SoftReference<Page> ref = pageCache.get(key);
+
+            Page page = ref == null ? null : ref.get();
+
+            if (page != null)
+            {
+                return page;
+            }
+
             // In rare race conditions, we may see the same page loaded multiple times across
             // different threads. The last built one will "evict" the others from the page cache,
             // and the earlier ones will be GCed.
 
-            Page page = pageLoader.loadPage(canonicalPageName, selector);
+            page = pageLoader.loadPage(canonicalPageName, selector);
 
-            pageCache.put(key, page);
+            ref = new SoftReference<Page>(page);
+
+            pageCache.put(key, ref);
         }
-
-        // From good authority (Brian Goetz), this is the best way to ensure that the
-        // loaded page, with all of its semi-mutable construction-time state, is
-        // properly published.
-
-        return pageCache.get(key);
     }
 
     public void clearCache()

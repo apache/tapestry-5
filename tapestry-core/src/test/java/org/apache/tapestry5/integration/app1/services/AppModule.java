@@ -142,9 +142,6 @@ public class AppModule
         configuration.add(SymbolConstants.SECURE_ENABLED, "true");
 
         configuration.add("app.injected-symbol", "Symbol contributed to ApplicationDefaults");
-
-        configuration.add(SymbolConstants.PAGE_SOURCE_ACTIVE_WINDOW, "30s");
-        configuration.add(SymbolConstants.PAGE_SOURCE_CHECK_INTERVAL, "15s");
     }
 
     public static void contributeIgnoredPathsFilter(Configuration<String> configuration)

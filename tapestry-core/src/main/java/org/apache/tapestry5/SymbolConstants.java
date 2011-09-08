@@ -313,23 +313,6 @@ public class SymbolConstants
     public static final String CLUSTERED_SESSIONS = "tapestry.clustered-sessions";
 
     /**
-     * The interval (in milliseconds) at which the {@link org.apache.tapestry5.internal.services.PageSource} checks for
-     * inactive pages that can be discarded. The default is "5 m" (every five minutes).
-     *
-     * @since 5.3
-     */
-    public static final String PAGE_SOURCE_CHECK_INTERVAL = "tapestry.page-source-check-interval";
-
-    /**
-     * The maximum amount of time, in milliseconds, that an instantiated page instance may be kept in memory
-     * before being discarded. The frequency of checks for such pages is determined by {@link #PAGE_SOURCE_CHECK_INTERVAL}.
-     * The default is "15 m" (fifteen minutes).
-     *
-     * @since 5.3
-     */
-    public static final String PAGE_SOURCE_ACTIVE_WINDOW = "tapestry.page-source-active-window";
-
-    /**
      * The fix for <a href="https://issues.apache.org/jira/browse/TAP5-1596">TAP5-1596</a> means that component ids referenced
      * by event handler methods (either the naming convention, or the {@link org.apache.tapestry5.annotations.OnEvent} annotation)
      * can cause a page load error if there is no matching component in the component's template. Although this is correct behavior,
