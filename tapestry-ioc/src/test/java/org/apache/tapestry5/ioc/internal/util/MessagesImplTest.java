@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -81,8 +81,7 @@ public class MessagesImplTest extends IOCTestCase
     public void formatters_are_cached()
     {
         MessageFormatter mf1 = messages.getFormatter("result");
-        // Throw in a case-insensitive check:
-        MessageFormatter mf2 = messages.getFormatter("Result");
+        MessageFormatter mf2 = messages.getFormatter("result");
 
         assertSame(mf2, mf1);
     }

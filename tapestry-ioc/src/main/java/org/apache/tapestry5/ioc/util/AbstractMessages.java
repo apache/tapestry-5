@@ -1,4 +1,4 @@
-// Copyright 2006, 2009 The Apache Software Foundation
+// Copyright 2006, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,9 @@
 
 package org.apache.tapestry5.ioc.util;
 
-import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.MessageFormatter;
 import org.apache.tapestry5.ioc.Messages;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
-import org.apache.tapestry5.ioc.internal.util.ConcurrentBarrier;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.MessageFormatterImpl;
 
 import java.util.Locale;
@@ -30,12 +28,10 @@ import java.util.Map;
  */
 public abstract class AbstractMessages implements Messages
 {
-    private final ConcurrentBarrier barrier = new ConcurrentBarrier();
-
     /**
      * String key to MF instance.
      */
-    private final Map<String, MessageFormatter> cache = newCaseInsensitiveMap();
+    private final Map<String, MessageFormatter> cache = CollectionFactory.newConcurrentMap();
 
     private final Locale locale;
 
@@ -66,29 +62,17 @@ public abstract class AbstractMessages implements Messages
         return String.format("[[missing key: %s]]", key);
     }
 
-    public MessageFormatter getFormatter(final String key)
+    public MessageFormatter getFormatter(String key)
     {
-        MessageFormatter result = barrier.withRead(new Invokable<MessageFormatter>()
+        MessageFormatter result = cache.get(key);
+
+        if (result == null)
         {
-            public MessageFormatter invoke()
-            {
-                return cache.get(key);
-            }
-        });
+            result = buildMessageFormatter(key);
+            cache.put(key, result);
+        }
 
-        if (result != null) return result;
-
-        final MessageFormatter newFormatter = buildMessageFormatter(key);
-
-        barrier.withWrite(new Runnable()
-        {
-            public void run()
-            {
-                cache.put(key, newFormatter);
-            }
-        });
-
-        return newFormatter;
+        return result;
     }
 
     private MessageFormatter buildMessageFormatter(String key)
