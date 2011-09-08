@@ -14,20 +14,10 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Formatter;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
-
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.ConcurrentBarrier;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassNameLocator;
 import org.apache.tapestry5.ioc.util.AvailableValues;
@@ -38,9 +28,18 @@ import org.apache.tapestry5.services.LibraryMapping;
 import org.apache.tapestry5.services.transform.ControlledPackageType;
 import org.slf4j.Logger;
 
+import java.util.*;
+import java.util.regex.Pattern;
+
 public class ComponentClassResolverImpl implements ComponentClassResolver, InvalidationListener
 {
     private static final String CORE_LIBRARY_PREFIX = "core/";
+
+    private static final Pattern SPLIT_PACKAGE_PATTERN = Pattern.compile("\\.");
+
+    private static final Pattern SPLIT_FOLDER_PATTERN = Pattern.compile("/");
+
+    private static final int LOGICAL_NAME_BUFFER_SIZE = 40;
 
     private final Logger logger;
 
@@ -62,51 +61,183 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     // structure of Tapestry, there should not be any reader threads while the write thread
     // is operating.
 
-    private boolean needsRebuild = true;
+    private volatile boolean needsRebuild = true;
 
-    /**
-     * Logical page name to class name.
-     */
-    private final Map<String, String> pageToClassName = CollectionFactory.newCaseInsensitiveMap();
+    private class Data
+    {
 
-    /**
-     * Component type to class name.
-     */
-    private final Map<String, String> componentToClassName = CollectionFactory.newCaseInsensitiveMap();
+        /**
+         * Logical page name to class name.
+         */
+        private final Map<String, String> pageToClassName = CollectionFactory.newCaseInsensitiveMap();
 
-    /**
-     * Mixing type to class name.
-     */
-    private final Map<String, String> mixinToClassName = CollectionFactory.newCaseInsensitiveMap();
+        /**
+         * Component type to class name.
+         */
+        private final Map<String, String> componentToClassName = CollectionFactory.newCaseInsensitiveMap();
 
-    /**
-     * Page class name to logical name (needed to build URLs). This one is case sensitive, since class names do always
-     * have a particular case.
-     */
-    private final Map<String, String> pageClassNameToLogicalName = CollectionFactory.newMap();
+        /**
+         * Mixing type to class name.
+         */
+        private final Map<String, String> mixinToClassName = CollectionFactory.newCaseInsensitiveMap();
 
-    /**
-     * Used to convert a logical page name to the canonical form of the page name; this ensures that uniform case for
-     * page names is used.
-     */
-    private final Map<String, String> pageNameToCanonicalPageName = CollectionFactory.newCaseInsensitiveMap();
+        /**
+         * Page class name to logical name (needed to build URLs). This one is case sensitive, since class names do always
+         * have a particular case.
+         */
+        private final Map<String, String> pageClassNameToLogicalName = CollectionFactory.newMap();
 
-    private final ConcurrentBarrier barrier = new ConcurrentBarrier();
+        /**
+         * Used to convert a logical page name to the canonical form of the page name; this ensures that uniform case for
+         * page names is used.
+         */
+        private final Map<String, String> pageNameToCanonicalPageName = CollectionFactory.newCaseInsensitiveMap();
 
-    private static final Pattern SPLIT_PACKAGE_PATTERN = Pattern.compile("\\.");
+        private void rebuild(String pathPrefix, String rootPackage)
+        {
+            fillNameToClassNameMap(pathPrefix, rootPackage, InternalConstants.PAGES_SUBPACKAGE, pageToClassName);
+            fillNameToClassNameMap(pathPrefix, rootPackage, InternalConstants.COMPONENTS_SUBPACKAGE, componentToClassName);
+            fillNameToClassNameMap(pathPrefix, rootPackage, InternalConstants.MIXINS_SUBPACKAGE, mixinToClassName);
+        }
 
-    private static final Pattern SPLIT_FOLDER_PATTERN = Pattern.compile("/");
+        private void fillNameToClassNameMap(String pathPrefix, String rootPackage, String subPackage,
+                                            Map<String, String> logicalNameToClassName)
+        {
+            String searchPackage = rootPackage + "." + subPackage;
+            boolean isPage = subPackage.equals(InternalConstants.PAGES_SUBPACKAGE);
 
-    private static final int LOGICAL_NAME_BUFFER_SIZE = 40;
+            Collection<String> classNames = classNameLocator.locateClassNames(searchPackage);
+
+            int startPos = searchPackage.length() + 1;
+
+            for (String name : classNames)
+            {
+                String logicalName = toLogicalName(name, pathPrefix, startPos, true);
+                String unstrippedName = toLogicalName(name, pathPrefix, startPos, false);
+
+                if (isPage)
+                {
+                    int lastSlashx = logicalName.lastIndexOf("/");
+
+                    String lastTerm = lastSlashx < 0 ? logicalName : logicalName.substring(lastSlashx + 1);
+
+                    if (lastTerm.equalsIgnoreCase("index") || lastTerm.equalsIgnoreCase(startPageName))
+                    {
+                        String reducedName = lastSlashx < 0 ? "" : logicalName.substring(0, lastSlashx);
+
+                        // Make the super-stripped name another alias to the class.
+                        // TAP5-1444: Everything else but a start page has precedence
+
+                        if (!(lastTerm.equalsIgnoreCase(startPageName) && logicalNameToClassName.containsKey(reducedName)))
+                        {
+                            logicalNameToClassName.put(reducedName, name);
+                            pageNameToCanonicalPageName.put(reducedName, logicalName);
+                        }
+                    }
+
+                    pageClassNameToLogicalName.put(name, logicalName);
+                    pageNameToCanonicalPageName.put(logicalName, logicalName);
+                    pageNameToCanonicalPageName.put(unstrippedName, logicalName);
+                }
+
+                logicalNameToClassName.put(logicalName, name);
+                logicalNameToClassName.put(unstrippedName, name);
+            }
+        }
+
+        /**
+         * Converts a fully qualified class name to a logical name
+         *
+         * @param className  fully qualified class name
+         * @param pathPrefix prefix to be placed on the logical name (to identify the library from in which the class
+         *                   lives)
+         * @param startPos   start position within the class name to extract the logical name (i.e., after the final '.' in
+         *                   "rootpackage.pages.").
+         * @param stripTerms
+         * @return a short logical name in folder format ('.' replaced with '/')
+         */
+        private String toLogicalName(String className, String pathPrefix, int startPos, boolean stripTerms)
+        {
+            List<String> terms = CollectionFactory.newList();
+
+            addAll(terms, SPLIT_FOLDER_PATTERN, pathPrefix);
+
+            addAll(terms, SPLIT_PACKAGE_PATTERN, className.substring(startPos));
+
+            StringBuilder builder = new StringBuilder(LOGICAL_NAME_BUFFER_SIZE);
+            String sep = "";
+
+            String logicalName = terms.remove(terms.size() - 1);
+
+            String unstripped = logicalName;
+
+            for (String term : terms)
+            {
+                builder.append(sep);
+                builder.append(term);
+
+                sep = "/";
+
+                if (stripTerms)
+                    logicalName = stripTerm(term, logicalName);
+            }
+
+            if (logicalName.equals(""))
+                logicalName = unstripped;
+
+            builder.append(sep);
+            builder.append(logicalName);
+
+            return builder.toString();
+        }
+
+        private void addAll(List<String> terms, Pattern splitter, String input)
+        {
+            for (String term : splitter.split(input))
+            {
+                if (term.equals(""))
+                    continue;
+
+                terms.add(term);
+            }
+        }
+
+        private String stripTerm(String term, String logicalName)
+        {
+            if (isCaselessPrefix(term, logicalName))
+            {
+                logicalName = logicalName.substring(term.length());
+            }
+
+            if (isCaselessSuffix(term, logicalName))
+            {
+                logicalName = logicalName.substring(0, logicalName.length() - term.length());
+            }
+
+            return logicalName;
+        }
+
+        private boolean isCaselessPrefix(String prefix, String string)
+        {
+            return string.regionMatches(true, 0, prefix, 0, prefix.length());
+        }
+
+        private boolean isCaselessSuffix(String suffix, String string)
+        {
+            return string.regionMatches(true, string.length() - suffix.length(), suffix, 0, suffix.length());
+        }
+    }
+
+    private volatile Data data = new Data();
 
     public ComponentClassResolverImpl(Logger logger,
 
-    ClassNameLocator classNameLocator,
+                                      ClassNameLocator classNameLocator,
 
-    @Symbol(SymbolConstants.START_PAGE_NAME)
-    String startPageName,
+                                      @Symbol(SymbolConstants.START_PAGE_NAME)
+                                      String startPageName,
 
-    Collection<LibraryMapping> mappings)
+                                      Collection<LibraryMapping> mappings)
     {
         this.logger = logger;
         this.classNameLocator = classNameLocator;
@@ -165,45 +296,21 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
      */
     public synchronized void objectWasInvalidated()
     {
-        barrier.withWrite(new Runnable()
-        {
-            public void run()
-            {
-                needsRebuild = true;
-            }
-        });
+        needsRebuild = true;
     }
 
     /**
      * Invoked from within a withRead() block, checks to see if a rebuild is needed, and then performs the rebuild
      * within a withWrite() block.
      */
-    private void rebuild()
+    private Data getData()
     {
         if (!needsRebuild)
-            return;
-
-        barrier.withWrite(new Runnable()
         {
-            public void run()
-            {
-                performRebuild();
-            }
-        });
-    }
+            return data;
+        }
 
-    private void performRebuild()
-    {
-
-        Map<String, String> savedPages = CollectionFactory.newMap(pageToClassName);
-        Map<String, String> savedComponents = CollectionFactory.newMap(componentToClassName);
-        Map<String, String> savedMixins = CollectionFactory.newMap(mixinToClassName);
-
-        pageToClassName.clear();
-        componentToClassName.clear();
-        mixinToClassName.clear();
-        pageClassNameToLogicalName.clear();
-        pageNameToCanonicalPageName.clear();
+        Data newData = new Data();
 
         for (String prefix : mappings.keySet())
         {
@@ -212,14 +319,23 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
             String folder = prefix + "/";
 
             for (String packageName : packages)
-                rebuild(folder, packageName);
+                newData.rebuild(folder, packageName);
         }
 
-        showChanges("pages", savedPages, pageToClassName);
-        showChanges("components", savedComponents, componentToClassName);
-        showChanges("mixins", savedMixins, mixinToClassName);
+        showChanges("pages", data.pageToClassName, newData.pageToClassName);
+        showChanges("components", data.componentToClassName, newData.componentToClassName);
+        showChanges("mixins", data.mixinToClassName, newData.mixinToClassName);
 
         needsRebuild = false;
+
+        data = newData;
+
+        return data;
+    }
+
+    private static int countUnique(Map<String, String> map)
+    {
+        return CollectionFactory.newSet(map.values()).size();
     }
 
     private void showChanges(String title, Map<String, String> savedMap, Map<String, String> newMap)
@@ -229,6 +345,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
         Map<String, String> core = CollectionFactory.newMap();
         Map<String, String> nonCore = CollectionFactory.newMap();
+
 
         int maxLength = 0;
 
@@ -245,8 +362,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
                 maxLength = Math.max(maxLength, key.length());
 
                 core.put(key, newMap.get(name));
-            }
-            else
+            } else
             {
                 maxLength = Math.max(maxLength, name.length());
 
@@ -263,7 +379,17 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         StringBuilder builder = new StringBuilder(2000);
         Formatter f = new Formatter(builder);
 
-        f.format("Available %s:\n", title);
+        int oldCount = countUnique(savedMap);
+        int newCount = countUnique(newMap);
+
+        f.format("Available %s (%d", title, newCount);
+
+        if (oldCount > 0 && oldCount != newCount)
+        {
+            f.format(", +%d", newCount - oldCount);
+        }
+
+        builder.append("):\n");
 
         String formatString = "%" + maxLength + "s: %s\n";
 
@@ -282,215 +408,57 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         logger.info(builder.toString());
     }
 
-    private void rebuild(String pathPrefix, String rootPackage)
-    {
-        fillNameToClassNameMap(pathPrefix, rootPackage, InternalConstants.PAGES_SUBPACKAGE, pageToClassName);
-        fillNameToClassNameMap(pathPrefix, rootPackage, InternalConstants.COMPONENTS_SUBPACKAGE, componentToClassName);
-        fillNameToClassNameMap(pathPrefix, rootPackage, InternalConstants.MIXINS_SUBPACKAGE, mixinToClassName);
-    }
-
-    private void fillNameToClassNameMap(String pathPrefix, String rootPackage, String subPackage,
-            Map<String, String> logicalNameToClassName)
-    {
-        String searchPackage = rootPackage + "." + subPackage;
-        boolean isPage = subPackage.equals(InternalConstants.PAGES_SUBPACKAGE);
-
-        Collection<String> classNames = classNameLocator.locateClassNames(searchPackage);
-
-        int startPos = searchPackage.length() + 1;
-
-        for (String name : classNames)
-        {
-            String logicalName = toLogicalName(name, pathPrefix, startPos, true);
-            String unstrippedName = toLogicalName(name, pathPrefix, startPos, false);
-
-            if (isPage)
-            {
-                int lastSlashx = logicalName.lastIndexOf("/");
-
-                String lastTerm = lastSlashx < 0 ? logicalName : logicalName.substring(lastSlashx + 1);
-
-                if (lastTerm.equalsIgnoreCase("index") || lastTerm.equalsIgnoreCase(startPageName))
-                {
-                    String reducedName = lastSlashx < 0 ? "" : logicalName.substring(0, lastSlashx);
-
-                    // Make the super-stripped name another alias to the class.
-                    // TAP5-1444: Everything else but a start page has precedence
-
-                    if (!(lastTerm.equalsIgnoreCase(startPageName) && logicalNameToClassName.containsKey(reducedName)))
-                    {
-                        logicalNameToClassName.put(reducedName, name);
-                        pageNameToCanonicalPageName.put(reducedName, logicalName);
-                    }
-                }
-
-                pageClassNameToLogicalName.put(name, logicalName);
-                pageNameToCanonicalPageName.put(logicalName, logicalName);
-                pageNameToCanonicalPageName.put(unstrippedName, logicalName);
-            }
-
-            logicalNameToClassName.put(logicalName, name);
-            logicalNameToClassName.put(unstrippedName, name);
-        }
-    }
-
-    /**
-     * Converts a fully qualified class name to a logical name
-     * 
-     * @param className
-     *            fully qualified class name
-     * @param pathPrefix
-     *            prefix to be placed on the logical name (to identify the library from in which the class
-     *            lives)
-     * @param startPos
-     *            start position within the class name to extract the logical name (i.e., after the final '.' in
-     *            "rootpackage.pages.").
-     * @param stripTerms
-     * @return a short logical name in folder format ('.' replaced with '/')
-     */
-    private String toLogicalName(String className, String pathPrefix, int startPos, boolean stripTerms)
-    {
-        List<String> terms = CollectionFactory.newList();
-
-        addAll(terms, SPLIT_FOLDER_PATTERN, pathPrefix);
-
-        addAll(terms, SPLIT_PACKAGE_PATTERN, className.substring(startPos));
-
-        StringBuilder builder = new StringBuilder(LOGICAL_NAME_BUFFER_SIZE);
-        String sep = "";
-
-        String logicalName = terms.remove(terms.size() - 1);
-
-        String unstripped = logicalName;
-
-        for (String term : terms)
-        {
-            builder.append(sep);
-            builder.append(term);
-
-            sep = "/";
-
-            if (stripTerms)
-                logicalName = stripTerm(term, logicalName);
-        }
-
-        if (logicalName.equals(""))
-            logicalName = unstripped;
-
-        builder.append(sep);
-        builder.append(logicalName);
-
-        return builder.toString();
-    }
-
-    private void addAll(List<String> terms, Pattern splitter, String input)
-    {
-        for (String term : splitter.split(input))
-        {
-            if (term.equals(""))
-                continue;
-
-            terms.add(term);
-        }
-    }
-
-    private String stripTerm(String term, String logicalName)
-    {
-        if (isCaselessPrefix(term, logicalName))
-        {
-            logicalName = logicalName.substring(term.length());
-        }
-
-        if (isCaselessSuffix(term, logicalName))
-        {
-            logicalName = logicalName.substring(0, logicalName.length() - term.length());
-        }
-
-        return logicalName;
-    }
-
-    private boolean isCaselessPrefix(String prefix, String string)
-    {
-        return string.regionMatches(true, 0, prefix, 0, prefix.length());
-    }
-
-    private boolean isCaselessSuffix(String suffix, String string)
-    {
-        return string.regionMatches(true, string.length() - suffix.length(), suffix, 0, suffix.length());
-    }
 
     public String resolvePageNameToClassName(final String pageName)
     {
-        return barrier.withRead(new Invokable<String>()
+        Data data = getData();
+
+        String result = locate(pageName, data.pageToClassName);
+
+        if (result == null)
         {
-            public String invoke()
-            {
-                String result = locate(pageName, pageToClassName);
+            throw new UnknownValueException(String.format("Unable to resolve '%s' to a page class name.",
+                    pageName), new AvailableValues("Page names", presentableNames(data.pageToClassName)));
+        }
 
-                if (result == null)
-                    throw new UnknownValueException(String.format("Unable to resolve '%s' to a page class name.",
-                            pageName), new AvailableValues("Page names", presentableNames(pageToClassName)));
-
-                return result;
-            }
-        });
+        return result;
     }
 
     public boolean isPageName(final String pageName)
     {
-        return barrier.withRead(new Invokable<Boolean>()
-        {
-            public Boolean invoke()
-            {
-                return locate(pageName, pageToClassName) != null;
-            }
-        });
+        return locate(pageName, getData().pageToClassName) != null;
     }
 
     public boolean isPage(final String pageClassName)
     {
-        return barrier.withRead(new Invokable<Boolean>()
-        {
-            public Boolean invoke()
-            {
-                return locate(pageClassName, pageClassNameToLogicalName) != null;
-            }
-        });
+        return locate(pageClassName, getData().pageClassNameToLogicalName) != null;
     }
 
     public List<String> getPageNames()
     {
-        return barrier.withRead(new Invokable<List<String>>()
-        {
-            public List<String> invoke()
-            {
-                rebuild();
+        Data data = getData();
 
-                List<String> result = CollectionFactory.newList(pageClassNameToLogicalName.values());
+        List<String> result = CollectionFactory.newList(data.pageClassNameToLogicalName.values());
 
-                Collections.sort(result);
+        Collections.sort(result);
 
-                return result;
-            }
-        });
+        return result;
     }
 
     public String resolveComponentTypeToClassName(final String componentType)
     {
-        return barrier.withRead(new Invokable<String>()
+        Data data = getData();
+
+        String result = locate(componentType, data.componentToClassName);
+
+        if (result == null)
         {
-            public String invoke()
-            {
-                String result = locate(componentType, componentToClassName);
+            throw new UnknownValueException(String.format("Unable to resolve '%s' to a component class name.",
+                    componentType), new AvailableValues("Component types",
+                    presentableNames(data.componentToClassName)));
+        }
 
-                if (result == null)
-                    throw new UnknownValueException(String.format("Unable to resolve '%s' to a component class name.",
-                            componentType), new AvailableValues("Component types",
-                            presentableNames(componentToClassName)));
-
-                return result;
-            }
-        });
+        return result;
     }
 
     Collection<String> presentableNames(Map<String, ?> map)
@@ -514,79 +482,67 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
     public String resolveMixinTypeToClassName(final String mixinType)
     {
-        return barrier.withRead(new Invokable<String>()
+        Data data = getData();
+
+        String result = locate(mixinType, data.mixinToClassName);
+
+        if (result == null)
         {
-            public String invoke()
-            {
-                String result = locate(mixinType, mixinToClassName);
+            throw new UnknownValueException(String.format("Unable to resolve '%s' to a mixin class name.",
+                    mixinType), new AvailableValues("Mixin types", presentableNames(data.mixinToClassName)));
+        }
 
-                if (result == null)
-                    throw new UnknownValueException(String.format("Unable to resolve '%s' to a mixin class name.",
-                            mixinType), new AvailableValues("Mixin types", presentableNames(mixinToClassName)));
-
-                return result;
-            }
-        });
+        return result;
     }
 
     /**
      * Locates a class name within the provided map, given its logical name. If not found naturally, a search inside the
      * "core" library is included.
-     * 
-     * @param logicalName
-     *            name to search for
-     * @param logicalNameToClassName
-     *            mapping from logical name to class name
+     *
+     * @param logicalName            name to search for
+     * @param logicalNameToClassName mapping from logical name to class name
      * @return the located class name or null
      */
     private String locate(String logicalName, Map<String, String> logicalNameToClassName)
     {
-        rebuild();
-
         String result = logicalNameToClassName.get(logicalName);
 
         // If not found, see if it exists under the core package. In this way,
         // anything in core is "inherited" (but overridable) by the application.
 
-        if (result == null)
-            result = logicalNameToClassName.get(CORE_LIBRARY_PREFIX + logicalName);
+        if (result != null)
+        {
+            return result;
+        }
 
-        return result;
+        return logicalNameToClassName.get(CORE_LIBRARY_PREFIX + logicalName);
     }
 
     public String resolvePageClassNameToPageName(final String pageClassName)
     {
-        return barrier.withRead(new Invokable<String>()
+        String result = getData().pageClassNameToLogicalName.get(pageClassName);
+
+        if (result == null)
         {
-            public String invoke()
-            {
-                rebuild();
+            throw new IllegalArgumentException(ServicesMessages.pageNameUnresolved(pageClassName));
+        }
 
-                String result = pageClassNameToLogicalName.get(pageClassName);
-
-                if (result == null)
-                    throw new IllegalArgumentException(ServicesMessages.pageNameUnresolved(pageClassName));
-
-                return result;
-            }
-        });
+        return result;
     }
 
     public String canonicalizePageName(final String pageName)
     {
-        return barrier.withRead(new Invokable<String>()
+        Data data = getData();
+
+        String result = locate(pageName, data.pageNameToCanonicalPageName);
+
+        if (result == null)
         {
-            public String invoke()
-            {
-                String result = locate(pageName, pageNameToCanonicalPageName);
+            throw new UnknownValueException(String.format("Unable to resolve '%s' to a known page name.",
+                    pageName), new AvailableValues("Page names", presentableNames(data.pageNameToCanonicalPageName)));
+        }
 
-                if (result == null)
-                    throw new UnknownValueException(String.format("Unable to resolve '%s' to a known page name.",
-                            pageName), new AvailableValues("Page names", presentableNames(pageNameToCanonicalPageName)));
-
-                return result;
-            }
-        });
+        return result;
     }
 
     public Map<String, String> getFolderToPackageMapping()
@@ -652,8 +608,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
                 commonLength += exploded[i].length() + (i == 0 ? 0 : 1);
                 commonTerms++;
-            }
-            else
+            } else
             {
                 break;
             }
