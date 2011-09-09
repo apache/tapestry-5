@@ -345,6 +345,14 @@ public final class TapestryIOCModule
             }
         });
 
+        add(configuration, Object[].class, Boolean.class, new Coercion<Object[], Boolean>()
+        {
+            public Boolean coerce(Object[] input)
+            {
+                return input != null && input.length > 0;
+            }
+        });
+
         add(configuration, Float.class, Double.class, new Coercion<Float, Double>()
         {
             public Double coerce(Float input)
