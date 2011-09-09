@@ -149,6 +149,7 @@ public final class TapestryIOCModule
      * Contributes a set of standard type coercions to the {@link TypeCoercer} service:
      * <ul>
      * <li>Object to String</li>
+     * <li>Object to Boolean</li>
      * <li>String to Double</li>
      * <li>String to BigDecimal</li>
      * <li>BigDecimal to Double</li>
@@ -164,7 +165,7 @@ public final class TapestryIOCModule
      * <li>Float to Double</li>
      * <li>Long to Double</li>
      * <li>String to Boolean ("false" is always false, other non-blank strings are true)</li>
-     * <li>Long to Boolean (true if long value is non zero)</li>
+     * <li>Number to Boolean (true if number value is non zero)</li>
      * <li>Null to Boolean (always false)</li>
      * <li>Collection to Boolean (false if empty)</li>
      * <li>Object[] to List</li>
@@ -187,6 +188,14 @@ public final class TapestryIOCModule
             public String coerce(Object input)
             {
                 return input.toString();
+            }
+        });
+
+        add(configuration, Object.class, Boolean.class, new Coercion<Object, Boolean>()
+        {
+            public Boolean coerce(Object input)
+            {
+                return input != null;
             }
         });
 
@@ -296,11 +305,11 @@ public final class TapestryIOCModule
             }
         });
 
-        add(configuration, Long.class, Boolean.class, new Coercion<Long, Boolean>()
+        add(configuration, Number.class, Boolean.class, new Coercion<Number, Boolean>()
         {
-            public Boolean coerce(Long input)
+            public Boolean coerce(Number input)
             {
-                return !input.equals(0L);
+                return input.byteValue() != 0;
             }
         });
 
