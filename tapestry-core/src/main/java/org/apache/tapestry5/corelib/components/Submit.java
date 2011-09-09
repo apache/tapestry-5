@@ -57,9 +57,9 @@ public class Submit implements ClientElement
 
     /**
      * If true, then the field will render out with a disabled attribute
-     * (to turn off client-side behavior). When the form is submitted, disabled
-     * fields' values are ignored (not even validated), and the component's
-     * events, if any, are not fired.
+     * (to turn off client-side behavior). When the form is submitted, the
+     * bound value is evaluated again and, if true, the field's value is
+     * ignored (not even validated) and the component's events are not fired.
      */
     @Parameter("false")
     private boolean disabled;
