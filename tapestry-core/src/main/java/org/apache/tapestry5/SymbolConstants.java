@@ -27,6 +27,13 @@ import org.apache.tapestry5.services.javascript.JavaScriptStack;
 public class SymbolConstants
 {
     /**
+     * A comma separated list of execution modes used to control how the application is initialized.
+     * Each modes can contribute a list (comma separated) of Module classes to be loaded during startup,
+     * the order in which they appear is preserved.
+     * The default value is: <code>production</code>.
+     */
+    public static final String EXECUTION_MODE = "tapestry.execution-mode";
+    /**
      * Indicates whether Tapestry is running in production mode or developer mode. The primary difference is how
      * exceptions are reported.
      */

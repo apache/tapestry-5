@@ -98,7 +98,7 @@ public class TapestryFilter implements Filter
             }
         };
 
-        String executionMode = System.getProperty("tapestry.execution-mode", "production");
+        String executionMode = System.getProperty(SymbolConstants.EXECUTION_MODE, "production");
 
         TapestryAppInitializer appInitializer = new TapestryAppInitializer(logger, provider,
                 filterName, executionMode);
