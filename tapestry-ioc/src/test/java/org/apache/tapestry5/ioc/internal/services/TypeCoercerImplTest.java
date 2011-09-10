@@ -306,7 +306,7 @@ public class TypeCoercerImplTest extends IOCInternalTestCase
                         {StringBuffer.class, Integer.class, "Object --> String, String --> Long, Long --> Integer"},
                         {void.class, Map.class, "null --> null"},
                         {void.class, Boolean.class, "null --> Boolean"},
-                        {Object[].class, Boolean.class, "Object --> Boolean"},
+                        {Object[].class, Boolean.class, "Object[] --> Boolean"},
                         {String[].class, List.class, "Object[] --> java.util.List"},
                         {Float.class, Double.class, "Float --> Double"},
                         {Double.class, BigDecimal.class, "Object --> String, String --> java.math.BigDecimal"},};
