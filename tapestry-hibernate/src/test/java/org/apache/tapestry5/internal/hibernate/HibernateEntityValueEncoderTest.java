@@ -1,4 +1,4 @@
-// Copyright 2008, 2010 The Apache Software Foundation
+// Copyright 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -68,17 +68,7 @@ public class HibernateEntityValueEncoderTest extends IOCTestCase
         HibernateEntityValueEncoder<SampleEntity> encoder = new HibernateEntityValueEncoder<SampleEntity>(
                 SampleEntity.class, persistentClass, session, access, typeCoercer, logger);
 
-        try
-        {
-            encoder.toClient(entity);
-            unreachable();
-        }
-        catch (IllegalStateException ex)
-        {
-            assertMessageContains(ex,
-                    "Entity org.apache.tapestry5.internal.hibernate.SampleEntity",
-                    "has an id property of null");
-        }
+        assertNull(encoder.toClient(entity));
 
         verify();
     }
@@ -129,8 +119,7 @@ public class HibernateEntityValueEncoderTest extends IOCTestCase
         {
             encoder.toValue("xyz");
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertMessageContains(
                     ex,

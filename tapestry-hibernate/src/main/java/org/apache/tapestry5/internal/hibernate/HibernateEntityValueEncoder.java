@@ -1,4 +1,4 @@
-// Copyright 2008, 2010 The Apache Software Foundation
+// Copyright 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.internal.hibernate;
 
-import java.io.Serializable;
-
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
@@ -25,6 +23,8 @@ import org.hibernate.Session;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
 import org.slf4j.Logger;
+
+import java.io.Serializable;
 
 public final class HibernateEntityValueEncoder<E> implements ValueEncoder<E>
 {
@@ -41,7 +41,7 @@ public final class HibernateEntityValueEncoder<E> implements ValueEncoder<E>
     private final Logger logger;
 
     public HibernateEntityValueEncoder(Class<E> entityClass, PersistentClass persistentClass, Session session,
-            PropertyAccess propertyAccess, TypeCoercer typeCoercer, Logger logger)
+                                       PropertyAccess propertyAccess, TypeCoercer typeCoercer, Logger logger)
     {
         this.entityClass = entityClass;
         this.session = session;
@@ -63,9 +63,9 @@ public final class HibernateEntityValueEncoder<E> implements ValueEncoder<E>
         Object id = propertyAdapter.get(value);
 
         if (id == null)
-            throw new IllegalStateException(String.format(
-                    "Entity %s has an %s property of null; this probably means that it has not been persisted yet.",
-                    value, idPropertyName));
+        {
+            return null;
+        }
 
         return typeCoercer.coerce(id, String.class);
     }
@@ -82,8 +82,7 @@ public final class HibernateEntityValueEncoder<E> implements ValueEncoder<E>
         {
 
             id = typeCoercer.coerce(clientValue, propertyAdapter.getType());
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             throw new RuntimeException(String.format(
                     "Exception converting '%s' to instance of %s (id type for entity %s): %s", clientValue,
