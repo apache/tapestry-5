@@ -2,7 +2,7 @@ description = "Apache Tapestry 5 Project"
 
 // Remember that when generating a release, this should be incremented. Also don't forget to
 // tag the release in Subversion.
-tapestryVersion = "5.3-beta-5"
+tapestryVersion = "5.3-beta-6"
 
 jettyVersion = '7.0.0.v20091005'
 tomcatVersion = '6.0.30'
@@ -19,169 +19,175 @@ snapshotUrl = "https://repository.apache.org/content/repositories/snapshots"
 doSign = !project.hasProperty('noSign') && project.hasProperty("signing.keyId")
 
 buildscript {
-  repositories {
-    mavenLocal()
-    mavenRepo name: "Gradle", urls: "http://repo.gradle.org/gradle/plugins-snapshots/"
-  }
-  dependencies {
-    classpath "org.gradle.plugins:gradle-signing-plugin:0.0.1-SNAPSHOT"
-  }
+    repositories {
+        mavenLocal()
+        mavenRepo name: "Gradle", urls: "http://repo.gradle.org/gradle/plugins-snapshots/"
+    }
+    dependencies {
+        classpath "org.gradle.plugins:gradle-signing-plugin:0.0.1-SNAPSHOT"
+    }
 }
 
 allprojects {
-    
+
     apply plugin: 'eclipse'
     apply plugin: 'idea'
-    
+
     ideaProject {
         javaVersion = 1.5
         beforeConfigured { project ->
             project.modulePaths.clear()
         }
     }
- 
+
     repositories {
         mavenCentral()
-               
+
         // All things JBoss/Javassist/Hibernate
-        mavenRepo urls: "https://repository.jboss.org/nexus/content/repositories/releases/" 
+        mavenRepo urls: "https://repository.jboss.org/nexus/content/repositories/releases/"
     }
 }
 
 subprojects {
-  version =  parent.version  
-  
-  apply plugin: 'java'
-  apply plugin: 'groovy' // mostly for testing
-  apply plugin: 'maven'
-  apply plugin: 'project-report'
-  
-  sourceCompatibility = '1.5'
-  targetCompatibility = '1.5'
+    version = parent.version
 
-  // This may be temporary, to help track down/verify the ProQuest production deployment
-  // issue.
-  compileJava {
-    debug = false
-  }
-      
-  group = 'org.apache.tapestry'  
-  
-  configurations {
-    provided
-    deployerJars
-    
-    // meta -- non-code artifacts, such as sources and javadoc JARs
-    meta
-    
-    // published -- what gets uploaded to the Nexus repository
-    published.extendsFrom archives, meta
-    if (doSign) { published.extendsFrom signatures }    
-  }
-  
-  // See http://jira.codehaus.org/browse/GRADLE-784
-  
-  sourceSets {
-    main { 
-      compileClasspath += configurations.provided 
+    apply plugin: 'java'
+    apply plugin: 'groovy' // mostly for testing
+    apply plugin: 'maven'
+    apply plugin: 'project-report'
+
+    sourceCompatibility = '1.5'
+    targetCompatibility = '1.5'
+
+    // This may be temporary, to help track down/verify the ProQuest production deployment
+    // issue.
+    compileJava {
+        debug = false
     }
-    test {
-      compileClasspath += configurations.provided
-      runtimeClasspath += configurations.provided
+
+    group = 'org.apache.tapestry'
+
+    configurations {
+        provided
+        deployerJars
+
+        // meta -- non-code artifacts, such as sources and javadoc JARs
+        meta
+
+        // published -- what gets uploaded to the Nexus repository
+        published.extendsFrom archives, meta
+        if (doSign)
+        { published.extendsFrom signatures }
     }
-  }
-  
-  ideaModule {
-      scopes.PROVIDED.plus += configurations.provided
-  }
-  
-  dependencies {
-      groovy "org.codehaus.groovy:groovy-all:1.7.4"
-      
-      deployerJars "org.apache.maven.wagon:wagon-http-lightweight:1.0-beta-6"
-  }
-  
-  test {
-      useTestNG()
-      
-      options.suites("src/test/conf/testng.xml")
-      
-      maxHeapSize = "400M"
-      
-      // Turn off live service reloading
 
-      systemProperties["tapestry.service-reloading-enabled"] = "false"
+    // See http://jira.codehaus.org/browse/GRADLE-784
 
-      jvmArgs("-XX:MaxPermSize=512m")        
-  }
-  
-  task sourcesJar(type: Jar, dependsOn:classes) {
-     classifier = 'sources'
-     from sourceSets.main.allSource
-  }
-
-  artifacts {
-     meta sourcesJar
-  }    
-  
-  if (doSign) {
-    apply plugin: 'signing'
-    // sign (create PGP signature for) archives (standard JARs)
-    // and meta (sources JARs)
-    signing { sign configurations.archives, configurations.meta }
-  }
-  
-  // apacheDeployUserName and apacheDeployPassword should be specified in ~/.gradle/gradle.properties
-  
-  deployUsernameProperty = isSnapshot() ? "snapshotDeployUserName" : "apacheDeployUserName"
-  deployPasswordProperty = isSnapshot() ? "snapshotDeployPassword" : "apacheDeployPassword"
-  canDeploy = [deployUsernameProperty, deployPasswordProperty].every { project.hasProperty(it) }
-    
-  uploadPublished  {
-  
-    doFirst {
-      if (!canDeploy) { 
-        throw new InvalidUserDataException("Missing upload credentials. Set '$deployUsernameProperty' and '$deployPasswordProperty' project properties.")
-      }
-    }  
-    
-    if (canDeploy) {
-      repositories  {
-        
-        project.deployer = repositories.mavenDeployer {
-        
-          if (doSign) {
-            beforeDeployment { MavenDeployment deployment ->
-              def signedPomArtifact = sign(deployment.pomArtifact).singleArtifact
-              // See http://issues.gradle.org/browse/GRADLE-1589
-              signedPomArtifact.type = "pom." + signing.type.extension
-              deployment.addArtifact(signedPomArtifact)
-            }
-          }          
-
-          repository(url: stagingUrl) {
-            authentication(userName: project.getProperty(deployUsernameProperty), password: project.getProperty(deployPasswordProperty))
-          }
-		  
-		  snapshotRepository(url: snapshotUrl) {
-            authentication(userName: project.getProperty(deployUsernameProperty), password: project.getProperty(deployPasswordProperty))
-          }
+    sourceSets {
+        main {
+            compileClasspath += configurations.provided
         }
-      }
+        test {
+            compileClasspath += configurations.provided
+            runtimeClasspath += configurations.provided
+        }
     }
-  }
+
+    ideaModule {
+        scopes.PROVIDED.plus += configurations.provided
+    }
+
+    dependencies {
+        groovy "org.codehaus.groovy:groovy-all:1.7.4"
+
+        deployerJars "org.apache.maven.wagon:wagon-http-lightweight:1.0-beta-6"
+    }
+
+    test {
+        useTestNG()
+
+        options.suites("src/test/conf/testng.xml")
+
+        maxHeapSize = "400M"
+
+        // Turn off live service reloading
+
+        systemProperties["tapestry.service-reloading-enabled"] = "false"
+
+        jvmArgs("-XX:MaxPermSize=512m")
+    }
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    artifacts {
+        meta sourcesJar
+    }
+
+    if (doSign)
+    {
+        apply plugin: 'signing'
+        // sign (create PGP signature for) archives (standard JARs)
+        // and meta (sources JARs)
+        signing { sign configurations.archives, configurations.meta }
+    }
+
+    // apacheDeployUserName and apacheDeployPassword should be specified in ~/.gradle/gradle.properties
+
+    deployUsernameProperty = isSnapshot() ? "snapshotDeployUserName" : "apacheDeployUserName"
+    deployPasswordProperty = isSnapshot() ? "snapshotDeployPassword" : "apacheDeployPassword"
+    canDeploy = [deployUsernameProperty, deployPasswordProperty].every { project.hasProperty(it) }
+
+    uploadPublished {
+
+        doFirst {
+            if (!canDeploy)
+            {
+                throw new InvalidUserDataException("Missing upload credentials. Set '$deployUsernameProperty' and '$deployPasswordProperty' project properties.")
+            }
+        }
+
+        if (canDeploy)
+        {
+            repositories {
+
+                project.deployer = repositories.mavenDeployer {
+
+                    if (doSign)
+                    {
+                        beforeDeployment { MavenDeployment deployment ->
+                            def signedPomArtifact = sign(deployment.pomArtifact).singleArtifact
+                            // See http://issues.gradle.org/browse/GRADLE-1589
+                            signedPomArtifact.type = "pom." + signing.type.extension
+                            deployment.addArtifact(signedPomArtifact)
+                        }
+                    }
+
+                    repository(url: stagingUrl) {
+                        authentication(userName: project.getProperty(deployUsernameProperty), password: project.getProperty(deployPasswordProperty))
+                    }
+
+                    snapshotRepository(url: snapshotUrl) {
+                        authentication(userName: project.getProperty(deployUsernameProperty), password: project.getProperty(deployPasswordProperty))
+                    }
+                }
+            }
+        }
+    }
 }
 
 // Specific to top-level build, not set for subprojects:
 
 configurations {
-  javadoc
-  published.extendsFrom archives, meta
-  if (doSign) { published.extendsFrom signatures }
+    javadoc
+    published.extendsFrom archives, meta
+    if (doSign)
+    { published.extendsFrom signatures }
 }
 
 dependencies {
-  javadoc project(':tapestry-javadoc')
+    javadoc project(':tapestry-javadoc')
 }
 
 subprojects.each { project.evaluationDependsOn(it.name) }
@@ -192,96 +198,97 @@ javadocBuildDir = dir(buildDirName + "/documentation/javadocs")
 
 task aggregateJavadoc(type: Javadoc, group: "Documentation") {
 
-   dependsOn configurations.javadoc
-   
-   description = "Build the aggregated JavaDocs for all modules"
-   maxMemory = '512m'
-   destinationDir = javadocBuildDir.dir
-   configure(options) {
-       // overview = new File( projectDir, 'src/javadoc/package.html' )
-       stylesheetFile = new File( projectDir, 'src/javadoc/stylesheet.css' )
-       windowTitle = 'Tapestry API Documentation'
-       docTitle = "Tapestry JavaDoc ($project.version)"
-       bottom = "Copyright &copy; 2003-2011 <a href=\"http://tapestry.apache.org\">The Apache Software Foundation</a>."
-       use = true
-       links = [ 'http://download.oracle.com/javase/6/docs/api/', 'http://download.oracle.com/javaee/6/api/' ]
-       addStringOption "tagletpath", configurations.javadoc.asPath
-       addStringOption "taglet", "org.apache.tapestry5.javadoc.TapestryDocTaglet"
-       
-       exclude "org/apache/tapestry5/internal/plastic/asm/**"
-   }
+    dependsOn configurations.javadoc
 
-   subprojects.each { sp -> 
-     sp.sourceSets.all.findAll { set -> set.name != "test" }.each { set ->
-       
-       source set.java
+    description = "Build the aggregated JavaDocs for all modules"
+    maxMemory = '512m'
+    destinationDir = javadocBuildDir.dir
+    configure(options) {
+        // overview = new File( projectDir, 'src/javadoc/package.html' )
+        stylesheetFile = new File(projectDir, 'src/javadoc/stylesheet.css')
+        windowTitle = 'Tapestry API Documentation'
+        docTitle = "Tapestry JavaDoc ($project.version)"
+        bottom = "Copyright &copy; 2003-2011 <a href=\"http://tapestry.apache.org\">The Apache Software Foundation</a>."
+        use = true
+        links = ['http://download.oracle.com/javase/6/docs/api/', 'http://download.oracle.com/javaee/6/api/']
+        addStringOption "tagletpath", configurations.javadoc.asPath
+        addStringOption "taglet", "org.apache.tapestry5.javadoc.TapestryDocTaglet"
 
-       classpath += set.classes + set.compileClasspath
+        exclude "org/apache/tapestry5/internal/plastic/asm/**"
+    }
 
-       // Some of the component .xdoc files refer to PNG images
-       // (we could also exclude .java and .xdoc)
-       copy {
-         from set.java.srcDirs.toList()                 
-         into javadocBuildDir.dir
-         include '**/*.png'
-       }       
-     }
-   }
- }
- 
- aggregateJavadoc.doLast {
+    subprojects.each { sp ->
+        sp.sourceSets.all.findAll { set -> set.name != "test" }.each { set ->
+
+            source set.java
+
+            classpath += set.classes + set.compileClasspath
+
+            // Some of the component .xdoc files refer to PNG images
+            // (we could also exclude .java and .xdoc)
+            copy {
+                from set.java.srcDirs.toList()
+                into javadocBuildDir.dir
+                include '**/*.png'
+            }
+        }
+    }
+}
+
+aggregateJavadoc.doLast {
     copy {
-        from new File( projectDir, 'src/javadoc/images' )
-        into new File( javadocBuildDir.dir, "/images" )
+        from new File(projectDir, 'src/javadoc/images')
+        into new File(javadocBuildDir.dir, "/images")
     }
 }
 
 task clean(type: Delete) {
-  delete buildDirName
+    delete buildDirName
 }
 
-task continuousIntegration(dependsOn: [subprojects.build, 'aggregateJavadoc', subprojects.uploadPublished], 
-  description: "Task executed on Jenkins CI server after SVN commits")
+task continuousIntegration(dependsOn: [subprojects.build, 'aggregateJavadoc', subprojects.uploadPublished],
+        description: "Task executed on Jenkins CI server after SVN commits")
 
-task generateRelease(dependsOn: ['continuousIntegration', subprojects.uploadPublished, 'zippedSources', 'zippedJavadoc'], 
-  group: "Release artifact",
-  description: "Generates and uploads a final release to Apache Nexus")
+task generateRelease(dependsOn: ['continuousIntegration', subprojects.uploadPublished, 'zippedSources', 'zippedJavadoc'],
+        group: "Release artifact",
+        description: "Generates and uploads a final release to Apache Nexus")
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '1.0-milestone-3'
-  description = "Regenerates the Gradle Wrapper files"
+    gradleVersion = '1.0-milestone-3'
+    description = "Regenerates the Gradle Wrapper files"
 }
 
 task zippedSources(type: Zip) {
-  description = "Creates a combined Zip file of all sub-project's sources"
-  group = "Release artifact"
+    description = "Creates a combined Zip file of all sub-project's sources"
+    group = "Release artifact"
 
-  destinationDir = buildDir
-  baseName = "apache-tapestry"
-  version = project.version
-  classifier = "sources"
+    destinationDir = buildDir
+    baseName = "apache-tapestry"
+    version = project.version
+    classifier = "sources"
 
-  from project.projectDir
-  exclude "**/.*/**"
-  exclude "**/bin/**"
-  exclude "**/target/**"
-  exclude "**/build/**"
-  exclude "**/test-output/**"  // Left around by TestNG sometimes 
+    from project.projectDir
+    exclude "**/.*/**"
+    exclude "**/bin/**"
+    exclude "**/target/**"
+    exclude "**/build/**"
+    exclude "**/test-output/**"  // Left around by TestNG sometimes
 }
 
 task zippedJavadoc(type: Zip, dependsOn: aggregateJavadoc) {
-  description = "Zip archive of the project's aggregate JavaDoc"
-  group = "Release artifact"
-  
-  destinationDir = buildDir  
-  baseName = "apache-tapestry"
-  version = project.version  
-  classifier = "javadocs"
-  
-  from javadocBuildDir.dir
-  into "apidocs"
+    description = "Zip archive of the project's aggregate JavaDoc"
+    group = "Release artifact"
+
+    destinationDir = buildDir
+    baseName = "apache-tapestry"
+    version = project.version
+    classifier = "javadocs"
+
+    from javadocBuildDir.dir
+    into "apidocs"
 }
 
-boolean isSnapshot() {
-  project.version.contains('SNAPSHOT')
+boolean isSnapshot()
+{
+    project.version.contains('SNAPSHOT')
 }
