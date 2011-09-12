@@ -27,7 +27,6 @@ import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.tree.*;
-import org.slf4j.Logger;
 
 import java.util.List;
 
@@ -129,9 +128,6 @@ public class Tree
         }
     };
 
-    @Inject
-    private Logger logger;
-
     /**
      * Renders a single node (which may be the last within its containing node).
      * This is a mix of immediate rendering, and queuing up various Blocks and Render commands
@@ -174,10 +170,6 @@ public class Tree
 
                 e.attribute("id", clientId);
 
-                logger.info(String.format("Selection model for %s is %s.",
-                        resources.getCompleteId(),
-                        selectionModel));
-
                 spec.put("leaf", node.isLeaf());
 
                 if (hasChildren)
@@ -206,11 +198,6 @@ public class Tree
                         {
                             spec.put("selected", true);
                         }
-
-                        logger.info(String.format("%s rendered node %s as selectable", resources.getCompleteId(), node.getId()));
-                    } else
-                    {
-                        logger.info(String.format("%s rendered node %s as NOT selectable", resources.getCompleteId(), node.getId()));
                     }
                 }
 
