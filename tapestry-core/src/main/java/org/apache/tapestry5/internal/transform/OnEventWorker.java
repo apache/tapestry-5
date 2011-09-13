@@ -332,13 +332,15 @@ public class OnEventWorker implements ComponentClassTransformWorker2
 
     private void addComponentIdValidationLogicOnPageLoad(PlasticClass plasticClass, Flow<EventHandlerMethod> eventHandlerMethods)
     {
-        ComponentIdValidator[] validators = extractComponentIdValidators(eventHandlerMethods);
-
-
-        if (validators.length > 0)
+        if (componentIdCheck)
         {
-            plasticClass.introduceInterface(PageLifecycleListener.class);
-            plasticClass.introduceMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_DESCRIPTION).addAdvice(new ValidateComponentIds(validators));
+            ComponentIdValidator[] validators = extractComponentIdValidators(eventHandlerMethods);
+
+            if (validators.length > 0)
+            {
+                plasticClass.introduceInterface(PageLifecycleListener.class);
+                plasticClass.introduceMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_DESCRIPTION).addAdvice(new ValidateComponentIds(validators));
+            }
         }
     }
 
