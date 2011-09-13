@@ -16,6 +16,7 @@ package org.apache.tapestry5.kaptcha.services;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.Resource;
@@ -44,7 +45,7 @@ public class KaptchaModule
     @Contribute(ComponentClassResolver.class)
     public static void provideLibraryMapping(Configuration<LibraryMapping> configuration)
     {
-        configuration.add(new LibraryMapping("core", "org.apache.tapestry5.kaptcha"));
+        configuration.add(new LibraryMapping(InternalConstants.CORE_LIBRARY, "org.apache.tapestry5.kaptcha"));
     }
 
     @Contribute(ComponentMessagesSource.class)

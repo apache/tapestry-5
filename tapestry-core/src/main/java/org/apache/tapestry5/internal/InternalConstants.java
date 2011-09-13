@@ -134,6 +134,14 @@ public final class InternalConstants
     public static final String CORE_STACK_NAME = "core";
 
     /**
+     * Virtual folder name for the core library. The core library is special as any component not present in another
+     * library (including the application library) is searched for inside core.
+     *
+     * @since 5.3
+     */
+    public static final String CORE_LIBRARY = "core";
+
+    /**
      * The names of the standard controlled subpackages.
      *
      * @since 5.3

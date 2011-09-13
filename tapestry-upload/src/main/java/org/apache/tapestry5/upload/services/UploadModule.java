@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,12 +14,10 @@
 
 package org.apache.tapestry5.upload.services;
 
-import java.io.File;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.io.FileCleaner;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
@@ -37,6 +35,9 @@ import org.apache.tapestry5.upload.internal.services.MultipartDecoderImpl;
 import org.apache.tapestry5.upload.internal.services.MultipartServletRequestFilter;
 import org.apache.tapestry5.upload.internal.services.UploadExceptionFilter;
 
+import java.io.File;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class UploadModule
 {
     private static final String NO_LIMIT = "-1";
@@ -47,16 +48,16 @@ public class UploadModule
     {
         // Add the component to the "core" library.
 
-        configuration.add(new LibraryMapping("core", "org.apache.tapestry5.upload"));
+        configuration.add(new LibraryMapping(InternalConstants.CORE_LIBRARY, "org.apache.tapestry5.upload"));
     }
 
     @Scope(ScopeConstants.PERTHREAD)
     public static MultipartDecoder buildMultipartDecoder(PerthreadManager perthreadManager,
 
-    RegistryShutdownHub shutdownHub,
+                                                         RegistryShutdownHub shutdownHub,
 
-    @Autobuild
-    MultipartDecoderImpl multipartDecoder)
+                                                         @Autobuild
+                                                         MultipartDecoderImpl multipartDecoder)
     {
         // This is proabably overkill since the FileCleaner should catch temporary files, but lets
         // be safe.
@@ -101,10 +102,10 @@ public class UploadModule
      * {@link org.apache.commons.fileupload.disk.DiskFileItemFactory}.
      */
     public static FileItemFactory buildDefaultFileItemFactory(@Symbol(UploadSymbols.REPOSITORY_THRESHOLD)
-    int repositoryThreshold,
+                                                              int repositoryThreshold,
 
-    @Symbol(UploadSymbols.REPOSITORY_LOCATION)
-    String repositoryLocation)
+                                                              @Symbol(UploadSymbols.REPOSITORY_LOCATION)
+                                                              String repositoryLocation)
     {
         return new DiskFileItemFactory(repositoryThreshold, new File(repositoryLocation));
     }

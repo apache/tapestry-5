@@ -46,17 +46,18 @@ public final class LibraryMapping
      * {@link ComponentClassResolver}, and the results are merged (though conflicts, where the same simple name appears
      * under multiple root packages, is not currently checked for).
      *
-     * @param virtualFolderName identifies the virtual folder "containing" the pages and components of the library. Prior to Tapestry
-     *                          5.2, the name could include a slash, but this is now expressly forbidden.
+     * @param virtualFolderName identifies the virtual folder "containing" the pages and components of the library. This may contain an embedded slash, but not a leading or trailing slash.
      * @param rootPackage       The root package to search.
      */
     public LibraryMapping(String virtualFolderName, String rootPackage)
     {
         assert InternalUtils.isNonBlank(rootPackage);
 
-        if (virtualFolderName.contains("/"))
+        if (virtualFolderName.startsWith("/") || virtualFolderName.endsWith("/"))
+        {
             throw new RuntimeException(
-                    "LibraryMapping path prefixes may no longer contain slashes (as of Tapestry 5.2).");
+                    "LibraryMapping path prefixes may not start with or end with a slash.");
+        }
 
         this.virtualFolderName = virtualFolderName;
         this.rootPackage = rootPackage;

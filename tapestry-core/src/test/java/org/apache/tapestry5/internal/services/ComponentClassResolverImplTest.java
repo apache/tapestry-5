@@ -14,13 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import static org.easymock.EasyMock.isA;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -31,6 +24,13 @@ import org.apache.tapestry5.services.LibraryMapping;
 import org.easymock.EasyMock;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import static org.easymock.EasyMock.isA;
 
 public class ComponentClassResolverImplTest extends InternalBaseTestCase
 {
@@ -203,7 +203,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         Logger logger = compliantLogger();
 
         String[] classNames =
-        { APP_ROOT_PACKAGE + ".pages.sub.HomePage", APP_ROOT_PACKAGE + ".pages.sub.SubIndex" };
+                {APP_ROOT_PACKAGE + ".pages.sub.HomePage", APP_ROOT_PACKAGE + ".pages.sub.SubIndex"};
 
         train_locateComponentClassNames(locator, APP_ROOT_PACKAGE + ".pages", classNames);
 
@@ -319,8 +319,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         {
             resolver.resolvePageNameToClassName("Unknown");
             unreachable();
-        }
-        catch (UnknownValueException ex)
+        } catch (UnknownValueException ex)
         {
             assertEquals(ex.getMessage(), "Unable to resolve \'Unknown\' to a page class name.");
             assertEquals(ex.getAvailableValues().toString(), "AvailableValues[Page names: Barney, Betty, Fred, Wilma]");
@@ -414,7 +413,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     }
 
     protected final void train_locateComponentClassNames(ClassNameLocator locator, String packageName,
-            String... classNames)
+                                                         String... classNames)
     {
         expect(locator.locateClassNames(packageName)).andReturn(Arrays.asList(classNames));
     }
@@ -539,25 +538,6 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         verify();
     }
 
-    @Test
-    public void slashes_trimmed_from_library_prefix()
-    {
-        String className = LIB_ROOT_PACKAGE + ".pages.MyLibPage";
-
-        ClassNameLocator locator = newClassNameLocator();
-        Logger logger = compliantLogger();
-
-        train_locateComponentClassNames(locator, LIB_ROOT_PACKAGE + ".pages", className);
-
-        replay();
-
-        ComponentClassResolver resolver = create(logger, locator, new LibraryMapping(LIB_PREFIX, LIB_ROOT_PACKAGE),
-                new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
-
-        assertEquals(resolver.resolvePageNameToClassName("lib/MyLibPage"), className);
-
-        verify();
-    }
 
     @Test
     public void lookup_by_logical_name_is_case_insensitive()
@@ -615,8 +595,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         {
             resolver.resolvePageClassNameToPageName(className);
             unreachable();
-        }
-        catch (IllegalArgumentException ex)
+        } catch (IllegalArgumentException ex)
         {
             assertEquals(ex.getMessage(), "Unable to resolve class name " + className + " to a logical page name.");
         }
@@ -640,8 +619,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         {
             resolver.canonicalizePageName("MissingPage");
             unreachable();
-        }
-        catch (UnknownValueException ex)
+        } catch (UnknownValueException ex)
         {
             assertEquals(ex.getMessage(), "Unable to resolve 'MissingPage' to a known page name.");
         }
@@ -665,8 +643,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         {
             resolver.resolvePageClassNameToPageName(className);
             unreachable();
-        }
-        catch (IllegalArgumentException ex)
+        } catch (IllegalArgumentException ex)
         {
             assertEquals(ex.getMessage(), "Unable to resolve class name " + className + " to a logical page name.");
         }
@@ -755,8 +732,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         {
             resolver.resolveMixinTypeToClassName("SimpleMixin");
             unreachable();
-        }
-        catch (UnknownValueException ex)
+        } catch (UnknownValueException ex)
         {
             assertMessageContains(ex, "Unable to resolve 'SimpleMixin' to a mixin class name.");
         }
@@ -778,8 +754,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         {
             resolver.resolveComponentTypeToClassName("SimpleComponent");
             unreachable();
-        }
-        catch (UnknownValueException ex)
+        } catch (UnknownValueException ex)
         {
             assertTrue(ex.getMessage().contains("Unable to resolve 'SimpleComponent' to a component class name."));
         }
@@ -816,8 +791,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
             ComponentClassResolverImpl.findCommonPackageNameForFolder("fred", packageNames);
 
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertEquals(
                     ex.getMessage(),
@@ -833,7 +807,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         Logger logger = compliantLogger();
 
         String[] classNames = new String[]
-        { APP_ROOT_PACKAGE + ".pages.exam.ExamIndex", APP_ROOT_PACKAGE + ".pages.exam.StartExam" };
+                {APP_ROOT_PACKAGE + ".pages.exam.ExamIndex", APP_ROOT_PACKAGE + ".pages.exam.StartExam"};
 
         train_locateComponentClassNames(locator, APP_ROOT_PACKAGE + ".pages", classNames);
 

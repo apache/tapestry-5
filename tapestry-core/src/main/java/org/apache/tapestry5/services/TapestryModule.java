@@ -426,20 +426,10 @@ public final class TapestryModule
         configuration.add(BindingConstants.SYMBOL, symbolBindingFactory);
     }
 
-    public static void contributeClasspathAssetAliasManager(MappedConfiguration<String, String> configuration,
-
-                                                            @Symbol(SymbolConstants.APPLICATION_VERSION)
-                                                            String applicationVersion,
-
-                                                            @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
-                                                            String appPackage,
-
-                                                            ComponentClassResolver resolver)
+    @Contribute(ClasspathAssetAliasManager.class)
+    public static void addMappingsForLibraryVirtualFolders(MappedConfiguration<String, String> configuration,
+                                                           ComponentClassResolver resolver)
     {
-        configuration.add("tapestry", "org/apache/tapestry5");
-
-        configuration.add("app", toPackagePath(appPackage));
-
         // Each library gets a mapping or its folder automatically
 
         Map<String, String> folderToPackageMapping = resolver.getFolderToPackageMapping();
@@ -448,7 +438,17 @@ public final class TapestryModule
         {
             configuration.add(folder, toPackagePath(folderToPackageMapping.get(folder)));
         }
+    }
 
+    @Contribute(ClasspathAssetAliasManager.class)
+    public static void addApplicationAndTapestryMappings(MappedConfiguration<String, String> configuration,
+
+                                                         @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
+                                                         String appPackage)
+    {
+        configuration.add("tapestry", "org/apache/tapestry5");
+
+        configuration.add("app", toPackagePath(appPackage));
     }
 
     /**
@@ -492,7 +492,7 @@ public final class TapestryModule
                                                 @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
                                                 String appRootPackage)
     {
-        configuration.add(new LibraryMapping("core", "org.apache.tapestry5.corelib"));
+        configuration.add(new LibraryMapping(InternalConstants.CORE_LIBRARY, "org.apache.tapestry5.corelib"));
         configuration.add(new LibraryMapping("", appRootPackage));
     }
 

@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,12 +35,11 @@ public class LibraryMappingTest extends TestBase
     {
         try
         {
-            new LibraryMapping("lib/1.0", "root.package");
+            new LibraryMapping("lib/", "root.package");
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
-            assertMessageContains(ex, "may no longer contain slashes");
+            assertMessageContains(ex, "path prefixes may not start with or end with a slash");
         }
     }
 }
