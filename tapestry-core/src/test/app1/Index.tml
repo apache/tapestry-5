@@ -187,6 +187,10 @@
     <li>
         <a href="music/details2">Missing page activation context</a>
     </li>
+    <li>
+        <a href="lib/alpha/root">Alpha Library Root</a> -- demonstrates libraries contributed with a slash in the name
+    </li>
+
 </ul>
 
 </html>

@@ -1,0 +1,8 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+
+<h1>Alpha Library Root</h1>
+
+<img id="t5logo" src="${asset:tapestry.png}"/>
+
+</html>
+

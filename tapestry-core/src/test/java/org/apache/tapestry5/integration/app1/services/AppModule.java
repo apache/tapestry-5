@@ -281,4 +281,11 @@ public class AppModule
     {
         configuration.add("properties");
     }
+
+    @Contribute(ComponentClassResolver.class)
+    public static void setupAlphaLibrary(Configuration<LibraryMapping> configuration)
+    {
+        configuration.add(new LibraryMapping("lib/alpha", "org.apache.tapestry5.integration.locallib.alpha"));
+    }
+
 }

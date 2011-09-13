@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.Dispatcher;
 import org.apache.tapestry5.services.Request;
@@ -25,6 +26,9 @@ import org.apache.tapestry5.services.assets.AssetRequestHandler;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,7 +42,15 @@ import java.util.Map;
 @UsesMappedConfiguration(AssetRequestHandler.class)
 public class AssetDispatcher implements Dispatcher
 {
-    private final Map<String, AssetRequestHandler> configuration;
+    /**
+     * Keyed on extended path name, which includes the pathPrefix first and a trailing slash.
+     */
+    private final Map<String, AssetRequestHandler> pathToHandler = CollectionFactory.newMap();
+
+    /**
+     * List of path prefixes in the pathToHandler, sorted be descending length.
+     */
+    private final List<String> assetPaths = CollectionFactory.newList();
 
     private final String pathPrefix;
 
@@ -49,11 +61,28 @@ public class AssetDispatcher implements Dispatcher
 
                            @Symbol(SymbolConstants.APPLICATION_FOLDER) String applicationFolder)
     {
-        this.configuration = configuration;
-
         String folder = applicationFolder.equals("") ? "" : "/" + applicationFolder;
 
         this.pathPrefix = folder + RequestConstants.ASSET_PATH_PREFIX + applicationVersion + "/";
+
+        for (String path : configuration.keySet())
+        {
+            String extendedPath = this.pathPrefix + path + "/";
+
+            pathToHandler.put(extendedPath, configuration.get(path));
+
+            assetPaths.add(extendedPath);
+        }
+
+        // Sort by descending length
+
+        Collections.sort(assetPaths, new Comparator<String>()
+        {
+            public int compare(String o1, String o2)
+            {
+                return o2.length() - o1.length();
+            }
+        });
     }
 
     public boolean dispatch(Request request, Response response) throws IOException
@@ -64,25 +93,26 @@ public class AssetDispatcher implements Dispatcher
         // looking for the asset path prefix right off the bat.
 
         if (!path.startsWith(pathPrefix))
+        {
             return false;
+        }
 
-        String virtualPath = path.substring(pathPrefix.length());
-
-        int slashx = virtualPath.indexOf('/');
-
-        String virtualFolder = virtualPath.substring(0, slashx);
-
-        AssetRequestHandler handler = configuration.get(virtualFolder);
-
-        if (handler != null)
+        for (String extendedPath : assetPaths)
         {
 
-            String extraPath = virtualPath.substring(slashx + 1);
+            if (path.startsWith(extendedPath))
+            {
+                AssetRequestHandler handler = pathToHandler.get(extendedPath);
 
-            boolean handled = handler.handleAssetRequest(request, response, extraPath);
+                String extraPath = path.substring(extendedPath.length());
 
-            if (handled)
-                return true;
+                boolean handled = handler.handleAssetRequest(request, response, extraPath);
+
+                if (handled)
+                {
+                    return true;
+                }
+            }
         }
 
         response.sendError(HttpServletResponse.SC_NOT_FOUND, path);

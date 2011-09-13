@@ -1,10 +1,9 @@
 package org.apache.tapestry5.integration.appfolder
 
-import org.apache.tapestry5.integration.TapestryCoreTestCase
+import org.apache.tapestry5.integration.GroovyTapestryCoreTestCase
 import org.testng.annotations.Test
-import org.apache.tapestry5.test.TapestryTestConstants
 
-class AppFolderTests extends TapestryCoreTestCase
+class AppFolderTests extends GroovyTapestryCoreTestCase
 {
 
     /**
@@ -48,7 +47,8 @@ class AppFolderTests extends TapestryCoreTestCase
     }
 
     @Test
-    void asset_access() {
+    void asset_access()
+    {
         openLinks "t5app/"
 
         // Ony one image on page
@@ -56,12 +56,6 @@ class AppFolderTests extends TapestryCoreTestCase
 
         assert assetURL.startsWith("/t5app/assets/")
 
-        URL url = new URL(getBaseURL() + assetURL.substring(1))
-
-        byte[] downloaded = url.bytes
-
-        byte[] actual = new File(TapestryTestConstants.MODULE_BASE_DIR, "src/test/appfolder/images/t5-logo.png").bytes
-
-        assertEquals downloaded, actual, "Contents of t5-logo.png do not match"
+        assertDownloadedAsset assetURL, "src/test/appfolder/images/t5-logo.png"
     }
 }
