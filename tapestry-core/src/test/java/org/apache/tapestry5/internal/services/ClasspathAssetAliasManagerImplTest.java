@@ -18,7 +18,6 @@ import org.apache.tapestry5.internal.services.assets.AssetPathConstructorImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
-
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.Request;
 import org.testng.annotations.DataProvider;
@@ -34,9 +33,9 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
     {
         Map<String, String> configuration = CollectionFactory.newMap();
 
-        configuration.put("tapestry", "org/apache/tapestry5/");
-        configuration.put("tapestry-internal", "org/apache/tapestry5/internal/");
-        configuration.put("mylib/", "com/example/mylib/");
+        configuration.put("tapestry", "org/apache/tapestry5");
+        configuration.put("tapestry-internal", "org/apache/tapestry5/internal");
+        configuration.put("mylib", "com/example/mylib");
 
         return configuration;
     }
@@ -46,16 +45,15 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
     {
         Map<String, String> configuration = CollectionFactory.newMap();
 
-        configuration.put("old/style", "com/myco/old/style/library");
+        configuration.put("slash/at/end/", "com/myco/old/style/library");
 
         try
         {
             new ClasspathAssetAliasManagerImpl(null, configuration);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
-            assertMessageContains(ex, "change the ComponentClassAsssetAliasManager contribution for 'old/style'.");
+            assertMessageContains(ex, "Contribution of folder name 'slash/at/end/' is invalid as it may not start with or end with a slash");
         }
     }
 
@@ -103,8 +101,7 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
         {
             manager.toClientURL("org/example/icons/flag.gif");
             unreachable();
-        }
-        catch (UnknownValueException ex)
+        } catch (UnknownValueException ex)
         {
             assertMessageContains(ex, "Unable to create a client URL for classpath resource org/example/icons/flag.gif");
 
@@ -117,11 +114,11 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
     public Object[][] to_client_url_data()
     {
         return new Object[][]
-        {
-        { "com/example/mylib/Foo.bar", "mylib/Foo.bar" },
-        { "com/example/mylib/nested/Foo.bar", "mylib/nested/Foo.bar" },
-        { "org/apache/tapestry5/internal/Foo.bar", "tapestry-internal/Foo.bar" },
-        { "org/apache/tapestry5/Foo.bar", "tapestry/Foo.bar" }, };
+                {
+                        {"com/example/mylib/Foo.bar", "mylib/Foo.bar"},
+                        {"com/example/mylib/nested/Foo.bar", "mylib/nested/Foo.bar"},
+                        {"org/apache/tapestry5/internal/Foo.bar", "tapestry-internal/Foo.bar"},
+                        {"org/apache/tapestry5/Foo.bar", "tapestry/Foo.bar"},};
     }
 
 }

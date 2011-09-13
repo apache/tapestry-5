@@ -14,16 +14,16 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManager
 {
@@ -49,24 +49,19 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
      */
     public ClasspathAssetAliasManagerImpl(AssetPathConstructor assetPathConstructor,
 
-    Map<String, String> configuration)
+                                          Map<String, String> configuration)
     {
         this.assetPathConstructor = assetPathConstructor;
 
         for (Map.Entry<String, String> e : configuration.entrySet())
         {
-            String alias = withOutSlash(e.getKey());
+            String alias = verify("folder name", e.getKey());
 
-            if (alias.contains("/"))
-                throw new RuntimeException(String.format(
-                        "Virtual folder names (for component libraries) may no longer contain slashes as of Tapestry 5.2. "
-                                + "You must change the ComponentClassAsssetAliasManager contribution for '%s'.", alias));
 
-            String path = withOutSlash(e.getValue());
+            String path = verify("path", e.getValue());
 
             aliasToPathPrefix.put(alias, path);
             pathPrefixToAlias.put(path, alias);
-
         }
 
         Comparator<String> sortDescendingByLength = new Comparator<String>()
@@ -82,6 +77,17 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
 
         sortedPathPrefixes = CollectionFactory.newList(aliasToPathPrefix.values());
         Collections.sort(sortedPathPrefixes, sortDescendingByLength);
+    }
+
+    private String verify(String name, String input)
+    {
+
+        if (input.startsWith("/") || input.endsWith("/"))
+            throw new RuntimeException(String.format("Contribution of %s '%s' is invalid as it may not start with or end with a slash.",
+                    name, input));
+
+        return input;
+
     }
 
     private String withOutSlash(String input)
