@@ -261,7 +261,7 @@ public class LinkImplTest extends InternalBaseTestCase
 
     /**
      * TAP5-922
-     * 
+     *
      * @since 5.3
      */
     @Test
@@ -282,6 +282,27 @@ public class LinkImplTest extends InternalBaseTestCase
         assertEquals(link.toURI(), expectedURI);
 
         verify();
-
     }
+
+    @Test
+    public void force_link_to_secure()
+    {
+        Response response = mockResponse();
+        BaseURLSource baseURLSource = mockBaseURLSource();
+
+        train_getBaseURL(baseURLSource, true, SECURE_BASE_URL);
+
+        train_encodeURL(response, SECURE_BASE_URL + BASE_PATH, ENCODED);
+
+        replay();
+
+        Link link = new LinkImpl(BASE_PATH, false, LinkSecurity.INSECURE, response, null, baseURLSource);
+
+        link.setSecurity(LinkSecurity.FORCE_SECURE);
+
+        assertEquals(link.toAbsoluteURI(), ENCODED);
+
+        verify();
+    }
+
 }

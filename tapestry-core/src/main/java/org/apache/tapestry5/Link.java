@@ -14,12 +14,13 @@
 
 package org.apache.tapestry5;
 
-import java.util.List;
-
 import org.apache.commons.codec.net.URLCodec;
+import org.apache.tapestry5.internal.services.LinkSecurity;
 import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.ContextPathEncoder;
 import org.apache.tapestry5.services.Request;
+
+import java.util.List;
 
 /**
  * A link is the Tapestry representation of a URL or URI that triggers dynamic behavior. This link is in three parts: a
@@ -35,7 +36,7 @@ public interface Link
      * Returns the names of any additional query parameters for the URI. Query parameters store less regular or less
      * often used values that can not be expressed in the path. They also are used to store, or link to, persistent
      * state.
-     * 
+     *
      * @return list of query parameter names, is alphabetical order
      */
     List<String> getParameterNames();
@@ -43,7 +44,7 @@ public interface Link
     /**
      * Returns the value of a specifically named query parameter, or <tt>null</tt> if no such query parameter is stored
      * in the link.
-     * 
+     *
      * @return the string value of the named parameter
      */
     String getParameterValue(String name);
@@ -51,13 +52,10 @@ public interface Link
     /**
      * Adds a parameter value. The value will be added, as is, to the URL. In many cases, the value should be URL
      * encoded via {@link URLCodec}.
-     * 
-     * @param parameterName
-     *            the name of the parameter to store
-     * @param value
-     *            the value to store, a null or blank value is allowed (as of Tapestry 5.3)
-     * @throws IllegalArgumentException
-     *             if the link already has a parameter with the given name
+     *
+     * @param parameterName the name of the parameter to store
+     * @param value         the value to store, a null or blank value is allowed (as of Tapestry 5.3)
+     * @throws IllegalArgumentException if the link already has a parameter with the given name
      */
     void addParameter(String parameterName, String value);
 
@@ -65,7 +63,7 @@ public interface Link
      * Adds a parameter value as a value object; the value object is converted to a string via
      * {@link ContextPathEncoder#encodeValue(Object)} and the result is added via {@link #addParameter(String, String)}.
      * The Link object is returned for further configuration.
-     * 
+     *
      * @since 5.2.2
      */
     Link addParameterValue(String parameterName, Object value);
@@ -73,7 +71,7 @@ public interface Link
     /**
      * Removes a parameter value, which is occasionally useful when transforming a parameter into a portion of
      * the path.
-     * 
+     *
      * @since 5.2.0
      */
     void removeParameter(String parameterName);
@@ -81,7 +79,7 @@ public interface Link
     /**
      * Returns the completely unadorned base path. Other methods (such as {@link #toURI()}), may append
      * an anchor or query parameters.
-     * 
+     *
      * @since 5.2.0
      */
     String getBasePath();
@@ -89,7 +87,7 @@ public interface Link
     /**
      * Creates a copy of this link that has the same parameters, anchor, and other attributes, but a different
      * {@linkplain #getBasePath() base path}.
-     * 
+     *
      * @since 5.2.0
      */
     Link copyWithBasePath(String basePath);
@@ -97,7 +95,7 @@ public interface Link
     /**
      * Returns the URI portion of the link. When the link is created for a form, this will not include query parameters.
      * This is the same value returned from toString().
-     * 
+     *
      * @return the URI, ready to be added as an element attribute
      */
     String toURI();
@@ -109,16 +107,15 @@ public interface Link
 
     /**
      * Returns the link anchor. If this link does not have an anchor, this method returns <tt>null</tt>.
-     * 
+     *
      * @return the link anchor
      */
     String getAnchor();
 
     /**
      * Sets the link anchor. Null and empty anchors will be ignored when building the link URI.
-     * 
-     * @param anchor
-     *            the link anchor
+     *
+     * @param anchor the link anchor
      */
     void setAnchor(String anchor);
 
@@ -126,10 +123,10 @@ public interface Link
      * Returns the absolute URL, which includes the scheme, hostname and possibly port (as per
      * {@link BaseURLSource#getBaseURL(boolean)}).
      * By default, the scheme is chosen to match the current {@linkplain Request#isSecure() requests security}.
-     * <p>
+     * <p/>
      * Note: the semantics of this method changed between Tapestry 5.1 and 5.2. Most code should use toString() or
      * {@link #toURI()} (which are equivalent) instead.
-     * 
+     *
      * @return the complete, qualified URL, including query parameters.
      */
     String toAbsoluteURI();
@@ -137,9 +134,25 @@ public interface Link
     /**
      * Returns either the secure or insecure URL, with complete scheme, hostname and possibly port (as per
      * {@link BaseURLSource#getBaseURL(boolean)}).
-     * 
-     * @since 5.2.2
+     *
      * @return the complete, qualified URL, including query parameters.
+     * @since 5.2.2
      */
     String toAbsoluteURI(boolean secure);
+
+    /**
+     * Changes the link's security, which can be useful to force a link to be either secure or insecure
+     * when normally it might not be.
+     *
+     * @param newSecurity new security value, not null, typically {@link LinkSecurity#FORCE_SECURE} or {@link LinkSecurity#FORCE_INSECURE}
+     * @since 5.3
+     */
+    void setSecurity(LinkSecurity newSecurity);
+
+    /**
+     * Returns the current security for this link, which reflects whether the targetted page is itself secure or insecure.
+     *
+     * @since 5.3
+     */
+    LinkSecurity getSecurity();
 }

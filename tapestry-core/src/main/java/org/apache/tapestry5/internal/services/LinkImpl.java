@@ -14,15 +14,15 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.ContextPathEncoder;
 import org.apache.tapestry5.services.Response;
+
+import java.util.List;
+import java.util.Map;
 
 public class LinkImpl implements Link
 {
@@ -43,7 +43,7 @@ public class LinkImpl implements Link
     private String anchor;
 
     public LinkImpl(String basePath, boolean forForm, LinkSecurity defaultSecurity, Response response,
-            ContextPathEncoder contextPathEncoder, BaseURLSource baseURLSource)
+                    ContextPathEncoder contextPathEncoder, BaseURLSource baseURLSource)
     {
         assert basePath != null;
 
@@ -121,6 +121,18 @@ public class LinkImpl implements Link
         return buildAnchoredURI(secure ? LinkSecurity.FORCE_SECURE : LinkSecurity.FORCE_INSECURE);
     }
 
+    public void setSecurity(LinkSecurity newSecurity)
+    {
+        assert newSecurity != null;
+
+        defaultSecurity = newSecurity;
+    }
+
+    public LinkSecurity getSecurity()
+    {
+        return defaultSecurity;
+    }
+
     public String toRedirectURI()
     {
         return appendAnchor(response.encodeRedirectURL(buildURI(defaultSecurity)));
@@ -152,7 +164,7 @@ public class LinkImpl implements Link
 
     /**
      * Extends the absolute path with any query parameters. Query parameters are never added to a forForm link.
-     * 
+     *
      * @return absoluteURI appended with query parameters
      */
     private String buildURI(LinkSecurity security)
