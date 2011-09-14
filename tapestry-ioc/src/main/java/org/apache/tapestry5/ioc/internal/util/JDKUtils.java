@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,9 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * Internal utilities for identifying the JDK version, used in the rare cases
  * that we are patching around JDK bugs.
@@ -28,5 +31,17 @@ public class JDKUtils
     private static boolean isVersion(String versionId)
     {
         return System.getProperty("java.specification.version").equals(versionId);
+    }
+
+    /**
+     * Returns a {@link ReentrantLock} used to serialize access to the construction of a thread local; this is only needed under JDK 1.5 (due to a bug in the JDK);
+     * for other JDKs, a {@link DummyLock} is returned.
+     *
+     * @return lock to use when creating
+     * @since 5.3
+     */
+    public static Lock createLockForThreadLocalCreation()
+    {
+        return JDK_1_5 ? new ReentrantLock() : new DummyLock();
     }
 }

@@ -14,26 +14,23 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.DummyLock;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.JDKUtils;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
 import org.slf4j.Logger;
 
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+
 @SuppressWarnings("all")
 public class PerthreadManagerImpl implements PerthreadManager
 {
-    private final Lock lock;
+    private final Lock lock = JDKUtils.createLockForThreadLocalCreation();
 
     private final PerThreadValue<List<ThreadCleanupListener>> listenersValue;
 
@@ -54,14 +51,7 @@ public class PerthreadManagerImpl implements PerthreadManager
 
     public PerthreadManagerImpl(Logger logger)
     {
-        this(logger, JDKUtils.JDK_1_5);
-    }
-
-    PerthreadManagerImpl(Logger logger, boolean useSynchronization)
-    {
         this.logger = logger;
-
-        lock = useSynchronization ? new ReentrantLock() : new DummyLock();
 
         listenersValue = createValue();
     }
@@ -73,8 +63,7 @@ public class PerthreadManagerImpl implements PerthreadManager
             lock.lock();
 
             return holder.get();
-        }
-        finally
+        } finally
         {
             lock.unlock();
         }
@@ -113,8 +102,7 @@ public class PerthreadManagerImpl implements PerthreadManager
             try
             {
                 listener.threadDidCleanup();
-            }
-            catch (Exception ex)
+            } catch (Exception ex)
             {
                 logger.warn(ServiceMessages.threadCleanupError(listener, ex), ex);
             }
@@ -133,8 +121,7 @@ public class PerthreadManagerImpl implements PerthreadManager
             // released to the GC.
 
             holder.remove();
-        }
-        finally
+        } finally
         {
             lock.unlock();
         }
@@ -194,8 +181,7 @@ public class PerthreadManagerImpl implements PerthreadManager
         try
         {
             runnable.run();
-        }
-        finally
+        } finally
         {
             cleanup();
         }
@@ -206,8 +192,7 @@ public class PerthreadManagerImpl implements PerthreadManager
         try
         {
             return invokable.invoke();
-        }
-        finally
+        } finally
         {
             cleanup();
         }

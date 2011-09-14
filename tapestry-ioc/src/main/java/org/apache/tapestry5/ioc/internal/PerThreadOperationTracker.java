@@ -1,4 +1,4 @@
-//  Copyright 2008, 2009 The Apache Software Foundation
+//  Copyright 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,10 @@ package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.internal.util.JDKUtils;
 import org.slf4j.Logger;
+
+import java.util.concurrent.locks.Lock;
 
 /**
  * Manages a per-thread OperationTracker using a ThreadLocal.
@@ -24,6 +27,8 @@ import org.slf4j.Logger;
 public class PerThreadOperationTracker implements OperationTracker
 {
     private final Logger logger;
+
+    private final Lock lock = JDKUtils.createLockForThreadLocalCreation();
 
     private final ThreadLocal<OperationTrackerImpl> perThread = new ThreadLocal<OperationTrackerImpl>()
     {
@@ -39,14 +44,29 @@ public class PerThreadOperationTracker implements OperationTracker
         this.logger = logger;
     }
 
-    synchronized OperationTracker get()
+    OperationTracker get()
     {
-        return perThread.get();
+        try
+        {
+            lock.lock();
+
+            return perThread.get();
+        } finally
+        {
+            lock.unlock();
+        }
     }
 
-    synchronized void cleanup()
+    void cleanup()
     {
-        if (perThread.get().isEmpty()) perThread.remove();
+        try
+        {
+            lock.lock();
+            if (perThread.get().isEmpty()) perThread.remove();
+        } finally
+        {
+            lock.unlock();
+        }
     }
 
     public void run(String description, Runnable operation)
@@ -54,8 +74,7 @@ public class PerThreadOperationTracker implements OperationTracker
         try
         {
             get().run(description, operation);
-        }
-        finally
+        } finally
         {
             cleanup();
         }
@@ -66,8 +85,7 @@ public class PerThreadOperationTracker implements OperationTracker
         try
         {
             return get().invoke(description, operation);
-        }
-        finally
+        } finally
         {
             cleanup();
         }
