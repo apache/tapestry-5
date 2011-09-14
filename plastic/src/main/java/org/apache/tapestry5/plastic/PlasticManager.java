@@ -14,14 +14,15 @@
 
 package org.apache.tapestry5.plastic;
 
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.Set;
-
 import org.apache.tapestry5.internal.plastic.Lockable;
 import org.apache.tapestry5.internal.plastic.NoopDelegate;
 import org.apache.tapestry5.internal.plastic.PlasticClassPool;
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
+
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.Set;
+import java.util.concurrent.locks.Lock;
 
 /**
  * Manages the internal class loaders and other logics necessary to load and transform existing classes,
@@ -96,7 +97,7 @@ public class PlasticManager implements PlasticClassListenerHub
 
         /**
          * Creates the PlasticManager with the current set of options.
-         * 
+         *
          * @return the PlasticManager
          */
         public PlasticManager create()
@@ -115,7 +116,9 @@ public class PlasticManager implements PlasticClassListenerHub
         return withClassLoader(Thread.currentThread().getContextClassLoader());
     }
 
-    /** Creates a new builder using the specified class loader. */
+    /**
+     * Creates a new builder using the specified class loader.
+     */
     public static PlasticManagerBuilder withClassLoader(ClassLoader loader)
     {
         return new PlasticManagerBuilder(loader);
@@ -124,19 +127,15 @@ public class PlasticManager implements PlasticClassListenerHub
     /**
      * The standard constructor for PlasticManager, allowing a parent class loader to be specified (this is most often
      * the thread's contextClassLoader), as well as the delegate and the names of all controlled packages.
-     * 
-     * @param parentClassLoader
-     *            main source for (untransformed) classes
-     * @param delegate
-     *            performs transformations on top-level classes from controlled packages
-     * @param controlledPackageNames
-     *            defines the packages that are to be transformed; top-classes in these packages
-     *            (or sub-packages) will be passed to the delegate for transformation
-     * @param options
-     *            used when transforming classes
+     *
+     * @param parentClassLoader      main source for (untransformed) classes
+     * @param delegate               performs transformations on top-level classes from controlled packages
+     * @param controlledPackageNames defines the packages that are to be transformed; top-classes in these packages
+     *                               (or sub-packages) will be passed to the delegate for transformation
+     * @param options                used when transforming classes
      */
     private PlasticManager(ClassLoader parentClassLoader, PlasticManagerDelegate delegate,
-            Set<String> controlledPackageNames, Set<TransformationOption> options)
+                           Set<String> controlledPackageNames, Set<TransformationOption> options)
     {
         assert parentClassLoader != null;
         assert delegate != null;
@@ -149,7 +148,7 @@ public class PlasticManager implements PlasticClassListenerHub
      * Returns the ClassLoader that is used to instantiate transformed classes. The parent class loader
      * of the returned class loader is the context class loader, or the class loader specified by
      * {@link #withClassLoader(ClassLoader)}.
-     * 
+     *
      * @return class loader used to load classes in controlled packages
      */
     public ClassLoader getClassLoader()
@@ -163,7 +162,7 @@ public class PlasticManager implements PlasticClassListenerHub
      * PlasticClassTransformation.
      * TODO: This may make a kind of callback when we get to proxy creation, rather then pure transformation.
      * TODO: Clean up this mess!
-     * 
+     *
      * @throws ClassNotFoundException
      */
     <T> PlasticClassTransformation<T> getPlasticClass(String className) throws ClassNotFoundException
@@ -175,14 +174,12 @@ public class PlasticManager implements PlasticClassListenerHub
 
     /**
      * Gets the {@link ClassInstantiator} for the indicated class, which must be in a transformed package.
-     * 
-     * @param className
-     *            fully qualified class name
+     *
+     * @param className fully qualified class name
      * @return instantiator (configured via the
      *         {@linkplain PlasticManagerDelegate#configureInstantiator(String, ClassInstantiator) delegate} for the
      *         class
-     * @throws IllegalArgumentException
-     *             if the class is not a transformed class
+     * @throws IllegalArgumentException if the class is not a transformed class
      */
     public <T> ClassInstantiator<T> getClassInstantiator(String className)
     {
@@ -191,11 +188,9 @@ public class PlasticManager implements PlasticClassListenerHub
 
     /**
      * Creates an entirely new class, extending from the provided base class.
-     * 
-     * @param baseClass
-     *            class to extend from, which must be a class, not an interface
-     * @param callback
-     *            used to configure the new class
+     *
+     * @param baseClass class to extend from, which must be a class, not an interface
+     * @param callback  used to configure the new class
      * @return the instantiator, which allows instances of the new class to be created
      */
     public <T> ClassInstantiator<T> createClass(Class<T> baseClass, PlasticClassTransformer callback)
@@ -218,11 +213,9 @@ public class PlasticManager implements PlasticClassListenerHub
 
     /**
      * Creates an entirely new class. The class extends from Object and implements the provided interface.
-     * 
-     * @param interfaceType
-     *            class to extend from, which must be a class, not an interface
-     * @param callback
-     *            used to configure the new class
+     *
+     * @param interfaceType class to extend from, which must be a class, not an interface
+     * @param callback      used to configure the new class
      * @return the instantiator, which allows instances of the new class to be created
      * @see #createProxyTransformation(Class)
      */
@@ -241,9 +234,8 @@ public class PlasticManager implements PlasticClassListenerHub
      * Creates the underlying {@link PlasticClassTransformation} for an interface proxy. This should only be
      * used in the cases where encapsulating the PlasticClass construction into a {@linkplain PlasticClassTransformer
      * callback} is not feasible (which is the case for some of the older APIs inside Tapestry IoC).
-     * 
-     * @param interfaceType
-     *            class proxy will extend from
+     *
+     * @param interfaceType class proxy will extend from
      * @return transformation from which an instantiator may be created
      */
     public <T> PlasticClassTransformation<T> createProxyTransformation(Class interfaceType)
@@ -272,5 +264,14 @@ public class PlasticManager implements PlasticClassListenerHub
     public void removePlasticClassListener(PlasticClassListener listener)
     {
         pool.removePlasticClassListener(listener);
+    }
+
+    /**
+     * Returns a {@link Lock} that can be used to ensure synchronization with the manager's class loading and
+     * class transformation.
+     */
+    public Lock getClassloaderLock()
+    {
+        return pool.getClassLoaderLock();
     }
 }
