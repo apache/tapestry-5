@@ -614,7 +614,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
             }
         }
 
-        if (commonTerms <= 1)
+        if (commonTerms < 1)
             return null;
 
         return commonPackageName.substring(0, commonLength);
