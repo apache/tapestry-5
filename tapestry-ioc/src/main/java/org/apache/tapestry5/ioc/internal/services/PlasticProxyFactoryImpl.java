@@ -28,6 +28,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
 
 public class PlasticProxyFactoryImpl implements PlasticProxyFactory
 {
@@ -35,11 +36,11 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
 
     private final ClassLoader loader;
 
-    public PlasticProxyFactoryImpl(ClassLoader parentClassLoader, Logger logger)
+    public PlasticProxyFactoryImpl(ClassLoader parentClassLoader, Logger logger, Lock classLoaderLock)
     {
         this.loader = parentClassLoader;
 
-        manager = PlasticManager.withClassLoader(parentClassLoader).create();
+        manager = PlasticManager.withClassLoader(parentClassLoader).classLoaderLock(classLoaderLock).create();
 
         if (logger != null)
         {
@@ -50,6 +51,11 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
     public ClassLoader getClassLoader()
     {
         return manager.getClassLoader();
+    }
+
+    public Lock getClassLoaderLock()
+    {
+        return manager.getClassloaderLock();
     }
 
     public <T> ClassInstantiator<T> createProxy(Class<T> interfaceType, PlasticClassTransformer callback)

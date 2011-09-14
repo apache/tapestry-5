@@ -23,13 +23,13 @@ import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry5.ioc.internal.services.PlasticProxyFactoryImpl;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.DummyLock;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFab;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.MethodSignature;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
-import static org.easymock.EasyMock.contains;
 import org.slf4j.Logger;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -39,6 +39,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Set;
+
+import static org.easymock.EasyMock.contains;
 
 public class DefaultModuleDefImplTest extends IOCTestCase
 {
@@ -52,7 +54,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     public void setup()
     {
         classFactory = new ClassFactoryImpl();
-        proxyFactory = new PlasticProxyFactoryImpl(Thread.currentThread().getContextClassLoader(), null);
+        proxyFactory = new PlasticProxyFactoryImpl(Thread.currentThread().getContextClassLoader(), null, new DummyLock());
     }
 
     @AfterClass
@@ -225,8 +227,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
             new DefaultModuleDefImpl(ServiceIdConflictMethodModule.class, logger, proxyFactory);
 
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertMessageContains(
                     ex,
@@ -250,8 +251,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         {
             new DefaultModuleDefImpl(VoidBuilderMethodModule.class, logger, null);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(), IOCMessages.buildMethodWrongReturnType(m));
         }
@@ -272,8 +272,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         {
             new DefaultModuleDefImpl(BuilderMethodModule.class, logger, null);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(), IOCMessages.buildMethodWrongReturnType(m));
         }
@@ -299,8 +298,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         {
             new DefaultModuleDefImpl(moduleClass, logger, null);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(), IOCMessages.decoratorMethodWrongReturnType(m));
         }
@@ -379,8 +377,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         {
             new DefaultModuleDefImpl(moduleClass, logger, null);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertEquals(
                     ex.getMessage(),
@@ -404,8 +401,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         {
             new DefaultModuleDefImpl(moduleClass, logger, null);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertEquals(
                     ex.getMessage(),
@@ -464,8 +460,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         {
             new DefaultModuleDefImpl(UninstantiableAutobuildServiceModule.class, logger, null);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertMessageContains(
                     ex,
@@ -486,8 +481,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         {
             new DefaultModuleDefImpl(NonStaticBindMethodModule.class, logger, proxyFactory);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertMessageContains(ex,
                     "Method org.apache.tapestry5.ioc.internal.NonStaticBindMethodModule.bind(ServiceBinder)",
@@ -545,8 +539,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         {
             new DefaultModuleDefImpl(ExceptionInBindMethod.class, logger, proxyFactory);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertTrue(ex.getMessage().matches(
                     "Error invoking service binder method org.apache.tapestry5.ioc.internal.ExceptionInBindMethod.bind\\(ServiceBinder\\) "
