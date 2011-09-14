@@ -161,7 +161,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
         hub.addUpdateListener(this);
     }
 
-    public synchronized void checkForUpdates()
+    public void checkForUpdates()
     {
         if (changeTracker.containsChanges())
         {
@@ -171,8 +171,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
     public void objectWasInvalidated()
     {
-        changeTracker.clear();
-        classToInstantiator.clear();
+        classLoaderLock.lock();
 
         // Release the existing class pool, loader and so forth.
         // Create a new one.
@@ -186,38 +185,55 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
      */
     private void initializeService()
     {
-        PlasticManagerBuilder builder = PlasticManager.withClassLoader(parent).delegate(this)
-                .packages(controlledPackageNames).classLoaderLock(classLoaderLock);
+        classLoaderLock.lock();
 
-        if (!productionMode)
+        try
         {
-            builder.enable(TransformationOption.FIELD_WRITEBEHIND);
+
+            PlasticManagerBuilder builder = PlasticManager.withClassLoader(parent).delegate(this)
+                    .packages(controlledPackageNames).classLoaderLock(classLoaderLock);
+
+            if (!productionMode)
+            {
+                builder.enable(TransformationOption.FIELD_WRITEBEHIND);
+            }
+
+            manager = builder.create();
+
+            manager.addPlasticClassListener(this);
+
+            classFactory = new ClassFactoryImpl(manager.getClassLoader(), logger);
+
+            proxyFactory = new PlasticProxyFactoryImpl(manager.getClassLoader(), logger, classLoaderLock);
+
+            classToInstantiator.clear();
+            classToModel.clear();
+        } finally
+        {
+            classLoaderLock.unlock();
         }
-
-        manager = builder.create();
-
-        manager.addPlasticClassListener(this);
-
-        classFactory = new ClassFactoryImpl(manager.getClassLoader(), logger);
-
-        proxyFactory = new PlasticProxyFactoryImpl(manager.getClassLoader(), logger, classLoaderLock);
-
-        classToInstantiator.clear();
-        classToModel.clear();
     }
 
-    public synchronized Instantiator getInstantiator(final String className)
+    public Instantiator getInstantiator(final String className)
     {
-        Instantiator result = classToInstantiator.get(className);
+        classLoaderLock.lock();
 
-        if (result == null)
+        try
         {
-            result = createInstantiatorForClass(className);
+            Instantiator result = classToInstantiator.get(className);
 
-            classToInstantiator.put(className, result);
+            if (result == null)
+            {
+                result = createInstantiatorForClass(className);
+
+                classToInstantiator.put(className, result);
+            }
+
+            return result;
+        } finally
+        {
+            classLoaderLock.unlock();
         }
-
-        return result;
     }
 
     private Instantiator createInstantiatorForClass(final String className)
