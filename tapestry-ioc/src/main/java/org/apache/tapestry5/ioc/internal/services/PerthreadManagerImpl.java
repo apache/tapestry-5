@@ -58,10 +58,10 @@ public class PerthreadManagerImpl implements PerthreadManager
 
     private Map getPerthreadMap()
     {
+        lock.lock();
+
         try
         {
-            lock.lock();
-
             return holder.get();
         } finally
         {

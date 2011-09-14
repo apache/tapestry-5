@@ -46,10 +46,10 @@ public class PerThreadOperationTracker implements OperationTracker
 
     OperationTracker get()
     {
+        lock.lock();
+
         try
         {
-            lock.lock();
-
             return perThread.get();
         } finally
         {
