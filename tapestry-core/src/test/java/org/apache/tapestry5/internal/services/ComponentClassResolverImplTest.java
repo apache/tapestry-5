@@ -781,7 +781,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     @Test
     public void expect_failure_when_no_common_package()
     {
-        List<String> packageNames = CollectionFactory.newList("org.example.app.main", "org.demo.app.sub");
+        List<String> packageNames = CollectionFactory.newList("org.example.app.main", "demo.app.sub");
 
         // "org" isn't good enough, we expect at least two terms.
 
@@ -795,7 +795,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "Package names for library folder 'fred' (org.demo.app.sub, org.example.app.main) can not be reduced to a common base package (of at least two terms).");
+                    "Package names for library folder 'fred' (demo.app.sub, org.example.app.main) can not be reduced to a common base package (of at least one term).");
         }
 
     }

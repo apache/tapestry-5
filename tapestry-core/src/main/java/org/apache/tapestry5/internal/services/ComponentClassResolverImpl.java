@@ -568,7 +568,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         if (packageName == null)
             throw new RuntimeException(
                     String.format(
-                            "Package names for library folder '%s' (%s) can not be reduced to a common base package (of at least two terms).",
+                            "Package names for library folder '%s' (%s) can not be reduced to a common base package (of at least one term).",
                             folder, InternalUtils.joinSorted(packageNames)));
         return packageName;
     }
@@ -614,7 +614,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
             }
         }
 
-        if (commonTerms < 2)
+        if (commonTerms <= 1)
             return null;
 
         return commonPackageName.substring(0, commonLength);
