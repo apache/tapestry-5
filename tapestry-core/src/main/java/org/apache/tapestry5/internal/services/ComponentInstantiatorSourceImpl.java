@@ -171,6 +171,8 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
     public void objectWasInvalidated()
     {
+        classLoaderLock.lock();
+
         // Release the existing class pool, loader and so forth.
         // Create a new one.
 
