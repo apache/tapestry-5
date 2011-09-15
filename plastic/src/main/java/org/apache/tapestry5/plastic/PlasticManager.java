@@ -204,20 +204,11 @@ public class PlasticManager implements PlasticClassListenerHub
 
         String name = String.format("$%s_%s", baseClass.getSimpleName(), PlasticUtils.nextUID());
 
-        lock();
+        PlasticClassTransformation<T> transformation = pool.createTransformation(baseClass.getName(), name);
 
-        try
-        {
+        callback.transform(transformation.getPlasticClass());
 
-            PlasticClassTransformation<T> transformation = pool.createTransformation(baseClass.getName(), name);
-
-            callback.transform(transformation.getPlasticClass());
-
-            return transformation.createInstantiator();
-        } finally
-        {
-            unlock();
-        }
+        return transformation.createInstantiator();
     }
 
     /**
@@ -232,29 +223,11 @@ public class PlasticManager implements PlasticClassListenerHub
     {
         assert callback != null;
 
-        lock();
+        PlasticClassTransformation<T> transformation = createProxyTransformation(interfaceType);
 
-        try
-        {
-            PlasticClassTransformation<T> transformation = createProxyTransformation(interfaceType);
+        callback.transform(transformation.getPlasticClass());
 
-            callback.transform(transformation.getPlasticClass());
-
-            return transformation.createInstantiator();
-        } finally
-        {
-            unlock();
-        }
-    }
-
-    private void unlock()
-    {
-        getClassloaderLock().unlock();
-    }
-
-    private void lock()
-    {
-        getClassloaderLock().lock();
+        return transformation.createInstantiator();
     }
 
     /**
