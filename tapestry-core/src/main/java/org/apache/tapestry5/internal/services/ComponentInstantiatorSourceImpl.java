@@ -53,7 +53,6 @@ import org.slf4j.Logger;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.locks.Lock;
 
 /**
  * A wrapper around a {@link PlasticManager} that allows certain classes to be modified as they are loaded.
@@ -226,19 +225,8 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                         // Force the creation of the class (and the transformation of the class). This will first
                         // trigger transformations of any base classes.
 
-                        final ClassInstantiator<Component> plasticInstantiator;
-
-                        Lock lock = manager.getClassloaderLock();
-
-                        lock.lock();
-
-                        try
-                        {
-                            plasticInstantiator = manager.getClassInstantiator(className);
-                        } finally
-                        {
-                            lock.unlock();
-                        }
+                        final ClassInstantiator<Component> plasticInstantiator = manager
+                                .getClassInstantiator(className);
 
                         final ComponentModel model = classToModel.get(className);
 

@@ -25,7 +25,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.locks.Lock;
 
 /**
  * Responsible for managing a class loader that allows ASM {@link ClassNode}s
@@ -58,11 +57,6 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
             return Modifier.isInterface(cn.access) ? TypeCategory.INTERFACE : TypeCategory.CLASS;
         }
     };
-
-    public Lock getClassLoaderLock()
-    {
-        return loader.classloaderLock;
-    }
 
     static class BaseClassDef
     {
@@ -401,7 +395,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
         }
     }
 
-    public ClassInstantiator getClassInstantiator(String className)
+    public synchronized ClassInstantiator getClassInstantiator(String className)
     {
         ClassInstantiator result;
 
