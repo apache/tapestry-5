@@ -100,10 +100,4 @@ public class EventImpl implements Event
     {
         return methodDescription;
     }
-
-    public void reset()
-    {
-        aborted = false;
-        methodDescription = null;
-    }
 }

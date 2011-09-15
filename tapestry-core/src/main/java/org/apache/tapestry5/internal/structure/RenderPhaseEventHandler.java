@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
 
 package org.apache.tapestry5.internal.structure;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.tapestry5.ComponentEventCallback;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.Renderable;
@@ -24,10 +21,13 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Used by {@link org.apache.tapestry5.internal.structure.ComponentPageElementImpl} to track the results of invoking the
  * component methods for a render phase event.
- * 
+ *
  * @since 5.0.19
  */
 class RenderPhaseEventHandler implements ComponentEventCallback
@@ -48,7 +48,7 @@ class RenderPhaseEventHandler implements ComponentEventCallback
         return result;
     }
 
-    void reset()
+    void enqueueSavedRenderCommands()
     {
         if (commands != null)
         {
@@ -56,11 +56,18 @@ class RenderPhaseEventHandler implements ComponentEventCallback
                 renderQueue.push(command);
         }
 
-        result = true;
-
-        commands = null;
     }
 
+    /**
+     * Handles a result (a return value from an event handler method). The result
+     * must be Boolean, {@link RenderCommand} or {@link Renderable}.  For the latter two types, the result
+     * is converted to a {@link RenderCommand} and added to an internal list; the commands in the list
+     * are pushed onto the {@link RenderQueue} at the end of the render phase, when {@link #enqueueSavedRenderCommands()}} is invoked.
+     *
+     * @param result the result value returned from the event handler method
+     * @return true if the event is aborted (a Boolean), false if event processing should continue (other types)
+     * @throws RuntimeException for any other type
+     */
     public boolean handleResult(Object result)
     {
         if (result instanceof Boolean)

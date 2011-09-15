@@ -30,11 +30,13 @@ public class RenderPhaseEvent extends EventImpl
 
     }
 
-    public void reset()
+    /**
+     * Delegates to {@link org.apache.tapestry5.internal.structure.RenderPhaseEventHandler#enqueueSavedRenderCommands()}, to queue up any
+     * render commands returned from invoked event handler methods.
+     */
+    public void enqueueSavedRenderCommands()
     {
-        super.reset();
-
-        handler.reset();
+        handler.enqueueSavedRenderCommands();
     }
 
     public boolean getResult()

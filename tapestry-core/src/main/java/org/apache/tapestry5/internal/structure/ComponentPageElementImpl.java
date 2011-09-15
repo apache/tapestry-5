@@ -182,7 +182,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
             push(queue, event.getResult(), beginRenderPhase, cleanupRenderPhase);
 
-            event.reset();
+            event.enqueueSavedRenderCommands();
         }
     }
 
@@ -211,7 +211,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             push(queue, afterRenderPhase);
             push(queue, event.getResult(), beforeRenderTemplatePhase, null);
 
-            event.reset();
+            event.enqueueSavedRenderCommands();
         }
     }
 
@@ -263,7 +263,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             if (event.getResult())
                 pushElements(queue, template);
 
-            event.reset();
+            event.enqueueSavedRenderCommands();
         }
     }
 
@@ -310,7 +310,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             if (event.getResult() && bodyBlock != null)
                 queue.push(bodyBlock);
 
-            event.reset();
+            event.enqueueSavedRenderCommands();
         }
     }
 
@@ -335,7 +335,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
             push(queue, event.getResult(), null, beforeRenderBodyPhase);
 
-            event.reset();
+            event.enqueueSavedRenderCommands();
         }
     }
 
@@ -359,7 +359,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
             push(queue, event.getResult(), null, beforeRenderTemplatePhase);
 
-            event.reset();
+            event.enqueueSavedRenderCommands();
         }
     }
 
@@ -386,7 +386,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
             push(queue, event.getResult(), cleanupRenderPhase, beginRenderPhase);
 
-            event.reset();
+            event.enqueueSavedRenderCommands();
         }
     }
 
@@ -410,7 +410,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
             push(queue, event.getResult(), null, setupRenderPhase);
 
-            event.reset();
+            event.enqueueSavedRenderCommands();
         }
     }
 
@@ -499,8 +499,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     private final Page page;
 
-    private final PerThreadValue<RenderPhaseEvent> renderPhaseEventValue;
-
     private final PerThreadValue<Boolean> renderingValue;
 
     // should be okay since it's a shadow service object
@@ -562,7 +560,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         eventLogger = elementResources.getEventLogger(coreResources.getLogger());
 
-        renderPhaseEventValue = elementResources.createPerThreadValue();
         renderingValue = elementResources.createPerThreadValue();
 
         page.addLifecycleListener(new PageLifecycleAdapter()
@@ -1263,20 +1260,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     protected RenderPhaseEvent createRenderEvent(RenderQueue queue)
     {
-        RenderPhaseEvent result = renderPhaseEventValue.get();
-
-        if (result != null)
-            return result;
-
-        // Create a per-thread value to use until the end of the render.
-        // This assumes that the queue will not change during the current request,
-        // which should be valid.
-
-        result = new RenderPhaseEvent(new RenderPhaseEventHandler(queue), eventLogger, elementResources);
-
-        renderPhaseEventValue.set(result);
-
-        return result;
+        return new RenderPhaseEvent(new RenderPhaseEventHandler(queue), eventLogger, elementResources);
     }
 
     boolean isRenderTracingEnabled()
