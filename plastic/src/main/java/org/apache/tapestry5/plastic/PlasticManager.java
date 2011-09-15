@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Manages the internal class loaders and other logics necessary to load and transform existing classes,
@@ -35,8 +34,6 @@ import java.util.concurrent.locks.ReentrantLock;
 public class PlasticManager implements PlasticClassListenerHub
 {
     private final PlasticClassPool pool;
-
-    private final Lock classLoaderLock;
 
     /**
      * A builder object for configuring the PlasticManager before instantiating it. Assumes a no-op
@@ -50,8 +47,6 @@ public class PlasticManager implements PlasticClassListenerHub
 
         private PlasticManagerDelegate delegate = new NoopDelegate();
 
-        private Lock classLoaderLock = new ReentrantLock();
-
         private final Set<String> packages = PlasticInternalUtils.newSet();
 
         private final Set<TransformationOption> options = EnumSet.noneOf(TransformationOption.class);
@@ -61,17 +56,6 @@ public class PlasticManager implements PlasticClassListenerHub
             assert loader != null;
 
             this.loader = loader;
-        }
-
-        public PlasticManagerBuilder classLoaderLock(Lock lock)
-        {
-            assert lock != null;
-
-            check();
-
-            classLoaderLock = lock;
-
-            return this;
         }
 
         /**
@@ -120,7 +104,7 @@ public class PlasticManager implements PlasticClassListenerHub
         {
             lock();
 
-            return new PlasticManager(loader, delegate, packages, options, classLoaderLock);
+            return new PlasticManager(loader, delegate, packages, options);
         }
     }
 
@@ -149,18 +133,15 @@ public class PlasticManager implements PlasticClassListenerHub
      * @param controlledPackageNames defines the packages that are to be transformed; top-classes in these packages
      *                               (or sub-packages) will be passed to the delegate for transformation
      * @param options                used when transforming classes
-     * @param classLoaderLock
      */
     private PlasticManager(ClassLoader parentClassLoader, PlasticManagerDelegate delegate,
-                           Set<String> controlledPackageNames, Set<TransformationOption> options, Lock classLoaderLock)
+                           Set<String> controlledPackageNames, Set<TransformationOption> options)
     {
         assert parentClassLoader != null;
         assert delegate != null;
         assert controlledPackageNames != null;
 
-        this.classLoaderLock = classLoaderLock;
-
-        pool = new PlasticClassPool(parentClassLoader, delegate, controlledPackageNames, options, classLoaderLock);
+        pool = new PlasticClassPool(parentClassLoader, delegate, controlledPackageNames, options);
     }
 
     /**
@@ -268,12 +249,12 @@ public class PlasticManager implements PlasticClassListenerHub
 
     private void unlock()
     {
-        classLoaderLock.unlock();
+        getClassloaderLock().unlock();
     }
 
     private void lock()
     {
-        classLoaderLock.lock();
+        getClassloaderLock().lock();
     }
 
     /**

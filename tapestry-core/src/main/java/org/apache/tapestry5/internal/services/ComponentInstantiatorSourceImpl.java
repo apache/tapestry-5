@@ -67,8 +67,6 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
     private final ClassLoader parent;
 
-    private final Lock classLoaderLock;
-
     private final ComponentClassTransformWorker2 transformerChain;
 
     private final LoggerSource loggerSource;
@@ -111,7 +109,6 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
         }
     };
 
-
     public ComponentInstantiatorSourceImpl(Logger logger,
 
                                            LoggerSource loggerSource,
@@ -136,7 +133,6 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                                            InternalComponentInvalidationEventHub invalidationHub)
     {
         this.parent = proxyFactory.getClassLoader();
-        classLoaderLock = proxyFactory.getClassLoaderLock();
         this.transformerChain = transformerChain;
         this.logger = logger;
         this.loggerSource = loggerSource;
@@ -187,7 +183,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
     private void initializeService()
     {
         PlasticManagerBuilder builder = PlasticManager.withClassLoader(parent).delegate(this)
-                .packages(controlledPackageNames).classLoaderLock(classLoaderLock);
+                .packages(controlledPackageNames);
 
         if (!productionMode)
         {
@@ -200,7 +196,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
         classFactory = new ClassFactoryImpl(manager.getClassLoader(), logger);
 
-        proxyFactory = new PlasticProxyFactoryImpl(manager.getClassLoader(), logger, classLoaderLock);
+        proxyFactory = new PlasticProxyFactoryImpl(manager.getClassLoader(), logger);
 
         classToInstantiator.clear();
         classToModel.clear();

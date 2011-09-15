@@ -61,7 +61,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
     public Lock getClassLoaderLock()
     {
-        return classLoaderLock;
+        return loader.classloaderLock;
     }
 
     static class BaseClassDef
@@ -84,8 +84,6 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
     private final Set<TransformationOption> options;
 
-    private final Lock classLoaderLock;
-
     /**
      * Creates the pool with a set of controlled packages; all classes in the controlled packages are loaded by the
      * pool's class loader, and all top-level classes in the controlled packages are transformed via the delegate.
@@ -94,17 +92,14 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
      * @param delegate           responsible for end stages of transforming top-level classes
      * @param controlledPackages set of package names (note: retained, not copied)
      * @param options            used when transforming classes
-     * @param classLoaderLock
      */
     public PlasticClassPool(ClassLoader parentLoader, PlasticManagerDelegate delegate, Set<String> controlledPackages,
-                            Set<TransformationOption> options, Lock classLoaderLock)
+                            Set<TransformationOption> options)
     {
+        loader = new PlasticClassLoader(parentLoader, this);
         this.delegate = delegate;
         this.controlledPackages = controlledPackages;
         this.options = options;
-        this.classLoaderLock = classLoaderLock;
-
-        loader = new PlasticClassLoader(parentLoader, this, classLoaderLock);
     }
 
     public ClassLoader getClassLoader()
@@ -410,7 +405,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
     {
         ClassInstantiator result;
 
-        classLoaderLock.lock();
+        loader.classloaderLock.lock();
 
         try
         {
@@ -428,7 +423,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
             result = instantiators.get(className);
         } finally
         {
-            classLoaderLock.unlock();
+            loader.classloaderLock.unlock();
         }
 
         if (result != null)

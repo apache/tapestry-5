@@ -34,7 +34,6 @@ import java.lang.reflect.AnnotatedElement;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Used to construct the IoC {@link org.apache.tapestry5.ioc.Registry}. This class is <em>not</em> thread-safe. The
@@ -84,7 +83,7 @@ public final class RegistryBuilder
         Logger proxyFactoryLogger = loggerSource.getLogger(TapestryIOCModule.class.getName() + ".PlasticProxyFactory");
 
         classFactory = new ClassFactoryImpl(this.classLoader, classFactoryLogger);
-        proxyFactory = new PlasticProxyFactoryImpl(this.classLoader, proxyFactoryLogger, new ReentrantLock());
+        proxyFactory = new PlasticProxyFactoryImpl(this.classLoader, proxyFactoryLogger);
 
         add(TapestryIOCModule.class);
     }

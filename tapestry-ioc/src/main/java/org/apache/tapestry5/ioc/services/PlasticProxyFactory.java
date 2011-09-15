@@ -23,7 +23,6 @@ import org.apache.tapestry5.plastic.PlasticClassTransformer;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.concurrent.locks.Lock;
 
 /**
  * A service used to create proxies of varying types. As a secondary concern, manages to identify the
@@ -38,11 +37,6 @@ public interface PlasticProxyFactory extends PlasticClassListenerHub
      * of another class loader (usually, the thread's context class loader).
      */
     ClassLoader getClassLoader();
-
-    /**
-     * Returns the Lock used to serialize access to the class loader. When creating child class loaders, it may be necessary to use this lock to avoid deadlocks.
-     */
-    Lock getClassLoaderLock();
 
     /**
      * Creates a proxy object that implements the indicated interface, then invokes the callback to further

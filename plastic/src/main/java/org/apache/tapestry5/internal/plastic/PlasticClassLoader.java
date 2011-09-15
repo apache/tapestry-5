@@ -15,25 +15,25 @@
 package org.apache.tapestry5.internal.plastic;
 
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class PlasticClassLoader extends ClassLoader
 {
-    private final Lock classLoaderLock;
+    final Lock classloaderLock = new ReentrantLock();
 
     private final ClassLoaderDelegate delegate;
 
-    public PlasticClassLoader(ClassLoader parent, ClassLoaderDelegate delegate, Lock classLoaderLock)
+    public PlasticClassLoader(ClassLoader parent, ClassLoaderDelegate delegate)
     {
         super(parent);
 
         this.delegate = delegate;
-        this.classLoaderLock = classLoaderLock;
     }
 
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException
     {
-        classLoaderLock.lock();
+        classloaderLock.lock();
 
         try
         {
@@ -56,7 +56,7 @@ public class PlasticClassLoader extends ClassLoader
             }
         } finally
         {
-            classLoaderLock.unlock();
+            classloaderLock.unlock();
         }
     }
 
