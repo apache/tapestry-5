@@ -16,7 +16,6 @@ package org.apache.tapestry5.internal.services;
 
 import javassist.CtClass;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
-import org.apache.tapestry5.internal.structure.InternalComponentResourcesImpl;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Messages;
@@ -164,16 +163,6 @@ public class ServicesMessages
         return MESSAGES.format("mixins-invalid-without-id-or-type", elementName);
     }
 
-    public static String missingFromEnvironment(Class type, Collection<Class> availableTypes)
-    {
-        List<String> types = CollectionFactory.newList();
-
-        for (Class c : availableTypes)
-            types.add(c.getName());
-
-        return MESSAGES.format("missing-from-environment", type.getName(), InternalUtils.joinSorted(types));
-    }
-
     public static String invalidComponentEventResult(Object result, Collection<Class> configuredResultTypes)
     {
         List<String> classNames = CollectionFactory.newList();
@@ -186,7 +175,7 @@ public class ServicesMessages
     }
 
     public static String undefinedTapestryAttribute(String elementName, String attributeName,
-            String allowedAttributeName)
+                                                    String allowedAttributeName)
     {
         return MESSAGES.format("undefined-tapestry-attribute", elementName, attributeName, allowedAttributeName);
     }
@@ -238,7 +227,7 @@ public class ServicesMessages
     }
 
     public static String missingValidatorConstraint(String validatorType, Class type, String perFormMessageKey,
-            String generalMessageKey)
+                                                    String generalMessageKey)
     {
         return MESSAGES.format("missing-validator-constraint", validatorType, type.getName(), perFormMessageKey,
                 generalMessageKey);

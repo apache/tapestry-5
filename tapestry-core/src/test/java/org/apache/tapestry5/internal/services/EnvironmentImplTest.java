@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.test.TapestryTestCase;
@@ -118,11 +119,11 @@ public class EnvironmentImplTest extends TapestryTestCase
         {
             e.peekRequired(List.class);
             unreachable();
-        } catch (RuntimeException ex)
+        } catch (UnknownValueException ex)
         {
             assertEquals(
                     ex.getMessage(),
-                    "No object of type java.util.List is available from the Environment.  Available types are org.apache.tapestry5.ioc.Location, org.apache.tapestry5.runtime.Component.");
+                    "No object of type java.util.List is available from the Environment.");
         }
 
         verify();

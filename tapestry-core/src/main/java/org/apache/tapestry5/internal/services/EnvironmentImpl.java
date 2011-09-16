@@ -14,10 +14,14 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
+import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.Stack;
+import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.Environment;
 
 import java.util.LinkedList;
@@ -81,7 +85,15 @@ public class EnvironmentImpl implements Environment, ThreadCleanupListener
                     types.add(e.getKey());
             }
 
-            throw new RuntimeException(ServicesMessages.missingFromEnvironment(type, types));
+            throw new UnknownValueException(String.format("No object of type %s is available from the Environment.", type.getName()),
+                    new AvailableValues("Environmentals",
+                            F.flow(typeToStack.keySet()).map(new Mapper<Class, String>()
+                            {
+                                public String map(Class element)
+                                {
+                                    return element.getName();
+                                }
+                            }).toList()));
         }
 
         return result;
