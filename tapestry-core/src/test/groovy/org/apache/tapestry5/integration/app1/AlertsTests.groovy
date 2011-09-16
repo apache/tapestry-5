@@ -94,4 +94,16 @@ class AlertsTests extends SeleniumTestCase
         click "link=Dismiss all"
     }
 
+    /** #1633 - alerts shouldn't hard-code the  'Dismiss all' label...*/
+    @Test
+    void dismiss_label_is_parameter() {
+        openLinks "Alerts Demo", "reset"
+        select "id=severity", "Warn"
+        select "id=duration", "Until Dismissed"
+        type "id=message", "I'm sorry, Hal, I can't do that."
+        clickAndWait "//input[@value='Traditional Update']"
+        assertTextPresent "I'm sorry, Hal, I can't do that."
+        assertTrue isElementPresent("link=Zenbu Kesu")
+    }
+
 }

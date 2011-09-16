@@ -133,7 +133,6 @@ public class SaxTemplateParser
     private static final char EXPANSION_STRING_DELIMITTER='\'';
     private static final char OPEN_BRACE='{';
     private static final char CLOSE_BRACE='}';
-    //private static final Pattern EXPANSION_PATTERN = Pattern.compile("\\$\\{\\");
 
     private static final Set<String> MUST_BE_ROOT = CollectionFactory.newSet("extend", "container");
 
@@ -1157,7 +1156,7 @@ public class SaxTemplateParser
                 //can't just assign to 
                 startx=matcher.start(1) + expressionEnd + 1;
             } else {
-                tokenAccumulator.add(new ExpansionToken(expression, textStartLocation));
+                tokenAccumulator.add(new ExpansionToken(expression.trim(), textStartLocation));
 
                 startx = matcher.end();
             }

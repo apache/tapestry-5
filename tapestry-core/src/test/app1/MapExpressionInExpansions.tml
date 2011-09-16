@@ -5,5 +5,7 @@
         <li>Empty Map: <span id="emptymap">${echoMap({})}</span></li>
         <li>String Keys Map: <span id="stringmap">${echoMap({'A':1})}</span></li>
         <li>Number Keys Map: <span id="numberkeysmap">${echoMap({1: 'one'})}</span></li>
+        <!-- demonstrates TAP5-1652 -->
+        <li>Map with spaces: <span id="mapwithspaces">${ echoMap( { 2 : 'two' } ) }</span></li>
     </ul>
 </html>

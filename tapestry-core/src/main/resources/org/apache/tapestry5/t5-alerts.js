@@ -6,9 +6,9 @@ T5.extendInitializers(function() {
         var DISMISS_ALERTS = "tapestry:dismiss-all";
         var addAlertPublisher = T5.pubsub.createPublisher(T5.events.ADD_ALERT, document);
 
-        function construct(clientId) {
+        function construct(clientId, dismissText) {
             $(clientId).innerHTML = "<div class='t-alert-container'></div>" +
-                "<div class='t-alert-controls'><a href='#'>Dismiss all</a></div>";
+                "<div class='t-alert-controls'><a href='#'>" + dismissText + "</a></div>";
 
             var list = find(clientId, "div");
             var link = find(clientId, "a");
@@ -48,7 +48,7 @@ T5.extendInitializers(function() {
 
             T5.sub(T5.events.ADD_ALERT, null, function(alertSpec) {
                 if (!constructed) {
-                    list = construct(spec.id);
+                    list = construct(spec.id, spec.dismissText);
                     constructed = true;
                 }
 

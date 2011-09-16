@@ -20,8 +20,10 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.alerts.Alert;
 import org.apache.tapestry5.alerts.AlertStorage;
 import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.RequestParameter;
 import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
@@ -37,6 +39,10 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  */
 public class Alerts implements ClientElement
 {
+
+    @Parameter(value="message:dismiss-label", defaultPrefix=BindingConstants.LITERAL)
+    private String dismissText;
+
     @Inject
     private ComponentResources resources;
 
@@ -61,7 +67,8 @@ public class Alerts implements ClientElement
         writer.end();
 
         JSONObject spec = new JSONObject("id", clientId,
-                "dismissURL", resources.createEventLink("dismiss").toURI());
+                "dismissURL", resources.createEventLink("dismiss").toURI(),
+                "dismissText", dismissText);
 
         javaScriptSupport.addInitializerCall(InitializationPriority.EARLY, "alertManager", spec);
 

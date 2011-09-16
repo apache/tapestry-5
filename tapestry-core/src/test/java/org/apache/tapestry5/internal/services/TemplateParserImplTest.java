@@ -569,7 +569,6 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     {
         List<TemplateToken> tokens= tokens("expansions_with_maps.tml");
 
-        System.out.println(tokens);
         assertEquals(tokens.size(), 11);
 
         //note that a single expansion on a line and two expansions on a line are tested individually elsewhere,
@@ -585,6 +584,18 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         expansion = get(tokens, 8);
         assertEquals(expansion.getExpression(), "{'two': 2}", "Second expansion in a line with two expansions parsed incorrectly");
+    }
+
+    @Test
+    public void expansion_whitespace_trimmed()
+    {
+        List<TemplateToken> tokens = tokens("expansions_with_whitespace.tml");
+
+        assertEquals(tokens.size(), 9);
+        
+        ExpansionToken expansion = get(tokens, 2);
+        assertEquals( expansion.getExpression(), "message:messagekey1");
+
     }
 
     @Test
