@@ -14,30 +14,17 @@
 
 package org.apache.tapestry5.internal.plastic;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.apache.tapestry5.internal.plastic.asm.ClassReader;
 import org.apache.tapestry5.internal.plastic.asm.ClassWriter;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 import org.apache.tapestry5.internal.plastic.asm.tree.AnnotationNode;
 import org.apache.tapestry5.internal.plastic.asm.tree.ClassNode;
-import org.apache.tapestry5.plastic.AnnotationAccess;
-import org.apache.tapestry5.plastic.ClassInstantiator;
-import org.apache.tapestry5.plastic.ClassType;
-import org.apache.tapestry5.plastic.PlasticClassEvent;
-import org.apache.tapestry5.plastic.PlasticClassListener;
-import org.apache.tapestry5.plastic.PlasticClassListenerHub;
-import org.apache.tapestry5.plastic.PlasticClassTransformation;
-import org.apache.tapestry5.plastic.PlasticManagerDelegate;
-import org.apache.tapestry5.plastic.TransformationOption;
+import org.apache.tapestry5.plastic.*;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Modifier;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Responsible for managing a class loader that allows ASM {@link ClassNode}s
@@ -52,6 +39,10 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
     private final Set<String> controlledPackages;
 
+    /**
+     * Maps class names to instantiators for that class name.
+     * Synchronized on the loader.
+     */
     private final Map<String, ClassInstantiator> instantiators = PlasticInternalUtils.newMap();
 
     private final InheritanceData emptyInheritanceData = new InheritanceData();
@@ -84,7 +75,9 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
         }
     }
 
-    /** Map from FQCN to BaseClassDef. */
+    /**
+     * Map from FQCN to BaseClassDef. Synchronized on the loader.
+     */
     private final Map<String, BaseClassDef> baseClassDefs = new HashMap<String, PlasticClassPool.BaseClassDef>();
 
     private final Set<TransformationOption> options;
@@ -92,18 +85,14 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
     /**
      * Creates the pool with a set of controlled packages; all classes in the controlled packages are loaded by the
      * pool's class loader, and all top-level classes in the controlled packages are transformed via the delegate.
-     * 
-     * @param parentLoader
-     *            typically, the Thread's context class loader
-     * @param delegate
-     *            responsible for end stages of transforming top-level classes
-     * @param controlledPackages
-     *            set of package names (note: retained, not copied)
-     * @param options
-     *            used when transforming classes
+     *
+     * @param parentLoader       typically, the Thread's context class loader
+     * @param delegate           responsible for end stages of transforming top-level classes
+     * @param controlledPackages set of package names (note: retained, not copied)
+     * @param options            used when transforming classes
      */
     public PlasticClassPool(ClassLoader parentLoader, PlasticManagerDelegate delegate, Set<String> controlledPackages,
-            Set<TransformationOption> options)
+                            Set<TransformationOption> options)
     {
         loader = new PlasticClassLoader(parentLoader, this);
         this.delegate = delegate;
@@ -116,32 +105,39 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
         return loader;
     }
 
-    public synchronized Class realizeTransformedClass(ClassNode classNode, InheritanceData inheritanceData,
-            StaticContext staticContext)
+    public Class realizeTransformedClass(ClassNode classNode, InheritanceData inheritanceData,
+                                         StaticContext staticContext)
     {
-        Class result = realize(PlasticInternalUtils.toClassName(classNode.name), ClassType.PRIMARY, classNode);
-
-        baseClassDefs.put(result.getName(), new BaseClassDef(inheritanceData, staticContext));
-
-        return result;
-    }
-
-    public synchronized Class realize(String primaryClassName, ClassType classType, final ClassNode classNode)
-    {
-        if (!listeners.isEmpty())
+        synchronized (loader)
         {
-            fire(toEvent(primaryClassName, classType, classNode));
+            Class result = realize(PlasticInternalUtils.toClassName(classNode.name), ClassType.PRIMARY, classNode);
+
+            baseClassDefs.put(result.getName(), new BaseClassDef(inheritanceData, staticContext));
+
+            return result;
         }
 
-        byte[] bytecode = toBytecode(classNode);
+    }
 
-        String className = PlasticInternalUtils.toClassName(classNode.name);
+    public Class realize(String primaryClassName, ClassType classType, final ClassNode classNode)
+    {
+        synchronized (loader)
+        {
+            if (!listeners.isEmpty())
+            {
+                fire(toEvent(primaryClassName, classType, classNode));
+            }
 
-        return loader.defineClassWithBytecode(className, bytecode);
+            byte[] bytecode = toBytecode(classNode);
+
+            String className = PlasticInternalUtils.toClassName(classNode.name);
+
+            return loader.defineClassWithBytecode(className, bytecode);
+        }
     }
 
     private PlasticClassEvent toEvent(final String primaryClassName, final ClassType classType,
-            final ClassNode classNode)
+                                      final ClassNode classNode)
     {
         return new PlasticClassEvent()
         {
@@ -188,7 +184,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
     {
         try
         {
-            final Class searchClass = loader.loadClass(className);
+            final Class<?> searchClass = loader.loadClass(className);
 
             return new AnnotationAccess()
             {
@@ -199,13 +195,10 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
                 public <T extends Annotation> T getAnnotation(Class<T> annotationType)
                 {
-                    // For the life of me, I don't understand why the cast is necessary.
-
-                    return annotationType.cast(searchClass.getAnnotation(annotationType));
+                    return searchClass.getAnnotation(annotationType);
                 }
             };
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             throw new RuntimeException(ex);
         }
@@ -214,7 +207,9 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
     public AnnotationAccess createAnnotationAccess(List<AnnotationNode> annotationNodes)
     {
         if (annotationNodes == null)
+        {
             return EmptyAnnotationAccess.SINGLETON;
+        }
 
         final Map<String, Object> cache = PlasticInternalUtils.newMap();
         final Map<String, AnnotationNode> nameToNode = PlasticInternalUtils.newMap();
@@ -226,7 +221,6 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
         return new AnnotationAccess()
         {
-
             public <T extends Annotation> boolean hasAnnotation(Class<T> annotationType)
             {
                 return nameToNode.containsKey(annotationType.getName());
@@ -266,8 +260,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
         try
         {
             return loader.loadClass(className);
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             throw new RuntimeException(String.format("Unable to load class %s: %s", className,
                     PlasticInternalUtils.toMessage(ex)), ex);
@@ -337,7 +330,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
     /**
      * For a fully-qualified class name of an <em>existing</em> class, loads the bytes for the class
      * and returns a PlasticClass instance.
-     * 
+     *
      * @throws ClassNotFoundException
      */
     public InternalPlasticClassTransformation getPlasticClassTransformation(String className)
@@ -374,9 +367,8 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
     /**
      * Constructs a class node by reading the raw bytecode for a class and instantiating a ClassNode
      * (via {@link ClassReader#accept(org.apache.tapestry5.internal.plastic.asm.ClassVisitor, int)}).
-     * 
-     * @param className
-     *            fully qualified class name
+     *
+     * @param className fully qualified class name
      * @return corresponding ClassNode
      */
     public ClassNode constructClassNode(String className)
@@ -406,65 +398,69 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
                     PlasticInternalUtils.toInternalName(baseClassName), null);
 
             return createTransformation(baseClassName, newClassNode);
-        }
-        catch (ClassNotFoundException ex)
+        } catch (ClassNotFoundException ex)
         {
             throw new RuntimeException(String.format("Unable to create class %s as sub-class of %s: %s", newClassName,
                     baseClassName, PlasticInternalUtils.toMessage(ex)), ex);
         }
     }
 
-    public synchronized ClassInstantiator getClassInstantiator(String className)
+    public ClassInstantiator getClassInstantiator(String className)
     {
-        if (!instantiators.containsKey(className))
+        synchronized (loader)
         {
-            try
+            if (!instantiators.containsKey(className))
             {
-                loader.loadClass(className);
+                try
+                {
+                    loader.loadClass(className);
+                } catch (ClassNotFoundException ex)
+                {
+                    throw new RuntimeException(ex);
+                }
             }
-            catch (ClassNotFoundException ex)
+
+            ClassInstantiator result = instantiators.get(className);
+
+            if (result == null)
             {
-                throw new RuntimeException(ex);
+                // TODO: Verify that the problem is incorrect package, and not any other failure.
+
+                StringBuilder b = new StringBuilder();
+                b.append("Class '")
+                        .append(className)
+                        .append("' is not a transformed class. Transformed classes should be in one of the following packages: ");
+
+                String sep = "";
+
+                List<String> names = new ArrayList<String>(controlledPackages);
+                Collections.sort(names);
+
+                for (String name : names)
+                {
+                    b.append(sep);
+                    b.append(name);
+
+                    sep = ", ";
+                }
+
+                String message = b.append(".").toString();
+
+                throw new IllegalArgumentException(message);
             }
+
+            return result;
         }
-
-        ClassInstantiator result = instantiators.get(className);
-
-        if (result == null)
-        {
-            // TODO: Verify that the problem is incorrect package, and not any other failure.
-
-            StringBuilder b = new StringBuilder();
-            b.append("Class '")
-                    .append(className)
-                    .append("' is not a transformed class. Transformed classes should be in one of the following packages: ");
-
-            String sep = "";
-
-            List<String> names = new ArrayList<String>(controlledPackages);
-            Collections.sort(names);
-
-            for (String name : names)
-            {
-                b.append(sep);
-                b.append(name);
-
-                sep = ", ";
-            }
-
-            String message = b.append(".").toString();
-
-            throw new IllegalArgumentException(message);
-        }
-
-        return result;
     }
 
     TypeCategory getTypeCategory(String typeName)
     {
-        // TODO: Is this the right place to cache this data?
+        synchronized (loader)
+        {
+            // TODO: Is this the right place to cache this data?
 
-        return typeName2Category.get(typeName);
+            return typeName2Category.get(typeName);
+        }
     }
 
     public void addPlasticClassListener(PlasticClassListener listener)

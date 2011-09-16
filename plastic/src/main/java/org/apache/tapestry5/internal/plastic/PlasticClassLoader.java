@@ -41,14 +41,13 @@ public class PlasticClassLoader extends ClassLoader
                 resolveClass(c);
 
             return c;
-        }
-        else
+        } else
         {
             return super.loadClass(name, resolve);
         }
     }
 
-    Class<?> defineClassWithBytecode(String className, byte[] bytecode)
+    synchronized Class<?> defineClassWithBytecode(String className, byte[] bytecode)
     {
         return defineClass(className, bytecode, 0, bytecode.length);
     }
