@@ -38,7 +38,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * {@linkplain EnvironmentalShadowBuilder internally delegates to the current environmental instance}), which is useful
  * for service-layer objects.
  * 
- * @deprecated RenderSupport has been replaced by {@link JavaScriptSupport} and may be removed in Tapestry 5.3.
+ * @deprecated RenderSupport has been replaced by {@link JavaScriptSupport} and may be removed after Tapestry 5.3.
  */
 public interface RenderSupport
 {
