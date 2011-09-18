@@ -19,7 +19,6 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.SortedSet;
@@ -192,7 +191,7 @@ import java.util.TreeSet;
  * @author Contributions from Mads Henderson
  * @author Refactoring from CronTrigger to CronExpression by Aaron Craven
  */
-public class CronExpression implements Serializable, Cloneable
+public class CronExpression implements Serializable
 {
 
     private static final long serialVersionUID = 12423409423L;
@@ -937,109 +936,6 @@ public class CronExpression implements Serializable, Cloneable
     public String getCronExpression()
     {
         return cronExpression;
-    }
-
-    public String getExpressionSummary()
-    {
-        StringBuffer buf = new StringBuffer();
-
-        buf.append("seconds: ");
-        buf.append(getExpressionSetSummary(seconds));
-        buf.append("\n");
-        buf.append("minutes: ");
-        buf.append(getExpressionSetSummary(minutes));
-        buf.append("\n");
-        buf.append("hours: ");
-        buf.append(getExpressionSetSummary(hours));
-        buf.append("\n");
-        buf.append("daysOfMonth: ");
-        buf.append(getExpressionSetSummary(daysOfMonth));
-        buf.append("\n");
-        buf.append("months: ");
-        buf.append(getExpressionSetSummary(months));
-        buf.append("\n");
-        buf.append("daysOfWeek: ");
-        buf.append(getExpressionSetSummary(daysOfWeek));
-        buf.append("\n");
-        buf.append("lastdayOfWeek: ");
-        buf.append(lastdayOfWeek);
-        buf.append("\n");
-        buf.append("nearestWeekday: ");
-        buf.append(nearestWeekday);
-        buf.append("\n");
-        buf.append("NthDayOfWeek: ");
-        buf.append(nthdayOfWeek);
-        buf.append("\n");
-        buf.append("lastdayOfMonth: ");
-        buf.append(lastdayOfMonth);
-        buf.append("\n");
-        buf.append("years: ");
-        buf.append(getExpressionSetSummary(years));
-        buf.append("\n");
-
-        return buf.toString();
-    }
-
-    protected String getExpressionSetSummary(java.util.Set set)
-    {
-
-        if (set.contains(NO_SPEC))
-        {
-            return "?";
-        }
-        if (set.contains(ALL_SPEC))
-        {
-            return "*";
-        }
-
-        StringBuffer buf = new StringBuffer();
-
-        Iterator itr = set.iterator();
-        boolean first = true;
-        while (itr.hasNext())
-        {
-            Integer iVal = (Integer) itr.next();
-            String val = iVal.toString();
-            if (!first)
-            {
-                buf.append(",");
-            }
-            buf.append(val);
-            first = false;
-        }
-
-        return buf.toString();
-    }
-
-    protected String getExpressionSetSummary(java.util.ArrayList list)
-    {
-
-        if (list.contains(NO_SPEC))
-        {
-            return "?";
-        }
-        if (list.contains(ALL_SPEC))
-        {
-            return "*";
-        }
-
-        StringBuffer buf = new StringBuffer();
-
-        Iterator itr = list.iterator();
-        boolean first = true;
-        while (itr.hasNext())
-        {
-            Integer iVal = (Integer) itr.next();
-            String val = iVal.toString();
-            if (!first)
-            {
-                buf.append(",");
-            }
-            buf.append(val);
-            first = false;
-        }
-
-        return buf.toString();
     }
 
     protected int skipWhiteSpace(int i, String s)
@@ -1857,35 +1753,6 @@ public class CronExpression implements Serializable, Cloneable
                 throw new IllegalArgumentException("Illegal month number: "
                         + monthNum);
         }
-    }
-
-
-    private void readObject(java.io.ObjectInputStream stream)
-            throws java.io.IOException, ClassNotFoundException
-    {
-
-        stream.defaultReadObject();
-        try
-        {
-            buildExpression(cronExpression);
-        } catch (Exception ignore)
-        {
-        } // never happens
-    }
-
-    public Object clone()
-    {
-        CronExpression copy = null;
-        try
-        {
-            copy = new CronExpression(getCronExpression());
-            if (getTimeZone() != null)
-                copy.setTimeZone((TimeZone) getTimeZone().clone());
-        } catch (ParseException ex)
-        { // never happens since the source is valid...
-            throw new IncompatibleClassChangeError("Not Cloneable.");
-        }
-        return copy;
     }
 }
 
