@@ -14,6 +14,8 @@
 
 package org.apache.tapestry.ioc.services
 
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 import org.apache.tapestry5.ioc.Registry
 import org.apache.tapestry5.ioc.services.cron.IntervalSchedule
 import org.apache.tapestry5.ioc.services.cron.PeriodicExecutor
@@ -32,16 +34,15 @@ class PeriodicExecutorTests extends IOCTestCase
     {
         Registry r = buildRegistry()
 
-        int count = 0
+        def countDownLatch = new CountDownLatch(5);
 
         def schedule = new IntervalSchedule(10)
 
-        PeriodicJob job = r.getService(PeriodicExecutor.class).addJob(schedule, "count incrementer", { count++; })
+        PeriodicJob job = r.getService(PeriodicExecutor.class).addJob(schedule, "count incrementer", { countDownLatch.countDown(); })
 
-        while (count < 10)
-        {
-            sleep 10
-        }
+        countDownLatch.await 30, TimeUnit.SECONDS
+
+        assertEquals countDownLatch.getCount(), 0
 
         job.cancel()
 
