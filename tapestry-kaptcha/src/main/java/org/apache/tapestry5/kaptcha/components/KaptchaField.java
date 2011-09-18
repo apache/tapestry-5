@@ -21,6 +21,7 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ValidationTracker;
 import org.apache.tapestry5.annotations.BeginRender;
 import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.base.AbstractField;
@@ -37,6 +38,7 @@ import org.apache.tapestry5.services.Request;
  * @since 5.3
  */
 @SupportsInformalParameters
+@Import(stylesheet = "kaptcha.css")
 public class KaptchaField extends AbstractField
 {
 
@@ -86,13 +88,13 @@ public class KaptchaField extends AbstractField
 
         writer.element("input",
 
-        "type", "password",
+                "type", "password",
 
-        "id", getClientId(),
+                "id", getClientId(),
 
-        "name", getControlName(),
+                "name", getControlName(),
 
-        "value", "");
+                "value", "");
 
         resources.renderInformalParameters(writer);
 
