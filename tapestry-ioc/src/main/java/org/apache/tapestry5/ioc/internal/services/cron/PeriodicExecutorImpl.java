@@ -138,7 +138,7 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable, Registr
             // here, such as basing the next execution on the actual start time, or event actual completion time, or allowing
             // overlapping executions of the Job on a more rigid schedule.  Use Quartz.
 
-            nextExecution = schedule.nextExecution(System.currentTimeMillis());
+            nextExecution = schedule.nextExecution(nextExecution);
 
             parallelExecutor.invoke(this);
 
