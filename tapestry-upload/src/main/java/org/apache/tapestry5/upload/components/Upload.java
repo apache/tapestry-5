@@ -23,6 +23,7 @@ import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.FieldValidatorDefaultSource;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.upload.services.MultipartDecoder;
 import org.apache.tapestry5.upload.services.UploadedFile;
 
@@ -85,7 +86,7 @@ public class Upload extends AbstractField
     private Request request;
 
     @Environmental
-    private RenderSupport renderSupport;
+    private JavaScriptSupport javaScriptSupport;
 
     /**
      * Computes a default value for the "validate" parameter using {@link FieldValidatorDefaultSource}.
@@ -154,8 +155,8 @@ public class Upload extends AbstractField
         // TAPESTRY-2453
         if (request.isXHR())
         {
-            renderSupport.addScriptLink(uploadScript);
-            renderSupport.addInit("injectedUpload", getClientId());
+            javaScriptSupport.importJavaScriptLibrary(uploadScript);
+            javaScriptSupport.addInitializerCall("injectedUpload", getClientId());
         }
     }
 
