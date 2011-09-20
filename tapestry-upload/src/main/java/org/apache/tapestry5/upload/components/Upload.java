@@ -195,7 +195,7 @@ public class Upload extends AbstractField
         return this;
     }
 
-    Upload injectFieldValidator(FieldValidator validator)
+    Upload injectFieldValidator(FieldValidator<Object> validator)
     {
         this.validate = validator;
 
