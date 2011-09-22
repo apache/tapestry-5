@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,32 +14,28 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.namespace.QName;
-
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.LocationImpl;
-import org.apache.tapestry5.ioc.internal.util.TapestryException;
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
+import org.xml.sax.*;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-/** Parses a document as a stream of XML tokens */
+import javax.xml.namespace.QName;
+import java.io.*;
+import java.net.URL;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Parses a document as a stream of XML tokens. It includes a special hack (as of Tapestry 5.3) to support the HTML5 doctype ({@code <!DOCTYPE html>})
+ * as if it were the XHTML transitional doctype
+ * ({@code <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">}).
+ */
 public class XMLTokenStream
 {
     private final class SaxHandler implements LexicalHandler, EntityResolver, ContentHandler
@@ -91,8 +87,7 @@ public class XMLTokenStream
             {
                 if (url != null)
                     return new InputSource(url.openStream());
-            }
-            catch (IOException ex)
+            } catch (IOException ex)
             {
                 throw new SAXException(String.format("Unable to open stream for resource %s: %s",
                         url, InternalUtils.toMessage(ex)), ex);
@@ -204,8 +199,7 @@ public class XMLTokenStream
             if (attributes.getLength() == 0)
             {
                 token.attributes = Collections.emptyList();
-            }
-            else
+            } else
             {
                 token.attributes = CollectionFactory.newList();
 
@@ -294,35 +288,82 @@ public class XMLTokenStream
         reader.setEntityResolver(handler);
         reader.setProperty("http://xml.org/sax/properties/lexical-handler", handler);
 
-        InputStream stream = resource.openStream();
+        InputStream stream = openStream();
 
         try
         {
             reader.parse(new InputSource(stream));
-        }
-        catch (IOException ex)
+        } catch (IOException ex)
         {
             this.exceptionLocation = handler.getLocation();
 
             throw ex;
-        }
-        catch (SAXException ex)
+        } catch (SAXException ex)
         {
             this.exceptionLocation = handler.getLocation();
 
             throw ex;
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             this.exceptionLocation = handler.getLocation();
 
             throw ex;
-        }
-        finally
+        } finally
         {
             InternalUtils.close(stream);
         }
     }
+
+    private InputStream openStream() throws IOException
+    {
+
+        InputStream rawStream = resource.openStream();
+
+        InputStreamReader rawReader = new InputStreamReader(rawStream);
+        LineNumberReader reader = new LineNumberReader(rawReader);
+
+        try
+        {
+            String firstLine = reader.readLine();
+
+            if ("<!DOCTYPE html>".equals(firstLine))
+            {
+                return substituteTransitionalDoctype(reader);
+            }
+
+            // Open a fresh stream for the parser to operate on.
+
+            return resource.openStream();
+
+        } finally
+        {
+            reader.close();
+        }
+    }
+
+    private InputStream substituteTransitionalDoctype(LineNumberReader reader) throws IOException
+    {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(5000);
+        PrintWriter writer = new PrintWriter(bos);
+
+        writer.println("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+
+        while (true)
+        {
+            String line = reader.readLine();
+            if (line == null)
+            {
+                break;
+            }
+
+            writer.println(line);
+        }
+
+        writer.close();
+
+        return new ByteArrayInputStream(bos.toByteArray());
+    }
+
 
     private XMLToken token()
     {

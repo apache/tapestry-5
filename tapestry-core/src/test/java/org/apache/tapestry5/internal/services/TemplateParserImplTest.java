@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,10 +26,11 @@ import org.apache.tapestry5.test.TapestryTestConstants;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import static java.lang.String.format;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import static java.lang.String.format;
 
 /**
  * This is used to test the template parser ... and in some cases, the underlying behavior of the SAX APIs.
@@ -567,7 +568,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test
     public void expansions_with_maps()
     {
-        List<TemplateToken> tokens= tokens("expansions_with_maps.tml");
+        List<TemplateToken> tokens = tokens("expansions_with_maps.tml");
 
         assertEquals(tokens.size(), 11);
 
@@ -592,9 +593,9 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         List<TemplateToken> tokens = tokens("expansions_with_whitespace.tml");
 
         assertEquals(tokens.size(), 9);
-        
+
         ExpansionToken expansion = get(tokens, 2);
-        assertEquals( expansion.getExpression(), "message:messagekey1");
+        assertEquals(expansion.getExpression(), "message:messagekey1");
 
     }
 
@@ -681,55 +682,55 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @DataProvider
     public Object[][] parse_failure_data()
     {
-        return new Object[][] {
+        return new Object[][]{
 
-                { "mixin_requires_id_or_type.tml",
+                {"mixin_requires_id_or_type.tml",
                         "You may not specify mixins for element <span> because it does not represent a component (which requires either an id attribute or a type attribute).",
-                        2 },
+                        2},
 
-                { "unexpected_attribute_in_parameter_element.tml",
+                {"unexpected_attribute_in_parameter_element.tml",
                         "Element <parameter> does not support an attribute named 'grok'. The only allowed attribute name is 'name'.",
-                        4 },
+                        4},
 
-                { "name_attribute_of_parameter_element_omitted.tml",
-                        "The name attribute of the <parameter> element must be specified.", 4 },
+                {"name_attribute_of_parameter_element_omitted.tml",
+                        "The name attribute of the <parameter> element must be specified.", 4},
 
-                { "name_attribute_of_parameter_element_blank.tml",
-                        "The name attribute of the <parameter> element must be specified.", 4 },
+                {"name_attribute_of_parameter_element_blank.tml",
+                        "The name attribute of the <parameter> element must be specified.", 4},
 
-                { "unexpected_attribute_in_block_element.tml",
+                {"unexpected_attribute_in_block_element.tml",
                         "Element <block> does not support an attribute named 'name'. The only allowed attribute name is 'id'.",
-                        3 },
+                        3},
 
-                { "parameter_namespace_with_attributes.tml",
-                        ServicesMessages.parameterElementDoesNotAllowAttributes(), 4 },
+                {"parameter_namespace_with_attributes.tml",
+                        ServicesMessages.parameterElementDoesNotAllowAttributes(), 4},
 
-                { "invalid_library_namespace_path.tml",
-                        "The path portion of library namespace URI 'tapestry-library:subfolder/' is not valid", 2 },
+                {"invalid_library_namespace_path.tml",
+                        "The path portion of library namespace URI 'tapestry-library:subfolder/' is not valid", 2},
 
-                { "content_within_body_element.tml", "Content inside a Tapestry body element is not allowed", 2 },
+                {"content_within_body_element.tml", "Content inside a Tapestry body element is not allowed", 2},
 
-                { "nested_content_element.tml",
-                        "The <content> element may not be nested within another <content> element.", 3 },
+                {"nested_content_element.tml",
+                        "The <content> element may not be nested within another <content> element.", 3},
 
-                { "container_must_be_root.tml", "Element <container> is only valid as the root element of a template.",
-                        3 },
+                {"container_must_be_root.tml", "Element <container> is only valid as the root element of a template.",
+                        3},
 
-                { "extend_must_be_root.tml", "Element <extend> is only valid as the root element of a template.", 3 },
+                {"extend_must_be_root.tml", "Element <extend> is only valid as the root element of a template.", 3},
 
-                { "replace_must_be_under_extend.tml",
-                        "The <replace> element may only appear directly within an extend element.", 3 },
+                {"replace_must_be_under_extend.tml",
+                        "The <replace> element may only appear directly within an extend element.", 3},
 
-                { "only_replace_within_extend.tml", "Child element of <extend> must be <replace>.", 2 },
+                {"only_replace_within_extend.tml", "Child element of <extend> must be <replace>.", 2},
 
-                { "missing_id_in_replace_element.tml", "The <replace> element must have an id attribute.", 3 },
+                {"missing_id_in_replace_element.tml", "The <replace> element must have an id attribute.", 3},
 
-                { "extension_point_must_have_id.tml", "The <extension-point> element must have an id attribute.", 3 },
+                {"extension_point_must_have_id.tml", "The <extension-point> element must have an id attribute.", 3},
 
-                { "misplaced_parameter.tml", "Block parameters are only allowed directly within component elements.",
-                        5 },
+                {"misplaced_parameter.tml", "Block parameters are only allowed directly within component elements.",
+                        5},
 
-                { "parameter_namespace_element_deprecated.tml", "The <parameter> element has been deprecated in Tapestry 5.3 in favour of 'tapestry:parameter' namespace.", 4 },
+                {"parameter_namespace_element_deprecated.tml", "The <parameter> element has been deprecated in Tapestry 5.3 in favour of 'tapestry:parameter' namespace.", 4},
 
         };
     }
@@ -741,13 +742,12 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         {
             parse(fileName);
             unreachable();
-        }
-        catch (TapestryException ex)
+        } catch (TapestryException ex)
         {
             if (!ex.getMessage().contains(errorMessageSubstring))
             {
                 throw new AssertionError(format("Message [%s] does not contain substring [%s].", ex.getMessage(),
-                                                errorMessageSubstring));
+                        errorMessageSubstring));
             }
 
             assertEquals(ex.getLocation().getLine(), expectedLine);
@@ -757,8 +757,8 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @DataProvider
     public Object[][] doctype_parsed_correctly_data()
     {
-        return new Object[][] { { "xhtml1_strict_doctype.tml" }, { "xhtml1_transitional_doctype.tml" },
-                { "xhtml1_frameset_doctype.tml" } };
+        return new Object[][]{{"xhtml1_strict_doctype.tml"}, {"xhtml1_transitional_doctype.tml"},
+                {"xhtml1_frameset_doctype.tml"}};
     }
 
     @Test(dataProvider = "doctype_parsed_correctly_data")
@@ -773,28 +773,28 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @DataProvider
     public Object[][] doctype_token_added_correctly_data()
     {
-        return new Object[][] {
+        return new Object[][]{
 
-                { "xhtml1_strict_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Strict//EN",
-                        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" },
+                {"xhtml1_strict_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Strict//EN",
+                        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"},
 
-                { "xhtml1_transitional_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Transitional//EN",
-                        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" },
+                {"xhtml1_transitional_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Transitional//EN",
+                        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"},
 
-                { "xhtml1_frameset_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Frameset//EN",
-                        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd" },
+                {"xhtml1_frameset_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Frameset//EN",
+                        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd"},
 
-                { "html4_strict_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01//EN",
-                        "http://www.w3.org/TR/html4/strict.dtd" },
+                {"html4_strict_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01//EN",
+                        "http://www.w3.org/TR/html4/strict.dtd"},
 
-                { "html4_transitional_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01 Transitional//EN",
-                        "http://www.w3.org/TR/html4/loose.dtd" },
+                {"html4_transitional_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01 Transitional//EN",
+                        "http://www.w3.org/TR/html4/loose.dtd"},
 
-                { "html4_frameset_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01 Frameset//EN",
-                        "http://www.w3.org/TR/html4/frameset.dtd" },
+                {"html4_frameset_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01 Frameset//EN",
+                        "http://www.w3.org/TR/html4/frameset.dtd"},
 
-                { "system_doctype.xml", "foo", null,
-                        "src/test/resources/org/apache/tapestry5/internal/services/simple.dtd" } };
+                {"system_doctype.xml", "foo", null,
+                        "src/test/resources/org/apache/tapestry5/internal/services/simple.dtd"}};
     }
 
     @Test(dataProvider = "doctype_token_added_correctly_data")
@@ -816,8 +816,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         {
             parse("invalid_component_id.tml");
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertMessageContains(ex, "Component id 'not-valid' is not valid");
         }
@@ -830,8 +829,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         {
             parse("invalid_block_id.tml");
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertMessageContains(ex, "Block id 'not-valid' is not valid");
         }
@@ -955,5 +953,17 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         assertEquals(title1.getText(), "Default Title");
 
         checkType(title, 2, TokenType.END_ELEMENT);
+    }
+
+    @Test
+    public void html5_with_entities() throws Exception
+    {
+        List<TemplateToken> tokens = tokens("html5_with_entities.tml");
+
+        assertEquals(tokens.size(), 5);
+
+        TextToken token3 = get(tokens, 3);
+
+        assertEquals(token3.getText(), "©2011 Apache");
     }
 }
