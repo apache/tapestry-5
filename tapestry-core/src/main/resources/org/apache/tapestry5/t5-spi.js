@@ -67,7 +67,8 @@ T5.define("spi", {
 
     /**
      * Performs an ajax request, as per T5.ajax.request(). Supplied by the SPI
-     * implementation.
+     * implementation. The options parameter is not yet fully defined in Tapestry 5.3
+     * (this SPI function is not yet used anywhere).
      *
      * @param url
      *            URL for Ajax request
