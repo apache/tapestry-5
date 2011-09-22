@@ -20,7 +20,7 @@
  *
  * <p>
  * The SPI defines placeholders for functions whose implementations are provided
- * elsehwere. In some cases, an SPI may define a function in terms of other SPI
+ * elsewhere. In some cases, an SPI may define a function in terms of other SPI
  * functions; a framework layer may leave such a function alone or re-implement
  * it.
  */
