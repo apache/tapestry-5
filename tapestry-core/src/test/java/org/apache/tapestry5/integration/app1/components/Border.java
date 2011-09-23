@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,10 +15,8 @@
 package org.apache.tapestry5.integration.app1.components;
 
 import org.apache.tapestry5.annotations.Import;
+import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.services.Builtin;
-import org.apache.tapestry5.ioc.services.ClassFactory;
-import org.apache.tapestry5.services.ComponentLayer;
 import org.apache.tapestry5.services.Request;
 
 /**
@@ -26,34 +24,12 @@ import org.apache.tapestry5.services.Request;
  * T5 naming.
  */
 @Import(stylesheet =
-{ "context:layout/style.css", "context:css/app.css" })
+        {"context:layout/style.css", "context:css/app.css"})
 public class Border
 {
     @Inject
-    @Builtin
-    private ClassFactory iocClassFactory;
-
-    @Inject
-    @ComponentLayer
-    private ClassFactory componentClassFactory;
-
-    @Inject
+    @Property
     private Request request;
-
-    public ClassFactory getComponentClassFactory()
-    {
-        return componentClassFactory;
-    }
-
-    public ClassFactory getIocClassFactory()
-    {
-        return iocClassFactory;
-    }
-
-    public Request getRequest()
-    {
-        return request;
-    }
 
     public String getSecure()
     {

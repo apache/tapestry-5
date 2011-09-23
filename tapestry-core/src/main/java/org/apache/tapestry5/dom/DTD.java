@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,6 +13,8 @@
 // limitations under the License.
 
 package org.apache.tapestry5.dom;
+
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.io.PrintWriter;
 
@@ -30,6 +32,8 @@ public class DTD
 
     public DTD(String name, String publicId, String systemId)
     {
+        assert InternalUtils.isNonBlank(name);
+
         this.name = name;
         this.publicId = publicId;
         this.systemId = systemId;
@@ -42,17 +46,14 @@ public class DTD
             if (systemId != null)
             {
                 writer.printf("<!DOCTYPE %s PUBLIC \"%s\" \"%s\">", name, publicId, systemId);
-            }
-            else
+            } else
             {
                 writer.printf("<!DOCTYPE %s PUBLIC \"%s\">", name, publicId);
             }
-        }
-        else if (systemId != null)
+        } else if (systemId != null)
         {
             writer.printf("<!DOCTYPE %s SYSTEM \"%s\">", name, systemId);
-        }
-        else
+        } else
         {
             writer.printf("<!DOCTYPE %s>", name);
         }

@@ -1,7 +1,8 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 <head>
     <title>Tapestry Integration Test Application #1</title>
+    <t:doctype name="html"/>
 </head>
 <body>
 <div id="wrap">
@@ -36,10 +37,6 @@
                 <h4>Infrastructure</h4>
 
                 <dl>
-                    <dt>IOC Layer: ${iocClassFactory.createdClassCount} classes</dt>
-                    <dd>Service proxies and interceptors</dd>
-
-                    <dt>Component Layer: ${componentClassFactory.createdClassCount} classes</dt>
                     <dt>Locale:</dt>
                     <dd>${componentResources.locale}</dd>
                 </dl>

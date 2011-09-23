@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.structure;
 
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 
@@ -35,7 +36,12 @@ public class DTDPageElement implements RenderCommand
 
     public void render(MarkupWriter writer, RenderQueue queue)
     {
-        writer.getDocument().dtd(name, publicId, systemId);
+        Document document = writer.getDocument();
+
+        if (!document.hasDTD())
+        {
+            document.dtd(name, publicId, systemId);
+        }
     }
 
     @Override

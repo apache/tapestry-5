@@ -14,13 +14,13 @@
 
 package org.apache.tapestry5.dom;
 
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+
 import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 /**
  * The root node of a DOM.
@@ -73,9 +73,8 @@ public final class Document extends Node
 
     /**
      * Finds an element based on a path of element names.
-     * 
-     * @param path
-     *            slash separated series of element names
+     *
+     * @param path slash separated series of element names
      * @return the matching element, or null if not found
      * @see Element#find(String)
      */
@@ -121,11 +120,9 @@ public final class Document extends Node
 
     /**
      * Creates a new root element within a namespace.
-     * 
-     * @param namespace
-     *            URI of namespace containing the element
-     * @param name
-     *            name of element with namespace
+     *
+     * @param namespace URI of namespace containing the element
+     * @param name      name of element with namespace
      * @return the root element
      */
     public Element newRootElement(String namespace, String name)
@@ -176,9 +173,8 @@ public final class Document extends Node
 
     /**
      * Tries to find an element in this document whose id is specified.
-     * 
-     * @param id
-     *            the value of the id attribute of the element being looked for
+     *
+     * @param id the value of the id attribute of the element being looked for
      * @return the element if found. null if not found.
      */
     public Element getElementById(String id)
@@ -186,24 +182,43 @@ public final class Document extends Node
         return rootElement.getElementById(id);
     }
 
+    /**
+     * Sets the DTD for the document, overriding any prior DTD.
+     *
+     * @param name     non-blank name of document type (i.e., "html")
+     * @param publicId optional
+     * @param systemId optional
+     */
     public void dtd(String name, String publicId, String systemId)
     {
         dtd = new DTD(name, publicId, systemId);
     }
 
+    /**
+     * Returns true if the document has an explicit DTD (set via {@link #dtd(String, String, String)}).
+     *
+     * @since 5.3
+     */
+    public boolean hasDTD()
+    {
+        return dtd != null;
+    }
+
     @Override
     protected Map<String, String> getNamespaceURIToPrefix()
     {
-        if (rootElement == null) { return Collections.emptyMap(); }
+        if (rootElement == null)
+        {
+            return Collections.emptyMap();
+        }
 
         return rootElement.getNamespaceURIToPrefix();
     }
 
     /**
      * Visits the root element of the document.
-     * 
-     * @param visitor
-     *            callback
+     *
+     * @param visitor callback
      * @since 5.1.0.0
      */
     void visit(Visitor visitor)
@@ -223,7 +238,7 @@ public final class Document extends Node
 
     /**
      * Adds the comment and returns this document for further construction.
-     * 
+     *
      * @since 5.1.0.0
      */
     public Document comment(String text)
@@ -235,7 +250,7 @@ public final class Document extends Node
 
     /**
      * Adds the raw text and returns this document for further construction.
-     * 
+     *
      * @since 5.1.0.0
      */
     public Document raw(String text)
@@ -248,9 +263,8 @@ public final class Document extends Node
     /**
      * Adds and returns a new text node (the text node is returned so that {@link Text#write(String)} or [@link
      * {@link Text#writef(String, Object[])} may be invoked.
-     * 
-     * @param text
-     *            initial text for the node
+     *
+     * @param text initial text for the node
      * @return the new Text node
      */
     public Text text(String text)
@@ -260,9 +274,8 @@ public final class Document extends Node
 
     /**
      * Adds and returns a new CDATA node.
-     * 
-     * @param content
-     *            the content to be rendered by the node
+     *
+     * @param content the content to be rendered by the node
      * @return the newly created node
      */
     public CData cdata(String content)
