@@ -110,10 +110,16 @@ public class ErrorReporterImpl implements ErrorReporter
 
         System.err.println("Writing current page screenshot to: " + capture);
 
-        commandProcessor.doCommand("captureEntirePageScreenshot", new String[]
-                {capture.getAbsolutePath(), "background=white"});
+        try
+        {
+            commandProcessor.doCommand("captureEntirePageScreenshot", new String[]
+                    {capture.getAbsolutePath(), "background=white"});
 
-        outputPaths.add(capture);
+            outputPaths.add(capture);
+        } catch (Exception ex)
+        {
+            System.err.println(ex.getMessage());
+        }
     }
 
 }
