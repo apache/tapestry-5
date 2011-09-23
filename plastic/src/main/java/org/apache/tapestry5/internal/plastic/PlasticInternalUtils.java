@@ -14,22 +14,6 @@
 
 package org.apache.tapestry5.internal.plastic;
 
-import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.tapestry5.internal.plastic.asm.ClassReader;
 import org.apache.tapestry5.internal.plastic.asm.Type;
 import org.apache.tapestry5.internal.plastic.asm.tree.ClassNode;
@@ -37,6 +21,14 @@ import org.apache.tapestry5.internal.plastic.asm.tree.MethodNode;
 import org.apache.tapestry5.internal.plastic.asm.util.TraceClassVisitor;
 import org.apache.tapestry5.plastic.InstanceContext;
 import org.apache.tapestry5.plastic.MethodDescription;
+
+import java.io.*;
+import java.lang.reflect.Array;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("rawtypes")
 public class PlasticInternalUtils
@@ -88,8 +80,7 @@ public class PlasticInternalUtils
         {
             if (closeable != null)
                 closeable.close();
-        }
-        catch (IOException ex)
+        } catch (IOException ex)
         {
             // Ignore it.
         }
@@ -236,7 +227,7 @@ public class PlasticInternalUtils
     /**
      * Strips out leading and trailing underscores, leaving the real property name.
      * In addition, "m_foo" is converted to "foo".
-     * 
+     *
      * @param fieldName to convert
      * @return the property name
      */
@@ -253,9 +244,8 @@ public class PlasticInternalUtils
 
     /**
      * Capitalizes the input string, converting the first character to upper case.
-     * 
-     * @param input
-     *            a non-empty string
+     *
+     * @param input a non-empty string
      * @return the same string if already capitalized, or a capitalized version
      */
     public static String capitalize(String input)
@@ -284,10 +274,8 @@ public class PlasticInternalUtils
     }
 
     /**
-     * @param loader
-     *            class loader to look up in
-     * @param javaName
-     *            java name is Java source format (e.g., "int", "int[]", "java.lang.String", "java.lang.String[]", etc.)
+     * @param loader   class loader to look up in
+     * @param javaName java name is Java source format (e.g., "int", "int[]", "java.lang.String", "java.lang.String[]", etc.)
      * @return class instance
      * @throws ClassNotFoundException
      */
@@ -338,8 +326,7 @@ public class PlasticInternalUtils
             Class valueType = toClass(loader, javaName);
 
             return context.get(valueType);
-        }
-        catch (ClassNotFoundException ex)
+        } catch (ClassNotFoundException ex)
         {
             throw new RuntimeException(ex);
         }
@@ -377,31 +364,56 @@ public class PlasticInternalUtils
     public static byte[] readBytecodeForClass(ClassLoader loader, String className, boolean mustExist)
     {
         String path = toClassPath(className);
-
-        InputStream stream = loader.getResourceAsStream(path);
-
-        if (stream == null)
-        {
-            if (mustExist)
-                throw new RuntimeException(String.format("Unable to locate class file for '%s' in class loader %s.",
-                        className, loader));
-
-            return null;
-        }
+        InputStream stream = null;
 
         try
         {
+            stream = getStreamForPath(loader, path);
+
+            if (stream == null)
+            {
+                if (mustExist)
+                    throw new RuntimeException(String.format("Unable to locate class file for '%s' in class loader %s.",
+                            className, loader));
+
+                return null;
+            }
+
             return readBytestream(stream);
-        }
-        catch (IOException ex)
+        } catch (IOException ex)
         {
             throw new RuntimeException(String.format("Failure reading bytecode for class %s: %s", className,
                     toMessage(ex)), ex);
-        }
-        finally
+        } finally
         {
             close(stream);
         }
+    }
+
+    private static InputStream getStreamForPath(ClassLoader loader, String path) throws IOException
+    {
+        URL url = loader.getResource(path);
+
+        if (url == null)
+        {
+            return null;
+        }
+
+        // This *should* handle Tomcat better, where the Tomcat class loader appears to be caching
+        // the contents of files; this bypasses Tomcat to re-read the files from the disk directly.
+
+        if (url.toString().startsWith("file:"))
+        {
+            try
+            {
+                return new FileInputStream(new File(url.toURI()));
+            } catch (URISyntaxException ex)
+            {
+                throw new IOException(ex);
+            }
+        }
+
+        return url.openStream();
     }
 
     public static ClassNode convertBytecodeToClassNode(byte[] bytecode)
