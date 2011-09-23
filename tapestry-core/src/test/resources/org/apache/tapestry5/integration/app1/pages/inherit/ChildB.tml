@@ -1,0 +1,11 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+
+<h1>Child B</h1>
+
+<p>
+    Go to
+    <t:pagelink page="inherit/childa">Child A</t:pagelink>
+</p>
+
+
+</html>

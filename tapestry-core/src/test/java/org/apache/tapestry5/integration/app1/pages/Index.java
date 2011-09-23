@@ -56,6 +56,8 @@ public class Index
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
 
+                    new Item("inherit/childa", "TAP5-1656 Demo", "Test a reported bug in component inheritance"),
+
                     new Item("ComponentInsideBlockDemo", "Component Inside Block Demo", "Verify that a component, inside a block, is still an embedded "),
 
                     new Item("EventMethodUnmatchedComponentId", "Unmatched Component Id in Event Method Demo", "Show that referencing a component that does not exist in an event handler method name is an error."),
