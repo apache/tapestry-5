@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.corelib.components.*;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.BeanBlockContribution;
 import org.apache.tapestry5.services.BeanBlockSource;
 import org.apache.tapestry5.services.PropertyEditContext;
@@ -69,7 +71,7 @@ public class PropertyEditBlocks
             parameters = {"value=context.propertyValue", "label=prop:context.label", "clientId=prop:context.propertyid",
                     "validate=prop:dateFieldValidator"})
     private DateField dateField;
-    
+
     @SuppressWarnings("unused")
     @Component(
             parameters = {"value=context.propertyValue", "label=prop:context.label", "clientId=prop:context.propertyid",
@@ -89,6 +91,9 @@ public class PropertyEditBlocks
                     "annotationProvider=context"})
     private TextArea textArea;
 
+
+    @Inject
+    private TypeCoercer typeCoercer;
 
     public PropertyEditContext getContext()
     {
@@ -158,7 +163,7 @@ public class PropertyEditBlocks
     @SuppressWarnings("unchecked")
     public ValueEncoder getValueEncoderForProperty()
     {
-        return new EnumValueEncoder(context.getPropertyType());
+        return new EnumValueEncoder(typeCoercer, context.getPropertyType());
     }
 
     /**

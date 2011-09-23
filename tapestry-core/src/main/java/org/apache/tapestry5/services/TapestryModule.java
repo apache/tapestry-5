@@ -2198,7 +2198,7 @@ public final class TapestryModule
     {
         configuration.addInstance(Object.class, TypeCoercedValueEncoderFactory.class);
         configuration.add(String.class, new StringValueEncoder());
-        configuration.add(Enum.class, new EnumValueEncoderFactory());
+        configuration.addInstance(Enum.class, EnumValueEncoderFactory.class);
     }
 
     /**

@@ -13,9 +13,6 @@
 // limitations under the License.
 package org.apache.tapestry5.integration.app1.pages;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.ValueEncoder;
@@ -24,8 +21,12 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.integration.app1.data.CarMaker;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.util.EnumSelectModel;
 import org.apache.tapestry5.util.EnumValueEncoder;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class SelectZoneDemo
 {
@@ -48,6 +49,10 @@ public class SelectZoneDemo
     @Property
     @Persist
     private List<String> availableModels;
+
+    @Inject
+    private TypeCoercer typeCoercer;
+
 
     public Object onValueChanged(final CarMaker maker)
     {
@@ -78,7 +83,7 @@ public class SelectZoneDemo
 
     public ValueEncoder<CarMaker> getMakeEncoder()
     {
-        return new EnumValueEncoder<CarMaker>(CarMaker.class);
+        return new EnumValueEncoder<CarMaker>(typeCoercer, CarMaker.class);
     }
 
 }

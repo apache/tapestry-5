@@ -20,6 +20,7 @@ import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.integration.app1.data.ProgrammingLanguage;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.util.EnumSelectModel;
 import org.apache.tapestry5.util.EnumValueEncoder;
 
@@ -35,6 +36,9 @@ public class PaletteDemo
 
     @Persist
     private boolean reorder;
+
+    @Inject
+    private TypeCoercer typeCoercer;
 
     public boolean isReorder()
     {
@@ -64,7 +68,7 @@ public class PaletteDemo
     @SuppressWarnings("unchecked")
     public ValueEncoder getLanguageEncoder()
     {
-        return new EnumValueEncoder(ProgrammingLanguage.class);
+        return new EnumValueEncoder(typeCoercer, ProgrammingLanguage.class);
     }
 
     void onActionFromReset()

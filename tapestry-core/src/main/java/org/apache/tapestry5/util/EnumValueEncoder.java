@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,17 +16,22 @@ package org.apache.tapestry5.util;
 
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
 
 /**
  * A value encoder that can be used for arbitrary Enum types. The enum name is stored as the client side value.
  */
 public class EnumValueEncoder<E extends Enum<E>> implements ValueEncoder<E>
 {
+    private final TypeCoercer typeCoercer;
+
     private final Class<E> enumType;
 
-    public EnumValueEncoder(final Class<E> enumType)
+    public EnumValueEncoder(TypeCoercer typeCoercer, final Class<E> enumType)
     {
         assert enumType != null;
+
+        this.typeCoercer = typeCoercer;
         this.enumType = enumType;
     }
 
@@ -43,7 +48,7 @@ public class EnumValueEncoder<E extends Enum<E>> implements ValueEncoder<E>
         if (InternalUtils.isBlank(clientValue))
             return null;
 
-        return Enum.valueOf(enumType, clientValue);
+        return typeCoercer.coerce(clientValue, enumType);
     }
 
 }

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.ValueEncoderFactory;
 import org.apache.tapestry5.util.EnumValueEncoder;
 
@@ -25,8 +26,15 @@ import org.apache.tapestry5.util.EnumValueEncoder;
  */
 public class EnumValueEncoderFactory<E extends Enum<E>> implements ValueEncoderFactory<E>
 {
+    private final TypeCoercer typeCoercer;
+
+    public EnumValueEncoderFactory(TypeCoercer typeCoercer)
+    {
+        this.typeCoercer = typeCoercer;
+    }
+
     public ValueEncoder<E> create(Class<E> type)
     {
-        return new EnumValueEncoder<E>(type);
+        return new EnumValueEncoder<E>(typeCoercer, type);
     }
 }
