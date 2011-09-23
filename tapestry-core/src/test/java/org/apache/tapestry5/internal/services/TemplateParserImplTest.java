@@ -964,6 +964,6 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         TextToken token3 = get(tokens, 3);
 
-        assertEquals(token3.getText(), "©2011 Apache");
+        assertEquals(token3.getText(), "\u00A92011\u00A0Apache");
     }
 }
