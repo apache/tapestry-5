@@ -366,6 +366,7 @@ public final class TapestryModule
         binder.bind(DynamicTemplateParser.class, DynamicTemplateParserImpl.class);
         binder.bind(AjaxResponseRenderer.class, AjaxResponseRendererImpl.class);
         binder.bind(AlertManager.class, AlertManagerImpl.class);
+        binder.bind(ValidationDecoratorFactory.class, ValidationDecoratorFactoryImpl.class);
     }
 
     // ========================================================================
@@ -1852,15 +1853,11 @@ public final class TapestryModule
      * <dd>Provides {@link ClientBehaviorSupport}</dd>
      * <dt>Heartbeat</dt>
      * <dd>Provides {@link org.apache.tapestry5.services.Heartbeat}</dd>
-     * <dt>DefaultValidationDecorator</dt>
-     * <dd>Provides {@link org.apache.tapestry5.ValidationDecorator} (as an instance of
-     * {@link org.apache.tapestry5.internal.DefaultValidationDecorator})</dd>
+     * <dt>ValidationDecorator</dt>
+     * <dd>Provides {@link org.apache.tapestry5.ValidationDecorator} (via {@link ValidationDecoratorFactory#newInstance(org.apache.tapestry5.MarkupWriter)})</dd>
      * </dl>
      */
     public void contributeMarkupRenderer(OrderedConfiguration<MarkupRendererFilter> configuration,
-
-                                         @Path("${tapestry.spacer-image}")
-                                         final Asset spacerImage,
 
                                          @Symbol(SymbolConstants.OMIT_GENERATOR_META)
                                          final boolean omitGeneratorMeta,
@@ -1878,6 +1875,8 @@ public final class TapestryModule
                                          final JavaScriptStackSource javascriptStackSource,
 
                                          final JavaScriptStackPathConstructor javascriptStackPathConstructor,
+
+                                         final ValidationDecoratorFactory validationDecoratorFactory,
 
                                          @Path("${tapestry.default-stylesheet}")
                                          final Asset defaultStylesheet)
@@ -1986,7 +1985,7 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                ValidationDecorator decorator = new DefaultValidationDecorator(environment, spacerImage, writer);
+                ValidationDecorator decorator = validationDecoratorFactory.newInstance(writer);
 
                 environment.push(ValidationDecorator.class, decorator);
 
@@ -1997,12 +1996,12 @@ public final class TapestryModule
         };
 
         configuration.add("DocumentLinker", documentLinker);
-        configuration.add("JavaScriptSupport", javaScriptSupport, "after:DocumentLinker");
-        configuration.add("RenderSupport", renderSupport, "after:JavaScriptSupport");
-        configuration.add("InjectDefaultStyleheet", injectDefaultStylesheet, "after:JavaScriptSupport");
-        configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:JavaScriptSupport");
-        configuration.add("Heartbeat", heartbeat, "after:ClientBehaviorSupport");
-        configuration.add("DefaultValidationDecorator", defaultValidationDecorator, "after:Heartbeat");
+        configuration.add("JavaScriptSupport", javaScriptSupport);
+        configuration.add("RenderSupport", renderSupport);
+        configuration.add("InjectDefaultStyleheet", injectDefaultStylesheet);
+        configuration.add("ClientBehaviorSupport", clientBehaviorSupport);
+        configuration.add("Heartbeat", heartbeat);
+        configuration.add("ValidationDecorator", defaultValidationDecorator);
     }
 
     /**
@@ -2020,14 +2019,13 @@ public final class TapestryModule
      * <dt>Heartbeat</dt>
      * <dd>Provides {@link org.apache.tapestry5.services.Heartbeat}</dd>
      * <dt>DefaultValidationDecorator</dt>
-     * <dd>Provides {@link org.apache.tapestry5.ValidationDecorator} (as an instance of
-     * {@link org.apache.tapestry5.internal.DefaultValidationDecorator})</dd>
+     * <dt>ValidationDecorator</dt>
+     * <dd>Provides {@link org.apache.tapestry5.ValidationDecorator} (via {@link ValidationDecoratorFactory#newInstance(org.apache.tapestry5.MarkupWriter)})</dd>
      * </dl>
      */
     public void contributePartialMarkupRenderer(OrderedConfiguration<PartialMarkupRendererFilter> configuration,
 
-                                                @Path("${tapestry.spacer-image}")
-                                                final Asset spacerImage,
+                                                final ValidationDecoratorFactory validationDecoratorFactory,
 
                                                 final JavaScriptStackSource javascriptStackSource,
 
@@ -2134,7 +2132,7 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {
-                ValidationDecorator decorator = new DefaultValidationDecorator(environment, spacerImage, writer);
+                ValidationDecorator decorator = validationDecoratorFactory.newInstance(writer);
 
                 environment.push(ValidationDecorator.class, decorator);
 
@@ -2145,11 +2143,11 @@ public final class TapestryModule
         };
 
         configuration.add("DocumentLinker", documentLinker);
-        configuration.add("JavaScriptSupport", javascriptSupport, "after:DocumentLinker");
-        configuration.add("RenderSupport", renderSupport, "after:JavaScriptSupport");
-        configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:JavaScriptSupport");
-        configuration.add("Heartbeat", heartbeat, "after:ClientBehaviorSupport");
-        configuration.add("DefaultValidationDecorator", defaultValidationDecorator, "after:Heartbeat");
+        configuration.add("JavaScriptSupport", javascriptSupport);
+        configuration.add("RenderSupport", renderSupport);
+        configuration.add("ClientBehaviorSupport", clientBehaviorSupport);
+        configuration.add("Heartbeat", heartbeat);
+        configuration.add("ValidationDecorator", defaultValidationDecorator);
     }
 
     /**
