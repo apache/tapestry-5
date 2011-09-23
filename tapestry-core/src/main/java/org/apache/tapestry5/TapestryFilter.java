@@ -43,7 +43,7 @@ import java.io.IOException;
  * <dt>tapestry.app-package</dt>
  * <dd>The application package (used to search for pages, components, etc.)</dd>
  * </dl>
- * <p>
+ * <p/>
  * In addition, a JVM system property affects configuration: <code>tapestry.execution-mode</code>
  * (with default value "production"). This property is a comma-separated list of execution modes.
  * For each mode, an additional init parameter is checked for:
@@ -92,7 +92,7 @@ public class TapestryFilter implements Filter
             public String valueForSymbol(String symbolName)
             {
                 String contextValue = contextProvider.valueForSymbol(symbolName);
-                if ( contextValue != null ) return contextValue;
+                if (contextValue != null) return contextValue;
 
                 return systemProvider.valueForSymbol(symbolName);
             }
@@ -104,6 +104,7 @@ public class TapestryFilter implements Filter
                 filterName, executionMode);
 
         appInitializer.addModules(provideExtraModuleDefs(context));
+        appInitializer.addModules(provideExtraModuleClasses(context));
 
         registry = appInitializer.createRegistry();
 
@@ -132,9 +133,8 @@ public class TapestryFilter implements Filter
      * Invoked from {@link #init(FilterConfig)} after the Registry has been created, to allow any
      * additional
      * initialization to occur. This implementation does nothing, and my be overriden in subclasses.
-     * 
-     * @param registry
-     *            from which services may be extracted
+     *
+     * @param registry from which services may be extracted
      * @throws ServletException
      */
     protected void init(Registry registry) throws ServletException
@@ -152,6 +152,17 @@ public class TapestryFilter implements Filter
         return new ModuleDef[0];
     }
 
+    /**
+     * Overriden in subclasses to provide additional module classes beyond those normally located. This implementation
+     * returns an empty array.
+     *
+     * @since 5.3
+     */
+    protected Class[] provideExtraModuleClasses(ServletContext context)
+    {
+        return new Class[0];
+    }
+
     public final void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException
     {
@@ -162,8 +173,7 @@ public class TapestryFilter implements Filter
 
             if (!handled)
                 chain.doFilter(request, response);
-        }
-        finally
+        } finally
         {
             registry.cleanupThread();
         }
@@ -193,7 +203,7 @@ public class TapestryFilter implements Filter
      * filter. The Registry
      * will be shutdown after this call. This implementation does nothing, and may be overridden in
      * subclasses.
-     * 
+     *
      * @param registry
      */
     protected void destroy(Registry registry)
