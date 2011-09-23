@@ -1697,13 +1697,7 @@ public final class TapestryModule
             }
         });
 
-        configuration.add(HttpError.class, new ComponentEventResultProcessor<HttpError>()
-        {
-            public void processResultValue(HttpError value) throws IOException
-            {
-                response.sendError(value.getStatusCode(), value.getMessage());
-            }
-        });
+        configuration.addInstance(HttpError.class, HttpErrorComponentEventResultProcessor.class);
 
         configuration.addInstance(String.class, PageNameComponentEventResultProcessor.class);
 
@@ -1757,6 +1751,7 @@ public final class TapestryModule
         configuration.addInstance(Link.class, AjaxLinkComponentEventResultProcessor.class);
         configuration.addInstance(Class.class, AjaxPageClassComponentEventResultProcessor.class);
         configuration.addInstance(MultiZoneUpdate.class, MultiZoneUpdateEventResultProcessor.class);
+        configuration.addInstance(HttpError.class, HttpErrorComponentEventResultProcessor.class);
     }
 
     /**
@@ -2876,4 +2871,5 @@ public final class TapestryModule
             });
         }
     }
+
 }

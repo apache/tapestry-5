@@ -11,11 +11,12 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package org.apache.tapestry5.services;
 
 /**
  * An event handler method may return an instance of this class to send an error response to the client.
- * 
+ *
  * @since 5.2.0
  */
 public final class HttpError
@@ -23,14 +24,14 @@ public final class HttpError
     private final int statusCode;
 
     private final String message;
-    
+
     public HttpError(int statusCode, String message)
     {
         this.statusCode = statusCode;
-        
+
         this.message = message;
     }
-    
+
 
     /**
      * Returns the error status code.
