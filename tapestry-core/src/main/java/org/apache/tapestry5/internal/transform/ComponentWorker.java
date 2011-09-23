@@ -35,6 +35,8 @@ import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
 
+import java.util.List;
+
 /**
  * Finds fields with the {@link org.apache.tapestry5.annotations.Component} annotation and updates
  * the model. Also
@@ -97,7 +99,7 @@ public class ComponentWorker implements ComponentClassTransformWorker2
     }
 
     private ComputedValue<FieldConduit<Object>> createProviderForEmbeddedComponentConduit(final String fieldName,
-            final String id)
+                                                                                          final String id)
     {
         return new ComputedValue<FieldConduit<Object>>()
         {
@@ -121,7 +123,11 @@ public class ComponentWorker implements ComponentClassTransformWorker2
         String names = annotation.publishParameters();
 
         if (InternalUtils.isNonBlank(names))
-            embedded.setPublishedParameters(CollectionFactory.newList(TapestryInternalUtils.splitAtCommas(names)));
+        {
+            List<String> published = CollectionFactory.newList(TapestryInternalUtils.splitAtCommas(names));
+            embedded.setPublishedParameters(published);
+        }
+
     }
 
     private void addMixinClasses(PlasticField field, MutableEmbeddedComponentModel model)

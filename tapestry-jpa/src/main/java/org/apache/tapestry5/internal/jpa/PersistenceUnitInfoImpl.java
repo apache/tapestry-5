@@ -27,7 +27,6 @@ import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.DataSource;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -152,7 +151,8 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
      */
     public List<String> getMappingFileNames()
     {
-        return Collections.unmodifiableList(CollectionFactory.newList(mappingFilesNames));
+        List<String> tmp = CollectionFactory.newList(mappingFilesNames);
+        return Collections.unmodifiableList(tmp);
     }
 
     /**
@@ -233,7 +233,8 @@ public class PersistenceUnitInfoImpl implements TapestryPersistenceUnitInfo
      */
     public List<String> getManagedClassNames()
     {
-        return Collections.unmodifiableList(CollectionFactory.newList(managedClassNames));
+        List<String> tmp = CollectionFactory.newList(managedClassNames);
+        return Collections.<String>unmodifiableList(tmp);
     }
 
     /**

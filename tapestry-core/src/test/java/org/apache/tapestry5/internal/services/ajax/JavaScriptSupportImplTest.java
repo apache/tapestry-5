@@ -14,10 +14,6 @@
 
 package org.apache.tapestry5.internal.services.ajax;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.InternalConstants;
@@ -28,13 +24,12 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.javascript.InitializationPriority;
-import org.apache.tapestry5.services.javascript.JavaScriptStack;
-import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
-import org.apache.tapestry5.services.javascript.JavaScriptSupport;
-import org.apache.tapestry5.services.javascript.StylesheetLink;
-import org.apache.tapestry5.services.javascript.StylesheetOptions;
+import org.apache.tapestry5.services.javascript.*;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class JavaScriptSupportImplTest extends InternalBaseTestCase
 {
@@ -106,35 +101,37 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
     }
 
     private void trainForEmptyCoreStack(DocumentLinker linker, JavaScriptStackSource stackSource,
-            JavaScriptStackPathConstructor pathConstructor)
+                                        JavaScriptStackPathConstructor pathConstructor)
     {
         JavaScriptStack stack = mockJavaScriptStack();
 
         expect(stackSource.getStack(InternalConstants.CORE_STACK_NAME)).andReturn(stack);
         expect(pathConstructor.constructPathsForJavaScriptStack(InternalConstants.CORE_STACK_NAME)).andReturn(
-                Collections.<String> emptyList());
-        expect(stack.getStylesheets()).andReturn(Collections.<StylesheetLink> emptyList());
+                Collections.<String>emptyList());
+        expect(stack.getStylesheets()).andReturn(Collections.<StylesheetLink>emptyList());
 
         expect(stack.getInitialization()).andReturn(null);
 
-        expect(stack.getStacks()).andReturn(Collections.<String> emptyList());
+        expect(stack.getStacks()).andReturn(Collections.<String>emptyList());
     }
 
     private void trainForCoreStack(DocumentLinker linker, JavaScriptStackSource stackSource,
-            JavaScriptStackPathConstructor pathConstructor)
+                                   JavaScriptStackPathConstructor pathConstructor)
     {
         JavaScriptStack stack = mockJavaScriptStack();
 
         StylesheetLink stylesheetLink = new StylesheetLink("style.css");
+        List<String> stackList = CollectionFactory.newList("stack1.js", "stack2.js");
 
         expect(stackSource.getStack(InternalConstants.CORE_STACK_NAME)).andReturn(stack);
         expect(pathConstructor.constructPathsForJavaScriptStack(InternalConstants.CORE_STACK_NAME)).andReturn(
-                CollectionFactory.newList("stack1.js", "stack2.js"));
-        expect(stack.getStylesheets()).andReturn(CollectionFactory.newList(stylesheetLink));
+                stackList);
+        List<StylesheetLink> stylesheetLst = CollectionFactory.newList(stylesheetLink);
+        expect(stack.getStylesheets()).andReturn(stylesheetLst);
 
         expect(stack.getInitialization()).andReturn("stackInit();");
 
-        expect(stack.getStacks()).andReturn(Collections.<String> emptyList());
+        expect(stack.getStacks()).andReturn(Collections.<String>emptyList());
 
         linker.addScriptLink("stack1.js");
         linker.addScriptLink("stack2.js");
@@ -216,12 +213,12 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
         expect(stackSource.getStackNames()).andReturn(Arrays.asList("mystack"));
         expect(stackSource.getStack("mystack")).andReturn(mystack).atLeastOnce();
 
-        expect(mystack.getStacks()).andReturn(Collections.<String> emptyList());
+        expect(mystack.getStacks()).andReturn(Collections.<String>emptyList());
         expect(mystack.getJavaScriptLibraries()).andReturn(Arrays.asList(library1, library2));
 
         expect(pathConstructor.constructPathsForJavaScriptStack("mystack")).andReturn(
                 Arrays.asList("stacks/mystack.js"));
-        expect(mystack.getStylesheets()).andReturn(Collections.<StylesheetLink> emptyList());
+        expect(mystack.getStylesheets()).andReturn(Collections.<StylesheetLink>emptyList());
 
         expect(mystack.getInitialization()).andReturn(null);
 
@@ -242,7 +239,7 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
     {
         // This is slightly odd, as it would normally return "core" at a minimum, but we test for that separately.
 
-        expect(stackSource.getStackNames()).andReturn(Collections.<String> emptyList());
+        expect(stackSource.getStackNames()).andReturn(Collections.<String>emptyList());
     }
 
     @Test
@@ -257,11 +254,13 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
         JavaScriptStack stack = mockJavaScriptStack();
 
         StylesheetLink stylesheetLink = new StylesheetLink("stack.css");
+        List<String> stackLst = CollectionFactory.newList("stack.js");
 
         expect(stackSource.getStack("custom")).andReturn(stack);
         expect(pathConstructor.constructPathsForJavaScriptStack("custom")).andReturn(
-                CollectionFactory.newList("stack.js"));
-        expect(stack.getStylesheets()).andReturn(CollectionFactory.newList(stylesheetLink));
+                stackLst);
+        List<StylesheetLink> stylesheetLst = CollectionFactory.newList(stylesheetLink);
+        expect(stack.getStylesheets()).andReturn(stylesheetLst);
 
         expect(stack.getInitialization()).andReturn("customInit();");
 
@@ -320,7 +319,7 @@ public class JavaScriptSupportImplTest extends InternalBaseTestCase
 
         expect(child.getInitialization()).andReturn("childInit();");
 
-        expect(parent.getStacks()).andReturn(Collections.<String> emptyList());
+        expect(parent.getStacks()).andReturn(Collections.<String>emptyList());
 
         linker.addScriptLink("parent.js");
         linker.addScriptLink("child.js");

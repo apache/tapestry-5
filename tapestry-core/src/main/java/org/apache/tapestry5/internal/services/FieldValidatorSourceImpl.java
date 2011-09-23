@@ -14,12 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.FieldValidator;
@@ -33,6 +27,12 @@ import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.FieldValidatorSource;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.validator.ValidatorMacro;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 
 @SuppressWarnings("all")
 public class FieldValidatorSourceImpl implements FieldValidatorSource
@@ -48,7 +48,7 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
     private final ValidatorMacro validatorMacro;
 
     public FieldValidatorSourceImpl(Messages globalMessages, TypeCoercer typeCoercer,
-            FormSupport formSupport, Map<String, Validator> validators, ValidatorMacro validatorMacro)
+                                    FormSupport formSupport, Map<String, Validator> validators, ValidatorMacro validatorMacro)
     {
         this.globalMessages = globalMessages;
         this.typeCoercer = typeCoercer;
@@ -73,14 +73,16 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
     }
 
     public FieldValidator createValidator(Field field, String validatorType, String constraintValue, String overrideId,
-            Messages overrideMessages, Locale locale)
+                                          Messages overrideMessages, Locale locale)
     {
 
         ValidatorSpecification originalSpec = new ValidatorSpecification(validatorType, constraintValue);
 
-        List<ValidatorSpecification> specs = expandMacros(newList(originalSpec));
+        List<ValidatorSpecification> org = CollectionFactory.newList(originalSpec);
 
-        List<FieldValidator> fieldValidators = CollectionFactory.newList();
+        List<ValidatorSpecification> specs = expandMacros(org);
+
+        List<FieldValidator> fieldValidators = CollectionFactory.<FieldValidator>newList();
 
         for (ValidatorSpecification spec : specs)
         {
@@ -91,7 +93,7 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
     }
 
     private FieldValidator createValidator(Field field, ValidatorSpecification spec, String overrideId,
-            Messages overrideMessages)
+                                           Messages overrideMessages)
     {
 
         String validatorType = spec.getValidatorType();
@@ -118,7 +120,7 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
     }
 
     private Object computeConstraintValue(String validatorType, Validator validator, String constraintValue,
-            String formId, String overrideId, Messages overrideMessages)
+                                          String formId, String overrideId, Messages overrideMessages)
     {
         Class constraintType = validator.getConstraintType();
 
@@ -132,7 +134,7 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
     }
 
     private String findConstraintValue(String validatorType, Class constraintType, String constraintValue,
-            String formValidationId, String overrideId, Messages overrideMessages)
+                                       String formValidationId, String overrideId, Messages overrideMessages)
     {
         if (constraintValue != null)
             return constraintValue;
@@ -158,7 +160,7 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
     }
 
     private MessageFormatter findMessageFormatter(String formId, String overrideId, Messages overrideMessages,
-            String validatorType, Validator validator)
+                                                  String validatorType, Validator validator)
     {
 
         String overrideKey = formId + "-" + overrideId + "-" + validatorType + "-message";
@@ -232,8 +234,7 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
                 {
                     queue.add(i, parsed.get(i));
                 }
-            }
-            else
+            } else
             {
                 result.add(head);
             }
