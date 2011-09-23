@@ -14,34 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.DECIMAL;
-import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.DEREF;
-import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.FALSE;
-import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.IDENTIFIER;
-import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.INTEGER;
-import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.INVOKE;
-import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.LIST;
-import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.MAP;
-import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.NOT;
-import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.NULL;
-import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.RANGEOP;
-import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.SAFEDEREF;
-import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.STRING;
-import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.THIS;
-import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.TRUE;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.tree.Tree;
@@ -56,25 +28,27 @@ import org.apache.tapestry5.ioc.internal.NullAnnotationProvider;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.GenericsUtils;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
-import org.apache.tapestry5.ioc.services.PropertyAccess;
-import org.apache.tapestry5.ioc.services.PropertyAdapter;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.ioc.services.*;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
-import org.apache.tapestry5.plastic.Condition;
-import org.apache.tapestry5.plastic.InstructionBuilder;
-import org.apache.tapestry5.plastic.InstructionBuilderCallback;
-import org.apache.tapestry5.plastic.MethodDescription;
-import org.apache.tapestry5.plastic.PlasticClass;
-import org.apache.tapestry5.plastic.PlasticClassTransformer;
-import org.apache.tapestry5.plastic.PlasticField;
-import org.apache.tapestry5.plastic.PlasticMethod;
-import org.apache.tapestry5.plastic.PlasticUtils;
+import org.apache.tapestry5.plastic.*;
 import org.apache.tapestry5.services.ComponentLayer;
 import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.PropertyConduitSource;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.apache.tapestry5.internal.antlr.PropertyExpressionParser.*;
 
 public class PropertyConduitSourceImpl implements PropertyConduitSource, InvalidationListener
 {
@@ -124,7 +98,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     };
 
     private static final String[] SINGLE_OBJECT_ARGUMENT = new String[]
-    { Object.class.getName() };
+            {Object.class.getName()};
 
     @SuppressWarnings("unchecked")
     private static Method getMethod(Class containingClass, String name, Class... parameterTypes)
@@ -132,8 +106,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         try
         {
             return containingClass.getMethod(name, parameterTypes);
-        }
-        catch (NoSuchMethodException ex)
+        } catch (NoSuchMethodException ex)
         {
             throw new IllegalArgumentException(ex);
         }
@@ -176,16 +149,20 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         final Class genericType;
 
-        /** Describes the term, for use in error messages. */
+        /**
+         * Describes the term, for use in error messages.
+         */
         final String description;
 
         final AnnotationProvider annotationProvider;
 
-        /** Callback that will implement the term. */
+        /**
+         * Callback that will implement the term.
+         */
         final InstructionBuilderCallback callback;
 
         Term(Type type, Class genericType, String description, AnnotationProvider annotationProvider,
-                InstructionBuilderCallback callback)
+             InstructionBuilderCallback callback)
         {
             this.type = type;
             this.genericType = genericType;
@@ -204,7 +181,9 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             this(type, description, null, callback);
         }
 
-        /** Returns a clone of this Term with a new callback. */
+        /**
+         * Returns a clone of this Term with a new callback.
+         */
         Term withCallback(InstructionBuilderCallback newCallback)
         {
             return new Term(type, genericType, description, annotationProvider, newCallback);
@@ -388,8 +367,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             if (callbacks.isEmpty())
             {
                 navMethod = getRootMethod;
-            }
-            else
+            } else
             {
                 navMethod = plasticClass.introducePrivateMethod(PlasticUtils.toTypeName(activeClass), "navigate",
                         SINGLE_OBJECT_ARGUMENT, null);
@@ -649,8 +627,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         }
 
         /**
-         * @param node
-         *            subexpression to invert
+         * @param node subexpression to invert
          */
         private void implementNotOpGetter(final Tree node)
         {
@@ -685,13 +662,10 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         /**
          * Uses the builder to add instructions for a subexpression.
-         * 
-         * @param builder
-         *            used to add instructions
-         * @param activeType
-         *            type of value on top of the stack when this code will execute, or null if no value on stack
-         * @param node
-         *            defines the expression
+         *
+         * @param builder    used to add instructions
+         * @param activeType type of value on top of the stack when this code will execute, or null if no value on stack
+         * @param node       defines the expression
          * @return the expression type
          */
         private Type implementSubexpression(InstructionBuilder builder, Type activeType, Tree node)
@@ -774,9 +748,21 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                         return implementNotExpression(builder, node);
 
+                    case THIS:
+
+                        invokeGetRootMethod(builder);
+
+                        return rootType;
+
+                    case NULL:
+
+                        builder.loadNull();
+
+                        return Void.class;
+
                     default:
                         throw unexpectedNodeType(node, TRUE, FALSE, INTEGER, DECIMAL, STRING, DEREF, SAFEDEREF,
-                                IDENTIFIER, INVOKE, LIST, NOT);
+                                IDENTIFIER, INVOKE, LIST, NOT, THIS, NULL);
                 }
             }
         }
@@ -842,7 +828,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             builder.newInstance(HashMap.class);
             builder.dupe().loadConstant(count).invokeConstructor(HashMap.class, int.class);
 
-            for (int i = 0; i < count; i+=2)
+            for (int i = 0; i < count; i += 2)
             {
                 builder.dupe();
 
@@ -851,7 +837,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 boxIfPrimitive(builder, GenericsUtils.asClass(keyType));
 
                 //and the value:
-                Type valueType = implementSubexpression(builder, null, mapNode.getChild(i+1));
+                Type valueType = implementSubexpression(builder, null, mapNode.getChild(i + 1));
                 boxIfPrimitive(builder, GenericsUtils.asClass(valueType));
 
                 //put the value into the array, then pop off the returned object.
@@ -885,16 +871,12 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         /**
          * Invokes a method that may take parameters. The children of the invokeNode are subexpressions
          * to be evaluated, and potentially coerced, so that they may be passed to the method.
-         * 
-         * @param builder
-         *            constructs code
-         * @param method
-         *            method to invoke
-         * @param node
-         *            INVOKE or RANGEOP node
-         * @param childOffset
-         *            offset within the node to the first child expression (1 in an INVOKE node because the
-         *            first child is the method name, 0 in a RANGEOP node)
+         *
+         * @param builder     constructs code
+         * @param method      method to invoke
+         * @param node        INVOKE or RANGEOP node
+         * @param childOffset offset within the node to the first child expression (1 in an INVOKE node because the
+         *                    first child is the method name, 0 in a RANGEOP node)
          */
         private void invokeMethod(InstructionBuilder builder, Method method, Tree node, int childOffset)
         {
@@ -927,8 +909,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     if (parameterType.isPrimitive())
                     {
                         builder.castOrUnbox(parameterType.getName());
-                    }
-                    else
+                    } else
                     {
                         builder.checkcast(parameterType);
                     }
@@ -947,7 +928,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         /**
          * Analyzes a DEREF or SAFEDEREF node, proving back a term that identifies its type and provides a callback to
          * peform the dereference.
-         * 
+         *
          * @return a term indicating the type of the expression to this point, and a {@link InstructionBuilderCallback}
          *         to advance the evaluation of the expression form the previous value to the current
          */
@@ -1062,11 +1043,17 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             // Prefer the accessor over the field
 
-            if (adapter.getReadMethod() != null) { return buildGetterMethodAccessTerm(activeType, propertyName,
-                    adapter.getReadMethod()); }
+            if (adapter.getReadMethod() != null)
+            {
+                return buildGetterMethodAccessTerm(activeType, propertyName,
+                        adapter.getReadMethod());
+            }
 
-            if (adapter.getField() != null) { return buildPublicFieldAccessTerm(activeType, propertyName,
-                    adapter.getField()); }
+            if (adapter.getField() != null)
+            {
+                return buildPublicFieldAccessTerm(activeType, propertyName,
+                        adapter.getField());
+            }
 
             throw new RuntimeException(String.format(
                     "Property '%s' of class %s is not readable (it has no read accessor method).", adapter.getName(),
@@ -1129,13 +1116,10 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         /**
          * Casts the results of a field read or method invocation based on generic information.
-         * 
-         * @param builder
-         *            used to add instructions
-         * @param rawType
-         *            the simple type (often Object) of the field (or method return type)
-         * @param genericType
-         *            the generic Type, from which parameterizations can be determined
+         *
+         * @param builder     used to add instructions
+         * @param rawType     the simple type (often Object) of the field (or method return type)
+         * @param genericType the generic Type, from which parameterizations can be determined
          */
         private void castToGenericType(InstructionBuilder builder, Class rawType, final Type genericType)
         {
@@ -1178,7 +1162,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
                     castToGenericType(builder, method.getReturnType(), genericType);
                 }
-            });
+            }
+            );
         }
 
         private Method findMethod(Class activeType, String methodName, int parameterCount)
@@ -1199,8 +1184,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 if (searchType != Object.class)
                 {
                     searchType = Object.class;
-                }
-                else
+                } else
                 {
                     throw new RuntimeException(String.format("Class %s does not contain a public method named '%s()'.",
                             activeType.getName(), methodName));
@@ -1234,7 +1218,9 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             return boolean.class;
         }
 
-        /** Defer creation of the delegate field unless actually needed. */
+        /**
+         * Defer creation of the delegate field unless actually needed.
+         */
         private PlasticField getDelegateField()
         {
             if (delegateField == null)
@@ -1297,11 +1283,9 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
      * conduits for the same
      * rootClass/expression, and it will get sorted out when the conduit is
      * stored into the cache.
-     * 
-     * @param rootClass
-     *            class of root object for expression evaluation
-     * @param expression
-     *            expression to be evaluated
+     *
+     * @param rootClass  class of root object for expression evaluation
+     * @param expression expression to be evaluated
      * @return the conduit
      */
     private PropertyConduit build(final Class rootClass, String expression)
@@ -1371,8 +1355,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             return proxyFactory.createProxy(InternalPropertyConduit.class,
                     new PropertyConduitBuilder(rootClass, expression, tree)).newInstance();
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             throw new PropertyExpressionException(String.format("Exception generating conduit for expression '%s': %s",
                     expression, InternalUtils.toMessage(ex)), expression, ex);
@@ -1420,8 +1403,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         try
         {
             ais = new ANTLRInputStream(is);
-        }
-        catch (IOException ex)
+        } catch (IOException ex)
         {
             throw new RuntimeException(ex);
         }
@@ -1435,8 +1417,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         try
         {
             return (Tree) parser.start().getTree();
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             throw new RuntimeException(String.format("Error parsing property expression '%s': %s.", expression,
                     ex.getMessage()), ex);

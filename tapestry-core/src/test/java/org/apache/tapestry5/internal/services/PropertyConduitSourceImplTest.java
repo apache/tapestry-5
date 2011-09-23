@@ -25,7 +25,6 @@ import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.internal.util.IntegerRange;
 import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ClassFab;
 import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.services.PropertyConduitSource;
@@ -105,8 +104,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         {
             pc.set(bean, 42);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(), "Literal values are not updateable.");
         }
@@ -122,8 +120,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         {
             normal.set(bean, 42);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(), "Literal values are not updateable.");
         }
@@ -147,8 +144,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         {
             normal.get(bean);
             unreachable();
-        }
-        catch (NullPointerException ex)
+        } catch (NullPointerException ex)
         {
             // Expected.
         }
@@ -159,8 +155,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         {
             normal.set(bean, "Howard");
             unreachable();
-        }
-        catch (NullPointerException ex)
+        } catch (NullPointerException ex)
         {
             // Expected.
         }
@@ -408,7 +403,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         bean.type1Field = holder;
         bean.type2Field = 5678L;
         bean.type2ArrayField = new Long[]
-        { 123L, 456L };
+                {123L, 456L};
 
         PropertyConduit conduit = source.create(RealizedParameters.class, "type1property.get().firstName");
         assertSame(conduit.get(bean), first);
@@ -465,8 +460,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         {
             conduit.get(null);
             unreachable();
-        }
-        catch (NullPointerException ex)
+        } catch (NullPointerException ex)
         {
             assertEquals(ex.getMessage(), "Root object of property expression 'value.get()' is null.");
         }
@@ -484,8 +478,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         {
             conduit.get(bean);
             unreachable();
-        }
-        catch (NullPointerException ex)
+        } catch (NullPointerException ex)
         {
             assertMessageContains(ex, "Property 'simple' (within property expression 'simple.lastName', of",
                     ") is null.");
@@ -613,9 +606,9 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         EchoBean bean = new EchoBean();
 
         bean.setStoredArray(new Number[][]
-        { new Integer[]
-        { 1, 2 }, new Double[]
-        { 3.0, 4.0 } });
+                {new Integer[]
+                        {1, 2}, new Double[]
+                        {3.0, 4.0}});
 
         Number[][] array = (Number[][]) conduit.get(bean);
 
@@ -656,7 +649,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         PropertyConduit conduit = source.create(EchoBean.class, "echoMap({ 1: 'one', 2.0: 'two', storedString: stringSource.value })");
         EchoBean bean = new EchoBean();
 
-        bean.setStoredString( "3" );
+        bean.setStoredString("3");
         bean.setStringSource(new StringSource("three"));
 
         Map m = (Map) conduit.get(bean);
@@ -720,8 +713,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         {
             source.create(IntegerHolder.class, "getValue(");
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             //note that addition of map support changed how this expression was parsed such that the error is now
             //reported at character 8, (, rather than 0: getValue(.
@@ -737,8 +729,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         {
             source.create(IntegerHolder.class, "fred #");
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(),
                     "Error parsing property expression 'fred #': Unable to parse input at character position 6.");
@@ -830,5 +821,22 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         PropertyConduit pc = source.create(PublicFieldBean.class, "StringField");
 
         assertNotNull(pc.getAnnotation(NonVisual.class));
+    }
+
+    /**
+     * TAP5-1555
+     */
+    @Test
+    public void this_and_null_inside_array()
+    {
+        PropertyConduit pc = source.create(NonVisualBean.class, "[this, null]");
+
+        Object bean = new NonVisualBean();
+
+        List list = (List) pc.get(bean);
+
+        assertEquals(list.size(), 2);
+        assertSame(list.get(0), bean);
+        assertNull(list.get(1));
     }
 }
