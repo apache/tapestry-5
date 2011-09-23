@@ -34,8 +34,6 @@ public final class HibernateEntityValueEncoder<E> implements ValueEncoder<E>
 
     private final TypeCoercer typeCoercer;
 
-    private final String idPropertyName;
-
     private final PropertyAdapter propertyAdapter;
 
     private final Logger logger;
@@ -50,9 +48,7 @@ public final class HibernateEntityValueEncoder<E> implements ValueEncoder<E>
 
         Property property = persistentClass.getIdentifierProperty();
 
-        idPropertyName = property.getName();
-
-        propertyAdapter = propertyAccess.getAdapter(this.entityClass).getPropertyAdapter(idPropertyName);
+        propertyAdapter = propertyAccess.getAdapter(this.entityClass).getPropertyAdapter(property.getName());
     }
 
     public String toClient(E value)
