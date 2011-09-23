@@ -14,24 +14,27 @@
 
 package org.apache.tapestry5.internal.plastic;
 
-import java.lang.reflect.Method;
-
 import org.apache.tapestry5.plastic.MethodAdvice;
 import org.apache.tapestry5.plastic.MethodDescription;
+
+import java.lang.reflect.Method;
 
 /**
  * Bundles together the fixed (same for all instances) information needed by a {@link MethodInvocationBundle}.
  */
 public class MethodInvocationBundle
 {
+    public final String className;
+
     public final MethodDescription methodDescription;
 
     public final MethodAdvice[] advice;
 
     private volatile Method method;
 
-    public MethodInvocationBundle(MethodDescription methodDescription, MethodAdvice[] advice)
+    public MethodInvocationBundle(String className, MethodDescription methodDescription, MethodAdvice[] advice)
     {
+        this.className = className;
         this.methodDescription = methodDescription;
         this.advice = advice;
     }
@@ -39,13 +42,13 @@ public class MethodInvocationBundle
     public Method getMethod(Object instance)
     {
         if (method == null)
-            method = findMethod(instance.getClass());
+            method = findMethod(instance.getClass().getClassLoader());
 
         return method;
     }
 
     @SuppressWarnings("unchecked")
-    private Method findMethod(Class clazz)
+    private Method findMethod(ClassLoader loader)
     {
         try
         {
@@ -53,12 +56,13 @@ public class MethodInvocationBundle
 
             for (int i = 0; i < types.length; i++)
             {
-                types[i] = PlasticInternalUtils.toClass(clazz.getClassLoader(), methodDescription.argumentTypes[i]);
+                types[i] = PlasticInternalUtils.toClass(loader, methodDescription.argumentTypes[i]);
             }
 
+            Class clazz = PlasticInternalUtils.toClass(loader, className);
+
             return clazz.getDeclaredMethod(methodDescription.methodName, types);
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             throw new RuntimeException(String.format("Unable to locate Method %s: %s", methodDescription,
                     PlasticInternalUtils.toMessage(ex)), ex);

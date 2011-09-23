@@ -1,6 +1,5 @@
 package org.apache.tapestry5.internal.plastic;
 
-import org.apache.tapestry5.internal.plastic.asm.*;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 import org.apache.tapestry5.internal.plastic.asm.tree.ClassNode;
 import org.apache.tapestry5.internal.plastic.asm.tree.MethodNode;
@@ -348,7 +347,7 @@ class MethodAdviceManager
                 PlasticUtils.nextUID());
 
         MethodAdvice[] adviceArray = advice.toArray(new MethodAdvice[advice.size()]);
-        MethodInvocationBundle bundle = new MethodInvocationBundle(description, adviceArray);
+        MethodInvocationBundle bundle = new MethodInvocationBundle(plasticClass.className, description, adviceArray);
 
         plasticClass.classNode.visitField(Opcodes.ACC_PRIVATE | Opcodes.ACC_FINAL, fieldName, plasticClass.nameCache.toDesc(constructorTypes[2]), null, null);
         plasticClass.initializeFieldFromStaticContext(fieldName, constructorTypes[2], bundle);

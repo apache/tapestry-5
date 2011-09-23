@@ -1,6 +1,6 @@
 <html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
 
-<h1>Child A</h1>
+<h2 id="subtitle">Child A</h2>
 
 <p>
     Go to
