@@ -18,13 +18,14 @@ import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Location;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.services.BindingFactory;
 import org.apache.tapestry5.services.BindingSource;
 import org.testng.annotations.Test;
 
 import java.util.Map;
+
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 
 public class BindingSourceImplTest extends InternalBaseTestCase
 {
@@ -166,47 +167,13 @@ public class BindingSourceImplTest extends InternalBaseTestCase
         {
             source.newBinding(description, container, component, defaultPrefix, expression, l);
             unreachable();
-        }
-        catch (TapestryException ex)
+        } catch (TapestryException ex)
         {
             assertTrue(ex.getMessage().contains(
                     "Could not convert 'full expression' into a component parameter binding"));
             assertTrue(ex.getMessage().contains(t.getMessage()));
             assertSame(ex.getLocation(), l);
             assertSame(ex.getCause(), t);
-        }
-
-        verify();
-    }
-
-    @Test
-    public void empty_parameter_binding()
-    {
-        BindingFactory factory = mockBindingFactory();
-        ComponentResources container = mockComponentResources();
-        ComponentResources component = mockComponentResources();
-        Location l = mockLocation();
-
-        String defaultPrefix = "def";
-        String description = "wilma";
-        String expression = "";
-
-        replay();
-
-        Map<String, BindingFactory> map = newMap();
-
-        map.put(defaultPrefix, factory);
-
-        BindingSource source = new BindingSourceImpl(map, interner);
-
-        try
-        {
-            source.newBinding(description, container, component, defaultPrefix, expression, l);
-        }
-        catch (TapestryException ex)
-        {
-            assertEquals(ex.getMessage(), "Parameter 'wilma' must have a non-empty binding.");
-            assertSame(ex.getLocation(), l);
         }
 
         verify();

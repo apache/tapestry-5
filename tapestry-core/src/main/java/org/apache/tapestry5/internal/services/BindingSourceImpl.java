@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.util.Map;
-
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.ioc.Location;
@@ -23,6 +21,8 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.services.BindingFactory;
 import org.apache.tapestry5.services.BindingSource;
+
+import java.util.Map;
 
 public class BindingSourceImpl implements BindingSource
 {
@@ -42,14 +42,16 @@ public class BindingSourceImpl implements BindingSource
     }
 
     public Binding newBinding(String description, ComponentResources container, ComponentResources component,
-            String defaultPrefix, String expression, Location location)
+                              String defaultPrefix, String expression, Location location)
     {
         assert InternalUtils.isNonBlank(description);
         assert container != null;
         assert InternalUtils.isNonBlank(defaultPrefix);
         assert component != null;
-        if (InternalUtils.isBlank(expression))
-            throw new TapestryException(ServicesMessages.emptyBinding(description), location, null);
+
+        // TAP5-845: The expression may be the empty string. This is ok, if it's compatible with
+        // the default prefix (the empty string is not a valid property expression, but is valid
+        // as a literal string, perhaps as an informal parameter).
 
         // Location might be null
 
@@ -76,10 +78,9 @@ public class BindingSourceImpl implements BindingSource
         try
         {
             return factory.newBinding(interner.intern(description), container, component, subexpression, location);
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
-            throw new TapestryException(ServicesMessages.bindingSourceFailure(expression, ex), location, ex);
+            throw new TapestryException(String.format("Could not convert '%s' into a component parameter binding: %s", expression, InternalUtils.toMessage(ex)), location, ex);
         }
     }
 }

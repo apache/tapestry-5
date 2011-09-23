@@ -14,47 +14,28 @@
 
 package org.apache.tapestry5.internal.services;
 
-import javassist.CtClass;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.RenderCommand;
-import org.apache.tapestry5.services.TransformMethodSignature;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 
 public class ServicesMessages
 {
     private static final Messages MESSAGES = MessagesImpl.forClass(ServicesMessages.class);
 
-    public static String duplicateContribution(Object conflict, Class contributionType, Object existing)
-    {
-        return MESSAGES.format("duplicate-contribution", conflict, contributionType.getName(), existing);
-    }
-
     public static String markupWriterNoCurrentElement()
     {
         return MESSAGES.get("markup-writer-no-current-element");
-    }
-
-    public static String errorAddingMethod(CtClass ctClass, String methodName, Throwable cause)
-    {
-        return MESSAGES.format("error-adding-method", ctClass.getName(), methodName, cause);
-    }
-
-    public static String classNotTransformed(String className)
-    {
-        return MESSAGES.format("class-not-transformed", className);
     }
 
     public static String missingTemplateResource(Resource resource)
@@ -67,29 +48,9 @@ public class ServicesMessages
         return MESSAGES.format("content-inside-body-not-allowed", location);
     }
 
-    public static String methodCompileError(TransformMethodSignature signature, String methodBody, Throwable cause)
-    {
-        return MESSAGES.format("method-compile-error", signature, methodBody, cause);
-    }
-
     public static String renderQueueError(RenderCommand command, Throwable cause)
     {
         return MESSAGES.format("render-queue-error", command, cause);
-    }
-
-    public static String readOnlyField(String className, String fieldName)
-    {
-        return MESSAGES.format("read-only-field", className, fieldName);
-    }
-
-    public static String nonPrivateFields(String className, List<String> names)
-    {
-        return MESSAGES.format("non-private-fields", className, InternalUtils.joinSorted(names));
-    }
-
-    public static String bindingSourceFailure(String expression, Throwable cause)
-    {
-        return MESSAGES.format("binding-source-failure", expression, cause);
     }
 
     public static String contextIndexOutOfRange(String methodDescription)
@@ -110,16 +71,6 @@ public class ServicesMessages
     public static String componentEventIsAborted(String methodDescription)
     {
         return MESSAGES.format("component-event-is-aborted", methodDescription);
-    }
-
-    public static String parameterNameMustBeUnique(String parameterName, String parameterValue)
-    {
-        return MESSAGES.format("parameter-name-must-be-unique", parameterName, parameterValue);
-    }
-
-    public static String pageIsDirty(Object page)
-    {
-        return MESSAGES.format("page-is-dirty", page);
     }
 
     public static String componentInstanceIsNotAPage(Component result)
@@ -163,17 +114,6 @@ public class ServicesMessages
         return MESSAGES.format("mixins-invalid-without-id-or-type", elementName);
     }
 
-    public static String invalidComponentEventResult(Object result, Collection<Class> configuredResultTypes)
-    {
-        List<String> classNames = CollectionFactory.newList();
-
-        for (Class c : configuredResultTypes)
-            classNames.add(c.getName());
-
-        return MESSAGES.format("invalid-component-event-result", result, ClassFabUtils.toJavaClassName(result
-                .getClass()), InternalUtils.joinSorted(classNames));
-    }
-
     public static String undefinedTapestryAttribute(String elementName, String attributeName,
                                                     String allowedAttributeName)
     {
@@ -194,11 +134,6 @@ public class ServicesMessages
     public static String requestException(Throwable cause)
     {
         return MESSAGES.format("request-exception", cause);
-    }
-
-    public static String componentRecursion(String componentClassName)
-    {
-        return MESSAGES.format("component-recursion", componentClassName);
     }
 
     public static String clientStateMustBeSerializable(Object newValue)
@@ -253,31 +188,10 @@ public class ServicesMessages
         return MESSAGES.format(messageKey, idValue);
     }
 
-    public static String attributeNotAllowed(String elementName)
-    {
-        return MESSAGES.format("attribute-not-allowed", elementName);
-    }
-
-    public static String pagePoolExausted(String pageName, Locale locale, int hardLimit)
-    {
-        return MESSAGES.format("page-pool-exausted", pageName, locale.toString(), hardLimit);
-    }
-
     public static String noTranslatorForType(Class valueType, Collection<String> typeNames)
     {
         return MESSAGES.format("no-translator-for-type", ClassFabUtils.toJavaClassName(valueType), InternalUtils
                 .joinSorted(typeNames));
-    }
-
-    public static String emptyBinding(String parameterName)
-    {
-        return MESSAGES.format("parameter-binding-must-not-be-empty", parameterName);
-    }
-
-
-    public static String forbidInstantiateComponentClass(String className)
-    {
-        return MESSAGES.format("forbid-instantiate-component-class", className);
     }
 
     public static String eventNotHandled(ComponentPageElement element, String eventName)
@@ -288,11 +202,6 @@ public class ServicesMessages
     public static String documentMissingHTMLRoot(String rootElementName)
     {
         return MESSAGES.format("document-missing-html-root", rootElementName);
-    }
-
-    public static String addNewMethodConflict(TransformMethodSignature signature)
-    {
-        return MESSAGES.format("add-new-method-conflict", signature);
     }
 
     public static String parameterElementDoesNotAllowAttributes()
@@ -308,16 +217,6 @@ public class ServicesMessages
     public static String literalConduitNotUpdateable()
     {
         return MESSAGES.get("literal-conduit-not-updateable");
-    }
-
-    public static String requestRewriteReturnedNull()
-    {
-        return MESSAGES.get("request-rewrite-returned-null");
-    }
-
-    public static String linkRewriteReturnedNull()
-    {
-        return MESSAGES.get("link-rewrite-returned-null");
     }
 
     public static String markupWriterAttributeNameOrValueOmitted(String element, Object[] namesAndValues)
