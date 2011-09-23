@@ -1319,6 +1319,15 @@ Tapestry.ErrorPopup = Class.create({
     initialize : function(field) {
         this.field = $(field);
 
+        // The UI elements (outerDiv and friends) are created by the first call to setMessage().
+        this.outerDiv = null;
+    },
+
+    /**
+     * Invoked once, from setMessage(), to create the outerDiv and innerSpan elements, as well as necessary listeners
+     *  (to hide the popup if clicked), and reposition the popup as necessary when the window resizes.
+     */
+    createUI : function() {
         this.innerSpan = new Element("span");
         this.outerDiv = $(new Element("div", {
             'id' : this.field.id + "_errorpopup",
@@ -1374,6 +1383,11 @@ Tapestry.ErrorPopup = Class.create({
     },
 
     showMessage : function(message) {
+
+        if (this.outerDiv == null) {
+            this.createUI();
+        }
+
         this.stopAnimation();
 
         this.innerSpan.update(message);
@@ -1427,7 +1441,7 @@ Tapestry.ErrorPopup = Class.create({
     /** Used in IE to hide the field if not the focus field. */
     hideIfNotFocused : function() {
 
-        if (this.field != Tapestry.currentFocusField) {
+        if (this.outerDiv != null && this.field != Tapestry.currentFocusField) {
             this.outerDiv.hide();
         }
     },
@@ -1441,7 +1455,7 @@ Tapestry.ErrorPopup = Class.create({
     },
 
     fadeOut : function() {
-        if (this.animation)
+        if (this.animation || this.outerDiv == null)
             return;
 
         if (Prototype.Browser.IE) {
@@ -1468,7 +1482,7 @@ Tapestry.ErrorPopup = Class.create({
 
         this.stopAnimation();
 
-        this.outerDiv.hide();
+        this.outerDiv && this.outerDiv.hide();
     }
 });
 
