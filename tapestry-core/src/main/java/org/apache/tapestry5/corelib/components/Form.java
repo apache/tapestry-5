@@ -31,6 +31,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONArray;
@@ -243,6 +244,9 @@ public class Form implements ClientElement, FormValidationControl
 
     @Inject
     private ClientDataEncoder clientDataEncoder;
+
+    @Inject
+    private PropertyAccess propertyAccess;
 
     private String clientId;
 
@@ -603,7 +607,7 @@ public class Form implements ClientElement, FormValidationControl
             resources.triggerContextEvent(eventName, context, callback);
         } catch (RuntimeException ex)
         {
-            ValidationException ve = ExceptionUtils.findCause(ex, ValidationException.class);
+            ValidationException ve = ExceptionUtils.findCause(ex, ValidationException.class, propertyAccess);
 
             if (ve != null)
             {

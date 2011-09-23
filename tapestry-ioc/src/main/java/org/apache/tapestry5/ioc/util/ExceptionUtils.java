@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,6 +13,9 @@
 // limitations under the License.
 
 package org.apache.tapestry5.ioc.util;
+
+import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
+import org.apache.tapestry5.ioc.services.PropertyAccess;
 
 /**
  * Contains static methods useful for manipulating exceptions.
@@ -33,12 +36,59 @@ public class ExceptionUtils
 
         while (current != null)
         {
-            if (type.isInstance(current)) return type.cast(current);
+            if (type.isInstance(current))
+            {
+                return type.cast(current);
+            }
 
             // Not a match, work down.
 
             current = current.getCause();
         }
+
+        return null;
+    }
+
+    /**
+     * Locates a particular type of exception, working its way down via any property that returns some type of Exception.
+     * This is more expensive, but more accurate, than {@link #findCause(Throwable, Class)} as it works with older exceptions
+     * that do not properly implement the (relatively new) {@linkplain Throwable#getCause() cause property}.
+     *
+     * @param t      the outermost exception
+     * @param type   the type of exception to search for
+     * @param access used to access properties
+     * @return the first exception of the given type, if found, or null
+     */
+    public static <T extends Throwable> T findCause(Throwable t, Class<T> type, PropertyAccess access)
+    {
+        Throwable current = t;
+
+        while (current != null)
+        {
+            if (type.isInstance(current))
+            {
+                return type.cast(current);
+            }
+
+            Throwable next = null;
+
+            ClassPropertyAdapter adapter = access.getAdapter(current);
+
+            for (String name : adapter.getPropertyNames())
+            {
+
+                Object value = adapter.getPropertyAdapter(name).get(current);
+
+                if (value != null && value != current && value instanceof Throwable)
+                {
+                    next = (Throwable) value;
+                    break;
+                }
+            }
+
+            current = next;
+        }
+
 
         return null;
     }

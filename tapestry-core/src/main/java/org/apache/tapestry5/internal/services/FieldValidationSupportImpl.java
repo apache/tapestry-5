@@ -14,17 +14,11 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.ComponentEventCallback;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.EventConstants;
-import org.apache.tapestry5.FieldTranslator;
-import org.apache.tapestry5.FieldValidationSupport;
-import org.apache.tapestry5.FieldValidator;
-import org.apache.tapestry5.NullFieldStrategy;
-import org.apache.tapestry5.ValidationException;
+import org.apache.tapestry5.*;
 import org.apache.tapestry5.corelib.internal.InternalMessages;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.ioc.util.ExceptionUtils;
 
@@ -33,13 +27,16 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
 {
     private final TypeCoercer typeCoercer;
 
-    public FieldValidationSupportImpl(TypeCoercer typeCoercer)
+    private final PropertyAccess propertyAccess;
+
+    public FieldValidationSupportImpl(TypeCoercer typeCoercer, PropertyAccess propertyAccess)
     {
         this.typeCoercer = typeCoercer;
+        this.propertyAccess = propertyAccess;
     }
 
     public String toClient(Object value, ComponentResources componentResources, FieldTranslator<Object> translator,
-            NullFieldStrategy nullFieldStrategy)
+                           NullFieldStrategy nullFieldStrategy)
     {
         assert componentResources != null;
         assert translator != null;
@@ -63,7 +60,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
         };
 
         componentResources.triggerEvent(EventConstants.TO_CLIENT, new Object[]
-        { value }, callback);
+                {value}, callback);
 
         if (resultHolder.hasValue())
             return resultHolder.get();
@@ -89,7 +86,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
     }
 
     public Object parseClient(String clientValue, ComponentResources componentResources,
-            FieldTranslator<Object> translator, NullFieldStrategy nullFieldStrategy) throws ValidationException
+                              FieldTranslator<Object> translator, NullFieldStrategy nullFieldStrategy) throws ValidationException
     {
         assert componentResources != null;
         assert translator != null;
@@ -118,9 +115,8 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
         try
         {
             componentResources.triggerEvent(EventConstants.PARSE_CLIENT, new Object[]
-            { effectiveValue }, callback);
-        }
-        catch (RuntimeException ex)
+                    {effectiveValue}, callback);
+        } catch (RuntimeException ex)
         {
             rethrowValidationException(ex);
         }
@@ -134,15 +130,13 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
     /**
      * Checks for a {@link org.apache.tapestry5.ValidationException} inside the outer exception and throws that,
      * otherwise rethrows the runtime exception.
-     * 
-     * @param outerException
-     *            initially caught exception
-     * @throws ValidationException
-     *             if found
+     *
+     * @param outerException initially caught exception
+     * @throws ValidationException if found
      */
     private void rethrowValidationException(RuntimeException outerException) throws ValidationException
     {
-        ValidationException ve = ExceptionUtils.findCause(outerException, ValidationException.class);
+        ValidationException ve = ExceptionUtils.findCause(outerException, ValidationException.class, propertyAccess);
 
         if (ve != null)
             throw ve;
@@ -151,7 +145,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
     }
 
     @SuppressWarnings(
-    { "unchecked" })
+            {"unchecked"})
     public void validate(Object value, ComponentResources componentResources, FieldValidator validator)
             throws ValidationException
     {
@@ -162,9 +156,8 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
         try
         {
             componentResources.triggerEvent(EventConstants.VALIDATE, new Object[]
-            { value }, null);
-        }
-        catch (RuntimeException ex)
+                    {value}, null);
+        } catch (RuntimeException ex)
         {
             rethrowValidationException(ex);
         }

@@ -14,32 +14,29 @@
 
 package org.apache.tapestry5.internal.services;
 
-import static org.easymock.EasyMock.eq;
-
-import org.apache.tapestry5.ComponentEventCallback;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.EventConstants;
-import org.apache.tapestry5.FieldTranslator;
-import org.apache.tapestry5.FieldValidationSupport;
-import org.apache.tapestry5.FieldValidator;
-import org.apache.tapestry5.NullFieldStrategy;
-import org.apache.tapestry5.ValidationException;
+import org.apache.tapestry5.*;
 import org.apache.tapestry5.corelib.internal.InternalMessages;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import static org.easymock.EasyMock.eq;
+
 public class FieldValidationSupportImplTest extends InternalBaseTestCase
 {
     private TypeCoercer typeCoercer;
+
+    private PropertyAccess propertyAccess;
 
     @BeforeClass
     public void setup()
     {
         typeCoercer = getService(TypeCoercer.class);
+        propertyAccess = getService(PropertyAccess.class);
     }
 
 
@@ -69,14 +66,14 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
         };
 
         EasyMock.expect(resources.triggerEvent(EasyMock.eq(EventConstants.PARSE_CLIENT),
-                                               EasyMock.isA(Object[].class),
-                                               EasyMock.isA(ComponentEventCallback.class))).andAnswer(answer);
+                EasyMock.isA(Object[].class),
+                EasyMock.isA(ComponentEventCallback.class))).andAnswer(answer);
 
 
         replay();
 
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(typeCoercer);
+        FieldValidationSupport support = new FieldValidationSupportImpl(typeCoercer, propertyAccess);
 
         Object actual = support.parseClient(clientValue, resources, translator, nullFieldStrategy);
 
@@ -102,7 +99,7 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(typeCoercer);
+        FieldValidationSupport support = new FieldValidationSupportImpl(typeCoercer, propertyAccess);
 
         Object actual = support.parseClient(clientValue, resources, translator, nullFieldStrategy);
 
@@ -114,8 +111,8 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
     private void ignoreEvent(ComponentResources resources, String event, Object... context)
     {
         EasyMock.expect(resources.triggerEvent(EasyMock.eq(event),
-                                               EasyMock.aryEq(context),
-                                               EasyMock.isA(ComponentEventCallback.class))).andReturn(false);
+                EasyMock.aryEq(context),
+                EasyMock.isA(ComponentEventCallback.class))).andReturn(false);
     }
 
     protected final void train_replaceFromClient(NullFieldStrategy nullFieldStrategy, String value)
@@ -135,22 +132,21 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
         String clientValue = "abracadabra";
 
         EasyMock.expect(resources.triggerEvent(EasyMock.eq(EventConstants.PARSE_CLIENT),
-                                               EasyMock.isA(Object[].class),
-                                               EasyMock.isA(ComponentEventCallback.class))).andThrow(
+                EasyMock.isA(Object[].class),
+                EasyMock.isA(ComponentEventCallback.class))).andThrow(
                 new RuntimeException(ve));
 
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(typeCoercer);
+        FieldValidationSupport support = new FieldValidationSupportImpl(typeCoercer, propertyAccess);
 
         try
         {
             support.parseClient(clientValue, resources, translator, nullFieldStrategy);
 
             unreachable();
-        }
-        catch (ValidationException ex)
+        } catch (ValidationException ex)
         {
             assertSame(ex, ve);
         }
@@ -172,21 +168,20 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
 
 
         EasyMock.expect(resources.triggerEvent(EasyMock.eq(EventConstants.PARSE_CLIENT),
-                                               EasyMock.isA(Object[].class),
-                                               EasyMock.isA(ComponentEventCallback.class))).andThrow(re);
+                EasyMock.isA(Object[].class),
+                EasyMock.isA(ComponentEventCallback.class))).andThrow(re);
 
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(typeCoercer);
+        FieldValidationSupport support = new FieldValidationSupportImpl(typeCoercer, propertyAccess);
 
         try
         {
             support.parseClient(clientValue, resources, translator, nullFieldStrategy);
 
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertSame(ex, re);
         }
@@ -210,7 +205,7 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(typeCoercer);
+        FieldValidationSupport support = new FieldValidationSupportImpl(typeCoercer, propertyAccess);
 
         Object actual = support.parseClient(clientValue, resources, translator, nullFieldStrategy);
 
@@ -233,14 +228,14 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
         String clientValue = "abracadabra";
 
         EasyMock.expect(resources.triggerEvent(EasyMock.eq(EventConstants.TO_CLIENT),
-                                               EasyMock.aryEq(new Object[] {value}),
-                                               EasyMock.isA(ComponentEventCallback.class))).andReturn(false);
+                EasyMock.aryEq(new Object[]{value}),
+                EasyMock.isA(ComponentEventCallback.class))).andReturn(false);
 
         expect(translator.toClient(value)).andReturn(clientValue);
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(typeCoercer);
+        FieldValidationSupport support = new FieldValidationSupportImpl(typeCoercer, propertyAccess);
 
         String actual = support.toClient(value, resources, translator, nullFieldStrategy);
 
@@ -273,13 +268,13 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
         };
 
         EasyMock.expect(resources.triggerEvent(EasyMock.eq(EventConstants.TO_CLIENT),
-                                               EasyMock.aryEq(new Object[] {value}),
-                                               EasyMock.isA(ComponentEventCallback.class))).andAnswer(answer);
+                EasyMock.aryEq(new Object[]{value}),
+                EasyMock.isA(ComponentEventCallback.class))).andAnswer(answer);
 
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(null);
+        FieldValidationSupport support = new FieldValidationSupportImpl(null, propertyAccess);
 
         String actual = support.toClient(value, resources, translator, nullFieldStrategy);
 
@@ -310,13 +305,13 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
         };
 
         EasyMock.expect(resources.triggerEvent(EasyMock.eq(EventConstants.TO_CLIENT),
-                                               EasyMock.aryEq(new Object[] {value}),
-                                               EasyMock.isA(ComponentEventCallback.class))).andAnswer(answer);
+                EasyMock.aryEq(new Object[]{value}),
+                EasyMock.isA(ComponentEventCallback.class))).andAnswer(answer);
 
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(null);
+        FieldValidationSupport support = new FieldValidationSupportImpl(null, propertyAccess);
 
         try
         {
@@ -324,8 +319,7 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
             support.toClient(value, resources, translator, null);
 
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(), InternalMessages.toClientShouldReturnString());
         }
@@ -349,12 +343,12 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
         ComponentEventCallback handler = null;
 
         expect(resources.triggerEvent(EasyMock.eq(EventConstants.VALIDATE),
-                                      EasyMock.aryEq(new Object[] {value}), EasyMock.eq(handler))).andReturn(true);
+                EasyMock.aryEq(new Object[]{value}), EasyMock.eq(handler))).andReturn(true);
 
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(typeCoercer);
+        FieldValidationSupport support = new FieldValidationSupportImpl(typeCoercer, propertyAccess);
 
         support.validate(value, resources, fv);
 
@@ -378,20 +372,19 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
         fv.validate(value);
 
         expect(resources.triggerEvent(eq(EventConstants.VALIDATE),
-                                      EasyMock.aryEq(new Object[] {value}), eq(handler))).andThrow(re);
+                EasyMock.aryEq(new Object[]{value}), eq(handler))).andThrow(re);
 
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(typeCoercer);
+        FieldValidationSupport support = new FieldValidationSupportImpl(typeCoercer, propertyAccess);
 
 
         try
         {
             support.validate(value, resources, fv);
             unreachable();
-        }
-        catch (ValidationException ex)
+        } catch (ValidationException ex)
         {
             assertSame(ex, ve);
         }
