@@ -14,35 +14,9 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
-import static org.apache.tapestry5.ioc.internal.util.InternalUtils.toList;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.isA;
-
-import java.io.Closeable;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Predicate;
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.Locatable;
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.ObjectCreator;
-import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.ioc.ScopeConstants;
-import org.apache.tapestry5.ioc.ServiceBuilderResources;
+import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.def.ServiceDef2;
@@ -55,6 +29,17 @@ import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.*;
+
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
+import static org.apache.tapestry5.ioc.internal.util.InternalUtils.toList;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.isA;
 
 public class InternalUtilsTest extends IOCTestCase
 {
@@ -127,7 +112,7 @@ public class InternalUtilsTest extends IOCTestCase
     public void array_size_when_non_null()
     {
         Object[] array =
-        { 1, 2, 3 };
+                {1, 2, 3};
 
         assertEquals(InternalUtils.size(array), 3);
     }
@@ -142,15 +127,15 @@ public class InternalUtilsTest extends IOCTestCase
     public Object[][] memberNameData()
     {
         return new Object[][]
-        {
-        { "simple", "simple" },
-        { "_name", "name" },
-        { "$name", "name" },
-        { "ruby_style", "ruby_style" },
-        { "__$ruby_style_", "ruby_style" },
-        { "$_$__$__$_$___$_$_$_$$name$", "name" },
-        { "foo_", "foo" },
-        { "_foo_", "foo" } };
+                {
+                        {"simple", "simple"},
+                        {"_name", "name"},
+                        {"$name", "name"},
+                        {"ruby_style", "ruby_style"},
+                        {"__$ruby_style_", "ruby_style"},
+                        {"$_$__$__$_$___$_$_$_$$name$", "name"},
+                        {"foo_", "foo"},
+                        {"_foo_", "foo"}};
     }
 
     @Test
@@ -160,8 +145,7 @@ public class InternalUtilsTest extends IOCTestCase
         {
             InternalUtils.stripMemberName("!foo");
             unreachable();
-        }
-        catch (IllegalArgumentException ex)
+        } catch (IllegalArgumentException ex)
         {
             assertEquals(ex.getMessage(), "Input '!foo' is not a valid Java identifier.");
         }
@@ -239,12 +223,12 @@ public class InternalUtilsTest extends IOCTestCase
     public Object[][] capitalize_inputs()
     {
         return new Object[][]
-        {
-        { "hello", "Hello" },
-        { "Goodbye", "Goodbye" },
-        { "", "" },
-        { "a", "A" },
-        { "A", "A" } };
+                {
+                        {"hello", "Hello"},
+                        {"Goodbye", "Goodbye"},
+                        {"", ""},
+                        {"a", "A"},
+                        {"A", "A"}};
     }
 
     @Test
@@ -346,8 +330,7 @@ public class InternalUtilsTest extends IOCTestCase
         {
             i.remove();
             unreachable();
-        }
-        catch (UnsupportedOperationException ex)
+        } catch (UnsupportedOperationException ex)
         {
 
         }
@@ -389,10 +372,9 @@ public class InternalUtilsTest extends IOCTestCase
         try
         {
             InternalUtils.validateMarkerAnnotations(new Class[]
-            { Inject.class, NotRetainedRuntime.class });
+                    {Inject.class, NotRetainedRuntime.class});
             unreachable();
-        }
-        catch (IllegalArgumentException ex)
+        } catch (IllegalArgumentException ex)
         {
             assertEquals(
                     ex.getMessage(),
@@ -455,7 +437,7 @@ public class InternalUtilsTest extends IOCTestCase
         assertEquals(c.getParameterTypes().length, 1);
         assertEquals(c.getParameterTypes()[0], String.class);
     }
-    
+
     @Test
     public void constructor_with_javax_inject_annotation()
     {
@@ -464,15 +446,14 @@ public class InternalUtilsTest extends IOCTestCase
         assertEquals(c.getParameterTypes().length, 1);
         assertEquals(c.getParameterTypes()[0], String.class);
     }
-    
+
     @Test
     public void too_many_autobuild_constructors()
     {
-    	try
-    	{
-    		InternalUtils.findAutobuildConstructor(TooManyAutobuildConstructorsBean.class);
-    	}
-        catch (IllegalArgumentException ex)
+        try
+        {
+            InternalUtils.findAutobuildConstructor(TooManyAutobuildConstructorsBean.class);
+        } catch (IllegalArgumentException ex)
         {
             assertEquals(
                     ex.getMessage(),
@@ -490,8 +471,7 @@ public class InternalUtilsTest extends IOCTestCase
         {
             InternalUtils.validateConstructorForAutobuild(cons);
             unreachable();
-        }
-        catch (IllegalArgumentException ex)
+        } catch (IllegalArgumentException ex)
         {
             assertEquals(
                     ex.getMessage(),
@@ -509,8 +489,7 @@ public class InternalUtilsTest extends IOCTestCase
         {
             InternalUtils.validateConstructorForAutobuild(cons);
             unreachable();
-        }
-        catch (IllegalArgumentException ex)
+        } catch (IllegalArgumentException ex)
         {
             assertMessageContains(
                     ex,
@@ -535,7 +514,7 @@ public class InternalUtilsTest extends IOCTestCase
 
         verify();
     }
-    
+
     @Test
     public void javax_inject_named_annotation_on_field()
     {
@@ -553,15 +532,15 @@ public class InternalUtilsTest extends IOCTestCase
 
         verify();
     }
-    
 
-    
+
     @Test
     public void javax_inject_annotation_on_field()
     {
         ObjectLocator ol = mockObjectLocator();
         FieldInjectionViaInject target = new FieldInjectionViaInject();
         final SymbolSource ss = mockSymbolSource();
+        InjectionResources ir = newMock(InjectionResources.class);
 
         IAnswer answer = new IAnswer()
         {
@@ -579,11 +558,13 @@ public class InternalUtilsTest extends IOCTestCase
             }
         };
 
+        expect(ir.findResource(SymbolSource.class, SymbolSource.class)).andReturn(null);
+
         expect(ol.getObject(eq(SymbolSource.class), isA(AnnotationProvider.class))).andAnswer(answer);
 
         replay();
 
-        InternalUtils.injectIntoFields(target, ol, null, tracker);
+        InternalUtils.injectIntoFields(target, ol, ir, tracker);
 
         assertSame(target.getSymbolSource(), ss);
 
@@ -596,6 +577,7 @@ public class InternalUtilsTest extends IOCTestCase
         ObjectLocator ol = mockObjectLocator();
         FieldInjectionViaInject target = new FieldInjectionViaInject();
         final SymbolSource ss = mockSymbolSource();
+        InjectionResources ir = newMock(InjectionResources.class);
 
         IAnswer answer = new IAnswer()
         {
@@ -613,11 +595,13 @@ public class InternalUtilsTest extends IOCTestCase
             }
         };
 
+        expect(ir.findResource(SymbolSource.class, SymbolSource.class)).andReturn(null);
+
         expect(ol.getObject(eq(SymbolSource.class), isA(AnnotationProvider.class))).andAnswer(answer);
 
         replay();
 
-        InternalUtils.injectIntoFields(target, ol, null, tracker);
+        InternalUtils.injectIntoFields(target, ol, ir, tracker);
 
         assertSame(target.getSymbolSource(), ss);
 
@@ -643,8 +627,7 @@ public class InternalUtilsTest extends IOCTestCase
             InternalUtils.injectIntoFields(target, ol, null, tracker);
 
             unreachable();
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             assertMessageContains(ex,
                     "Unable to set field 'fred' of <FieldInjectionViaInjectService> to NotTheRightType");

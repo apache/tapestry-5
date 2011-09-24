@@ -333,21 +333,17 @@ public class InternalUtils
                             return;
                         }
 
-                        if (ap.getAnnotation(Inject.class) != null)
-                        {
-                            inject(object, f, locator.getObject(fieldType, ap));
-                            return;
-                        }
-
-                        if (ap.getAnnotation(InjectResource.class) != null)
+                        if (ap.getAnnotation(Inject.class) != null || ap.getAnnotation(InjectResource.class) != null)
                         {
                             Object value = resources.findResource(fieldType, f.getGenericType());
 
-                            if (value == null)
-                                throw new RuntimeException(UtilMessages.injectResourceFailure(f.getName(), fieldType));
+                            if (value != null)
+                            {
+                                inject(object, f, value);
+                                return;
+                            }
 
-                            inject(object, f, value);
-
+                            inject(object, f, locator.getObject(fieldType, ap));
                             return;
                         }
 
