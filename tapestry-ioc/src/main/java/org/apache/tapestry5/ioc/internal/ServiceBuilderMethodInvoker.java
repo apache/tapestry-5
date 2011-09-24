@@ -14,12 +14,10 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.Invokable;
-import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -37,55 +35,36 @@ public class ServiceBuilderMethodInvoker extends AbstractServiceCreator
         builderMethod = method;
     }
 
+    private ObjectCreator<Object> plan;
+
+    private synchronized ObjectCreator<Object> getPlan()
+    {
+        if (plan == null)
+        {
+            // Defer getting (and possibly instantiating) the module instance until the last possible
+            // moment. If the method is static, there's no need to even get the builder.
+
+            final Object moduleInstance = InternalUtils.isStatic(builderMethod) ? null : resources.getModuleBuilder();
+
+            plan = InternalUtils.createMethodInvocationPlan(resources.getTracker(), resources, createInjectionResources(), logger, "Constructing service implementation via " + creatorDescription, moduleInstance, builderMethod);
+        }
+
+        return plan;
+    }
+
     /**
      * Invoked from the proxy to create the actual service implementation.
      */
     public Object createObject()
     {
-        // Defer getting (and possibly instantiating) the module instance until the last possible
-        // moment. If the method is static, there's no need to even get the builder.
+        Object result = getPlan().createObject();
 
-        final Object moduleInstance = InternalUtils.isStatic(builderMethod) ? null : resources.getModuleBuilder();
-
-        final OperationTracker tracker = resources.getTracker();
-
-        return tracker.invoke(String.format("Constructing service implementation via " + creatorDescription), new Invokable<Object>()
+        if (result == null)
         {
-            public Object invoke()
-            {
-                final OperationTracker tracker = resources.getTracker();
-                Object result = null;
-                Throwable failure = null;
+            throw new RuntimeException(String.format("Builder method %s (for service '%s') returned null.", creatorDescription, serviceId));
+        }
 
-                try
-                {
-                    Object[] parameters = InternalUtils.calculateParametersForMethod(builderMethod, resources,
-                            createInjectionResources(), tracker);
-
-                    if (logger.isDebugEnabled())
-                        logger.debug(IOCMessages.invokingMethod(creatorDescription));
-
-                    result = builderMethod.invoke(moduleInstance, parameters);
-                }
-                catch (InvocationTargetException ite)
-                {
-                    failure = ite.getTargetException();
-                }
-                catch (Exception ex)
-                {
-                    failure = ex;
-                }
-
-                if (failure != null)
-                    throw new RuntimeException(IOCMessages.builderMethodError(creatorDescription, serviceId, failure),
-                            failure);
-
-                if (result == null)
-                    throw new RuntimeException(IOCMessages.builderMethodReturnedNull(creatorDescription, serviceId));
-
-                return result;
-            }
-        });
+        return result;
     }
 
     @Override

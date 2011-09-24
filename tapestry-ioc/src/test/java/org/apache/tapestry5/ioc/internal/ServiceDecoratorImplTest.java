@@ -42,7 +42,7 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
 
     /**
      * Also, test logging of decorator method invocation.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -58,8 +58,6 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
         ModuleBuilderSource source = newSource(fixture);
 
         trainForConstructor(resources, logger);
-
-        train_isDebugEnabled(logger, true);
 
         logger.debug(EasyMock
                 .contains("Invoking method org.apache.tapestry5.ioc.internal.ServiceDecoratorFixture.decoratorReturnsInterceptor(Class, Object)"));
@@ -89,7 +87,7 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
 
         trainForConstructor(resources, logger);
 
-        train_isDebugEnabled(logger, false);
+        logger.debug(EasyMock.anyObject(String.class));
 
         replay();
 
@@ -118,7 +116,7 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
 
         trainForConstructor(resources, logger);
 
-        train_isDebugEnabled(logger, false);
+        logger.debug(EasyMock.anyObject(String.class));
 
         replay();
 
@@ -128,8 +126,7 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
         {
             decorator.createInterceptor(fixture.expectedDelegate);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertMessageContains(
                     ex,
@@ -153,7 +150,7 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
 
         trainForConstructor(resources, logger);
 
-        train_isDebugEnabled(logger, false);
+        logger.debug(EasyMock.anyObject(String.class));
 
         replay();
 
@@ -165,12 +162,12 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
         {
             decorator.createInterceptor(delegate);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertMessageContains(
                     ex,
-                    "Exception invoking method org.apache.tapestry5.ioc.internal.ServiceDecoratorFixture.decoratorThrowsException(Object)",
+                    "Error invoking",
+                    "org.apache.tapestry5.ioc.internal.ServiceDecoratorFixture.decoratorThrowsException(java.lang.Object)",
                     "Ouch!");
 
             Throwable cause = ex.getCause();

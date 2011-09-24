@@ -21,12 +21,11 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.slf4j.Logger;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
- * Based class for service decorators and service advisors that work by invoking a module method.
+ * Base class for service decorators and service advisors that work by invoking a module method.
  *
  * @since 5.1.0.0
  */
@@ -83,43 +82,10 @@ public class AbstractMethodInvokingInstrumenter
 
     protected Object invoke(final InjectionResources injectionResources)
     {
-        final String methodId = toString();
+        String description = String.format("Invoking method %s", toString());
 
-        String description = String.format("Invoking method %s", methodId);
+        ObjectCreator<Object> plan = InternalUtils.createMethodInvocationPlan(resources.getTracker(), resources, injectionResources, logger, description, getModuleInstance(), method);
 
-        if (logger.isDebugEnabled())
-        {
-            logger.debug(description);
-        }
-
-        return resources.getTracker().invoke(description, new Invokable<Object>()
-        {
-            public Object invoke()
-            {
-                Object result = null;
-                Throwable failure = null;
-
-                try
-                {
-                    Object[] parameters = InternalUtils.calculateParametersForMethod(method, resources,
-                            injectionResources, resources.getTracker());
-
-                    result = method.invoke(getModuleInstance(), parameters);
-                } catch (InvocationTargetException ite)
-                {
-                    failure = ite.getTargetException();
-                } catch (Exception ex)
-                {
-                    failure = ex;
-                }
-
-                if (failure != null)
-                    throw new RuntimeException(String.format("Exception invoking method %s: %s", methodId,
-                            InternalUtils.toMessage(failure)), failure);
-
-                return result;
-            }
-        });
-
+        return plan.createObject();
     }
 }

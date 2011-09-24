@@ -243,14 +243,6 @@ public class InternalUtils
                 method.getParameterAnnotations(), tracker);
     }
 
-    public static Object[] calculateParametersForConstructor(Constructor constructor, ObjectLocator locator,
-                                                             InjectionResources resources, OperationTracker tracker)
-    {
-
-        return calculateParameters(locator, resources, constructor.getParameterTypes(),
-                constructor.getGenericParameterTypes(), constructor.getParameterAnnotations(), tracker);
-    }
-
     public static Object[] calculateParameters(final ObjectLocator locator, final InjectionResources resources,
                                                Class[] parameterTypes, final Type[] genericTypes, Annotation[][] parameterAnnotations,
                                                OperationTracker tracker)
@@ -370,44 +362,6 @@ public class InternalUtils
             }
 
             clazz = clazz.getSuperclass();
-        }
-    }
-
-    public static void invokePostInjectionMethods(final Object object, final ObjectLocator locator,
-                                                  final InjectionResources injectionResources, final OperationTracker tracker)
-    {
-        for (final Method m : object.getClass().getMethods())
-        {
-            if (m.getAnnotation(PostInjection.class) == null)
-                continue;
-
-            String description = String.format("Invoking post-inject method %s", m);
-
-            tracker.run(description, new Runnable()
-            {
-                public void run()
-                {
-                    Throwable fail = null;
-
-                    try
-                    {
-                        Object[] parameters = InternalUtils.calculateParametersForMethod(m, locator,
-                                injectionResources, tracker);
-
-                        m.invoke(object, parameters);
-                    } catch (InvocationTargetException ex)
-                    {
-                        fail = ex.getTargetException();
-                    } catch (Exception ex)
-                    {
-                        fail = ex;
-                    }
-
-                    if (fail != null)
-                        throw new RuntimeException(String
-                                .format("Exception invoking method %s: %s", m, toMessage(fail)), fail);
-                }
-            });
         }
     }
 
@@ -1613,6 +1567,30 @@ public class InternalUtils
                         });
                     }
                 });
+    }
+
+
+    public static <T> ObjectCreator<T> createMethodInvocationPlan(final OperationTracker tracker, final ObjectLocator locator,
+                                                                  final InjectionResources resources,
+                                                                  final Logger logger,
+                                                                  final String description,
+                                                                  final Object instance,
+                                                                  final Method method)
+    {
+
+        return tracker.invoke("Creating plan to invoke " + method, new Invokable<ObjectCreator<T>>()
+        {
+            public ObjectCreator<T> invoke()
+            {
+                Object[] methodParameters = calculateParametersForMethod(method, locator, resources, tracker);
+
+                Invokable<T> core = new MethodInvoker<T>(instance, method, methodParameters);
+
+                Invokable<T> wrapped = logger == null ? core : new LoggingInvokableWrapper<T>(logger, description, core);
+
+                return new ConstructionPlan(tracker, description, wrapped);
+            }
+        });
     }
 
 }

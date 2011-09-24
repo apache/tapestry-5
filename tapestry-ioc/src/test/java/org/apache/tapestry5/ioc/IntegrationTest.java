@@ -542,10 +542,6 @@ public class IntegrationTest extends IOCInternalTestCase
         {
             assertMessageContains(ex,
                     "Class org.apache.tapestry5.ioc.UnbuildablePingable does not contain a public constructor needed to autobuild.");
-
-            // Like to check that the message includes the source location
-
-            assertTrue(ex.getMessage().matches(".*\\(at ServiceBuilderAutobuilderModule.java:\\d+\\).*"));
         }
 
         r.shutdown();
@@ -716,7 +712,6 @@ public class IntegrationTest extends IOCInternalTestCase
         {
             assertMessageContains(
                     ex,
-                    "Error invoking service builder method",
                     "Unable to locate a single service assignable to type org.apache.tapestry5.ioc.Greeter with marker annotation(s) org.apache.tapestry5.ioc.RedMarker",
                     "org.apache.tapestry5.ioc.GreeterModule.buildRedGreeter1()",
                     "org.apache.tapestry5.ioc.GreeterModule.buildRedGreeter2()");
@@ -740,8 +735,8 @@ public class IntegrationTest extends IOCInternalTestCase
         {
             assertMessageContains(
                     ex,
-                    "Error invoking service builder method",
-                    " Unable to locate any service assignable to type org.apache.tapestry5.ioc.Greeter with marker annotation(s) org.apache.tapestry5.ioc.YellowMarker.");
+                    "Exception constructing service",
+                    "Unable to locate any service assignable to type org.apache.tapestry5.ioc.Greeter with marker annotation(s) org.apache.tapestry5.ioc.YellowMarker.");
         }
 
         r.shutdown();
@@ -1310,8 +1305,6 @@ public class IntegrationTest extends IOCInternalTestCase
         {
             assertMessageContains(
                     ex,
-                    "Exception constructing service 'StringLookup'",
-                    "Error invoking service builder method org.apache.tapestry5.ioc.FredModule.buildStringLookup(Map) ",
                     "Override for key alley cat (at org.apache.tapestry5.ioc.util.NonmatchingMappedConfigurationOverrideModule.contributeStringLookup(MappedConfiguration)",
                     "does not match an existing key.");
         }

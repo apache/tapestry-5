@@ -66,16 +66,6 @@ final class IOCMessages
         return MESSAGES.format("instantiate-builder-error", builderClass.getName(), cause);
     }
 
-    static String builderMethodError(String methodId, String serviceId, Throwable cause)
-    {
-        return MESSAGES.format("builder-method-error", methodId, serviceId, cause);
-    }
-
-    static String builderMethodReturnedNull(String methodId, String serviceId)
-    {
-        return MESSAGES.format("builder-method-returned-null", methodId, serviceId);
-    }
-
     static String noServiceMatchesType(Class serviceInterface)
     {
         return MESSAGES.format("no-service-matches-type", serviceInterface.getName());
@@ -104,16 +94,6 @@ final class IOCMessages
     {
         return MESSAGES.format("decorator-returned-wrong-type", asString(method), serviceId, returned,
                 serviceInterface.getName());
-    }
-
-    static String invokingMethod(String methodId)
-    {
-        return MESSAGES.format("invoking-method", methodId);
-    }
-
-    static String invokingConstructor(String creatorDescription)
-    {
-        return MESSAGES.format("invoking-constructor", creatorDescription);
     }
 
     static String invokingMethod(ContributionDef def)
@@ -239,11 +219,6 @@ final class IOCMessages
     static String noAutobuildConstructor(Class clazz)
     {
         return MESSAGES.format("no-autobuild-constructor", clazz.getName());
-    }
-
-    static String autobuildConstructorError(String constructorDescription, Throwable cause)
-    {
-        return MESSAGES.format("autobuild-constructor-error", constructorDescription, cause);
     }
 
     private static String toJavaClassNames(List<Class> classes)

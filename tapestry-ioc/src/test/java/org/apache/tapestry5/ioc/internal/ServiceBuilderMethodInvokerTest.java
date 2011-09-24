@@ -18,9 +18,7 @@ import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
-import static org.apache.tapestry5.ioc.internal.AbstractServiceCreator.findParameterizedTypeFromGenericType;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.isA;
+import org.easymock.EasyMock;
 import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -30,6 +28,10 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 
+import static org.apache.tapestry5.ioc.internal.AbstractServiceCreator.findParameterizedTypeFromGenericType;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.isA;
+
 public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 {
     private static final String SERVICE_ID = "Fie";
@@ -37,6 +39,11 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
     private static final String CREATOR_DESCRIPTION = "{CREATOR DESCRIPTION}";
 
     private final OperationTracker tracker = new QuietOperationTracker();
+
+    private void ignoreDebug(Logger logger)
+    {
+        logger.debug(EasyMock.anyObject(String.class));
+    }
 
     @Test
     public void noargs_method()
@@ -51,7 +58,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         train_getModuleBuilder(resources, fixture);
 
-        train_isDebugEnabled(logger, false);
+        ignoreDebug(logger);
 
         replay();
 
@@ -93,9 +100,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         train_getModuleBuilder(resources, fixture);
 
-        train_isDebugEnabled(logger, true);
-
-        logger.debug(IOCMessages.invokingMethod(CREATOR_DESCRIPTION));
+        ignoreDebug(logger);
 
         replay();
 
@@ -125,9 +130,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         train_getModuleBuilder(resources, fixture);
 
-        train_isDebugEnabled(logger, true);
-
-        logger.debug(IOCMessages.invokingMethod(CREATOR_DESCRIPTION));
+        ignoreDebug(logger);
 
         // This simulates what the real stack does when it sees @Value("Injected")
 
@@ -160,7 +163,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         train_getService(resources, "Foe", FoeService.class, fixture.expectedFoe);
 
-        train_isDebugEnabled(logger, false);
+        ignoreDebug(logger);
 
         replay();
 
@@ -173,7 +176,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         verify();
     }
-    
+
     @Test
     public void named_injected_service_method()
     {
@@ -190,7 +193,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         train_getService(resources, "Foe", FoeService.class, fixture.expectedFoe);
 
-        train_isDebugEnabled(logger, false);
+        ignoreDebug(logger);
 
         replay();
 
@@ -222,7 +225,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         expect(resources.getOrderedConfiguration(Runnable.class)).andReturn(result);
 
-        train_isDebugEnabled(logger, false);
+        ignoreDebug(logger);
 
         replay();
 
@@ -254,7 +257,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         expect(resources.getUnorderedConfiguration(Runnable.class)).andReturn(result);
 
-        train_isDebugEnabled(logger, false);
+        ignoreDebug(logger);
 
         replay();
 
@@ -286,7 +289,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         train_getModuleBuilder(resources, fixture);
 
-        train_isDebugEnabled(logger, false);
+        ignoreDebug(logger);
 
         replay();
 
@@ -296,8 +299,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
         {
             sc.createObject();
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             Assert.assertEquals(ex.getMessage(), "Builder method " + CREATOR_DESCRIPTION
                     + " (for service 'Fie') returned null.");
@@ -319,7 +321,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         train_getModuleBuilder(resources, fixture);
 
-        train_isDebugEnabled(logger, false);
+        ignoreDebug(logger);
 
         replay();
 
@@ -329,11 +331,9 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
         {
             sc.createObject();
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
-            assertEquals(ex.getMessage(), "Error invoking service builder method " + CREATOR_DESCRIPTION
-                    + " (for service 'Fie'): Method failed.");
+            assertMessageContains(ex, "build_fail()", "Method failed.");
 
             Throwable cause = ex.getCause();
 
@@ -361,7 +361,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         expect(resources.getObject(eq(FoeService.class), isA(AnnotationProvider.class))).andReturn(fixture.expectedFoe);
 
-        train_isDebugEnabled(logger, false);
+        ignoreDebug(logger);
 
         replay();
 
@@ -415,8 +415,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
         {
             findParameterizedTypeFromGenericType(type);
             unreachable();
-        }
-        catch (IllegalArgumentException ex)
+        } catch (IllegalArgumentException ex)
         {
             assertEquals(ex.getMessage(), IOCMessages.genericTypeNotSupported(type));
         }
