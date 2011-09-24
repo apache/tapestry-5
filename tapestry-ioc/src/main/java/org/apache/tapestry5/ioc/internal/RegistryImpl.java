@@ -14,72 +14,24 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Flow;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
-import org.apache.tapestry5.ioc.AdvisorDef;
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.Configuration;
-import org.apache.tapestry5.ioc.IOCConstants;
-import org.apache.tapestry5.ioc.Invokable;
-import org.apache.tapestry5.ioc.LoggerSource;
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.ObjectCreator;
-import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.ObjectProvider;
-import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
-import org.apache.tapestry5.ioc.Registry;
-import org.apache.tapestry5.ioc.ScopeConstants;
-import org.apache.tapestry5.ioc.ServiceAdvisor;
-import org.apache.tapestry5.ioc.ServiceBuilderResources;
-import org.apache.tapestry5.ioc.ServiceDecorator;
-import org.apache.tapestry5.ioc.ServiceLifecycle;
-import org.apache.tapestry5.ioc.ServiceLifecycle2;
-import org.apache.tapestry5.ioc.ServiceResources;
+import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.Local;
-import org.apache.tapestry5.ioc.def.ContributionDef;
-import org.apache.tapestry5.ioc.def.ContributionDef2;
-import org.apache.tapestry5.ioc.def.DecoratorDef;
-import org.apache.tapestry5.ioc.def.ModuleDef;
-import org.apache.tapestry5.ioc.def.ServiceDef;
-import org.apache.tapestry5.ioc.def.ServiceDef2;
-import org.apache.tapestry5.ioc.def.ServiceDef3;
+import org.apache.tapestry5.ioc.def.*;
 import org.apache.tapestry5.ioc.internal.services.PerthreadManagerImpl;
 import org.apache.tapestry5.ioc.internal.services.RegistryShutdownHubImpl;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InjectionResources;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.internal.util.MapInjectionResources;
-import org.apache.tapestry5.ioc.internal.util.OneShotLock;
-import org.apache.tapestry5.ioc.internal.util.Orderer;
-import org.apache.tapestry5.ioc.services.Builtin;
-import org.apache.tapestry5.ioc.services.ClassFab;
-import org.apache.tapestry5.ioc.services.ClassFactory;
-import org.apache.tapestry5.ioc.services.MasterObjectProvider;
-import org.apache.tapestry5.ioc.services.PerthreadManager;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
-import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
-import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
-import org.apache.tapestry5.ioc.services.ServiceActivityScoreboard;
-import org.apache.tapestry5.ioc.services.ServiceLifecycleSource;
-import org.apache.tapestry5.ioc.services.Status;
-import org.apache.tapestry5.ioc.services.SymbolSource;
-import org.apache.tapestry5.ioc.services.TapestryIOCModule;
+import org.apache.tapestry5.ioc.internal.util.*;
+import org.apache.tapestry5.ioc.services.*;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.UpdateListenerHub;
 import org.slf4j.Logger;
+
+import java.lang.reflect.Constructor;
+import java.util.*;
 
 @SuppressWarnings("all")
 public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyProvider
@@ -158,18 +110,14 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     /**
      * Constructs the registry from a set of module definitions and other resources.
-     * 
-     * @param moduleDefs
-     *            defines the modules (and builders, decorators, etc., within)
-     * @param classFactory
-     *            TODO
-     * @param proxyFactory
-     *            TODO
-     * @param loggerSource
-     *            used to obtain Logger instances
+     *
+     * @param moduleDefs   defines the modules (and builders, decorators, etc., within)
+     * @param classFactory TODO
+     * @param proxyFactory TODO
+     * @param loggerSource used to obtain Logger instances
      */
     public RegistryImpl(Collection<ModuleDef> moduleDefs, ClassFactory classFactory, PlasticProxyFactory proxyFactory,
-            LoggerSource loggerSource)
+                        LoggerSource loggerSource)
     {
         assert moduleDefs != null;
         assert classFactory != null;
@@ -269,11 +217,16 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
                 if (cd2.getServiceId() != null)
                 {
-                    if (!serviceIdToModule.containsKey(serviceId)) { throw new IllegalArgumentException(
-                            IOCMessages.contributionForNonexistentService(cd)); }
+                    if (!serviceIdToModule.containsKey(serviceId))
+                    {
+                        throw new IllegalArgumentException(
+                                IOCMessages.contributionForNonexistentService(cd));
+                    }
+                } else if (!isContributionForExistentService(module, cd2))
+                {
+                    throw new IllegalArgumentException(
+                            IOCMessages.contributionForUnqualifiedService(cd2));
                 }
-                else if (!isContributionForExistentService(module, cd2)) { throw new IllegalArgumentException(
-                        IOCMessages.contributionForUnqualifiedService(cd2)); }
             }
         }
 
@@ -298,18 +251,19 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         // Match services with the correct interface AND having as markers *all* the marker annotations
 
         Flow<ServiceDef2> filtered = serviceDefs.filter(F.and(new Predicate<ServiceDef2>()
-        {
-            public boolean accept(ServiceDef2 object)
-            {
-                return object.getServiceInterface().equals(cd.getServiceInterface());
-            }
-        }, new Predicate<ServiceDef2>()
+                {
+                    public boolean accept(ServiceDef2 object)
+                    {
+                        return object.getServiceInterface().equals(cd.getServiceInterface());
+                    }
+                }, new Predicate<ServiceDef2>()
         {
             public boolean accept(ServiceDef2 serviceDef)
             {
                 return serviceDef.getMarkers().containsAll(contributionMarkers);
             }
-        }));
+        }
+        ));
 
         // That's a lot of logic; the good news is it will short-circuit as soon as it finds a single match,
         // thanks to the laziness inside Flow.
@@ -458,8 +412,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         try
         {
             return serviceInterface.cast(service);
-        }
-        catch (ClassCastException ex)
+        } catch (ClassCastException ex)
         {
             throw new RuntimeException(IOCMessages.serviceWrongInterface(serviceId, builtinTypes.get(serviceId),
                     serviceInterface));
@@ -567,8 +520,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     }
 
     private <K, V> void addToMappedConfiguration(Map<K, V> map, Map<K, MappedConfigurationOverride<K, V>> overrides,
-            Map<K, ContributionDef> keyToContribution, Class<K> keyClass, Class<V> valueType, ServiceDef3 serviceDef,
-            final Module module)
+                                                 Map<K, ContributionDef> keyToContribution, Class<K> keyClass, Class<V> valueType, ServiceDef3 serviceDef,
+                                                 final Module module)
     {
         String serviceId = serviceDef.getServiceId();
         Set<ContributionDef2> contributions = module.getContributorDefsForService(serviceDef);
@@ -603,7 +556,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     }
 
     private <T> void addToUnorderedConfiguration(Collection<T> collection, Class<T> valueType, ServiceDef3 serviceDef,
-            final Module module)
+                                                 final Module module)
     {
         String serviceId = serviceDef.getServiceId();
         Set<ContributionDef2> contributions = module.getContributorDefsForService(serviceDef);
@@ -638,8 +591,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     }
 
     private <T> void addToOrderedConfiguration(Orderer<T> orderer,
-            Map<String, OrderedConfigurationOverride<T>> overrides, Class<T> valueType, ServiceDef3 serviceDef,
-            final Module module)
+                                               Map<String, OrderedConfigurationOverride<T>> overrides, Class<T> valueType, ServiceDef3 serviceDef,
+                                               final Module module)
     {
         String serviceId = serviceDef.getServiceId();
         Set<ContributionDef2> contributions = module.getContributorDefsForService(serviceDef);
@@ -807,7 +760,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     }
 
     public <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator,
-            Module localModule)
+                           Module localModule)
     {
         lock.check();
 
@@ -908,11 +861,9 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     /**
      * Filters the set into a new set, containing only elements shared between the set and the
      * filter collection.
-     * 
-     * @param set
-     *            to be filtered
-     * @param filter
-     *            values to keep from the set
+     *
+     * @param set    to be filtered
+     * @param filter values to keep from the set
      * @return a new set containing only the shared values
      */
     private static <T> Set<T> intersection(Set<T> set, Collection<T> filter)
@@ -983,32 +934,18 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         final Constructor constructor = InternalUtils.findAutobuildConstructor(clazz);
 
         if (constructor == null)
+        {
             throw new RuntimeException(IOCMessages.noAutobuildConstructor(clazz));
+        }
 
         Map<Class, Object> resourcesMap = CollectionFactory.newMap();
         resourcesMap.put(OperationTracker.class, RegistryImpl.this);
 
-        final InjectionResources resources = new MapInjectionResources(resourcesMap);
+        InjectionResources resources = new MapInjectionResources(resourcesMap);
 
-        final Invokable<T> operation = new Invokable<T>()
-        {
-            public T invoke()
-            {
-                InternalUtils.validateConstructorForAutobuild(constructor);
+        ObjectCreator<T> plan = InternalUtils.createConstructorConstructionPlan(this, this, resources, null, "Invoking " + proxyFactory.getConstructorLocation(constructor).toString(), constructor);
 
-                Object result = invokeConstructor(constructor, resources);
-
-                InternalUtils.injectIntoFields(result, RegistryImpl.this, resources, RegistryImpl.this);
-
-                return clazz.cast(result);
-            }
-        };
-
-        T result = invoke("Autobuilding instance of class " + clazz.getName(), operation);
-
-        InternalUtils.invokePostInjectionMethods(result, this, resources, this);
-
-        return result;
+        return plan.createObject();
     }
 
     public <T> T proxy(Class<T> interfaceClass, Class<? extends T> implementationClass)
@@ -1028,7 +965,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     }
 
     private <T> T createNonReloadingProxy(Class<T> interfaceClass, final Class<? extends T> implementationClass,
-            final ObjectLocator locator)
+                                          final ObjectLocator locator)
     {
         final ObjectCreator<T> autobuildCreator = new ObjectCreator<T>()
         {
@@ -1056,7 +993,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     }
 
     private <T> T createReloadingProxy(Class<T> interfaceClass, final Class<? extends T> implementationClass,
-            ObjectLocator locator)
+                                       ObjectLocator locator)
     {
         ReloadableObjectCreator creator = new ReloadableObjectCreator(implementationClass.getClassLoader(),
                 implementationClass.getName(), loggerSource.getLogger(implementationClass), this, locator);
@@ -1080,37 +1017,6 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     public <T> T invoke(String description, Invokable<T> operation)
     {
         return operationTracker.invoke(description, operation);
-    }
-
-    private Object invokeConstructor(final Constructor constructor, final InjectionResources resources)
-    {
-        final String description = proxyFactory.getConstructorLocation(constructor).toString();
-
-        return invoke("Invoking " + description, new Invokable<Object>()
-        {
-            public Object invoke()
-            {
-                Throwable failure;
-
-                try
-                {
-                    Object[] parameters = InternalUtils.calculateParametersForConstructor(constructor,
-                            RegistryImpl.this, resources, RegistryImpl.this);
-
-                    return constructor.newInstance(parameters);
-                }
-                catch (InvocationTargetException ite)
-                {
-                    failure = ite.getTargetException();
-                }
-                catch (Exception ex)
-                {
-                    failure = ex;
-                }
-
-                throw new RuntimeException(IOCMessages.autobuildConstructorError(description, failure), failure);
-            }
-        });
     }
 
     public Set<Class> getMarkerAnnotations()

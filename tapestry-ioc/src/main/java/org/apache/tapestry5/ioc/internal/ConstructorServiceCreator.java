@@ -14,13 +14,11 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.Invokable;
+import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.ServiceBuilderResources;
-import org.apache.tapestry5.ioc.internal.util.InjectionResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * A service creator based on an implementation class' constructor, rather than a service builder method.
@@ -30,7 +28,7 @@ public class ConstructorServiceCreator extends AbstractServiceCreator
     private final Constructor constructor;
 
     public ConstructorServiceCreator(ServiceBuilderResources resources, String creatorDescription,
-            Constructor constructor)
+                                     Constructor constructor)
     {
         super(resources, creatorDescription);
 
@@ -43,49 +41,23 @@ public class ConstructorServiceCreator extends AbstractServiceCreator
         return creatorDescription;
     }
 
+    private ObjectCreator<?> plan;
+
+    private synchronized ObjectCreator<?> getPlan()
+    {
+        if (plan == null)
+        {
+            String description = String.format("Invoking constructor %s (for service '%s')", creatorDescription, resources.getServiceId());
+
+            plan = InternalUtils.createConstructorConstructionPlan(resources.getTracker(), resources, createInjectionResources(), logger,
+                    description, constructor);
+        }
+
+        return plan;
+    }
+
     public Object createObject()
     {
-        return resources.getTracker().invoke("Invoking constructor " + creatorDescription, new Invokable<Object>()
-        {
-            public Object invoke()
-            {
-                Throwable failure = null;
-                Object result = null;
-
-                InternalUtils.validateConstructorForAutobuild(constructor);
-
-                InjectionResources injectionResources = createInjectionResources();
-
-                try
-                {
-                    Object[] parameters = InternalUtils.calculateParametersForConstructor(constructor, resources,
-                            injectionResources, resources.getTracker());
-
-                    if (logger.isDebugEnabled())
-                        logger.debug(IOCMessages.invokingConstructor(creatorDescription));
-
-                    result = constructor.newInstance(parameters);
-
-                    InternalUtils.injectIntoFields(result, resources, injectionResources, resources.getTracker());
-                }
-                catch (InvocationTargetException ite)
-                {
-                    failure = ite.getTargetException();
-                }
-                catch (Exception ex)
-                {
-                    failure = ex;
-                }
-
-                if (failure != null)
-                    throw new RuntimeException(IOCMessages.constructorError(creatorDescription, serviceId, failure),
-                            failure);
-
-                InternalUtils.invokePostInjectionMethods(result, resources, injectionResources, resources.getTracker());
-
-                return result;
-            }
-        });
-
+        return getPlan().createObject();
     }
 }

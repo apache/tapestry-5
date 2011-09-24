@@ -21,10 +21,8 @@ import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.def.ServiceDef2;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import static org.apache.tapestry5.ioc.internal.util.InternalUtils.asString;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
-import static org.apache.tapestry5.ioc.services.ClassFabUtils.toJavaClassName;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -32,6 +30,9 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
+import static org.apache.tapestry5.ioc.internal.util.InternalUtils.asString;
+import static org.apache.tapestry5.ioc.services.ClassFabUtils.toJavaClassName;
 
 final class IOCMessages
 {
@@ -57,7 +58,7 @@ final class IOCMessages
     static String serviceWrongInterface(String serviceId, Class actualInterface, Class requestedInterface)
     {
         return MESSAGES.format("service-wrong-interface", serviceId, actualInterface.getName(),
-                               requestedInterface.getName());
+                requestedInterface.getName());
     }
 
     static String instantiateBuilderError(Class builderClass, Throwable cause)
@@ -68,11 +69,6 @@ final class IOCMessages
     static String builderMethodError(String methodId, String serviceId, Throwable cause)
     {
         return MESSAGES.format("builder-method-error", methodId, serviceId, cause);
-    }
-
-    static String constructorError(String creatorDescription, String serviceId, Throwable cause)
-    {
-        return MESSAGES.format("constructor-error", creatorDescription, serviceId, cause);
     }
 
     static String builderMethodReturnedNull(String methodId, String serviceId)
@@ -107,7 +103,7 @@ final class IOCMessages
     static String decoratorReturnedWrongType(Method method, String serviceId, Object returned, Class serviceInterface)
     {
         return MESSAGES.format("decorator-returned-wrong-type", asString(method), serviceId, returned,
-                               serviceInterface.getName());
+                serviceInterface.getName());
     }
 
     static String invokingMethod(String methodId)
@@ -134,7 +130,7 @@ final class IOCMessages
     static String contributionWrongReturnType(Method method)
     {
         return MESSAGES.format("contribution-wrong-return-type", asString(method),
-                               toJavaClassName(method.getReturnType()));
+                toJavaClassName(method.getReturnType()));
     }
 
     static String tooManyContributionParameters(Method method)
@@ -167,7 +163,7 @@ final class IOCMessages
                                            Class expectedClass)
     {
         return MESSAGES.format("contribution-wrong-key-type", serviceId, actualClass.getName(),
-                               expectedClass.getName());
+                expectedClass.getName());
     }
 
     static String tooManyConfigurationParameters(String methodId)
@@ -265,17 +261,17 @@ final class IOCMessages
     static String noServicesMatchMarker(Class objectType, List<Class> markers)
     {
         return MESSAGES.format("no-services-match-marker",
-                               ClassFabUtils.toJavaClassName(objectType),
-                               toJavaClassNames(markers));
+                ClassFabUtils.toJavaClassName(objectType),
+                toJavaClassNames(markers));
     }
 
     static String manyServicesMatchMarker(Class objectType, List<Class> markers,
                                           Collection<ServiceDef2> matchingServices)
     {
         return MESSAGES.format("many-services-match-marker",
-                               ClassFabUtils.toJavaClassName(objectType),
-                               toJavaClassNames(markers),
-                               InternalUtils.joinSorted(matchingServices));
+                ClassFabUtils.toJavaClassName(objectType),
+                toJavaClassNames(markers),
+                InternalUtils.joinSorted(matchingServices));
     }
 
     static String overlappingServiceProxyProviders()
@@ -297,12 +293,12 @@ final class IOCMessages
     {
         return MESSAGES.format("no-convention-service-implementation-found", clazz.getName(), clazz.getName());
     }
-    
+
     static String contributionForNonexistentService(ContributionDef cd)
     {
         return MESSAGES.format("contribution-for-nonexistent-service", cd, cd.getServiceId());
     }
-    
+
     static String contributionForUnqualifiedService(ContributionDef2 cd)
     {
         return MESSAGES.format("contribution-for-unqualified-service", cd, cd.getServiceInterface(), cd.getMarkers());

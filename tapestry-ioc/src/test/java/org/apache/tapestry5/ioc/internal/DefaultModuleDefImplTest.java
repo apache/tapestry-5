@@ -29,7 +29,6 @@ import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.MethodSignature;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
-import static org.easymock.EasyMock.contains;
 import org.slf4j.Logger;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -39,6 +38,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Set;
+
+import static org.easymock.EasyMock.contains;
 
 public class DefaultModuleDefImplTest extends IOCTestCase
 {
@@ -225,8 +226,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
             new DefaultModuleDefImpl(ServiceIdConflictMethodModule.class, logger, proxyFactory);
 
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertMessageContains(
                     ex,
@@ -250,8 +250,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         {
             new DefaultModuleDefImpl(VoidBuilderMethodModule.class, logger, null);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(), IOCMessages.buildMethodWrongReturnType(m));
         }
@@ -272,8 +271,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         {
             new DefaultModuleDefImpl(BuilderMethodModule.class, logger, null);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(), IOCMessages.buildMethodWrongReturnType(m));
         }
@@ -299,8 +297,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         {
             new DefaultModuleDefImpl(moduleClass, logger, null);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(), IOCMessages.decoratorMethodWrongReturnType(m));
         }
@@ -379,8 +376,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         {
             new DefaultModuleDefImpl(moduleClass, logger, null);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertEquals(
                     ex.getMessage(),
@@ -404,8 +400,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         {
             new DefaultModuleDefImpl(moduleClass, logger, null);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertEquals(
                     ex.getMessage(),
@@ -464,8 +459,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         {
             new DefaultModuleDefImpl(UninstantiableAutobuildServiceModule.class, logger, null);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertMessageContains(
                     ex,
@@ -486,8 +480,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         {
             new DefaultModuleDefImpl(NonStaticBindMethodModule.class, logger, proxyFactory);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertMessageContains(ex,
                     "Method org.apache.tapestry5.ioc.internal.NonStaticBindMethodModule.bind(ServiceBinder)",
@@ -505,11 +498,9 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         train_getTracker(resources, tracker);
 
-        train_isDebugEnabled(logger, true);
-
         // The point is, we're choosing the constructor with the largest number of parameters.
 
-        logger.debug(contains("Invoking constructor org.apache.tapestry5.ioc.internal.MultipleConstructorsAutobuildService(StringHolder)"));
+        logger.debug(contains("org.apache.tapestry5.ioc.internal.MultipleConstructorsAutobuildService(StringHolder)"));
 
         train_getServiceId(resources, "StringHolder");
         train_getLogger(resources, logger);
@@ -545,8 +536,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         {
             new DefaultModuleDefImpl(ExceptionInBindMethod.class, logger, proxyFactory);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertTrue(ex.getMessage().matches(
                     "Error invoking service binder method org.apache.tapestry5.ioc.internal.ExceptionInBindMethod.bind\\(ServiceBinder\\) "

@@ -26,6 +26,7 @@ import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.plastic.MethodAdvice;
 import org.apache.tapestry5.plastic.MethodInvocation;
 import org.apache.tapestry5.plastic.PlasticUtils;
+import org.slf4j.Logger;
 
 import javax.inject.Named;
 import java.io.Closeable;
@@ -1428,4 +1429,190 @@ public class InternalUtils
             }
         };
     }
+
+    public static <T> ObjectCreator<T> createConstructorConstructionPlan(final OperationTracker tracker, final ObjectLocator locator,
+                                                                         final InjectionResources resources,
+                                                                         final Logger logger,
+                                                                         final String description,
+                                                                         final Constructor<T> constructor)
+    {
+        return tracker.invoke(String.format("Creating plan to instantiate %s via %s",
+                constructor.getDeclaringClass().getName(),
+                constructor), new Invokable<ObjectCreator<T>>()
+        {
+            public ObjectCreator<T> invoke()
+            {
+                validateConstructorForAutobuild(constructor);
+
+                Object[] constructorParameters = calculateParameters(locator, resources, constructor.getParameterTypes(), constructor.getGenericParameterTypes(), constructor.getParameterAnnotations(), tracker);
+
+                Invokable<T> core = new ConstructorInvoker<T>(constructor, constructorParameters);
+
+                Invokable<T> wrapped = logger == null ? core : new LoggingInvokableWrapper<T>(logger, description, core);
+
+                ConstructionPlan<T> plan = new ConstructionPlan(tracker, description, wrapped);
+
+                extendPlanForInjectedFields(plan, tracker, locator, resources, constructor.getDeclaringClass());
+
+                extendPlanForPostInjectionMethods(plan, tracker, locator, resources, constructor.getDeclaringClass());
+
+                return plan;
+            }
+        });
+    }
+
+    private static <T> void extendPlanForInjectedFields(final ConstructionPlan<T> plan, OperationTracker tracker, final ObjectLocator locator, final InjectionResources resources, Class<T> instantiatedClass)
+    {
+        Class clazz = instantiatedClass;
+
+        while (clazz != Object.class)
+        {
+            Field[] fields = clazz.getDeclaredFields();
+
+            for (final Field f : fields)
+            {
+                // Ignore all static and final fields.
+
+                int fieldModifiers = f.getModifiers();
+
+                if (Modifier.isStatic(fieldModifiers) || Modifier.isFinal(fieldModifiers))
+                    continue;
+
+                final AnnotationProvider ap = new AnnotationProvider()
+                {
+                    public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
+                    {
+                        return f.getAnnotation(annotationClass);
+                    }
+                };
+
+                String description = String.format("Calculating possible injection value for field %s.%s (%s)",
+                        clazz.getName(), f.getName(),
+                        PlasticUtils.toTypeName(f.getType()));
+
+                tracker.run(description, new Runnable()
+                {
+                    public void run()
+                    {
+                        final Class<?> fieldType = f.getType();
+
+                        InjectService is = ap.getAnnotation(InjectService.class);
+                        if (is != null)
+                        {
+                            addInjectPlan(plan, f, locator.getService(is.value(), fieldType));
+                            return;
+                        }
+
+                        if (ap.getAnnotation(Inject.class) != null || ap.getAnnotation(InjectResource.class) != null)
+                        {
+                            Object value = resources.findResource(fieldType, f.getGenericType());
+
+                            if (value != null)
+                            {
+                                addInjectPlan(plan, f, value);
+                                return;
+                            }
+
+                            addInjectPlan(plan, f, locator.getObject(fieldType, ap));
+                            return;
+                        }
+
+                        if (ap.getAnnotation(javax.inject.Inject.class) != null)
+                        {
+                            Named named = ap.getAnnotation(Named.class);
+
+                            if (named == null)
+                            {
+                                addInjectPlan(plan, f, locator.getObject(fieldType, ap));
+                            } else
+                            {
+                                addInjectPlan(plan, f, locator.getService(named.value(), fieldType));
+                            }
+
+                            return;
+                        }
+
+                        // Ignore fields that do not have the necessary annotation.
+
+                    }
+                });
+            }
+
+            clazz = clazz.getSuperclass();
+        }
+    }
+
+    private static <T> void addInjectPlan(ConstructionPlan<T> plan, final Field field, final Object injectedValue)
+    {
+        plan.add(new InitializationPlan<T>()
+        {
+            public String getDescription()
+            {
+                return String.format("Injecting %s into field %s of class %s.",
+                        injectedValue,
+                        field.getName(),
+                        field.getDeclaringClass().getName());
+            }
+
+            public void initialize(T instance)
+            {
+                inject(instance, field, injectedValue);
+            }
+        });
+    }
+
+    private static <T> void extendPlanForPostInjectionMethods(ConstructionPlan<T> plan, OperationTracker tracker, ObjectLocator locator, InjectionResources resources, Class<T> instantiatedClass)
+    {
+        for (Method m : instantiatedClass.getMethods())
+        {
+            if (m.getAnnotation(PostInjection.class) != null)
+            {
+                extendPlanForPostInjectionMethod(plan, tracker, locator, resources, m);
+            }
+        }
+    }
+
+    private static void extendPlanForPostInjectionMethod(final ConstructionPlan<?> plan, final OperationTracker tracker, final ObjectLocator locator, final InjectionResources resources, final Method method)
+    {
+        tracker.run("Computing parameters for post-injection method " + method,
+                new Runnable()
+                {
+                    public void run()
+                    {
+                        final Object[] parameters = InternalUtils.calculateParametersForMethod(method, locator,
+                                resources, tracker);
+
+                        plan.add(new InitializationPlan<Object>()
+                        {
+                            public String getDescription()
+                            {
+                                return "Invoking " + method;
+                            }
+
+                            public void initialize(Object instance)
+                            {
+                                Throwable fail = null;
+
+                                try
+                                {
+                                    method.invoke(instance, parameters);
+                                } catch (InvocationTargetException ex)
+                                {
+                                    fail = ex.getTargetException();
+                                } catch (Exception ex)
+                                {
+                                    fail = ex;
+                                }
+
+                                if (fail != null)
+                                {
+                                    throw new RuntimeException(String
+                                            .format("Exception invoking method %s: %s", method, toMessage(fail)), fail);
+                                }
+                            }
+                        });
+                    }
+                });
+    }
+
 }

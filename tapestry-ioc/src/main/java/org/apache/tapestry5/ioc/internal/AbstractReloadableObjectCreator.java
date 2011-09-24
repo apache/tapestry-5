@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,25 +14,9 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Set;
-
-import javassist.CannotCompileException;
-import javassist.ClassPath;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.Loader;
-import javassist.LoaderClassPath;
-import javassist.NotFoundException;
-import javassist.Translator;
+import javassist.*;
 import javassist.expr.ConstructorCall;
 import javassist.expr.ExprEditor;
-import javassist.expr.FieldAccess;
-import javassist.expr.MethodCall;
-import javassist.expr.NewExpr;
-
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.OperationTracker;
@@ -44,6 +28,10 @@ import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.services.UpdateListener;
 import org.slf4j.Logger;
+
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Set;
 
 @SuppressWarnings("all")
 public abstract class AbstractReloadableObjectCreator implements ObjectCreator, UpdateListener, Translator
@@ -69,8 +57,6 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
 
     private final String implementationClassName;
 
-    private final String classFilePath;
-
     private final Logger logger;
 
     private final OperationTracker tracker;
@@ -88,14 +74,12 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
     private boolean firstTime = true;
 
     protected AbstractReloadableObjectCreator(ClassLoader baseClassLoader, String implementationClassName,
-            Logger logger, OperationTracker tracker)
+                                              Logger logger, OperationTracker tracker)
     {
         this.baseClassLoader = baseClassLoader;
         this.implementationClassName = implementationClassName;
         this.logger = logger;
         this.tracker = tracker;
-
-        classFilePath = ClassFabUtils.getPathForClassNamed(implementationClassName);
     }
 
     public synchronized void checkForUpdates()
@@ -146,14 +130,16 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
                 Class reloadedClass = reloadImplementationClass();
 
                 return createInstance(reloadedClass);
-            };
+            }
+
+            ;
         });
     }
 
     /**
      * Invoked when an instance of the class is needed. It is the responsibility of this method (as implemented in a
      * subclass) to instantiate the class and inject dependencies into the class.
-     * 
+     *
      * @see InternalUtils#findAutobuildConstructor(Class)
      */
     abstract protected Object createInstance(Class clazz);
@@ -185,8 +171,7 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
             firstTime = false;
 
             return result;
-        }
-        catch (Throwable ex)
+        } catch (Throwable ex)
         {
             throw new RuntimeException(String.format("Unable to %s class %s: %s", firstTime ? "load" : "reload",
                     implementationClassName, InternalUtils.toMessage(ex)), ex);
@@ -273,7 +258,9 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
         return className.indexOf('$') >= 0;
     }
 
-    /** Does nothing. */
+    /**
+     * Does nothing.
+     */
     public void start(ClassPool pool) throws NotFoundException, CannotCompileException
     {
 

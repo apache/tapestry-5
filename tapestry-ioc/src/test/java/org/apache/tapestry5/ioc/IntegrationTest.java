@@ -405,7 +405,7 @@ public class IntegrationTest extends IOCInternalTestCase
         } catch (RuntimeException ex)
         {
             assertMessageContains(ex, "Error invoking constructor", "ExceptionInConstructorServiceImpl()",
-                    "for service 'Pingable'", "Yes, we have no tomatoes.");
+                    "Yes, we have no tomatoes.");
         }
 
         r.shutdown();
@@ -583,12 +583,9 @@ public class IntegrationTest extends IOCInternalTestCase
         } catch (RuntimeException ex)
         {
             assertMessageContains(ex,
-                    "Error invoking constructor org.apache.tapestry5.ioc.FailInConstructorRunnable()",
+                    "Error invoking constructor",
+                    "org.apache.tapestry5.ioc.FailInConstructorRunnable()",
                     "Failure in Runnable constructor.");
-
-            // Like to check that the message includes the source location
-
-            assertTrue(ex.getMessage().matches(".*\\(at FailInConstructorRunnable.java:\\d+\\).*"));
         }
 
         r.shutdown();
