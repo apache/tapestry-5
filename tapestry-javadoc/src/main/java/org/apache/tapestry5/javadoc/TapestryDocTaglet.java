@@ -194,10 +194,10 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
             flags.add("Required");
 
         if (!pd.cache)
-            flags.add("NOT Cached");
+            flags.add("Not Cached");
 
         if (!pd.allowNull)
-            flags.add("NOT Allow Null");
+            flags.add("Not Null");
 
         element(writer, "td", InternalUtils.join(flags));
         element(writer, "td", pd.defaultValue);
