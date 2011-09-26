@@ -23,6 +23,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
+import org.apache.tapestry5.plastic.PlasticUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -94,12 +95,6 @@ final class IOCMessages
     {
         return MESSAGES.format("decorator-returned-wrong-type", asString(method), serviceId, returned,
                 serviceInterface.getName());
-    }
-
-    static String invokingMethod(ContributionDef def)
-    {
-        // The toString() of a contribution def is the name of the method.
-        return MESSAGES.format("invoking-method", def);
     }
 
     static String recursiveServiceBuild(ServiceDef def)
@@ -223,12 +218,9 @@ final class IOCMessages
 
     private static String toJavaClassNames(List<Class> classes)
     {
-        List<String> names = CollectionFactory.newList();
-
-        for (Class<?> clazz : classes)
-        {
-            names.add(ClassFabUtils.toJavaClassName(clazz));
-        }
+        Class[] asArray = classes.toArray(new Class[classes.size()]);
+        String[] namesArray = PlasticUtils.toTypeNames(asArray);
+        List<String> names = CollectionFactory.newList(namesArray);
 
         return InternalUtils.joinSorted(names);
     }

@@ -540,10 +540,9 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             final MappedConfiguration<K, V> validating = new ValidatingMappedConfigurationWrapper<K, V>(valueType,
                     resources, typeCoercerProxy, map, overrides, serviceId, def, keyClass, keyToContribution);
 
-            String description = IOCMessages.invokingMethod(def);
+            String description = "Invoking " + def;
 
-            if (debug)
-                logger.debug(description);
+            logger.debug(description);
 
             operationTracker.run(description, new Runnable()
             {
@@ -575,10 +574,9 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             final Configuration<T> validating = new ValidatingConfigurationWrapper<T>(valueType, resources,
                     typeCoercerProxy, collection, serviceId);
 
-            String description = IOCMessages.invokingMethod(def);
+            String description = "Invoking " + def;
 
-            if (debug)
-                logger.debug(description);
+            logger.debug(description);
 
             operationTracker.run(description, new Runnable()
             {
@@ -610,16 +608,14 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             final OrderedConfiguration<T> validating = new ValidatingOrderedConfigurationWrapper<T>(valueType,
                     resources, typeCoercerProxy, orderer, overrides, def);
 
-            String description = IOCMessages.invokingMethod(def);
+            String description = "Invoking " + def;
 
-            if (debug)
-                logger.debug(description);
+            logger.debug(description);
 
             operationTracker.run(description, new Runnable()
             {
                 public void run()
                 {
-
                     def.contribute(module, resources, validating);
                 }
             });
