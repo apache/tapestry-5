@@ -84,9 +84,12 @@ public class OrderHandling
 
     @Inject
     private Messages messages;
-
+	
+	@Inject
+    private TypeCoercer typeCoercer;
+    
     @Property
-    private final ValueEncoder<SpecialHandling> encoder = new EnumValueEncoder(SpecialHandling.class);
+    private final ValueEncoder<SpecialHandling> encoder = new EnumValueEncoder(typeCoercer, SpecialHandling.class);
 
     @Property
     private final SelectModel model = new EnumSelectModel(SpecialHandling.class, messages);
