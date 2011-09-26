@@ -531,8 +531,6 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         Logger logger = getServiceLogger(serviceId);
 
-        boolean debug = logger.isDebugEnabled();
-
         final ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, proxyFactory, logger);
 
         for (final ContributionDef def : contributions)
@@ -564,8 +562,6 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             return;
 
         Logger logger = getServiceLogger(serviceId);
-
-        boolean debug = logger.isDebugEnabled();
 
         final ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, proxyFactory, logger);
 
@@ -599,7 +595,6 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             return;
 
         Logger logger = getServiceLogger(serviceId);
-        boolean debug = logger.isDebugEnabled();
 
         final ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, proxyFactory, logger);
 
