@@ -409,7 +409,8 @@ public class PlasticInternalUtils
                 return new FileInputStream(new File(url.toURI()));
             } catch (URISyntaxException ex)
             {
-                throw new IOException(ex);
+                // Note: the simple constructor IOException(Throwable) is only since 1.6
+                throw new IOException(ex.getMessage(), ex);
             }
         }
 
