@@ -410,7 +410,9 @@ public class PlasticInternalUtils
             } catch (URISyntaxException ex)
             {
                 // Note: the simple constructor IOException(Throwable) is only since 1.6
-                throw new IOException(ex.getMessage(), ex);
+                IOException wrapped = new IOException(ex.getMessage());
+                wrapped.initCause(ex);
+                throw wrapped;
             }
         }
 
