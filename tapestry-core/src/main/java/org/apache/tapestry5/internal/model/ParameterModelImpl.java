@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,10 +14,13 @@
 
 package org.apache.tapestry5.internal.model;
 
+import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.ParameterModel;
 
 public class ParameterModelImpl implements ParameterModel
 {
+    private final ComponentModel componentModel;
+
     private final String name;
 
     private final boolean required;
@@ -28,13 +31,9 @@ public class ParameterModelImpl implements ParameterModel
 
     private final boolean cached;
 
-    public ParameterModelImpl(
-            String name,
-            boolean required,
-            boolean allowNull,
-            String defaultBindingPrefix,
-            boolean cached)
+    public ParameterModelImpl(ComponentModel componentModel, String name, boolean required, boolean allowNull, String defaultBindingPrefix, boolean cached)
     {
+        this.componentModel = componentModel;
         this.name = name;
         this.required = required;
         this.allowNull = allowNull;
@@ -65,5 +64,10 @@ public class ParameterModelImpl implements ParameterModel
     public boolean isCached()
     {
         return cached;
+    }
+
+    public ComponentModel getComponentModel()
+    {
+        return componentModel;
     }
 }

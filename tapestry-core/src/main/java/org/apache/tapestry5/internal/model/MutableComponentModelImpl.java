@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,22 +14,18 @@
 
 package org.apache.tapestry5.internal.model;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.IdAllocator;
-import org.apache.tapestry5.model.ComponentModel;
-import org.apache.tapestry5.model.EmbeddedComponentModel;
-import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.model.MutableEmbeddedComponentModel;
-import org.apache.tapestry5.model.ParameterModel;
+import org.apache.tapestry5.model.*;
 import org.slf4j.Logger;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Internal implementation of {@link org.apache.tapestry5.model.MutableComponentModel}.
@@ -72,7 +68,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     private Map<String, Boolean> handledEvents;
 
     public MutableComponentModelImpl(String componentClassName, Logger logger, Resource baseResource,
-            ComponentModel parentModel, boolean pageClass)
+                                     ComponentModel parentModel, boolean pageClass)
     {
         this.componentClassName = componentClassName;
         this.logger = logger;
@@ -113,17 +109,30 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     }
 
     public void addParameter(String name, boolean required, boolean allowNull, String defaultBindingPrefix,
-            boolean cached)
+                             boolean cached)
     {
         assert InternalUtils.isNonBlank(name);
         assert InternalUtils.isNonBlank(defaultBindingPrefix);
+
         if (parameters == null)
+        {
             parameters = CollectionFactory.newCaseInsensitiveMap();
+        }
 
         if (parameters.containsKey(name))
-            throw new IllegalArgumentException(ModelMessages.duplicateParameter(name, componentClassName));
+        {
+            throw new IllegalArgumentException(String.format("Parameter '%s' of component class %s is already defined.", name, componentClassName));
+        }
 
-        parameters.put(name, new ParameterModelImpl(name, required, allowNull, defaultBindingPrefix, cached));
+        ParameterModel existingModel = getParameterModel(name);
+
+        if (existingModel != null)
+        {
+            throw new IllegalArgumentException(String.format("Parameter '%s' of component class %s conflicts with the parameter defined by the %s base class.",
+                    name, componentClassName, existingModel.getComponentModel().getComponentClassName()));
+        }
+
+        parameters.put(name, new ParameterModelImpl(this, name, required, allowNull, defaultBindingPrefix, cached));
     }
 
     public void addParameter(String name, boolean required, boolean allowNull, String defaultBindingPrefix)
@@ -138,7 +147,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
     public ParameterModel getParameterModel(String parameterName)
     {
-        ParameterModel result = InternalUtils.get(parameters, parameterName.toLowerCase());
+        ParameterModel result = InternalUtils.get(parameters, parameterName);
 
         if (result == null && parentModel != null)
             result = parentModel.getParameterModel(parameterName);
@@ -172,7 +181,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     }
 
     public MutableEmbeddedComponentModel addEmbeddedComponent(String id, String type, String componentClassName,
-            boolean inheritInformalParameters, Location location)
+                                                              boolean inheritInformalParameters, Location location)
     {
         // TODO: Parent compent model? Or would we simply override the parent?
 
@@ -367,7 +376,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     {
         final String[] orders = InternalUtils.get(mixinOrders, mixinClassName);
 
-        if ( orders == null && parentModel != null )
+        if (orders == null && parentModel != null)
             return parentModel.getOrderForMixin(mixinClassName);
 
         return orders;

@@ -121,6 +121,10 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         train_getPersistentFieldNames(parent);
         train_getParameterNames(parent, "betty");
 
+        expect(parent.getParameterModel("fred")).andReturn(null);
+        expect(parent.getParameterModel("wilma")).andReturn(null);
+        expect(parent.getParameterModel("barney")).andReturn(null);
+
         replay();
 
         MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, parent, false);
@@ -153,11 +157,10 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
             model.addParameter("Fred", true, true, BindingConstants.PROP);
             unreachable();
-        }
-        catch (IllegalArgumentException ex)
+        } catch (IllegalArgumentException ex)
         {
             assertEquals(ex.getMessage(),
-                         "Parameter 'Fred' of component org.example.components.Foo is already defined.");
+                    "Parameter 'Fred' of component class org.example.components.Foo is already defined.");
         }
 
         verify();
@@ -215,7 +218,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         assertSame(fred.getLocation(), l);
 
         MutableEmbeddedComponentModel barney = model.addEmbeddedComponent("barney", "Barney", COMPONENT_CLASS_NAME,
-                                                                          false, null);
+                false, null);
 
         assertEquals(model.getEmbeddedComponentIds(), Arrays.asList("barney", "fred"));
 
@@ -228,7 +231,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         assertSame(model.getEmbeddedComponentModel("BARNEY"), barney);
 
         assertEquals(fred.toString(),
-                     "EmbeddedComponentModel[id=fred type=Fred class=org.example.components.Fred inheritInformals=false]");
+                "EmbeddedComponentModel[id=fred type=Fred class=org.example.components.Fred inheritInformals=false]");
 
         verify();
     }
@@ -249,11 +252,10 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         {
             model.addEmbeddedComponent("fred", "Fred2", COMPONENT_CLASS_NAME, false, null);
             unreachable();
-        }
-        catch (IllegalArgumentException ex)
+        } catch (IllegalArgumentException ex)
         {
             assertEquals(ex.getMessage(),
-                         "Embedded component 'fred' has already been defined for component class org.example.components.Foo.");
+                    "Embedded component 'fred' has already been defined for component class org.example.components.Foo.");
         }
 
         verify();
@@ -277,7 +279,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         assertTrue(fred.getInheritInformalParameters());
 
         assertEquals(fred.toString(),
-                     "EmbeddedComponentModel[id=fred type=Fred class=org.example.components.Fred inheritInformals=true]");
+                "EmbeddedComponentModel[id=fred type=Fred class=org.example.components.Fred inheritInformals=true]");
 
         verify();
     }
@@ -299,11 +301,10 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         {
             model.addEmbeddedComponent("FRED", "Fred2", COMPONENT_CLASS_NAME, false, null);
             unreachable();
-        }
-        catch (IllegalArgumentException ex)
+        } catch (IllegalArgumentException ex)
         {
             assertEquals(ex.getMessage(),
-                         "Embedded component 'FRED' has already been defined for component class org.example.components.Foo.");
+                    "Embedded component 'FRED' has already been defined for component class org.example.components.Foo.");
         }
 
         verify();
@@ -320,7 +321,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         MutableEmbeddedComponentModel fred = model.addEmbeddedComponent("fred", "Fred", COMPONENT_CLASS_NAME, false,
-                                                                        null);
+                null);
 
         assertTrue(fred.getParameterNames().isEmpty());
 
@@ -345,7 +346,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         MutableEmbeddedComponentModel fred = model.addEmbeddedComponent("fred", "Fred", COMPONENT_CLASS_NAME, false,
-                                                                        null);
+                null);
 
         fred.addParameter("city", "bedrock");
 
@@ -353,11 +354,10 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         {
             fred.addParameter("city", "slateville");
             unreachable();
-        }
-        catch (IllegalArgumentException ex)
+        } catch (IllegalArgumentException ex)
         {
             assertEquals(ex.getMessage(),
-                         "A value for parameter 'city' of embedded component fred (of component class org.example.components.Foo) has already been provided.");
+                    "A value for parameter 'city' of embedded component fred (of component class org.example.components.Foo) has already been provided.");
         }
 
         verify();
@@ -374,7 +374,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         MutableEmbeddedComponentModel fred = model.addEmbeddedComponent("fred", "Fred", COMPONENT_CLASS_NAME, false,
-                                                                        null);
+                null);
 
         assertTrue(fred.getMixinClassNames().isEmpty());
 
@@ -392,7 +392,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         MutableEmbeddedComponentModel fred = model.addEmbeddedComponent("fred", "Fred", COMPONENT_CLASS_NAME, false,
-                                                                        null);
+                null);
 
         fred.addMixin("zip.zop.Zoom");
         fred.addMixin("foo.bar.Baz");
@@ -413,12 +413,12 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         MutableEmbeddedComponentModel fred = model.addEmbeddedComponent("fred", "Fred", COMPONENT_CLASS_NAME, false,
-                                                                        null);
+                null);
 
         fred.addMixin("zip.zop.Zoom", "before:*", "after:foo.bar.Baz");
         fred.addMixin("foo.bar.Baz");
 
-        assertEquals(fred.getConstraintsForMixin("zip.zop.Zoom"), new String[] {"before:*", "after:foo.bar.Baz"});
+        assertEquals(fred.getConstraintsForMixin("zip.zop.Zoom"), new String[]{"before:*", "after:foo.bar.Baz"});
         assertEquals(fred.getConstraintsForMixin("foo.bar.Baz"), new String[0]);
 
         verify();
@@ -435,7 +435,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null, false);
 
         MutableEmbeddedComponentModel fred = model.addEmbeddedComponent("fred", "Fred", COMPONENT_CLASS_NAME, false,
-                                                                        null);
+                null);
 
         fred.addMixin("zip.zop.Zoom");
 
@@ -443,8 +443,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         {
             fred.addMixin("zip.zop.Zoom");
             unreachable();
-        }
-        catch (IllegalArgumentException ex)
+        } catch (IllegalArgumentException ex)
         {
             assertEquals(ex.getMessage(), "Mixin zip.zop.Zoom (for component fred) has already been defined.");
         }
@@ -564,8 +563,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         {
             model.getFieldPersistenceStrategy("someField");
             unreachable();
-        }
-        catch (IllegalArgumentException ex)
+        } catch (IllegalArgumentException ex)
         {
             assertEquals(ex.getMessage(), "No field persistence strategy has been defined for field \'someField\'.");
         }
@@ -665,8 +663,8 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         child.addMixinClassName("Fred", "after:Barney");
         child.addMixinClassName("Barney");
 
-        assertEquals(child.getOrderForMixin("Wilma"), new String[] {"before:Fred"});
-        assertEquals(child.getOrderForMixin("Fred"), new String[] {"after:Barney"});
+        assertEquals(child.getOrderForMixin("Wilma"), new String[]{"before:Fred"});
+        assertEquals(child.getOrderForMixin("Fred"), new String[]{"after:Barney"});
         assertEquals(child.getOrderForMixin("Barney"), null);
 
         verify();
@@ -690,8 +688,8 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         child.addMixinClassName("Fred", "after:Barney");
         child.addMixinClassName("Barney");
 
-        assertEquals(child.getOrderForMixin("Wilma"), new String[] {"before:*"});
-        assertEquals(child.getOrderForMixin("Fred"), new String[] {"after:Barney"});
+        assertEquals(child.getOrderForMixin("Wilma"), new String[]{"before:*"});
+        assertEquals(child.getOrderForMixin("Fred"), new String[]{"after:Barney"});
         assertEquals(child.getOrderForMixin("Barney"), null);
 
         verify();

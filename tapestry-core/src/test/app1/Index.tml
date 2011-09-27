@@ -190,6 +190,10 @@
     <li>
         <a href="lib/alpha/root">Alpha Library Root</a> -- demonstrates libraries contributed with a slash in the name
     </li>
+    <li>
+        <a href="parameterconflictdemo">Parameter Conflict Demo</a> -- checks for subclass parameters conflicting with
+        base class parameters
+    </li>
 
 </ul>
 

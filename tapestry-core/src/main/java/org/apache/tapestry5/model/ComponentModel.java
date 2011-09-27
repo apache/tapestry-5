@@ -34,12 +34,12 @@ public interface ComponentModel
 {
     /**
      * Is this a model of a page (rather than a component, mixin, or base-class)?
-     * 
+     *
      * @return true if a page
      * @since 5.3
      */
     boolean isPage();
-    
+
     /**
      * Returns the resource corresponding to the class file for this component. This is used to find related resources,
      * such as the component's template and message catalog.
@@ -87,20 +87,22 @@ public interface ComponentModel
     List<String> getMixinClassNames();
 
     /**
-     * Return a single parameter model by parameter name, or null if the parameter is not defined (is not 
-     * a formal parameter).
+     * Return a single parameter model by parameter name, or null if the parameter is not defined (is not
+     * a formal parameter). This may be a parameter defined by this component, or from a base class.
      *
      * @param parameterName the name of the parameter (case is ignored)
+     * @return the parameter model if found in this model or a parent model, or null if not found
      */
     ParameterModel getParameterModel(String parameterName);
 
     /**
      * Returns true if the named parameter is formally defined (there's a ParameterModel).
+     *
      * @param parameterName name of the parameter (case is ignored)
      * @since 5.2.0
      */
     boolean isFormalParameter(String parameterName);
-    
+
     /**
      * Returns an alphabetically sorted list of the names of all formal parameters. This includes parameters defined by
      * a base class.

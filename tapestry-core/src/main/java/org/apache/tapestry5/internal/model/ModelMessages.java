@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,11 +23,6 @@ class ModelMessages
 
     private ModelMessages()
     {
-    }
-
-    static String duplicateParameter(String parameterName, String componentName)
-    {
-        return MESSAGES.format("duplicate-parameter", parameterName, componentName);
     }
 
     static String duplicateParameterValue(String parameterName, String componentId, String componentClassName)
