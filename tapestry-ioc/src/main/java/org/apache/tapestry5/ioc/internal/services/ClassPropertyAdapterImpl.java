@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
 import org.apache.tapestry5.ioc.internal.util.GenericsUtils;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
@@ -23,9 +22,10 @@ import org.apache.tapestry5.ioc.services.PropertyAdapter;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Map;
+
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
 
 public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
 {
@@ -56,13 +56,10 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
             adapters.put(pa.getName(), pa);
         }
 
-        // Now, add any public fields that do not conflict
+        // Now, add any public fields (even if static) that do not conflict
 
         for (Field f : beanType.getFields())
         {
-            if(Modifier.isStatic(f.getModifiers()))
-                continue;
-            
             String name = f.getName();
 
             if (!adapters.containsKey(name))

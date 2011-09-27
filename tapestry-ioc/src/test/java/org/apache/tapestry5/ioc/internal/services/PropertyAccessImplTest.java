@@ -41,8 +41,8 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
 
     public static class Bean
     {
-        public static Double PI = 3.14;
-        
+        public static final Double PI = 3.14;
+
         @DataType("fred")
         @Validate("field-value-overridden")
         private int value;
@@ -250,6 +250,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     {
         // abstract class implements method from interface
         private String other;
+
         public String getOtherValue()
         {
             return other;
@@ -266,19 +267,23 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
         private String value;
         private int intValue;
 
-        public ConcreteBean(int intValue) {
+        public ConcreteBean(int intValue)
+        {
             this.intValue = intValue;
         }
 
-        public String getValue() {
+        public String getValue()
+        {
             return value;
         }
 
-        public void setValue(String v) {
+        public void setValue(String v)
+        {
             value = v;
         }
 
-        public int getIntValue() {
+        public int getIntValue()
+        {
             return intValue;
         }
     }
@@ -341,8 +346,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
             access.get(b, "zaphod");
 
             unreachable();
-        }
-        catch (IllegalArgumentException ex)
+        } catch (IllegalArgumentException ex)
         {
             assertEquals(ex.getMessage(), "Class " + CLASS_NAME + "$Bean does not "
                     + "contain a property named 'zaphod'.");
@@ -358,8 +362,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
         {
             access.set(b, "class", null);
             unreachable();
-        }
-        catch (UnsupportedOperationException ex)
+        } catch (UnsupportedOperationException ex)
         {
             assertEquals(ex.getMessage(), "Class " + CLASS_NAME
                     + "$Bean does not provide an mutator ('setter') method for property 'class'.");
@@ -375,8 +378,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
         {
             access.get(b, "writeOnly");
             unreachable();
-        }
-        catch (UnsupportedOperationException ex)
+        } catch (UnsupportedOperationException ex)
         {
             assertEquals(ex.getMessage(), "Class " + CLASS_NAME
                     + "$Bean does not provide an accessor ('getter') method for property 'writeOnly'.");
@@ -392,8 +394,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
         {
             access.get(b, "failure");
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(), "Error reading property 'failure' of PropertyUtilsExceptionBean: getFailure");
         }
@@ -408,8 +409,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
         {
             access.set(b, "failure", false);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(), "Error updating property 'failure' of PropertyUtilsExceptionBean: setFailure");
         }
@@ -424,8 +424,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
         {
             access.get(b, "google");
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(), "java.lang.RuntimeException: This is the UglyBean.");
         }
@@ -455,7 +454,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
         ClassPropertyAdapter cpa = access.getAdapter(Bean.class);
 
         assertEquals(cpa.toString(), "<ClassPropertyAdaptor " + CLASS_NAME
-                + "$Bean : class, readOnly, value, writeOnly>");
+                + "$Bean : PI, class, readOnly, value, writeOnly>");
     }
 
     @Test
@@ -508,7 +507,30 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     {
         ClassPropertyAdapter cpa = access.getAdapter(Bean.class);
 
-        assertEquals(cpa.getPropertyNames(), Arrays.asList("class", "readOnly", "value", "writeOnly"));
+        assertEquals(cpa.getPropertyNames(), Arrays.asList("PI", "class", "readOnly", "value", "writeOnly"));
+    }
+
+    @Test
+    public void read_static_field()
+    {
+        PropertyAdapter adapter = access.getAdapter(Bean.class).getPropertyAdapter("pi");
+
+        assertSame(adapter.get(null), Bean.PI);
+    }
+
+    @Test
+    public void static_final_fields_may_not_be_changed()
+    {
+        PropertyAdapter adapter = access.getAdapter(Bean.class).getPropertyAdapter("pi");
+
+        try
+        {
+            adapter.set(null, 3.0d);
+            unreachable();
+        } catch (RuntimeException ex)
+        {
+            assertMessageContains(ex, "Can not set static final", "org.apache.tapestry5.ioc.internal.services.PropertyAccessImplTest$Bean.PI");
+        }
     }
 
     @Test

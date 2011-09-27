@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,7 +26,8 @@ import java.util.List;
 public interface ClassPropertyAdapter
 {
     /**
-     * Returns the names of all properties, sorted into alphabetic order.
+     * Returns the names of all properties, sorted into alphabetic order. This includes true properties
+     * (as defined in the JavaBeans specification), but also public fields. Starting in Tapestry 5.3, even public static fields are included.
      */
     List<String> getPropertyNames();
 

@@ -23,12 +23,20 @@ public class Lockable
 {
     private boolean locked;
 
+    /**
+     * Checks to see if the object has been locked.
+     *
+     * @throw IllegalStateException if {@link #lock()} has been invoked.
+     */
     protected void check()
     {
         if (locked)
             throw new IllegalStateException(toString() + " has been locked and can no longer be used.");
     }
 
+    /**
+     * Invokes {@link #check()}, then sets the locked flag. Subsequent calls to {@link #check()} will fail.
+     */
     protected void lock()
     {
         check();

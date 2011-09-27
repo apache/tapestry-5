@@ -14,36 +14,26 @@
 
 package org.apache.tapestry5.internal.plastic;
 
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.tapestry5.internal.plastic.InstructionBuilderState.LVInfo;
 import org.apache.tapestry5.internal.plastic.asm.Label;
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 import org.apache.tapestry5.internal.plastic.asm.Type;
-import org.apache.tapestry5.plastic.Condition;
-import org.apache.tapestry5.plastic.InstructionBuilder;
-import org.apache.tapestry5.plastic.InstructionBuilderCallback;
-import org.apache.tapestry5.plastic.LocalVariable;
-import org.apache.tapestry5.plastic.LocalVariableCallback;
-import org.apache.tapestry5.plastic.MethodDescription;
-import org.apache.tapestry5.plastic.PlasticField;
-import org.apache.tapestry5.plastic.PlasticMethod;
-import org.apache.tapestry5.plastic.PlasticUtils;
-import org.apache.tapestry5.plastic.SwitchCallback;
-import org.apache.tapestry5.plastic.TryCatchCallback;
-import org.apache.tapestry5.plastic.WhenCallback;
-import org.apache.tapestry5.plastic.WhileCallback;
+import org.apache.tapestry5.plastic.*;
+
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 @SuppressWarnings("rawtypes")
 public class InstructionBuilderImpl extends Lockable implements Opcodes, InstructionBuilder
 {
     private static final int[] DUPE_OPCODES = new int[]
-    { DUP, DUP_X1, DUP_X2 };
+            {DUP, DUP_X1, DUP_X2};
 
-    /** Maps from condition to opcode to jump to the false code block. */
+    /**
+     * Maps from condition to opcode to jump to the false code block.
+     */
     private static final Map<Condition, Integer> conditionToOpcode = new HashMap<Condition, Integer>();
 
     static
@@ -126,8 +116,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         {
             v.visitInsn(ACONST_NULL);
             v.visitInsn(ARETURN);
-        }
-        else
+        } else
         {
             switch (type)
             {
@@ -222,7 +211,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
     }
 
     public InstructionBuilder invokeVirtual(String className, String returnType, String methodName,
-            String... argumentTypes)
+                                            String... argumentTypes)
     {
         check();
 
@@ -232,7 +221,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
     }
 
     public InstructionBuilder invokeInterface(String interfaceName, String returnType, String methodName,
-            String... argumentTypes)
+                                              String... argumentTypes)
     {
         check();
 
@@ -337,6 +326,38 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         return this;
     }
 
+    public InstructionBuilder getStaticField(String className, String fieldName, String typeName)
+    {
+        check();
+
+        v.visitFieldInsn(GETSTATIC, cache.toInternalName(className), fieldName, cache.toDesc(typeName));
+
+        return this;
+    }
+
+    public InstructionBuilder getStaticField(String className, String fieldName, Class fieldType)
+    {
+        check();
+
+        return getStaticField(className, fieldName, cache.toTypeName(fieldType));
+    }
+
+    public InstructionBuilder putStaticField(String className, String fieldName, Class fieldType)
+    {
+        check();
+
+        return putStaticField(className, fieldName, cache.toTypeName(fieldType));
+    }
+
+    public InstructionBuilder putStaticField(String className, String fieldName, String typeName)
+    {
+        check();
+
+        v.visitFieldInsn(PUTSTATIC, cache.toInternalName(className), fieldName, cache.toDesc(typeName));
+
+        return this;
+    }
+
     public InstructionBuilder getField(PlasticField field)
     {
         check();
@@ -378,8 +399,7 @@ public class InstructionBuilderImpl extends Lockable implements Opcodes, Instruc
         if (type == null)
         {
             v.visitInsn(AALOAD);
-        }
-        else
+        } else
         {
             throw new RuntimeException("Access to non-object arrays is not yet supported.");
         }

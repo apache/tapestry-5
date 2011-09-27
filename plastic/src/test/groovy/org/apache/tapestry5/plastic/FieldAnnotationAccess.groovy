@@ -1,15 +1,14 @@
 package org.apache.tapestry5.plastic
 
-import org.apache.tapestry5.plastic.PlasticManager;
+import testannotations.Maybe
 
-import spock.lang.Specification
-import testannotations.Maybe;
+class FieldAnnotationAccess extends AbstractPlasticSpecification
+{
 
-class FieldAnnotationAccess extends AbstractPlasticSpecification {
-
-    def "locate field by annotation"() {
+    def "read static field"()
+    {
         setup:
-        def pc  = mgr.getPlasticClass("testsubjects.AnnotationSubject")
+        def pc = mgr.getPlasticClass("testsubjects.AnnotationSubject")
 
         when:
         def fields = pc.getFieldsWithAnnotation(Maybe.class)

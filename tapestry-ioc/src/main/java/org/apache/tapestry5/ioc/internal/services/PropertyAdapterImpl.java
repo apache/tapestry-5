@@ -20,9 +20,7 @@ import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry5.ioc.services.PropertyAdapter;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.List;
 
 public class PropertyAdapterImpl implements PropertyAdapter
@@ -39,6 +37,7 @@ public class PropertyAdapterImpl implements PropertyAdapter
 
     private final boolean castRequired;
 
+    // Synchronized by this; lazily initialized
     private AnnotationProvider annotationProvider;
 
     private final Field field;
@@ -46,7 +45,7 @@ public class PropertyAdapterImpl implements PropertyAdapter
     private final Class declaringClass;
 
     PropertyAdapterImpl(ClassPropertyAdapter classAdapter, String name, Class type, Method readMethod,
-            Method writeMethod)
+                        Method writeMethod)
     {
         this.classAdapter = classAdapter;
         this.name = name;
@@ -105,7 +104,12 @@ public class PropertyAdapterImpl implements PropertyAdapter
 
     public boolean isUpdate()
     {
-        return field != null || writeMethod != null;
+        return writeMethod != null || (field != null && !isFinal(field));
+    }
+
+    private boolean isFinal(Member member)
+    {
+        return Modifier.isFinal(member.getModifiers());
     }
 
     public Object get(Object instance)
@@ -121,12 +125,10 @@ public class PropertyAdapterImpl implements PropertyAdapter
                 return readMethod.invoke(instance);
             else
                 return field.get(instance);
-        }
-        catch (InvocationTargetException ex)
+        } catch (InvocationTargetException ex)
         {
             fail = ex.getTargetException();
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             fail = ex;
         }
@@ -149,12 +151,10 @@ public class PropertyAdapterImpl implements PropertyAdapter
                 field.set(instance, value);
 
             return;
-        }
-        catch (InvocationTargetException ex)
+        } catch (InvocationTargetException ex)
         {
             fail = ex.getTargetException();
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             fail = ex;
         }
@@ -189,7 +189,8 @@ public class PropertyAdapterImpl implements PropertyAdapter
 
             Class cursor = getBeanType();
 
-            out: while (cursor != null)
+            out:
+            while (cursor != null)
             {
                 for (Field f : cursor.getDeclaredFields())
                 {

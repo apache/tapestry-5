@@ -40,9 +40,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -502,13 +500,13 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         {
             if (adapter.getWriteMethod() != null)
             {
-                implementSetter(activeType, adapter.getWriteMethod());
+                implementSetter(adapter.getWriteMethod());
                 return;
             }
 
-            if (adapter.getField() != null)
+            if (adapter.getField() != null && adapter.isUpdate())
             {
-                implementSetter(activeType, adapter.getField());
+                implementSetter(adapter.getField());
                 return;
             }
 
@@ -516,8 +514,30 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     rootType.getName());
         }
 
-        private void implementSetter(Type activeType, final Field field)
+        private boolean isStatic(Member member)
         {
+            return Modifier.isStatic(member.getModifiers());
+        }
+
+        private void implementSetter(final Field field)
+        {
+            if (isStatic(field))
+            {
+                plasticClass.introduceMethod(ConduitMethods.SET, new InstructionBuilderCallback()
+                {
+                    public void doBuild(InstructionBuilder builder)
+                    {
+                        builder.loadArgument(1).castOrUnbox(PlasticUtils.toTypeName(field.getType()));
+
+                        builder.putStaticField(field.getDeclaringClass().getName(), field.getName(), field.getType());
+
+                        builder.returnResult();
+                    }
+                });
+
+                return;
+            }
+
             plasticClass.introduceMethod(ConduitMethods.SET, new InstructionBuilderCallback()
             {
                 public void doBuild(InstructionBuilder builder)
@@ -533,7 +553,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             });
         }
 
-        private void implementSetter(Type activeType, final Method writeMethod)
+        private void implementSetter(final Method writeMethod)
         {
             plasticClass.introduceMethod(ConduitMethods.SET, new InstructionBuilderCallback()
             {
@@ -557,13 +577,13 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         {
             if (adapter.getReadMethod() != null)
             {
-                implementGetter(activeType, adapter.getReadMethod());
+                implementGetter(adapter.getReadMethod());
                 return;
             }
 
             if (adapter.getField() != null)
             {
-                implementGetter(activeType, adapter.getField());
+                implementGetter(adapter.getField());
                 return;
             }
 
@@ -571,8 +591,27 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     rootType.getName());
         }
 
-        private void implementGetter(final Type activeType, final Field field)
+        private void implementGetter(final Field field)
         {
+            if (isStatic(field))
+            {
+                plasticClass.introduceMethod(ConduitMethods.GET, new InstructionBuilderCallback()
+                {
+                    public void doBuild(InstructionBuilder builder)
+                    {
+                        builder.getStaticField(field.getDeclaringClass().getName(), field.getName(), field.getType());
+
+                        // Cast not necessary here since the return type of get() is Object
+
+                        boxIfPrimitive(builder, field.getType());
+
+                        builder.returnResult();
+                    }
+                });
+
+                return;
+            }
+
             plasticClass.introduceMethod(ConduitMethods.GET, new InstructionBuilderCallback()
             {
                 public void doBuild(InstructionBuilder builder)
@@ -590,15 +629,13 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             });
         }
 
-        private void implementGetter(final Type activeType, final Method readMethod)
+        private void implementGetter(final Method readMethod)
         {
             plasticClass.introduceMethod(ConduitMethods.GET, new InstructionBuilderCallback()
             {
                 public void doBuild(InstructionBuilder builder)
                 {
                     invokeNavigateMethod(builder);
-
-                    Type actualType = GenericsUtils.extractActualType(activeType, readMethod);
 
                     invokeMethod(builder, readMethod, null, 0);
 

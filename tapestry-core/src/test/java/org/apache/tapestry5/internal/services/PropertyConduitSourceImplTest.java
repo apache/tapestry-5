@@ -839,4 +839,35 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         assertSame(list.get(0), bean);
         assertNull(list.get(1));
     }
+
+    /**
+     * TAP5-1673
+     */
+    @Test
+    public void public_static_fields_are_accessible()
+    {
+        PropertyConduit pc = source.create(PublicStaticFieldBean.class, "value");
+
+        assertSame(pc.get(null), PublicStaticFieldBean.VALUE);
+
+        pc.set(null, "new-value");
+
+        assertEquals(PublicStaticFieldBean.VALUE, "new-value");
+    }
+
+    @Test
+    public void final_static_fields_are_read_only()
+    {
+        PropertyConduit pc = source.create(PublicStaticFieldBean.class, "read_only");
+
+        try
+        {
+            pc.set(null, "new-value");
+            unreachable();
+        } catch (RuntimeException ex)
+        {
+            assertEquals(ex.getMessage(),
+                    "Expression 'read_only' for class org.apache.tapestry5.internal.services.PublicStaticFieldBean is read-only.");
+        }
+    }
 }
