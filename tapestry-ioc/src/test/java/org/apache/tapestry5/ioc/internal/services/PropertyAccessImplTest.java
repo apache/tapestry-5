@@ -529,7 +529,8 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
             unreachable();
         } catch (RuntimeException ex)
         {
-            assertMessageContains(ex, "Can not set static final", "org.apache.tapestry5.ioc.internal.services.PropertyAccessImplTest$Bean.PI");
+            // The exact text varies from JDK to JDK
+            assertMessageContains(ex, "final", "PI");
         }
     }
 
