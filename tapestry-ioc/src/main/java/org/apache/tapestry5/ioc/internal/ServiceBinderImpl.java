@@ -14,28 +14,22 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Set;
-
-import org.apache.tapestry5.ioc.ObjectCreator;
-import org.apache.tapestry5.ioc.ScopeConstants;
-import org.apache.tapestry5.ioc.ServiceBinder;
-import org.apache.tapestry5.ioc.ServiceBindingOptions;
-import org.apache.tapestry5.ioc.ServiceBuilder;
-import org.apache.tapestry5.ioc.ServiceBuilderResources;
+import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.EagerLoad;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
 import org.apache.tapestry5.ioc.annotations.Scope;
-import org.apache.tapestry5.ioc.annotations.ServiceId;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Set;
 
 @SuppressWarnings("all")
 public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
@@ -53,7 +47,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
     private final boolean moduleDefaultPreventDecoration;
 
     public ServiceBinderImpl(ServiceDefAccumulator accumulator, Method bindMethod, PlasticProxyFactory proxyFactory,
-            Set<Class> defaultMarkers, boolean moduleDefaultPreventDecoration)
+                             Set<Class> defaultMarkers, boolean moduleDefaultPreventDecoration)
     {
         this.accumulator = accumulator;
         this.bindMethod = bindMethod;
@@ -185,11 +179,13 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
                 Class<T> implementationClass = (Class<T>) classLoader.loadClass(expectedImplName);
 
-                if (!implementationClass.isInterface() && serviceClass.isAssignableFrom(implementationClass)) { return bind(
-                        serviceClass, implementationClass); }
+                if (!implementationClass.isInterface() && serviceClass.isAssignableFrom(implementationClass))
+                {
+                    return bind(
+                            serviceClass, implementationClass);
+                }
                 throw new RuntimeException(IOCMessages.noServiceMatchesType(serviceClass));
-            }
-            catch (ClassNotFoundException ex)
+            } catch (ClassNotFoundException ex)
             {
                 throw new RuntimeException(IOCMessages.noConventionServiceImplementationFound(serviceClass));
             }
@@ -308,6 +304,16 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         serviceId = id;
 
         return this;
+    }
+
+    public ServiceBindingOptions withSimpleId()
+    {
+        if (serviceImplementation == null)
+        {
+            throw new IllegalArgumentException("No defined implementation class to generate simple id from.");
+        }
+
+        return withId(serviceImplementation.getSimpleName());
     }
 
     public ServiceBindingOptions scope(String scope)

@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,25 +13,10 @@
 // limitations under the License.
 package org.apache.tapestry5.beanvalidator;
 
-import javax.validation.MessageInterpolator;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-import javax.validation.groups.Default;
-
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.RenderSupport;
-import org.apache.tapestry5.internal.beanvalidator.BeanFieldValidatorDefaultSource;
-import org.apache.tapestry5.internal.beanvalidator.BeanValidationGroupSourceImpl;
-import org.apache.tapestry5.internal.beanvalidator.BeanValidatorSourceImpl;
-import org.apache.tapestry5.internal.beanvalidator.ClientConstraintDescriptorImpl;
-import org.apache.tapestry5.internal.beanvalidator.MessageInterpolatorImpl;
+import org.apache.tapestry5.internal.beanvalidator.*;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
@@ -39,92 +24,93 @@ import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
-import org.apache.tapestry5.services.AssetSource;
-import org.apache.tapestry5.services.Environment;
-import org.apache.tapestry5.services.FieldValidatorDefaultSource;
-import org.apache.tapestry5.services.MarkupRenderer;
-import org.apache.tapestry5.services.MarkupRendererFilter;
+import org.apache.tapestry5.services.*;
+
+import javax.validation.MessageInterpolator;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import javax.validation.constraints.*;
+import javax.validation.groups.Default;
 
 /**
  * Module for JSR-303 services.
- * 
+ *
  * @since 5.2.0.0
  */
-public class BeanValidatorModule 
+public class BeanValidatorModule
 {
-	public static void bind(final ServiceBinder binder) 
-	{
-		binder.bind(FieldValidatorDefaultSource.class, BeanFieldValidatorDefaultSource.class)
-					.withId("BeanFieldValidatorDefaultSource");
-		binder.bind(BeanValidatorGroupSource.class, BeanValidationGroupSourceImpl.class);
-		binder.bind(BeanValidatorSource.class, BeanValidatorSourceImpl.class);
-		binder.bind(ClientConstraintDescriptorSource.class, ClientConstraintDescriptorImpl.class);
-	}
+    public static void bind(final ServiceBinder binder)
+    {
+        binder.bind(FieldValidatorDefaultSource.class, BeanFieldValidatorDefaultSource.class).withSimpleId();
+        binder.bind(BeanValidatorGroupSource.class, BeanValidationGroupSourceImpl.class);
+        binder.bind(BeanValidatorSource.class, BeanValidatorSourceImpl.class);
+        binder.bind(ClientConstraintDescriptorSource.class, ClientConstraintDescriptorImpl.class);
+    }
 
-	public static void contributeServiceOverride(
-			MappedConfiguration<Class, Object> configuration,
-			@Local FieldValidatorDefaultSource source) 
-	{
-		configuration.add(FieldValidatorDefaultSource.class, source);
-	}
-	
-	public static Validator buildBeanValidator(ValidatorFactory validatorFactory, PropertyShadowBuilder propertyShadowBuilder) 
-	{
-		return propertyShadowBuilder.build(validatorFactory, "validator", Validator.class);
-	}
-	
-	
-	public static ValidatorFactory buildValidatorFactory( BeanValidatorSource beanValidatorSource, PropertyShadowBuilder propertyShadowBuilder) 
-	{
-		return propertyShadowBuilder.build(beanValidatorSource, "validatorFactory", ValidatorFactory.class);
-	}
+    public static void contributeServiceOverride(
+            MappedConfiguration<Class, Object> configuration,
+            @Local FieldValidatorDefaultSource source)
+    {
+        configuration.add(FieldValidatorDefaultSource.class, source);
+    }
 
-	public static void contributeBeanValidatorGroupSource(
-			final Configuration<Class> configuration) 
-	{
-		configuration.add(Default.class);
-	}
-	
-	public static void contributeBeanValidatorSource(
-			final OrderedConfiguration<BeanValidatorConfigurer> configuration, final ThreadLocale threadLocale) 
-	{
-		configuration.add("LocaleAwareMessageInterpolator", new BeanValidatorConfigurer() 
-		{
-			public void configure(javax.validation.Configuration<?> configuration) 
-			{
-				MessageInterpolator defaultInterpolator = configuration.getDefaultMessageInterpolator();
-				
-				configuration.messageInterpolator(new MessageInterpolatorImpl(defaultInterpolator, threadLocale));
-			}
-		});
-	}
-	
-	public static void contributeClientConstraintDescriptorSource(
-			final Configuration<ClientConstraintDescriptor> configuration) 
-	{
-		configuration.add(new ClientConstraintDescriptor(Max.class, "maxnumber", "value"));
-		configuration.add(new ClientConstraintDescriptor(Min.class, "minnumber", "value"));
-		configuration.add(new ClientConstraintDescriptor(NotNull.class, "notnull"));
-		configuration.add(new ClientConstraintDescriptor(Null.class, "isnull"));
-		configuration.add(new ClientConstraintDescriptor(Pattern.class, "pattern", "regexp"));
-		configuration.add(new ClientConstraintDescriptor(Size.class, "size", "min", "max"));
-	}
-	
-	public void contributeMarkupRenderer(
-			OrderedConfiguration<MarkupRendererFilter> configuration, 
-			
-			final AssetSource assetSource,
-			
-			final ThreadLocale threadLocale,
-			
-			final Environment environment)
-	{
+    public static Validator buildBeanValidator(ValidatorFactory validatorFactory, PropertyShadowBuilder propertyShadowBuilder)
+    {
+        return propertyShadowBuilder.build(validatorFactory, "validator", Validator.class);
+    }
+
+
+    public static ValidatorFactory buildValidatorFactory(BeanValidatorSource beanValidatorSource, PropertyShadowBuilder propertyShadowBuilder)
+    {
+        return propertyShadowBuilder.build(beanValidatorSource, "validatorFactory", ValidatorFactory.class);
+    }
+
+    public static void contributeBeanValidatorGroupSource(
+            final Configuration<Class> configuration)
+    {
+        configuration.add(Default.class);
+    }
+
+    public static void contributeBeanValidatorSource(
+            final OrderedConfiguration<BeanValidatorConfigurer> configuration, final ThreadLocale threadLocale)
+    {
+        configuration.add("LocaleAwareMessageInterpolator", new BeanValidatorConfigurer()
+        {
+            public void configure(javax.validation.Configuration<?> configuration)
+            {
+                MessageInterpolator defaultInterpolator = configuration.getDefaultMessageInterpolator();
+
+                configuration.messageInterpolator(new MessageInterpolatorImpl(defaultInterpolator, threadLocale));
+            }
+        });
+    }
+
+    public static void contributeClientConstraintDescriptorSource(
+            final Configuration<ClientConstraintDescriptor> configuration)
+    {
+        configuration.add(new ClientConstraintDescriptor(Max.class, "maxnumber", "value"));
+        configuration.add(new ClientConstraintDescriptor(Min.class, "minnumber", "value"));
+        configuration.add(new ClientConstraintDescriptor(NotNull.class, "notnull"));
+        configuration.add(new ClientConstraintDescriptor(Null.class, "isnull"));
+        configuration.add(new ClientConstraintDescriptor(Pattern.class, "pattern", "regexp"));
+        configuration.add(new ClientConstraintDescriptor(Size.class, "size", "min", "max"));
+    }
+
+    public void contributeMarkupRenderer(
+            OrderedConfiguration<MarkupRendererFilter> configuration,
+
+            final AssetSource assetSource,
+
+            final ThreadLocale threadLocale,
+
+            final Environment environment)
+    {
         MarkupRendererFilter injectBeanValidatorScript = new MarkupRendererFilter()
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
                 RenderSupport renderSupport = environment.peek(RenderSupport.class);
-                
+
                 Asset validators = assetSource.getAsset(null, "org/apache/tapestry5/beanvalidator/tapestry-beanvalidator.js",
                         threadLocale.getLocale());
 
@@ -133,9 +119,9 @@ public class BeanValidatorModule
                 renderer.renderMarkup(writer);
             }
         };
-        
-        
+
+
         configuration.add("BeanValidatorScript", injectBeanValidatorScript, "after:*");
-	}
+    }
 
 }

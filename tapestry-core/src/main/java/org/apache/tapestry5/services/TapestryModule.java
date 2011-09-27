@@ -321,13 +321,12 @@ public final class TapestryModule
         binder.bind(ComponentDefaultProvider.class, ComponentDefaultProviderImpl.class);
         binder.bind(MarkupWriterFactory.class, MarkupWriterFactoryImpl.class);
         binder.bind(FieldValidationSupport.class, FieldValidationSupportImpl.class);
-        binder.bind(ObjectRenderer.class, LocationRenderer.class).withId("LocationRenderer");
-        binder.bind(ObjectProvider.class, AssetObjectProvider.class).withId("AssetObjectProvider");
+        binder.bind(ObjectRenderer.class, LocationRenderer.class).withSimpleId();
+        binder.bind(ObjectProvider.class, AssetObjectProvider.class).withSimpleId();
         binder.bind(RequestExceptionHandler.class, DefaultRequestExceptionHandler.class);
-        binder.bind(ComponentEventResultProcessor.class, ComponentInstanceResultProcessor.class).withId(
-                "ComponentInstanceResultProcessor");
+        binder.bind(ComponentEventResultProcessor.class, ComponentInstanceResultProcessor.class).withSimpleId();
         binder.bind(NullFieldStrategySource.class, NullFieldStrategySourceImpl.class);
-        binder.bind(HttpServletRequestFilter.class, IgnoredPathsFilter.class).withId("IgnoredPathsFilter");
+        binder.bind(HttpServletRequestFilter.class, IgnoredPathsFilter.class).withSimpleId();
         binder.bind(ContextValueEncoder.class, ContextValueEncoderImpl.class);
         binder.bind(BaseURLSource.class, BaseURLSourceImpl.class);
         binder.bind(BeanBlockOverrideSource.class, BeanBlockOverrideSourceImpl.class);
@@ -335,18 +334,16 @@ public final class TapestryModule
         binder.bind(PageDocumentGenerator.class, PageDocumentGeneratorImpl.class);
         binder.bind(ResponseRenderer.class, ResponseRendererImpl.class);
         binder.bind(FieldTranslatorSource.class, FieldTranslatorSourceImpl.class);
-        binder.bind(BindingFactory.class, MessageBindingFactory.class).withId("MessageBindingFactory");
-        binder.bind(BindingFactory.class, ValidateBindingFactory.class).withId("ValidateBindingFactory");
-        binder.bind(BindingFactory.class, TranslateBindingFactory.class).withId("TranslateBindingFactory");
-        binder.bind(BindingFactory.class, AssetBindingFactory.class).withId("AssetBindingFactory");
-        binder.bind(BindingFactory.class, ContextBindingFactory.class).withId("ContextBindingFactory");
-        binder.bind(BindingFactory.class, NullFieldStrategyBindingFactory.class).withId(
-                "NullFieldStrategyBindingFactory");
-        binder.bind(BindingFactory.class, SymbolBindingFactory.class).withId("SymbolBindingFactory");
+        binder.bind(BindingFactory.class, MessageBindingFactory.class).withSimpleId();
+        binder.bind(BindingFactory.class, ValidateBindingFactory.class).withSimpleId();
+        binder.bind(BindingFactory.class, TranslateBindingFactory.class).withSimpleId();
+        binder.bind(BindingFactory.class, AssetBindingFactory.class).withSimpleId();
+        binder.bind(BindingFactory.class, ContextBindingFactory.class).withSimpleId();
+        binder.bind(BindingFactory.class, NullFieldStrategyBindingFactory.class).withSimpleId();
+        binder.bind(BindingFactory.class, SymbolBindingFactory.class).withSimpleId();
         binder.bind(URLEncoder.class, URLEncoderImpl.class);
         binder.bind(ContextPathEncoder.class, ContextPathEncoderImpl.class);
-        binder.bind(ApplicationStatePersistenceStrategy.class, SessionApplicationStatePersistenceStrategy.class)
-                .withId("SessionApplicationStatePersistenceStrategy");
+        binder.bind(ApplicationStatePersistenceStrategy.class, SessionApplicationStatePersistenceStrategy.class).withSimpleId();
         binder.bind(SessionFactory.class, SessionFactoryImpl.class);
         binder.bind(AssetPathConverter.class, IdentityAssetPathConverter.class);
         binder.bind(NumericTranslatorSupport.class);
@@ -356,7 +353,7 @@ public final class TapestryModule
         binder.bind(ValidatorMacro.class, ValidatorMacroImpl.class);
         binder.bind(PropertiesFileParser.class, PropertiesFileParserImpl.class);
         binder.bind(PageActivator.class, PageActivatorImpl.class);
-        binder.bind(Dispatcher.class, AssetDispatcher.class).withId("AssetDispatcher");
+        binder.bind(Dispatcher.class, AssetDispatcher.class).withSimpleId();
         binder.bind(AssetPathConstructor.class, AssetPathConstructorImpl.class);
         binder.bind(JavaScriptStackSource.class, JavaScriptStackSourceImpl.class);
         binder.bind(TranslatorAlternatesSource.class, TranslatorAlternatesSourceImpl.class);

@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import java.util.List;
  * Defines core services that support initialization of Hibernate and access to the Hibernate {@link
  * org.hibernate.Session}.
  */
-@SuppressWarnings({ "JavaDoc" })
+@SuppressWarnings({"JavaDoc"})
 @Marker(HibernateCore.class)
 public class HibernateCoreModule
 {
@@ -44,7 +44,7 @@ public class HibernateCoreModule
     {
         binder.bind(HibernateTransactionDecorator.class, HibernateTransactionDecoratorImpl.class);
         binder.bind(HibernateTransactionAdvisor.class, HibernateTransactionAdvisorImpl.class);
-        binder.bind(HibernateConfigurer.class, DefaultHibernateConfigurer.class).withId("DefaultHibernateConfigurer");
+        binder.bind(HibernateConfigurer.class, DefaultHibernateConfigurer.class).withSimpleId();
     }
 
 

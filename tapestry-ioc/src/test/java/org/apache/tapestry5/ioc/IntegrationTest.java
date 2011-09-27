@@ -1591,4 +1591,19 @@ public class IntegrationTest extends IOCInternalTestCase
         assertEquals(source.valueForSymbol("bool-false"), "false");
         assertEquals(source.valueForSymbol("num-12345"), "12345");
     }
+
+    /**
+     * TAP5-1674
+     */
+    @Test
+    public void no_implemention_class_defined_for_ServiceBinder_withSimpleId()
+    {
+        try
+        {
+            buildRegistry(NoImplementationClassForSimpleIdModule.class);
+        } catch (RuntimeException ex)
+        {
+            assertMessageContains(ex, "No defined implementation class to generate simple id from");
+        }
+    }
 }

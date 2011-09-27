@@ -42,8 +42,7 @@ public class JpaModule
     public static void bind(final ServiceBinder binder)
     {
         binder.bind(JpaTransactionAdvisor.class, JpaTransactionAdvisorImpl.class);
-        binder.bind(PersistenceUnitConfigurer.class, PackageNamePersistenceUnitConfigurer.class).withId(
-                "PackageNamePersistenceUnitConfigurer");
+        binder.bind(PersistenceUnitConfigurer.class, PackageNamePersistenceUnitConfigurer.class).withSimpleId();
     }
 
     public static EntityManagerSource buildEntityManagerSource(final Logger logger,

@@ -1,4 +1,4 @@
-// Copyright 2007, 2010, 2011 The Apache Software Foundation
+// Copyright 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,16 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc.internal;
+package org.apache.tapestry5.ioc;
 
-import org.apache.tapestry5.ioc.ServiceBinder;
-import org.apache.tapestry5.ioc.StringHolder;
-
-public class MutlipleAutobuildServiceConstructorsModule
+public class NoImplementationClassForSimpleIdModule
 {
     public static void bind(ServiceBinder binder)
     {
-        binder.bind(StringHolder.class, ToUpperCaseStringHolder.class).withSimpleId().preventReloading();
-        binder.bind(StringHolder.class, MultipleConstructorsAutobuildService.class).preventReloading();
+        binder.bind(Runnable.class, new ServiceBuilder<Runnable>()
+        {
+            public Runnable buildService(ServiceResources resources)
+            {
+                return null;
+            }
+        }).withSimpleId();
     }
 }

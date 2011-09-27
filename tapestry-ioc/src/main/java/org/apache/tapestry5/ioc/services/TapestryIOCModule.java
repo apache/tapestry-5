@@ -62,7 +62,7 @@ public final class TapestryIOCModule
                 .withMarker(ApplicationDefaults.class);
         binder.bind(SymbolProvider.class, MapSymbolProvider.class).withId("FactoryDefaults")
                 .withMarker(FactoryDefaults.class);
-        binder.bind(Runnable.class, RegistryStartup.class).withId("RegistryStartup");
+        binder.bind(Runnable.class, RegistryStartup.class).withSimpleId();
         binder.bind(MasterObjectProvider.class, MasterObjectProviderImpl.class).preventReloading();
         binder.bind(ClassNameLocator.class, ClassNameLocatorImpl.class);
         binder.bind(AspectDecorator.class, AspectDecoratorImpl.class);

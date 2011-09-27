@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 The Apache Software Foundation
+// Copyright 2007, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import java.lang.annotation.Annotation;
 /**
  * Allows additional options for a service to be specified, overriding hard coded defaults or defaults from annotations
  * on the service.
- * 
+ *
  * @see org.apache.tapestry5.ioc.def.ServiceDef2
  */
 public interface ServiceBindingOptions
@@ -31,15 +31,25 @@ public interface ServiceBindingOptions
      * Allows a specific service id for the service to be provided, rather than the default (from the service
      * interface). This is useful when multiple services implement the same interface, since service ids must be
      * unique.
-     * 
+     *
      * @param id
      * @return this binding options, for further configuration
      */
     ServiceBindingOptions withId(String id);
 
     /**
+     * Uses the the simple (unqualified) class name of the implementation class as the id of the service.
+     *
+     * @return this binding options, for further configuration
+     * @throws IllegalStateException if the class name was not defined (via {@link ServiceBinder#bind(Class, Class)} or
+     *                               {@link ServiceBinder#bind(Class)}).
+     * @since 5.3
+     */
+    ServiceBindingOptions withSimpleId();
+
+    /**
      * Sets the scope of the service, overriding the {@link Scope} annotation on the service implementation class.
-     * 
+     *
      * @param scope
      * @return this binding options, for further configuration
      * @see org.apache.tapestry5.ioc.ScopeConstants
@@ -49,14 +59,14 @@ public interface ServiceBindingOptions
     /**
      * Turns eager loading on for this service. This may also be accomplished using the {@link EagerLoad} annotation on
      * the service implementation class.
-     * 
+     *
      * @return this binding options, for further configuration
      */
     ServiceBindingOptions eagerLoad();
 
     /**
      * Disallows service decoration for this service.
-     * 
+     *
      * @return this binding options, for further configuration
      */
     ServiceBindingOptions preventDecoration();
@@ -66,7 +76,7 @@ public interface ServiceBindingOptions
      * internal Tapestry services, and is necessary during the development of Tapestry itself. In user applications,
      * services defined in library modules are not subject to reloading because the class files are stored in JARs, not
      * as local file system files.
-     * 
+     *
      * @since 5.2.0
      */
     ServiceBindingOptions preventReloading();
@@ -76,10 +86,9 @@ public interface ServiceBindingOptions
      * with a particular service implementation, based on the intersection of type and marker interface. The containing
      * module will sometimes provide a set of default marker annotations for all services within the module, this method
      * allows that default to be extended.
-     * 
+     *
      * @param <T>
-     * @param marker
-     *            one or more markers to add
+     * @param marker one or more markers to add
      * @return this binding options, for further configuration
      */
     <T extends Annotation> ServiceBindingOptions withMarker(Class<T>... marker);
