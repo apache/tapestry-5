@@ -18,6 +18,7 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.internal.services.ComponentClassCache;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.*;
 import org.apache.tapestry5.runtime.Component;
@@ -62,7 +63,14 @@ public class InjectComponentWorker implements ComponentClassTransformWorker2
 
         private void load()
         {
-            embedded = resources.getEmbeddedComponent(componentId);
+            try
+            {
+                embedded = resources.getEmbeddedComponent(componentId);
+            } catch (UnknownValueException ex)
+            {
+                throw new RuntimeException(String.format("Unable to inject component into field %s of class %s: %s",
+                        fieldName, getComponentClassName(), ex.getMessage()), ex);
+            }
 
             Class fieldType = classCache.forName(type);
 
@@ -70,9 +78,14 @@ public class InjectComponentWorker implements ComponentClassTransformWorker2
                 throw new RuntimeException(
                         String
                                 .format(
-                                        "Unable to inject component '%s' into field %s of component %s.  Class %s is not assignable to a field of type %s.",
-                                        componentId, fieldName, resources.getCompleteId(), embedded.getClass()
-                                        .getName(), fieldType.getName()));
+                                        "Unable to inject component '%s' into field %s of %s. Class %s is not assignable to a field of type %s.",
+                                        componentId, fieldName, getComponentClassName(),
+                                        embedded.getClass().getName(), fieldType.getName()));
+        }
+
+        private String getComponentClassName()
+        {
+            return resources.getComponentModel().getComponentClassName();
         }
 
         public Object get(Object instance, InstanceContext context)

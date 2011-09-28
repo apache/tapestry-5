@@ -171,7 +171,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     {
         openLinks("InjectComponentMismatch");
 
-        assertTextPresent("Unable to inject component 'form' into field form of component InjectComponentMismatch. Class org.apache.tapestry5.corelib.components.BeanEditForm is not assignable to a field of type org.apache.tapestry5.corelib.components.Form.");
+        assertTextPresent("Unable to inject component 'form' into field form of org.apache.tapestry5.integration.app1.pages.InjectComponentMismatch. Class org.apache.tapestry5.corelib.components.BeanEditForm is not assignable to a field of type org.apache.tapestry5.corelib.components.Form.");
     }
 
     @Test

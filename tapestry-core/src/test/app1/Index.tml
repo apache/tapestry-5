@@ -194,7 +194,10 @@
         <a href="parameterconflictdemo">Parameter Conflict Demo</a> -- checks for subclass parameters conflicting with
         base class parameters
     </li>
-
+    <li>
+        <a href="missingembeddedcomponent">Missing Embedded Component</a> -- @InjectComponent for component not in
+        template
+    </li>
 </ul>
 
 </html>
