@@ -30,16 +30,15 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A list of checkboxes, allowing selection of multiple items in a list. 
+ * A list of checkboxes, allowing selection of multiple items in a list.
  * <p/>
  * For an alternative component that can be used for similar purposes, see
  * {@link Palette}.
- * 
- * @since 5.3
- * 
+ *
+ * @tapestrydoc
  * @see Form
  * @see Palette
- * @tapestrydoc
+ * @since 5.3
  */
 public class Checklist extends AbstractField
 {
@@ -152,10 +151,10 @@ public class Checklist extends AbstractField
     }
 
     @Override
-    protected void processSubmission(final String elementName)
+    protected void processSubmission(final String controlName)
     {
 
-        final String[] parameters = request.getParameters(elementName);
+        final String[] parameters = request.getParameters(controlName);
 
         List<Object> selected = this.selected;
 

@@ -25,7 +25,7 @@ import org.apache.tapestry5.services.Request;
 
 /**
  * A Checkbox component is simply a &lt;input type="checkbox"&gt;.
- * 
+ *
  * @tapestrydoc
  */
 public class Checkbox extends AbstractField
@@ -59,11 +59,11 @@ public class Checkbox extends AbstractField
 
         writer.element("input", "type", "checkbox",
 
-                       "name", getControlName(),
+                "name", getControlName(),
 
-                       "id", getClientId(),
+                "id", getClientId(),
 
-                       "checked", checked ? "checked" : null);
+                "checked", checked ? "checked" : null);
 
         resources.renderInformalParameters(writer);
 
@@ -77,9 +77,9 @@ public class Checkbox extends AbstractField
     }
 
     @Override
-    protected void processSubmission(String elementName)
+    protected void processSubmission(String controlName)
     {
-        String postedValue = request.getParameter(elementName);
+        String postedValue = request.getParameter(controlName);
 
         // record as "true" or "false"
 

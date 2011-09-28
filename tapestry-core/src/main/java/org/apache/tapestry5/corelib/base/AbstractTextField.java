@@ -44,7 +44,7 @@ import java.util.Locale;
  * event handler may also throw {@link org.apache.tapestry5.ValidationException}.
  */
 @Events(
-{ EventConstants.TO_CLIENT, EventConstants.VALIDATE, EventConstants.PARSE_CLIENT })
+        {EventConstants.TO_CLIENT, EventConstants.VALIDATE, EventConstants.PARSE_CLIENT})
 public abstract class AbstractTextField extends AbstractField
 {
     /**
@@ -74,7 +74,7 @@ public abstract class AbstractTextField extends AbstractField
     /**
      * Provider of annotations used for some defaults. Annotation are usually provided in terms of the value parameter
      * (i.e., from the getter and/or setter bound to the value parameter).
-     * 
+     *
      * @see org.apache.tapestry5.beaneditor.Width
      */
     @Parameter
@@ -141,7 +141,7 @@ public abstract class AbstractTextField extends AbstractField
     }
 
     @SuppressWarnings(
-    { "unchecked" })
+            {"unchecked"})
     @BeginRender
     void begin(MarkupWriter writer)
     {
@@ -180,20 +180,18 @@ public abstract class AbstractTextField extends AbstractField
      * <p/>
      * Generally, the subclass will invoke {@link MarkupWriter#element(String, Object[])}, and will be responsible for
      * including an {@link AfterRender} phase method to invoke {@link MarkupWriter#end()}.
-     * 
-     * @param writer
-     *            markup write to send output to
-     * @param value
-     *            the value (either obtained and translated from the value parameter, or obtained from the tracker)
+     *
+     * @param writer markup write to send output to
+     * @param value  the value (either obtained and translated from the value parameter, or obtained from the tracker)
      */
     protected abstract void writeFieldTag(MarkupWriter writer, String value);
 
     @SuppressWarnings(
-    { "unchecked" })
+            {"unchecked"})
     @Override
-    protected void processSubmission(String elementName)
+    protected void processSubmission(String controlName)
     {
-        String rawValue = request.getParameter(elementName);
+        String rawValue = request.getParameter(controlName);
 
         tracker.recordInput(this, rawValue);
 
@@ -210,8 +208,7 @@ public abstract class AbstractTextField extends AbstractField
 
             if (!(ignoreBlankInput() && InternalUtils.isBlank(rawValue)))
                 value = translated;
-        }
-        catch (ValidationException ex)
+        } catch (ValidationException ex)
         {
             tracker.recordError(this, ex.getMessage());
         }
@@ -237,7 +234,7 @@ public abstract class AbstractTextField extends AbstractField
     /**
      * Looks for a {@link org.apache.tapestry5.beaneditor.Width} annotation and, if present, returns its value as a
      * string.
-     * 
+     *
      * @return the indicated width, or null if the annotation is not present
      */
     protected final String getWidth()

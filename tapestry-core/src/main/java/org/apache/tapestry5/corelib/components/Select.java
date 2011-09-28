@@ -15,12 +15,7 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.BeforeRenderTemplate;
-import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.Events;
-import org.apache.tapestry5.annotations.Mixin;
-import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.RequestParameter;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.corelib.data.BlankOption;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
@@ -31,12 +26,7 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.ComponentDefaultProvider;
-import org.apache.tapestry5.services.FieldValidatorDefaultSource;
-import org.apache.tapestry5.services.FormSupport;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.ValueEncoderFactory;
-import org.apache.tapestry5.services.ValueEncoderSource;
+import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.util.EnumSelectModel;
 
@@ -49,11 +39,11 @@ import org.apache.tapestry5.util.EnumSelectModel;
  * the type of the value parameter. The {@link ValueEncoderSource} service provides an encoder in these situations; it
  * can be overriden by binding the encoder parameter, or extended by contributing a {@link ValueEncoderFactory} into the
  * service's configuration.
- * 
+ *
  * @tapestrydoc
  */
 @Events(
-{ EventConstants.VALIDATE, EventConstants.VALUE_CHANGED + " when 'zone' parameter is bound" })
+        {EventConstants.VALIDATE, EventConstants.VALUE_CHANGED + " when 'zone' parameter is bound"})
 public class Select extends AbstractField
 {
     public static final String CHANGE_EVENT = "change";
@@ -78,8 +68,8 @@ public class Select extends AbstractField
      * "value" parameter into a unique client-side string (typically an ID) and
      * back. Note: this parameter may be OMITTED if Tapestry is configured to
      * provide a ValueEncoder automatically for the type of property bound to
-     * the "value" parameter. 
-     * 
+     * the "value" parameter.
+     *
      * @see ValueEncoderSource
      */
     @Parameter
@@ -137,7 +127,7 @@ public class Select extends AbstractField
      * the
      * indicated zone. The component will trigger the event {@link EventConstants#VALUE_CHANGED} to inform its
      * container that Select's value has changed.
-     * 
+     *
      * @since 5.2.0
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
@@ -164,11 +154,11 @@ public class Select extends AbstractField
     }
 
     @SuppressWarnings(
-    { "unchecked" })
+            {"unchecked"})
     @Override
-    protected void processSubmission(String elementName)
+    protected void processSubmission(String controlName)
     {
-        String submittedValue = request.getParameter(elementName);
+        String submittedValue = request.getParameter(controlName);
 
         tracker.recordInput(this, submittedValue);
 
@@ -181,8 +171,7 @@ public class Select extends AbstractField
             fieldValidationSupport.validate(selectedValue, resources, validate);
 
             value = selectedValue;
-        }
-        catch (ValidationException ex)
+        } catch (ValidationException ex)
         {
             tracker.recordError(this, ex.getMessage());
         }
@@ -206,7 +195,7 @@ public class Select extends AbstractField
         removePropertyNameFromBeanValidationContext();
 
         resources.renderInformalParameters(writer);
-        
+
         decorateInsideField();
 
         // Disabled is via a mixin
@@ -222,14 +211,14 @@ public class Select extends AbstractField
     }
 
     Object onChange(@RequestParameter(value = "t:selectvalue", allowBlank = true)
-    final String selectValue)
+                    final String selectValue)
     {
         final Object newValue = toValue(selectValue);
 
         CaptureResultCallback<Object> callback = new CaptureResultCallback<Object>();
 
         this.resources.triggerEvent(EventConstants.VALUE_CHANGED, new Object[]
-        { newValue }, callback);
+                {newValue}, callback);
 
         this.value = newValue;
 

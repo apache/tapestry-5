@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import java.util.Locale;
 /**
  * A component to upload a file.
  */
-@SuppressWarnings({ "UnusedDeclaration" })
+@SuppressWarnings({"UnusedDeclaration"})
 @Events(EventConstants.VALIDATE)
 public class Upload extends AbstractField
 {
@@ -112,11 +112,11 @@ public class Upload extends AbstractField
         this.fieldValidationSupport = fieldValidationSupport;
     }
 
-    @SuppressWarnings({ "unchecked" })
+    @SuppressWarnings({"unchecked"})
     @Override
-    protected void processSubmission(String elementName)
+    protected void processSubmission(String controlName)
     {
-        UploadedFile uploaded = decoder.getFileUpload(elementName);
+        UploadedFile uploaded = decoder.getFileUpload(controlName);
 
         if (uploaded != null)
         {
@@ -126,8 +126,7 @@ public class Upload extends AbstractField
         try
         {
             fieldValidationSupport.validate(uploaded, resources, validate);
-        }
-        catch (ValidationException ex)
+        } catch (ValidationException ex)
         {
             tracker.recordError(this, ex.getMessage());
         }

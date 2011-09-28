@@ -14,14 +14,6 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newSet;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Import;
@@ -36,6 +28,14 @@ import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newSet;
 
 /**
  * Multiple selection component. Generates a UI consisting of two &lt;select&gt; elements configured for multiple
@@ -56,7 +56,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * Much of the look and feel is driven by CSS, the default Tapestry CSS is used to set up the columns, etc. By default,
  * the &lt;select&gt; element's widths are 200px, and it is common to override this to a specific value:
  * <p/>
- * 
+ * <p/>
  * <pre>
  * &lt;style&gt;
  * DIV.t-palette SELECT { width: 300px; }
@@ -71,10 +71,10 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * <p/>
  * For an alternative component that can be used for similar purposes, see
  * {@link Checklist}.
- * 
+ *
+ * @tapestrydoc
  * @see Form
  * @see Select
- * @tapestrydoc
  */
 @Import(library = "palette.js")
 public class Palette extends AbstractField
@@ -291,7 +291,7 @@ public class Palette extends AbstractField
     /**
      * The object that will perform input validation. The validate binding prefix is generally used to provide
      * this object in a declarative fashion.
-     * 
+     *
      * @since 5.2.0
      */
     @Parameter(defaultPrefix = BindingConstants.VALIDATE)
@@ -318,9 +318,9 @@ public class Palette extends AbstractField
     }
 
     @Override
-    protected void processSubmission(String elementName)
+    protected void processSubmission(String controlName)
     {
-        String parameterValue = request.getParameter(elementName + "-values");
+        String parameterValue = request.getParameter(controlName + "-values");
 
         this.tracker.recordInput(this, parameterValue);
 
@@ -354,8 +354,7 @@ public class Palette extends AbstractField
             this.fieldValidationSupport.validate(selected, this.componentResources, this.validate);
 
             this.selected = selected;
-        }
-        catch (final ValidationException e)
+        } catch (final ValidationException e)
         {
             this.tracker.recordError(this, e.getMessage());
         }

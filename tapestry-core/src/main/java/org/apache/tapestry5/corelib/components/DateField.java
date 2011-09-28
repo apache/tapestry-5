@@ -14,18 +14,8 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.Events;
-import org.apache.tapestry5.annotations.Import;
-import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.RequestParameter;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -34,6 +24,12 @@ import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * A component used to collect a provided date from the user using a client-side JavaScript calendar. Non-JavaScript
@@ -45,7 +41,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * <p/>
  * Tapestry's DateField component is a wrapper around <a
  * href="http://webfx.eae.net/dhtml/datepicker/datepicker.html">WebFX DatePicker</a>.
- * 
+ *
  * @tapestrydoc
  * @see Form
  * @see TextField
@@ -89,7 +85,7 @@ public class DateField extends AbstractField
 
     /**
      * Used to override the component's message catalog.
-     * 
+     *
      * @since 5.2.0.0
      */
     @Parameter("componentResources.messages")
@@ -154,7 +150,7 @@ public class DateField extends AbstractField
      * not formatted correct.
      */
     JSONObject onParse(@RequestParameter(INPUT_PARAMETER)
-    String input)
+                       String input)
     {
         JSONObject response = new JSONObject();
 
@@ -163,8 +159,7 @@ public class DateField extends AbstractField
             Date date = format.parse(input);
 
             response.put(RESULT, date.getTime());
-        }
-        catch (ParseException ex)
+        } catch (ParseException ex)
         {
             response.put(ERROR, ex.getMessage());
         }
@@ -178,7 +173,7 @@ public class DateField extends AbstractField
      * the result.
      */
     JSONObject onFormat(@RequestParameter(INPUT_PARAMETER)
-    String input)
+                        String input)
     {
         JSONObject response = new JSONObject();
 
@@ -189,8 +184,7 @@ public class DateField extends AbstractField
             Date date = new Date(millis);
 
             response.put(RESULT, format.format(date));
-        }
-        catch (NumberFormatException ex)
+        } catch (NumberFormatException ex)
         {
             response.put(ERROR, ex.getMessage());
         }
@@ -210,13 +204,13 @@ public class DateField extends AbstractField
 
         writer.element("input",
 
-        "type", hideTextField ? "hidden" : "text",
+                "type", hideTextField ? "hidden" : "text",
 
-        "name", getControlName(),
+                "name", getControlName(),
 
-        "id", clientId,
+                "id", clientId,
 
-        "value", value);
+                "value", value);
 
         writeDisabled(writer);
 
@@ -236,13 +230,13 @@ public class DateField extends AbstractField
 
         writer.element("img",
 
-        "id", triggerId,
+                "id", triggerId,
 
-        "class", "t-calendar-trigger",
+                "class", "t-calendar-trigger",
 
-        "src", icon.toClientURL(),
+                "src", icon.toClientURL(),
 
-        "alt", "[Show]");
+                "alt", "[Show]");
         writer.end(); // img
 
         JSONObject spec = new JSONObject();
@@ -269,9 +263,9 @@ public class DateField extends AbstractField
     }
 
     @Override
-    protected void processSubmission(String elementName)
+    protected void processSubmission(String controlName)
     {
-        String value = request.getParameter(elementName);
+        String value = request.getParameter(controlName);
 
         tracker.recordInput(this, value);
 
@@ -281,8 +275,7 @@ public class DateField extends AbstractField
         {
             if (InternalUtils.isNonBlank(value))
                 parsedValue = format.parse(value);
-        }
-        catch (ParseException ex)
+        } catch (ParseException ex)
         {
             tracker.recordError(this, messages.format("date-value-not-parseable", value));
             return;
@@ -294,8 +287,7 @@ public class DateField extends AbstractField
             fieldValidationSupport.validate(parsedValue, resources, validate);
 
             this.value = parsedValue;
-        }
-        catch (ValidationException ex)
+        } catch (ValidationException ex)
         {
             tracker.recordError(this, ex.getMessage());
         }

@@ -16,7 +16,6 @@ package org.apache.tapestry5.corelib.base;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
-import org.apache.tapestry5.corelib.internal.InternalMessages;
 import org.apache.tapestry5.corelib.mixins.DiscardBody;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.corelib.mixins.RenderInformals;
@@ -196,13 +195,12 @@ public abstract class AbstractField implements Field
 
     /**
      * Method implemented by subclasses to actually do the work of processing the submission of the form. The element's
-     * elementName property will already have been set. This method is only invoked if the field is <strong>not
+     * controlName property will already have been set. This method is only invoked if the field is <strong>not
      * {@link #isDisabled() disabled}</strong>.
-     * 
-     * @param elementName
-     *            the name of the element (used to find the correct parameter in the request)
+     *
+     * @param controlName the control name of the rendered element (used to find the correct parameter in the request)
      */
-    protected abstract void processSubmission(String elementName);
+    protected abstract void processSubmission(String controlName);
 
     /**
      * Allows the validation decorator to write markup before the field itself writes markup.
