@@ -9,7 +9,6 @@ class PageCatalogTests extends SeleniumTestCase
     @Test
     void load_page_catalog_page()
     {
-
         open("${baseURL}pagecatalog")
 
         assertTitle "Tapestry Page Catalog"
@@ -23,5 +22,10 @@ class PageCatalogTests extends SeleniumTestCase
         assertTitle "Tapestry Page Catalog"
 
         assertTextPresent "Page cache cleared"
+
+        clickAndWait "link=Run the Java Garbage Collector"
+
+        assertTextPresent "Garbage collection freed"
+
     }
 }

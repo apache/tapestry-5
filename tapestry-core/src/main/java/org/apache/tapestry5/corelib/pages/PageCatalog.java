@@ -17,15 +17,20 @@ package org.apache.tapestry5.corelib.pages;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.annotations.ContentType;
+import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.internal.services.PageSource;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * Lists out the currently loaded pages, using a {@link Grid}.  Provides an option to force all pages to be loaded. In development mode,
@@ -54,37 +59,109 @@ public class PageCatalog
     @Property
     private Page page;
 
+    @InjectComponent
+    private Zone pagesZone;
+
+    @Persist
+    private Set<String> failures;
+
     public Collection<Page> getPages()
     {
         return pageSource.getAllPages();
     }
 
-    void onActionFromForceLoad()
+    Object onActionFromForceLoad()
     {
+        if (failures == null)
+        {
+            failures = CollectionFactory.newSet();
+        }
 
-        int startCount = getPages().size();
+        long startTime = System.currentTimeMillis();
+
+        Collection<Page> initialPages = getPages();
+
+        int loadedCount = 0;
+
+        RuntimeException fail = null;
+
+        boolean someFail = false;
 
         for (String name : resolver.getPageNames())
         {
-            pageSource.getPage(name);
+            if (failures.contains(name))
+            {
+                alertManager.warn(String.format("Skipping page %s due to prior load failure.", name));
+                someFail = true;
+                continue;
+            }
+
+            try
+            {
+                Page newPage = pageSource.getPage(name);
+
+                if (!initialPages.contains(newPage))
+                {
+                    loadedCount++;
+                }
+            } catch (RuntimeException ex)
+            {
+                alertManager.error(String.format("Page %s failed to load.", name));
+                failures.add(name);
+                fail = ex;
+                break;
+            }
         }
 
-        int added = getPages().size() - startCount;
+        alertManager.info(String.format("Loaded %,d new pages for selector '%s' (in %,d ms).", loadedCount,
+                selector.toShortString(), System.currentTimeMillis() - startTime));
 
-        alertManager.info(String.format("Loaded %,d new pages for selector '%s'.", added, selector.toShortString()));
+        if (someFail)
+        {
+            alertManager.warn("Clear the cache to reset the list of failed pages.");
+        }
+
+        if (fail != null)
+        {
+            throw fail;
+        }
+
+        return pagesZone.getBody();
     }
 
     void onActionFromClearCache()
     {
         if (productionMode)
         {
-            alertManager.error("Clearing the cache is not allowed in production mode");
+            alertManager.error("Clearing the cache is only allowed in development mode.");
             return;
         }
 
         pageSource.clearCache();
 
+        failures = null;
+
         alertManager.info("Page cache cleared.");
+    }
+
+    void onActionFromRunGC()
+    {
+        if (productionMode)
+        {
+            alertManager.error("Executing a garbage collection is only allowed in development mode.");
+            return;
+        }
+
+        Runtime runtime = Runtime.getRuntime();
+
+        long initialFreeMemory = runtime.freeMemory();
+
+        runtime.gc();
+
+        long delta = runtime.freeMemory() - initialFreeMemory;
+
+        alertManager.info(String.format("Garbage collection freed %,.2f Kb of memory.",
+                ((double) delta) / 1024.0d));
     }
 
     public String formatElapsed(long millis)

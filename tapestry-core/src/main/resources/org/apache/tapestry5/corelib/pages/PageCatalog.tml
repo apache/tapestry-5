@@ -6,38 +6,43 @@
 
 <h1>Tapestry Page Catalog</h1>
 
-<t:alerts/>
-
 <p>
-    This page provides a list of pages currently loaded in the application.
+    This page provides a list of pages currently loaded in the application. There are currently
+    <strong>${pages.size()}</strong> page instances in the page cache.
 </p>
 
 <p>Actions:</p>
 <ul>
     <li>
-        <t:pagelink page="pagecatalog">refresh the page</t:pagelink>
+        <t:pagelink page="pagecatalog">refresh this page</t:pagelink>
     </li>
     <li>
-        <t:actionlink t:id="forceLoad">load all pages</t:actionlink>
+        <t:actionlink t:id="forceLoad" zone="pages">load all pages</t:actionlink>
     </li>
     <t:if test="! productionMode">
         <li>
             <t:actionlink t:id="clearCache">clear the cache</t:actionlink>
         </li>
+        <li>
+            <t:actionlink t:id="runGC">Run the Java Garbage Collector</t:actionlink>
+        </li>
     </t:if>
 </ul>
 
-<t:grid source="pages" row="page" add="selector" reorder="name,selector">
-    <p:nameCell>
-        <t:pagelink page="prop:page.name">${page.name}</t:pagelink>
-    </p:nameCell>
-    <p:assemblyTimeCell>
-        ${formatElapsed(page.assemblyTime)}
-    </p:assemblyTimeCell>
-    <p:selectorCell>
-        ${page.selector.toShortString()}
-    </p:selectorCell>
-</t:grid>
+<t:alerts/>
+
+<t:zone t:id="pagesZone" id="pages">
+
+    <t:grid source="pages" row="page" add="selector" reorder="name,selector">
+        <p:assemblyTimeCell>
+            ${formatElapsed(page.assemblyTime)}
+        </p:assemblyTimeCell>
+        <p:selectorCell>
+            ${page.selector.toShortString()}
+        </p:selectorCell>
+    </t:grid>
+
+</t:zone>
 
 </body>
 
