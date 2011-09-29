@@ -182,4 +182,37 @@ public interface Page
      * Invoked to notify {@link PageResetListener} listeners.
      */
     void pageReset();
+
+
+    /**
+     * Invoked once at the end of page construction, to provide page construction statistics.
+     *
+     * @since 5.3
+     */
+    void setStats(long assemblyTime, int componentCount);
+
+    /**
+     * Returns the time, in milliseconds, to construct the page.
+     *
+     * @since 5.3
+     */
+    long getAssemblyTime();
+
+    /**
+     * Returns the number of components on the page, including the root component. This is a rough
+     * measure of complexity.
+     *
+     * @since 5.3
+     */
+    int getComponentCount();
+
+    /**
+     * Returns the number of times the page has been attached to a request. This is a rough measure
+     * of how important the page is, relative to other pages. This value is volatile, changing constantly.
+     *
+     * @since 5.3
+     */
+    int getAttachCount();
+
+
 }

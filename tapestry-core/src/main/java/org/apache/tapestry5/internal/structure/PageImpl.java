@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
 public class PageImpl implements Page
@@ -49,6 +50,15 @@ public class PageImpl implements Page
     private final OneShotLock lock = new OneShotLock();
 
     private final Map<String, ComponentPageElement> idToComponent = CollectionFactory.newCaseInsensitiveMap();
+
+    // TODO: loadComplete, assemblyTime, and componentCount are each set once without thread semantics,
+    // but before the instance is published to other threads ... is that enough?
+
+    private long assemblyTime;
+
+    private int componentCount;
+
+    private final AtomicInteger attachCount = new AtomicInteger();
 
     /**
      * Obtained from the {@link org.apache.tapestry5.internal.services.PersistentFieldManager} when
@@ -73,6 +83,12 @@ public class PageImpl implements Page
         this.persistentFieldManager = persistentFieldManager;
 
         fieldBundle = perThreadManager.createValue();
+    }
+
+    public void setStats(long assemblyTime, int componentCount)
+    {
+        this.assemblyTime = assemblyTime;
+        this.componentCount = componentCount;
     }
 
     @Override
@@ -174,6 +190,8 @@ public class PageImpl implements Page
 
     public void attached()
     {
+        attachCount.incrementAndGet();
+
         for (PageLifecycleListener listener : lifecycleListeners)
             listener.restoreStateBeforePageAttach();
 
@@ -233,4 +251,18 @@ public class PageImpl implements Page
         return !resetListeners.isEmpty();
     }
 
+    public long getAssemblyTime()
+    {
+        return assemblyTime;
+    }
+
+    public int getComponentCount()
+    {
+        return componentCount;
+    }
+
+    public int getAttachCount()
+    {
+        return attachCount.get();
+    }
 }

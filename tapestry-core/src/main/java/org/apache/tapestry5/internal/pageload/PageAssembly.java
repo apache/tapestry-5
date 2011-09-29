@@ -48,6 +48,11 @@ class PageAssembly
 
     private final Set<String> flags = CollectionFactory.newSet();
 
+    /**
+     * Number of components constructed for this page instance.
+     */
+    int componentCount;
+
     PageAssembly(Page page)
     {
         this.page = page;

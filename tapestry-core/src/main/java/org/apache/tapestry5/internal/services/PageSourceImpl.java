@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.InvalidationListener;
@@ -22,6 +24,7 @@ import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
 import java.lang.ref.SoftReference;
 import java.util.Map;
+import java.util.Set;
 
 public class PageSourceImpl implements PageSource, InvalidationListener
 {
@@ -109,5 +112,16 @@ public class PageSourceImpl implements PageSource, InvalidationListener
     public void clearCache()
     {
         pageCache.clear();
+    }
+
+    public Set<Page> getAllPages()
+    {
+        return F.flow(pageCache.values()).map(new Mapper<SoftReference<Page>, Page>()
+        {
+            public Page map(SoftReference<Page> element)
+            {
+                return element.get();
+            }
+        }).removeNulls().toSet();
     }
 }

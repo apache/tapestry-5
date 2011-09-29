@@ -1,0 +1,44 @@
+<html xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+<head>
+    <title>Tapestry Page Catalog</title>
+</head>
+<body>
+
+<h1>Tapestry Page Catalog</h1>
+
+<t:alerts/>
+
+<p>
+    This page provides a list of pages currently loaded in the application.
+</p>
+
+<p>Actions:</p>
+<ul>
+    <li>
+        <t:pagelink page="pagecatalog">refresh the page</t:pagelink>
+    </li>
+    <li>
+        <t:actionlink t:id="forceLoad">load all pages</t:actionlink>
+    </li>
+    <t:if test="! productionMode">
+        <li>
+            <t:actionlink t:id="clearCache">clear the cache</t:actionlink>
+        </li>
+    </t:if>
+</ul>
+
+<t:grid source="pages" row="page" add="selector" reorder="name,selector">
+    <p:nameCell>
+        <t:pagelink page="prop:page.name">${page.name}</t:pagelink>
+    </p:nameCell>
+    <p:assemblyTimeCell>
+        ${formatElapsed(page.assemblyTime)}
+    </p:assemblyTimeCell>
+    <p:selectorCell>
+        ${page.selector.toShortString()}
+    </p:selectorCell>
+</t:grid>
+
+</body>
+
+</html>
