@@ -49,6 +49,9 @@ task generateGrammarSource {
 }
 
 ideaModule.doFirst {
+
+    tasks.generateGrammarSource.execute()
+
     excludeDirs -= buildDir
 
     def generatedDir = file("$buildDir/generated-sources")
