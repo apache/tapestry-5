@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -54,8 +54,7 @@ class PageAssembly
     }
 
     /**
-     * Adds the command to the top element of the {@link #bodyElement} stack. {@linkplain
-     * #flushComposableRenderCommands() Flushes} composable render commands first.
+     * Adds the command to the top element of the {@link #bodyElement} stack.
      *
      * @param command
      */
@@ -84,7 +83,7 @@ class PageAssembly
             {
                 throw new TapestryException(
                         PageloadMessages.recursiveTemplate(componentClassName),
-                        location, 
+                        location,
                         null);
             }
         }
