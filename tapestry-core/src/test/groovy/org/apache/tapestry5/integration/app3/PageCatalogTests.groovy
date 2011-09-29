@@ -13,10 +13,6 @@ class PageCatalogTests extends SeleniumTestCase
 
         assertTitle "Tapestry Page Catalog"
 
-        clickAndWait "link=load all pages"
-
-        assertTitle "Tapestry Page Catalog"
-
         clickAndWait "link=clear the cache"
 
         assertTitle "Tapestry Page Catalog"
@@ -27,5 +23,6 @@ class PageCatalogTests extends SeleniumTestCase
 
         assertTextPresent "Garbage collection freed"
 
+        click "link=load all pages"
     }
 }
