@@ -182,13 +182,4 @@ public interface Page
      * Invoked to notify {@link PageResetListener} listeners.
      */
     void pageReset();
-
-    /**
-     * Returns time, in milliseconds, that the page was last attached. This is used by the {@link org.apache.tapestry5.internal.services.PageSource} service to
-     * cull unused pages from memory.
-     *
-     * @return milliseconds time of last {@link #attached()}} call
-     * @since 5.3
-     */
-    long getLastAttachTime();
 }

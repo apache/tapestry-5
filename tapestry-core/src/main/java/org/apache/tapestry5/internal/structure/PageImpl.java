@@ -50,8 +50,6 @@ public class PageImpl implements Page
 
     private final Map<String, ComponentPageElement> idToComponent = CollectionFactory.newCaseInsensitiveMap();
 
-    private volatile long lastAttach = System.currentTimeMillis();
-
     /**
      * Obtained from the {@link org.apache.tapestry5.internal.services.PersistentFieldManager} when
      * first needed,
@@ -176,8 +174,6 @@ public class PageImpl implements Page
 
     public void attached()
     {
-        lastAttach = System.currentTimeMillis();
-
         for (PageLifecycleListener listener : lifecycleListeners)
             listener.restoreStateBeforePageAttach();
 
@@ -230,11 +226,6 @@ public class PageImpl implements Page
         {
             l.containingPageDidReset();
         }
-    }
-
-    public long getLastAttachTime()
-    {
-        return lastAttach;
     }
 
     public boolean hasResetListeners()
