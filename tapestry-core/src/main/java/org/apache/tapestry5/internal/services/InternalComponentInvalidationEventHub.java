@@ -18,10 +18,10 @@ import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.InvalidationListener;
 
 /**
- * Split-out implementation of {@link InvalidationEventHub} that seperates it from {@link ComponentInstantiatorSource}.
+ * Split-out implementation of {@link InvalidationEventHub} that separates it from {@link ComponentInstantiatorSource}.
  * This was necessary due to some refactoring that made {@link ComponentClassResolver} and ComponentInstantiatorSource
  * mutually dependent.
- * 
+ *
  * @since 5.3
  */
 public interface InternalComponentInvalidationEventHub extends InvalidationEventHub

@@ -24,6 +24,7 @@ import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Predicate;
+import org.apache.tapestry5.internal.services.ComponentInstantiatorSource;
 import org.apache.tapestry5.internal.services.PageSource;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -73,6 +74,9 @@ public class PageCatalog
     @Validate("required")
     private String pageName;
 
+    @Inject
+    private ComponentInstantiatorSource componentInstantiatorSource;
+
     public List<String> getPageNames()
     {
         return resolver.getPageNames();
@@ -81,6 +85,21 @@ public class PageCatalog
     public Collection<Page> getPages()
     {
         return pageSource.getAllPages();
+    }
+
+    Object onActionFromReloadClasses()
+    {
+        if (productionMode)
+        {
+            alertManager.error("Forcing a class reload is only allowed when executing in development mode.");
+            return null;
+        }
+
+        componentInstantiatorSource.forceComponentInvalidation();
+
+        alertManager.info("Forced a component class reload.");
+
+        return pagesZone.getBody();
     }
 
     Object onSuccessFromSinglePageLoad()

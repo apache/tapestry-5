@@ -16,6 +16,9 @@
                     <t:actionlink t:id="clearCache">clear the cache</t:actionlink>
                 </li>
                 <li>
+                    <t:actionlink t:id="reloadClasses" zone="pages">reload component classes</t:actionlink>
+                </li>
+                <li>
                     <t:actionlink t:id="runGC">Run the GC</t:actionlink>
                 </li>
             </t:if>
@@ -39,6 +42,10 @@
             <p:selectorCell>
                 ${page.selector.toShortString()}
             </p:selectorCell>
+            <p:empty>
+                <p><em>There are no pages in the page cache. This can only occur immediately after reloading all
+                    component classes.</em></p>
+            </p:empty>
         </t:grid>
 
     </t:zone>

@@ -164,6 +164,12 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
         }
     }
 
+    public void forceComponentInvalidation()
+    {
+        changeTracker.clear();
+        invalidationHub.classInControlledPackageHasChanged();
+    }
+
     public void objectWasInvalidated()
     {
         changeTracker.clear();
