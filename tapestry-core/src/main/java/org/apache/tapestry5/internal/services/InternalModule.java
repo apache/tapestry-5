@@ -14,10 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.util.Map;
-
-import javax.servlet.http.Cookie;
-
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.pageload.PageLoaderImpl;
 import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateController;
@@ -31,25 +27,12 @@ import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Autobuild;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Marker;
-import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.services.CtClassSource;
-import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
-import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
-import org.apache.tapestry5.services.ComponentClassResolver;
-import org.apache.tapestry5.services.ComponentClasses;
-import org.apache.tapestry5.services.ComponentLayer;
-import org.apache.tapestry5.services.ComponentMessages;
-import org.apache.tapestry5.services.ComponentTemplates;
-import org.apache.tapestry5.services.Core;
-import org.apache.tapestry5.services.InvalidationEventHub;
-import org.apache.tapestry5.services.LinkCreationListener2;
-import org.apache.tapestry5.services.LocalizationSetter;
-import org.apache.tapestry5.services.RequestGlobals;
-import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
-import org.apache.tapestry5.services.UpdateListenerHub;
-import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
+import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.transform.ControlledPackageType;
+
+import javax.servlet.http.Cookie;
+import java.util.Map;
 
 /**
  * {@link org.apache.tapestry5.services.TapestryModule} has gotten too complicated and it is nice to demarkate public
@@ -58,25 +41,17 @@ import org.apache.tapestry5.services.transform.ControlledPackageType;
 @Marker(Core.class)
 public class InternalModule
 {
-    private final UpdateListenerHub updateListenerHub;
 
     private final RequestGlobals requestGlobals;
 
     private final InvalidationEventHub classesInvalidationEventHub;
 
-    private final boolean productionMode;
+    public InternalModule(RequestGlobals requestGlobals,
 
-    public InternalModule(UpdateListenerHub updateListenerHub, RequestGlobals requestGlobals,
-
-    @Symbol(SymbolConstants.PRODUCTION_MODE)
-    boolean productionMode,
-
-    @ComponentClasses
-    InvalidationEventHub classesInvalidationEventHub)
+                          @ComponentClasses
+                          InvalidationEventHub classesInvalidationEventHub)
     {
-        this.updateListenerHub = updateListenerHub;
         this.requestGlobals = requestGlobals;
-        this.productionMode = productionMode;
         this.classesInvalidationEventHub = classesInvalidationEventHub;
     }
 
@@ -117,10 +92,10 @@ public class InternalModule
      */
     public static ActionRenderResponseGenerator buildActionRenderResponseGenerator(
 
-    @Symbol(SymbolConstants.SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS)
-    boolean immediateMode,
+            @Symbol(SymbolConstants.SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS)
+            boolean immediateMode,
 
-    ObjectLocator locator)
+            ObjectLocator locator)
     {
         if (immediateMode)
             return locator.autobuild(ImmediateActionRenderResponseGenerator.class);
@@ -129,13 +104,13 @@ public class InternalModule
     }
 
     public PageLoader buildPageLoader(@Autobuild
-    PageLoaderImpl service,
+                                      PageLoaderImpl service,
 
-    @ComponentTemplates
-    InvalidationEventHub templatesHub,
+                                      @ComponentTemplates
+                                      InvalidationEventHub templatesHub,
 
-    @ComponentMessages
-    InvalidationEventHub messagesHub)
+                                      @ComponentMessages
+                                      InvalidationEventHub messagesHub)
     {
         // TODO: We could combine these three using chain-of-command.
 
@@ -147,13 +122,13 @@ public class InternalModule
     }
 
     public PageSource buildPageSource(@Autobuild
-    PageSourceImpl service,
+                                      PageSourceImpl service,
 
-    @ComponentTemplates
-    InvalidationEventHub templatesHub,
+                                      @ComponentTemplates
+                                      InvalidationEventHub templatesHub,
 
-    @ComponentMessages
-    InvalidationEventHub messagesHub)
+                                      @ComponentMessages
+                                      InvalidationEventHub messagesHub)
     {
         // This covers invalidations due to changes to classes
 
@@ -171,7 +146,7 @@ public class InternalModule
     }
 
     public ComponentClassCache buildComponentClassCache(@Autobuild
-    ComponentClassCacheImpl service)
+                                                        ComponentClassCacheImpl service)
     {
         classesInvalidationEventHub.addInvalidationListener(service);
 
@@ -203,7 +178,7 @@ public class InternalModule
     }
 
     public PageActivationContextCollector buildPageActivationContextCollector(@Autobuild
-    PageActivationContextCollectorImpl service)
+                                                                              PageActivationContextCollectorImpl service)
     {
         classesInvalidationEventHub.addInvalidationListener(service);
 
@@ -214,7 +189,7 @@ public class InternalModule
      * @since 5.1.0.0
      */
     public StringInterner buildStringInterner(@Autobuild
-    StringInternerImpl service)
+                                              StringInternerImpl service)
     {
         classesInvalidationEventHub.addInvalidationListener(service);
 
@@ -227,7 +202,7 @@ public class InternalModule
      * <dt>LinkDecoration (instance of {@link LinkDecorationListener})</dt>
      * <dd>Triggers events for notifications about links</dd>
      * <dl>
-     * 
+     *
      * @since 5.2.0
      */
     public static void contributeLinkSource(OrderedConfiguration<LinkCreationListener2> configuration)
@@ -237,7 +212,7 @@ public class InternalModule
 
     /**
      * Contributes packages identified by {@link ComponentClassResolver#getControlledPackageMapping()}.
-     * 
+     *
      * @since 5.3
      */
     @Contribute(ComponentInstantiatorSource.class)
