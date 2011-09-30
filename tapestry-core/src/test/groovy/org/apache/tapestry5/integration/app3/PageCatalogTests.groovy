@@ -9,13 +9,15 @@ class PageCatalogTests extends SeleniumTestCase
     @Test
     void load_page_catalog_page()
     {
+        def title = "Tapestry 5: Page Catalog"
+
         open("${baseURL}pagecatalog")
 
-        assertTitle "Tapestry Page Catalog"
+        assertTitle title
 
         clickAndWait "link=clear the cache"
 
-        assertTitle "Tapestry Page Catalog"
+        assertTitle title
 
         assertTextPresent "Page cache cleared"
 
