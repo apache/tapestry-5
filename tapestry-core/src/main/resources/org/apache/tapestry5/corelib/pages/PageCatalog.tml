@@ -43,4 +43,16 @@
 
     </t:zone>
 
+
+    <div class="t-space-vertically">
+
+        <t:form t:id="singlePageLoad" zone="pages">
+
+            <t:label for="pageName">Load single page</t:label>
+            <t:select t:id="pageName" model="pageNames"/>
+            <input type="submit" value="Load Page"/>
+
+        </t:form>
+    </div>
+
 </i:internallayout>

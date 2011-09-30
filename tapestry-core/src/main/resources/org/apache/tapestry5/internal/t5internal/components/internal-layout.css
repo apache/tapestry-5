@@ -24,3 +24,11 @@ UL.t-menu A {
 UL.t-menu A:hover {
     text-decoration: underline;
 }
+
+DIV.t-space-vertically {
+    margin-top: 20px;
+}
+
+LABEL:after {
+    content: ":"
+}

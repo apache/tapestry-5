@@ -20,7 +20,10 @@ import org.apache.tapestry5.annotations.ContentType;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.corelib.components.Zone;
+import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.services.PageSource;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -30,6 +33,7 @@ import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -65,9 +69,49 @@ public class PageCatalog
     @Persist
     private Set<String> failures;
 
+    @Property
+    @Validate("required")
+    private String pageName;
+
+    public List<String> getPageNames()
+    {
+        return resolver.getPageNames();
+    }
+
     public Collection<Page> getPages()
     {
         return pageSource.getAllPages();
+    }
+
+    Object onSuccessFromSinglePageLoad()
+    {
+        boolean found = !F.flow(getPages()).filter(new Predicate<Page>()
+        {
+            public boolean accept(Page element)
+            {
+                return element.getName().equals(pageName) && element.getSelector().equals(selector);
+            }
+        }).isEmpty();
+
+        if (found)
+        {
+            alertManager.warn(String.format("Page %s has already been loaded for '%s'.",
+                    pageName, selector.toShortString()));
+            return null;
+        }
+
+        long startTime = System.currentTimeMillis();
+
+
+        // Load the page now (may cause an exception).
+
+        pageSource.getPage(pageName);
+
+
+        alertManager.info(String.format("Loaded page %s for selector '%s' (in %,d ms).", pageName,
+                selector.toShortString(), System.currentTimeMillis() - startTime));
+
+        return pagesZone.getBody();
     }
 
     Object onActionFromForceLoad()
