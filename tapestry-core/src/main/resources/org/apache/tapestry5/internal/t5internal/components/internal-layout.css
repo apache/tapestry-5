@@ -5,7 +5,8 @@ SPAN.detail {
 UL.t-menu {
     list-style-type: none;
     margin-left: 0;
-    padding: 0
+    padding: 0;
+    font-size: 12px;
 }
 
 UL.t-menu LI {
@@ -31,4 +32,8 @@ DIV.t-space-vertically {
 
 LABEL:after {
     content: ":"
+}
+
+A {
+    text-decoration: none;
 }

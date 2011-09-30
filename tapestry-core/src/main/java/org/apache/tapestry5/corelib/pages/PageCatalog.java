@@ -192,12 +192,12 @@ public class PageCatalog
         return pagesZone.getBody();
     }
 
-    void onActionFromClearCache()
+    Object onActionFromClearCache()
     {
         if (productionMode)
         {
             alertManager.error("Clearing the cache is only allowed in development mode.");
-            return;
+            return null;
         }
 
         pageSource.clearCache();
@@ -205,14 +205,16 @@ public class PageCatalog
         failures = null;
 
         alertManager.info("Page cache cleared.");
+
+        return pagesZone.getBody();
     }
 
-    void onActionFromRunGC()
+    Object onActionFromRunGC()
     {
         if (productionMode)
         {
             alertManager.error("Executing a garbage collection is only allowed in development mode.");
-            return;
+            return null;
         }
 
         Runtime runtime = Runtime.getRuntime();
@@ -225,6 +227,8 @@ public class PageCatalog
 
         alertManager.info(String.format("Garbage collection freed %,.2f Kb of memory.",
                 ((double) delta) / 1024.0d));
+
+        return pagesZone.getBody();
     }
 
     public String formatElapsed(long millis)

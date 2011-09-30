@@ -33,22 +33,6 @@ div.t-content>p+p {
     text-indent: 30px;
 }
 
-a {
-    color: #09c;
-    font-size: 11px;
-    text-decoration: none;
-    font-weight: 600;
-    font-family: verdana, arial, helvetica, sans-serif;
-}
-
-a:link {
-    color: #09c;
-}
-
-a:visited {
-    color: #07a;
-}
-
 div.t-header {
     margin: 50px 0px 10px 0px;
     padding: 17px 0px 0px 20px;
