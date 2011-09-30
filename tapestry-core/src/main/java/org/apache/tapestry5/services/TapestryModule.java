@@ -491,6 +491,7 @@ public final class TapestryModule
                                                 String appRootPackage)
     {
         configuration.add(new LibraryMapping(InternalConstants.CORE_LIBRARY, "org.apache.tapestry5.corelib"));
+        configuration.add(new LibraryMapping("t5internal", "org.apache.tapestry5.internal.t5internal"));
         configuration.add(new LibraryMapping("", appRootPackage));
     }
 

@@ -19,7 +19,7 @@ class PageCatalogTests extends SeleniumTestCase
 
         assertTextPresent "Page cache cleared"
 
-        clickAndWait "link=Run the Java Garbage Collector"
+        clickAndWait "link=Run the GC"
 
         assertTextPresent "Garbage collection freed"
 

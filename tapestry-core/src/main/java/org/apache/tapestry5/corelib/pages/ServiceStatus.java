@@ -16,6 +16,7 @@ package org.apache.tapestry5.corelib.pages;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.ContentType;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.ioc.Messages;
@@ -34,6 +35,7 @@ import java.util.List;
  * TODO: Add filters to control which services are displayed
  */
 @ContentType("text/html")
+@Import(stylesheet = "ServiceStatus.css")
 public class ServiceStatus
 {
     @Inject
@@ -65,7 +67,7 @@ public class ServiceStatus
         model.add("serviceInterface", null);
 
         // There's no line number information for interfaces, so we'll reorder the
-        // propreties manually.
+        // proprieties manually.
 
         model.reorder("serviceId", "serviceInterface", "scope", "status");
     }

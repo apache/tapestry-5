@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+<head><title>Tapestry 5: ${title}</title></head>
+<body>
+
+
+<div class="t-header">
+    <a href="http://tapestry.apache.org" title="Tapestry 5">Tapestry 5</a>
+    <span class="detail">version ${frameworkVersion}</span>
+</div>
+
+<div class="t-content">
+    <h1>${title}</h1>
+
+    <t:alerts/>
+
+    <t:body/>
+</div>
+
+<div class="t-menu">
+    <t:delegate to="leftNav"/>
+</div>
+
+</body>
+</html>

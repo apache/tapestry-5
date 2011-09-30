@@ -1,0 +1,16 @@
+TR.DEFINED {
+    color: #666666;
+    font-style: italic;
+}
+
+TR.VIRTUAL {
+    color: blue;
+}
+
+TR.REAL {
+    color: green;
+}
+
+DL {
+    font-size: small;
+}

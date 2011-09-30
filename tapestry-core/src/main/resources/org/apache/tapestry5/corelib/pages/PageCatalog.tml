@@ -1,49 +1,46 @@
-<html xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
-<head>
-    <title>Tapestry Page Catalog</title>
-</head>
-<body>
+<i:internallayout title="Page Catalog" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+                  xmlns:p="tapestry:parameter"
+                  xmlns:i="tapestry-library:t5internal">
 
-<h1>Tapestry Page Catalog</h1>
+    <p:leftnav>
 
-<p>
-    This page provides a list of pages currently loaded in the application. There are currently
-    <strong>${pages.size()}</strong> page instances in the page cache.
-</p>
+        <ul class="t-menu">
+            <li>
+                <t:pagelink page="pagecatalog">refresh this page</t:pagelink>
+            </li>
+            <li>
+                <t:actionlink t:id="forceLoad" zone="pages">load all pages</t:actionlink>
+            </li>
+            <t:if test="! productionMode">
+                <li>
+                    <t:actionlink t:id="clearCache">clear the cache</t:actionlink>
+                </li>
+                <li>
+                    <t:actionlink t:id="runGC">Run the GC</t:actionlink>
+                </li>
+            </t:if>
+        </ul>
 
-<p>Actions:</p>
-<ul>
-    <li>
-        <t:pagelink page="pagecatalog">refresh this page</t:pagelink>
-    </li>
-    <li>
-        <t:actionlink t:id="forceLoad" zone="pages">load all pages</t:actionlink>
-    </li>
-    <t:if test="! productionMode">
-        <li>
-            <t:actionlink t:id="clearCache">clear the cache</t:actionlink>
-        </li>
-        <li>
-            <t:actionlink t:id="runGC">Run the Java Garbage Collector</t:actionlink>
-        </li>
-    </t:if>
-</ul>
+    </p:leftnav>
 
-<t:alerts/>
 
-<t:zone t:id="pagesZone" id="pages">
+    <t:zone t:id="pagesZone" id="pages">
 
-    <t:grid source="pages" row="page" add="selector" reorder="name,selector">
-        <p:assemblyTimeCell>
-            ${formatElapsed(page.assemblyTime)}
-        </p:assemblyTimeCell>
-        <p:selectorCell>
-            ${page.selector.toShortString()}
-        </p:selectorCell>
-    </t:grid>
+        <p>
+            This page provides a list of pages currently loaded in the application. There are currently
+            <strong>${pages.size()}</strong> page instances in the page cache.
+        </p>
 
-</t:zone>
 
-</body>
+        <t:grid source="pages" row="page" add="selector" reorder="name,selector">
+            <p:assemblyTimeCell>
+                ${formatElapsed(page.assemblyTime)}
+            </p:assemblyTimeCell>
+            <p:selectorCell>
+                ${page.selector.toShortString()}
+            </p:selectorCell>
+        </t:grid>
 
-</html>
+    </t:zone>
+
+</i:internallayout>
