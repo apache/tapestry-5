@@ -1,4 +1,4 @@
-// Copyright 2006, 2009 The Apache Software Foundation
+// Copyright 2006, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,10 @@
 
 package org.apache.tapestry5.internal.parser;
 
+import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.runtime.RenderCommand;
+import org.apache.tapestry5.runtime.RenderQueue;
 
 /**
  * The start of an ordinary element within the template (as opposed to {@link org.apache.tapestry5.internal.parser.StartComponentToken},
@@ -23,11 +26,11 @@ import org.apache.tapestry5.ioc.Location;
  * start element token will always be balanced by a {@link org.apache.tapestry5.internal.parser.EndElementToken} (though
  * there will likely be some amount of intermediate tokens).
  */
-public class StartElementToken extends TemplateToken
+public class StartElementToken extends TemplateToken implements RenderCommand
 {
-    private final String namespaceURI;
+    public final String namespaceURI;
 
-    private final String name;
+    public final String name;
 
     public StartElementToken(String namespaceURI, String name, Location location)
     {
@@ -35,22 +38,6 @@ public class StartElementToken extends TemplateToken
 
         this.namespaceURI = namespaceURI;
         this.name = name;
-    }
-
-    /**
-     * Returns local name for the element.
-     */
-    public String getName()
-    {
-        return name;
-    }
-
-    /**
-     * @return the namespace URI for the element, or the empty string for the default namespace
-     */
-    public String getNamespaceURI()
-    {
-        return namespaceURI;
     }
 
     @Override
@@ -63,5 +50,10 @@ public class StartElementToken extends TemplateToken
         builder.append(name).append("]");
 
         return builder.toString();
+    }
+
+    public void render(MarkupWriter writer, RenderQueue queue)
+    {
+        writer.elementNS(namespaceURI, name);
     }
 }

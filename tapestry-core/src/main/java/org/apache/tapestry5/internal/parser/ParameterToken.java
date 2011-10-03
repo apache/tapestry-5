@@ -21,7 +21,7 @@ import org.apache.tapestry5.ioc.Location;
  */
 public class ParameterToken extends TemplateToken
 {
-    private final String name;
+    public final String name;
 
     /**
      * @param name     the name of the parameter to be bound
@@ -32,11 +32,6 @@ public class ParameterToken extends TemplateToken
         super(TokenType.PARAMETER, location);
 
         this.name = name;
-    }
-
-    public String getName()
-    {
-        return name;
     }
 
     @Override

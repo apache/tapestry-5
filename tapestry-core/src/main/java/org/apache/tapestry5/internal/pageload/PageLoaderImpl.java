@@ -64,19 +64,23 @@ import java.util.Map;
  * <p/>
  * And truly, <em>This is the Tapestry Heart, This is the Tapestry Soul...</em>
  */
-public class PageLoaderImpl implements PageLoader, InvalidationListener, ComponentAssemblerSource {
-    private static final class Key {
+public class PageLoaderImpl implements PageLoader, InvalidationListener, ComponentAssemblerSource
+{
+    private static final class Key
+    {
         private final String className;
 
         private final ComponentResourceSelector selector;
 
-        private Key(String className, ComponentResourceSelector selector) {
+        private Key(String className, ComponentResourceSelector selector)
+        {
             this.className = className;
             this.selector = selector;
         }
 
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(Object o)
+        {
             if (this == o)
                 return true;
             if (o == null || getClass() != o.getClass())
@@ -88,26 +92,32 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         }
 
         @Override
-        public int hashCode() {
+        public int hashCode()
+        {
             return 31 * className.hashCode() + selector.hashCode();
         }
     }
 
-    private static final PageAssemblyAction POP_EMBEDDED_COMPONENT_ACTION = new PageAssemblyAction() {
-        public void execute(PageAssembly pageAssembly) {
+    private static final PageAssemblyAction POP_EMBEDDED_COMPONENT_ACTION = new PageAssemblyAction()
+    {
+        public void execute(PageAssembly pageAssembly)
+        {
             pageAssembly.createdElement.pop();
             pageAssembly.bodyElement.pop();
             pageAssembly.embeddedAssembler.pop();
         }
     };
 
-    private static final RenderCommand END_ELEMENT = new RenderCommand() {
-        public void render(MarkupWriter writer, RenderQueue queue) {
+    private static final RenderCommand END_ELEMENT = new RenderCommand()
+    {
+        public void render(MarkupWriter writer, RenderQueue queue)
+        {
             writer.end();
         }
 
         @Override
-        public String toString() {
+        public String toString()
+        {
             return "End";
         }
     };
@@ -140,7 +150,8 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
                           PageElementFactory elementFactory, ComponentPageElementResourcesSource resourcesSource,
                           ComponentClassResolver componentClassResolver, PersistentFieldManager persistentFieldManager,
                           StringInterner interner, OperationTracker tracker, PerthreadManager perThreadManager, Request request,
-                          SymbolSource symbolSource) {
+                          SymbolSource symbolSource)
+    {
         this.instantiatorSource = instantiatorSource;
         this.templateSource = templateSource;
         this.elementFactory = elementFactory;
@@ -154,15 +165,19 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         this.symbolSource = symbolSource;
     }
 
-    public void objectWasInvalidated() {
+    public void objectWasInvalidated()
+    {
         cache.clear();
     }
 
-    public Page loadPage(final String logicalPageName, final ComponentResourceSelector selector) {
+    public Page loadPage(final String logicalPageName, final ComponentResourceSelector selector)
+    {
         final String pageClassName = componentClassResolver.resolvePageNameToClassName(logicalPageName);
 
-        return tracker.invoke("Constructing instance of page class " + pageClassName, new Invokable<Page>() {
-            public Page invoke() {
+        return tracker.invoke("Constructing instance of page class " + pageClassName, new Invokable<Page>()
+        {
+            public Page invoke()
+            {
                 Page page = new PageImpl(logicalPageName, selector, persistentFieldManager, perThreadManager);
 
                 ComponentAssembler assembler = getAssembler(pageClassName, selector);
@@ -182,12 +197,14 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         });
     }
 
-    public ComponentAssembler getAssembler(String className, ComponentResourceSelector selector) {
+    public ComponentAssembler getAssembler(String className, ComponentResourceSelector selector)
+    {
         Key key = new Key(className, selector);
 
         ComponentAssembler result = cache.get(key);
 
-        if (result == null) {
+        if (result == null)
+        {
             // There's a window here where two threads may create the same assembler simultaneously;
             // the extra assembler will be discarded.
 
@@ -199,9 +216,12 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         return result;
     }
 
-    private ComponentAssembler createAssembler(final String className, final ComponentResourceSelector selector) {
-        return tracker.invoke("Creating ComponentAssembler for " + className, new Invokable<ComponentAssembler>() {
-            public ComponentAssembler invoke() {
+    private ComponentAssembler createAssembler(final String className, final ComponentResourceSelector selector)
+    {
+        return tracker.invoke("Creating ComponentAssembler for " + className, new Invokable<ComponentAssembler>()
+        {
+            public ComponentAssembler invoke()
+            {
                 Instantiator instantiator = instantiatorSource.getInstantiator(className);
 
                 ComponentModel componentModel = instantiator.getModel();
@@ -227,12 +247,14 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
      * "Programs" the assembler by analyzing the component, its mixins and its embedded components (both in the template
      * and in the Java class), adding new PageAssemblyActions.
      */
-    private void programAssembler(ComponentAssembler assembler, ComponentTemplate template) {
+    private void programAssembler(ComponentAssembler assembler, ComponentTemplate template)
+    {
         TokenStream stream = createTokenStream(assembler, template);
 
         AssemblerContext context = new AssemblerContext(assembler, stream);
 
-        if (template.isMissing()) {
+        if (template.isMissing())
+        {
             // Pretend the template has a single <t:body> element.
 
             body(context);
@@ -240,7 +262,8 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
             return;
         }
 
-        while (context.more()) {
+        while (context.more())
+        {
             processTemplateToken(context);
         }
 
@@ -252,7 +275,8 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
      * {@link org.apache.tapestry5.internal.parser.ExtensionPointToken}s
      * and replacing them with appropriate overrides. Also validates that all embedded ids are accounted for.
      */
-    private TokenStream createTokenStream(ComponentAssembler assembler, ComponentTemplate template) {
+    private TokenStream createTokenStream(ComponentAssembler assembler, ComponentTemplate template)
+    {
         List<TemplateToken> tokens = CollectionFactory.newList();
 
         Stack<TemplateToken> queue = CollectionFactory.newStack();
@@ -266,17 +290,20 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
         pushAll(queue, baseTemplate.getTokens());
 
-        while (!queue.isEmpty()) {
+        while (!queue.isEmpty())
+        {
             TemplateToken token = queue.pop();
 
             // When an ExtensionPoint is found, it is replaced with the tokens of its override.
 
-            if (token.getTokenType().equals(TokenType.EXTENSION_POINT)) {
+            if (token.getTokenType().equals(TokenType.EXTENSION_POINT))
+            {
                 ExtensionPointToken extensionPointToken = (ExtensionPointToken) token;
 
                 queueOverrideTokensForExtensionPoint(extensionPointToken, queue, overrideSearch);
 
-            } else {
+            } else
+            {
                 tokens.add(token);
             }
         }
@@ -287,7 +314,8 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
         Map<String, Location> componentIds = CollectionFactory.newCaseInsensitiveMap();
 
-        for (ComponentTemplate ct : overrideSearch) {
+        for (ComponentTemplate ct : overrideSearch)
+        {
             componentIds.putAll(ct.getComponentIds());
         }
 
@@ -299,22 +327,26 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         return new TokenStreamImpl(tokens);
     }
 
-    private static <T> T getLast(List<T> list) {
+    private static <T> T getLast(List<T> list)
+    {
         int count = list.size();
 
         return list.get(count - 1);
     }
 
     private void queueOverrideTokensForExtensionPoint(ExtensionPointToken extensionPointToken,
-                                                      Stack<TemplateToken> queue, List<ComponentTemplate> overrideSearch) {
+                                                      Stack<TemplateToken> queue, List<ComponentTemplate> overrideSearch)
+    {
         String extensionPointId = extensionPointToken.getExtensionPointId();
 
         // Work up from the component, through its base classes, towards the last non-extension template.
 
-        for (ComponentTemplate t : overrideSearch) {
+        for (ComponentTemplate t : overrideSearch)
+        {
             List<TemplateToken> tokens = t.getExtensionPointTokens(extensionPointId);
 
-            if (tokens != null) {
+            if (tokens != null)
+            {
                 pushAll(queue, tokens);
                 return;
             }
@@ -327,7 +359,8 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
                 extensionPointToken.getLocation(), null);
     }
 
-    private List<ComponentTemplate> buildOverrideSearch(ComponentAssembler assembler, ComponentTemplate template) {
+    private List<ComponentTemplate> buildOverrideSearch(ComponentAssembler assembler, ComponentTemplate template)
+    {
         List<ComponentTemplate> result = CollectionFactory.newList();
         result.add(template);
 
@@ -335,10 +368,12 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
         ComponentTemplate lastTemplate = template;
 
-        while (lastTemplate.isExtension()) {
+        while (lastTemplate.isExtension())
+        {
             ComponentModel parentModel = model.getParentModel();
 
-            if (parentModel == null) {
+            if (parentModel == null)
+            {
                 throw new RuntimeException(PageloadMessages.noParentForExtension(model));
             }
 
@@ -358,16 +393,19 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
      * Push all the tokens onto the stack, in reverse order, so that the last token is deepest and the first token is
      * most shallow (first to come off the queue).
      */
-    private void pushAll(Stack<TemplateToken> queue, List<TemplateToken> tokens) {
+    private void pushAll(Stack<TemplateToken> queue, List<TemplateToken> tokens)
+    {
         for (int i = tokens.size() - 1; i >= 0; i--)
             queue.push(tokens.get(i));
     }
 
-    private void processTemplateToken(AssemblerContext context) {
+    private void processTemplateToken(AssemblerContext context)
+    {
         // These tokens can appear at the top level, or at lower levels (this method is invoked
         // from token-processing loops inside element(), component(), etc.
 
-        switch (context.peekType()) {
+        switch (context.peekType())
+        {
             case TEXT:
 
                 text(context);
@@ -428,65 +466,50 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         }
     }
 
-    private void cdata(AssemblerContext context) {
-        final CDATAToken token = context.next(CDATAToken.class);
+    private void cdata(AssemblerContext context)
+    {
+        CDATAToken token = context.next(CDATAToken.class);
 
-        RenderCommand command = new RenderCommand() {
-            public void render(MarkupWriter writer, RenderQueue queue) {
-                writer.cdata(token.getContent());
-            }
-
-            @Override
-            public String toString() {
-                return String.format("CDATA[%s]", token.getLocation());
-            }
-        };
-
-        context.addComposable(command);
+        context.addComposable(token);
 
     }
 
-    private void defineNamespacePrefix(AssemblerContext context) {
-        final DefineNamespacePrefixToken token = context.next(DefineNamespacePrefixToken.class);
+    private void defineNamespacePrefix(AssemblerContext context)
+    {
+        DefineNamespacePrefixToken token = context.next(DefineNamespacePrefixToken.class);
 
-        RenderCommand command = new RenderCommand() {
-            public void render(MarkupWriter writer, RenderQueue queue) {
-                writer.defineNamespace(token.getNamespaceURI(), token.getNamespacePrefix());
-            }
-
-            @Override
-            public String toString() {
-                return String.format("DefineNamespace[%s %s]", token.getNamespacePrefix(), token.getNamespaceURI());
-            }
-        };
-
-        context.addComposable(command);
+        context.addComposable(token);
     }
 
-    private void dtd(AssemblerContext context) {
+    private void dtd(AssemblerContext context)
+    {
         final DTDToken token = context.next(DTDToken.class);
 
-        context.add(new PageAssemblyAction() {
-            public void execute(PageAssembly pageAssembly) {
-                if (!pageAssembly.checkAndSetFlag("dtd-page-element-added")) {
-                    RenderCommand command = new DTDPageElement(token.getName(), token.getPublicId(), token
-                            .getSystemId());
+        context.add(new PageAssemblyAction()
+        {
+            public void execute(PageAssembly pageAssembly)
+            {
+                if (!pageAssembly.checkAndSetFlag("dtd-page-element-added"))
+                {
 
                     // It doesn't really matter where this ends up in the tree as long as its inside
                     // a portion that always renders.
 
-                    pageAssembly.addRenderCommand(command);
+                    pageAssembly.addRenderCommand(token);
                 }
             }
         });
     }
 
-    private void parameter(AssemblerContext context) {
+    private void parameter(AssemblerContext context)
+    {
         final ParameterToken token = context.next(ParameterToken.class);
 
-        context.add(new PageAssemblyAction() {
-            public void execute(PageAssembly pageAssembly) {
-                String parameterName = token.getName();
+        context.add(new PageAssemblyAction()
+        {
+            public void execute(PageAssembly pageAssembly)
+            {
+                String parameterName = token.name;
 
                 ComponentPageElement element = pageAssembly.createdElement.peek();
 
@@ -501,7 +524,8 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
                 ParameterBinder binder = embeddedAssembler.createParameterBinder(parameterName);
 
-                if (binder == null) {
+                if (binder == null)
+                {
                     throw new UnknownValueException(
                             String.format("Component %s does not include a formal parameter '%s' (and does not support informal parameters).",
                                     element.getCompleteId(), parameterName), location,
@@ -518,11 +542,14 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         consumeToEndElementAndPopBodyElement(context);
     }
 
-    private void block(AssemblerContext context) {
+    private void block(AssemblerContext context)
+    {
         final BlockToken token = context.next(BlockToken.class);
 
-        context.add(new PageAssemblyAction() {
-            public void execute(PageAssembly pageAssembly) {
+        context.add(new PageAssemblyAction()
+        {
+            public void execute(PageAssembly pageAssembly)
+            {
                 String blockId = token.getId();
 
                 ComponentPageElement element = pageAssembly.activeElement.peek();
@@ -543,15 +570,20 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         consumeToEndElementAndPopBodyElement(context);
     }
 
-    private void consumeToEndElementAndPopBodyElement(AssemblerContext context) {
-        while (true) {
-            switch (context.peekType()) {
+    private void consumeToEndElementAndPopBodyElement(AssemblerContext context)
+    {
+        while (true)
+        {
+            switch (context.peekType())
+            {
                 case END_ELEMENT:
 
                     context.next();
 
-                    context.add(new PageAssemblyAction() {
-                        public void execute(PageAssembly pageAssembly) {
+                    context.add(new PageAssemblyAction()
+                    {
+                        public void execute(PageAssembly pageAssembly)
+                        {
                             pageAssembly.bodyElement.pop();
                         }
                     });
@@ -564,19 +596,21 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         }
     }
 
-    private void comment(AssemblerContext context) {
+    private void comment(AssemblerContext context)
+    {
         CommentToken token = context.next(CommentToken.class);
 
-        RenderCommand commentElement = new CommentPageElement(token.getComment());
-
-        context.addComposable(commentElement);
+        context.addComposable(token);
     }
 
-    private void component(AssemblerContext context) {
+    private void component(AssemblerContext context)
+    {
         EmbeddedComponentAssembler embeddedAssembler = startComponent(context);
 
-        while (true) {
-            switch (context.peekType()) {
+        while (true)
+        {
+            switch (context.peekType())
+            {
                 case ATTRIBUTE:
 
                     bindAttributeAsParameter(context, embeddedAssembler);
@@ -597,22 +631,24 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         }
     }
 
-    private void bindAttributeAsParameter(AssemblerContext context, EmbeddedComponentAssembler embeddedAssembler) {
+    private void bindAttributeAsParameter(AssemblerContext context, EmbeddedComponentAssembler embeddedAssembler)
+    {
         AttributeToken token = context.next(AttributeToken.class);
 
-        addParameterBindingAction(context, embeddedAssembler, token.getName(), token.getValue(),
+        addParameterBindingAction(context, embeddedAssembler, token.name, token.value,
                 BindingConstants.LITERAL, token.getLocation(), true);
     }
 
-    private void element(AssemblerContext context) {
+    private void element(AssemblerContext context)
+    {
         StartElementToken token = context.next(StartElementToken.class);
 
-        RenderCommand element = new StartElementPageElement(token.getNamespaceURI(), token.getName());
+        context.addComposable(token);
 
-        context.addComposable(element);
-
-        while (true) {
-            switch (context.peekType()) {
+        while (true)
+        {
+            switch (context.peekType())
+            {
                 case ATTRIBUTE:
                     attribute(context);
                     break;
@@ -633,7 +669,8 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
     }
 
-    private EmbeddedComponentAssembler startComponent(AssemblerContext context) {
+    private EmbeddedComponentAssembler startComponent(AssemblerContext context)
+    {
         StartComponentToken token = context.next(StartComponentToken.class);
 
         ComponentAssembler assembler = context.assembler;
@@ -653,10 +690,12 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         if (embeddedId == null)
             embeddedId = assembler.generateEmbeddedId(embeddedType);
 
-        if (embeddedModel != null) {
+        if (embeddedModel != null)
+        {
             String modelType = embeddedModel.getComponentType();
 
-            if (InternalUtils.isNonBlank(modelType) && embeddedType != null) {
+            if (InternalUtils.isNonBlank(modelType) && embeddedType != null)
+            {
                 throw new TapestryException(
                         PageloadMessages.redundantEmbeddedComponentTypes(embeddedId, embeddedType, modelType), token, null);
             }
@@ -670,15 +709,18 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         // This awkwardness is making me think that the page loader should resolve the component
         // type before invoking this method (we would then remove the componentType parameter).
 
-        if (InternalUtils.isNonBlank(embeddedType)) {
+        if (InternalUtils.isNonBlank(embeddedType))
+        {
             // The type actually overrides the specified class name. The class name is defined
             // by the type of the field. In many scenarios, the field type is a common
             // interface,
             // and the type is used to determine the concrete class to instantiate.
 
-            try {
+            try
+            {
                 componentClassName = componentClassResolver.resolveComponentTypeToClassName(embeddedType);
-            } catch (RuntimeException ex) {
+            } catch (RuntimeException ex)
+            {
                 throw new TapestryException(ex.getMessage(), token, ex);
             }
         }
@@ -692,17 +734,22 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
         addParameterBindingActions(context, embeddedAssembler, embeddedModel);
 
-        if (embeddedModel != null && embeddedModel.getInheritInformalParameters()) {
+        if (embeddedModel != null && embeddedModel.getInheritInformalParameters())
+        {
             // Another two-step: The first "captures" the container and embedded component. The second
             // occurs at the end of the page setup.
 
-            assembler.add(new PageAssemblyAction() {
-                public void execute(PageAssembly pageAssembly) {
+            assembler.add(new PageAssemblyAction()
+            {
+                public void execute(PageAssembly pageAssembly)
+                {
                     final ComponentPageElement container = pageAssembly.activeElement.peek();
                     final ComponentPageElement embedded = pageAssembly.createdElement.peek();
 
-                    pageAssembly.deferred.add(new PageAssemblyAction() {
-                        public void execute(PageAssembly pageAssembly) {
+                    pageAssembly.deferred.add(new PageAssemblyAction()
+                    {
+                        public void execute(PageAssembly pageAssembly)
+                        {
                             copyInformalParameters(container, embedded);
                         }
                     });
@@ -715,7 +762,8 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
     }
 
-    private void copyInformalParameters(ComponentPageElement container, ComponentPageElement embedded) {
+    private void copyInformalParameters(ComponentPageElement container, ComponentPageElement embedded)
+    {
         // TODO: Much more, this is an area where we can make things a bit more efficient by tracking
         // what has and hasn't been bound in the EmbeddedComponentAssembler (and identifying what is
         // and isn't informal).
@@ -724,7 +772,8 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
         Map<String, Binding> informals = container.getInformalParameterBindings();
 
-        for (String name : informals.keySet()) {
+        for (String name : informals.keySet())
+        {
             if (model.getParameterModel(name) != null)
                 continue;
 
@@ -735,11 +784,13 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
     }
 
     private void addParameterBindingActions(AssemblerContext context, EmbeddedComponentAssembler embeddedAssembler,
-                                            EmbeddedComponentModel embeddedModel) {
+                                            EmbeddedComponentModel embeddedModel)
+    {
         if (embeddedModel == null)
             return;
 
-        for (String parameterName : embeddedModel.getParameterNames()) {
+        for (String parameterName : embeddedModel.getParameterNames())
+        {
             String parameterValue = embeddedModel.getParameterValue(parameterName);
 
             addParameterBindingAction(context, embeddedAssembler, parameterName, parameterValue, BindingConstants.PROP,
@@ -749,21 +800,25 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
     private void addParameterBindingAction(AssemblerContext context,
                                            final EmbeddedComponentAssembler embeddedAssembler, final String parameterName,
-                                           final String parameterValue, final String metaDefaultBindingPrefix, final Location location, final boolean ignoreUnmatchedFormal) {
+                                           final String parameterValue, final String metaDefaultBindingPrefix, final Location location, final boolean ignoreUnmatchedFormal)
+    {
         if (embeddedAssembler.isBound(parameterName))
             return;
 
         embeddedAssembler.setBound(parameterName);
 
-        if (parameterValue.startsWith(InternalConstants.INHERIT_BINDING_PREFIX)) {
+        if (parameterValue.startsWith(InternalConstants.INHERIT_BINDING_PREFIX))
+        {
             String containerParameterName = parameterValue.substring(InternalConstants.INHERIT_BINDING_PREFIX.length());
 
             addInheritedBindingAction(context, parameterName, containerParameterName);
             return;
         }
 
-        context.add(new PageAssemblyAction() {
-            public void execute(PageAssembly pageAssembly) {
+        context.add(new PageAssemblyAction()
+        {
+            public void execute(PageAssembly pageAssembly)
+            {
                 // Because of published parameters, we have to wait until page assembly time to throw out
                 // informal parameters bound to components that don't support informal parameters ...
                 // otherwise we'd throw out (sometimes!) published parameters.
@@ -772,8 +827,10 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
                 // Null meaning an informal parameter and the component (and mixins) doesn't support informals.
 
-                if (binder == null) {
-                    if (ignoreUnmatchedFormal) {
+                if (binder == null)
+                {
+                    if (ignoreUnmatchedFormal)
+                    {
                         return;
                     }
 
@@ -811,9 +868,12 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
      * @param containerParameterName
      */
     private void addInheritedBindingAction(AssemblerContext context, final String parameterName,
-                                           final String containerParameterName) {
-        context.add(new PageAssemblyAction() {
-            public void execute(PageAssembly pageAssembly) {
+                                           final String containerParameterName)
+    {
+        context.add(new PageAssemblyAction()
+        {
+            public void execute(PageAssembly pageAssembly)
+            {
                 // At the time this action executes, we'll be able to capture the containing and embedded
                 // component. We can then defer the connection logic until after all other construction.
 
@@ -822,8 +882,10 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
                 // Parameters are normally bound bottom to top. Inherited parameters run differently, and should be
                 // top to bottom.
-                pageAssembly.deferred.add(new PageAssemblyAction() {
-                    public void execute(PageAssembly pageAssembly) {
+                pageAssembly.deferred.add(new PageAssemblyAction()
+                {
+                    public void execute(PageAssembly pageAssembly)
+                    {
                         connectInheritedParameter(container, embedded, parameterName, containerParameterName);
                     }
                 });
@@ -832,7 +894,8 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
     }
 
     private void connectInheritedParameter(ComponentPageElement container, ComponentPageElement embedded,
-                                           String parameterName, String containerParameterName) {
+                                           String parameterName, String containerParameterName)
+    {
         // TODO: This assumes that the two parameters are both on the core component and not on
         // a mixin. I think this could be improved with more static analysis.
 
@@ -852,9 +915,12 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
     private void addActionForEmbeddedComponent(AssemblerContext context,
                                                final EmbeddedComponentAssembler embeddedAssembler, final String embeddedId, final String elementName,
-                                               final String componentClassName) {
-        context.add(new PageAssemblyAction() {
-            public void execute(PageAssembly pageAssembly) {
+                                               final String componentClassName)
+    {
+        context.add(new PageAssemblyAction()
+        {
+            public void execute(PageAssembly pageAssembly)
+            {
                 pageAssembly.checkForRecursion(componentClassName, embeddedAssembler.getLocation());
 
                 ComponentResourceSelector selector = pageAssembly.page.getSelector();
@@ -887,22 +953,25 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         });
     }
 
-    private void attribute(AssemblerContext context) {
+    private void attribute(AssemblerContext context)
+    {
         final AttributeToken token = context.next(AttributeToken.class);
 
-        String value = token.getValue();
+        String value = token.value;
 
         // No expansion makes this easier, more efficient.
-        if (value.indexOf(InternalConstants.EXPANSION_START) < 0) {
-            RenderCommand command = new RenderAttribute(token);
+        if (value.indexOf(InternalConstants.EXPANSION_START) < 0)
+        {
 
-            context.addComposable(command);
+            context.addComposable(token);
 
             return;
         }
 
-        context.add(new PageAssemblyAction() {
-            public void execute(PageAssembly pageAssembly) {
+        context.add(new PageAssemblyAction()
+        {
+            public void execute(PageAssembly pageAssembly)
+            {
                 InternalComponentResources resources = pageAssembly.activeElement.peek().getComponentResources();
 
                 RenderCommand command = elementFactory.newAttributeElement(resources, token);
@@ -912,9 +981,12 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         });
     }
 
-    private void body(AssemblerContext context) {
-        context.add(new PageAssemblyAction() {
-            public void execute(PageAssembly pageAssembly) {
+    private void body(AssemblerContext context)
+    {
+        context.add(new PageAssemblyAction()
+        {
+            public void execute(PageAssembly pageAssembly)
+            {
                 ComponentPageElement element = pageAssembly.activeElement.peek();
 
                 pageAssembly.addRenderCommand(new RenderBodyElement(element));
@@ -922,11 +994,14 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         });
     }
 
-    private void expansion(AssemblerContext context) {
+    private void expansion(AssemblerContext context)
+    {
         final ExpansionToken token = context.next(ExpansionToken.class);
 
-        context.add(new PageAssemblyAction() {
-            public void execute(PageAssembly pageAssembly) {
+        context.add(new PageAssemblyAction()
+        {
+            public void execute(PageAssembly pageAssembly)
+            {
                 ComponentResources resources = pageAssembly.activeElement.peek().getComponentResources();
 
                 RenderCommand command = elementFactory.newExpansionElement(resources, token);
@@ -936,10 +1011,11 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         });
     }
 
-    private void text(AssemblerContext context) {
+    private void text(AssemblerContext context)
+    {
         TextToken textToken = context.next(TextToken.class);
 
-        context.addComposable(new TextPageElement(textToken.getText()));
+        context.addComposable(textToken);
     }
 
 }

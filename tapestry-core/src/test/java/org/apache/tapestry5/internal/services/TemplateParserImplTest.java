@@ -103,35 +103,35 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         // Spot check a few things ...
 
-        assertEquals(t0.getName(), "html");
-        assertEquals(t0.getNamespaceURI(), "");
+        assertEquals(t0.name, "html");
+        assertEquals(t0.namespaceURI, "");
         checkLine(t0, 1);
 
         TextToken t1 = get(tokens, 1);
         // Concerned this may not work cross platform.
-        assertEquals(t1.getText(), "\n    ");
+        assertEquals(t1.text, "\n    ");
 
         StartElementToken t2 = get(tokens, 2);
-        assertEquals(t2.getName(), "head");
+        assertEquals(t2.name, "head");
         checkLine(t2, 2);
 
         TextToken t5 = get(tokens, 5);
-        assertEquals(t5.getText(), "title");
+        assertEquals(t5.text, "title");
         checkLine(t5, 3);
 
         get(tokens, 6);
 
         StartElementToken t12 = get(tokens, 12);
-        assertEquals(t12.getName(), "p");
+        assertEquals(t12.name, "p");
 
         AttributeToken t13 = get(tokens, 13);
-        assertEquals(t13.getName(), "class");
-        assertEquals(t13.getValue(), "important");
-        assertEquals(t13.getNamespaceURI(), "");
+        assertEquals(t13.name, "class");
+        assertEquals(t13.value, "important");
+        assertEquals(t13.namespaceURI, "");
 
         TextToken t14 = get(tokens, 14);
         // Simplify the text, converting consecutive whitespace to just a single space.
-        assertEquals(t14.getText().replaceAll("\\s+", " ").trim(), "Tapestry rocks! Line 2");
+        assertEquals(t14.text.replaceAll("\\s+", " ").trim(), "Tapestry rocks! Line 2");
 
         // Line number is the *start* line of the whole text block.
         checkLine(t14, 6);
@@ -156,24 +156,24 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         String expectedURI = "http://foo.com";
 
-        assertEquals(t0.getNamespaceURI(), expectedURI);
-        assertEquals(t0.getName(), "bar");
+        assertEquals(t0.namespaceURI, expectedURI);
+        assertEquals(t0.name, "bar");
 
         DefineNamespacePrefixToken t1 = get(tokens, 1);
 
-        assertEquals(t1.getNamespacePrefix(), "foo");
-        assertEquals(t1.getNamespaceURI(), expectedURI);
+        assertEquals(t1.namespacePrefix, "foo");
+        assertEquals(t1.namespaceURI, expectedURI);
 
         AttributeToken t2 = get(tokens, 2);
 
-        assertEquals(t2.getName(), "biff");
-        assertEquals(t2.getValue(), "baz");
-        assertEquals(t2.getNamespaceURI(), expectedURI);
+        assertEquals(t2.name, "biff");
+        assertEquals(t2.value, "baz");
+        assertEquals(t2.namespaceURI, expectedURI);
 
         StartElementToken t4 = get(tokens, 4);
 
-        assertEquals(t4.getNamespaceURI(), "");
-        assertEquals(t4.getName(), "gnip");
+        assertEquals(t4.namespaceURI, "");
+        assertEquals(t4.name, "gnip");
 
         // The rest are close tokens
     }
@@ -187,11 +187,11 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         TextToken t0 = get(tokens, 0);
 
-        assertEquals(t0.getText().trim(), "A bit of text.");
+        assertEquals(t0.text.trim(), "A bit of text.");
 
         StartElementToken t1 = get(tokens, 1);
 
-        assertEquals(t1.getName(), "foo");
+        assertEquals(t1.name, "foo");
 
         EndElementToken t2 = get(tokens, 2);
 
@@ -199,7 +199,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         TextToken t3 = get(tokens, 3);
 
-        assertEquals(t3.getText().trim(), "Some more text.");
+        assertEquals(t3.text.trim(), "Some more text.");
     }
 
     @Test
@@ -214,7 +214,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         // This is OK because the org.apache.tapestry5.dom.Text will convert the characters back into
         // XML entities.
 
-        assertEquals(t.getText().trim(), "lt:< gt:> amp:&");
+        assertEquals(t.text.trim(), "lt:< gt:> amp:&");
     }
 
     @Test
@@ -228,19 +228,19 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         DTDToken t0 = get(tokens, 0);
 
-        assertEquals(t0.getName(), "html");
-        assertEquals(t0.getPublicId(), "-//W3C//DTD XHTML 1.0 Transitional//EN");
-        assertEquals(t0.getSystemId(), "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd");
+        assertEquals(t0.name, "html");
+        assertEquals(t0.publicId, "-//W3C//DTD XHTML 1.0 Transitional//EN");
+        assertEquals(t0.systemId, "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd");
 
         StartElementToken t1 = get(tokens, 1);
 
-        assertEquals(t1.getNamespaceURI(), expectedURI);
-        assertEquals(t1.getName(), "html");
+        assertEquals(t1.namespaceURI, expectedURI);
+        assertEquals(t1.name, "html");
 
         DefineNamespacePrefixToken t2 = get(tokens, 2);
 
-        assertEquals(t2.getNamespaceURI(), expectedURI);
-        assertEquals(t2.getNamespacePrefix(), "");
+        assertEquals(t2.namespaceURI, expectedURI);
+        assertEquals(t2.namespacePrefix, "");
 
 
         TextToken t = get(tokens, 3);
@@ -252,7 +252,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         // You have to have a DOCTYPE just to parse a template that uses
         // an HTML entity.
 
-        assertEquals(t.getText().trim(), "nbsp:[\u00a0]");
+        assertEquals(t.text.trim(), "nbsp:[\u00a0]");
     }
 
     @Test
@@ -266,7 +266,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         CDATAToken t = get(tokens, 2);
 
-        assertEquals(t.getContent(), "CDATA: &lt;foo&gt; &amp; &lt;bar&gt; and <baz>");
+        assertEquals(t.content, "CDATA: &lt;foo&gt; &amp; &lt;bar&gt; and <baz>");
         checkLine(t, 2);
     }
 
@@ -281,7 +281,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         CommentToken token1 = get(tokens, 1);
 
-        assertEquals(token1.getComment(), " Single line comment ");
+        assertEquals(token1.comment, " Single line comment ");
     }
 
     @Test
@@ -295,7 +295,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         CommentToken t = get(tokens, 2);
 
-        String comment = t.getComment().trim().replaceAll("\\s+", " ");
+        String comment = t.comment.trim().replaceAll("\\s+", " ");
 
         assertEquals(comment, "Line one Line two Line three");
     }
@@ -327,7 +327,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         TextToken t = get(tokens, 3);
 
-        assertEquals(t.getText().trim(), "fred's body");
+        assertEquals(t.text.trim(), "fred's body");
 
         get(tokens, 4);
     }
@@ -346,7 +346,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         TextToken t = get(tokens, 3);
 
-        assertEquals(t.getText().trim(), "fred's body");
+        assertEquals(t.text.trim(), "fred's body");
 
         EndElementToken end5 = get(tokens, 5);
         EndElementToken end7 = get(tokens, 7);
@@ -367,8 +367,8 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         AttributeToken attr = get(tokens, 1);
 
-        assertEquals(attr.getName(), "param");
-        assertEquals(attr.getValue(), "value");
+        assertEquals(attr.name, "param");
+        assertEquals(attr.value, "value");
 
         assertTrue(EndElementToken.class.isInstance(tokens.get(2)));
     }
@@ -389,8 +389,8 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         AttributeToken attr = get(tokens, 1);
 
-        assertEquals(attr.getName(), "param");
-        assertEquals(attr.getValue(), "value");
+        assertEquals(attr.name, "param");
+        assertEquals(attr.value, "value");
 
         assertTrue(EndElementToken.class.isInstance(tokens.get(2)));
 
@@ -425,18 +425,18 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         // TODO: Not sure what order the attributes appear in. Order in the XML? Sorted
         // alphabetically? Random 'cause they're hashed?
 
-        assertEquals(t1.getName(), "cherry");
-        assertEquals(t1.getValue(), "bomb");
+        assertEquals(t1.name, "cherry");
+        assertEquals(t1.value, "bomb");
         assertSame(t1.getLocation(), l);
 
         AttributeToken t2 = get(tokens, 4);
-        assertEquals(t2.getName(), "align");
-        assertEquals(t2.getValue(), "right");
+        assertEquals(t2.name, "align");
+        assertEquals(t2.value, "right");
         assertSame(t2.getLocation(), l);
 
         TextToken t3 = get(tokens, 5);
 
-        assertEquals(t3.getText().trim(), "fred's body");
+        assertEquals(t3.text.trim(), "fred's body");
 
         get(tokens, 6);
     }
@@ -489,19 +489,19 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         TextToken t1 = get(tokens, 1);
 
-        assertEquals(t1.getText().trim(), "Expansion #1[");
+        assertEquals(t1.text.trim(), "Expansion #1[");
 
         ExpansionToken t2 = get(tokens, 2);
         assertEquals(t2.getExpression(), "expansion1");
 
         TextToken t3 = get(tokens, 3);
-        assertEquals(t3.getText().replaceAll("\\s+", " "), "] Expansion #2[");
+        assertEquals(t3.text.replaceAll("\\s+", " "), "] Expansion #2[");
 
         ExpansionToken t4 = get(tokens, 4);
         assertEquals(t4.getExpression(), "expansion2");
 
         TextToken t5 = get(tokens, 5);
-        assertEquals(t5.getText().trim(), "]");
+        assertEquals(t5.text.trim(), "]");
     }
 
     @Test
@@ -513,7 +513,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         TextToken t1 = get(tokens, 1);
 
-        assertEquals(t1.getText().replaceAll("\\s+", " "), " ${expansions must be on a single line} ");
+        assertEquals(t1.text.replaceAll("\\s+", " "), " ${expansions must be on a single line} ");
     }
 
     @Test
@@ -529,7 +529,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         TextToken token4 = get(tokens, 4);
 
-        assertEquals(token4.getText(), " [");
+        assertEquals(token4.text, " [");
 
         ExpansionToken token5 = get(tokens, 5);
 
@@ -537,7 +537,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         TextToken token6 = get(tokens, 6);
 
-        assertEquals(token6.getText(), "]");
+        assertEquals(token6.text, "]");
     }
 
     @Test
@@ -549,7 +549,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         CDATAToken t2 = get(tokens, 2);
 
-        assertEquals(t2.getContent(), "${not-an-expansion}");
+        assertEquals(t2.content, "${not-an-expansion}");
     }
 
     @Test
@@ -561,8 +561,8 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         AttributeToken token1 = get(tokens, 1);
 
-        assertEquals(token1.getName(), "exp");
-        assertEquals(token1.getValue(), "${not-an-expansion}");
+        assertEquals(token1.name, "exp");
+        assertEquals(token1.value, "${not-an-expansion}");
     }
 
     @Test
@@ -605,10 +605,10 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         List<TemplateToken> tokens = tokens("parameter_element.tml");
 
         ParameterToken token4 = get(tokens, 4);
-        assertEquals(token4.getName(), "fred");
+        assertEquals(token4.name, "fred");
 
         CommentToken token6 = get(tokens, 6);
-        assertEquals(token6.getComment(), " fred content ");
+        assertEquals(token6.comment, " fred content ");
 
         TemplateToken token8 = get(tokens, 8);
 
@@ -624,10 +624,10 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         List<TemplateToken> tokens = tokens("parameter_namespace_element.tml");
 
         ParameterToken token4 = get(tokens, 4);
-        assertEquals(token4.getName(), "fred");
+        assertEquals(token4.name, "fred");
 
         CommentToken token6 = get(tokens, 6);
-        assertEquals(token6.getComment(), " fred content ");
+        assertEquals(token6.comment, " fred content ");
 
         TemplateToken token8 = get(tokens, 8);
 
@@ -670,13 +670,13 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         assertEquals(token1.getId(), "block0");
 
         CommentToken token2 = get(tokens, 2);
-        assertEquals(token2.getComment(), " block0 content ");
+        assertEquals(token2.comment, " block0 content ");
 
         BlockToken token4 = get(tokens, 4);
         assertNull(token4.getId());
 
         CommentToken token5 = get(tokens, 5);
-        assertEquals(token5.getComment(), " anon block content ");
+        assertEquals(token5.comment, " anon block content ");
     }
 
     @DataProvider
@@ -767,7 +767,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         List<TemplateToken> tokens = tokens(fileName);
         assertEquals(tokens.size(), 12);
         TextToken t = get(tokens, 9);
-        assertEquals(t.getText().trim(), "<Test>");
+        assertEquals(t.text.trim(), "<Test>");
     }
 
     @DataProvider
@@ -804,9 +804,9 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         List<TemplateToken> tokens = tokens(fileName);
         DTDToken t0 = get(tokens, 0);
-        assertEquals(t0.getName(), name);
-        assertEquals(t0.getPublicId(), publicId);
-        assertEquals(t0.getSystemId(), systemId);
+        assertEquals(t0.name, name);
+        assertEquals(t0.publicId, publicId);
+        assertEquals(t0.systemId, systemId);
     }
 
     @Test
@@ -845,7 +845,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         TextToken token1 = get(tokens, 1);
 
-        assertEquals(token1.getText(), "\n" + "        line in the middle\n" + "    ");
+        assertEquals(token1.text, "\n" + "        line in the middle\n" + "    ");
     }
 
     /**
@@ -857,10 +857,10 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         List<TemplateToken> tokens = tokens("space_preserved_in_container.tml");
 
         TextToken token0 = get(tokens, 0);
-        assertEquals(token0.getText(), "\n" + "    ");
+        assertEquals(token0.text, "\n" + "    ");
 
         TextToken token2 = get(tokens, 2);
-        assertEquals(token2.getText(), "\n" + "        some text\n" + "    ");
+        assertEquals(token2.text, "\n" + "        some text\n" + "    ");
     }
 
     @Test
@@ -872,11 +872,11 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         // just a line feed.
 
         TextToken token1 = get(tokens, 1);
-        assertEquals(token1.getText(), "\nWhitespace\n");
+        assertEquals(token1.text, "\nWhitespace\n");
 
 
         TextToken token5 = get(tokens, 5);
-        assertEquals(token5.getText(), "\nis maintained.\n");
+        assertEquals(token5.text, "\nis maintained.\n");
     }
 
     /**
@@ -894,11 +894,11 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         assertEquals(token0.getComponentType(), "layout");
 
         StartElementToken token1 = get(tokens, 1);
-        assertEquals(token1.getName(), "p");
+        assertEquals(token1.name, "p");
 
         TextToken token2 = get(tokens, 2);
 
-        assertEquals(token2.getText(), "Page content");
+        assertEquals(token2.text, "Page content");
 
         checkType(tokens, 3, TokenType.END_ELEMENT);
         checkType(tokens, 4, TokenType.END_ELEMENT);
@@ -918,17 +918,17 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         assertEquals(alpha.size(), 1);
 
         TextToken alpha0 = get(alpha, 0);
-        assertEquals(alpha0.getText(), "beta");
+        assertEquals(alpha0.text, "beta");
 
         List<TemplateToken> gamma = template.getExtensionPointTokens("gamma");
         assertEquals(gamma.size(), 3);
 
         StartElementToken gamma0 = get(gamma, 0);
-        assertEquals(gamma0.getName(), "p");
+        assertEquals(gamma0.name, "p");
 
         TextToken gamma1 = get(gamma, 1);
 
-        assertEquals(gamma1.getText(), "Hi!");
+        assertEquals(gamma1.text, "Hi!");
 
         checkType(gamma, 2, TokenType.END_ELEMENT);
     }
@@ -947,10 +947,10 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         assertEquals(title.size(), 3);
 
         StartElementToken title0 = get(title, 0);
-        assertEquals(title0.getName(), "h1");
+        assertEquals(title0.name, "h1");
 
         TextToken title1 = get(title, 1);
-        assertEquals(title1.getText(), "Default Title");
+        assertEquals(title1.text, "Default Title");
 
         checkType(title, 2, TokenType.END_ELEMENT);
     }
@@ -964,6 +964,6 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         TextToken token3 = get(tokens, 3);
 
-        assertEquals(token3.getText(), "\u00A92011\u00A0Apache");
+        assertEquals(token3.text, "\u00A92011\u00A0Apache");
     }
 }

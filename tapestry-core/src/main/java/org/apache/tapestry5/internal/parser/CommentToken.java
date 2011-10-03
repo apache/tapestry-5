@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,14 +14,17 @@
 
 package org.apache.tapestry5.internal.parser;
 
+import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.runtime.RenderCommand;
+import org.apache.tapestry5.runtime.RenderQueue;
 
 /**
  * A node representing a comment embedded in the source input.
  */
-public class CommentToken extends TemplateToken
+public class CommentToken extends TemplateToken implements RenderCommand
 {
-    private final String comment;
+    public final String comment;
 
     public CommentToken(String comment, Location location)
     {
@@ -30,9 +33,9 @@ public class CommentToken extends TemplateToken
         this.comment = comment;
     }
 
-    public String getComment()
+    public void render(MarkupWriter writer, RenderQueue queue)
     {
-        return comment;
+        writer.comment(comment);
     }
 
     @Override

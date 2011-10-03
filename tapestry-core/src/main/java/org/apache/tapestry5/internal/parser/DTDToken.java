@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,20 +14,24 @@
 
 package org.apache.tapestry5.internal.parser;
 
+import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.runtime.RenderCommand;
+import org.apache.tapestry5.runtime.RenderQueue;
 
 /**
  * Represents the presence of a Document Type declaration within a template. The Document type declaration will be
  * output to the client. In the event that multiple declarations are encountered (a page and one or more nested
  * components all declare a document type), the first document type declared will be used.
  */
-public class DTDToken extends TemplateToken
+public class DTDToken extends TemplateToken implements RenderCommand
 {
-    private final String name;
+    public final String name;
 
-    private final String publicId;
+    public final String publicId;
 
-    private final String systemId;
+    public final String systemId;
 
     public DTDToken(String name, String publicId, String systemId, Location location)
     {
@@ -38,28 +42,14 @@ public class DTDToken extends TemplateToken
         this.systemId = systemId;
     }
 
-    /**
-     * Returns the doctype name (the name of the document root element)
-     */
-    public String getName()
+    public void render(MarkupWriter writer, RenderQueue queue)
     {
-        return name;
-    }
+        Document document = writer.getDocument();
 
-    /**
-     * Returns the public identifier of the DTD
-     */
-    public String getPublicId()
-    {
-        return publicId;
-    }
-
-    /**
-     * Returns the system identifier of the DTD
-     */
-    public String getSystemId()
-    {
-        return systemId;
+        if (!document.hasDTD())
+        {
+            document.dtd(name, publicId, systemId);
+        }
     }
 
     @Override

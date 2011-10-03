@@ -23,7 +23,6 @@ import org.apache.tapestry5.internal.parser.AttributeToken;
 import org.apache.tapestry5.internal.parser.ExpansionToken;
 import org.apache.tapestry5.internal.structure.ExpansionPageElement;
 import org.apache.tapestry5.ioc.Location;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.runtime.RenderCommand;
@@ -31,6 +30,8 @@ import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.BindingSource;
 
 import java.util.List;
+
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 
 public class PageElementFactoryImpl implements PageElementFactory
 {
@@ -61,22 +62,19 @@ public class PageElementFactoryImpl implements PageElementFactory
 
     public RenderCommand newAttributeElement(ComponentResources componentResources, final AttributeToken token)
     {
-        final StringProvider provider = parseAttributeExpansionExpression(token.getValue(), componentResources,
-                                                                          token.getLocation());
-
-        final String namespace = token.getNamespaceURI();
-        final String name = token.getName();
+        final StringProvider provider = parseAttributeExpansionExpression(token.value, componentResources,
+                token.getLocation());
 
         return new RenderCommand()
         {
             public void render(MarkupWriter writer, RenderQueue queue)
             {
-                writer.attributeNS(namespace, name, provider.provideString());
+                writer.attributeNS(token.namespaceURI, token.name, provider.provideString());
             }
 
             public String toString()
             {
-                return String.format("AttributeNS[%s %s \"%s\"]", namespace, name, token.getValue());
+                return String.format("AttributeNS[%s %s \"%s\"]", token.namespaceURI, token.name, token.value);
             }
         };
     }
@@ -115,7 +113,7 @@ public class PageElementFactoryImpl implements PageElementFactory
             String expansion = expression.substring(expansionx + 2, endx);
 
             final Binding binding = bindingSource.newBinding("attribute expansion", resources, resources,
-                                                             BindingConstants.PROP, expansion, location);
+                    BindingConstants.PROP, expansion, location);
 
             final StringProvider provider = new StringProvider()
             {
@@ -126,8 +124,7 @@ public class PageElementFactoryImpl implements PageElementFactory
                         Object raw = binding.get();
 
                         return typeCoercer.coerce(raw, String.class);
-                    }
-                    catch (Exception ex)
+                    } catch (Exception ex)
                     {
                         throw new TapestryException(ex.getMessage(), location, ex);
                     }
@@ -163,7 +160,7 @@ public class PageElementFactoryImpl implements PageElementFactory
     public RenderCommand newExpansionElement(ComponentResources componentResources, ExpansionToken token)
     {
         Binding binding = bindingSource.newBinding("expansion", componentResources, componentResources,
-                                                   BindingConstants.PROP, token.getExpression(), token.getLocation());
+                BindingConstants.PROP, token.getExpression(), token.getLocation());
 
         return new ExpansionPageElement(binding, typeCoercer);
     }
@@ -176,12 +173,12 @@ public class PageElementFactoryImpl implements PageElementFactory
         if (expression.contains(InternalConstants.EXPANSION_START))
         {
             StringProvider provider = parseAttributeExpansionExpression(expression, loadingComponentResources,
-                                                                        location);
+                    location);
 
             return new AttributeExpansionBinding(location, provider);
         }
 
         return bindingSource.newBinding(parameterName, loadingComponentResources,
-                                        embeddedComponentResources, defaultBindingPrefix, expression, location);
+                embeddedComponentResources, defaultBindingPrefix, expression, location);
     }
 }

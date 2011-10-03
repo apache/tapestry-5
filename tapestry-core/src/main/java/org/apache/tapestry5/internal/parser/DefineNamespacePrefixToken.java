@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,10 @@
 
 package org.apache.tapestry5.internal.parser;
 
+import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.runtime.RenderCommand;
+import org.apache.tapestry5.runtime.RenderQueue;
 
 /**
  * A token from a template that defines a namespace prefix. This will always follow a {@link
@@ -24,10 +27,11 @@ import org.apache.tapestry5.ioc.Location;
  *
  * @see org.apache.tapestry5.dom.Element#defineNamespace(String, String)
  */
-public class DefineNamespacePrefixToken extends TemplateToken
+public class DefineNamespacePrefixToken extends TemplateToken implements RenderCommand
 {
-    private final String namespaceURI;
-    private final String namespacePrefix;
+    public final String namespaceURI;
+
+    public final String namespacePrefix;
 
     public DefineNamespacePrefixToken(String namespaceURI, String namespacePrefix, Location location)
     {
@@ -37,19 +41,15 @@ public class DefineNamespacePrefixToken extends TemplateToken
         this.namespaceURI = namespaceURI;
     }
 
-    public String getNamespacePrefix()
-    {
-        return namespacePrefix;
-    }
-
-    public String getNamespaceURI()
-    {
-        return namespaceURI;
-    }
-
     @Override
     public String toString()
     {
         return String.format("DefineNamespacePrefix[%s=%s]", namespacePrefix, namespaceURI);
     }
+
+    public void render(MarkupWriter writer, RenderQueue queue)
+    {
+        writer.defineNamespace(namespaceURI, namespacePrefix);
+    }
+
 }

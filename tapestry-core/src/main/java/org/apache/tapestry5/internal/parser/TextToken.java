@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,14 +14,17 @@
 
 package org.apache.tapestry5.internal.parser;
 
+import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.runtime.RenderCommand;
+import org.apache.tapestry5.runtime.RenderQueue;
 
 /**
  *
  */
-public class TextToken extends TemplateToken
+public class TextToken extends TemplateToken implements RenderCommand
 {
-    private final String text;
+    public final String text;
 
     public TextToken(String text, Location location)
     {
@@ -30,12 +33,9 @@ public class TextToken extends TemplateToken
         this.text = text;
     }
 
-    /**
-     * Returns the text extracted from that part of the template.
-     */
-    public String getText()
+    public void render(MarkupWriter writer, RenderQueue queue)
     {
-        return text;
+        writer.write(text);
     }
 
     @Override

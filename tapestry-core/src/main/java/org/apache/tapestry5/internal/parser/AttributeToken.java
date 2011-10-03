@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,18 +14,21 @@
 
 package org.apache.tapestry5.internal.parser;
 
+import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.runtime.RenderCommand;
+import org.apache.tapestry5.runtime.RenderQueue;
 
 /**
  * Stores an attribute/value pair (as part of an XML element).
  */
-public class AttributeToken extends TemplateToken
+public class AttributeToken extends TemplateToken implements RenderCommand
 {
-    private final String namespaceURI;
+    public final String namespaceURI;
 
-    private final String name;
+    public final String name;
 
-    private final String value;
+    public final String value;
 
     public AttributeToken(String namespaceURI, String name, String value, Location location)
     {
@@ -36,29 +39,11 @@ public class AttributeToken extends TemplateToken
         this.value = value;
     }
 
-    /**
-     * Returns local name for the attribute.
-     */
-    public String getName()
+    public void render(MarkupWriter writer, RenderQueue queue)
     {
-        return name;
+        writer.attributeNS(namespaceURI, name, value);
     }
 
-    /**
-     * Returns the value for the attribute.
-     */
-    public String getValue()
-    {
-        return value;
-    }
-
-    /**
-     * Returns the namespace URI containing the attribute, or the empty string for the default namespace.
-     */
-    public String getNamespaceURI()
-    {
-        return namespaceURI;
-    }
 
     @Override
     public String toString()

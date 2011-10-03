@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,14 +14,17 @@
 
 package org.apache.tapestry5.internal.parser;
 
+import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.runtime.RenderCommand;
+import org.apache.tapestry5.runtime.RenderQueue;
 
 /**
  * Literal text that was enclosed within a !CDATA in the input template (so we should do the same during output).
  */
-public class CDATAToken extends TemplateToken
+public class CDATAToken extends TemplateToken implements RenderCommand
 {
-    private final String content;
+    public final String content;
 
     public CDATAToken(String content, Location location)
     {
@@ -30,9 +33,9 @@ public class CDATAToken extends TemplateToken
         this.content = content;
     }
 
-    public String getContent()
+    public void render(MarkupWriter writer, RenderQueue queue)
     {
-        return content;
+        writer.cdata(content);
     }
 
     @Override
