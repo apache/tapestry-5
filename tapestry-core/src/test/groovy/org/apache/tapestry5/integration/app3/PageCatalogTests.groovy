@@ -1,11 +1,10 @@
 package org.apache.tapestry5.integration.app3
 
-import org.apache.tapestry5.test.SeleniumTestCase
+import org.apache.tapestry5.integration.TapestryCoreTestCase
 import org.testng.annotations.Test
 
-class PageCatalogTests extends SeleniumTestCase
+class PageCatalogTests extends TapestryCoreTestCase
 {
-
     @Test
     void load_page_catalog_page()
     {
@@ -15,16 +14,22 @@ class PageCatalogTests extends SeleniumTestCase
 
         assertTitle title
 
-        clickAndWait "link=clear the cache"
+        click "link=clear the cache"
 
-        assertTitle title
+        waitForAjaxRequestsToComplete "500"
 
         assertTextPresent "Page cache cleared"
 
-        clickAndWait "link=Run the GC"
+        click "link=Run the GC"
+
+        waitForAjaxRequestsToComplete "500"
 
         assertTextPresent "Garbage collection freed"
 
         click "link=load all pages"
+
+        waitForAjaxRequestsToComplete "2000"
+
+        assertTextPresent "new pages for selector"
     }
 }
