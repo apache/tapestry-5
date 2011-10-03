@@ -33,7 +33,9 @@ interface EmbeddedComponentAssembler extends Locatable
      * Creates a binder that can later be used to bind the parameter. The parameter name may be unqualified ("value") or
      * have a mixin prefix ("mymixin.value").  In the former case, the correct mixin is located (though the more typical
      * case is to bind a parameter of the component itself, not a parameter of a mixin attached to the component). In
-     * the latter case, the mixinId is validated (to ensure it exists).
+     * the latter case, the mixinId is validated (to ensure it exists). In addition, a special mixinid that matches the
+     * component's class name can be used; this is necessary to disambiguate informal parameters of the component from formal mixin parameters
+     * (where an unqualified name would be bound to the mixin's parameter).
      * <p/>
      * If the name of the parameter does not match a formal parameter of the component (or mixin) and the component (or
      * mixin) does not support informal parameters, then null is returned.
@@ -41,8 +43,7 @@ interface EmbeddedComponentAssembler extends Locatable
      * This method should only be called at page-assembly time as it requires some data that is collected during
      * ComponentAssembly construction in order to handle published parameters of embedded components.
      *
-     * @param parameterName
-     *         simple or qualified parameter name
+     * @param parameterName simple or qualified parameter name
      * @return object that can bind the parameter
      */
     ParameterBinder createParameterBinder(String parameterName);
@@ -62,8 +63,7 @@ interface EmbeddedComponentAssembler extends Locatable
     /**
      * Adds mixins to the newly created embedded element.
      *
-     * @param newElement
-     *         new element requiring mixins
+     * @param newElement new element requiring mixins
      */
     void addMixinsToElement(ComponentPageElement newElement);
 

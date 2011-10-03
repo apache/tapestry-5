@@ -57,24 +57,19 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
 
     private final String informalParametersMixinId;
 
+    private final String componentPsuedoMixinId;
+
     private Map<String, Boolean> bound;
 
     /**
      * @param assemblerSource
-     * @param instantiatorSource
-     *         used to access component models
-     * @param componentClassResolver
-     *         used to convert mixin types to component models
-     * @param componentClassName
-     *         class name of embedded component
-     * @param selector
-     *         used to select template and other resources
-     * @param embeddedModel
-     *         embedded model (may be null for components defined in the template)
-     * @param templateMixins
-     *         list of mixins from the t:mixins element (possibly null)
-     * @param location
-     *         location of components element in its container's template
+     * @param instantiatorSource     used to access component models
+     * @param componentClassResolver used to convert mixin types to component models
+     * @param componentClassName     class name of embedded component
+     * @param selector               used to select template and other resources
+     * @param embeddedModel          embedded model (may be null for components defined in the template)
+     * @param templateMixins         list of mixins from the t:mixins element (possibly null)
+     * @param location               location of components element in its container's template
      */
     public EmbeddedComponentAssemblerImpl(ComponentAssemblerSource assemblerSource,
                                           ComponentInstantiatorSource instantiatorSource, ComponentClassResolver componentClassResolver,
@@ -106,7 +101,7 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
             }
         }
 
-        // And the template may include a t:mixins element to define yet more mixin.
+        // And the template may include a t:mixins element to define yet more mixins.
         // Template strings specified as:
         for (String mixinDef : TapestryInternalUtils.splitAtCommas(templateMixins))
         {
@@ -115,6 +110,12 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
 
             addMixin(className, order.getConstraints());
         }
+
+        // Finally (new in 5.3, for TAP5-1680), the component itself can sometimes acts as a mixin;
+        // this allows for dealing with parameter name conflicts between the component and the mixin
+        // (especially where informal parameters are involved).
+
+        componentPsuedoMixinId = InternalUtils.lastTerm(componentClassName);
 
         informalParametersMixinId = prescanMixins();
 
@@ -182,50 +183,115 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
         return assemblerSource.getAssembler(componentModel.getComponentClassName(), selector);
     }
 
-    public ParameterBinder createParameterBinder(String parameterName)
+
+    public ParameterBinder createParameterBinder(String qualifiedParameterName)
     {
-        int dotx = parameterName.indexOf('.');
-        if (dotx >= 0)
+        int dotx = qualifiedParameterName.indexOf('.');
+
+        if (dotx < 0)
         {
-            String mixinId = parameterName.substring(0, dotx);
-            if (!mixinIdToInstantiator.containsKey(mixinId))
-            {
-                throw new TapestryException(
-                        PageloadMessages.mixinidForParamnotfound(parameterName, mixinIdToInstantiator.keySet()), location,
-                        null);
-            }
-        } else
-        {
-            // Unqualified parameter name. May be a reference not to a parameter of this component, but a published
-            // parameter of a component embedded in this component. The ComponentAssembler for this component
-            // will know.
-
-            ComponentAssembler assembler = assemblerSource.getAssembler(componentModel.getComponentClassName(),
-                    selector);
-
-            ParameterBinder binder = assembler.getBinder(parameterName);
-
-            if (binder != null)
-                return binder;
+            return createParameterBinderFromSimpleParameterName(qualifiedParameterName);
         }
 
-        final ParameterBinder binder = parameterNameToBinder.get(parameterName);
+        return createParameterBinderFromQualifiedParameterName(qualifiedParameterName, qualifiedParameterName.substring(0, dotx),
+                qualifiedParameterName.substring(dotx + 1));
+    }
+
+    private ParameterBinder createParameterBinderFromSimpleParameterName(String parameterName)
+    {
+
+        // Look for a *formal* parameter with the simple name on the component itself.
+
+        ParameterBinder binder = getComponentAssembler().getBinder(parameterName);
 
         if (binder != null)
+        {
             return binder;
+        }
 
-        // Informal parameter: Is there a mixin for that?
+        // Next see if any mixin has a formal parameter with this simple name.
+
+        binder = parameterNameToBinder.get(parameterName);
+
+        if (binder != null)
+        {
+            return binder;
+        }
+
+
+        // So, is there an mixin that's claiming all informal parameters?
 
         if (informalParametersMixinId != null)
+        {
             return new ParameterBinderImpl(informalParametersMixinId, parameterName, null);
+        }
 
+        // Maybe the component claims informal parameters?
         if (componentModel.getSupportsInformalParameters())
             return new ParameterBinderImpl(null, parameterName, null);
 
-        // Otherwise, informal parameter and not supported by the component or any mixin.
+        // Otherwise, informal parameter are not supported by the component or any mixin.
 
         return null;
     }
+
+    private ParameterBinder createParameterBinderFromQualifiedParameterName(String qualifiedParameterName, String mixinId, String parameterName)
+    {
+
+        if (mixinId.equalsIgnoreCase(componentPsuedoMixinId))
+        {
+            return createParameterBinderForComponent(qualifiedParameterName, parameterName);
+        }
+
+        if (!mixinIdToInstantiator.containsKey(mixinId))
+        {
+            throw new TapestryException(
+                    String.format("Mixin id for parameter '%s' not found. Attached mixins: %s.", qualifiedParameterName,
+                            InternalUtils.joinSorted(mixinIdToInstantiator.keySet())), location,
+                    null);
+        }
+
+        ParameterBinder binder = parameterNameToBinder.get(qualifiedParameterName);
+
+        if (binder != null)
+        {
+            return binder;
+        }
+
+        // Ok, so perhaps this is a qualified name for an informal parameter of the mixin.
+
+        Instantiator instantiator = mixinIdToInstantiator.get(mixinId);
+
+        assert instantiator != null;
+
+        return bindInformalParameter(qualifiedParameterName, mixinId, parameterName, instantiator.getModel());
+    }
+
+    private ParameterBinder bindInformalParameter(String qualifiedParameterName, String mixinId, String parameterName, ComponentModel model)
+    {
+        if (model.getSupportsInformalParameters())
+        {
+            return new ParameterBinderImpl(mixinId, parameterName, null);
+        }
+
+        // Pretty sure this was not caught as an error in 5.2.
+
+        throw new TapestryException(String.format("Binding parameter %s as an informal parameter does not make sense, as %s does not support informal parameters.",
+                qualifiedParameterName, model.getComponentClassName()), location, null);
+    }
+
+    private ParameterBinder createParameterBinderForComponent(String qualifiedParameterName, String parameterName)
+    {
+        ParameterBinder binder = getComponentAssembler().getBinder(parameterName);
+
+        if (binder != null)
+        {
+            return binder;
+        }
+
+        return bindInformalParameter(qualifiedParameterName, null, parameterName, componentModel);
+    }
+
 
     public boolean isBound(String parameterName)
     {

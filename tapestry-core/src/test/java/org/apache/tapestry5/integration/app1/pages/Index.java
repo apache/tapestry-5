@@ -56,6 +56,8 @@ public class Index
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
 
+                    new Item("MixinVsInformalParameter", "Mixin Parameter vs. Informal Parameter", "Informal Paramters vs. Mixin parameter of same name"),
+
                     new Item("inherit/childa", "TAP5-1656 Demo", "Test a reported bug in component inheritance"),
 
                     new Item("ComponentInsideBlockDemo", "Component Inside Block Demo", "Verify that a component, inside a block, is still an embedded "),

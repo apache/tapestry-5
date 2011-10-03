@@ -1,0 +1,10 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+
+<h1>Mixin Parameter vs. Component Informal Parameter</h1>
+
+<p>
+    <t:actionlink t:id="frog" actionlink.title="Frog Title" t:mixins="alttitle" alttitle.title="Alt Title">little frog
+    </t:actionlink>
+</p>
+
+</html>

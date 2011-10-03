@@ -14,17 +14,15 @@
 
 package org.apache.tapestry5.internal.pageload;
 
+import org.apache.tapestry5.internal.parser.TokenType;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.internal.parser.TokenType;
 import org.apache.tapestry5.model.ComponentModel;
-
-import java.util.Collection;
 
 /**
  * Localized exception message support for pageload-related classes.
+ *
  * @since 5.2.0
  */
 final class PageloadMessages
@@ -39,11 +37,6 @@ final class PageloadMessages
     public static String uniqueMixinRequired(String mixinId)
     {
         return MESSAGES.format("unique_mixin_required", mixinId);
-    }
-
-    public static String mixinidForParamnotfound(String parameterName, Collection<String> availableMixins)
-    {
-        return MESSAGES.format("mixinid_for_paramnotfound", parameterName, InternalUtils.joinSorted(availableMixins));
     }
 
     public static String missingComponentType()
@@ -83,12 +76,12 @@ final class PageloadMessages
 
     public static String compositeRenderCommandMethodNotImplemented(String methodName)
     {
-        return MESSAGES.format("composite_render_command_method_not_implemented",methodName);
+        return MESSAGES.format("composite_render_command_method_not_implemented", methodName);
     }
 
     public static String exceptionAssemblingRootComponent(String pageName, String exceptionMessage)
     {
-        return MESSAGES.format("exception_assembling_root_component",pageName,exceptionMessage);
+        return MESSAGES.format("exception_assembling_root_component", pageName, exceptionMessage);
     }
 
     public static String exceptionAssemblingEmbeddedComponent(
@@ -118,7 +111,7 @@ final class PageloadMessages
     }
 
     public static String parameterAlreadyPublished(
-            String publishedParameterName, 
+            String publishedParameterName,
             String embeddedId,
             String componentClassName,
             String existingEmbeddedId)
@@ -132,7 +125,7 @@ final class PageloadMessages
 
     public static String failureCreatingEmbeddedComponent(String embeddedId, String containerClass, String exception)
     {
-        return MESSAGES.format("failure_creating_embedded_component",embeddedId, containerClass, exception);
+        return MESSAGES.format("failure_creating_embedded_component", embeddedId, containerClass, exception);
     }
 
     public static String publishedParameterNonexistant(String parameterName, String publishingClass, String embeddedId)

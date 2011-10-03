@@ -57,4 +57,18 @@ class ParameterTests extends TapestryCoreTestCase
 
         assertTextPresent "Parameter 'value' of component class org.apache.tapestry5.integration.app1.components.ParameterSubClass conflicts with the parameter defined by the org.apache.tapestry5.integration.app1.base.ParameterBaseClass base class."
     }
+
+    /**
+     * https://issues.apache.org/jira/browse/TAP5-1680
+     */
+    @Test
+    void use_component_class_name_to_disambiguate_informal_parameter()
+    {
+        openLinks "Mixin Parameter vs. Informal Parameter"
+
+        // Why frog?  I don't know.
+
+        assertAttribute "//a[@id='frog']/@alt", "Alt Title"
+        assertAttribute "//a[@id='frog']/@title", "Frog Title"
+    }
 }

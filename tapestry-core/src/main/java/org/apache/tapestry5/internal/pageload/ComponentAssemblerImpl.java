@@ -286,6 +286,7 @@ class ComponentAssemblerImpl implements ComponentAssembler
                 throw new TapestryException(
                         PageloadMessages.missingComponentType(), location, null);
             }
+
             EmbeddedComponentAssemblerImpl embedded = new EmbeddedComponentAssemblerImpl(assemblerSource,
                     instantiatorSource, componentClassResolver, componentClassName, getSelector(), embeddedModel,
                     mixins, location);
