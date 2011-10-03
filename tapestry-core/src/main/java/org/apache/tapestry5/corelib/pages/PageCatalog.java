@@ -72,6 +72,7 @@ public class PageCatalog
 
     @Property
     @Validate("required")
+    @Persist
     private String pageName;
 
     @Inject
@@ -94,6 +95,8 @@ public class PageCatalog
             alertManager.error("Forcing a class reload is only allowed when executing in development mode.");
             return null;
         }
+
+        pageName = null;
 
         componentInstantiatorSource.forceComponentInvalidation();
 
@@ -171,7 +174,13 @@ public class PageCatalog
             {
                 alertManager.error(String.format("Page %s failed to load.", name));
                 failures.add(name);
-                fail = ex;
+
+                if (fail == null)
+                {
+                    pageName = name;
+                    fail = ex;
+                }
+
                 break;
             }
         }
