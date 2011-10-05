@@ -5,7 +5,7 @@ package org.apache.tapestry5;
  *
  * @since 5.3
  */
-public class ParameterConstants
+public class ComponentsParametersConstants
 {
     /**
      * The default number for how many rows to display in a

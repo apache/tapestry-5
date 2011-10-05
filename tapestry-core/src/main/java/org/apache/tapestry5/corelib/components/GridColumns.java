@@ -72,15 +72,15 @@ public class GridColumns
     private EventLink sort, sort2;
 
     @Inject
-    @Path("${" + ParameterConstants.GRIDCOLUMNS_ASCENDING_ASSET + "}")
+    @Path("${" + ComponentsParametersConstants.GRIDCOLUMNS_ASCENDING_ASSET + "}")
     private Asset ascendingAsset;
 
     @Inject
-    @Path("${" + ParameterConstants.GRIDCOLUMNS_DESCENDING_ASSET + "}")
+    @Path("${" + ComponentsParametersConstants.GRIDCOLUMNS_DESCENDING_ASSET + "}")
     private Asset descendingAsset;
 
     @Inject
-    @Path("${" + ParameterConstants.GRIDCOLUMNS_SORTABLE_ASSET + "}")
+    @Path("${" + ComponentsParametersConstants.GRIDCOLUMNS_SORTABLE_ASSET + "}")
     private Asset sortableAsset;
 
     @Inject
