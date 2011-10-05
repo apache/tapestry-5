@@ -1,0 +1,8 @@
+<t:layout xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd" xmlns:p="tapestry:parameter">
+
+    <h1>Grid Symbol</h1>
+
+    <table t:type="grid" t:id="grid" source="numbers" row="number">
+    </table>
+
+</t:layout>

@@ -1,0 +1,9 @@
+<t:layout xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd" xmlns:p="tapestry:parameter">
+
+  <ul>
+    <li>
+      <t:pagelink page="gridsymbol">GridSymbol</t:pagelink>
+    </li>
+  </ul>
+
+</t:layout>

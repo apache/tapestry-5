@@ -92,6 +92,13 @@
         </packages>
     </test>
 
+    <test name="Components Param Symbols Tests" enabled="true">
+        <parameter name="tapestry.web-app-folder" value="src/test/symbolparam"/>
+        <packages>
+            <package name="org.apache.tapestry5.integration.symbolparam"/>
+        </packages>
+    </test>
+
     <test name="AppFolder Tests" enabled="true">
         <parameter name="tapestry.web-app-folder" value="src/test/appfolder"/>
         <packages>
