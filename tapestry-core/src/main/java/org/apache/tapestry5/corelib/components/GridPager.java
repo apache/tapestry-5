@@ -57,7 +57,7 @@ public class GridPager
      * Number of pages before and after the current page in the range. The pager always displays links for 2 * range + 1
      * pages, unless that's more than the total number of available pages.
      */
-    @Parameter("5")
+    @Parameter(BindingConstants.SYMBOL + ":" + ParameterConstants.GRIDPAGER_PAGE_RANGE)
     private int range;
 
     /**

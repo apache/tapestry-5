@@ -40,4 +40,45 @@ public class GridConstants
      */
 
     public static final String SORT_DESCENDING_CLASS = "t-sort-column-descending";
+
+    /**
+     * Number of rows to diplay within each {@link org.apache.tapestry5.corelib.components.Grid} page.
+     */
+    public static final int ROWS_PER_PAGE = 25;
+
+    /**
+     * CSS class for the &lt;table&gt; element.
+     */
+    public static final String TABLE_CLASS = "t-data-grid";
+
+    /**
+     * Default pager position
+     */
+    public static final String PAGER_POSITION = "top";
+
+    /**
+     * Block name to display in place of an empty {@link org.apache.tapestry5.corelib.components.Grid}
+     */
+    public static final String EMPTY_BLOCK = "block:empty";
+
+    /**
+     * Default number of page to display before and after the current page in the
+     * {@link org.apache.tapestry5.corelib.components.GridPager}
+     */
+    public static final int PAGER_PAGE_RANGE = 5;
+
+    /**
+     * Default {@link org.apache.tapestry5.Asset} for ascending columns sort
+     */
+    public static final String COLUMNS_ASCENDING = "sort-asc.png";
+
+    /**
+     * Default {@link org.apache.tapestry5.Asset} for ascending columns sort
+     */
+    public static final String COLUMNS_DESCENDING = "sort-desc.png";
+
+    /**
+     * Default {@link org.apache.tapestry5.Asset} for sortable columns
+     */
+    public static final String COLUMNS_SORTABLE = "sortable.png";
 }

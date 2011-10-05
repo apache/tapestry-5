@@ -18,14 +18,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.tapestry5.Binding;
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.Block;
-import org.apache.tapestry5.ComponentAction;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.PropertyOverrides;
-import org.apache.tapestry5.ValueEncoder;
+import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Component;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
@@ -98,14 +91,15 @@ public class Grid implements GridModel
      * the rows into "pages" and (normally) provide a pager to allow the user to navigate within the overall result
      * set.
      */
-    @Parameter("25")
+    @Parameter(BindingConstants.SYMBOL + ":" + ParameterConstants.GRID_ROWS_PER_PAGE)
     private int rowsPerPage;
 
     /**
      * Defines where the pager (used to navigate within the "pages" of results) should be displayed: "top", "bottom",
      * "both" or "none".
      */
-    @Parameter(value = "top", defaultPrefix = BindingConstants.LITERAL)
+    @Parameter(value = BindingConstants.SYMBOL + ":" + ParameterConstants.GRID_PAGER_POSITION,
+            defaultPrefix = BindingConstants.LITERAL)
     private GridPagerPosition pagerPosition;
 
     /**
@@ -188,14 +182,16 @@ public class Grid implements GridModel
      * "There is no data to display". This parameter is used to customize that message, possibly including components to
      * allow the user to create new objects.
      */
-    @Parameter(value = "block:empty", defaultPrefix = BindingConstants.LITERAL)
+    @Parameter(value = BindingConstants.SYMBOL + ":" + ParameterConstants.GRID_EMPTY_BLOCK,
+            defaultPrefix = BindingConstants.LITERAL)
     private Block empty;
 
     /**
      * CSS class for the &lt;table&gt; element. In addition, informal parameters to the Grid are rendered in the table
      * element.
      */
-    @Parameter(name = "class", defaultPrefix = BindingConstants.LITERAL, value = "t-data-grid")
+    @Parameter(name = "class", defaultPrefix = BindingConstants.LITERAL,
+            value = BindingConstants.SYMBOL + ":" + ParameterConstants.GRID_TABLE_CSS_CLASS)
     @Property(write = false)
     private String tableClass;
 

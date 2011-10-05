@@ -22,6 +22,7 @@ import org.apache.tapestry5.annotations.ContentType;
 import org.apache.tapestry5.beaneditor.DataTypeConstants;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.corelib.ClientValidation;
+import org.apache.tapestry5.grid.GridConstants;
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.internal.*;
 import org.apache.tapestry5.internal.alerts.AlertManagerImpl;
@@ -2363,6 +2364,16 @@ public final class TapestryModule
         configuration.add(SymbolConstants.UNKNOWN_COMPONENT_ID_CHECK_ENABLED, true);
 
         configuration.add(SymbolConstants.APPLICATION_FOLDER, "");
+
+        // Components parameters default
+        configuration.add(ParameterConstants.GRID_ROWS_PER_PAGE, GridConstants.ROWS_PER_PAGE);
+        configuration.add(ParameterConstants.GRID_PAGER_POSITION, GridConstants.PAGER_POSITION);
+        configuration.add(ParameterConstants.GRID_EMPTY_BLOCK, GridConstants.EMPTY_BLOCK);
+        configuration.add(ParameterConstants.GRID_TABLE_CSS_CLASS,  GridConstants.TABLE_CLASS);
+        configuration.add(ParameterConstants.GRIDPAGER_PAGE_RANGE, GridConstants.PAGER_PAGE_RANGE);
+        configuration.add(ParameterConstants.GRIDCOLUMNS_SORTABLE_ASSET, GridConstants.COLUMNS_SORTABLE);
+        configuration.add(ParameterConstants.GRIDCOLUMNS_ASCENDING_ASSET, GridConstants.COLUMNS_ASCENDING);
+        configuration.add(ParameterConstants.GRIDCOLUMNS_DESCENDING_ASSET, GridConstants.COLUMNS_DESCENDING);
     }
 
     /**

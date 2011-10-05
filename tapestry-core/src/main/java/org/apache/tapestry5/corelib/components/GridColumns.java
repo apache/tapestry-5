@@ -14,10 +14,7 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.Block;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.PropertyOverrides;
+import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.grid.ColumnSort;
@@ -75,15 +72,15 @@ public class GridColumns
     private EventLink sort, sort2;
 
     @Inject
-    @Path("sort-asc.png")
+    @Path("${" + ParameterConstants.GRIDCOLUMNS_ASCENDING_ASSET + "}")
     private Asset ascendingAsset;
 
     @Inject
-    @Path("sort-desc.png")
+    @Path("${" + ParameterConstants.GRIDCOLUMNS_DESCENDING_ASSET + "}")
     private Asset descendingAsset;
 
     @Inject
-    @Path("sortable.png")
+    @Path("${" + ParameterConstants.GRIDCOLUMNS_SORTABLE_ASSET + "}")
     private Asset sortableAsset;
 
     @Inject
