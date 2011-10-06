@@ -5,7 +5,8 @@
 
 
 <div class="t-header">
-    <a href="http://tapestry.apache.org" title="Tapestry 5">Tapestry 5</a>
+    <a href="http://tapestry.apache.org">Apache Tapestry 5</a>
+    &nbsp;
     <span class="detail">version ${frameworkVersion}</span>
 </div>
 
