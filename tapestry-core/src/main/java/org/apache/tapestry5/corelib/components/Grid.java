@@ -182,7 +182,8 @@ public class Grid implements GridModel
      * "There is no data to display". This parameter is used to customize that message, possibly including components to
      * allow the user to create new objects.
      */
-    @Parameter(value = BindingConstants.SYMBOL + ":" + ComponentsParametersConstants.GRID_EMPTY_BLOCK,
+    //@Parameter(value = BindingConstants.SYMBOL + ":" + ComponentsParametersConstants.GRID_EMPTY_BLOCK,
+    @Parameter(value = "block:empty",
             defaultPrefix = BindingConstants.LITERAL)
     private Block empty;
 
