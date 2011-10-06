@@ -16,19 +16,19 @@ class PageCatalogTests extends TapestryCoreTestCase
 
         click "link=clear the cache"
 
-        waitForAjaxRequestsToComplete "500"
+        sleep 500
 
         assertTextPresent "Page cache cleared"
 
         click "link=Run the GC"
 
-        waitForAjaxRequestsToComplete "500"
+        sleep 500
 
         assertTextPresent "Garbage collection freed"
 
         click "link=load all pages"
 
-        waitForAjaxRequestsToComplete "2000"
+        sleep 1000
 
         assertTextPresent "new pages for selector"
     }
