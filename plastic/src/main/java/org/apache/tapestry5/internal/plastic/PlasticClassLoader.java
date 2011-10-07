@@ -47,7 +47,7 @@ public class PlasticClassLoader extends ClassLoader
         }
     }
 
-    synchronized Class<?> defineClassWithBytecode(String className, byte[] bytecode)
+    public synchronized Class<?> defineClassWithBytecode(String className, byte[] bytecode)
     {
         return defineClass(className, bytecode, 0, bytecode.length);
     }

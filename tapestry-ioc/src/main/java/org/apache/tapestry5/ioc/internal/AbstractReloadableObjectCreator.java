@@ -14,45 +14,33 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import javassist.*;
-import javassist.expr.ConstructorCall;
-import javassist.expr.ExprEditor;
+import org.apache.tapestry5.internal.plastic.ClassLoaderDelegate;
+import org.apache.tapestry5.internal.plastic.PlasticClassLoader;
+import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
+import org.apache.tapestry5.internal.plastic.asm.ClassAdapter;
+import org.apache.tapestry5.internal.plastic.asm.ClassReader;
+import org.apache.tapestry5.internal.plastic.asm.ClassVisitor;
+import org.apache.tapestry5.internal.plastic.asm.commons.EmptyVisitor;
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.ReloadAware;
-import org.apache.tapestry5.ioc.internal.services.ClassFactoryClassPool;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
-import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.services.UpdateListener;
 import org.slf4j.Logger;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Set;
 
 @SuppressWarnings("all")
-public abstract class AbstractReloadableObjectCreator implements ObjectCreator, UpdateListener, Translator
+public abstract class AbstractReloadableObjectCreator implements ObjectCreator, UpdateListener, ClassLoaderDelegate
 {
-    private class InternalLoader extends Loader
-    {
-        public InternalLoader(ClassLoader parent, ClassPool pool)
-        {
-            super(parent, pool);
-        }
-
-        @Override
-        protected Class findClass(String name) throws ClassNotFoundException
-        {
-            if (shouldLoadClassNamed(name))
-                return super.findClass(name);
-
-            return null; // Force delegation to parent class loader
-        }
-    }
-
     private final ClassLoader baseClassLoader;
 
     private final String implementationClassName;
@@ -73,6 +61,8 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
 
     private boolean firstTime = true;
 
+    private PlasticClassLoader loader;
+
     protected AbstractReloadableObjectCreator(ClassLoader baseClassLoader, String implementationClassName,
                                               Logger logger, OperationTracker tracker)
     {
@@ -84,17 +74,20 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
 
     public synchronized void checkForUpdates()
     {
-        if (instance == null)
+        if (instance == null || !changeTracker.containsChanges())
+        {
             return;
-
-        if (!changeTracker.containsChanges())
-            return;
+        }
 
         if (logger.isDebugEnabled())
+        {
             logger.debug(String.format("Implementation class %s has changed and will be reloaded on next use.",
                     implementationClassName));
+        }
 
         changeTracker.clear();
+
+        loader = null;
 
         boolean reloadNow = informInstanceOfReload();
 
@@ -116,7 +109,9 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
     public synchronized Object createObject()
     {
         if (instance == null)
+        {
             instance = createInstance();
+        }
 
         return instance;
     }
@@ -131,8 +126,6 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
 
                 return createInstance(reloadedClass);
             }
-
-            ;
         });
     }
 
@@ -147,25 +140,18 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
     private Class reloadImplementationClass()
     {
         if (logger.isDebugEnabled())
+        {
             logger.debug(String.format("%s class %s.", firstTime ? "Loading" : "Reloading", implementationClassName));
+        }
 
-        ClassFactoryClassPool pool = new ClassFactoryClassPool(baseClassLoader);
-
-        ClassLoader threadDeadlockBuffer = new URLClassLoader(new URL[0], baseClassLoader);
-
-        Loader loader = new InternalLoader(threadDeadlockBuffer, pool);
-
-        ClassPath path = new LoaderClassPath(loader);
-
-        pool.appendClassPath(path);
+        loader = new PlasticClassLoader(baseClassLoader, this);
 
         classesToLoad.clear();
+
         add(implementationClassName);
 
         try
         {
-            loader.addTranslator(pool, this);
-
             Class result = loader.loadClass(implementationClassName);
 
             firstTime = false;
@@ -178,92 +164,127 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
         }
     }
 
-    private boolean shouldLoadClassNamed(String name)
-    {
-        return classesToLoad.contains(name);
-    }
-
     private void add(String className)
     {
-        if (classesToLoad.contains(className))
-            return;
+        if (!classesToLoad.contains(className))
+        {
+            logger.debug(String.format("Marking class %s to be (re-)loaded", className));
 
-        logger.debug(String.format("Marking class %s to be (re-)loaded", className));
-
-        classesToLoad.add(className);
+            classesToLoad.add(className);
+        }
     }
 
-    public void onLoad(ClassPool pool, String className) throws NotFoundException, CannotCompileException
+    public boolean shouldInterceptClassLoading(String className)
+    {
+        return classesToLoad.contains(className);
+    }
+
+    public Class<?> loadAndTransformClass(String className) throws ClassNotFoundException
     {
         logger.debug(String.format("BEGIN Analyzing %s", className));
 
-        analyze(pool, className);
+        Class<?> result;
+
+        try
+        {
+            result = doClassLoad(className);
+        } catch (IOException ex)
+        {
+            throw new ClassNotFoundException(String.format("Unable to analyze and load class %s: %s", className,
+                    InternalUtils.toMessage(ex)), ex);
+        }
 
         trackClassFileChanges(className);
 
         logger.debug(String.format("  END Analyzing %s", className));
+
+        return result;
     }
 
-    private void analyze(ClassPool pool, String className) throws NotFoundException, CannotCompileException
+    public Class<?> doClassLoad(String className) throws IOException
     {
-        CtClass ctClass = pool.get(className);
-
-        CtClass[] nestedClasses = ctClass.getNestedClasses();
-
-        for (CtClass nc : nestedClasses)
+        ClassVisitor analyzer = new ClassAdapter(new EmptyVisitor())
         {
-            add(nc.getName());
+            @Override
+            public void visit(int version, int access, String name, String signature, String superName, String[] interfaces)
+            {
+                String path = superName + ".class";
+
+                URL url = baseClassLoader.getResource(path);
+
+                if (isFileURL(url))
+                {
+                    add(PlasticInternalUtils.toClassName(superName));
+                }
+            }
+
+            @Override
+            public void visitInnerClass(String name, String outerName, String innerName, int access)
+            {
+                add(PlasticInternalUtils.toClassName(name));
+            }
+        };
+
+
+        String path = PlasticInternalUtils.toClassPath(className);
+
+        InputStream stream = baseClassLoader.getResourceAsStream(path);
+
+        assert stream != null;
+
+        ByteArrayOutputStream classBuffer = new ByteArrayOutputStream(5000);
+        byte[] buffer = new byte[5000];
+
+        while (true)
+        {
+            int length = stream.read(buffer);
+
+            if (length < 0)
+            {
+                break;
+            }
+
+            classBuffer.write(buffer, 0, length);
         }
 
-        ctClass.instrument(new ExprEditor()
-        {
-            public void edit(ConstructorCall c) throws CannotCompileException
-            {
-                if (c.getMethodName().equals("this"))
-                    return;
+        stream.close();
 
-                String cn = c.getClassName();
+        byte[] bytecode = classBuffer.toByteArray();
 
-                String classFilePath = ClassFabUtils.getPathForClassNamed(cn);
+        new ClassReader(new ByteArrayInputStream(bytecode)).accept(analyzer,
+                ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
 
-                URL url = baseClassLoader.getResource(classFilePath);
 
-                // If the base class is also a file on the file system then mark
-                // that it should be loaded by the same class loader. This serves two
-                // purposes: first, if the base class is in the same package then
-                // protected access will work properly. Secondly, if the base implementation
-                // changes, the service implementation will be reloaded.
-
-                if (url != null && url.getProtocol().equals("file"))
-                    add(cn);
-            }
-        });
+        return loader.defineClassWithBytecode(className, bytecode);
     }
 
     private void trackClassFileChanges(String className)
     {
         if (isInnerClassName(className))
+        {
             return;
+        }
 
-        String path = ClassFabUtils.getPathForClassNamed(className);
+        String path = PlasticInternalUtils.toClassPath(className);
 
         URL url = baseClassLoader.getResource(path);
 
-        if (url != null && url.getProtocol().equals("file"))
+        if (isFileURL(url))
+        {
             changeTracker.add(url);
+        }
+    }
+
+    /**
+     * Returns true if the url is non-null, and is for the "file:" protocol.
+     */
+    private boolean isFileURL(URL url)
+    {
+        return url != null && url.getProtocol().equals("file");
     }
 
     private boolean isInnerClassName(String className)
     {
         return className.indexOf('$') >= 0;
     }
-
-    /**
-     * Does nothing.
-     */
-    public void start(ClassPool pool) throws NotFoundException, CannotCompileException
-    {
-
-    }
-
 }
