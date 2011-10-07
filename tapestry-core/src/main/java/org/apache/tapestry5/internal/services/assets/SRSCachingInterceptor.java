@@ -14,15 +14,16 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
-import java.io.IOException;
-import java.util.Map;
-
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.assets.StreamableResource;
 import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
+
+import java.io.IOException;
+import java.lang.ref.SoftReference;
+import java.util.Map;
 
 /**
  * An interceptor for the {@link StreamableResourceSource} service that handles caching of content.
@@ -33,7 +34,7 @@ public class SRSCachingInterceptor implements StreamableResourceSource, Invalida
 
     private final StreamableResourceSource delegate;
 
-    private final Map<Resource, StreamableResource> cache = CollectionFactory.newConcurrentMap();
+    private final Map<Resource, SoftReference<StreamableResource>> cache = CollectionFactory.newConcurrentMap();
 
     public SRSCachingInterceptor(ResourceChangeTracker tracker, StreamableResourceSource delegate)
     {
@@ -45,9 +46,13 @@ public class SRSCachingInterceptor implements StreamableResourceSource, Invalida
             throws IOException
     {
         if (processing == StreamableResourceProcessing.FOR_AGGREGATION)
+        {
             return delegate.getStreamableResource(baseResource, processing);
+        }
 
-        StreamableResource result = cache.get(baseResource);
+        SoftReference<StreamableResource> ref = cache.get(baseResource);
+
+        StreamableResource result = ref == null ? null : ref.get();
 
         if (result == null)
         {
@@ -57,7 +62,7 @@ public class SRSCachingInterceptor implements StreamableResourceSource, Invalida
             {
                 tracker.trackResource(baseResource);
 
-                cache.put(baseResource, result);
+                cache.put(baseResource, new SoftReference<StreamableResource>(result));
             }
         }
 
@@ -66,7 +71,7 @@ public class SRSCachingInterceptor implements StreamableResourceSource, Invalida
 
     /**
      * Always returns true; a subclass may extend this to only cache the resource in some circumstances.
-     * 
+     *
      * @param resource
      * @return true to cache the resource
      */
