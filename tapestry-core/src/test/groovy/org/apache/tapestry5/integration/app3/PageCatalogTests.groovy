@@ -22,7 +22,7 @@ class PageCatalogTests extends TapestryCoreTestCase
 
         click "link=Run the GC"
 
-        sleep 500
+        sleep 1000
 
         assertTextPresent "Garbage collection freed"
 
