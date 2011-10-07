@@ -221,7 +221,12 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
             @Override
             public void visitInnerClass(String name, String outerName, String innerName, int access)
             {
-                add(PlasticInternalUtils.toClassName(name));
+                // Anonymous inner classes show the outerName as null. Nested classes show the outer name as
+                // the internal name of the containing class.
+                if (outerName == null || classesToLoad.contains(PlasticInternalUtils.toClassName(outerName)))
+                {
+                    add(PlasticInternalUtils.toClassName(name));
+                }
             }
         };
 
