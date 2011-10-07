@@ -90,14 +90,6 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
 
     }
 
-    private String withOutSlash(String input)
-    {
-        if (input.endsWith("/"))
-            return input.substring(0, input.length() - 1);
-
-        return input;
-    }
-
     public String toClientURL(String resourcePath)
     {
         for (String pathPrefix : sortedPathPrefixes)
