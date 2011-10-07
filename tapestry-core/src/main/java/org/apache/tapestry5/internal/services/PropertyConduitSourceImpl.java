@@ -24,6 +24,7 @@ import org.apache.tapestry5.internal.antlr.PropertyExpressionParser;
 import org.apache.tapestry5.internal.util.IntegerRange;
 import org.apache.tapestry5.internal.util.MultiKey;
 import org.apache.tapestry5.ioc.AnnotationProvider;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.internal.NullAnnotationProvider;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.GenericsUtils;
@@ -32,9 +33,7 @@ import org.apache.tapestry5.ioc.services.*;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.plastic.*;
-import org.apache.tapestry5.services.ComponentLayer;
-import org.apache.tapestry5.services.InvalidationListener;
-import org.apache.tapestry5.services.PropertyConduitSource;
+import org.apache.tapestry5.services.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -1282,6 +1281,13 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         sharedDelegate = new PropertyConduitDelegate(typeCoercer);
     }
+
+    @PostInjection
+    public void listenForInvalidations(@ComponentClasses InvalidationEventHub hub)
+    {
+        hub.addInvalidationListener(this);
+    }
+
 
     public PropertyConduit create(Class rootClass, String expression)
     {

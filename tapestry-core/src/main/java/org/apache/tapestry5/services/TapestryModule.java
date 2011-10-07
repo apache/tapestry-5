@@ -365,6 +365,7 @@ public final class TapestryModule
         binder.bind(AjaxResponseRenderer.class, AjaxResponseRendererImpl.class);
         binder.bind(AlertManager.class, AlertManagerImpl.class);
         binder.bind(ValidationDecoratorFactory.class, ValidationDecoratorFactoryImpl.class);
+        binder.bind(PropertyConduitSource.class, PropertyConduitSourceImpl.class);
     }
 
     // ========================================================================
@@ -1512,15 +1513,6 @@ public final class TapestryModule
         return chainBuilder.build(Dispatcher.class, configuration);
     }
 
-    public PropertyConduitSource buildPropertyConduitSource(@Autobuild
-                                                            PropertyConduitSourceImpl service, @ComponentClasses
-    InvalidationEventHub hub)
-    {
-        hub.addInvalidationListener(service);
-
-        return service;
-    }
-
     /**
      * Builds a shadow of the RequestGlobals.request property. Note again that
      * the shadow can be an ordinary singleton,
@@ -2369,7 +2361,7 @@ public final class TapestryModule
         configuration.add(ComponentsParametersConstants.GRID_ROWS_PER_PAGE, GridConstants.ROWS_PER_PAGE);
         configuration.add(ComponentsParametersConstants.GRID_PAGER_POSITION, GridConstants.PAGER_POSITION);
         configuration.add(ComponentsParametersConstants.GRID_EMPTY_BLOCK, GridConstants.EMPTY_BLOCK);
-        configuration.add(ComponentsParametersConstants.GRID_TABLE_CSS_CLASS,  GridConstants.TABLE_CLASS);
+        configuration.add(ComponentsParametersConstants.GRID_TABLE_CSS_CLASS, GridConstants.TABLE_CLASS);
         configuration.add(ComponentsParametersConstants.GRIDPAGER_PAGE_RANGE, GridConstants.PAGER_PAGE_RANGE);
         configuration.add(ComponentsParametersConstants.GRIDCOLUMNS_SORTABLE_ASSET, GridConstants.COLUMNS_SORTABLE);
         configuration.add(ComponentsParametersConstants.GRIDCOLUMNS_ASCENDING_ASSET, GridConstants.COLUMNS_ASCENDING);

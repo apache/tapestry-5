@@ -33,13 +33,16 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
 {
     private final PlasticManager manager;
 
-    private final ClassLoader loader;
-
     public PlasticProxyFactoryImpl(ClassLoader parentClassLoader, Logger logger)
     {
-        this.loader = parentClassLoader;
+        this(PlasticManager.withClassLoader(parentClassLoader).create(), logger);
+    }
 
-        manager = PlasticManager.withClassLoader(parentClassLoader).create();
+    public PlasticProxyFactoryImpl(PlasticManager manager, Logger logger)
+    {
+        assert manager != null;
+
+        this.manager = manager;
 
         if (logger != null)
         {
@@ -101,7 +104,7 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
 
     private ClassNode readClassNode(Class clazz)
     {
-        byte[] bytecode = PlasticInternalUtils.readBytecodeForClass(loader, clazz.getName(), false);
+        byte[] bytecode = PlasticInternalUtils.readBytecodeForClass(manager.getClassLoader(), clazz.getName(), false);
 
         return bytecode == null ? null : PlasticInternalUtils.convertBytecodeToClassNode(bytecode);
     }

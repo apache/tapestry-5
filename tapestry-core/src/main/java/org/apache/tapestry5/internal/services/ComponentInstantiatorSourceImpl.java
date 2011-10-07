@@ -201,7 +201,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
         classFactory = new ClassFactoryImpl(manager.getClassLoader(), logger);
 
-        proxyFactory = new PlasticProxyFactoryImpl(manager.getClassLoader(), logger);
+        proxyFactory = new PlasticProxyFactoryImpl(manager, logger);
 
         classToInstantiator.clear();
         classToModel.clear();
@@ -229,6 +229,8 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                     public Instantiator invoke()
                     {
                         ClassLoader proxyClassLoader = proxyFactory.getClassLoader();
+
+                        // Not 100% sure this is needed, now that the proxyFactory and the PlasticManager share the same class loader.
 
                         synchronized (proxyClassLoader)
                         {
