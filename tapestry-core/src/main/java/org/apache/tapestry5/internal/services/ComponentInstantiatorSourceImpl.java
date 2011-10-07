@@ -228,40 +228,32 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                 {
                     public Instantiator invoke()
                     {
-                        ClassLoader proxyClassLoader = proxyFactory.getClassLoader();
+                        // Force the creation of the class (and the transformation of the class). This will first
+                        // trigger transformations of any base classes.
 
-                        // Not 100% sure this is needed, now that the proxyFactory and the PlasticManager share the same class loader.
+                        final ClassInstantiator<Component> plasticInstantiator = manager.getClassInstantiator(className);
 
-                        synchronized (proxyClassLoader)
+                        final ComponentModel model = classToModel.get(className);
+
+                        return new Instantiator()
                         {
-                            // Force the creation of the class (and the transformation of the class). This will first
-                            // trigger transformations of any base classes.
-
-                            final ClassInstantiator<Component> plasticInstantiator = manager
-                                    .getClassInstantiator(className);
-
-                            final ComponentModel model = classToModel.get(className);
-
-                            return new Instantiator()
+                            public Component newInstance(InternalComponentResources resources)
                             {
-                                public Component newInstance(InternalComponentResources resources)
-                                {
-                                    return plasticInstantiator.with(ComponentResources.class, resources)
-                                            .with(InternalComponentResources.class, resources).newInstance();
-                                }
+                                return plasticInstantiator.with(ComponentResources.class, resources)
+                                        .with(InternalComponentResources.class, resources).newInstance();
+                            }
 
-                                public ComponentModel getModel()
-                                {
-                                    return model;
-                                }
+                            public ComponentModel getModel()
+                            {
+                                return model;
+                            }
 
-                                @Override
-                                public String toString()
-                                {
-                                    return String.format("[Instantiator[%s]", className);
-                                }
-                            };
-                        }
+                            @Override
+                            public String toString()
+                            {
+                                return String.format("[Instantiator[%s]", className);
+                            }
+                        };
                     }
                 });
     }
