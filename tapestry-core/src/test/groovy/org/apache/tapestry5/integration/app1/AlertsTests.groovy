@@ -73,8 +73,10 @@ class AlertsTests extends SeleniumTestCase
         assertText "css=.t-alert-container", ""
     }
 
-    @Test
-    void ajax_update_with_redirect() {
+    /** Disabled by HLS 7-oct-2011; there's a timing issue that makes it very fragile.   */
+    @Test(enabled = false)
+    void ajax_update_with_redirect()
+    {
 
         openLinks "Alerts Demo", "reset"
 
@@ -94,9 +96,10 @@ class AlertsTests extends SeleniumTestCase
         click "link=Dismiss all"
     }
 
-    /** #1633 - alerts shouldn't hard-code the  'Dismiss all' label...*/
+    /** #1633 - alerts shouldn't hard-code the  'Dismiss all' label...  */
     @Test
-    void dismiss_label_is_parameter() {
+    void dismiss_label_is_parameter()
+    {
         openLinks "Alerts Demo", "reset"
         select "id=severity", "Warn"
         select "id=duration", "Until Dismissed"
