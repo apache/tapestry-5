@@ -82,11 +82,11 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
     // These change whenever the invalidation event hub sends an invalidation notification
 
-    private ClassFactory classFactory;
+    private volatile ClassFactory classFactory;
 
-    private PlasticProxyFactory proxyFactory;
+    private volatile PlasticProxyFactory proxyFactory;
 
-    private PlasticManager manager;
+    private volatile PlasticManager manager;
 
     /**
      * Map from class name to Instantiator.
@@ -228,33 +228,38 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                 {
                     public Instantiator invoke()
                     {
-                        // Force the creation of the class (and the transformation of the class). This will first
-                        // trigger transformations of any base classes.
+                        ClassLoader proxyClassLoader = proxyFactory.getClassLoader();
 
-                        final ClassInstantiator<Component> plasticInstantiator = manager
-                                .getClassInstantiator(className);
-
-                        final ComponentModel model = classToModel.get(className);
-
-                        return new Instantiator()
+                        synchronized (proxyClassLoader)
                         {
-                            public Component newInstance(InternalComponentResources resources)
-                            {
-                                return plasticInstantiator.with(ComponentResources.class, resources)
-                                        .with(InternalComponentResources.class, resources).newInstance();
-                            }
+                            // Force the creation of the class (and the transformation of the class). This will first
+                            // trigger transformations of any base classes.
 
-                            public ComponentModel getModel()
-                            {
-                                return model;
-                            }
+                            final ClassInstantiator<Component> plasticInstantiator = manager
+                                    .getClassInstantiator(className);
 
-                            @Override
-                            public String toString()
+                            final ComponentModel model = classToModel.get(className);
+
+                            return new Instantiator()
                             {
-                                return String.format("[Instantiator[%s]", className);
-                            }
-                        };
+                                public Component newInstance(InternalComponentResources resources)
+                                {
+                                    return plasticInstantiator.with(ComponentResources.class, resources)
+                                            .with(InternalComponentResources.class, resources).newInstance();
+                                }
+
+                                public ComponentModel getModel()
+                                {
+                                    return model;
+                                }
+
+                                @Override
+                                public String toString()
+                                {
+                                    return String.format("[Instantiator[%s]", className);
+                                }
+                            };
+                        }
                     }
                 });
     }
