@@ -1,17 +1,17 @@
-.code
+.code, pre
 {
-        border: 1px solid black;
+        border: 1px dashed #6699CC;
         background-color: #F4F4F4;
         padding: 5px;
 }
- 
+
 body
 {
-        font: 12px Verdana, Arial, Helvetica, "Bitstream Vera Sans", sans-serif;
+        font-size: 10px;
+        font-family: 'Lucida Grande',verdana,arial,helvetica,sans-serif;
         background-color: #fff;
         color: #333;
 }
- 
  
 /* Link colors */
 a
@@ -33,18 +33,22 @@ h1
         color:#007c00;
         padding: 2.0em;
 }
+h1,h2,h3 {
+        color: #569D2F;
+}
  
 /* Table colors */
 
 table
 {
-        border:none;
+		background: #fff;
+        border-collapse: collapse;
 }
  
 td
 {
-        border:none;
-        border-bottom:1px dotted #ddd;
+        border: 1px dotted #ccc;
+        background: #F4F4F4;
 }
  
 th
