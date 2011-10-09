@@ -31,7 +31,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.util.EnumSelectModel;
 
 /**
- * Select an item from a list of values, using an [X]HTML &lt;select&gt; element on the client side. An validation
+ * Select an item from a list of values, using an [X]HTML &lt;select&gt; element on the client side. Any validation
  * decorations will go around the entire &lt;select&gt; element.
  * <p/>
  * A core part of this component is the {@link ValueEncoder} (the encoder parameter) that is used to convert between

@@ -183,9 +183,10 @@ public enum CarMaker
 			<subsection name="SelectZoneDemo.tml">
 				The Select component 'carMaker' of the page SelectZoneDemo shows all available car makers. 
 				When a user selects a car maker, another Select component for selecting available models of the make should appear.
-				This can be accomplished by the parameter <em>zone</em> of the Select component 'carMaker'. When <em>zone</em> parameter is bound 
-				every change of the Select's value causes an Ajax request. In this case the Select component publishes the event <em>valuechanged</em> which can 
-				be used to provide the <em>model</em> for the second Select component.
+				This can be accomplished with the <em>zone</em> parameter of the 'carMaker' Select component. 
+				When the <em>zone</em> parameter is bound, every change of the Select's value causes an Ajax
+				request, firing the <em>valueChanged</em> event. In this example, a corresponding event handler
+				method, onValueChanged, populates the <em>model</em> used by the second Select component.
        	                <source><![CDATA[                                                                   
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
    <t:form>
