@@ -23,6 +23,10 @@ import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
 
+/**
+ * A {@link org.apache.tapestry5.ioc.services.Coercion} for converting the
+ * deprecated ComponentClassTransformWorker to the new ComponentClassTransformWorker2.
+ */
 @SuppressWarnings("deprecation")
 public class CCTWToCCTW2Coercion implements Coercion<ComponentClassTransformWorker, ComponentClassTransformWorker2>
 {

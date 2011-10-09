@@ -24,7 +24,7 @@ import org.apache.tapestry5.services.transform.InjectionProvider2;
 
 
 /**
- * Converts old style {@link InjectionProvider} to the new {@link InjectionProvider2}.
+ * Converts the deprecated {@link InjectionProvider} to the new {@link InjectionProvider2}.
  *
  * @since 5.3
  */
