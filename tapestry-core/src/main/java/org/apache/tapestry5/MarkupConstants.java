@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ public class MarkupConstants
 
     /**
      * Handler for the onclick event (for links) or other events (such as forms) to ensure the page is loaded before
-     * allowing the click event to occur. Refrences a client-side JavaScript function that displays a standard "wait for
+     * allowing the click event to occur. References a client-side JavaScript function that displays a standard "wait for
      * page to load" modal dialog.
      */
     public static final String WAIT_FOR_PAGE = "javascript:return Tapestry.waitForPage(event);";
