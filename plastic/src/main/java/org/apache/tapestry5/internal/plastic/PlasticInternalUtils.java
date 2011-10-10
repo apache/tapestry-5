@@ -24,8 +24,7 @@ import org.apache.tapestry5.plastic.MethodDescription;
 
 import java.io.*;
 import java.lang.reflect.Array;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -402,18 +401,11 @@ public class PlasticInternalUtils
         // This *should* handle Tomcat better, where the Tomcat class loader appears to be caching
         // the contents of files; this bypasses Tomcat to re-read the files from the disk directly.
 
-        if (url.toString().startsWith("file:"))
+        if (url.getProtocol().equals("file"))
         {
-            try
-            {
-                return new FileInputStream(new File(url.toURI()));
-            } catch (URISyntaxException ex)
-            {
-                // Note: the simple constructor IOException(Throwable) is only since 1.6
-                IOException wrapped = new IOException(ex.getMessage());
-                wrapped.initCause(ex);
-                throw wrapped;
-            }
+	    String urlPath = url.getPath();
+	    String decoded = URLDecoder.decode(urlPath);
+            return new FileInputStream(new File(decoded));
         }
 
         return url.openStream();
