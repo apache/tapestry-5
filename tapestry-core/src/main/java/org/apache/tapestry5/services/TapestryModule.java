@@ -1838,8 +1838,8 @@ public final class TapestryModule
      * <dd>Provides {@link JavaScriptSupport}</dd>
      * <dt>RenderSupport</dt>
      * <dd>Provides {@link org.apache.tapestry5.RenderSupport}</dd>
-     * <dt>InjectDefaultStyleheet</dt>
-     * <dd>Injects the default stylesheet</dd></dt>
+     * <dt>InjectDefaultStylesheet</dt>
+     * <dd>Injects the default stylesheet into all pages</dd></dt>
      * <dt>ClientBehaviorSupport</dt>
      * <dd>Provides {@link ClientBehaviorSupport}</dd>
      * <dt>Heartbeat</dt>
@@ -1989,7 +1989,7 @@ public final class TapestryModule
         configuration.add("DocumentLinker", documentLinker);
         configuration.add("JavaScriptSupport", javaScriptSupport);
         configuration.add("RenderSupport", renderSupport);
-        configuration.add("InjectDefaultStyleheet", injectDefaultStylesheet);
+        configuration.add("InjectDefaultStylesheet", injectDefaultStylesheet);
         configuration.add("ClientBehaviorSupport", clientBehaviorSupport);
         configuration.add("Heartbeat", heartbeat);
         configuration.add("ValidationDecorator", defaultValidationDecorator);
