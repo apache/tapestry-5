@@ -184,7 +184,7 @@ public class TapestryAppInitializer
                 new SingleKeySymbolProvider(InternalSymbols.APP_PACKAGE_PATH, appPackage.replace('.', '/')));
 
         ContributionDef symbolSourceContribution = new SyntheticSymbolSourceContributionDef("ServletContext",
-                appProvider, "before:ApplicationDefaults");
+                appProvider, "before:ApplicationDefaults", "after:EnvironmentVariables");
 
         ContributionDef appNameContribution = new SyntheticSymbolSourceContributionDef("AppName",
                 new SingleKeySymbolProvider(InternalSymbols.APP_NAME, appName), "before:ServletContext");
@@ -249,13 +249,17 @@ public class TapestryAppInitializer
                 registryCreatedTime - startTime,
                 toFinish - startTime);
 
+        String version = source.valueForSymbol(SymbolConstants.TAPESTRY_VERSION);
+        boolean productionMode = Boolean.parseBoolean(source.valueForSymbol(SymbolConstants.PRODUCTION_MODE));
+
 
         buffer.append("\n\n");
         buffer.append(" ______                  __             ____\n");
         buffer.append("/_  __/__ ____  ___ ___ / /_______ __  / __/\n");
         buffer.append(" / / / _ `/ _ \\/ -_|_-</ __/ __/ // / /__ \\ \n");
         buffer.append("/_/  \\_,_/ .__/\\__/___/\\__/_/  \\_, / /____/\n");
-        f.format("        /_/                   /___/  %s\n\n", source.valueForSymbol(SymbolConstants.TAPESTRY_VERSION));
+        f.format("        /_/                   /___/  %s%s\n\n",
+                version, productionMode ? "" : " (development mode)");
 
         logger.info(buffer.toString());
     }

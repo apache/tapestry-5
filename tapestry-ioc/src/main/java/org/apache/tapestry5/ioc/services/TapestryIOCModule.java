@@ -451,6 +451,18 @@ public final class TapestryIOCModule
         configuration.add(tuple);
     }
 
+    /**
+     * <dl>
+     * <dt>SystemProperties</dt>
+     * <dd>Exposes JVM System properties as symbols (currently case-sensitive)</dd>
+     * <dt>EnvironmentVariables</dt>
+     * <dd>Exposes environment variables as symbols (adding a "env." prefix)</dd>
+     * <dt>ApplicationDefaults</dt>
+     * <dd>Values contributed to @{@link SymbolProvider} @{@link ApplicationDefaults}</dd>
+     * <dt>FactoryDefaults</dt>
+     * <dd>Values contributed to @{@link SymbolProvider} @{@link FactoryDefaults}</dd>
+     * </dl>
+     */
     @Contribute(SymbolSource.class)
     public static void setupStandardSymbolProviders(OrderedConfiguration<SymbolProvider> configuration,
                                                     @ApplicationDefaults
@@ -460,8 +472,9 @@ public final class TapestryIOCModule
                                                     SymbolProvider factoryDefaults)
     {
         configuration.add("SystemProperties", new SystemPropertiesSymbolProvider(), "before:*");
-        configuration.add("ApplicationDefaults", applicationDefaults, "after:SystemProperties");
-        configuration.add("FactoryDefaults", factoryDefaults, "after:ApplicationDefaults");
+        configuration.add("EnvironmentVariables", new SystemEnvSymbolProvider());
+        configuration.add("ApplicationDefaults", applicationDefaults);
+        configuration.add("FactoryDefaults", factoryDefaults);
     }
 
     public static ParallelExecutor buildDeferredExecution(@Symbol(IOCSymbols.THREAD_POOL_CORE_SIZE)
