@@ -27,6 +27,7 @@ import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.services.ComponentInstantiatorSource;
 import org.apache.tapestry5.internal.services.PageSource;
 import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -74,6 +75,9 @@ public class PageCatalog
     @Validate("required")
     @Persist
     private String pageName;
+
+    @Inject
+    private OperationTracker operationTracker;
 
     @Inject
     private ComponentInstantiatorSource componentInstantiatorSource;
@@ -136,6 +140,13 @@ public class PageCatalog
         return pagesZone.getBody();
     }
 
+    private class PageLoadData
+    {
+        int loadedCount;
+        RuntimeException fail;
+        boolean someFail;
+    }
+
     Object onActionFromForceLoad()
     {
         if (failures == null)
@@ -145,57 +156,62 @@ public class PageCatalog
 
         long startTime = System.currentTimeMillis();
 
-        Collection<Page> initialPages = getPages();
+        final Collection<Page> initialPages = getPages();
 
-        int loadedCount = 0;
+        final PageLoadData data = new PageLoadData();
 
-        RuntimeException fail = null;
-
-        boolean someFail = false;
-
-        for (String name : resolver.getPageNames())
+        for (final String name : resolver.getPageNames())
         {
             if (failures.contains(name))
             {
                 alertManager.warn(String.format("Skipping page %s due to prior load failure.", name));
-                someFail = true;
+                data.someFail = true;
                 continue;
             }
 
-            try
+            operationTracker.run("Loading page " + name, new Runnable()
             {
-                Page newPage = pageSource.getPage(name);
-
-                if (!initialPages.contains(newPage))
+                public void run()
                 {
-                    loadedCount++;
+                    try
+                    {
+                        Page newPage = pageSource.getPage(name);
+
+                        if (!initialPages.contains(newPage))
+                        {
+                            data.loadedCount++;
+                        }
+                    } catch (RuntimeException ex)
+                    {
+                        alertManager.error(String.format("Page %s failed to load.", name));
+                        failures.add(name);
+
+                        if (data.fail == null)
+                        {
+                            pageName = name;
+                            data.fail = ex;
+                        }
+                    }
                 }
-            } catch (RuntimeException ex)
+            });
+
+            if (data.fail != null)
             {
-                alertManager.error(String.format("Page %s failed to load.", name));
-                failures.add(name);
-
-                if (fail == null)
-                {
-                    pageName = name;
-                    fail = ex;
-                }
-
                 break;
             }
         }
 
-        alertManager.info(String.format("Loaded %,d new pages for selector '%s' (in %,d ms).", loadedCount,
+        alertManager.info(String.format("Loaded %,d new pages for selector '%s' (in %,d ms).", data.loadedCount,
                 selector.toShortString(), System.currentTimeMillis() - startTime));
 
-        if (someFail)
+        if (data.someFail)
         {
             alertManager.warn("Clear the cache to reset the list of failed pages.");
         }
 
-        if (fail != null)
+        if (data.fail != null)
         {
-            throw fail;
+            throw data.fail;
         }
 
         return pagesZone.getBody();
