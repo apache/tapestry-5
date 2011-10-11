@@ -14,22 +14,14 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
-import java.io.BufferedInputStream;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.services.assets.*;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Map;
-
-import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.services.assets.CompressionAnalyzer;
-import org.apache.tapestry5.services.assets.CompressionStatus;
-import org.apache.tapestry5.services.assets.ContentTypeAnalyzer;
-import org.apache.tapestry5.services.assets.ResourceTransformer;
-import org.apache.tapestry5.services.assets.StreamableResource;
-import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
-import org.apache.tapestry5.services.assets.StreamableResourceSource;
 
 public class StreamableResourceSourceImpl implements StreamableResourceSource
 {
@@ -42,8 +34,8 @@ public class StreamableResourceSourceImpl implements StreamableResourceSource
     private final ResourceChangeTracker resourceChangeTracker;
 
     public StreamableResourceSourceImpl(Map<String, ResourceTransformer> configuration,
-            ContentTypeAnalyzer contentTypeAnalyzer, CompressionAnalyzer compressionAnalyzer,
-            ResourceChangeTracker resourceChangeTracker)
+                                        ContentTypeAnalyzer contentTypeAnalyzer, CompressionAnalyzer compressionAnalyzer,
+                                        ResourceChangeTracker resourceChangeTracker)
     {
         this.configuration = configuration;
         this.contentTypeAnalyzer = contentTypeAnalyzer;
@@ -51,15 +43,15 @@ public class StreamableResourceSourceImpl implements StreamableResourceSource
         this.resourceChangeTracker = resourceChangeTracker;
     }
 
-    public StreamableResource getStreamableResource(Resource baseResource, StreamableResourceProcessing processing)
+    public StreamableResource getStreamableResource(Resource baseResource, StreamableResourceProcessing processing, ResourceDependencies dependencies)
             throws IOException
     {
         assert baseResource != null;
 
-        URL url = baseResource.toURL();
-
-        if (url == null)
+        if (!baseResource.exists())
+        {
             throw new IOException(String.format("Resource %s does not exist.", baseResource));
+        }
 
         String fileSuffix = TapestryInternalUtils.toFileSuffix(baseResource.getFile());
 
@@ -68,14 +60,13 @@ public class StreamableResourceSourceImpl implements StreamableResourceSource
         // http://jashkenas.github.com/coffee-script/
         ResourceTransformer rt = configuration.get(fileSuffix);
 
-        InputStream buffered = new BufferedInputStream(url.openStream());
+        InputStream transformed = rt == null ? baseResource.openStream() : rt.transform(baseResource, dependencies);
 
-        InputStream transformed = rt == null ? buffered : rt.transform(buffered);
+        assert transformed != null;
 
         BytestreamCache bytestreamCache = readStream(transformed);
 
         transformed.close();
-        buffered.close();
 
         String contentType = contentTypeAnalyzer.getContentType(baseResource);
 

@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.services.assets;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.InvalidationListener;
+import org.apache.tapestry5.services.assets.ResourceDependencies;
 import org.apache.tapestry5.services.assets.StreamableResource;
 import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
@@ -42,12 +43,12 @@ public class SRSCachingInterceptor implements StreamableResourceSource, Invalida
         this.delegate = delegate;
     }
 
-    public StreamableResource getStreamableResource(Resource baseResource, StreamableResourceProcessing processing)
+    public StreamableResource getStreamableResource(Resource baseResource, StreamableResourceProcessing processing, ResourceDependencies dependencies)
             throws IOException
     {
         if (processing == StreamableResourceProcessing.FOR_AGGREGATION)
         {
-            return delegate.getStreamableResource(baseResource, processing);
+            return delegate.getStreamableResource(baseResource, processing, dependencies);
         }
 
         SoftReference<StreamableResource> ref = cache.get(baseResource);
@@ -56,11 +57,11 @@ public class SRSCachingInterceptor implements StreamableResourceSource, Invalida
 
         if (result == null)
         {
-            result = delegate.getStreamableResource(baseResource, processing);
+            result = delegate.getStreamableResource(baseResource, processing, dependencies);
 
             if (isCacheable(result))
             {
-                tracker.trackResource(baseResource);
+                dependencies.addDependency(baseResource);
 
                 cache.put(baseResource, new SoftReference<StreamableResource>(result));
             }

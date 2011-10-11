@@ -14,16 +14,13 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.services.assets.*;
+
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.zip.GZIPOutputStream;
-
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.services.assets.CompressionStatus;
-import org.apache.tapestry5.services.assets.StreamableResource;
-import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
-import org.apache.tapestry5.services.assets.StreamableResourceSource;
 
 public class SRSCompressingInterceptor implements StreamableResourceSource
 {
@@ -37,20 +34,20 @@ public class SRSCompressingInterceptor implements StreamableResourceSource
         this.delegate = delegate;
     }
 
-    public StreamableResource getStreamableResource(Resource baseResource, StreamableResourceProcessing processing)
+    public StreamableResource getStreamableResource(Resource baseResource, StreamableResourceProcessing processing, ResourceDependencies dependencies)
             throws IOException
     {
-        StreamableResource streamable = delegate.getStreamableResource(baseResource, processing);
+        StreamableResource streamable = delegate.getStreamableResource(baseResource, processing, dependencies);
 
-        if (processing == StreamableResourceProcessing.COMPRESSION_ENABLED) { return compress(streamable); }
-
-        return streamable;
+        return processing == StreamableResourceProcessing.COMPRESSION_ENABLED ? compress(streamable) : streamable;
     }
 
     private StreamableResource compress(StreamableResource uncompressed) throws IOException
     {
         if (uncompressed.getCompression() != CompressionStatus.COMPRESSABLE)
+        {
             return uncompressed;
+        }
 
         int size = uncompressed.getSize();
 
@@ -58,7 +55,9 @@ public class SRSCompressingInterceptor implements StreamableResourceSource
         // we don't even try.
 
         if (size < compressionCutoff)
+        {
             return uncompressed;
+        }
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream(size);
 

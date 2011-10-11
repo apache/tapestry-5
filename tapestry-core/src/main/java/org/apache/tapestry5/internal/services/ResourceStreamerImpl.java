@@ -14,15 +14,11 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.IOOperation;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -33,6 +29,10 @@ import org.apache.tapestry5.services.assets.CompressionStatus;
 import org.apache.tapestry5.services.assets.StreamableResource;
 import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class ResourceStreamerImpl implements ResourceStreamer
 {
@@ -50,18 +50,20 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
     private final OperationTracker tracker;
 
+    private final ResourceChangeTracker resourceChangeTracker;
+
     public ResourceStreamerImpl(Request request,
 
-    Response response,
+                                Response response,
 
-    StreamableResourceSource streamableResourceSource,
+                                StreamableResourceSource streamableResourceSource,
 
-    ResponseCompressionAnalyzer analyzer,
+                                ResponseCompressionAnalyzer analyzer,
 
-    OperationTracker tracker,
+                                OperationTracker tracker,
 
-    @Symbol(SymbolConstants.PRODUCTION_MODE)
-    boolean productionMode)
+                                @Symbol(SymbolConstants.PRODUCTION_MODE)
+                                boolean productionMode, ResourceChangeTracker resourceChangeTracker)
     {
         this.request = request;
         this.response = response;
@@ -70,6 +72,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
         this.analyzer = analyzer;
         this.tracker = tracker;
         this.productionMode = productionMode;
+        this.resourceChangeTracker = resourceChangeTracker;
     }
 
     public void streamResource(final Resource resource) throws IOException
@@ -87,7 +90,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
                 StreamableResourceProcessing processing = analyzer.isGZipSupported() ? StreamableResourceProcessing.COMPRESSION_ENABLED
                         : StreamableResourceProcessing.COMPRESSION_DISABLED;
 
-                StreamableResource streamable = streamableResourceSource.getStreamableResource(resource, processing);
+                StreamableResource streamable = streamableResourceSource.getStreamableResource(resource, processing, resourceChangeTracker);
 
                 streamResource(streamable);
             }
@@ -103,8 +106,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
         try
         {
             ifModifiedSince = request.getDateHeader(IF_MODIFIED_SINCE_HEADER);
-        }
-        catch (IllegalArgumentException ex)
+        } catch (IllegalArgumentException ex)
         {
             // Simulate the header being missing if it is poorly formatted.
 
@@ -127,12 +129,16 @@ public class ResourceStreamerImpl implements ResourceStreamer
         response.setDateHeader("Last-Modified", lastModified);
 
         if (productionMode)
+        {
             response.setDateHeader("Expires", lastModified + InternalConstants.TEN_YEARS);
+        }
 
         response.setContentLength(streamable.getSize());
 
         if (streamable.getCompression() == CompressionStatus.COMPRESSED)
+        {
             response.setHeader(InternalConstants.CONTENT_ENCODING_HEADER, InternalConstants.GZIP_CONTENT_ENCODING);
+        }
 
         OutputStream os = response.getOutputStream(streamable.getContentType());
 

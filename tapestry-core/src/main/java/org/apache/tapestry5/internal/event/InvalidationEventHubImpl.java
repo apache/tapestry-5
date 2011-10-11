@@ -14,11 +14,11 @@
 
 package org.apache.tapestry5.internal.event;
 
-import java.util.List;
-
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.InvalidationListener;
+
+import java.util.List;
 
 /**
  * Base implementation class for classes (especially services) that need to manage a list of
@@ -33,8 +33,7 @@ public class InvalidationEventHubImpl implements InvalidationEventHub
         if (productionMode)
         {
             listeners = null;
-        }
-        else
+        } else
         {
             listeners = CollectionFactory.newThreadSafeList();
         }
@@ -46,7 +45,9 @@ public class InvalidationEventHubImpl implements InvalidationEventHub
     protected final void fireInvalidationEvent()
     {
         if (listeners == null)
+        {
             return;
+        }
 
         for (InvalidationListener listener : listeners)
         {
@@ -56,9 +57,9 @@ public class InvalidationEventHubImpl implements InvalidationEventHub
 
     public final void addInvalidationListener(InvalidationListener listener)
     {
-        if (listeners == null)
-            return;
-
-        listeners.add(listener);
+        if (listeners != null)
+        {
+            listeners.add(listener);
+        }
     }
 }

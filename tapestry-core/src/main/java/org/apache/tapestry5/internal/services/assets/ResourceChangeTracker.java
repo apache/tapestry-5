@@ -19,25 +19,25 @@ import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
 import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.UpdateListener;
+import org.apache.tapestry5.services.assets.ResourceDependencies;
 
 /**
  * Tracks resources (at least, resources that can change because they are on the file system) and
  * acts as an {@link UpdateListener} to check for changes and notify its listeners.
- * 
+ *
  * @since 5.3
  */
-public interface ResourceChangeTracker extends InvalidationEventHub
+public interface ResourceChangeTracker extends InvalidationEventHub, ResourceDependencies
 {
     /**
      * Start tracking the resource (or return the last modified time of an already tracked resource). Only file system
      * resources are tracked. Resources are tracked until <em>any</em> resource changes, at which points
      * {@linkplain InvalidationListener listeners} are notified and the internal state
      * is cleared.
-     * 
-     * @see URLChangeTracker
-     * @param resource
-     *            to track
+     *
+     * @param resource to track
      * @return last modified time, to nearest second
+     * @see URLChangeTracker
      */
     long trackResource(Resource resource);
 }

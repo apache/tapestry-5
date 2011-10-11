@@ -30,15 +30,15 @@ public class ResourceChangeTrackerImpl extends InvalidationEventHubImpl implemen
     private final URLChangeTracker tracker;
 
     public ResourceChangeTrackerImpl(ClasspathURLConverter classpathURLConverter,
-            @Symbol(SymbolConstants.PRODUCTION_MODE)
-            boolean productionMode)
+                                     @Symbol(SymbolConstants.PRODUCTION_MODE)
+                                     boolean productionMode)
     {
         super(productionMode);
-        
+
         // Use granularity of seconds (not milliseconds) since that works properly
         // with response headers for identifying last modified. Don't track
         // folder changes, just changes to actual files.
-        tracker = new URLChangeTracker(classpathURLConverter, true, false);
+        tracker = productionMode ? null : new URLChangeTracker(classpathURLConverter, true, false);
     }
 
     @PostInjection
@@ -49,7 +49,17 @@ public class ResourceChangeTrackerImpl extends InvalidationEventHubImpl implemen
 
     public long trackResource(Resource resource)
     {
+        if (tracker == null)
+        {
+            return 0;
+        }
+
         return tracker.add(resource.toURL());
+    }
+
+    public void addDependency(Resource dependency)
+    {
+        trackResource(dependency);
     }
 
     public void checkForUpdates()

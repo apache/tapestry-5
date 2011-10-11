@@ -14,13 +14,10 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
-import java.io.IOException;
-
 import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.services.assets.ResourceMinimizer;
-import org.apache.tapestry5.services.assets.StreamableResource;
-import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
-import org.apache.tapestry5.services.assets.StreamableResourceSource;
+import org.apache.tapestry5.services.assets.*;
+
+import java.io.IOException;
 
 /**
  * Loops the result through the {@link ResourceMinimizer} service.
@@ -37,13 +34,15 @@ public class SRSMinimizingInterceptor implements StreamableResourceSource
         this.minimizer = minimizer;
     }
 
-    public StreamableResource getStreamableResource(Resource baseResource, StreamableResourceProcessing processing)
+    public StreamableResource getStreamableResource(Resource baseResource, StreamableResourceProcessing processing, ResourceDependencies dependencies)
             throws IOException
     {
-        StreamableResource streamable = delegate.getStreamableResource(baseResource, processing);
+        StreamableResource streamable = delegate.getStreamableResource(baseResource, processing, dependencies);
 
         if (processing != StreamableResourceProcessing.FOR_AGGREGATION)
+        {
             return minimizer.minimize(streamable);
+        }
 
         return streamable;
     }

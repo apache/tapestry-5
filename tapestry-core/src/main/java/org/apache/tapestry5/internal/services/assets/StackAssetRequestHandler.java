@@ -14,18 +14,6 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.zip.GZIPOutputStream;
-
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.IOOperation;
@@ -37,19 +25,17 @@ import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.json.JSONArray;
-import org.apache.tapestry5.services.InvalidationListener;
-import org.apache.tapestry5.services.LocalizationSetter;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Response;
-import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
-import org.apache.tapestry5.services.assets.AssetRequestHandler;
-import org.apache.tapestry5.services.assets.CompressionStatus;
-import org.apache.tapestry5.services.assets.ResourceMinimizer;
-import org.apache.tapestry5.services.assets.StreamableResource;
-import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
-import org.apache.tapestry5.services.assets.StreamableResourceSource;
+import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.assets.*;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
+
+import java.io.*;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.GZIPOutputStream;
 
 public class StackAssetRequestHandler implements AssetRequestHandler, InvalidationListener
 {
@@ -78,13 +64,15 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
 
     private final boolean minificationEnabled;
 
-    public StackAssetRequestHandler(StreamableResourceSource streamableResourceSource,
-            JavaScriptStackSource javascriptStackSource, LocalizationSetter localizationSetter,
-            ResponseCompressionAnalyzer compressionAnalyzer, ResourceStreamer resourceStreamer,
-            ResourceMinimizer resourceMinimizer, OperationTracker tracker,
+    private final ResourceChangeTracker resourceChangeTracker;
 
-            @Symbol(SymbolConstants.MINIFICATION_ENABLED)
-            boolean minificationEnabled)
+    public StackAssetRequestHandler(StreamableResourceSource streamableResourceSource,
+                                    JavaScriptStackSource javascriptStackSource, LocalizationSetter localizationSetter,
+                                    ResponseCompressionAnalyzer compressionAnalyzer, ResourceStreamer resourceStreamer,
+                                    ResourceMinimizer resourceMinimizer, OperationTracker tracker,
+
+                                    @Symbol(SymbolConstants.MINIFICATION_ENABLED)
+                                    boolean minificationEnabled, ResourceChangeTracker resourceChangeTracker)
     {
         this.streamableResourceSource = streamableResourceSource;
         this.javascriptStackSource = javascriptStackSource;
@@ -94,6 +82,7 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
         this.resourceMinimizer = resourceMinimizer;
         this.tracker = tracker;
         this.minificationEnabled = minificationEnabled;
+        this.resourceChangeTracker = resourceChangeTracker;
     }
 
     @PostInjection
@@ -120,7 +109,9 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
         return true;
     }
 
-    /** Notified by the {@link ResourceChangeTracker} when (any) resource files change; the internal caches are cleared. */
+    /**
+     * Notified by the {@link ResourceChangeTracker} when (any) resource files change; the internal caches are cleared.
+     */
     public synchronized void objectWasInvalidated()
     {
         uncompressedCache.clear();
@@ -204,7 +195,7 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
             Resource resource = library.getResource();
 
             StreamableResource streamable = streamableResourceSource.getStreamableResource(resource,
-                    StreamableResourceProcessing.FOR_AGGREGATION);
+                    StreamableResourceProcessing.FOR_AGGREGATION, resourceChangeTracker);
 
             streamable.streamTo(stream);
 
