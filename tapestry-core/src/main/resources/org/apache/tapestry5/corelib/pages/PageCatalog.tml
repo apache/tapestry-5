@@ -29,7 +29,7 @@
 
     <t:zone t:id="pagesZone" id="pages">
 
-        <p>
+        <p xml:space="preserve">
             This page provides a list of pages currently loaded in the application. There are currently
             <strong>${pages.size()}</strong> page instances in the page cache.
         </p>
