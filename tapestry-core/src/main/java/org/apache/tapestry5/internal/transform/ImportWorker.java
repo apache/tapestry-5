@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.internal.transform;
 
-import java.util.Locale;
-
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Import;
@@ -26,23 +24,18 @@ import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.plastic.ComputedValue;
-import org.apache.tapestry5.plastic.FieldHandle;
-import org.apache.tapestry5.plastic.InstanceContext;
-import org.apache.tapestry5.plastic.MethodAdvice;
-import org.apache.tapestry5.plastic.MethodInvocation;
-import org.apache.tapestry5.plastic.PlasticClass;
-import org.apache.tapestry5.plastic.PlasticField;
-import org.apache.tapestry5.plastic.PlasticMethod;
+import org.apache.tapestry5.plastic.*;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
 
+import java.util.Locale;
+
 /**
  * Implements the {@link Import} annotation, both at the class and at the method level.
- * 
+ *
  * @since 5.2.0
  */
 public class ImportWorker implements ComponentClassTransformWorker2
@@ -66,7 +59,9 @@ public class ImportWorker implements ComponentClassTransformWorker2
         public void work(Asset asset)
         {
             javascriptSupport.importStylesheet(asset);
-        };
+        }
+
+        ;
     };
 
     public ImportWorker(JavaScriptSupport javascriptSupport, SymbolSource symbolSource, AssetSource assetSource)
@@ -108,7 +103,7 @@ public class ImportWorker implements ComponentClassTransformWorker2
     }
 
     private void decorateMethod(PlasticClass componentClass, MutableComponentModel model, PlasticMethod method,
-            Import annotation)
+                                Import annotation)
     {
         importStacks(method, annotation.stack());
 
@@ -132,27 +127,27 @@ public class ImportWorker implements ComponentClassTransformWorker2
                 for (String stack : stacks)
                 {
                     javascriptSupport.importStack(stack);
-
-                    invocation.proceed();
                 }
+
+                invocation.proceed();
             }
         };
     }
 
     private void importLibraries(PlasticClass plasticClass, MutableComponentModel model, PlasticMethod method,
-            String[] paths)
+                                 String[] paths)
     {
         decorateMethodWithOperation(plasticClass, model, method, paths, importLibrary);
     }
 
     private void importStylesheets(PlasticClass plasticClass, MutableComponentModel model, PlasticMethod method,
-            String[] paths)
+                                   String[] paths)
     {
         decorateMethodWithOperation(plasticClass, model, method, paths, importStylesheet);
     }
 
     private void decorateMethodWithOperation(PlasticClass componentClass, MutableComponentModel model,
-            PlasticMethod method, String[] paths, Worker<Asset> operation)
+                                             PlasticMethod method, String[] paths, Worker<Asset> operation)
     {
         if (paths.length == 0)
             return;
@@ -178,7 +173,7 @@ public class ImportWorker implements ComponentClassTransformWorker2
     }
 
     private void initializeAssetsFromPaths(PlasticClass componentClass, final Resource baseResource,
-            final String[] expandedPaths, final PlasticField assetsField)
+                                           final String[] expandedPaths, final PlasticField assetsField)
     {
         assetsField.injectComputed(new ComputedValue<Asset[]>()
         {
@@ -203,7 +198,7 @@ public class ImportWorker implements ComponentClassTransformWorker2
     }
 
     private void addMethodAssetOperationAdvice(PlasticMethod method, final FieldHandle access,
-            final Worker<Asset> operation)
+                                               final Worker<Asset> operation)
     {
         method.addAdvice(new MethodAdvice()
         {
