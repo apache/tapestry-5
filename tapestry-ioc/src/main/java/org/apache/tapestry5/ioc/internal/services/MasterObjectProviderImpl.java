@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 The Apache Software Foundation
+// Copyright 2007, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,8 +16,9 @@ package org.apache.tapestry5.ioc.internal.services;
 
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
-import org.apache.tapestry5.ioc.services.ClassFabUtils;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.MasterObjectProvider;
+import org.apache.tapestry5.plastic.PlasticUtils;
 
 import java.util.List;
 
@@ -30,8 +31,11 @@ public class MasterObjectProviderImpl implements MasterObjectProvider
 
     public MasterObjectProviderImpl(List<ObjectProvider> configuration, OperationTracker tracker)
     {
-        this.configuration = configuration;
+        this.configuration = CollectionFactory.newList(configuration);
         this.tracker = tracker;
+
+        // Add this special case to the front of the list.
+        this.configuration.add(0, new StaticObjectProvider(OperationTracker.class, tracker));
     }
 
     public <T> T provide(final Class<T> objectType, final AnnotationProvider annotationProvider,
@@ -39,7 +43,7 @@ public class MasterObjectProviderImpl implements MasterObjectProvider
                          final boolean required)
     {
         return tracker.invoke(String.format("Resolving object of type %s using MasterObjectProvider",
-                                            ClassFabUtils.toJavaClassName(objectType)), new Invokable<T>()
+                PlasticUtils.toTypeName(objectType)), new Invokable<T>()
         {
             public T invoke()
             {

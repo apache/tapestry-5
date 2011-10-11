@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,6 +26,9 @@ import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
  * This service is itself a key part of Tapestry's general injection mechanism; it is used when instantiating a service
  * implementation instance, invoking module methods (service builder, decorator, or contribution methods), when
  * {@linkplain ObjectLocator#autobuild(Class) autobuilding} objects of any type.
+ * <p/>
+ * As of Tapestry 5.3, the MasterObjectProvider allows injection of {@link org.apache.tapestry5.ioc.OperationTracker} as a
+ * special case (not based on a contributed ObjectProvider).
  */
 @UsesOrderedConfiguration(ObjectProvider.class)
 public interface MasterObjectProvider
