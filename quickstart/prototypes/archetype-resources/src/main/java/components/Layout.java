@@ -1,9 +1,12 @@
-package ${package}.components;
+package $
+
+{package}.components;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.ioc.annotations.*;
 import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.SymbolConstants
 
 /**
  * Layout component for pages of application ${artifactId}.
@@ -11,7 +14,9 @@ import org.apache.tapestry5.BindingConstants;
 @IncludeStylesheet("context:layout/layout.css")
 public class Layout
 {
-    /** The page title, for the <title> element and the <h1> element. */
+    /**
+     * The page title, for the <title> element and the <h1> element.
+     */
     @Property
     @Parameter(required = true, defaultPrefix = BindingConstants.LITERAL)
     private String title;
@@ -30,15 +35,21 @@ public class Layout
     @Inject
     private ComponentResources resources;
 
+    @Property
+    @Inject
+    @Symbol(SymbolConstants.APPLICATION_VERSION)
+    private String appVersion;
+
+
     public String getClassForPageName()
     {
-      return resources.getPageName().equalsIgnoreCase(pageName)
-             ? "current_page_item"
-             : null;
+        return resources.getPageName().equalsIgnoreCase(pageName)
+                ? "current_page_item"
+                : null;
     }
 
     public String[] getPageNames()
     {
-      return new String[] { "Index", "About", "Contact" };
+        return new String[]{"Index", "About", "Contact"};
     }
 }

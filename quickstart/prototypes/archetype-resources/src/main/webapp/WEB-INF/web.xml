@@ -12,17 +12,17 @@ of where to look for pages, components and mixins. -->
     </context-param>
     <!--
     Specify some additional Modules for two different execution
-    modes: Development and Qa.
-    Remember that the default execution mode is: Production
+    modes: development and qa.
+    Remember that the default execution mode is production
     -->
     <context-param>
-        <param-name>tapestry.Development-modules</param-name>
+        <param-name>tapestry.development-modules</param-name>
         <param-value>
             ${package}.services.DevelopmentModule
         </param-value>
     </context-param>
     <context-param>
-        <param-name>tapestry.Qa-modules</param-name>
+        <param-name>tapestry.qa-modules</param-name>
         <param-value>
             ${package}.services.QaModule
         </param-value>

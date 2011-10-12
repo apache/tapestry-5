@@ -7,7 +7,7 @@ Released for free under a Creative Commons Attribution 2.5 License
 body {
     margin: 0;
     padding: 0;
-    background: #FFFFFF url( images/img01.jpg ) repeat-x;
+    background: #FFFFFF url(images/img01.jpg) repeat-x;
     text-align: justify;
     font: 15px Arial, Helvetica, sans-serif;
     color: #626262;
@@ -20,7 +20,7 @@ form {
 
 input {
     padding: 5px;
-    background: #FEFEFE url( images/img13.gif ) repeat-x;
+    background: #FEFEFE url(images/img13.gif) repeat-x;
     border: 1px solid #626262;
     font: normal 1em Arial, Helvetica, sans-serif;
 }
@@ -69,20 +69,20 @@ a:hover {
 
 /* Header */
 
-#header {
+div.header {
     height: 42px;
 }
 
-#logo h1, #logo p {
+div.logo h1, div.logo p {
     float: left;
     text-transform: lowercase;
 }
 
-#logo h1 {
+div.logo h1 {
     padding: 0px 0 0 40px;
 }
 
-#logo p {
+div.logo p {
     margin: 0;
     padding: 14px 0 0 4px;
     line-height: normal;
@@ -90,28 +90,28 @@ a:hover {
     font-size: 14px;
 }
 
-#logo a {
+div.logo a {
     text-decoration: none;
     color: #D0C7A6;
 }
 
-#menu {
+div.menu {
     float: right;
 }
 
-#menu ul {
+div.menu ul {
     margin: 0;
     padding: 0;
     list-style: none;
 }
 
-#menu li {
+div.menu li {
     display: block;
     float: left;
     height: 42px;
 }
 
-#menu a {
+div.menu a {
     display: block;
     padding: 8px 20px 0px 20px;
     text-decoration: none;
@@ -123,24 +123,24 @@ a:hover {
     color: #CEC5A4;
 }
 
-#menu .last {
+div.menu .last {
     margin-right: 20px;
 }
 
-#menu a:hover {
+div.menu a:hover {
     color: #FFFFFF;
 }
 
-#menu .current_page_item A {
+div.menu .current_page_item A {
     text-decoration: underline;
 }
 
-#menu .current_page_item a {
+div.menu .current_page_item a {
 }
 
 /* Page */
 
-#page {
+div.page {
     padding: 40px 40px 0 40px;
 }
 
@@ -203,53 +203,53 @@ a:hover {
 .post .links .more {
     width: 128px;
     height: 30px;
-    background: url( images/img03.jpg ) no-repeat left center;
+    background: url(images/img03.jpg) no-repeat left center;
 }
 
 .post .links .comments {
     width: 152px;
     height: 30px;
-    background: url( images/img04.jpg ) no-repeat left center;
+    background: url(images/img04.jpg) no-repeat left center;
 }
 
 /* Sidebar */
 
-#sidebar {
+div.sidebar {
     float: right;
     width: 300px;
     margin-top: 30px;
 }
 
-#sidebar ul {
+div.sidebar ul {
     margin: 0;
     padding: 0;
     list-style: none;
 }
 
-#sidebar li {
+div.sidebar li {
     margin-bottom: 10px;
-    background: url( images/img10.gif ) no-repeat left bottom;
+    background: url(images/img10.gif) no-repeat left bottom;
 }
 
-#sidebar li ul {
+div.sidebar li ul {
     padding: 0 30px 40px 30px;
 }
 
-#sidebar li li {
+div.sidebar li li {
     margin: 0;
     padding-left: 20px;
 }
 
-#sidebar h2 {
+div.sidebar h2 {
     padding: 30px 30px 5px 10px;
-    background: url( images/img09.gif ) no-repeat;
+    background: url(images/img09.gif) no-repeat;
     text-transform: lowercase;
     font-weight: normal;
     font-size: 1.6em;
     color: #302D26;
 }
 
-#sidebar DIV.sidebar-content {
+div.sidebar DIV.sidebar-content {
     width: 265px;
     margin-left: 10px;
     padding-bottom: 1px;
@@ -257,70 +257,70 @@ a:hover {
 
 /* Search */
 
-#search {
+li.search {
     padding: 20px 30px 40px 30px;
 }
 
-#search input {
+li.search input {
     padding: 0;
     width: 70px;
     height: 29px;
-    background: #DFDFDF url( images/img14.gif ) repeat-x;
+    background: #DFDFDF url(images/img14.gif) repeat-x;
     font-weight: bold;
 }
 
-#search #s {
+li.search #s {
     padding: 5px;
     width: 150px;
     height: auto;
-    background: #FEFEFE url( images/img13.gif ) repeat-x;
+    background: #FEFEFE url(images/img13.gif) repeat-x;
     border: 1px solid #626262;
     font: normal 1em Arial, Helvetica, sans-serif;
 }
 
-#search br {
+li.search br {
     display: none;
 }
 
 /* Categories */
 
-#sidebar #categories li {
-    background: url( images/img12.gif ) no-repeat left center;
+div.sidebar div.categories li {
+    background: url(images/img12.gif) no-repeat left center;
 }
 
 /* Calendar */
 
-#calendar_wrap {
+div.calendar_wrap {
     padding: 0 30px 40px 30px;
 }
 
-#calendar table {
+div.calendar table {
     width: 100%;
     text-align: center;
 }
 
-#calendar thead {
+div.calendar thead {
     background: #F1F1F1;
 }
 
-#calendar tbody td {
+div.calendar tbody td {
     border: 1px solid #F1F1F1;
 }
 
-#calendar #prev {
+div.calendar #prev {
     text-align: left;
 }
 
-#calendar #next {
+div.calendar #next {
     text-align: right;
 }
 
-#calendar tfoot a {
+div.calendar tfoot a {
     text-decoration: none;
     font-weight: bold;
 }
 
-#calendar #today {
+div.calendar #today {
     background: #FFF3A7;
     border: 1px solid #EB1400;
     font-weight: bold;
@@ -329,12 +329,12 @@ a:hover {
 
 /* Footer */
 
-#footer {
+div.footer {
     padding: 70px 0 50px 0;
-    background: #757575 url( images/img08.gif ) repeat-x;
+    background: #757575 url(images/img08.gif) repeat-x;
 }
 
-#footer p {
+div.footer p {
     margin-bottom: 1em;
     text-align: center;
     line-height: normal;
@@ -342,28 +342,28 @@ a:hover {
     color: #BABABA;
 }
 
-#footer a {
+div.footer a {
     padding: 0 20px;
     text-decoration: none;
     color: #DDDDDD;
 }
 
-#footer a:hover {
+div.footer a:hover {
     color: #FFFFFF;
 }
 
-#footer .rss {
-    background: url( images/img18.gif ) no-repeat left center;
+div.footer .rss {
+    background: url(images/img18.gif) no-repeat left center;
 }
 
-#footer .xhtml {
-    background: url( images/img19.gif ) no-repeat left center;
+div.footer .xhtml {
+    background: url(images/img19.gif) no-repeat left center;
 }
 
-#footer .css {
-    background: url( images/img20.gif ) no-repeat left center;
+div.footer .css {
+    background: url(images/img20.gif) no-repeat left center;
 }
 
-#footer .legal a {
+div.footer .legal a {
     padding: 0;
 }

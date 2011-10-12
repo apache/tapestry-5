@@ -1,11 +1,15 @@
 <html t:type="layout" title="${artifactId} Index"
       t:sidebarTitle="Current Time"
-      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"
+      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
       xmlns:p="tapestry:parameter">
     #set( $D = '$' )
     <!-- Most of the page content, including <head>, <body>, etc. tags, comes from Layout.tml -->
 
     <p>${D}{message:greeting}</p>
+
+    <p>
+        You are running Tapestry version <strong>${D}{tapestryVersion}</strong>.
+    </p>
 
     <p:sidebar>
 
@@ -15,9 +19,28 @@
 
         <p>The current time is: ${D}{currentTime}.</p>
 
+        <!-- A Zone is a component that can be updated in place, triggered by other components. -->
+        <t:zone t:id="zone">
+            <p>
+                You have clicked the link <strong>${D}{clickCount}</strong> times.
+            </p>
+
+            <p>
+                [
+                <t:actionlink t:id="increment">increment</t:actionlink>
+                ]
+                &nbsp;
+                [
+                <t:actionlink t:id="incrementAjax" zone="^">increment (via Ajax)</t:actionlink>
+                ]
+            </p>
+
+        </t:zone>
 
         <p>
-            [<t:pagelink page="Index">refresh</t:pagelink>]
+            [
+            <t:pagelink page="Index">refresh page</t:pagelink>
+            ]
         </p>
     </p:sidebar>
 
