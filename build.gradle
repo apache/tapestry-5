@@ -2,7 +2,7 @@ description = "Apache Tapestry 5 Project"
 
 // Remember that when generating a release, this should be incremented. Also don't forget to
 // tag the release in Subversion.
-tapestryVersion = "5.3-beta-19"
+tapestryVersion = "5.3-beta-20"
 
 jettyVersion = '7.0.0.v20091005'
 tomcatVersion = '6.0.30'
@@ -51,20 +51,6 @@ allprojects {
 subprojects {
     version = parent.version
 
-    apply plugin: 'java'
-    apply plugin: 'groovy' // mostly for testing
-    apply plugin: 'maven'
-    apply plugin: 'project-report'
-
-    sourceCompatibility = '1.5'
-    targetCompatibility = '1.5'
-
-    // This may be temporary, to help track down/verify the ProQuest production deployment
-    // issue.
-    compileJava {
-        debug = false
-    }
-
     group = 'org.apache.tapestry'
 
     configurations {
@@ -73,56 +59,71 @@ subprojects {
 
         // meta -- non-code artifacts, such as sources and javadoc JARs
         meta
+    }
 
+    if (name != "quickstart")
+    {
+        apply plugin: 'java'
+        apply plugin: 'groovy' // mostly for testing
+        apply plugin: 'maven'
+        apply plugin: 'project-report'
+
+        sourceCompatibility = '1.5'
+        targetCompatibility = '1.5'
+
+        // See http://jira.codehaus.org/browse/GRADLE-784
+
+        sourceSets {
+            main {
+                compileClasspath += configurations.provided
+            }
+            test {
+                compileClasspath += configurations.provided
+                runtimeClasspath += configurations.provided
+            }
+        }
+
+        ideaModule {
+            scopes.PROVIDED.plus += configurations.provided
+        }
+
+        dependencies {
+            groovy "org.codehaus.groovy:groovy-all:1.7.4"
+
+            deployerJars "org.apache.maven.wagon:wagon-http-lightweight:1.0-beta-6"
+        }
+
+        test {
+            useTestNG()
+
+            options.suites("src/test/conf/testng.xml")
+
+            maxHeapSize = "400M"
+
+            // Turn off live service reloading
+
+            systemProperties["tapestry.service-reloading-enabled"] = "false"
+
+            jvmArgs("-XX:MaxPermSize=512m")
+        }
+
+        task sourcesJar(type: Jar, dependsOn: classes) {
+            classifier = 'sources'
+            from sourceSets.main.allSource
+        }
+
+        artifacts {
+            meta sourcesJar
+        }
+
+    }
+
+    configurations {
         // published -- what gets uploaded to the Nexus repository
         published.extendsFrom archives, meta
+
         if (doSign)
         { published.extendsFrom signatures }
-    }
-
-    // See http://jira.codehaus.org/browse/GRADLE-784
-
-    sourceSets {
-        main {
-            compileClasspath += configurations.provided
-        }
-        test {
-            compileClasspath += configurations.provided
-            runtimeClasspath += configurations.provided
-        }
-    }
-
-    ideaModule {
-        scopes.PROVIDED.plus += configurations.provided
-    }
-
-    dependencies {
-        groovy "org.codehaus.groovy:groovy-all:1.7.4"
-
-        deployerJars "org.apache.maven.wagon:wagon-http-lightweight:1.0-beta-6"
-    }
-
-    test {
-        useTestNG()
-
-        options.suites("src/test/conf/testng.xml")
-
-        maxHeapSize = "400M"
-
-        // Turn off live service reloading
-
-        systemProperties["tapestry.service-reloading-enabled"] = "false"
-
-        jvmArgs("-XX:MaxPermSize=512m")
-    }
-
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        classifier = 'sources'
-        from sourceSets.main.allSource
-    }
-
-    artifacts {
-        meta sourcesJar
     }
 
     if (doSign)
@@ -139,7 +140,7 @@ subprojects {
     deployPasswordProperty = isSnapshot() ? "snapshotDeployPassword" : "apacheDeployPassword"
     canDeploy = [deployUsernameProperty, deployPasswordProperty].every { project.hasProperty(it) }
 
-    uploadPublished {
+    task uploadPublished {
 
         doFirst {
             if (!canDeploy)
@@ -217,7 +218,7 @@ task aggregateJavadoc(type: Javadoc, group: "Documentation") {
         exclude "org/apache/tapestry5/internal/plastic/asm/**"
     }
 
-    subprojects.each { sp ->
+    subprojects.findAll({ sp -> sp.name != "quickstart" }).each { sp ->
         sp.sourceSets.all.findAll { set -> set.name != "test" }.each { set ->
 
             source set.java

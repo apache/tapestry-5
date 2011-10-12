@@ -39,7 +39,7 @@ task generateArchetype(type: Copy) {
 
 }
 
-task archetype(type: Jar, dependsOn: 'generateArchetype') {
+task build(type: Jar, dependsOn: 'generateArchetype') {
 
     description = "Creates a the JAR archive for the quickstart archetype"
     group = "Release artifact"
@@ -49,4 +49,8 @@ task archetype(type: Jar, dependsOn: 'generateArchetype') {
     version = project.version
 
     from generatedDir
+}
+
+artifacts {
+    archives build
 }
