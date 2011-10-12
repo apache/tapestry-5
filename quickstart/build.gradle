@@ -1,41 +1,27 @@
 import org.apache.tools.ant.filters.FixCrLfFilter
 import org.apache.tools.ant.filters.ReplaceTokens
+import java.util.*
 
-generatedDir = new File(buildDir, 'quickstart-generated')
+task processPrototypes(type: Copy) {
 
-task generateArchetype(type: Copy) {
     srcDir = file('prototypes')
 
     inputs.file srcDir
-    outputs.dir generatedDir
-
-    generatedDir.mkdirs()
+    outputs.dir sourceSets.main.classesDir
 
     from srcDir
-    into generatedDir
+    into sourceSets.main.classesDir
 
     // Use some of the filters provided by Ant
     filter(FixCrLfFilter)
     filter(ReplaceTokens, tokens: [
-            quickstartVersion: version, tapestryReleaseVersion: version,
+            quickstartVersion: version,
+            tapestryReleaseVersion: version,
             servletApiReleaseVersion: servletAPIVersion,
-            testngReleaseVersion: testngVersion, easymockReleaseVersion: easymockVersion
+            testngReleaseVersion: testngVersion,
+            easymockReleaseVersion: easymockVersion,
+            year: new GregorianCalendar()[Calendar.YEAR].toString()
     ])
-
 }
 
-task build(type: Jar, dependsOn: 'generateArchetype') {
-
-    description = "Creates a the JAR archive for the quickstart archetype"
-    group = "Release artifact"
-
-    destinationDir = buildDir
-    baseName = "quickstart"
-    version = project.version
-
-    from generatedDir
-}
-
-artifacts {
-    archives build
-}
+processResources.dependsOn processPrototypes

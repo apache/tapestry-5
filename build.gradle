@@ -61,62 +61,59 @@ subprojects {
         meta
     }
 
-    if (name != "quickstart")
-    {
-        apply plugin: 'java'
-        apply plugin: 'groovy' // mostly for testing
-        apply plugin: 'maven'
-        apply plugin: 'project-report'
+    apply plugin: 'java'
+    apply plugin: 'groovy' // mostly for testing
+    apply plugin: 'maven'
+    apply plugin: 'project-report'
 
-        sourceCompatibility = '1.5'
-        targetCompatibility = '1.5'
+    sourceCompatibility = '1.5'
+    targetCompatibility = '1.5'
 
-        // See http://jira.codehaus.org/browse/GRADLE-784
+    // See http://jira.codehaus.org/browse/GRADLE-784
 
-        sourceSets {
-            main {
-                compileClasspath += configurations.provided
-            }
-            test {
-                compileClasspath += configurations.provided
-                runtimeClasspath += configurations.provided
-            }
+    sourceSets {
+        main {
+            compileClasspath += configurations.provided
         }
-
-        ideaModule {
-            scopes.PROVIDED.plus += configurations.provided
-        }
-
-        dependencies {
-            groovy "org.codehaus.groovy:groovy-all:1.7.4"
-
-            deployerJars "org.apache.maven.wagon:wagon-http-lightweight:1.0-beta-6"
-        }
-
         test {
-            useTestNG()
-
-            options.suites("src/test/conf/testng.xml")
-
-            maxHeapSize = "400M"
-
-            // Turn off live service reloading
-
-            systemProperties["tapestry.service-reloading-enabled"] = "false"
-
-            jvmArgs("-XX:MaxPermSize=512m")
+            compileClasspath += configurations.provided
+            runtimeClasspath += configurations.provided
         }
-
-        task sourcesJar(type: Jar, dependsOn: classes) {
-            classifier = 'sources'
-            from sourceSets.main.allSource
-        }
-
-        artifacts {
-            meta sourcesJar
-        }
-
     }
+
+    ideaModule {
+        scopes.PROVIDED.plus += configurations.provided
+    }
+
+    dependencies {
+        groovy "org.codehaus.groovy:groovy-all:1.7.4"
+
+        deployerJars "org.apache.maven.wagon:wagon-http-lightweight:1.0-beta-6"
+    }
+
+    test {
+        useTestNG()
+
+        options.suites("src/test/conf/testng.xml")
+
+        maxHeapSize = "400M"
+
+        // Turn off live service reloading
+
+        systemProperties["tapestry.service-reloading-enabled"] = "false"
+
+        jvmArgs("-XX:MaxPermSize=512m")
+    }
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    artifacts {
+        meta sourcesJar
+    }
+
 
     configurations {
         // published -- what gets uploaded to the Nexus repository
@@ -140,7 +137,7 @@ subprojects {
     deployPasswordProperty = isSnapshot() ? "snapshotDeployPassword" : "apacheDeployPassword"
     canDeploy = [deployUsernameProperty, deployPasswordProperty].every { project.hasProperty(it) }
 
-    task uploadPublished {
+    uploadPublished {
 
         doFirst {
             if (!canDeploy)
