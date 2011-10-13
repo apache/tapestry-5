@@ -83,6 +83,11 @@ public class ComponentsParametersConstants
      */
     public static final String FORMINJECTOR_SHOW_FUNCTION = "tapestry.components.forminjector_show_function";
 
+    /**
+     * The default size of rows
+     */
+    public static final String PALETTE_ROWS_SIZE = "tapestry.components.palette_rows_size";
+
 
 
 }

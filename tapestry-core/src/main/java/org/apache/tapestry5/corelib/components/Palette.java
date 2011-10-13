@@ -285,7 +285,7 @@ public class Palette extends AbstractField
     /**
      * Number of rows to display.
      */
-    @Parameter(value = "10")
+    @Parameter(value = BindingConstants.SYMBOL + ":" + ComponentsParametersConstants.PALETTE_ROWS_SIZE)
     private int size;
 
     /**

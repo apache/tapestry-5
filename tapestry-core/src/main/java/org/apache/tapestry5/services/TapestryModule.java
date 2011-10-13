@@ -2370,6 +2370,9 @@ public final class TapestryModule
         // FormInjector components parameters defaults
         configuration.add(ComponentsParametersConstants.FORMINJECTOR_INSERT_POSITION, "above");
         configuration.add(ComponentsParametersConstants.FORMINJECTOR_SHOW_FUNCTION, "highlight");
+
+        // Palette components parameters defaults
+        configuration.add(ComponentsParametersConstants.PALETTE_ROWS_SIZE, 10);
     }
 
     /**
