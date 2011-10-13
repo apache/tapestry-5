@@ -69,7 +69,8 @@ public class FormInjector implements ClientElement
     @Parameter
     private Object[] context;
 
-    @Parameter(defaultPrefix = BindingConstants.LITERAL, value = "above")
+    @Parameter(defaultPrefix = BindingConstants.LITERAL,
+            value = BindingConstants.SYMBOL + ":" + ComponentsParametersConstants.FORMINJECOTR_INSERT_POSITION)
     private InsertPosition position;
 
     /**

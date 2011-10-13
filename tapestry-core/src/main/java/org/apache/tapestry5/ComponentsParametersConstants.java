@@ -71,9 +71,9 @@ public class ComponentsParametersConstants
     public static final String GRIDCOLUMNS_SORTABLE_ASSET = "tapestry.components.gridcolumns_sortable_asset";
 
     /**
-     * The default {@link org.apache.tapestry5.Asset} to display for
-     * {@link org.apache.tapestry5.corelib.components.Palette} deselect action.
+     * The default position where to insert content into {@link org.apache.tapestry5.corelib.components.Form}.
+     * Default to "above".
      */
-    public static final String PALETTE_DESELECT_ASSET = "tapestry.components.palette_deselect_asset";
+    public static final String FORMINJECOTR_INSERT_POSITION= "tapestry.components.forminjector_insert_position";
 
 }
