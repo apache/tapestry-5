@@ -64,9 +64,10 @@ public class FormInjector implements ClientElement
 
     /**
      * Name of a function on the client-side Tapestry.ElementEffect object that is invoked to make added content
-     * visible. Leaving as null uses the default function, "highlight".
+     * visible. The default value is "highlight".
      */
-    @Parameter(defaultPrefix = BindingConstants.LITERAL)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL,
+            value = BindingConstants.SYMBOL + ":" + ComponentsParametersConstants.FORMINJECTOR_SHOW_FUNCTION)
     private String show;
 
     /**

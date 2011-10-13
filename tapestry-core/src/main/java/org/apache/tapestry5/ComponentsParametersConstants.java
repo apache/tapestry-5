@@ -76,6 +76,13 @@ public class ComponentsParametersConstants
      */
     public static final String FORMINJECTOR_INSERT_POSITION = "tapestry.components.forminjector_insert_position";
 
+    /**
+     * The default name for a JS function to use to show the injected content by
+     * {@link org.apache.tapestry5.corelib.components.FormInjector}.
+     * Default to "highlight".
+     */
+    public static final String FORMINJECTOR_SHOW_FUNCTION = "tapestry.components.forminjector_show_function";
+
 
 
 }
