@@ -2368,7 +2368,7 @@ public final class TapestryModule
         configuration.add(ComponentsParametersConstants.GRIDCOLUMNS_DESCENDING_ASSET, GridConstants.COLUMNS_DESCENDING);
 
         // FormInjector components parameters defaults
-        configuration.add(ComponentsParametersConstants.FORMINJECOTR_INSERT_POSITION, "above");
+        configuration.add(ComponentsParametersConstants.FORMINJECTOR_INSERT_POSITION, "above");
     }
 
     /**

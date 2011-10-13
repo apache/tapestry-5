@@ -74,6 +74,8 @@ public class ComponentsParametersConstants
      * The default position where to insert content into {@link org.apache.tapestry5.corelib.components.Form}.
      * Default to "above".
      */
-    public static final String FORMINJECOTR_INSERT_POSITION= "tapestry.components.forminjector_insert_position";
+    public static final String FORMINJECTOR_INSERT_POSITION = "tapestry.components.forminjector_insert_position";
+
+
 
 }

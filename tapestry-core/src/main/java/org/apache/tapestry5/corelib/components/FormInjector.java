@@ -20,29 +20,18 @@ import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.RequestParameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.data.InsertPosition;
-import org.apache.tapestry5.corelib.internal.ComponentActionSink;
-import org.apache.tapestry5.corelib.internal.HiddenFieldPositioner;
-import org.apache.tapestry5.corelib.internal.InternalFormSupport;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.services.PageRenderQueue;
 import org.apache.tapestry5.internal.services.RequestConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ClientBehaviorSupport;
-import org.apache.tapestry5.services.ClientDataEncoder;
-import org.apache.tapestry5.services.ComponentSource;
-import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FormSupport;
-import org.apache.tapestry5.services.Heartbeat;
-import org.apache.tapestry5.services.HiddenFieldLocationRules;
 import org.apache.tapestry5.services.PartialMarkupRenderer;
 import org.apache.tapestry5.services.PartialMarkupRendererFilter;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
-import org.slf4j.Logger;
 
 /**
  * A way to add new content to an existing Form. The FormInjector emulates its tag from the template (or uses a
@@ -70,7 +59,7 @@ public class FormInjector implements ClientElement
     private Object[] context;
 
     @Parameter(defaultPrefix = BindingConstants.LITERAL,
-            value = BindingConstants.SYMBOL + ":" + ComponentsParametersConstants.FORMINJECOTR_INSERT_POSITION)
+            value = BindingConstants.SYMBOL + ":" + ComponentsParametersConstants.FORMINJECTOR_INSERT_POSITION)
     private InsertPosition position;
 
     /**
