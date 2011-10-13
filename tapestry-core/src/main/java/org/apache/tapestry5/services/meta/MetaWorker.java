@@ -26,7 +26,12 @@ import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
  * @since 5.2.0
  */
 @UsesMappedConfiguration(key = Class.class, value = MetaDataExtractor.class)
-public interface MetaWorker extends ComponentClassTransformWorker2
+public interface MetaWorker
 {
-
+    /**
+     * Returns the worker that performs transformations (in 5.2, MetaWorker implemented ComponentClassTransformWorker).
+     *
+     * @return worker that implements the meta data analysis
+     */
+    ComponentClassTransformWorker2 getWorker();
 }

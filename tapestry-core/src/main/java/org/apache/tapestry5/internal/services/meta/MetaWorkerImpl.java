@@ -16,22 +16,27 @@ package org.apache.tapestry5.internal.services.meta;
 
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.PlasticClass;
-import org.apache.tapestry5.services.ClassTransformation;
 import org.apache.tapestry5.services.meta.MetaDataExtractor;
 import org.apache.tapestry5.services.meta.MetaWorker;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
 
 import java.lang.annotation.Annotation;
 import java.util.Map;
 
 @SuppressWarnings("unchecked")
-public class MetaWorkerImpl implements MetaWorker
+public class MetaWorkerImpl implements MetaWorker, ComponentClassTransformWorker2
 {
     private final Map<Class, MetaDataExtractor> configuration;
 
     public MetaWorkerImpl(Map<Class, MetaDataExtractor> configuration)
     {
         this.configuration = configuration;
+    }
+
+    public ComponentClassTransformWorker2 getWorker()
+    {
+        return this;
     }
 
     public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)

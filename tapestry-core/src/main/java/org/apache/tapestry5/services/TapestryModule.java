@@ -598,7 +598,7 @@ public final class TapestryModule
 
         configuration.addInstance("Import", ImportWorker.class);
 
-        configuration.add("Meta", metaWorker);
+        configuration.add("Meta", metaWorker.getWorker());
 
         configuration.add("Retain", new RetainWorker());
 
