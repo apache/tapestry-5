@@ -25,8 +25,8 @@ package org.apache.tapestry5.func;
 public interface Reducer<A, T>
 {
     /**
-     * Run a computation using the current value of the accumulator and a value (from a Flow),
+     * Run a computation using the current value of the accumulator and an element (from a Flow),
      * and return the new accumulator.
      */
-    A reduce(A accumulator, T value);
+    A reduce(A accumulator, T element);
 }
