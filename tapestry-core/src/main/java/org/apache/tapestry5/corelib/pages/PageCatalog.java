@@ -16,14 +16,11 @@ package org.apache.tapestry5.corelib.pages;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.alerts.AlertManager;
-import org.apache.tapestry5.annotations.ContentType;
-import org.apache.tapestry5.annotations.InjectComponent;
-import org.apache.tapestry5.annotations.Persist;
-import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.beaneditor.ReorderProperties;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.corelib.components.Zone;
-import org.apache.tapestry5.func.F;
-import org.apache.tapestry5.func.Predicate;
+import org.apache.tapestry5.func.*;
 import org.apache.tapestry5.internal.services.ComponentInstantiatorSource;
 import org.apache.tapestry5.internal.services.PageSource;
 import org.apache.tapestry5.internal.structure.Page;
@@ -31,6 +28,7 @@ import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
@@ -45,6 +43,33 @@ import java.util.Set;
 @ContentType("text/html")
 public class PageCatalog
 {
+    @ReorderProperties("definedPages,loadedPages,uniquePageNames,selectors,components")
+    public class Totals
+    {
+        /**
+         * Total number of pages loaded.
+         */
+        public int loadedPages;
+
+        /**
+         * Number of total page names.
+         */
+        public int definedPages;
+        /**
+         * Number of unique page names (remember, same page may appear for multiple selectors).
+         */
+        public int uniquePageNames;
+        /**
+         * Total number of components.
+         */
+        public int components;
+
+        /**
+         * All selectors represented in the pool, often just 'en'.
+         */
+        public String selectors;
+    }
+
     @Property
     @Inject
     @Symbol(SymbolConstants.PRODUCTION_MODE)
@@ -81,6 +106,46 @@ public class PageCatalog
 
     @Inject
     private ComponentInstantiatorSource componentInstantiatorSource;
+
+    @Cached
+    public Totals getTotals()
+    {
+
+        Totals result = new Totals();
+
+        Flow<Page> pages = F.flow(getPages());
+
+        result.loadedPages = pages.count();
+        result.definedPages = getPageNames().size();
+        result.uniquePageNames = pages.map(new Mapper<Page, String>()
+        {
+            public String map(Page element)
+            {
+                return element.getName();
+            }
+        }).toSet().size();
+
+        result.components = pages.reduce(new Reducer<Integer, Page>()
+        {
+            public Integer reduce(Integer accumulator, Page element)
+            {
+                return accumulator + element.getComponentCount();
+            }
+        }, 0);
+
+        Set<String> selectorIds = pages.map(new Mapper<Page, String>()
+        {
+            public String map(Page element)
+            {
+                return element.getSelector().toShortString();
+            }
+        }).toSet();
+
+        result.selectors = InternalUtils.joinSorted(selectorIds);
+
+        return result;
+
+    }
 
     public List<String> getPageNames()
     {

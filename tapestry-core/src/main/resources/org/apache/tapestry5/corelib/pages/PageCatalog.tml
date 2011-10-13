@@ -30,10 +30,10 @@
     <t:zone t:id="pagesZone" id="pages">
 
         <p xml:space="preserve">
-            This page provides a list of pages currently loaded in the application. There are currently
-            <strong>${pages.size()}</strong> page instances in the page cache.
+            This page provides a list of pages currently loaded in the application.
         </p>
 
+        <t:beandisplay object="totals"/>
 
         <t:grid source="pages" row="page" add="selector" reorder="name,selector">
             <p:assemblyTimeCell>
