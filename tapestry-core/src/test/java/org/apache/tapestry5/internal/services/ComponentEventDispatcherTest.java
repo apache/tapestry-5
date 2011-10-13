@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,11 +15,13 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.EventConstants;
+import org.apache.tapestry5.MetaDataConstants;
 import org.apache.tapestry5.internal.EmptyEventContext;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.URLEventContext;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.security.ClientWhitelist;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -50,7 +52,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         Dispatcher dispatcher = new ComponentEventDispatcher(null,
                 new ComponentEventLinkEncoderImpl(null, contextPathEncoder, null, request,
-                        response, null, null, null, true, ""));
+                        response, null, null, null, true, "", null, null));
 
         assertFalse(dispatcher.dispatch(request, response));
 
@@ -136,11 +138,12 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
         Response response = mockResponse();
         ComponentClassResolver resolver = mockComponentClassResolver();
         LocalizationSetter ls = mockLocalizationSetter();
+        MetaDataLocator metaDataLocator = neverWhitelistProtected();
 
         ComponentEventRequestParameters expectedParameters = new ComponentEventRequestParameters(
                 "mypage", "mypage", "", "eventname", new URLEventContext(contextValueEncoder,
-                        new String[]
-                        { "alpha", "beta" }), new EmptyEventContext());
+                new String[]
+                        {"alpha", "beta"}), new EmptyEventContext());
 
         train_getPath(request, "/mypage:eventname");
 
@@ -160,7 +163,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         Dispatcher dispatcher = new ComponentEventDispatcher(handler,
                 new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls, request,
-                        response, null, null, null, true, ""));
+                        response, null, null, null, true, "", metaDataLocator, null));
 
         assertTrue(dispatcher.dispatch(request, response));
 
@@ -175,6 +178,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
         Response response = mockResponse();
         ComponentClassResolver resolver = mockComponentClassResolver();
         LocalizationSetter ls = mockLocalizationSetter();
+        MetaDataLocator metaDataLocator = neverWhitelistProtected();
 
         ComponentEventRequestParameters expectedParameters = new ComponentEventRequestParameters(
                 "activepage", "mypage", "", "eventname", new EmptyEventContext(),
@@ -200,7 +204,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         Dispatcher dispatcher = new ComponentEventDispatcher(handler,
                 new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls, request,
-                        response, null, null, null, true, ""));
+                        response, null, null, null, true, "", metaDataLocator, null));
 
         assertTrue(dispatcher.dispatch(request, response));
 
@@ -224,7 +228,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         Dispatcher dispatcher = new ComponentEventDispatcher(null,
                 new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls, request,
-                        response, null, null, null, true, ""));
+                        response, null, null, null, true, "", null, null));
 
         assertFalse(dispatcher.dispatch(request, response));
 
@@ -232,13 +236,14 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
     }
 
     private void test(String requestPath, String localeName, String containerPageName,
-            String nestedComponentId, String eventType, String... eventContext) throws IOException
+                      String nestedComponentId, String eventType, String... eventContext) throws IOException
     {
         ComponentRequestHandler handler = mockComponentRequestHandler();
         Request request = mockRequest();
         Response response = mockResponse();
         ComponentClassResolver resolver = mockComponentClassResolver();
         LocalizationSetter localizationSetter = mockLocalizationSetter();
+        MetaDataLocator metaDataLocator = neverWhitelistProtected();
 
         ComponentEventRequestParameters expectedParameters = new ComponentEventRequestParameters(
                 containerPageName, containerPageName, nestedComponentId, eventType,
@@ -262,10 +267,93 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         Dispatcher dispatcher = new ComponentEventDispatcher(handler,
                 new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, localizationSetter,
-                        request, response, null, null, null, true, ""));
+                        request, response, null, null, null, true, "", metaDataLocator, null));
 
         assertTrue(dispatcher.dispatch(request, response));
 
         verify();
     }
+
+    @Test
+    public void request_for_whitelist_only_page_from_valid_client() throws IOException
+    {
+        String containerPageName = "foo/MyPage";
+
+        ComponentRequestHandler handler = mockComponentRequestHandler();
+        Request request = mockRequest();
+        Response response = mockResponse();
+        ComponentClassResolver resolver = mockComponentClassResolver();
+        LocalizationSetter localizationSetter = mockLocalizationSetter();
+        MetaDataLocator metaDataLocator = newMock(MetaDataLocator.class);
+        ClientWhitelist whitelist = newMock(ClientWhitelist.class);
+
+        ComponentEventRequestParameters expectedParameters = new ComponentEventRequestParameters(
+                containerPageName, containerPageName, "", "anevent",
+                new EmptyEventContext(), new EmptyEventContext());
+
+        train_getPath(request, "/foo/MyPage:anevent");
+
+        train_setLocaleFromLocaleName(localizationSetter, "foo", false);
+
+        train_isPageName(resolver, containerPageName, true);
+
+        train_canonicalizePageName(resolver, containerPageName, containerPageName);
+
+        expect(metaDataLocator.findMeta(MetaDataConstants.WHITELIST_ONLY_PAGE, containerPageName, boolean.class)).andReturn(true);
+        expect(whitelist.isClientRequestOnWhitelist()).andReturn(true);
+
+        train_getParameter(request, InternalConstants.PAGE_CONTEXT_NAME, null);
+
+        train_getParameter(request, InternalConstants.CONTAINER_PAGE_NAME, null);
+
+        handler.handleComponentEvent(expectedParameters);
+
+        replay();
+
+        Dispatcher dispatcher = new ComponentEventDispatcher(handler,
+                new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, localizationSetter,
+                        request, response, null, null, null, true, "", metaDataLocator, whitelist));
+
+        assertTrue(dispatcher.dispatch(request, response));
+
+        verify();
+    }
+
+    @Test
+    public void request_for_whitelist_only_page_from_client_not_on_whitelist() throws IOException
+    {
+        String requestPath = "/foo/MyPage:anevent";
+        String localeName = "foo";
+        String containerPageName = "foo/MyPage";
+
+        ComponentRequestHandler handler = mockComponentRequestHandler();
+        Request request = mockRequest();
+        Response response = mockResponse();
+        ComponentClassResolver resolver = mockComponentClassResolver();
+        LocalizationSetter localizationSetter = mockLocalizationSetter();
+        MetaDataLocator metaDataLocator = newMock(MetaDataLocator.class);
+        ClientWhitelist whitelist = newMock(ClientWhitelist.class);
+
+        train_getPath(request, requestPath);
+
+        train_setLocaleFromLocaleName(localizationSetter, localeName, false);
+
+        train_isPageName(resolver, containerPageName, true);
+
+        train_canonicalizePageName(resolver, containerPageName, containerPageName);
+
+        expect(metaDataLocator.findMeta(MetaDataConstants.WHITELIST_ONLY_PAGE, containerPageName, boolean.class)).andReturn(true);
+        expect(whitelist.isClientRequestOnWhitelist()).andReturn(false);
+
+        replay();
+
+        Dispatcher dispatcher = new ComponentEventDispatcher(handler,
+                new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, localizationSetter,
+                        request, response, null, null, null, true, "", metaDataLocator, whitelist));
+
+        assertFalse(dispatcher.dispatch(request, response));
+
+        verify();
+    }
+
 }

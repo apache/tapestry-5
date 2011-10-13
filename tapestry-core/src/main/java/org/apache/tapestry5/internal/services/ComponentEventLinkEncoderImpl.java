@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.security.ClientWhitelist;
 
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -43,6 +44,10 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
     private final PersistentLocale persistentLocale;
 
     private final boolean encodeLocaleIntoPath;
+
+    private final MetaDataLocator metaDataLocator;
+
+    private final ClientWhitelist clientWhitelist;
 
     private final String applicationFolder;
 
@@ -74,7 +79,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
                                          ContextPathEncoder contextPathEncoder, LocalizationSetter localizationSetter, Request request,
                                          Response response, RequestSecurityManager requestSecurityManager, BaseURLSource baseURLSource,
                                          PersistentLocale persistentLocale, @Symbol(SymbolConstants.ENCODE_LOCALE_INTO_PATH)
-    boolean encodeLocaleIntoPath, @Symbol(SymbolConstants.APPLICATION_FOLDER) String applicationFolder)
+    boolean encodeLocaleIntoPath, @Symbol(SymbolConstants.APPLICATION_FOLDER) String applicationFolder, MetaDataLocator metaDataLocator, ClientWhitelist clientWhitelist)
     {
         this.componentClassResolver = componentClassResolver;
         this.contextPathEncoder = contextPathEncoder;
@@ -86,6 +91,8 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         this.persistentLocale = persistentLocale;
         this.encodeLocaleIntoPath = encodeLocaleIntoPath;
         this.applicationFolder = applicationFolder;
+        this.metaDataLocator = metaDataLocator;
+        this.clientWhitelist = clientWhitelist;
 
         boolean hasAppFolder = applicationFolder.equals("");
 
@@ -130,7 +137,9 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
                 response, contextPathEncoder, baseURLSource);
 
         if (parameters.isLoopback())
+        {
             link.addParameter(TapestryConstants.PAGE_LOOPBACK_PARAMETER_NAME, "t");
+        }
 
         return link;
     }
@@ -246,12 +255,19 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         String possibleLocaleName = slashx > 0 ? activePageName.substring(0, slashx) : "";
 
         if (localizationSetter.setLocaleFromLocaleName(possibleLocaleName))
+        {
             activePageName = activePageName.substring(slashx + 1);
+        }
 
         if (!componentClassResolver.isPageName(activePageName))
             return null;
 
         activePageName = componentClassResolver.canonicalizePageName(activePageName);
+
+        if (isWhitelistOnlyAndNotValid(activePageName))
+        {
+            return null;
+        }
 
         EventContext eventContext = contextPathEncoder.decodePath(matcher.group(CONTEXT));
 
@@ -284,7 +300,6 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         // activation context begins. Further, strip out the leading slash.
 
         String path = request.getPath();
-
 
         if (applicationFolderPrefix != null)
         {
@@ -345,7 +360,9 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
             PageRenderRequestParameters parameters = checkIfPage(request, pageName, pageActivationContext);
 
             if (parameters != null)
+            {
                 return parameters;
+            }
 
             // Work backwards, splitting at the next slash.
             slashx = extendedName.lastIndexOf('/', slashx - 1);
@@ -361,15 +378,30 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
     private PageRenderRequestParameters checkIfPage(Request request, String pageName, String pageActivationContext)
     {
         if (!componentClassResolver.isPageName(pageName))
+        {
             return null;
-
-        EventContext activationContext = contextPathEncoder.decodePath(pageActivationContext);
+        }
 
         String canonicalized = componentClassResolver.canonicalizePageName(pageName);
+
+        // If the page is only visible to the whitelist, but the request is not on the whitelist, then
+        // pretend the page doesn't exist!
+        if (isWhitelistOnlyAndNotValid(canonicalized))
+        {
+            return null;
+        }
+
+        EventContext activationContext = contextPathEncoder.decodePath(pageActivationContext);
 
         boolean loopback = request.getParameter(TapestryConstants.PAGE_LOOPBACK_PARAMETER_NAME) != null;
 
         return new PageRenderRequestParameters(canonicalized, activationContext, loopback);
+    }
+
+    private boolean isWhitelistOnlyAndNotValid(String canonicalized)
+    {
+        return metaDataLocator.findMeta(MetaDataConstants.WHITELIST_ONLY_PAGE, canonicalized, boolean.class) &&
+                !clientWhitelist.isClientRequestOnWhitelist();
     }
 
     public void appendContext(boolean seperatorRequired, EventContext context, StringBuilder builder)
@@ -379,7 +411,9 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         if (encoded.length() > 0)
         {
             if (seperatorRequired)
+            {
                 builder.append(SLASH);
+            }
 
             builder.append(encoded);
         }

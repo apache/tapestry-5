@@ -249,4 +249,14 @@ public class TestableRequestImpl implements TestableRequest
     {
         return 80;
     }
+
+    /**
+     * Always returns "localhost".
+     *
+     * @since 5.3
+     */
+    public String getRemoteHost()
+    {
+        return "localhost";
+    }
 }

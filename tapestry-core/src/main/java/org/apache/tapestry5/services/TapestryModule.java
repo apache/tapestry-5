@@ -55,6 +55,8 @@ import org.apache.tapestry5.internal.services.messages.PropertiesFileParserImpl;
 import org.apache.tapestry5.internal.services.meta.ContentTypeExtractor;
 import org.apache.tapestry5.internal.services.meta.MetaAnnotationExtractor;
 import org.apache.tapestry5.internal.services.meta.MetaWorkerImpl;
+import org.apache.tapestry5.internal.services.security.ClientWhitelistImpl;
+import org.apache.tapestry5.internal.services.security.LocalhostOnly;
 import org.apache.tapestry5.internal.services.templates.DefaultTemplateLocator;
 import org.apache.tapestry5.internal.services.templates.PageTemplateLocator;
 import org.apache.tapestry5.internal.transform.*;
@@ -97,6 +99,8 @@ import org.apache.tapestry5.services.meta.FixedExtractor;
 import org.apache.tapestry5.services.meta.MetaDataExtractor;
 import org.apache.tapestry5.services.meta.MetaWorker;
 import org.apache.tapestry5.services.pageload.PageLoadModule;
+import org.apache.tapestry5.services.security.ClientWhitelist;
+import org.apache.tapestry5.services.security.WhitelistAnalyzer;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.InjectionProvider2;
@@ -366,6 +370,7 @@ public final class TapestryModule
         binder.bind(AlertManager.class, AlertManagerImpl.class);
         binder.bind(ValidationDecoratorFactory.class, ValidationDecoratorFactoryImpl.class);
         binder.bind(PropertyConduitSource.class, PropertyConduitSourceImpl.class);
+        binder.bind(ClientWhitelist.class, ClientWhitelistImpl.class);
     }
 
     // ========================================================================
@@ -2377,6 +2382,9 @@ public final class TapestryModule
         // Zone component parameters defaults
         configuration.add(ComponentsParametersConstants.ZONE_SHOW_METHOD, "show");
         configuration.add(ComponentsParametersConstants.ZONE_UPDATE_METHOD, "highlight");
+
+        // By default, no page is on the whitelist unless it has the @WhitelistAccessOnly annotation
+        configuration.add(MetaDataConstants.WHITELIST_ONLY_PAGE, false);
     }
 
     /**
@@ -2775,7 +2783,7 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes extractors for {@link Meta}, {@link Secure} and {@link ContentType} annotations.
+     * Contributes extractors for {@link Meta}, {@link Secure}, {@link ContentType} and {@link WhitelistAccessOnly} annotations.
      *
      * @since 5.2.0
      */
@@ -2785,6 +2793,7 @@ public final class TapestryModule
         configuration.addInstance(Meta.class, MetaAnnotationExtractor.class);
         configuration.add(Secure.class, new FixedExtractor(MetaDataConstants.SECURE_PAGE));
         configuration.addInstance(ContentType.class, ContentTypeExtractor.class);
+        configuration.add(WhitelistAccessOnly.class, new FixedExtractor(MetaDataConstants.WHITELIST_ONLY_PAGE));
     }
 
     /**
@@ -2882,4 +2891,18 @@ public final class TapestryModule
         }
     }
 
+    /**
+     * Contributes a single default analyzer:
+     * <dl>
+     * <dt>LocalhostOnly</dt>
+     * <dd>Identifies requests from localhost as on client whitelist</dd>
+     * </dl>
+     *
+     * @since 5.3
+     */
+    @Contribute(ClientWhitelist.class)
+    public static void defaultWhitelist(OrderedConfiguration<WhitelistAnalyzer> configuration)
+    {
+        configuration.add("LocalhostOnly", new LocalhostOnly());
+    }
 }

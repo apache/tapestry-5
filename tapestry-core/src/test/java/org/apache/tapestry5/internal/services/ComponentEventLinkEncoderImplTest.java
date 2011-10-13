@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,23 +15,19 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.MetaDataConstants;
 import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.internal.EmptyEventContext;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
-import org.apache.tapestry5.services.ComponentClassResolver;
-import org.apache.tapestry5.services.ComponentEventLinkEncoder;
-import org.apache.tapestry5.services.ContextPathEncoder;
-import org.apache.tapestry5.services.LocalizationSetter;
-import org.apache.tapestry5.services.PageRenderRequestParameters;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.security.ClientWhitelist;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
  * Most of the testing is implemented through legacy tests against code that uses CELE.
- * 
+ *
  * @since 5.1.0.1
  */
 public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
@@ -63,7 +59,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null, contextPathEncoder, null, request,
-                response, manager, null, null, false, "");
+                response, manager, null, null, false, "", null, null);
 
         PageRenderRequestParameters parameters = new PageRenderRequestParameters("MyPage", new EmptyEventContext());
 
@@ -90,7 +86,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null, contextPathEncoder, null, request,
-                response, manager, null, null, false, "");
+                response, manager, null, null, false, "", null, null);
 
         PageRenderRequestParameters parameters = new PageRenderRequestParameters("admin/Index", new ArrayEventContext(
                 typeCoercer, "abc"));
@@ -118,7 +114,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null, contextPathEncoder, null, request,
-                response, manager, null, null, false, "");
+                response, manager, null, null, false, "", null, null);
 
         PageRenderRequestParameters parameters = new PageRenderRequestParameters("Index", new EmptyEventContext());
 
@@ -146,7 +142,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                request, response, null, null, null, true, "");
+                request, response, null, null, null, true, "", null, null);
 
         PageRenderRequestParameters parameters = linkEncoder.decodePageRenderRequest(request);
 
@@ -171,7 +167,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                request, response, null, null, null, true, "");
+                request, response, null, null, null, true, "", null, null);
 
         PageRenderRequestParameters parameters = linkEncoder.decodePageRenderRequest(request);
 
@@ -197,7 +193,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                request, response, null, null, null, true, "");
+                request, response, null, null, null, true, "", null, null);
 
         PageRenderRequestParameters parameters = linkEncoder.decodePageRenderRequest(request);
 
@@ -224,6 +220,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         ComponentClassResolver resolver = mockComponentClassResolver();
         Request request = mockRequest(false);
         LocalizationSetter ls = mockLocalizationSetter();
+        MetaDataLocator metaDataLocator = neverWhitelistProtected();
 
         train_getPath(request, "/foo/bar");
 
@@ -238,7 +235,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                request, null, null, null, null, true, "");
+                request, null, null, null, null, true, "", metaDataLocator, null);
 
         PageRenderRequestParameters parameters = linkEncoder.decodePageRenderRequest(request);
 
@@ -266,6 +263,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         ComponentClassResolver resolver = mockComponentClassResolver();
         Request request = mockRequest(false);
         LocalizationSetter ls = mockLocalizationSetter();
+        MetaDataLocator metaDataLocator = neverWhitelistProtected();
 
         String path = "/foo/Bar" + (finalSlash ? "/" : "");
         train_getPath(request, path);
@@ -279,7 +277,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                request, null, null, null, null, true, "");
+                request, null, null, null, null, true, "", metaDataLocator, null);
 
         PageRenderRequestParameters parameters = linkEncoder.decodePageRenderRequest(request);
 
@@ -289,6 +287,78 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
 
         verify();
     }
+
+    @Test
+    public void page_requires_whitelist_and_client_on_whitelist() throws Exception
+    {
+        ComponentClassResolver resolver = mockComponentClassResolver();
+        Request request = mockRequest(false);
+        LocalizationSetter ls = mockLocalizationSetter();
+        MetaDataLocator metaDataLocator = mockMetaDataLocator();
+        ClientWhitelist whitelist = newMock(ClientWhitelist.class);
+
+        String path = "/foo/Bar";
+
+        train_getPath(request, path);
+
+        train_setLocaleFromLocaleName(ls, "foo", false);
+
+        train_isPageName(resolver, "foo/Bar", true);
+
+        train_canonicalizePageName(resolver, "foo/Bar", "foo/bar");
+
+        expect(metaDataLocator.findMeta(MetaDataConstants.WHITELIST_ONLY_PAGE, "foo/bar", boolean.class)).andReturn(true);
+        expect(whitelist.isClientRequestOnWhitelist()).andReturn(true);
+
+        replay();
+
+        ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
+                request, null, null, null, null, true, "", metaDataLocator, whitelist);
+
+        PageRenderRequestParameters parameters = linkEncoder.decodePageRenderRequest(request);
+
+        assertEquals(parameters.getLogicalPageName(), "foo/bar");
+        assertEquals(parameters.getActivationContext().getCount(), 0);
+        assertFalse(parameters.isLoopback());
+
+        verify();
+    }
+
+    @Test
+    public void page_requires_whitelist_and_client_not_on_whitelist()
+    {
+        ComponentClassResolver resolver = mockComponentClassResolver();
+        Request request = mockRequest();
+        LocalizationSetter ls = mockLocalizationSetter();
+        MetaDataLocator metaDataLocator = mockMetaDataLocator();
+        ClientWhitelist whitelist = newMock(ClientWhitelist.class);
+
+        String path = "/foo/Bar";
+
+        train_getPath(request, path);
+
+        train_setLocaleFromLocaleName(ls, "foo", false);
+
+        train_isPageName(resolver, "foo/Bar", true);
+
+        train_canonicalizePageName(resolver, "foo/Bar", "foo/bar");
+
+        expect(metaDataLocator.findMeta(MetaDataConstants.WHITELIST_ONLY_PAGE, "foo/bar", boolean.class)).andReturn(true);
+        expect(whitelist.isClientRequestOnWhitelist()).andReturn(false);
+
+        train_isPageName(resolver, "foo", false);
+        train_isPageName(resolver, "", false);
+
+        replay();
+
+        ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
+                request, null, null, null, null, true, "", metaDataLocator, whitelist);
+
+        assertNull(linkEncoder.decodePageRenderRequest(request));
+
+        verify();
+    }
+
 
     @Test
     public void context_passed_in_path_without_final_slash() throws Exception
@@ -307,6 +377,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         ComponentClassResolver resolver = mockComponentClassResolver();
         Request request = mockRequest(true);
         LocalizationSetter ls = mockLocalizationSetter();
+        MetaDataLocator metaDataLocator = neverWhitelistProtected();
 
         String path = "/foo/Bar/zip/zoom" + (finalSlash ? "/" : "");
         train_getPath(request, path);
@@ -324,7 +395,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                request, null, null, null, null, true, "");
+                request, null, null, null, null, true, "", metaDataLocator, null);
 
         PageRenderRequestParameters parameters = linkEncoder.decodePageRenderRequest(request);
 

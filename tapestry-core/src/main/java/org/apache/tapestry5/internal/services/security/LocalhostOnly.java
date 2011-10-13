@@ -12,5 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** Contains annotations, primarily those used inside component classes as well as a few specific to the tapestry-core services layer. */
-package org.apache.tapestry5.annotations;
+package org.apache.tapestry5.internal.services.security;
+
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.security.WhitelistAnalyzer;
+
+/**
+ * Standard analyzer that places requests from the "localhost" (or "127.0.0.1") onto the white list.
+ *
+ * @since 5.3
+ */
+public class LocalhostOnly implements WhitelistAnalyzer
+{
+    public boolean isRequestOnWhitelist(Request request)
+    {
+        String remoteHost = request.getRemoteHost();
+
+        return remoteHost.equals("localhost") || remoteHost.equals("127.0.0.1");
+    }
+}

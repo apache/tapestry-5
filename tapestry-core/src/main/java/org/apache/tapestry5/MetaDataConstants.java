@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,4 +34,13 @@ public class MetaDataConstants
      * Meta data key applied to pages that may only be accessed via secure methods (HTTPS).
      */
     public static final String SECURE_PAGE = "tapestry.secure-page";
+
+    /**
+     * Meta-data for identifying pages that should only be accessible from clients on the whitelist.
+     * The meta-default is "false".
+     *
+     * @see org.apache.tapestry5.services.security.ClientWhitelist
+     * @since 5.3
+     */
+    public static final String WHITELIST_ONLY_PAGE = "tapestry.white-list-only-page";
 }

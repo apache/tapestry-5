@@ -18,6 +18,7 @@ import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.ContentType;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.WhitelistAccessOnly;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Registry;
@@ -36,6 +37,7 @@ import java.util.List;
  */
 @ContentType("text/html")
 @Import(stylesheet = "ServiceStatus.css")
+@WhitelistAccessOnly
 public class ServiceStatus
 {
     @Inject

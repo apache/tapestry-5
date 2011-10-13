@@ -41,6 +41,7 @@ import java.util.Set;
  * includes an option to clear the page cache.
  */
 @ContentType("text/html")
+@WhitelistAccessOnly
 public class PageCatalog
 {
     @ReorderProperties("definedPages,loadedPages,uniquePageNames,selectors,components")

@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.util.Collection;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.ContentType;
 import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.WhitelistAccessOnly;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.hibernate.Session;
@@ -35,6 +36,7 @@ import org.hibernate.stat.SecondLevelCacheStatistics;
  *
  */
 @ContentType("text/html")
+@WhitelistAccessOnly
 public class Statistics {
    @Inject
    private Session session;

@@ -411,4 +411,13 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     {
         return newMock(ComponentModelSource.class);
     }
+
+    protected final MetaDataLocator neverWhitelistProtected()
+    {
+        MetaDataLocator l = mockMetaDataLocator();
+
+        expect(l.findMeta(EasyMock.anyObject(String.class), EasyMock.anyObject(String.class), EasyMock.eq(boolean.class))).andReturn(false);
+
+        return l;
+    }
 }

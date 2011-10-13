@@ -109,7 +109,7 @@ public class RequestImpl implements Request
             session = null;
         }
 
-        if (session == null )
+        if (session == null)
         {
             // TAP5-1489 - Re-storage of session attributes at end of request should be configurable
             session = sessionFactory.getSession(create);
@@ -192,4 +192,8 @@ public class RequestImpl implements Request
         return request.getServerPort();
     }
 
+    public String getRemoteHost()
+    {
+        return request.getRemoteHost();
+    }
 }

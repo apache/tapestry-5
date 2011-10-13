@@ -12,5 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** Contains annotations, primarily those used inside component classes as well as a few specific to the tapestry-core services layer. */
-package org.apache.tapestry5.annotations;
+package org.apache.tapestry5.services.security;
+
+import org.apache.tapestry5.services.Request;
+
+/**
+ * Given a request, determine if the request is from a client on the whitelist.
+ *
+ * @since 5.3
+ * @see ClientWhitelist
+ */
+public interface WhitelistAnalyzer
+{
+    boolean isRequestOnWhitelist(Request request);
+}

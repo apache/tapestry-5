@@ -151,4 +151,9 @@ public class DelegatingRequest implements Request
     {
         return request.getServerPort();
     }
+
+    public String getRemoteHost()
+    {
+        return request.getRemoteHost();
+    }
 }
