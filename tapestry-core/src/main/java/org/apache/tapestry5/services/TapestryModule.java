@@ -2357,7 +2357,7 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.APPLICATION_FOLDER, "");
 
-        // Grid components parameters defaults
+        // Grid component parameters defaults
         configuration.add(ComponentsParametersConstants.GRID_ROWS_PER_PAGE, GridConstants.ROWS_PER_PAGE);
         configuration.add(ComponentsParametersConstants.GRID_PAGER_POSITION, GridConstants.PAGER_POSITION);
         configuration.add(ComponentsParametersConstants.GRID_EMPTY_BLOCK, GridConstants.EMPTY_BLOCK);
@@ -2367,11 +2367,11 @@ public final class TapestryModule
         configuration.add(ComponentsParametersConstants.GRIDCOLUMNS_ASCENDING_ASSET, GridConstants.COLUMNS_ASCENDING);
         configuration.add(ComponentsParametersConstants.GRIDCOLUMNS_DESCENDING_ASSET, GridConstants.COLUMNS_DESCENDING);
 
-        // FormInjector components parameters defaults
+        // FormInjector component parameters defaults
         configuration.add(ComponentsParametersConstants.FORMINJECTOR_INSERT_POSITION, "above");
         configuration.add(ComponentsParametersConstants.FORMINJECTOR_SHOW_FUNCTION, "highlight");
 
-        // Palette components parameters defaults
+        // Palette component parameters defaults
         configuration.add(ComponentsParametersConstants.PALETTE_ROWS_SIZE, 10);
     }
 
