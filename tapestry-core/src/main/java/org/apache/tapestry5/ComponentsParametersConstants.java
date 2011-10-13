@@ -89,4 +89,18 @@ public class ComponentsParametersConstants
      */
     public static final String PALETTE_ROWS_SIZE = "tapestry.components.palette_rows_size";
 
+    /**
+     * The default name of a JS function attached to Tapestry.ElementEffect object to use for the initial
+     * visualization of a {@link org.apache.tapestry5.corelib.components.Zone}.
+     * Defaults to "show"
+     */
+    public static final String ZONE_SHOW_METHOD = "tapestry.components.zone_show_method";
+
+    /**
+     * The default name of a JS function attached to Tapestry.ElementEffect object to point out an
+     * update on a {@link org.apache.tapestry5.corelib.components.Zone}.
+     * Defaults to "highlight"
+     */
+    public static final String ZONE_UPDATE_METHOD = "tapestry.components.zone_update_method";
+
 }

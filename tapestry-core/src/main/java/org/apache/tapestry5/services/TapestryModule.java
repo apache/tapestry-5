@@ -2373,6 +2373,10 @@ public final class TapestryModule
 
         // Palette component parameters defaults
         configuration.add(ComponentsParametersConstants.PALETTE_ROWS_SIZE, 10);
+
+        // Zone component parameters defaults
+        configuration.add(ComponentsParametersConstants.ZONE_SHOW_METHOD, "show");
+        configuration.add(ComponentsParametersConstants.ZONE_UPDATE_METHOD, "highlight");
     }
 
     /**

@@ -20,6 +20,7 @@ import org.apache.tapestry5.CSSClassConstants;
 import org.apache.tapestry5.ClientBodyElement;
 import org.apache.tapestry5.ComponentAction;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.ComponentsParametersConstants;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.QueryParameterConstants;
 import org.apache.tapestry5.annotations.BeginRender;
@@ -90,7 +91,8 @@ public class Zone implements ClientBodyElement
      * Name of a function on the client-side Tapestry.ElementEffect object that is invoked to make the Zone's
      * &lt;div&gt; visible before being updated. If not specified, then the basic "show" method is used.
      */
-    @Parameter(defaultPrefix = BindingConstants.LITERAL)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL,
+        value = BindingConstants.SYMBOL + ":" + ComponentsParametersConstants.ZONE_SHOW_METHOD)
     private String show;
 
     /**
@@ -98,7 +100,8 @@ public class Zone implements ClientBodyElement
      * been updated. If not specified, then the basic "highlight" method is used, which performs a classic "yellow fade"
      * to indicate to the user that and update has taken place.
      */
-    @Parameter(defaultPrefix = BindingConstants.LITERAL)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL,
+        value = BindingConstants.SYMBOL + ":" + ComponentsParametersConstants.ZONE_UPDATE_METHOD)
     private String update;
 
     /**
