@@ -68,7 +68,7 @@ public class ImportWorker implements ComponentClassTransformWorker2
         {
             return symbolSource.expandSymbols(element);
         }
-    }
+    };
 
     public ImportWorker(JavaScriptSupport javascriptSupport, SymbolSource symbolSource, AssetSource assetSource)
     {
