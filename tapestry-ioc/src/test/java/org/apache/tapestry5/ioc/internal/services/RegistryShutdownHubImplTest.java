@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,11 +15,15 @@
 package org.apache.tapestry5.ioc.internal.services;
 
 import org.apache.tapestry5.ioc.internal.IOCInternalTestCase;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
-import static org.easymock.EasyMock.contains;
-import static org.easymock.EasyMock.same;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
+
+import java.util.List;
+
+import static org.easymock.EasyMock.contains;
+import static org.easymock.EasyMock.same;
 
 public class RegistryShutdownHubImplTest extends IOCInternalTestCase
 {
@@ -44,6 +48,40 @@ public class RegistryShutdownHubImplTest extends IOCInternalTestCase
         hub.fireRegistryDidShutdown();
 
         verify();
+    }
+
+    @Test
+    public void pre_listeners_before_normal_listeners()
+    {
+        final List<String> ordering = CollectionFactory.newList();
+
+
+        RegistryShutdownHubImpl hub = new RegistryShutdownHubImpl(null);
+
+        for (int i = 1; i <= 3; i++)
+        {
+            final int k = i;
+
+            hub.addRegistryShutdownListener(new RegistryShutdownListener()
+            {
+                public void registryDidShutdown()
+                {
+                    ordering.add("did:" + k);
+                }
+            });
+
+            hub.addRegistryWillShutdownListener(new Runnable()
+            {
+                public void run()
+                {
+                    ordering.add("will:" + k);
+                }
+            });
+        }
+
+        hub.fireRegistryDidShutdown();
+
+        assertListsEquals(ordering, "will:1", "will:2", "will:3", "did:1", "did:2", "did:3");
     }
 
     /**

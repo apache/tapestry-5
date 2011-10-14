@@ -18,6 +18,9 @@ import java.util.EventListener;
 
 /**
  * Event listener interfaces for objects that need to know when the Registry shutsdown.
+ *
+ * @see RegistryShutdownHub#addRegistryShutdownListener(Runnable)
+ * @deprecated In Tapestry 5.3, to be removed in a later release.
  */
 public interface RegistryShutdownListener extends EventListener
 {

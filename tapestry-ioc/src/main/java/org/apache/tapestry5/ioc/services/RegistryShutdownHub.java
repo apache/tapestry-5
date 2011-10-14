@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,4 +23,21 @@ public interface RegistryShutdownHub
      * Adds a listener for eventual notification.
      */
     void addRegistryShutdownListener(RegistryShutdownListener listener);
+
+    /**
+     * Adds a listener for eventual notification when the registry shuts down.  Runtime exceptions thrown by the listener
+     * will be logged and ignored.
+     *
+     * @since 5.3
+     */
+    void addRegistryShutdownListener(Runnable listener);
+
+    /**
+     * Adds a listener for eventual notification. RegistryWillShutdownListeners are notified before any standard listeners,
+     * and before service proxies and other parts of the Registry are  disabled. Runtime exceptions thrown by the listener will
+     * be logged and ignored.
+     *
+     * @since 5.3
+     */
+    void addRegistryWillShutdownListener(Runnable listener);
 }

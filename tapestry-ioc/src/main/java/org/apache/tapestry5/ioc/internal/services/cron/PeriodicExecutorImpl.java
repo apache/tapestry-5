@@ -19,7 +19,6 @@ import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ParallelExecutor;
 import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
-import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
 import org.apache.tapestry5.ioc.services.cron.PeriodicExecutor;
 import org.apache.tapestry5.ioc.services.cron.PeriodicJob;
 import org.apache.tapestry5.ioc.services.cron.Schedule;
@@ -28,7 +27,7 @@ import org.slf4j.Logger;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable, RegistryShutdownListener
+public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable
 {
     private final ParallelExecutor parallelExecutor;
 
@@ -195,7 +194,13 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable, Registr
     @PostInjection
     public void start(RegistryShutdownHub hub)
     {
-        hub.addRegistryShutdownListener(this);
+        hub.addRegistryShutdownListener(new Runnable()
+        {
+            public void run()
+            {
+                registryDidShutdown();
+            }
+        });
 
         thread.start();
     }

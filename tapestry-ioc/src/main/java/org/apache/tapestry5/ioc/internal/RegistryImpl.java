@@ -885,6 +885,20 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         registryShutdownHub.addRegistryShutdownListener(listener);
     }
 
+    public void addRegistryShutdownListener(Runnable listener)
+    {
+        lock.check();
+
+        registryShutdownHub.addRegistryShutdownListener(listener);
+    }
+
+    public void addRegistryWillShutdownListener(Runnable listener)
+    {
+        lock.check();
+
+        registryShutdownHub.addRegistryWillShutdownListener(listener);
+    }
+
     public String expandSymbols(String input)
     {
         lock.check();
