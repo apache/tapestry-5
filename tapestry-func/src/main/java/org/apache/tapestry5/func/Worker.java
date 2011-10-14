@@ -25,5 +25,5 @@ public interface Worker<T>
     /**
      * Perform the operation on some object of type T.
      */
-    void work(T value);
+    void work(T element);
 }
