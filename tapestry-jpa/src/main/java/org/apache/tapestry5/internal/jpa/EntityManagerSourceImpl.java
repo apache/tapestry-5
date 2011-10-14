@@ -14,12 +14,18 @@
 
 package org.apache.tapestry5.internal.jpa;
 
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.func.Mapper;
+import org.apache.tapestry5.func.Predicate;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.Local;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
+import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
+import org.apache.tapestry5.jpa.*;
+import org.slf4j.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -27,21 +33,14 @@ import javax.persistence.spi.PersistenceProvider;
 import javax.persistence.spi.PersistenceProviderResolver;
 import javax.persistence.spi.PersistenceProviderResolverHolder;
 import javax.persistence.spi.PersistenceUnitInfo;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
-import org.apache.tapestry5.func.F;
-import org.apache.tapestry5.func.Mapper;
-import org.apache.tapestry5.func.Predicate;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
-import org.apache.tapestry5.jpa.EntityManagerSource;
-import org.apache.tapestry5.jpa.JpaConstants;
-import org.apache.tapestry5.jpa.PersistenceUnitConfigurer;
-import org.apache.tapestry5.jpa.TapestryPersistenceUnitInfo;
-import org.slf4j.Logger;
-
-public class EntityManagerSourceImpl implements EntityManagerSource, RegistryShutdownListener
+public class EntityManagerSourceImpl implements EntityManagerSource
 {
     private final Map<String, EntityManagerFactory> entityManagerFactories = CollectionFactory
             .newMap();
@@ -50,10 +49,11 @@ public class EntityManagerSourceImpl implements EntityManagerSource, RegistryShu
 
     private final List<TapestryPersistenceUnitInfo> persistenceUnitInfos;
 
-    public EntityManagerSourceImpl(final Logger logger, final Resource persistenceDescriptor, PersistenceUnitConfigurer packageNamePersistenceUnitConfigurer, 
-            final Map<String, PersistenceUnitConfigurer> configuration)
+    public EntityManagerSourceImpl(Logger logger, @Symbol(JpaSymbols.PERSISTENCE_DESCRIPTOR)
+    final Resource persistenceDescriptor, @Local
+    PersistenceUnitConfigurer packageNamePersistenceUnitConfigurer,
+                                   Map<String, PersistenceUnitConfigurer> configuration)
     {
-        super();
         this.logger = logger;
 
         List<TapestryPersistenceUnitInfo> persistenceUnitInfos = parsePersistenceUnitInfos(persistenceDescriptor);
@@ -62,16 +62,27 @@ public class EntityManagerSourceImpl implements EntityManagerSource, RegistryShu
 
         configureRemaining(persistenceUnitInfos, remainingConfigurations);
 
-        if(persistenceUnitInfos.size() == 1) 
+        if (persistenceUnitInfos.size() == 1)
         {
             packageNamePersistenceUnitConfigurer.configure(persistenceUnitInfos.get(0));
-        }
-        else
+        } else
         {
             validateUnitInfos(persistenceUnitInfos);
         }
 
         this.persistenceUnitInfos = persistenceUnitInfos;
+    }
+
+    @PostInjection
+    public void listenForShutdown(RegistryShutdownHub hub)
+    {
+        hub.addRegistryShutdownListener(new Runnable()
+        {
+            public void run()
+            {
+                registryDidShutdown();
+            }
+        });
     }
 
     private void validateUnitInfos(List<TapestryPersistenceUnitInfo> persistenceUnitInfos)
@@ -90,14 +101,14 @@ public class EntityManagerSourceImpl implements EntityManagerSource, RegistryShu
             }
         }).toList();
 
-        if(0 < affectedUnits.size())
+        if (0 < affectedUnits.size())
         {
             throw new RuntimeException(
                     String.format(
                             "Persistence units '%s' are configured to include managed classes that have not been explicitly listed. " +
-                            "This is forbidden when multiple persistence units are used in the same application. " +
-                            "Please configure persistence units to exclude unlisted managed classes (e.g. by removing <exclude-unlisted-classes> element) " +
-                            "and include them explicitly.",
+                                    "This is forbidden when multiple persistence units are used in the same application. " +
+                                    "Please configure persistence units to exclude unlisted managed classes (e.g. by removing <exclude-unlisted-classes> element) " +
+                                    "and include them explicitly.",
                             InternalUtils.join(affectedUnits)));
         }
     }
@@ -106,7 +117,7 @@ public class EntityManagerSourceImpl implements EntityManagerSource, RegistryShu
     {
         List<TapestryPersistenceUnitInfo> persistenceUnitInfos = CollectionFactory.newList();
 
-        if(persistenceDescriptor.exists())
+        if (persistenceDescriptor.exists())
         {
             final PersistenceParser parser = new PersistenceParser();
 
@@ -115,12 +126,10 @@ public class EntityManagerSourceImpl implements EntityManagerSource, RegistryShu
             {
                 inputStream = persistenceDescriptor.openStream();
                 persistenceUnitInfos = parser.parse(inputStream);
-            }
-            catch(Exception e)
+            } catch (Exception e)
             {
                 throw new RuntimeException(e);
-            }
-            finally
+            } finally
             {
                 InternalUtils.close(inputStream);
             }
@@ -143,7 +152,7 @@ public class EntityManagerSourceImpl implements EntityManagerSource, RegistryShu
             {
                 configurer.configure(info);
 
-                remainingConfigurations.remove(unitName) ;
+                remainingConfigurations.remove(unitName);
             }
         }
 
@@ -153,7 +162,7 @@ public class EntityManagerSourceImpl implements EntityManagerSource, RegistryShu
 
     private void configureRemaining(List<TapestryPersistenceUnitInfo> persistenceUnitInfos, Map<String, PersistenceUnitConfigurer> remainingConfigurations)
     {
-        for(Entry<String, PersistenceUnitConfigurer> entry: remainingConfigurations.entrySet())
+        for (Entry<String, PersistenceUnitConfigurer> entry : remainingConfigurations.entrySet())
         {
             final PersistenceUnitInfoImpl info = new PersistenceUnitInfoImpl(entry.getKey());
 
@@ -220,7 +229,7 @@ public class EntityManagerSourceImpl implements EntityManagerSource, RegistryShu
         return getEntityManagerFactory(persistenceUnitName).createEntityManager();
     }
 
-    public void registryDidShutdown()
+    private void registryDidShutdown()
     {
         final Set<Entry<String, EntityManagerFactory>> entrySet = entityManagerFactories.entrySet();
 
@@ -230,8 +239,7 @@ public class EntityManagerSourceImpl implements EntityManagerSource, RegistryShu
             try
             {
                 emf.close();
-            }
-            catch (final Exception e)
+            } catch (final Exception e)
             {
                 logger.error(String.format(
                         "Failed to close EntityManagerFactory for persistence unit '%s'",
@@ -245,7 +253,7 @@ public class EntityManagerSourceImpl implements EntityManagerSource, RegistryShu
 
     public List<PersistenceUnitInfo> getPersistenceUnitInfos()
     {
-        return Collections.<PersistenceUnitInfo> unmodifiableList(persistenceUnitInfos);
+        return Collections.<PersistenceUnitInfo>unmodifiableList(persistenceUnitInfos);
     }
 
 }

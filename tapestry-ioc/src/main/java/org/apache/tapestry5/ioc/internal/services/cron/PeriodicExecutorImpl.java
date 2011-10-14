@@ -277,7 +277,7 @@ public class PeriodicExecutorImpl implements PeriodicExecutor, Runnable
         return shutdown;
     }
 
-    public synchronized void registryDidShutdown()
+    private synchronized void registryDidShutdown()
     {
         shutdown = true;
 

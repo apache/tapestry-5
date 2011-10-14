@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,18 +14,19 @@
 
 package org.apache.tapestry5.internal.hibernate;
 
-import java.util.List;
-
 import org.apache.tapestry5.hibernate.HibernateConfigurer;
 import org.apache.tapestry5.hibernate.HibernateSessionSource;
-import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
+import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.slf4j.Logger;
 
-public class HibernateSessionSourceImpl implements HibernateSessionSource, RegistryShutdownListener
+import java.util.List;
+
+public class HibernateSessionSourceImpl implements HibernateSessionSource
 {
     private final SessionFactory sessionFactory;
 
@@ -51,6 +52,18 @@ public class HibernateSessionSourceImpl implements HibernateSessionSource, Regis
         logger.info(HibernateCoreMessages.entityCatalog(sessionFactory.getAllClassMetadata().keySet()));
     }
 
+    @PostInjection
+    public void listenForShutdown(RegistryShutdownHub hub)
+    {
+        hub.addRegistryShutdownListener(new Runnable()
+        {
+            public void run()
+            {
+                sessionFactory.close();
+            }
+        });
+    }
+
     public Session create()
     {
         return sessionFactory.openSession();
@@ -66,8 +79,4 @@ public class HibernateSessionSourceImpl implements HibernateSessionSource, Regis
         return configuration;
     }
 
-    public void registryDidShutdown()
-    {
-        sessionFactory.close();
-    }
 }

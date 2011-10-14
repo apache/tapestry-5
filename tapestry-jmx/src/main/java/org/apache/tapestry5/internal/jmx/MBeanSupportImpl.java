@@ -14,25 +14,23 @@
 
 package org.apache.tapestry5.internal.jmx;
 
-import static java.lang.String.format;
-
-import java.lang.management.ManagementFactory;
-import java.util.List;
-import java.util.Set;
-
-import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
-import javax.management.ObjectName;
-
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
-import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
 import org.apache.tapestry5.jmx.MBeanSupport;
 import org.slf4j.Logger;
 
-public class MBeanSupportImpl implements MBeanSupport, RegistryShutdownListener
+import javax.management.MBeanServer;
+import javax.management.MBeanServerFactory;
+import javax.management.ObjectName;
+import java.lang.management.ManagementFactory;
+import java.util.List;
+import java.util.Set;
+
+import static java.lang.String.format;
+
+public class MBeanSupportImpl implements MBeanSupport
 {
     private final Logger logger;
 
@@ -67,7 +65,13 @@ public class MBeanSupportImpl implements MBeanSupport, RegistryShutdownListener
     @PostInjection
     public void listenForShutdown(RegistryShutdownHub hub)
     {
-        hub.addRegistryShutdownListener(this);
+        hub.addRegistryShutdownListener(new Runnable()
+        {
+            public void run()
+            {
+                registryDidShutdown();
+            }
+        });
     }
 
     public void register(Object bean, String name)
@@ -80,8 +84,7 @@ public class MBeanSupportImpl implements MBeanSupport, RegistryShutdownListener
         try
         {
             return new ObjectName(name);
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             throw new RuntimeException(ex);
         }
@@ -101,8 +104,7 @@ public class MBeanSupportImpl implements MBeanSupport, RegistryShutdownListener
             this.registeredBeans.add(objectName);
 
             this.logger.info(format("Registered MBean '%s' with server", objectName));
-        }
-        catch (final Exception e)
+        } catch (final Exception e)
         {
             this.logger.error(format("Failed to register MBean '%s' with server", objectName), e);
         }
@@ -127,15 +129,14 @@ public class MBeanSupportImpl implements MBeanSupport, RegistryShutdownListener
 
                 if (registeredBeans.contains(objectName))
                     registeredBeans.remove(objectName);
-            }
-            catch (final Exception e)
+            } catch (final Exception e)
             {
                 this.logger.error(String.format("Failed to unregister MBean '%s' from server", objectName), e);
             }
         }
     }
 
-    public void registryDidShutdown()
+    private void registryDidShutdown()
     {
         lock.lock();
         // store into new data structure so we can remove them from registered beans

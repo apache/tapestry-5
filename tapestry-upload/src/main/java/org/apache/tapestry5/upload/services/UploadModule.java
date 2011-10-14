@@ -65,9 +65,9 @@ public class UploadModule
 
         if (needToAddShutdownListener.getAndSet(false))
         {
-            shutdownHub.addRegistryShutdownListener(new RegistryShutdownListener()
+            shutdownHub.addRegistryShutdownListener(new Runnable()
             {
-                public void registryDidShutdown()
+                public void run()
                 {
                     FileCleaner.exitWhenFinished();
                 }

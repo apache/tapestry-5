@@ -45,6 +45,7 @@ public class HibernateCoreModule
         binder.bind(HibernateTransactionDecorator.class, HibernateTransactionDecoratorImpl.class);
         binder.bind(HibernateTransactionAdvisor.class, HibernateTransactionAdvisorImpl.class);
         binder.bind(HibernateConfigurer.class, DefaultHibernateConfigurer.class).withSimpleId();
+        binder.bind(HibernateSessionSource.class, HibernateSessionSourceImpl.class);
     }
 
 
@@ -115,16 +116,6 @@ public class HibernateCoreModule
         // of the request.
 
         return propertyShadowBuilder.build(sessionManager, "session", Session.class);
-    }
-
-    public static HibernateSessionSource buildHibernateSessionSource(Logger logger, List<HibernateConfigurer> config,
-                                                                     RegistryShutdownHub hub)
-    {
-        HibernateSessionSourceImpl hss = new HibernateSessionSourceImpl(logger, config);
-
-        hub.addRegistryShutdownListener(hss);
-
-        return hss;
     }
 
     /**

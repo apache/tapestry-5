@@ -43,26 +43,7 @@ public class JpaModule
     {
         binder.bind(JpaTransactionAdvisor.class, JpaTransactionAdvisorImpl.class);
         binder.bind(PersistenceUnitConfigurer.class, PackageNamePersistenceUnitConfigurer.class).withSimpleId();
-    }
-
-    public static EntityManagerSource buildEntityManagerSource(final Logger logger,
-
-                                                               @Symbol(JpaSymbols.PERSISTENCE_DESCRIPTOR)
-                                                               Resource persistenceDescriptor,
-
-                                                               @Local
-                                                               PersistenceUnitConfigurer persistenceUnitConfigurer,
-
-                                                               final Map<String, PersistenceUnitConfigurer> configuration,
-
-                                                               final RegistryShutdownHub hub)
-    {
-        final EntityManagerSourceImpl ems = new EntityManagerSourceImpl(logger, persistenceDescriptor,
-                persistenceUnitConfigurer, configuration);
-
-        hub.addRegistryShutdownListener(ems);
-
-        return ems;
+        binder.bind(EntityManagerSource.class, EntityManagerSourceImpl.class);
     }
 
     public static JpaEntityPackageManager buildJpaEntityPackageManager(final Collection<String> packageNames)

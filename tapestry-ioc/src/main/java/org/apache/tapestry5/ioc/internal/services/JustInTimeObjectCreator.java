@@ -17,7 +17,6 @@ package org.apache.tapestry5.ioc.internal.services;
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.internal.EagerLoadServiceProxy;
 import org.apache.tapestry5.ioc.internal.ServiceActivityTracker;
-import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
 import org.apache.tapestry5.ioc.services.Status;
 
 /**
@@ -26,7 +25,7 @@ import org.apache.tapestry5.ioc.services.Status;
  * same time (a service should be realized only once). The additional interfaces implemented by this class support eager
  * loading of services (at application startup), and orderly shutdown of proxies.
  */
-public class JustInTimeObjectCreator<T> implements ObjectCreator<T>, EagerLoadServiceProxy, RegistryShutdownListener
+public class JustInTimeObjectCreator<T> implements ObjectCreator<T>, EagerLoadServiceProxy, Runnable
 {
     private final ServiceActivityTracker tracker;
 
@@ -46,9 +45,8 @@ public class JustInTimeObjectCreator<T> implements ObjectCreator<T>, EagerLoadSe
     /**
      * Checks to see if the proxy has been shutdown, then invokes {@link ObjectCreator#createObject()} if it has not
      * already done so.
-     * 
-     * @throws IllegalStateException
-     *             if the registry has been shutdown
+     *
+     * @throws IllegalStateException if the registry has been shutdown
      */
     public T createObject()
     {
@@ -72,8 +70,7 @@ public class JustInTimeObjectCreator<T> implements ObjectCreator<T>, EagerLoadSe
             tracker.setStatus(serviceId, Status.REAL);
 
             creator = null;
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             throw new RuntimeException(ServiceMessages.serviceBuildFailure(serviceId, ex), ex);
         }
@@ -90,9 +87,9 @@ public class JustInTimeObjectCreator<T> implements ObjectCreator<T>, EagerLoadSe
     }
 
     /**
-     * Sets the shutdown flag and releases the object and the creator.
+     * Invoked when the Registry is shutdown; sets the shutdown flag and releases the object and the creator.
      */
-    public void registryDidShutdown()
+    public void run()
     {
         creator = new ObjectCreator<T>()
         {

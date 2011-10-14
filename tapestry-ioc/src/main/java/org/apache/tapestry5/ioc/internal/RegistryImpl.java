@@ -145,9 +145,9 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         lifecycles.put("singleton", new SingletonServiceLifecycle());
 
-        registryShutdownHub.addRegistryShutdownListener(new RegistryShutdownListener()
+        registryShutdownHub.addRegistryShutdownListener(new Runnable()
         {
-            public void registryDidShutdown()
+            public void run()
             {
                 scoreboardAndTracker.shutdown();
             }

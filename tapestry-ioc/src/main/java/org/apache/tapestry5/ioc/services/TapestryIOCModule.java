@@ -508,9 +508,9 @@ public final class TapestryIOCModule
         final ThreadPoolExecutor executorService = new ThreadPoolExecutor(coreSize, maxSize, keepAliveMillis,
                 TimeUnit.MILLISECONDS, workQueue);
 
-        shutdownHub.addRegistryShutdownListener(new RegistryShutdownListener()
+        shutdownHub.addRegistryShutdownListener(new Runnable()
         {
-            public void registryDidShutdown()
+            public void run()
             {
                 executorService.shutdown();
             }
