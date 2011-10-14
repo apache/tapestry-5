@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html t:type="layout" title="${artifactId} Index"
-      t:sidebarTitle="Current Time"
+      t:sidebarTitle="Framework Version"
       xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
       xmlns:p="tapestry:parameter">
     #set( $D = '$' )
@@ -8,35 +8,31 @@
 
     <p>${D}{message:greeting}</p>
 
-    <p>
-        You are running Tapestry version <strong>${D}{tapestryVersion}</strong>.
-    </p>
+    <p>The current time is: <strong>${D}{currentTime}</strong></p>
 
-    <p:sidebar>
-
+    <!-- A Zone is a component that can be updated in place, triggered by other components. -->
+    <t:zone t:id="zone">
         <p>
-            Just to prove this is live:
+            You have clicked the link <strong>${D}{clickCount}</strong> times.
         </p>
 
-        <p>The current time is: ${D}{currentTime}.</p>
+        <p>
+            [
+            <t:actionlink t:id="increment">increment</t:actionlink>
+            ]
+            &nbsp;
+            [
+            <t:actionlink t:id="incrementAjax" zone="^">increment (via Ajax)</t:actionlink>
+            ]
+        </p>
 
-        <!-- A Zone is a component that can be updated in place, triggered by other components. -->
-        <t:zone t:id="zone">
-            <p>
-                You have clicked the link <strong>${D}{clickCount}</strong> times.
-            </p>
+    </t:zone>
 
-            <p>
-                [
-                <t:actionlink t:id="increment">increment</t:actionlink>
-                ]
-                &nbsp;
-                [
-                <t:actionlink t:id="incrementAjax" zone="^">increment (via Ajax)</t:actionlink>
-                ]
-            </p>
+    <p:sidebar>
+        <p>
+            You are running Tapestry version <strong>${D}{tapestryVersion}</strong>.
+        </p>
 
-        </t:zone>
 
         <p>
             [
