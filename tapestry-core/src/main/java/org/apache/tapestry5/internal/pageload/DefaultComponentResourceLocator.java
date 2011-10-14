@@ -46,7 +46,7 @@ public class DefaultComponentResourceLocator implements ComponentResourceLocator
     {
         String baseName = baseResource.getFile();
 
-        return F.flow(new LocalizedNameGenerator(baseName, selector.locale)).map(new Mapper<String, Resource>()
+        return F.flow(new LocalizedNameGenerator(baseName, selector.locale).iterator()).map(new Mapper<String, Resource>()
         {
             public Resource map(String element)
             {
