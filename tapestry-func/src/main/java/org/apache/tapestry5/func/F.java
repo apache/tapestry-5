@@ -28,11 +28,11 @@ import java.util.Map.Entry;
  * are initially
  * created
  * using {@link #flow(Collection)} and {@link #flow(Object...)}.
- * <p>
+ * <p/>
  * F will be used a bit, thus it has a short name (for those who don't like static imports). It provides a base set of
  * Predicate, Mapper and Reducer factories. A good development pattern for applications is to provide a similar,
  * application-specific, set of such factories.
- * 
+ *
  * @since 5.2.0
  */
 @SuppressWarnings("all")
@@ -191,16 +191,13 @@ public class F
     /**
      * A Mapper factory that combines a Predicate with two {@link Mapper}s; evaluating the predicate
      * selects one of the two mappers.
-     * 
-     * @param predicate
-     *            evaluated to selected a coercion
-     * @param ifAccepted
-     *            used when predicate evaluates to true
-     * @param ifRejected
-     *            used when predicate evaluates to false
+     *
+     * @param predicate  evaluated to selected a coercion
+     * @param ifAccepted used when predicate evaluates to true
+     * @param ifRejected used when predicate evaluates to false
      */
     public static <S, T> Mapper<S, T> select(final Predicate<? super S> predicate, final Mapper<S, T> ifAccepted,
-            final Mapper<S, T> ifRejected)
+                                             final Mapper<S, T> ifRejected)
     {
         assert predicate != null;
         assert ifAccepted != null;
@@ -237,7 +234,9 @@ public class F
         return select(predicate, ifAccepted, rejectedMapper);
     }
 
-    /** A Mapper factory; the Mapper returns the the flow value unchanged. */
+    /**
+     * A Mapper factory; the Mapper returns the the flow value unchanged.
+     */
     public static <S> Mapper<S, S> identity()
     {
         return new Mapper<S, S>()
@@ -249,7 +248,9 @@ public class F
         };
     }
 
-    /** Allows a Mapper that maps to boolean to be used as a Predicate. */
+    /**
+     * Allows a Mapper that maps to boolean to be used as a Predicate.
+     */
     public static <S> Predicate<S> toPredicate(final Mapper<S, Boolean> mapper)
     {
         assert mapper != null;
@@ -322,19 +323,27 @@ public class F
     {
         assert iterable != null;
 
-        return lazy(new LazyIterator<T>(iterable.iterator()));
+        return flow(iterable.iterator());
+    }
+
+    /**
+     * Creates a lazy Flow from the {@link Iterator}. The Flow will be threadsafe as long as the underlying iterable
+     * object is not modified while the Flow is evaluating. In other words, not extremely threadsafe.
+     *
+     * @since 5.3
+     */
+    public static <T> Flow<T> flow(Iterator<T> iterator)
+    {
+        return lazy(new LazyIterator<T>(iterator));
     }
 
     /**
      * Creates a ZippedFlow from the provided map; the order of the tuples in the ZippedFlow is defined
      * by the iteration order of the map entries.
-     * 
-     * @param <A>
-     *            type of key and first tuple value
-     * @param <B>
-     *            type of value and second tuple value
-     * @param map
-     *            source of tuples
+     *
+     * @param <A> type of key and first tuple value
+     * @param <B> type of value and second tuple value
+     * @param map source of tuples
      * @return zipped flow created from map
      * @since 5.3
      */
@@ -358,11 +367,9 @@ public class F
      * with the lower value and counts by 1 up to the upper range (which is not part of
      * the Flow). If lower equals upper, the Flow is empty. If upper is less than lower,
      * the Flow counts down instead.
-     * 
-     * @param lower
-     *            start of range (inclusive)
-     * @param upper
-     *            end of range (exclusive)
+     *
+     * @param lower start of range (inclusive)
+     * @param upper end of range (exclusive)
      */
     public static Flow<Integer> range(int lower, int upper)
     {
@@ -401,11 +408,9 @@ public class F
     /**
      * Creates an infinite lazy flow from an initial value and a function to map from the current value to the
      * next value.
-     * 
-     * @param initial
-     *            initial value in flow
-     * @param function
-     *            maps from current value in flow to next value in flow
+     *
+     * @param initial  initial value in flow
+     * @param function maps from current value in flow to next value in flow
      * @return lazy flow
      */
     public static <T> Flow<T> iterate(final T initial, final Mapper<T, T> function)
@@ -423,7 +428,7 @@ public class F
 
     /**
      * Creates an <em>infinite</em> series of numbers.
-     * <p>
+     * <p/>
      * Attempting to get the {@linkplain Flow#count()} of the series will form an infinite loop.
      */
     public static Flow<Integer> series(int start, final int delta)
@@ -453,7 +458,7 @@ public class F
 
     /**
      * A Predicate factory for matching String elements with a given prefix.
-     * 
+     *
      * @since 5.3
      */
     public static Predicate<String> startsWith(String prefix)
@@ -463,7 +468,7 @@ public class F
 
     /**
      * As {@link #startsWith(String)}, but ignores case.
-     * 
+     *
      * @since 5.3
      */
     public static Predicate<String> startsWithIgnoringCase(String prefix)
@@ -471,7 +476,9 @@ public class F
         return startsWith(prefix, true);
     }
 
-    /** @since 5.3 */
+    /**
+     * @since 5.3
+     */
     private static Predicate<String> startsWith(final String prefix, final boolean ignoreCase)
     {
         return new Predicate<String>()
@@ -485,7 +492,7 @@ public class F
 
     /**
      * A Predicate factory for matching String elements with a given suffix.
-     * 
+     *
      * @since 5.3
      */
     public static Predicate<String> endsWith(String suffix)
@@ -495,7 +502,7 @@ public class F
 
     /**
      * As with {@link #endsWith(String)} but ignores case.
-     * 
+     *
      * @since 5.3
      */
     public static Predicate<String> endsWithIgnoringCase(String suffix)
@@ -503,7 +510,9 @@ public class F
         return endsWith(suffix, true);
     }
 
-    /** @since 5.3 */
+    /**
+     * @since 5.3
+     */
     private static Predicate<String> endsWith(final String suffix, final boolean ignoreCase)
     {
         return new Predicate<String>()
@@ -519,7 +528,7 @@ public class F
     /**
      * Creates a Comparator for the Tuples of a {@link ZippedFlow} that sorts the Tuple elements based on the first
      * value in the Tuple.
-     * 
+     *
      * @since 5.3
      */
     public static <A extends Comparable<A>, B> Comparator<Tuple<A, B>> orderByFirst()
@@ -536,7 +545,7 @@ public class F
     /**
      * Creates a Comparator for the Tuples of a {@link ZippedFlow} that sorts the Tuple elements based on the first
      * value in the Tuple.
-     * 
+     *
      * @since 5.3
      */
     public static <A, B extends Comparable<B>> Comparator<Tuple<A, B>> orderBySecond()
@@ -552,9 +561,8 @@ public class F
 
     /**
      * Inverts a predicate.
-     * 
-     * @param delegate
-     *            the predicate to invert
+     *
+     * @param delegate the predicate to invert
      * @return a new predicate that is inverse to the existing predicate
      * @since 5.3
      */
@@ -573,11 +581,9 @@ public class F
 
     /**
      * Combines two mappers into a composite mapping from type A to type C via type B.
-     * 
-     * @param abMapper
-     *            maps from A to B
-     * @param bcMapper
-     *            maps from B to C
+     *
+     * @param abMapper maps from A to B
+     * @param bcMapper maps from B to C
      * @return mapper from A to C
      */
     public static <A, B, C> Mapper<A, C> combine(final Mapper<A, B> abMapper, final Mapper<B, C> bcMapper)
@@ -601,9 +607,8 @@ public class F
     /**
      * Combines any number of delegates as a logical and operation. Evaluation terminates
      * with the first delegate predicate that returns false.
-     * 
-     * @param delegates
-     *            to evaluate
+     *
+     * @param delegates to evaluate
      * @return combined delegate
      * @since 5.3
      */
@@ -627,9 +632,8 @@ public class F
     /**
      * Combines any number of delegates as a logical or operation. Evaluation terminates
      * with the first delegate predicate that returns true.
-     * 
-     * @param delegates
-     *            to evaluate
+     *
+     * @param delegates to evaluate
      * @return combined delegate
      * @since 5.3
      */
@@ -652,7 +656,7 @@ public class F
 
     /**
      * Combines several compatible workers together into a composite.
-     * 
+     *
      * @since 5.3
      */
     public static <T> Worker<T> combine(final Worker<? super T>... delegates)

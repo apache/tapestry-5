@@ -577,8 +577,8 @@ public final class TapestryModule
 
         // These must come after Property, since they actually delete fields
         // that may still have the annotation
-        configuration.addInstance("ApplicationState", ApplicationStateWorker.class, "after:Property");
-        configuration.addInstance("Environment", EnvironmentalWorker.class, "after:Property");
+        configuration.addInstance("ApplicationState", ApplicationStateWorker.class);
+        configuration.addInstance("Environment", EnvironmentalWorker.class);
 
         configuration.add("Component", new ComponentWorker(resolver));
         configuration.add("Mixin", new MixinWorker(resolver));
@@ -607,9 +607,9 @@ public final class TapestryModule
 
         configuration.add("Retain", new RetainWorker());
 
-        configuration.add("PageActivationContext", new PageActivationContextWorker(), "after:OnEvent");
+        configuration.add("PageActivationContext", new PageActivationContextWorker());
         configuration
-                .addInstance("ActivationRequestParameter", ActivationRequestParameterWorker.class, "after:OnEvent");
+                .addInstance("ActivationRequestParameter", ActivationRequestParameterWorker.class);
 
         configuration.addInstance("Cached", CachedWorker.class);
 
@@ -630,7 +630,7 @@ public final class TapestryModule
 
         configuration.addInstance("Log", LogWorker.class);
 
-        configuration.addInstance("HeartbeatDeferred", HeartbeatDeferredWorker.class, "after:RenderPhase");
+        configuration.addInstance("HeartbeatDeferred", HeartbeatDeferredWorker.class);
 
         // This one is always last. Any additional private fields that aren't
         // annotated will
@@ -838,7 +838,7 @@ public final class TapestryModule
     {
         configuration.add("IgnoredPaths", ignoredPathsFilter);
 
-        configuration.add("GZIP", gzipCompressionEnabled ? gzipFilter : null, "after:IgnoredPaths");
+        configuration.add("GZIP", gzipCompressionEnabled ? gzipFilter : null);
 
         HttpServletRequestFilter storeIntoGlobals = new HttpServletRequestFilter()
         {
@@ -915,11 +915,11 @@ public final class TapestryModule
 
         configuration.add("StaticFiles", staticFilesFilter);
 
+        configuration.add("StoreIntoGlobals", storeIntoGlobals);
+
+        configuration.add("EndOfRequest", fireEndOfRequestEvent);
+
         configuration.addInstance("ErrorFilter", RequestErrorFilter.class);
-
-        configuration.add("StoreIntoGlobals", storeIntoGlobals, "after:StaticFiles", "before:ErrorFilter");
-
-        configuration.add("EndOfRequest", fireEndOfRequestEvent, "after:StoreIntoGlobals", "before:ErrorFilter");
     }
 
     /**
@@ -2812,7 +2812,7 @@ public final class TapestryModule
      * <dl>
      * <dt>Default</dt>
      * <dd>Searches for the template on the classpath ({@link DefaultTemplateLocator}</dd>
-     * <dt>Page (after:Default)</dt>
+     * <dt>Page</dt>
      * <dd>Searches for <em>page</em> templates in the context ({@link PageTemplateLocator})</dd>
      * </dl>
      *

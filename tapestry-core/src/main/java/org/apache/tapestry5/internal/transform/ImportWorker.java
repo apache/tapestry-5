@@ -60,9 +60,15 @@ public class ImportWorker implements ComponentClassTransformWorker2
         {
             javascriptSupport.importStylesheet(asset);
         }
-
-        ;
     };
+
+    private final Mapper<String, String> expandSymbols = new Mapper<String, String>()
+    {
+        public String map(String element)
+        {
+            return symbolSource.expandSymbols(element);
+        }
+    }
 
     public ImportWorker(JavaScriptSupport javascriptSupport, SymbolSource symbolSource, AssetSource assetSource)
     {
@@ -85,14 +91,14 @@ public class ImportWorker implements ComponentClassTransformWorker2
     {
         Import annotation = componentClass.getAnnotation(Import.class);
 
-        if (annotation == null)
-            return;
+        if (annotation != null)
+        {
+            PlasticMethod setupRender = componentClass.introduceMethod(TransformConstants.SETUP_RENDER_DESCRIPTION);
 
-        PlasticMethod setupRender = componentClass.introduceMethod(TransformConstants.SETUP_RENDER_DESCRIPTION);
+            decorateMethod(componentClass, model, setupRender, annotation);
 
-        decorateMethod(componentClass, model, setupRender, annotation);
-
-        model.addRenderPhase(SetupRender.class);
+            model.addRenderPhase(SetupRender.class);
+        }
     }
 
     private void decorateMethod(PlasticClass componentClass, MutableComponentModel model, PlasticMethod method)
@@ -115,7 +121,9 @@ public class ImportWorker implements ComponentClassTransformWorker2
     private void importStacks(PlasticMethod method, String[] stacks)
     {
         if (stacks.length != 0)
+        {
             method.addAdvice(createImportStackAdvice(stacks));
+        }
     }
 
     private MethodAdvice createImportStackAdvice(final String[] stacks)
@@ -157,22 +165,17 @@ public class ImportWorker implements ComponentClassTransformWorker2
         PlasticField assetListField = componentClass.introduceField(Asset[].class,
                 "importedAssets_" + method.getDescription().methodName);
 
-        initializeAssetsFromPaths(componentClass, model.getBaseResource(), expandedPaths, assetListField);
+        initializeAssetsFromPaths(model.getBaseResource(), expandedPaths, assetListField);
 
         addMethodAssetOperationAdvice(method, assetListField.getHandle(), operation);
     }
 
     private String[] expandPaths(String[] paths)
     {
-        String[] result = new String[paths.length];
-
-        for (int i = 0; i < paths.length; i++)
-            result[i] = symbolSource.expandSymbols(paths[i]);
-
-        return result;
+        return F.flow(paths).map(expandSymbols).toArray(String.class);
     }
 
-    private void initializeAssetsFromPaths(PlasticClass componentClass, final Resource baseResource,
+    private void initializeAssetsFromPaths(final Resource baseResource,
                                            final String[] expandedPaths, final PlasticField assetsField)
     {
         assetsField.injectComputed(new ComputedValue<Asset[]>()
