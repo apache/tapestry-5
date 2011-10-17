@@ -18,35 +18,36 @@ import java.util.List;
 
 /**
  * Used with {@link DefaultTreeModel} to define how to extract labels and child nodes from a value.
- * 
+ *
  * @since 5.3
  */
 public interface TreeModelAdapter<T>
 {
     /**
      * Determines if the value is a leaf or a (potential) container of children.
-     * 
+     *
      * @see TreeNode#isLeaf()
      */
     boolean isLeaf(T value);
 
     /**
      * Returns true if the value has children (only invoked for non-leaf values).
-     * 
+     *
      * @see TreeNode#getHasChildren()
      */
     boolean hasChildren(T value);
 
     /**
      * Returns the children, in the order they should be presented to the client.
-     * 
+     * This should return the childen in the correct presentation or, or return null or an empty list.
+     *
      * @see TreeNode#getChildren()
      */
     List<T> getChildren(T value);
 
     /**
      * Returns a text label for the value, which may be presented to the client.
-     * 
+     *
      * @see TreeNode#getLabel()
      */
     String getLabel(T value);

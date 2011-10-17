@@ -28,7 +28,7 @@ public class Stuff
 
     public final String name;
 
-    public final List<Stuff> children = CollectionFactory.newList();
+    public List<Stuff> children;
 
     public Stuff(String name)
     {
@@ -39,7 +39,7 @@ public class Stuff
     {
         for (String name : names)
         {
-            children.add(new Stuff(name));
+            addChild(new Stuff(name));
         }
 
         return this;
@@ -47,6 +47,11 @@ public class Stuff
 
     public Stuff addChild(Stuff child)
     {
+        if (children == null)
+        {
+            children = CollectionFactory.newList();
+        }
+
         children.add(child);
 
         return this;
@@ -87,7 +92,8 @@ public class Stuff
         ROOT.addChild(numbers);
     }
 
-    public static TreeModel<Stuff> createTreeModel() {
+    public static TreeModel<Stuff> createTreeModel()
+    {
         ValueEncoder<Stuff> encoder = new StuffValueEncoder();
 
         return new DefaultTreeModel<Stuff>(encoder, new StuffTreeModelAdapter(), Stuff.ROOT.children);

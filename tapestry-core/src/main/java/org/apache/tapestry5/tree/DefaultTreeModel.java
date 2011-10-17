@@ -27,9 +27,9 @@ import java.util.Map;
 /**
  * A default implementation of TreeModel that starts with a {@link ValueEncoder} (for the element to string conversion),
  * a {@link TreeModelAdapter}, and a list of root nodes.
- * <p>
+ * <p/>
  * This implementation is <em>not</em> thread safe.
- * 
+ *
  * @param <T>
  * @since 5.3
  */
@@ -86,7 +86,15 @@ public class DefaultTreeModel<T> implements TreeModel<T>
         public List<TreeNode<T>> getChildren()
         {
             if (children == null)
-                children = F.flow(adapter.getChildren(value)).map(toTreeNode).toList();
+            {
+                List<T> childValues = adapter.getChildren(value);
+
+                boolean empty = childValues == null || childValues.isEmpty();
+
+                children = empty
+                        ? emptyTreeNodeList()
+                        : F.flow(childValues).map(toTreeNode).toList();
+            }
 
             return children;
         }
@@ -96,17 +104,19 @@ public class DefaultTreeModel<T> implements TreeModel<T>
             return adapter.getLabel(value);
         }
 
+        private List<TreeNode<T>> emptyTreeNodeList()
+        {
+            return Collections.emptyList();
+        }
+
     }
 
     /**
      * Creates a new model starting from a single root element.
-     * 
-     * @param encoder
-     *            used to convert values to strings and vice-versa
-     * @param adapter
-     *            adapts elements to the tree
-     * @param root
-     *            defines the root node of the model
+     *
+     * @param encoder used to convert values to strings and vice-versa
+     * @param adapter adapts elements to the tree
+     * @param root    defines the root node of the model
      */
     public DefaultTreeModel(ValueEncoder<T> encoder, TreeModelAdapter<T> adapter, T root)
     {
@@ -115,13 +125,10 @@ public class DefaultTreeModel<T> implements TreeModel<T>
 
     /**
      * Standard constructor.
-     * 
-     * @param encoder
-     *            used to convert values to strings and vice-versa
-     * @param adapter
-     *            adapts elements to the tree
-     * @param roots
-     *            defines the root nodes of the model
+     *
+     * @param encoder used to convert values to strings and vice-versa
+     * @param adapter adapts elements to the tree
+     * @param roots   defines the root nodes of the model
      */
     public DefaultTreeModel(ValueEncoder<T> encoder, TreeModelAdapter<T> adapter, List<T> roots)
     {

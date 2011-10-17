@@ -14,20 +14,20 @@
 
 package org.apache.tapestry5.integration.app1;
 
-import java.util.List;
-
 import org.apache.tapestry5.tree.TreeModelAdapter;
+
+import java.util.List;
 
 public class StuffTreeModelAdapter implements TreeModelAdapter<Stuff>
 {
     public boolean isLeaf(Stuff value)
     {
-        return value.children.isEmpty();
+        return !hasChildren(value);
     }
 
     public boolean hasChildren(Stuff value)
     {
-        return !value.children.isEmpty();
+        return value.children != null && !value.children.isEmpty();
     }
 
     public List<Stuff> getChildren(Stuff value)
