@@ -32,6 +32,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.SpringVersion;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.ServletContext;
 import java.util.Collections;
@@ -77,10 +78,10 @@ public class SpringModuleDef implements ModuleDef
      */
     protected ApplicationContext locateApplicationContext(ServletContext servletContext)
     {
-        ApplicationContext context = (ApplicationContext) servletContext
-                .getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
+        ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(servletContext);
 
         if (context == null)
+        {
             throw new NullPointerException(
                     String
                             .format(
@@ -88,6 +89,8 @@ public class SpringModuleDef implements ModuleDef
                                             + "You should either re-enable Tapestry as the creator of the ApplicationContext, or "
                                             + "add a Spring ContextLoaderListener to web.xml.",
                                     WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE));
+        }
+
         return context;
     }
 
