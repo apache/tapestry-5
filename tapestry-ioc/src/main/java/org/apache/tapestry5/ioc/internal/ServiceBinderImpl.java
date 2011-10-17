@@ -187,7 +187,8 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
                 throw new RuntimeException(IOCMessages.noServiceMatchesType(serviceClass));
             } catch (ClassNotFoundException ex)
             {
-                throw new RuntimeException(IOCMessages.noConventionServiceImplementationFound(serviceClass));
+                throw new RuntimeException(String.format("Could not find default implementation class %sImpl. Please provide this class, or bind the service interface to a specific implementation class.",
+                        serviceClass.getName()));
             }
         }
 

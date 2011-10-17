@@ -449,8 +449,8 @@ public class IntegrationTest extends IOCInternalTestCase
             unreachable();
         } catch (RuntimeException ex)
         {
-            assertMessageContains(ex, "No service implements the interface " + StringTransformer.class.getName()
-                    + ". Please provide");
+            assertMessageContains(ex, "Could not find default implementation class org.apache.tapestry5.ioc.StringTransformerImpl.",
+                    "Please provide this class, or bind the service interface to a specific implementation class.");
         }
     }
 
