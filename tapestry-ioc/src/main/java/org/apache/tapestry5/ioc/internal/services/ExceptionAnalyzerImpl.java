@@ -79,7 +79,7 @@ public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
      * We want to filter out exceptions that do not provide any additional value. Additional value includes: an
      * exception message not present in the containing exception or a property value not present in the containing
      * exception. Also the first exception is always valued and the last exception (with the stack trace) is valued.
-     * 
+     *
      * @param previousInfo
      * @param info
      * @return
@@ -90,6 +90,10 @@ public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
             return true;
 
         if (!info.getStackTrace().isEmpty())
+            return true;
+
+        // TAP5-508: This adds back in a large number of frames that used to be squashed.
+        if (!info.getClassName().equals(previousInfo.getClassName()))
             return true;
 
         if (!previousInfo.getMessage().contains(info.getMessage()))
