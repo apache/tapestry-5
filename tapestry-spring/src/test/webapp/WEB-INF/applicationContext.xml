@@ -52,5 +52,11 @@
         </constructor-arg>
     </bean>
 
+    <bean id="TAP5-892" class="java.util.Locale">
+        <constructor-arg>
+            <value>ru</value>
+        </constructor-arg>
+    </bean>
+
 </beans>
 

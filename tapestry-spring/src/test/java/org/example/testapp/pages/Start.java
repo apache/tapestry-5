@@ -14,10 +14,8 @@
 
 package org.example.testapp.pages;
 
-import java.util.Arrays;
-
+import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.annotations.Retain;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.example.testapp.services.SpringStatusProvider;
@@ -26,9 +24,12 @@ import org.example.testapp.services.Upcase;
 import org.example.testapp.services.ViaFactory;
 import org.springframework.context.ApplicationContext;
 
+import java.util.Arrays;
+import java.util.Locale;
+
 public class Start
 {
-    @Retain
+    @Persist
     private String input;
 
     // We're matching on type here, just as we would a service provided in a T5 IoC module.
@@ -45,10 +46,14 @@ public class Start
     @Inject
     @Property
     private ViaFactory viaFactory;
-    
+
     @Inject
     @Property
     private SymbolValueHolder symbolValueHolder;
+
+    @Property
+    @Inject
+    private Locale locale;
 
     void onSuccess()
     {

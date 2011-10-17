@@ -22,7 +22,11 @@
             <dt>Via factory:</dt>
             <dd id="viaFactory">${viaFactory.message}</dd>
             <dt>Symbol Value Holder:</dt>
-            <dd id="symbolValueHolder">Start page is '${symbolValueHolder.value}', Value from Spring is '${symbolValueHolder.anotherValue}'</dd>
+            <dd id="symbolValueHolder">Start page is '${symbolValueHolder.value}', Value from Spring is
+                '${symbolValueHolder.anotherValue}'
+            </dd>
+            <dt>Page Locale:</dt>
+            <dd id="locale">${locale}</dd>
         </dl>
 
     </body>
