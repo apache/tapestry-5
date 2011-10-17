@@ -29,7 +29,7 @@ public class JustInTimeObjectCreator<T> implements ObjectCreator<T>, EagerLoadSe
 {
     private final ServiceActivityTracker tracker;
 
-    private volatile ObjectCreator<T> creator;
+    private ObjectCreator<T> creator;
 
     private volatile T object;
 
@@ -87,9 +87,10 @@ public class JustInTimeObjectCreator<T> implements ObjectCreator<T>, EagerLoadSe
     }
 
     /**
-     * Invoked when the Registry is shutdown; sets the shutdown flag and releases the object and the creator.
+     * Invoked when the Registry is shutdown; deletes the instantiated object (if it exists) and replaces
+     * the ObjectCreator with one that throws an IllegalStateException.
      */
-    public void run()
+    public synchronized void run()
     {
         creator = new ObjectCreator<T>()
         {
