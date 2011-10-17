@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,18 +14,13 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.io.IOException;
-
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.EmptyEventContext;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.services.ComponentClassResolver;
-import org.apache.tapestry5.services.ComponentRequestHandler;
-import org.apache.tapestry5.services.Dispatcher;
-import org.apache.tapestry5.services.PageRenderRequestParameters;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.*;
+
+import java.io.IOException;
 
 /**
  * Recognizes a request for the application root (i.e., "/") and handles this the same as a render request for the
@@ -43,16 +38,19 @@ public class RootPathDispatcher implements Dispatcher
 
     private final PageRenderRequestParameters parameters;
 
+    private final LocalizationSetter localizationSetter;
+
     public RootPathDispatcher(ComponentClassResolver componentClassResolver,
 
-    ComponentRequestHandler handler,
+                              ComponentRequestHandler handler,
 
-    @Symbol(SymbolConstants.START_PAGE_NAME)
-    String startPageName)
+                              @Symbol(SymbolConstants.START_PAGE_NAME)
+                              String startPageName, LocalizationSetter localizationSetter)
     {
         this.componentClassResolver = componentClassResolver;
         this.handler = handler;
         this.startPageName = startPageName;
+        this.localizationSetter = localizationSetter;
 
         parameters = new PageRenderRequestParameters(this.startPageName, EMPTY_CONTEXT, false);
     }
@@ -63,6 +61,8 @@ public class RootPathDispatcher implements Dispatcher
 
         if (request.getPath().equals("/") && componentClassResolver.isPageName(startPageName))
         {
+            localizationSetter.setNonPeristentLocaleFromLocaleName(request.getLocale().toString());
+
             handler.handlePageRender(parameters);
 
             return true;

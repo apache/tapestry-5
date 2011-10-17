@@ -236,6 +236,8 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
     public ComponentEventRequestParameters decodeComponentEventRequest(Request request)
     {
+        boolean explicitLocale = false;
+
         Matcher matcher = COMPONENT_EVENT_REQUEST_PATH_PATTERN.matcher(request.getPath());
 
         if (!matcher.matches())
@@ -257,6 +259,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         if (localizationSetter.setLocaleFromLocaleName(possibleLocaleName))
         {
             activePageName = activePageName.substring(slashx + 1);
+            explicitLocale = true;
         }
 
         if (!componentClassResolver.isPageName(activePageName))
@@ -289,12 +292,28 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         else
             containingPageName = componentClassResolver.canonicalizePageName(containingPageName);
 
+        if (!explicitLocale)
+        {
+            setLocaleFromRequest(request);
+        }
+
         return new ComponentEventRequestParameters(activePageName, containingPageName, nestedComponentId, eventType,
                 activationContext, eventContext);
     }
 
+    private void setLocaleFromRequest(Request request)
+    {
+        Locale locale = request.getLocale();
+
+        // And explicit locale will have invoked setLocaleFromLocaleName().
+
+        localizationSetter.setNonPeristentLocaleFromLocaleName(locale.toString());
+    }
+
     public PageRenderRequestParameters decodePageRenderRequest(Request request)
     {
+        boolean explicitLocale = false;
+
         // The extended name may include a page activation context. The trick is
         // to figure out where the logical page name stops and where the
         // activation context begins. Further, strip out the leading slash.
@@ -347,6 +366,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         if (localizationSetter.setLocaleFromLocaleName(possibleLocaleName))
         {
             extendedName = slashx > 0 ? extendedName.substring(slashx + 1) : "";
+            explicitLocale = true;
         }
 
         slashx = extendedName.length();
@@ -372,7 +392,14 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
         // OK, maybe its all page activation context for the root Index page.
 
-        return checkIfPage(request, "", extendedName);
+        PageRenderRequestParameters result = checkIfPage(request, "", extendedName);
+
+        if (result != null && !explicitLocale)
+        {
+            setLocaleFromRequest(request);
+        }
+
+        return result;
     }
 
     private PageRenderRequestParameters checkIfPage(Request request, String pageName, String pageActivationContext)
