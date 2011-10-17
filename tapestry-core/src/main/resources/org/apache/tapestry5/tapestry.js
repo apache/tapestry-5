@@ -1785,6 +1785,10 @@ Tapestry.ElementEffect = {
     /** Fades the content out (opposite of show). */
     fade : function(element) {
         return new Effect.Fade(element);
+    },
+
+    none :  function(element) {
+        return element;
     }
 };
 
