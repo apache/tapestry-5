@@ -1028,7 +1028,7 @@ T5.extendInitializers({
         if (!zoneElement) {
             Tapestry
                 .error(
-                "Could not find zone element '#{zoneId}' to update on #{eventName} of element '#{elementId}",
+                "Could not find zone element '#{zoneId}' to update on #{eventName} of element '#{elementId}'.",
                 {
                     zoneId : zoneId,
                     eventName : eventName,
