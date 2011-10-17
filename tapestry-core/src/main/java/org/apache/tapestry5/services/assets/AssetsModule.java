@@ -15,23 +15,10 @@
 package org.apache.tapestry5.services.assets;
 
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.internal.services.assets.CompressionAnalyzerImpl;
-import org.apache.tapestry5.internal.services.assets.ContentTypeAnalyzerImpl;
-import org.apache.tapestry5.internal.services.assets.MasterResourceMinimizer;
-import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
-import org.apache.tapestry5.internal.services.assets.ResourceChangeTrackerImpl;
-import org.apache.tapestry5.internal.services.assets.SRSCachingInterceptor;
-import org.apache.tapestry5.internal.services.assets.SRSCompressedCachingInterceptor;
-import org.apache.tapestry5.internal.services.assets.SRSCompressingInterceptor;
-import org.apache.tapestry5.internal.services.assets.SRSMinimizingInterceptor;
-import org.apache.tapestry5.internal.services.assets.StreamableResourceSourceImpl;
+import org.apache.tapestry5.internal.services.assets.*;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
-import org.apache.tapestry5.ioc.annotations.Contribute;
-import org.apache.tapestry5.ioc.annotations.Decorate;
-import org.apache.tapestry5.ioc.annotations.Marker;
-import org.apache.tapestry5.ioc.annotations.Order;
-import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.annotations.*;
 import org.apache.tapestry5.ioc.services.FactoryDefaults;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.services.Core;
@@ -65,9 +52,9 @@ public class AssetsModule
 
     @Decorate(id = "GZipCompression", serviceInterface = StreamableResourceSource.class)
     public StreamableResourceSource enableCompression(StreamableResourceSource delegate,
-            @Symbol(SymbolConstants.GZIP_COMPRESSION_ENABLED)
-            boolean gzipEnabled, @Symbol(SymbolConstants.MIN_GZIP_SIZE)
-            int compressionCutoff)
+                                                      @Symbol(SymbolConstants.GZIP_COMPRESSION_ENABLED)
+                                                      boolean gzipEnabled, @Symbol(SymbolConstants.MIN_GZIP_SIZE)
+    int compressionCutoff)
     {
         return gzipEnabled ? new SRSCompressingInterceptor(compressionCutoff, delegate) : null;
     }
@@ -75,8 +62,8 @@ public class AssetsModule
     @Decorate(id = "CacheCompressed", serviceInterface = StreamableResourceSource.class)
     @Order("before:GZIpCompression")
     public StreamableResourceSource enableCompressedCaching(StreamableResourceSource delegate,
-            @Symbol(SymbolConstants.GZIP_COMPRESSION_ENABLED)
-            boolean gzipEnabled, ResourceChangeTracker tracker)
+                                                            @Symbol(SymbolConstants.GZIP_COMPRESSION_ENABLED)
+                                                            boolean gzipEnabled, ResourceChangeTracker tracker)
     {
         if (!gzipEnabled)
             return null;
@@ -91,7 +78,7 @@ public class AssetsModule
     @Decorate(id = "Cache", serviceInterface = StreamableResourceSource.class)
     @Order("after:GZipCompression")
     public StreamableResourceSource enableUncompressedCaching(StreamableResourceSource delegate,
-            ResourceChangeTracker tracker)
+                                                              ResourceChangeTracker tracker)
     {
         SRSCachingInterceptor interceptor = new SRSCachingInterceptor(tracker, delegate);
 
@@ -103,8 +90,8 @@ public class AssetsModule
     @Decorate(id = "Minification", serviceInterface = StreamableResourceSource.class)
     @Order("after:Cache")
     public StreamableResourceSource enableMinification(StreamableResourceSource delegate, ResourceMinimizer minimizer,
-            @Symbol(SymbolConstants.MINIFICATION_ENABLED)
-            boolean enabled)
+                                                       @Symbol(SymbolConstants.MINIFICATION_ENABLED)
+                                                       boolean enabled)
     {
         if (enabled)
             return new SRSMinimizingInterceptor(delegate, minimizer);
@@ -125,6 +112,8 @@ public class AssetsModule
      * <dd>image/gif</dd>
      * <dt>png</dt>
      * <dd>image/png</dd>
+     * <dt>svg</dt>
+     * <dd>image/svg+xml</dd>
      * <dt>swf</dt>
      * <dd>application/x-shockwave-flash</dd>
      * </dl>
@@ -139,6 +128,7 @@ public class AssetsModule
         configuration.add("jpeg", "image/jpeg");
         configuration.add("png", "image/png");
         configuration.add("swf", "application/x-shockwave-flash");
+        configuration.add("svg", "image/svg+xml");
     }
 
     /**
