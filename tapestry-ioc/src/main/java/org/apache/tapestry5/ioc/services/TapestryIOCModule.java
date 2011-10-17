@@ -111,8 +111,8 @@ public final class TapestryIOCModule
     /**
      * <dl>
      * <dt>AnnotationBasedContributions</dt>
-     * <dd>Empty placeholder used to seperate annotation-based ObjectProvider contributions (which come before) from
-     * non-annotation based (ServiceOverride here, Alias in tapestry-core) which come after.</dd>
+     * <dd>Empty placeholder used to separate annotation-based ObjectProvider contributions (which come before) from
+     * non-annotation based (such as ServiceOverride) which come after.</dd>
      * <dt>Value</dt>
      * <dd>Supports the {@link org.apache.tapestry5.ioc.annotations.Value} annotation</dd>
      * <dt>Symbol</dt>

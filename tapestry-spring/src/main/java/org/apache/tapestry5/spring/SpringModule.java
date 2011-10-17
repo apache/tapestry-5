@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,16 +14,15 @@
 
 package org.apache.tapestry5.spring;
 
-import java.util.List;
-
-import javax.servlet.ServletContext;
-
 import org.apache.tapestry5.internal.spring.SymbolBeanFactoryPostProcessor;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.services.ChainBuilder;
+import org.apache.tapestry5.ioc.services.FactoryDefaults;
+import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.services.ApplicationInitializer;
 import org.apache.tapestry5.services.ApplicationInitializerFilter;
@@ -32,6 +31,9 @@ import org.slf4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.SpringVersion;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
+
+import javax.servlet.ServletContext;
+import java.util.List;
 
 /**
  * Module for Tapestry/Spring Integration. This module exists to force the load of the Spring ApplicationContext as part
@@ -48,7 +50,8 @@ public class SpringModule
         this.logger = logger;
     }
 
-    public void contributeApplicationInitializer(
+    @Contribute(ApplicationInitializer.class)
+    public void reportSpringContextDetailsAtStartup(
             OrderedConfiguration<ApplicationInitializerFilter> configuration, final ApplicationContext springContext)
     {
         ApplicationInitializerFilter filter = new ApplicationInitializerFilter()
@@ -56,8 +59,8 @@ public class SpringModule
             public void initializeApplication(Context context, ApplicationInitializer initializer)
             {
                 logger.info(String.format("Spring version %s with %,d defined beans.",
-                                          SpringVersion.getVersion(),
-                                          springContext.getBeanDefinitionCount()));
+                        SpringVersion.getVersion(),
+                        springContext.getBeanDefinitionCount()));
 
                 initializer.initializeApplication(context);
             }
@@ -66,9 +69,11 @@ public class SpringModule
         configuration.add("SpringContextInitialization", filter);
     }
 
-    public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
+    @Contribute(SymbolProvider.class)
+    @FactoryDefaults
+    public static void defaultExternalSpringContextOff(MappedConfiguration<String, Object> configuration)
     {
-        configuration.add(SpringConstants.USE_EXTERNAL_SPRING_CONTEXT, "false");
+        configuration.add(SpringConstants.USE_EXTERNAL_SPRING_CONTEXT, false);
     }
 
     /**
@@ -83,22 +88,23 @@ public class SpringModule
     {
         return builder.build(ApplicationContextCustomizer.class, configuration);
     }
-    
-    public static void contributeApplicationContextCustomizer(
-            OrderedConfiguration<ApplicationContextCustomizer> configuration, 
+
+    @Contribute(ApplicationContextCustomizer.class)
+    public static void addSymbolSourceAsPropertyCustomizerForSpringBeans(
+            OrderedConfiguration<ApplicationContextCustomizer> configuration,
             final SymbolSource symbolSource)
     {
         ApplicationContextCustomizer beanFactoryPostProcessorCustomizer = new ApplicationContextCustomizer()
         {
-            
+
             public void customizeApplicationContext(ServletContext servletContext,
-                    ConfigurableWebApplicationContext applicationContext)
+                                                    ConfigurableWebApplicationContext applicationContext)
             {
                 applicationContext.addBeanFactoryPostProcessor(new SymbolBeanFactoryPostProcessor(symbolSource));
-                
+
             }
         };
-        
+
         configuration.add("BeanFactoryPostProcessorCustomizer", beanFactoryPostProcessorCustomizer);
     }
 }

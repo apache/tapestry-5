@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ public class SpringConstants
     /**
      * If true, then Tapestry will attempt to use an externally configured Spring ApplicationContext rather than create
      * its own. This will disable the ability to inject Tapestry IoC services and objects into Spring beans. This
-     * <em>must</em> be configured as a conetxt &lt;init-parameter&gt; in web.xml.
+     * <em>must</em> be configured as a context &lt;init-parameter&gt; in web.xml.
      */
     public static final String USE_EXTERNAL_SPRING_CONTEXT = "tapestry.use-external-spring-context";
 }

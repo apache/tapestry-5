@@ -25,7 +25,6 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
-import org.apache.tapestry5.ioc.services.RegistryShutdownListener;
 import org.apache.tapestry5.spring.ApplicationContextCustomizer;
 import org.apache.tapestry5.spring.SpringConstants;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -70,12 +69,10 @@ public class SpringModuleDef implements ModuleDef
      * Invoked to obtain the Spring ApplicationContext, presumably stored in the ServletContext.
      * This method is only used in Tapestry 5.0 compatibility mode (in Tapestry 5.1 and above,
      * the default is for Tapestry to <em>create</em> the ApplicationContext).
-     * 
-     * @param servletContext
-     *            used to locate the ApplicationContext
+     *
+     * @param servletContext used to locate the ApplicationContext
      * @return the ApplicationContext itself
-     * @throws RuntimeException
-     *             if the ApplicationContext could not be located or is otherwise invalid
+     * @throws RuntimeException if the ApplicationContext could not be located or is otherwise invalid
      * @since 5.2.0
      */
     protected ApplicationContext locateApplicationContext(ServletContext servletContext)
@@ -163,7 +160,7 @@ public class SpringModuleDef implements ModuleDef
 
     private ObjectCreator constructObjectCreatorForApplicationContext(
             final ServiceBuilderResources resources, @Primary
-            ApplicationContextCustomizer customizer)
+    ApplicationContextCustomizer customizer)
     {
         final CustomizingContextLoader loader = new CustomizingContextLoader(customizer);
 
@@ -240,7 +237,7 @@ public class SpringModuleDef implements ModuleDef
 
             @Override
             public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources,
-                    OrderedConfiguration configuration)
+                                   OrderedConfiguration configuration)
             {
                 final OperationTracker tracker = resources.getTracker();
 
@@ -250,7 +247,7 @@ public class SpringModuleDef implements ModuleDef
                 final ObjectProvider springBeanProvider = new ObjectProvider()
                 {
                     public <T> T provide(Class<T> objectType,
-                            AnnotationProvider annotationProvider, ObjectLocator locator)
+                                         AnnotationProvider annotationProvider, ObjectLocator locator)
                     {
 
                         Map beanMap = context.getBeansOfType(objectType);
@@ -272,8 +269,8 @@ public class SpringModuleDef implements ModuleDef
                                         .format(
                                                 "Spring context contains %d beans assignable to type %s: %s.",
                                                 beanMap.size(), ClassFabUtils
-                                                        .toJavaClassName(objectType), InternalUtils
-                                                        .joinSorted(beanMap.keySet()));
+                                                .toJavaClassName(objectType), InternalUtils
+                                                .joinSorted(beanMap.keySet()));
 
                                 throw new IllegalArgumentException(message);
                         }
@@ -283,7 +280,7 @@ public class SpringModuleDef implements ModuleDef
                 final ObjectProvider springBeanProviderInvoker = new ObjectProvider()
                 {
                     public <T> T provide(final Class<T> objectType,
-                            final AnnotationProvider annotationProvider, final ObjectLocator locator)
+                                         final AnnotationProvider annotationProvider, final ObjectLocator locator)
                     {
                         return tracker.invoke(
                                 "Resolving dependency by searching Spring ApplicationContext",
@@ -301,7 +298,7 @@ public class SpringModuleDef implements ModuleDef
                 ObjectProvider outerCheck = new ObjectProvider()
                 {
                     public <T> T provide(Class<T> objectType,
-                            AnnotationProvider annotationProvider, ObjectLocator locator)
+                                         AnnotationProvider annotationProvider, ObjectLocator locator)
                     {
                         // I think the following line is the only reason we put the
                         // SpringBeanProvider here,
@@ -315,7 +312,8 @@ public class SpringModuleDef implements ModuleDef
                     }
                 };
 
-                configuration.add("SpringBean", outerCheck, "after:Service,Alias,Autobuild");
+
+                configuration.add("SpringBean", outerCheck, "after:AnnotationBasedContributions", "after:ServiceOverride");
             }
         };
 
