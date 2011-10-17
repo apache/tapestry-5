@@ -20,7 +20,6 @@ import org.apache.tapestry5.corelib.ClientValidation;
 import org.apache.tapestry5.corelib.internal.ComponentActionSink;
 import org.apache.tapestry5.corelib.internal.FormSupportImpl;
 import org.apache.tapestry5.corelib.internal.InternalFormSupport;
-import org.apache.tapestry5.corelib.mixins.RenderInformals;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.*;
 import org.apache.tapestry5.internal.services.HeartbeatImpl;
@@ -231,9 +230,6 @@ public class Form implements ClientElement, FormValidationControl
     // component id), followed by a ComponentAction
 
     private ComponentActionSink actionSink;
-
-    @Mixin
-    private RenderInformals renderInformals;
 
     @Environmental
     private ClientBehaviorSupport clientBehaviorSupport;

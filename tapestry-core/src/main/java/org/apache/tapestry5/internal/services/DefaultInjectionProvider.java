@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.services.MasterObjectProvider;
 import org.apache.tapestry5.model.MutableComponentModel;
@@ -40,8 +39,6 @@ public class DefaultInjectionProvider implements InjectionProvider2
 
     private final ComponentClassCache classCache;
 
-    private final static String MESSAGES_TYPE = Messages.class.getName();
-
     public DefaultInjectionProvider(MasterObjectProvider masterObjectProvider, ObjectLocator locator, ComponentClassCache classCache)
     {
         this.masterObjectProvider = masterObjectProvider;
@@ -51,17 +48,6 @@ public class DefaultInjectionProvider implements InjectionProvider2
 
     public boolean provideInjection(final PlasticField field, ObjectLocator locator, MutableComponentModel componentModel)
     {
-        // I hate special cases, but we have a conflict between the ObjectProvider contributed so as to inject
-        // the global application messages into services, and the injection of per-component Messages into components.
-        // For yet other reasons, this InjectionProvider gets invoked before CommonResources, and will attempt
-        // to inject the wrong Messages (the global application messages, not the component messages) ... so we
-        // make a special check here.
-
-        if (field.getTypeName().equals(MESSAGES_TYPE))
-        {
-            return false;
-        }
-
         Class fieldType = classCache.forName(field.getTypeName());
 
         Object injectionValue = masterObjectProvider.provide(fieldType, new AnnotationProvider()

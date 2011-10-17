@@ -1,6 +1,8 @@
 <t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
           xmlns:p="tapestry:parameter">
 
-    <t:form t:mixins="renderInformals"/>
+    <t:form>
+        <t:textfield t:id="value" t:mixins="discardbody"/>
+    </t:form>
 
 </t:border>

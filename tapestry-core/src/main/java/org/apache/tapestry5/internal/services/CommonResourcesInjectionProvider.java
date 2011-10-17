@@ -92,13 +92,6 @@ public class CommonResourcesInjectionProvider implements InjectionProvider2
         }
     };
 
-    private static ResourceProvider<String> completeIdProvider = new ResourceProvider<String>()
-    {
-        public String get(ComponentResources resources)
-        {
-            return resources.getCompleteId();
-        }
-    };
 
     private static ResourceProvider<ComponentResources> resourcesProvider = new ResourceProvider<ComponentResources>()
     {
@@ -116,7 +109,6 @@ public class CommonResourcesInjectionProvider implements InjectionProvider2
         add(Messages.class, messagesProvider);
         add(Locale.class, localeProvider);
         add(Logger.class, loggerProvider);
-        add(String.class, completeIdProvider);
     }
 
     private static void add(Class type, ResourceProvider provider)

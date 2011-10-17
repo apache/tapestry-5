@@ -25,6 +25,8 @@ import org.apache.tapestry5.services.security.ClientWhitelist;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.util.Locale;
+
 /**
  * Most of the testing is implemented through legacy tests against code that uses CELE.
  *
@@ -231,6 +233,9 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         train_isPageName(resolver, "", true);
 
         train_canonicalizePageName(resolver, "", "index");
+
+        train_getLocale(request, Locale.ITALIAN);
+        ls.setNonPeristentLocaleFromLocaleName("it");
 
         replay();
 

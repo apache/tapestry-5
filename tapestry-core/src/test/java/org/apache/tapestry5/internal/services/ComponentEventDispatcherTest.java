@@ -26,6 +26,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.Locale;
 
 public class ComponentEventDispatcherTest extends InternalBaseTestCase
 {
@@ -157,6 +158,8 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         train_getParameter(request, InternalConstants.CONTAINER_PAGE_NAME, null);
 
+        train_for_request_locale(request, ls);
+
         handler.handleComponentEvent(expectedParameters);
 
         replay();
@@ -197,6 +200,8 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
         train_getParameter(request, InternalConstants.CONTAINER_PAGE_NAME, "mypage");
 
         train_canonicalizePageName(resolver, "mypage", "mypage");
+
+        train_for_request_locale(request, ls);
 
         handler.handleComponentEvent(expectedParameters);
 
@@ -263,6 +268,8 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         handler.handleComponentEvent(expectedParameters);
 
+        train_for_request_locale(request, localizationSetter);
+
         replay();
 
         Dispatcher dispatcher = new ComponentEventDispatcher(handler,
@@ -272,6 +279,12 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
         assertTrue(dispatcher.dispatch(request, response));
 
         verify();
+    }
+
+    private void train_for_request_locale(Request request, LocalizationSetter localizationSetter)
+    {
+        train_getLocale(request, Locale.CANADA_FRENCH);
+        localizationSetter.setNonPeristentLocaleFromLocaleName("fr_CA");
     }
 
     @Test
@@ -305,6 +318,8 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
         train_getParameter(request, InternalConstants.PAGE_CONTEXT_NAME, null);
 
         train_getParameter(request, InternalConstants.CONTAINER_PAGE_NAME, null);
+
+        train_for_request_locale(request, localizationSetter);
 
         handler.handleComponentEvent(expectedParameters);
 

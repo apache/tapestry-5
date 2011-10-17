@@ -1169,7 +1169,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     {
         openLinks("Bad Mixin Id Demo");
 
-        assertTextPresent("Mixin id for parameter 'unknownmixinid.foo' not found. Attached mixins: RenderInformals.");
+        assertTextPresent("Mixin id for parameter 'unknownmixinid.foo' not found. Attached mixins: DiscardBody, RenderDisabled.");
     }
 
     @Test
@@ -1177,9 +1177,9 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     {
         openLinks("Duplicate Mixin Demo");
 
-        assertTextPresent("Failure creating embedded component 'form' of "
+        assertTextPresent("Failure creating embedded component 'value' of "
                 + "org.apache.tapestry5.integration.app1.pages.DupeMixinDemo: "
-                + "Mixins applied to a component must be unique. Mixin 'RenderInformals' has already been applied.");
+                + "Mixins applied to a component must be unique. Mixin 'DiscardBody' has already been applied.");
     }
 
     @Test

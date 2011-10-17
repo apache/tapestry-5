@@ -15,6 +15,7 @@
 package org.apache.tapestry5.integration.app1.components;
 
 import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -29,7 +30,11 @@ public class Publish3
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String value;
 
-    @Property
     @Inject
-    private String id;
+    private ComponentResources resources;
+
+    public String getId()
+    {
+        return resources.getCompleteId();
+    }
 }

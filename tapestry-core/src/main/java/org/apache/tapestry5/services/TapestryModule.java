@@ -778,9 +778,10 @@ public final class TapestryModule
         configuration.add("Block", new BlockInjectionProvider());
         configuration.add("Asset", new AssetInjectionProvider(symbolSource, assetSource));
 
+        configuration.add("CommonResources", new CommonResourcesInjectionProvider());
+
         configuration.addInstance("Default", DefaultInjectionProvider.class);
 
-        configuration.add("CommonResources", new CommonResourcesInjectionProvider());
         // This needs to be the last one, since it matches against services
         // and might blow up if there is no match.
         configuration.addInstance("Service", ServiceInjectionProvider.class, "after:*");

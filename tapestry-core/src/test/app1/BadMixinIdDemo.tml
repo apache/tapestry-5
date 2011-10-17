@@ -1,6 +1,9 @@
 <t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
           xmlns:p="tapestry:parameter">
 
-    <t:form unknownmixinid.foo="bar"/>
+    <t:form>
+        <t:textfield t:id="value" unknownmixinid.foo="bar"/>
+    </t:form>
 
 </t:border>
+        </t:border>

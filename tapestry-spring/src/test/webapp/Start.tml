@@ -27,6 +27,8 @@
             </dd>
             <dt>Page Locale:</dt>
             <dd id="locale">${locale}</dd>
+            <dt>Page selector:</dt>
+            <dd id="selector">${selector.toShortString()}</dd>
         </dl>
 
     </body>
