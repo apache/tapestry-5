@@ -17,8 +17,7 @@ Tapestry.Palette = Class.create({
     // id: of main select element                                                                                                 ˜
     // reorder: true to enable extra controls for changing selection order
     // naturalOrder: array of values, the proper order for the elements (needed when de-selecting items)
-    initialize : function(id, reorder, naturalOrder)
-    {
+    initialize : function(id, reorder, naturalOrder) {
         this.reorder = reorder;
         // The SELECT elements
 
@@ -31,24 +30,22 @@ Tapestry.Palette = Class.create({
         this.select = $(id + "-select");
         this.deselect = $(id + "-deselect");
 
-        if (this.reorder)
-        {
+        if (this.reorder) {
             this.up = $(id + "-up");
             this.down = $(id + "-down");
         }
 
         this.valueToOrderIndex = {};
 
-        naturalOrder.each(function (value, i)
-        {
+        naturalOrder.each(function (value, i) {
             this.valueToOrderIndex[value] = i;
         }.bind(this));
 
         this.bindEvents();
+        this.updateHidden();
     },
 
-    bindEvents : function()
-    {
+    bindEvents : function() {
         var updateButtons = this.updateButtons.bindAsEventListener(this);
         this.avail.observe("change", updateButtons);
         this.selected.observe("change", updateButtons);
@@ -61,78 +58,66 @@ Tapestry.Palette = Class.create({
         this.deselect.observe("click", deselectClicked);
         this.selected.observe("dblclick", deselectClicked);
 
-        if (this.reorder)
-        {
+        if (this.reorder) {
             this.up.observe("click", this.moveUpClicked.bindAsEventListener(this));
             this.down.observe("click", this.moveDownClicked.bindAsEventListener(this));
         }
     },
 
-    updateButtons: function()
-    {
+    updateButtons: function() {
         this.select.disabled = this.avail.selectedIndex < 0;
 
         var nothingSelected = this.selected.selectedIndex < 0;
 
         this.deselect.disabled = nothingSelected;
 
-        if (this.reorder)
-        {
+        if (this.reorder) {
             this.up.disabled = nothingSelected || this.allSelectionsAtTop();
             this.down.disabled = nothingSelected || this.allSelectionsAtBottom();
         }
     },
 
-    indexOfLastSelection : function(select)
-    {
+    indexOfLastSelection : function(select) {
         if (select.selectedIndex < 0) return -1;
 
-        for (var i = select.options.length - 1; i >= select.selectedIndex; i--)
-        {
+        for (var i = select.options.length - 1; i >= select.selectedIndex; i--) {
             if (select.options[i].selected) return i;
         }
 
         return -1;
     },
 
-    allSelectionsAtTop: function()
-    {
+    allSelectionsAtTop: function() {
         var last = this.indexOfLastSelection(this.selected);
         var options = $A(this.selected.options);
 
-        return ! options.slice(0, last).any(function (o)
-        {
+        return ! options.slice(0, last).any(function (o) {
             return ! o.selected;
         });
     },
 
-    allSelectionsAtBottom : function()
-    {
+    allSelectionsAtBottom : function() {
         var options = $A(this.selected.options);
 
         // Make sure that all elements from the (first) selectedIndex to the end are also selected.
-        return options.slice(this.selected.selectedIndex).all(function(o)
-        {
+        return options.slice(this.selected.selectedIndex).all(function(o) {
             return o.selected;
         });
     },
 
-    selectClicked : function(event)
-    {
+    selectClicked : function(event) {
         this.transferOptions(this.avail, this.selected, this.reorder);
 
         Event.stop(event);
     },
 
-    deselectClicked : function(event)
-    {
+    deselectClicked : function(event) {
         this.transferOptions(this.selected, this.avail, false);
 
         Event.stop(event);
     },
 
-    transferOptions : function (from, to, atEnd)
-    {
+    transferOptions : function (from, to, atEnd) {
         // don't bother moving the options if nothing is selected. this can happen
         // if you double-click a disabled option
         if (from.selectedIndex == -1)
@@ -143,8 +128,7 @@ Tapestry.Palette = Class.create({
         // atEnd : if true, add at end, otherwise by natural sort order
         var toOptions = $A(to.options);
 
-        toOptions.each(function(option)
-        {
+        toOptions.each(function(option) {
             option.selected = false;
         });
 
@@ -153,19 +137,16 @@ Tapestry.Palette = Class.create({
 
     },
 
-    updateHidden : function()
-    {
+    updateHidden : function() {
         // Every value in the selected list (whether enabled or not) is combined to form the value.
-        var values = $A(this.selected).map(function(o)
-        {
+        var values = $A(this.selected).map(function(o) {
             return o.value;
         });
 
         this.hidden.value = Object.toJSON(values);
     },
 
-    moveUpClicked : function(event)
-    {
+    moveUpClicked : function(event) {
         var pos = this.selected.selectedIndex - 1;
         var movers = this.removeSelectedOptions(this.selected);
 
@@ -176,16 +157,13 @@ Tapestry.Palette = Class.create({
         Event.stop(event);
     },
 
-    removeSelectedOptions : function(select)
-    {
+    removeSelectedOptions : function(select) {
         var movers = [];
         var options = select.options;
 
-        for (var i = select.selectedIndex; i < select.length; i++)
-        {
+        for (var i = select.selectedIndex; i < select.length; i++) {
             var option = options[i];
-            if (option.selected)
-            {
+            if (option.selected) {
                 select.remove(i--);
                 movers.push(option);
             }
@@ -194,11 +172,9 @@ Tapestry.Palette = Class.create({
         return movers;
     },
 
-    moveOptions : function(movers, to, atEnd)
-    {
+    moveOptions : function(movers, to, atEnd) {
 
-        movers.each(function(option)
-        {
+        movers.each(function(option) {
             this.moveOption(option, to, atEnd);
         }.bind(this));
 
@@ -206,15 +182,12 @@ Tapestry.Palette = Class.create({
         this.updateButtons();
     },
 
-    moveOption : function(option, to, atEnd)
-    {
+    moveOption : function(option, to, atEnd) {
         var before = null;
 
-        if (!atEnd)
-        {
+        if (!atEnd) {
             var optionOrder = this.valueToOrderIndex[option.value];
-            var candidate = $A(to.options).find(function (o)
-            {
+            var candidate = $A(to.options).find(function (o) {
                 return this.valueToOrderIndex[o.value] > optionOrder;
             }.bind(this));
             if (candidate) before = candidate;
@@ -222,22 +195,17 @@ Tapestry.Palette = Class.create({
         this.addOption(to, option, before);
     },
 
-    addOption : function(to, option, before)
-    {
-        try
-        {
+    addOption : function(to, option, before) {
+        try {
             to.add(option, before);
         }
-        catch (ex)
-        {
+        catch (ex) {
             //probably IE complaining about type mismatch for before argument;
-            if (before == null)
-            {
+            if (before == null) {
                 //just add to the end...
                 to.add(option);
             }
-            else
-            {
+            else {
                 //use option index property...
                 to.add(option, before.index);
             }
@@ -245,10 +213,8 @@ Tapestry.Palette = Class.create({
 
     },
 
-    moveDownClicked : function(event)
-    {
-        var lastSelected = $A(this.selected.options).reverse(true).find(function (option)
-        {
+    moveDownClicked : function(event) {
+        var lastSelected = $A(this.selected.options).reverse(true).find(function (option) {
             return option.selected;
         });
         var lastPos = lastSelected.index;
@@ -260,10 +226,8 @@ Tapestry.Palette = Class.create({
         Event.stop(event);
     },
 
-    reorderSelected : function(movers, before)
-    {
-        movers.each(function(option)
-        {
+    reorderSelected : function(movers, before) {
+        movers.each(function(option) {
             this.addOption(this.selected, option, before);
         }.bind(this));
 
