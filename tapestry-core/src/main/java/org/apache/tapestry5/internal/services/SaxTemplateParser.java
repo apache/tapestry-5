@@ -14,6 +14,14 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.internal.parser.*;
+import org.apache.tapestry5.ioc.Location;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.TapestryException;
+
+import javax.xml.namespace.QName;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -21,49 +29,22 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.namespace.QName;
-
-import org.apache.tapestry5.internal.parser.AttributeToken;
-import org.apache.tapestry5.internal.parser.BlockToken;
-import org.apache.tapestry5.internal.parser.BodyToken;
-import org.apache.tapestry5.internal.parser.CDATAToken;
-import org.apache.tapestry5.internal.parser.CommentToken;
-import org.apache.tapestry5.internal.parser.ComponentTemplate;
-import org.apache.tapestry5.internal.parser.ComponentTemplateImpl;
-import org.apache.tapestry5.internal.parser.DTDToken;
-import org.apache.tapestry5.internal.parser.DefineNamespacePrefixToken;
-import org.apache.tapestry5.internal.parser.EndElementToken;
-import org.apache.tapestry5.internal.parser.ExpansionToken;
-import org.apache.tapestry5.internal.parser.ExtensionPointToken;
-import org.apache.tapestry5.internal.parser.ParameterToken;
-import org.apache.tapestry5.internal.parser.StartComponentToken;
-import org.apache.tapestry5.internal.parser.StartElementToken;
-import org.apache.tapestry5.internal.parser.TemplateToken;
-import org.apache.tapestry5.internal.parser.TextToken;
-import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.internal.util.TapestryException;
-
-import static org.apache.tapestry5.internal.services.SaxTemplateParser.Version.T_5_0;
-import static org.apache.tapestry5.internal.services.SaxTemplateParser.Version.T_5_1;
-import static org.apache.tapestry5.internal.services.SaxTemplateParser.Version.T_5_3;
+import static org.apache.tapestry5.internal.services.SaxTemplateParser.Version.*;
 
 /**
  * SAX-based template parser logic, taking a {@link Resource} to a Tapestry
  * template file and returning
  * a {@link ComponentTemplate}.
- * <p>
+ * <p/>
  * Earlier versions of this code used the StAX (streaming XML parser), but that
  * was really, really bad for Google App Engine. This version uses SAX under the
  * covers, but kind of replicates the important bits of the StAX API as
  * {@link XMLTokenStream}.
- * 
+ *
  * @since 5.2.0
  */
 @SuppressWarnings(
-{ "JavaDoc" })
+        {"JavaDoc"})
 public class SaxTemplateParser
 {
     private static final String MIXINS_ATTRIBUTE_NAME = "mixins";
@@ -130,9 +111,9 @@ public class SaxTemplateParser
     // but invalid expansion.
 
     private static final Pattern EXPANSION_PATTERN = Pattern.compile("\\$\\{\\s*(((?!\\$\\{).)*)\\s*}");
-    private static final char EXPANSION_STRING_DELIMITTER='\'';
-    private static final char OPEN_BRACE='{';
-    private static final char CLOSE_BRACE='}';
+    private static final char EXPANSION_STRING_DELIMITTER = '\'';
+    private static final char OPEN_BRACE = '{';
+    private static final char CLOSE_BRACE = '}';
 
     private static final Set<String> MUST_BE_ROOT = CollectionFactory.newSet("extend", "container");
 
@@ -167,6 +148,8 @@ public class SaxTemplateParser
 
     private boolean active = true;
 
+    private final Map<String, Boolean> extensionPointIdSet = CollectionFactory.newCaseInsensitiveMap();
+
     public SaxTemplateParser(Resource resource, Map<String, URL> publicIdToURL)
     {
         this.resource = resource;
@@ -185,8 +168,7 @@ public class SaxTemplateParser
             root(initialParserState);
 
             return new ComponentTemplateImpl(resource, tokens, componentIds, extension, overrides);
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             throw new TapestryException(String.format("Failure parsing template %s: %s", resource,
                     InternalUtils.toMessage(ex)), tokenStream.getLocation(), ex);
@@ -274,7 +256,7 @@ public class SaxTemplateParser
 
                     return;
 
-                    // Ignore spaces and characters inside <extend>.
+                // Ignore spaces and characters inside <extend>.
 
                 case COMMENT:
                 case SPACE:
@@ -377,8 +359,11 @@ public class SaxTemplateParser
                 return;
             }
 
-            if (name.equalsIgnoreCase("replace")) { throw new RuntimeException(
-                    "The <replace> element may only appear directly within an extend element."); }
+            if (name.equalsIgnoreCase("replace"))
+            {
+                throw new RuntimeException(
+                        "The <replace> element may only appear directly within an extend element.");
+            }
 
             if (MUST_BE_ROOT.contains(name))
                 mustBeRoot(name);
@@ -406,7 +391,7 @@ public class SaxTemplateParser
 
             if (name.equalsIgnoreCase("parameter"))
             {
-                if(T_5_3.before(version))
+                if (T_5_3.before(version))
                 {
                     throw new RuntimeException(
                             String.format("The <parameter> element has been deprecated in Tapestry 5.3 in favour of '%s' namespace.", TAPESTRY_PARAMETERS_URI));
@@ -446,7 +431,7 @@ public class SaxTemplateParser
      * elements. Adds an
      * {@link org.apache.tapestry5.internal.parser.TokenType#END_ELEMENT} token
      * before returning.
-     * 
+     *
      * @param state
      */
     private void processBody(TemplateParserState state)
@@ -488,7 +473,7 @@ public class SaxTemplateParser
     /**
      * Handles an extension point, putting a RenderExtension token in position
      * in the template.
-     * 
+     *
      * @param state
      */
     private void extensionPoint(TemplateParserState state)
@@ -499,6 +484,14 @@ public class SaxTemplateParser
         // template) is positioned.
 
         String id = getRequiredIdAttribute();
+
+        if (extensionPointIdSet.containsKey(id))
+        {
+            throw new TapestryException(String.format("Extension point '%s' is already defined for this template. Extension point ids must be unique.", id), getLocation(), null);
+        } else
+        {
+            extensionPointIdSet.put(id, true);
+        }
 
         tokenAccumulator.add(new ExtensionPointToken(id, getLocation()));
 
@@ -669,12 +662,11 @@ public class SaxTemplateParser
 
     /**
      * @param elementName
-     * @param identifiedType
-     *            the type of the element, usually null, but may be the
-     *            component type derived from element
+     * @param identifiedType the type of the element, usually null, but may be the
+     *                       component type derived from element
      */
     private void possibleTapestryComponent(TemplateParserState state, String elementName,
-            String identifiedType)
+                                           String identifiedType)
     {
         String id = null;
         String type = identifiedType;
@@ -748,8 +740,7 @@ public class SaxTemplateParser
         if (isComponent)
         {
             tokenAccumulator.add(new StartComponentToken(elementName, id, type, mixins, location));
-        }
-        else
+        } else
         {
             tokenAccumulator.add(new StartElementToken(tokenStream.getNamespaceURI(), elementName,
                     location));
@@ -885,7 +876,7 @@ public class SaxTemplateParser
     /**
      * Driven by the &lt;t:container&gt; element, this state adds elements for
      * its body but not its start or end tags.
-     * 
+     *
      * @param state
      */
     private void container(TemplateParserState state)
@@ -977,7 +968,7 @@ public class SaxTemplateParser
      * Processes text content if in the correct state, or throws an exception.
      * This is used as a default for matching
      * case statements.
-     * 
+     *
      * @param state
      */
     private void textContent(TemplateParserState state)
@@ -1057,7 +1048,7 @@ public class SaxTemplateParser
     /**
      * Reduces vertical whitespace to a single newline, then reduces horizontal
      * whitespace to a single space.
-     * 
+     *
      * @param text
      * @return compressed version of text
      */
@@ -1072,11 +1063,10 @@ public class SaxTemplateParser
      * Scans the text, using a regular expression pattern, for expansion
      * patterns, and adds appropriate tokens for what
      * it finds.
-     * 
-     * @param text
-     *            to add as
-     *            {@link org.apache.tapestry5.internal.parser.TextToken}s and
-     *            {@link org.apache.tapestry5.internal.parser.ExpansionToken}s
+     *
+     * @param text to add as
+     *             {@link org.apache.tapestry5.internal.parser.TextToken}s and
+     *             {@link org.apache.tapestry5.internal.parser.ExpansionToken}s
      */
     private void addTokensForText(String text)
     {
@@ -1127,35 +1117,43 @@ public class SaxTemplateParser
             //count of 'open' braces. Expression ends when it hits 0. In most cases,
             // it should end up as 1 b/c "expression" is everything inside ${}, so 
             // the following will typically not find the end of the expression.
-            int openBraceCount=1;
+            int openBraceCount = 1;
             int expressionEnd = expression.length();
-            boolean inQuote=false;
-            for(int i=0;i<expression.length();i++) {
+            boolean inQuote = false;
+            for (int i = 0; i < expression.length(); i++)
+            {
                 char c = expression.charAt(i);
                 //basically, if we're inQuote, we ignore everything until we hit the quote end, so we only care if the character matches the quote start (meaning we're at the end of the quote).
                 //note that I don't believe expression support escaped quotes...
-                if (c==EXPANSION_STRING_DELIMITTER) {
+                if (c == EXPANSION_STRING_DELIMITTER)
+                {
                     inQuote = !inQuote;
                     continue;
-                } else if (inQuote) {
+                } else if (inQuote)
+                {
                     continue;
-                } else if (c == CLOSE_BRACE) {
+                } else if (c == CLOSE_BRACE)
+                {
                     openBraceCount--;
-                    if (openBraceCount == 0) {
+                    if (openBraceCount == 0)
+                    {
                         expressionEnd = i;
                         break;
                     }
-                } else if (c == OPEN_BRACE) {
+                } else if (c == OPEN_BRACE)
+                {
                     openBraceCount++;
                 }
             }
-            if (expressionEnd <  expression.length()) {
+            if (expressionEnd < expression.length())
+            {
                 //then we gobbled up some } that we shouldn't have... like the closing } of a javascript
                 //function.
-                tokenAccumulator.add(new ExpansionToken(expression.substring(0,expressionEnd), textStartLocation));
+                tokenAccumulator.add(new ExpansionToken(expression.substring(0, expressionEnd), textStartLocation));
                 //can't just assign to 
-                startx=matcher.start(1) + expressionEnd + 1;
-            } else {
+                startx = matcher.start(1) + expressionEnd + 1;
+            } else
+            {
                 tokenAccumulator.add(new ExpansionToken(expression.trim(), textStartLocation));
 
                 startx = matcher.end();
@@ -1171,7 +1169,7 @@ public class SaxTemplateParser
 
     static enum Version
     {
-        T_5_0(5,0), T_5_1(5,1), T_5_3(5,3);
+        T_5_0(5, 0), T_5_1(5, 1), T_5_3(5, 3);
 
         private int major;
         private int minor;
@@ -1185,10 +1183,10 @@ public class SaxTemplateParser
 
         public boolean before(Version other)
         {
-            if(other == null)
+            if (other == null)
                 return false;
 
-            if(this == other)
+            if (this == other)
                 return true;
 
             return major <= other.major && minor <= other.minor;

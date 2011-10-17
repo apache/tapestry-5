@@ -966,4 +966,20 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         assertEquals(token3.text, "\u00A92011\u00A0Apache");
     }
+
+    /**
+     * https://issues.apache.org/jira/browse/TAP5-1329
+     */
+    @Test
+    public void dupe_extension_point_id() throws Exception
+    {
+        try
+        {
+            tokens("dupe_extension_point_id.tml");
+            unreachable();
+        } catch (Exception ex)
+        {
+            assertMessageContains(ex, "Extension point 'batman' is already defined for this template.");
+        }
+    }
 }

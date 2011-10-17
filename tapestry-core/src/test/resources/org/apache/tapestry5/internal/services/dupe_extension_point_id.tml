@@ -1,0 +1,10 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+
+    <t:extension-point id="batman">
+        This is the first "batman" extension point.
+    </t:extension-point>
+
+    <t:extension-point id="batman">
+        This is the second "batman" extension point.
+    </t:extension-point>
+</html>
