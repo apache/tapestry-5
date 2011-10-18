@@ -16,11 +16,11 @@ package org.apache.tapestry5.ioc.internal.util;
 
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
+import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.*;
 import org.apache.tapestry5.ioc.def.*;
 import org.apache.tapestry5.ioc.internal.NullAnnotationProvider;
-import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.plastic.MethodAdvice;
@@ -143,14 +143,6 @@ public class InternalUtils
     }
 
     /**
-     * Strips leading characters defined by {@link InternalUtils#NAME_PREFIX}, then adds the prefix back in.
-     */
-    public static String createMemberName(String memberName)
-    {
-        return NAME_PREFIX + stripMemberName(memberName);
-    }
-
-    /**
      * Converts an enumeration (of Strings) into a sorted list of Strings.
      */
     public static List<String> toList(Enumeration e)
@@ -258,7 +250,7 @@ public class InternalUtils
             final Annotation[] annotations = parameterAnnotations[i];
 
             String description = String.format("Determining injection value for parameter #%d (%s)", i + 1,
-                    ClassFabUtils.toJavaClassName(type));
+                    PlasticUtils.toTypeName(type));
 
             final Invokable<Object> operation = new Invokable<Object>()
             {
@@ -943,6 +935,12 @@ public class InternalUtils
             {
                 return sd.isEagerLoad();
             }
+
+            @Override
+            public String toString()
+            {
+                return sd.toString();
+            }
         };
     }
 
@@ -1082,6 +1080,11 @@ public class InternalUtils
                 return contribution.getServiceId();
             }
 
+            @Override
+            public String toString()
+            {
+                return contribution.toString();
+            }
         };
     }
 
@@ -1130,6 +1133,12 @@ public class InternalUtils
             public Class getServiceInterface()
             {
                 return cd2.getServiceInterface();
+            }
+
+            @Override
+            public String toString()
+            {
+                return cd2.toString();
             }
         };
     }
@@ -1241,7 +1250,7 @@ public class InternalUtils
      */
     public static boolean isLocalFile(Class clazz)
     {
-        String path = ClassFabUtils.getPathForClass(clazz);
+        String path = PlasticInternalUtils.toClassPath(clazz.getName());
 
         ClassLoader loader = clazz.getClassLoader();
 
@@ -1266,7 +1275,6 @@ public class InternalUtils
 
         return new Mapper<S, T>()
         {
-
             public T map(S value)
             {
                 return coercion.coerce(value);
