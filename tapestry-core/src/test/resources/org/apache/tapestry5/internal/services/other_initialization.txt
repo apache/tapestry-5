@@ -1,4 +1,4 @@
-<html><head><meta></meta><script></script></head><body><script type="text/javascript">Tapestry.onDOMLoaded(function() {
+<html><head><meta/><script></script></head><body><script type="text/javascript">Tapestry.onDOMLoaded(function() {
 Tapestry.init({"fred":"barney"});
 });
 </script></body></html>
