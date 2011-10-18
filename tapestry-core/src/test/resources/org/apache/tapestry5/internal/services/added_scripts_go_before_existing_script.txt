@@ -1,1 +1,1 @@
-<html><head><meta/><script src="/foo.js" type="text/javascript"></script><script></script></head></html>
+<html><head><meta></meta><script src="/foo.js" type="text/javascript"></script><script></script></head></html>

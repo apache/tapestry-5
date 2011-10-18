@@ -22,11 +22,11 @@ import java.util.Set;
  * Default implementation of {@link org.apache.tapestry5.dom.MarkupModel} that is appropriate for traditional (X)HTML
  * markup. Assumes that all tags are lower-case.  The majority of elements will be "expanded" (meaning a complete start
  * and end tag); this is for compatibility with web browsers, especially when the content type of a response indicates
- * HTML, not true XML. Only the "hr", "br","img", "link", and "meta" tags will be rendered abbreviated (i.e., "lt;img/&gt;").
+ * HTML, not true XML. Only the "hr" and "br" and "img" tags will be rendered abbreviated (i.e., "lt;img/&gt;").
  */
 public class DefaultMarkupModel extends AbstractMarkupModel
 {
-    private final Set<String> ALWAYS_EMPTY = CollectionFactory.newSet("hr", "br", "img", "link", "meta");
+    private final Set<String> ALWAYS_EMPTY = CollectionFactory.newSet("hr", "br", "img");
 
     public DefaultMarkupModel()
     {
