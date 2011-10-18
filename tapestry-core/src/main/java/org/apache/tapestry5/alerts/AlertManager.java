@@ -30,14 +30,14 @@ public interface AlertManager
     void info(String message);
 
     /**
-     * Adds an {@link Severity#INFO} alert with the default duration, {@link Duration#SINGLE}.
+     * Adds an {@link Severity#WARN} alert with the default duration, {@link Duration#SINGLE}.
      *
      * @param message to present to the user
      */
     void warn(String message);
 
     /**
-     * Adds an {@link Severity#INFO} alert with the default duration, {@link Duration#SINGLE}.
+     * Adds an {@link Severity#ERROR} alert with the default duration, {@link Duration#SINGLE}.
      *
      * @param message to present to the user
      */

@@ -27,7 +27,7 @@ public interface Asset2 extends Asset
 {
     /**
      * Returns true if the Asset is invariant (meaning that it returns the same value from {@link Asset#toClientURL()}
-     * at all times}. Assets that are used as binding values will be cached more aggresively by Tapestry as they are
+     * at all times). Most Assets are invariant. Assets that are used as binding values will be cached more aggressively by Tapestry if they are
      * invariant.
      *
      * @return true if invariant
