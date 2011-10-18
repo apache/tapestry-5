@@ -17,13 +17,13 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.services.Session;
 
 /**
- * Encapsulates logic for accessing the {@link Session} (a wrapper around the {@link javax.servlet.http.HttpSession}).
+ * Encapsulates logic for accessing the Tapestry {@link Session} (a wrapper around the {@link javax.servlet.http.HttpSession}).
  *
- * @since 5.3
  * @see SessionImpl
  * @see ClusteredSessionImpl
+ * @since 5.3
  */
-public interface SessionFactory
+public interface TapestrySessionFactory
 {
     Session getSession(boolean create);
 }

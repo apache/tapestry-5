@@ -22,13 +22,13 @@ import org.apache.tapestry5.services.SessionPersistedObjectAnalyzer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-public class SessionFactoryImpl implements SessionFactory
+public class TapestrySessionFactoryImpl implements TapestrySessionFactory
 {
     private boolean clustered;
     private final SessionPersistedObjectAnalyzer analyzer;
     private final HttpServletRequest request;
 
-    public SessionFactoryImpl(
+    public TapestrySessionFactoryImpl(
             @Symbol(SymbolConstants.CLUSTERED_SESSIONS)
             boolean clustered,
             SessionPersistedObjectAnalyzer analyzer,

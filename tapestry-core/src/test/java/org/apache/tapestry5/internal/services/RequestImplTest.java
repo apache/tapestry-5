@@ -33,7 +33,7 @@ public class RequestImplTest extends InternalBaseTestCase
     public void get_session_doesnt_exist()
     {
         HttpServletRequest sr = mockHttpServletRequest();
-        SessionFactory sf = newMock(SessionFactory.class);
+        TapestrySessionFactory sf = newMock(TapestrySessionFactory.class);
 
         expect(sf.getSession(false)).andReturn(null);
 
@@ -51,7 +51,7 @@ public class RequestImplTest extends InternalBaseTestCase
     {
         HttpServletRequest sr = mockHttpServletRequest();
         HttpSession ss = mockHttpSession();
-        SessionFactory sf = newMock(SessionFactory.class);
+        TapestrySessionFactory sf = newMock(TapestrySessionFactory.class);
 
         expect(sf.getSession(true)).andReturn(new SessionImpl(sr, ss));
 
@@ -102,8 +102,7 @@ public class RequestImplTest extends InternalBaseTestCase
         {
             new RequestImpl(sr, encoding, null).getParameterNames();
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertSame(ex.getCause(), exception);
         }
@@ -131,11 +130,11 @@ public class RequestImplTest extends InternalBaseTestCase
     public Object[][] xhr_inputs()
     {
         return new Object[][]
-        {
-        { null, false },
-        { "", false },
-        { "some other value", false },
-        { "XMLHttpRequest", true } };
+                {
+                        {null, false},
+                        {"", false},
+                        {"some other value", false},
+                        {"XMLHttpRequest", true}};
     }
 
     @Test
@@ -204,9 +203,9 @@ public class RequestImplTest extends InternalBaseTestCase
         HttpSession hsession1 = mockHttpSession();
         HttpSession hsession2 = mockHttpSession();
 
-        SessionFactory sf = newMock(SessionFactory.class);
+        TapestrySessionFactory sf = newMock(TapestrySessionFactory.class);
 
-        expect(sf.getSession(true)).andReturn(new SessionImpl(sr,hsession1));
+        expect(sf.getSession(true)).andReturn(new SessionImpl(sr, hsession1));
 
         replay();
 

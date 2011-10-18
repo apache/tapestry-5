@@ -37,7 +37,7 @@ public class RequestImpl implements Request
 
     private final String requestEncoding;
 
-    private final SessionFactory sessionFactory;
+    private final TapestrySessionFactory sessionFactory;
 
     private boolean encodingSet;
 
@@ -46,7 +46,7 @@ public class RequestImpl implements Request
     public RequestImpl(
             HttpServletRequest request,
             String requestEncoding,
-            SessionFactory sessionFactory)
+            TapestrySessionFactory sessionFactory)
     {
         this.request = request;
         this.requestEncoding = requestEncoding;

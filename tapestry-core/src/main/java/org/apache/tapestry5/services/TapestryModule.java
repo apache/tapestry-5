@@ -223,10 +223,10 @@ public final class TapestryModule
     {
         private final RequestHandler handler;
         private final String applicationCharset;
-        private final SessionFactory sessionFactory;
+        private final TapestrySessionFactory sessionFactory;
 
         public HttpServletRequestHandlerTerminator(RequestHandler handler, String applicationCharset,
-                                                   SessionFactory sessionFactory)
+                                                   TapestrySessionFactory sessionFactory)
         {
             this.handler = handler;
             this.applicationCharset = applicationCharset;
@@ -349,7 +349,7 @@ public final class TapestryModule
         binder.bind(URLEncoder.class, URLEncoderImpl.class);
         binder.bind(ContextPathEncoder.class, ContextPathEncoderImpl.class);
         binder.bind(ApplicationStatePersistenceStrategy.class, SessionApplicationStatePersistenceStrategy.class).withSimpleId();
-        binder.bind(SessionFactory.class, SessionFactoryImpl.class);
+        binder.bind(TapestrySessionFactory.class, TapestrySessionFactoryImpl.class);
         binder.bind(AssetPathConverter.class, IdentityAssetPathConverter.class);
         binder.bind(NumericTranslatorSupport.class);
         binder.bind(ClientDataEncoder.class, ClientDataEncoderImpl.class);
@@ -1376,7 +1376,7 @@ public final class TapestryModule
                                                                     @Symbol(SymbolConstants.CHARSET)
                                                                     String applicationCharset,
 
-                                                                    SessionFactory sessionFactory)
+                                                                    TapestrySessionFactory sessionFactory)
     {
         HttpServletRequestHandler terminator = new HttpServletRequestHandlerTerminator(handler, applicationCharset,
                 sessionFactory);
