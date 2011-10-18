@@ -1,5 +1,7 @@
 T5.define("pubsub", function() {
 
+    var _ = T5._;
+
     // Element keys: topic, element, listenerfn
     // May be multiple elements with some topic/element pair
     // element property may be undefined

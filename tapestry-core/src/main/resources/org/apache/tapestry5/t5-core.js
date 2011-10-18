@@ -21,41 +21,49 @@
  * @since 5.3
  */
 var T5 = {
-    /**
-     * Extends an object using a source. In the simple case, the source object's
-     * properties are overlaid on top of the destination object. In the typical
-     * case, the source parameter is a function that returns the source object
-     * ... this is to facilitate modularity and encapsulation.
-     *
-     * @param destination
-     *            object to receive new or updated properties
-     * @param source
-     *            source object for properties, or function returning source
-     *            object
-     * @returns the destination object
+
+    /** _ is _.noConflict(), in other words, all Underscore functions are not inside
+     * T5._, rather than simply _.
      */
-    extend : function(destination, source) {
-        if (_.isFunction(source)) {
-            source = source();
-        }
+    _ : _.noConflict()
+};
 
-        return _.extend(destination, source);
-    },
+/**
+ * Extends an object using a source. In the simple case, the source object's
+ * properties are overlaid on top of the destination object. In the typical
+ * case, the source parameter is a function that returns the source object
+ * ... this is to facilitate modularity and encapsulation.
+ *
+ * @param destination
+ *            object to receive new or updated properties
+ * @param source
+ *            source object for properties, or function returning source
+ *            object
+ * @returns the destination object
+ */
+T5.extend = function(destination, source) {
+    var _ = T5._;
 
-    /**
-     * Defines a new namespace under the T5 object.
-     *
-     * @param name
-     *            string name of the namespace
-     * @param source
-     *            source object for properties (or function returning source
-     *            object)
-     * @return the namespace object
-     */
-    define : function(name, source) {
-        var namespace = {};
-        T5[name] = namespace;
-
-        return this.extend(namespace, source);
+    if (_.isFunction(source)) {
+        source = source();
     }
-}
+
+    return _.extend(destination, source);
+};
+
+/**
+ * Defines a new namespace under the T5 object.
+ *
+ * @param name
+ *            string name of the namespace
+ * @param source
+ *            source object for properties (or function returning source
+ *            object)
+ * @return the namespace object
+ */
+T5.define = function(name, source) {
+    var namespace = {};
+    T5[name] = namespace;
+
+    return this.extend(namespace, source);
+};

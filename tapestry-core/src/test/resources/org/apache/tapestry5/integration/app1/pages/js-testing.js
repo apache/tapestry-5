@@ -1,5 +1,7 @@
 var JST = (function() {
 
+    var _ = T5._;
+
     var resultElement;
 
     var $fail = {};

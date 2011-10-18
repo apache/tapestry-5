@@ -21,6 +21,7 @@
  */
 T5.define("ajax", function() {
 
+    var _ = T5._;
     var $ = T5.$;
     var spi = T5.spi;
 

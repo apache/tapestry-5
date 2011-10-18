@@ -1418,6 +1418,8 @@ Tapestry.ErrorPopup = Class.create({
             return;
 
         if (Prototype.Browser.IE) {
+            var _ = T5._;
+
             this.outerDiv.show();
 
             var bound = _.bind(this.hideIfNotFocused, this);

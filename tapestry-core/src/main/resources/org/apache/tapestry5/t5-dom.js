@@ -15,6 +15,8 @@
 
 T5.define("dom", function() {
 
+    var _ = T5._;
+
     var removeEventHandlers;
 
     // Necessary to lazy-instantiate femoveEventHandlers publisher function,
@@ -84,7 +86,9 @@ T5.define("dom", function() {
         purgeChildren(element);
 
         if (element.t5pubsub) {
-            _.defer(function() { T5.pubsub.cleanupRemovedElement(element) });
+            _.defer(function() {
+                T5.pubsub.cleanupRemovedElement(element)
+            });
         }
 
         doRemoveEventHandlers(element);
