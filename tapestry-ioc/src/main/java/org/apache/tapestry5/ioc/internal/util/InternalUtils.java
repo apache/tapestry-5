@@ -1085,6 +1085,55 @@ public class InternalUtils
         };
     }
 
+    public static ContributionDef3 toContributionDef3(ContributionDef contribution)
+    {
+
+        if (contribution instanceof ContributionDef2)
+        {
+            return (ContributionDef3) contribution;
+        }
+
+        final ContributionDef2 cd2 = toContributionDef2(contribution);
+
+        return new ContributionDef3()
+        {
+            public boolean isOptional()
+            {
+                return false;
+            }
+
+            public String getServiceId()
+            {
+                return cd2.getServiceId();
+            }
+
+            public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources, Configuration configuration)
+            {
+                cd2.contribute(moduleSource, resources, configuration);
+            }
+
+            public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources, OrderedConfiguration configuration)
+            {
+                cd2.contribute(moduleSource, resources, configuration);
+            }
+
+            public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources, MappedConfiguration configuration)
+            {
+                cd2.contribute(moduleSource, resources, configuration);
+            }
+
+            public Set<Class> getMarkers()
+            {
+                return cd2.getMarkers();
+            }
+
+            public Class getServiceInterface()
+            {
+                return cd2.getServiceInterface();
+            }
+        };
+    }
+
     /**
      * @since 5.2.2
      */

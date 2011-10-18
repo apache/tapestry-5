@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package org.apache.tapestry5.ioc.def;
 
 import org.apache.tapestry5.ioc.Markable;
@@ -22,10 +23,10 @@ import org.apache.tapestry5.ioc.annotations.Contribute;
  * identifies the service contributed either by the service id or by a combination of {@link Contribute} annotation and
  * a set of marker annotations. This means that {@link #getServiceId()} may to return <code>null</code> if
  * {@link #getServiceInterface()} returns a non <code>null</code> value.
- * 
+ *
  * @since 5.2.0
  */
 public interface ContributionDef2 extends ContributionDef, Markable
 {
-	
+
 }

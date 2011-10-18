@@ -1606,4 +1606,11 @@ public class IntegrationTest extends IOCInternalTestCase
             assertMessageContains(ex, "No defined implementation class to generate simple id from");
         }
     }
+
+    @Test
+    public void optional_contribution_to_unknown_service_is_not_an_error()
+    {
+
+        buildRegistry(OptionalContributionModule.class);
+    }
 }

@@ -14,49 +14,22 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
-import org.apache.tapestry5.ioc.AdvisorDef;
-import org.apache.tapestry5.ioc.Configuration;
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.MethodAdviceReceiver;
-import org.apache.tapestry5.ioc.ObjectCreator;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
-import org.apache.tapestry5.ioc.ScopeConstants;
-import org.apache.tapestry5.ioc.ServiceBinder;
-import org.apache.tapestry5.ioc.ServiceBuilderResources;
-import org.apache.tapestry5.ioc.annotations.Advise;
-import org.apache.tapestry5.ioc.annotations.Contribute;
-import org.apache.tapestry5.ioc.annotations.Decorate;
-import org.apache.tapestry5.ioc.annotations.EagerLoad;
-import org.apache.tapestry5.ioc.annotations.Marker;
-import org.apache.tapestry5.ioc.annotations.Match;
-import org.apache.tapestry5.ioc.annotations.Order;
-import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
-import org.apache.tapestry5.ioc.annotations.Scope;
-import org.apache.tapestry5.ioc.annotations.Startup;
-import org.apache.tapestry5.ioc.def.ContributionDef;
-import org.apache.tapestry5.ioc.def.ContributionDef2;
-import org.apache.tapestry5.ioc.def.DecoratorDef;
-import org.apache.tapestry5.ioc.def.ModuleDef2;
-import org.apache.tapestry5.ioc.def.ServiceDef;
+import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.annotations.*;
+import org.apache.tapestry5.ioc.def.*;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.slf4j.Logger;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.*;
 
 /**
  * Starting from the Class for a module, identifies all the services (service builder methods),
@@ -117,12 +90,9 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
     }
 
     /**
-     * @param moduleClass
-     *            the class that is responsible for building services, etc.
-     * @param logger
-     *            based on the class name of the module
-     * @param proxyFactory
-     *            factory used to create proxy classes at runtime
+     * @param moduleClass  the class that is responsible for building services, etc.
+     * @param logger       based on the class name of the module
+     * @param proxyFactory factory used to create proxy classes at runtime
      */
     public DefaultModuleDefImpl(Class<?> moduleClass, Logger logger, PlasticProxyFactory proxyFactory)
     {
@@ -264,7 +234,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
     {
         Set<Class> markers = Collections.emptySet();
 
-        ContributionDef2 def = new ContributionDefImpl("RegistryStartup", method, proxyFactory, Runnable.class, markers);
+        ContributionDef2 def = new ContributionDefImpl("RegistryStartup", method, false, proxyFactory, Runnable.class, markers);
 
         contributionDefs.add(def);
     }
@@ -299,9 +269,11 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
         if (type == null)
             throw new RuntimeException(IOCMessages.noContributionParameter(method));
 
-        Set<Class> markers = extractMarkers(method, Contribute.class);
+        Set<Class> markers = extractMarkers(method, Contribute.class, Optional.class);
 
-        ContributionDef2 def = new ContributionDefImpl(serviceId, method, proxyFactory, serviceInterface, markers);
+        boolean optional = method.getAnnotation(Optional.class) != null;
+
+        ContributionDef3 def = new ContributionDefImpl(serviceId, method, optional, proxyFactory, serviceInterface, markers);
 
         contributionDefs.add(def);
     }
@@ -338,7 +310,7 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
         if (match == null)
         {
-            return new String[] { id };
+            return new String[]{id};
         }
 
         return match.value();
@@ -478,20 +450,27 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
     }
 
     @SuppressWarnings("rawtypes")
-    private Set<Class> extractMarkers(Method method, final Class annotationClassToSkip)
+    private Set<Class> extractMarkers(Method method, final Class... annotationClassesToSkip)
     {
         return F.flow(method.getAnnotations()).map(new Mapper<Annotation, Class>()
         {
             public Class map(Annotation value)
             {
                 return value.annotationType();
-            };
+            }
         }).filter(new Predicate<Class>()
         {
-            public boolean accept(Class object)
+            public boolean accept(Class element)
             {
-                return !object.equals(annotationClassToSkip);
+                for (Class skip : annotationClassesToSkip)
+                {
+                    if (skip.equals(element))
+                    {
+                        return false;
+                    }
+                }
 
+                return true;
             }
         }).toSet();
     }
@@ -533,13 +512,12 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
 
     /**
      * See if the build class defined a bind method and invoke it.
-     * 
-     * @param remainingMethods
-     *            set of methods as yet unaccounted for
+     *
+     * @param remainingMethods set of methods as yet unaccounted for
      * @param modulePreventsServiceDecoration
-     *            true if {@link org.apache.tapestry5.ioc.annotations.PreventServiceDecoration} on
-     *            module
-     *            class
+     *                         true if {@link org.apache.tapestry5.ioc.annotations.PreventServiceDecoration} on
+     *                         module
+     *                         class
      */
     private void bind(Set<Method> remainingMethods, boolean modulePreventsServiceDecoration)
     {
@@ -563,22 +541,18 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
             remainingMethods.remove(bindMethod);
 
             return;
-        }
-        catch (NoSuchMethodException ex)
+        } catch (NoSuchMethodException ex)
         {
             // No problem! Many modules will not have such a method.
 
             return;
-        }
-        catch (IllegalArgumentException ex)
+        } catch (IllegalArgumentException ex)
         {
             failure = ex;
-        }
-        catch (IllegalAccessException ex)
+        } catch (IllegalAccessException ex)
         {
             failure = ex;
-        }
-        catch (InvocationTargetException ex)
+        } catch (InvocationTargetException ex)
         {
             failure = ex.getTargetException();
         }

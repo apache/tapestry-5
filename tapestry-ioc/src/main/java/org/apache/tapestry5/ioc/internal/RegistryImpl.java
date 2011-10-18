@@ -213,19 +213,29 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             {
                 String serviceId = cd.getServiceId();
 
-                ContributionDef2 cd2 = InternalUtils.toContributionDef2(cd);
+                ContributionDef3 cd3 = InternalUtils.toContributionDef3(cd);
 
-                if (cd2.getServiceId() != null)
+                // Ignore any optional contribution methods; there's no way to validate that
+                // they contribute to a known service ... that's the point of @Optional
+
+                if (cd3.isOptional())
+                {
+                    continue;
+                }
+
+                // Otherwise, check that the service being contributed to exists ...
+
+                if (cd3.getServiceId() != null)
                 {
                     if (!serviceIdToModule.containsKey(serviceId))
                     {
                         throw new IllegalArgumentException(
                                 IOCMessages.contributionForNonexistentService(cd));
                     }
-                } else if (!isContributionForExistentService(module, cd2))
+                } else if (!isContributionForExistentService(module, cd3))
                 {
                     throw new IllegalArgumentException(
-                            IOCMessages.contributionForUnqualifiedService(cd2));
+                            IOCMessages.contributionForUnqualifiedService(cd3));
                 }
             }
         }

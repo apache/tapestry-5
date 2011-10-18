@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009,, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,21 +14,15 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import java.lang.reflect.Method;
-
-import javax.inject.Named;
-
-import org.apache.tapestry5.ioc.Configuration;
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.ModuleBuilderSource;
-import org.apache.tapestry5.ioc.OperationTracker;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
-import org.apache.tapestry5.ioc.ServiceResources;
+import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
+
+import javax.inject.Named;
+import java.lang.reflect.Method;
 
 public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilderSource
 {
@@ -58,7 +52,7 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         replay();
 
         Method m = findMethod("contributeUnordered");
-        ContributionDef def = new ContributionDefImpl("foo.Bar", m, null, null, null);
+        ContributionDef def = new ContributionDefImpl("foo.Bar", m, false, null, null, null);
 
         def.contribute(this, serviceResources, configuration);
 
@@ -83,13 +77,13 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         replay();
 
         Method m = findMethod("contributeUnorderedParameter");
-        ContributionDef def = new ContributionDefImpl("foo.Bar", m, null, null, null);
+        ContributionDef def = new ContributionDefImpl("foo.Bar", m, false, null, null, null);
 
         def.contribute(this, resources, configuration);
 
         verify();
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
     public void unordered_collection_with_named_service_lookup()
@@ -108,7 +102,7 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         replay();
 
         Method m = findMethod("contributeUnorderedParameterNamedServiceLookup");
-        ContributionDef def = new ContributionDefImpl("foo.Bar", m, null, null, null);
+        ContributionDef def = new ContributionDefImpl("foo.Bar", m, false, null, null, null);
 
         def.contribute(this, resources, configuration);
 
@@ -128,18 +122,17 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         replay();
 
         Method m = findMethod("contributeUnorderedWrongParameter");
-        ContributionDef def = new ContributionDefImpl("foo.Bar", m, null, null, null);
+        ContributionDef def = new ContributionDefImpl("foo.Bar", m, false, null, null, null);
 
         try
         {
             def.contribute(this, resources, configuration);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertMessageContains(ex,
-                                  "Error invoking service contribution method org.apache.tapestry5.ioc.internal.ContributionDefImplTest.contributeUnorderedWrongParameter(MappedConfiguration)",
-                                  "Service 'Bif' is configured using org.apache.tapestry5.ioc.Configuration, not org.apache.tapestry5.ioc.MappedConfiguration."
+                    "Error invoking service contribution method org.apache.tapestry5.ioc.internal.ContributionDefImplTest.contributeUnorderedWrongParameter(MappedConfiguration)",
+                    "Service 'Bif' is configured using org.apache.tapestry5.ioc.Configuration, not org.apache.tapestry5.ioc.MappedConfiguration."
             );
         }
 
@@ -168,7 +161,7 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         replay();
 
         Method m = findMethod("contributeOrderedParameter");
-        ContributionDef def = new ContributionDefImpl("foo.Bar", m, null, null, null);
+        ContributionDef def = new ContributionDefImpl("foo.Bar", m, false, null, null, null);
 
         def.contribute(this, resources, configuration);
 
@@ -194,7 +187,7 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         replay();
 
         Method m = findMethod("contributeOrderedParameterNamedServiceLookup");
-        ContributionDef def = new ContributionDefImpl("foo.Bar", m, null, null, null);
+        ContributionDef def = new ContributionDefImpl("foo.Bar", m, false, null, null, null);
 
         def.contribute(this, resources, configuration);
 
@@ -220,7 +213,7 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         replay();
 
         Method m = findMethod("contributeMappedParameter");
-        ContributionDef def = new ContributionDefImpl("foo.Bar", m, null, null, null);
+        ContributionDef def = new ContributionDefImpl("foo.Bar", m, false, null, null, null);
 
         def.contribute(this, resources, configuration);
 
@@ -246,7 +239,7 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
         replay();
 
         Method m = findMethod("contributeMappedParameterNamedServiceLookup");
-        ContributionDef def = new ContributionDefImpl("foo.Bar", m, null, null, null);
+        ContributionDef def = new ContributionDefImpl("foo.Bar", m, false, null, null, null);
 
         def.contribute(this, resources, configuration);
 
@@ -272,8 +265,8 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
     }
 
     public void contributeUnorderedParameterNamedServiceLookup(Configuration<UpcaseService> configuration,
-                                             @Named("zip.Zap")
-                                             UpcaseService service)
+                                                               @Named("zip.Zap")
+                                                               UpcaseService service)
     {
         configuration.add(service);
     }
@@ -286,8 +279,8 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
     }
 
     public void contributeOrderedParameterNamedServiceLookup(OrderedConfiguration<UpcaseService> configuration,
-                                           @Named("zip.Zap")
-                                           UpcaseService service)
+                                                             @Named("zip.Zap")
+                                                             UpcaseService service)
     {
         configuration.add("fred", service);
     }
@@ -300,8 +293,8 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
     }
 
     public void contributeMappedParameterNamedServiceLookup(MappedConfiguration<String, UpcaseService> configuration,
-                                          @Named("zip.Zap")
-                                          UpcaseService service)
+                                                            @Named("zip.Zap")
+                                                            UpcaseService service)
     {
         configuration.add("upcase", service);
     }

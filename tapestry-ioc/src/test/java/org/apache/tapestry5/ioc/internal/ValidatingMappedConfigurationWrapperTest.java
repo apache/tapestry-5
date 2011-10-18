@@ -14,18 +14,18 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
-
-import java.util.Map;
-
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.testng.annotations.Test;
 
+import java.util.Map;
+
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
+
 @SuppressWarnings(
-{ "rawtypes", "unchecked" })
+        {"rawtypes", "unchecked"})
 public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCase
 {
     private static final String SERVICE_ID = "Baz";
@@ -111,8 +111,7 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         {
             wrapper.add(key, value);
             unreachable();
-        }
-        catch (IllegalArgumentException ex)
+        } catch (IllegalArgumentException ex)
         {
             assertMessageContains(ex, "Service contribution (to service 'Baz') conflicts with existing contribution");
         }
@@ -141,8 +140,7 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         {
             wrapper.add(null, value);
             unreachable();
-        }
-        catch (NullPointerException ex)
+        } catch (NullPointerException ex)
         {
             assertEquals(ex.getMessage(), "Key for service contribution (to service 'Baz') was null.");
         }
@@ -171,8 +169,7 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         {
             wrapper.add("java.util.List", value);
             unreachable();
-        }
-        catch (IllegalArgumentException ex)
+        } catch (IllegalArgumentException ex)
         {
             assertEquals(
                     ex.getMessage(),
@@ -201,8 +198,7 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         {
             wrapper.add(Integer.class, null);
             unreachable();
-        }
-        catch (NullPointerException ex)
+        } catch (NullPointerException ex)
         {
             assertEquals(ex.getMessage(), "Service contribution (to service 'Baz') was null.");
         }
@@ -214,7 +210,7 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
 
     private ContributionDef newContributionDef(String methodName)
     {
-        return new ContributionDefImpl(SERVICE_ID, findMethod(methodName), getProxyFactory(), null, null);
+        return new ContributionDefImpl(SERVICE_ID, findMethod(methodName), false, getProxyFactory(), null, null);
     }
 
     public void contributionPlaceholder1()

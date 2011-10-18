@@ -14,32 +14,24 @@
 
 package org.apache.tapestry5.ioc.internal;
 
+import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.def.ContributionDef3;
+import org.apache.tapestry5.ioc.internal.util.*;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
+import org.slf4j.Logger;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.tapestry5.ioc.Configuration;
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.ModuleBuilderSource;
-import org.apache.tapestry5.ioc.ObjectLocator;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
-import org.apache.tapestry5.ioc.ServiceResources;
-import org.apache.tapestry5.ioc.def.ContributionDef2;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.DelegatingInjectionResources;
-import org.apache.tapestry5.ioc.internal.util.InjectionResources;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.internal.util.MapInjectionResources;
-import org.apache.tapestry5.ioc.internal.util.WrongConfigurationTypeGuard;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
-import org.slf4j.Logger;
-
-public class ContributionDefImpl implements ContributionDef2
+public class ContributionDefImpl implements ContributionDef3
 {
     private final String serviceId;
 
     private final Method contributorMethod;
+
+    private final boolean optional;
 
     private final PlasticProxyFactory proxyFactory;
 
@@ -48,13 +40,14 @@ public class ContributionDefImpl implements ContributionDef2
     private final Class serviceInterface;
 
     private static final Class[] CONFIGURATION_TYPES = new Class[]
-    { Configuration.class, MappedConfiguration.class, OrderedConfiguration.class };
+            {Configuration.class, MappedConfiguration.class, OrderedConfiguration.class};
 
-    public ContributionDefImpl(String serviceId, Method contributorMethod, PlasticProxyFactory proxyFactory,
-            Class serviceInterface, Set<Class> markers)
+    public ContributionDefImpl(String serviceId, Method contributorMethod, boolean optional, PlasticProxyFactory proxyFactory,
+                               Class serviceInterface, Set<Class> markers)
     {
         this.serviceId = serviceId;
         this.contributorMethod = contributorMethod;
+        this.optional = optional;
         this.proxyFactory = proxyFactory;
         this.serviceInterface = serviceInterface;
         this.markers = markers;
@@ -64,6 +57,11 @@ public class ContributionDefImpl implements ContributionDef2
     public String toString()
     {
         return InternalUtils.asString(contributorMethod, proxyFactory);
+    }
+
+    public boolean isOptional()
+    {
+        return optional;
     }
 
     public String getServiceId()
@@ -77,19 +75,19 @@ public class ContributionDefImpl implements ContributionDef2
     }
 
     public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources,
-            OrderedConfiguration configuration)
+                           OrderedConfiguration configuration)
     {
         invokeMethod(moduleSource, resources, OrderedConfiguration.class, configuration);
     }
 
     public void contribute(ModuleBuilderSource moduleSource, ServiceResources resources,
-            MappedConfiguration configuration)
+                           MappedConfiguration configuration)
     {
         invokeMethod(moduleSource, resources, MappedConfiguration.class, configuration);
     }
 
     private <T> void invokeMethod(ModuleBuilderSource source, ServiceResources resources, Class<T> parameterType,
-            T parameterValue)
+                                  T parameterValue)
     {
         Map<Class, Object> resourceMap = CollectionFactory.newMap();
 
@@ -120,12 +118,10 @@ public class ContributionDefImpl implements ContributionDef2
                     injectionResources, resources.getTracker());
 
             contributorMethod.invoke(moduleInstance, parameters);
-        }
-        catch (InvocationTargetException ex)
+        } catch (InvocationTargetException ex)
         {
             fail = ex.getTargetException();
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             fail = ex;
         }
