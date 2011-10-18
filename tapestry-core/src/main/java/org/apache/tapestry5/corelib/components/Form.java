@@ -88,6 +88,7 @@ import java.io.ObjectInputStream;
 @Events(
         {EventConstants.PREPARE_FOR_RENDER, EventConstants.PREPARE, EventConstants.PREPARE_FOR_SUBMIT,
                 EventConstants.VALIDATE, EventConstants.SUBMIT, EventConstants.FAILURE, EventConstants.SUCCESS, EventConstants.CANCELED})
+@SupportsInformalParameters
 public class Form implements ClientElement, FormValidationControl
 {
     /**
