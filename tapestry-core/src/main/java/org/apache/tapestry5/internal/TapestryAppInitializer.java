@@ -144,6 +144,7 @@ public class TapestryAppInitializer
         {
             // That's OK, not all applications will have a module class, even though any
             // non-trivial application will.
+            logger.warn("Application Module class {} not found", className);
         }
 
         // Add a synthetic module that contributes symbol sources.
