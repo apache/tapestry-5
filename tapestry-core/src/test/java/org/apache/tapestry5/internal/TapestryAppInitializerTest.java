@@ -16,17 +16,22 @@ package org.apache.tapestry5.internal;
 
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.util.Transformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 @Test
 public class TapestryAppInitializerTest extends Assert
 {
+
+    private Logger logger = LoggerFactory.getLogger(TapestryAppInitializerTest.class);
+
     @SuppressWarnings("unchecked")
     @Test
     public void testLoadAppModule()
     {
-        Registry registry = new TapestryAppInitializer(null, "org.apache.tapestry5.integration.app0",
+        Registry registry = new TapestryAppInitializer(logger, "org.apache.tapestry5.integration.app0",
                                                        "foo").createRegistry();
 
         Transformer<String> s1 = registry.getService("Service1", Transformer.class);
@@ -38,7 +43,7 @@ public class TapestryAppInitializerTest extends Assert
     {
         // Apparently just checking to see that it doesn't fail.
 
-        new TapestryAppInitializer(null, "non_existing.package", "foo").createRegistry();
+        new TapestryAppInitializer(logger, "non_existing.package", "foo").createRegistry();
     }
 
 }
