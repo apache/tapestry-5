@@ -241,7 +241,7 @@ public class FormTests extends TapestryCoreTestCase
     {
         openLinks("DateField Demo", "clear", "english");
 
-        type("asteroidImpact", "<script>alert('T5 is great'); </script>");
+        type("asteroidImpact", "&lt;script&gt;alert('T5 is great'); &lt;/script&gt;");
 
         click("id=asteroidImpact-trigger");
 
