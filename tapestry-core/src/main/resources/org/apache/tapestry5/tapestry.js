@@ -437,7 +437,7 @@ var Tapestry = {
                      * those false success callbacks. We have a listener for the
                      * window's "beforeunload" event that sets this flag.
                      */
-                    if (Tapestry.windowUnloaded)
+                    if (Tapestry.windowUnloaded && response.responseText.blank())
                         return;
 
                     /*
