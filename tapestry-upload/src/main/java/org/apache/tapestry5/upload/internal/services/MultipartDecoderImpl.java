@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,13 +14,6 @@
 
 package org.apache.tapestry5.upload.internal.services;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
@@ -32,6 +25,12 @@ import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
 import org.apache.tapestry5.upload.services.MultipartDecoder;
 import org.apache.tapestry5.upload.services.UploadSymbols;
 import org.apache.tapestry5.upload.services.UploadedFile;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Implementation of multipart decoder for servlets. This implementation is perthread scope.
@@ -52,16 +51,16 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
 
     public MultipartDecoderImpl(
 
-    FileItemFactory fileItemFactory,
+            FileItemFactory fileItemFactory,
 
-    @Symbol(UploadSymbols.REQUESTSIZE_MAX)
-    long maxRequestSize,
+            @Symbol(UploadSymbols.REQUESTSIZE_MAX)
+            long maxRequestSize,
 
-    @Symbol(UploadSymbols.FILESIZE_MAX)
-    long maxFileSize,
+            @Symbol(UploadSymbols.FILESIZE_MAX)
+            long maxFileSize,
 
-    @Symbol(SymbolConstants.CHARSET)
-    String requestEncoding)
+            @Symbol(SymbolConstants.CHARSET)
+            String requestEncoding)
     {
         this.fileItemFactory = fileItemFactory;
         this.maxRequestSize = maxRequestSize;
@@ -79,8 +78,7 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
         try
         {
             request.setCharacterEncoding(requestEncoding);
-        }
-        catch (UnsupportedEncodingException ex)
+        } catch (UnsupportedEncodingException ex)
         {
             throw new RuntimeException(ex);
         }
@@ -104,8 +102,7 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
         try
         {
             return createFileUpload().parseRequest(request);
-        }
-        catch (FileUploadException ex)
+        } catch (FileUploadException ex)
         {
             uploadException = ex;
 
@@ -126,9 +123,20 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
 
     protected HttpServletRequest processFileItems(HttpServletRequest request, List<FileItem> fileItems)
     {
-        if (uploadException == null && fileItems.isEmpty()) { return request; }
+        if (uploadException == null && fileItems.isEmpty())
+        {
+            return request;
+        }
 
         ParametersServletRequestWrapper wrapper = new ParametersServletRequestWrapper(request);
+
+        // First add parameters from the request
+        for (Object e : request.getParameterMap().entrySet())
+        {
+            Map.Entry<String, String[]> ee = (Map.Entry<String, String[]>) e;
+            for (String s : ee.getValue())
+                wrapper.addParameter(ee.getKey(), s);
+        }
 
         for (FileItem item : fileItems)
         {
@@ -140,15 +148,13 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
                 {
 
                     fieldValue = item.getString(requestEncoding);
-                }
-                catch (UnsupportedEncodingException ex)
+                } catch (UnsupportedEncodingException ex)
                 {
                     throw new RuntimeException(ex);
                 }
 
                 wrapper.addParameter(item.getFieldName(), fieldValue);
-            }
-            else
+            } else
             {
                 wrapper.addParameter(item.getFieldName(), item.getName());
                 addUploadedFile(item.getFieldName(), new UploadedFileItem(item));

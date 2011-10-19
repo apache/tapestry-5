@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -86,6 +86,7 @@ public class MultipartDecoderImplTest extends TapestryTestCase
     public void process_file_items_creates_wrapped_request_and_sets_non_file_parameters() throws Exception
     {
         HttpServletRequest request = mockHttpServletRequest();
+        expect(request.getParameterMap()).andReturn(Collections.EMPTY_MAP);
 
         MultipartDecoderImpl decoder = new MultipartDecoderImpl(fileItemFactory, -1, -1, CHARSET);
         List<FileItem> fileItems = Arrays.asList(createValueItem("one", "first"), createValueItem("two", "second"));
@@ -106,6 +107,7 @@ public class MultipartDecoderImplTest extends TapestryTestCase
     public void non_file_items_with_null_request_encoding() throws Exception
     {
         HttpServletRequest request = mockHttpServletRequest();
+        expect(request.getParameterMap()).andReturn(Collections.EMPTY_MAP);
 
         MultipartDecoderImpl decoder = new MultipartDecoderImpl(fileItemFactory, -1, -1, CHARSET);
 
@@ -127,9 +129,10 @@ public class MultipartDecoderImplTest extends TapestryTestCase
     public void process_file_items_set_file_parameters_with_file_name() throws Exception
     {
         HttpServletRequest request = mockHttpServletRequest();
+        expect(request.getParameterMap()).andReturn(Collections.EMPTY_MAP);
         MultipartDecoderImpl decoder = new MultipartDecoderImpl(fileItemFactory, -1, -1, CHARSET);
         List<FileItem> fileItems = Arrays.asList(createFileItem("one", "first.txt"),
-                                                 createFileItem("two", "second.txt"));
+                createFileItem("two", "second.txt"));
 
         replay();
 
@@ -147,9 +150,10 @@ public class MultipartDecoderImplTest extends TapestryTestCase
     public void uploaded_file_stored() throws Exception
     {
         HttpServletRequest request = mockHttpServletRequest();
+        expect(request.getParameterMap()).andReturn(Collections.EMPTY_MAP);
         MultipartDecoderImpl decoder = new MultipartDecoderImpl(fileItemFactory, -1, -1, CHARSET);
         List<FileItem> fileItems = Arrays.asList(createFileItem("one", "first.txt"),
-                                                 createFileItem("two", "second.txt"));
+                createFileItem("two", "second.txt"));
 
         replay();
 
@@ -167,6 +171,7 @@ public class MultipartDecoderImplTest extends TapestryTestCase
     public void file_items_cleaned_up() throws Exception
     {
         HttpServletRequest request = mockHttpServletRequest();
+        expect(request.getParameterMap()).andReturn(Collections.EMPTY_MAP);
         MultipartDecoderImpl decoder = new MultipartDecoderImpl(fileItemFactory, -1, -1, CHARSET);
         StubFileItem firstItem = new StubFileItem("one");
         firstItem.setFormField(false);
