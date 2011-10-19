@@ -241,11 +241,11 @@ public class FormTests extends TapestryCoreTestCase
     {
         openLinks("DateField Demo", "clear", "english");
 
-        type("asteroidImpact", "&lt;script&gt;alert('T5 is great'); &lt;/script&gt;");
+        type("asteroidImpact", "<script>alert('T5 is great'); </script>");
 
         click("id=asteroidImpact-trigger");
 
-        assertBubbleMessage("asteroidImpact", "Unparseable date: \"<script>alert('T5 is great'); </script>\"");
+        assertBubbleMessage("asteroidImpact", "Unparseable date: \"&lt;script&gt;alert('T5 is great'); &lt;/script&gt;\"");
     }
 
     // TAP5-1409
