@@ -17,7 +17,12 @@ package org.apache.tapestry5.integration.app3.services;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.services.BeanBlockContribution;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.security.ClientWhitelist;
+import org.apache.tapestry5.services.security.WhitelistAnalyzer;
 
 public class AppModule
 {
@@ -31,6 +36,19 @@ public class AppModule
         configuration.add(SymbolConstants.GZIP_COMPRESSION_ENABLED, "false");
         
         configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
+    }
+
+    @Contribute(ClientWhitelist.class)
+    public static void provideWhitelistAnalyzer(OrderedConfiguration<WhitelistAnalyzer> configuration)
+    {
+       configuration.add("TestAnalyzer", new WhitelistAnalyzer()
+       {
+
+           public boolean isRequestOnWhitelist(Request request)
+           {
+               return true;
+           }
+       }, "before:*");
     }
     
 }

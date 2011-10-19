@@ -19,13 +19,28 @@ import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.integration.app1.data.ToDoItem;
 import org.apache.tapestry5.integration.app1.data.Track;
 import org.apache.tapestry5.internal.services.GenericValueEncoderFactory;
-import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.Configuration;
+import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Value;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ServiceOverride;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.BaseURLSource;
+import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.ComponentClassTransformWorker;
+import org.apache.tapestry5.services.LibraryMapping;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.RequestFilter;
+import org.apache.tapestry5.services.RequestHandler;
+import org.apache.tapestry5.services.ResourceDigestGenerator;
+import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.ValueEncoderFactory;
+import org.apache.tapestry5.services.security.ClientWhitelist;
+import org.apache.tapestry5.services.security.WhitelistAnalyzer;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -286,6 +301,19 @@ public class AppModule
     public static void setupAlphaLibrary(Configuration<LibraryMapping> configuration)
     {
         configuration.add(new LibraryMapping("lib/alpha", "org.apache.tapestry5.integration.locallib.alpha"));
+    }
+
+        @Contribute(ClientWhitelist.class)
+    public static void provideWhitelistAnalyzer(OrderedConfiguration<WhitelistAnalyzer> configuration)
+    {
+       configuration.add("TestAnalyzer", new WhitelistAnalyzer()
+       {
+
+           public boolean isRequestOnWhitelist(Request request)
+           {
+               return true;
+           }
+       }, "before:*");
     }
 
 }
