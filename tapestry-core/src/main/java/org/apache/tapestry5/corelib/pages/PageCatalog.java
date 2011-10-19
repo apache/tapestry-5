@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-// http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,11 +16,20 @@ package org.apache.tapestry5.corelib.pages;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.alerts.AlertManager;
-import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.annotations.Cached;
+import org.apache.tapestry5.annotations.ContentType;
+import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.Property;
+import org.apache.tapestry5.annotations.WhitelistAccessOnly;
 import org.apache.tapestry5.beaneditor.ReorderProperties;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.corelib.components.Zone;
-import org.apache.tapestry5.func.*;
+import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.func.Flow;
+import org.apache.tapestry5.func.Mapper;
+import org.apache.tapestry5.func.Predicate;
+import org.apache.tapestry5.func.Reducer;
 import org.apache.tapestry5.internal.services.ComponentInstantiatorSource;
 import org.apache.tapestry5.internal.services.PageSource;
 import org.apache.tapestry5.internal.structure.Page;
@@ -37,8 +46,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Lists out the currently loaded pages, using a {@link Grid}.  Provides an option to force all pages to be loaded. In development mode,
- * includes an option to clear the page cache.
+ * Lists out the currently loaded pages, using a {@link org.apache.tapestry5.corelib.components.Grid}.
+ * Provides an option to force all pages to be loaded. In development mode, includes an option to clear the page cache.
  */
 @ContentType("text/html")
 @WhitelistAccessOnly

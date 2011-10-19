@@ -303,7 +303,7 @@ public class AppModule
         configuration.add(new LibraryMapping("lib/alpha", "org.apache.tapestry5.integration.locallib.alpha"));
     }
 
-        @Contribute(ClientWhitelist.class)
+    @Contribute(ClientWhitelist.class)
     public static void provideWhitelistAnalyzer(OrderedConfiguration<WhitelistAnalyzer> configuration)
     {
        configuration.add("TestAnalyzer", new WhitelistAnalyzer()
