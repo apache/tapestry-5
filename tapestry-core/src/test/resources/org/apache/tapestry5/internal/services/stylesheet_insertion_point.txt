@@ -1,0 +1,1 @@
+<html><head><link type="text/css" rel="stylesheet" href="whatever.css"/><link type="text/css" rel="stylesheet t-ajax-insertion-point" href="insertion-point.css"/></head></html>

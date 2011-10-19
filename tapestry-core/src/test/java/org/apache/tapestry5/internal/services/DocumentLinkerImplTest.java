@@ -50,8 +50,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
         {
             linker.updateDocument(document);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertEquals(
                     ex.getMessage(),
@@ -380,11 +379,28 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
         DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
 
         linker.addStylesheetLink(new StylesheetLink("everybody.css"));
-        linker.addStylesheetLink(new StylesheetLink("just_ie.css", new StylesheetOptions(null, "IE")));
+        linker.addStylesheetLink(new StylesheetLink("just_ie.css", new StylesheetOptions().withCondition("IE")));
 
         linker.updateDocument(document);
 
         assertEquals(document.toString(), readFile("ie_conditional_stylesheet.txt"));
+    }
+
+    @Test
+    public void stylesheet_insertion_point() throws Exception
+    {
+        Document document = new Document();
+
+        document.newRootElement("html");
+
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
+
+        linker.addStylesheetLink(new StylesheetLink("whatever.css"));
+        linker.addStylesheetLink(new StylesheetLink("insertion-point.css", new StylesheetOptions().asAjaxInsertionPoint()));
+
+        linker.updateDocument(document);
+
+        assertEquals(document.toString(), readFile("stylesheet_insertion_point.txt"));
 
     }
 }

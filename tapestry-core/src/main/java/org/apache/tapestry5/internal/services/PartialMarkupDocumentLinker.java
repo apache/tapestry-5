@@ -1,4 +1,4 @@
-// Copyright 2008, 2010 The Apache Software Foundation
+// Copyright 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.util.Map;
-
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
+
+import java.util.Map;
 
 public class PartialMarkupDocumentLinker implements DocumentLinker
 {
@@ -39,9 +39,9 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
     {
         JSONObject object = new JSONObject(
 
-        "href", stylesheet.getURL(),
+                "href", stylesheet.getURL(),
 
-        "media", stylesheet.getOptions().getMedia());
+                "media", stylesheet.getOptions().media);
 
         stylesheets.put(object);
     }
@@ -59,9 +59,8 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
 
     /**
      * Commits changes, adding one or more keys to the reply.
-     * 
-     * @param reply
-     *            JSON Object to be sent to client
+     *
+     * @param reply JSON Object to be sent to client
      */
     public void commit(JSONObject reply)
     {
