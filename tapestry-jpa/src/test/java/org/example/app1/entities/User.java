@@ -22,8 +22,6 @@ import javax.persistence.Version;
 @Entity
 public class User
 {
-    @Id
-    @GeneratedValue
     private Long id;
 
     private String firstName;
@@ -34,7 +32,6 @@ public class User
 
     private String encodedPassword;
 
-    @Version
     private int version;
 
     public String getEmail()
@@ -52,6 +49,8 @@ public class User
         return firstName;
     }
 
+     @Id
+    @GeneratedValue
     public Long getId()
     {
         return id;
@@ -62,28 +61,39 @@ public class User
         return lastName;
     }
 
+    @Version
     public int getVersion()
     {
         return version;
     }
 
+    public void setId(Long id)
+    {
+        this.id = id;
+    }
+
     public void setEmail(final String email)
     {
         this.email = email;
-    }
+}
 
     public void setEncodedPassword(final String encodedPassword)
     {
         this.encodedPassword = encodedPassword;
-    }
+}
 
     public void setFirstName(final String firstName)
     {
         this.firstName = firstName;
-    }
+}
 
     public void setLastName(final String lastName)
     {
         this.lastName = lastName;
+}
+
+    public void setVersion(int version)
+    {
+        this.version = version;
     }
 }

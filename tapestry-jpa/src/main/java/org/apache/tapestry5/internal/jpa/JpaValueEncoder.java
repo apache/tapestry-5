@@ -14,11 +14,6 @@
 
 package org.apache.tapestry5.internal.jpa;
 
-import javax.persistence.EntityManager;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.SingularAttribute;
-import javax.persistence.metamodel.Type;
-
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
@@ -26,6 +21,11 @@ import org.apache.tapestry5.ioc.services.PropertyAdapter;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.jpa.EntityManagerManager;
 import org.slf4j.Logger;
+
+import javax.persistence.EntityManager;
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.SingularAttribute;
+import javax.persistence.metamodel.Type;
 
 public class JpaValueEncoder<E> implements ValueEncoder<E>
 {
@@ -52,7 +52,7 @@ public class JpaValueEncoder<E> implements ValueEncoder<E>
 
         final SingularAttribute<? super E, ?> idAttribute = this.entity.getId(idType.getJavaType());
 
-        idPropertyName = idAttribute.getJavaMember().getName();
+        idPropertyName = idAttribute.getName();
 
         propertyAdapter = propertyAccess.getAdapter(entity.getJavaType()).getPropertyAdapter(
                 idPropertyName);
