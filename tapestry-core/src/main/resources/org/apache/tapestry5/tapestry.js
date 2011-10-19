@@ -445,7 +445,7 @@ var Tapestry = {
                      * to mean the server didn't respond.
                      */
                     if (!response.getStatus() || !response.request.success()) {
-                        finalOptions.onFailure.call(this, response);
+                        finalOptions.get('onFailure').call(this, response);
                         return;
                     }
 
@@ -453,7 +453,7 @@ var Tapestry = {
                         /* Re-invoke the success handler, capturing any exceptions. */
                         successHandler.call(this, response, jsonResponse);
                     } catch (e) {
-                        finalOptions.onException.call(this, ajaxRequest, e);
+                        finalOptions.get('onException').call(this, response);
                     }
                 }
             });
