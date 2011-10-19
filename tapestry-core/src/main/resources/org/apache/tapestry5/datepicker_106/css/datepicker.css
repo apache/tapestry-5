@@ -23,7 +23,7 @@
 }
 
 .datePicker .header {
-    background: ActiveCaption;
+    background: Window;
     padding: 3px;
     border-bottom: 1px solid WindowText;
 }
@@ -98,21 +98,21 @@
 }
 
 .datePicker .previousButton {
-    background: buttonface url( "../images/arrow.left.png" ) no-repeat center center;
+    background: buttonface url("../images/arrow.left.png") no-repeat center center;
 }
 
 .datePicker .nextButton {
-    background: buttonface url( "../images/arrow.right.png" ) no-repeat center center;
+    background: buttonface url("../images/arrow.right.png") no-repeat center center;
 }
 
 .datePicker .previousButton,
-    .datePicker .nextButton {
+.datePicker .nextButton {
     width: 14px;
     height: 14px;
 }
 
 .datePicker .todayButton,
-    .datePicker .noneButton {
+.datePicker .noneButton {
     width: 50px;
 }
 
