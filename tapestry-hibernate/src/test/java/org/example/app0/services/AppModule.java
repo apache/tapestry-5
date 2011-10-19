@@ -20,10 +20,15 @@ import org.apache.tapestry5.hibernate.HibernateModule;
 import org.apache.tapestry5.hibernate.HibernateSymbols;
 import org.apache.tapestry5.hibernate.HibernateTransactionDecorator;
 import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.ServiceResources;
+import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Match;
 import org.apache.tapestry5.ioc.annotations.SubModule;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.security.ClientWhitelist;
+import org.apache.tapestry5.services.security.WhitelistAnalyzer;
 
 // @SubModule just needed for developers running these tests within the IDE
 @SubModule({HibernateModule.class, HibernateCoreModule.class})
@@ -45,5 +50,20 @@ public class AppModule
                                                 T delegate, ServiceResources resources)
     {
         return decorator.build(serviceInterface, delegate, resources.getServiceId());
+    }
+
+
+
+    @Contribute(ClientWhitelist.class)
+    public static void provideWhitelistAnalyzer(OrderedConfiguration<WhitelistAnalyzer> configuration)
+    {
+       configuration.add("TestAnalyzer", new WhitelistAnalyzer()
+       {
+
+           public boolean isRequestOnWhitelist(Request request)
+           {
+               return true;
+           }
+       }, "before:*");
     }
 }
