@@ -1,0 +1,9 @@
+/* Used by ZoneDemo page
+
+  This is injected via Ajax. */
+
+#demo-aip {
+    color: blue;
+    font-size: large;
+    text-decoration: underline;
+}

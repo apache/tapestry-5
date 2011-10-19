@@ -235,7 +235,9 @@ public class ZoneTests extends TapestryCoreTestCase
         assertEquals(color, "rgb(255, 255, 255)");
     }
 
-    /** TAP5-1084 */
+    /**
+     * TAP5-1084
+     */
     @Test
     public void update_zone_inside_form()
     {
@@ -252,7 +254,9 @@ public class ZoneTests extends TapestryCoreTestCase
         assertText("output", "Tapestry 5.2");
     }
 
-    /** TAP5-1109 */
+    /**
+     * TAP5-1109
+     */
     @Test
     public void update_to_zone_inside_form()
     {
@@ -266,13 +270,15 @@ public class ZoneTests extends TapestryCoreTestCase
     }
 
     @Test
-    public void multi_zone_update_using_string_in_loop() {
+    public void multi_zone_update_using_string_in_loop()
+    {
         openLinks("MultiZone String Body Demo");
         String[] numbers = new String[]{
                 "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"
         };
 
-        for (int i = 0; i <= 10; i++) {
+        for (int i = 0; i <= 10; i++)
+        {
             assertText("row-" + i, numbers[i]);
         }
 
@@ -280,11 +286,13 @@ public class ZoneTests extends TapestryCoreTestCase
         waitForElementToAppear("row-7");
 
         // 7- are unchanged
-        for (int i = 0; i <= 7; i++) {
+        for (int i = 0; i <= 7; i++)
+        {
             assertText("row-" + i, numbers[i]);
         }
         // 8+ are modified
-        for (int i = 8; i <= 10; i++) {
+        for (int i = 8; i <= 10; i++)
+        {
             assertText("row-" + i, i + " is the integer value");
         }
 
@@ -292,11 +300,42 @@ public class ZoneTests extends TapestryCoreTestCase
         waitForElementToAppear("wholeLoopZone");
 
         // all elements reset via AJAX
-        for (int i = 0, numbersLength = numbers.length; i < numbersLength; i++) {
+        for (int i = 0, numbersLength = numbers.length; i < numbersLength; i++)
+        {
             assertText("row-" + i, numbers[i]);
         }
 
     }
-    
+
+    private void assertCSS(String elementId, String cssProperty, String expected)
+    {
+        // See http://groups.google.com/group/selenium-users/browse_thread/thread/f21e0a43c9913d42
+
+        String actual = selenium.getEval(String.format("window.document.defaultView.getComputedStyle(window.document.getElementById('%s'), null).getPropertyValue('%s')",
+                elementId, cssProperty));
+
+        assertEquals(actual, expected, String.format("CSS property '%s' of '%s' should be '%s'.", cssProperty, elementId, expected));
+    }
+
+    @Test
+    public void css_insertion_point()
+    {
+        openLinks("Zone Demo");
+
+        click("link=Select \"CSS Injection\"");
+
+        sleep(100);
+
+        // First check that the update arrived
+
+        assertText("demo-aip", "This should be styled GREEN.");
+
+        // Next see if we can verify that the presentation matches the exceptations; greend and underlined.  Underlined from
+        // zonedemo-viaajax.css; green from zonedmeo-overrides.css (not blue as defined in zonedemo-viaajax.css).
+
+
+        assertCSS("demo-aip", "color", "rgb(0, 128, 0)");
+        assertCSS("demo-aip", "text-decoration", "underline");
+    }
 
 }

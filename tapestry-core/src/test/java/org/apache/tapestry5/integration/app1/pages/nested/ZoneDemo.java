@@ -14,21 +14,12 @@
 
 package org.apache.tapestry5.integration.app1.pages.nested;
 
-import java.util.Date;
-
+import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.Block;
 import org.apache.tapestry5.QueryParameterConstants;
-import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.ajax.MultiZoneUpdate;
-import org.apache.tapestry5.annotations.Component;
-import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.InjectComponent;
-import org.apache.tapestry5.annotations.InjectPage;
-import org.apache.tapestry5.annotations.Log;
-import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.annotations.RequestParameter;
-import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.corelib.components.BeanEditForm;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.integration.app1.data.RegistrationData;
@@ -36,6 +27,13 @@ import org.apache.tapestry5.integration.app1.pages.SecurePage;
 import org.apache.tapestry5.internal.services.StringValueEncoder;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
+import org.apache.tapestry5.services.ajax.JavaScriptCallback;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
+import org.apache.tapestry5.services.javascript.StylesheetLink;
+import org.apache.tapestry5.services.javascript.StylesheetOptions;
+
+import java.util.Date;
 
 public class ZoneDemo
 {
@@ -48,10 +46,10 @@ public class ZoneDemo
     private RegistrationData registration;
 
     private static final String[] NAMES =
-    { "Fred & Wilma", "Mr. <Roboto>", "Grim Fandango", "Registration", "Vote" };
+            {"Fred & Wilma", "Mr. <Roboto>", "Grim Fandango", "Registration", "Vote", "CSS Injection"};
 
     @Inject
-    private Block registrationForm, registrationOutput, voteForm, voteOutput, empty, forUnknownZone, forNotAZone;
+    private Block registrationForm, registrationOutput, voteForm, voteOutput, empty, forUnknownZone, forNotAZone, ajaxCSS;
 
     @Property
     private String vote;
@@ -63,7 +61,18 @@ public class ZoneDemo
     private SecurePage securePage;
 
     @Environmental
-    private RenderSupport renderSupport;
+    private JavaScriptSupport jss;
+
+    @Inject
+    private AjaxResponseRenderer ajaxResponseRenderer;
+
+    @Inject
+    @Path("zonedemo-overrides.css")
+    private Asset overridesCSS;
+
+    @Inject
+    @Path("zonedemo-viaajax.css")
+    private Asset viaAjaxCSS;
 
     public String[] getNames()
     {
@@ -90,10 +99,27 @@ public class ZoneDemo
         this.name = name;
 
         if (name.equals("Registration"))
+        {
             return registrationForm;
+        }
 
         if (name.equals("Vote"))
+        {
             return voteForm;
+        }
+
+        if (name.equals("CSS Injection"))
+        {
+            ajaxResponseRenderer.addCallback(new JavaScriptCallback()
+            {
+                public void run(JavaScriptSupport javascriptSupport)
+                {
+                    javascriptSupport.importStylesheet(viaAjaxCSS);
+                }
+            });
+
+            return ajaxCSS;
+        }
 
         return output.getBody();
     }
@@ -177,10 +203,11 @@ public class ZoneDemo
 
     void afterRender()
     {
-        renderSupport
-                .addScript(
-                        "$('%s').observe(Tapestry.ZONE_UPDATED_EVENT, function() { $('zone-update-message').update('Zone updated.'); });",
-                        output.getClientId());
+        jss.importStylesheet(new StylesheetLink(overridesCSS, new StylesheetOptions().asAjaxInsertionPoint()));
+
+        jss.addScript(
+                "$('%s').observe(Tapestry.ZONE_UPDATED_EVENT, function() { $('zone-update-message').update('Zone updated.'); });",
+                output.getClientId());
     }
 
     Object onActionFromBadZone()

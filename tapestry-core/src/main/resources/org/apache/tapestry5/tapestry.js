@@ -2042,32 +2042,8 @@ Tapestry.ScriptManager = {
         element.onload = callback.bindAsEventListener(this);
     },
 
-    /**
-     * Checks to see if the given collection (of &lt;script&gt; or &lt;style&gt;
-     * elements) contains the given asset URL.
-     *
-     * @param collection
-     * @param prop
-     *            property to check ('src' for script, 'href' to style).
-     * @param assetURL
-     *            complete URL (i.e., with protocol, host and port) to the asset
-     */
-    contains : function(collection, prop, assetURL) {
-        return $A(collection).any(
-            function(element) {
-                var existing = element[prop];
-
-                if (!existing || existing.blank())
-                    return false;
-
-                var complete = Prototype.Browser.IE ? Tapestry
-                    .rebuildURL(existing) : existing;
-
-                return complete == assetURL;
-            });
-
-        return false;
-    },
+    rebuildURLIfIE :
+        Prototype.Browser.IE ? Tapestry.rebuildURL : T5._.identity,
 
     /**
      * Add scripts, as needed, to the document, then waits for them all to load,
@@ -2080,68 +2056,64 @@ Tapestry.ScriptManager = {
      */
     addScripts : function(scripts, callback) {
 
-        var scriptsToLoad = [];
+        var _ = T5._;
 
-        /* scripts may be null or undefined */
-        (scripts || []).each(function(s) {
-            var assetURL = Tapestry.rebuildURL(s);
+        var loaded = _(document.scripts).chain().pluck("src").without("").map(this.rebuildURLIfIE).value();
 
-            if (Tapestry.ScriptManager.contains(document.scripts, "src",
-                assetURL))
-                return;
+        var topCallback = _(scripts).chain().map(Tapestry.rebuildURL).difference(loaded).reverse().reduce(
+            function (nextCallback, scriptURL) {
+                return function() {
+                    this.loadScript(scriptURL, nextCallback);
+                }
+            }, callback).value();
 
-            scriptsToLoad.push(assetURL);
-        });
+        // Kick if off with the callback that loads the first script:
 
-        /*
-         * Set it up last script to first script. The last script's callback is
-         * the main callback (the code to execute after all scripts are loaded).
-         * The 2nd to last script's callback loads the last script. Prototype's
-         * Array.inject() is effectively the same as Clojure's reduce().
-         */
-        scriptsToLoad.reverse();
-
-        var topCallback = scriptsToLoad.inject(callback, function(nextCallback, scriptURL) {
-            return function() {
-                Tapestry.ScriptManager.loadScript(scriptURL, nextCallback);
-            };
-        });
-
-        /* Kick it off with the callback that loads the first script. */
-        topCallback.call();
+        topCallback.call(this);
     },
 
+    /**
+     * Adds stylesheets to the document. Each element in stylesheets is an object with two keys: href (the URL to the CSS file) and
+     * (optionally) media.
+     * @param stylesheets
+     */
     addStylesheets : function(stylesheets) {
         if (!stylesheets)
             return;
 
+        var _ = T5._;
+
+        var loaded = _(document.styleSheets).chain().pluck("href").without("").map(this.rebuildURLIfIE).value();
+
+        var toLoad = _(stylesheets).chain().map(
+            function(ss) {
+                ss.href = Tapestry.rebuildURL(ss.href);
+
+                return ss;
+            }).reject(
+            function (ss) {
+                return _(loaded).contains(ss.href);
+            }).value();
+
+
         var head = $$('head').first();
 
-        $(stylesheets).each(
-            function(s) {
-                var assetURL = Tapestry.rebuildURL(s.href);
+        var insertionPoint = head.down("link[rel='stylesheet t-ajax-insertion-point']");
 
-                if (Tapestry.ScriptManager.contains(document.styleSheets,
-                    'href', assetURL))
-                    return;
-                var element = new Element('link', {
-                    type : 'text/css',
-                    rel : 'stylesheet',
-                    href : assetURL
-                });
+        _(toLoad).each(function(ss) {
 
-                /*
-                 * Careful about media types, some browser will break if it
-                 * ends up as 'null'.
-                 */
-                if (s.media != undefined)
-                    element.writeAttribute('media', s.media);
+            var element = new Element('link', { type: 'text/css', rel: 'stylesheet', href: ss.href });
+            if (ss.media) {
+                element.writeAttribute('media', ss.media);
+            }
 
-                head.insert({
-                    bottom : element
-                });
-
-            });
+            if (insertionPoint) {
+                insertionPoint.insert({ before: element });
+            }
+            else {
+                head:insert({bottom: element});
+            }
+        });
     }
 };
 
