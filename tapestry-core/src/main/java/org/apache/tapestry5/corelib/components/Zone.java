@@ -20,7 +20,7 @@ import org.apache.tapestry5.CSSClassConstants;
 import org.apache.tapestry5.ClientBodyElement;
 import org.apache.tapestry5.ComponentAction;
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.ComponentsParametersConstants;
+import org.apache.tapestry5.ComponentParameterConstants;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.QueryParameterConstants;
 import org.apache.tapestry5.annotations.BeginRender;
@@ -92,7 +92,7 @@ public class Zone implements ClientBodyElement
      * &lt;div&gt; visible before being updated. If not specified, then the basic "show" method is used.
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL,
-        value = BindingConstants.SYMBOL + ":" + ComponentsParametersConstants.ZONE_SHOW_METHOD)
+        value = BindingConstants.SYMBOL + ":" + ComponentParameterConstants.ZONE_SHOW_METHOD)
     private String show;
 
     /**
@@ -101,7 +101,7 @@ public class Zone implements ClientBodyElement
      * to indicate to the user that and update has taken place.
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL,
-        value = BindingConstants.SYMBOL + ":" + ComponentsParametersConstants.ZONE_UPDATE_METHOD)
+        value = BindingConstants.SYMBOL + ":" + ComponentParameterConstants.ZONE_UPDATE_METHOD)
     private String update;
 
     /**

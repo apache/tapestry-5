@@ -59,7 +59,7 @@ public class FormInjector implements ClientElement
     private Object[] context;
 
     @Parameter(defaultPrefix = BindingConstants.LITERAL,
-            value = BindingConstants.SYMBOL + ":" + ComponentsParametersConstants.FORMINJECTOR_INSERT_POSITION)
+            value = BindingConstants.SYMBOL + ":" + ComponentParameterConstants.FORMINJECTOR_INSERT_POSITION)
     private InsertPosition position;
 
     /**
@@ -67,7 +67,7 @@ public class FormInjector implements ClientElement
      * visible. The default value is "highlight".
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL,
-            value = BindingConstants.SYMBOL + ":" + ComponentsParametersConstants.FORMINJECTOR_SHOW_FUNCTION)
+            value = BindingConstants.SYMBOL + ":" + ComponentParameterConstants.FORMINJECTOR_SHOW_FUNCTION)
     private String show;
 
     /**

@@ -16,13 +16,13 @@ package org.apache.tapestry5.integration.symbolparam.services
 
 import org.apache.tapestry5.SymbolConstants
 import org.apache.tapestry5.ioc.MappedConfiguration
-import org.apache.tapestry5.ComponentsParametersConstants
+import org.apache.tapestry5.ComponentParameterConstants
 
 class AppModule {
 
     void contributeApplicationDefaults(MappedConfiguration conf)
     {
         conf.add(SymbolConstants.PRODUCTION_MODE, false)
-        conf.add(ComponentsParametersConstants.GRID_ROWS_PER_PAGE, 2);
+        conf.add(ComponentParameterConstants.GRID_ROWS_PER_PAGE, 2);
     }
 }

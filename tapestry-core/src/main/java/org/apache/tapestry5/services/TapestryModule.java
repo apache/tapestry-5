@@ -2364,25 +2364,25 @@ public final class TapestryModule
         configuration.add(SymbolConstants.APPLICATION_FOLDER, "");
 
         // Grid component parameters defaults
-        configuration.add(ComponentsParametersConstants.GRID_ROWS_PER_PAGE, GridConstants.ROWS_PER_PAGE);
-        configuration.add(ComponentsParametersConstants.GRID_PAGER_POSITION, GridConstants.PAGER_POSITION);
-        configuration.add(ComponentsParametersConstants.GRID_EMPTY_BLOCK, GridConstants.EMPTY_BLOCK);
-        configuration.add(ComponentsParametersConstants.GRID_TABLE_CSS_CLASS, GridConstants.TABLE_CLASS);
-        configuration.add(ComponentsParametersConstants.GRIDPAGER_PAGE_RANGE, GridConstants.PAGER_PAGE_RANGE);
-        configuration.add(ComponentsParametersConstants.GRIDCOLUMNS_SORTABLE_ASSET, GridConstants.COLUMNS_SORTABLE);
-        configuration.add(ComponentsParametersConstants.GRIDCOLUMNS_ASCENDING_ASSET, GridConstants.COLUMNS_ASCENDING);
-        configuration.add(ComponentsParametersConstants.GRIDCOLUMNS_DESCENDING_ASSET, GridConstants.COLUMNS_DESCENDING);
+        configuration.add(ComponentParameterConstants.GRID_ROWS_PER_PAGE, GridConstants.ROWS_PER_PAGE);
+        configuration.add(ComponentParameterConstants.GRID_PAGER_POSITION, GridConstants.PAGER_POSITION);
+        configuration.add(ComponentParameterConstants.GRID_EMPTY_BLOCK, GridConstants.EMPTY_BLOCK);
+        configuration.add(ComponentParameterConstants.GRID_TABLE_CSS_CLASS, GridConstants.TABLE_CLASS);
+        configuration.add(ComponentParameterConstants.GRIDPAGER_PAGE_RANGE, GridConstants.PAGER_PAGE_RANGE);
+        configuration.add(ComponentParameterConstants.GRIDCOLUMNS_SORTABLE_ASSET, GridConstants.COLUMNS_SORTABLE);
+        configuration.add(ComponentParameterConstants.GRIDCOLUMNS_ASCENDING_ASSET, GridConstants.COLUMNS_ASCENDING);
+        configuration.add(ComponentParameterConstants.GRIDCOLUMNS_DESCENDING_ASSET, GridConstants.COLUMNS_DESCENDING);
 
         // FormInjector component parameters defaults
-        configuration.add(ComponentsParametersConstants.FORMINJECTOR_INSERT_POSITION, "above");
-        configuration.add(ComponentsParametersConstants.FORMINJECTOR_SHOW_FUNCTION, "highlight");
+        configuration.add(ComponentParameterConstants.FORMINJECTOR_INSERT_POSITION, "above");
+        configuration.add(ComponentParameterConstants.FORMINJECTOR_SHOW_FUNCTION, "highlight");
 
         // Palette component parameters defaults
-        configuration.add(ComponentsParametersConstants.PALETTE_ROWS_SIZE, 10);
+        configuration.add(ComponentParameterConstants.PALETTE_ROWS_SIZE, 10);
 
         // Zone component parameters defaults
-        configuration.add(ComponentsParametersConstants.ZONE_SHOW_METHOD, "show");
-        configuration.add(ComponentsParametersConstants.ZONE_UPDATE_METHOD, "highlight");
+        configuration.add(ComponentParameterConstants.ZONE_SHOW_METHOD, "show");
+        configuration.add(ComponentParameterConstants.ZONE_UPDATE_METHOD, "highlight");
 
         // By default, no page is on the whitelist unless it has the @WhitelistAccessOnly annotation
         configuration.add(MetaDataConstants.WHITELIST_ONLY_PAGE, false);

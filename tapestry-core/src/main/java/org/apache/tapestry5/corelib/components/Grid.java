@@ -91,14 +91,14 @@ public class Grid implements GridModel
      * the rows into "pages" and (normally) provide a pager to allow the user to navigate within the overall result
      * set.
      */
-    @Parameter(BindingConstants.SYMBOL + ":" + ComponentsParametersConstants.GRID_ROWS_PER_PAGE)
+    @Parameter(BindingConstants.SYMBOL + ":" + ComponentParameterConstants.GRID_ROWS_PER_PAGE)
     private int rowsPerPage;
 
     /**
      * Defines where the pager (used to navigate within the "pages" of results) should be displayed: "top", "bottom",
      * "both" or "none".
      */
-    @Parameter(value = BindingConstants.SYMBOL + ":" + ComponentsParametersConstants.GRID_PAGER_POSITION,
+    @Parameter(value = BindingConstants.SYMBOL + ":" + ComponentParameterConstants.GRID_PAGER_POSITION,
             defaultPrefix = BindingConstants.LITERAL)
     private GridPagerPosition pagerPosition;
 
@@ -182,7 +182,7 @@ public class Grid implements GridModel
      * "There is no data to display". This parameter is used to customize that message, possibly including components to
      * allow the user to create new objects.
      */
-    //@Parameter(value = BindingConstants.SYMBOL + ":" + ComponentsParametersConstants.GRID_EMPTY_BLOCK,
+    //@Parameter(value = BindingConstants.SYMBOL + ":" + ComponentParameterConstants.GRID_EMPTY_BLOCK,
     @Parameter(value = "block:empty",
             defaultPrefix = BindingConstants.LITERAL)
     private Block empty;
@@ -192,7 +192,7 @@ public class Grid implements GridModel
      * element.
      */
     @Parameter(name = "class", defaultPrefix = BindingConstants.LITERAL,
-            value = BindingConstants.SYMBOL + ":" + ComponentsParametersConstants.GRID_TABLE_CSS_CLASS)
+            value = BindingConstants.SYMBOL + ":" + ComponentParameterConstants.GRID_TABLE_CSS_CLASS)
     @Property(write = false)
     private String tableClass;
 
