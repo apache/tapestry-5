@@ -14,10 +14,6 @@
 
 package org.apache.tapestry5.test;
 
-import java.io.IOException;
-import java.util.Locale;
-import java.util.Map;
-
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
@@ -37,6 +33,10 @@ import org.apache.tapestry5.services.ApplicationGlobals;
 import org.apache.tapestry5.services.RequestHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * This class is used to run a Tapestry app in a single-threaded, in-process testing environment.
@@ -68,7 +68,7 @@ public class PageTester
      * Initializes a PageTester without overriding any services and assuming that the context root
      * is in
      * src/main/webapp.
-     * 
+     *
      * @see #PageTester(String, String, String, Class[])
      */
     public PageTester(String appPackage, String appName)
@@ -79,21 +79,17 @@ public class PageTester
     /**
      * Initializes a PageTester that acts as a browser and a servlet container to test drive your
      * Tapestry pages.
-     * 
-     * @param appPackage
-     *            The same value you would specify using the tapestry.app-package context parameter.
-     *            As this
-     *            testing environment is not run in a servlet container, you need to specify it.
-     * @param appName
-     *            The same value you would specify as the filter name. It is used to form the name
-     *            of the
-     *            module class for your app. If you don't have one, pass an empty string.
-     * @param contextPath
-     *            The path to the context root so that Tapestry can find the templates (if they're
-     *            put
-     *            there).
-     * @param moduleClasses
-     *            Classes of additional modules to load
+     *
+     * @param appPackage    The same value you would specify using the tapestry.app-package context parameter.
+     *                      As this
+     *                      testing environment is not run in a servlet container, you need to specify it.
+     * @param appName       The same value you would specify as the filter name. It is used to form the name
+     *                      of the
+     *                      module class for your app. If you don't have one, pass an empty string.
+     * @param contextPath   The path to the context root so that Tapestry can find the templates (if they're
+     *                      put
+     *                      there).
+     * @param moduleClasses Classes of additional modules to load
      */
     public PageTester(String appPackage, String appName, String contextPath, Class... moduleClasses)
     {
@@ -160,9 +156,8 @@ public class PageTester
      * Allows a service to be retrieved via its service interface. Use {@link #getRegistry()} for
      * more complicated
      * queries.
-     * 
-     * @param serviceInterface
-     *            used to select the service
+     *
+     * @param serviceInterface used to select the service
      */
     public <T> T getService(Class<T> serviceInterface)
     {
@@ -171,33 +166,31 @@ public class PageTester
 
     /**
      * Renders a page specified by its name.
-     * 
-     * @param pageName
-     *            The name of the page to be rendered.
+     *
+     * @param pageName The name of the page to be rendered.
      * @return The DOM created. Typically you will assert against it.
      */
     public Document renderPage(String pageName)
     {
-        
+
         renderPageAndReturnResponse(pageName);
-        
+
         Document result = response.getRenderedDocument();
 
         if (result == null)
             throw new RuntimeException(String.format("Render of page '%s' did not result in a Document.",
                     pageName));
-        
+
         return result;
 
     }
-    
+
     /**
      * Renders a page specified by its name and returns the response.
-     * 
-     * @since 5.2.3
-     * 
+     *
      * @param pageName The name of the page to be rendered.
      * @return The response object to assert against
+     * @since 5.2.3
      */
     public TestableResponse renderPageAndReturnResponse(String pageName)
     {
@@ -211,8 +204,11 @@ public class PageTester
 
                 boolean handled = requestHandler.service(request, response);
 
-                if (!handled) { throw new RuntimeException(String.format(
-                        "Request was not handled: '%s' may not be a valid page name.", pageName)); }
+                if (!handled)
+                {
+                    throw new RuntimeException(String.format(
+                            "Request was not handled: '%s' may not be a valid page name.", pageName));
+                }
 
                 Link link = response.getRedirectLink();
 
@@ -224,12 +220,10 @@ public class PageTester
 
                 return response;
 
-            }
-            catch (IOException ex)
+            } catch (IOException ex)
             {
                 throw new RuntimeException(ex);
-            }
-            finally
+            } finally
             {
                 registry.cleanupThread();
             }
@@ -239,9 +233,8 @@ public class PageTester
 
     /**
      * Simulates a click on a link.
-     * 
-     * @param linkElement
-     *            The Link object to be "clicked" on.
+     *
+     * @param linkElement The Link object to be "clicked" on.
      * @return The DOM created. Typically you will assert against it.
      */
     public Document clickLink(Element linkElement)
@@ -250,15 +243,13 @@ public class PageTester
 
         return getDocumentFromResponse();
     }
-    
+
     /**
      * Simulates a click on a link.
-     * 
-     * @since 5.2.3
-     * 
-     * @param linkElement
-     *            The Link object to be "clicked" on.
+     *
+     * @param linkElement The Link object to be "clicked" on.
      * @return The response object to assert against
+     * @since 5.2.3
      */
     public TestableResponse clickLinkAndReturnResponse(Element linkElement)
     {
@@ -290,17 +281,17 @@ public class PageTester
             throw new RuntimeException(String.format("The element must be type '%s', not '%s'.", expectedElementName,
                     element.getName()));
     }
-    
+
     private Document getDocumentFromResponse()
     {
         Document result = response.getRenderedDocument();
-        
+
         if (result == null)
             throw new RuntimeException(String.format("Render request '%s' did not result in a Document.", request.getPath()));
-    
+
         return result;
     }
-    
+
     private TestableResponse runComponentEventRequest()
     {
         while (true)
@@ -322,14 +313,12 @@ public class PageTester
                     setupRequestFromLink(link);
                     continue;
                 }
-                
+
                 return response;
-            }
-            catch (IOException ex)
+            } catch (IOException ex)
             {
                 throw new RuntimeException(ex);
-            }
-            finally
+            } finally
             {
                 registry.cleanupThread();
             }
@@ -353,7 +342,7 @@ public class PageTester
         request.clear().setPath(path);
 
         if (comma > 0)
-            decodeParametersIntoRequest(linkPath.substring(comma + 1));
+            decodeParametersIntoRequest(path.substring(comma + 1));
     }
 
     private void decodeParametersIntoRequest(String queryString)
@@ -390,11 +379,9 @@ public class PageTester
      * Simulates a submission of the form specified. The caller can specify values for the form
      * fields, which act as
      * overrides on the values stored inside the elements.
-     * 
-     * @param form
-     *            the form to be submitted.
-     * @param parameters
-     *            the query parameter name/value pairs
+     *
+     * @param form       the form to be submitted.
+     * @param parameters the query parameter name/value pairs
      * @return The DOM created. Typically you will assert against it.
      */
     public Document submitForm(Element form, Map<String, String> parameters)
@@ -403,19 +390,16 @@ public class PageTester
 
         return getDocumentFromResponse();
     }
-    
+
     /**
      * Simulates a submission of the form specified. The caller can specify values for the form
      * fields, which act as
      * overrides on the values stored inside the elements.
-     * 
-     * @since 5.2.3
-     * 
-     * @param form
-     *            the form to be submitted.
-     * @param parameters
-     *            the query parameter name/value pairs
+     *
+     * @param form       the form to be submitted.
+     * @param parameters the query parameter name/value pairs
      * @return The response object to assert against.
+     * @since 5.2.3
      */
     public TestableResponse submitFormAndReturnResponse(Element form, Map<String, String> parameters)
     {
@@ -516,11 +500,9 @@ public class PageTester
      * Simulates a submission of the form by clicking the specified submit button. The caller can
      * specify values for the
      * form fields.
-     * 
-     * @param submitButton
-     *            the submit button to be clicked.
-     * @param fieldValues
-     *            the field values keyed on field names.
+     *
+     * @param submitButton the submit button to be clicked.
+     * @param fieldValues  the field values keyed on field names.
      * @return The DOM created. Typically you will assert against it.
      */
     public Document clickSubmit(Element submitButton, Map<String, String> fieldValues)
@@ -529,19 +511,16 @@ public class PageTester
 
         return getDocumentFromResponse();
     }
-    
+
     /**
      * Simulates a submission of the form by clicking the specified submit button. The caller can
      * specify values for the
      * form fields.
-     * 
-     * @since 5.2.3
-     * 
-     * @param submitButton
-     *            the submit button to be clicked.
-     * @param fieldValues
-     *            the field values keyed on field names.
+     *
+     * @param submitButton the submit button to be clicked.
+     * @param fieldValues  the field values keyed on field names.
      * @return The response object to assert against.
+     * @since 5.2.3
      */
     public TestableResponse clickSubmitAndReturnResponse(Element submitButton, Map<String, String> fieldValues)
     {
@@ -604,9 +583,8 @@ public class PageTester
     /**
      * Sets the simulated browser's preferred language, i.e., the value returned from
      * {@link org.apache.tapestry5.services.Request#getLocale()}.
-     * 
-     * @param preferedLanguage
-     *            preferred language setting
+     *
+     * @param preferedLanguage preferred language setting
      */
     public void setPreferedLanguage(Locale preferedLanguage)
     {
