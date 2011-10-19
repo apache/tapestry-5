@@ -22,10 +22,22 @@ import org.apache.tapestry5.internal.plastic.asm.util.TraceClassVisitor;
 import org.apache.tapestry5.plastic.InstanceContext;
 import org.apache.tapestry5.plastic.MethodDescription;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Array;
-import java.net.*;
-import java.util.*;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -227,7 +239,8 @@ public class PlasticInternalUtils
      * Strips out leading and trailing underscores, leaving the real property name.
      * In addition, "m_foo" is converted to "foo".
      *
-     * @param fieldName to convert
+     * @param fieldName
+     *         to convert
      * @return the property name
      */
     public static String toPropertyName(String fieldName)
@@ -244,7 +257,8 @@ public class PlasticInternalUtils
     /**
      * Capitalizes the input string, converting the first character to upper case.
      *
-     * @param input a non-empty string
+     * @param input
+     *         a non-empty string
      * @return the same string if already capitalized, or a capitalized version
      */
     public static String capitalize(String input)
@@ -273,8 +287,10 @@ public class PlasticInternalUtils
     }
 
     /**
-     * @param loader   class loader to look up in
-     * @param javaName java name is Java source format (e.g., "int", "int[]", "java.lang.String", "java.lang.String[]", etc.)
+     * @param loader
+     *         class loader to look up in
+     * @param javaName
+     *         java name is Java source format (e.g., "int", "int[]", "java.lang.String", "java.lang.String[]", etc.)
      * @return class instance
      * @throws ClassNotFoundException
      */
@@ -403,9 +419,8 @@ public class PlasticInternalUtils
 
         if (url.getProtocol().equals("file"))
         {
-	    String urlPath = url.getPath();
-	    String decoded = URLDecoder.decode(urlPath);
-            return new FileInputStream(new File(decoded));
+            String urlPath = url.getPath();
+            return new FileInputStream(new File(urlPath));
         }
 
         return url.openStream();
