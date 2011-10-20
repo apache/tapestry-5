@@ -293,9 +293,14 @@ var Tapestry = {
         Tapestry.invokeLogger(message, substitutions, Tapestry.Logging.info);
     },
 
-    /** Formats and displays a debug message on the console. */
+    /**
+     * Formats and displays a debug message on the console. This function is a no-op unless Tapestry.DEBUG_ENABLED is true
+     * (which will be the case when the application is running in development mode).
+     */
     debug : function(message, substitutions) {
-        Tapestry.invokeLogger(message, substitutions, Tapestry.Logging.debug);
+        if (Tapestry.DEBUG_ENABLED) {
+            Tapestry.invokeLogger(message, substitutions, Tapestry.Logging.debug);
+        }
     },
 
     invokeLogger : function(message, substitutions, loggingFunction) {

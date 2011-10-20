@@ -16,15 +16,15 @@ T5.define("console", function() {
 
     // FireFox throws an exception is you reference the console when it is not enabled.
 
-    var nativeConsoleExists = false, nativeConsole = {}, floatingConsole;
+    var nativeConsole = {}, floatingConsole;
 
     try {
         if (console) {
             nativeConsole = console;
-            nativeConsoleExists = true;
         }
     }
     catch (e) {
+        // No true native console, the empty nativeConsole object will take its place.
     }
 
     function display(className, message) {
@@ -56,22 +56,9 @@ T5.define("console", function() {
         return function (message) {
             display(className, message);
 
+            // consolefn may be null when there is no native console, in which case
+            // do nothing more
             consolefn && consolefn.call(console, message);
-        }
-    }
-
-    function error(message) {
-        display("t-err", message);
-
-        if (nativeConsoleExists) {
-            console.error(message);
-
-            // Chrome doesn't automatically output a trace with the error message.
-            // FireFox does.
-
-            if (! Prototype.Browser.Gecko) {
-                console.trace();
-            }
         }
     }
 
@@ -82,6 +69,6 @@ T5.define("console", function() {
         debug : level("t-debug", nativeConsole.debug),
         info : level("t-info", nativeConsole.info),
         warn : level("t-warn", nativeConsole.warn),
-        error : error
+        error : level("t-err", nativeConsole.error)
     };
 });
