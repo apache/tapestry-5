@@ -86,6 +86,14 @@ public final class CollectionFactory
     }
 
     /**
+     * @since 5.3
+     */
+    public static <K, V> Map<K, V> newWeakHashMap()
+    {
+        return new WeakHashMap<K, V>();
+    }
+
+    /**
      * Contructs and returns a new generic {@link java.util.ArrayList} instance.
      */
     public static <T> List<T> newList()

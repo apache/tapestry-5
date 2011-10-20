@@ -23,7 +23,7 @@ import org.apache.tapestry5.services.assets.AssetPathConstructor;
 
 /**
  * Implementation of {@link AssetFactory} for assets that are part of the web application context.
- * 
+ *
  * @see org.apache.tapestry5.internal.services.ContextResource
  */
 public class ContextAssetFactory implements AssetFactory
@@ -38,7 +38,7 @@ public class ContextAssetFactory implements AssetFactory
 
     public ContextAssetFactory(AssetPathConstructor assetPathConstructor, Context context,
 
-    AssetPathConverter converter)
+                               AssetPathConverter converter)
     {
         this.assetPathConstructor = assetPathConstructor;
         this.converter = converter;
@@ -47,12 +47,44 @@ public class ContextAssetFactory implements AssetFactory
         invariant = this.converter.isInvariant();
     }
 
-    public Asset createAsset(final Resource resource)
+    public Asset createAsset(Resource resource)
     {
-        final String defaultPath = assetPathConstructor.constructAssetPath(RequestConstants.CONTEXT_FOLDER, resource
-                .getPath());
+        String defaultPath = assetPathConstructor.constructAssetPath(RequestConstants.CONTEXT_FOLDER, resource.getPath());
 
-        return new AbstractAsset(invariant)
+        if (invariant)
+        {
+            return createInvariantAsset(resource, defaultPath);
+        }
+
+        return createVariantAsset(resource, defaultPath);
+    }
+
+    private Asset createInvariantAsset(final Resource resource, final String defaultPath)
+    {
+        return new AbstractAsset(true)
+        {
+            private String clientURL;
+
+            public Resource getResource()
+            {
+                return resource;
+            }
+
+            public synchronized String toClientURL()
+            {
+                if (clientURL == null)
+                {
+                    clientURL = converter.convertAssetPath(defaultPath);
+                }
+
+                return clientURL;
+            }
+        };
+    }
+
+    private Asset createVariantAsset(final Resource resource, final String defaultPath)
+    {
+        return new AbstractAsset(false)
         {
             public Resource getResource()
             {

@@ -25,6 +25,8 @@ import org.apache.tapestry5.ioc.Resource;
  * <p/>
  * Release 5.1.0.0 introduced {@link org.apache.tapestry5.Asset2}, which extends this interface with an additional
  * method.
+ *
+ * @see org.apache.tapestry5.services.AssetPathConverter
  */
 public interface Asset
 {
@@ -34,7 +36,7 @@ public interface Asset
      * <p/>
      * Tapestry's built-in asset types (context and classpath) always incorporate a version number as part of the path,
      * and alternate implementations are encouraged to do so as well. In addition, Tapestry ensures that context and
-     * classpath assets have a far-future expires header (to ensure aggresive caching by the client).
+     * classpath assets have a far-future expires header (to ensure aggressive caching by the client).
      * <p/>
      */
     String toClientURL();

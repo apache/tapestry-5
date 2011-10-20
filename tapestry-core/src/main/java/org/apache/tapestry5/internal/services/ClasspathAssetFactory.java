@@ -16,14 +16,12 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.AssetFactory;
 import org.apache.tapestry5.services.AssetPathConverter;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
-import org.apache.tapestry5.services.InvalidationListener;
-
-import java.util.Map;
+import org.apache.tapestry5.services.ClasspathProvider;
 
 /**
  * Generates Assets for files on the classpath. Caches generated client URLs internally, and clears that cache when
@@ -31,13 +29,12 @@ import java.util.Map;
  *
  * @see AssetDispatcher
  */
-public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
+@Marker(ClasspathProvider.class)
+public class ClasspathAssetFactory implements AssetFactory
 {
     private final ResourceDigestManager digestManager;
 
     private final ClasspathAssetAliasManager aliasManager;
-
-    private final Map<Resource, String> resourceToDefaultPath = CollectionFactory.newConcurrentMap();
 
     private final ClasspathResource rootResource;
 
@@ -57,21 +54,9 @@ public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
         invariant = converter.isInvariant();
     }
 
-    public void objectWasInvalidated()
-    {
-        resourceToDefaultPath.clear();
-    }
-
     private String clientURL(Resource resource)
     {
-        String defaultPath = resourceToDefaultPath.get(resource);
-
-        if (defaultPath == null)
-        {
-            defaultPath = buildDefaultPath(resource);
-
-            resourceToDefaultPath.put(resource, defaultPath);
-        }
+        String defaultPath = buildDefaultPath(resource);
 
         return converter.convertAssetPath(defaultPath);
     }
@@ -94,9 +79,22 @@ public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
         return aliasManager.toClientURL(path);
     }
 
-    public Asset createAsset(final Resource resource)
+    public Asset createAsset(Resource resource)
     {
-        return new AbstractAsset(invariant)
+        if (invariant)
+        {
+            return createInvariantAsset(resource);
+        }
+
+        return createVariantAsset(resource);
+    }
+
+    /**
+     * A variant asset must pass the resource through clientURL() all the time; very inefficient.
+     */
+    private Asset createVariantAsset(final Resource resource)
+    {
+        return new AbstractAsset(false)
         {
             public Resource getResource()
             {
@@ -106,6 +104,32 @@ public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
             public String toClientURL()
             {
                 return clientURL(resource);
+            }
+        };
+    }
+
+    /**
+     * An invariant asset is normal, and only needs to compute the clientURL for the resource once.
+     */
+    private Asset createInvariantAsset(final Resource resource)
+    {
+        return new AbstractAsset(true)
+        {
+            private String clientURL;
+
+            public Resource getResource()
+            {
+                return resource;
+            }
+
+            public synchronized String toClientURL()
+            {
+                if (clientURL == null)
+                {
+                    clientURL = clientURL(resource);
+                }
+
+                return clientURL;
             }
         };
     }

@@ -14,11 +14,9 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.util.Locale;
-import java.util.Map;
-
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.internal.AssetConstants;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -27,6 +25,10 @@ import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
 import org.apache.tapestry5.services.AssetFactory;
 import org.apache.tapestry5.services.AssetSource;
+
+import java.lang.ref.SoftReference;
+import java.util.Locale;
+import java.util.Map;
 
 @SuppressWarnings("all")
 public class AssetSourceImpl implements AssetSource
@@ -37,13 +39,13 @@ public class AssetSourceImpl implements AssetSource
 
     private final Map<String, Resource> prefixToRootResource = CollectionFactory.newMap();
 
-    private final Map<Resource, Asset> cache = CollectionFactory.newConcurrentMap();
+    private final Map<Resource, SoftReference<Asset>> cache = CollectionFactory.newWeakHashMap();
 
     private final SymbolSource symbolSource;
 
     public AssetSourceImpl(ThreadLocale threadLocale,
 
-    Map<String, AssetFactory> configuration, SymbolSource symbolSource)
+                           Map<String, AssetFactory> configuration, SymbolSource symbolSource)
     {
         this.threadLocale = threadLocale;
         this.symbolSource = symbolSource;
@@ -137,14 +139,14 @@ public class AssetSourceImpl implements AssetSource
         return getAssetForResource(localized);
     }
 
-    private Asset getAssetForResource(Resource resource)
+    private synchronized Asset getAssetForResource(Resource resource)
     {
-        Asset result = cache.get(resource);
+        Asset result = TapestryInternalUtils.getAndDeref(cache, resource);
 
         if (result == null)
         {
             result = createAssetFromResource(resource);
-            cache.put(resource, result);
+            cache.put(resource, new SoftReference(result));
         }
 
         return result;

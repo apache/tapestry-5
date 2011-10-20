@@ -54,19 +54,6 @@ public class ClasspathAssetFactoryTest extends InternalBaseTestCase
         assertEquals(asset.toClientURL(), expectedClientURL);
 
         verify();
-
-        // Now, to test cache clearing:
-        train_requiresDigest(digestManager, r, false);
-
-        train_toClientURL(aliasManager, "foo/Bar.txt", expectedClientURL);
-
-        replay();
-
-        factory.objectWasInvalidated();
-
-        assertEquals(asset.toClientURL(), expectedClientURL);
-
-        verify();
     }
 
     @Test

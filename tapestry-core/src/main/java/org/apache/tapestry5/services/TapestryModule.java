@@ -371,6 +371,7 @@ public final class TapestryModule
         binder.bind(ValidationDecoratorFactory.class, ValidationDecoratorFactoryImpl.class);
         binder.bind(PropertyConduitSource.class, PropertyConduitSourceImpl.class);
         binder.bind(ClientWhitelist.class, ClientWhitelistImpl.class);
+        binder.bind(AssetFactory.class, ClasspathAssetFactory.class).withSimpleId();
     }
 
     // ========================================================================
@@ -1212,17 +1213,6 @@ public final class TapestryModule
         hub.addInvalidationListener(service);
 
         return service;
-    }
-
-    @Marker(ClasspathProvider.class)
-    public AssetFactory buildClasspathAssetFactory(ResourceDigestManager resourceDigestManager,
-                                                   ClasspathAssetAliasManager aliasManager, AssetPathConverter converter)
-    {
-        ClasspathAssetFactory factory = new ClasspathAssetFactory(resourceDigestManager, aliasManager, converter);
-
-        resourceDigestManager.addInvalidationListener(factory);
-
-        return factory;
     }
 
     @Marker(ContextProvider.class)
