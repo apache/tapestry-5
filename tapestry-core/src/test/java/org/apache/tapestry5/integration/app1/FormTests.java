@@ -345,6 +345,13 @@ public class FormTests extends TapestryCoreTestCase
         click("css=div.labelPopup a");
 
         waitForCondition("!selenium.isElementPresent('css=div.labelPopup')", PAGE_LOAD_TIMEOUT);
+        //It's basically impossible to express "wait until the popup doesn't disappear" 
+        //Instead, we take advantage of knowing that the datepicker disappears with this bug /almost/ 
+        //immediately after picking the month label, so we sleep the test for a few seconds to provide
+        //ammple time for the bug to manifest. 
+        try {
+            Thread.sleep(1500);
+        } catch (Exception e){/*Ignore the interrupted exception */}
         assertTrue(isVisible("css=div.datePicker"));
     }
 

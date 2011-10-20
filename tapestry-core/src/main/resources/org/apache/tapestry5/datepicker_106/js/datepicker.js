@@ -328,7 +328,7 @@ DatePicker.prototype.create = function (doc)
         var insideDatePicker = null;
         var parent = targ.parentNode;
         while (parent != null) {
-            if (parent.className == 'datePicker'/* || parent.className == 'labelPopup'*/) {
+            if (parent.className == 'datePicker' || parent.className == 'labelPopup') {
                 insideDatePicker = parent;
                 break;
             }
