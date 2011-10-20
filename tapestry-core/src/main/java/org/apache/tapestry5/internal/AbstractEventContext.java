@@ -18,6 +18,8 @@ import org.apache.tapestry5.EventContext;
 
 public abstract class AbstractEventContext implements EventContext
 {
+    private String[] values;
+
     public String[] toStrings()
     {
         int count = getCount();
@@ -30,5 +32,26 @@ public abstract class AbstractEventContext implements EventContext
         }
 
         return result;
+    }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder builder = new StringBuilder("EventContext:");
+
+        if (values == null)
+            return builder.append(" null").toString();
+
+        for (int i = 0; i < values.length; i++)
+        {
+            if (i == 0)
+                builder.append(" ");
+            else
+                builder.append(",");
+
+            builder.append(values[i]);
+        }
+
+        return builder.toString();
     }
 }
