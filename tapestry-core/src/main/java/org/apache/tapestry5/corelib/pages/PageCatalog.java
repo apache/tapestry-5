@@ -16,28 +16,22 @@ package org.apache.tapestry5.corelib.pages;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.alerts.AlertManager;
-import org.apache.tapestry5.annotations.Cached;
-import org.apache.tapestry5.annotations.ContentType;
-import org.apache.tapestry5.annotations.InjectComponent;
-import org.apache.tapestry5.annotations.Persist;
-import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.annotations.WhitelistAccessOnly;
+import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.ReorderProperties;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.corelib.components.Zone;
-import org.apache.tapestry5.func.F;
-import org.apache.tapestry5.func.Flow;
-import org.apache.tapestry5.func.Mapper;
-import org.apache.tapestry5.func.Predicate;
-import org.apache.tapestry5.func.Reducer;
+import org.apache.tapestry5.func.*;
 import org.apache.tapestry5.internal.services.ComponentInstantiatorSource;
 import org.apache.tapestry5.internal.services.PageSource;
 import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
@@ -117,6 +111,26 @@ public class PageCatalog
     @Inject
     private ComponentInstantiatorSource componentInstantiatorSource;
 
+    @Inject
+    private BeanModelSource beanModelSource;
+
+    @Inject
+    private Messages messages;
+
+    public BeanModel<Page> getModel()
+    {
+
+        BeanModel<Page> model = beanModelSource.createDisplayModel(Page.class, messages);
+
+        model.addExpression("selector", "selector.toString()");
+        model.addExpression("assemblyTime", "stats.assemblyTime");
+        model.addExpression("componentCount", "stats.componentCount");
+
+        model.reorder("name", "selector", "assemblyTime", "componentCount", "selector");
+
+        return model;
+    }
+
     @Cached
     public Totals getTotals()
     {
@@ -139,7 +153,7 @@ public class PageCatalog
         {
             public Integer reduce(Integer accumulator, Page element)
             {
-                return accumulator + element.getComponentCount();
+                return accumulator + element.getStats().componentCount;
             }
         }, 0);
 

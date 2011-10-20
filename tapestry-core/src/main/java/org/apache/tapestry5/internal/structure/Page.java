@@ -41,6 +41,39 @@ import org.slf4j.Logger;
 public interface Page
 {
     /**
+     * Page construction statistics for the page.
+     *
+     * @since 5.3
+     */
+    public final class Stats
+    {
+        /**
+         * Time, in milliseconds, to construct the page. This includes time to construct components inside the page,
+         * as well as hooking everything together. You'll often see that the first page is expensive to construct,
+         * and later pages that use a similar mix of components are very cheap.
+         */
+        public final long assemblyTime;
+
+        /**
+         * The total number of components in the page, including the root component. This does not include the number of mixins.
+         */
+        public final int componentCount;
+
+        /**
+         * The "weight" of the page is an arbitrary number that factors the number of components, mixins, component template elements,
+         * bindings, and other factors.
+         */
+        public final int weight;
+
+        public Stats(long assemblyTime, int componentCount, int weight)
+        {
+            this.assemblyTime = assemblyTime;
+            this.componentCount = componentCount;
+            this.weight = weight;
+        }
+    }
+
+    /**
      * Returns the short, logical name for the page. This is the page name as it might included in
      * an action or page
      * render URL (though it will be converted to lower case when it is included).
@@ -189,22 +222,12 @@ public interface Page
      *
      * @since 5.3
      */
-    void setStats(long assemblyTime, int componentCount);
+    void setStats(Stats stats);
 
     /**
-     * Returns the time, in milliseconds, to construct the page.
-     *
-     * @since 5.3
+     * Returns the page construction statistics for this page.
      */
-    long getAssemblyTime();
-
-    /**
-     * Returns the number of components on the page, including the root component. This is a rough
-     * measure of complexity.
-     *
-     * @since 5.3
-     */
-    int getComponentCount();
+    Stats getStats();
 
     /**
      * Returns the number of times the page has been attached to a request. This is a rough measure

@@ -51,12 +51,7 @@ public class PageImpl implements Page
 
     private final Map<String, ComponentPageElement> idToComponent = CollectionFactory.newCaseInsensitiveMap();
 
-    // TODO: loadComplete, assemblyTime, and componentCount are each set once without thread semantics,
-    // but before the instance is published to other threads ... is that enough?
-
-    private long assemblyTime;
-
-    private int componentCount;
+    private Stats stats;
 
     private final AtomicInteger attachCount = new AtomicInteger();
 
@@ -85,10 +80,14 @@ public class PageImpl implements Page
         fieldBundle = perThreadManager.createValue();
     }
 
-    public void setStats(long assemblyTime, int componentCount)
+    public void setStats(Stats stats)
     {
-        this.assemblyTime = assemblyTime;
-        this.componentCount = componentCount;
+        this.stats = stats;
+    }
+
+    public Stats getStats()
+    {
+        return stats;
     }
 
     @Override
@@ -249,16 +248,6 @@ public class PageImpl implements Page
     public boolean hasResetListeners()
     {
         return !resetListeners.isEmpty();
-    }
-
-    public long getAssemblyTime()
-    {
-        return assemblyTime;
-    }
-
-    public int getComponentCount()
-    {
-        return componentCount;
     }
 
     public int getAttachCount()

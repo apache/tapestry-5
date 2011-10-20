@@ -32,17 +32,17 @@ public class BeanModelUtilsTest extends InternalBaseTestCase
     private Object[] build(String propertyNames, String... expected)
     {
         return new Object[]
-                { propertyNames, expected };
+                {propertyNames, expected};
     }
 
     @DataProvider
     public Object[][] split_inputs()
     {
         return new Object[][]
-                { build("fred", "fred"), build("fred,barney", "fred", "barney"),
+                {build("fred", "fred"), build("fred,barney", "fred", "barney"),
                         build(" fred, barney, wilma, betty ", "fred", "barney", "wilma", "betty"),
                         new Object[]
-                                { "   ", new String[0] } };
+                                {"   ", new String[0]}};
     }
 
     @Test
@@ -80,8 +80,8 @@ public class BeanModelUtilsTest extends InternalBaseTestCase
         PropertyModel fred = mockPropertyModel();
         PropertyModel barney = mockPropertyModel();
 
-        expect(model.add("fred", null)).andReturn(fred);
-        expect(model.add("barney", null)).andReturn(barney);
+        expect(model.addEmpty("fred")).andReturn(fred);
+        expect(model.addEmpty("barney")).andReturn(barney);
 
         replay();
 
@@ -101,7 +101,7 @@ public class BeanModelUtilsTest extends InternalBaseTestCase
 
         EasyMock.checkOrder(model, true);
 
-        expect(model.add("fred", null)).andReturn(fred);
+        expect(model.addEmpty("fred")).andReturn(fred);
 
         expect(model.include("sam", "fred")).andReturn(model);
 
@@ -131,8 +131,8 @@ public class BeanModelUtilsTest extends InternalBaseTestCase
         PropertyModel fred = mockPropertyModel();
         PropertyModel barney = mockPropertyModel();
 
-        expect(model.add("fred", null)).andReturn(fred);
-        expect(model.add("barney", null)).andReturn(barney);
+        expect(model.addEmpty("fred")).andReturn(fred);
+        expect(model.addEmpty("barney")).andReturn(barney);
 
         expect(model.exclude("pebbles", "bambam")).andReturn(model);
 

@@ -293,8 +293,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         {
             model.add("age");
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertEquals(
                     ex.getMessage(),
@@ -319,8 +318,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         {
             model.get("frobozz");
             unreachable();
-        }
-        catch (UnknownValueException ex)
+        } catch (UnknownValueException ex)
         {
             assertEquals(
                     ex.getMessage(),
@@ -343,14 +341,13 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         BeanModel model = source.create(SimpleBean.class, true, messages);
 
-        model.add("shrub.foo()", null);
+        model.addEmpty("shrub.foo()");
 
         try
         {
             model.getById("frobozz");
             unreachable();
-        }
-        catch (UnknownValueException ex)
+        } catch (UnknownValueException ex)
         {
             assertEquals(
                     ex.getMessage(),
@@ -373,7 +370,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         BeanModel model = source.create(SimpleBean.class, true, messages);
 
-        PropertyModel pm = model.add("shrub.foo()", null);
+        PropertyModel pm = model.addEmpty("shrub.foo()");
 
         assertSame(model.get("Shrub.Foo()"), pm);
 
@@ -391,7 +388,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         BeanModel model = source.create(SimpleBean.class, true, messages);
 
-        PropertyModel pm = model.add("shrub.foo()", null);
+        PropertyModel pm = model.addEmpty("shrub.foo()");
 
         assertSame(model.getById("ShrubFoo"), pm);
 
@@ -468,7 +465,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         assertSame(propertyModel.getPropertyType(), String[].class);
 
         String[] value =
-        { "foo", "bar" };
+                {"foo", "bar"};
 
         StringArrayBean bean = new StringArrayBean();
 
@@ -552,7 +549,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         BeanModel model = source.create(SimpleBean.class, true, messages);
 
-        PropertyModel property = model.add("placeholder", null);
+        PropertyModel property = model.addEmpty("placeholder");
 
         assertFalse(property.isSortable());
         assertSame(property.getPropertyType(), Object.class);
@@ -576,8 +573,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         {
             model.add("doesNotExist");
             unreachable();
-        }
-        catch (PropertyExpressionException ex)
+        } catch (PropertyExpressionException ex)
         {
             assertMessageContains(ex, "does not contain", "doesNotExist");
         }

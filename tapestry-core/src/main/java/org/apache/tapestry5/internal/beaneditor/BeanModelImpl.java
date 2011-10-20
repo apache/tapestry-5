@@ -50,8 +50,10 @@ public class BeanModelImpl<T> implements BeanModel<T>
 
     private final List<String> propertyNames = CollectionFactory.newList();
 
+    private static PropertyConduit NULL_PROPERTY_CONDUIT = null;
+
     public BeanModelImpl(Class<T> beanType, PropertyConduitSource propertyConduitSource, TypeCoercer typeCoercer,
-            Messages messages, ObjectLocator locator)
+                         Messages messages, ObjectLocator locator)
 
     {
         this.beanType = beanType;
@@ -73,9 +75,20 @@ public class BeanModelImpl<T> implements BeanModel<T>
 
     public PropertyModel add(String propertyName)
     {
-        PropertyConduit conduit = createConduit(propertyName);
+        return addExpression(propertyName, propertyName);
+    }
+
+    public PropertyModel addEmpty(String propertyName)
+    {
+        return add(propertyName, NULL_PROPERTY_CONDUIT);
+    }
+
+    public PropertyModel addExpression(String propertyName, String expression)
+    {
+        PropertyConduit conduit = createConduit(expression);
 
         return add(propertyName, conduit);
+
     }
 
     private void validateNewPropertyName(String propertyName)
@@ -88,7 +101,7 @@ public class BeanModelImpl<T> implements BeanModel<T>
     }
 
     public PropertyModel add(RelativePosition position, String existingPropertyName, String propertyName,
-            PropertyConduit conduit)
+                             PropertyConduit conduit)
     {
         assert position != null;
         validateNewPropertyName(propertyName);

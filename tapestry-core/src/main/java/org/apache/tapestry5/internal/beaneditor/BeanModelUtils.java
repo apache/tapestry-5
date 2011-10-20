@@ -28,20 +28,15 @@ public final class BeanModelUtils
      * Performs standard set of modifications to a {@link org.apache.tapestry5.beaneditor.BeanModel}
      * . First new
      * properties may be added, then properties removed, then properties reordered.
-     * 
-     * @param model
-     *            to modifiy
-     * @param addPropertyNames
-     *            comma seperated list of property names to add, or null
-     * @param includePropertyNames
-     *            comma seperated list of property names to include
-     * @param excludePropertyNames
-     *            comma seperated list of property names to exclude, or null
-     * @param reorderPropertyNames
-     *            comma seperated list of property names to reorder, or null
+     *
+     * @param model                to modifiy
+     * @param addPropertyNames     comma seperated list of property names to add, or null
+     * @param includePropertyNames comma seperated list of property names to include
+     * @param excludePropertyNames comma seperated list of property names to exclude, or null
+     * @param reorderPropertyNames comma seperated list of property names to reorder, or null
      */
     public static void modify(BeanModel model, String addPropertyNames,
-            String includePropertyNames, String excludePropertyNames, String reorderPropertyNames)
+                              String includePropertyNames, String excludePropertyNames, String reorderPropertyNames)
     {
         if (addPropertyNames != null)
             add(model, addPropertyNames);
@@ -67,26 +62,24 @@ public final class BeanModelUtils
     /**
      * Adds empty properties to the bean model. New properties are added with a <em>null</em>
      * {@link org.apache.tapestry5.PropertyConduit}. `
-     * 
-     * @param model
-     *            to be modified
-     * @param propertyNames
-     *            comma-separated list of property names
+     *
+     * @param model         to be modified
+     * @param propertyNames comma-separated list of property names
+     * @see BeanModel#addEmpty(String)
      */
     public static void add(BeanModel model, String propertyNames)
     {
         for (String name : split(propertyNames))
         {
-            model.add(name, null);
+            model.addEmpty(name);
         }
     }
 
     /**
      * Removes properties from the bean model.
-     * 
+     *
      * @param model
-     * @param propertyNames
-     *            comma-separated list of property names
+     * @param propertyNames comma-separated list of property names
      * @see BeanModel#exclude(String...)
      */
     public static void exclude(BeanModel model, String propertyNames)
@@ -104,10 +97,9 @@ public final class BeanModelUtils
 
     /**
      * Reorders properties within the bean model.
-     * 
+     *
      * @param model
-     * @param propertyNames
-     *            comma-separated list of property names
+     * @param propertyNames comma-separated list of property names
      * @see BeanModel#reorder(String...)
      */
     public static void reorder(BeanModel model, String propertyNames)

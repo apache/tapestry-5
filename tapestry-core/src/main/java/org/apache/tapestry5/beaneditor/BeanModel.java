@@ -80,6 +80,29 @@ public interface BeanModel<T>
      */
     PropertyModel add(String propertyName);
 
+
+    /**
+     * Adds a new synthetic property to the model, returning its mutable model for further refinement. The property is added to
+     * the <em>end</em> of the list of properties.
+     *
+     * @param propertyName name of property to add
+     * @param expression   expression for the property
+     * @return the new property model (for further configuration)
+     * @throws RuntimeException if the property already exists
+     * @since 5.3
+     */
+    PropertyModel addExpression(String propertyName, String expression);
+
+    /**
+     * Adds an empty property (one with no property conduit).
+     *
+     * @param propertyName name of property to add
+     * @return the new property model (for further configuration)
+     * @throws RuntimeException if the property already exists
+     * @since 5.3
+     */
+    PropertyModel addEmpty(String propertyName);
+
     /**
      * Adds a new property to the model (as with {@link #add(String)}), ordered before or after an existing property.
      *
@@ -110,9 +133,10 @@ public interface BeanModel<T>
      *
      * @param propertyName name of property to add
      * @param conduit      the conduit used to read or update the property; this may be null for a synthetic or
-     *                     placeholder property
+     *                     placeholder property.  Instead of passing null, please invoke {@link #addEmpty(String)}.
      * @return the model for the property
      * @throws RuntimeException if the property already exists
+     * @see #addExpression(String, String)
      */
     PropertyModel add(String propertyName, PropertyConduit conduit);
 

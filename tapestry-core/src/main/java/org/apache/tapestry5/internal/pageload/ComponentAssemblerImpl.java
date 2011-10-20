@@ -126,7 +126,7 @@ class ComponentAssemblerImpl implements ComponentAssembler
                 action.execute(pageAssembly);
             }
 
-            page.setStats(System.currentTimeMillis() - startTime, pageAssembly.componentCount);
+            page.setStats(new Page.Stats(System.currentTimeMillis() - startTime, pageAssembly.componentCount, 0));
 
             return pageAssembly.createdElement.peek();
         } catch (RuntimeException ex)

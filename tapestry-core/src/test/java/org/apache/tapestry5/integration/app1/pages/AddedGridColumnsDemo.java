@@ -48,13 +48,13 @@ public class AddedGridColumnsDemo
 
         model.exclude("album", "artist", "genre", "playcount", "rating");
 
-        model.add("viewlink", null);
+        model.addEmpty("viewlink");
 
         model.add("title.length()").label("Title Length");
 
         // This is to test the case where there's no property conduit or override block.
 
-        model.add("dummy", null);
+        model.addEmpty("dummy");
     }
 
     public Track getTrack()

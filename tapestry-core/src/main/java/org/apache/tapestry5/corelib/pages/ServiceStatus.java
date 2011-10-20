@@ -66,7 +66,7 @@ public class ServiceStatus
     {
         model = source.createDisplayModel(ServiceActivity.class, messages);
 
-        model.add("serviceInterface", null);
+        model.addEmpty("serviceInterface");
 
         // There's no line number information for interfaces, so we'll reorder the
         // proprieties manually.

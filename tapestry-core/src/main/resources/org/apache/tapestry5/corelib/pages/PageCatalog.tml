@@ -35,9 +35,9 @@
 
         <t:beandisplay object="totals"/>
 
-        <t:grid source="pages" row="page" add="selector" reorder="name,selector">
+        <t:grid source="pages" row="page" model="model">
             <p:assemblyTimeCell>
-                ${formatElapsed(page.assemblyTime)}
+                ${formatElapsed(page.stats.assemblyTime)}
             </p:assemblyTimeCell>
             <p:selectorCell>
                 ${page.selector.toShortString()}
