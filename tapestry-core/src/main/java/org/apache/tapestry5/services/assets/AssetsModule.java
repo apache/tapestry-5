@@ -68,7 +68,7 @@ public class AssetsModule
         if (!gzipEnabled)
             return null;
 
-        SRSCompressedCachingInterceptor interceptor = new SRSCompressedCachingInterceptor(tracker, delegate);
+        SRSCompressedCachingInterceptor interceptor = new SRSCompressedCachingInterceptor(delegate);
 
         tracker.addInvalidationListener(interceptor);
 
@@ -80,7 +80,7 @@ public class AssetsModule
     public StreamableResourceSource enableUncompressedCaching(StreamableResourceSource delegate,
                                                               ResourceChangeTracker tracker)
     {
-        SRSCachingInterceptor interceptor = new SRSCachingInterceptor(tracker, delegate);
+        SRSCachingInterceptor interceptor = new SRSCachingInterceptor(delegate);
 
         tracker.addInvalidationListener(interceptor);
 

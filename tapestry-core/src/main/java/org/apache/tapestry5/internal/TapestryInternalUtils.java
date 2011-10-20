@@ -14,22 +14,7 @@
 
 package org.apache.tapestry5.internal;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.annotation.Annotation;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-
-import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.Asset2;
-import org.apache.tapestry5.EventContext;
-import org.apache.tapestry5.Link;
-import org.apache.tapestry5.OptionModel;
-import org.apache.tapestry5.PropertyConduit;
-import org.apache.tapestry5.SelectModel;
-import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.*;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.Messages;
@@ -43,6 +28,15 @@ import org.apache.tapestry5.services.LinkCreationListener;
 import org.apache.tapestry5.services.LinkCreationListener2;
 import org.apache.tapestry5.services.PageRenderRequestParameters;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.annotation.Annotation;
+import java.lang.ref.Reference;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Shared utility methods used by various implementation classes.
@@ -140,9 +134,8 @@ public class TapestryInternalUtils
     /**
      * Parses a string input into a series of value=label pairs compatible with {@link #toOptionModel(String)}. Splits
      * on commas. Ignores whitespace around commas.
-     * 
-     * @param input
-     *            comma seperated list of terms
+     *
+     * @param input comma seperated list of terms
      * @return list of option models
      */
     public static List<OptionModel> toOptionModels(String input)
@@ -179,9 +172,8 @@ public class TapestryInternalUtils
 
     /**
      * Processes a map input into a series of map entries compatible with {@link #toOptionModel(Map.Entry)}.
-     * 
-     * @param input
-     *            map of elements
+     *
+     * @param input map of elements
      * @return list of option models
      */
     public static <K, V> List<OptionModel> toOptionModels(Map<K, V> input)
@@ -217,9 +209,8 @@ public class TapestryInternalUtils
 
     /**
      * Processes a list input into a series of objects compatible with {@link #toOptionModel(Object)}.
-     * 
-     * @param input
-     *            list of elements
+     *
+     * @param input list of elements
      * @return list of option models
      */
     public static <E> List<OptionModel> toOptionModels(List<E> input)
@@ -264,9 +255,8 @@ public class TapestryInternalUtils
      * Used to convert a property expression into a key that can be used to locate various resources (Blocks, messages,
      * etc.). Strips out any punctuation characters, leaving just words characters (letters, number and the
      * underscore).
-     * 
-     * @param expression
-     *            a property expression
+     *
+     * @param expression a property expression
      * @return the expression with punctuation removed
      */
     public static String extractIdFromPropertyExpression(String expression)
@@ -302,9 +292,8 @@ public class TapestryInternalUtils
     /**
      * Converts an list of strings into a space-separated string combining them all, suitable for use as an HTML class
      * attribute value.
-     * 
-     * @param classes
-     *            classes to combine
+     *
+     * @param classes classes to combine
      * @return the joined classes, or null if classes is empty
      */
     public static String toClassAttributeValue(List<String> classes)
@@ -323,13 +312,10 @@ public class TapestryInternalUtils
      * <li>As key <em>name</em> if present, i.e., "LOCAL_VARIABLE".
      * <li>As a user-presentable version of the name, i.e., "Local Variable".
      * </ul>
-     * 
-     * @param messages
-     *            the messages to search for the label
-     * @param prefix
-     *            prepended to key
-     * @param value
-     *            to get a label for
+     *
+     * @param messages the messages to search for the label
+     * @param prefix   prepended to key
+     * @param value    to get a label for
      * @return the label
      */
     public static String getLabelForEnum(Messages messages, String prefix, Enum value)
@@ -362,11 +348,9 @@ public class TapestryInternalUtils
     /**
      * Determines if the two values are equal. They are equal if they are the exact same value (including if they are
      * both null). Otherwise standard equals() comparison is used.
-     * 
-     * @param left
-     *            value to compare, possibly null
-     * @param right
-     *            value to compare, possibly null
+     *
+     * @param left  value to compare, possibly null
+     * @param right value to compare, possibly null
      * @return true if same value, both null, or equal
      */
     public static <T> boolean isEqual(T left, T right)
@@ -390,7 +374,7 @@ public class TapestryInternalUtils
 
     /**
      * Splits a value around commas. Whitespace around the commas is removed, as is leading and trailing whitespace.
-     * 
+     *
      * @since 5.1.0.0
      */
     public static String[] splitAtCommas(String value)
@@ -404,11 +388,9 @@ public class TapestryInternalUtils
     /**
      * Copies some content from an input stream to an output stream. It is the caller's responsibility to close the
      * streams.
-     * 
-     * @param in
-     *            source of data
-     * @param out
-     *            sink of data
+     *
+     * @param in  source of data
+     * @param out sink of data
      * @throws IOException
      * @since 5.1.0.0
      */
@@ -452,7 +434,7 @@ public class TapestryInternalUtils
     /**
      * Converts an Asset to an Asset2 if necessary. When actually wrapping an Asset as an Asset2, the asset is assumed
      * to be variant (i.e., not cacheable).
-     * 
+     *
      * @since 5.1.0.0
      */
     public static Asset2 toAsset2(final Asset asset)
@@ -522,14 +504,16 @@ public class TapestryInternalUtils
     }
 
     /**
-     * @param mixinDef
-     *            the original mixin definition.
+     * @param mixinDef the original mixin definition.
      * @return an Orderable whose id is the mixin name.
      */
     public static Orderable<String> mixinTypeAndOrder(String mixinDef)
     {
         int idx = mixinDef.indexOf("::");
-        if (idx == -1) { return new Orderable<String>(mixinDef, mixinDef); }
+        if (idx == -1)
+        {
+            return new Orderable<String>(mixinDef, mixinDef);
+        }
         String type = mixinDef.substring(0, idx);
         String[] constraints = splitMixinConstraints(mixinDef.substring(idx + 2));
 
@@ -543,7 +527,7 @@ public class TapestryInternalUtils
 
     /**
      * Common mapper, used primarily with {@link org.apache.tapestry5.func.Flow#map(org.apache.tapestry5.func.Mapper)}
-     * 
+     *
      * @since 5.2.0
      */
     public static Mapper<Asset, StylesheetLink> assetToStylesheetLink = new Mapper<Asset, StylesheetLink>()
@@ -571,7 +555,9 @@ public class TapestryInternalUtils
         };
     }
 
-    /** @since 5.3 */
+    /**
+     * @since 5.3
+     */
     public static String toFileSuffix(String fileName)
     {
         int dotx = fileName.lastIndexOf('.');
@@ -579,12 +565,14 @@ public class TapestryInternalUtils
         return dotx < 0 ? "" : fileName.substring(dotx + 1);
     }
 
-    /** Performs an operation and re-throws the IOException that may occur. */
+    /**
+     * Performs an operation and re-throws the IOException that may occur.
+     */
     public static void performIO(OperationTracker tracker, String description, final IOOperation operation)
             throws IOException
     {
         final Holder<IOException> exceptionHolder = Holder.create();
-    
+
         tracker.run(description, new Runnable()
         {
             public void run()
@@ -592,15 +580,28 @@ public class TapestryInternalUtils
                 try
                 {
                     operation.perform();
-                }
-                catch (IOException ex)
+                } catch (IOException ex)
                 {
                     exceptionHolder.put(ex);
                 }
             }
         });
-    
+
         if (exceptionHolder.hasValue())
             throw exceptionHolder.get();
     }
+
+    /**
+     * Extracts a value from a  map of references. Handles the case where the reference does not exist,
+     * and the case where the reference itself now contains null.
+     *
+     * @since 5.3
+     */
+    public static <K, V> V getAndDeref(Map<K, ? extends Reference<V>> map, K key)
+    {
+        Reference<V> ref = map.get(key);
+
+        return ref == null ? null : ref.get();
+    }
 }
+

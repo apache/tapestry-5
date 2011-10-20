@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.InvalidationListener;
@@ -31,15 +32,12 @@ import java.util.Map;
  */
 public class SRSCachingInterceptor implements StreamableResourceSource, InvalidationListener
 {
-    private final ResourceChangeTracker tracker;
-
     private final StreamableResourceSource delegate;
 
     private final Map<Resource, SoftReference<StreamableResource>> cache = CollectionFactory.newConcurrentMap();
 
-    public SRSCachingInterceptor(ResourceChangeTracker tracker, StreamableResourceSource delegate)
+    public SRSCachingInterceptor(StreamableResourceSource delegate)
     {
-        this.tracker = tracker;
         this.delegate = delegate;
     }
 
@@ -51,9 +49,7 @@ public class SRSCachingInterceptor implements StreamableResourceSource, Invalida
             return delegate.getStreamableResource(baseResource, processing, dependencies);
         }
 
-        SoftReference<StreamableResource> ref = cache.get(baseResource);
-
-        StreamableResource result = ref == null ? null : ref.get();
+        StreamableResource result = TapestryInternalUtils.getAndDeref(cache, baseResource);
 
         if (result == null)
         {

@@ -24,9 +24,9 @@ import org.apache.tapestry5.services.assets.StreamableResourceSource;
  */
 public class SRSCompressedCachingInterceptor extends SRSCachingInterceptor
 {
-    public SRSCompressedCachingInterceptor(ResourceChangeTracker tracker, StreamableResourceSource delegate)
+    public SRSCompressedCachingInterceptor(StreamableResourceSource delegate)
     {
-        super(tracker, delegate);
+        super(delegate);
     }
 
     /**
