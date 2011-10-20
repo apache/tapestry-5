@@ -64,8 +64,9 @@ interface EmbeddedComponentAssembler extends Locatable
      * Adds mixins to the newly created embedded element.
      *
      * @param newElement new element requiring mixins
+     * @return number of mixins added
      */
-    void addMixinsToElement(ComponentPageElement newElement);
+    int addMixinsToElement(ComponentPageElement newElement);
 
     /**
      * Returns the names of all formal parameters.

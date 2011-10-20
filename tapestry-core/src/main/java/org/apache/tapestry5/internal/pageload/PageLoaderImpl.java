@@ -972,6 +972,10 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         {
             public void execute(PageAssembly pageAssembly)
             {
+                // A little extra weight for token containing one or more expansions.
+
+                pageAssembly.weight++;
+
                 InternalComponentResources resources = pageAssembly.activeElement.peek().getComponentResources();
 
                 RenderCommand command = elementFactory.newAttributeElement(resources, token);

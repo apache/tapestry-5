@@ -99,13 +99,14 @@ class ComponentAssemblerImpl implements ComponentAssembler
         try
         {
             pageAssembly.componentCount++;
+            pageAssembly.weight++;
 
             ComponentPageElement newElement = new ComponentPageElementImpl(pageAssembly.page, instantiator, resources,
                     request, symbolSource);
 
             pageAssembly.componentName.push(new ComponentName(pageAssembly.page.getName()));
 
-            addRootComponentMixins(newElement);
+            addRootComponentMixins(pageAssembly, newElement);
 
             pushNewElement(pageAssembly, newElement);
 
@@ -123,10 +124,12 @@ class ComponentAssemblerImpl implements ComponentAssembler
             {
                 PageAssemblyAction action = pageAssembly.deferred.get(i);
 
+                pageAssembly.weight++;
+
                 action.execute(pageAssembly);
             }
 
-            page.setStats(new Page.Stats(System.currentTimeMillis() - startTime, pageAssembly.componentCount, 0));
+            page.setStats(new Page.Stats(System.currentTimeMillis() - startTime, pageAssembly.componentCount, pageAssembly.weight));
 
             return pageAssembly.createdElement.peek();
         } catch (RuntimeException ex)
@@ -136,10 +139,12 @@ class ComponentAssemblerImpl implements ComponentAssembler
         }
     }
 
-    private void addRootComponentMixins(ComponentPageElement element)
+    private void addRootComponentMixins(PageAssembly assembly, ComponentPageElement element)
     {
         for (String className : instantiator.getModel().getMixinClassNames())
         {
+            assembly.weight++;
+
             Instantiator mixinInstantiator = instantiatorSource.getInstantiator(className);
 
             ComponentModel model = instantiator.getModel();
@@ -167,17 +172,19 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
                 try
                 {
-
                     pageAssembly.componentName.push(embeddedName);
 
                     ComponentPageElement newElement = container.newChild(embeddedId, embeddedName.nestedId,
                             embeddedName.completeId, elementName, instantiator, location);
 
                     pageAssembly.componentCount++;
+                    pageAssembly.weight++;
 
                     pushNewElement(pageAssembly, newElement);
 
-                    embeddedAssembler.addMixinsToElement(newElement);
+                    int mixinCount = embeddedAssembler.addMixinsToElement(newElement);
+
+                    pageAssembly.weight += mixinCount;
 
                     runActions(pageAssembly);
 
@@ -223,7 +230,10 @@ class ComponentAssemblerImpl implements ComponentAssembler
     private void runActions(PageAssembly pageAssembly)
     {
         for (PageAssemblyAction action : actions)
+        {
+            pageAssembly.weight++;
             action.execute(pageAssembly);
+        }
     }
 
     public ComponentModel getModel()

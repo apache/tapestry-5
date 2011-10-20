@@ -50,7 +50,6 @@
 
     </t:zone>
 
-
     <t:form t:id="singlePageLoad" zone="pages">
 
         <t:label for="pageName">Load single page</t:label>
@@ -58,5 +57,30 @@
         <input type="submit" value="Load Page"/>
 
     </t:form>
+
+    <dl>
+        <dt>Defined Pages</dt>
+        <dd>Number of page classes.</dd>
+        <dt>Pages in Cache</dt>
+        <dd>Number of page instances currently loaded. This may include the same page class for different selectors.
+        </dd>
+        <dt>Unique Page Names</dt>
+        <dd>Number of pages loaded, ignoring selectors.</dd>
+        <dt>Selector</dt>
+        <dd>The locale (plus application-specific other information) for which the page was assembled. A new instance of
+            a Page will be created for each new selector,
+            as needed.
+        </dd>
+        <dt>Assembly Time</dt>
+        <dd>Time to assemble a complete instance of a page, including all sub-components, and all bindings and other
+            connections
+            between them.
+        </dd>
+        <dt>Component Count</dt>
+        <dd>Number of components on the page, including the root component.</dd>
+        <dt>Weight</dt>
+        <dd>Arbitrary number that includes number of components and mixins, template tokens, and other factors.</dd>
+    </dl>
+
 
 </i:internallayout>

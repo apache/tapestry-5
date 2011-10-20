@@ -306,7 +306,7 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
         bound.put(parameterName, true);
     }
 
-    public void addMixinsToElement(ComponentPageElement newElement)
+    public int addMixinsToElement(ComponentPageElement newElement)
     {
         for (Map.Entry<String, Instantiator> entry : mixinIdToInstantiator.entrySet())
         {
@@ -315,6 +315,8 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
 
             newElement.addMixin(mixinId, instantiator, mixinsIdToOrderConstraints.get(mixinId));
         }
+
+        return mixinIdToInstantiator.size();
     }
 
     public Location getLocation()

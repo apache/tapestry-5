@@ -53,6 +53,12 @@ class PageAssembly
      */
     int componentCount;
 
+    /**
+     * Rollup of a number of different things: number of components, bindings, mixins, template elements, etc.
+     * Useful only in comparison to other weights.
+     */
+    int weight;
+
     PageAssembly(Page page)
     {
         this.page = page;
@@ -65,6 +71,8 @@ class PageAssembly
      */
     void addRenderCommand(RenderCommand command)
     {
+        weight++;
+
         bodyElement.peek().addToBody(command);
     }
 

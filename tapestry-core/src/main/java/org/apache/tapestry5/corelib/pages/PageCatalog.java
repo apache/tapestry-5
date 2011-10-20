@@ -117,18 +117,20 @@ public class PageCatalog
     @Inject
     private Messages messages;
 
-    public BeanModel<Page> getModel()
-    {
+    @Property
+    @Retain
+    private BeanModel<Page> model;
 
-        BeanModel<Page> model = beanModelSource.createDisplayModel(Page.class, messages);
+    void pageLoaded()
+    {
+        model = beanModelSource.createDisplayModel(Page.class, messages);
 
         model.addExpression("selector", "selector.toString()");
         model.addExpression("assemblyTime", "stats.assemblyTime");
         model.addExpression("componentCount", "stats.componentCount");
+        model.addExpression("weight", "stats.weight");
 
-        model.reorder("name", "selector", "assemblyTime", "componentCount", "selector");
-
-        return model;
+        model.reorder("name", "selector", "assemblyTime", "componentCount", "weight");
     }
 
     @Cached
