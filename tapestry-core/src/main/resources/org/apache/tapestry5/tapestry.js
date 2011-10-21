@@ -2116,7 +2116,7 @@ Tapestry.ScriptManager = {
                 insertionPoint.insert({ before: element });
             }
             else {
-                head:insert({bottom: element});
+                head.insert({bottom: element});
             }
         });
     }
