@@ -827,6 +827,19 @@ public class IntegrationTest extends IOCInternalTestCase
     }
 
     @Test
+    public void get_service_by_type_and_markers()
+    {
+        Registry r = buildRegistry(GreeterModule.class);
+
+        Greeter blue = r.getService(Greeter.class, BlueMarker.class);
+
+        assert blue.getGreeting().equals("Blue");
+
+        r.shutdown();
+    }
+
+
+    @Test
     public void service_activity_scoreboard_perthread() throws InterruptedException
     {
         final Registry r = buildRegistry(GreeterModule.class, PerThreadModule.class);

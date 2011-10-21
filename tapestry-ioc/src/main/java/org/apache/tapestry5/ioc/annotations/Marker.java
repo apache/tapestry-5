@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 The Apache Software Foundation
+// Copyright 2007, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,11 +17,12 @@ package org.apache.tapestry5.ioc.annotations;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 
 import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
-import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import java.lang.annotation.Target;
 
 /**
  * Used to define one or more {@linkplain ServiceDef#getMarkers() marker annotations} for a service implementation. This
@@ -32,9 +33,11 @@ import java.lang.annotation.Target;
  * additive, so a Marker annotation on the implementation class and/or specified with {@link
  * org.apache.tapestry5.ioc.ServiceBindingOptions#withMarker(Class[])} will accumulate; a service may have any number of
  * markers.  Generally one or two is enough.
+ *
+ * @see org.apache.tapestry5.ioc.ObjectLocator#getService(Class, Class[])
  */
 @Target(
-        { TYPE, METHOD })
+        {TYPE, METHOD})
 @Retention(RUNTIME)
 @Documented
 @UseWith({AnnotationUseContext.SERVICE, AnnotationUseContext.MODULE})

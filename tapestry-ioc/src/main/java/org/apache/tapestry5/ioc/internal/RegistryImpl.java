@@ -30,7 +30,11 @@ import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.services.UpdateListenerHub;
 import org.slf4j.Logger;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.*;
 
 @SuppressWarnings("all")
@@ -107,6 +111,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     private final OperationTracker operationTracker;
 
     private final TypeCoercerProxy typeCoercerProxy = new TypeCoercerProxyImpl(this);
+
+    private final Map<Class<? extends Annotation>, Annotation> cachedAnnotationProxies = CollectionFactory.newConcurrentMap();
 
     /**
      * Constructs the registry from a set of module definitions and other resources.
@@ -627,10 +633,20 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         }
     }
 
-    public <T> T getService(Class<T> serviceInterface)
+    public <T> T getService(Class<T> serviceInterface, Class<? extends Annotation>... markerTypes)
     {
         lock.check();
 
+        if (markerTypes.length == 0)
+        {
+            return findServiceByTypeAlone(serviceInterface);
+        }
+
+        return findServiceByTypeAndMarkers(serviceInterface, markerTypes);
+    }
+
+    private <T> T findServiceByTypeAlone(Class<T> serviceInterface)
+    {
         List<String> serviceIds = findServiceIdsForInterface(serviceInterface);
 
         if (serviceIds == null)
@@ -654,6 +670,67 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
                 throw new RuntimeException(IOCMessages.manyServiceMatches(serviceInterface, serviceIds));
         }
+    }
+
+    private <T> T findServiceByTypeAndMarkers(Class<T> serviceInterface, Class<? extends Annotation>... markerTypes)
+    {
+        AnnotationProvider provider = createAnnotationProvider(markerTypes);
+
+        Set<ServiceDef2> matches = CollectionFactory.newSet();
+        List<Class> markers = CollectionFactory.newList();
+
+        findServiceDefsMatchingMarkerAndType(serviceInterface, provider, null, markers, matches);
+
+        return extractServiceFromMatches(serviceInterface, markers, matches);
+    }
+
+    private AnnotationProvider createAnnotationProvider(Class<? extends Annotation>... markerTypes)
+    {
+        final Map<Class<? extends Annotation>, Annotation> map = CollectionFactory.newMap();
+
+        for (Class<? extends Annotation> markerType : markerTypes)
+        {
+            map.put(markerType, createAnnotationProxy(markerType));
+        }
+
+        return new AnnotationProvider()
+        {
+            public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
+            {
+                return annotationClass.cast(map.get(annotationClass));
+            }
+        };
+    }
+
+    private <A extends Annotation> Annotation createAnnotationProxy(final Class<A> annotationType)
+    {
+        Annotation result = cachedAnnotationProxies.get(annotationType);
+
+        if (result == null)
+        {
+            // We create a JDK proxy because its pretty quick and easy.
+
+            InvocationHandler handler = new InvocationHandler()
+            {
+                public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
+                {
+                    if (method.getName().equals("annotationType"))
+                    {
+                        return annotationType;
+                    }
+
+                    return method.invoke(proxy, args);
+                }
+            };
+
+            result = (Annotation) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
+                    new Class[]{annotationType},
+                    handler);
+
+            cachedAnnotationProxies.put(annotationType, result);
+        }
+
+        return result;
     }
 
     private List<String> findServiceIdsForInterface(Class serviceInterface)
@@ -805,34 +882,29 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         if (provider == null)
             return null;
 
-        boolean localOnly = localModule != null && provider.getAnnotation(Local.class) != null;
-
         Set<ServiceDef2> matches = CollectionFactory.newSet();
-
-        matches.addAll(filterByType(objectType, localOnly ? moduleToServiceDefs.get(localModule) : allServiceDefs));
-
         List<Class> markers = CollectionFactory.newList();
 
-        if (localOnly)
-            markers.add(Local.class);
+        findServiceDefsMatchingMarkerAndType(objectType, provider, localModule, markers, matches);
 
-        for (Class marker : markerToServiceDef.keySet())
-        {
-            if (provider.getAnnotation(marker) == null)
-                continue;
-
-            markers.add(marker);
-
-            matches = intersection(matches, markerToServiceDef.get(marker));
-        }
 
         // If didn't see @Local or any recognized marker annotation, then don't try to filter that
-        // way.
-        // Continue on, eventually to the MasterObjectProvider service.
+        // way. Continue on, eventually to the MasterObjectProvider service.
 
         if (markers.isEmpty())
+        {
             return null;
+        }
 
+        return extractServiceFromMatches(objectType, markers, matches);
+    }
+
+    /**
+     * Given markers and matches processed by {@link #findServiceDefsMatchingMarkerAndType(Class, org.apache.tapestry5.ioc.AnnotationProvider, Module, java.util.List, java.util.Set)}, this
+     * finds the singular match, or reports an error for 0 or 2+ matches.
+     */
+    private <T> T extractServiceFromMatches(Class<T> objectType, List<Class> markers, Set<ServiceDef2> matches)
+    {
         switch (matches.size())
         {
 
@@ -859,28 +931,36 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         }
     }
 
-    /**
-     * Filters the set into a new set, containing only elements shared between the set and the
-     * filter collection.
-     *
-     * @param set    to be filtered
-     * @param filter values to keep from the set
-     * @return a new set containing only the shared values
-     */
-    private static <T> Set<T> intersection(Set<T> set, Collection<T> filter)
+    private <T> void findServiceDefsMatchingMarkerAndType(Class<T> objectType, AnnotationProvider provider, Module localModule, List<Class> markers,
+                                                          Set<ServiceDef2> matches)
     {
-        if (set.isEmpty())
-            return Collections.emptySet();
+        assert provider != null;
 
-        Set<T> result = CollectionFactory.newSet();
+        boolean localOnly = localModule != null && provider.getAnnotation(Local.class) != null;
 
-        for (T elem : filter)
+        matches.addAll(filterByType(objectType, localOnly ? moduleToServiceDefs.get(localModule) : allServiceDefs));
+
+        if (localOnly)
         {
-            if (set.contains(elem))
-                result.add(elem);
+            markers.add(Local.class);
         }
 
-        return result;
+        for (Class marker : markerToServiceDef.keySet())
+        {
+            if (provider.getAnnotation(marker) == null)
+            {
+                continue;
+            }
+
+            markers.add(marker);
+
+            matches.retainAll(markerToServiceDef.get(marker));
+
+            if (matches.isEmpty())
+            {
+                return;
+            }
+        }
     }
 
     public <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider)

@@ -44,6 +44,7 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
 import java.io.*;
+import java.lang.annotation.Annotation;
 
 import static org.easymock.EasyMock.isA;
 
@@ -90,7 +91,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         return registry.getObject(objectType, annotationProvider);
     }
 
-    public final <T> T getService(Class<T> serviceInterface)
+    public final <T> T getService(Class<T> serviceInterface, Class<? extends Annotation>... markerTypes)
     {
         return registry.getService(serviceInterface);
     }
@@ -171,7 +172,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     }
 
     protected final void train_resolvePageClassNameToPageName(ComponentClassResolver resolver, String pageClassName,
-            String pageName)
+                                                              String pageName)
     {
         expect(resolver.resolvePageClassNameToPageName(pageClassName)).andReturn(pageName);
     }
@@ -245,7 +246,8 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         expect(cache.get(pageName)).andReturn(page).atLeastOnce();
     }
 
-    protected final LinkCreationListener2 mockLinkCreationListener2() {
+    protected final LinkCreationListener2 mockLinkCreationListener2()
+    {
         return newMock(LinkCreationListener2.class);
     }
 
@@ -274,8 +276,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
      * leading/trailing
      * whitespace.
      *
-     * @param file
-     *            trim each line of whitespace
+     * @param file trim each line of whitespace
      */
     protected final String readFile(String file) throws Exception
     {
@@ -309,7 +310,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     }
 
     protected final void train_canonicalizePageName(ComponentClassResolver resolver, String pageName,
-            String canonicalized)
+                                                    String canonicalized)
     {
         expect(resolver.canonicalizePageName(pageName)).andReturn(canonicalized);
     }
@@ -370,13 +371,13 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     }
 
     protected final void train_getPropertyAdapter(ClassPropertyAdapter classPropertyAdapter, String propertyName,
-            PropertyAdapter propertyAdapter)
+                                                  PropertyAdapter propertyAdapter)
     {
         expect(classPropertyAdapter.getPropertyAdapter(propertyName)).andReturn(propertyAdapter).atLeastOnce();
     }
 
     protected final void train_getAdapter(PropertyAccess access, Object object,
-            ClassPropertyAdapter classPropertyAdapter)
+                                          ClassPropertyAdapter classPropertyAdapter)
     {
         expect(access.getAdapter(object)).andReturn(classPropertyAdapter);
     }
@@ -397,7 +398,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     }
 
     protected final void train_setLocaleFromLocaleName(LocalizationSetter localizationSetter, String localeName,
-            boolean recognized)
+                                                       boolean recognized)
     {
         expect(localizationSetter.setLocaleFromLocaleName(localeName)).andReturn(recognized);
     }

@@ -1,4 +1,4 @@
-// Copyright 2007, 2010 The Apache Software Foundation
+// Copyright 2007, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,9 +18,11 @@ import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.Registry;
 
+import java.lang.annotation.Annotation;
+
 /**
  * A wrapper around {@link InternalRegistry} that exists to expand symbols in a service id before
- * invoking {@link ObjectLocator#getService(Class)}.
+ * invoking {@link ObjectLocator#getService(String, Class)}.
  */
 public class RegistryWrapper implements Registry
 {
@@ -53,9 +55,9 @@ public class RegistryWrapper implements Registry
         return registry.getService(expandedServiceId, serviceInterface);
     }
 
-    public <T> T getService(Class<T> serviceInterface)
+    public <T> T getService(Class<T> serviceInterface, Class<? extends Annotation>... markerTypes)
     {
-        return registry.getService(serviceInterface);
+        return registry.getService(serviceInterface, markerTypes);
     }
 
     public <T> T autobuild(Class<T> clazz)

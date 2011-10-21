@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@ package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.ObjectLocator;
+
+import java.lang.annotation.Annotation;
 
 /**
  * Base service locator class used when only the module is known (i.e., when instantiating a module
@@ -40,9 +42,9 @@ public class ObjectLocatorImpl implements ObjectLocator
         return registry.getService(expandedServiceId, serviceInterface);
     }
 
-    public <T> T getService(Class<T> serviceInterface)
+    public <T> T getService(Class<T> serviceInterface, Class<? extends Annotation>... markerTypes)
     {
-        return registry.getService(serviceInterface);
+        return registry.getService(serviceInterface, markerTypes);
     }
 
     public <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider)

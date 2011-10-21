@@ -14,11 +14,6 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import static org.easymock.EasyMock.isA;
-
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;
@@ -30,6 +25,12 @@ import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
+
+import java.lang.annotation.Annotation;
+import java.util.Collections;
+import java.util.List;
+
+import static org.easymock.EasyMock.isA;
 
 public class IOCInternalTestCase extends IOCTestCase implements Registry
 {
@@ -60,9 +61,9 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
         return registry.getObject(objectType, annotationProvider);
     }
 
-    public final <T> T getService(Class<T> serviceInterface)
+    public final <T> T getService(Class<T> serviceInterface, Class<? extends Annotation>... markerTypes)
     {
-        return registry.getService(serviceInterface);
+        return registry.getService(serviceInterface, markerTypes);
     }
 
     public final <T> T getService(String serviceId, Class<T> serviceInterface)
@@ -146,7 +147,7 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
     }
 
     protected final <T> void train_getService(InternalRegistry registry, String serviceId, Class<T> serviceInterface,
-            T service)
+                                              T service)
     {
         expect(registry.getService(serviceId, serviceInterface)).andReturn(service);
     }
@@ -156,7 +157,9 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
         return newMock(ServiceActivityTracker.class);
     }
 
-    /** @since 5.3 */
+    /**
+     * @since 5.3
+     */
     protected final TypeCoercerProxy mockTypeCoercerProxy()
     {
         return newMock(TypeCoercerProxy.class);

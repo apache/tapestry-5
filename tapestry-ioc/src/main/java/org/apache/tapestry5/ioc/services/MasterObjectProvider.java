@@ -39,7 +39,8 @@ public interface MasterObjectProvider
      * decorator method. The locator parameter provides access to the services visible <em>to that context</em>.
      * <p/>
      * When the value is required and no {@link ObjectProvider} provided a non-null value, then {@link
-     * ObjectLocator#getService(Class)} is invoked, to provide a uniquely matching service, or throw a failure exception
+     * ObjectLocator#getService(Class, Class[])}  is invoked (with no marker annotations),
+     * to provide a uniquely matching service, or throw a failure exception
      * if no <em>single</em> service can be found.
      *
      * @param objectType         the expected object type
