@@ -870,4 +870,16 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
                     "Expression 'read_only' for class org.apache.tapestry5.internal.services.PublicStaticFieldBean is read-only.");
         }
     }
+
+    @Test
+    public void public_static_field_in_an_array()
+    {
+        PropertyConduit pc = source.create(PublicStaticFieldBean.class, "[read_only]");
+
+        // Need to instantiate it, or exception "Root object of property expression is null"
+
+        List<String> actual = (List<String>) pc.get(new PublicStaticFieldBean());
+
+        assertListsEquals(actual, PublicStaticFieldBean.READ_ONLY);
+    }
 }
