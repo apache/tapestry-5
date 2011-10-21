@@ -1141,8 +1141,25 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 {
                     Class rawFieldType = field.getType();
 
-                    builder.getField(field.getDeclaringClass().getName(), field.getName(),
-                            PlasticUtils.toTypeName(rawFieldType));
+                    String rawTypeName = PlasticUtils.toTypeName(rawFieldType);
+                    String containingClassName = field.getDeclaringClass().getName();
+                    String fieldName = field.getName();
+
+                    if (isStatic(field))
+                    {
+                        // We've gone to the trouble of loading the root object, or navigated to some other object,
+                        // but we don't need or want the instance, since it's a static field we're accessing.
+                        // Ideally, we would optimize this, and only generate and invoke the getRoot() and nav() methods as needed, but
+                        // access to public fields is relatively rare, and the cost is just the unused bytecode.
+
+                        builder.pop();
+
+                        builder.getStaticField(containingClassName, fieldName, rawTypeName);
+
+                    } else
+                    {
+                        builder.getField(containingClassName, fieldName, rawTypeName);
+                    }
 
                     castToGenericType(builder, rawFieldType, fieldType);
                 }
