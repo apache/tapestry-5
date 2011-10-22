@@ -22,7 +22,7 @@ import org.apache.tapestry5.services.EnvironmentalShadowBuilder;
 
 /**
  * An environmental that acts as a replacement for the {@link RenderSupport} environmental, renaming and streamlining
- * the the key methods. JavaScriptSupport is very stateful, accumulating JavaScript stacks, libraries and initialization
+ * the key methods. JavaScriptSupport is very stateful, accumulating JavaScript stacks, libraries and initialization
  * code until the end of the main page render; it then updates the rendered DOM (adding &lt;script&gt; tags to the
  * &lt;head&gt; and &lt;body&gt;) before the document is streamed to the client.
  * <p/>
