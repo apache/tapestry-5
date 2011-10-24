@@ -29,6 +29,13 @@ public class ResourceChangeTrackerImpl extends InvalidationEventHubImpl implemen
 {
     private final URLChangeTracker tracker;
 
+    /**
+     * Used in production mode as the last modified time of any resource exposed to the client. Remember that
+     * all exposed assets include a URL with a version number, and each new deployment of the application should change
+     * that version number.
+     */
+    private final long fixedLastModifiedTime = System.currentTimeMillis();
+
     public ResourceChangeTrackerImpl(ClasspathURLConverter classpathURLConverter,
                                      @Symbol(SymbolConstants.PRODUCTION_MODE)
                                      boolean productionMode)
@@ -51,7 +58,7 @@ public class ResourceChangeTrackerImpl extends InvalidationEventHubImpl implemen
     {
         if (tracker == null)
         {
-            return 0;
+            return fixedLastModifiedTime;
         }
 
         return tracker.add(resource.toURL());
