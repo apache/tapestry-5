@@ -420,7 +420,8 @@ public class PlasticInternalUtils
         if (url.getProtocol().equals("file"))
         {
             String urlPath = url.getPath();
-            return new FileInputStream(new File(urlPath));
+            String decoded = urlPath.replaceAll("%20", " ");
+            return new FileInputStream(new File(decoded));
         }
 
         return url.openStream();
