@@ -118,7 +118,7 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
         environment.pop(ComponentEventResultProcessor.class);
 
 
-        // If the result processor was passed a value, then it will already have rendered. Otherise it was not passed a value,
+        // If the result processor was passed a value, then it will already have rendered. Otherwise it was not passed a value,
         // but it's still possible that we still want to do a partial page render ... if filters were added to the render queue.
         // In that event, run the partial page render now and return.
 
