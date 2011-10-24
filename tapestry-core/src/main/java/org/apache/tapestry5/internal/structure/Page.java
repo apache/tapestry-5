@@ -205,6 +205,17 @@ public interface Page
     void addResetListener(PageResetListener listener);
 
     /**
+     * Adds a verify callback, which is allowed while the page is loading. Such callbacks are invoked once,
+     * after the page has been loaded succesfully. This was added specifically to ensure that components
+     * only verify that required parameters are bound after all components and mixins of the page have had a chance
+     * to initialize.
+     *
+     * @param callback to be invoked after page loaded
+     * @since 5.3
+     */
+    void addVerifyListener(Runnable callback);
+
+    /**
      * Returns true if there are any {@link PageResetListener} listeners.
      *
      * @since 5.2.0

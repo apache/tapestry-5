@@ -55,6 +55,8 @@ public class PageImpl implements Page
 
     private final AtomicInteger attachCount = new AtomicInteger();
 
+    private List<Runnable> pageVerifyCallbacks = CollectionFactory.newList();
+
     /**
      * Obtained from the {@link org.apache.tapestry5.internal.services.PersistentFieldManager} when
      * first needed,
@@ -180,11 +182,26 @@ public class PageImpl implements Page
         lock.check();
 
         for (PageLifecycleListener listener : lifecycleListeners)
+        {
             listener.containingPageDidLoad();
-
-        loadComplete = true;
+        }
 
         lock.lock();
+
+
+        for (Runnable callback : pageVerifyCallbacks)
+        {
+            callback.run();
+        }
+
+        // These are never needed again, so we can get rid of them. The PageLifecycleListener interface is too complicated,
+        // we don't know what's needed when, and rely on the listeners themselves to unregister when no longer needed. A better design
+        // would be more like these pageVerifyCallbacks: just use Runnable and know when it is safe to throw them away. Something
+        // to refactor to over time.
+
+        pageVerifyCallbacks = null;
+
+        loadComplete = true;
     }
 
     public void attached()
@@ -235,6 +252,15 @@ public class PageImpl implements Page
         lock.check();
 
         resetListeners.add(listener);
+    }
+
+    public void addVerifyListener(Runnable callback)
+    {
+        assert callback != null;
+
+        lock.check();
+
+        pageVerifyCallbacks.add(callback);
     }
 
     public void pageReset()

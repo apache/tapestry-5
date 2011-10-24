@@ -247,7 +247,7 @@ public class ParameterWorker implements ComponentClassTransformWorker2
 
                     private Object readFromBinding()
                     {
-                        Object result = null;
+                        Object result;
 
                         try
                         {

@@ -71,4 +71,14 @@ class ParameterTests extends TapestryCoreTestCase
         assertAttribute "//a[@id='frog']/@alt", "Alt Title"
         assertAttribute "//a[@id='frog']/@title", "Frog Title"
     }
+
+/** https://issues.apache.org/jira/browse/TAP5-1642    */
+    @Test
+    void mixin_parameter_with_default_no_longer_causes_spurious_exception()
+    {
+        openLinks "Mixin Parameter with Default"
+
+        // This proves the mixin was added and did its job.
+        assertAttribute "//a[@class='testsubject']/@alt", "Default title"
+    }
 }

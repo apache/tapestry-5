@@ -56,6 +56,8 @@ public class Index
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
 
+                    new Item("MixinParameterDefault", "Mixin Parameter with Default", "Ensure that a mixin parameter with a default value is not reported as unbound."),
+
                     new Item("MixinVsInformalParameter", "Mixin Parameter vs. Informal Parameter", "Informal Paramters vs. Mixin parameter of same name"),
 
                     new Item("inherit/childa", "TAP5-1656 Demo", "Test a reported bug in component inheritance"),

@@ -1,0 +1,8 @@
+<t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+
+
+    <t:actionlink class="testsubject" t:mixins="alttitledefault">
+        the link
+    </t:actionlink>
+
+</t:border>

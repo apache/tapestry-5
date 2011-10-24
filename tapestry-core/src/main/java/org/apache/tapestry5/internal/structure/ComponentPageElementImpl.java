@@ -781,12 +781,19 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             mixinAfterOrderer = null;
         }
 
-        // For some parameters, bindings (from defaults) are provided inside the callback method, so
-        // that is invoked first, before we check for unbound parameters.
-
-        verifyRequiredParametersAreBound();
-
         initializeRenderPhases();
+
+        page.addVerifyListener(new Runnable()
+        {
+            public void run()
+            {
+                // For some parameters, bindings (from defaults) are provided inside the callback method, so
+                // that is invoked first, before we check for unbound parameters.
+
+                verifyRequiredParametersAreBound();
+            }
+        });
+
 
         loaded = true;
     }
@@ -1166,10 +1173,10 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             addUnboundParameterNames(name, unbound, mixinIdToComponentResources.get(name));
         }
 
-        if (unbound.isEmpty())
-            return;
-
-        throw new TapestryException(StructureMessages.missingParameters(unbound, this), this, null);
+        if (!unbound.isEmpty())
+        {
+            throw new TapestryException(StructureMessages.missingParameters(unbound, this), this, null);
+        }
     }
 
     public Locale getLocale()
