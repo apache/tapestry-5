@@ -962,8 +962,9 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         {
             instanceContextFieldName = makeUnique(fieldNames, "instanceContext");
 
-            // TODO: Once we support inheritance, we could use a protected field and only initialize
-            // it once, in the first base class where it is needed.
+            // TODO: We could use a protected field and only initialize
+            // it once, in the first base class where it is needed, though that raises the possibilities
+            // of name conflicts (a subclass might introduce a field with a conflicting name).
 
             FieldNode node = new FieldNode(ACC_PRIVATE | ACC_FINAL, instanceContextFieldName, INSTANCE_CONTEXT_DESC,
                     null, null);
