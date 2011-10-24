@@ -104,7 +104,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
                 "^/" + // The leading slash is recognized but skipped
                         applicationFolderPattern + // The folder containing the application (TAP5-743)
-                        "(((\\w+)/)*(\\w+))" + // A series of folder names leading up to the page name, forming
+                        "(((\\w(?:\\w|-)*)/)*(\\w+))" + // A series of folder names (which allow dashes) leading up to the page name, forming
                         // the logical page name (may include the locale name)
                         "(\\.(\\w+(\\.\\w+)*))?" + // The first dot separates the page name from the nested
                         // component id

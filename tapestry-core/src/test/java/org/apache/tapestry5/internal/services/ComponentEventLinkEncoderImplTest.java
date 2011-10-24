@@ -18,6 +18,7 @@ import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MetaDataConstants;
 import org.apache.tapestry5.TapestryConstants;
 import org.apache.tapestry5.internal.EmptyEventContext;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.*;
@@ -409,5 +410,42 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         assertTrue(parameters.isLoopback());
 
         verify();
+    }
+
+    @Test
+    public void page_name_includes_dash_in_component_event_request()
+    {
+        ComponentClassResolver resolver = mockComponentClassResolver();
+        Request request = mockRequest();
+        LocalizationSetter ls = mockLocalizationSetter();
+        MetaDataLocator metaDataLocator = neverWhitelistProtected();
+
+        train_getParameter(request, InternalConstants.PAGE_CONTEXT_NAME, null);
+        train_getParameter(request, InternalConstants.CONTAINER_PAGE_NAME, null);
+        train_getLocale(request, Locale.ENGLISH);
+
+        ls.setNonPeristentLocaleFromLocaleName("en");
+
+        String path = "/foo-bar/baz.biff";
+        train_getPath(request, path);
+
+        train_setLocaleFromLocaleName(ls, "foo-bar", false);
+
+        train_isPageName(resolver, "foo-bar/baz", true);
+
+        train_canonicalizePageName(resolver, "foo-bar/baz", "foo-bar/Baz");
+
+        replay();
+
+        ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
+                request, null, null, null, null, true, "", metaDataLocator, null);
+
+        ComponentEventRequestParameters parameters = linkEncoder.decodeComponentEventRequest(request);
+
+        assertEquals(parameters.getActivePageName(), "foo-bar/Baz");
+        assertEquals(parameters.getNestedComponentId(), "biff");
+
+        verify();
+
     }
 }
