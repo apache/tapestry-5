@@ -138,10 +138,8 @@ public class CachedWorker implements ComponentClassTransformWorker2
 
     private void adviseMethod(PlasticClass plasticClass, PlasticMethod method)
     {
-        // The key needs to reflect not just the method name, but also the containing
-        // page and component (otherwise, there would be unwanted sharing of cache
-        // between different instances of the same component within or across pages). This
-        // name can't be calculated until page instantiation time.
+        // Every instance of the clas srequires its own per-thread value. This handles the case of multiple
+        // pages containing the component, or the same page containing the component multiple times.
 
         PlasticField cacheField =
                 plasticClass.introduceField(PerThreadValue.class, "cache$" + method.getDescription().methodName);
@@ -156,7 +154,6 @@ public class CachedWorker implements ComponentClassTransformWorker2
         });
 
         Cached annotation = method.getAnnotation(Cached.class);
-
 
         MethodResultCacheFactory factory = createFactory(plasticClass, annotation.watch(), method);
 
