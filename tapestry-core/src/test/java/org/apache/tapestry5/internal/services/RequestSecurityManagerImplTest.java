@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,11 +18,7 @@ import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MetaDataConstants;
 import org.apache.tapestry5.internal.EmptyEventContext;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
-import org.apache.tapestry5.services.ComponentEventLinkEncoder;
-import org.apache.tapestry5.services.MetaDataLocator;
-import org.apache.tapestry5.services.PageRenderRequestParameters;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.*;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -106,7 +102,7 @@ public class RequestSecurityManagerImplTest extends InternalBaseTestCase
     }
 
     private void train_createPageRenderLink(ComponentEventLinkEncoder encoder, PageRenderRequestParameters parameters,
-            Link link)
+                                            Link link)
     {
         expect(encoder.createPageRenderLink(parameters)).andReturn(link);
     }
@@ -115,11 +111,11 @@ public class RequestSecurityManagerImplTest extends InternalBaseTestCase
     public Object[][] check_page_security_data()
     {
         return new Object[][]
-        {
-        { true, true, LinkSecurity.SECURE },
-        { false, false, LinkSecurity.INSECURE },
-        { true, false, LinkSecurity.FORCE_INSECURE },
-        { false, true, LinkSecurity.FORCE_SECURE } };
+                {
+                        {true, true, LinkSecurity.SECURE},
+                        {false, false, LinkSecurity.INSECURE},
+                        {true, false, LinkSecurity.FORCE_INSECURE},
+                        {false, true, LinkSecurity.FORCE_SECURE}};
     }
 
     @Test(dataProvider = "check_page_security_data")
@@ -146,6 +142,36 @@ public class RequestSecurityManagerImplTest extends InternalBaseTestCase
     private static void train_isSecure(MetaDataLocator locator, String pageName, boolean securePage)
     {
         expect(locator.findMeta(MetaDataConstants.SECURE_PAGE, pageName, Boolean.class)).andReturn(securePage);
+    }
+
+    @DataProvider
+    public Object[][] security_disabled_data()
+    {
+        return new Object[][]{
+                {false, LinkSecurity.INSECURE},
+                {true, LinkSecurity.SECURE}
+        };
+    }
+
+    /**
+     * https://issues.apache.org/jira/browse/TAP5-1511
+     */
+    @Test(dataProvider = "security_disabled_data")
+    public void link_security_when_security_is_disabled(boolean secureRequest, LinkSecurity expectedLinkSecurity)
+    {
+        Request request = mockRequest();
+        Response response = mockResponse();
+        MetaDataLocator locator = mockMetaDataLocator();
+
+        train_isSecure(request, secureRequest);
+
+        replay();
+
+        RequestSecurityManager manager = new RequestSecurityManagerImpl(request, response, null, locator, false);
+
+        assertEquals(manager.checkPageSecurity(PAGE_NAME), expectedLinkSecurity);
+
+        verify();
     }
 
 }
