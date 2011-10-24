@@ -56,6 +56,8 @@ public class AjaxResponseRendererImpl implements AjaxResponseRenderer
 
     public AjaxResponseRenderer addCallback(final JavaScriptCallback callback)
     {
+        assert callback != null;
+
         addFilter(new PartialMarkupRendererFilter()
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
@@ -65,6 +67,24 @@ public class AjaxResponseRendererImpl implements AjaxResponseRenderer
                 renderer.renderMarkup(writer, reply);
             }
         });
+
+        return this;
+    }
+
+    public AjaxResponseRenderer addCallback(final Runnable callback)
+    {
+        assert callback != null;
+
+        addFilter(new PartialMarkupRendererFilter()
+        {
+            public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
+            {
+                callback.run();
+
+                renderer.renderMarkup(writer, reply);
+            }
+        });
+
 
         return this;
     }
@@ -80,6 +100,8 @@ public class AjaxResponseRendererImpl implements AjaxResponseRenderer
 
     public AjaxResponseRenderer addCallback(final JSONCallback callback)
     {
+        assert callback != null;
+
         addFilter(new PartialMarkupRendererFilter()
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)

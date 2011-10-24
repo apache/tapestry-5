@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import java.io.IOException;
-
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Events;
@@ -23,15 +21,16 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.data.InsertPosition;
 import org.apache.tapestry5.dom.Element;
-import org.apache.tapestry5.internal.services.PageRenderQueue;
 import org.apache.tapestry5.internal.services.RequestConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ClientBehaviorSupport;
 import org.apache.tapestry5.services.FormSupport;
-import org.apache.tapestry5.services.PartialMarkupRenderer;
-import org.apache.tapestry5.services.PartialMarkupRendererFilter;
+import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
+import org.apache.tapestry5.services.ajax.JSONCallback;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
+
+import java.io.IOException;
 
 /**
  * A way to add new content to an existing Form. The FormInjector emulates its tag from the template (or uses a
@@ -41,7 +40,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * On the client side, a new function, trigger(), is added to the element. Invoking this client-side function will
  * trigger the FormInjector; a request is sent to the server, new content is generated, and the new content is placed
  * before or after (per configuration) the existing FormInjector element.
- * 
+ *
  * @tapestrydoc
  */
 @SupportsInformalParameters
@@ -90,13 +89,13 @@ public class FormInjector implements ClientElement
     @Environmental
     private TrackableComponentEventCallback eventCallback;
 
-    @Inject
-    private PageRenderQueue pageRenderQueue;
-
     private String clientId;
 
     @Inject
     private ComponentResources resources;
+
+    @Inject
+    private AjaxResponseRenderer ajaxResponseRenderer;
 
     private Element clientElement;
 
@@ -147,25 +146,16 @@ public class FormInjector implements ClientElement
      */
     void onInject(EventContext context) throws IOException
     {
-        resources.triggerContextEvent(EventConstants.ACTION, context, eventCallback);
-
-        if (!eventCallback.isAborted())
-            return;
-
-        // Before rendering, allocate a unique element id and record it into the JSON reply.
-
-        PartialMarkupRendererFilter filter = new PartialMarkupRendererFilter()
+        ajaxResponseRenderer.addCallback(new JSONCallback()
         {
-            public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
+            public void run(JSONObject reply)
             {
                 clientId = javascriptSupport.allocateClientId(resources);
 
                 reply.put("elementId", clientId);
-
-                renderer.renderMarkup(writer, reply);
             }
-        };
+        });
 
-        pageRenderQueue.addPartialMarkupRendererFilter(filter);
+        resources.triggerContextEvent(EventConstants.ACTION, context, eventCallback);
     }
 }
