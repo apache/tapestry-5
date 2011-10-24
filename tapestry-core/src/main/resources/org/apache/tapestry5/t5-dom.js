@@ -39,7 +39,7 @@ T5.define("dom", function() {
      */
     function locate(element) {
 
-        if (_.isString(element)) {
+        if (T5._.isString(element)) {
             return document.getElementById(element);
         }
 

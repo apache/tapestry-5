@@ -1249,7 +1249,7 @@ Tapestry.Validator = {
 
     required : function(field, message) {
         $(field).getFieldEventManager().requiredCheck = function(value) {
-            if ((Object.isString(value) && value.strip() == '')
+            if ((T5._.isString(value) && value.strip() == '')
                 || value == null)
                 $(field).showValidationMessage(message);
         };
@@ -1733,7 +1733,7 @@ Tapestry.FieldEventManager = Class.create({
          * error is already noted and presented to the user.
          */
 
-        if (!t.validationError && !(Object.isString(value) && value.blank())) {
+        if (!t.validationError && !(T5._.isString(value) && value.blank())) {
             var translated = this.translator(value);
 
             /*
