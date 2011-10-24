@@ -160,8 +160,7 @@ class PlasticMethodImpl extends PlasticMember implements PlasticMethod, Comparab
         plasticClass.check();
 
         assert field != null;
-
-        // TODO: Ensure that the field is a field of this class.
+        assert field.getPlasticClass() == plasticClass;
 
         // TODO: Better handling error case where delegating to a primitive or object array.
 
@@ -189,8 +188,9 @@ class PlasticMethodImpl extends PlasticMember implements PlasticMethod, Comparab
         plasticClass.check();
 
         assert delegateProvidingMethod != null;
+        assert delegateProvidingMethod.getPlasticClass() == plasticClass;
 
-        // TODO: ensure same class, ensure not primitive/array type
+        // TODO: ensure not primitive/array type
         final MethodDescription providerDescriptor = delegateProvidingMethod.getDescription();
         final String delegateType = providerDescriptor.returnType;
 

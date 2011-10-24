@@ -110,7 +110,6 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
      * have method advice.
      */
     final Set<PlasticMethodImpl> advisedMethods = PlasticInternalUtils.newSet();
-    ;
 
     final NameCache nameCache = new NameCache();
 
@@ -169,7 +168,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
     // Set of methods that need to contribute to the shim and gain access to it
 
-     final Set<PlasticMethodImpl> shimMethods = PlasticInternalUtils.newSet();
+    final Set<PlasticMethodImpl> shimMethods = PlasticInternalUtils.newSet();
 
     /**
      * @param classNode
