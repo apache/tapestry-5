@@ -150,8 +150,7 @@ public class XMLTokenStream
 
                 public String getSystemId()
                 {
-                    return systemId;
-
+                    return html5DTD ? null : systemId;
                 }
 
                 public String getRootName()
@@ -161,7 +160,7 @@ public class XMLTokenStream
 
                 public String getPublicId()
                 {
-                    return publicId;
+                    return html5DTD ? null : publicId;
                 }
             };
 
@@ -271,6 +270,8 @@ public class XMLTokenStream
 
     private Location exceptionLocation;
 
+    private boolean html5DTD;
+
     public XMLTokenStream(Resource resource, Map<String, URL> publicIdToURL)
     {
         this.resource = resource;
@@ -325,8 +326,11 @@ public class XMLTokenStream
         {
             String firstLine = reader.readLine();
 
-            if ("<!DOCTYPE html>".equals(firstLine))
+            if ("<!DOCTYPE html>".equalsIgnoreCase(firstLine))
             {
+                // When we hit the doctype later, ignore the transitional PUBLIC and SYSTEM ids and
+                // treat it like a proper HTML5 doctype.
+                html5DTD = true;
                 return substituteTransitionalDoctype(reader);
             }
 

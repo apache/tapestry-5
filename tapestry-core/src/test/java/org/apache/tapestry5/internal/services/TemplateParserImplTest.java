@@ -962,6 +962,9 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         assertEquals(tokens.size(), 5);
 
+        DTDToken token0 = get(tokens, 0);
+        assertEquals(token0.toString(), "DTD[name=html; publicId=null; systemId=null]");
+
         TextToken token3 = get(tokens, 3);
 
         assertEquals(token3.text, "\u00A92011\u00A0Apache");
