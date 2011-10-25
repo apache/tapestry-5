@@ -28,6 +28,7 @@ import org.apache.tapestry5.plastic.MethodInvocation;
 import org.apache.tapestry5.plastic.PlasticUtils;
 import org.slf4j.Logger;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Named;
 import java.io.Closeable;
 import java.io.IOException;
@@ -1572,11 +1573,16 @@ public class InternalUtils
         });
     }
 
+    private static boolean hasAnnotation(AccessibleObject member, Class<? extends Annotation> annotationType)
+    {
+        return member.getAnnotation(annotationType) != null;
+    }
+
     private static <T> void extendPlanForPostInjectionMethods(ConstructionPlan<T> plan, OperationTracker tracker, ObjectLocator locator, InjectionResources resources, Class<T> instantiatedClass)
     {
         for (Method m : instantiatedClass.getMethods())
         {
-            if (m.getAnnotation(PostInjection.class) != null)
+            if (hasAnnotation(m, PostInjection.class) || hasAnnotation(m, PostConstruct.class))
             {
                 extendPlanForPostInjectionMethod(plan, tracker, locator, resources, m);
             }
