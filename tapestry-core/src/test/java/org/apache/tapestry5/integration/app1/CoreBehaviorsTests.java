@@ -1261,6 +1261,12 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         // load invocation order)
         assertEchoMixins("defaultbinding", "goodbye", 0, -1, -1, 1, false);
         assertText("mypropertyoutput5", "goodbye");
+        
+        // binding to a published parameter
+        assertText("publishedparameter_before", "publishedvalue-before");
+        assertText("p3-value", "publishedvaluetemporaryvalue");
+        assertText("publishedparameter_after", "publishedvalue-after");
+        assertText("mypropertyoutput6", "publishedvalue");
     }
 
     /**
@@ -1429,7 +1435,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
                 "Failure binding parameter field 'boundParameter' of mixin BindParameterNoSuchParameter:throwexception$echovalue2 (type org.apache.tapestry5.integration.app1.mixins.EchoValue2)",
 
-                "Containing component org.apache.tapestry5.corelib.components.Any does not contain a formal parameter matching any of boundParameter, value.");
+                "Containing component org.apache.tapestry5.corelib.components.Any does not contain a formal parameter or a published parameter matching any of boundParameter, value.");
     }
 
     @Test

@@ -22,6 +22,7 @@
       <t:textfield t:id="testmixin3" value="myproperty3" t:mixins="echovalue3"/>
       <t:textfield t:id="multimixins" value="myproperty4" t:mixins="echovalue::before:*, echovalue2::before:echovalue3, echovalue3"/>
       <t:textonlyondisabledtextfield t:id="defaultbinding" value="myproperty5" disabled="true" t:mixins="echovalue"/>
+      <t:publish1 value="prop:myproperty6" t:mixins="echoValueWithId" id="literal:publishedparameter"/>
   </t:form>
 
   <div id="mypropertyoutput">${myproperty}</div>
@@ -29,4 +30,5 @@
   <div id="mypropertyoutput3">${myproperty3}</div>
   <div id="mypropertyoutput4">${myproperty4}</div>
   <div id="mypropertyoutput5">${myproperty5}</div>
+  <div id="mypropertyoutput6">${myproperty6}</div>
 </html>

@@ -38,6 +38,9 @@ public class BindParameterDemo
     @Property
     private String myproperty5;
     
+    @Property
+    private String myproperty6;
+    
     @SetupRender
     void initMyprop()
     {
@@ -46,5 +49,6 @@ public class BindParameterDemo
         myproperty3="hello";
         myproperty4="supervalue";
         myproperty5="goodbye";
+        myproperty6="publishedvalue";
     }
 }
