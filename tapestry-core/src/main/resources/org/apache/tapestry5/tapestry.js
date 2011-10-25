@@ -1469,7 +1469,7 @@ Tapestry.ErrorPopup = Class.create({
 
             var div = this.outerDiv;
 
-            _.delay(function() {
+            T5._.delay(function() {
                 div.hide();
             }, this.IE_FADE_TIME);
 
