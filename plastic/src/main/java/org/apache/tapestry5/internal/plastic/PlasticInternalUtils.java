@@ -14,30 +14,18 @@
 
 package org.apache.tapestry5.internal.plastic;
 
-import org.apache.tapestry5.internal.plastic.asm.ClassReader;
-import org.apache.tapestry5.internal.plastic.asm.Type;
+import org.apache.tapestry5.internal.plastic.asm.*;
+import org.apache.tapestry5.internal.plastic.asm.commons.JSRInlinerAdapter;
 import org.apache.tapestry5.internal.plastic.asm.tree.ClassNode;
 import org.apache.tapestry5.internal.plastic.asm.tree.MethodNode;
 import org.apache.tapestry5.internal.plastic.asm.util.TraceClassVisitor;
 import org.apache.tapestry5.plastic.InstanceContext;
 import org.apache.tapestry5.plastic.MethodDescription;
 
-import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.lang.reflect.Array;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -239,8 +227,7 @@ public class PlasticInternalUtils
      * Strips out leading and trailing underscores, leaving the real property name.
      * In addition, "m_foo" is converted to "foo".
      *
-     * @param fieldName
-     *         to convert
+     * @param fieldName to convert
      * @return the property name
      */
     public static String toPropertyName(String fieldName)
@@ -257,8 +244,7 @@ public class PlasticInternalUtils
     /**
      * Capitalizes the input string, converting the first character to upper case.
      *
-     * @param input
-     *         a non-empty string
+     * @param input a non-empty string
      * @return the same string if already capitalized, or a capitalized version
      */
     public static String capitalize(String input)
@@ -287,10 +273,8 @@ public class PlasticInternalUtils
     }
 
     /**
-     * @param loader
-     *         class loader to look up in
-     * @param javaName
-     *         java name is Java source format (e.g., "int", "int[]", "java.lang.String", "java.lang.String[]", etc.)
+     * @param loader   class loader to look up in
+     * @param javaName java name is Java source format (e.g., "int", "int[]", "java.lang.String", "java.lang.String[]", etc.)
      * @return class instance
      * @throws ClassNotFoundException
      */
@@ -433,7 +417,18 @@ public class PlasticInternalUtils
 
         ClassNode result = new ClassNode();
 
-        cr.accept(result, 0);
+        ClassVisitor adapter = new ClassAdapter(result)
+        {
+            @Override
+            public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions)
+            {
+                MethodVisitor delegate = super.visitMethod(access, name, desc, signature, exceptions);
+
+                return new JSRInlinerAdapter(delegate, access, name, desc, signature, exceptions);
+            }
+        };
+
+        cr.accept(adapter, 0);
 
         return result;
     }
