@@ -37,6 +37,11 @@ import java.util.Map;
  */
 public class XMLTokenStream
 {
+
+    public static final String TRANSITIONAL_DOCTYPE = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
+
+    private static final DTDData HTML5_DTD_DATA = new DTDData("html", null, null);
+
     private final class SaxHandler implements LexicalHandler, EntityResolver, ContentHandler
     {
         private Locator locator;
@@ -62,7 +67,10 @@ public class XMLTokenStream
 
             if (cachedLocation == null)
             {
-                cachedLocation = new LocationImpl(resource, line);
+                // lineOffset accounts for the extra line when a doctype is injected. The line number reported
+                // from the XML parser inlcudes the phantom doctype line, the lineOffset is used to subtract one
+                // to get the real line number.
+                cachedLocation = new LocationImpl(resource, line + lineOffset);
             }
 
             return cachedLocation;
@@ -138,6 +146,7 @@ public class XMLTokenStream
 
         public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException
         {
+            characters(ch, start, length);
         }
 
         public void startDTD(final String name, final String publicId, final String systemId)
@@ -145,26 +154,12 @@ public class XMLTokenStream
         {
             insideDTD = true;
 
-            DTDData data = new DTDData()
+            if (!ignoreDTD)
             {
+                DTDData data = html5DTD ? HTML5_DTD_DATA : new DTDData(name, publicId, systemId);
 
-                public String getSystemId()
-                {
-                    return html5DTD ? null : systemId;
-                }
-
-                public String getRootName()
-                {
-                    return name;
-                }
-
-                public String getPublicId()
-                {
-                    return html5DTD ? null : publicId;
-                }
-            };
-
-            add(XMLTokenType.DTD).dtdData = data;
+                add(XMLTokenType.DTD).dtdData = data;
+            }
         }
 
         public void endDocument() throws SAXException
@@ -182,12 +177,21 @@ public class XMLTokenStream
             this.locator = locator;
         }
 
+        /**
+         * Checks for the extra namespace injected when the transitional doctype is injected (which
+         * occurs when the template contains no doctype).
+         */
+        private boolean ignoreURI(String uri)
+        {
+            return ignoreDTD && uri.equals("http://www.w3.org/1999/xhtml");
+        }
+
         public void startElement(String uri, String localName, String qName, Attributes attributes)
                 throws SAXException
         {
             XMLToken token = add(XMLTokenType.START_ELEMENT);
 
-            token.uri = uri;
+            token.uri = ignoreURI(uri) ? "" : uri;
             token.localName = localName;
             token.qName = qName;
 
@@ -227,6 +231,11 @@ public class XMLTokenStream
 
         public void startPrefixMapping(String prefix, String uri) throws SAXException
         {
+            if (ignoreDTD && prefix.equals("") && uri.equals("http://www.w3.org/1999/xhtml"))
+            {
+                return;
+            }
+
             namespaceMappings.add(new NamespaceMapping(prefix, uri));
         }
 
@@ -270,7 +279,9 @@ public class XMLTokenStream
 
     private Location exceptionLocation;
 
-    private boolean html5DTD;
+    private boolean html5DTD, ignoreDTD;
+
+    private int lineOffset;
 
     public XMLTokenStream(Resource resource, Map<String, URL> publicIdToURL)
     {
@@ -314,59 +325,94 @@ public class XMLTokenStream
         }
     }
 
+    enum State
+    {
+        MAYBE_XML, MAYBE_DOCTYPE, JUST_COPY
+    }
+
     private InputStream openStream() throws IOException
     {
-
         InputStream rawStream = resource.openStream();
 
         InputStreamReader rawReader = new InputStreamReader(rawStream);
         LineNumberReader reader = new LineNumberReader(rawReader);
 
-        try
-        {
-            String firstLine = reader.readLine();
-
-            if ("<!DOCTYPE html>".equalsIgnoreCase(firstLine))
-            {
-                // When we hit the doctype later, ignore the transitional PUBLIC and SYSTEM ids and
-                // treat it like a proper HTML5 doctype.
-                html5DTD = true;
-                return substituteTransitionalDoctype(reader);
-            }
-
-            // Open a fresh stream for the parser to operate on.
-
-            return resource.openStream();
-
-        } finally
-        {
-            reader.close();
-        }
-    }
-
-    private InputStream substituteTransitionalDoctype(LineNumberReader reader) throws IOException
-    {
         ByteArrayOutputStream bos = new ByteArrayOutputStream(5000);
         PrintWriter writer = new PrintWriter(bos);
 
-        writer.println("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+        State state = State.MAYBE_XML;
 
-        while (true)
+        try
         {
-            String line = reader.readLine();
-            if (line == null)
+            while (true)
             {
-                break;
+                String line = reader.readLine();
+
+                if (line == null)
+                {
+                    break;
+                }
+
+                switch (state)
+                {
+
+                    case MAYBE_XML:
+
+                        if (line.toLowerCase().startsWith("<?xml"))
+                        {
+                            writer.println(line);
+                            state = State.MAYBE_DOCTYPE;
+                            continue;
+                        }
+
+                    case MAYBE_DOCTYPE:
+
+                        if (line.trim().length() == 0)
+                        {
+                            writer.println(line);
+                            continue;
+                        }
+
+                        String lineLower = line.toLowerCase();
+
+                        if (lineLower.equals("<!doctype html>"))
+                        {
+                            html5DTD = true;
+                            writer.println(TRANSITIONAL_DOCTYPE);
+                            state = State.JUST_COPY;
+                            continue;
+                        }
+
+
+                        if (lineLower.startsWith("<!doctype"))
+                        {
+                            writer.println(line);
+                            state = State.JUST_COPY;
+                            continue;
+                        }
+
+                        // No doctype, let's provide one.
+
+                        ignoreDTD = true;
+                        lineOffset = -1;
+                        writer.println(TRANSITIONAL_DOCTYPE);
+
+                        state = State.JUST_COPY;
+
+                        // And drop down to writing out the actual line, and all following lines.
+
+                    case JUST_COPY:
+                        writer.println(line);
+                }
             }
-
-            writer.println(line);
+        } finally
+        {
+            writer.close();
+            reader.close();
         }
-
-        writer.close();
 
         return new ByteArrayInputStream(bos.toByteArray());
     }
-
 
     private XMLToken token()
     {

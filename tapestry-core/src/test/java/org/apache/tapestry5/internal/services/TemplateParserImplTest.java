@@ -985,4 +985,22 @@ public class TemplateParserImplTest extends InternalBaseTestCase
             assertMessageContains(ex, "Extension point 'batman' is already defined for this template.");
         }
     }
+
+    @Test
+    public void html_entities_inside_template_without_doctype_are_allowed() throws Exception
+    {
+
+        List<TemplateToken> tokens = tokens("html_entities.tml");
+
+        assertEquals(tokens.size(), 3);
+
+        StartElementToken token0 = get(tokens, 0);
+
+        assertEquals(token0.name, "html");
+
+        TextToken token1 = get(tokens, 1);
+
+        assertEquals(token1.text, "\n[\u00A0]\n");
+
+    }
 }

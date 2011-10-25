@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.net.URL;
-import java.util.Map;
-
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.parser.ComponentTemplate;
 import org.apache.tapestry5.ioc.Invokable;
@@ -24,11 +21,14 @@ import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 
+import java.net.URL;
+import java.util.Map;
+
 /**
  * Parses Tapestry XML template files into {@link ComponentTemplate} instances.
  * A new instance of {@link SaxTemplateParser} is created for each document
  * parsed.
- * 
+ *
  * @since 5.1.0.0
  */
 public class TemplateParserImpl implements TemplateParser
@@ -41,8 +41,8 @@ public class TemplateParserImpl implements TemplateParser
 
     public TemplateParserImpl(Map<String, URL> configuration,
 
-    @Symbol(SymbolConstants.COMPRESS_WHITESPACE)
-    boolean defaultCompressWhitespace, OperationTracker tracker)
+                              @Symbol(SymbolConstants.COMPRESS_WHITESPACE)
+                              boolean defaultCompressWhitespace, OperationTracker tracker)
     {
         this.configuration = configuration;
         this.defaultCompressWhitespace = defaultCompressWhitespace;
@@ -61,5 +61,10 @@ public class TemplateParserImpl implements TemplateParser
                 return new SaxTemplateParser(templateResource, configuration).parse(defaultCompressWhitespace);
             }
         });
+    }
+
+    public Map<String, URL> getDTDURLMappings()
+    {
+        return configuration;
     }
 }

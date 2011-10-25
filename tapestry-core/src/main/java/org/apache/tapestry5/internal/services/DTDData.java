@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,14 +19,17 @@ import org.xml.sax.ext.LexicalHandler;
 /**
  * A capturing of the data from
  * {@link LexicalHandler#startDTD(String, String, String)}.
- * 
+ *
  * @since 5.2.0
  */
-public interface DTDData
+public class DTDData
 {
-    String getRootName();
+    public final String rootName, publicId, systemId;
 
-    String getPublicId();
-
-    String getSystemId();
+    public DTDData(String rootName, String publicId, String systemId)
+    {
+        this.rootName = rootName;
+        this.publicId = publicId;
+        this.systemId = systemId;
+    }
 }

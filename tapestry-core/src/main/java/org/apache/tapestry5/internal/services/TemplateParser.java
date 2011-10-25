@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 The Apache Software Foundation
+// Copyright 2006, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
 import java.net.URL;
+import java.util.Map;
 
 /**
  * Parses a resource into a {@link org.apache.tapestry5.internal.parser.ComponentTemplate}. The service's configuration
@@ -37,4 +38,13 @@ public interface TemplateParser
      * @throws RuntimeException if the resource does not exist, or if there is any kind of parse error
      */
     ComponentTemplate parseTemplate(Resource templateResource);
+
+    /**
+     * Returns a mapping from URL string to a local equivalent URL, used to avoid attempting to pull
+     * well-known DTDs down over the wire while parsing XML.
+     *
+     * @since 5.3
+     */
+    Map<String, URL> getDTDURLMappings();
 }
+

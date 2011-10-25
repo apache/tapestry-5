@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -293,8 +293,8 @@ public class SaxTemplateParser
     {
         DTDData dtdInfo = tokenStream.getDTDInfo();
 
-        tokenAccumulator.add(new DTDToken(dtdInfo.getRootName(), dtdInfo.getPublicId(), dtdInfo
-                .getSystemId(), getLocation()));
+        tokenAccumulator.add(new DTDToken(dtdInfo.rootName, dtdInfo.publicId, dtdInfo
+                .systemId, getLocation()));
     }
 
     private Location getLocation()

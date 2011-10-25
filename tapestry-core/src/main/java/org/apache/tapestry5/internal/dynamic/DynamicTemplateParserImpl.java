@@ -14,9 +14,8 @@
 
 package org.apache.tapestry5.internal.dynamic;
 
-import java.util.Map;
-
 import org.apache.tapestry5.internal.services.PageSource;
+import org.apache.tapestry5.internal.services.TemplateParser;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -28,6 +27,8 @@ import org.apache.tapestry5.services.UpdateListenerHub;
 import org.apache.tapestry5.services.dynamic.DynamicTemplate;
 import org.apache.tapestry5.services.dynamic.DynamicTemplateParser;
 
+import java.util.Map;
+
 public class DynamicTemplateParserImpl implements DynamicTemplateParser, UpdateListener
 {
     private final Map<Resource, DynamicTemplate> cache = CollectionFactory.newConcurrentMap();
@@ -38,10 +39,13 @@ public class DynamicTemplateParserImpl implements DynamicTemplateParser, UpdateL
 
     private final URLChangeTracker tracker;
 
-    public DynamicTemplateParserImpl(ClasspathURLConverter converter, BindingSource bindingSource, PageSource pageSource)
+    private final TemplateParser componentTemplateParser;
+
+    public DynamicTemplateParserImpl(ClasspathURLConverter converter, BindingSource bindingSource, PageSource pageSource, TemplateParser componentTemplateParser)
     {
         this.bindingSource = bindingSource;
         this.pageSource = pageSource;
+        this.componentTemplateParser = componentTemplateParser;
 
         tracker = new URLChangeTracker(converter);
     }
@@ -69,7 +73,7 @@ public class DynamicTemplateParserImpl implements DynamicTemplateParser, UpdateL
 
     private DynamicTemplate doParse(Resource resource)
     {
-        return new DynamicTemplateSaxParser(resource, bindingSource).parse();
+        return new DynamicTemplateSaxParser(resource, bindingSource, componentTemplateParser.getDTDURLMappings()).parse();
     }
 
     public void checkForUpdates()

@@ -14,15 +14,6 @@
 
 package org.apache.tapestry5.internal.dynamic;
 
-import java.net.URL;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.xml.namespace.QName;
-
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Block;
@@ -44,7 +35,16 @@ import org.apache.tapestry5.services.BindingSource;
 import org.apache.tapestry5.services.dynamic.DynamicDelegate;
 import org.apache.tapestry5.services.dynamic.DynamicTemplate;
 
-/** Does the heavy lifting for {@link DynamicTemplateParserImpl}. */
+import javax.xml.namespace.QName;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * Does the heavy lifting for {@link DynamicTemplateParserImpl}.
+ */
 public class DynamicTemplateSaxParser
 {
     private final Resource resource;
@@ -52,8 +52,6 @@ public class DynamicTemplateSaxParser
     private final BindingSource bindingSource;
 
     private final XMLTokenStream tokenStream;
-
-    private final Map<String, URL> publicIdToURL = Collections.emptyMap();
 
     private static final Pattern PARAM_ID_PATTERN = Pattern.compile("^param:(\\p{Alpha}\\w*)$",
             Pattern.CASE_INSENSITIVE);
@@ -69,7 +67,7 @@ public class DynamicTemplateSaxParser
         }
     };
 
-    public DynamicTemplateSaxParser(Resource resource, BindingSource bindingSource)
+    public DynamicTemplateSaxParser(Resource resource, BindingSource bindingSource, Map<String, URL> publicIdToURL)
     {
         this.resource = resource;
         this.bindingSource = bindingSource;
@@ -84,8 +82,7 @@ public class DynamicTemplateSaxParser
             tokenStream.parse();
 
             return toDynamicTemplate(root());
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             throw new TapestryException(String.format("Failure parsing dynamic template %s: %s", resource,
                     InternalUtils.toMessage(ex)), tokenStream.getLocation(), ex);
@@ -219,7 +216,7 @@ public class DynamicTemplateSaxParser
     }
 
     private static DynamicTemplateElement createElementWriterElement(final String elementURI, final String elementName,
-            final List<DynamicTemplateAttribute> attributes, List<DynamicTemplateElement> body)
+                                                                     final List<DynamicTemplateAttribute> attributes, List<DynamicTemplateElement> body)
     {
         final Flow<DynamicTemplateElement> bodyFlow = F.flow(body).reverse();
 
@@ -269,8 +266,7 @@ public class DynamicTemplateSaxParser
                     Block block = delegate.getBlock(blockId);
 
                     queue.push((RenderCommand) block);
-                }
-                catch (Exception ex)
+                } catch (Exception ex)
                 {
                     throw new TapestryException(String.format(
                             "Exception rendering block '%s' as part of dynamic template: %s", blockId,
@@ -443,7 +439,7 @@ public class DynamicTemplateSaxParser
     }
 
     private static Mapper<DynamicDelegate, String> createExpansionExtractor(final String expression,
-            final Location location, final BindingSource bindingSource)
+                                                                            final Location location, final BindingSource bindingSource)
     {
         return new Mapper<DynamicDelegate, String>()
         {
@@ -458,8 +454,7 @@ public class DynamicTemplateSaxParser
                     Object boundValue = binding.get();
 
                     return boundValue == null ? null : boundValue.toString();
-                }
-                catch (Throwable t)
+                } catch (Throwable t)
                 {
                     throw new TapestryException(InternalUtils.toMessage(t), location, t);
                 }
