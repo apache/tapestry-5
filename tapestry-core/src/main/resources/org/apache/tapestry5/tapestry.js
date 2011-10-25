@@ -1654,7 +1654,7 @@ Tapestry.FieldEventManager = Class.create({
 
     getIcon : function() {
         if (!this.icon) {
-            this.com = $(this.field.id + "_icon");
+            this.icon = $(this.field.id + "_icon");
         }
 
         return this.icon;
