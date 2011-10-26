@@ -45,6 +45,7 @@ public class AssetsModule
         configuration.add(SymbolConstants.MINIFICATION_ENABLED, SymbolConstants.PRODUCTION_MODE_VALUE);
         configuration.add(SymbolConstants.GZIP_COMPRESSION_ENABLED, "true");
         configuration.add(SymbolConstants.COMBINE_SCRIPTS, SymbolConstants.PRODUCTION_MODE_VALUE);
+        configuration.add(SymbolConstants.ASSET_URL_FULL_QUALIFIED, "false");
     }
 
     // The use of decorators is to allow third-parties to get their own extensions

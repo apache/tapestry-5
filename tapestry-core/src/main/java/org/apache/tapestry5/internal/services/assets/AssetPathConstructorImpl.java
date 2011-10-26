@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.services.assets;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.services.RequestConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 
@@ -26,15 +27,26 @@ public class AssetPathConstructorImpl implements AssetPathConstructor
 
     private final String prefix;
 
+    private final BaseURLSource baseURLSource;
+
+    private final boolean fullyQualified;
+
     public AssetPathConstructorImpl(Request request,
+                                    BaseURLSource baseURLSource,
 
                                     @Symbol(SymbolConstants.APPLICATION_VERSION)
                                     String applicationVersion,
 
                                     @Symbol(SymbolConstants.APPLICATION_FOLDER)
-                                    String applicationFolder)
+                                    String applicationFolder,
+
+                                    @Symbol(SymbolConstants.ASSET_URL_FULL_QUALIFIED)
+                                    boolean fullyQualified)
     {
         this.request = request;
+        this.baseURLSource = baseURLSource;
+
+        this.fullyQualified = fullyQualified;
 
         String folder = applicationFolder.equals("") ? "" : "/" + applicationFolder;
 
@@ -43,7 +55,12 @@ public class AssetPathConstructorImpl implements AssetPathConstructor
 
     public String constructAssetPath(String virtualFolder, String path)
     {
-        StringBuilder builder = new StringBuilder(request.getContextPath());
+        StringBuilder builder = new StringBuilder();
+
+        if (fullyQualified)
+            builder.append(baseURLSource.getBaseURL(request.isSecure()));
+
+        builder.append(request.getContextPath());
         builder.append(prefix);
         builder.append(virtualFolder);
         builder.append('/');

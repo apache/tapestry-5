@@ -19,6 +19,7 @@ import org.apache.tapestry5.internal.services.assets.AssetPathConstructorImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.services.AssetFactory;
+import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.Context;
 import org.apache.tapestry5.services.Request;
 import org.testng.annotations.Test;
@@ -31,7 +32,7 @@ public class ContextAssetFactoryTest extends InternalBaseTestCase
     public void root_resource()
     {
         Context context = mockContext();
-        Request request = mockRequest();
+        // Request request = mockRequest();
 
         replay();
 
@@ -48,14 +49,63 @@ public class ContextAssetFactoryTest extends InternalBaseTestCase
         Context context = mockContext();
         Request request = mockRequest();
 
+        BaseURLSource baseURLSource = newMock(BaseURLSource.class);
+
         Resource r = new ContextResource(context, "foo/Bar.txt");
 
         train_getContextPath(request, "/context");
 
         replay();
 
-        AssetFactory factory = new ContextAssetFactory(new AssetPathConstructorImpl(request, "4.5.6", ""), context,
-                new IdentityAssetPathConverter());
+        AssetFactory factory = new ContextAssetFactory(
+                                    new AssetPathConstructorImpl(request,
+                                                                baseURLSource,
+                                                                "4.5.6",
+                                                                "",
+                                                                false
+                                                            ),
+                                    context,
+                                    new IdentityAssetPathConverter()
+                                );
+
+        Asset asset = factory.createAsset(r);
+
+        assertSame(asset.getResource(), r);
+        assertEquals(asset.toClientURL(), "/context/assets/4.5.6/ctx/foo/Bar.txt");
+
+        // In real life, toString() is the same as toClientURL(), but we're testing
+        // that the optimize method is getting called, basically.
+
+        assertEquals(asset.toString(), "/context/assets/4.5.6/ctx/foo/Bar.txt");
+
+        verify();
+    }
+
+    @Test
+    public void asset_client_URL_fully_qualified()
+    {
+        Context context = mockContext();
+        Request request = mockRequest();
+
+        BaseURLSource baseURLSource = newMock(BaseURLSource.class);
+
+        Resource r = new ContextResource(context, "foo/Bar.txt");
+
+        train_getContextPath(request, "/context");
+        train_getBaseSource(baseURLSource, request);
+
+        replay();
+
+        AssetFactory factory = new ContextAssetFactory(
+                                    new AssetPathConstructorImpl(request,
+                                                                baseURLSource,
+                                                                "4.5.6",
+                                                                "",
+                                                                true
+                                                            ),
+                                    context,
+                                    new IdentityAssetPathConverter()
+                                );
 
         Asset asset = factory.createAsset(r);
 

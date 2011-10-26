@@ -171,6 +171,12 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         expect(request.getContextPath()).andReturn(contextPath).atLeastOnce();
     }
 
+    protected final void train_getBaseSource(BaseURLSource baseURLSource, Request request)
+    {
+        expect(request.isSecure()).andReturn(false);
+        expect(baseURLSource.getBaseURL(false)).andReturn("");
+    }
+
     protected final void train_resolvePageClassNameToPageName(ComponentClassResolver resolver, String pageClassName,
                                                               String pageName)
     {

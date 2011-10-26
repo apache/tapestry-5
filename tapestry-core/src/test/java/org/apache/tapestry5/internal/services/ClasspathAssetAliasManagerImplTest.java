@@ -18,6 +18,7 @@ import org.apache.tapestry5.internal.services.assets.AssetPathConstructorImpl;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
+import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.Request;
 import org.testng.annotations.DataProvider;
@@ -79,12 +80,14 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
     {
         Request request = mockRequest();
 
+        BaseURLSource baseURLSource = newMock(BaseURLSource.class);
+
         train_getContextPath(request, "/ctx");
 
         replay();
 
         ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(new AssetPathConstructorImpl(request,
-                APP_VERSION, ""), configuration());
+                baseURLSource, APP_VERSION, "", false), configuration());
 
         String expectedPath = "/ctx" + RequestConstants.ASSET_PATH_PREFIX + APP_VERSION + "/" + expectedClientURL;
         assertEquals(manager.toClientURL(resourcePath), expectedPath);

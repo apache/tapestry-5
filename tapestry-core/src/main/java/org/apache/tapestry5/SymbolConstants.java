@@ -353,4 +353,11 @@ public class SymbolConstants
      * @since 5.3
      */
     public static final String APPLICATION_FOLDER = "tapestry.application-folder";
+
+    /**
+     * Boolean value to indicate if every {@link  org.apache.tapestry5.Asset2} should be fully qualified or not.
+     * Default to <code>false</code> meaning no Asset URL will be fully qualified.
+     * @since 5.3
+     */
+    public static final String ASSET_URL_FULL_QUALIFIED = "tapestry.asset-url-fully-qualified";
 }
