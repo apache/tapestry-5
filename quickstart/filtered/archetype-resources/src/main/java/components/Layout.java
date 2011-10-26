@@ -1,6 +1,4 @@
-package $
-
-{package}.components;
+package ${package}.components;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;

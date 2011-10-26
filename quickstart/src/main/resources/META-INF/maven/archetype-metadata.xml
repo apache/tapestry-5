@@ -65,13 +65,17 @@
 
         <fileSet filtered="true" packaged="false">
             <directory>.</directory>
-            <includes>build.gradle</includes>
+            <includes>
+                <include>build.gradle</include>
+            </includes>
         </fileSet>
 
         <fileSet filtered="false" packaged="false">
             <directory>.</directory>
-            <includes>gradlew*</includes>
-            <includes>gradle/wrapper/*</includes>
+            <includes>
+                <include>gradlew*</include>
+                <include>gradle/wrapper/*</include>
+            </includes>
         </fileSet>
 
     </fileSets>
