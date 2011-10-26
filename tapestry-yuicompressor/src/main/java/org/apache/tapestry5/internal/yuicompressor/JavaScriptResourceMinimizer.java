@@ -130,7 +130,7 @@ public class JavaScriptResourceMinimizer extends AbstractMinimizer
                     break;
                 }
 
-                output.write(buffer, 0.length);
+                output.write(buffer, 0, length);
             }
         } finally
         {
