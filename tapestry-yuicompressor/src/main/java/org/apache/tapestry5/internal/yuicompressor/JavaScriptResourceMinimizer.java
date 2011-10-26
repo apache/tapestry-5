@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.yuicompressor;
 import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.assets.StreamableResource;
 import org.mozilla.javascript.ErrorReporter;
 import org.mozilla.javascript.EvaluatorException;
@@ -101,9 +102,40 @@ public class JavaScriptResourceMinimizer extends AbstractMinimizer
             logInputLines(resource, errorLines);
 
             throw ex;
+        } catch (Exception ex)
+        {
+            logger.error(String.format("Exception minimizing %s: %s", resource, InternalUtils.toMessage(ex), ex));
+
+            streamUnminimized(resource, output);
         }
 
         reader.close();
+    }
+
+    private void streamUnminimized(StreamableResource resource, Writer output) throws IOException
+    {
+        Reader reader = toReader(resource);
+
+        char[] buffer = new char[5000];
+
+        try
+        {
+
+            while (true)
+            {
+                int length = reader.read(buffer);
+
+                if (length < 0)
+                {
+                    break;
+                }
+
+                output.write(buffer, 0.length);
+            }
+        } finally
+        {
+            reader.close();
+        }
     }
 
     private void logInputLines(StreamableResource resource, Set<Integer> lines)
