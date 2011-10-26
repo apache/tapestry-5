@@ -6,6 +6,7 @@ task processFiltered(type: Copy) {
     srcDir = file('filtered')
 
     inputs.file srcDir
+    inputs.file file("../build.gradle")
     outputs.dir sourceSets.main.classesDir
 
     from srcDir
