@@ -1,0 +1,11 @@
+<plugin>
+    <description>Archetype for creating a basic Tapestry 5 application.</description>
+    <groupId>org.apache.tapestry</groupId>
+    <artifactId>quickstart</artifactId>
+    <version>@quickstartVersion@</version>
+    <goalPrefix>quickstart</goalPrefix>
+    <isolatedRealm>false</isolatedRealm>
+    <inheritedByDefault>true</inheritedByDefault>
+    <mojos/>
+    <dependencies/>
+</plugin>

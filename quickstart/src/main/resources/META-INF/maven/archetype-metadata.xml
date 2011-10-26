@@ -61,5 +61,18 @@
             <directory>src/site</directory>
         </fileSet>
 
+        <!-- Now the Gradle stuff -->
+
+        <fileSet filtered="true" packaged="false">
+            <directory>.</directory>
+            <includes>build.gradle</includes>
+        </fileSet>
+
+        <fileSet filtered="false" packaged="false">
+            <directory>.</directory>
+            <includes>gradlew*</includes>
+            <includes>gradle/wrapper/*</includes>
+        </fileSet>
+
     </fileSets>
 </archetype-descriptor>

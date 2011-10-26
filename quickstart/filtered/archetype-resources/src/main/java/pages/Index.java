@@ -1,4 +1,6 @@
-package ${package}.pages;
+package $
+
+{package}.pages;
 
 import java.util.Date;
 import org.apache.tapestry5.annotations.*;

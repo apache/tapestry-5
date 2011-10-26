@@ -11,7 +11,7 @@ group = "${groupId}"
 version = "${version}"
 
 repositories {
-  mavenCentral()
+    mavenCentral()
 
     // All things JBoss/Javassist/Hibernate
     mavenRepo urls: "http://repository.jboss.org/nexus/content/groups/public/"
@@ -30,7 +30,7 @@ repositories {
 // See http://jira.codehaus.org/browse/GRADLE-784
 
 configurations {
-  provided
+    provided
 }
 
 sourceSets {
@@ -45,15 +45,15 @@ sourceSets {
 
 dependencies {
 
-  compile "org.apache.tapestry:tapestry-core:@tapestryReleaseVersion@"
+    compile "org.apache.tapestry:tapestry-core:@tapestryReleaseVersion@"
 
-  // This adds automatic compression of JavaScript and CSS in production mode:
-  compile "org.apache.tapestry:tapestry-yuicompressor:@tapestryReleaseVersion@"
+    // This adds automatic compression of JavaScript and CSS in production mode:
+    compile "org.apache.tapestry:tapestry-yuicompressor:@tapestryReleaseVersion@"
 
-  // Uncomment this to add support for file uploads:
-  // compile "org.apache.tapestry:tapestry-upload:@tapestryReleaseVersion@"
+    // Uncomment this to add support for file uploads:
+    // compile "org.apache.tapestry:tapestry-upload:@tapestryReleaseVersion@"
 
-  provided "javax.servlet:servlet-api:@servletApiReleaseVersion@"
+    provided "javax.servlet:servlet-api:@servletApiReleaseVersion@"
 }
 
 test {

@@ -247,7 +247,7 @@ task clean(type: Delete) {
 task continuousIntegration(dependsOn: [subprojects.build, 'aggregateJavadoc', subprojects.uploadPublished],
         description: "Task executed on Jenkins CI server after SVN commits")
 
-task generateRelease(dependsOn: ['continuousIntegration', subprojects.uploadPublished, 'zippedSources', 'zippedJavadoc'],
+task generateRelease(dependsOn: ['quickstart:clean', 'continuousIntegration', subprojects.uploadPublished, 'zippedSources', 'zippedJavadoc'],
         group: "Release artifact",
         description: "Generates and uploads a final release to Apache Nexus")
 

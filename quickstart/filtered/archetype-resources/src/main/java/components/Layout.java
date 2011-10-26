@@ -1,4 +1,6 @@
-package ${package}.components;
+package $
+
+{package}.components;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.*;
@@ -9,7 +11,7 @@ import org.apache.tapestry5.SymbolConstants;
 /**
  * Layout component for pages of application ${artifactId}.
  */
-@Import(stylesheet="context:layout/layout.css")
+@Import(stylesheet = "context:layout/layout.css")
 public class Layout
 {
     /**

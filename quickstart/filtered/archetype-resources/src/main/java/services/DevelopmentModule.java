@@ -1,4 +1,6 @@
-package ${package}.services;
+package $
+
+{package}.services;
 
 import java.io.IOException;
 
@@ -15,17 +17,10 @@ import org.slf4j.Logger;
 
 /**
  * This module is automatically included as part of the Tapestry IoC Registry if <em>tapestry.execution-mode</em>
- * includes <code>qa</code> ("quality assurance").
+ * includes <code>development</code>.
  */
-public class QaModule
+public class DevelopmentModule
 {
-    public static void bind(ServiceBinder binder)
-    {
-        // Bind any services needed by the QA team to produce their reports
-        // binder.bind(MyServiceMonitorInterface.class, MyServiceMonitorImpl.class);
-    }
-
-
     public static void contributeApplicationDefaults(
             MappedConfiguration<String, Object> configuration)
     {
@@ -38,6 +33,6 @@ public class QaModule
         // assets. Web browsers will cache assets because of the far future expires
         // header. If existing assets are changed, the version number should also
         // change, to force the browser to download new versions.
-        configuration.add(SymbolConstants.APPLICATION_VERSION, "${version}-QA");
+        configuration.add(SymbolConstants.APPLICATION_VERSION, "${version}-DEV");
     }
 }

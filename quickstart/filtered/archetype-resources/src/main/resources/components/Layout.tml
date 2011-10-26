@@ -45,26 +45,26 @@ Description: A Web 2.0 design with fluid width suitable for blogs and small webs
                     <li class="search" style="background: none;">
                     </li>
                     <li>
-                      <t:alerts/>
+                        <t:alerts/>
                     </li>
                     <li t:type="if" test="sidebar">
-                      <h2>${D}{sidebarTitle}</h2>
+                        <h2>${D}{sidebarTitle}</h2>
 
-                      <div class="sidebar-content">
-                        <t:delegate to="sidebar"/>
-                      </div>
+                        <div class="sidebar-content">
+                            <t:delegate to="sidebar"/>
+                        </div>
                     </li>
                 </ul>
             </div>
             <!-- end sidebar -->
             <!-- start content -->
             <div class="content">
-              <div class="post">
-                <div class="title">
-                  <h2>${D}{title}</h2>
-                </div>
-                <div class="entry">
-                  <t:body/>
+                <div class="post">
+                    <div class="title">
+                        <h2>${D}{title}</h2>
+                    </div>
+                    <div class="entry">
+                        <t:body/>
                     </div>
                 </div>
             </div>
