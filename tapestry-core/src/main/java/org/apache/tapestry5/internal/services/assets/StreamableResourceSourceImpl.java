@@ -74,7 +74,7 @@ public class StreamableResourceSourceImpl implements StreamableResourceSource
 
         long lastModified = resourceChangeTracker.trackResource(baseResource);
 
-        return new StreamableResourceImpl(contentType, compressable ? CompressionStatus.COMPRESSABLE
+        return new StreamableResourceImpl(baseResource.toString(), contentType, compressable ? CompressionStatus.COMPRESSABLE
                 : CompressionStatus.NOT_COMPRESSABLE, lastModified, bytestreamCache);
     }
 

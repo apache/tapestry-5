@@ -14,15 +14,17 @@
 
 package org.apache.tapestry5.internal.services.assets;
 
+import org.apache.tapestry5.services.assets.CompressionStatus;
+import org.apache.tapestry5.services.assets.StreamableResource;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.tapestry5.services.assets.CompressionStatus;
-import org.apache.tapestry5.services.assets.StreamableResource;
-
 public class StreamableResourceImpl implements StreamableResource
 {
+    private final String description;
+
     private final String contentType;
 
     private final CompressionStatus compression;
@@ -31,13 +33,19 @@ public class StreamableResourceImpl implements StreamableResource
 
     private final BytestreamCache bytestreamCache;
 
-    public StreamableResourceImpl(String contentType, CompressionStatus compression, long lastModified,
-            BytestreamCache bytestreamCache)
+    public StreamableResourceImpl(String description, String contentType, CompressionStatus compression, long lastModified,
+                                  BytestreamCache bytestreamCache)
     {
+        this.description = description;
         this.contentType = contentType;
         this.compression = compression;
         this.lastModified = lastModified;
         this.bytestreamCache = bytestreamCache;
+    }
+
+    public String getDescription()
+    {
+        return description;
     }
 
     public CompressionStatus getCompression()
@@ -73,7 +81,7 @@ public class StreamableResourceImpl implements StreamableResource
     @Override
     public String toString()
     {
-        return String.format("StreamableResource<%s %s lastModified: %tc size: %d>", contentType, compression.name(),
+        return String.format("StreamableResource<%s %s %s lastModified: %tc size: %d>", contentType, description, compression.name(),
                 lastModified, getSize());
     }
 }

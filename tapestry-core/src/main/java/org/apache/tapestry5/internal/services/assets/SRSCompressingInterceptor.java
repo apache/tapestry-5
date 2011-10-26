@@ -70,7 +70,8 @@ public class SRSCompressingInterceptor implements StreamableResourceSource
 
         BytestreamCache cache = new BytestreamCache(bos);
 
-        return new StreamableResourceImpl(uncompressed.getContentType(), CompressionStatus.COMPRESSED,
+        return new StreamableResourceImpl(uncompressed.getDescription(),
+                uncompressed.getContentType(), CompressionStatus.COMPRESSED,
                 uncompressed.getLastModified(), cache);
     }
 }

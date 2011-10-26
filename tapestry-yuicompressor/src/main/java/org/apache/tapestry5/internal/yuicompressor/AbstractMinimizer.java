@@ -23,7 +23,6 @@ import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.assets.CompressionStatus;
 import org.apache.tapestry5.services.assets.ResourceMinimizer;
 import org.apache.tapestry5.services.assets.StreamableResource;
-import org.mozilla.javascript.EvaluatorException;
 import org.slf4j.Logger;
 
 import javax.management.RuntimeErrorException;
@@ -79,7 +78,8 @@ public abstract class AbstractMinimizer implements ResourceMinimizer
 
         // The content is minimized, but can still be (GZip) compressed.
 
-        StreamableResource output = new StreamableResourceImpl(input.getContentType(), CompressionStatus.COMPRESSABLE,
+        StreamableResource output = new StreamableResourceImpl("minimized " + input.getDescription(),
+                input.getContentType(), CompressionStatus.COMPRESSABLE,
                 input.getLastModified(), new BytestreamCache(bos));
 
         long elapsedNanos = System.nanoTime() - startNanos;
@@ -88,8 +88,8 @@ public abstract class AbstractMinimizer implements ResourceMinimizer
         {
             double elapsedMillis = ((double) elapsedNanos) * NANOS_TO_MILLIS;
 
-            logger.debug(String.format("Minimized %,d input bytes of %s to %,d output bytes in %.2f ms",
-                    input.getSize(), resourceType, output.getSize(), elapsedMillis));
+            logger.debug(String.format("Minimized %s (%,d input bytes of %s to %,d output bytes in %.2f ms)",
+                    input.getDescription(), input.getSize(), resourceType, output.getSize(), elapsedMillis));
         }
 
         return output;

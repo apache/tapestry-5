@@ -170,17 +170,20 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
         JavaScriptStack stack = javascriptStackSource.getStack(stackName);
         List<Asset> libraries = stack.getJavaScriptLibraries();
 
-        StreamableResource stackContent = assembleStackContent(libraries);
+        StreamableResource stackContent = assembleStackContent(localeName, stackName, libraries);
 
         return minificationEnabled ? resourceMinimizer.minimize(stackContent) : stackContent;
     }
 
-    private StreamableResource assembleStackContent(List<Asset> libraries) throws IOException
+    private StreamableResource assembleStackContent(String localeName, String stackName, List<Asset> libraries) throws IOException
     {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         OutputStreamWriter osw = new OutputStreamWriter(stream, "UTF-8");
         PrintWriter writer = new PrintWriter(osw, true);
         long lastModified = 0;
+
+        StringBuilder description = new StringBuilder(String.format("stack=%s, locale=%s, resources=[", stackName, localeName));
+        String sep = "";
 
         JSONArray paths = new JSONArray();
 
@@ -194,6 +197,9 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
 
             Resource resource = library.getResource();
 
+            description.append(sep).append(resource.toString());
+            sep = ", ";
+
             StreamableResource streamable = streamableResourceSource.getStreamableResource(resource,
                     StreamableResourceProcessing.FOR_AGGREGATION, resourceChangeTracker);
 
@@ -204,7 +210,9 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
 
         writer.close();
 
-        return new StreamableResourceImpl(JAVASCRIPT_CONTENT_TYPE, CompressionStatus.COMPRESSABLE, lastModified,
+        return new StreamableResourceImpl(
+                description.append("]").toString(),
+                JAVASCRIPT_CONTENT_TYPE, CompressionStatus.COMPRESSABLE, lastModified,
                 new BytestreamCache(stream));
     }
 
@@ -219,7 +227,7 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
 
         BytestreamCache cache = new BytestreamCache(compressed);
 
-        return new StreamableResourceImpl(JAVASCRIPT_CONTENT_TYPE, CompressionStatus.COMPRESSED,
+        return new StreamableResourceImpl(uncompressed.getDescription(), JAVASCRIPT_CONTENT_TYPE, CompressionStatus.COMPRESSED,
                 uncompressed.getLastModified(), cache);
     }
 }

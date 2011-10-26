@@ -14,19 +14,28 @@
 
 package org.apache.tapestry5.services.assets;
 
+import org.apache.tapestry5.ioc.Resource;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.tapestry5.ioc.Resource;
-
 /**
  * An object, derived from a {@link Resource}, that can be streamed (ultimately, to a client web browser).
- * 
+ *
  * @since 5.3
  */
 public interface StreamableResource
 {
+    /**
+     * Describes the underlying {@link Resource} (or resources} for this streamble resource; expressly used
+     * as part of the object's {@code toString()}.
+     */
+    String getDescription();
+
+    /**
+     * Indicates if the content is compressed, or compressable.
+     */
     CompressionStatus getCompression();
 
     /**
@@ -48,7 +57,7 @@ public interface StreamableResource
     /**
      * Opens the content of the resource as an input stream; the caller is responsible for closing the stream
      * after reading it.
-     * 
+     *
      * @return stream of the contents of the resource
      * @throws IOException
      */

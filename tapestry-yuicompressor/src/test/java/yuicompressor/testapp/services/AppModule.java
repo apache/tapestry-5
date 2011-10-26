@@ -15,7 +15,6 @@ public class AppModule
     @ApplicationDefaults
     public static void setupConfiguration(MappedConfiguration<String, Object> configuration)
     {
-        configuration.add(SymbolConstants.BLACKBIRD_ENABLED, true);
         configuration.add(SymbolConstants.COMBINE_SCRIPTS, true);
         configuration.add(SymbolConstants.MINIFICATION_ENABLED, true);
         configuration.add(SymbolConstants.PRODUCTION_MODE, false);
