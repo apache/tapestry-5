@@ -64,14 +64,14 @@
         <!-- Now the Gradle stuff -->
 
         <fileSet filtered="true" packaged="false">
-            <directory>.</directory>
+            <directory/>
             <includes>
                 <include>build.gradle</include>
             </includes>
         </fileSet>
 
         <fileSet filtered="false" packaged="false">
-            <directory>.</directory>
+            <directory/>
             <includes>
                 <include>gradlew*</include>
                 <include>gradle/wrapper/*</include>
