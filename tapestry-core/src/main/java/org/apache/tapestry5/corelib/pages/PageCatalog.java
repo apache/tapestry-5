@@ -18,10 +18,10 @@ import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.beaneditor.BeanModel;
-import org.apache.tapestry5.beaneditor.ReorderProperties;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.corelib.components.Zone;
 import org.apache.tapestry5.func.*;
+import org.apache.tapestry5.internal.PageCatalogTotals;
 import org.apache.tapestry5.internal.services.ComponentInstantiatorSource;
 import org.apache.tapestry5.internal.services.PageSource;
 import org.apache.tapestry5.internal.structure.Page;
@@ -47,32 +47,9 @@ import java.util.Set;
 @WhitelistAccessOnly
 public class PageCatalog
 {
-    @ReorderProperties("definedPages,loadedPages,uniquePageNames,selectors,components")
-    public class Totals
-    {
-        /**
-         * Total number of pages loaded.
-         */
-        public int loadedPages;
 
-        /**
-         * Number of total page names.
-         */
-        public int definedPages;
-        /**
-         * Number of unique page names (remember, same page may appear for multiple selectors).
-         */
-        public int uniquePageNames;
-        /**
-         * Total number of components.
-         */
-        public int components;
-
-        /**
-         * All selectors represented in the pool, often just 'en'.
-         */
-        public String selectors;
-    }
+    @Property
+    private PageCatalogTotals totals;
 
     @Property
     @Inject
@@ -133,17 +110,15 @@ public class PageCatalog
         model.reorder("name", "selector", "assemblyTime", "componentCount", "weight");
     }
 
-    @Cached
-    public Totals getTotals()
+    public void onRecomputeTotals()
     {
-
-        Totals result = new Totals();
+        totals = new PageCatalogTotals();
 
         Flow<Page> pages = F.flow(getPages());
 
-        result.loadedPages = pages.count();
-        result.definedPages = getPageNames().size();
-        result.uniquePageNames = pages.map(new Mapper<Page, String>()
+        totals.loadedPages = pages.count();
+        totals.definedPages = getPageNames().size();
+        totals.uniquePageNames = pages.map(new Mapper<Page, String>()
         {
             public String map(Page element)
             {
@@ -151,7 +126,7 @@ public class PageCatalog
             }
         }).toSet().size();
 
-        result.components = pages.reduce(new Reducer<Integer, Page>()
+        totals.components = pages.reduce(new Reducer<Integer, Page>()
         {
             public Integer reduce(Integer accumulator, Page element)
             {
@@ -167,10 +142,7 @@ public class PageCatalog
             }
         }).toSet();
 
-        result.selectors = InternalUtils.joinSorted(selectorIds);
-
-        return result;
-
+        totals.selectors = InternalUtils.joinSorted(selectorIds);
     }
 
     public List<String> getPageNames()

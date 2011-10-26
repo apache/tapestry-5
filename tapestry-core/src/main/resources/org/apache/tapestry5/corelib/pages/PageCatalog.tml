@@ -33,7 +33,9 @@
             This page provides a list of pages currently loaded in the application.
         </p>
 
-        <t:beandisplay object="totals"/>
+        <t:trigger event="recomputeTotals"/>
+
+        <t:beandisplay t:id="totals"/>
 
         <t:grid source="pages" row="page" model="model">
             <p:assemblyTimeCell>
