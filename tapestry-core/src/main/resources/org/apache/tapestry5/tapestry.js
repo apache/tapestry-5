@@ -2020,10 +2020,12 @@ Tapestry.ScriptManager = {
 
         var loaded = _(document.scripts).chain().pluck("src").without("").map(this.rebuildURLIfIE).value();
 
+        var self = this;
+
         var topCallback = _(scripts).chain().map(Tapestry.rebuildURL).difference(loaded).reverse().reduce(
             function (nextCallback, scriptURL) {
                 return function() {
-                    this.loadScript(scriptURL, nextCallback);
+                    self.loadScript(scriptURL, nextCallback);
                 }
             }, callback).value();
 
