@@ -265,15 +265,7 @@ var Tapestry = {
                     parameterList = [ parameterList ];
                 }
 
-                try {
-                    initf.apply(this, parameterList);
-                } catch (e) {
-                    Tapestry.error(Tapestry.Messages.invocationException, {
-                        fname : "Tapestry.Initializer." + functionName,
-                        params : Object.toJSON(parameterList),
-                        exception : e
-                    });
-                }
+                initf.apply(this, parameterList);
             });
         });
     },
@@ -1148,16 +1140,9 @@ T5.extendInitializers({
                 $(field).getFieldEventManager();
 
                 $A(pair.value)
-                    .each(
-                    function(spec) {
+                    .each(function(spec) {
                         /*
-                         * Each pair value is an
-                         * array of specs, each
-                         * spec is a 2 or 3
-                         * element array.
-                         * validator function
-                         * name, message,
-                         * optional constraint
+                         * Each pair value is an array of specs, each spec is a 2 or 3 element array. validator function name, message, optional constraint
                          */
 
                         var name = spec[0];
@@ -1168,47 +1153,17 @@ T5.extendInitializers({
 
                         if (vfunc == undefined) {
                             Tapestry
-                                .error(
-                                Tapestry.Messages.missingValidator,
-                                {
-                                    name : name,
-                                    fieldName : field.id
-                                });
+                                .error(Tapestry.Messages.missingValidator, {
+                                name : name,
+                                fieldName : field.id
+                            });
                             return;
                         }
 
                         /*
-                         * Pass the extended
-                         * field, the provided
-                         * message, and the
-                         * constraint object to
-                         * the
-                         * Tapestry.Validator
-                         * function, so that it
-                         * can, typically,
-                         * invoke
-                         * field.addValidator().
+                         * Pass the extended field, the provided message, and the constraint object to the Tapestry.Validator function, so that it can, typically, invoke field.addValidator().
                          */
-                        try {
-                            vfunc.call(this,
-                                field,
-                                message,
-                                constraint);
-                        } catch (e) {
-                            Tapestry
-                                .error(
-                                Tapestry.Messages.invocationException,
-                                {
-                                    fname : "Tapestry.Validator."
-                                        + functionName,
-                                    params : Object
-                                        .toJSON([
-                                        field.id,
-                                        message,
-                                        constraint ]),
-                                    exception : e
-                                });
-                        }
+                        vfunc.call(this, field, message, constraint);
                     });
             });
     },

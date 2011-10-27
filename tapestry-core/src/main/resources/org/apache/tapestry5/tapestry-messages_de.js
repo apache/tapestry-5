@@ -37,6 +37,4 @@ Tapestry.Messages = {
     invalidCharacter : "Ungültiges Zeichen",
 
     communicationFailed : "Kommunikation mit dem Server ist fehlgeschlagen: ",
-
-    invocationException : "Fehler beim Aufrufen der Funktion #{fname} mit den Parametern #{params}: #{exception}"
 };
