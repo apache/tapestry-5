@@ -20,6 +20,7 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.model.MutableComponentModel;
+import org.apache.tapestry5.plastic.ComputedValue;
 import org.apache.tapestry5.plastic.InstanceContext;
 import org.apache.tapestry5.plastic.PlasticField;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
@@ -34,27 +35,16 @@ import java.util.Map;
  */
 public class CommonResourcesInjectionProvider implements InjectionProvider2
 {
-    interface ResourceProvider<T>
+    abstract static class ResourceProvider<T> implements ComputedValue<T>
     {
-        T get(ComponentResources resources);
-    }
-
-    static class ResourceConduit extends ReadOnlyComponentFieldConduit
-    {
-        private final ResourceProvider<?> provider;
-
-        ResourceConduit(String className, String fieldName, ResourceProvider<?> provider)
-        {
-            super(className, fieldName);
-            this.provider = provider;
-        }
-
-        public Object get(Object instance, InstanceContext context)
+        public T get(InstanceContext context)
         {
             ComponentResources resources = context.get(ComponentResources.class);
 
-            return provider.get(resources);
+            return get(resources);
         }
+
+        abstract T get(ComponentResources resources);
     }
 
     private static ResourceProvider<ComponentResourceSelector> selectorProvider = new ResourceProvider<ComponentResourceSelector>()
@@ -118,14 +108,14 @@ public class CommonResourcesInjectionProvider implements InjectionProvider2
 
     public boolean provideInjection(PlasticField field, ObjectLocator locator, MutableComponentModel componentModel)
     {
-        ResourceProvider provider = configuration.get(field.getTypeName());
+        final ResourceProvider provider = configuration.get(field.getTypeName());
 
         if (provider == null)
         {
             return false;
         }
 
-        field.setConduit(new ResourceConduit(field.getPlasticClass().getClassName(), field.getName(), provider));
+        field.injectComputed(provider);
 
         return true;
     }
