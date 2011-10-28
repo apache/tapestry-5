@@ -1,16 +1,17 @@
 package yuicompressor.testapp.pages;
 
-import java.util.List;
-
 import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.ValueEncoderSource;
 import org.apache.tapestry5.util.EnumSelectModel;
+
+import java.util.List;
 
 public class Index
 {
@@ -25,6 +26,14 @@ public class Index
 
     @Inject
     private Messages messages;
+
+    void onActivate()
+    {
+        if (languages == null)
+        {
+            languages = CollectionFactory.newList();
+        }
+    }
 
     @Inject
     private ValueEncoderSource vec;

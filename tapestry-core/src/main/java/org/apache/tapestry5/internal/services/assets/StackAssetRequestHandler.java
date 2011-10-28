@@ -182,7 +182,7 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
         PrintWriter writer = new PrintWriter(osw, true);
         long lastModified = 0;
 
-        StringBuilder description = new StringBuilder(String.format("stack=%s, locale=%s, resources=[", stackName, localeName));
+        StringBuilder description = new StringBuilder(String.format("'%s' JavaScript stack, for locale %s, resources=", stackName, localeName));
         String sep = "";
 
         JSONArray paths = new JSONArray();
@@ -211,7 +211,7 @@ public class StackAssetRequestHandler implements AssetRequestHandler, Invalidati
         writer.close();
 
         return new StreamableResourceImpl(
-                description.append("]").toString(),
+                description.toString(),
                 JAVASCRIPT_CONTENT_TYPE, CompressionStatus.COMPRESSABLE, lastModified,
                 new BytestreamCache(stream));
     }

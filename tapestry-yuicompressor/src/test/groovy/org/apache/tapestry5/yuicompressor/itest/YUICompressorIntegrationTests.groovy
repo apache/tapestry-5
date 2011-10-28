@@ -34,4 +34,13 @@ class YUICompressorIntegrationTests extends SeleniumTestCase
 
         assertText "selected", "CLOJURE, JAVA"
     }
+
+    @Test
+    void bad_js_is_reported() {
+        openLinks "Bad JavaScript Demo"
+
+        // We still get there, no the exception page.
+
+        assertTitle "Tapestry 5: Bad JavaScript Demo"
+    }
 }

@@ -101,15 +101,21 @@ public class JavaScriptResourceMinimizer extends AbstractMinimizer
         {
             logInputLines(resource, errorLines);
 
-            throw ex;
+            recoverFromException(ex, resource, output);
+
         } catch (Exception ex)
         {
-            logger.error(String.format("Exception minimizing %s: %s", resource, InternalUtils.toMessage(ex), ex));
-
-            streamUnminimized(resource, output);
+            recoverFromException(ex, resource, output);
         }
 
         reader.close();
+    }
+
+    private void recoverFromException(Exception ex, StreamableResource resource, Writer output) throws IOException
+    {
+        logger.error(String.format("Exception minimizing %s: %s", resource.getDescription(), InternalUtils.toMessage(ex), ex));
+
+        streamUnminimized(resource, output);
     }
 
     private void streamUnminimized(StreamableResource resource, Writer output) throws IOException
@@ -140,6 +146,8 @@ public class JavaScriptResourceMinimizer extends AbstractMinimizer
 
     private void logInputLines(StreamableResource resource, Set<Integer> lines)
     {
+        logger.error(String.format("Errors in resource %s:", resource.getDescription()));
+
         int last = -1;
 
         try
