@@ -74,8 +74,7 @@ public class ClassNameLocatorImpl implements ClassNameLocator
 
             return findClassesWithinPath(packagePath);
 
-        }
-        catch (IOException ex)
+        } catch (IOException ex)
         {
             throw new RuntimeException(ex);
         }
@@ -108,8 +107,7 @@ public class ClassNameLocatorImpl implements ClassNameLocator
         if (connection instanceof JarURLConnection)
         {
             jarFile = ((JarURLConnection) connection).getJarFile();
-        }
-        else
+        } else
         {
             jarFile = getAlternativeJarFile(url);
         }
@@ -117,8 +115,7 @@ public class ClassNameLocatorImpl implements ClassNameLocator
         if (jarFile != null)
         {
             scanJarFile(packagePath, componentClassNames, jarFile);
-        }
-        else if (supportsDirStream(url))
+        } else if (supportsDirStream(url))
         {
             Stack<Queued> queue = CollectionFactory.newStack();
 
@@ -130,8 +127,7 @@ public class ClassNameLocatorImpl implements ClassNameLocator
 
                 scanDirStream(queued.packagePath, queued.packageURL, componentClassNames, queue);
             }
-        }
-        else
+        } else
         {
             // Try scanning file system.
             String packageName = packagePath.replace("/", ".");
@@ -157,16 +153,13 @@ public class ClassNameLocatorImpl implements ClassNameLocator
         {
             is = packageURL.openStream();
             return true;
-        }
-        catch (FileNotFoundException ex)
+        } catch (FileNotFoundException ex)
         {
             return false;
-        }
-        catch (IOException e)
+        } catch (IOException e)
         {
             return false;
-        }
-        finally
+        } finally
         {
             InternalUtils.close(is);
         }
@@ -180,8 +173,7 @@ public class ClassNameLocatorImpl implements ClassNameLocator
         try
         {
             is = new BufferedInputStream(packageURL.openStream());
-        }
-        catch (FileNotFoundException ex)
+        } catch (FileNotFoundException ex)
         {
             // This can happen for certain application servers (JBoss 4.0.5 for example), that
             // export part of the exploded WAR for deployment, but leave part (WEB-INF/classes)
@@ -205,13 +197,21 @@ public class ClassNameLocatorImpl implements ClassNameLocator
 
                 if (CLASS_NAME_PATTERN.matcher(line).matches())
                 {
-                    if (packageName == null) packageName = packagePath.replace('/', '.');
+                    if (packageName == null)
+                    {
+                        packageName = packagePath.replace('/', '.');
+                    }
 
                     // packagePath ends with '/', packageName ends with '.'
 
-                    String fullClassName = packageName + line.substring(0, line.length() - CLASS_SUFFIX.length());
+                    String fileName = line.substring(0, line.length() - CLASS_SUFFIX.length());
 
-                    componentClassNames.add(fullClassName);
+                    if (!fileName.equals("package-info"))
+                    {
+                        String fullClassName = packageName + fileName;
+
+                        componentClassNames.add(fullClassName);
+                    }
 
                     continue;
                 }
@@ -230,8 +230,7 @@ public class ClassNameLocatorImpl implements ClassNameLocator
 
             lineReader.close();
             lineReader = null;
-        }
-        finally
+        } finally
         {
             InternalUtils.close(lineReader);
         }
@@ -280,10 +279,10 @@ public class ClassNameLocatorImpl implements ClassNameLocator
                 }
                 // https://issues.apache.org/jira/browse/TAP5-1737
                 // Use of package-info.java leaves these package-info.class files around.
-                else if (fileName.endsWith(CLASS_SUFFIX) && ! fileName.equals("package-info.class"))
+                else if (fileName.endsWith(CLASS_SUFFIX) && !fileName.equals("package-info.class"))
                 {
                     String className = packageName + "." + fileName.substring(0,
-                                                                              fileName.length() - CLASS_SUFFIX.length());
+                            fileName.length() - CLASS_SUFFIX.length());
                     componentClassNames.add(className);
                 }
             }
