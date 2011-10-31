@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 public class ClassNameLocatorImpl implements ClassNameLocator
 {
     private static final String CLASS_SUFFIX = ".class";
+    public static final String PACKAGE_INFO = "package-info.class";
 
     private final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 
@@ -247,15 +248,22 @@ public class ClassNameLocatorImpl implements ClassNameLocator
 
             if (!name.startsWith(packagePath)) continue;
 
-            if (!name.endsWith(CLASS_SUFFIX)) continue;
 
-            if (name.contains("$")) continue;
+            int lastSlashx = name.lastIndexOf('/');
 
-            // Strip off .class and convert the slashes back to periods.
+            String fileName = name.substring(lastSlashx + 1);
 
-            String className = name.substring(0, name.length() - CLASS_SUFFIX.length()).replace("/", ".");
+            if (isClassName(fileName))
+            {
 
-            componentClassNames.add(className);
+                // Strip off .class and convert the slashes back to periods.
+                String className =
+                        name.substring(0, lastSlashx + 1).replace('/', '.') +
+                                fileName.substring(0, fileName.length() - CLASS_SUFFIX.length());
+
+
+                componentClassNames.add(className);
+            }
         }
     }
 
@@ -279,7 +287,7 @@ public class ClassNameLocatorImpl implements ClassNameLocator
                 }
                 // https://issues.apache.org/jira/browse/TAP5-1737
                 // Use of package-info.java leaves these package-info.class files around.
-                else if (fileName.endsWith(CLASS_SUFFIX) && !fileName.equals("package-info.class"))
+                else if (isClassName(fileName))
                 {
                     String className = packageName + "." + fileName.substring(0,
                             fileName.length() - CLASS_SUFFIX.length());
@@ -287,6 +295,11 @@ public class ClassNameLocatorImpl implements ClassNameLocator
                 }
             }
         }
+    }
+
+    private boolean isClassName(String fileName)
+    {
+        return fileName.endsWith(CLASS_SUFFIX) && !fileName.equals(PACKAGE_INFO) && !fileName.contains("$");
     }
 
     /**
