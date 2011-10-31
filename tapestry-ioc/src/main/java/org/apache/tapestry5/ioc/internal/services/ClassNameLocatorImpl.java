@@ -278,7 +278,9 @@ public class ClassNameLocatorImpl implements ClassNameLocator
                 {
                     scanDir(packageName + "." + fileName, file, componentClassNames);
                 }
-                else if (fileName.endsWith(CLASS_SUFFIX))
+                // https://issues.apache.org/jira/browse/TAP5-1737
+                // Use of package-info.java leaves these package-info.class files around.
+                else if (fileName.endsWith(CLASS_SUFFIX) && ! fileName.equals("package-info"))
                 {
                     String className = packageName + "." + fileName.substring(0,
                                                                               fileName.length() - CLASS_SUFFIX.length());
