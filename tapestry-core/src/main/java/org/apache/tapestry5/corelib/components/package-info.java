@@ -15,4 +15,4 @@
 /**
  * The set of core components available in all Tapestry applications
  */
-package org.apache.tapestry5.corelib.base;
+package org.apache.tapestry5.corelib.components;
