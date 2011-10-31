@@ -12,5 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** For internal usage only; API subject to change. */
-package org.apache.tapestry5.internal;
+/**
+ * For internal usage only.
+ * Support classes for the {@link org.apache.tapestry5.corelib.components.BeanEditor} component.
+ * API subject to change.
+ */
+package org.apache.tapestry5.internal.beaneditor;

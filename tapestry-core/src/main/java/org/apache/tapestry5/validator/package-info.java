@@ -12,5 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** For internal usage only; API subject to change. */
-package org.apache.tapestry5.internal;
+/**
+ * Validators for use by Tapestry (and custom) form field components.
+ */
+package org.apache.tapestry5.validator;

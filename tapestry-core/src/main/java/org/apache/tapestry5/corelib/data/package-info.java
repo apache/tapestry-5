@@ -12,5 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** For internal usage only; API subject to change. */
-package org.apache.tapestry5.internal;
+/**
+ * A set of enums used by Tapestry and also useful in custom Tapestry
+ * components and services.  
+ */
+package org.apache.tapestry5.corelib.data;

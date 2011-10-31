@@ -12,5 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** For internal usage only; API subject to change. */
-package org.apache.tapestry5.internal;
+/**
+ * Contains interfaces that are added to component classes at <em>runtime</em>.
+ * These interfaces are added using Tapestry built-in AOP support.
+ */
+package org.apache.tapestry5.runtime;

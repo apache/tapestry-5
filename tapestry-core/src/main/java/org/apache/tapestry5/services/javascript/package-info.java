@@ -12,5 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** For internal usage only; API subject to change. */
-package org.apache.tapestry5.internal;
+/**
+ * Support for Javascript (and CSS), including dynamically-added JavaScript and
+ * services that manage dynamically-added links to JavaScript (and CSS) assets.
+ */
+package org.apache.tapestry5.services.javascript;

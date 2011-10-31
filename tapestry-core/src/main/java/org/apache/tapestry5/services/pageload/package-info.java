@@ -12,5 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** For internal usage only; API subject to change. */
-package org.apache.tapestry5.internal;
+/**
+ * Services for locating and loading pages and component resources.
+ */
+package org.apache.tapestry5.services.pageload;

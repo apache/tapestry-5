@@ -12,5 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** For internal usage only; API subject to change. */
-package org.apache.tapestry5.internal;
+/**
+ * Support classes for the {@link org.apache.tapestry5.corelib.components.Grid}
+ * component, which presents tabular data in an (X)HTML table.
+ */
+package org.apache.tapestry5.grid;

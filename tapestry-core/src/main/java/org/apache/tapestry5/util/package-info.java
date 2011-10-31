@@ -12,5 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** For internal usage only; API subject to change. */
-package org.apache.tapestry5.internal;
+/**
+ * A set of enums, abstract classs and wrappers of various purposes 
+ */
+package org.apache.tapestry5.util;

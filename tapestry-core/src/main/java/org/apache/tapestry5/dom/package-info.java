@@ -12,5 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** For internal usage only; API subject to change. */
-package org.apache.tapestry5.internal;
+/**
+ * A Document Object Model, a tree of nodes representing elements, attributes
+ * and text within a document. Tapestry renders pages and their components to a
+ * DOM before streaming the output (typically as (X)HTML) to the client.
+ */
+package org.apache.tapestry5.dom;

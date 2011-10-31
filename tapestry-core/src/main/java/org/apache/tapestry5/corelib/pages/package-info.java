@@ -12,5 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** For internal usage only; API subject to change. */
-package org.apache.tapestry5.internal;
+/**
+ * The set of core pages available in all Tapestry applications
+ */
+package org.apache.tapestry5.corelib.pages;

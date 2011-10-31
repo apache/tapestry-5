@@ -12,5 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** For internal usage only; API subject to change. */
-package org.apache.tapestry5.internal;
+/**
+ * Interfaces support a simple whitelist-based security model to protect page access.
+ */
+package org.apache.tapestry5.services.security;

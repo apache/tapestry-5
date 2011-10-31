@@ -12,5 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/** For internal usage only; API subject to change. */
-package org.apache.tapestry5.internal;
+/**
+ * Interfaces for various types of component and parameter models used by Tapestry
+ */
+package org.apache.tapestry5.model;
