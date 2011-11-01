@@ -209,7 +209,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
         catch (RuntimeException ex)
         {
             assertMessageContains(ex, "Writing attributes of the element 'img' failed.",
-                    "A attribute name or value is omitted [src, foo.png, width, 20, 30].",
+                    "An attribute name or value is omitted [src, foo.png, width, 20, 30].",
                     "Please provide an even number of values, alternating names and values");
         }
     }

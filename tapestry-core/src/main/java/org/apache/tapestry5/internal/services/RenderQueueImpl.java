@@ -18,6 +18,7 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.TapestryMarkers;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.Stack;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
@@ -74,7 +75,7 @@ public class RenderQueueImpl implements RenderQueue
         }
         catch (RuntimeException ex)
         {
-            String message = String.format("Render queue error in %s: %s", command, ex);
+            String message = String.format("Render queue error in %s: %s", command, InternalUtils.toMessage(ex));
 
             logger.error(message, ex);
 

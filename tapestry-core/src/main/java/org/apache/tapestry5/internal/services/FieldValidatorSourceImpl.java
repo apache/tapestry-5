@@ -154,7 +154,7 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
         if (overrideMessages.contains(generalKey))
             return overrideMessages.get(generalKey);
 
-        throw new IllegalArgumentException(String.format("Validator '%s' requires a validation constraint (of type %s) but none was provided. The constraint may be provided inside the @Validator annotaton on the property, or in the associated component message catalog as key '%s' or key '%s'.", validatorType, constraintType.getName(), perFormKey,
+        throw new IllegalArgumentException(String.format("Validator '%s' requires a validation constraint (of type %s) but none was provided. The constraint may be provided inside the @Validator annotation on the property, or in the associated component message catalog as key '%s' or key '%s'.", validatorType, constraintType.getName(), perFormKey,
                 generalKey));
     }
 

@@ -75,7 +75,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         }
         catch (IllegalArgumentException ex)
         {
-            assertEquals(ex.getMessage(), "Unknown validator type 'foo'.  Configured validators are alpha, beta.");
+            assertEquals(ex.getMessage(), "Unknown validator type 'foo'. Configured validators are alpha, beta.");
         }
 
         verify();
@@ -367,7 +367,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "Validator 'minlength' requires a validation constraint (of type java.lang.Integer) but none was provided. The constraint may be provided inside the @Validator annotaton on the property, or in the associated component message catalog as key 'myform-fred-minlength' or key 'fred-minlength'. ");
+                    "Validator 'minlength' requires a validation constraint (of type java.lang.Integer) but none was provided. The constraint may be provided inside the @Validator annotation on the property, or in the associated component message catalog as key 'myform-fred-minlength' or key 'fred-minlength'.");
         }
 
         verify();
