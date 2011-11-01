@@ -17,4 +17,4 @@
  * 
  *  @since 5.3
  */
-package org.apache.tapestry5.services.ajax;
+package org.apache.tapestry5.services.dynamic;
