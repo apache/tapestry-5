@@ -1552,17 +1552,4 @@ public class InternalUtils
         });
     }
 
-    public static Class getWrapperType(Class type)
-    {
-        // This is needed by TypeCoercer, which has its own rules about how to handler void.class (as a stand-in
-        // for null). Plastic treats Void as the wrapper for void.
-
-        if (type == void.class)
-        {
-            return type;
-        }
-
-        return PlasticUtils.toWrapperType(type);
-    }
-
 }

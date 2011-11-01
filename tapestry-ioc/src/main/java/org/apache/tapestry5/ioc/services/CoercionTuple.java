@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.ioc.services;
 
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.plastic.PlasticUtils;
 
 /**
@@ -64,7 +63,7 @@ public final class CoercionTuple<S, T>
 
     private String convert(Class type)
     {
-        if (void.class.equals(type))
+        if (Void.class.equals(type))
             return "null";
 
         String name = PlasticUtils.toTypeName(type);
@@ -116,8 +115,26 @@ public final class CoercionTuple<S, T>
         assert targetType != null;
         assert coercion != null;
 
-        this.sourceType = InternalUtils.getWrapperType(sourceType);
-        this.targetType = InternalUtils.getWrapperType(targetType);
+        // This is needed by TypeCoercer, which has its own rules about how to handler void.class (as a stand-in
+        // for null). Plastic treats Void as the wrapper for void.
+        /*
+if (type == void.class)
+{
+   return type;
+}
+    */
+
+        this.sourceType = PlasticUtils.toWrapperType(sourceType);
+        // This is needed by TypeCoercer, which has its own rules about how to handler void.class (as a stand-in
+        // for null). Plastic treats Void as the wrapper for void.
+        /*
+if (type == void.class)
+{
+   return type;
+}
+    */
+
+        this.targetType = PlasticUtils.toWrapperType(targetType);
         this.coercion = wrap ? new CoercionWrapper<S, T>(coercion) : coercion;
     }
 

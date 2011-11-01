@@ -23,6 +23,7 @@ import org.apache.tapestry5.ioc.services.CoercionTuple;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
+import org.apache.tapestry5.plastic.PlasticUtils;
 import org.apache.tapestry5.util.StringToEnumCoercion;
 
 import java.util.*;
@@ -56,7 +57,7 @@ public class TypeCoercerImpl implements TypeCoercer
         Object coerce(Object input)
         {
 
-            Class sourceType = input != null ? input.getClass() : void.class;
+            Class sourceType = input != null ? input.getClass() : Void.class;
 
             if (type.isAssignableFrom(sourceType))
                 return input;
@@ -131,7 +132,16 @@ public class TypeCoercerImpl implements TypeCoercer
     public Object coerce(Object input, Class targetType)
     {
         assert targetType != null;
-        Class effectiveTargetType = InternalUtils.getWrapperType(targetType);
+        // This is needed by TypeCoercer, which has its own rules about how to handler void.class (as a stand-in
+        // for null). Plastic treats Void as the wrapper for void.
+        /*
+if (type == void.class)
+{
+   return type;
+}
+    */
+
+        Class effectiveTargetType = PlasticUtils.toWrapperType(targetType);
 
         if (effectiveTargetType.isInstance(input))
             return input;
@@ -144,8 +154,26 @@ public class TypeCoercerImpl implements TypeCoercer
     {
         assert sourceType != null;
         assert targetType != null;
-        Class effectiveSourceType = InternalUtils.getWrapperType(sourceType);
-        Class effectiveTargetType = InternalUtils.getWrapperType(targetType);
+        // This is needed by TypeCoercer, which has its own rules about how to handler void.class (as a stand-in
+        // for null). Plastic treats Void as the wrapper for void.
+        /*
+if (type == void.class)
+{
+   return type;
+}
+    */
+
+        Class effectiveSourceType = PlasticUtils.toWrapperType(sourceType);
+        // This is needed by TypeCoercer, which has its own rules about how to handler void.class (as a stand-in
+        // for null). Plastic treats Void as the wrapper for void.
+        /*
+if (type == void.class)
+{
+   return type;
+}
+    */
+
+        Class effectiveTargetType = PlasticUtils.toWrapperType(targetType);
 
         if (effectiveTargetType.isAssignableFrom(effectiveSourceType))
             return NO_COERCION;
@@ -158,8 +186,26 @@ public class TypeCoercerImpl implements TypeCoercer
     {
         assert sourceType != null;
         assert targetType != null;
-        Class effectiveTargetType = InternalUtils.getWrapperType(targetType);
-        Class effectiveSourceType = InternalUtils.getWrapperType(sourceType);
+        // This is needed by TypeCoercer, which has its own rules about how to handler void.class (as a stand-in
+        // for null). Plastic treats Void as the wrapper for void.
+        /*
+if (type == void.class)
+{
+   return type;
+}
+    */
+
+        Class effectiveTargetType = PlasticUtils.toWrapperType(targetType);
+        // This is needed by TypeCoercer, which has its own rules about how to handler void.class (as a stand-in
+        // for null). Plastic treats Void as the wrapper for void.
+        /*
+if (type == void.class)
+{
+   return type;
+}
+    */
+
+        Class effectiveSourceType = PlasticUtils.toWrapperType(sourceType);
 
         // Is a coercion even necessary? Not if the target type is assignable from the
         // input value.
@@ -167,7 +213,7 @@ public class TypeCoercerImpl implements TypeCoercer
         if (effectiveTargetType.isAssignableFrom(effectiveSourceType))
             return "";
 
-        return getTargetCoercion(targetType).explain(sourceType);
+        return getTargetCoercion(effectiveTargetType).explain(effectiveSourceType);
     }
 
     private synchronized TargetCoercion getTargetCoercion(Class targetType)
@@ -225,7 +271,7 @@ public class TypeCoercerImpl implements TypeCoercer
     @SuppressWarnings("unchecked")
     private Coercion findOrCreateCoercion(Class sourceType, Class targetType)
     {
-        if (sourceType == void.class)
+        if (sourceType == Void.class)
             return searchForNullCoercion(targetType);
 
         // These are instance variables because this method may be called concurrently.
@@ -279,7 +325,7 @@ public class TypeCoercerImpl implements TypeCoercer
      */
     private Coercion searchForNullCoercion(Class targetType)
     {
-        List<CoercionTuple> tuples = getTuples(void.class, targetType);
+        List<CoercionTuple> tuples = getTuples(Void.class, targetType);
 
         for (CoercionTuple tuple : tuples)
         {
@@ -336,7 +382,7 @@ public class TypeCoercerImpl implements TypeCoercer
             // Don't pull in Object -> type coercions when doing
             // a search from null.
 
-            if (sourceType == void.class)
+            if (sourceType == Void.class)
                 return;
         }
     }

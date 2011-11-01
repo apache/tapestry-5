@@ -17,7 +17,6 @@ package org.apache.tapestry5.ioc.internal;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.def.*;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
@@ -55,7 +54,7 @@ public class ModuleImplTest extends IOCInternalTestCase
     {
         InternalRegistry registry = mockInternalRegistry();
         ServiceDef serviceDef = mockServiceDef();
-        DecoratorDef2 def1 =newMock(DecoratorDef2.class);
+        DecoratorDef2 def1 = newMock(DecoratorDef2.class);
         DecoratorDef def2 = newMock(DecoratorDef2.class);
         Set<DecoratorDef> rawDefs = newMock(Set.class);
         Logger logger = mockLogger();
@@ -92,12 +91,12 @@ public class ModuleImplTest extends IOCInternalTestCase
     {
         InternalRegistry registry = mockInternalRegistry();
         ServiceDef serviceDef = mockServiceDef();
-        DecoratorDef2 def1 =newMock(DecoratorDef2.class);
+        DecoratorDef2 def1 = newMock(DecoratorDef2.class);
         DecoratorDef def2 = newMock(DecoratorDef2.class);
         Set<DecoratorDef> rawDefs = newMock(Set.class);
-        Set<Class> def1Markers = CollectionFactory.newSet((Class)BlueMarker.class);
-        Set<Class> serviceDefMarkers =CollectionFactory.newSet((Class)RedMarker.class);
-        Set<Class> allMarkers = CollectionFactory.newSet((Class)BlueMarker.class, (Class)BlueMarker.class);
+        Set<Class> def1Markers = CollectionFactory.newSet((Class) BlueMarker.class);
+        Set<Class> serviceDefMarkers = CollectionFactory.newSet((Class) RedMarker.class);
+        Set<Class> allMarkers = CollectionFactory.newSet((Class) BlueMarker.class, (Class) BlueMarker.class);
         Logger logger = mockLogger();
 
         ModuleDef moduleDef = mockModuleDef();
@@ -177,9 +176,9 @@ public class ModuleImplTest extends IOCInternalTestCase
         AdvisorDef2 def1 = mockAdvisorDef2();
         AdvisorDef2 def2 = mockAdvisorDef2();
         Set<AdvisorDef> rawDefs = newMock(Set.class);
-        Set<Class> def1Markers = CollectionFactory.newSet((Class)BlueMarker.class);
-        Set<Class> serviceDefMarkers =CollectionFactory.newSet((Class)RedMarker.class);
-        Set<Class> allMarkers = CollectionFactory.newSet((Class)BlueMarker.class, (Class)BlueMarker.class);
+        Set<Class> def1Markers = CollectionFactory.newSet((Class) BlueMarker.class);
+        Set<Class> serviceDefMarkers = CollectionFactory.newSet((Class) RedMarker.class);
+        Set<Class> allMarkers = CollectionFactory.newSet((Class) BlueMarker.class, (Class) BlueMarker.class);
         Logger logger = mockLogger();
 
         ModuleDef2 moduleDef = mockModuleDef2();
@@ -221,9 +220,9 @@ public class ModuleImplTest extends IOCInternalTestCase
         AdvisorDef2 def1 = mockAdvisorDef2();
         AdvisorDef2 def2 = mockAdvisorDef2();
         Set<AdvisorDef> rawDefs = newMock(Set.class);
-        Set<Class> def1Markers = CollectionFactory.newSet((Class)BlueMarker.class);
-        Set<Class> serviceDefMarkers =CollectionFactory.newSet((Class)BlueMarker.class);
-        Set<Class> allMarkers = CollectionFactory.newSet((Class)BlueMarker.class);
+        Set<Class> def1Markers = CollectionFactory.newSet((Class) BlueMarker.class);
+        Set<Class> serviceDefMarkers = CollectionFactory.newSet((Class) BlueMarker.class);
+        Set<Class> allMarkers = CollectionFactory.newSet((Class) BlueMarker.class);
         Logger logger = mockLogger();
 
         ModuleDef2 moduleDef = mockModuleDef2();
@@ -258,7 +257,7 @@ public class ModuleImplTest extends IOCInternalTestCase
     }
 
 
-     @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     @Test
     public void no_advisor_def_when_service_interface_is_default_and_no_markers()
     {
@@ -340,8 +339,7 @@ public class ModuleImplTest extends IOCInternalTestCase
         {
             foe.foe();
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             // The details are checked elsewhere.
         }
