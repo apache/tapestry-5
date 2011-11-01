@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -153,7 +153,7 @@ public abstract class AbstractPropertyOutput
         }
         catch (NullPointerException ex)
         {
-            throw new NullPointerException(BaseMessages.nullValueInPath(model.getPropertyName()));
+            throw new NullPointerException(String.format("Property '%s' contains a null value in the path.", model.getPropertyName()));
         }
     }
 
