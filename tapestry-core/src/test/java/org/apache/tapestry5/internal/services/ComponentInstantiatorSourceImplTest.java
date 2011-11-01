@@ -14,32 +14,20 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.URLConnection;
-import java.util.UUID;
-
-import javassist.CannotCompileException;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtMethod;
-import javassist.CtNewMethod;
-import javassist.LoaderClassPath;
-import javassist.NotFoundException;
-
 import org.apache.tapestry5.internal.InternalComponentResources;
+import org.apache.tapestry5.internal.plastic.asm.ClassWriter;
+import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.transform.pages.BasicComponent;
 import org.apache.tapestry5.ioc.Registry;
-import org.apache.tapestry5.ioc.RegistryBuilder;
 import org.apache.tapestry5.runtime.Component;
-import org.apache.tapestry5.services.TapestryModule;
 import org.apache.tapestry5.services.UpdateListenerHub;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import static org.apache.tapestry5.internal.plastic.asm.Opcodes.ACC_PUBLIC;
+import static org.apache.tapestry5.internal.plastic.asm.Opcodes.ARETURN;
 
 /**
  * Tests for {@link org.apache.tapestry5.internal.services.ComponentInstantiatorSourceImpl}. Several of these tests are
@@ -47,19 +35,15 @@ import org.testng.annotations.Test;
  */
 public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 {
-    private static final ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
+    private static final String BASIC_COMPONENT_CLASSNAME = BasicComponent.class.getName();
 
     private static final String SYNTH_COMPONENT_CLASSNAME = "org.apache.tapestry5.internal.transform.pages.SynthComponent";
 
-    private File extraClasspath;
-
     private ComponentInstantiatorSource source;
 
+    private ClassCreationHelper helper;
+
     private Registry registry;
-
-    private ClassLoader extraLoader;
-
-    private String tempDir;
 
     /**
      * This allows tests the exists() method.
@@ -83,19 +67,16 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         assertEquals(named.getName(), "Original");
 
-        String path = tempDir + "/" + SYNTH_COMPONENT_CLASSNAME.replace('.', '/') + ".class";
-        URL url = new File(path).toURL();
-
-        long dtm = readDTM(url);
+        long dtm = helper.readDTM(SYNTH_COMPONENT_CLASSNAME);
 
         while (true)
         {
-            if (readDTM(url) != dtm)
+            createSynthComponentClass("Updated");
+
+            if (helper.readDTM(SYNTH_COMPONENT_CLASSNAME) != dtm)
                 break;
 
             // Keep re-writing the file until we see the DTM change.
-
-            createSynthComponentClass("Updated");
         }
 
         // Detect the change and clear out the internal caches
@@ -111,34 +92,22 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
         assertEquals(named.getName(), "Updated");
     }
 
-    private long readDTM(URL url) throws Exception
+
+    private void createSynthComponentClass(String name) throws Exception
     {
-        URLConnection connection = url.openConnection();
+        ClassWriter cw = helper.createWriter(SYNTH_COMPONENT_CLASSNAME, BASIC_COMPONENT_CLASSNAME, Named.class.getName());
 
-        connection.connect();
+        helper.implementPublicConstructor(cw, BASIC_COMPONENT_CLASSNAME);
 
-        return connection.getLastModified();
-    }
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "getName", "()Ljava/lang/String;", null, null);
+        mv.visitCode();
+        mv.visitLdcInsn(name);
+        mv.visitInsn(ARETURN);
+        mv.visitEnd();
 
-    private void createSynthComponentClass(String name) throws CannotCompileException, NotFoundException, IOException
-    {
-        ClassPool pool = new ClassPool();
-        // Inside Maven Surefire, the system classpath is not sufficient to find all
-        // the necessary files.
-        pool.appendClassPath(new LoaderClassPath(extraLoader));
+        cw.visitEnd();
 
-        CtClass ctClass = pool.makeClass(SYNTH_COMPONENT_CLASSNAME);
-
-        ctClass.setSuperclass(pool.get(BasicComponent.class.getName()));
-
-        // Implement method getName()
-
-        CtMethod method = CtNewMethod.make("public String getName() { return \"" + name + "\"; }", ctClass);
-        ctClass.addMethod(method);
-
-        ctClass.addInterface(pool.get(Named.class.getName()));
-
-        ctClass.writeFile(extraClasspath.getAbsolutePath());
+        helper.writeFile(cw, SYNTH_COMPONENT_CLASSNAME);
     }
 
     private Component createComponent(String classname)
@@ -159,25 +128,9 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
     @BeforeClass
     public void setup_tests() throws Exception
     {
-        String tempdir = System.getProperty("java.io.tmpdir");
-        String uid = UUID.randomUUID().toString();
+        helper = new ClassCreationHelper(ForceDevelopmentModeModule.class, AddTransformPagesToCISModule.class);
 
-        tempDir = tempdir + "/tapestry-test-classpath/" + uid;
-        extraClasspath = new File(tempDir);
-
-        System.out.println("Creating dir: " + extraClasspath);
-
-        extraClasspath.mkdirs();
-
-        URL url = extraClasspath.toURL();
-
-        extraLoader = new URLClassLoader(new URL[]
-        { url }, contextLoader);
-        RegistryBuilder builder = new RegistryBuilder(extraLoader);
-
-        builder.add(TapestryModule.class, ForceDevelopmentModeModule.class, AddTransformPagesToCISModule.class);
-
-        registry = builder.build();
+        registry = helper.registry;
 
         source = registry.getService(ComponentInstantiatorSource.class);
     }
