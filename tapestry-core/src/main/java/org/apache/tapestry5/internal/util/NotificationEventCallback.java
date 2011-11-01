@@ -37,7 +37,8 @@ public class NotificationEventCallback implements ComponentEventCallback
         if (result instanceof Boolean) return ((Boolean) result);
 
         throw new IllegalArgumentException(
-                UtilMessages.noReturnValueAccepted(eventType, completeId, result));
+                String.format("Event '%s' from %s received an event handler method return value of %s. This type of event does not support return values from event handler methods.", eventType, completeId, String
+                        .valueOf(result)));
     }
 
 }
