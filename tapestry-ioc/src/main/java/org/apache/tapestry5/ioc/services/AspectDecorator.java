@@ -15,45 +15,23 @@
 package org.apache.tapestry5.ioc.services;
 
 import org.apache.tapestry5.ioc.AnnotationAccess;
-import org.apache.tapestry5.ioc.MethodAdvice;
 
 /**
  * A decorator used to create an interceptor that delegates each method's invocation to an
- * {@link org.apache.tapestry5.ioc.MethodAdvice} for advice. Advice can inspect or change method parameters, inspect or
- * change
- * the method's return value, and inspect and change thrown exceptions (checked and unchecked).
+ * {@link org.apache.tapestry5.plastic.MethodAdvice} for advice. Advice can inspect or change method parameters, inspect or
+ * change the method's return value, and inspect and change thrown exceptions (checked and unchecked).
  */
 public interface AspectDecorator
 {
     /**
-     * Intercepts method invocations on the delegate and passes them through the provided aspect. Note that the advice
-     * <em>must</em> be thread-safe.
-     * 
-     * @param serviceInterface
-     *            defines the interface of the interceptor and delegate
-     * @param delegate
-     *            the object on which methods will be invoked
-     * @param advice
-     *            intercepts the method invocations on the delegate
-     * @param description
-     *            used as the toString() of the returned interceptor, unless toString() is part of the
-     *            service interface
-     * @return the interceptor, wrapping the delegate with all the advice
-     */
-    <T> T build(Class<T> serviceInterface, T delegate, MethodAdvice advice, String description);
-
-    /**
      * Creates a builder that can be used to create the interceptor. This is used when only some of the methods need to
      * be advised, or when different methods need to receive different advice, or when multiple advice is to be
      * applied.
-     * 
-     * @param serviceInterface
-     *            defines the interface of the interceptor and the delegate
-     * @param delegate
-     *            the object on which methods will be invokes
-     * @param description
-     *            used as the toString() of the interceptor unless toString() is part of the service
-     *            interface
+     *
+     * @param serviceInterface defines the interface of the interceptor and the delegate
+     * @param delegate         the object on which methods will be invokes
+     * @param description      used as the toString() of the interceptor unless toString() is part of the service
+     *                         interface
      * @return a builder that can be used to generate the final interceptor
      */
     <T> AspectInterceptorBuilder<T> createBuilder(Class<T> serviceInterface, T delegate, String description);
@@ -62,19 +40,15 @@ public interface AspectDecorator
      * Creates a builder that can be used to create the interceptor. This is used when only some of the methods need to
      * be advised, or when different methods need to receive different advice, or when multiple advice is to be
      * applied.
-     * 
-     * @param serviceInterface
-     *            defines the interface of the interceptor and the delegate
-     * @param delegate
-     *            the object on which methods will be invokes
-     * @param annotationAccess
-     *            provides access to combined annotations of the underlying service
-     *            and service interface
-     * @param description
-     *            used as the toString() of the interceptor unless toString() is part of the service
-     *            interface
+     *
+     * @param serviceInterface defines the interface of the interceptor and the delegate
+     * @param delegate         the object on which methods will be invokes
+     * @param annotationAccess provides access to combined annotations of the underlying service
+     *                         and service interface
+     * @param description      used as the toString() of the interceptor unless toString() is part of the service
+     *                         interface
      * @return a builder that can be used to generate the final interceptor
      */
     <T> AspectInterceptorBuilder<T> createBuilder(Class<T> serviceInterface, T delegate,
-            AnnotationAccess annotationAccess, String description);
+                                                  AnnotationAccess annotationAccess, String description);
 }

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,17 +14,19 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.tapestry5.Translator;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
+import org.apache.tapestry5.plastic.PlasticUtils;
 import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.TranslatorSource;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("unchecked")
 public class TranslatorSourceImpl implements TranslatorSource, InvalidationListener
@@ -105,7 +107,8 @@ public class TranslatorSourceImpl implements TranslatorSource, InvalidationListe
                 names.add(type.getName());
             }
 
-            throw new IllegalArgumentException(ServicesMessages.noTranslatorForType(valueType, names));
+            throw new IllegalArgumentException(String.format("No translator is defined for type %s.  Registered types: %s.", PlasticUtils.toTypeName(valueType), InternalUtils
+                    .joinSorted(names)));
         }
 
         return result;

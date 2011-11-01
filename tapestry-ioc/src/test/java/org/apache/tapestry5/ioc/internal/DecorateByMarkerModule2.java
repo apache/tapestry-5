@@ -13,24 +13,31 @@
 // limitations under the License.
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.*;
-import org.apache.tapestry5.ioc.annotations.*;
+import org.apache.tapestry5.ioc.Greeter;
+import org.apache.tapestry5.ioc.RedMarker;
+import org.apache.tapestry5.ioc.ServiceResources;
+import org.apache.tapestry5.ioc.annotations.Decorate;
+import org.apache.tapestry5.ioc.annotations.Marker;
+import org.apache.tapestry5.ioc.annotations.Match;
+import org.apache.tapestry5.ioc.annotations.Order;
 import org.apache.tapestry5.ioc.services.AspectDecorator;
 import org.apache.tapestry5.ioc.services.AspectInterceptorBuilder;
+import org.apache.tapestry5.plastic.MethodAdvice;
+import org.apache.tapestry5.plastic.MethodInvocation;
 import org.testng.Assert;
 
 
 public class DecorateByMarkerModule2
 {
-   
+
     @Decorate
     @Match("RedGreeter")
     public static <T> T byMatchAnnotation(ServiceResources resources, T delegate, AspectDecorator aspectDecorator)
     {
         return doDecorate("alpha", resources, delegate, aspectDecorator);
     }
-   
-    @Decorate(id="withMarker")
+
+    @Decorate(id = "withMarker")
     @RedMarker
     @Order("before:*")
     public static <T> T byMarkerAnnotation(ServiceResources resources, T delegate, AspectDecorator aspectDecorator)
@@ -38,38 +45,38 @@ public class DecorateByMarkerModule2
         return doDecorate("beta", resources, delegate, aspectDecorator);
     }
 
-    @Decorate(id="doesNotMatchAnyService")
+    @Decorate(id = "doesNotMatchAnyService")
     public static <T> T doesNotMatchAnyService(ServiceResources resources, T delegate, AspectDecorator aspectDecorator)
     {
         Assert.fail("Unexpected invocation");
 
         return delegate;
     }
-   
+
     private static <T> T doDecorate(final String decoratorId, ServiceResources resources, T delegate, AspectDecorator aspectDecorator)
     {
         Class<T> serviceInterface = resources.getServiceInterface();
-       
+
         AspectInterceptorBuilder<T> builder = aspectDecorator.createBuilder(serviceInterface, delegate, String.format(
                 "<Interceptor for %s(%s)>", resources.getServiceId(), serviceInterface.getName()));
 
         builder.adviseAllMethods(new MethodAdvice()
         {
-           
-            public void advise(Invocation invocation)
+
+            public void advise(MethodInvocation invocation)
             {
                 invocation.proceed();
-               
-                Object result = invocation.getResult();
-               
-                invocation.overrideResult(String.format("Decorated by %s[%s]", decoratorId, result));
-               
+
+                Object result = invocation.getReturnValue();
+
+                invocation.setReturnValue(String.format("Decorated by %s[%s]", decoratorId, result));
+
             }
         });
 
         return builder.build();
     }
-   
+
     @Marker(RedMarker.class)
     public Greeter buildRedGreeter()
     {

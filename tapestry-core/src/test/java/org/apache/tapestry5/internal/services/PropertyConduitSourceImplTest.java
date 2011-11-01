@@ -24,15 +24,11 @@ import org.apache.tapestry5.internal.bindings.PropBindingFactoryTest;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.internal.util.IntegerRange;
-import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
-import org.apache.tapestry5.ioc.services.ClassFab;
-import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.services.PropertyConduitSource;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -190,6 +186,9 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     @Test
     public void handle_beans_from_unexpected_classloader() throws Exception
     {
+        throw new Exception("test not yet re-implemented");
+
+        /*
         // First, create something that looks like a Hibernate proxy.
 
         ClassFactory factory = new ClassFactoryImpl();
@@ -211,6 +210,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         PropertyConduit conduit = source.create(proxyClass, "firstName");
 
         assertEquals(conduit.get(simple), "Howard");
+        */
     }
 
     @Test

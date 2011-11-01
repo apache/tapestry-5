@@ -14,10 +14,6 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import java.lang.reflect.Method;
-
-import org.apache.tapestry5.ioc.Invocation;
-import org.apache.tapestry5.ioc.MethodAdvice;
 import org.apache.tapestry5.ioc.MethodAdviceReceiver;
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.annotations.NotLazy;
@@ -25,6 +21,10 @@ import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.LazyAdvisor;
 import org.apache.tapestry5.ioc.services.ThunkCreator;
+import org.apache.tapestry5.plastic.MethodAdvice;
+import org.apache.tapestry5.plastic.MethodInvocation;
+
+import java.lang.reflect.Method;
 
 @PreventServiceDecoration
 public class LazyAdvisorImpl implements LazyAdvisor
@@ -58,7 +58,7 @@ public class LazyAdvisorImpl implements LazyAdvisor
              * When the method is invoked, we don't immediately proceed. Instead, we return a thunk instance
              * that defers its behavior to the lazily invoked invocation.
              */
-            public void advise(final Invocation invocation)
+            public void advise(final MethodInvocation invocation)
             {
                 ObjectCreator deferred = new ObjectCreator()
                 {
@@ -66,7 +66,7 @@ public class LazyAdvisorImpl implements LazyAdvisor
                     {
                         invocation.proceed();
 
-                        return invocation.getResult();
+                        return invocation.getReturnValue();
                     }
                 };
 
@@ -74,7 +74,7 @@ public class LazyAdvisorImpl implements LazyAdvisor
 
                 Object thunk = thunkCreator.createThunk(thunkType, cachingObjectCreator, description);
 
-                invocation.overrideResult(thunk);
+                invocation.setReturnValue(thunk);
             }
         };
 

@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.Invocation;
-import org.apache.tapestry5.ioc.MethodAdvice;
 import org.apache.tapestry5.ioc.internal.IOCInternalTestCase;
 import org.apache.tapestry5.ioc.services.AspectDecorator;
 import org.apache.tapestry5.ioc.services.AspectInterceptorBuilder;
+import org.apache.tapestry5.plastic.MethodAdvice;
+import org.apache.tapestry5.plastic.MethodInvocation;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -51,9 +51,9 @@ public class AspectInterceptorBuilderImplTest extends IOCInternalTestCase
 
         MethodAdvice advice = new MethodAdvice()
         {
-            public void advise(Invocation invocation)
+            public void advise(MethodInvocation invocation)
             {
-                assertEquals(invocation.getMethodName(), "advised");
+                assertEquals(invocation.getMethod().getName(), "advised");
 
                 invocation.proceed();
             }
@@ -94,11 +94,10 @@ public class AspectInterceptorBuilderImplTest extends IOCInternalTestCase
             builder.adviseMethod(Runnable.class.getMethod("run"), advice);
 
             unreachable();
-        }
-        catch (IllegalArgumentException ex)
+        } catch (IllegalArgumentException ex)
         {
             assertEquals(ex.getMessage(),
-                         "Method public abstract void java.lang.Runnable.run() is not defined for interface interface org.apache.tapestry5.ioc.internal.services.AspectInterceptorBuilderImplTest$Subject.");
+                    "Method public abstract void java.lang.Runnable.run() is not defined for interface interface org.apache.tapestry5.ioc.internal.services.AspectInterceptorBuilderImplTest$Subject.");
         }
 
 
@@ -118,11 +117,11 @@ public class AspectInterceptorBuilderImplTest extends IOCInternalTestCase
 
         MethodAdvice stripFirstLetter = new MethodAdvice()
         {
-            public void advise(Invocation invocation)
+            public void advise(MethodInvocation invocation)
             {
                 String param = (String) invocation.getParameter(0);
 
-                invocation.override(0, param.substring(1));
+                invocation.setParameter(0, param.substring(1));
 
                 invocation.proceed();
             }
@@ -130,7 +129,7 @@ public class AspectInterceptorBuilderImplTest extends IOCInternalTestCase
 
         MethodAdvice reverse = new MethodAdvice()
         {
-            public void advise(Invocation invocation)
+            public void advise(MethodInvocation invocation)
             {
                 String param = (String) invocation.getParameter(0);
 
@@ -142,14 +141,14 @@ public class AspectInterceptorBuilderImplTest extends IOCInternalTestCase
                 for (int i = 0; i < count; i++)
                     output[count - i - 1] = input[i];
 
-                invocation.override(0, new String(output));
+                invocation.setParameter(0, new String(output));
 
                 invocation.proceed();
             }
         };
 
         AspectInterceptorBuilder<TextTransformer> builder = decorator.createBuilder(TextTransformer.class, delegate,
-                                                                                    "<TextTransformer>");
+                "<TextTransformer>");
 
         Method method = TextTransformer.class.getMethod("transform", String.class);
         builder.adviseMethod(method, stripFirstLetter);
@@ -168,7 +167,7 @@ public class AspectInterceptorBuilderImplTest extends IOCInternalTestCase
 
         MethodAdvice advice = new MethodAdvice()
         {
-            public void advise(Invocation invocation)
+            public void advise(MethodInvocation invocation)
             {
                 String[] param = (String[]) invocation.getParameter(0);
 
@@ -179,7 +178,7 @@ public class AspectInterceptorBuilderImplTest extends IOCInternalTestCase
 
                 invocation.proceed();
 
-                String[] result = (String[]) invocation.getResult();
+                String[] result = (String[]) invocation.getReturnValue();
 
                 for (int i = 0; i < result.length; i++)
                 {
@@ -188,7 +187,11 @@ public class AspectInterceptorBuilderImplTest extends IOCInternalTestCase
             }
         };
 
-        ArraysSubject advised = decorator.build(ArraysSubject.class, delegate, advice, "whatever");
+        AspectInterceptorBuilder<ArraysSubject> builder = decorator.createBuilder(ArraysSubject.class, delegate, "whatever");
+
+        builder.adviseAllMethods(advice);
+
+        ArraysSubject advised = builder.build();
 
         String[] inputs = {"Fred", "Barney"};
 

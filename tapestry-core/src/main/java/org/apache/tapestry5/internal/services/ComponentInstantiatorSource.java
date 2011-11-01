@@ -15,7 +15,6 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
-import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.services.transform.ControlledPackageType;
 
@@ -55,14 +54,6 @@ public interface ComponentInstantiatorSource
      * @return true if the class exists (there's a ".class" file), false otherwise
      */
     boolean exists(String className);
-
-    /**
-     * Returns a class factory that can be used to generate additional classes around enhanced classes, or create
-     * subclasses of enhanced classes.
-     *
-     * @deprecated Deprecated in 5.3, to be removed in 5.4
-     */
-    ClassFactory getClassFactory();
 
     /**
      * Returns a proxy factory that can be used to generate additional classes around enhanced classes, or create

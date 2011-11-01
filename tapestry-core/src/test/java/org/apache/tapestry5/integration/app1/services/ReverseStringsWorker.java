@@ -15,41 +15,48 @@
 package org.apache.tapestry5.integration.app1.services;
 
 import org.apache.tapestry5.model.MutableComponentModel;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.plastic.MethodAdvice;
+import org.apache.tapestry5.plastic.MethodInvocation;
+import org.apache.tapestry5.plastic.PlasticClass;
+import org.apache.tapestry5.plastic.PlasticMethod;
+import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
+import org.apache.tapestry5.services.transform.TransformationSupport;
 
-public class ReverseStringsWorker implements ComponentClassTransformWorker
+public class ReverseStringsWorker implements ComponentClassTransformWorker2
 {
-    private final ComponentMethodAdvice advice = new ComponentMethodAdvice()
+    private final MethodAdvice advice = new MethodAdvice()
     {
-        public void advise(ComponentMethodInvocation invocation)
+        public void advise(MethodInvocation invocation)
         {
-            for (int i = 0; i < invocation.getParameterCount(); i++)
+            Class<?>[] parameterTypes = invocation.getMethod().getParameterTypes();
+
+            for (int i = 0; i < parameterTypes.length; i++)
             {
-                if (invocation.getParameterType(i).equals(String.class))
+                if (parameterTypes[i].equals(String.class))
                 {
                     String value = (String) invocation.getParameter(i);
 
-                    invocation.override(i, reverse(value));
+                    invocation.setParameter(i, reverse(value));
                 }
             }
 
             invocation.proceed();
 
-            if (invocation.getResultType().equals(String.class))
+            if (invocation.getMethod().getReturnType().equals(String.class))
             {
-                if (invocation.isFail())
+                if (invocation.didThrowCheckedException())
                 {
-                    Exception thrown = invocation.getThrown(Exception.class);
+                    Exception thrown = invocation.getCheckedException(Exception.class);
 
-                    invocation.overrideResult(String.format("Invocation of method %s() failed with %s.",
-                            invocation.getMethodName(), thrown.getClass().getName()));
+                    invocation.setReturnValue(String.format("Invocation of method %s() failed with %s.",
+                            invocation.getMethod().getName(), thrown.getClass().getName()));
 
                     return;
                 }
 
-                String value = (String) invocation.getResult();
+                String value = (String) invocation.getReturnValue();
 
-                invocation.overrideResult(reverse(value));
+                invocation.setReturnValue(reverse(value));
             }
         }
 
@@ -67,9 +74,9 @@ public class ReverseStringsWorker implements ComponentClassTransformWorker
         }
     };
 
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+    public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
-        for (TransformMethod method : transformation.matchMethodsWithAnnotation(ReverseStrings.class))
+        for (PlasticMethod method : plasticClass.getMethodsWithAnnotation(ReverseStrings.class))
         {
             method.addAdvice(advice);
         }

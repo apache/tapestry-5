@@ -14,10 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import java.lang.reflect.Method;
-
 import org.apache.tapestry5.ioc.AnnotationAccess;
-import org.apache.tapestry5.ioc.MethodAdvice;
 import org.apache.tapestry5.ioc.annotations.PreventServiceDecoration;
 import org.apache.tapestry5.ioc.internal.AnnotationAccessImpl;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -26,25 +23,17 @@ import org.apache.tapestry5.ioc.services.AspectInterceptorBuilder;
 import org.apache.tapestry5.ioc.services.Builtin;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 
+import java.lang.reflect.Method;
+
 @PreventServiceDecoration
 public class AspectDecoratorImpl implements AspectDecorator
 {
     private final PlasticProxyFactory proxyFactory;
 
     public AspectDecoratorImpl(@Builtin
-    PlasticProxyFactory proxyFactory)
+                               PlasticProxyFactory proxyFactory)
     {
         this.proxyFactory = proxyFactory;
-    }
-
-    public <T> T build(Class<T> serviceInterface, T delegate, MethodAdvice advice, String description)
-    {
-        assert advice != null;
-        AspectInterceptorBuilder<T> builder = createBuilder(serviceInterface, delegate, description);
-
-        builder.adviseAllMethods(advice);
-
-        return builder.build();
     }
 
     public <T> AspectInterceptorBuilder<T> createBuilder(Class<T> serviceInterface, final T delegate, String description)
@@ -53,7 +42,7 @@ public class AspectDecoratorImpl implements AspectDecorator
     }
 
     public <T> AspectInterceptorBuilder<T> createBuilder(final Class<T> serviceInterface, final T delegate,
-            AnnotationAccess annotationAccess, final String description)
+                                                         AnnotationAccess annotationAccess, final String description)
     {
         assert serviceInterface != null;
         assert delegate != null;
@@ -65,16 +54,6 @@ public class AspectDecoratorImpl implements AspectDecorator
         return new AbtractAspectInterceptorBuilder<T>(annotationAccess)
         {
             private AspectInterceptorBuilder<T> builder;
-
-            public void adviseMethod(Method method, MethodAdvice advice)
-            {
-                getBuilder().adviseMethod(method, advice);
-            }
-
-            public void adviseAllMethods(MethodAdvice advice)
-            {
-                getBuilder().adviseAllMethods(advice);
-            }
 
             public void adviseMethod(Method method, org.apache.tapestry5.plastic.MethodAdvice advice)
             {

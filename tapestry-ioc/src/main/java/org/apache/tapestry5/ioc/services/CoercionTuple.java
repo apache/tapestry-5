@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.ioc.services;
 
+import org.apache.tapestry5.plastic.PlasticUtils;
+
 /**
  * An immutable object that represents a mapping from one type to another. This is also the contribution type when
  * building the {@link org.apache.tapestry5.ioc.services.TypeCoercer} service. Wraps a
@@ -64,7 +66,7 @@ public final class CoercionTuple<S, T>
         if (void.class.equals(type))
             return "null";
 
-        String name = ClassFabUtils.toJavaClassName(type);
+        String name = PlasticUtils.toTypeName(type);
 
         int dotx = name.lastIndexOf('.');
 

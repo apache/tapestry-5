@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.plastic.PlasticUtils;
 
 /**
  * Handy method useful when creating new classes using {@link org.apache.tapestry5.ioc.services.ClassFab}.
@@ -53,19 +54,6 @@ public final class ClassFabUtils
     public static String generateClassName(Class interfaceClass)
     {
         return generateClassName(interfaceClass.getSimpleName());
-    }
-
-    /**
-     * Javassist needs the class name to be as it appears in source code, even for arrays. Invoking getName() on a Class
-     * instance representing an array returns the internal format (i.e, "[...;" or something). This returns it as it
-     * would appear in Java code.
-     */
-    public static String toJavaClassName(Class inputClass)
-    {
-        if (inputClass.isArray())
-            return toJavaClassName(inputClass.getComponentType()) + "[]";
-
-        return inputClass.getName();
     }
 
     /**

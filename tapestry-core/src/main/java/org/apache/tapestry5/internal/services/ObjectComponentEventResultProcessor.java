@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,16 +14,16 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.func.Mapper;
+import org.apache.tapestry5.ioc.util.AvailableValues;
+import org.apache.tapestry5.ioc.util.UnknownValueException;
+import org.apache.tapestry5.plastic.PlasticUtils;
+import org.apache.tapestry5.services.ComponentEventResultProcessor;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-
-import org.apache.tapestry5.func.F;
-import org.apache.tapestry5.func.Mapper;
-import org.apache.tapestry5.ioc.services.ClassFabUtils;
-import org.apache.tapestry5.ioc.util.AvailableValues;
-import org.apache.tapestry5.ioc.util.UnknownValueException;
-import org.apache.tapestry5.services.ComponentEventResultProcessor;
 
 /**
  * A catch-all for type Object that reports the return value as an error.
@@ -44,13 +44,13 @@ public class ObjectComponentEventResultProcessor implements ComponentEventResult
         {
             public String map(Class input)
             {
-                return ClassFabUtils.toJavaClassName(input);
+                return PlasticUtils.toTypeName(input);
             }
         }).toList();
 
         String message = String.format(
                 "A component event handler method returned the value %s. Return type %s can not be handled.", value,
-                ClassFabUtils.toJavaClassName(value.getClass()));
+                PlasticUtils.toTypeName(value.getClass()));
 
         throw new UnknownValueException(message, new AvailableValues("Configured return types", names));
     }

@@ -14,19 +14,16 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Set;
-
 import org.apache.tapestry5.ioc.AnnotationAccess;
-import org.apache.tapestry5.ioc.AnnotationProvider;
-import org.apache.tapestry5.ioc.MethodAdvice;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.plastic.PlasticClass;
 import org.apache.tapestry5.plastic.PlasticClassTransformation;
 import org.apache.tapestry5.plastic.PlasticField;
+
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Set;
 
 @SuppressWarnings("all")
 public class AspectInterceptorBuilderImpl<T> extends AbtractAspectInterceptorBuilder<T>
@@ -40,7 +37,7 @@ public class AspectInterceptorBuilderImpl<T> extends AbtractAspectInterceptorBui
     private final PlasticClass plasticClass;
 
     public AspectInterceptorBuilderImpl(AnnotationAccess annotationAccess, PlasticProxyFactory plasticProxyFactory,
-            Class<T> serviceInterface, T delegate, String description)
+                                        Class<T> serviceInterface, T delegate, String description)
     {
         super(annotationAccess);
 
@@ -59,23 +56,6 @@ public class AspectInterceptorBuilderImpl<T> extends AbtractAspectInterceptorBui
         {
             plasticClass.introduceMethod(method).delegateTo(delegateField);
         }
-    }
-
-    public void adviseMethod(Method method, MethodAdvice advice)
-    {
-        assert method != null;
-        assert advice != null;
-
-        AnnotationProvider methodAnnotationProvider = getMethodAnnotationProvider(method.getName(),
-                method.getParameterTypes());
-
-        adviseMethod(method, InternalUtils.toPlasticMethodAdvice(advice, methodAnnotationProvider));
-    }
-
-    public void adviseAllMethods(MethodAdvice advice)
-    {
-        for (Method m : serviceInterface.getMethods())
-            adviseMethod(m, advice);
     }
 
     public void adviseMethod(Method method, org.apache.tapestry5.plastic.MethodAdvice advice)

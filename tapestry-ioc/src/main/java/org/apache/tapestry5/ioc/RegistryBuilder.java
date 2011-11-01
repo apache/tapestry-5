@@ -20,12 +20,10 @@ import org.apache.tapestry5.ioc.internal.DefaultModuleDefImpl;
 import org.apache.tapestry5.ioc.internal.LoggerSourceImpl;
 import org.apache.tapestry5.ioc.internal.RegistryImpl;
 import org.apache.tapestry5.ioc.internal.RegistryWrapper;
-import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry5.ioc.internal.services.PlasticProxyFactoryImpl;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
-import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.services.TapestryIOCModule;
 import org.slf4j.Logger;
@@ -54,8 +52,6 @@ public final class RegistryBuilder
 
     private final LoggerSource loggerSource;
 
-    private final ClassFactory classFactory;
-
     private final PlasticProxyFactory proxyFactory;
 
     private final Set<Class> addedModuleClasses = CollectionFactory.newSet();
@@ -79,10 +75,8 @@ public final class RegistryBuilder
         // Make the ClassFactory appear to be a service inside TapestryIOCModule, even before that
         // module exists.
 
-        Logger classFactoryLogger = loggerSource.getLogger(TapestryIOCModule.class.getName() + ".ClassFactory");
         Logger proxyFactoryLogger = loggerSource.getLogger(TapestryIOCModule.class.getName() + ".PlasticProxyFactory");
 
-        classFactory = new ClassFactoryImpl(this.classLoader, classFactoryLogger);
         proxyFactory = new PlasticProxyFactoryImpl(this.classLoader, proxyFactoryLogger);
 
         add(TapestryIOCModule.class);
@@ -174,7 +168,7 @@ public final class RegistryBuilder
     {
         lock.lock();
 
-        RegistryImpl registry = new RegistryImpl(modules, classFactory, proxyFactory, loggerSource);
+        RegistryImpl registry = new RegistryImpl(modules, proxyFactory, loggerSource);
 
         return new RegistryWrapper(registry);
     }

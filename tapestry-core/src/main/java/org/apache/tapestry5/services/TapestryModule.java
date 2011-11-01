@@ -965,7 +965,7 @@ public final class TapestryModule
      * <li>null to {@link GridDataSource}
      * <li>List to {@link SelectModel}
      * <li>{@link ComponentResourcesAware} (typically, a component) to {@link ComponentResources}
-     * <li> {@link ComponentResources} to {@link PropertyOverrides}
+     * <li>{@link ComponentResources} to {@link PropertyOverrides}
      * <li>String to {@link Renderable}
      * <li>{@link Renderable} to {@link Block}
      * <li>String to {@link DateFormat}
@@ -973,8 +973,6 @@ public final class TapestryModule
      * <li>{@link Renderable} to {@link RenderCommand}</li>
      * <li>String to {@link Pattern}</li>
      * <li>String to {@link DateFormat}</li>
-     * <li>{@link ComponentClassTransformWorker} to {@link ComponentClassTransformWorker2}</li>
-     * <li>{@link InjectionProvider} to {@link InjectionProvider2}</li>
      * <li>{@link Resource} to {@link DynamicTemplate}</li>
      * <li>{@link Asset} to {@link Resource}</li>
      * <li>{@link ValueEncoder} to {@link ValueEncoderFactory}</li>
@@ -990,9 +988,6 @@ public final class TapestryModule
 
                                              @Core
                                              final AssetSource assetSource,
-
-                                             @Core
-                                             final ComponentClassCache classCache,
 
                                              @Core
                                              final DynamicTemplateParser dynamicTemplateParser)
@@ -1152,8 +1147,6 @@ public final class TapestryModule
 
         configuration.add(CoercionTuple.create(String.class, ClientValidation.class, stringToClientValidationCoercion));
 
-        configuration.add(CCTWToCCTW2Coercion.TUPLE);
-
         configuration.add(CoercionTuple.create(ValueEncoder.class, ValueEncoderFactory.class, new Coercion<ValueEncoder, ValueEncoderFactory>()
         {
             public ValueEncoderFactory coerce(ValueEncoder input)
@@ -1161,9 +1154,6 @@ public final class TapestryModule
                 return new GenericValueEncoderFactory(input);
             }
         }));
-
-        configuration.add(CoercionTuple.create(InjectionProvider.class, InjectionProvider2.class,
-                new InjectionProviderToInjectionProvider2(classCache)));
     }
 
     /**
@@ -1812,8 +1802,6 @@ public final class TapestryModule
                 writer.end();
             }
         };
-
-        configuration.add(ClassTransformation.class, preformatted);
 
         configuration.addInstance(List.class, ListRenderer.class);
         configuration.addInstance(Object[].class, ObjectArrayRenderer.class);

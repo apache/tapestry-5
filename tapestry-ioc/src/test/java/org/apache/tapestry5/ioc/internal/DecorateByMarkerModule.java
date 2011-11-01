@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010,, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@ package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.GreenMarker;
 import org.apache.tapestry5.ioc.Greeter;
-import org.apache.tapestry5.ioc.Invocation;
-import org.apache.tapestry5.ioc.MethodAdvice;
 import org.apache.tapestry5.ioc.RedMarker;
 import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.Decorate;
@@ -25,65 +23,67 @@ import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Order;
 import org.apache.tapestry5.ioc.services.AspectDecorator;
 import org.apache.tapestry5.ioc.services.AspectInterceptorBuilder;
+import org.apache.tapestry5.plastic.MethodAdvice;
+import org.apache.tapestry5.plastic.MethodInvocation;
 
 
 public class DecorateByMarkerModule
 {
-   
-    @Decorate(serviceInterface=Greeter.class)
+
+    @Decorate(serviceInterface = Greeter.class)
     @GreenMarker
     public static <T> T greeter(ServiceResources resources, T delegate, AspectDecorator aspectDecorator)
     {
         return doDecorate("foo", resources, delegate, aspectDecorator);
     }
-   
-    @Decorate(serviceInterface=Greeter.class, id="bar")
+
+    @Decorate(serviceInterface = Greeter.class, id = "bar")
     @GreenMarker
     @Order("after:Greeter")
     public static <T> T greeter2(ServiceResources resources, T delegate, AspectDecorator aspectDecorator)
     {
         return doDecorate("bar", resources, delegate, aspectDecorator);
     }
-   
-    @Decorate(serviceInterface=Greeter.class, id="baz")
+
+    @Decorate(serviceInterface = Greeter.class, id = "baz")
     @GreenMarker
     @Order({"after:Greeter", "before:bar"})
     public static <T> T greeter3(ServiceResources resources, T delegate, AspectDecorator aspectDecorator)
     {
         return doDecorate("baz", resources, delegate, aspectDecorator);
     }
-   
-    @Decorate(serviceInterface=Greeter.class, id="barney")
+
+    @Decorate(serviceInterface = Greeter.class, id = "barney")
     @Local
     public static <T> T localAdvise(ServiceResources resources, T delegate, AspectDecorator aspectDecorator)
     {
         return doDecorate("barney", resources, delegate, aspectDecorator);
     }
-   
+
     private static <T> T doDecorate(final String decoratorId, ServiceResources resources, T delegate, AspectDecorator aspectDecorator)
     {
         Class<T> serviceInterface = resources.getServiceInterface();
-       
+
         AspectInterceptorBuilder<T> builder = aspectDecorator.createBuilder(serviceInterface, delegate, String.format(
                 "<Interceptor for %s(%s)>", resources.getServiceId(), serviceInterface.getName()));
 
         builder.adviseAllMethods(new MethodAdvice()
         {
-           
-            public void advise(Invocation invocation)
+
+            public void advise(MethodInvocation invocation)
             {
                 invocation.proceed();
-               
-                Object result = invocation.getResult();
-               
-                invocation.overrideResult(String.format("Decorated by %s[%s]", decoratorId, result));
-               
+
+                Object result = invocation.getReturnValue();
+
+                invocation.setReturnValue(String.format("Decorated by %s[%s]", decoratorId, result));
+
             }
         });
 
         return builder.build();
     }
-   
+
     @Marker(RedMarker.class)
     public Greeter buildRedGreeter()
     {

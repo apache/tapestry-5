@@ -28,11 +28,6 @@ import java.util.Set;
 
 public class ModuleImplTest extends IOCInternalTestCase
 {
-    protected final void train_newClass(InternalRegistry registry, ClassFactory factory, Class serviceInterface)
-    {
-        expect(registry.newClass(serviceInterface)).andReturn(factory.newClass(serviceInterface));
-    }
-
     @Test
     public void find_service_ids_for_interface()
     {

@@ -103,13 +103,6 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub, Operati
      */
     <K, V> Map<K, V> getMappedConfiguration(ServiceDef3 serviceDef, Class<K> keyType, Class<V> valueType);
 
-    /**
-     * Convieience for creating a new {@link org.apache.tapestry5.ioc.services.ClassFab} instance using a
-     * {@link org.apache.tapestry5.ioc.services.ClassFactory}.
-     *
-     * @param serviceInterface the interface to be implemented by the provided class
-     */
-    ClassFab newClass(Class serviceInterface);
 
     /**
      * Given an input string that <em>may</em> contain symbols, returns the string with any and all symbols fully

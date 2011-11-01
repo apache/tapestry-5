@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,66 +15,66 @@ package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.GreenMarker;
 import org.apache.tapestry5.ioc.Greeter;
-import org.apache.tapestry5.ioc.Invocation;
-import org.apache.tapestry5.ioc.MethodAdvice;
 import org.apache.tapestry5.ioc.MethodAdviceReceiver;
 import org.apache.tapestry5.ioc.RedMarker;
 import org.apache.tapestry5.ioc.annotations.Advise;
 import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Order;
+import org.apache.tapestry5.plastic.MethodAdvice;
+import org.apache.tapestry5.plastic.MethodInvocation;
 
 
 public class AdviseByMarkerModule
 {
-   
-    @Advise(serviceInterface=Greeter.class, id="foo")
+
+    @Advise(serviceInterface = Greeter.class, id = "foo")
     @GreenMarker
     @Order("before:Greeter")
     public static void doAdviseOneMoreTime(MethodAdviceReceiver receiver)
     {
         doAdvise(receiver, "gamma");
     }
-   
-    @Advise(serviceInterface=Greeter.class, id="bar")
+
+    @Advise(serviceInterface = Greeter.class, id = "bar")
     @GreenMarker
     @Order({"after:foo", "before:Greeter"})
     public static void doAdviseAgain(MethodAdviceReceiver receiver)
     {
         doAdvise(receiver, "beta");
     }
-    
-    @Advise(serviceInterface=Greeter.class)
+
+    @Advise(serviceInterface = Greeter.class)
     @GreenMarker
     public static void doAdvise(MethodAdviceReceiver receiver)
     {
         doAdvise(receiver, "alpha");
     }
-    
+
     private static void doAdvise(MethodAdviceReceiver receiver, final String id)
     {
         receiver.adviseAllMethods(new MethodAdvice()
         {
-           
-            public void advise(Invocation invocation)
+
+            public void advise(MethodInvocation invocation)
             {
                 invocation.proceed();
-               
-                Object result = invocation.getResult();
-               
-                invocation.overrideResult(String.format("%s[%s]", id, result));
-               
+
+                Object result = invocation.getReturnValue();
+
+                invocation.setReturnValue(String.format("%s[%s]", id, result));
+
             }
         });
     }
-   
-    @Advise(serviceInterface=Greeter.class, id="barney")
+
+    @Advise(serviceInterface = Greeter.class, id = "barney")
     @Local
     public static void localAdvise(MethodAdviceReceiver receiver)
     {
         doAdvise(receiver, "delta");
     }
-   
+
     @Marker(RedMarker.class)
     public Greeter buildRedGreeter()
     {

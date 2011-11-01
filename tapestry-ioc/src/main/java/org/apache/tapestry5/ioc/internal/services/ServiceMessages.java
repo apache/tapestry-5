@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@ package org.apache.tapestry5.ioc.internal.services;
 import javassist.CtClass;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
-import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.services.MethodSignature;
 import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
+import org.apache.tapestry5.plastic.PlasticUtils;
 
 public class ServiceMessages
 {
@@ -30,45 +30,9 @@ public class ServiceMessages
     {
     }
 
-    public static String unableToAddMethod(MethodSignature signature, CtClass ctClass, Throwable cause)
-    {
-        return MESSAGES.format("unable-to-add-method", signature, ctClass.getName(), cause);
-    }
 
-    public static String unableToAddConstructor(CtClass ctClass, Throwable cause)
-    {
-        return MESSAGES.format("unable-to-add-constructor", ctClass.getName(), cause);
-    }
 
-    public static String unableToAddField(String fieldName, CtClass ctClass, Throwable cause)
-    {
-        return MESSAGES.format("unable-to-add-field", fieldName, ctClass.getName(), cause);
-    }
 
-    public static String unableToCreateClass(String className, Class superClass, Throwable cause)
-    {
-        return MESSAGES.format("unable-to-create-class", className, superClass.getName(), cause);
-    }
-
-    public static String unableToLookupClass(String className, Throwable cause)
-    {
-        return MESSAGES.format("unable-to-lookup-class", className, cause);
-    }
-
-    public static String unableToWriteClass(CtClass ctClass, Throwable cause)
-    {
-        return MESSAGES.format("unable-to-write-class", ctClass.getName(), cause);
-    }
-
-    public static String duplicateMethodInClass(MethodSignature ms, ClassFabImpl fab)
-    {
-        return MESSAGES.format("duplicate-method-in-class", ms, fab.getName());
-    }
-
-    public static String loggingInterceptor(String serviceId, Class serviceInterface)
-    {
-        return MESSAGES.format("logging-interceptor", serviceId, serviceInterface.getName());
-    }
 
     public static String threadCleanupError(ThreadCleanupListener listener, Throwable cause)
     {
@@ -117,19 +81,9 @@ public class ServiceMessages
         return MESSAGES.format("unmatched-service-method", sig, filterInterface.getName());
     }
 
-    public static String unknownObjectProvider(String prefix, String reference)
-    {
-        return MESSAGES.format("unknown-object-provider", prefix, reference);
-    }
-
     public static String shutdownListenerError(Object listener, Throwable cause)
     {
         return MESSAGES.format("shutdown-listener-error", listener, cause);
-    }
-
-    public static String noCoercionFound(Class sourceType, Class targetType, String coercions)
-    {
-        return MESSAGES.format("no-coercion-found", sourceType.getName(), targetType.getName(), coercions);
     }
 
     public static String recursiveSymbol(String symbolName, String path)
@@ -159,7 +113,7 @@ public class ServiceMessages
 
     public static String failedCoercion(Object input, Class targetType, Coercion coercion, Throwable cause)
     {
-        return MESSAGES.format("failed-coercion", String.valueOf(input), ClassFabUtils.toJavaClassName(targetType),
+        return MESSAGES.format("failed-coercion", String.valueOf(input), PlasticUtils.toTypeName(targetType),
                 coercion, cause);
     }
 

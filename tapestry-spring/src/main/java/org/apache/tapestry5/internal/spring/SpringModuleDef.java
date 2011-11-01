@@ -23,8 +23,8 @@ import org.apache.tapestry5.ioc.def.ModuleDef;
 import org.apache.tapestry5.ioc.def.ServiceDef;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
+import org.apache.tapestry5.plastic.PlasticUtils;
 import org.apache.tapestry5.spring.ApplicationContextCustomizer;
 import org.apache.tapestry5.spring.SpringConstants;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -271,8 +271,7 @@ public class SpringModuleDef implements ModuleDef
                                 String message = String
                                         .format(
                                                 "Spring context contains %d beans assignable to type %s: %s.",
-                                                beanMap.size(), ClassFabUtils
-                                                .toJavaClassName(objectType), InternalUtils
+                                                beanMap.size(), PlasticUtils.toTypeName(objectType), InternalUtils
                                                 .joinSorted(beanMap.keySet()));
 
                                 throw new IllegalArgumentException(message);

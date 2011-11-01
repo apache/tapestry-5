@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@ package org.apache.tapestry5.internal.hibernate;
 import org.apache.tapestry5.hibernate.HibernateSessionManager;
 import org.apache.tapestry5.hibernate.HibernateTransactionAdvisor;
 import org.apache.tapestry5.hibernate.annotations.CommitAfter;
-import org.apache.tapestry5.ioc.Invocation;
-import org.apache.tapestry5.ioc.MethodAdvice;
 import org.apache.tapestry5.ioc.MethodAdviceReceiver;
+import org.apache.tapestry5.plastic.MethodAdvice;
+import org.apache.tapestry5.plastic.MethodInvocation;
 
 import java.lang.reflect.Method;
 
@@ -33,7 +33,7 @@ public class HibernateTransactionAdvisorImpl implements HibernateTransactionAdvi
      */
     private final MethodAdvice advice = new MethodAdvice()
     {
-        public void advise(Invocation invocation)
+        public void advise(MethodInvocation invocation)
         {
             try
             {

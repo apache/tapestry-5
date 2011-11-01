@@ -21,7 +21,6 @@ import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.Builtin;
-import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.services.ThunkCreator;
 import org.apache.tapestry5.plastic.ClassInstantiator;
@@ -57,7 +56,7 @@ public class ThunkCreatorImpl implements ThunkCreator
         if (!proxyType.isInterface())
             throw new IllegalArgumentException(String.format(
                     "Thunks may only be created for interfaces; %s is a class.",
-                    ClassFabUtils.toJavaClassName(proxyType)));
+                    PlasticUtils.toTypeName(proxyType)));
 
         return getInstantiator(proxyType).with(ObjectCreator.class, objectCreator).with(String.class, description)
                 .newInstance();

@@ -59,12 +59,6 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         BUILTIN.add(Builtin.class);
     }
 
-    /**
-     * Used to obtain the {@link org.apache.tapestry5.ioc.services.ClassFactory} service, which is
-     * crucial when creating
-     * runtime classes for proxies and the like.
-     */
-    static final String CLASS_FACTORY_SERVICE_ID = "ClassFactory";
 
     static final String PLASTIC_PROXY_FACTORY_SERVICE_ID = "PlasticProxyFactory";
 
@@ -91,8 +85,6 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     private final PerthreadManager perthreadManager;
 
-    private final ClassFactory classFactory;
-
     private final PlasticProxyFactory proxyFactory;
 
     private final ServiceActivityTracker tracker;
@@ -118,15 +110,13 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
      * Constructs the registry from a set of module definitions and other resources.
      *
      * @param moduleDefs   defines the modules (and builders, decorators, etc., within)
-     * @param classFactory TODO
      * @param proxyFactory TODO
      * @param loggerSource used to obtain Logger instances
      */
-    public RegistryImpl(Collection<ModuleDef> moduleDefs, ClassFactory classFactory, PlasticProxyFactory proxyFactory,
+    public RegistryImpl(Collection<ModuleDef> moduleDefs, PlasticProxyFactory proxyFactory,
                         LoggerSource loggerSource)
     {
         assert moduleDefs != null;
-        assert classFactory != null;
         assert proxyFactory != null;
         assert loggerSource != null;
 
@@ -134,7 +124,6 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         operationTracker = new PerThreadOperationTracker(loggerSource.getLogger(Registry.class));
 
-        this.classFactory = classFactory;
         this.proxyFactory = proxyFactory;
 
         Logger logger = loggerForBuiltinService(PERTHREAD_MANAGER_SERVICE_ID);
@@ -194,7 +183,6 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         addBuiltin(SERVICE_ACTIVITY_SCOREBOARD_SERVICE_ID, ServiceActivityScoreboard.class, scoreboardAndTracker);
         addBuiltin(LOGGER_SOURCE_SERVICE_ID, LoggerSource.class, this.loggerSource);
-        addBuiltin(CLASS_FACTORY_SERVICE_ID, ClassFactory.class, this.classFactory);
         addBuiltin(PERTHREAD_MANAGER_SERVICE_ID, PerthreadManager.class, perthreadManager);
         addBuiltin(REGISTRY_SHUTDOWN_HUB_SERVICE_ID, RegistryShutdownHub.class, registryShutdownHub);
         addBuiltin(PLASTIC_PROXY_FACTORY_SERVICE_ID, PlasticProxyFactory.class, proxyFactory);
@@ -828,13 +816,6 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         }
 
         return orderer.getOrdered();
-    }
-
-    public ClassFab newClass(Class serviceInterface)
-    {
-        lock.check();
-
-        return classFactory.newClass(serviceInterface);
     }
 
     public <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator,

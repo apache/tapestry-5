@@ -18,6 +18,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.plastic.PlasticUtils;
 
 /**
  * A representation of a {@link java.lang.reflect.Method}, identifying the name, return type, parameter types and
@@ -182,7 +183,7 @@ public class MethodSignature
     {
         StringBuilder buffer = new StringBuilder();
 
-        buffer.append(ClassFabUtils.toJavaClassName(returnType));
+        buffer.append(PlasticUtils.toTypeName(returnType));
         buffer.append(" ");
         buffer.append(name);
         buffer.append("(");
@@ -192,7 +193,7 @@ public class MethodSignature
             if (i > 0)
                 buffer.append(", ");
 
-            buffer.append(ClassFabUtils.toJavaClassName(parameterTypes[i]));
+            buffer.append(PlasticUtils.toTypeName(parameterTypes[i]));
         }
 
         buffer.append(")");
@@ -237,7 +238,7 @@ public class MethodSignature
             if (i > 0)
                 buffer.append(",");
 
-            buffer.append(ClassFabUtils.toJavaClassName(parameterTypes[i]));
+            buffer.append(PlasticUtils.toTypeName(parameterTypes[i]));
         }
 
         buffer.append(")");

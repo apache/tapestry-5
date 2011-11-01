@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,13 +13,16 @@
 // limitations under the License.
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.Greeter;
+import org.apache.tapestry5.ioc.MethodAdviceReceiver;
+import org.apache.tapestry5.ioc.RedMarker;
 import org.apache.tapestry5.ioc.annotations.Advise;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Match;
 import org.apache.tapestry5.ioc.annotations.Order;
+import org.apache.tapestry5.plastic.MethodAdvice;
+import org.apache.tapestry5.plastic.MethodInvocation;
 import org.testng.Assert;
-import org.testng.TestNG;
 
 
 public class AdviseByMarkerModule2
@@ -29,26 +32,26 @@ public class AdviseByMarkerModule2
         receiver.adviseAllMethods(new MethodAdvice()
         {
 
-            public void advise(Invocation invocation)
+            public void advise(MethodInvocation invocation)
             {
                 invocation.proceed();
 
-                Object result = invocation.getResult();
+                Object result = invocation.getReturnValue();
 
-                invocation.overrideResult(String.format("%s[%s]", id, result));
+                invocation.setReturnValue(String.format("%s[%s]", id, result));
 
             }
         });
     }
 
     @Advise
-    @Match ("RedGreeter")
+    @Match("RedGreeter")
     public static void byMatchAnnotation(MethodAdviceReceiver receiver)
     {
         doAdvise(receiver, "alpha");
     }
 
-    @Advise(id="withMarker")
+    @Advise(id = "withMarker")
     @RedMarker
     @Order("before:*")
     public static void byMarkerAnnotation(MethodAdviceReceiver receiver)
@@ -56,12 +59,12 @@ public class AdviseByMarkerModule2
         doAdvise(receiver, "beta");
     }
 
-    @Advise(id="doesNotMatchAnyService")
+    @Advise(id = "doesNotMatchAnyService")
     public static void doesNotMatchAnyService(MethodAdviceReceiver receiver)
     {
         Assert.fail("Unexpected invocation");
     }
-   
+
     @Marker(RedMarker.class)
     public Greeter buildRedGreeter()
     {

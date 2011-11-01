@@ -22,6 +22,7 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
 import org.apache.tapestry5.ioc.services.ClassFabUtils;
+import org.apache.tapestry5.plastic.PlasticUtils;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.RenderCommand;
 
@@ -186,12 +187,6 @@ public class ServicesMessages
     public static String invalidId(String messageKey, String idValue)
     {
         return MESSAGES.format(messageKey, idValue);
-    }
-
-    public static String noTranslatorForType(Class valueType, Collection<String> typeNames)
-    {
-        return MESSAGES.format("no-translator-for-type", ClassFabUtils.toJavaClassName(valueType), InternalUtils
-                .joinSorted(typeNames));
     }
 
     public static String eventNotHandled(ComponentPageElement element, String eventName)

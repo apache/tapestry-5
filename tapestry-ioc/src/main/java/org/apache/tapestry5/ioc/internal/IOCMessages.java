@@ -22,7 +22,6 @@ import org.apache.tapestry5.ioc.def.ServiceDef2;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
-import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.plastic.PlasticUtils;
 
 import java.lang.reflect.Constructor;
@@ -33,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.apache.tapestry5.ioc.internal.util.InternalUtils.asString;
-import static org.apache.tapestry5.ioc.services.ClassFabUtils.toJavaClassName;
 
 final class IOCMessages
 {
@@ -105,7 +103,7 @@ final class IOCMessages
     static String contributionWrongReturnType(Method method)
     {
         return MESSAGES.format("contribution-wrong-return-type", asString(method),
-                toJavaClassName(method.getReturnType()));
+                PlasticUtils.toTypeName(method.getReturnType()));
     }
 
     static String tooManyContributionParameters(Method method)
@@ -228,7 +226,7 @@ final class IOCMessages
     static String noServicesMatchMarker(Class objectType, List<Class> markers)
     {
         return MESSAGES.format("no-services-match-marker",
-                ClassFabUtils.toJavaClassName(objectType),
+                PlasticUtils.toTypeName(objectType),
                 toJavaClassNames(markers));
     }
 
@@ -236,7 +234,7 @@ final class IOCMessages
                                           Collection<ServiceDef2> matchingServices)
     {
         return MESSAGES.format("many-services-match-marker",
-                ClassFabUtils.toJavaClassName(objectType),
+                PlasticUtils.toTypeName(objectType),
                 toJavaClassNames(markers),
                 InternalUtils.joinSorted(matchingServices));
     }

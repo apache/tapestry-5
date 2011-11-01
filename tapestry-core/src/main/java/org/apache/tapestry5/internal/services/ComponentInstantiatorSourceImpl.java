@@ -27,14 +27,12 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry5.ioc.internal.services.PlasticProxyFactoryImpl;
 import org.apache.tapestry5.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.services.Builtin;
-import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.model.ComponentModel;
@@ -79,10 +77,6 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
     private final boolean productionMode;
 
     private final ComponentClassResolver resolver;
-
-    // These change whenever the invalidation event hub sends an invalidation notification
-
-    private volatile ClassFactory classFactory;
 
     private volatile PlasticProxyFactory proxyFactory;
 
@@ -199,8 +193,6 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
         manager.addPlasticClassListener(this);
 
-        classFactory = new ClassFactoryImpl(manager.getClassLoader(), logger);
-
         proxyFactory = new PlasticProxyFactoryImpl(manager, logger);
 
         classToInstantiator.clear();
@@ -261,11 +253,6 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
     public boolean exists(String className)
     {
         return parent.getResource(PlasticInternalUtils.toClassPath(className)) != null;
-    }
-
-    public ClassFactory getClassFactory()
-    {
-        return classFactory;
     }
 
     public PlasticProxyFactory getProxyFactory()

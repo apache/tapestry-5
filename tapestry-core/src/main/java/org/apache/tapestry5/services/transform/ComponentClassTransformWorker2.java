@@ -18,31 +18,26 @@ import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 import org.apache.tapestry5.ioc.services.ChainBuilder;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.PlasticClass;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
 
 /**
  * Interface for a set of objects that can perform transformation of component classes. Implementations should
  * be thread safe and ideally stateless (all necessary state can be stored inside the {@link PlasticClass}).
- * <p>
+ * <p/>
  * The ComponentClassTransformWorker service uses an ordered configuration of these works as a {@linkplain ChainBuilder
- * chain of command}. For compatibility with the code compiled for Tapestry 5.2, contributions of type
- * {@link ComponentClassTransformWorker} are type coerced into this type automatically.
- * 
- * @since 5.3
+ * chain of command}.
+ *
  * @see PlasticClass
+ * @since 5.3
  */
 @UsesOrderedConfiguration(ComponentClassTransformWorker2.class)
 public interface ComponentClassTransformWorker2
 {
     /**
      * Invoked to perform part of the transformation of the {@link PlasticClass}.
-     * 
-     * @param plasticClass
-     *            component class being transformed
-     * @param support
-     *            additional utilities needed during the transformation
-     * @param model
-     *            the model for the component being transformed
+     *
+     * @param plasticClass component class being transformed
+     * @param support      additional utilities needed during the transformation
+     * @param model        the model for the component being transformed
      */
     void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model);
 }

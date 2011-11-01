@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package org.apache.tapestry5.ioc;
 import org.apache.tapestry5.ioc.annotations.Match;
 import org.apache.tapestry5.ioc.annotations.Order;
 import org.apache.tapestry5.ioc.services.LoggingAdvisor;
+import org.apache.tapestry5.plastic.MethodAdvice;
+import org.apache.tapestry5.plastic.MethodInvocation;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Method;
@@ -45,14 +47,14 @@ public class AdviceDemoModule
     {
         MethodAdvice advice = new MethodAdvice()
         {
-            public void advise(Invocation invocation)
+            public void advise(MethodInvocation invocation)
             {
                 invocation.proceed();
 
-                String result = (String) invocation.getResult();
+                String result = (String) invocation.getReturnValue();
 
                 if (result != null)
-                    invocation.overrideResult(result.toUpperCase());
+                    invocation.setReturnValue(result.toUpperCase());
             }
         };
 
