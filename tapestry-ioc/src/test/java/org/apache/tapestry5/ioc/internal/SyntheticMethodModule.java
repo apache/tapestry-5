@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,13 +18,13 @@ package org.apache.tapestry5.ioc.internal;
 
 public class SyntheticMethodModule
 {
-    public Object build()
+    public static Object build()
     {
         return new Object();
     }
 
     /** Methods with a leading '$' are ignored as well, mostly for Scala support. */
-    public Object $ignored()
+    public static Object $ignored()
     {
         return null;
     }

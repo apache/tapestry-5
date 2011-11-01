@@ -14,8 +14,11 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import javassist.bytecode.AccessFlag;
+import org.apache.tapestry5.internal.plastic.ClassLoaderDelegate;
+import org.apache.tapestry5.internal.plastic.PlasticClassLoader;
+import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
 import org.apache.tapestry5.internal.plastic.asm.ClassWriter;
+import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.def.ContributionDef;
 import org.apache.tapestry5.ioc.def.DecoratorDef;
@@ -32,10 +35,9 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.List;
 import java.util.Set;
 
+import static org.apache.tapestry5.internal.plastic.asm.Opcodes.*;
 import static org.easymock.EasyMock.contains;
 
 public class DefaultModuleDefImplTest extends IOCTestCase
@@ -649,29 +651,42 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
     private Class createSyntheticMethodModuleClass() throws NoSuchMethodException
     {
-                /*
-        ClassFab fab = classFactory.newClass("EnhancedSyntheticMethodModule", SyntheticMethodModule.class);
 
-        int modifiers = Modifier.PUBLIC | AccessFlag.SYNTHETIC;
+        ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS + ClassWriter.COMPUTE_FRAMES);
 
-        // choose arbitrary signature
+        cw.visit(V1_5, ACC_PUBLIC, "EnhancedSyntheticMethodModule", null,
+                PlasticInternalUtils.toInternalName(SyntheticMethodModule.class.getName()), null);
 
-        MethodSignature signature = new MethodSignature(List.class.getMethod("size"));
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC | ACC_STATIC | ACC_SYNTHETIC, "synth", "()V", null, null);
+        mv.visitCode();
+        mv.visitInsn(RETURN);
+        mv.visitEnd();
 
-        fab.addMethod(modifiers, signature, "return 0;");
+        cw.visitEnd();
 
-        Class moduleClass = fab.createClass();
+        byte[] bytecode = cw.toByteArray();
 
-        // make sure we really managed to create a synthetic method
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
-        assertTrue(moduleClass.getMethod("size").isSynthetic());
+        PlasticClassLoader plasticLoader = new PlasticClassLoader(loader, new NoopDelegate());
 
-        return moduleClass;       */
-
-        return null;
+        return plasticLoader.defineClassWithBytecode("EnhancedSyntheticMethodModule", bytecode);
     }
 
     // TODO: We're short on tests that ensure that marker annotation are additive (i.e., module
     // marker annotation are
     // merged into the set specific to the service).
+
+    private static class NoopDelegate implements ClassLoaderDelegate
+    {
+        public boolean shouldInterceptClassLoading(String className)
+        {
+            return false;
+        }
+
+        public Class<?> loadAndTransformClass(String className) throws ClassNotFoundException
+        {
+            return null;
+        }
+    }
 }
