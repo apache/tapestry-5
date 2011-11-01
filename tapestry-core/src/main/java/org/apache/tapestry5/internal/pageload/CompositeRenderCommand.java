@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ class CompositeRenderCommand implements RenderCommand
         private void nyi(String methodName)
         {
             throw new IllegalStateException(
-                    PageloadMessages.compositeRenderCommandMethodNotImplemented(methodName));
+                    String.format("RenderQueue method %s() is not implemented for composited render commands.", methodName));
         }
     };
 

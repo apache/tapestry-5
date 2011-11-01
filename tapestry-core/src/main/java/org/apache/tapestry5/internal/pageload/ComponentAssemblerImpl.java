@@ -134,8 +134,7 @@ class ComponentAssemblerImpl implements ComponentAssembler
             return pageAssembly.createdElement.peek();
         } catch (RuntimeException ex)
         {
-            throw new RuntimeException(PageloadMessages.exceptionAssemblingRootComponent(pageAssembly.page.getName(),
-                    InternalUtils.toMessage(ex)), ex);
+            throw new RuntimeException(String.format("Exception assembling root component of page %s: %s", pageAssembly.page.getName(), InternalUtils.toMessage(ex)), ex);
         }
     }
 
@@ -193,8 +192,11 @@ class ComponentAssemblerImpl implements ComponentAssembler
                     pageAssembly.componentName.pop();
                 } catch (RuntimeException ex)
                 {
-                    throw new TapestryException(PageloadMessages.exceptionAssemblingEmbeddedComponent(embeddedId,
-                            componentClassName, container.getCompleteId(), InternalUtils.toMessage(ex)), location, ex);
+                    throw new TapestryException(String.format("Exception assembling embedded component '%s' (of type %s, within %s): %s",
+                            embeddedId,
+                            componentClassName,
+                            container.getCompleteId(),
+                            InternalUtils.toMessage(ex)), location, ex);
                 }
             }
         });
@@ -264,8 +266,10 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
             String className = getModel().getComponentClassName();
 
-            throw new RuntimeException(PageloadMessages.embeddedComponentsNotInTemplate(
-                    InternalUtils.joinSorted(embeddedIds.keySet()), className, InternalUtils.lastTerm(className),
+            throw new RuntimeException(String.format("Embedded component(s) %s are defined within component class %s (or a super-class of %s), but are not present in the component template (%s).",
+                    InternalUtils.joinSorted(embeddedIds.keySet()),
+                    className,
+                    InternalUtils.lastTerm(className),
                     templateResource));
         }
     }
@@ -294,7 +298,7 @@ class ComponentAssemblerImpl implements ComponentAssembler
             if (InternalUtils.isBlank(componentClassName))
             {
                 throw new TapestryException(
-                        PageloadMessages.missingComponentType(), location, null);
+                        "You must specify the type via t:type, the element, or @Component annotation.", location, null);
             }
 
             EmbeddedComponentAssemblerImpl embedded = new EmbeddedComponentAssemblerImpl(assemblerSource,
@@ -318,8 +322,12 @@ class ComponentAssemblerImpl implements ComponentAssembler
                     if (existingEmbeddedId != null)
                     {
                         throw new TapestryException(
-                                PageloadMessages.parameterAlreadyPublished(publishedParameterName, embeddedId, instantiator
-                                        .getModel().getComponentClassName(), existingEmbeddedId), location, null);
+                                String.format("Parameter '%s' of embedded component '%s' can not be published as a parameter of component %s, as it has previously been published by embedded component '%s'.",
+                                        publishedParameterName,
+                                        embeddedId,
+                                        instantiator
+                                                .getModel().getComponentClassName(),
+                                        existingEmbeddedId), location, null);
                     }
 
                     publishedParameterToEmbeddedId.put(publishedParameterName, embeddedId);
@@ -330,7 +338,7 @@ class ComponentAssemblerImpl implements ComponentAssembler
             return embedded;
         } catch (Exception ex)
         {
-            throw new TapestryException(PageloadMessages.failureCreatingEmbeddedComponent(embeddedId, instantiator
+            throw new TapestryException(String.format("Failure creating embedded component '%s' of %s: %s", embeddedId, instantiator
                     .getModel().getComponentClassName(), InternalUtils.toMessage(ex)), location, ex);
         }
     }
@@ -373,7 +381,9 @@ class ComponentAssemblerImpl implements ComponentAssembler
 
         if (innerBinder == null)
         {
-            String message = PageloadMessages.publishedParameterNonexistant(parameterName, instantiator.getModel()
+            String message = String.format("Parameter '%s' of component %s is improperly published from embedded component '%s' " +
+                    "(where it does not exist). This may be a typo in the publishParameters attribute of " +
+                    "the @Component annotation.", parameterName, instantiator.getModel()
                     .getComponentClassName(), embeddedId);
 
             throw new TapestryException(message, embededdedComponentAssembler.getLocation(), null);

@@ -167,7 +167,7 @@ public class EmbeddedComponentAssemblerImpl implements EmbeddedComponentAssemble
         String mixinId = InternalUtils.lastTerm(className);
 
         if (mixinIdToInstantiator.containsKey(mixinId))
-            throw new TapestryException(PageloadMessages.uniqueMixinRequired(mixinId), location, null);
+            throw new TapestryException(String.format("Mixins applied to a component must be unique. Mixin '%s' has already been applied.", mixinId), location, null);
 
         mixinIdToInstantiator.put(mixinId, mixinInstantiator);
         mixinsIdToOrderConstraints.put(mixinId, order);

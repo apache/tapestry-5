@@ -355,7 +355,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         // Sanity check: since an extension point defines its own default, it's going to be hard to
         // not find an override, somewhere, for it.
 
-        throw new TapestryException(PageloadMessages.couldNotFindOverride(extensionPointId),
+        throw new TapestryException(String.format("Could not find an override for extension point '%s'.", extensionPointId),
                 extensionPointToken.getLocation(), null);
     }
 
@@ -374,7 +374,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
 
             if (parentModel == null)
             {
-                throw new RuntimeException(PageloadMessages.noParentForExtension(model));
+                throw new RuntimeException(String.format("Component %s uses an extension template, but does not have a parent component.", model.getComponentClassName()));
             }
 
             ComponentTemplate parentTemplate = templateSource.getTemplate(parentModel, assembler.getSelector());
@@ -462,7 +462,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
                 break;
 
             default:
-                throw new IllegalStateException(PageloadMessages.tokenNotImplemented(context.peekType()));
+                throw new IllegalStateException(String.format("Not yet implemented: %s", context.peekType().toString()));
         }
     }
 
@@ -697,7 +697,9 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
             if (InternalUtils.isNonBlank(modelType) && embeddedType != null)
             {
                 throw new TapestryException(
-                        PageloadMessages.redundantEmbeddedComponentTypes(embeddedId, embeddedType, modelType), token, null);
+                        String.format("Embedded component '%s' provides a type attribute in the template ('%s') " +
+                                "as well as in the component class ('%s'). You should not provide a type attribute " +
+                                "in the template when defining an embedded component within the component class.", embeddedId, embeddedType, modelType), token, null);
             }
 
             embeddedType = modelType;
