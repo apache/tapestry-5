@@ -38,8 +38,6 @@ public class ClassCreationHelper
 
     private String tempDir;
 
-    private URLClassLoader extraLoader;
-
     public final Registry registry;
 
     public ClassCreationHelper(Class... extraModules) throws Exception
