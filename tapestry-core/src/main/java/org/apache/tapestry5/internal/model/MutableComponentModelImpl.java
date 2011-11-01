@@ -188,7 +188,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
         if (embeddedComponents == null)
             embeddedComponents = CollectionFactory.newCaseInsensitiveMap();
         else if (embeddedComponents.containsKey(id))
-            throw new IllegalArgumentException(ModelMessages.duplicateComponentId(id, this.componentClassName));
+            throw new IllegalArgumentException(String.format("Embedded component '%s' has already been defined for component class %s.", id, this.componentClassName));
 
         MutableEmbeddedComponentModel embedded = new MutableEmbeddedComponentModelImpl(id, type, componentClassName,
                 this.componentClassName, inheritInformalParameters, location);
@@ -231,7 +231,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
             result = parentModel.getFieldPersistenceStrategy(fieldName);
 
         if (result == null)
-            throw new IllegalArgumentException(ModelMessages.missingPersistentField(fieldName));
+            throw new IllegalArgumentException(String.format("No field persistence strategy has been defined for field '%s'.", fieldName));
 
         return result;
     }

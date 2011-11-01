@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ public class MutableEmbeddedComponentModelImpl extends BaseLocatable implements 
         if (parameters == null)
             parameters = CollectionFactory.newMap();
         else if (parameters.containsKey(name))
-            throw new IllegalArgumentException(ModelMessages.duplicateParameterValue(name, id, declaredClass));
+            throw new IllegalArgumentException(String.format("A value for parameter '%s' of embedded component %s (of component class %s) has already been provided.", name, id, declaredClass));
 
         parameters.put(name, value);
     }
@@ -119,7 +119,7 @@ public class MutableEmbeddedComponentModelImpl extends BaseLocatable implements 
         else
         {
             if (mixinClassNames.contains(mixinClassName))
-                throw new IllegalArgumentException(ModelMessages.duplicateMixin(mixinClassName, id));
+                throw new IllegalArgumentException(String.format("Mixin %s (for component %s) has already been defined.", mixinClassName, id));
         }
 
         mixinClassNames.add(mixinClassName);
