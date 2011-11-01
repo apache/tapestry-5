@@ -139,7 +139,7 @@ public class FormSupportImpl implements InternalFormSupport, Locatable
         assert InternalUtils.isNonBlank(encodingType);
 
         if (this.encodingType != null && !this.encodingType.equals(encodingType))
-            throw new IllegalStateException(InternalMessages.conflictingEncodingType(this.encodingType, encodingType));
+            throw new IllegalStateException(String.format("Encoding type of form has already been set to '%s' and may not be changed to '%s'.", this.encodingType, encodingType));
 
         this.encodingType = encodingType;
     }

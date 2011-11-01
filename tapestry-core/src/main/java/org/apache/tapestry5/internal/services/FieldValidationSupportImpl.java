@@ -15,7 +15,6 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.corelib.internal.InternalMessages;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
@@ -51,7 +50,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
                 // the method description.
 
                 if (!(result instanceof String))
-                    throw new RuntimeException(InternalMessages.toClientShouldReturnString());
+                    throw new RuntimeException("Return value from 'parseClient' event handler method must be a string.");
 
                 resultHolder.put((String) result);
 

@@ -15,7 +15,6 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.corelib.internal.InternalMessages;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
@@ -321,7 +320,7 @@ public class FieldValidationSupportImplTest extends InternalBaseTestCase
             unreachable();
         } catch (RuntimeException ex)
         {
-            assertEquals(ex.getMessage(), InternalMessages.toClientShouldReturnString());
+            assertEquals(ex.getMessage(), "Return value from 'parseClient' event handler method must be a string.");
         }
 
         verify();

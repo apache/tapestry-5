@@ -23,12 +23,12 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.beaneditor.BeanModel;
-import org.apache.tapestry5.corelib.internal.InternalMessages;
 import org.apache.tapestry5.internal.BeanValidationContext;
 import org.apache.tapestry5.internal.BeanValidationContextImpl;
 import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
+import org.apache.tapestry5.plastic.PlasticUtils;
 import org.apache.tapestry5.services.BeanEditContext;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.Environment;
@@ -209,8 +209,8 @@ public class BeanEditor
             }
             catch (Exception ex)
             {
-                String message = InternalMessages.failureInstantiatingObject(model.getBeanType(),
-                        resources.getCompleteId(), ex);
+                String message = String.format("Exception instantiating instance of %s (for component '%s'): %s",
+                        PlasticUtils.toTypeName(model.getBeanType()), resources.getCompleteId(), ex);
                 throw new TapestryException(message, resources.getLocation(), ex);
             }
 

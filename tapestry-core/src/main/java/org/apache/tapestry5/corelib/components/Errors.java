@@ -19,8 +19,6 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ValidationTracker;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.corelib.internal.InternalMessages;
-import org.apache.tapestry5.services.FormSupport;
 
 import java.util.List;
 
@@ -57,7 +55,7 @@ public class Errors
     void beginRender(MarkupWriter writer)
     {
         if (tracker == null)
-            throw new RuntimeException(InternalMessages.encloseErrorsInForm());
+            throw new RuntimeException("The Errors component must be enclosed by a Form component.");
 
         if (!tracker.getHasErrors())
             return;

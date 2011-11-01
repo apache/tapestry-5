@@ -64,7 +64,7 @@ public class ComponentActionSink
         }
         catch (IOException ex)
         {
-            throw new RuntimeException(InternalMessages.componentActionNotSerializable(completeId, ex), ex);
+            throw new RuntimeException(String.format("Error serializing component action for component %s: %s", completeId, ex), ex);
         }
 
         empty = false;
