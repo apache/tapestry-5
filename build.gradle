@@ -266,6 +266,10 @@ task zippedSources(type: Zip) {
     classifier = "sources"
 
     from project.projectDir
+    exclude "out/**"
+    exclude "**/*.iml"
+    exclude "**/*.ipr"
+    exclude "**/*.iws"
     exclude "**/.*/**"
     exclude "**/bin/**"
     exclude "**/target/**"
