@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.ApplicationStatePersistenceStrategy;
 import org.apache.tapestry5.services.ApplicationStatePersistenceStrategySource;
 
@@ -34,9 +35,8 @@ public class ApplicationStatePersistenceStrategySourceImpl implements
         ApplicationStatePersistenceStrategy result = configuration.get(name);
 
         if (result == null)
-            throw new RuntimeException(ServicesMessages.missingApplicationStatePersistenceStrategy(
-                    name,
-                    configuration.keySet()));
+            throw new RuntimeException(String.format("No application state persistence strategy is available with name '%s'. Available strategies: %s.", name, InternalUtils
+                    .joinSorted(configuration.keySet())));
 
         return result;
     }

@@ -52,7 +52,7 @@ public class LiteralPropertyConduit extends PropertyConduitDelegate implements I
 
     public void set(Object instance, Object value)
     {
-        throw new RuntimeException(ServicesMessages.literalConduitNotUpdateable());
+        throw new RuntimeException("Literal values are not updateable.");
     }
 
     public Class getPropertyType()

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public class ComponentInstanceResultProcessor implements ComponentEventResultPro
         ComponentResources resources = value.getComponentResources();
 
         if (resources.getContainer() != null)
-            logger.warn(ServicesMessages.componentInstanceIsNotAPage(value));
+            logger.warn(String.format("Component %s was returned from an event handler method, but is not a page component. The page containing the component will render the client response.", value.getComponentResources().getCompleteId()));
 
         // We have all these layers and layers between us and the page instance, but its easy to
         // extract the page class name and quickly re-resolve that to the page instance.

@@ -102,8 +102,7 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
         Validator validator = validators.get(validatorType);
 
         if (validator == null)
-            throw new IllegalArgumentException(ServicesMessages.unknownValidatorType(validatorType,
-                    InternalUtils.sortedKeys(validators)));
+            throw new IllegalArgumentException(String.format("Unknown validator type '%s'. Configured validators are %s.", validatorType, InternalUtils.join(InternalUtils.sortedKeys(validators))));
 
         // I just have this thing about always treating parameters as finals, so
         // we introduce a second variable to treat a mutable.
@@ -155,8 +154,8 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
         if (overrideMessages.contains(generalKey))
             return overrideMessages.get(generalKey);
 
-        throw new IllegalArgumentException(ServicesMessages.missingValidatorConstraint(validatorType, constraintType,
-                perFormKey, generalKey));
+        throw new IllegalArgumentException(String.format("Validator '%s' requires a validation constraint (of type %s) but none was provided. The constraint may be provided inside the @Validator annotaton on the property, or in the associated component message catalog as key '%s' or key '%s'.", validatorType, constraintType.getName(), perFormKey,
+                generalKey));
     }
 
     private MessageFormatter findMessageFormatter(String formId, String overrideId, Messages overrideMessages,
@@ -420,6 +419,7 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
 
     private static void parseError(int cursor, String specification)
     {
-        throw new RuntimeException(ServicesMessages.validatorSpecificationParseError(cursor, specification));
+        throw new RuntimeException(String.format("Unexpected character '%s' at position %d of input string: %s", specification.charAt(cursor), cursor + 1,
+                specification));
     }
 }

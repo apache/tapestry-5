@@ -367,7 +367,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
             unreachable();
         } catch (IllegalStateException ex)
         {
-            assertEquals(ex.getMessage(), ServicesMessages.componentEventIsAborted("foo.Bar.biff()"));
+            assertEquals(ex.getMessage(), String.format("Can not store result from invoking method %s, because an event result value has already been obtained from some other event handler method.", "foo.Bar.biff()"));
         }
 
         verify();

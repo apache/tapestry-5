@@ -89,7 +89,7 @@ public class AssetResourceLocatorImpl implements AssetResourceLocator
         // TODO: Perhaps we should send an exception here, so that the caller can decide
         // to send the error. I'm not happy with this.
 
-        response.sendError(HttpServletResponse.SC_FORBIDDEN, ServicesMessages.wrongAssetDigest(result));
+        response.sendError(HttpServletResponse.SC_FORBIDDEN, String.format("The asset digest in the request does not match the actual digest for asset '%s'. This indicates that the content of the asset has changed between requests.", result.getPath()));
 
         return null;
     }

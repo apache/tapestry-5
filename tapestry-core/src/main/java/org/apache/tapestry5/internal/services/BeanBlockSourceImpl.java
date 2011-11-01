@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ public class BeanBlockSourceImpl implements BeanBlockSource
             result = masterSource.getDisplayBlock(datatype);
 
         if (result == null)
-            throw new RuntimeException(ServicesMessages.noDisplayForDataType(datatype));
+            throw new RuntimeException(String.format("There is no defined way to display data of type '%s'. Make a contribution to the BeanBlockSource service for this type.", datatype));
 
         return result;
     }
@@ -61,7 +61,7 @@ public class BeanBlockSourceImpl implements BeanBlockSource
             result = masterSource.getEditBlock(datatype);
 
         if (result == null)
-            throw new RuntimeException(ServicesMessages.noEditForDataType(datatype));
+            throw new RuntimeException(String.format("There is no defined way to edit data of type '%s'.  Make a contribution to the BeanBlockSource service for this type.", datatype));
 
         return result;
     }

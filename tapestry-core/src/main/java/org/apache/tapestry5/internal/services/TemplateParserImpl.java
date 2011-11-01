@@ -52,7 +52,7 @@ public class TemplateParserImpl implements TemplateParser
     public ComponentTemplate parseTemplate(final Resource templateResource)
     {
         if (!templateResource.exists())
-            throw new RuntimeException(ServicesMessages.missingTemplateResource(templateResource));
+            throw new RuntimeException(String.format("Template resource %s does not exist.", templateResource));
 
         return tracker.invoke("Parsing component template " + templateResource, new Invokable<ComponentTemplate>()
         {

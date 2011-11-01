@@ -703,7 +703,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
                         3},
 
                 {"parameter_namespace_with_attributes.tml",
-                        ServicesMessages.parameterElementDoesNotAllowAttributes(), 4},
+                        "A block parameter element does not allow any additional attributes. The element name defines the parameter name.", 4},
 
                 {"invalid_library_namespace_path.tml",
                         "The path portion of library namespace URI 'tapestry-library:subfolder/' is not valid", 2},

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -107,8 +107,7 @@ public class PageElementFactoryImpl implements PageElementFactory
 
             int endx = expression.indexOf("}", expansionx);
 
-            if (endx < 0) throw new TapestryException(ServicesMessages
-                    .unclosedAttributeExpression(expression), location, null);
+            if (endx < 0) throw new TapestryException(String.format("Attribute expression '%s' is missing a closing brace.", expression), location, null);
 
             String expansion = expression.substring(expansionx + 2, endx);
 

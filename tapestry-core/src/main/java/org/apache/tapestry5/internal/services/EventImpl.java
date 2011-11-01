@@ -75,7 +75,7 @@ public class EventImpl implements Event
 
         if (aborted)
         {
-            throw new IllegalStateException(ServicesMessages.componentEventIsAborted(methodDescription));
+            throw new IllegalStateException(String.format("Can not store result from invoking method %s, because an event result value has already been obtained from some other event handler method.", methodDescription));
         }
 
 

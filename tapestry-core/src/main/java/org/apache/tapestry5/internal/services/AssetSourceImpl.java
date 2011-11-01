@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -124,7 +124,7 @@ public class AssetSourceImpl implements AssetSource
         Resource root = prefixToRootResource.get(prefix);
 
         if (root == null)
-            throw new IllegalArgumentException(ServicesMessages.unknownAssetPrefix(path));
+            throw new IllegalArgumentException(String.format("Unknown prefix for asset path '%s'.", path));
 
         return root.forFile(path.substring(colonx + 1));
     }
@@ -134,7 +134,7 @@ public class AssetSourceImpl implements AssetSource
         Resource localized = locale == null ? unlocalized : unlocalized.forLocale(locale);
 
         if (localized == null)
-            throw new RuntimeException(ServicesMessages.assetDoesNotExist(unlocalized));
+            throw new RuntimeException(String.format("Unable to locate asset '%s' (the file does not exist).", unlocalized));
 
         return getAssetForResource(localized);
     }

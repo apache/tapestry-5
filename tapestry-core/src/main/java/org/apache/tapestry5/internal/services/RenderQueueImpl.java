@@ -74,7 +74,7 @@ public class RenderQueueImpl implements RenderQueue
         }
         catch (RuntimeException ex)
         {
-            String message = ServicesMessages.renderQueueError(command, ex);
+            String message = String.format("Render queue error in %s: %s", command, ex);
 
             logger.error(message, ex);
 

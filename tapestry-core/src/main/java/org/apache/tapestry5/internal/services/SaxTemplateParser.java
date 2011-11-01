@@ -655,7 +655,7 @@ public class SaxTemplateParser
         String path = uri.substring(LIB_NAMESPACE_URI_PREFIX.length());
 
         if (!LIBRARY_PATH_PATTERN.matcher(path).matches())
-            throw new RuntimeException(ServicesMessages.invalidPathForLibraryNamespace(uri));
+            throw new RuntimeException(String.format("The path portion of library namespace URI '%s' is not valid: it must be a simple identifier, or a series of identifiers seperated by slashes.", uri));
 
         possibleTapestryComponent(state, null, path + "/" + tokenStream.getLocalName());
     }
@@ -702,7 +702,7 @@ public class SaxTemplateParser
                 {
                     id = nullForBlank(value);
 
-                    validateId(id, "invalid-component-id");
+                    validateId(id, "Component id '%s' is not valid; component ids must be valid Java identifiers: start with a letter, and consist of letters, numbers and underscores.");
 
                     continue;
                 }
@@ -734,7 +734,7 @@ public class SaxTemplateParser
         // component
 
         if (mixins != null && !isComponent)
-            throw new TapestryException(ServicesMessages.mixinsInvalidWithoutIdOrType(elementName),
+            throw new TapestryException(String.format("You may not specify mixins for element <%s> because it does not represent a component (which requires either an id attribute or a type attribute).", elementName),
                     location, null);
 
         if (isComponent)
@@ -816,7 +816,7 @@ public class SaxTemplateParser
         String parameterName = getSingleParameter("name");
 
         if (InternalUtils.isBlank(parameterName))
-            throw new TapestryException(ServicesMessages.parameterElementNameRequired(),
+            throw new TapestryException("The name attribute of the <parameter> element must be specified.",
                     getLocation(), null);
 
         ensureParameterWithinComponent(state);
@@ -842,7 +842,7 @@ public class SaxTemplateParser
         ensureParameterWithinComponent(state);
 
         if (tokenStream.getAttributeCount() > 0)
-            throw new TapestryException(ServicesMessages.parameterElementDoesNotAllowAttributes(),
+            throw new TapestryException("A block parameter element does not allow any additional attributes. The element name defines the parameter name.",
                     getLocation(), null);
 
         tokenAccumulator.add(new ParameterToken(tokenStream.getLocalName(), getLocation()));
@@ -867,8 +867,7 @@ public class SaxTemplateParser
                     return;
 
                 default:
-                    throw new IllegalStateException(ServicesMessages
-                            .contentInsideBodyNotAllowed(getLocation()));
+                    throw new IllegalStateException(String.format("Content inside a Tapestry body element is not allowed (at %s). The content has been ignored.", getLocation()));
             }
         }
     }
@@ -912,7 +911,7 @@ public class SaxTemplateParser
     {
         String blockId = getSingleParameter("id");
 
-        validateId(blockId, "invalid-block-id");
+        validateId(blockId, "Block id '%s' is not valid; block ids must be valid Java identifiers: start with a letter, and consist of letters, numbers and underscores.");
 
         tokenAccumulator.add(new BlockToken(blockId, getLocation()));
 
@@ -938,7 +937,7 @@ public class SaxTemplateParser
 
             // Only the named attribute is allowed.
 
-            throw new TapestryException(ServicesMessages.undefinedTapestryAttribute(tokenStream
+            throw new TapestryException(String.format("Element <%s> does not support an attribute named '%s'. The only allowed attribute name is '%s'.", tokenStream
                     .getLocalName(), qName.toString(), attributeName), getLocation(), null);
         }
 
@@ -955,7 +954,7 @@ public class SaxTemplateParser
 
         // Not a match.
 
-        throw new TapestryException(ServicesMessages.invalidId(messageKey, id), getLocation(), null);
+        throw new TapestryException(String.format(messageKey, id), getLocation(), null);
     }
 
     private boolean isXMLSpaceAttribute(QName qName)

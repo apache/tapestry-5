@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -186,8 +186,7 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
         else
         {
             if (!Serializable.class.isInstance(newValue))
-                throw new IllegalArgumentException(ServicesMessages
-                        .clientStateMustBeSerializable(newValue));
+                throw new IllegalArgumentException(String.format("State persisted on the client must be serializable, but %s does not implement the Serializable interface.", newValue));
 
             persistedValues.put(key, newValue);
         }
@@ -237,7 +236,7 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
         }
         catch (Exception ex)
         {
-            throw new RuntimeException(ServicesMessages.corruptClientState(), ex);
+            throw new RuntimeException("Serialized client state was corrupted. This may indicate that too much state is being stored, which can cause the encoded string to be truncated by the client web browser.", ex);
         }
         finally
         {

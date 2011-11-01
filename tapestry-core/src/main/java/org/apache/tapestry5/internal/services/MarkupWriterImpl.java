@@ -17,8 +17,10 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.MarkupWriterListener;
 import org.apache.tapestry5.dom.*;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -119,7 +121,8 @@ public class MarkupWriterImpl implements MarkupWriter
         int length = namesAndValues.length;
 
         if (length % 2 != 0)
-            throw new IllegalArgumentException(ServicesMessages.markupWriterAttributeNameOrValueOmitted(current.getName(), namesAndValues));
+            throw new IllegalArgumentException(String.format("Writing attributes of the element '%s' failed. An attribute name or value is omitted [%s]. Please provide an even number of values, alternating names and values.", current.getName(), InternalUtils.join(Arrays
+                    .asList(namesAndValues))));
 
         while (i < length)
         {
@@ -137,7 +140,9 @@ public class MarkupWriterImpl implements MarkupWriter
     private void ensureCurrentElement()
     {
         if (current == null)
-            throw new IllegalStateException(ServicesMessages.markupWriterNoCurrentElement());
+            throw new IllegalStateException("This markup writer does not have a current element. " +
+                    "The current element is established with the first call to element() and is " +
+                    "maintained across subsequent calls.");
     }
 
     public Element element(String name, Object... namesAndValues)

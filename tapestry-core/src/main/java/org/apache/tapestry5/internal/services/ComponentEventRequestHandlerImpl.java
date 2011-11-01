@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -82,7 +82,7 @@ public class ComponentEventRequestHandlerImpl implements ComponentEventRequestHa
                 .triggerContextEvent(parameters.getEventType(), parameters.getEventContext(), callback);
 
         if (!handled)
-            throw new TapestryException(ServicesMessages.eventNotHandled(element, parameters.getEventType()), element,
+            throw new TapestryException(String.format("Request event '%s' (on component %s) was not handled; you must provide a matching event handler method in the component or in one of its containers.", parameters.getEventType(), element.getCompleteId()), element,
                     null);
 
         environment.pop(TrackableComponentEventCallback.class);

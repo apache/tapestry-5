@@ -282,8 +282,7 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
                         {
                             String suggestedPackageName = buildSuggestedPackageName(className);
 
-                            throw new RuntimeException(ServicesMessages.baseClassInWrongPackage(parentClassName,
-                                    className, suggestedPackageName));
+                            throw new RuntimeException(String.format("Base class %s (super class of %s) is not in a controlled package and is therefore not valid. You should try moving the class to package %s.", parentClassName, className, suggestedPackageName));
                         }
 
                         // Tapestry 5.2 was more sensitive that the parent class have a public no-args constructor.

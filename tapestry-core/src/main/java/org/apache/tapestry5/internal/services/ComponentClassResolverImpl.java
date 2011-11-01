@@ -524,7 +524,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
         if (result == null)
         {
-            throw new IllegalArgumentException(ServicesMessages.pageNameUnresolved(pageClassName));
+            throw new IllegalArgumentException(String.format("Unable to resolve class name %s to a logical page name.", pageClassName));
         }
 
         return result;

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -146,7 +146,7 @@ public class DocumentLinkerImpl implements DocumentLinker
         String rootElementName = root.getName();
 
         if (!rootElementName.equals("html"))
-            throw new RuntimeException(ServicesMessages.documentMissingHTMLRoot(rootElementName));
+            throw new RuntimeException(String.format("The root element of the rendered document was <%s>, not <html>. A root element of <html> is needed when linking JavaScript and stylesheet resources.", rootElementName));
 
         Element head = findOrCreateElement(root, "head", true);
 

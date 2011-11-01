@@ -211,7 +211,7 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
         }
         catch (Exception ex)
         {
-            throw new RuntimeException(ServicesMessages.failureReadingMessages(resource, ex), ex);
+            throw new RuntimeException(String.format("Unable to read message catalog from %s: %s", resource, ex), ex);
         }
     }
 

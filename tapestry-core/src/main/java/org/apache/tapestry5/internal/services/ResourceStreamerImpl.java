@@ -79,7 +79,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
     {
         if (!resource.exists())
         {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, ServicesMessages.assetDoesNotExist(resource));
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, String.format("Unable to locate asset '%s' (the file does not exist).", resource));
             return;
         }
 

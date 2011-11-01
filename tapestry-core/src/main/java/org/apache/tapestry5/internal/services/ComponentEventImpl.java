@@ -75,7 +75,7 @@ public class ComponentEventImpl extends EventImpl implements ComponentEvent
     public Object coerceContext(int index, String desiredTypeName)
     {
         if (index >= context.getCount())
-            throw new IllegalArgumentException(ServicesMessages.contextIndexOutOfRange(getMethodDescription()));
+            throw new IllegalArgumentException(String.format("Method %s has more parameters than there are context values for this component event.", getMethodDescription()));
         try
         {
             Class desiredType = elementResources.toClass(desiredTypeName);
@@ -84,8 +84,7 @@ public class ComponentEventImpl extends EventImpl implements ComponentEvent
         }
         catch (Exception ex)
         {
-            throw new IllegalArgumentException(ServicesMessages.exceptionInMethodParameter(getMethodDescription(),
-                    index, ex), ex);
+            throw new IllegalArgumentException(String.format("Exception in method %s, parameter #%d: %s", getMethodDescription(), index + 1, ex), ex);
         }
     }
 

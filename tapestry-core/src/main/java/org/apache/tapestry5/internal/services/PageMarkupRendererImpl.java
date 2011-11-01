@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,6 +47,6 @@ public class PageMarkupRendererImpl implements PageMarkupRenderer
         markupRendererPipeline.renderMarkup(writer);
 
         if (writer.getDocument().getRootElement() == null)
-            throw new RuntimeException(ServicesMessages.noMarkupFromPageRender(page));
+            throw new RuntimeException(String.format("=Page %s did not generate any markup when rendered. This could be because its template file could not be located, or because a render phase method in the page prevented rendering.", page.getName()));
     }
 }
