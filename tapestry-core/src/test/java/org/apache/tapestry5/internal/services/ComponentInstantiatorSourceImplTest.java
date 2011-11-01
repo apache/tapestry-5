@@ -20,11 +20,17 @@ import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.internal.transform.pages.BasicComponent;
 import org.apache.tapestry5.ioc.Registry;
+import org.apache.tapestry5.ioc.RegistryBuilder;
 import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.services.TapestryModule;
 import org.apache.tapestry5.services.UpdateListenerHub;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 import static org.apache.tapestry5.internal.plastic.asm.Opcodes.ACC_PUBLIC;
 import static org.apache.tapestry5.internal.plastic.asm.Opcodes.ARETURN;
@@ -128,9 +134,22 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
     @BeforeClass
     public void setup_tests() throws Exception
     {
-        helper = new ClassCreationHelper(ForceDevelopmentModeModule.class, AddTransformPagesToCISModule.class);
+        helper = new ClassCreationHelper();
 
-        registry = helper.registry;
+        File extraClasspath = new File(helper.tempDir);
+
+        extraClasspath.mkdirs();
+
+        URL url = extraClasspath.toURL();
+
+        URLClassLoader extraLoader = new URLClassLoader(new URL[]
+                {url}, Thread.currentThread().getContextClassLoader());
+
+        RegistryBuilder builder = new RegistryBuilder(extraLoader);
+
+        builder.add(TapestryModule.class, ForceDevelopmentModeModule.class, AddTransformPagesToCISModule.class);
+
+        registry = builder.build();
 
         source = registry.getService(ComponentInstantiatorSource.class);
     }

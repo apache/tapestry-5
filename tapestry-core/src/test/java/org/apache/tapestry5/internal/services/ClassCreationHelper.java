@@ -17,16 +17,12 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
 import org.apache.tapestry5.internal.plastic.asm.ClassWriter;
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
-import org.apache.tapestry5.ioc.Registry;
-import org.apache.tapestry5.ioc.RegistryBuilder;
-import org.apache.tapestry5.services.TapestryModule;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.util.UUID;
 
@@ -34,33 +30,19 @@ import static org.apache.tapestry5.internal.plastic.asm.Opcodes.*;
 
 public class ClassCreationHelper
 {
-    private static final ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
 
-    private String tempDir;
+    public final String tempDir;
 
-    public final Registry registry;
-
-    public ClassCreationHelper(Class... extraModules) throws Exception
+    public ClassCreationHelper()
     {
-        tempDir = String.format("%s/tapestry-test-classpath/%s",
+        this(String.format("%s/tapestry-test-classpath/%s",
                 System.getProperty("java.io.tmpdir"),
-                UUID.randomUUID().toString());
+                UUID.randomUUID().toString()));
+    }
 
-        File extraClasspath = new File(tempDir);
-
-        extraClasspath.mkdirs();
-
-        URL url = extraClasspath.toURL();
-
-        URLClassLoader extraLoader = new URLClassLoader(new URL[]
-                {url}, contextLoader);
-
-        RegistryBuilder builder = new RegistryBuilder(extraLoader);
-
-        builder.add(TapestryModule.class);
-        builder.add(extraModules);
-
-        registry = builder.build();
+    public ClassCreationHelper(String tempDir)
+    {
+        this.tempDir = tempDir;
     }
 
     public void writeFile(ClassWriter writer, String className) throws Exception

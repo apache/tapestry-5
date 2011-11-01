@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,25 +14,19 @@
 
 package org.apache.tapestry5.integration.reload;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import javassist.CannotCompileException;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtMethod;
-import javassist.NotFoundException;
-
 import org.apache.tapestry5.integration.TapestryCoreTestCase;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
+import org.apache.tapestry5.internal.plastic.asm.ClassWriter;
+import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
+import org.apache.tapestry5.internal.services.ClassCreationHelper;
 import org.apache.tapestry5.test.TapestryTestConstants;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import org.testng.xml.XmlTest;
+
+import java.io.*;
+
+import static org.apache.tapestry5.internal.plastic.asm.Opcodes.*;
 
 /**
  * Integration tests designed to test Tapestry's ability to dynamically reload component classes,
@@ -44,10 +38,11 @@ public class ReloadTests extends TapestryCoreTestCase
     private File webinfDir;
     private File classesDir;
     private File pagesDir;
+    private ClassCreationHelper helper;
 
     private static final String PACKAGE = "org.apache.tapestry5.integration.reload.pages";
-    
-    @BeforeTest(groups = { "beforeStartup" })
+
+    @BeforeTest(groups = {"beforeStartup"})
     public void beforeStartup(XmlTest xmlTest) throws Exception
     {
         String uid = Long.toHexString(System.currentTimeMillis());
@@ -66,40 +61,37 @@ public class ReloadTests extends TapestryCoreTestCase
         copy("Index.1.tml", webappDir, "Index.tml");
         copy("Index.1.properties", pagesDir, "Index.properties");
 
+        helper = new ClassCreationHelper(classesDir.getAbsolutePath());
+
         createIndexClass(100);
-        
+
         // overwrite the web-app-folder parameter
         xmlTest.addParameter(TapestryTestConstants.WEB_APP_FOLDER_PARAMETER, webappDir.getAbsolutePath());
-
-        System.err.println("Created: " + webappDir);
     }
 
     private void createIndexClass(int number) throws Exception
     {
-        ClassPool pool = new ClassPool(null);
+        String className = PACKAGE + ".Index";
 
-        pool.appendSystemPath();
+        ClassWriter cw = helper.createWriter(className, "java.lang.Object");
 
-        CtClass ctClass = pool.makeClass(PACKAGE + ".Index");
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "getNumber", "()I", null, null);
+        mv.visitCode();
+        mv.visitLdcInsn(number);
+        mv.visitInsn(IRETURN);
+        cw.visitEnd();
 
-        CtMethod method = new CtMethod(pool.get("int"), "getNumber", null, ctClass);
+        cw.visitEnd();
 
-        method.setBody("return " + number + ";");
-
-        ctClass.addMethod(method);
-
-        ctClass.writeFile(classesDir.getAbsolutePath());
+        helper.writeFile(cw, className);
     }
 
     /**
      * Copies a source file (from the classpath) to a directory as a new file name.
-     * 
-     * @param sourceFile
-     *            source file (within in the reload package)
-     * @param dir
-     *            directory to copy to
-     * @param targetFile
-     *            name of file to be created or overwritten
+     *
+     * @param sourceFile source file (within in the reload package)
+     * @param dir        directory to copy to
+     * @param targetFile name of file to be created or overwritten
      */
     private void copy(String sourceFile, File dir, String targetFile) throws IOException
     {
