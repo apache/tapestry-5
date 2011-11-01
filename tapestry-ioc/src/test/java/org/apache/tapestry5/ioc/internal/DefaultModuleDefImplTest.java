@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import org.apache.tapestry5.internal.plastic.ClassLoaderDelegate;
 import org.apache.tapestry5.internal.plastic.PlasticClassLoader;
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
 import org.apache.tapestry5.internal.plastic.asm.ClassWriter;
@@ -668,7 +667,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
-        PlasticClassLoader plasticLoader = new PlasticClassLoader(loader, new NoopDelegate());
+        PlasticClassLoader plasticLoader = new PlasticClassLoader(loader, new NoopClassLoaderDelegate());
 
         return plasticLoader.defineClassWithBytecode("EnhancedSyntheticMethodModule", bytecode);
     }
@@ -677,16 +676,4 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     // marker annotation are
     // merged into the set specific to the service).
 
-    private static class NoopDelegate implements ClassLoaderDelegate
-    {
-        public boolean shouldInterceptClassLoading(String className)
-        {
-            return false;
-        }
-
-        public Class<?> loadAndTransformClass(String className) throws ClassNotFoundException
-        {
-            return null;
-        }
-    }
 }

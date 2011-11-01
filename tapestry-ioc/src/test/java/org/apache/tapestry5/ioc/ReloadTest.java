@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,30 +14,23 @@
 
 package org.apache.tapestry5.ioc;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Modifier;
-import java.net.URL;
-import java.net.URLClassLoader;
-
-import javassist.CannotCompileException;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtConstructor;
-import javassist.CtMethod;
-import javassist.NotFoundException;
-
-import org.apache.tapestry5.ioc.services.ClassFabUtils;
+import com.example.*;
+import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
+import org.apache.tapestry5.internal.plastic.asm.ClassWriter;
+import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.apache.tapestry5.services.UpdateListenerHub;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.example.Counter;
-import com.example.CounterImpl;
-import com.example.ReloadAwareModule;
-import com.example.ReloadModule;
-import com.example.ReloadableService;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLClassLoader;
+
+import static org.apache.tapestry5.internal.plastic.asm.Opcodes.*;
 
 /**
  * Test the ability to perform live class reloading of a service implementation.
@@ -73,7 +66,7 @@ public class ReloadTest extends IOCTestCase
         System.out.println("Reload classes dir: " + classesURL);
 
         classLoader = new URLClassLoader(new URL[]
-        { classesURL }, Thread.currentThread().getContextClassLoader());
+                {classesURL}, Thread.currentThread().getContextClassLoader());
 
         classFile = new File(classesDir, "com/example/ReloadableServiceImpl.class");
     }
@@ -113,18 +106,27 @@ public class ReloadTest extends IOCTestCase
     @Test
     public void reload_a_base_class() throws Exception
     {
+        String baseClassInternalName = PlasticInternalUtils.toInternalName(BASE_CLASS);
+        String internalName = PlasticInternalUtils.toInternalName(CLASS);
+
         createImplementationClass(BASE_CLASS, "initial from base");
 
-        ClassPool pool = new ClassPool(null);
 
-        pool.appendSystemPath();
-        pool.appendClassPath(classesDir.getAbsolutePath());
+        ClassWriter cw = createClassWriter(internalName, baseClassInternalName, ACC_PUBLIC);
 
-        CtClass ctClass = pool.makeClass(CLASS);
+        // Add default constructor
 
-        ctClass.setSuperclass(pool.get(BASE_CLASS));
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
+        mv.visitCode();
+        mv.visitVarInsn(ALOAD, 0);
+        mv.visitMethodInsn(INVOKESPECIAL, baseClassInternalName, "<init>", "()V");
+        mv.visitInsn(RETURN);
+        mv.visitMaxs(1, 1);
+        mv.visitEnd();
 
-        ctClass.writeFile(classesDir.getAbsolutePath());
+        cw.visitEnd();
+
+        writeBytecode(cw, internalName);
 
         Registry registry = createRegistry();
 
@@ -134,7 +136,7 @@ public class ReloadTest extends IOCTestCase
 
         assertEquals(reloadable.getStatus(), "initial from base");
 
-        touch(new File(classesDir, ClassFabUtils.getPathForClassNamed(BASE_CLASS)));
+        touch(new File(pathForInternalName(baseClassInternalName)));
 
         createImplementationClass(BASE_CLASS, "updated from base");
 
@@ -167,8 +169,7 @@ public class ReloadTest extends IOCTestCase
         {
             reloadable.getStatus();
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertMessageContains(ex, "Unable to reload", CLASS);
         }
@@ -242,8 +243,7 @@ public class ReloadTest extends IOCTestCase
             reloadable.getStatus();
 
             unreachable();
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             assertEquals(ex.getMessage(),
                     "Service implementation class com.example.ReloadableServiceImpl does not have a suitable public constructor.");
@@ -257,46 +257,94 @@ public class ReloadTest extends IOCTestCase
         createImplementationClass(CLASS, status);
     }
 
-    private void createImplementationClass(String className, String status) throws NotFoundException,
-            CannotCompileException, IOException
+    private void createImplementationClass(String className, String status) throws Exception
     {
-        ClassPool pool = new ClassPool(null);
+        String internalName = PlasticInternalUtils.toInternalName(className);
 
-        pool.appendSystemPath();
+        ClassWriter cw = createClassWriter(internalName, "java/lang/Object", ACC_PUBLIC);
 
-        CtClass ctClass = pool.makeClass(className);
+        // Add default constructor
 
-        ctClass.addInterface(pool.get(ReloadableService.class.getName()));
+        MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
+        mv.visitCode();
+        mv.visitVarInsn(ALOAD, 0);
+        mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V");
+        mv.visitInsn(RETURN);
+        mv.visitMaxs(1, 1);
+        mv.visitEnd();
 
-        CtMethod method = new CtMethod(pool.get("java.lang.String"), "getStatus", null, ctClass);
 
-        method.setBody(String.format("return \"%s\";", status));
+        mv = cw.visitMethod(ACC_PUBLIC, "getStatus", "()Ljava/lang/String;", null, null);
+        mv.visitCode();
+        mv.visitLdcInsn(status);
+        mv.visitInsn(ARETURN);
+        mv.visitMaxs(1, 1);
+        mv.visitEnd();
 
-        ctClass.addMethod(method);
+        cw.visitEnd();
 
-        ctClass.writeFile(classesDir.getAbsolutePath());
+        writeBytecode(cw, internalName);
+    }
+
+    private ClassWriter createClassWriter(String internalName, String baseClassInternalName, int classModifiers)
+    {
+        ClassWriter cw = new ClassWriter(0);
+
+        cw.visit(V1_5, classModifiers, internalName, null,
+                baseClassInternalName, new String[]{
+                PlasticInternalUtils.toInternalName(ReloadableService.class.getName())
+        });
+
+        return cw;
+    }
+
+    private void writeBytecode(ClassWriter cw, String internalName) throws Exception
+    {
+        byte[] bytecode = cw.toByteArray();
+
+        writeBytecode(bytecode, pathForInternalName(internalName));
+    }
+
+    private String pathForInternalName(String internalName)
+    {
+        return String.format("%s/%s.class",
+                classesDir.getAbsolutePath(),
+                internalName);
+    }
+
+    private void writeBytecode(byte[] bytecode, String path) throws Exception
+    {
+        File file = new File(path);
+
+        file.getParentFile().mkdirs();
+
+        OutputStream stream = new BufferedOutputStream(new FileOutputStream(file));
+
+        stream.write(bytecode);
+
+        stream.close();
     }
 
     private void createInvalidImplentationClass() throws Exception
     {
-        ClassPool pool = new ClassPool(null);
+        String internalName = PlasticInternalUtils.toInternalName(CLASS);
 
-        pool.appendSystemPath();
+        ClassWriter cw = createClassWriter(internalName, "java/lang/Object", ACC_PUBLIC);
 
-        CtClass ctClass = pool.makeClass(CLASS);
+        // Add default constructor
 
-        ctClass.setModifiers(Modifier.ABSTRACT | Modifier.PUBLIC);
-        ctClass.addInterface(pool.get(ReloadableService.class.getName()));
+        MethodVisitor mv = cw.visitMethod(ACC_PROTECTED, "<init>", "()V", null, null);
+        mv.visitVarInsn(ALOAD, 0);
+        mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V");
+        mv.visitInsn(RETURN);
+        mv.visitMaxs(1, 1);
+        mv.visitEnd();
 
-        CtConstructor constructor = new CtConstructor(new CtClass[0], ctClass);
+        // Notice the  class is abstract, so no implementation.
 
-        constructor.setBody("return $0;");
+        cw.visitEnd();
 
-        constructor.setModifiers(Modifier.PROTECTED);
-
-        ctClass.addConstructor(constructor);
-
-        ctClass.writeFile(classesDir.getAbsolutePath());
+        writeBytecode(cw, internalName);
     }
 
     @Test

@@ -178,41 +178,6 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         assertEquals(inner.getFirstName(), "Howard");
     }
 
-    /**
-     * Or call this the "Hibernate" case; Hibernate creates sub-classes of
-     * entity classes in its own class loader to do
-     * all sorts of proxying. This trips up Javassist.
-     */
-    @Test
-    public void handle_beans_from_unexpected_classloader() throws Exception
-    {
-        throw new Exception("test not yet re-implemented");
-
-        /*
-        // First, create something that looks like a Hibernate proxy.
-
-        ClassFactory factory = new ClassFactoryImpl();
-
-        Class clazz = SimpleBean.class;
-
-        ClassFab cf = factory.newClass(clazz.getName() + "$$Proxy", clazz);
-
-        cf.addInterface(Serializable.class);
-
-        Class proxyClass = cf.createClass();
-
-        SimpleBean simple = (SimpleBean) proxyClass.newInstance();
-
-        assertTrue(simple instanceof Serializable);
-
-        simple.setFirstName("Howard");
-
-        PropertyConduit conduit = source.create(proxyClass, "firstName");
-
-        assertEquals(conduit.get(simple), "Howard");
-        */
-    }
-
     @Test
     public void generics()
     {

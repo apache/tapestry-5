@@ -43,30 +43,6 @@ public final class ClassFabUtils
     }
 
     /**
-     * Given a Class instance, convert the name into a path that can be used to locate
-     * the underlying class file on the classpath.
-     *
-     * @since 5.2.0
-     */
-    public static String getPathForClass(Class clazz)
-    {
-        assert clazz != null;
-
-        return getPathForClassNamed(clazz.getName());
-    }
-
-    /**
-     * Given a fully qualified class name, converts to a path on the classpath.
-     *
-     * @since 5.2.0
-     */
-    public static String getPathForClassNamed(String className)
-    {
-        return className.replace('.', '/') + ".class";
-    }
-
-
-    /**
      * Converts a URL with protocol "file" to a File instance.
      *
      * @since 5.2.0
