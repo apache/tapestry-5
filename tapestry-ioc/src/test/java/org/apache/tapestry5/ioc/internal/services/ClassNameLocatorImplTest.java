@@ -33,7 +33,7 @@ public class ClassNameLocatorImplTest extends Assert
     private final ClasspathURLConverter converter = new ClasspathURLConverterImpl();
 
     /**
-     * Use various packages in javassist to test this, as those don't change unexpectedly(-ish) and we know they are in
+     * Use various packages in javax.inject to test this, as those don't change unexpectedly(-ish) and we know they are in
      * a JAR on the classpath.
      */
     @Test
@@ -42,17 +42,12 @@ public class ClassNameLocatorImplTest extends Assert
         ClassNameLocator locator = new ClassNameLocatorImpl(converter);
 
         Collection<String> names = locator
-                .locateClassNames("javassist.util");
+                .locateClassNames("javax.inject");
 
+        // Assert a couple of the matched names
         assertInList(
                 names,
-                "javassist.util",
-                "HotSwapper",
-                "Trigger");
-        assertNotInList(
-                names,
-                "javassist.util",
-                "Orderer$1");
+                "javax.inject", "Inject", "Named", "Singleton");
     }
 
     @Test
@@ -60,12 +55,12 @@ public class ClassNameLocatorImplTest extends Assert
     {
         ClassNameLocator locator = new ClassNameLocatorImpl(converter);
 
-        Collection<String> names = locator.locateClassNames("javassist.util");
+        Collection<String> names = locator.locateClassNames("org.slf4j");
 
         assertInList(
                 names,
-                "javassist.util",
-                "proxy.ProxyFactory");
+                "org.slf4j",
+                "spi.MDCAdapter");
 
     }
 

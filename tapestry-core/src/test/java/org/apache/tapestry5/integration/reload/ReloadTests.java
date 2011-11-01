@@ -74,8 +74,7 @@ public class ReloadTests extends TapestryCoreTestCase
         System.err.println("Created: " + webappDir);
     }
 
-    private void createIndexClass(int number) throws NotFoundException, CannotCompileException,
-            IOException
+    private void createIndexClass(int number) throws Exception
     {
         ClassPool pool = new ClassPool(null);
 
