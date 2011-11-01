@@ -243,7 +243,7 @@ public class TapestryInternalUtils
         int pos = input.indexOf('=');
 
         if (pos < 1)
-            throw new IllegalArgumentException(InternalMessages.badKeyValue(input));
+            throw new IllegalArgumentException(String.format("Key/value pair '%s' is not properly formatted (it does not contain an equals sign).", input));
 
         String key = input.substring(0, pos);
         String value = input.substring(pos + 1);

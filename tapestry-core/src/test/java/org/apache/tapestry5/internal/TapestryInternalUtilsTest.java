@@ -222,7 +222,7 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
             unreachable();
         } catch (IllegalArgumentException ex)
         {
-            assertEquals(ex.getMessage(), InternalMessages.badKeyValue(input));
+            assertEquals(ex.getMessage(), "Key/value pair 'abraxas' is not properly formatted (it does not contain an equals sign).");
         }
     }
 
