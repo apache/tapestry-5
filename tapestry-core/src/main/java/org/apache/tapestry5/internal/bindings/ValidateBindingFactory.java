@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ public class ValidateBindingFactory implements BindingFactory
         Object fieldAsObject = component.getComponent();
 
         if (!Field.class.isInstance(fieldAsObject))
-            throw new TapestryException(BindingsMessages.validateBindingForFieldsOnly(component),
+            throw new TapestryException(String.format("Component '%s' is not a field (it does not implement the Field interface) and may not be used with the validate: binding prefix.", component.getCompleteId()),
                                         location, null);
 
         final Field field = (Field) fieldAsObject;
