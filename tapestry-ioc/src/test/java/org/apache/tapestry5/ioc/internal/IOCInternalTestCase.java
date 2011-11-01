@@ -19,7 +19,6 @@ import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;
 import org.apache.tapestry5.ioc.ServiceDecorator;
 import org.apache.tapestry5.ioc.def.ServiceDef3;
-import org.apache.tapestry5.ioc.services.ClassFactory;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.testng.annotations.AfterMethod;
@@ -36,19 +35,12 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
 {
     private static Registry registry;
 
-    private static ClassFactory classFactory;
-
     private static PlasticProxyFactory proxyFactory;
 
     @AfterMethod
     public final void cleanupThread()
     {
         registry.cleanupThread();
-    }
-
-    public final ClassFactory getClassFactory()
-    {
-        return classFactory;
     }
 
     public final PlasticProxyFactory getProxyFactory()
@@ -100,7 +92,6 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
 
         registry.performRegistryStartup();
 
-        classFactory = registry.getService(ClassFactory.class);
         proxyFactory = registry.getService(PlasticProxyFactory.class);
 
     }
@@ -116,7 +107,6 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
         registry.shutdown();
 
         registry = null;
-        classFactory = null;
     }
 
     protected final InternalRegistry mockInternalRegistry()

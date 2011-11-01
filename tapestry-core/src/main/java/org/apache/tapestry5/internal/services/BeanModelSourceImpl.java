@@ -14,10 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.NonVisual;
 import org.apache.tapestry5.beaneditor.ReorderProperties;
@@ -28,15 +24,15 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.ClassFactory;
-import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
-import org.apache.tapestry5.ioc.services.PropertyAccess;
-import org.apache.tapestry5.ioc.services.PropertyAdapter;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.ioc.services.*;
 import org.apache.tapestry5.services.BeanModelSource;
 import org.apache.tapestry5.services.ComponentLayer;
 import org.apache.tapestry5.services.DataTypeAnalyzer;
 import org.apache.tapestry5.services.PropertyConduitSource;
+
+import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.List;
 
 public class BeanModelSourceImpl implements BeanModelSource
 {
@@ -46,7 +42,7 @@ public class BeanModelSourceImpl implements BeanModelSource
 
     private final PropertyConduitSource propertyConduitSource;
 
-    private final ClassFactory classFactory;
+    private final PlasticProxyFactory proxyFactory;
 
     private final DataTypeAnalyzer dataTypeAnalyzer;
 
@@ -82,10 +78,8 @@ public class BeanModelSourceImpl implements BeanModelSource
     }
 
     /**
-     * @param classAdapter
-     *            defines the bean that contains the properties
-     * @param propertyNames
-     *            the initial set of property names, which will be rebuilt in the correct order
+     * @param classAdapter  defines the bean that contains the properties
+     * @param propertyNames the initial set of property names, which will be rebuilt in the correct order
      */
     private void orderProperties(ClassPropertyAdapter classAdapter, List<String> propertyNames)
     {
@@ -97,7 +91,7 @@ public class BeanModelSourceImpl implements BeanModelSource
 
             Method readMethod = pa.getReadMethod();
 
-            Location location = readMethod == null ? null : classFactory.getMethodLocation(readMethod);
+            Location location = readMethod == null ? null : proxyFactory.getMethodLocation(readMethod);
 
             int line = location == null ? -1 : location.getLine();
 
@@ -131,14 +125,16 @@ public class BeanModelSourceImpl implements BeanModelSource
     }
 
     public BeanModelSourceImpl(TypeCoercer typeCoercer, PropertyAccess propertyAccess,
-            PropertyConduitSource propertyConduitSource, @ComponentLayer
-            ClassFactory classFactory, @Primary
-            DataTypeAnalyzer dataTypeAnalyzer, ObjectLocator locator)
+                               PropertyConduitSource propertyConduitSource,
+                               @ComponentLayer
+                               PlasticProxyFactory proxyFactory,
+                               @Primary
+                               DataTypeAnalyzer dataTypeAnalyzer, ObjectLocator locator)
     {
         this.typeCoercer = typeCoercer;
         this.propertyAccess = propertyAccess;
         this.propertyConduitSource = propertyConduitSource;
-        this.classFactory = classFactory;
+        this.proxyFactory = proxyFactory;
         this.dataTypeAnalyzer = dataTypeAnalyzer;
         this.locator = locator;
     }

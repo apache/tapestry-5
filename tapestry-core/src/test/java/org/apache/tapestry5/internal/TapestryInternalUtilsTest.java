@@ -20,13 +20,8 @@ import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.ClassFactory;
-import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.runtime.ComponentResourcesAware;
-import org.apache.tapestry5.services.BeanModelSource;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -35,28 +30,6 @@ import java.util.regex.Pattern;
 
 public class TapestryInternalUtilsTest extends InternalBaseTestCase
 {
-    private ClassFactory classFactory;
-
-    private PropertyAccess access;
-
-    private BeanModelSource beanModelSource;
-
-    @BeforeClass
-    public void setup()
-    {
-        classFactory = getService("ClassFactory", ClassFactory.class);
-        access = getService("PropertyAccess", PropertyAccess.class);
-        beanModelSource = getService(BeanModelSource.class);
-    }
-
-    @AfterClass
-    public void cleanup()
-    {
-        access = null;
-        classFactory = null;
-        beanModelSource = null;
-    }
-
     @Test(dataProvider = "to_user_presentable_data")
     public void to_user_presentable(String input, String expected)
     {
@@ -67,11 +40,11 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
     public Object[][] to_user_presentable_data()
     {
         return new Object[][]
-        {
-        { "hello", "Hello" },
-        { "userId", "User Id" },
-        { "useHTML", "Use HTML" },
-        { "underscored_name", "Underscored Name" }, };
+                {
+                        {"hello", "Hello"},
+                        {"userId", "User Id"},
+                        {"useHTML", "Use HTML"},
+                        {"underscored_name", "Underscored Name"},};
     }
 
     @Test
@@ -247,8 +220,7 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
         {
             TapestryInternalUtils.parseKeyValue(input);
             unreachable();
-        }
-        catch (IllegalArgumentException ex)
+        } catch (IllegalArgumentException ex)
         {
             assertEquals(ex.getMessage(), InternalMessages.badKeyValue(input));
         }
@@ -380,15 +352,15 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
     public Object[][] split_at_commas_data()
     {
         return new Object[][]
-        {
-        { "foo", new String[]
-        { "foo" } },
-        { "foo, bar", new String[]
-        { "foo", "bar" } },
-        { "  foo, \nbar\t\t", new String[]
-        { "foo", "bar" } },
-        { "", new String[0] },
-        { null, new String[0] } };
+                {
+                        {"foo", new String[]
+                                {"foo"}},
+                        {"foo, bar", new String[]
+                                {"foo", "bar"}},
+                        {"  foo, \nbar\t\t", new String[]
+                                {"foo", "bar"}},
+                        {"", new String[0]},
+                        {null, new String[0]}};
     }
 
     @Test(dataProvider = "split_at_commas_data")
@@ -402,10 +374,10 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
     public Object[][] to_base64_data()
     {
         return new Object[][]
-        {
-        { 0L, "AA" },
-        { 1L, "AQ" },
-        { 0xab54a98ceb1f0ad2L, "q1SpjOsfCtI" } };
+                {
+                        {0L, "AA"},
+                        {1L, "AQ"},
+                        {0xab54a98ceb1f0ad2L, "q1SpjOsfCtI"}};
     }
 
     @Test

@@ -23,8 +23,6 @@ import org.apache.tapestry5.ioc.def.*;
 import org.apache.tapestry5.ioc.internal.NullAnnotationProvider;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
-import org.apache.tapestry5.plastic.MethodAdvice;
-import org.apache.tapestry5.plastic.MethodInvocation;
 import org.apache.tapestry5.plastic.PlasticUtils;
 import org.slf4j.Logger;
 
@@ -54,10 +52,6 @@ public class InternalUtils
     public static final boolean SERVICE_CLASS_RELOADING_ENABLED = Boolean.parseBoolean(System.getProperty(
             IOCConstants.SERVICE_CLASS_RELOADING_ENABLED, "true"));
 
-    /**
-     * Leading punctuation on member names that is stripped off to form a property name or new member name.
-     */
-    private static final String NAME_PREFIX = "_$";
 
     /**
      * Pattern used to eliminate leading and trailing underscores and dollar signs.
@@ -1556,6 +1550,19 @@ public class InternalUtils
                 return new ConstructionPlan(tracker, description, wrapped);
             }
         });
+    }
+
+    public static Class getWrapperType(Class type)
+    {
+        // This is needed by TypeCoercer, which has its own rules about how to handler void.class (as a stand-in
+        // for null). Plastic treats Void as the wrapper for void.
+
+        if (type == void.class)
+        {
+            return type;
+        }
+
+        return PlasticUtils.toWrapperType(type);
     }
 
 }

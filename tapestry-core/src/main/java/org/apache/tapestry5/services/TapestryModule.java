@@ -1459,24 +1459,6 @@ public final class TapestryModule
     }
 
     /**
-     * Returns a {@link org.apache.tapestry5.ioc.services.ClassFactory} that can
-     * be used to create extra classes around
-     * component classes. This ClassFactory will be cleared whenever an
-     * underlying component class is discovered to have
-     * changed. Use of this class factory implies that your code will become
-     * aware of this (if necessary) to discard any
-     * cached object (alas, this currently involves dipping into the internals
-     * side to register for the correct
-     * notifications). Failure to properly clean up can result in really nasty
-     * PermGen space memory leaks.
-     */
-    @Marker(ComponentLayer.class)
-    public ClassFactory buildComponentClassFactory(ComponentInstantiatorSource source)
-    {
-        return shadowBuilder.build(source, "classFactory", ClassFactory.class);
-    }
-
-    /**
      * Returns a {@link PlasticProxyFactory} that can be used to create extra classes around component classes. This
      * factory will be cleared whenever an underlying component class is discovered to have changed. Use of this
      * factory implies that your code will become aware of this (if necessary) to discard any cached object (alas,

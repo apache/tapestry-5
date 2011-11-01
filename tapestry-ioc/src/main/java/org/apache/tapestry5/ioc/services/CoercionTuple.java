@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.ioc.services;
 
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.plastic.PlasticUtils;
 
 /**
@@ -115,8 +116,8 @@ public final class CoercionTuple<S, T>
         assert targetType != null;
         assert coercion != null;
 
-        this.sourceType = ClassFabUtils.getWrapperType(sourceType);
-        this.targetType = ClassFabUtils.getWrapperType(targetType);
+        this.sourceType = InternalUtils.getWrapperType(sourceType);
+        this.targetType = InternalUtils.getWrapperType(targetType);
         this.coercion = wrap ? new CoercionWrapper<S, T>(coercion) : coercion;
     }
 

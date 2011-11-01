@@ -14,26 +14,23 @@
 
 package org.apache.tapestry5.internal.jpa;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.ObjectProvider;
-import org.apache.tapestry5.ioc.services.ClassFactory;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.jpa.EntityManagerManager;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 public class EntityManagerObjectProvider implements ObjectProvider
 {
 
     private EntityManager proxy;
 
-    /**
-     * {@inheritDoc}
-     */
     public <T> T provide(final Class<T> objectType, final AnnotationProvider annotationProvider,
-            final ObjectLocator locator)
+                         final ObjectLocator locator)
     {
         if (objectType.equals(EntityManager.class))
             return objectType.cast(getOrCreateProxy(annotationProvider, locator));
@@ -46,13 +43,13 @@ public class EntityManagerObjectProvider implements ObjectProvider
     {
         if (proxy == null)
         {
-            final ClassFactory classFactory = objectLocator.getService("ClassFactory",
-                    ClassFactory.class);
+            final PlasticProxyFactory proxyFactory = objectLocator.getService("PlasticProxyFactory",
+                    PlasticProxyFactory.class);
 
-             final PersistenceContext annotation = annotationProvider
-                            .getAnnotation(PersistenceContext.class);
+            final PersistenceContext annotation = annotationProvider
+                    .getAnnotation(PersistenceContext.class);
 
-            proxy = classFactory.createProxy(EntityManager.class, new ObjectCreator()
+            proxy = proxyFactory.createProxy(EntityManager.class, new ObjectCreator()
             {
                 public Object createObject()
                 {
