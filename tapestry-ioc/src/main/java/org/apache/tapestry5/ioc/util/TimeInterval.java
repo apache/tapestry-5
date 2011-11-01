@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.ioc.util;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -139,7 +140,7 @@ public class TimeInterval
             if (lastMatchEnd + 1 < start)
             {
                 String invalid = input.substring(lastMatchEnd + 1, start);
-                throw new RuntimeException(UtilMessages.invalidTimeIntervalInput(invalid, input));
+                throw new RuntimeException(String.format("Unexpected string '%s' (in time interval '%s').", invalid, input));
             }
 
             lastMatchEnd = matcher.end();
@@ -156,7 +157,7 @@ public class TimeInterval
             Long unitValue = UNITS.get(units);
 
             if (unitValue == null)
-                throw new RuntimeException(UtilMessages.invalidTimeIntervalUnit(units, input, UNITS.keySet()));
+                throw new RuntimeException(String.format("Unknown time interval unit '%s' (in '%s').  Defined units: %s.", units, input, InternalUtils.joinSorted(UNITS.keySet())));
 
             milliseconds += count * unitValue;
         }
@@ -164,7 +165,7 @@ public class TimeInterval
         if (lastMatchEnd + 1 < input.length())
         {
             String invalid = input.substring(lastMatchEnd + 1);
-            throw new RuntimeException(UtilMessages.invalidTimeIntervalInput(invalid, input));
+            throw new RuntimeException(String.format("Unexpected string '%s' (in time interval '%s').", invalid, input));
         }
 
         return milliseconds;

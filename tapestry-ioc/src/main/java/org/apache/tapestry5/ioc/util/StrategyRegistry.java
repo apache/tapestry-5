@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc.util;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InheritanceSearch;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -153,8 +154,8 @@ public final class StrategyRegistry<A>
         for (Class t : registrations.keySet())
             names.add(t.getName());
 
-        throw new IllegalArgumentException(UtilMessages
-                .noStrategyAdapter(type, adapterType, names));
+        throw new IllegalArgumentException(String.format("No adapter from type %s to type %s is available (registered types are %s).", type.getName(), adapterType.getName(),
+                InternalUtils.joinSorted(names)));
     }
 
     /**

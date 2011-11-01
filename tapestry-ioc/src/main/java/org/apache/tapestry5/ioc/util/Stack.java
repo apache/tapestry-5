@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -116,7 +116,7 @@ public class Stack<E>
 
     private void checkIfEmpty()
     {
-        if (index < 0) throw new IllegalStateException(UtilMessages.stackIsEmpty());
+        if (index < 0) throw new IllegalStateException("Stack is empty.");
     }
 
     /**
