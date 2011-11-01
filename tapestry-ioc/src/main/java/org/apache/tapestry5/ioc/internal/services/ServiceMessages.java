@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import javassist.CtClass;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
 import org.apache.tapestry5.ioc.services.Coercion;
@@ -29,10 +28,6 @@ public class ServiceMessages
     private ServiceMessages()
     {
     }
-
-
-
-
 
     public static String threadCleanupError(ThreadCleanupListener listener, Throwable cause)
     {

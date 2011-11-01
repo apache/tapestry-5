@@ -16,7 +16,6 @@ package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.def.ServiceDef3;
-import org.apache.tapestry5.ioc.services.ClassFab;
 import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
 import org.slf4j.Logger;
 
