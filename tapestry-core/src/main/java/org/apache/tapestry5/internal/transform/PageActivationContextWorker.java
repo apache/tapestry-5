@@ -16,6 +16,8 @@ package org.apache.tapestry5.internal.transform;
 
 import org.apache.tapestry5.EventConstants;
 import org.apache.tapestry5.annotations.PageActivationContext;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.FieldHandle;
 import org.apache.tapestry5.plastic.PlasticClass;
@@ -52,7 +54,14 @@ public class PageActivationContextWorker implements ComponentClassTransformWorke
 
             default:
 
-                throw new RuntimeException(TransformMessages.illegalNumberOfPageActivationContextHandlers2(fields));
+                List<String> names = CollectionFactory.newList();
+
+                for (PlasticField field : fields)
+                {
+                    names.add(field.getName());
+                }
+
+                throw new RuntimeException(String.format("Illegal number of fields annotated with @PageActivationContext: %s. Only one field is allowed.", InternalUtils.joinSorted(names)));
         }
     }
 

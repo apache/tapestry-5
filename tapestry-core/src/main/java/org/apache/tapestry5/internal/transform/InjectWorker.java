@@ -19,6 +19,7 @@ import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.PlasticClass;
 import org.apache.tapestry5.plastic.PlasticField;
@@ -78,8 +79,7 @@ public class InjectWorker implements ComponentClassTransformWorker2
                         }
                     } catch (RuntimeException ex)
                     {
-                        throw new RuntimeException(TransformMessages.fieldInjectionError(plasticClass.getClassName(),
-                                fieldName, ex), ex);
+                        throw new RuntimeException(String.format("Error obtaining injected value for field %s.%s: %s", plasticClass.getClassName(), fieldName, InternalUtils.toMessage(ex)), ex);
                     }
                 }
             });

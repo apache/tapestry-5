@@ -140,7 +140,8 @@ public class ComponentWorker implements ComponentClassTransformWorker2
         boolean orderEmpty = annotation.order().length == 0;
 
         if (!orderEmpty && annotation.order().length != annotation.value().length)
-            throw new TapestryException(TransformMessages.badMixinConstraintLength(annotation, field.getName()), model,
+            throw new TapestryException(String.format("%d mixins defined via @MixinClasses on field '%s', but %d ordering constraints \\\n" +
+                    " specified (expected 0 or %1$d).", annotation.value().length, field.getName(), annotation.order().length), model,
                     null);
 
         for (int i = 0; i < annotation.value().length; i++)

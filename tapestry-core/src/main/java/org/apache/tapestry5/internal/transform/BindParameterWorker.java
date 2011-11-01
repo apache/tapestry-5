@@ -76,8 +76,8 @@ public class BindParameterWorker implements ComponentClassTransformWorker2
                 if (containerResources.getComponentModel().isFormalParameter(containerParameterName))
                     conduit = containerResources.getParameterConduit(containerParameterName);
                 else
-                	conduit = getEmbeddedComponentResourcesForPublishedParameter(containerResources, containerParameterName)
-                			.getParameterConduit(containerParameterName);
+                    conduit = getEmbeddedComponentResourcesForPublishedParameter(containerResources, containerParameterName)
+                            .getParameterConduit(containerParameterName);
             }
 
             return conduit;
@@ -160,7 +160,8 @@ public class BindParameterWorker implements ComponentClassTransformWorker2
                                                final String fieldName, final String[] possibleNames)
     {
         if (!resources.isMixin())
-            throw new TapestryException(TransformMessages.bindParameterOnlyOnMixin(fieldName, resources), null);
+            throw new TapestryException(String.format("@BindParameter was used on field '%s' of component class '%s', but @BindParameter should only be used in mixins.", fieldName, resources.getComponentModel()
+                    .getComponentClassName()), null);
 
         InternalComponentResources containerResources = (InternalComponentResources) resources.getContainerResources();
 
@@ -190,11 +191,11 @@ public class BindParameterWorker implements ComponentClassTransformWorker2
         {
             if (model.isFormalParameter(name))
                 return name;
-            
-            if(isPublishedParameter(model, name))
-            	return name;
+
+            if (isPublishedParameter(model, name))
+                return name;
         }
-        
+
         String message = String.format("Containing component %s does not contain a formal parameter or a published parameter %s %s.",
 
                 model.getComponentClassName(),
@@ -208,73 +209,73 @@ public class BindParameterWorker implements ComponentClassTransformWorker2
 
         throw new UnknownValueException(message, new AvailableValues("Formal and published parameters", formalAndPublishedParameters));
     }
-    
+
     /**
      * Returns true if the parameter with the given parameterName is a published parameter
      * of any of the embedded components for the component with the given model.
      */
-    private boolean isPublishedParameter(ComponentModel model,  String parameterName)
-	{
-    	for (String embeddedComponentId : model.getEmbeddedComponentIds())
-		{
-	    	EmbeddedComponentModel embeddedComponentModel = model
-						.getEmbeddedComponentModel(embeddedComponentId);
-	    	if (embeddedComponentModel.getPublishedParameters().contains(parameterName)) return true;
-		}
-    	
-    	return false;
-	}
-    
-    private List<String> getPublishedParameters(ComponentModel model)
+    private boolean isPublishedParameter(ComponentModel model, String parameterName)
     {
-    	List<String> publishedParameters = CollectionFactory.newList();
-    	for (String embeddedComponentId : model.getEmbeddedComponentIds())
-    	{
-    		EmbeddedComponentModel embeddedComponentModel = model.getEmbeddedComponentModel(embeddedComponentId);
-    	    publishedParameters.addAll(embeddedComponentModel.getPublishedParameters());
-    	}
-    	return publishedParameters;
+        for (String embeddedComponentId : model.getEmbeddedComponentIds())
+        {
+            EmbeddedComponentModel embeddedComponentModel = model
+                    .getEmbeddedComponentModel(embeddedComponentId);
+            if (embeddedComponentModel.getPublishedParameters().contains(parameterName)) return true;
+        }
+
+        return false;
     }
 
-	/**
+    private List<String> getPublishedParameters(ComponentModel model)
+    {
+        List<String> publishedParameters = CollectionFactory.newList();
+        for (String embeddedComponentId : model.getEmbeddedComponentIds())
+        {
+            EmbeddedComponentModel embeddedComponentModel = model.getEmbeddedComponentModel(embeddedComponentId);
+            publishedParameters.addAll(embeddedComponentModel.getPublishedParameters());
+        }
+        return publishedParameters;
+    }
+
+    /**
      * Returns the {@link InternalComponentResources} of an embeddedComponent that contains the published parameter
      * publishedParameterName. This is basically a recursive search for published parameters.
      */
-	private InternalComponentResources getEmbeddedComponentResourcesForPublishedParameter(InternalComponentResources containerResources, 
-			String publishedParameterName)
-	{
-		List<InternalComponentResources> embeddedComponentResourcesList = CollectionFactory.newList();
-		
-		embeddedComponentResourcesList.add(containerResources);
-		
-		while(!embeddedComponentResourcesList.isEmpty())
-		{
-			InternalComponentResources resources = embeddedComponentResourcesList.remove(0);
-			
-			ComponentModel containerComponentModel = resources.getComponentModel();
-			
-			for(String embeddedComponentId : containerComponentModel.getEmbeddedComponentIds())
-			{
-				EmbeddedComponentModel embeddedComponentModel = containerComponentModel
-						.getEmbeddedComponentModel(embeddedComponentId);
-				
-				InternalComponentResources embeddedComponentResources = (InternalComponentResources) resources
-						.getEmbeddedComponent(embeddedComponentId).getComponentResources();
-				/**
-	    		 * If the parameter is not a formal parameter, then the parameter must be a published parameter
-	    		 * of an embeddedComponent of the component we are currently examining.
-	    		 */
-				if(embeddedComponentModel.getPublishedParameters().contains(publishedParameterName)
-						&& embeddedComponentResources.getComponentModel().isFormalParameter(publishedParameterName))
-				{
-					return embeddedComponentResources;
-				}
-				
-				embeddedComponentResourcesList.add(embeddedComponentResources);
-			}
-		}
-		
-		return null;
-	}
+    private InternalComponentResources getEmbeddedComponentResourcesForPublishedParameter(InternalComponentResources containerResources,
+                                                                                          String publishedParameterName)
+    {
+        List<InternalComponentResources> embeddedComponentResourcesList = CollectionFactory.newList();
+
+        embeddedComponentResourcesList.add(containerResources);
+
+        while (!embeddedComponentResourcesList.isEmpty())
+        {
+            InternalComponentResources resources = embeddedComponentResourcesList.remove(0);
+
+            ComponentModel containerComponentModel = resources.getComponentModel();
+
+            for (String embeddedComponentId : containerComponentModel.getEmbeddedComponentIds())
+            {
+                EmbeddedComponentModel embeddedComponentModel = containerComponentModel
+                        .getEmbeddedComponentModel(embeddedComponentId);
+
+                InternalComponentResources embeddedComponentResources = (InternalComponentResources) resources
+                        .getEmbeddedComponent(embeddedComponentId).getComponentResources();
+                /**
+                 * If the parameter is not a formal parameter, then the parameter must be a published parameter
+                 * of an embeddedComponent of the component we are currently examining.
+                 */
+                if (embeddedComponentModel.getPublishedParameters().contains(publishedParameterName)
+                        && embeddedComponentResources.getComponentModel().isFormalParameter(publishedParameterName))
+                {
+                    return embeddedComponentResources;
+                }
+
+                embeddedComponentResourcesList.add(embeddedComponentResources);
+            }
+        }
+
+        return null;
+    }
 }
 
