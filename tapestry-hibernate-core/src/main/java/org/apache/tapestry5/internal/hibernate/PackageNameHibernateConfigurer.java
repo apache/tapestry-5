@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,13 +38,11 @@ public final class PackageNameHibernateConfigurer implements HibernateConfigurer
 
     public void configure(Configuration configuration)
     {
-        AnnotationConfiguration cfg = (AnnotationConfiguration) configuration;
-
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 
         for (String packageName : packageManager.getPackageNames())
         {
-            cfg.addPackage(packageName);
+            configuration.addPackage(packageName);
 
             for (String className : classNameLocator.locateClassNames(packageName))
             {
@@ -52,7 +50,7 @@ public final class PackageNameHibernateConfigurer implements HibernateConfigurer
                 {
                     Class entityClass = contextClassLoader.loadClass(className);
 
-                    cfg.addAnnotatedClass(entityClass);
+                    configuration.addAnnotatedClass(entityClass);
                 }
                 catch (ClassNotFoundException ex)
                 {

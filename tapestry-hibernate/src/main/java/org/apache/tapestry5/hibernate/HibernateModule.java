@@ -34,7 +34,6 @@ import org.apache.tapestry5.ioc.services.ServiceOverride;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.services.ApplicationStateContribution;
 import org.apache.tapestry5.services.ApplicationStatePersistenceStrategy;
-import org.apache.tapestry5.services.ComponentClassTransformWorker;
 import org.apache.tapestry5.services.LibraryMapping;
 import org.apache.tapestry5.services.PersistentFieldStrategy;
 import org.apache.tapestry5.services.ValueEncoderFactory;

@@ -36,7 +36,7 @@ public class HibernateSessionSourceImpl implements HibernateSessionSource
     {
         long startTime = System.currentTimeMillis();
 
-        configuration = new AnnotationConfiguration();
+        configuration = new Configuration();
 
         for (HibernateConfigurer configurer : hibernateConfigurers)
             configurer.configure(configuration);
