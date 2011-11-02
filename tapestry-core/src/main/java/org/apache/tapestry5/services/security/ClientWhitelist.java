@@ -29,7 +29,6 @@ public interface ClientWhitelist
     /**
      * Analyzes the current request, returning true if it is on the whitelist.
      *
-     * @return
      */
     boolean isClientRequestOnWhitelist();
 }
