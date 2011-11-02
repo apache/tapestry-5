@@ -133,7 +133,7 @@ public class AssetSourceImpl implements AssetSource
     {
         Resource localized = locale == null ? unlocalized : unlocalized.forLocale(locale);
 
-        if (localized == null)
+        if (localized == null || !localized.exists())
             throw new RuntimeException(String.format("Unable to locate asset '%s' (the file does not exist).", unlocalized));
 
         return getAssetForResource(localized);
