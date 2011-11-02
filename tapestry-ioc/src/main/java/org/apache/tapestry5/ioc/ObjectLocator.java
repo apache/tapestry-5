@@ -50,14 +50,29 @@ public interface ObjectLocator
      * Locates a service given a service interface and (optionally) some marker annotation types. A single service must implement the service
      * interface (which                                                   * can be hard to guarantee) and by marked by all the marker types. The search takes into account inheritance of the service interface
      * (not the service <em>implementation</em>), which may result in a failure due to extra
-     * matches.        The ability to specify marker annotation types was added in 5.3
+     * matches.
      *
      * @param serviceInterface the interface the service implements
-     * @param markerTypes
      * @return the service's proxy
      * @throws RuntimeException if the service does not exist (this is considered programmer error), or multiple
      *                          services directly implement, or extend from, the service interface
      * @see org.apache.tapestry5.ioc.annotations.Marker
+     */
+    <T> T getService(Class<T> serviceInterface);
+
+    /**
+     * Locates a service given a service interface and (optionally) some marker annotation types. A single service must implement the service
+     * interface (which                                                   * can be hard to guarantee) and by marked by all the marker types. The search takes into account inheritance of the service interface
+     * (not the service <em>implementation</em>), which may result in a failure due to extra
+     * matches.        The ability to specify marker annotation types was added in 5.3
+     *
+     * @param serviceInterface the interface the service implements
+     * @param markerTypes      Markers used to select a specific service that implements the interface
+     * @return the service's proxy
+     * @throws RuntimeException if the service does not exist (this is considered programmer error), or multiple
+     *                          services directly implement, or extend from, the service interface
+     * @see org.apache.tapestry5.ioc.annotations.Marker
+     * @since 5.3
      */
     <T> T getService(Class<T> serviceInterface, Class<? extends Annotation>... markerTypes);
 

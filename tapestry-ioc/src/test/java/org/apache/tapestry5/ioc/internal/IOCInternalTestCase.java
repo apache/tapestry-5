@@ -53,14 +53,19 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
         return registry.getObject(objectType, annotationProvider);
     }
 
-    public final <T> T getService(Class<T> serviceInterface, Class<? extends Annotation>... markerTypes)
-    {
-        return registry.getService(serviceInterface, markerTypes);
-    }
-
     public final <T> T getService(String serviceId, Class<T> serviceInterface)
     {
         return registry.getService(serviceId, serviceInterface);
+    }
+
+    public final <T> T getService(Class<T> serviceInterface)
+    {
+        return registry.getService(serviceInterface);
+    }
+
+    public final <T> T getService(Class<T> serviceInterface, Class<? extends Annotation>... markerTypes)
+    {
+        return registry.getService(serviceInterface, markerTypes);
     }
 
     public final <T> T autobuild(Class<T> clazz)
