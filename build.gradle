@@ -203,6 +203,8 @@ task aggregateJavadoc(type: Javadoc, group: "Documentation") {
     destinationDir = javadocBuildDir.dir
     configure(options) {
         // overview = new File( projectDir, 'src/javadoc/package.html' )
+        splitIndex = true
+        linkSource = true
         stylesheetFile = new File(projectDir, 'src/javadoc/stylesheet.css')
         windowTitle = 'Tapestry API Documentation'
         docTitle = "Tapestry JavaDoc ($project.version)"
@@ -211,7 +213,6 @@ task aggregateJavadoc(type: Javadoc, group: "Documentation") {
         links = ['http://download.oracle.com/javase/6/docs/api/', 'http://download.oracle.com/javaee/6/api/']
         addStringOption "tagletpath", configurations.javadoc.asPath
         addStringOption "taglet", "org.apache.tapestry5.javadoc.TapestryDocTaglet"
-
         exclude "org/apache/tapestry5/internal/plastic/asm/**"
     }
 

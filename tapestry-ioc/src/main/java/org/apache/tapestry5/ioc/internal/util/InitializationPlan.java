@@ -24,7 +24,6 @@ public interface InitializationPlan<T>
     /**
      * The description of the operation, used with the {@link org.apache.tapestry5.ioc.OperationTracker}.
      *
-     * @return
      */
     String getDescription();
 

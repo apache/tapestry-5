@@ -336,8 +336,7 @@ public class Tree
 
     /**
      * Returns the actual {@link TreeSelectionModel} in use for this Tree component,
-     * as per the {@link #selectionModel} parameter. This is often, but not always, the same
-     * as {@link #getDefaultTreeSelectionModel()}.
+     * as per the {@link #selectionModel} parameter.
      */
     public TreeSelectionModel getSelectionModel()
     {

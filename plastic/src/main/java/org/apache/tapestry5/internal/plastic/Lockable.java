@@ -26,7 +26,7 @@ public class Lockable
     /**
      * Checks to see if the object has been locked.
      *
-     * @throw IllegalStateException if {@link #lock()} has been invoked.
+     * @throws IllegalStateException if {@link #lock()} has been invoked.
      */
     protected void check()
     {

@@ -20,9 +20,9 @@ import org.apache.tapestry5.services.javascript.JavaScriptStack;
 /**
  * Defines additional features desired when accessing the content of a {@link Resource} as
  * a {@link StreamableResource}.
- * 
+ *
+ * @see StreamableResourceSource
  * @since 5.3
- * @see StreamableResourceSource#getStreamableResource(Resource, StreamableResourceProcessing)
  */
 public enum StreamableResourceProcessing
 {
@@ -42,7 +42,7 @@ public enum StreamableResourceProcessing
     /**
      * Turns off all caching and minification of the resource, which is appropriate when the individual resource will be
      * aggregated with other resources to form a virtual composite.
-     * 
+     *
      * @see JavaScriptStack
      */
     FOR_AGGREGATION
