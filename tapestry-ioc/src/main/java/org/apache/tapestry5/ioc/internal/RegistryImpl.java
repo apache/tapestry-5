@@ -633,19 +633,21 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         }
     }
 
+    public <T> T getService(Class<T> serviceInterface)
+    {
+        lock.check();
+
+        return getServiceByTypeAndMarkers(serviceInterface);
+    }
+
     public <T> T getService(Class<T> serviceInterface, Class<? extends Annotation>... markerTypes)
     {
         lock.check();
 
-        if (markerTypes.length == 0)
-        {
-            return findServiceByTypeAlone(serviceInterface);
-        }
-
-        return findServiceByTypeAndMarkers(serviceInterface, markerTypes);
+        return getServiceByTypeAndMarkers(serviceInterface, markerTypes);
     }
 
-    private <T> T findServiceByTypeAlone(Class<T> serviceInterface)
+    private <T> T getServiceByTypeAlone(Class<T> serviceInterface)
     {
         List<String> serviceIds = findServiceIdsForInterface(serviceInterface);
 
@@ -672,8 +674,13 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         }
     }
 
-    private <T> T findServiceByTypeAndMarkers(Class<T> serviceInterface, Class<? extends Annotation>... markerTypes)
+    private <T> T getServiceByTypeAndMarkers(Class<T> serviceInterface, Class<? extends Annotation>... markerTypes)
     {
+        if (markerTypes.length == 0)
+        {
+            return getServiceByTypeAlone(serviceInterface);
+        }
+
         AnnotationProvider provider = createAnnotationProvider(markerTypes);
 
         Set<ServiceDef2> matches = CollectionFactory.newSet();

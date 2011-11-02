@@ -55,6 +55,11 @@ public class RegistryWrapper implements Registry
         return registry.getService(expandedServiceId, serviceInterface);
     }
 
+    public <T> T getService(Class<T> serviceInterface)
+    {
+        return registry.getService(serviceInterface);
+    }
+
     public <T> T getService(Class<T> serviceInterface, Class<? extends Annotation>... markerTypes)
     {
         return registry.getService(serviceInterface, markerTypes);

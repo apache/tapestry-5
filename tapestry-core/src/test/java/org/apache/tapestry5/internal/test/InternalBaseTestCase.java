@@ -91,6 +91,12 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         return registry.getObject(objectType, annotationProvider);
     }
 
+    public final <T> T getService(Class<T> serviceInterface)
+    {
+        return registry.getService(serviceInterface);
+    }
+
+
     public final <T> T getService(Class<T> serviceInterface, Class<? extends Annotation>... markerTypes)
     {
         return registry.getService(serviceInterface);
