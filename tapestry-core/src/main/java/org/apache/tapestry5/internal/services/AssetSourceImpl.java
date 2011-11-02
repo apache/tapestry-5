@@ -133,7 +133,7 @@ public class AssetSourceImpl implements AssetSource
     {
         Resource localized = locale == null ? unlocalized : unlocalized.forLocale(locale);
 
-        if (localized == null)
+	if (localized == null || !localized.exists())
             throw new RuntimeException(ServicesMessages.assetDoesNotExist(unlocalized));
 
         return getAssetForResource(localized);
