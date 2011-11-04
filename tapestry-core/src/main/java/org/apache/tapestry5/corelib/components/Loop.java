@@ -422,7 +422,7 @@ public class Loop<T>
      * Ends the current heartbeat.
      */
     @AfterRender
-    boolean after(MarkupWriter writer)
+    Boolean after(MarkupWriter writer)
     {
         if (element != null)
             writer.end();
@@ -434,7 +434,7 @@ public class Loop<T>
             formSupport.store(this, END_HEARTBEAT);
         }
 
-        return !iterator.hasNext();
+        return iterator.hasNext() ? false : null;
     }
 
     private void endHeartbeat()

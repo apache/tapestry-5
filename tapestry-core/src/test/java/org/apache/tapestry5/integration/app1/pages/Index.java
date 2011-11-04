@@ -175,6 +175,9 @@ public class Index
                     new Item("GenericLoopDemo", "Generic Loop Demo",
                             "Use of generic parameters with the Loop component."),
 
+                    new Item("LoopWithMixinDemo", "Loop With Mixin Demo",
+                        "Use a mixin with a Loop component."),
+
                     new Item("BlankPasswordDemo", "Blank Password Demo",
                             "Show that a blank value in a PasswordField does not update the server side value."),
 
