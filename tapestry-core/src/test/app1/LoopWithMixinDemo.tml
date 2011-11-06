@@ -1,0 +1,6 @@
+<html t:type='border' xmlns:t='http://tapestry.apache.org/schema/tapestry_5_3.xsd'>
+    <h1>Loop with Mixin Demo</h1>
+    <span t:type='loop' t:source='123456..123457' t:value='value' t:mixins='tracerMixin'>
+        ${value}
+    </span>
+</html>
