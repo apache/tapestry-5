@@ -98,4 +98,14 @@ public class LoopTests extends TapestryCoreTestCase
         assertFieldValue("title_1", "Cure Common Cold - post haste");
         assertFieldValue("title_2", "Conquer World");
     }
+
+    @Test
+    public void after_render_does_not_shortcut_other_after_render_phase_methods() throws Exception{
+        openLinks("Loop With Mixin Demo");
+
+        assertTextPresent("BEGIN-TRACER-MIXIN");
+        assertTextPresent("123456");
+        assertTextPresent("123457");
+        assertTextPresent("AFTER-TRACER-MIXIN");
+    }
 }
