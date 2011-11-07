@@ -24,6 +24,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 import java.util.Collections;
 import java.util.List;
@@ -92,6 +93,9 @@ public class Checklist extends AbstractField
     @Inject
     private ComponentDefaultProvider defaultProvider;
 
+    @Inject
+    private JavaScriptSupport javaScriptSupport;
+
     @Property
     private List<Renderable> availableOptions;
 
@@ -108,13 +112,15 @@ public class Checklist extends AbstractField
 
         public void render(MarkupWriter writer)
         {
-            writer.element("label");
+            final String clientId = javaScriptSupport.allocateClientId(componentResources);
+
+            writer.element("label", "for", clientId);
             writer.write(model.getLabel());
             writer.end();
 
             final String clientValue = encoder.toClient(model.getValue());
 
-            final Element checkbox = writer.element("input", "type", "checkbox", "name", getControlName(), "value", clientValue);
+            final Element checkbox = writer.element("input", "type", "checkbox", "id", clientId, "name", getControlName(), "value", clientValue);
 
             if (getSelected().contains(model.getValue()))
             {
