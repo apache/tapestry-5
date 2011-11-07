@@ -210,12 +210,8 @@ DIV.t-checklist-row {
 }
 
 DIV.t-checklist-row LABEL {
-    width: 150px;
-    display: block;
-    float: left;
     text-align: right;
-    clear: left;
-    padding-right: 3px;
+    padding-left: 5px;
     vertical-align: middle;
 }
 

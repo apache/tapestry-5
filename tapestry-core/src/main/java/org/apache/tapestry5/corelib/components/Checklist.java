@@ -114,10 +114,6 @@ public class Checklist extends AbstractField
         {
             final String clientId = javaScriptSupport.allocateClientId(componentResources);
 
-            writer.element("label", "for", clientId);
-            writer.write(model.getLabel());
-            writer.end();
-
             final String clientValue = encoder.toClient(model.getValue());
 
             final Element checkbox = writer.element("input", "type", "checkbox", "id", clientId, "name", getControlName(), "value", clientValue);
@@ -126,6 +122,10 @@ public class Checklist extends AbstractField
             {
                 checkbox.attribute("checked", "checked");
             }
+            writer.end();
+
+            writer.element("label", "for", clientId);
+            writer.write(model.getLabel());
             writer.end();
         }
     }
