@@ -26,5 +26,5 @@
     ]
 </p>
 
-<t:alerts dismissText="Zenbu Kesu"/>
+<t:alerts class='alert-class' dismissText="Zenbu Kesu"/>
 </html>

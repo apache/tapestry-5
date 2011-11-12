@@ -109,4 +109,11 @@ class AlertsTests extends SeleniumTestCase
         assertTrue isElementPresent("link=Zenbu Kesu")
     }
 
+    @Test
+    void check_informal_parameters()
+    {
+        openLinks "Alerts Demo"
+        assertTrue isElementPresent("//div[@class='alert-class']")
+    }
+
 }
