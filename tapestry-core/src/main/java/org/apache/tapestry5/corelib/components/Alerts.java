@@ -23,6 +23,7 @@ import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.RequestParameter;
 import org.apache.tapestry5.annotations.SessionState;
+import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
@@ -37,6 +38,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * @tapestrydoc
  * @since 5.3
  */
+@SupportsInformalParameters
 public class Alerts implements ClientElement
 {
 
@@ -64,6 +66,7 @@ public class Alerts implements ClientElement
         clientId = javaScriptSupport.allocateClientId(resources);
 
         writer.element("div", "id", clientId);
+        resources.renderInformalParameters(writer);
         writer.end();
 
         JSONObject spec = new JSONObject("id", clientId,
