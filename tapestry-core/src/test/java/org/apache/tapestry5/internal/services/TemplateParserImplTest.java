@@ -989,7 +989,6 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test
     public void html_entities_inside_template_without_doctype_are_allowed() throws Exception
     {
-
         List<TemplateToken> tokens = tokens("html_entities.tml");
 
         assertEquals(tokens.size(), 3);
@@ -1001,6 +1000,14 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         TextToken token1 = get(tokens, 1);
 
         assertEquals(token1.text, "\n[\u00A0]\n");
+    }
 
+    @Test
+    public void utf8_template() throws Exception {
+        List<TemplateToken> tokens = tokens("chinese_utf-8.tml");
+
+        TextToken token7 = get(tokens, 7);
+
+        assertEquals(token7.text.trim().substring(0, 3), "\u975E\u5e38\u7b80");
     }
 }
