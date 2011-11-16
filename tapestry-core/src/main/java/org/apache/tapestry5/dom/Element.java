@@ -962,6 +962,8 @@ public final class Element extends Node
                     lastChild = prior != null ? prior : null;
                 }
 
+                node.nextSibling = null;
+
                 return;
             }
 
