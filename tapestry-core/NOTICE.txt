@@ -1,9 +1,6 @@
 This product includes software developed by
 The Apache Software Foundation (http://www.apache.org/).
 
-This product makes use of the Javassist library, distributed under the terms of the Mozilla Public License.
-http://www.jboss.com/products/javassist
-
 This product includes the script.aculo.us JavaScript library, distributed under the terms of an MIT-style license.
 http://script.aculo.us
 
