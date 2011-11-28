@@ -13,7 +13,7 @@ dependencies {
 }
 
 repositories {
-  mavenRepo urls: "http://mirrors.ibiblio.org/pub/mirrors/eclipse/rt/eclipselink/maven.repo"
+  mavenRepo urls: "http://download.eclipse.org/rt/eclipselink/maven.repo/"
 }
 
 test {
