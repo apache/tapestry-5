@@ -19,7 +19,7 @@ import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.ClientElement;
 
 /**
- * Forces a client element to render its client id by ensuring that "getClientId" is called.
+ * Forces a client element to render its client id by ensuring that {@link org.apache.tapestry5.ClientElement#getClientId()} is called.
  * 
  * @tapestrydoc
  */

@@ -39,6 +39,7 @@ import java.util.List;
  * The Tree component uses special tricks to support recursive rendering of the Tree as necessary.
  *
  * @since 5.3
+ * @tapestrydoc
  */
 @SuppressWarnings(
         {"rawtypes", "unchecked", "unused"})

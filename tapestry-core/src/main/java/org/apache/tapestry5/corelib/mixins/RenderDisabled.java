@@ -20,7 +20,7 @@ import org.apache.tapestry5.annotations.InjectContainer;
 import org.apache.tapestry5.annotations.MixinAfter;
 
 /**
- * Renders an "disabled" attribute if the containing {@link Field#isDisabled() is disabled}.
+ * Renders an "disabled" attribute if the containing component {@link Field#isDisabled() is disabled}.
  * 
  * @tapestrydoc
  */
