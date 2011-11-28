@@ -36,6 +36,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * </p>
  * 
  * <b>Note: </b> This mixin is only meant for a @{link org.apache.tapestry5.corelib.components.Zone zone}
+ * @tapestrydoc
  */
 @Import(library = "zone-refresh.js")
 public class ZoneRefresh

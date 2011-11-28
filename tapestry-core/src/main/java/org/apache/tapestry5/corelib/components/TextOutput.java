@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
  * component.  The TextArea is split into lines, and each line it output inside its own &lt;p&gt; element.
  * 
  * @see TextArea
+ * @tapestrydoc
  */
 public class TextOutput
 {
