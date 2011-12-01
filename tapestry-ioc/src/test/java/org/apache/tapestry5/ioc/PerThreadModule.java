@@ -14,13 +14,14 @@
 
 package org.apache.tapestry5.ioc;
 
+import org.apache.tapestry5.ioc.annotations.Autobuild;
 import org.apache.tapestry5.ioc.annotations.Scope;
 
 public class PerThreadModule
 {
     @Scope(ScopeConstants.PERTHREAD)
-    public StringHolder buildStringHolder()
+    public StringHolder buildStringHolder(@Autobuild StringHolderImpl impl)
     {
-        return new StringHolderImpl();
+        return impl;
     }
 }

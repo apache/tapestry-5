@@ -422,11 +422,13 @@ public class ModuleImpl implements Module
         {
             insideConstructor = true;
 
-            Object[] parameterValues = InternalUtils.calculateParameters(locator, resources,
+            ObjectCreator[] parameterValues = InternalUtils.calculateParameters(locator, resources,
                     constructor.getParameterTypes(), constructor.getGenericParameterTypes(),
                     constructor.getParameterAnnotations(), registry);
 
-            Object result = constructor.newInstance(parameterValues);
+            Object[] realized = InternalUtils.realizeObjects(parameterValues);
+
+            Object result = constructor.newInstance(realized);
 
             InternalUtils.injectIntoFields(result, locator, resources, registry);
 

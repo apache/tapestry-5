@@ -15,6 +15,7 @@
 package org.apache.tapestry5.ioc.internal.util;
 
 import org.apache.tapestry5.ioc.Invokable;
+import org.apache.tapestry5.ioc.ObjectCreator;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -28,9 +29,9 @@ public class ConstructorInvoker<T> implements Invokable<T>
 {
     private final Constructor<T> constructor;
 
-    private final Object[] constructorParameters;
+    private final ObjectCreator[] constructorParameters;
 
-    public ConstructorInvoker(Constructor constructor, Object[] constructorParameters)
+    public ConstructorInvoker(Constructor constructor, ObjectCreator[] constructorParameters)
     {
         this.constructor = constructor;
         this.constructorParameters = constructorParameters;
@@ -40,9 +41,11 @@ public class ConstructorInvoker<T> implements Invokable<T>
     {
         Throwable fail;
 
+        Object[] realized = InternalUtils.realizeObjects(constructorParameters);
+
         try
         {
-            return constructor.newInstance(constructorParameters);
+            return constructor.newInstance(realized);
         } catch (InvocationTargetException ex)
         {
             fail = ex.getTargetException();
