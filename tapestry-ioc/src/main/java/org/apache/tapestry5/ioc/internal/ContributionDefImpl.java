@@ -114,10 +114,10 @@ public class ContributionDefImpl implements ContributionDef3
 
         try
         {
-            Object[] parameters = InternalUtils.calculateParametersForMethod(contributorMethod, resources,
+            ObjectCreator[] parameters = InternalUtils.calculateParametersForMethod(contributorMethod, resources,
                     injectionResources, resources.getTracker());
 
-            contributorMethod.invoke(moduleInstance, parameters);
+            contributorMethod.invoke(moduleInstance, InternalUtils.realizeObjects(parameters));
         } catch (InvocationTargetException ex)
         {
             fail = ex.getTargetException();

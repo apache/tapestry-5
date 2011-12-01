@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
+import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
@@ -181,10 +182,21 @@ public class InternalUtils
         return null;
     }
 
-    private static Object calculateInjection(Class injectionType, Type genericType, final Annotation[] annotations,
-                                             ObjectLocator locator, InjectionResources resources)
+    private static ObjectCreator<Object> asObjectCreator(final Object fixedValue)
     {
-        AnnotationProvider provider = new AnnotationProvider()
+        return new ObjectCreator<Object>()
+        {
+            public Object createObject()
+            {
+                return fixedValue;
+            }
+        };
+    }
+
+    private static ObjectCreator calculateInjection(final Class injectionType, Type genericType, final Annotation[] annotations,
+                                                    final ObjectLocator locator, InjectionResources resources)
+    {
+        final AnnotationProvider provider = new AnnotationProvider()
         {
             public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
             {
@@ -201,14 +213,14 @@ public class InternalUtils
         {
             String serviceId = is.value();
 
-            return locator.getService(serviceId, injectionType);
+            return asObjectCreator(locator.getService(serviceId, injectionType));
         }
 
         Named named = provider.getAnnotation(Named.class);
 
         if (named != null)
         {
-            return locator.getService(named.value(), injectionType);
+            return asObjectCreator(locator.getService(named.value(), injectionType));
         }
 
         // In the absence of @InjectService, try some autowiring. First, does the
@@ -219,30 +231,47 @@ public class InternalUtils
             Object result = resources.findResource(injectionType, genericType);
 
             if (result != null)
-                return result;
+            {
+                return asObjectCreator(result);
+            }
+        }
+
+        // TAP5-1765: For @Autobuild, special case where we always compute a fresh value
+        // for the injection on every use.  Elsewhere, we compute once when generating the
+        // construction plan and just use the singleton value repeatedly.
+
+        if (provider.getAnnotation(Autobuild.class) != null)
+        {
+            return new ObjectCreator()
+            {
+                public Object createObject()
+                {
+                    return locator.getObject(injectionType, provider);
+                }
+            };
         }
 
         // Otherwise, make use of the MasterObjectProvider service to resolve this type (plus
         // any other information gleaned from additional annotation) into the correct object.
 
-        return locator.getObject(injectionType, provider);
+        return asObjectCreator(locator.getObject(injectionType, provider));
     }
 
-    public static Object[] calculateParametersForMethod(Method method, ObjectLocator locator,
-                                                        InjectionResources resources, OperationTracker tracker)
+    public static ObjectCreator[] calculateParametersForMethod(Method method, ObjectLocator locator,
+                                                               InjectionResources resources, OperationTracker tracker)
     {
 
         return calculateParameters(locator, resources, method.getParameterTypes(), method.getGenericParameterTypes(),
                 method.getParameterAnnotations(), tracker);
     }
 
-    public static Object[] calculateParameters(final ObjectLocator locator, final InjectionResources resources,
-                                               Class[] parameterTypes, final Type[] genericTypes, Annotation[][] parameterAnnotations,
-                                               OperationTracker tracker)
+    public static ObjectCreator[] calculateParameters(final ObjectLocator locator, final InjectionResources resources,
+                                                      Class[] parameterTypes, final Type[] genericTypes, Annotation[][] parameterAnnotations,
+                                                      OperationTracker tracker)
     {
         int parameterCount = parameterTypes.length;
 
-        Object[] parameters = new Object[parameterCount];
+        ObjectCreator[] parameters = new ObjectCreator[parameterCount];
 
         for (int i = 0; i < parameterCount; i++)
         {
@@ -253,9 +282,9 @@ public class InternalUtils
             String description = String.format("Determining injection value for parameter #%d (%s)", i + 1,
                     PlasticUtils.toTypeName(type));
 
-            final Invokable<Object> operation = new Invokable<Object>()
+            final Invokable<ObjectCreator> operation = new Invokable<ObjectCreator>()
             {
-                public Object invoke()
+                public ObjectCreator invoke()
                 {
                     return calculateInjection(type, genericType, annotations, locator, resources);
                 }
@@ -1456,7 +1485,7 @@ public class InternalUtils
             {
                 validateConstructorForAutobuild(constructor);
 
-                Object[] constructorParameters = calculateParameters(locator, resources, constructor.getParameterTypes(), constructor.getGenericParameterTypes(), constructor.getParameterAnnotations(), tracker);
+                ObjectCreator[] constructorParameters = calculateParameters(locator, resources, constructor.getParameterTypes(), constructor.getGenericParameterTypes(), constructor.getParameterAnnotations(), tracker);
 
                 Invokable<T> core = new ConstructorInvoker<T>(constructor, constructorParameters);
 
@@ -1596,7 +1625,7 @@ public class InternalUtils
                 {
                     public void run()
                     {
-                        final Object[] parameters = InternalUtils.calculateParametersForMethod(method, locator,
+                        final ObjectCreator[] parameters = InternalUtils.calculateParametersForMethod(method, locator,
                                 resources, tracker);
 
                         plan.add(new InitializationPlan<Object>()
@@ -1610,9 +1639,11 @@ public class InternalUtils
                             {
                                 Throwable fail = null;
 
+                                Object[] realized = realizeObjects(parameters);
+
                                 try
                                 {
-                                    method.invoke(instance, parameters);
+                                    method.invoke(instance, realized);
                                 } catch (InvocationTargetException ex)
                                 {
                                     fail = ex.getTargetException();
@@ -1645,7 +1676,7 @@ public class InternalUtils
         {
             public ObjectCreator<T> invoke()
             {
-                Object[] methodParameters = calculateParametersForMethod(method, locator, resources, tracker);
+                ObjectCreator[] methodParameters = calculateParametersForMethod(method, locator, resources, tracker);
 
                 Invokable<T> core = new MethodInvoker<T>(instance, method, methodParameters);
 
@@ -1656,4 +1687,22 @@ public class InternalUtils
         });
     }
 
+    /**
+     * @since 5.3.1, 5.4
+     */
+    public static Mapper<ObjectCreator, Object> CREATE_OBJECT = new Mapper<ObjectCreator, Object>()
+    {
+        public Object map(ObjectCreator element)
+        {
+            return element.createObject();
+        }
+    };
+
+    /**
+     * @since 5.3.1, 5.4
+     */
+    public static Object[] realizeObjects(ObjectCreator[] creators)
+    {
+        return F.flow(creators).map(CREATE_OBJECT).toArray(Object.class);
+    }
 }

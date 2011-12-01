@@ -16,6 +16,7 @@
 package org.apache.tapestry5.ioc.internal.util;
 
 import org.apache.tapestry5.ioc.Invokable;
+import org.apache.tapestry5.ioc.ObjectCreator;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -29,9 +30,9 @@ public class MethodInvoker<T> implements Invokable<T>
 
     private final Method method;
 
-    private final Object[] methodParameters;
+    private final ObjectCreator[] methodParameters;
 
-    public MethodInvoker(Object instance, Method method, Object[] methodParameters)
+    public MethodInvoker(Object instance, Method method, ObjectCreator[] methodParameters)
     {
         this.instance = instance;
         this.method = method;
@@ -42,9 +43,11 @@ public class MethodInvoker<T> implements Invokable<T>
     {
         Throwable fail;
 
+        Object[] realized = InternalUtils.realizeObjects(methodParameters);
+
         try
         {
-            Object result = method.invoke(instance, methodParameters);
+            Object result = method.invoke(instance, realized);
 
             return (T) result;
         } catch (InvocationTargetException ex)
