@@ -125,7 +125,14 @@ public class FieldTranslatorSourceImpl implements FieldTranslatorSource
             return overrideMessages.getFormatter(overrideKey);
 
         // Otherwise, use the built-in validation message appropriate to this validator.
+        String messageKey = translator.getMessageKey();
 
-        return globalMessages.getFormatter(translator.getMessageKey());
+        // If no key has been specified, use translator name to create a key
+        if(messageKey == null)
+        {
+            messageKey = translatorName + "-message";
+        }
+
+        return globalMessages.getFormatter(messageKey);
     }
 }
