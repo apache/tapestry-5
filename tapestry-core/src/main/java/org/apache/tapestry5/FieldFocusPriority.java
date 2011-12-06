@@ -1,4 +1,4 @@
-//  Copyright 2008, 2010 The Apache Software Foundation
+//  Copyright 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ package org.apache.tapestry5;
 /**
  * Used to determine which field on a page should receive focus, based on its status.
  *
- * @see org.apache.tapestry5.RenderSupport#autofocus(FieldFocusPriority, String)
+ * @see org.apache.tapestry5.services.javascript.JavaScriptSupport#autofocus(FieldFocusPriority, String)
  */
 public enum FieldFocusPriority
 {
@@ -32,7 +32,7 @@ public enum FieldFocusPriority
     REQUIRED,
 
     /**
-     * A field that contains a validation error, the highest priority.
+     * A field that contains a validation error, the highest normal priority.
      */
     IN_ERROR,
 
@@ -41,6 +41,7 @@ public enum FieldFocusPriority
      * than {@link #IN_ERROR}.
      *
      * @since 5.1.0.4
+     * @see org.apache.tapestry5.corelib.mixins.FormFieldFocus
      */
     OVERRIDE;
 }
