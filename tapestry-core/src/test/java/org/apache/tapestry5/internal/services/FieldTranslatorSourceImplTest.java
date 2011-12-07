@@ -113,6 +113,50 @@ public class FieldTranslatorSourceImplTest extends InternalBaseTestCase
     }
 
     @Test
+    public void create_default_translator_with_name_and_null_key()
+    {
+        Field field = mockField();
+        Messages messages = mockMessages();
+        Locale locale = Locale.ENGLISH;
+        Class propertyType = Map.class;
+        TranslatorSource ts = mockTranslatorSource();
+        FormSupport fs = mockFormSupport();
+        Translator translator = mockTranslator("maptrans", Map.class);
+        Messages globalMessages = mockMessages();
+        MessageFormatter formatter = mockMessageFormatter();
+        MarkupWriter writer = mockMarkupWriter();
+        String label = "Field Label";
+        String message = "Woops, did it again.";
+        AnnotationProvider ap = mockAnnotationProvider(null);
+
+        train_findByType(ts, propertyType, translator);
+
+        train_getFormValidationId(fs, "myform");
+
+        train_contains(messages, "myform-myfield-maptrans-message", false);
+        train_contains(messages, "myfield-maptrans-message", false);
+        train_getMessageKey(translator, null);
+
+        train_getMessageFormatter(globalMessages, "maptrans-message", formatter);
+        train_getLabel(field, label);
+        train_format(formatter, message, label);
+
+        translator.render(field, message, writer, fs);
+
+        replay();
+
+        FieldTranslatorSource source = new FieldTranslatorSourceImpl(ts, globalMessages, fs);
+
+        FieldTranslator ft = source.createDefaultTranslator(field, "myfield", messages, locale, propertyType, ap);
+
+        assertEquals(ft.getType(), Map.class);
+
+        ft.render(writer);
+
+        verify();
+    }
+
+    @Test
     public void create_default_translator_with_name()
     {
         Field field = mockField();
