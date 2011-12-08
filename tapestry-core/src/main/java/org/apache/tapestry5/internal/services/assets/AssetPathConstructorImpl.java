@@ -15,7 +15,6 @@
 package org.apache.tapestry5.internal.services.assets;
 
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.internal.services.RequestConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.Request;
@@ -41,7 +40,10 @@ public class AssetPathConstructorImpl implements AssetPathConstructor
                                     String applicationFolder,
 
                                     @Symbol(SymbolConstants.ASSET_URL_FULL_QUALIFIED)
-                                    boolean fullyQualified)
+                                    boolean fullyQualified,
+
+                                    @Symbol(SymbolConstants.ASSET_PATH_PREFIX)
+                                    String assetPathPrefix)
     {
         this.request = request;
         this.baseURLSource = baseURLSource;
@@ -50,7 +52,7 @@ public class AssetPathConstructorImpl implements AssetPathConstructor
 
         String folder = applicationFolder.equals("") ? "" : "/" + applicationFolder;
 
-        this.prefix = folder + RequestConstants.ASSET_PATH_PREFIX + applicationVersion + "/";
+        this.prefix = folder + assetPathPrefix + applicationVersion + "/";
     }
 
     public String constructAssetPath(String virtualFolder, String path)

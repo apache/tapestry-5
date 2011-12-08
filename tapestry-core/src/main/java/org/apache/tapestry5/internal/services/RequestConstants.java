@@ -26,14 +26,9 @@ public final class RequestConstants
 {
 
     /**
-     * Request path prefix that identifies an internal (on the classpath) asset.
-     */
-    public static final String ASSET_PATH_PREFIX = "/assets/";
-
-    /**
      * Virtual folder name for assets that are actually stored in the context, but are exposed (much like classpath
      * assets) to gain far-future expires headers and automatic content compression.
-     * 
+     *
      * @since 5.1.0.0
      */
     public static final String CONTEXT_FOLDER = "ctx";
@@ -42,7 +37,7 @@ public final class RequestConstants
      * Folder for combined {@link JavaScriptStack} JavaScript files. The path consists of the locale (as a folder) and
      * the name
      * of the stack (suffixed with ".js").
-     * 
+     *
      * @since 5.2.0
      */
     public static final String STACK_FOLDER = "stack";
@@ -50,14 +45,14 @@ public final class RequestConstants
     /**
      * Name of parameter, in an Ajax update, that identifies the client-side id of the {@link Form} being extended. Used
      * with {@link Zone}, {@link FormInjector} and other similar components that may be contained within a form.
-     * 
+     *
      * @since 5.2.0
      */
     public static final String FORM_CLIENTID_PARAMETER = "t:formid";
 
     /**
      * The server-side part of {@link #FORM_CLIENTID_PARAMETER} identifying the server-side component id.
-     * 
+     *
      * @since 5.2.0
      */
     public static final String FORM_COMPONENTID_PARAMETER = "t:formcomponentid";

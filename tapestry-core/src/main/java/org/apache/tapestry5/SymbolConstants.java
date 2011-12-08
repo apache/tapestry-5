@@ -360,4 +360,9 @@ public class SymbolConstants
      * @since 5.3
      */
     public static final String ASSET_URL_FULL_QUALIFIED = "tapestry.asset-url-fully-qualified";
+
+    /**
+     * Prefix to be used for all asset paths
+     */
+    public static final String ASSET_PATH_PREFIX = "tapestry.asset-path-prefix";
 }

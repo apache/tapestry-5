@@ -16,7 +16,7 @@ class PageCatalogTests extends TapestryCoreTestCase
 
         click "link=clear the cache"
 
-        sleep 500
+        sleep 1000
 
         assertTextPresent "Page cache cleared"
 
