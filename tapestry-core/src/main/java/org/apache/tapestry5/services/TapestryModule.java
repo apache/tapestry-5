@@ -2289,6 +2289,8 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.CLUSTERED_SESSIONS, true);
 
+        configuration.add(SymbolConstants.ASSET_PATH_PREFIX, "/assets/");
+
         configuration.add(SymbolConstants.COMPRESS_WHITESPACE, true);
 
         configuration.add(MetaDataConstants.SECURE_PAGE, false);

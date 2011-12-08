@@ -62,7 +62,8 @@ public class ContextAssetFactoryTest extends InternalBaseTestCase
                                                                 baseURLSource,
                                                                 "4.5.6",
                                                                 "",
-                                                                false
+                                                                false,
+                                                                "/assets/"
                                                             ),
                                     context,
                                     new IdentityAssetPathConverter()
@@ -101,7 +102,8 @@ public class ContextAssetFactoryTest extends InternalBaseTestCase
                                                                 baseURLSource,
                                                                 "4.5.6",
                                                                 "",
-                                                                true
+                                                                true,
+                                                                "/assets/"
                                                             ),
                                     context,
                                     new IdentityAssetPathConverter()

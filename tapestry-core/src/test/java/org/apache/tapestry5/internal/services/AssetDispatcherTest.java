@@ -34,6 +34,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
     private static final String SMILEY_PATH = "org/apache/tapestry5/integration/app1/pages/smiley.png";
 
     private static final Resource SMILEY = new ClasspathResource(SMILEY_PATH);
+
     private static final String APPLICATION_VERSION = "1.2.3";
 
 //    @Test
@@ -153,7 +154,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
 //        ResourceStreamer streamer = mockResourceStreamer();
 //        AssetResourceLocator locator = new AssetResourceLocatorImpl(aliasManager, cache, APPLICATION_VERSION, null, response);
 //
-//        String clientURL = RequestConstants.ASSET_PATH_PREFIX + "app1/pages/smiley.RIGHT.png";
+//        String clientURL = "/assets/app1/pages/smiley.RIGHT.png";
 //        String resourcePath = "org/apache/tapestry5/integration/app1/pages/smiley.RIGHT.png";
 //
 //        train_getPath(request, clientURL);

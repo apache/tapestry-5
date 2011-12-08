@@ -59,11 +59,16 @@ public class AssetDispatcher implements Dispatcher
                            @Symbol(SymbolConstants.APPLICATION_VERSION)
                            String applicationVersion,
 
-                           @Symbol(SymbolConstants.APPLICATION_FOLDER) String applicationFolder)
+                           @Symbol(SymbolConstants.APPLICATION_FOLDER)
+                           String applicationFolder,
+
+                           @Symbol(SymbolConstants.ASSET_PATH_PREFIX)
+                           String assetPathPrefix
+                           )
     {
         String folder = applicationFolder.equals("") ? "" : "/" + applicationFolder;
 
-        this.pathPrefix = folder + RequestConstants.ASSET_PATH_PREFIX + applicationVersion + "/";
+        this.pathPrefix = folder + assetPathPrefix + applicationVersion + "/";
 
         for (String path : configuration.keySet())
         {
