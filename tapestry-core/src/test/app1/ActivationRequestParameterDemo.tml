@@ -21,6 +21,9 @@
       <t:actionlink t:id="setMessage">set message</t:actionlink>
     </li>
     <li>
+      <t:actionlink t:id="setSpecialMessage">set special message</t:actionlink>
+    </li>
+    <li>
       <t:actionlink t:id="reset">reset</t:actionlink>
     </li>
   </ul>

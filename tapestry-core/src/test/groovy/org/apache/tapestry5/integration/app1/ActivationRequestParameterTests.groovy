@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.integration.app1;
 
-import org.apache.tapestry5.corelib.components.Submit;
-import org.apache.tapestry5.integration.TapestryCoreTestCase 
-import org.testng.annotations.Test 
+
+import org.apache.tapestry5.integration.TapestryCoreTestCase
+import org.testng.annotations.Test
 
 class ActivationRequestParameterTests extends TapestryCoreTestCase
 {
@@ -39,7 +39,16 @@ class ActivationRequestParameterTests extends TapestryCoreTestCase
         
         assertText "click-count", "1"
         assertText "click-count-set", "true"
-        assertText "message", "Link clicked!"        
+        assertText "message", "Link clicked!"
+    }
+
+    @Test
+    void special_chars() {
+        openLinks "ActivationRequestParameter Annotation Demo"
+
+        clickAndWait "link=set special message"
+
+        assertText "message", "!#\$&'()*+,/:;=?@[]"
     }
     
     @Test
