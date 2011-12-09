@@ -113,7 +113,7 @@ public class JavaScriptResourceMinimizer extends AbstractMinimizer
 
     private void recoverFromException(Exception ex, StreamableResource resource, Writer output) throws IOException
     {
-        logger.error(String.format("Exception minimizing %s: %s", resource.getDescription(), InternalUtils.toMessage(ex), ex));
+        logger.error(String.format("Exception minimizing %s: %s", resource.getDescription(), InternalUtils.toMessage(ex)), ex);
 
         streamUnminimized(resource, output);
     }
