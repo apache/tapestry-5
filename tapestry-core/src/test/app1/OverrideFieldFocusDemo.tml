@@ -1,0 +1,14 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xml:space="default">
+    <h1>Override Field Focus Demo</h1>
+
+    <t:form t:id="focusform" name="focusform">
+
+        <t:label for="requiredValue" />
+        <t:textfield t:id="requiredValue" t:validate="required"/>
+        <br/>
+        <t:label for="overrideFocus" />
+        <t:textfield t:id="overrideFocus" t:value="overrideFocusValue" t:mixins="overridefieldfocus" />
+
+    </t:form>
+
+</html>

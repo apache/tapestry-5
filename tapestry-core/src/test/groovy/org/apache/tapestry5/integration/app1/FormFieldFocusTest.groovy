@@ -19,14 +19,24 @@ import org.apache.tapestry5.integration.TapestryCoreTestCase
 import org.testng.annotations.Test
 
 /**
- * Integration test to veryfiy {@link FormFieldFocusTest} mixin.
+ * Integration test to veryfiy {@link com.gargoylesoftware.htmlunit.javascript.host.FormField}
+ * and {@link org.apache.tapestry5.corelib.mixins.OverrideFieldfocus} mixin.
  */
 class FormFieldFocusTest extends TapestryCoreTestCase
 {
     @Test
     void form_field_focus_mixin()
     {
-        openLinks "FormFieldFocus Demo"
+        openLinks "FormFieldFocus (DEPRECATED) Demo"
+
+        assertEquals getEval("window.document.activeElement.value"), "But I got the focus!"
+
+    }
+
+    @Test
+    void override_field_focus_mixin()
+    {
+        openLinks "OverrideFieldFocus Demo"
 
         assertEquals getEval("window.document.activeElement.value"), "But I got the focus!"
 

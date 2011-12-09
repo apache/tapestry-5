@@ -15,7 +15,6 @@
 package org.apache.tapestry5.corelib.mixins;
 
 import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.ClientElement;
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.FieldFocusPriority;
 import org.apache.tapestry5.annotations.AfterRender;
@@ -28,17 +27,14 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.slf4j.Logger;
 
 /**
- * A mixin that instruments the outer {@link org.apache.tapestry5.corelib.components.Form} on which
- * component the focus should be activated.
+ * A mixin that let a {@link org.apache.tapestry5.Field} gain focus.
  * <p/>
- * This is meant to be used only with {@link org.apache.tapestry5.corelib.components.Form} component.
+ * This supersede {@link org.apache.tapestry5.corelib.mixins.FormFieldFocus} in 5.4
  *
- * @since 5.3
- * @deprecated As of release 5.4, replaced by {@link org.apache.tapestry5.corelib.mixins.OverrideFieldFocus}
+ * @since 5.4
  * @tapestrydoc
  */
-@Deprecated
-public class FormFieldFocus
+public class OverrideFieldFocus
 {
     @Inject
     private Logger logger;
@@ -47,14 +43,7 @@ public class FormFieldFocus
      * The outer Form
      */
     @InjectContainer
-    private Form form;
-
-    /**
-     * The {@link org.apache.tapestry5.Field} instance that will receive the focus within
-     * the {@link org.apache.tapestry5.corelib.components.Form}.
-     */
-    @Parameter(required = true, defaultPrefix = BindingConstants.COMPONENT, allowNull = false)
-    private Field focusField;
+    private Field container;
 
     @Environmental
     private JavaScriptSupport javascriptSupport;
@@ -63,9 +52,9 @@ public class FormFieldFocus
     @AfterRender
     void focusField()
     {
-        javascriptSupport.autofocus(FieldFocusPriority.OVERRIDE, focusField.getClientId());
+        javascriptSupport.autofocus(FieldFocusPriority.OVERRIDE, container.getClientId());
 
-        logger.trace("Focus OVERRIDE done on field {}", focusField.getClientId());
+        logger.trace("Focus OVERRIDE done on field {}", container.getClientId());
     }
 
 }
