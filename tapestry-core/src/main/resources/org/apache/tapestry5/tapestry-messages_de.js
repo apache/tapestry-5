@@ -36,5 +36,5 @@ Tapestry.Messages = {
 
     invalidCharacter : "Ungültiges Zeichen",
 
-    communicationFailed : "Kommunikation mit dem Server ist fehlgeschlagen: ",
+    communicationFailed : "Kommunikation mit dem Server ist fehlgeschlagen: "
 };
