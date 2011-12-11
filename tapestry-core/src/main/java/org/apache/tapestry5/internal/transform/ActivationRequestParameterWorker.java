@@ -28,6 +28,7 @@ import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.ComponentEvent;
 import org.apache.tapestry5.services.ComponentEventHandler;
 import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.URLEncoder;
 import org.apache.tapestry5.services.ValueEncoderSource;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
@@ -49,12 +50,15 @@ public class ActivationRequestParameterWorker implements ComponentClassTransform
 
     private final ValueEncoderSource valueEncoderSource;
 
+    private final URLEncoder urlEncoder;
+
     public ActivationRequestParameterWorker(Request request, ComponentClassCache classCache,
-                                            ValueEncoderSource valueEncoderSource)
+                                            ValueEncoderSource valueEncoderSource, URLEncoder urlEncoder)
     {
         this.request = request;
         this.classCache = classCache;
         this.valueEncoderSource = valueEncoderSource;
+        this.urlEncoder = urlEncoder;
     }
 
     public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
@@ -82,9 +86,9 @@ public class ActivationRequestParameterWorker implements ComponentClassTransform
 
         String fieldName = String.format("%s.%s", field.getPlasticClass().getClassName(), field.getName());
 
-        setValueFromInitializeEventHandler(support, fieldName, handle, parameterName, encoder);
+        setValueFromInitializeEventHandler(support, fieldName, handle, parameterName, encoder, urlEncoder);
 
-        decorateLinks(support, fieldName, handle, parameterName, encoder);
+        decorateLinks(support, fieldName, handle, parameterName, encoder, urlEncoder);
 
         preallocateName(support, parameterName);
     }
@@ -109,7 +113,7 @@ public class ActivationRequestParameterWorker implements ComponentClassTransform
 
     @SuppressWarnings("all")
     private void setValueFromInitializeEventHandler(TransformationSupport support, String fieldName, final FieldHandle handle,
-                                                    final String parameterName, final ValueEncoder encoder)
+                                                    final String parameterName, final ValueEncoder encoder, final URLEncoder urlEncoder)
     {
         ComponentEventHandler handler = new ComponentEventHandler()
         {
@@ -119,6 +123,9 @@ public class ActivationRequestParameterWorker implements ComponentClassTransform
 
                 if (clientValue == null)
                     return;
+
+                // TAP5-1768: unescape encoded value
+                clientValue = urlEncoder.decode(clientValue);
 
                 Object value = encoder.toValue(clientValue);
 
@@ -133,7 +140,7 @@ public class ActivationRequestParameterWorker implements ComponentClassTransform
 
     @SuppressWarnings("all")
     private static void decorateLinks(TransformationSupport support, String fieldName, final FieldHandle handle,
-                                      final String parameterName, final ValueEncoder encoder)
+                                      final String parameterName, final ValueEncoder encoder, final URLEncoder urlEncoder)
     {
         ComponentEventHandler handler = new ComponentEventHandler()
         {
@@ -149,6 +156,9 @@ public class ActivationRequestParameterWorker implements ComponentClassTransform
                 Link link = event.getEventContext().get(Link.class, 0);
 
                 String clientValue = encoder.toClient(value);
+
+                // TAP5-1768: escape special characters
+                clientValue = urlEncoder.encode(clientValue);
 
                 link.addParameter(parameterName, clientValue);
             }

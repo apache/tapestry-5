@@ -56,6 +56,11 @@ public class ActivationRequestParameterDemo
         message = "Link clicked!";
     }
 
+    void onActionFromSetSpecialMessage()
+    {
+        message = "!#$&'()*+,/:;=?@[]";
+    }
+
     void onActionFromReset()
     {
         clickCount = null;
