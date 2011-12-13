@@ -14,12 +14,15 @@
 
 package org.apache.tapestry5.corelib.components;
 
+import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.corelib.base.AbstractTextField;
 
 /**
- * TextField component corresponds to &lt;input type="text"&gt; element. The value parameter will be editted. TextField
- * is generally used with string values, but other values are acceptible, as long as they can be freely converted back
+ * TextField component corresponds to {@code <input>} element. The value parameter will be edited (read when the containing
+ * {@link Form} is rendered, and updated when the form is submitted). TextField
+ * is generally used with string values, but other values are acceptable, as long as they can be freely converted back
  * and forth to strings.
  * <p/>
  * Includes the <code>size</code> attribute, if a {@link org.apache.tapestry5.beaneditor.Width} annotation is present on
@@ -29,12 +32,19 @@ import org.apache.tapestry5.corelib.base.AbstractTextField;
  */
 public class TextField extends AbstractTextField
 {
+    /**
+     * Sets the type attribute of the {@code <input>} element. The default is "text", but this can be overriden
+     * when using <a href="http://www.w3.org/TR/html5/the-input-element.html">HTML5</a> types such as "number".
+     */
+    @Parameter(allowNull = false, value = "text", defaultPrefix = BindingConstants.LITERAL)
+    private String type;
+
     @Override
     protected void writeFieldTag(MarkupWriter writer, String value)
     {
         writer.element("input",
 
-                       "type", "text",
+                       "type", type,
 
                        "name", getControlName(),
 
