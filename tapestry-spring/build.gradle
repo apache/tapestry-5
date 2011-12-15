@@ -2,7 +2,7 @@ description = "Integration of Tapestry with the Spring Inversion Of Control Cont
 
 dependencies {
   compile project(':tapestry-core')
-  compile "org.springframework:spring-web:3.0.0.RELEASE"
+  compile "org.springframework:spring-web:3.1.0.RELEASE"
 
   provided "javax.servlet:servlet-api:$servletAPIVersion"
 
