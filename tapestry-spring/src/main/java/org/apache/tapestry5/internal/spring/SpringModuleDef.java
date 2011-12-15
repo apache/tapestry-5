@@ -153,7 +153,7 @@ public class SpringModuleDef implements ModuleDef
 
     private void addServiceDefsForSpringBeans(ApplicationContext context)
     {
-        for (final String beanName : BeanFactoryUtils.beanNamesIncludingAncestors(context))
+        for (final String beanName : context.getBeanDefinitionNames())
         {
             String trueName = beanName.startsWith("&") ? beanName.substring(1) : beanName;
 
