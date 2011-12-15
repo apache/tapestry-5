@@ -1,0 +1,12 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>Start Page</title>
+    </head>
+    <body>
+
+        <h1>Demonstrates Spring Context Configured Externally</h1>
+
+        <div>${message}</div>
+
+    </body>
+</html>

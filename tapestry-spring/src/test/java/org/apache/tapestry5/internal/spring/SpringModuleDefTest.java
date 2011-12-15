@@ -41,11 +41,7 @@ public class SpringModuleDefTest extends SpringTestCase
         train_getInitParameter(servletContext, SpringConstants.USE_EXTERNAL_SPRING_CONTEXT, "true");
 
         train_getAttribute(servletContext, WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, ac);
-
-        // Simulate barney as a factory bean.
-
-        expect(ac.getBeanNamesForType(Object.class)).andReturn(new String[] {"fred", "&barney"});
-        expect(ac.getParentBeanFactory()).andReturn(null);
+        expect(ac.getBeanDefinitionNames()).andReturn(new String[] {"fred", "&barney"});
 
         replay();
 
