@@ -156,13 +156,24 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
 
         // Map<String, String> testParameters = xmlTest.getParameters();
 
-        String webAppFolder = getParameter(xmlTest, TapestryTestConstants.WEB_APP_FOLDER_PARAMETER, "src/main/webapp");
-        String container = getParameter(xmlTest, TapestryTestConstants.SERVLET_CONTAINER_PARAMETER, JETTY_7);
-        String contextPath = getParameter(xmlTest, TapestryTestConstants.CONTEXT_PATH_PARAMETER, "");
-        int port = Integer.parseInt(getParameter(xmlTest, TapestryTestConstants.PORT_PARAMETER, "9090"));
-        int sslPort = Integer.parseInt(getParameter(xmlTest, TapestryTestConstants.SSL_PORT_PARAMETER, "8443"));
+        TapestryTestConfiguration annotation = this.getClass().getAnnotation(TapestryTestConfiguration.class);
+        if(annotation == null)
+        {
+            @TapestryTestConfiguration final class defaults{};
+            annotation = defaults.class.getAnnotation(TapestryTestConfiguration.class);
+        }
+
+        String webAppFolder = getParameter(xmlTest, TapestryTestConstants.WEB_APP_FOLDER_PARAMETER,
+                annotation.webAppFolder());
+        String container = getParameter(xmlTest, TapestryTestConstants.SERVLET_CONTAINER_PARAMETER,
+                annotation.container());
+        String contextPath = getParameter(xmlTest, TapestryTestConstants.CONTEXT_PATH_PARAMETER,
+                annotation.contextPath());
+        int port = Integer.parseInt(getParameter(xmlTest, TapestryTestConstants.PORT_PARAMETER, annotation.port()));
+        int sslPort = Integer.parseInt(getParameter(xmlTest, TapestryTestConstants.SSL_PORT_PARAMETER,
+                annotation.sslPort()));
         String browserStartCommand = getParameter(xmlTest, TapestryTestConstants.BROWSER_START_COMMAND_PARAMETER,
-                "*firefox");
+                annotation.browserStartCommand());
 
         final Runnable stopWebServer = launchWebServer(container, webAppFolder, contextPath, port, sslPort);
 

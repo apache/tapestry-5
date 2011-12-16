@@ -17,7 +17,9 @@ package org.apache.tapestry5.integration.app1;
 
 import org.apache.tapestry5.integration.TapestryCoreTestCase
 import org.testng.annotations.Test
+import org.apache.tapestry5.test.TapestryTestConfiguration
 
+@TapestryTestConfiguration(webAppFolder = "src/test/app1")
 class ActivationRequestParameterTests extends TapestryCoreTestCase
 {
     @Test
