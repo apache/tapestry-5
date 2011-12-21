@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
 
@@ -166,20 +167,33 @@ public class BeanModelSourceImpl implements BeanModelSource
             PropertyAdapter pa = adapter.getPropertyAdapter(propertyName);
 
             if (!pa.isRead())
+            {
                 continue;
+            }
+
+            if (isStaticFieldProperty(pa))
+            {
+                continue;
+            }
 
             if (pa.getAnnotation(NonVisual.class) != null)
+            {
                 continue;
+            }
 
             if (filterReadOnlyProperties && !pa.isUpdate())
+            {
                 continue;
+            }
 
             final String dataType = dataTypeAnalyzer.identifyDataType(pa);
 
             // If an unregistered type, then ignore the property.
 
             if (dataType == null)
+            {
                 continue;
+            }
 
             model.add(propertyName).dataType(dataType);
         }
@@ -203,5 +217,10 @@ public class BeanModelSourceImpl implements BeanModelSource
         }
 
         return model;
+    }
+
+    private boolean isStaticFieldProperty(PropertyAdapter adapter)
+    {
+        return adapter.isField() && Modifier.isStatic(adapter.getField().getModifiers());
     }
 }

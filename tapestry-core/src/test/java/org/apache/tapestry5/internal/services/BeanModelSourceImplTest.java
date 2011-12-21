@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -673,6 +673,23 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         BeanModel model = source.create(PropertyOrderBean.class, true, messages);
 
         assertEquals(model.getPropertyNames(), Arrays.asList("third", "first", "second"));
+
+        verify();
+    }
+
+    // https://issues.apache.org/jira/browse/TAP5-1798
+    @Test
+    public void static_fields_are_ignored()
+    {
+        Messages messages = mockMessages();
+
+        stub_contains(messages, false);
+
+        replay();
+
+        BeanModel<BeanWithStaticField> model = source.createDisplayModel(BeanWithStaticField.class,  messages);
+
+        assertListsEquals(model.getPropertyNames(), "name");
 
         verify();
     }
