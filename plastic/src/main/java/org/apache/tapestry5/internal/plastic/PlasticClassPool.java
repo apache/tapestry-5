@@ -17,8 +17,7 @@ package org.apache.tapestry5.internal.plastic;
 import org.apache.tapestry5.internal.plastic.asm.ClassReader;
 import org.apache.tapestry5.internal.plastic.asm.ClassWriter;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
-import org.apache.tapestry5.internal.plastic.asm.tree.AnnotationNode;
-import org.apache.tapestry5.internal.plastic.asm.tree.ClassNode;
+import org.apache.tapestry5.internal.plastic.asm.tree.*;
 import org.apache.tapestry5.plastic.*;
 
 import java.lang.annotation.Annotation;
@@ -129,7 +128,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
     }
 
-    public Class realize(String primaryClassName, ClassType classType, final ClassNode classNode)
+    public Class realize(String primaryClassName, ClassType classType, ClassNode classNode)
     {
         synchronized (loader)
         {
@@ -315,7 +314,9 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
         // Inner classes are not transformed, but they are loaded by the same class loader.
 
         if (className.contains("$"))
+        {
             return loadInnerClass(className);
+        }
 
         // TODO: What about interfaces, enums, annotations, etc. ... they shouldn't be in the package, but
         // we should generate a reasonable error message.
@@ -360,10 +361,55 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
     private Class loadInnerClass(String className)
     {
-        byte[] bytecode = readBytecode(className);
+        ClassNode classNode = constructClassNodeFromBytecode(className);
 
-        return loader.defineClassWithBytecode(className, bytecode);
+        interceptFieldAccess(classNode);
+
+        return realize(className, ClassType.INNER, classNode);
     }
+
+    private void interceptFieldAccess(ClassNode classNode)
+    {
+        for (MethodNode method : (List<MethodNode>) classNode.methods) {
+            interceptFieldAccess(classNode.name, method);
+        }
+    }
+
+    private void interceptFieldAccess(String classInternalName, MethodNode method)
+    {
+        InsnList insns = method.instructions;
+
+        ListIterator it = insns.iterator();
+
+        while (it.hasNext())
+        {
+            AbstractInsnNode node = (AbstractInsnNode) it.next();
+
+            int opcode = node.getOpcode();
+
+            if (opcode != GETFIELD && opcode != PUTFIELD)
+            {
+                continue;
+            }
+
+            FieldInsnNode fnode = (FieldInsnNode) node;
+
+            String ownerInternalName = fnode.owner;
+
+            if (ownerInternalName.equals(classInternalName)) { continue; }
+
+            FieldInstrumentation instrumentation = getFieldInstrumentations(ownerInternalName).get(fnode.name, opcode == GETFIELD);
+
+            if (instrumentation == null) { continue; }
+
+            // Replace the field access node with the appropriate method invocation.
+
+            insns.insertBefore(fnode, new MethodInsnNode(INVOKEVIRTUAL, ownerInternalName, instrumentation.methodName, instrumentation.methodDescription));
+
+            it.remove();
+        }
+    }
+
 
     /**
      * For a fully-qualified class name of an <em>existing</em> class, loads the bytes for the class
@@ -388,8 +434,8 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
     /**
      *
      * @param baseClassName class from which the transformed class extends
-     * @param classNode node for the class
-     * @param proxy if true, the class is a new empty class; if false an existing class that's being transformed
+     * @param classNode     node for the class
+     * @param proxy         if true, the class is a new empty class; if false an existing class that's being transformed
      * @return
      * @throws ClassNotFoundException
      */

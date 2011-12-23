@@ -1,8 +1,12 @@
 package testsubjects;
 
+import testannotations.KindaInject;
+import testinterfaces.ValueGetter;
+
 public class ProtectedFieldCollaborator
 {
-    private ProtectedField delegate;
+    @KindaInject
+    ProtectedField delegate;
 
     public String getProtectedValue()
     {
@@ -12,5 +16,16 @@ public class ProtectedFieldCollaborator
     public void setProtectedValue(String newValue)
     {
         delegate.protectedValue = newValue;
+    }
+
+    public ValueGetter getValueGetter()
+    {
+        return new ValueGetter()
+        {
+            public String getValue()
+            {
+                return delegate.protectedValue;
+            }
+        };
     }
 }

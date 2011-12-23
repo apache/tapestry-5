@@ -714,9 +714,6 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
             interceptFieldAccess(node);
         }
-
-        // Remove all added methods that aren't actually used.
-
     }
 
     /**
