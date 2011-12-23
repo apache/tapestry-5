@@ -14,7 +14,7 @@
 
 package testsubjects;
 
-public class NonPrivateInstanceField
+public class PublicInstanceField
 {
-    String shouldBePrivate;
+    public String publicNotAllowed;
 }

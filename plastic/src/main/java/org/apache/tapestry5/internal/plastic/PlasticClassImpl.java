@@ -222,7 +222,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
             /**
              * Static methods are not visible to the main API methods, but they must still be transformed,
-             * incase they directly access fields. In addition, track their names to avoid collisions.
+             * in case they directly access fields. In addition, track their names to avoid collisions.
              */
             if (Modifier.isStatic(node.access))
             {
@@ -271,16 +271,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             if (Modifier.isStatic(node.access))
                 continue;
 
-            // TODO: Perhaps we should defer this private check until it is needed,
-            // i.e., when we do some work on the field that requires it to be private?
-            // However, given class loading issues, public fields are likely to cause
-            // their own problems when passing the ClassLoader boundary.
-
-            if (!Modifier.isPrivate(node.access))
-                throw new IllegalArgumentException(
-                        String.format(
-                                "Field %s of class %s is not private. Class transformation requires that all instance fields be private.",
-                                node.name, className));
+            // When we instrument the field such that it must be private, we'll get an exception.
 
             fields.add(new PlasticFieldImpl(this, node));
         }
