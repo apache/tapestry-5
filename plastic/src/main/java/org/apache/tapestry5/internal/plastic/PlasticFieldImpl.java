@@ -381,15 +381,22 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
 
         plasticClass.addMethod(setAccess);
 
-        plasticClass.redirectFieldWrite(node.name, setAccess);
+        plasticClass.redirectFieldWrite(node.name, isPrivate(), setAccess);
     }
 
-    /** Determines the access for a method that takes the place of reading from or writing to the field. Escalates
-     *  private fields to package private visibility, but leaves protected and package private alone (public fields
-     *  can not be instrumented).
+    /**
+     * Determines the access for a method that takes the place of reading from or writing to the field. Escalates
+     * private fields to package private visibility, but leaves protected and package private alone (public fields
+     * can not be instrumented).
      */
-    private int accessForMethod() {
-        return (Opcodes.ACC_SYNTHETIC | Opcodes.ACC_FINAL | node.access) &  ~Opcodes.ACC_PRIVATE;
+    private int accessForMethod()
+    {
+        return (Opcodes.ACC_SYNTHETIC | Opcodes.ACC_FINAL | node.access) & ~Opcodes.ACC_PRIVATE;
+    }
+
+    private boolean isPrivate()
+    {
+        return Modifier.isPrivate(node.access);
     }
 
     private void replaceFieldReadAccess(String conduitFieldName)
@@ -442,7 +449,7 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
 
         plasticClass.addMethod(getAccess);
 
-        plasticClass.redirectFieldRead(node.name, getAccess);
+        plasticClass.redirectFieldRead(node.name, isPrivate(), getAccess);
     }
 
     private boolean isWriteBehindEnabled()
@@ -477,7 +484,7 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
 
         plasticClass.addMethod(setAccess);
 
-        plasticClass.redirectFieldWrite(node.name, setAccess);
+        plasticClass.redirectFieldWrite(node.name, isPrivate(), setAccess);
 
         node.access |= Opcodes.ACC_FINAL;
     }

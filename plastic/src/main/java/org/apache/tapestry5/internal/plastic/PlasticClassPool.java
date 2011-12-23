@@ -84,22 +84,6 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
      */
     private final Map<String, BaseClassDef> baseClassDefs = PlasticInternalUtils.newMap();
 
-    /**
-     * Tracks field read and write instrumentations for a particular class.
-     */
-    static class FieldInstrumentations
-    {
-        /**
-         * Map field name to a read method.
-         */
-        final Map<String, String> read = PlasticInternalUtils.newMap();
-
-        /**
-         * Maps field name to a write method.
-         */
-        final Map<String, String> write = PlasticInternalUtils.newMap();
-    }
-
 
     private final Map<String, FieldInstrumentations> instrumentations = PlasticInternalUtils.newMap();
 
@@ -547,12 +531,12 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
     }
 
 
-    void setFieldReadInstrumentation(String classInternalName, String fieldName, String methodName)
+    void setFieldReadInstrumentation(String classInternalName, String fieldName, FieldInstrumentation fi)
     {
-        instrumentations.get(classInternalName).read.put(fieldName, methodName);
+        instrumentations.get(classInternalName).read.put(fieldName, fi);
     }
 
-    private FieldInstrumentations getFieldInstrumentation(String classInternalName)
+    FieldInstrumentations getFieldInstrumentations(String classInternalName)
     {
         FieldInstrumentations result = instrumentations.get(classInternalName);
 
@@ -590,29 +574,9 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
         return result;
     }
 
-
-    /**
-     * Checks to see if there is an instrumentation for the given class and field.
-     * This may cause the class to be transformed.  Returns the name of the method that replaces
-     * the field read, or null if the field is not instrumented in such a way that the method is required.
-     */
-    String getInstrumentedReadMethod(String classInternalName, String fieldName)
+    void setFieldWriteInstrumentation(String classInternalName, String fieldName, FieldInstrumentation fi)
     {
-        return getFieldInstrumentation(classInternalName).read.get(fieldName);
+        instrumentations.get(classInternalName).write.put(fieldName, fi);
     }
 
-    void setFieldWriteInstrumentation(String classInternalName, String fieldName, String methodName)
-    {
-        instrumentations.get(classInternalName).write.put(fieldName, methodName);
-    }
-
-    /**
-     * Checks to see if there is an instrumentation for the given class and field.
-     * This may cause the class to be transformed.  Returns the name of the method that replaces
-     * the field write, or null if the field is not instrumented in such a way that the method is required.
-     */
-    String getInstrumentedWriteMethod(String classInternalName, String fieldName)
-    {
-        return getFieldInstrumentation(classInternalName).write.get(fieldName);
-    }
 }
