@@ -19,7 +19,8 @@ package org.apache.tapestry5.integration.app1.pages;
  */
 public class ProtectedFields
 {
-    protected String _field;
+    // Until Tapestry 5.4, component fields had to be private. Starting in 5.4, they merely must not be public.
+    public String _field;
 
     public String getField()
     {

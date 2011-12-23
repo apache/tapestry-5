@@ -107,13 +107,16 @@ class ObtainPlasticClass extends AbstractPlasticSpecification
         pc.allFields == []
     }
 
-    def "instance fields must be private"() {
+    def "instrumented instance fields must be private"() {
         when:
-        mgr.getPlasticClass("testsubjects.NonPrivateInstanceField")
+
+        PlasticClass pc = mgr.getPlasticClass("testsubjects.PublicInstanceField")
+
+        pc.getAllFields()[0].inject("fixed string value")
 
         then:
         def e = thrown(IllegalArgumentException)
-        e.message == "Field shouldBePrivate of class testsubjects.NonPrivateInstanceField is not private. Class transformation requires that all instance fields be private."
+        e.message == "Field publicNotAllowed of class testsubjects.PublicInstanceField must be instrumented, and may not be public."
     }
 
     def "original constructors now throw exceptions"() {

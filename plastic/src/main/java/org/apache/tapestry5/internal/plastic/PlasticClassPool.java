@@ -17,8 +17,7 @@ package org.apache.tapestry5.internal.plastic;
 import org.apache.tapestry5.internal.plastic.asm.ClassReader;
 import org.apache.tapestry5.internal.plastic.asm.ClassWriter;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
-import org.apache.tapestry5.internal.plastic.asm.tree.AnnotationNode;
-import org.apache.tapestry5.internal.plastic.asm.tree.ClassNode;
+import org.apache.tapestry5.internal.plastic.asm.tree.*;
 import org.apache.tapestry5.plastic.*;
 
 import java.lang.annotation.Annotation;
@@ -39,6 +38,11 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
     private final Set<String> controlledPackages;
 
+
+    // Would use Deque, but that's added in 1.6 and we're still striving for 1.5 code compatibility.
+
+    private final Stack<String> activeInstrumentClassNames = new Stack<String>();
+
     /**
      * Maps class names to instantiators for that class name.
      * Synchronized on the loader.
@@ -53,10 +57,9 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
     private final Cache<String, TypeCategory> typeName2Category = new Cache<String, TypeCategory>()
     {
-
         protected TypeCategory convert(String typeName)
         {
-            ClassNode cn = constructClassNode(typeName);
+            ClassNode cn = constructClassNodeFromBytecode(typeName);
 
             return Modifier.isInterface(cn.access) ? TypeCategory.INTERFACE : TypeCategory.CLASS;
         }
@@ -78,7 +81,13 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
     /**
      * Map from FQCN to BaseClassDef. Synchronized on the loader.
      */
-    private final Map<String, BaseClassDef> baseClassDefs = new HashMap<String, PlasticClassPool.BaseClassDef>();
+    private final Map<String, BaseClassDef> baseClassDefs = PlasticInternalUtils.newMap();
+
+
+    private final Map<String, FieldInstrumentations> instrumentations = PlasticInternalUtils.newMap();
+
+    private final FieldInstrumentations placeholder = new FieldInstrumentations();
+
 
     private final Set<TransformationOption> options;
 
@@ -119,7 +128,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
     }
 
-    public Class realize(String primaryClassName, ClassType classType, final ClassNode classNode)
+    public Class realize(String primaryClassName, ClassType classType, ClassNode classNode)
     {
         synchronized (loader)
         {
@@ -298,34 +307,109 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
         return false;
     }
 
-    public Class<?> loadAndTransformClass(String className) throws ClassNotFoundException
+    // Hopefully the synchronized will not cause a deadlock
+
+    public synchronized Class<?> loadAndTransformClass(String className) throws ClassNotFoundException
     {
         // Inner classes are not transformed, but they are loaded by the same class loader.
 
         if (className.contains("$"))
+        {
             return loadInnerClass(className);
+        }
 
         // TODO: What about interfaces, enums, annotations, etc. ... they shouldn't be in the package, but
         // we should generate a reasonable error message.
 
-        InternalPlasticClassTransformation transformation = getPlasticClassTransformation(className);
+        if (activeInstrumentClassNames.contains(className))
+        {
+            StringBuilder builder = new StringBuilder("");
+            String sep = "";
 
-        delegate.transform(transformation.getPlasticClass());
+            for (String name : activeInstrumentClassNames)
+            {
+                builder.append(sep);
+                builder.append(name);
 
-        ClassInstantiator createInstantiator = transformation.createInstantiator();
-        ClassInstantiator configuredInstantiator = delegate.configureInstantiator(className, createInstantiator);
+                sep = ", ";
+            }
 
-        instantiators.put(className, configuredInstantiator);
+            throw new IllegalStateException(String.format("Unable to transform class %s as it is already in the process of being transformed; there is a cycle among the following classes: %s.",
+                    className, builder));
+        }
 
-        return transformation.getTransformedClass();
+        activeInstrumentClassNames.push(className);
+
+        try
+        {
+
+            InternalPlasticClassTransformation transformation = getPlasticClassTransformation(className);
+
+            delegate.transform(transformation.getPlasticClass());
+
+            ClassInstantiator createInstantiator = transformation.createInstantiator();
+            ClassInstantiator configuredInstantiator = delegate.configureInstantiator(className, createInstantiator);
+
+            instantiators.put(className, configuredInstantiator);
+
+            return transformation.getTransformedClass();
+        } finally
+        {
+            activeInstrumentClassNames.pop();
+        }
     }
 
     private Class loadInnerClass(String className)
     {
-        byte[] bytecode = readBytecode(className);
+        ClassNode classNode = constructClassNodeFromBytecode(className);
 
-        return loader.defineClassWithBytecode(className, bytecode);
+        interceptFieldAccess(classNode);
+
+        return realize(className, ClassType.INNER, classNode);
     }
+
+    private void interceptFieldAccess(ClassNode classNode)
+    {
+        for (MethodNode method : (List<MethodNode>) classNode.methods) {
+            interceptFieldAccess(classNode.name, method);
+        }
+    }
+
+    private void interceptFieldAccess(String classInternalName, MethodNode method)
+    {
+        InsnList insns = method.instructions;
+
+        ListIterator it = insns.iterator();
+
+        while (it.hasNext())
+        {
+            AbstractInsnNode node = (AbstractInsnNode) it.next();
+
+            int opcode = node.getOpcode();
+
+            if (opcode != GETFIELD && opcode != PUTFIELD)
+            {
+                continue;
+            }
+
+            FieldInsnNode fnode = (FieldInsnNode) node;
+
+            String ownerInternalName = fnode.owner;
+
+            if (ownerInternalName.equals(classInternalName)) { continue; }
+
+            FieldInstrumentation instrumentation = getFieldInstrumentations(ownerInternalName).get(fnode.name, opcode == GETFIELD);
+
+            if (instrumentation == null) { continue; }
+
+            // Replace the field access node with the appropriate method invocation.
+
+            insns.insertBefore(fnode, new MethodInsnNode(INVOKEVIRTUAL, ownerInternalName, instrumentation.methodName, instrumentation.methodDescription));
+
+            it.remove();
+        }
+    }
+
 
     /**
      * For a fully-qualified class name of an <em>existing</em> class, loads the bytes for the class
@@ -338,14 +422,24 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
     {
         assert PlasticInternalUtils.isNonBlank(className);
 
-        ClassNode classNode = constructClassNode(className);
+        ClassNode classNode = constructClassNodeFromBytecode(className);
 
         String baseClassName = PlasticInternalUtils.toClassName(classNode.superName);
 
-        return createTransformation(baseClassName, classNode);
+        instrumentations.put(classNode.name, new FieldInstrumentations());
+
+        return createTransformation(baseClassName, classNode, false);
     }
 
-    private InternalPlasticClassTransformation createTransformation(String baseClassName, ClassNode classNode)
+    /**
+     *
+     * @param baseClassName class from which the transformed class extends
+     * @param classNode     node for the class
+     * @param proxy         if true, the class is a new empty class; if false an existing class that's being transformed
+     * @return
+     * @throws ClassNotFoundException
+     */
+    private InternalPlasticClassTransformation createTransformation(String baseClassName, ClassNode classNode, boolean proxy)
             throws ClassNotFoundException
     {
         if (shouldInterceptClassLoading(baseClassName))
@@ -356,12 +450,12 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
             assert def != null;
 
-            return new PlasticClassImpl(classNode, this, def.inheritanceData, def.staticContext);
+            return new PlasticClassImpl(classNode, this, def.inheritanceData, def.staticContext, proxy);
         }
 
         // When the base class is Object, or otherwise not in a transformed package,
         // then start with the empty
-        return new PlasticClassImpl(classNode, this, emptyInheritanceData, emptyStaticContext);
+        return new PlasticClassImpl(classNode, this, emptyInheritanceData, emptyStaticContext, proxy);
     }
 
     /**
@@ -371,7 +465,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
      * @param className fully qualified class name
      * @return corresponding ClassNode
      */
-    public ClassNode constructClassNode(String className)
+    public ClassNode constructClassNodeFromBytecode(String className)
     {
         byte[] bytecode = readBytecode(className);
 
@@ -397,7 +491,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
             newClassNode.visit(V1_5, ACC_PUBLIC, PlasticInternalUtils.toInternalName(newClassName), null,
                     PlasticInternalUtils.toInternalName(baseClassName), null);
 
-            return createTransformation(baseClassName, newClassNode);
+            return createTransformation(baseClassName, newClassNode, true);
         } catch (ClassNotFoundException ex)
         {
             throw new RuntimeException(String.format("Unable to create class %s as sub-class of %s: %s", newClassName,
@@ -481,4 +575,54 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
     {
         return options.contains(option);
     }
+
+
+    void setFieldReadInstrumentation(String classInternalName, String fieldName, FieldInstrumentation fi)
+    {
+        instrumentations.get(classInternalName).read.put(fieldName, fi);
+    }
+
+    FieldInstrumentations getFieldInstrumentations(String classInternalName)
+    {
+        FieldInstrumentations result = instrumentations.get(classInternalName);
+
+        if (result != null)
+        {
+            return result;
+        }
+
+        String className = PlasticInternalUtils.toClassName(classInternalName);
+
+        // If it is a top-level (not inner) class in a controlled package, then we
+        // will recursively load the class, to identify any field instrumentations
+        // in it.
+        if (!className.contains("$") && shouldInterceptClassLoading(className))
+        {
+            try
+            {
+                loadAndTransformClass(className);
+
+                // The key is written into the instrumentations map as a side-effect
+                // of loading the class.
+                return instrumentations.get(classInternalName);
+            } catch (Exception ex)
+            {
+                throw new RuntimeException(PlasticInternalUtils.toMessage(ex), ex);
+            }
+        }
+
+        // Either a class outside of controlled packages, or an inner class. Use a placeholder
+        // that contains empty maps.
+
+        result = placeholder;
+        instrumentations.put(classInternalName, result);
+
+        return result;
+    }
+
+    void setFieldWriteInstrumentation(String classInternalName, String fieldName, FieldInstrumentation fi)
+    {
+        instrumentations.get(classInternalName).write.put(fieldName, fi);
+    }
+
 }

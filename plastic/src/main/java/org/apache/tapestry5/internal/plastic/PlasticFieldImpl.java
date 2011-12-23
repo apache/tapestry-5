@@ -14,8 +14,8 @@
 
 package org.apache.tapestry5.internal.plastic;
 
-import org.apache.tapestry5.internal.plastic.asm.*;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
+import org.apache.tapestry5.internal.plastic.asm.Type;
 import org.apache.tapestry5.internal.plastic.asm.tree.FieldNode;
 import org.apache.tapestry5.internal.plastic.asm.tree.MethodNode;
 import org.apache.tapestry5.plastic.*;
@@ -104,9 +104,11 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
         plasticClass.check();
 
         if (this.tag != null)
+        {
             throw new IllegalStateException(String.format(
                     "Field %s of class %s can not be claimed by %s as it is already claimed by %s.", node.name,
                     plasticClass.className, tag, this.tag));
+        }
 
         this.tag = tag;
 
@@ -141,8 +143,18 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
     private void verifyInitialState(String operation)
     {
         if (state != FieldState.INITIAL)
+        {
             throw new IllegalStateException(String.format("Unable to %s field %s of class %s, as it already %s.",
                     operation, node.name, plasticClass.className, state.description));
+        }
+    }
+
+    private void ensureNotPublic()
+    {
+        if (Modifier.isPublic(node.access))
+        {
+            throw new IllegalArgumentException(String.format("Field %s of class %s must be instrumented, and may not be public.", node.name, plasticClass.className));
+        }
     }
 
     public PlasticField inject(Object value)
@@ -265,8 +277,6 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
         replaceFieldReadAccess(conduitField.getName());
         replaceFieldWriteAccess(conduitField.getName());
 
-        // TODO: Do we keep the field or not? It will now always be null/0/false.
-
         state = FieldState.CONDUIT;
 
         return this;
@@ -324,24 +334,28 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
     private void introduceAccessorMethod(String returnType, String name, String[] parameterTypes, String signature,
                                          InstructionBuilderCallback callback)
     {
-        MethodDescription description = new MethodDescription(org.apache.tapestry5.internal.plastic.asm.Opcodes.ACC_PUBLIC, returnType, name, parameterTypes,
+        MethodDescription description = new MethodDescription(Opcodes.ACC_PUBLIC, returnType, name, parameterTypes,
                 signature, null);
 
         String desc = plasticClass.nameCache.toDesc(description);
 
         if (plasticClass.inheritanceData.isImplemented(name, desc))
+        {
             throw new IllegalArgumentException(String.format(
                     "Unable to create new accessor method %s on class %s as the method is already implemented.",
                     description.toString(), plasticClass.className));
+        }
 
         plasticClass.introduceMethod(description, callback);
     }
 
     private void replaceFieldWriteAccess(String conduitFieldName)
     {
-        String setAccessName = plasticClass.makeUnique(plasticClass.methodNames, "set_" + node.name);
+        ensureNotPublic();
 
-        setAccess = new MethodNode(Opcodes.ACC_SYNTHETIC | Opcodes.ACC_FINAL, setAccessName, "(" + node.desc + ")V", null, null);
+        String setAccessName = plasticClass.makeUnique(plasticClass.methodNames, "conduit_set_" + node.name);
+
+        setAccess = new MethodNode(accessForMethod(), setAccessName, "(" + node.desc + ")V", null, null);
 
         InstructionBuilder builder = plasticClass.newBuilder(setAccess);
 
@@ -367,16 +381,33 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
 
         plasticClass.addMethod(setAccess);
 
-        plasticClass.fieldToWriteMethod.put(node.name, setAccess);
+        plasticClass.redirectFieldWrite(node.name, isPrivate(), setAccess);
+    }
+
+    /**
+     * Determines the access for a method that takes the place of reading from or writing to the field. Escalates
+     * private fields to package private visibility, but leaves protected and package private alone (public fields
+     * can not be instrumented).
+     */
+    private int accessForMethod()
+    {
+        return (Opcodes.ACC_SYNTHETIC | Opcodes.ACC_FINAL | node.access) & ~Opcodes.ACC_PRIVATE;
+    }
+
+    private boolean isPrivate()
+    {
+        return Modifier.isPrivate(node.access);
     }
 
     private void replaceFieldReadAccess(String conduitFieldName)
     {
+        ensureNotPublic();
+
         boolean writeBehindEnabled = isWriteBehindEnabled();
 
-        String getAccessName = plasticClass.makeUnique(plasticClass.methodNames, "getfieldvalue_" + node.name);
+        String getAccessName = plasticClass.makeUnique(plasticClass.methodNames, "conduit_get_" + node.name);
 
-        getAccess = new MethodNode(Opcodes.ACC_SYNTHETIC | Opcodes.ACC_FINAL, getAccessName, "()" + node.desc, null, null);
+        getAccess = new MethodNode(accessForMethod(), getAccessName, "()" + node.desc, null, null);
 
         InstructionBuilder builder = plasticClass.newBuilder(getAccess);
 
@@ -418,7 +449,7 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
 
         plasticClass.addMethod(getAccess);
 
-        plasticClass.fieldToReadMethod.put(node.name, getAccess);
+        plasticClass.redirectFieldRead(node.name, isPrivate(), getAccess);
     }
 
     private boolean isWriteBehindEnabled()
@@ -441,9 +472,11 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
 
     private void makeReadOnly()
     {
-        String setAccessName = plasticClass.makeUnique(plasticClass.methodNames, "setfieldvalue_" + node.name);
+        ensureNotPublic();
 
-        setAccess = new MethodNode(Opcodes.ACC_SYNTHETIC | Opcodes.ACC_FINAL, setAccessName, "(" + node.desc + ")V", null, null);
+        String setAccessName = plasticClass.makeUnique(plasticClass.methodNames, "reject_field_change_" + node.name);
+
+        setAccess = new MethodNode(accessForMethod(), setAccessName, "(" + node.desc + ")V", null, null);
 
         String message = String.format("Field %s of class %s is read-only.", node.name, plasticClass.className);
 
@@ -451,7 +484,7 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
 
         plasticClass.addMethod(setAccess);
 
-        plasticClass.fieldToWriteMethod.put(node.name, setAccess);
+        plasticClass.redirectFieldWrite(node.name, isPrivate(), setAccess);
 
         node.access |= Opcodes.ACC_FINAL;
     }
@@ -462,7 +495,7 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
      */
     private MethodNode addShimSetAccessMethod()
     {
-        String name = plasticClass.makeUnique(plasticClass.methodNames, "shimset_" + node.name);
+        String name = plasticClass.makeUnique(plasticClass.methodNames, "shim_set_" + node.name);
 
         // Takes two Object parameters (instance, and value) and returns void.
 
@@ -482,7 +515,7 @@ class PlasticFieldImpl extends PlasticMember implements PlasticField, Comparable
 
     private MethodNode addShimGetAccessMethod()
     {
-        String name = plasticClass.makeUnique(plasticClass.methodNames, "shimget_" + node.name);
+        String name = plasticClass.makeUnique(plasticClass.methodNames, "shim_get_" + node.name);
 
         MethodNode mn = new MethodNode(Opcodes.ACC_SYNTHETIC | Opcodes.ACC_FINAL, name, "()" + node.desc, null, null);
 

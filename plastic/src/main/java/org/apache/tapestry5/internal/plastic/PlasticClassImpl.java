@@ -85,6 +85,8 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
     final PlasticClassPool pool;
 
+    private final boolean proxy;
+
     final String className;
 
     private final String superClassName;
@@ -131,17 +133,12 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
     // such methods are not optimized away incorrectly.
     final Set<MethodNode> shimInvokedMethods = PlasticInternalUtils.newSet();
 
-    /**
-     * Maps a field name to a replacement method that should be invoked instead of reading the
-     * field.
-     */
-    final Map<String, MethodNode> fieldToReadMethod = PlasticInternalUtils.newMap();
 
     /**
-     * Maps a field name to a replacement method that should be invoked instead of writing the
-     * field.
+     * Tracks instrumentations of fields of this class, including private fields which are not published into the
+     * {@link PlasticClassPool}.
      */
-    final Map<String, MethodNode> fieldToWriteMethod = PlasticInternalUtils.newMap();
+    private final FieldInstrumentations fieldInstrumentations = new FieldInstrumentations();
 
     /**
      * This normal no-arguments constructor, or null. By the end of the transformation
@@ -175,12 +172,14 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
      * @param pool
      * @param parentInheritanceData
      * @param parentStaticContext
+     * @param proxy
      */
     public PlasticClassImpl(ClassNode classNode, PlasticClassPool pool, InheritanceData parentInheritanceData,
-                            StaticContext parentStaticContext)
+                            StaticContext parentStaticContext, boolean proxy)
     {
         this.classNode = classNode;
         this.pool = pool;
+        this.proxy = proxy;
 
         staticContext = parentStaticContext.dupe();
 
@@ -222,7 +221,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
             /**
              * Static methods are not visible to the main API methods, but they must still be transformed,
-             * incase they directly access fields. In addition, track their names to avoid collisions.
+             * in case they directly access fields. In addition, track their names to avoid collisions.
              */
             if (Modifier.isStatic(node.access))
             {
@@ -271,16 +270,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             if (Modifier.isStatic(node.access))
                 continue;
 
-            // TODO: Perhaps we should defer this private check until it is needed,
-            // i.e., when we do some work on the field that requires it to be private?
-            // However, given class loading issues, public fields are likely to cause
-            // their own problems when passing the ClassLoader boundary.
-
-            if (!Modifier.isPrivate(node.access))
-                throw new IllegalArgumentException(
-                        String.format(
-                                "Field %s of class %s is not private. Class transformation requires that all instance fields be private.",
-                                node.name, className));
+            // When we instrument the field such that it must be private, we'll get an exception.
 
             fields.add(new PlasticFieldImpl(this, node));
         }
@@ -717,27 +707,13 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
      */
     private void interceptFieldAccess()
     {
-        Set<MethodNode> unusedAccessMethods = PlasticInternalUtils.newSet();
-
-        // Track all the access methods created for the fields.
-
-        unusedAccessMethods.addAll(fieldToReadMethod.values());
-        unusedAccessMethods.addAll(fieldToWriteMethod.values());
-
-        // Keep any field access methods invoked from the shim
-        unusedAccessMethods.removeAll(shimInvokedMethods);
-
         for (MethodNode node : fieldTransformMethods)
         {
             // Intercept field access inside the method, tracking which access methods
             // are actually used by removing them from accessMethods
 
-            interceptFieldAccess(node, unusedAccessMethods);
+            interceptFieldAccess(node);
         }
-
-        // Remove all added methods that aren't actually used.
-
-        classNode.methods.removeAll(unusedAccessMethods);
     }
 
     /**
@@ -914,7 +890,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         }
     }
 
-    private void interceptFieldAccess(MethodNode methodNode, Set<MethodNode> unusedAccessMethods)
+    private void interceptFieldAccess(MethodNode methodNode)
     {
         InsnList insns = methodNode.instructions;
 
@@ -927,33 +903,33 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
             int opcode = node.getOpcode();
 
             if (opcode != GETFIELD && opcode != PUTFIELD)
+            {
                 continue;
-
-            // Make sure we're talking about access to a field of this class, not some other
-            // visible field of another class.
+            }
 
             FieldInsnNode fnode = (FieldInsnNode) node;
 
-            if (!fnode.owner.equals(classNode.name))
-                continue;
+            FieldInstrumentation instrumentation = findInstrumentations(fnode).get(fnode.name, opcode == GETFIELD);
 
-            Map<String, MethodNode> fieldToMethod = opcode == GETFIELD ? fieldToReadMethod : fieldToWriteMethod;
-
-            MethodNode mn = fieldToMethod.get(fnode.name);
-
-            if (mn == null)
-                continue;
-
-            String methodDescription = opcode == GETFIELD ? "()" + fnode.desc : "(" + fnode.desc + ")V";
+            if (instrumentation == null) { continue; }
 
             // Replace the field access node with the appropriate method invocation.
 
-            insns.insertBefore(fnode, new MethodInsnNode(INVOKEVIRTUAL, fnode.owner, mn.name, methodDescription));
+            insns.insertBefore(fnode, new MethodInsnNode(INVOKEVIRTUAL, fnode.owner, instrumentation.methodName, instrumentation.methodDescription));
 
             it.remove();
-
-            unusedAccessMethods.remove(mn);
         }
+    }
+
+    private FieldInstrumentations findInstrumentations(FieldInsnNode node)
+    {
+        if (node.owner.equals(classNode.name))
+        {
+            return fieldInstrumentations;
+        }
+
+        return pool.getFieldInstrumentations(node.owner);
+
     }
 
     String getInstanceContextFieldName()
@@ -1141,4 +1117,27 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return this;
     }
 
+    void redirectFieldWrite(String fieldName, boolean privateField, MethodNode method)
+    {
+        FieldInstrumentation fi = new FieldInstrumentation(method.name, method.desc);
+
+        fieldInstrumentations.write.put(fieldName, fi);
+
+        if (!(proxy || privateField))
+        {
+            pool.setFieldWriteInstrumentation(classNode.name, fieldName, fi);
+        }
+    }
+
+    void redirectFieldRead(String fieldName, boolean privateField, MethodNode method)
+    {
+        FieldInstrumentation fi = new FieldInstrumentation(method.name, method.desc);
+
+        fieldInstrumentations.read.put(fieldName, fi);
+
+        if (!(proxy || privateField))
+        {
+            pool.setFieldReadInstrumentation(classNode.name, fieldName, fi);
+        }
+    }
 }

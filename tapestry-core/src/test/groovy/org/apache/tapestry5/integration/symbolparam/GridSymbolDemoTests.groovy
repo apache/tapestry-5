@@ -29,9 +29,10 @@ class GridSymbolDemoTests extends TapestryCoreTestCase
 
         clickAndWait "link=4"
 
-        assertText("//tr[1]/td[3]", "6");
-        assertText("//tr[1]/td[4]", "false");
-        assertText("//tr[2]/td[3]", "7");
-        assertText("//tr[2]/td[4]", "true");
+        // Using the XPath selectors was a bit flakey, so maybe css is better.
+        assertText("css=tr.t-first td.me", "6");
+        assertText("css=tr.t-first td.odd", "false");
+        assertText("css=tr.t-last td.me", "7");
+        assertText("css=tr.t-first td.odd", "false");
     }
 }

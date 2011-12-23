@@ -33,5 +33,13 @@ public enum ClassType
      * An implementation of {@link MethodInvocation}, needed to handle advice added to
      * a method of a primary class.
      */
-    METHOD_INVOCATION
+    METHOD_INVOCATION,
+
+    /**
+     * An inner class within a controlled package, which may have field accesses (to non-private
+     * fields visible to it) instrumented.
+     *
+     * @since 5.4
+     */
+    INNER;
 }
