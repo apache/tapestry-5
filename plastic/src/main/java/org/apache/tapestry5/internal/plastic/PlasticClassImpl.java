@@ -85,6 +85,8 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
     final PlasticClassPool pool;
 
+    private final boolean proxy;
+
     final String className;
 
     private final String superClassName;
@@ -135,13 +137,13 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
      * Maps a field name to a replacement method that should be invoked instead of reading the
      * field.
      */
-    final Map<String, MethodNode> fieldToReadMethod = PlasticInternalUtils.newMap();
+    private final Map<String, MethodNode> fieldToReadMethod = PlasticInternalUtils.newMap();
 
     /**
      * Maps a field name to a replacement method that should be invoked instead of writing the
      * field.
      */
-    final Map<String, MethodNode> fieldToWriteMethod = PlasticInternalUtils.newMap();
+    private final Map<String, MethodNode> fieldToWriteMethod = PlasticInternalUtils.newMap();
 
     /**
      * This normal no-arguments constructor, or null. By the end of the transformation
@@ -175,12 +177,14 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
      * @param pool
      * @param parentInheritanceData
      * @param parentStaticContext
+     * @param proxy
      */
     public PlasticClassImpl(ClassNode classNode, PlasticClassPool pool, InheritanceData parentInheritanceData,
-                            StaticContext parentStaticContext)
+                            StaticContext parentStaticContext, boolean proxy)
     {
         this.classNode = classNode;
         this.pool = pool;
+        this.proxy = proxy;
 
         staticContext = parentStaticContext.dupe();
 
@@ -1132,4 +1136,28 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         return this;
     }
 
+    void redirectFieldWrite(String fieldName, MethodNode method)
+    {
+        fieldToWriteMethod.put(fieldName, method);
+
+        if (!(proxy || isPrivate(method)))
+        {
+            pool.setFieldWriteInstrumentation(classNode.name, fieldName, method.name);
+        }
+    }
+
+    void redirectFieldRead(String fieldName, MethodNode method)
+    {
+        fieldToReadMethod.put(fieldName, method);
+
+        if (! (proxy || isPrivate(method)))
+        {
+            pool.setFieldReadInstrumentation(classNode.name, fieldName, method.name);
+        }
+    }
+
+    private boolean isPrivate(MethodNode method)
+    {
+        return Modifier.isPrivate(method.access);
+    }
 }
