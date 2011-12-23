@@ -936,13 +936,13 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
      * TAPESTRY-2196
      */
     @Test
-    public void protected_field_in_page_class()
+    public void public_field_in_page_class()
     {
         openLinks("Protected Fields Demo", "Trigger the Exception");
 
         assertTextPresent(
                 "An unexpected application exception has occurred.",
-                "Field _field of class org.apache.tapestry5.integration.app1.pages.ProtectedFields is not private. Class transformation requires that all instance fields be private.");
+                "Field _field of class org.apache.tapestry5.integration.app1.pages.ProtectedFields must be instrumented, and may not be public.");
     }
 
     /**
@@ -955,7 +955,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     {
         openLinks("Class Transformation Exception Demo");
 
-        assertTextPresent("Field _value of class org.apache.tapestry5.integration.app1.pages.Datum is not private. Class transformation requires that all instance fields be private.");
+        assertTextPresent("Field _value of class org.apache.tapestry5.integration.app1.pages.Datum must be instrumented, and may not be public.");
     }
 
     @Test

@@ -19,7 +19,9 @@ package org.apache.tapestry5.integration.app1.pages;
  */
 public class Datum
 {
-    protected int _value;
+    // This will be instrumented as with any Tapestry component field, and that will fail as the field may not
+    // be public.
+    public int _value;
 
     public int getValue()
     {
