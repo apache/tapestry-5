@@ -198,6 +198,11 @@
         <a href="missingembeddedcomponent">Missing Embedded Component</a> -- @InjectComponent for component not in
         template
     </li>
+    <li>
+        <t:actionlink t:id="immediateResponse">Immediate Response</t:actionlink>
+        -- Stream page content bypassing page activation
+    </li>
+
 </ul>
 
 </html>

@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,12 +16,14 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.internal.InternalComponentResources;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.structure.ComponentPageElement;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
 import org.apache.tapestry5.services.PageRenderRequestHandler;
 import org.apache.tapestry5.services.PageRenderRequestParameters;
+import org.apache.tapestry5.services.Request;
 import org.testng.annotations.Test;
 
 public class PageRenderRequestHandlerImplTest extends InternalBaseTestCase
@@ -37,7 +39,9 @@ public class PageRenderRequestHandlerImplTest extends InternalBaseTestCase
         ComponentPageElement root = mockComponentPageElement();
         InternalComponentResources pageResources = mockInternalComponentResources();
         PageActivator activator = newMock(PageActivator.class);
-
+        Request request = mockRequest();
+        
+        train_getAttribute(request, InternalConstants.BYPASS_ACTIVATION, null);
         train_get(cache, "foo/Bar", page);
 
         train_getRootElement(page, root);
@@ -50,7 +54,7 @@ public class PageRenderRequestHandlerImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer, activator);
+        PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer, activator, request);
 
         PageRenderRequestParameters parameters = new PageRenderRequestParameters("foo/Bar", context, true);
 

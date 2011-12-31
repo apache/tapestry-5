@@ -1,0 +1,8 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+
+    <p>
+    Activate event was triggered: <span id="activated">${activated}</span>
+    </p>
+
+    <t:pagelink page="bypassactivationtarget">refresh</t:pagelink>
+</html>

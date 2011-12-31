@@ -23,6 +23,7 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.services.StreamPageContent;
 
 import java.util.*;
 
@@ -176,7 +177,7 @@ public class Index
                             "Use of generic parameters with the Loop component."),
 
                     new Item("LoopWithMixinDemo", "Loop With Mixin Demo",
-                        "Use a mixin with a Loop component."),
+                            "Use a mixin with a Loop component."),
 
                     new Item("BlankPasswordDemo", "Blank Password Demo",
                             "Show that a blank value in a PasswordField does not update the server side value."),
@@ -580,5 +581,10 @@ public class Index
     public String getAlert()
     {
         return alert;
+    }
+
+    Object onActionFromImmediateResponse()
+    {
+        return new StreamPageContent(BypassActivationTarget.class).withoutActivation();
     }
 }

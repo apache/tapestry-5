@@ -156,4 +156,13 @@ public final class InternalConstants
      * @since 5.3
      */
     public static final String CANCEL_NAME = "cancel";
+
+    /**
+     * Request attribute that can be set to bypass page activation.
+     *
+     * @since 5.4
+     * @see org.apache.tapestry5.internal.services.StreamPageContentResultProcessor
+     * @see org.apache.tapestry5.internal.services.PageRenderRequestHandlerImpl
+     */
+    public static final String BYPASS_ACTIVATION = "tapestry.bypass-page-activation";
 }
