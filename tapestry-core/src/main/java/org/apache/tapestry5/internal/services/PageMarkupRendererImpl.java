@@ -47,6 +47,8 @@ public class PageMarkupRendererImpl implements PageMarkupRenderer
         markupRendererPipeline.renderMarkup(writer);
 
         if (writer.getDocument().getRootElement() == null)
-            throw new RuntimeException(String.format("=Page %s did not generate any markup when rendered. This could be because its template file could not be located, or because a render phase method in the page prevented rendering.", page.getName()));
+        {
+            throw new RuntimeException(String.format("Page %s did not generate any markup when rendered. This could be because its template file could not be located, or because a render phase method in the page prevented rendering.", page.getName()));
+        }
     }
 }
