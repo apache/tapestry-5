@@ -76,7 +76,10 @@ import java.io.ObjectInputStream;
  * </p>
  * <p>
  * While rendering, or processing a Form submission, the Form component places a {@link FormSupport} object into the {@linkplain Environment environment},
- * so that enclosed components can coordinate with the Form component.
+ * so that enclosed components can coordinate with the Form component. It also places a {@link ValidationTracker} into the environment during both render and submission.
+ * During submission it also pushes a {@link Heartbeat} into the environment, which is {@link org.apache.tapestry5.services.Heartbeat#end() ended} just before
+ * {@linkplain FormSupport#defer(Runnable) deferred FormSupport operations} are executed.
+ * </p>
  * </p>
  *
  * @tapestrydoc
@@ -119,13 +122,11 @@ public class Form implements ClientElement, FormValidationControl
     private Object[] context;
 
     /**
-     * The object which will record user input and validation errors. The object
-     * must be persistent between requests
-     * (since the form submission and validation occurs in a component event
-     * request and the subsequent render occurs
-     * in a render request). The default is a persistent property of the Form
-     * component and this is sufficient for
-     * nearly all purposes (except when a Form is rendered inside a loop).
+     * The object which will record user input and validation errors. When not using
+     * the default behavior supplied by the Form component (an immediate re-render of the active
+     * page when there are form validation errors), it is necessary to bind this parameter
+     * to a persistent value that can be maintained until the active page is re-rendered. See
+     * <a href="https://issues.apache.org/jira/browse/TAP5-1808">TAP5-1801</a>.
      */
     @Parameter("defaultTracker")
     private ValidationTracker tracker;
@@ -215,7 +216,10 @@ public class Form implements ClientElement, FormValidationControl
     @Symbol(InternalSymbols.PRE_SELECTED_FORM_NAMES)
     private String preselectedFormNames;
 
-    @Persist(PersistenceConstants.FLASH)
+
+    /**
+     * Starting in 5.4, this is a simple, non-persistent property, with no extra magic tricks.
+     */
     private ValidationTracker defaultTracker;
 
     @Inject
@@ -249,9 +253,8 @@ public class Form implements ClientElement, FormValidationControl
 
     private String clientId;
 
-    // Set during rendering or submit processing to be the
-    // same as the VT pushed into the Environment
-    private ValidationTracker activeTracker;
+    @Inject
+    private ComponentSource componentSource;
 
     String defaultValidationId()
     {
@@ -264,63 +267,25 @@ public class Form implements ClientElement, FormValidationControl
     }
 
     /**
-     * Returns a wrapped version of the tracker parameter (which is usually bound to the
-     * defaultTracker persistent field).
-     * If tracker is currently null, a new instance of {@link ValidationTrackerImpl} is created.
-     * The tracker is then wrapped, such that the tracker parameter
-     * is only updated the first time an error is recorded into the tracker (this will typically
-     * propagate to the defaultTracker
-     * persistent field and be stored into the session). This means that if no errors are recorded,
-     * the tracker parameter is not updated and (in the default case) no data is stored into the
-     * session.
+     * Returns an instance of {@link ValidationTrackerImpl}, lazily creating it as needed. This property
+     * is the default for the <strong>tracker</strong> parameter; the property (as of Tapestry 5.4) is not
+     * persistent.
      *
-     * @return a tracker ready to receive data (possibly a previously stored tracker with field
-     *         input and errors)
-     * @see <a href="https://issues.apache.org/jira/browse/TAP5-979">TAP5-979</a>
+     * @return per-request cached instance
      */
-    private ValidationTracker getWrappedTracker()
-    {
-        ValidationTracker innerTracker = tracker == null ? new ValidationTrackerImpl() : tracker;
-
-        ValidationTracker wrapper = new ValidationTrackerWrapper(innerTracker)
-        {
-            private boolean saved = false;
-
-            private void save()
-            {
-                if (!saved)
-                {
-                    tracker = getDelegate();
-
-                    saved = true;
-                }
-            }
-
-            @Override
-            public void recordError(Field field, String errorMessage)
-            {
-                super.recordError(field, errorMessage);
-
-                save();
-            }
-
-            @Override
-            public void recordError(String errorMessage)
-            {
-                super.recordError(errorMessage);
-
-                save();
-            }
-        };
-
-        return wrapper;
-    }
-
     public ValidationTracker getDefaultTracker()
     {
+        if (defaultTracker == null)
+        {
+            defaultTracker = new ValidationTrackerImpl();
+        }
+
         return defaultTracker;
     }
 
+    /**
+     * @deprecated In 5.4; previously used only for testing
+     */
     public void setDefaultTracker(ValidationTracker defaultTracker)
     {
         this.defaultTracker = defaultTracker;
@@ -358,15 +323,13 @@ public class Form implements ClientElement, FormValidationControl
         if (zone != null)
             linkFormToZone(link);
 
-        activeTracker = getWrappedTracker();
-
         environment.push(FormSupport.class, formSupport);
-        environment.push(ValidationTracker.class, activeTracker);
+        environment.push(ValidationTracker.class, tracker);
 
         if (autofocus)
         {
             ValidationDecorator autofocusDecorator = new AutofocusValidationDecorator(
-                    environment.peek(ValidationDecorator.class), activeTracker, jsSupport);
+                    environment.peek(ValidationDecorator.class), tracker, jsSupport);
             environment.push(ValidationDecorator.class, autofocusDecorator);
         }
 
@@ -387,7 +350,9 @@ public class Form implements ClientElement, FormValidationControl
         form = writer.element("form", "id", clientId, "method", "post", "action", actionURL);
 
         if ((zone != null || clientValidation != ClientValidation.NONE) && !request.isXHR())
+        {
             writer.attributes("onsubmit", MarkupConstants.WAIT_FOR_PAGE);
+        }
 
         resources.renderInformalParameters(writer);
 
@@ -472,23 +437,20 @@ public class Form implements ClientElement, FormValidationControl
 
         environment.pop(ValidationTracker.class);
 
-        activeTracker = null;
+        tracker.clear();
 
         environment.pop(BeanValidationContext.class);
     }
 
     @SuppressWarnings(
             {"unchecked", "InfiniteLoopStatement"})
-    @Log
     Object onAction(EventContext context) throws IOException
     {
-        activeTracker = getWrappedTracker();
-
-        activeTracker.clear();
+        tracker.clear();
 
         formSupport = new FormSupportImpl(resources, validationId);
 
-        environment.push(ValidationTracker.class, activeTracker);
+        environment.push(ValidationTracker.class, tracker);
         environment.push(FormSupport.class, formSupport);
 
         Heartbeat heartbeat = new HeartbeatImpl();
@@ -541,32 +503,43 @@ public class Form implements ClientElement, FormValidationControl
             // true persistent data, not value from the previous form
             // submission.
 
-            if (!activeTracker.getHasErrors())
+            if (!tracker.getHasErrors())
             {
-                activeTracker.clear();
+                tracker.clear();
             }
 
-            resources.triggerContextEvent(activeTracker.getHasErrors() ? EventConstants.FAILURE
-                    : EventConstants.SUCCESS, context, eventCallback);
+            String eventType = tracker.getHasErrors()
+                    ? EventConstants.FAILURE
+                    : EventConstants.SUCCESS;
+
+            resources.triggerContextEvent(eventType, context, eventCallback);
+
+            if (eventCallback.isAborted())
+            {
+                return true;
+            }
 
             // Lastly, tell anyone whose interested that the form is completely
             // submitted.
 
-            if (eventCallback.isAborted())
-                return true;
-
             resources.triggerContextEvent(EventConstants.SUBMIT, context, eventCallback);
 
-            if (eventCallback.isAborted()) { return true; }
+            if (eventCallback.isAborted())
+            {
+                return true;
+            }
 
             // For traditional request with no validation exceptions, re-render the
             // current page immediately, as-is.  Prior to Tapestry 5.4, a redirect was
             // sent that required that the tracker be persisted across requests.
             // See https://issues.apache.org/jira/browse/TAP5-1808
 
-            if (activeTracker.getHasErrors() && !request.isXHR()) {
+            if (tracker.getHasErrors() && !request.isXHR())
+            {
                 return STREAM_ACTIVE_PAGE_CONTENT;
             }
+
+            // The event will not work its way up.
 
             return false;
 
@@ -581,8 +554,6 @@ public class Form implements ClientElement, FormValidationControl
             {
                 environment.pop(BeanValidationContext.class);
             }
-
-            activeTracker = null;
         }
     }
 
@@ -695,32 +666,27 @@ public class Form implements ClientElement, FormValidationControl
 
     public void recordError(String errorMessage)
     {
-        getActiveTracker().recordError(errorMessage);
+        tracker.recordError(errorMessage);
     }
 
     public void recordError(Field field, String errorMessage)
     {
-        getActiveTracker().recordError(field, errorMessage);
+        tracker.recordError(field, errorMessage);
     }
 
     public boolean getHasErrors()
     {
-        return getActiveTracker().getHasErrors();
+        return tracker.getHasErrors();
     }
 
     public boolean isValid()
     {
-        return !getActiveTracker().getHasErrors();
-    }
-
-    private ValidationTracker getActiveTracker()
-    {
-        return activeTracker != null ? activeTracker : getWrappedTracker();
+        return !tracker.getHasErrors();
     }
 
     public void clearErrors()
     {
-        getActiveTracker().clear();
+        tracker.clear();
     }
 
     // For testing:
@@ -737,9 +703,6 @@ public class Form implements ClientElement, FormValidationControl
     {
         return clientId;
     }
-
-    @Inject
-    private ComponentSource componentSource;
 
     private void preallocateNames(IdAllocator idAllocator)
     {
