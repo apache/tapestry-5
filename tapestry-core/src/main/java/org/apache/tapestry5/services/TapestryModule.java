@@ -2253,8 +2253,6 @@ public final class TapestryModule
         configuration.add(SymbolConstants.DEFAULT_STYLESHEET, "classpath:/org/apache/tapestry5/default.css");
         configuration.add("tapestry.spacer-image", "classpath:/org/apache/tapestry5/spacer.gif");
 
-        configuration.add(SymbolConstants.SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS, false);
-
         configuration.add(SymbolConstants.PRODUCTION_MODE, true);
 
         configuration.add(SymbolConstants.CLUSTERED_SESSIONS, true);
@@ -2426,12 +2424,9 @@ public final class TapestryModule
                 handler.handle(parameters);
             }
         };
+        configuration.add("Secure", secureFilter);
 
         configuration.add("Ajax", new AjaxFilter(request, ajaxHandler));
-
-        configuration.addInstance("ImmediateRender", ImmediateActionRenderResponseFilter.class);
-
-        configuration.add("Secure", secureFilter, "before:Ajax");
     }
 
     /**

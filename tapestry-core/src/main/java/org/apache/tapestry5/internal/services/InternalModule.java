@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.pageload.PageLoaderImpl;
 import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateController;
 import org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathConstructor;
@@ -27,7 +26,6 @@ import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Autobuild;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Marker;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.transform.ControlledPackageType;
 
@@ -85,22 +83,6 @@ public class InternalModule
         binder.bind(RequestPageCache.class, NonPoolingRequestPageCacheImpl.class);
         binder.bind(ComponentInstantiatorSource.class);
         binder.bind(InternalComponentInvalidationEventHub.class);
-    }
-
-    /**
-     * Chooses one of two implementations, based on the configured mode.
-     */
-    public static ActionRenderResponseGenerator buildActionRenderResponseGenerator(
-
-            @Symbol(SymbolConstants.SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS)
-            boolean immediateMode,
-
-            ObjectLocator locator)
-    {
-        if (immediateMode)
-            return locator.autobuild(ImmediateActionRenderResponseGenerator.class);
-
-        return locator.autobuild(ActionRenderResponseGeneratorImpl.class);
     }
 
     public PageLoader buildPageLoader(@Autobuild

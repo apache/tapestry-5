@@ -64,14 +64,6 @@
         </packages>
     </test>
 
-    <test name="Immediate Mode Integration Tests" enabled="true">
-        <parameter name="tapestry.web-app-folder" value="src/test/app4"/>
-
-        <packages>
-            <package name="org.apache.tapestry5.integration.app4"/>
-        </packages>
-    </test>
-
     <test name="Live Reload Tests" enabled="true">
         <packages>
             <package name="org.apache.tapestry5.integration.reload"/>

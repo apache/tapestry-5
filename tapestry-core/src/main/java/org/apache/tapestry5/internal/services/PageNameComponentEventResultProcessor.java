@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,8 +14,10 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.Link;
+import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
+import org.apache.tapestry5.services.Traditional;
 
 import java.io.IOException;
 
@@ -25,21 +27,22 @@ import java.io.IOException;
  */
 public class PageNameComponentEventResultProcessor implements ComponentEventResultProcessor<String>
 {
-    private final RequestPageCache requestPageCache;
+    private final LinkSource linkSource;
 
-    private final ActionRenderResponseGenerator generator;
+    private final ComponentEventResultProcessor primary;
 
-    public PageNameComponentEventResultProcessor(RequestPageCache requestPageCache,
-                                                 ActionRenderResponseGenerator generator)
+    public PageNameComponentEventResultProcessor(LinkSource linkSource,
+                                                 @Traditional @Primary
+                                                 ComponentEventResultProcessor primary)
     {
-        this.requestPageCache = requestPageCache;
-        this.generator = generator;
+        this.linkSource = linkSource;
+        this.primary = primary;
     }
 
     public void processResultValue(String value) throws IOException
     {
-        Page page = requestPageCache.get(value);
+        Link link = linkSource.createPageRenderLink(value, false);
 
-        generator.generateResponse(page);
+        primary.processResultValue(link);
     }
 }

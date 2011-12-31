@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
@@ -26,31 +25,25 @@ public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
 {
     private static final String PAGE_NAME = "Zoop";
 
-    private static final String METHOD_DESCRIPTION = "foo.bar.Baz.biff()";
-
     @Test
     public void result_is_root_component() throws Exception
     {
         Component result = mockComponent();
-        Component source = mockComponent();
         ComponentResources resources = mockComponentResources();
         Logger logger = mockLogger();
-        RequestPageCache cache = mockRequestPageCache();
-        Page page = mockPage();
-        ActionRenderResponseGenerator generator = mockActionRenderResponseGenerator();
+        ComponentEventResultProcessor primary = mockComponentEventResultProcessor();
 
         train_getComponentResources(result, resources);
         train_getContainer(resources, null);
 
         train_getPageName(resources, PAGE_NAME);
-        train_get(cache, PAGE_NAME, page);
 
-        generator.generateResponse(page);
+        primary.processResultValue(PAGE_NAME);
 
         replay();
 
-        ComponentEventResultProcessor<Component> processor = new ComponentInstanceResultProcessor(logger, cache,
-                                                                                                  generator);
+        ComponentEventResultProcessor<Component> processor = new ComponentInstanceResultProcessor(logger,
+                primary);
 
         processor.processResultValue(result);
 
@@ -64,10 +57,7 @@ public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
         Component containerResources = mockComponent();
         ComponentResources valueResources = mockComponentResources();
         Logger logger = mockLogger();
-        RequestPageCache cache = mockRequestPageCache();
-        Page page = mockPage();
-        ActionRenderResponseGenerator generator = mockActionRenderResponseGenerator();
-
+        ComponentEventResultProcessor primary = mockComponentEventResultProcessor();
 
         train_getComponentResources(value, valueResources);
 
@@ -79,14 +69,12 @@ public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
                 .warn("Component Zoop:child was returned from an event handler method, but is not a page component. The page containing the component will render the client response.");
 
         train_getPageName(valueResources, PAGE_NAME);
-        train_get(cache, PAGE_NAME, page);
 
-        generator.generateResponse(page);
+        primary.processResultValue(PAGE_NAME);
 
         replay();
 
-        ComponentEventResultProcessor<Component> processor = new ComponentInstanceResultProcessor(logger, cache,
-                                                                                                  generator);
+        ComponentEventResultProcessor<Component> processor = new ComponentInstanceResultProcessor(logger, primary);
 
         processor.processResultValue(value);
 

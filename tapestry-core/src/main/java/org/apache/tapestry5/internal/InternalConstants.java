@@ -71,15 +71,6 @@ public final class InternalConstants
     public static final String CHARSET_CONTENT_TYPE_PARAMETER = "charset";
 
     /**
-     * Request attribute that stores a {@link org.apache.tapestry5.internal.structure.Page} instance
-     * that will be
-     * rendered as the {@linkplain org.apache.tapestry5.SymbolConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS
-     * immediate
-     * mode response}.
-     */
-    public static final String IMMEDIATE_RESPONSE_PAGE_ATTRIBUTE = "tapestry.immediate-response-page";
-
-    /**
      * Required MIME type for JSON responses. If this MIME type is not used, the client-side
      * Prototype code will not
      * recognize the response as JSON, and the Ajax.Response.responseJSON property will be null.

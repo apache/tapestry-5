@@ -49,16 +49,6 @@ public class SymbolConstants
     public static final String PRODUCTION_MODE_VALUE = String.format("${%s}", PRODUCTION_MODE);
 
     /**
-     * If set to "true", then action requests will render a page markup response immediately, rather than sending a
-     * redirect to render the response. "Action request" is an outdated term for "component event request" (i.e., most
-     * links and all form submissions).
-     *
-     * @deprecated In 5.3, to be removed (along with the support it implies) in 5.4
-     */
-    @Deprecated
-    public static final String SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS = "tapestry.suppress-redirect-from-action-requests";
-
-    /**
      * The list of locales supported by the application; locales identified in the incoming request are "narrowed" to
      * one of these values. The first locale name in the list is the default locale used when no proper match can be
      * found.

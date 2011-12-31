@@ -15,8 +15,8 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.annotations.Marker;
+import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
 import org.apache.tapestry5.services.Traditional;
@@ -27,18 +27,15 @@ import java.io.IOException;
 @Marker({Traditional.class, ComponentInstanceProcessor.class})
 public class ComponentInstanceResultProcessor implements ComponentEventResultProcessor<Component>
 {
-    private final RequestPageCache requestPageCache;
-
     private final Logger logger;
 
-    private final ActionRenderResponseGenerator generator;
+    private final ComponentEventResultProcessor resultProcessor;
 
-    public ComponentInstanceResultProcessor(Logger logger, RequestPageCache requestPageCache,
-                                            ActionRenderResponseGenerator generator)
+    public ComponentInstanceResultProcessor(Logger logger,
+                                            @Traditional @Primary ComponentEventResultProcessor resultProcessor)
     {
-        this.requestPageCache = requestPageCache;
         this.logger = logger;
-        this.generator = generator;
+        this.resultProcessor = resultProcessor;
     }
 
     public void processResultValue(Component value) throws IOException
@@ -46,13 +43,10 @@ public class ComponentInstanceResultProcessor implements ComponentEventResultPro
         ComponentResources resources = value.getComponentResources();
 
         if (resources.getContainer() != null)
+        {
             logger.warn(String.format("Component %s was returned from an event handler method, but is not a page component. The page containing the component will render the client response.", value.getComponentResources().getCompleteId()));
+        }
 
-        // We have all these layers and layers between us and the page instance, but its easy to
-        // extract the page class name and quickly re-resolve that to the page instance.
-
-        Page page = requestPageCache.get(resources.getPageName());
-
-        generator.generateResponse(page);
+        resultProcessor.processResultValue(resources.getPageName());
     }
 }
