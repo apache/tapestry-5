@@ -106,6 +106,8 @@ public class Form implements ClientElement, FormValidationControl
      */
     public static final String SUBMITTING_ELEMENT_ID = "t:submit";
 
+    public static final StreamPageContent STREAM_ACTIVE_PAGE_CONTENT = new StreamPageContent().withoutActivation();
+
     /**
      * The context for the link (optional parameter). This list of values will
      * be converted into strings and included in
@@ -540,7 +542,9 @@ public class Form implements ClientElement, FormValidationControl
             // submission.
 
             if (!activeTracker.getHasErrors())
+            {
                 activeTracker.clear();
+            }
 
             resources.triggerContextEvent(activeTracker.getHasErrors() ? EventConstants.FAILURE
                     : EventConstants.SUCCESS, context, eventCallback);
@@ -553,7 +557,19 @@ public class Form implements ClientElement, FormValidationControl
 
             resources.triggerContextEvent(EventConstants.SUBMIT, context, eventCallback);
 
-            return eventCallback.isAborted();
+            if (eventCallback.isAborted()) { return true; }
+
+            // For traditional request with no validation exceptions, re-render the
+            // current page immediately, as-is.  Prior to Tapestry 5.4, a redirect was
+            // sent that required that the tracker be persisted across requests.
+            // See https://issues.apache.org/jira/browse/TAP5-1808
+
+            if (activeTracker.getHasErrors() && !request.isXHR()) {
+                return STREAM_ACTIVE_PAGE_CONTENT;
+            }
+
+            return false;
+
         } finally
         {
             environment.pop(Heartbeat.class);
