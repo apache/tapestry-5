@@ -147,16 +147,6 @@ subprojects {
 
                 project.deployer = repositories.mavenDeployer {
 
-                    if (doSign)
-                    {
-                        beforeDeployment { MavenDeployment deployment ->
-                            def signedPomArtifact = sign(deployment.pomArtifact).singleArtifact
-                            // See http://issues.gradle.org/browse/GRADLE-1589
-                            signedPomArtifact.type = "pom." + signing.type.extension
-                            deployment.addArtifact(signedPomArtifact)
-                        }
-                    }
-
                     repository(url: stagingUrl) {
                         authentication(userName: project.getProperty(deployUsernameProperty), password: project.getProperty(deployPasswordProperty))
                     }
