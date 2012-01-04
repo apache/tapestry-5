@@ -18,34 +18,29 @@ snapshotUrl = "https://repository.apache.org/content/repositories/snapshots"
 
 doSign = !project.hasProperty('noSign') && project.hasProperty("signing.keyId")
 
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenRepo name: "Gradle", urls: "http://repo.gradle.org/gradle/plugins-snapshots/"
-    }
-    dependencies {
-        classpath "org.gradle.plugins:gradle-signing-plugin:0.0.1-SNAPSHOT"
-    }
-}
-
 allprojects {
 
     apply plugin: 'eclipse'
     apply plugin: 'idea'
 
-    ideaProject {
-        javaVersion = 1.5
-        beforeConfigured { project ->
-            project.modulePaths.clear()
-        }
-    }
-
     repositories {
         mavenCentral()
 
-        // All things JBoss/Javassist/Hibernate
-        mavenRepo urls: "https://repository.jboss.org/nexus/content/repositories/releases/"
+        // All things JBoss/Hibernate
+        mavenRepo name: "JBoss", url: "https://repository.jboss.org/nexus/content/repositories/releases/"
     }
+
+    idea {
+        project {
+            jdkName = "1.5"
+        }
+    }
+
+//    idea.project.ipr {
+//        beforeMerged { project -> project.modulePaths.clear() }
+//    }
+
+
 }
 
 subprojects {
@@ -81,7 +76,7 @@ subprojects {
         }
     }
 
-    ideaModule {
+    idea.module {
         scopes.PROVIDED.plus += configurations.provided
     }
 
@@ -208,7 +203,7 @@ task aggregateJavadoc(type: Javadoc, group: "Documentation") {
         stylesheetFile = new File(projectDir, 'src/javadoc/stylesheet.css')
         windowTitle = 'Tapestry API Documentation'
         docTitle = "Tapestry JavaDoc ($project.version)"
-        bottom = "Copyright &copy; 2003-2011 <a href=\"http://tapestry.apache.org\">The Apache Software Foundation</a>."
+        bottom = "Copyright &copy; 2003-2012 <a href=\"http://tapestry.apache.org\">The Apache Software Foundation</a>."
         use = true
         links = ['http://download.oracle.com/javase/6/docs/api/', 'http://download.oracle.com/javaee/6/api/']
         addStringOption "tagletpath", configurations.javadoc.asPath
@@ -216,12 +211,12 @@ task aggregateJavadoc(type: Javadoc, group: "Documentation") {
         exclude "org/apache/tapestry5/internal/plastic/asm/**"
     }
 
-    subprojects.findAll({ sp -> sp.name != "quickstart" }).each { sp ->
-        sp.sourceSets.all.findAll { set -> set.name != "test" }.each { set ->
+    subprojects.each({ sp -> sp.name != "quickstart" }).each { sp ->
+        sp.sourceSets.find { set -> set.name != "test" }.each { set ->
 
             source set.java
 
-            classpath += set.classes + set.compileClasspath
+            classpath += set.output + set.compileClasspath
 
             // Some of the component .xdoc files refer to PNG images
             // (we could also exclude .java and .xdoc)
@@ -253,7 +248,7 @@ task generateRelease(dependsOn: ['quickstart:clean', 'continuousIntegration', su
         description: "Generates and uploads a final release to Apache Nexus")
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.0-milestone-3'
+    gradleVersion = '1.0-milestone-6'
     description = "Regenerates the Gradle Wrapper files"
 }
 
