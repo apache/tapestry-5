@@ -238,7 +238,7 @@ task generateRelease(dependsOn: ['quickstart:clean', 'continuousIntegration', su
         description: "Generates and uploads a final release to Apache Nexus")
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.0-milestone-6'
+    gradleVersion = '1.0-milestone-7'
     description = "Regenerates the Gradle Wrapper files"
 }
 
