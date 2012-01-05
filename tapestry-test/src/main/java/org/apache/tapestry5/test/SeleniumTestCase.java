@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009, 2010, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -129,8 +129,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      * </table>
      * <p>
      * Tests in the <em>beforeStartup</em> group will be run before the start of Selenium. This can be used to
-     * programmatically override the above parameter values. For an example see
-     * {@link org.apache.tapestry5.integration.reload.ReloadTests#beforeStartup}.
+     * programmatically override the above parameter values.
      * <p>
      * This method will be invoked in <em>each</em> subclass, but is set up to only startup the servers once (it checks
      * the {@link ITestContext} to see if the necessary keys are already present).

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -1535,7 +1535,6 @@ public final class TapestryModule
      * partial page renders.
      * Supports an ordered configuration of {@link org.apache.tapestry5.services.PartialMarkupRendererFilter}s.
      *
-     * @see #contributePartialMarkupRenderer(org.apache.tapestry5.ioc.OrderedConfiguration, org.apache.tapestry5.Asset, org.apache.tapestry5.services.javascript.JavaScriptStackSource, org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathConstructor, org.apache.tapestry5.ioc.services.SymbolSource, AssetSource)
      */
     public PartialMarkupRenderer buildPartialMarkupRenderer(Logger logger,
                                                             List<PartialMarkupRendererFilter> configuration, @Autobuild
@@ -2401,10 +2400,6 @@ public final class TapestryModule
      * <dl>
      * <dt>Ajax</dt>
      * <dd>Determines if the request is Ajax oriented, and redirects to an alternative handler if so</dd>
-     * <dt>ImmediateRender</dt>
-     * <dd>When {@linkplain SymbolConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS
-     * immediate action response rendering} is enabled, generates the markup response (instead of a page redirect
-     * response, which is the normal behavior)</dd>
      * <dt>Secure</dt>
      * <dd>Sends a redirect if an non-secure request accesses a secure page</dd>
      * </dl>

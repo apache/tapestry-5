@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,8 +18,7 @@ import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.runtime.ComponentEvent;
 
 /**
- * Interface used with  {@link org.apache.tapestry5.services.transform.TransformationSupport#addEventHandler(String, int, String, ComponentEventHandler)}} (and, in the old
- * API, {@link ClassTransformation#addComponentEventHandler(String, int, String, ComponentEventHandler)}).
+ * Interface used with  {@link org.apache.tapestry5.services.transform.TransformationSupport#addEventHandler(String, int, String, ComponentEventHandler)}}.
  *
  * @since 5.2.0
  */

@@ -1,4 +1,4 @@
-//  Copyright 2011 The Apache Software Foundation
+//  Copyright 2011, 2012 The Apache Software Foundation
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -38,8 +38,8 @@ public @interface TapestryTestConfiguration
     String webAppFolder() default "src/main/webapp";
 
     /**
-     * Which container to use. Can be one of {@link SeleniumTestCase.JETTY_7} or {@link SeleniumTestCase.TOMCAT_6}.
-     * Defaults to {@link SeleniumTestCase.JETTY_7}.
+     * Which container to use. Can be one of {@link SeleniumTestCase#JETTY_7} or {@link SeleniumTestCase#TOMCAT_6}.
+     * Defaults to {@link SeleniumTestCase#JETTY_7}.
      */
     String container() default SeleniumTestCase.JETTY_7;
 

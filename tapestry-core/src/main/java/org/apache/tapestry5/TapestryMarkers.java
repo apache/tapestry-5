@@ -1,4 +1,4 @@
-//  Copyright 2008 The Apache Software Foundation
+//  Copyright 2008, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,9 +31,10 @@ public class TapestryMarkers
     public static final Marker TAPESTRY = MarkerFactory.getMarker("TAPESTRY");
 
     /**
-     * Logs the final version of the class transformation. This is useful when debugging {@link
-     * org.apache.tapestry5.services.ComponentClassTransformWorker}s, as it shows exactly what transformation operations
-     * occured, at the Java code level.
+     * Logs the final version of the class transformation. This is useful when debugging {@linkplain
+     * org.apache.tapestry5.services.transform.ComponentClassTransformWorker2 component class transformers},
+     * as it shows exactly what transformation operations
+     * occurred, at the Java code level.
      */
     public static final Marker CLASS_TRANSFORMATION = MarkerFactory.getMarker("CLASS_TRANSFORMATION");
 
