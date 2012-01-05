@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2011 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,22 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.spring;
+package org.apache.tapestry5.spring.integration.standard;
 
-import org.apache.tapestry5.test.AbstractIntegrationTestSuite;
+import org.apache.tapestry5.test.SeleniumTestCase;
+import org.apache.tapestry5.test.TapestryTestConfiguration;
 import org.testng.annotations.Test;
 
-public class TapestrySpringIntegrationTest extends AbstractIntegrationTestSuite
+@TapestryTestConfiguration(webAppFolder = "src/test/webapp")
+public class TapestrySpringIntegrationTest extends SeleniumTestCase
 {
-    public TapestrySpringIntegrationTest()
-    {
-        super("src/test/webapp");
-    }
+
 
     @Test
     public void integration_test() throws Exception
     {
-        open(BASE_URL);
+        openBaseURL();
 
         type("input", "paris in the springtime");
         clickAndWait("//input[@value='Convert']");
@@ -38,7 +37,7 @@ public class TapestrySpringIntegrationTest extends AbstractIntegrationTestSuite
     @Test
     public void access_to_spring_context() throws Exception
     {
-        open(BASE_URL);
+        openBaseURL();
 
         String text = getText("beans");
         assertTrue(text.contains("upcase"));
@@ -47,7 +46,7 @@ public class TapestrySpringIntegrationTest extends AbstractIntegrationTestSuite
     @Test
     public void customize_pipeline_is_invoked() throws Exception
     {
-        open(BASE_URL);
+        openBaseURL();
 
         assertText("message", "SPRING VERSION 3.1.0.RELEASE: PIPELINE WAS INVOKED");
     }
@@ -55,7 +54,7 @@ public class TapestrySpringIntegrationTest extends AbstractIntegrationTestSuite
     @Test
     public void too_many_spring_beans_are_assignable()
     {
-        open(BASE_URL + "bedrock");
+        open(getBaseURL() + "bedrock");
 
         assertTextPresent(
                 "Spring context contains 2 beans assignable to type org.example.testapp.services.Flintstone: barney, fred.");
@@ -64,7 +63,7 @@ public class TapestrySpringIntegrationTest extends AbstractIntegrationTestSuite
     @Test
     public void factory_provided_beans_accessible() throws Exception
     {
-        open(BASE_URL);
+        openBaseURL();
 
         assertEquals(getText("viaFactory"), "Instantiated via a factory bean.");
     }
@@ -72,7 +71,7 @@ public class TapestrySpringIntegrationTest extends AbstractIntegrationTestSuite
     @Test
     public void symbol_bean_factory_post_processor() throws Exception
     {
-        open(BASE_URL);
+        openBaseURL();
 
         assertEquals(getText("symbolValueHolder"), "Start page is 'start', Value from Spring is 'Hello'");
     }
@@ -80,7 +79,7 @@ public class TapestrySpringIntegrationTest extends AbstractIntegrationTestSuite
     @Test
     public void no_conflict_on_injected_locale() throws Exception
     {
-        open(BASE_URL);
+        openBaseURL();
 
         assertEquals(getText("locale"), "en");
         assertEquals(getText("selector"), "en");

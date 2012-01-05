@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.upload;
 
-import org.apache.tapestry5.test.JettyRunner;
+import org.apache.tapestry5.test.Jetty7Runner;
 
 import java.io.File;
 
@@ -26,6 +26,6 @@ public class RunJettyUpload
 
         new File(workingDir, "target/tmp").mkdirs();
 
-        new JettyRunner(workingDir, "/", 8080, "src/test/webapp");
+        new Jetty7Runner("src/test/webapp", "/", 8080, 9999).start();
     }
 }

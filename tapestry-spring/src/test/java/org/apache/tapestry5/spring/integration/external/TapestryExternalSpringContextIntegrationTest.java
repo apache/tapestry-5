@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,22 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.spring;
+package org.apache.tapestry5.spring.integration.external;
 
-import org.apache.tapestry5.test.AbstractIntegrationTestSuite;
+import org.apache.tapestry5.test.SeleniumTestCase;
+import org.apache.tapestry5.test.TapestryTestConfiguration;
 import org.testng.annotations.Test;
 
-public class TapestryExternalSpringContextIntegrationTest extends AbstractIntegrationTestSuite
+@TapestryTestConfiguration(webAppFolder = "src/test/webapp1")
+public class TapestryExternalSpringContextIntegrationTest extends SeleniumTestCase
 {
-    public TapestryExternalSpringContextIntegrationTest()
-    {
-        super("src/test/webapp1");
-    }
-
     @Test
     public void external_context_integration_test() throws Exception
     {
-        open(BASE_URL);
+        openBaseURL();
 
         assertTextPresent("Demonstrates Spring Context Configured Externally", "Instantiated via a factory bean.");
     }

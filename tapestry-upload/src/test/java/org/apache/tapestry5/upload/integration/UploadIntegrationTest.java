@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.upload.integration;
 
-import org.apache.tapestry5.test.AbstractIntegrationTestSuite;
+import org.apache.tapestry5.test.SeleniumTestCase;
 import org.example.upload.pages.Start;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -23,9 +23,9 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * . TODO: These tests wont work because Selenium cannot enter values for input type="file'
+ * TODO: These tests wont work because Selenium cannot enter values for input type="file'
  */
-public class UploadIntegrationTest extends AbstractIntegrationTestSuite
+public class UploadIntegrationTest extends SeleniumTestCase
 {
 
     @BeforeTest
@@ -35,8 +35,7 @@ public class UploadIntegrationTest extends AbstractIntegrationTestSuite
         if (!target.exists())
         {
             target.mkdirs();
-        }
-        else
+        } else
         {
             for (File file : target.listFiles())
             {
@@ -49,12 +48,11 @@ public class UploadIntegrationTest extends AbstractIntegrationTestSuite
     public void integration_test() throws Exception
     {
 
-        open(BASE_URL);
+        openBaseURL();
 
         File source = new File("test/data/upload.txt");
 
         type("file", source.getCanonicalPath());
         clickAndWait("//input[@value='Upload']");
-
     }
 }
