@@ -26,6 +26,7 @@ import java.lang.annotation.*;
  * <b>Parameters coming from a TestNG XML configuration file take precedence over those supplied with the annotation.</b>
  *
  * Configures the container to be started for the tests and the browser to be used.
+ * @since 5.4
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -51,12 +52,12 @@ public @interface TapestryTestConfiguration
     /**
      * The port to listen on for HTTP requests. Defaults to "9090".
      */
-    String port() default "9090";
+    int port() default 9090;
 
     /**
      * The port to listen on fot HTTPS requests. Defaults to "8443".
      */
-    String sslPort() default "8443";
+    int sslPort() default 8443;
 
     /**
      * The browser start command to use with Selenium. Defaults to "*firefox".
