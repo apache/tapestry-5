@@ -334,7 +334,7 @@ public class XMLTokenStream
     {
         InputStream rawStream = resource.openStream();
 
-        InputStreamReader rawReader = new InputStreamReader(rawStream);
+        InputStreamReader rawReader = new InputStreamReader(rawStream, "UTF8");
         LineNumberReader reader = new LineNumberReader(rawReader);
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream(5000);

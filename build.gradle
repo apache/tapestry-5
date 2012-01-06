@@ -97,7 +97,7 @@ subprojects {
 
         systemProperties["tapestry.service-reloading-enabled"] = "false"
 
-        jvmArgs("-XX:MaxPermSize=512m")
+        jvmArgs("-XX:MaxPermSize=512m", "-Dfile.encoding=UTF-8")
     }
 
     task sourcesJar(type: Jar, dependsOn: classes) {
