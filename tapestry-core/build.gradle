@@ -48,9 +48,9 @@ task generateGrammarSource {
     }
 }
 
-ideaModule.doFirst {
+ideaModule.dependsOn generateGrammarSource
 
-    tasks.generateGrammarSource.execute()
+ideaModule.doFirst {
 
     excludeDirs -= buildDir
 

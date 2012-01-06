@@ -10,7 +10,7 @@ testngVersion = '5.14.9'
 easymockVersion = '3.0'
 servletAPIVersion = '2.5'
 
-// Provided so that Jenkins can override the normal version number for nightly builds.
+// Provided so that the CI server can override the normal version number for nightly builds.
 version = System.getProperty('project-version', tapestryVersion)
 
 stagingUrl = "https://repository.apache.org/service/local/staging/deploy/maven2/"
@@ -32,14 +32,11 @@ allprojects {
 
     idea {
         project {
-            jdkName = "1.5"
+            // Technically, Tapestry is built for JDK 1.5, but we're all using Eclipse or IntelliJ with
+            // JDK 1.6 at this point.
+            jdkName = "1.6"
         }
     }
-
-//    idea.project.ipr {
-//        beforeMerged { project -> project.modulePaths.clear() }
-//    }
-
 
 }
 
@@ -238,7 +235,7 @@ task generateRelease(dependsOn: ['quickstart:clean', 'continuousIntegration', su
         description: "Generates and uploads a final release to Apache Nexus")
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.0-milestone-6'
+    gradleVersion = '1.0-milestone-7'
     description = "Regenerates the Gradle Wrapper files"
 }
 
