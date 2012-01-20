@@ -1,29 +1,40 @@
 description = "Apache Tapestry 5 Project"
 
-apply plugin: 'base'
+apply plugin: "base"
+apply from: "ssh.gradle"
+apply from: "md5.gradle"
 
-// Remember that when generating a release, this should be incremented. Also don't forget to
+// Remember that when generating a release, this should be incremented. Also don"t forget to
 // tag the release in Subversion.
 tapestryVersion = "5.4-alpha-1"
 
-jettyVersion = '7.0.0.v20091005'
-tomcatVersion = '6.0.30'
-testngVersion = '5.14.9'
-easymockVersion = '3.0'
-servletAPIVersion = '2.5'
+jettyVersion = "7.0.0.v20091005"
+tomcatVersion = "6.0.30"
+testngVersion = "5.14.9"
+easymockVersion = "3.0"
+servletAPIVersion = "2.5"
 
 // Provided so that the CI server can override the normal version number for nightly builds.
-version = System.getProperty('project-version', tapestryVersion)
+version = System.getProperty("project-version", tapestryVersion)
 
 stagingUrl = "https://repository.apache.org/service/local/staging/deploy/maven2/"
 snapshotUrl = "https://repository.apache.org/content/repositories/snapshots"
 
-doSign = !project.hasProperty('noSign') && project.hasProperty("signing.keyId")
+doSign = !project.hasProperty("noSign") && project.hasProperty("signing.keyId")
+
+// apacheDeployUserName and apacheDeployPassword should be specified in ~/.gradle/gradle.properties
+
+deployUsernameProperty = isSnapshot() ? "snapshotDeployUserName" : "apacheDeployUserName"
+deployPasswordProperty = isSnapshot() ? "snapshotDeployPassword" : "apacheDeployPassword"
+
+canDeploy = [deployUsernameProperty, deployPasswordProperty].every { project.hasProperty(it) }
+deployUsername = { getProperty(deployUsernameProperty) }
+deployPassword = { getProperty(deployPasswordProperty) }
 
 allprojects {
 
-  apply plugin: 'eclipse'
-  apply plugin: 'idea'
+  apply plugin: "eclipse"
+  apply plugin: "idea"
 
   repositories {
     mavenCentral()
@@ -47,25 +58,24 @@ allprojects {
 
 }
 
-
 // Specific to top-level build, not set for subprojects:
 
 configurations {
   javadoc
   published.extendsFrom archives, meta
-  if (doSign) { 
-    published.extendsFrom signatures 
+  if (doSign) {
+    published.extendsFrom signatures
   }
 }
 
 dependencies {
-  javadoc project(':tapestry-javadoc')
+  javadoc project(":tapestry-javadoc")
 }
 
 subprojects {
   version = parent.version
 
-  group = 'org.apache.tapestry'
+  group = "org.apache.tapestry"
 
   configurations {
     provided
@@ -73,13 +83,13 @@ subprojects {
 
   }
 
-  apply plugin: 'java'
-  apply plugin: 'groovy' // mostly for testing
-  apply plugin: 'maven'
-  apply plugin: 'project-report'
+  apply plugin: "java"
+  apply plugin: "groovy" // mostly for testing
+  apply plugin: "maven"
+  apply plugin: "project-report"
 
-  sourceCompatibility = '1.5'
-  targetCompatibility = '1.5'
+  sourceCompatibility = "1.5"
+  targetCompatibility = "1.5"
 
   // See http://jira.codehaus.org/browse/GRADLE-784
 
@@ -119,7 +129,7 @@ subprojects {
 
   task sourcesJar(type: Jar) {
     dependsOn classes
-    classifier 'sources'
+    classifier "sources"
     from sourceSets.main.allSource
   }
 
@@ -132,29 +142,23 @@ subprojects {
     // published -- what gets uploaded to the Nexus repository
     published.extendsFrom archives, meta
 
-    if (doSign) { 
-      published.extendsFrom signatures 
+    if (rootProject.doSign) {
+      published.extendsFrom signatures
     }
   }
 
-  if (doSign) {
-    apply plugin: 'signing'
+  if (rootProject.doSign) {
+    apply plugin: "signing"
     // sign (create PGP signature for) archives (standard JARs)
     // and meta (sources JARs)
     signing { sign configurations.archives, configurations.meta }
   }
 
-  // apacheDeployUserName and apacheDeployPassword should be specified in ~/.gradle/gradle.properties
-
-  deployUsernameProperty = isSnapshot() ? "snapshotDeployUserName" : "apacheDeployUserName"
-  deployPasswordProperty = isSnapshot() ? "snapshotDeployPassword" : "apacheDeployPassword"
-  canDeploy = [deployUsernameProperty, deployPasswordProperty].every { project.hasProperty(it) }
-
   uploadPublished {
 
     doFirst {
       if (!canDeploy) {
-        throw new InvalidUserDataException("Missing upload credentials. Set '$deployUsernameProperty' and '$deployPasswordProperty' project properties.")
+        throw new InvalidUserDataException("Missing upload credentials. Set '$deployUsernameProperty' and '$deployPasswordProperty' root project properties.")
       }
     }
 
@@ -164,11 +168,11 @@ subprojects {
         project.deployer = repositories.mavenDeployer {
 
           repository(url: stagingUrl) {
-            authentication(userName: project.getProperty(deployUsernameProperty), password: project.getProperty(deployPasswordProperty))
+            authentication(userName: deployUsername(), password: deployPassword())
           }
 
           snapshotRepository(url: snapshotUrl) {
-            authentication(userName: project.getProperty(deployUsernameProperty), password: project.getProperty(deployPasswordProperty))
+            authentication(userName: deployUsername(), password: deployPassword())
           }
         }
       }
@@ -186,45 +190,50 @@ task aggregateJavadoc(type: Javadoc) {
   group "Documentation"
 
   description "Build the aggregated JavaDocs for all modules"
-  maxMemory '512m'
+  maxMemory "512m"
   destinationDir file("$buildDirName/documentation/javadocs")
   configure(options) {
     splitIndex true
     linkSource true
-    stylesheetFile file('src/javadoc/stylesheet.css')
-    windowTitle 'Tapestry API Documentation'
+    stylesheetFile file("src/javadoc/stylesheet.css")
+    windowTitle "Tapestry API Documentation"
     docTitle "Tapestry JavaDoc ($project.version)"
     bottom 'Copyright &copy; 2003-2012 <a href="http://tapestry.apache.org">The Apache Software Foundation</a>.'
     use = true // 'use' seems to be a reserved word for the DSL
-    links 'http://download.oracle.com/javase/6/docs/api/'
-    links 'http://download.oracle.com/javaee/6/api/'
+    links "http://download.oracle.com/javase/6/docs/api/"
+    links "http://download.oracle.com/javaee/6/api/"
     addStringOption "tagletpath", configurations.javadoc.asPath
     addStringOption "taglet", "org.apache.tapestry5.javadoc.TapestryDocTaglet"
     exclude "org/apache/tapestry5/internal/plastic/asm/**"
   }
 
-  subprojects.each({ sp -> sp.name != "quickstart" }).each { sp ->
-    sp.sourceSets.find { set -> set.name != "test" }.each { set ->
+  def allMainSourceSets = subprojects*.sourceSets*.main.flatten()
+  def allMainJavaFiles = allMainSourceSets*.java
+  def allMainJavaSrcDirs = allMainJavaFiles*.srcDirs
 
-      source set.java
+  source allMainJavaFiles
 
-      classpath += set.output + set.compileClasspath
+  classpath += files(allMainSourceSets*.compileClasspath)
 
-      // Some of the component .xdoc files refer to PNG images
-      // (we could also just exclude .java and .xdoc and copy anything else)
-      copy {
-        from set.java.srcDirs.toList()
-        into aggregateJavadoc.destinationDir
-        include '**/*.png'
-      }
+  inputs.files allMainJavaSrcDirs
+
+  // As part of generating the documentation, ALSO copy any related files:
+  // Any extra images (Tapestry logo)
+  // Any images stored under src/main/java ... everything exclude .java, .xdoc and package.html
+
+  doLast {
+    copy {
+      from allMainJavaSrcDirs
+      into aggregateJavadoc.destinationDir
+      exclude "**/*.java"
+      exclude "**/*.xdoc"
+      exclude "**/package.html"
     }
-  }
-}
 
-aggregateJavadoc.doLast {
-  copy {
-    from file('src/javadoc/images')
-    into aggregateJavadoc.destinationDir
+    copy {
+      from file("src/javadoc/images")
+      into aggregateJavadoc.destinationDir
+    }
   }
 }
 
@@ -233,14 +242,8 @@ dependencies {
 }
 
 task continuousIntegration {
-  dependsOn subprojects.build, 'aggregateJavadoc', subprojects.uploadPublished
+  dependsOn subprojects.build, aggregateJavadoc, subprojects.uploadPublished
   description "Task executed on Jenkins CI server after SVN commits"
-}
-
-task generateRelease {
-  dependsOn 'quickstart:clean', 'continuousIntegration', subprojects.uploadPublished, 'zippedSources', 'zippedJavadoc'
-  group "Release artifact"
-  description "Generates and uploads a final release to Apache Nexus"
 }
 
 task wrapper(type: Wrapper) {
@@ -282,7 +285,32 @@ task zippedJavadoc(type: Zip) {
   into "apidocs"
 }
 
-boolean isSnapshot() {
-  project.version.contains('SNAPSHOT')
+task generateMD5Checksums(type: GenMD5) {
+  group "Release artifact"
+  description "Creates MD5 checksums for zippedJavadoc and zippedSources"
+  source zippedJavadoc, zippedSources
+  outputDir "$buildDir/md5"
 }
 
+task uploadSourcesAndJavadocs(type: Scp) {
+  group "Release artifact"
+  description "Uploads source and JavaDoc Zips and MD5 checksums to people.apache.org"
+
+  source files(generateMD5Checksums, generateMD5Checksums.inputs.files)
+  host "people.apache.org"
+  userName deployUsername()
+  password deployPassword()
+  // The destination folder needs to already exist.
+  destination "public_html/tapestry-releases"
+  verbose true
+}
+
+boolean isSnapshot() {
+  project.version.contains("SNAPSHOT")
+}
+
+task generateRelease {
+  dependsOn "quickstart:clean", continuousIntegration, subprojects.uploadPublished, uploadSourcesAndJavadocs
+  group "Release artifact"
+  description "Generates and uploads a final release to Apache Nexus"
+}
