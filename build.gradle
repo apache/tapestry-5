@@ -1,5 +1,7 @@
 description = "Apache Tapestry 5 Project"
 
+apply plugin: 'base'
+
 // Remember that when generating a release, this should be incremented. Also don't forget to
 // tag the release in Subversion.
 tapestryVersion = "5.4-alpha-1"
@@ -38,6 +40,26 @@ allprojects {
     }
   }
 
+  configurations {
+    // Non-code artifacts, such as sources JARs and zipped JavaDocs
+    meta
+  }
+
+}
+
+
+// Specific to top-level build, not set for subprojects:
+
+configurations {
+  javadoc
+  published.extendsFrom archives, meta
+  if (doSign) { 
+    published.extendsFrom signatures 
+  }
+}
+
+dependencies {
+  javadoc project(':tapestry-javadoc')
 }
 
 subprojects {
@@ -49,8 +71,6 @@ subprojects {
     provided
     deployerJars
 
-    // meta -- non-code artifacts, such as sources and javadoc JARs
-    meta
   }
 
   apply plugin: 'java'
@@ -156,20 +176,6 @@ subprojects {
   }
 }
 
-// Specific to top-level build, not set for subprojects:
-
-configurations {
-  javadoc
-  published.extendsFrom archives, meta
-  if (doSign) { 
-    published.extendsFrom signatures 
-  }
-}
-
-dependencies {
-  javadoc project(':tapestry-javadoc')
-}
-
 subprojects.each { project.evaluationDependsOn(it.name) }
 
 // Cribbed from https://github.com/hibernate/hibernate-core/blob/master/release/release.gradle#L19
@@ -222,8 +228,8 @@ aggregateJavadoc.doLast {
   }
 }
 
-task clean(type: Delete) {      
-  delete buildDirName
+dependencies {
+  meta aggregateJavadoc.outputs.files
 }
 
 task continuousIntegration {
@@ -279,3 +285,4 @@ task zippedJavadoc(type: Zip) {
 boolean isSnapshot() {
   project.version.contains('SNAPSHOT')
 }
+
