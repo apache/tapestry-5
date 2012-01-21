@@ -16,12 +16,12 @@
 -->
 
 <suite name="Tapesty Spring Integration" parallel="false" thread-count="10" annotations="1.5" verbose="2">
-    <test name="Tapestry Spring Unit Tests">
+    <!-- >test name="Tapestry Spring Unit Tests">
         <packages>
             <package name="org.apache.tapestry5.spring"/>
             <package name="org.apache.tapestry5.internal.spring"/>
         </packages>
-    </test>
+    </test-->
     <test name="Tapestry Spring Integration - Standard">
         <packages>
             <package name="org.apache.tapestry5.spring.integration.standard"/>
