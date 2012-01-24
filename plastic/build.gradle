@@ -9,6 +9,3 @@ dependencies {
 
 sourceSets.main.java.srcDir "src/external/java"
 
-test {
-	useJUnit()
-}

@@ -7,10 +7,10 @@ task processFiltered(type: Copy) {
 
     inputs.file srcDir
     inputs.file file("../build.gradle")
-    outputs.dir sourceSets.main.classesDir
+    outputs.dir sourceSets.main.output.classesDir
 
     from srcDir
-    into sourceSets.main.classesDir
+    into sourceSets.main.output.classesDir
 
     // Use some of the filters provided by Ant
     filter(FixCrLfFilter)
