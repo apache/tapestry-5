@@ -1,4 +1,5 @@
 import org.apache.tools.ant.filters.*
+import org.gradle.api.specs.AndSpec
 
 description = "Central module for Tapestry, containing all core services and components"
 
@@ -35,6 +36,9 @@ task generateGrammarSource(type: JavaExec) {
   description "Generates Java sources from Antlr3 grammars."
   inputs.source fileTree(dir: antlrSource, include: "**/*.g")
   outputs.dir file(antlrOutput)
+
+  // See http://forums.gradle.org/gradle/topics/why_does_a_task_execute_even_when_inputs_and_outputs_are_defined_and_nothing_has_changed
+  outputs.upToDateSpec = new AndSpec();
 
   classpath configurations.antlr3
 
