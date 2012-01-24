@@ -312,25 +312,27 @@ task generateMD5Checksums(type: GenMD5) {
   outputDir "$buildDir/md5"
 }
 
-task uploadSourcesAndJavadocs(type: Scp) {
-  group "Release artifact"
-  description "Uploads source and JavaDoc Zips and MD5 checksums to people.apache.org"
+if(canDeploy) {
+  task uploadSourcesAndJavadocs(type: Scp) {
+    group "Release artifact"
+    description "Uploads source and JavaDoc Zips and MD5 checksums to people.apache.org"
 
-  source files(generateMD5Checksums, generateMD5Checksums.inputs.files)
-  host "people.apache.org"
-  userName deployUsername()
-  password deployPassword()
-  // The destination folder needs to already exist.
-  destination "public_html/tapestry-releases"
-  verbose true
+    source files(generateMD5Checksums, generateMD5Checksums.inputs.files)
+    host "people.apache.org"
+    userName deployUsername()
+    password deployPassword()
+    // The destination folder needs to already exist.
+    destination "public_html/tapestry-releases"
+    verbose true
+  }
+
+  task generateRelease {
+    dependsOn "quickstart:clean", continuousIntegration, subprojects.uploadPublished, uploadSourcesAndJavadocs
+    group "Release artifact"
+    description "Generates and uploads a final release to Apache Nexus"
+  }
 }
 
 boolean isSnapshot() {
   project.version.contains("SNAPSHOT")
-}
-
-task generateRelease {
-  dependsOn "quickstart:clean", continuousIntegration, subprojects.uploadPublished, uploadSourcesAndJavadocs
-  group "Release artifact"
-  description "Generates and uploads a final release to Apache Nexus"
 }
