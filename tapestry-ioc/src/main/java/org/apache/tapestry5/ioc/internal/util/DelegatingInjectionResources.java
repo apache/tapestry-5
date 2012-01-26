@@ -1,4 +1,4 @@
-//  Copyright 2008 The Apache Software Foundation
+//  Copyright 2008, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ public class DelegatingInjectionResources implements InjectionResources
 
     public <T> T findResource(Class<T> type, Type genericType)
     {
-        T result = first.findResource(type, null);
+        T result = first.findResource(type, genericType);
 
         return result != null ? result : next.findResource(type, genericType);
     }
