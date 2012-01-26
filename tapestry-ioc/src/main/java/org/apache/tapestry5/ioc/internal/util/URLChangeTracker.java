@@ -15,11 +15,11 @@
 package org.apache.tapestry5.ioc.internal.util;
 
 import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl;
-import org.apache.tapestry5.ioc.services.ClassFabUtils;
 import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 
@@ -102,6 +102,29 @@ public class URLChangeTracker
     }
 
     /**
+     * Converts a URL with protocol "file" to a File instance.
+     *
+     * @since 5.2.0
+     */
+    public static File toFileFromFileProtocolURL(URL url)
+    {
+        assert url != null;
+
+        if (!url.getProtocol().equals("file"))
+            throw new IllegalArgumentException(String.format("URL %s does not use the 'file' protocol.", url));
+
+        // http://weblogs.java.net/blog/kohsuke/archive/2007/04/how_to_convert.html
+
+        try
+        {
+            return new File(url.toURI());
+        } catch (URISyntaxException ex)
+        {
+            return new File(url.getPath());
+        }
+    }
+
+    /**
      * Stores a new URL into the tracker, or returns the previous time stamp for a previously added URL. Filters out all
      * non-file URLs.
      * 
@@ -120,7 +143,7 @@ public class URLChangeTracker
         if (!converted.getProtocol().equals("file"))
             return timestampForNonFileURL(converted);
 
-        File resourceFile = ClassFabUtils.toFileFromFileProtocolURL(converted);
+        File resourceFile = toFileFromFileProtocolURL(converted);
 
         if (fileToTimestamp.containsKey(resourceFile))
             return fileToTimestamp.get(resourceFile);
