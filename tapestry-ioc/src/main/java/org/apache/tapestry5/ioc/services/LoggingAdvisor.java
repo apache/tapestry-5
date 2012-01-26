@@ -1,4 +1,4 @@
-// Copyright 2009, 2011 The Apache Software Foundation
+// Copyright 2009, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import org.slf4j.Logger;
  * A service used in conjunction with a service advisor method to add logging advice to a service.
  * 
  * @since 5.1.0.0
+ * @see org.apache.tapestry5.ioc.annotations.Advise
  */
 public interface LoggingAdvisor
 {
@@ -31,5 +32,5 @@ public interface LoggingAdvisor
      *            log used for debug level logging messages by the interceptor
      * @param methodAdviceReceiver
      */
-    <T> void addLoggingAdvice(Logger logger, MethodAdviceReceiver methodAdviceReceiver);
+    void addLoggingAdvice(Logger logger, MethodAdviceReceiver methodAdviceReceiver);
 }
