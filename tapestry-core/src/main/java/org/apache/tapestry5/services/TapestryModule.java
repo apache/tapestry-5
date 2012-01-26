@@ -2592,6 +2592,8 @@ public final class TapestryModule
      * <dd>Omits stack frames for classes related to Tapestry AOP (such as advice, etc.)</dd>
      * <dt>OperationTracker</dt>
      * <dd>Omits stack frames related to {@link OperationTracker}</dd>
+     * <dt>Access</dt>
+     * <dd>Omits tack frames used to provide with access to container class private members</dd>
      * </dl>
      *
      * @since 5.1.0.0
@@ -2599,14 +2601,18 @@ public final class TapestryModule
     public static void contributeMasterStackTraceElementAnalyzer(
             OrderedConfiguration<StackTraceElementAnalyzer> configuration)
     {
-        configuration.addInstance("Application", ApplicationStackTraceElementAnalyzer.class);
-        configuration.add("Proxies", new ProxiesStackTraceElementAnalyzer(), "before:Application");
-        configuration.add("Synthetic", new SyntheticStackTraceElementAnalyzer(), "before:Application");
+        configuration.addInstance("TapestryAOP", TapestryAOPStackFrameAnalyzer.class);
+        configuration.add("Proxies", new ProxiesStackTraceElementAnalyzer());
+        configuration.add("Synthetic", new SyntheticStackTraceElementAnalyzer());
         configuration.add("SunReflect", new PrefixCheckStackTraceElementAnalyzer(
                 StackTraceElementClassConstants.OMITTED, "sun.reflect."));
-        configuration.addInstance("TapestryAOP", TapestryAOPStackFrameAnalyzer.class, "before:Application");
-        configuration.add("OperationTracker", new RegexpStackTraceElementAnalyzer(Pattern.compile("internal\\.(RegistryImpl|PerThreadOperationTracker|OperationTrackerImpl)\\.invoke\\("), StackTraceElementClassConstants.OMITTED));
+        configuration.add("OperationTracker", new RegexpStackTraceElementAnalyzer(Pattern.compile("internal\\.(RegistryImpl|PerThreadOperationTracker|OperationTrackerImpl).*(run|invoke)\\("), StackTraceElementClassConstants.OMITTED));
+        configuration.add("Access", new RegexpStackTraceElementAnalyzer(Pattern.compile("\\.access\\$\\d+\\("), StackTraceElementClassConstants.OMITTED));
+
+        configuration.addInstance("Application", ApplicationStackTraceElementAnalyzer.class);
+
     }
+
 
     /**
      * Advises the {@link org.apache.tapestry5.services.messages.ComponentMessagesSource} service so
