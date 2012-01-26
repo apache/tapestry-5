@@ -1,0 +1,12 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <h1>Operation Worker Demo</h1>
+
+
+    <p>
+        Click
+        <t:actionlink t:id="throwException">throw exception</t:actionlink>
+        for an exception inside an operation tracked component method.
+    </p>
+
+
+</html>

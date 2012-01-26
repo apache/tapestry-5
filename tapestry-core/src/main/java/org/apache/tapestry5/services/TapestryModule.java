@@ -560,6 +560,7 @@ public final class TapestryModule
      * <dt>Inject</dt>
      * <dd>Used with the {@link org.apache.tapestry5.ioc.annotations.Inject} annotation, when a value is supplied</dd>
      * </dl>
+     * <dd>Operation</dt> <dd>Support for the {@link Operation} method annotation</dd></dd>
      */
     @Contribute(ComponentClassTransformWorker2.class)
     @Primary
@@ -569,6 +570,10 @@ public final class TapestryModule
             ComponentClassResolver resolver)
     {
         configuration.add("Property", new PropertyWorker());
+
+        // Order this one pretty early:
+
+        configuration.addInstance("Operation", OperationWorker.class);
 
         configuration.add("RenderCommand", new RenderCommandWorker());
 
@@ -1534,7 +1539,6 @@ public final class TapestryModule
      * A wrapper around {@link org.apache.tapestry5.internal.services.PageRenderQueue} used for
      * partial page renders.
      * Supports an ordered configuration of {@link org.apache.tapestry5.services.PartialMarkupRendererFilter}s.
-     *
      */
     public PartialMarkupRenderer buildPartialMarkupRenderer(Logger logger,
                                                             List<PartialMarkupRendererFilter> configuration, @Autobuild
