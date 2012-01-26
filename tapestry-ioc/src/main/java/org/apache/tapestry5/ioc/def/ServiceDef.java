@@ -23,16 +23,15 @@ import java.util.Set;
 
 /**
  * Service definition derived, by default, from a service builder method. This has been extended in Tapestry 5.1 with
- * {@link org.apache.tapestry5.ioc.def.ServiceDef2}, which adds additional methods.
+ * {@link org.apache.tapestry5.ioc.def.ServiceDef2}, which adds additional methods. Tapestry 5.3 added {@link ServiceDef3}.
  */
 @SuppressWarnings("rawtypes")
 public interface ServiceDef
 {
     /**
      * Returns an {@link ObjectCreator} that can create the core service implementation.
-     * 
-     * @param resources
-     *            used to resolve dependencies of the service, or access its configuration
+     *
+     * @param resources used to resolve dependencies of the service, or access its configuration
      * @return an object that can (later) be used to instantiate the service itself
      */
     ObjectCreator createServiceCreator(ServiceBuilderResources resources);
@@ -49,7 +48,7 @@ public interface ServiceDef
      * combination of a marker annotation and a service type is expected to be unique. The annotation is placed on the
      * field or method/constructor parameter and the service is located by combining the marker with service type (the
      * parameter or field type).
-     * 
+     *
      * @return the marker annotations for the service (possibly empty), including any default marker annotations
      *         from the containing module.
      */
@@ -69,6 +68,7 @@ public interface ServiceDef
      * {@link org.apache.tapestry5.ioc.annotations.Scope} annotation to the service builder method for the service.
      * <p/>
      * Services that are not proxied will ignore their scope; such services are always treated as singletons.
+     *
      * @see ServiceLifecycle
      * @see ServiceLifecycleSource
      */
@@ -76,7 +76,7 @@ public interface ServiceDef
 
     /**
      * Returns true if the service should be eagerly loaded at Registry startup.
-     * 
+     *
      * @see org.apache.tapestry5.ioc.annotations.EagerLoad
      */
     boolean isEagerLoad();

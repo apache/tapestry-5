@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc.def;
 
 /**
  * Extension to {@link org.apache.tapestry5.ioc.def.ServiceDef} containing new methods added for Tapestry 5.1.
+ * Tapestry 5.3 added {@link ServiceDef3}.
  */
 public interface ServiceDef2 extends ServiceDef
 {
