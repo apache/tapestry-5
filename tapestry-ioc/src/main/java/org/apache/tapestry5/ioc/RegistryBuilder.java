@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,10 +16,7 @@ package org.apache.tapestry5.ioc;
 
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.ioc.def.ModuleDef;
-import org.apache.tapestry5.ioc.internal.DefaultModuleDefImpl;
-import org.apache.tapestry5.ioc.internal.LoggerSourceImpl;
-import org.apache.tapestry5.ioc.internal.RegistryImpl;
-import org.apache.tapestry5.ioc.internal.RegistryWrapper;
+import org.apache.tapestry5.ioc.internal.*;
 import org.apache.tapestry5.ioc.internal.services.PlasticProxyFactoryImpl;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -72,7 +69,7 @@ public final class RegistryBuilder
         this.loggerSource = loggerSource;
         logger = loggerSource.getLogger(RegistryBuilder.class);
 
-        // Make the ClassFactory appear to be a service inside TapestryIOCModule, even before that
+        // Make the Proxy Factory appear to be a service inside TapestryIOCModule, even before that
         // module exists.
 
         Logger proxyFactoryLogger = loggerSource.getLogger(TapestryIOCModule.class.getName() + ".PlasticProxyFactory");
@@ -168,7 +165,9 @@ public final class RegistryBuilder
     {
         lock.lock();
 
-        RegistryImpl registry = new RegistryImpl(modules, proxyFactory, loggerSource);
+        PerThreadOperationTracker tracker = new PerThreadOperationTracker(loggerSource.getLogger(Registry.class));
+
+        RegistryImpl registry = new RegistryImpl(modules, proxyFactory, loggerSource, tracker);
 
         return new RegistryWrapper(registry);
     }

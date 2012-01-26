@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -109,20 +109,21 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     /**
      * Constructs the registry from a set of module definitions and other resources.
      *
-     * @param moduleDefs   defines the modules (and builders, decorators, etc., within)
-     * @param proxyFactory TODO
-     * @param loggerSource used to obtain Logger instances
+     * @param moduleDefs       defines the modules (and builders, decorators, etc., within)
+     * @param proxyFactory     used to create new proxy objects
+     * @param loggerSource     used to obtain Logger instances
+     * @param operationTracker used to track operations related to the registry and its services
      */
     public RegistryImpl(Collection<ModuleDef> moduleDefs, PlasticProxyFactory proxyFactory,
-                        LoggerSource loggerSource)
+                        LoggerSource loggerSource, OperationTracker operationTracker)
     {
         assert moduleDefs != null;
         assert proxyFactory != null;
         assert loggerSource != null;
+        assert operationTracker != null;
 
         this.loggerSource = loggerSource;
-
-        operationTracker = new PerThreadOperationTracker(loggerSource.getLogger(Registry.class));
+        this.operationTracker = operationTracker;
 
         this.proxyFactory = proxyFactory;
 
