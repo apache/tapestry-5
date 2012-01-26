@@ -26,7 +26,7 @@ import java.util.Set;
  * The search starts with the initial class (provided in the constructor). It progresses up the inheritance chain, but
  * skips java.lang.Object.
  * <p/>
- * Once classes are exhausted, the inheritance hiearchy is searched. This is a breadth-first search, rooted in the
+ * Once classes are exhausted, the inheritance hierarchy is searched. This is a breadth-first search, rooted in the
  * interfaces implemented by the initial class at its super classes.
  * <p/>
  * Once all interfaces are exhausted, java.lang.Object is returned (it is always returned last).
@@ -39,7 +39,7 @@ import java.util.Set;
  * This class implements the {@link Iterable} interface, so it can be used directly in a for loop: <code> for (Class
  * search : new InheritanceSearch(startClass)) { ... } </code>
  * <p/>
- * This class is not threadsafe.
+ * This class is not thread-safe.
  */
 public class InheritanceSearch implements Iterator<Class>, Iterable<Class>
 {
