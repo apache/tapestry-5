@@ -271,7 +271,7 @@ public class ClassNameLocatorImpl implements ClassNameLocator
      * Scan a dir for classes. Will recursively look in the supplied directory and all sub directories.
      *
      * @param packageName         Name of package that this directory corresponds to.
-     * @param dir                 Dir to scan for clases.
+     * @param dir                 Dir to scan for classes.
      * @param componentClassNames List of class names that have been found.
      */
     private void scanDir(String packageName, File dir, Collection<String> componentClassNames)
@@ -322,6 +322,7 @@ public class ClassNameLocatorImpl implements ClassNameLocator
         {
             separatorIndex = urlFile.indexOf('!');
         }
+
         if (separatorIndex != -1)
         {
             String jarFileUrl = urlFile.substring(0, separatorIndex);
@@ -330,8 +331,10 @@ public class ClassNameLocatorImpl implements ClassNameLocator
             {
                 jarFileUrl = jarFileUrl.substring("file:".length());
             }
+
             return new JarFile(jarFileUrl);
         }
+
         return null;
     }
 

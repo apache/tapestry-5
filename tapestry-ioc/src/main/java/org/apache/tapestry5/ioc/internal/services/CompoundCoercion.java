@@ -17,7 +17,7 @@ package org.apache.tapestry5.ioc.internal.services;
 import org.apache.tapestry5.ioc.services.Coercion;
 
 /**
- * Combines two coercions to create a coercsion through an intermediate type.
+ * Combines two coercions to create a coercion through an intermediate type.
  *
  * @param <S> The source (input) type
  * @param <I> The intermediate type
