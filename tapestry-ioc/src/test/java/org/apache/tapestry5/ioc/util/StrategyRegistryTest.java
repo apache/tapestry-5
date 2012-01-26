@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,12 @@
 
 package org.apache.tapestry5.ioc.util;
 
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.testng.annotations.Test;
 
 import java.util.*;
+
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
 
 public class StrategyRegistryTest extends IOCTestCase
 {
@@ -41,12 +42,12 @@ public class StrategyRegistryTest extends IOCTestCase
         {
             r.get(Set.class);
             unreachable();
-        }
-        catch (IllegalArgumentException ex)
+        } catch (UnknownValueException ex)
         {
             assertEquals(
                     ex.getMessage(),
-                    "No adapter from type java.util.Set to type java.lang.Runnable is available (registered types are java.util.List, java.util.Map).");
+                    "No adapter from type java.util.Set to type java.lang.Runnable is available.");
+            assertEquals(ex.getAvailableValues().toString(), "AvailableValues[registered types: interface java.util.List, interface java.util.Map]");
         }
 
         verify();

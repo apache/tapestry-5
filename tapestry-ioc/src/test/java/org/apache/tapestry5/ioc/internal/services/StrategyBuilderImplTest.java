@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 The Apache Software Foundation
+// Copyright 2006, 2008, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -59,11 +59,10 @@ public class StrategyBuilderImplTest extends IOCInternalTestCase
         {
             service.kindOf(null);
             unreachable();
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(),
-                         "No adapter from type void to type org.apache.tapestry5.ioc.internal.services.KindOf is available (registered types are java.util.List, java.util.Map).");
+                    "No adapter from type void to type org.apache.tapestry5.ioc.internal.services.KindOf is available.");
         }
     }
 
