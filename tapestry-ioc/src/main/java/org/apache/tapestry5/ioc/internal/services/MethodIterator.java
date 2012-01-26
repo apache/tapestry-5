@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006, 2011 The Apache Software Foundation
+// Copyright 2004, 2005, 2006, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc.services;
+package org.apache.tapestry5.ioc.internal.services;
+
+import org.apache.tapestry5.ioc.internal.services.MethodSignature;
 
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
@@ -25,10 +27,9 @@ import java.util.*;
  * some complications that can occur when a class inherits the same method from multiple interfaces and with slightly
  * different signatures (due to the fact that declared thrown exceptions can vary slightly for the "same" method).
  * 
- * @see org.apache.tapestry5.ioc.services.MethodSignature#isOverridingSignatureOf(MethodSignature)
- * @deprecated In 5.3, to be removed in a later release
+ * @see MethodSignature#isOverridingSignatureOf(MethodSignature)
  */
-public class MethodIterator
+class MethodIterator
 {
     private boolean toString;
 

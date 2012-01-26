@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.MethodIterator;
-import org.apache.tapestry5.ioc.services.MethodSignature;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.plastic.ClassInstantiator;
 import org.apache.tapestry5.plastic.InstructionBuilder;
@@ -62,11 +60,9 @@ class BridgeBuilder<S, F>
 
     /**
      * Instantiates a bridge object.
-     * 
-     * @param nextBridge
-     *            the next Bridge object in the pipeline, or the terminator service
-     * @param filter
-     *            the filter object for this step of the pipeline
+     *
+     * @param nextBridge the next Bridge object in the pipeline, or the terminator service
+     * @param filter     the filter object for this step of the pipeline
      */
     public S instantiateBridge(S nextBridge, F filter)
     {
@@ -132,7 +128,7 @@ class BridgeBuilder<S, F>
         {
             MethodSignature ms = (MethodSignature) i.next();
 
-            logger.error(ServiceMessages.extraFilterMethod(ms, filterInterface, serviceInterface));
+            logger.error(String.format("Method %s of filter interface %s does not have a matching method in %s.", ms, filterInterface.getName(), serviceInterface.getName()));
         }
     }
 
@@ -144,7 +140,7 @@ class BridgeBuilder<S, F>
      * the two methods call each other are added.
      */
     private void addBridgeMethod(PlasticClass plasticClass, PlasticField filterField, PlasticField nextField,
-            final MethodSignature ms, List filterMethods)
+                                 final MethodSignature ms, List filterMethods)
     {
         PlasticMethod method = plasticClass.introduceMethod(ms.getMethod());
 
@@ -168,7 +164,7 @@ class BridgeBuilder<S, F>
         {
             public void doBuild(InstructionBuilder builder)
             {
-                String message = ServiceMessages.unmatchedServiceMethod(ms, filterInterface);
+                String message = String.format("Method %s has no match in filter interface %s.", ms, filterInterface.getName());
 
                 logger.error(message);
 
@@ -178,7 +174,7 @@ class BridgeBuilder<S, F>
     }
 
     private void bridgeServiceMethodToFilterMethod(PlasticMethod method, final PlasticField filterField,
-            final PlasticField nextField, final int position, MethodSignature ms, final MethodSignature fms)
+                                                   final PlasticField nextField, final int position, MethodSignature ms, final MethodSignature fms)
     {
         method.changeImplementation(new InstructionBuilderCallback()
         {
@@ -193,8 +189,7 @@ class BridgeBuilder<S, F>
                     if (i == position)
                     {
                         builder.loadThis().getField(nextField);
-                    }
-                    else
+                    } else
                     {
                         builder.loadArgument(argumentIndex++);
                     }

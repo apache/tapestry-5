@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc.services;
+package org.apache.tapestry5.ioc.internal.services;
 
 import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.testng.annotations.Test;
@@ -71,8 +71,7 @@ public class MethodIteratorTest extends IOCTestCase
         try
         {
             mi.next();
-        }
-        catch (NoSuchElementException ex)
+        } catch (NoSuchElementException ex)
         {
             //
         }
@@ -139,7 +138,7 @@ public class MethodIteratorTest extends IOCTestCase
 
         MethodSignature actual = mi.next();
 
-        assertEquals(new MethodSignature(void.class, "open", null, new Class[] { IOException.class }), actual);
+        assertEquals(new MethodSignature(void.class, "open", null, new Class[]{IOException.class}), actual);
 
         assertEquals(false, mi.hasNext());
     }

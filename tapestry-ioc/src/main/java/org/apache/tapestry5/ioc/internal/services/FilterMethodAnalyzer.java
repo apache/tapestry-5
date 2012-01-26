@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,13 +14,11 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.services.MethodSignature;
-
 /**
  * Used by {@link org.apache.tapestry5.ioc.internal.services.PipelineBuilderImpl} to analyze service interface methods
  * against filter interface methods to find the position of the extra service parameter (in the filter method).
  */
-public class FilterMethodAnalyzer
+class FilterMethodAnalyzer
 {
     private final Class serviceInterface;
 

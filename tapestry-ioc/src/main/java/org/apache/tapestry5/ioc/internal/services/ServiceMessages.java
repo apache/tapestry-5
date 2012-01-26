@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.apache.tapestry5.ioc.internal.services;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
 import org.apache.tapestry5.ioc.services.Coercion;
-import org.apache.tapestry5.ioc.services.MethodSignature;
 import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
 import org.apache.tapestry5.plastic.PlasticUtils;
 
@@ -60,20 +59,10 @@ public class ServiceMessages
     }
 
     public static String propertyTypeMismatch(String propertyName, Class sourceClass, Class propertyType,
-            Class expectedType)
+                                              Class expectedType)
     {
         return MESSAGES.format("property-type-mismatch", propertyName, sourceClass.getName(), propertyType.getName(),
                 expectedType.getName());
-    }
-
-    public static String extraFilterMethod(MethodSignature sig, Class filterInterface, Class serviceInterface)
-    {
-        return MESSAGES.format("extra-filter-method", sig, filterInterface.getName(), serviceInterface.getName());
-    }
-
-    public static String unmatchedServiceMethod(MethodSignature sig, Class filterInterface)
-    {
-        return MESSAGES.format("unmatched-service-method", sig, filterInterface.getName());
     }
 
     public static String shutdownListenerError(Object listener, Throwable cause)

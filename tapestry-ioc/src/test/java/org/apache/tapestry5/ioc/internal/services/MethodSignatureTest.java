@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc.services;
+package org.apache.tapestry5.ioc.internal.services;
 
 import org.apache.tapestry5.ioc.test.IOCTestCase;
 import org.testng.annotations.Test;
@@ -86,8 +86,8 @@ public class MethodSignatureTest extends IOCTestCase
     @Test
     public void equals_with_parameters_mismatch()
     {
-        MethodSignature m1 = new MethodSignature(void.class, "foo", new Class[] { String.class }, null);
-        MethodSignature m2 = new MethodSignature(void.class, "foo", new Class[] { Boolean.class }, null);
+        MethodSignature m1 = new MethodSignature(void.class, "foo", new Class[]{String.class}, null);
+        MethodSignature m2 = new MethodSignature(void.class, "foo", new Class[]{Boolean.class}, null);
 
         assertEquals(false, m1.equals(m2));
     }
@@ -118,7 +118,7 @@ public class MethodSignatureTest extends IOCTestCase
         m = find(Class.class, "newInstance");
 
         assertEquals(m.toString(),
-                     "java.lang.Object newInstance() throws java.lang.IllegalAccessException, java.lang.InstantiationException");
+                "java.lang.Object newInstance() throws java.lang.IllegalAccessException, java.lang.InstantiationException");
     }
 
     @Test
@@ -155,7 +155,7 @@ public class MethodSignatureTest extends IOCTestCase
     public void overriding_signature_parameters_mismatch()
     {
         MethodSignature m1 = new MethodSignature(void.class, "foo", null, null);
-        MethodSignature m2 = new MethodSignature(void.class, "foo", new Class[] { String.class }, null);
+        MethodSignature m2 = new MethodSignature(void.class, "foo", new Class[]{String.class}, null);
 
         assertEquals(m1.isOverridingSignatureOf(m2), false);
     }
@@ -163,8 +163,8 @@ public class MethodSignatureTest extends IOCTestCase
     @Test
     public void overriding_signature()
     {
-        MethodSignature m1 = new MethodSignature(void.class, "close", null, new Class[] { Exception.class });
-        MethodSignature m2 = new MethodSignature(void.class, "close", null, new Class[] { RuntimeException.class });
+        MethodSignature m1 = new MethodSignature(void.class, "close", null, new Class[]{Exception.class});
+        MethodSignature m2 = new MethodSignature(void.class, "close", null, new Class[]{RuntimeException.class});
 
         assertEquals(m1.isOverridingSignatureOf(m2), true);
         assertEquals(m2.isOverridingSignatureOf(m1), false);
@@ -177,7 +177,7 @@ public class MethodSignatureTest extends IOCTestCase
     public void overriding_signature_with_no_exceptions()
     {
         MethodSignature m1 = new MethodSignature(void.class, "close", null, null);
-        MethodSignature m2 = new MethodSignature(void.class, "close", null, new Class[] { RuntimeException.class });
+        MethodSignature m2 = new MethodSignature(void.class, "close", null, new Class[]{RuntimeException.class});
 
         assertEquals(m1.isOverridingSignatureOf(m2), false);
         assertEquals(m2.isOverridingSignatureOf(m1), true);
@@ -190,9 +190,9 @@ public class MethodSignatureTest extends IOCTestCase
     public void overriding_signature_with_multiple_matched_exceptions()
     {
         MethodSignature m1 = new MethodSignature(void.class, "close", null,
-                                                 new Class[] { SQLException.class, NumberFormatException.class });
+                new Class[]{SQLException.class, NumberFormatException.class});
         MethodSignature m2 = new MethodSignature(void.class, "close", null,
-                                                 new Class[] { SQLException.class, IOException.class });
+                new Class[]{SQLException.class, IOException.class});
 
         assertEquals(m1.isOverridingSignatureOf(m2), false);
         assertEquals(m2.isOverridingSignatureOf(m1), false);

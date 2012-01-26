@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.ioc.services;
+package org.apache.tapestry5.ioc.internal.services;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -28,14 +28,9 @@ import org.apache.tapestry5.plastic.PlasticUtils;
  * Because the intended purpose is to compare methods from interfaces (which are always public and abstract) we don't
  * bother to actually track the modifiers. In addition, at this time, MethodSignature <em>does not distinguish between
  * instance and static methods</em>.
- * <p/>
- * This version of MethodSignature works with <em>loaded</em> classes, and it usually used in the context of
- * {@link org.apache.tapestry5.ioc.services.ClassFab} to create new classes and subclasses.
- * 
- * @deprecated In 5.3, to be removed in a later release
  */
 @SuppressWarnings("all")
-public class MethodSignature
+class MethodSignature
 {
     private int hashCode = -1;
 
@@ -87,7 +82,7 @@ public class MethodSignature
 
     /**
      * If this signature was created from a method, return that method.
-     * 
+     *
      * @since 5.3
      */
     public Method getMethod()
@@ -135,7 +130,7 @@ public class MethodSignature
     /**
      * Returns true if the other object is an instance of MethodSignature with <em>identical</em> values for return
      * type, name, parameter types and exception types.
-     * 
+     *
      * @see #isOverridingSignatureOf(MethodSignature)
      */
     @Override
@@ -223,9 +218,9 @@ public class MethodSignature
     /**
      * Returns a string consisting of the name of the method and its parameter types. This is similar to
      * {@link #toString()}, but omits the return type and information about thrown exceptions. A unique id is used by
-     * {@link MethodIterator} to identify overlapping methods (methods with the same name and parameter types but with
+     * {@link org.apache.tapestry5.ioc.internal.util.MethodIterator} to identify overlapping methods (methods with the same name and parameter types but with
      * different thrown exceptions).
-     * 
+     *
      * @see #isOverridingSignatureOf(MethodSignature)
      */
     public String getUniqueId()
