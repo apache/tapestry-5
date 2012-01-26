@@ -19,7 +19,7 @@ import java.lang.reflect.Type;
 /**
  * Provides for the injection of specific types of values as <em>resources</em> as opposed to services or objects
  * obtained from {@link org.apache.tapestry5.ioc.services.MasterObjectProvider}. This includes values such as a
- * service's id, logger or service interface class.
+ * service's logger, service interface class, or {@link org.apache.tapestry5.ioc.ServiceResources}.
  */
 public interface InjectionResources
 {
