@@ -595,7 +595,6 @@ public class InternalUtils
 
             public T next()
             {
-                // TODO Auto-generated method stub
                 return normal.previous();
             }
 
