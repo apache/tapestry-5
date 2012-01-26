@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,8 +19,12 @@ package org.apache.tapestry5.ioc.def;
  * Starting in Tapestry 5.3, contributions could be optional.
  *
  * @since 5.3
+ * @see org.apache.tapestry5.ioc.annotations.Optional
  */
 public interface ContributionDef3 extends ContributionDef2
 {
+    /** Is this contribution optional, meaning it is not an error if the service to which the contribution is targetted
+     * does not exist.
+     */
     boolean isOptional();
 }
