@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,11 +28,15 @@ import java.lang.annotation.*;
  * <p/>
  * Service decoration includes the decoration mechanism (from Tapestry 5.0) and the newer service advice mechanism (from
  * Tapestry 5.1).
+ * <p/>
+ * Generally, services that are used to advise or decorate other services (such as {@link org.apache.tapestry5.ioc.services.LoggingAdvisor}
+ * or {@link org.apache.tapestry5.ioc.services.OperationAdvisor}) should include this annotation, to prevent a recursive service build
+ * when they attempt to advise themselves.
  *
  * @see org.apache.tapestry5.ioc.def.ServiceDef2#isPreventDecoration()
  * @since 5.1.0.0
  */
-@Target({ ElementType.TYPE, ElementType.METHOD })
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @UseWith(AnnotationUseContext.SERVICE)
