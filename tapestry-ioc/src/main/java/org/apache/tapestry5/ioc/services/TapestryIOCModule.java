@@ -73,6 +73,7 @@ public final class TapestryIOCModule
         binder.bind(ThunkCreator.class, ThunkCreatorImpl.class);
         binder.bind(UpdateListenerHub.class, UpdateListenerHubImpl.class).preventReloading();
         binder.bind(PeriodicExecutor.class, PeriodicExecutorImpl.class);
+        binder.bind(OperationAdvisor.class, OperationAdvisorImpl.class);
     }
 
     /**
