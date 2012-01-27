@@ -39,7 +39,6 @@ public class OperationAdvisorImpl implements OperationAdvisor
     {
         return new Runnable()
         {
-            @Override
             public void run()
             {
                 invocation.proceed();
@@ -56,7 +55,6 @@ public class OperationAdvisorImpl implements OperationAdvisor
             this.description = description;
         }
 
-        @Override
         public void advise(MethodInvocation invocation)
         {
             tracker.run(description, toRunnable(invocation));
@@ -72,7 +70,6 @@ public class OperationAdvisorImpl implements OperationAdvisor
             this.format = format;
         }
 
-        @Override
         public void advise(MethodInvocation invocation)
         {
             Object[] parameters = extractParameters(invocation);
@@ -97,7 +94,6 @@ public class OperationAdvisorImpl implements OperationAdvisor
         }
     }
 
-    @Override
     public void addOperationAdvice(MethodAdviceReceiver receiver)
     {
         for (Method m : receiver.getInterface().getMethods())
@@ -114,7 +110,6 @@ public class OperationAdvisorImpl implements OperationAdvisor
         }
     }
 
-    @Override
     public MethodAdvice createAdvice(String description)
     {
         assert InternalUtils.isNonBlank(description);
