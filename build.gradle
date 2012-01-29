@@ -167,7 +167,9 @@ subprojects {
 
         project.deployer = repositories.mavenDeployer {
 
-          beforeDeployment { MavenDeployment deployment -> signPom(deployment) }
+          if (doSign) {
+            beforeDeployment { MavenDeployment deployment -> signPom(deployment) }
+	  }
 
           repository(url: stagingUrl) {
             authentication(userName: deployUsername(), password: deployPassword())
