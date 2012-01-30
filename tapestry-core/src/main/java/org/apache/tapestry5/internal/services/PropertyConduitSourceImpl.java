@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -491,11 +491,11 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             conduitPropertyName = propertyName;
             annotationProvider = adapter;
 
-            implementGetter(activeType, adapter);
-            implementSetter(activeType, adapter);
+            implementGetter(adapter);
+            implementSetter(adapter);
         }
 
-        private void implementSetter(Type activeType, PropertyAdapter adapter)
+        private void implementSetter(PropertyAdapter adapter)
         {
             if (adapter.getWriteMethod() != null)
             {
@@ -572,7 +572,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             });
         }
 
-        private void implementGetter(Type activeType, PropertyAdapter adapter)
+        private void implementGetter(PropertyAdapter adapter)
         {
             if (adapter.getReadMethod() != null)
             {
@@ -1487,6 +1487,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     /**
      * May be invoked from fabricated PropertyConduit instances.
      */
+    @SuppressWarnings("unused")
     public static NullPointerException nullTerm(String term, String expression, Object root)
     {
         String message = String.format("Property '%s' (within property expression '%s', of %s) is null.", term,
