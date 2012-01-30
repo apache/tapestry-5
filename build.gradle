@@ -2,6 +2,7 @@ description = "Apache Tapestry 5 Project"
 
 apply plugin: "base"
 apply plugin: "sonar"
+
 apply from: "ssh.gradle"
 apply from: "md5.gradle"
 
@@ -35,7 +36,8 @@ doSign = !project.hasProperty("noSign") && project.hasProperty("signing.keyId")
 deployUsernameProperty = isSnapshot() ? "snapshotDeployUserName" : "apacheDeployUserName"
 deployPasswordProperty = isSnapshot() ? "snapshotDeployPassword" : "apacheDeployPassword"
 
-canDeploy = [deployUsernameProperty, deployPasswordProperty].every { project.hasProperty(it) }
+canDeploy = doSign && [deployUsernameProperty, deployPasswordProperty].every { project.hasProperty(it) }
+
 deployUsername = { getProperty(deployUsernameProperty) }
 deployPassword = { getProperty(deployPasswordProperty) }
 
@@ -55,6 +57,8 @@ allprojects {
 
   apply plugin: "eclipse"
   apply plugin: "idea"
+  apply plugin: "signing"
+
 
   repositories {
     mavenCentral()
@@ -168,7 +172,6 @@ subprojects {
   }
 
   if (rootProject.doSign) {
-    apply plugin: "signing"
     // sign (create PGP signature for) archives (standard JARs)
     // and meta (sources JARs)
     signing { sign configurations.archives, configurations.meta }
@@ -207,6 +210,7 @@ subprojects {
 subprojects.each { project.evaluationDependsOn(it.name) }
 
 // Cribbed from https://github.com/hibernate/hibernate-core/blob/master/release/release.gradle#L19
+
 
 task aggregateJavadoc(type: Javadoc) {
 
@@ -309,25 +313,51 @@ task zippedJavadoc(type: Zip) {
   into "apidocs"
 }
 
-task generateMD5Checksums(type: GenMD5) {
-  group "Release artifact"
-  description "Creates MD5 checksums for zippedJavadoc and zippedSources"
-  source zippedJavadoc, zippedSources
-  outputDir "$buildDir/md5"
-}
 
-if(canDeploy) {
+
+if (canDeploy) {
+
+  configurations { 
+    archives
+    uploads.extendsFrom archives, signatures
+  }
+
+
+  task generateMD5Checksums(type: GenMD5) {
+    group "Release artifact"
+    description "Creates MD5 checksums for archives of source and JavaDoc"
+    source configurations.archives
+    outputDir "$buildDir/md5"
+  }
+
+  artifacts { 
+    archives zippedJavadoc, zippedSources
+  }
+
+  configurations { 
+    upload.extendsFrom archives, signatures
+  }
+
+  signing { 
+    sign configurations.archives
+  }
+
   task uploadSourcesAndJavadocs(type: Scp) {
     group "Release artifact"
-    description "Uploads source and JavaDoc Zips and MD5 checksums to people.apache.org"
+    description "Uploads source and JavaDoc Zips and MD5 checksums and PGP signatures to people.apache.org"
 
-    source files(generateMD5Checksums, generateMD5Checksums.inputs.files)
+    source files(generateMD5Checksums, configurations.upload.allArtifacts.files)
+
     host "people.apache.org"
     userName deployUsername()
     password deployPassword()
     // The destination folder needs to already exist.
     destination "public_html/tapestry-releases"
     verbose true
+
+    doFirst { 
+      logger.info "Uploads files: ${source.files}"
+    }
   }
 
   task generateRelease {
