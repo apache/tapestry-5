@@ -36,7 +36,7 @@ doSign = !project.hasProperty("noSign") && project.hasProperty("signing.keyId")
 deployUsernameProperty = isSnapshot() ? "snapshotDeployUserName" : "apacheDeployUserName"
 deployPasswordProperty = isSnapshot() ? "snapshotDeployPassword" : "apacheDeployPassword"
 
-canDeploy = doSign && [deployUsernameProperty, deployPasswordProperty].every { project.hasProperty(it) }
+canDeploy = [deployUsernameProperty, deployPasswordProperty].every { project.hasProperty(it) }
 
 deployUsername = { getProperty(deployUsernameProperty) }
 deployPassword = { getProperty(deployPasswordProperty) }
@@ -338,30 +338,32 @@ if (canDeploy) {
     upload.extendsFrom archives, signatures
   }
 
-  signing { 
-    sign configurations.archives
+  if (doSign) {
+    signing { 
+      sign configurations.archives
+    }
   }
 
-  task uploadSourcesAndJavadocs(type: Scp) {
+  task uploadArtifacts(type: Scp) {
     group "Release artifact"
-    description "Uploads source and JavaDoc Zips and MD5 checksums and PGP signatures to people.apache.org"
+    description "Uploads top-level artifacts to people.apache.org, along with MD5 checksums and PGP signatures (if signing is enabled)"
 
     source files(generateMD5Checksums, configurations.upload.allArtifacts.files)
 
     host "people.apache.org"
     userName deployUsername()
     password deployPassword()
-    // The destination folder needs to already exist.
+
+    // The destination folder at people.apache.org needs to already exist.
     destination "public_html/tapestry-releases"
-    verbose true
 
     doFirst { 
-      logger.info "Uploads files: ${source.files}"
+      logger.info "Uploading ${source.files} to people.apache.org."
     }
   }
 
   task generateRelease {
-    dependsOn "quickstart:clean", continuousIntegration, subprojects.uploadPublished, uploadSourcesAndJavadocs
+    dependsOn "quickstart:clean", continuousIntegration, subprojects.uploadPublished, uploadArtifacts
     group "Release artifact"
     description "Generates and uploads a final release to Apache Nexus"
   }
