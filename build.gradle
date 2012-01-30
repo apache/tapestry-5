@@ -358,7 +358,8 @@ if (canDeploy) {
     destination "public_html/tapestry-releases"
 
     doFirst { 
-      logger.info "Uploading ${source.files} to people.apache.org."
+      logger.info "Uploading the following files to people.apache.org (as user '${userName}'):"
+      source.files.each {  logger.info "  $it"}
     }
   }
 
