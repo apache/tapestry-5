@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,17 +14,13 @@
 
 package org.apache.tapestry5.corelib.components;
 
+import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ClientElement;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.alerts.Alert;
 import org.apache.tapestry5.alerts.AlertStorage;
-import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.RequestParameter;
-import org.apache.tapestry5.annotations.SessionState;
-import org.apache.tapestry5.annotations.SupportsInformalParameters;
-import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
@@ -34,6 +30,8 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * Renders out an empty {@code <div>} element and provides JavaScript initialization to make the element
  * the container for alerts. After rendering markup (and initialization JavaScript), it
  * {@linkplain org.apache.tapestry5.alerts.AlertStorage#dismissNonPersistent() removes all non-persistent alerts}.
+ * 
+ * Alerts are created using the {@link org.apache.tapestry5.alerts.AlertManager} service.
  *
  * @tapestrydoc
  * @since 5.3
