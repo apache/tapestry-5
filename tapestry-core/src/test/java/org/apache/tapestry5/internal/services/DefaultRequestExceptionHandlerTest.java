@@ -10,6 +10,7 @@ import org.apache.tapestry5.ContextAwareException;
 import org.apache.tapestry5.ExceptionHandlerAssistant;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
@@ -28,7 +29,8 @@ public class DefaultRequestExceptionHandlerTest extends InternalBaseTestCase {
     Response response = mockResponse();
     ComponentClassResolver componentClassResolver = mockComponentClassResolver();
     LinkSource linkSource = mockLinkSource();
-	private DefaultRequestExceptionHandler exceptionHandler = new DefaultRequestExceptionHandler(pageCache, renderer, logger, "exceptionpage", request, response, componentClassResolver, linkSource, mockConfiguration);
+    ServiceResources serviceResources = mockServiceResources();
+	private DefaultRequestExceptionHandler exceptionHandler = new DefaultRequestExceptionHandler(pageCache, renderer, logger, "exceptionpage", request, response, componentClassResolver, linkSource, serviceResources, mockConfiguration);
 
 	private static class MyContextAwareException extends Throwable implements ContextAwareException {
 		private Object[] context;

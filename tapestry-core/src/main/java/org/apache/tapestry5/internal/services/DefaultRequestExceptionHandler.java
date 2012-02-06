@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -29,6 +30,7 @@ import org.apache.tapestry5.ExceptionHandlerAssistant;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.OperationException;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -71,7 +73,7 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
     @Symbol(SymbolConstants.EXCEPTION_REPORT_PAGE)
     String pageName,
 
-    Request request, Response response, ComponentClassResolver componentClassResolver, LinkSource linkSource, Map<Class, Object> configuration)
+    Request request, Response response, ComponentClassResolver componentClassResolver, LinkSource linkSource, ServiceResources serviceResources, Map<Class, Object> configuration)
     {
         this.pageCache = pageCache;
         this.renderer = renderer;
@@ -82,10 +84,23 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
         this.componentClassResolver = componentClassResolver;
         this.linkSource = linkSource;
         
+        Map<Class<ExceptionHandlerAssistant>, ExceptionHandlerAssistant> handlerAssistants = new HashMap<Class<ExceptionHandlerAssistant>, ExceptionHandlerAssistant>();
+        
         for (Entry<Class, Object> entry : configuration.entrySet()) {
             if (!Throwable.class.isAssignableFrom(entry.getKey()))
                 throw new IllegalArgumentException(Throwable.class.getName() + " is the only allowable key type but " + entry.getKey().getName()
                         + " was contributed");
+            
+            if (ExceptionHandlerAssistant.class.isAssignableFrom((Class) entry.getValue())) {
+                @SuppressWarnings("unchecked")
+                Class<ExceptionHandlerAssistant> handlerType = (Class<ExceptionHandlerAssistant>) entry.getValue();
+                ExceptionHandlerAssistant assistant = handlerAssistants.get(handlerType); 
+                if (assistant == null) {
+                    assistant = (ExceptionHandlerAssistant) serviceResources.autobuild(handlerType);
+                    handlerAssistants.put(handlerType, assistant);
+                }
+                entry.setValue(assistant);
+            }
         }
         this.configuration = configuration;
     }
