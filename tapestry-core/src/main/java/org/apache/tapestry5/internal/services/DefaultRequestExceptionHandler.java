@@ -18,8 +18,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -31,7 +29,6 @@ import org.apache.tapestry5.ExceptionHandlerAssistant;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.structure.Page;
-import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.OperationException;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
@@ -61,8 +58,6 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
 
     private final Response response;
     
-    private final ServiceResources serviceResources;
-    
     private final ComponentClassResolver componentClassResolver;
     
     private final LinkSource linkSource;
@@ -70,16 +65,13 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
     // should be Class<? extends Throwable>, Object but it's not allowed to configure subtypes
     private final Map<Class, Object> configuration;
     
-    private final Map<Class<ExceptionHandlerAssistant>, ExceptionHandlerAssistant> handlerAssistants = Collections
-            .synchronizedMap(new HashMap<Class<ExceptionHandlerAssistant>, ExceptionHandlerAssistant>());
-
     @SuppressWarnings("rawtypes")
     public DefaultRequestExceptionHandler(RequestPageCache pageCache, PageResponseRenderer renderer, Logger logger,
 
     @Symbol(SymbolConstants.EXCEPTION_REPORT_PAGE)
     String pageName,
 
-    Request request, Response response, ServiceResources serviceResources, ComponentClassResolver componentClassResolver, LinkSource linkSource, Map<Class, Object> configuration)
+    Request request, Response response, ComponentClassResolver componentClassResolver, LinkSource linkSource, Map<Class, Object> configuration)
     {
         this.pageCache = pageCache;
         this.renderer = renderer;
@@ -87,7 +79,6 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
         this.pageName = pageName;
         this.request = request;
         this.response = response;
-        this.serviceResources = serviceResources;
         this.componentClassResolver = componentClassResolver;
         this.linkSource = linkSource;
         
@@ -101,6 +92,12 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
 
     public void handleRequestException(Throwable exception) throws IOException
     {
+        // skip handling of known exceptions if there are none configured 
+        if (configuration.isEmpty()) {
+            renderException(exception);
+            return;
+        }
+        
         Throwable cause = exception;
 
         // Depending on where the error was thrown, there could be several levels of wrappers..
@@ -129,30 +126,19 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
         Object value = configuration.get(causeClass);
         Object page = null;
         ExceptionHandlerAssistant assistant = null;
-        if (value instanceof ExceptionHandlerAssistant) assistant = (ExceptionHandlerAssistant) value;
-        else if (!(value instanceof Class)) {
-            renderException(exception);
-            return;
-        } else if (ExceptionHandlerAssistant.class.isAssignableFrom((Class) value)) {
-            @SuppressWarnings("unchecked")
-            Class<ExceptionHandlerAssistant> handlerType = (Class<ExceptionHandlerAssistant>) value;
-            assistant = handlerAssistants.get(handlerType);
-            if (assistant == null) {
-                assistant = (ExceptionHandlerAssistant) serviceResources.autobuild(handlerType);
-                handlerAssistants.put(handlerType, assistant);
-            }
-        }
-
-        // the assistant may handle the exception directly or return a page
-        if (assistant != null) {
+        if (value instanceof ExceptionHandlerAssistant) {
+            assistant = (ExceptionHandlerAssistant) value;
             // in case the assistant changes the context
             List context = Arrays.asList(exceptionContext);
             page = assistant.handleRequestException(exception, context);
             exceptionContext = context.toArray();
         }
-        if (page == null) return;
+        else if (!(value instanceof Class)) {
+            renderException(exception);
+            return;
+        } else page = value;
 
-        exceptionContext = new Object[0];
+        if (page == null) return;
 
         try {
             if (page instanceof Class) page = componentClassResolver.resolvePageClassNameToPageName(((Class) page).getName());
@@ -163,7 +149,7 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
                 os.close();
             } else response.sendRedirect(link);
         }
-        // This could throw exceptions if this is already a render request, but it's
+        // The above could throw an exception if we are already on a render request, but it's
         // user's responsibility not to abuse the mechanism
         catch (Exception e) {
             // Nothing to do but delegate
