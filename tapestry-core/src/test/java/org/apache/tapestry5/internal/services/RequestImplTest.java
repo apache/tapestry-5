@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -238,5 +238,63 @@ public class RequestImplTest extends InternalBaseTestCase
     protected final void train_getPathInfo(HttpServletRequest request, String pathInfo)
     {
         expect(request.getPathInfo()).andReturn(pathInfo).atLeastOnce();
+    }
+
+    @Test
+    public void isSessionInvalidated_is_false_when_no_session_at_all()
+    {
+        HttpServletRequest sr = mockHttpServletRequest();
+
+        TapestrySessionFactory sf = newMock(TapestrySessionFactory.class);
+
+        expect(sf.getSession(false)).andReturn(null);
+
+        replay();
+
+        Request request = new RequestImpl(sr, CHARSET, sf);
+
+        assertFalse(request.isSessionInvalidated());
+
+        verify();
+    }
+
+    @Test
+    public void isSessionInvalidated_is_false_when_session_exists_and_is_valid()
+    {
+        HttpServletRequest sr = mockHttpServletRequest();
+        Session session = mockSession();
+
+        TapestrySessionFactory sf = newMock(TapestrySessionFactory.class);
+
+        expect(sf.getSession(false)).andReturn(session);
+        expect(session.isInvalidated()).andReturn(false);
+
+        replay();
+
+        Request request = new RequestImpl(sr, CHARSET, sf);
+
+        assertFalse(request.isSessionInvalidated());
+
+        verify();
+    }
+
+    @Test
+    public void isSessionInvalidated_is_true_when_session_is_invalid()
+    {
+        HttpServletRequest sr = mockHttpServletRequest();
+        Session session = mockSession();
+
+        TapestrySessionFactory sf = newMock(TapestrySessionFactory.class);
+
+        expect(sf.getSession(false)).andReturn(session);
+        expect(session.isInvalidated()).andReturn(true);
+
+        replay();
+
+        Request request = new RequestImpl(sr, CHARSET, sf);
+
+        assertTrue(request.isSessionInvalidated());
+
+        verify();
     }
 }

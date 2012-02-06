@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.util.Locale;
  * Generic version of {@link javax.servlet.http.HttpServletRequest}, used to encapsulate the Servlet API version, and to
  * help bridge the differences between Servlet API and Porlet API.
  * <p/>
- * <p/>
  * The Request service is a {@linkplain org.apache.tapestry5.ioc.services.PropertyShadowBuilder shadow} of the current
  * thread's request.
  */
@@ -29,7 +28,8 @@ public interface Request
 {
     /**
      * Gets the {@link Session}. If create is false and the session has not be created previously, returns null. Also,
-     * if the session is invalidated and create is false, returns null.
+     * if the session is invalidated and create is false, returns null. Invoking this method with true, when the session exists but has
+     * been invalidated, will force the creation of a new session.
      *
      * @param create true to force the creation of the session
      * @return the session (or null if create is false the session has not been previously created)
@@ -190,4 +190,12 @@ public interface Request
      * @since 5.3
      */
     String getRemoteHost();
+
+    /**
+     * Returns true if the request specified a session, and that session has been invalidated.
+     *
+     * @return true if session was invalidated during this request
+     * @since 5.4
+     */
+    boolean isSessionInvalidated();
 }

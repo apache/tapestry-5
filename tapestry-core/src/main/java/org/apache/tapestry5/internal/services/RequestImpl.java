@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,8 @@ import java.util.Locale;
 
 /**
  * Basic implementation of {@link org.apache.tapestry5.services.Request} that wraps around an
- * {@link javax.servlet.http.HttpServletRequest}.
+ * {@link javax.servlet.http.HttpServletRequest}. This is not threadsafe, nor should it need to be (each Request is
+ * handled by its own Thread).
  */
 public class RequestImpl implements Request
 {
@@ -100,6 +101,18 @@ public class RequestImpl implements Request
     public String getContextPath()
     {
         return request.getContextPath();
+    }
+
+
+    public boolean isSessionInvalidated()
+    {
+        // Double check to ensure that the session exists, but don't create it.
+        if (session == null)
+        {
+            session = sessionFactory.getSession(false);
+        }
+
+        return session != null && session.isInvalidated();
     }
 
     public Session getSession(boolean create)
@@ -196,4 +209,5 @@ public class RequestImpl implements Request
     {
         return request.getRemoteHost();
     }
+
 }
