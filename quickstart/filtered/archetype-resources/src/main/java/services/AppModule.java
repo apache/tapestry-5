@@ -32,12 +32,13 @@ public class AppModule
     public static void contributeFactoryDefaults(
             MappedConfiguration<String, Object> configuration)
     {
-        // The application version number is incorprated into URLs for some
-        // assets. Web browsers will cache assets because of the far future expires
-        // header. If existing assets are changed, the version number should also
-        // change, to force the browser to download new versions. This overrides Tapesty's default
-        // (a random hexadecimal number), but may be further overriden by DevelopmentModule or
-        // QaModule.
+        // The application version is incorprated into URLs for most assets. Web
+        // browsers will cache assets because of the far future expires header.
+    	// If existing assets change (or if the Tapestry version changes) you
+    	// should also change this number, to force the browser to download new
+    	// versions. This overrides Tapesty's default (a random hexadecimal
+    	// number), but may be further overriden by DevelopmentModule or QaModule 
+    	// by adding the same key in the contributeApplicationDefaults method.
         configuration.override(SymbolConstants.APPLICATION_VERSION, "${version}");
     }
 
