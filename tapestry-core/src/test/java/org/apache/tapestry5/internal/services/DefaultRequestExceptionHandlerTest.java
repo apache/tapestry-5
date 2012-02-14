@@ -30,21 +30,21 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.easymock.EasyMock;
 import org.slf4j.Logger;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 @SuppressWarnings("serial")
 public class DefaultRequestExceptionHandlerTest extends InternalBaseTestCase {
     private Map<Class, Object> mockConfiguration = new HashMap<Class, Object>();
-    RequestPageCache pageCache = mockRequestPageCache();
-    PageResponseRenderer renderer = mockPageResponseRenderer();
-    Logger logger = mockLogger();
-    Request request = mockRequest();
-    Response response = mockResponse();
-    ComponentClassResolver componentClassResolver = mockComponentClassResolver();
-    LinkSource linkSource = mockLinkSource();
-    ServiceResources serviceResources = mockServiceResources();
-	private DefaultRequestExceptionHandler exceptionHandler = new DefaultRequestExceptionHandler(pageCache, renderer, logger, "exceptionpage", request, response, componentClassResolver, linkSource, serviceResources, mockConfiguration);
+    RequestPageCache pageCache;
+    PageResponseRenderer renderer;
+    Logger logger;
+    Request request;
+    Response response;
+    ComponentClassResolver componentClassResolver;
+    LinkSource linkSource;
+    ServiceResources serviceResources;
+	private DefaultRequestExceptionHandler exceptionHandler;
 
 	private static class MyContextAwareException extends Throwable implements ContextAwareException {
 		private Object[] context;
@@ -63,10 +63,19 @@ public class DefaultRequestExceptionHandlerTest extends InternalBaseTestCase {
 	    
 	}
 	
-    @BeforeClass
+    @BeforeMethod
     public void setup_tests() throws Exception
     {
         mockConfiguration.clear();
+        pageCache = mockRequestPageCache();
+        renderer = mockPageResponseRenderer();
+        logger = mockLogger();
+        request = mockRequest();
+        response = mockResponse();
+        componentClassResolver = mockComponentClassResolver();
+        linkSource = mockLinkSource();
+        serviceResources = mockServiceResources();
+        exceptionHandler = new DefaultRequestExceptionHandler(pageCache, renderer, logger, "exceptionpage", request, response, componentClassResolver, linkSource, serviceResources, mockConfiguration);
     }
 	
 
