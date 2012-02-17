@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -1003,11 +1003,24 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void utf8_template() throws Exception {
+    public void utf8_template() throws Exception
+    {
         List<TemplateToken> tokens = tokens("chinese_utf-8.tml");
 
         TextToken token7 = get(tokens, 7);
 
         assertEquals(token7.text.trim().substring(0, 3), "\u975E\u5e38\u7b80");
+    }
+
+    @Test
+    public void block_can_nest_inside_extend() throws Exception
+    {
+        List<TemplateToken> tokens = tokens("block_can_nest_inside_extend.tml");
+
+        System.out.println(tokens);
+        
+        BlockToken token = get(tokens, 0);
+
+        assert (token.getId().equals("myBlock"));
     }
 }

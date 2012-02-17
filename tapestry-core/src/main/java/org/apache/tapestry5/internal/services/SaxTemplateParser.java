@@ -1,4 +1,4 @@
-// Copyright 2009, 2011 The Apache Software Foundation
+// Copyright 2009, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -60,7 +60,13 @@ public class SaxTemplateParser
     {
         NAMESPACE_URI_TO_VERSION.put("http://tapestry.apache.org/schema/tapestry_5_0_0.xsd", T_5_0);
         NAMESPACE_URI_TO_VERSION.put("http://tapestry.apache.org/schema/tapestry_5_1_0.xsd", T_5_1);
+        // 5.2 didn't change the schmea, so the 5_1_0.xsd was still used.
+        // 5.3 fixes an incorrect element name in the XSD ("replacement" should be "replace")
+        // The parser code here always expected "replace".
         NAMESPACE_URI_TO_VERSION.put("http://tapestry.apache.org/schema/tapestry_5_3.xsd", T_5_3);
+        // 5.4 is pretty much the same as 5.3, but allows block inside extend
+        // as per TAP5-1847
+        NAMESPACE_URI_TO_VERSION.put("http://tapestry.apache.org/schema/tapestry_5_4.xsd", T_5_4);
     }
 
     /**
@@ -212,7 +218,7 @@ public class SaxTemplateParser
         String name = tokenStream.getLocalName();
         Version version = NAMESPACE_URI_TO_VERSION.get(uri);
 
-        if (T_5_1.before(version))
+        if (T_5_1.sameOrEarlier(version))
         {
             if (name.equalsIgnoreCase("extend"))
             {
@@ -243,26 +249,36 @@ public class SaxTemplateParser
             {
                 case START_ELEMENT:
 
-                    if (T_5_1.before(NAMESPACE_URI_TO_VERSION.get(tokenStream.getNamespaceURI()))
-                            && tokenStream.getLocalName().equalsIgnoreCase("replace"))
+                    if (isTemplateVersion(Version.T_5_1) && isElementName("replace"))
                     {
                         replace(state);
                         break;
                     }
 
-                    throw new RuntimeException("Child element of <extend> must be <replace>.");
+                    boolean is54 = isTemplateVersion(Version.T_5_4);
+
+                    if (is54 && isElementName("block"))
+                    {
+                        block(state);
+                        break;
+                    }
+
+                    throw new RuntimeException(
+                            is54
+                                    ? "Child element of <extend> must be <replace> or <block>."
+                                    : "Child element of <extend> must be <replace>.");
 
                 case END_ELEMENT:
 
                     return;
 
-                // Ignore spaces and characters inside <extend>.
+                // Ignore spaces and comments directly inside <extend>.
 
                 case COMMENT:
                 case SPACE:
                     break;
 
-                // Other content (characters, etc.) are forbidden.
+                // Other non-whitespace content (characters, etc.) are forbidden.
 
                 case CHARACTERS:
                     if (InternalUtils.isBlank(tokenStream.getText()))
@@ -272,6 +288,24 @@ public class SaxTemplateParser
                     unexpectedEventType();
             }
         }
+    }
+
+    /**
+     * Returns true if the <em>local name</em> is the element name (ignoring case).
+     */
+    private boolean isElementName(String elementName)
+    {
+        return tokenStream.getLocalName().equalsIgnoreCase(elementName);
+    }
+
+    /**
+     * Returns true if the template version is at least the required version.
+     */
+    private boolean isTemplateVersion(Version requiredVersion)
+    {
+        Version templateVersion = NAMESPACE_URI_TO_VERSION.get(tokenStream.getNamespaceURI());
+
+        return requiredVersion.sameOrEarlier(templateVersion);
     }
 
     private void replace(TemplateParserState state)
@@ -335,7 +369,7 @@ public class SaxTemplateParser
         String name = tokenStream.getLocalName();
         Version version = NAMESPACE_URI_TO_VERSION.get(uri);
 
-        if (T_5_1.before(version))
+        if (T_5_1.sameOrEarlier(version))
         {
 
             if (name.equalsIgnoreCase("remove"))
@@ -391,7 +425,7 @@ public class SaxTemplateParser
 
             if (name.equalsIgnoreCase("parameter"))
             {
-                if (T_5_3.before(version))
+                if (T_5_3.sameOrEarlier(version))
                 {
                     throw new RuntimeException(
                             String.format("The <parameter> element has been deprecated in Tapestry 5.3 in favour of '%s' namespace.", TAPESTRY_PARAMETERS_URI));
@@ -1168,7 +1202,7 @@ public class SaxTemplateParser
 
     static enum Version
     {
-        T_5_0(5, 0), T_5_1(5, 1), T_5_3(5, 3);
+        T_5_0(5, 0), T_5_1(5, 1), T_5_3(5, 3), T_5_4(5, 4);
 
         private int major;
         private int minor;
@@ -1180,7 +1214,11 @@ public class SaxTemplateParser
             this.minor = minor;
         }
 
-        public boolean before(Version other)
+        /**
+         * Returns true if this Version is the same as, or ordered before the other Version. This is often used to enable new
+         * template features for a specific version.
+         */
+        public boolean sameOrEarlier(Version other)
         {
             if (other == null)
                 return false;
