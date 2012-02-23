@@ -122,11 +122,17 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
         // but it's still possible that we still want to do a partial page render ... if filters were added to the render queue.
         // In that event, run the partial page render now and return.
 
-        if ((!resultProcessorInvoked.get()) && queue.isPartialRenderInitialized())
+        boolean wasInvoked = resultProcessorInvoked.get();
+
+        if ((!wasInvoked) && queue.isPartialRenderInitialized())
         {
             partialRenderer.renderPartialPageMarkup();
             return;
         }
+
+        // If the result processor was passed a value, then it will already have rendered, and there is nothing more to do.
+
+        if (wasInvoked) { return; }
 
         // Send an empty JSON reply if no value was returned from the component event handler method.
         // This is the typical behavior when an Ajax component event handler returns null.
