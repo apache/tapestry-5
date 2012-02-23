@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.security.WhitelistAnalyzer;
 
 /**
- * Standard analyzer that places requests from the "localhost", "127.0.0.1", or "0:0:0:0:0:0:0:1%0" onto the white list.
+ * Standard analyzer that places requests from the "localhost", "127.0.0.1", "0:0:0:0:0:0:0:1%0", or :"0:0:0:0:0:0:0:1" onto the white list.
  *
  * @since 5.3
  */
@@ -28,6 +28,6 @@ public class LocalhostOnly implements WhitelistAnalyzer
     {
         String remoteHost = request.getRemoteHost();
 
-        return remoteHost.equals("localhost") || remoteHost.equals("127.0.0.1") || remoteHost.equals("0:0:0:0:0:0:0:1%0");
+        return remoteHost.equals("localhost") || remoteHost.equals("127.0.0.1") || remoteHost.equals("0:0:0:0:0:0:0:1%0") || remoteHost.equals("0:0:0:0:0:0:0:1");
     }
 }
