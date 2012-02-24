@@ -1,12 +1,14 @@
 description = "Apache Tapestry 5 Project"
 
 apply plugin: "base"
+apply plugin: "sonar"
+
 apply from: "ssh.gradle"
 apply from: "md5.gradle"
 
 // Remember that when generating a release, this should be incremented. Also don"t forget to
 // tag the release in Subversion.
-tapestryVersion = "5.3.3-rc1"
+tapestryVersion = "5.3.3-rc-1"
 
 jettyVersion = "7.0.0.v20091005"
 tomcatVersion = "6.0.30"
@@ -16,6 +18,13 @@ servletAPIVersion = "2.5"
 
 // Provided so that the CI server can override the normal version number for nightly builds.
 version = System.getProperty("project-version", tapestryVersion)
+
+// Let analysis.apache.org get in touch with our builds
+sonarUrl = System.getProperty("sonarUrl", "http://analysis.apache.org");
+sonarDbUrl = System.getProperty("sonarDbUrl", "");
+sonarDbUsername = System.getProperty("sonarDbUsername", "");
+sonarDbPassword = System.getProperty("sonarDbPassword", "");
+sonarDbDriverClassName = "com.mysql.jdbc.Driver"
 
 stagingUrl = "https://repository.apache.org/service/local/staging/deploy/maven2/"
 snapshotUrl = "https://repository.apache.org/content/repositories/snapshots"
@@ -28,13 +37,28 @@ deployUsernameProperty = isSnapshot() ? "snapshotDeployUserName" : "apacheDeploy
 deployPasswordProperty = isSnapshot() ? "snapshotDeployPassword" : "apacheDeployPassword"
 
 canDeploy = [deployUsernameProperty, deployPasswordProperty].every { project.hasProperty(it) }
+
 deployUsername = { getProperty(deployUsernameProperty) }
 deployPassword = { getProperty(deployPasswordProperty) }
+
+sonar {
+  server {
+    url = sonarUrl
+  }
+  database {
+    url = sonarDbUrl
+    driverClassName = sonarDbDriverClassName
+    username = sonarDbUsername
+    password = sonarDbPassword
+  }
+}
 
 allprojects {
 
   apply plugin: "eclipse"
   apply plugin: "idea"
+  apply plugin: "signing"
+
 
   repositories {
     mavenCentral()
@@ -66,10 +90,19 @@ configurations {
   if (doSign) {
     published.extendsFrom signatures
   }
+  binaries // additional dependencies included in the binary archive
 }
 
 dependencies {
   javadoc project(":tapestry-javadoc")
+
+  // From tapestry-ioc:
+  binaries "javax.inject:javax.inject:1"
+  binaries "org.slf4j:slf4j-api:1.6.1"
+  binaries "log4j:log4j:1.2.14"
+  binaries "org.slf4j:slf4j-log4j12:1.6.1"
+  binaries "commons-codec:commons-codec:1.5"
+  binaries "org.antlr:antlr-runtime:3.3", { transitive = false }
 }
 
 subprojects {
@@ -148,7 +181,6 @@ subprojects {
   }
 
   if (rootProject.doSign) {
-    apply plugin: "signing"
     // sign (create PGP signature for) archives (standard JARs)
     // and meta (sources JARs)
     signing { sign configurations.archives, configurations.meta }
@@ -166,8 +198,8 @@ subprojects {
       repositories {
 
         project.deployer = repositories.mavenDeployer {
-
-          if (doSign) {
+          
+	  if (doSign) {
             beforeDeployment { MavenDeployment deployment -> signPom(deployment) }
 	  }
 
@@ -187,6 +219,7 @@ subprojects {
 subprojects.each { project.evaluationDependsOn(it.name) }
 
 // Cribbed from https://github.com/hibernate/hibernate-core/blob/master/release/release.gradle#L19
+
 
 task aggregateJavadoc(type: Javadoc) {
 
@@ -289,32 +322,101 @@ task zippedJavadoc(type: Zip) {
   into "apidocs"
 }
 
-task generateMD5Checksums(type: GenMD5) {
+task zippedBinaries(type:Zip) {
+  description "Zip archive of binaries of each sub-project"
+  // TODO: Plus dependencies?
   group "Release artifact"
-  description "Creates MD5 checksums for zippedJavadoc and zippedSources"
-  source zippedJavadoc, zippedSources
-  outputDir "$buildDir/md5"
+  // This may create a few unwanted dependencies, but does
+  // seem to ensure that the subprojects are created
+  inputs.files subprojects*.configurations*.archives.artifacts
+
+  destinationDir buildDir
+  baseName "apache-tapestry"
+  version project.version
+  classifier "bin"
+
+  // This is via some experimentation
+  from subprojects*.configurations*.archives.artifacts*.file*.findAll { 
+    ! (it.name.endsWith(".asc") || it.name.startsWith("quickstart"))
+  }
+
+  from configurations.binaries
+
+  // Pick up various licenses and notices
+
+  from (projectDir) { 
+    include "*.txt"
+  }
+
+  subprojects.each {  sub ->
+    from (sub.projectDir) { 
+      include "*.txt"
+      into sub.name
+    }
+  }
+
+  
+
 }
 
-task uploadSourcesAndJavadocs(type: Scp) {
-  group "Release artifact"
-  description "Uploads source and JavaDoc Zips and MD5 checksums to people.apache.org"
 
-  source files(generateMD5Checksums, generateMD5Checksums.inputs.files)
-  host "people.apache.org"
-  userName deployUsername()
-  password deployPassword()
-  // The destination folder needs to already exist.
-  destination "public_html/tapestry-releases"
-  verbose true
+
+
+if (canDeploy) {
+
+  configurations { 
+    archives
+    uploads.extendsFrom archives, signatures
+  }
+
+
+  artifacts { 
+    archives zippedJavadoc, zippedSources, zippedBinaries
+  }
+
+  configurations { 
+    upload.extendsFrom archives, signatures
+  }
+
+  task generateMD5Checksums(type: GenMD5) {
+    group "Release artifact"
+    description "Creates MD5 checksums for archives of source and JavaDoc"
+    source tasks.withType(Zip)
+    outputDir "$buildDir/md5"
+  }
+
+  if (doSign) {
+    signing { 
+      sign configurations.archives
+    }
+  }
+
+  task uploadArtifacts(type: Scp) {
+    group "Release artifact"
+    description "Uploads top-level artifacts to people.apache.org, along with MD5 checksums and PGP signatures (if signing is enabled)"
+
+    source files(generateMD5Checksums, configurations.uploads.allArtifacts.files)
+
+    host "people.apache.org"
+    userName deployUsername()
+    password deployPassword()
+
+    // The destination folder at people.apache.org needs to already exist.
+    destination "public_html/tapestry-releases"
+
+    doFirst { 
+      logger.info "Uploading the following files to people.apache.org (as user '${userName}'):"
+      source.files.each {  logger.info "  $it"}
+    }
+  }
+
+  task generateRelease {
+    dependsOn "quickstart:clean", continuousIntegration, subprojects.uploadPublished, uploadArtifacts
+    group "Release artifact"
+    description "Generates and uploads a final release to Apache Nexus"
+  }
 }
 
 boolean isSnapshot() {
   project.version.contains("SNAPSHOT")
-}
-
-task generateRelease {
-  dependsOn "quickstart:clean", continuousIntegration, subprojects.uploadPublished, uploadSourcesAndJavadocs
-  group "Release artifact"
-  description "Generates and uploads a final release to Apache Nexus"
 }
