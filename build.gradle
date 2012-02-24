@@ -90,10 +90,19 @@ configurations {
   if (doSign) {
     published.extendsFrom signatures
   }
+  binaries // additional dependencies included in the binary archive
 }
 
 dependencies {
   javadoc project(":tapestry-javadoc")
+
+  // From tapestry-ioc:
+  binaries "javax.inject:javax.inject:1"
+  binaries "org.slf4j:slf4j-api:1.6.1"
+  binaries "log4j:log4j:1.2.14"
+  binaries "org.slf4j:slf4j-log4j12:1.6.1"
+  binaries "commons-codec:commons-codec:1.5"
+  binaries "org.antlr:antlr-runtime:3.3", { transitive = false }
 }
 
 subprojects {
@@ -313,6 +322,41 @@ task zippedJavadoc(type: Zip) {
   into "apidocs"
 }
 
+task zippedBinaries(type:Zip) {
+  description "Zip archive of binaries of each sub-project"
+  // TODO: Plus dependencies?
+  group "Release artifact"
+
+  destinationDir buildDir
+  baseName "apache-tapestry"
+  version project.version
+  classifier "bin"
+
+  // This is via some experimentation
+  from subprojects*.configurations*.archives.artifacts*.file*.findAll { 
+    ! (it.name.endsWith(".asc") || it.name.startsWith("quickstart"))
+  }
+
+  from configurations.binaries
+
+  // Pick up various licenses and notices
+
+  from (projectDir) { 
+    include "*.txt"
+  }
+
+  subprojects.each {  sub ->
+    from (sub.projectDir) { 
+      include "*.txt"
+      into sub.name
+    }
+  }
+
+  
+
+}
+
+
 
 
 if (canDeploy) {
@@ -323,19 +367,19 @@ if (canDeploy) {
   }
 
 
-  task generateMD5Checksums(type: GenMD5) {
-    group "Release artifact"
-    description "Creates MD5 checksums for archives of source and JavaDoc"
-    source configurations.archives
-    outputDir "$buildDir/md5"
-  }
-
   artifacts { 
-    archives zippedJavadoc, zippedSources
+    archives zippedJavadoc, zippedSources, zippedBinaries
   }
 
   configurations { 
     upload.extendsFrom archives, signatures
+  }
+
+  task generateMD5Checksums(type: GenMD5) {
+    group "Release artifact"
+    description "Creates MD5 checksums for archives of source and JavaDoc"
+    source tasks.withType(Zip)
+    outputDir "$buildDir/md5"
   }
 
   if (doSign) {
@@ -348,7 +392,7 @@ if (canDeploy) {
     group "Release artifact"
     description "Uploads top-level artifacts to people.apache.org, along with MD5 checksums and PGP signatures (if signing is enabled)"
 
-    source files(generateMD5Checksums, configurations.upload.allArtifacts.files)
+    source files(generateMD5Checksums, configurations.uploads.allArtifacts.files)
 
     host "people.apache.org"
     userName deployUsername()
