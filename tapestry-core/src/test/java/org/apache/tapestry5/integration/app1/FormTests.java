@@ -966,9 +966,9 @@ public class FormTests extends TapestryCoreTestCase
     {
         openLinks("Cancel Demo");
 
-        clickAndWait("//input[@type='submit']");
+        clickAndWait("//input[@value='Cancel Form']");
 
-        assertText("message", "onSelectedFromCancel() invoked.");
+        assertText("message", "Form was canceled.");
     }
 
     @Test
@@ -976,9 +976,9 @@ public class FormTests extends TapestryCoreTestCase
     {
         openLinks("Cancel Demo");
 
-        clickAndWait("//a[@id='cancelLink']");
+        clickAndWait("link=Cancel Form");
 
-        assertText("message", "onSelectedFromCancelLink() invoked.");
+        assertText("message", "Form was canceled.");
     }
 
     @Test

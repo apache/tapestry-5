@@ -14,11 +14,9 @@
 
 package org.apache.tapestry5.integration.app1.pages;
 
-import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.InjectPage;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.beaneditor.Validate;
-import org.apache.tapestry5.corelib.components.Form;
 
 /**
  * Demo the use of the cancel option on Submit.
@@ -32,23 +30,25 @@ public class CancelDemo
     @InjectPage
     private CancelDemoMessage page;
 
-    @InjectComponent
-    private Form form;
-
-    Object onSelectedFromCancel()
+    Object onCanceled()
     {
-        form.clearErrors();
-
-        page.setMessage("onSelectedFromCancel() invoked.");
+        page.setMessage("Form was canceled.");
 
         return page;
     }
 
-    Object onSelectedFromCancelLink()
+    Object onSelectedFromAbort()
     {
-        form.clearErrors();
 
-        page.setMessage("onSelectedFromCancelLink() invoked.");
+        page.setMessage("onSelectedFromAbort() invoked.");
+
+        return page;
+    }
+
+    Object onSelectedFromAbortLink()
+    {
+
+        page.setMessage("onSelectedFromAbortLink() invoked.");
 
         return page;
     }

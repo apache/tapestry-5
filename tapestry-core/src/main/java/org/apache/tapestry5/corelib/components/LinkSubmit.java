@@ -55,9 +55,10 @@ public class LinkSubmit implements ClientElement
 
     /**
      * Defines the mode, or client-side behavior, for the submit. The default is {@link SubmitMode#NORMAL}; clicking the
-     * button submits the form with validation. {@link SubmitMode#CANCEL} indicates the client-side validation
-     * should be omitted (though server-side validation still occurs).
+     * button submits the form with validation. {@link SubmitMode#CANCEL} indicates the form should be submitted as a cancel,
+     * with no client or server-side validation. {@link SubmitMode#UNCONDITIONAL} bypassed client-side validation.
      *
+     * @see EventConstants#CANCELED
      * @since 5.2.0
      */
     @Parameter(allowNull = false, defaultPrefix = BindingConstants.LITERAL)
@@ -164,12 +165,7 @@ public class LinkSubmit implements ClientElement
 
             JSONObject spec = new JSONObject("form", formSupport.getClientId(), "clientId", clientId);
 
-            spec.put("validate", mode == SubmitMode.NORMAL);
-
-            if (mode == SubmitMode.CANCEL)
-            {
-                spec.put("cancel", true);
-            }
+            spec.put("mode", mode.name().toLowerCase());
 
             javascriptSupport.addInitializerCall(InitializationPriority.EARLY, "linkSubmit", spec);
         }
