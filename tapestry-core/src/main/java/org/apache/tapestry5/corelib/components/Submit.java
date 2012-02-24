@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -83,9 +83,11 @@ public class Submit implements ClientElement
 
     /**
      * Defines the mode, or client-side behavior, for the submit. The default is {@link SubmitMode#NORMAL}; clicking the
-     * button submits the form with validation. {@link SubmitMode#CANCEL} indicates the client-side validation
-     * should be omitted (though server-side validation still occurs).
+     * button submits the form with validation. {@link SubmitMode#CANCEL} indicates the form should be submitted as a cancel,
+     * with no client-side validation. {@link SubmitMode#UNCONDITIONAL} bypasses client-side validation, but does not indicate
+     * that the form was cancelled.
      *
+     * @see EventConstants#CANCELED
      * @since 5.2.0
      */
     @Parameter(allowNull = false, defaultPrefix = BindingConstants.LITERAL)
@@ -173,11 +175,10 @@ public class Submit implements ClientElement
 
         resources.renderInformalParameters(writer);
 
-        if (isCancel)
+        if (mode != SubmitMode.NORMAL)
         {
-            javascriptSupport.addInitializerCall("cancelButton", getClientId());
+            javascriptSupport.addInitializerCall("enableBypassValidation", getClientId());
         }
-
     }
 
     void afterRender(MarkupWriter writer)

@@ -22,19 +22,19 @@ var Tapestry = {
      * of the Form's Tapestry object to true (which will prevent form
      * submission).
      */
-    FORM_VALIDATE_EVENT : "tapestry:formvalidate",
+    FORM_VALIDATE_EVENT: "tapestry:formvalidate",
 
     /**
      * Event fired just before the form submits, to allow observers to make
      * final preparations for the submission, such as updating hidden form
      * fields. The form element is passed as the event memo.
      */
-    FORM_PREPARE_FOR_SUBMIT_EVENT : "tapestry:formprepareforsubmit",
+    FORM_PREPARE_FOR_SUBMIT_EVENT: "tapestry:formprepareforsubmit",
 
     /**
      * Form event fired after prepare.
      */
-    FORM_PROCESS_SUBMIT_EVENT : "tapestry:formprocesssubmit",
+    FORM_PROCESS_SUBMIT_EVENT: "tapestry:formprocesssubmit",
 
     /**
      * Event, fired on a field element, to cause observers to validate the
@@ -44,67 +44,67 @@ var Tapestry = {
      * identify that the field is in error (and decorate the field and show a
      * popup error message).
      */
-    FIELD_VALIDATE_EVENT : "tapestry:fieldvalidate",
+    FIELD_VALIDATE_EVENT: "tapestry:fieldvalidate",
 
     /**
      * Event notification, on a form object, that is used to trigger validation
      * on all fields within the form (observed by each field's
      * Tapestry.FieldEventManager).
      */
-    FORM_VALIDATE_FIELDS_EVENT : "tapestry:validatefields",
+    FORM_VALIDATE_FIELDS_EVENT: "tapestry:validatefields",
 
     /**
      * Event, fired on the document object, which identifies the current focus
      * input element.
      */
-    FOCUS_CHANGE_EVENT : "tapestry:focuschange",
+    FOCUS_CHANGE_EVENT: "tapestry:focuschange",
 
     /** Event, fired on a zone element when the zone is updated with new content. */
-    ZONE_UPDATED_EVENT : "tapestry:zoneupdated",
+    ZONE_UPDATED_EVENT: "tapestry:zoneupdated",
 
     /**
      * Event fired on a form fragment element to change the visibility of the
      * fragment. The event memo object includes a key, visible, that should be
      * true or false.
      */
-    CHANGE_VISIBILITY_EVENT : "tapestry:changevisibility",
+    CHANGE_VISIBILITY_EVENT: "tapestry:changevisibility",
 
     /**
      * Event fired on a form fragment element to hide the element and remove it
      * from the DOM.
      */
-    HIDE_AND_REMOVE_EVENT : "tapestry:hideandremove",
+    HIDE_AND_REMOVE_EVENT: "tapestry:hideandremove",
 
     /**
      * Event fired on a link or submit to request that it request that the
      * correct ZoneManager update from a provided URL.
      */
-    TRIGGER_ZONE_UPDATE_EVENT : "tapestry:triggerzoneupdate",
+    TRIGGER_ZONE_UPDATE_EVENT: "tapestry:triggerzoneupdate",
 
     /** Event used when intercepting and canceling the normal click event. */
-    ACTION_EVENT : "tapestry:action",
+    ACTION_EVENT: "tapestry:action",
 
     /** When false, the default, the Tapestry.debug() function will be a no-op. */
-    DEBUG_ENABLED : false,
+    DEBUG_ENABLED: false,
 
     /** Time, in seconds, that console messages are visible. */
-    CONSOLE_DURATION : 10,
+    CONSOLE_DURATION: 10,
 
     /**
      * CSS Class added to a &lt;form&gt; element that directs Tapestry to
      * prevent normal (HTTP POST) form submission, in favor of Ajax
      * (XmlHttpRequest) submission.
      */
-    PREVENT_SUBMISSION : "t-prevent-submission",
+    PREVENT_SUBMISSION: "t-prevent-submission",
 
     /** Initially, false, set to true once the page is fully loaded. */
-    pageLoaded : false,
+    pageLoaded: false,
 
     /**
      * Invoked from onclick event handlers built into links and forms. Raises a
      * dialog if the page is not yet fully loaded.
      */
-    waitForPage : function(event) {
+    waitForPage: function (event) {
         if (Tapestry.pageLoaded)
             return true;
 
@@ -118,30 +118,30 @@ var Tapestry = {
          * prevent keypresses (its z-order helps there).
          */
         var overlay = new Element("div", {
-            'class' : 't-dialog-overlay'
+            'class': 't-dialog-overlay'
         });
         overlay.setOpacity(0.0);
 
         body.insert({
-            top : overlay
+            top: overlay
         });
 
         new Effect.Appear(overlay, {
-            duration : 0.2,
-            from : 0.0
+            duration: 0.2,
+            from: 0.0
         });
 
         var messageDiv = new Element("div", {
-            'class' : 't-page-loading-banner'
+            'class': 't-page-loading-banner'
         }).update(Tapestry.Messages.pageIsLoading);
         overlay.insert({
-            top : messageDiv
+            top: messageDiv
         });
 
-        var hideDialog = function() {
+        var hideDialog = function () {
             new Effect.Fade(overlay, {
-                duration : 0.2,
-                afterFinish : function() {
+                duration: 0.2,
+                afterFinish: function () {
                     Tapestry.remove(overlay);
                 }
             });
@@ -167,7 +167,7 @@ var Tapestry = {
      * such to load first. This simply observes the dom:loaded event on the
      * document object (support for which is provided by Prototype).
      */
-    onDOMLoaded : function(callback) {
+    onDOMLoaded: function (callback) {
         document.observe("dom:loaded", callback);
     },
 
@@ -181,13 +181,13 @@ var Tapestry = {
      * This is invoked when the DOM is first loaded, and AGAIN whenever dynamic
      * content is loaded via the Zone mechanism.
      */
-    onDomLoadedCallback : function() {
+    onDomLoadedCallback: function () {
 
         Tapestry.pageLoaded = true;
 
         Tapestry.ScriptManager.initialize();
 
-        $$(".t-invisible").each(function(element) {
+        $$(".t-invisible").each(function (element) {
             element.hide();
             element.removeClassName("t-invisible");
         });
@@ -196,7 +196,7 @@ var Tapestry = {
          * Adds a focus observer that fades all error popups except for the
          * field in question.
          */
-        $$("INPUT", "SELECT", "TEXTAREA").each(function(element) {
+        $$("INPUT", "SELECT", "TEXTAREA").each(function (element) {
             /*
              * Due to Ajax, we may execute the callback multiple times, and we
              * don't want to add multiple listeners to the same element.
@@ -204,7 +204,7 @@ var Tapestry = {
             var t = $T(element);
 
             if (!t.observingFocusChange) {
-                element.observe("focus", function() {
+                element.observe("focus", function () {
                     if (element != Tapestry.currentFocusField) {
                         document.fire(Tapestry.FOCUS_CHANGE_EVENT, element);
 
@@ -224,11 +224,11 @@ var Tapestry = {
          * TAP5-1418: Added "type=image" so that they set the submitting element
          * correctly.
          */
-        $$("INPUT[type=submit]", "INPUT[type=image]").each(function(element) {
+        $$("INPUT[type=submit]", "INPUT[type=image]").each(function (element) {
             var t = $T(element);
 
             if (!t.trackingClicks) {
-                element.observe("click", function() {
+                element.observe("click", function () {
                     $(element.form).setSubmittingElement(element);
                 });
 
@@ -247,20 +247,20 @@ var Tapestry = {
      * optimization, the inner value may not be an array but instead a single
      * value.
      */
-    init : function(spec) {
-        $H(spec).each(function(pair) {
+    init: function (spec) {
+        $H(spec).each(function (pair) {
             var functionName = pair.key;
 
             var initf = Tapestry.Initializer[functionName];
 
             if (initf == undefined) {
                 Tapestry.error(Tapestry.Messages.missingInitializer, {
-                    name : functionName
+                    name: functionName
                 });
                 return;
             }
 
-            pair.value.each(function(parameterList) {
+            pair.value.each(function (parameterList) {
                 if (!Object.isArray(parameterList)) {
                     parameterList = [ parameterList ];
                 }
@@ -271,17 +271,17 @@ var Tapestry = {
     },
 
     /** Formats and displays an error message on the console. */
-    error : function(message, substitutions) {
+    error: function (message, substitutions) {
         Tapestry.invokeLogger(message, substitutions, Tapestry.Logging.error);
     },
 
     /** Formats and displays a warning on the console. */
-    warn : function(message, substitutions) {
+    warn: function (message, substitutions) {
         Tapestry.invokeLogger(message, substitutions, Tapestry.Logging.warn);
     },
 
     /** Formats and displays an info message on the console. */
-    info : function(message, substitutions) {
+    info: function (message, substitutions) {
         Tapestry.invokeLogger(message, substitutions, Tapestry.Logging.info);
     },
 
@@ -289,13 +289,13 @@ var Tapestry = {
      * Formats and displays a debug message on the console. This function is a no-op unless Tapestry.DEBUG_ENABLED is true
      * (which will be the case when the application is running in development mode).
      */
-    debug : function(message, substitutions) {
+    debug: function (message, substitutions) {
         if (Tapestry.DEBUG_ENABLED) {
             Tapestry.invokeLogger(message, substitutions, Tapestry.Logging.debug);
         }
     },
 
-    invokeLogger : function(message, substitutions, loggingFunction) {
+    invokeLogger: function (message, substitutions, loggingFunction) {
         if (substitutions != undefined)
             message = message.interpolate(substitutions);
 
@@ -322,7 +322,7 @@ var Tapestry = {
      *            function invoked after the scripts have all loaded
      *            (presumably, to update the DOM)
      */
-    loadScriptsInReply : function(reply, callback) {
+    loadScriptsInReply: function (reply, callback) {
         var redirectURL = reply.redirectURL;
 
         if (redirectURL) {
@@ -335,7 +335,7 @@ var Tapestry = {
 
         Tapestry.ScriptManager.addStylesheets(reply.stylesheets);
 
-        Tapestry.ScriptManager.addScripts(reply.scripts, function() {
+        Tapestry.ScriptManager.addScripts(reply.scripts, function () {
             /* Let the caller do its thing first (i.e., modify the DOM). */
             callback.call(this);
 
@@ -355,9 +355,9 @@ var Tapestry = {
      *            array of parameters to pass to Tapestry.init(), one invocation
      *            per element (may be null)
      */
-    executeInits : function(initializations) {
+    executeInits: function (initializations) {
 
-        $A(initializations).each(function(spec) {
+        $A(initializations).each(function (spec) {
             Tapestry.init(spec);
         });
 
@@ -368,7 +368,7 @@ var Tapestry = {
      * Default function for handling a communication error during an Ajax
      * request.
      */
-    ajaxExceptionHandler : function(response, exception) {
+    ajaxExceptionHandler: function (response, exception) {
         Tapestry.error(Tapestry.Messages.communicationFailed + exception);
 
         Tapestry.debug(Tapestry.Messages.ajaxFailure + exception, response);
@@ -379,7 +379,7 @@ var Tapestry = {
     /**
      * Default function for handling Ajax-related failures.
      */
-    ajaxFailureHandler : function(response) {
+    ajaxFailureHandler: function (response) {
         var rawMessage = response.getHeader("X-Tapestry-ErrorMessage");
 
         var message = unescape(rawMessage).escapeHTML();
@@ -412,21 +412,21 @@ var Tapestry = {
      *            either a success handler
      * @return the Ajax.Request object
      */
-    ajaxRequest : function(url, options) {
+    ajaxRequest: function (url, options) {
 
         if (Object.isFunction(options)) {
             return Tapestry.ajaxRequest(url, {
-                onSuccess : options
+                onSuccess: options
             });
         }
 
         var successHandler = (options && options.onSuccess) || Prototype.emptyFunction;
 
         var finalOptions = $H({
-            onException : Tapestry.ajaxExceptionHandler,
-            onFailure : Tapestry.ajaxFailureHandler
+            onException: Tapestry.ajaxExceptionHandler,
+            onFailure: Tapestry.ajaxFailureHandler
         }).update(options).update({
-                onSuccess : function(response, jsonResponse) {
+                onSuccess: function (response, jsonResponse) {
                     /*
                      * When the page is unloaded, pending Ajax requests appear to
                      * terminate as successful (but with no reply value). Since
@@ -471,7 +471,7 @@ var Tapestry = {
      * @return Tapestry.ZoneManager instance for updated zone, or null if not
      *         found.
      */
-    findZoneManager : function(element) {
+    findZoneManager: function (element) {
         var zoneId = $T(element).zoneId;
 
         return Tapestry.findZoneManagerForZone(zoneId);
@@ -486,12 +486,12 @@ var Tapestry = {
      *            zone element (id or instance)
      * @return Tapestry.ZoneManager instance for zone, or null if not found
      */
-    findZoneManagerForZone : function(zoneElement) {
+    findZoneManagerForZone: function (zoneElement) {
         var element = $(zoneElement);
 
         if (!element) {
             Tapestry.error(Tapestry.Messages.missingZone, {
-                id : zoneElement
+                id: zoneElement
             });
             return null;
         }
@@ -516,14 +516,14 @@ var Tapestry = {
      * @param path
      * @return complete URL as string
      */
-    rebuildURL : function(path) {
+    rebuildURL: function (path) {
         if (path.match(/^https?:/)) {
             return path;
         }
 
         if (!path.startsWith("/")) {
             Tapestry.error(Tapestry.Messages.pathDoesNotStartWithSlash, {
-                path : path
+                path: path
             });
 
             return path;
@@ -537,7 +537,7 @@ var Tapestry = {
         return Tapestry.buildUrl + path;
     },
 
-    stripToLastSlash : function(URL) {
+    stripToLastSlash: function (URL) {
         var slashx = URL.lastIndexOf("/");
 
         return URL.substring(0, slashx + 1);
@@ -553,7 +553,7 @@ var Tapestry = {
      * @param isInteger
      *            if true, disallow decimal point
      */
-    formatLocalizedNumber : function(number, isInteger) {
+    formatLocalizedNumber: function (number, isInteger) {
         /*
          * We convert from localized string to a canonical string, stripping out
          * group seperators (normally commas). If isInteger is true, we don't
@@ -566,7 +566,7 @@ var Tapestry = {
 
         var canonical = "";
 
-        number.strip().toArray().each(function(ch) {
+        number.strip().toArray().each(function (ch) {
             if (ch == minus) {
                 canonical += "-";
                 return;
@@ -601,7 +601,7 @@ var Tapestry = {
      *            element or element id
      * @since 5.2.0
      */
-    replaceElementTagName : function(element, newTagName) {
+    replaceElementTagName: function (element, newTagName) {
 
         element = $(element);
 
@@ -618,7 +618,7 @@ var Tapestry = {
             "</" + newTagName + ">");
 
         element.insert({
-            before : replaceHTML
+            before: replaceHTML
         });
 
         T5.dom.remove(element);
@@ -633,10 +633,10 @@ var Tapestry = {
      * @since 5.2.0
      * @deprecated Since 5.3, use T5.dom.remove() instead
      */
-    remove : T5.dom.remove,
+    remove: T5.dom.remove,
 
     /** @deprecated Since 5.3, use T5.dom.purgeChildren instead */
-    purgeChildren : T5.dom.purgeChildren
+    purgeChildren: T5.dom.purgeChildren
 };
 
 Element.addMethods({
@@ -658,9 +658,9 @@ Element.addMethods({
      * @return true if visible (and containers visible), false if it or
      *         container are not visible
      */
-    isDeepVisible : function(element, options) {
+    isDeepVisible: function (element, options) {
         var current = $(element);
-        var boundFunc = (options && options.bound) || function(el) {
+        var boundFunc = (options && options.bound) || function (el) {
             return el.tagName == "FORM"
         };
 
@@ -695,8 +695,8 @@ Element.addMethods({
      *            function to be invoked; it will be registered as a observer of
      *            the Tapestry.ACTION_EVENT.
      */
-    observeAction : function(element, eventName, handler) {
-        element.observe(eventName, function(event) {
+    observeAction: function (element, eventName, handler) {
+        element.observe(eventName, function (event) {
 
             event.stop();
 
@@ -719,7 +719,7 @@ Element
          * @param form
          *            form element
          */
-        getFormEventManager : function(form) {
+        getFormEventManager: function (form) {
             form = $(form);
 
             var manager = $T(form).formEventManager;
@@ -744,7 +744,7 @@ Element
          *            id or element that is the cause of the submit
          *            (a Submit or LinkSubmit)
          */
-        setSubmittingElement : function(form, element) {
+        setSubmittingElement: function (form, element) {
             form.getFormEventManager()
                 .setSubmittingElement(element);
         },
@@ -753,7 +753,7 @@ Element
          * Turns off client validation for the next submission of
          * the form.
          */
-        skipValidation : function(form) {
+        skipValidation: function (form) {
             $T(form).skipValidation = true;
         },
 
@@ -761,7 +761,7 @@ Element
          * Programmatically perform a submit, invoking the onsubmit
          * event handler (if present) before calling form.submit().
          */
-        performSubmit : function(form, event) {
+        performSubmit: function (form, event) {
             if (form.onsubmit == undefined
                 || form.onsubmit.call(window.document, event)) {
                 form.submit();
@@ -782,7 +782,7 @@ Element
          * @return Ajax.Request the Ajax.Request created for the
          *         request
          */
-        sendAjaxRequest : function(form, url, options) {
+        sendAjaxRequest: function (form, url, options) {
             form = $(form);
 
             /*
@@ -796,7 +796,7 @@ Element
              * Find the elements, skipping over any submit buttons.
              * This works around bugs in Prototype 1.6.0.2.
              */
-            var elements = form.getElements().reject(function(e) {
+            var elements = form.getElements().reject(function (e) {
                 return e.tagName == "INPUT" && e.type == "submit";
             });
 
@@ -827,7 +827,7 @@ Element.addMethods([ 'INPUT', 'SELECT', 'TEXTAREA' ], {
      * @param field
      *            field element
      */
-    getFieldEventManager : function(field) {
+    getFieldEventManager: function (field) {
         field = $(field);
         var t = $T(field);
 
@@ -850,7 +850,7 @@ Element.addMethods([ 'INPUT', 'SELECT', 'TEXTAREA' ], {
      * @param message
      *            to display
      */
-    showValidationMessage : function(element, message) {
+    showValidationMessage: function (element, message) {
         element = $(element);
 
         element.getFieldEventManager().showValidationMessage(message);
@@ -862,7 +862,7 @@ Element.addMethods([ 'INPUT', 'SELECT', 'TEXTAREA' ], {
      * Removes any validation decorations on the field, and hides the error
      * popup (if any) for the field.
      */
-    removeDecorations : function(element) {
+    removeDecorations: function (element) {
         $(element).getFieldEventManager().removeDecorations();
 
         return element;
@@ -879,8 +879,8 @@ Element.addMethods([ 'INPUT', 'SELECT', 'TEXTAREA' ], {
      * @param validator
      *            function to be passed the field value
      */
-    addValidator : function(element, validator) {
-        element.observe(Tapestry.FIELD_VALIDATE_EVENT, function(event) {
+    addValidator: function (element, validator) {
+        element.observe(Tapestry.FIELD_VALIDATE_EVENT, function (event) {
             try {
                 validator.call(this, event.memo.translated);
             } catch (message) {
@@ -900,7 +900,7 @@ Tapestry.Initializer = T5.initializers;
 T5.extendInitializers({
 
     /** Make the given field the active field (focus on the field). */
-    activate : function(id) {
+    activate: function (id) {
         $(id).activate();
     },
 
@@ -909,29 +909,29 @@ T5.extendInitializers({
      * used in Ajax requests to handle any setup code that does not fit
      * into a standard Tapestry.Initializer call.
      */
-    evalScript : eval,
+    evalScript: eval,
 
-    ajaxFormLoop : function(spec) {
+    ajaxFormLoop: function (spec) {
         var rowInjector = $(spec.rowInjector);
 
-        $(spec.addRowTriggers).each(function(triggerId) {
-            $(triggerId).observeAction("click", function(event) {
+        $(spec.addRowTriggers).each(function (triggerId) {
+            $(triggerId).observeAction("click", function (event) {
                 $(rowInjector).trigger();
             });
         });
     },
 
-    formLoopRemoveLink : function(spec) {
+    formLoopRemoveLink: function (spec) {
         var link = $(spec.link);
         var fragmentId = spec.fragment;
 
-        link.observeAction("click", function(event) {
-            var successHandler = function(transport) {
+        link.observeAction("click", function (event) {
+            var successHandler = function (transport) {
                 var container = $(fragmentId);
 
                 var effect = Tapestry.ElementEffect.fade(container);
 
-                effect.options.afterFinish = function() {
+                effect.options.afterFinish = function () {
                     Tapestry.remove(container);
                 }
             };
@@ -952,7 +952,7 @@ T5.extendInitializers({
      * @param spec.url
      *            absolute component event request URL
      */
-    linkZone : function(spec) {
+    linkZone: function (spec) {
         Tapestry.Initializer.updateZoneOnEvent("click", spec.linkId,
             spec.zoneId, spec.url);
     },
@@ -968,27 +968,28 @@ T5.extendInitializers({
      * @param spec.url
      *            component event request URL
      */
-    linkSelectToZone : function(spec) {
+    linkSelectToZone: function (spec) {
         Tapestry.Initializer.updateZoneOnEvent("change", spec.selectId,
             spec.zoneId, spec.url);
     },
 
-    linkSubmit : function(spec) {
+    linkSubmit: function (spec) {
 
         Tapestry.replaceElementTagName(spec.clientId, "A");
 
         $(spec.clientId).writeAttribute("href", "#");
 
-        if (spec.cancel) {
+        if (spec.mode == "cancel") {
             $(spec.clientId).writeAttribute("name", "cancel");
         }
 
-        $(spec.clientId).observeAction("click", function(event) {
+        $(spec.clientId).observeAction("click", function (event) {
 
             var form = $(spec.form);
 
-            if (!spec.validate)
+            if (spec.mode != "normal") {
                 form.skipValidation();
+            }
 
             form.setSubmittingElement(this);
 
@@ -1014,7 +1015,7 @@ T5.extendInitializers({
      *            observed. Ultimately, a partial page update JSON
      *            response will be passed to the Zone's ZoneManager.
      */
-    updateZoneOnEvent : function(eventName, element, zoneId, url) {
+    updateZoneOnEvent: function (eventName, element, zoneId, url) {
         element = $(element);
 
         $T(element).zoneUpdater = true;
@@ -1027,9 +1028,9 @@ T5.extendInitializers({
                 .error(
                 "Could not find zone element '#{zoneId}' to update on #{eventName} of element '#{elementId}'.",
                 {
-                    zoneId : zoneId,
-                    eventName : eventName,
-                    elementId : element.id
+                    zoneId: zoneId,
+                    eventName: eventName,
+                    elementId: element.id
                 });
             return;
         }
@@ -1055,23 +1056,23 @@ T5.extendInitializers({
             element
                 .observe(
                 Tapestry.FORM_PROCESS_SUBMIT_EVENT,
-                function() {
+                function () {
                     var zoneManager = Tapestry
                         .findZoneManager(element);
 
                     if (!zoneManager)
                         return;
 
-                    var successHandler = function(transport) {
+                    var successHandler = function (transport) {
                         zoneManager
                             .processReply(transport.responseJSON);
                     };
 
                     element.sendAjaxRequest(url, {
-                        parameters : {
-                            "t:zoneid" : zoneId
+                        parameters: {
+                            "t:zoneid": zoneId
                         },
-                        onSuccess : successHandler
+                        onSuccess: successHandler
                     });
                 });
 
@@ -1080,11 +1081,11 @@ T5.extendInitializers({
 
         /* Otherwise, assume it's just an ordinary link or input field. */
 
-        element.observeAction(eventName, function(event) {
+        element.observeAction(eventName, function (event) {
             element.fire(Tapestry.TRIGGER_ZONE_UPDATE_EVENT);
         });
 
-        element.observe(Tapestry.TRIGGER_ZONE_UPDATE_EVENT, function() {
+        element.observe(Tapestry.TRIGGER_ZONE_UPDATE_EVENT, function () {
 
             var zoneObject = Tapestry.findZoneManager(element);
 
@@ -1115,7 +1116,7 @@ T5.extendInitializers({
      *
      * @since 5.2.2
      */
-    formEventManager : function(spec) {
+    formEventManager: function (spec) {
         $T(spec.formId).formEventManager = new Tapestry.FormEventManager(
             spec);
     },
@@ -1125,10 +1126,10 @@ T5.extendInitializers({
      * is a list of validation specs. Each validation spec is a 2 or 3
      * element array.
      */
-    validate : function(masterSpec) {
+    validate: function (masterSpec) {
         $H(masterSpec)
             .each(
-            function(pair) {
+            function (pair) {
 
                 var field = $(pair.key);
 
@@ -1140,7 +1141,7 @@ T5.extendInitializers({
                 $(field).getFieldEventManager();
 
                 $A(pair.value)
-                    .each(function(spec) {
+                    .each(function (spec) {
                         /*
                          * Each pair value is an array of specs, each spec is a 2 or 3 element array. validator function name, message, optional constraint
                          */
@@ -1154,8 +1155,8 @@ T5.extendInitializers({
                         if (vfunc == undefined) {
                             Tapestry
                                 .error(Tapestry.Messages.missingValidator, {
-                                name : name,
-                                fieldName : field.id
+                                name: name,
+                                fieldName: field.id
                             });
                             return;
                         }
@@ -1168,29 +1169,34 @@ T5.extendInitializers({
             });
     },
 
-    zone : function(spec) {
+    zone: function (spec) {
         new Tapestry.ZoneManager(spec);
     },
 
 
-    formInjector : function(spec) {
+    formInjector: function (spec) {
         new Tapestry.FormInjector(spec);
     },
 
 
-
-    cancelButton : function(clientId) {
+    /**
+     * Invoked on a submit element to indicate that it forces form to submit as a cancel (bypassing client-side validation
+     * and most server-side processing).
+     * @param clientId of submit element
+     */
+    enableBypassValidation: function (clientId) {
 
         /*
          * Set the form's skipValidation property and allow the event to
          * continue, which will ultimately submit the form.
          */
-        $(clientId).observeAction("click", function(event) {
+        $(clientId).observeAction("click", function (event) {
             $(this.form).skipValidation();
             $(this.form).setSubmittingElement(clientId);
             $(this.form).performSubmit(event);
         });
     }
+
 });
 
 /*
@@ -1202,8 +1208,8 @@ T5.extendInitializers({
 
 Tapestry.Validator = {
 
-    required : function(field, message) {
-        $(field).getFieldEventManager().requiredCheck = function(value) {
+    required: function (field, message) {
+        $(field).getFieldEventManager().requiredCheck = function (value) {
             if ((T5._.isString(value) && value.strip() == '')
                 || value == null)
                 $(field).showValidationMessage(message);
@@ -1211,8 +1217,8 @@ Tapestry.Validator = {
     },
 
     /** Supplies a client-side numeric translator for the field. */
-    numericformat : function(field, message, isInteger) {
-        $(field).getFieldEventManager().translator = function(input) {
+    numericformat: function (field, message, isInteger) {
+        $(field).getFieldEventManager().translator = function (input) {
             try {
                 return Tapestry.formatLocalizedNumber(input, isInteger);
             } catch (e) {
@@ -1221,38 +1227,38 @@ Tapestry.Validator = {
         };
     },
 
-    minlength : function(field, message, length) {
-        field.addValidator(function(value) {
+    minlength: function (field, message, length) {
+        field.addValidator(function (value) {
             if (value.length < length)
                 throw message;
         });
     },
 
-    maxlength : function(field, message, maxlength) {
-        field.addValidator(function(value) {
+    maxlength: function (field, message, maxlength) {
+        field.addValidator(function (value) {
             if (value.length > maxlength)
                 throw message;
         });
     },
 
-    min : function(field, message, minValue) {
-        field.addValidator(function(value) {
+    min: function (field, message, minValue) {
+        field.addValidator(function (value) {
             if (value < minValue)
                 throw message;
         });
     },
 
-    max : function(field, message, maxValue) {
-        field.addValidator(function(value) {
+    max: function (field, message, maxValue) {
+        field.addValidator(function (value) {
             if (value > maxValue)
                 throw message;
         });
     },
 
-    regexp : function(field, message, pattern) {
+    regexp: function (field, message, pattern) {
         var regexp = new RegExp(pattern);
 
-        field.addValidator(function(value) {
+        field.addValidator(function (value) {
             if (!regexp.test(value))
                 throw message;
         });
@@ -1266,17 +1272,17 @@ Tapestry.ErrorPopup = Class.create({
      * overriding Tapestry's default.css stylesheet), then some of these values
      * may also need to be adjusted.
      */
-    BUBBLE_VERT_OFFSET : -34,
+    BUBBLE_VERT_OFFSET: -34,
 
-    BUBBLE_HORIZONTAL_OFFSET : -20,
+    BUBBLE_HORIZONTAL_OFFSET: -20,
 
-    BUBBLE_WIDTH : "auto",
+    BUBBLE_WIDTH: "auto",
 
-    BUBBLE_HEIGHT : "39px",
+    BUBBLE_HEIGHT: "39px",
 
-    IE_FADE_TIME : 500,
+    IE_FADE_TIME: 500,
 
-    initialize : function(field) {
+    initialize: function (field) {
         this.field = $(field);
 
         // The UI elements (outerDiv and friends) are created by the first call to setMessage().
@@ -1287,22 +1293,22 @@ Tapestry.ErrorPopup = Class.create({
      * Invoked once, from setMessage(), to create the outerDiv and innerSpan elements, as well as necessary listeners
      *  (to hide the popup if clicked), and reposition the popup as necessary when the window resizes.
      */
-    createUI : function() {
+    createUI: function () {
         this.innerSpan = new Element("span");
         this.outerDiv = $(new Element("div", {
-            'id' : this.field.id + "_errorpopup",
-            'class' : 't-error-popup'
+            'id': this.field.id + "_errorpopup",
+            'class': 't-error-popup'
         })).update(this.innerSpan).hide();
 
         var body = $(document.body);
 
         body.insert({
-            bottom : this.outerDiv
+            bottom: this.outerDiv
         });
 
         this.outerDiv.absolutize();
 
-        this.outerDiv.observe("click", function(event) {
+        this.outerDiv.observe("click", function (event) {
             this.ignoreNextFocus = true;
 
             this.stopAnimation();
@@ -1315,13 +1321,13 @@ Tapestry.ErrorPopup = Class.create({
         }.bindAsEventListener(this));
 
         this.queue = {
-            position : 'end',
-            scope : this.field.id
+            position: 'end',
+            scope: this.field.id
         };
 
         Event.observe(window, "resize", this.repositionBubble.bind(this));
 
-        document.observe(Tapestry.FOCUS_CHANGE_EVENT, function(event) {
+        document.observe(Tapestry.FOCUS_CHANGE_EVENT, function (event) {
             if (this.ignoreNextFocus) {
                 this.ignoreNextFocus = false;
                 return;
@@ -1342,7 +1348,7 @@ Tapestry.ErrorPopup = Class.create({
         }.bind(this));
     },
 
-    showMessage : function(message) {
+    showMessage: function (message) {
 
         if (this.outerDiv == null) {
             this.createUI();
@@ -1357,18 +1363,18 @@ Tapestry.ErrorPopup = Class.create({
         this.fadeIn();
     },
 
-    repositionBubble : function() {
+    repositionBubble: function () {
         var fieldPos = this.field.cumulativeOffset();
 
         this.outerDiv.setStyle({
-            top : (fieldPos[1] + this.BUBBLE_VERT_OFFSET) + "px",
-            left : (fieldPos[0] + this.BUBBLE_HORIZONTAL_OFFSET) + "px",
-            width : this.BUBBLE_WIDTH,
-            height : this.BUBBLE_HEIGHT
+            top: (fieldPos[1] + this.BUBBLE_VERT_OFFSET) + "px",
+            left: (fieldPos[0] + this.BUBBLE_HORIZONTAL_OFFSET) + "px",
+            width: this.BUBBLE_WIDTH,
+            height: this.BUBBLE_HEIGHT
         });
     },
 
-    fadeIn : function() {
+    fadeIn: function () {
         if (!this.hasMessage)
             return;
 
@@ -1390,8 +1396,8 @@ Tapestry.ErrorPopup = Class.create({
         }
 
         this.animation = new Effect.Appear(this.outerDiv, {
-            queue : this.queue,
-            afterFinish : function() {
+            queue: this.queue,
+            afterFinish: function () {
                 this.animation = null;
 
                 if (this.field != Tapestry.currentFocusField)
@@ -1401,7 +1407,7 @@ Tapestry.ErrorPopup = Class.create({
     },
 
     /** Used in IE to hide the field if not the focus field. */
-    hideIfNotFocused : function() {
+    hideIfNotFocused: function () {
 
         if (this.outerDiv != null && this.field != Tapestry.currentFocusField) {
             this.outerDiv.hide();
@@ -1409,14 +1415,14 @@ Tapestry.ErrorPopup = Class.create({
     },
 
 
-    stopAnimation : function() {
+    stopAnimation: function () {
         if (this.animation)
             this.animation.cancel();
 
         this.animation = null;
     },
 
-    fadeOut : function() {
+    fadeOut: function () {
         if (this.animation || this.outerDiv == null)
             return;
 
@@ -1424,7 +1430,7 @@ Tapestry.ErrorPopup = Class.create({
 
             var div = this.outerDiv;
 
-            T5._.delay(function() {
+            T5._.delay(function () {
                 div.hide();
             }, this.IE_FADE_TIME);
 
@@ -1432,14 +1438,14 @@ Tapestry.ErrorPopup = Class.create({
         }
 
         this.animation = new Effect.Fade(this.outerDiv, {
-            queue : this.queue,
-            afterFinish : function() {
+            queue: this.queue,
+            afterFinish: function () {
                 this.animation = null;
             }.bind(this)
         });
     },
 
-    hide : function() {
+    hide: function () {
         this.hasMessage = false;
 
         this.stopAnimation();
@@ -1450,7 +1456,7 @@ Tapestry.ErrorPopup = Class.create({
 
 Tapestry.FormEventManager = Class.create({
 
-    initialize : function(spec) {
+    initialize: function (spec) {
         this.form = $(spec.formId);
         this.validateOnBlur = spec.validate.blur;
         this.validateOnSubmit = spec.validate.submit;
@@ -1466,7 +1472,7 @@ Tapestry.FormEventManager = Class.create({
      *            id or element that is the cause of the submit (a Submit or
      *            LinkSubmit)
      */
-    setSubmittingElement : function(element) {
+    setSubmittingElement: function (element) {
 
         if (!this.submitHidden) {
             // skip if this is not a tapestry controlled form
@@ -1484,12 +1490,12 @@ Tapestry.FormEventManager = Class.create({
                 var firstHidden = this.form.getInputs("hidden").first();
 
                 this.submitHidden = new Element("input", {
-                    type : "hidden",
-                    name : "t:submit"
+                    type: "hidden",
+                    name: "t:submit"
                 });
 
                 firstHidden.insert({
-                    after : this.submitHidden
+                    after: this.submitHidden
                 });
             } else
                 this.submitHidden = hiddens.first();
@@ -1498,7 +1504,7 @@ Tapestry.FormEventManager = Class.create({
         this.submitHidden.value = element == null ? null : Object.toJSON([$(element).id, $(element).name]);
     },
 
-    handleSubmit : function(domevent) {
+    handleSubmit: function (domevent) {
 
         /*
          * Necessary because we set the onsubmit property of the form, rather
@@ -1570,7 +1576,7 @@ Tapestry.FormEventManager = Class.create({
 
 Tapestry.FieldEventManager = Class.create({
 
-    initialize : function(field) {
+    initialize: function (field) {
         this.field = $(field);
 
         this.translator = Prototype.K;
@@ -1579,7 +1585,7 @@ Tapestry.FieldEventManager = Class.create({
 
         if (fem.validateOnBlur) {
 
-            document.observe(Tapestry.FOCUS_CHANGE_EVENT, function(event) {
+            document.observe(Tapestry.FOCUS_CHANGE_EVENT, function (event) {
                 /*
                  * If changing focus *within the same form* then perform
                  * validation. Note that Tapestry.currentFocusField does not
@@ -1598,7 +1604,7 @@ Tapestry.FieldEventManager = Class.create({
         }
     },
 
-    getLabel : function() {
+    getLabel: function () {
         if (!this.label) {
             var selector = "label[for='" + this.field.id + "']";
             this.label = this.field.form.down(selector);
@@ -1607,7 +1613,7 @@ Tapestry.FieldEventManager = Class.create({
         return this.label;
     },
 
-    getIcon : function() {
+    getIcon: function () {
         if (!this.icon) {
             this.icon = $(this.field.id + "_icon");
         }
@@ -1619,7 +1625,7 @@ Tapestry.FieldEventManager = Class.create({
      * Removes validation decorations if present. Hides the ErrorPopup, if it
      * exists.
      */
-    removeDecorations : function() {
+    removeDecorations: function () {
         this.field.removeClassName("t-error");
 
         this.getLabel() && this.getLabel().removeClassName("t-error");
@@ -1638,7 +1644,7 @@ Tapestry.FieldEventManager = Class.create({
      * @param message
      *            validation message to display
      */
-    showValidationMessage : function(message) {
+    showValidationMessage: function (message) {
         $T(this.field).validationError = true;
         $T(this.field.form).validationError = true;
 
@@ -1667,7 +1673,7 @@ Tapestry.FieldEventManager = Class.create({
      *
      * @return true if the field has a validation error
      */
-    validateInput : function() {
+    validateInput: function () {
         if (this.field.disabled)
             return false;
 
@@ -1696,8 +1702,8 @@ Tapestry.FieldEventManager = Class.create({
              */
             if (!t.validationError) {
                 this.field.fire(Tapestry.FIELD_VALIDATE_EVENT, {
-                    value : value,
-                    translated : translated
+                    value: value,
+                    translated: translated
                 });
             }
         }
@@ -1719,37 +1725,37 @@ Tapestry.FieldEventManager = Class.create({
 Tapestry.ElementEffect = {
 
     /** Fades in the element. */
-    show : function(element) {
+    show: function (element) {
         return new Effect.Appear(element);
     },
 
     /** The classic yellow background fade. */
-    highlight : function(element, color) {
+    highlight: function (element, color) {
         if (color)
             return new Effect.Highlight(element, {
-                endcolor : color,
-                restorecolor : color
+                endcolor: color,
+                restorecolor: color
             });
 
         return new Effect.Highlight(element);
     },
 
     /** Scrolls the content down. */
-    slidedown : function(element) {
+    slidedown: function (element) {
         return new Effect.SlideDown(element);
     },
 
     /** Slids the content back up (opposite of slidedown). */
-    slideup : function(element) {
+    slideup: function (element) {
         return new Effect.SlideUp(element);
     },
 
     /** Fades the content out (opposite of show). */
-    fade : function(element) {
+    fade: function (element) {
         return new Effect.Fade(element);
     },
 
-    none :  function(element) {
+    none: function (element) {
         return element;
     }
 };
@@ -1767,7 +1773,7 @@ Tapestry.ZoneManager = Class.create({
      * Tapestry.ElementEffect function used to highlight the zone after it is
      * updated
      */
-    initialize : function(spec) {
+    initialize: function (spec) {
         this.element = $(spec.element);
         this.showFunc = Tapestry.ElementEffect[spec.show]
             || Tapestry.ElementEffect.show;
@@ -1813,7 +1819,7 @@ Tapestry.ZoneManager = Class.create({
      *
      * @param content
      */
-    show : function(content) {
+    show: function (content) {
 
         Tapestry.purgeChildren(this.updateElement);
 
@@ -1835,8 +1841,8 @@ Tapestry.ZoneManager = Class.create({
      * @param reply
      *            response in JSON format appropriate to a Tapestry.Zone
      */
-    processReply : function(reply) {
-        Tapestry.loadScriptsInReply(reply, function() {
+    processReply: function (reply) {
+        Tapestry.loadScriptsInReply(reply, function () {
             /*
              * In a multi-zone update, the reply.content may be missing, in
              * which case, leave the curent content in place. TAP5-1177
@@ -1847,7 +1853,7 @@ Tapestry.ZoneManager = Class.create({
              * zones is an object of zone ids and zone content that will be
              * present in a multi-zone update response.
              */
-            reply.zones && Object.keys(reply.zones).each(function(zoneId) {
+            reply.zones && Object.keys(reply.zones).each(function (zoneId) {
                 var manager = Tapestry.findZoneManagerForZone(zoneId);
 
                 if (manager) {
@@ -1867,10 +1873,10 @@ Tapestry.ZoneManager = Class.create({
      * @param parameters
      *            object containing additional key/value pairs (optional)
      */
-    updateFromURL : function(URL, parameters) {
+    updateFromURL: function (URL, parameters) {
 
         var finalParameters = $H({
-            "t:zoneid" : this.element.id
+            "t:zoneid": this.element.id
         }).update(this.specParameters);
 
         /* If parameters were supplied, merge them in with the zone id */
@@ -1878,8 +1884,8 @@ Tapestry.ZoneManager = Class.create({
             finalParameters.update(parameters);
 
         Tapestry.ajaxRequest(URL, {
-            parameters : finalParameters.toObject(),
-            onSuccess : function(transport) {
+            parameters: finalParameters.toObject(),
+            onSuccess: function (transport) {
                 this.processReply(transport.responseJSON);
             }.bind(this)
         });
@@ -1888,7 +1894,7 @@ Tapestry.ZoneManager = Class.create({
 
 Tapestry.FormInjector = Class.create({
 
-    initialize : function(spec) {
+    initialize: function (spec) {
         this.element = $(spec.element);
         this.url = spec.url;
         this.below = spec.below;
@@ -1896,9 +1902,9 @@ Tapestry.FormInjector = Class.create({
         this.showFunc = Tapestry.ElementEffect[spec.show]
             || Tapestry.ElementEffect.highlight;
 
-        this.element.trigger = function() {
+        this.element.trigger = function () {
 
-            var successHandler = function(transport) {
+            var successHandler = function (transport) {
 
                 var reply = transport.responseJSON;
 
@@ -1908,7 +1914,7 @@ Tapestry.FormInjector = Class.create({
                  * FormInjector's element.
                  */
                 var newElement = new Element(this.element.tagName, {
-                    'class' : this.element.className
+                    'class': this.element.className
                 });
 
                 /* Insert the new element before or after the existing element. */
@@ -1916,7 +1922,7 @@ Tapestry.FormInjector = Class.create({
                 var param = {};
                 param[this.below ? "after" : "before"] = newElement;
 
-                Tapestry.loadScriptsInReply(reply, function() {
+                Tapestry.loadScriptsInReply(reply, function () {
                     /* Add the new element with the downloaded content. */
 
                     this.element.insert(param);
@@ -1948,7 +1954,7 @@ Tapestry.FormInjector = Class.create({
 
 Tapestry.ScriptManager = {
 
-    initialize : function() {
+    initialize: function () {
 
         /*
          * Check to see if document.scripts is supported; if not (for example,
@@ -1961,21 +1967,21 @@ Tapestry.ScriptManager = {
 
             document.scripts = new Array();
 
-            $$('script').each(function(s) {
+            $$('script').each(function (s) {
                 document.scripts.push(s);
             });
         }
     },
 
-    loadScript : function(scriptURL, callback) {
+    loadScript: function (scriptURL, callback) {
         /* IE needs the type="text/javascript" as well. */
         var element = new Element('script', {
-            src : scriptURL,
-            type : 'text/javascript'
+            src: scriptURL,
+            type: 'text/javascript'
         });
 
         $$("head").first().insert({
-            bottom : element
+            bottom: element
         });
 
         if (this.emulated)
@@ -1984,7 +1990,7 @@ Tapestry.ScriptManager = {
         if (Prototype.Browser.IE) {
             var loaded = false;
 
-            element.onreadystatechange = function() {
+            element.onreadystatechange = function () {
                 /* IE may fire either 'loaded' or 'complete', or possibly both. */
                 if (!loaded && this.readyState == 'loaded'
                     || this.readyState == 'complete') {
@@ -2002,8 +2008,7 @@ Tapestry.ScriptManager = {
         element.onload = callback.bindAsEventListener(this);
     },
 
-    rebuildURLIfIE :
-        Prototype.Browser.IE ? Tapestry.rebuildURL : T5._.identity,
+    rebuildURLIfIE: Prototype.Browser.IE ? Tapestry.rebuildURL : T5._.identity,
 
     /**
      * Add scripts, as needed, to the document, then waits for them all to load,
@@ -2014,7 +2019,7 @@ Tapestry.ScriptManager = {
      * @param callback
      *            invoked after scripts are loaded
      */
-    addScripts : function(scripts, callback) {
+    addScripts: function (scripts, callback) {
 
         var _ = T5._;
 
@@ -2024,7 +2029,7 @@ Tapestry.ScriptManager = {
 
         var topCallback = _(scripts).chain().map(Tapestry.rebuildURL).difference(loaded).reverse().reduce(
             function (nextCallback, scriptURL) {
-                return function() {
+                return function () {
                     self.loadScript(scriptURL, nextCallback);
                 }
             }, callback).value();
@@ -2039,7 +2044,7 @@ Tapestry.ScriptManager = {
      * (optionally) media.
      * @param stylesheets
      */
-    addStylesheets : function(stylesheets) {
+    addStylesheets: function (stylesheets) {
         if (!stylesheets)
             return;
 
@@ -2048,7 +2053,7 @@ Tapestry.ScriptManager = {
         var loaded = _(document.styleSheets).chain().pluck("href").without("").map(this.rebuildURLIfIE).value();
 
         var toLoad = _(stylesheets).chain().map(
-            function(ss) {
+            function (ss) {
                 ss.href = Tapestry.rebuildURL(ss.href);
 
                 return ss;
@@ -2062,7 +2067,7 @@ Tapestry.ScriptManager = {
 
         var insertionPoint = head.down("link[rel='stylesheet t-ajax-insertion-point']");
 
-        _(toLoad).each(function(ss) {
+        _(toLoad).each(function (ss) {
 
             var element = new Element('link', { type: 'text/css', rel: 'stylesheet', href: ss.href });
             if (ss.media) {
@@ -2097,6 +2102,6 @@ function $T(element) {
 Tapestry.onDOMLoaded(Tapestry.onDomLoadedCallback);
 
 /* Ajax code needs to know to do nothing after the window is unloaded. */
-Event.observe(window, "beforeunload", function() {
+Event.observe(window, "beforeunload", function () {
     Tapestry.windowUnloaded = true;
 });

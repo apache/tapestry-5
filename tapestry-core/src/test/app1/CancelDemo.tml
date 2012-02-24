@@ -10,7 +10,9 @@
     <br/>
 
     <t:submit mode="cancel" t:id="cancel" value="Cancel Form"/>
+    <t:submit mode="unconditional" t:id="abort" value="Abort"/>
     <t:linksubmit mode="cancel" t:id="cancelLink">Cancel Form</t:linksubmit>
+    <t:linksubmit mode="unconditional" t:id="abortLink">Abort</t:linksubmit>
 
   </t:form>
 </html>

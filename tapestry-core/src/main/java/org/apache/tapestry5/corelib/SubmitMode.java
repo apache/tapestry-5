@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,10 +31,17 @@ public enum SubmitMode
     NORMAL,
 
     /**
-     * Cancel the form; bypass client-side form validation. Fires the {@link EventConstants#CANCELED} event.
-     * If the event handler for that event allows the submission to proceed, then server-side validation still occurs
+     * Cancel the form; bypass form validation on both the client and the server. The {@link org.apache.tapestry5.corelib.components.Form} fires
+     * the {@link EventConstants#CANCELED} event. If the event handler for that event allows the submission to proceed, then server-side validation still occurs
      * on the server, though generally the data is discarded by the event listener
      * (listening to the Submit component's {@link EventConstants#SELECTED} event).
      */
-    CANCEL;
+    CANCEL,
+
+    /**
+     * Submits the form, bypassing client-side validation, but performing all normal server-side processing (including validation).
+     *
+     * @since 5.3.3
+     */
+    UNCONDITIONAL;
 }
