@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -72,7 +72,8 @@ public class ModuleImpl implements Module
     private final static ConcurrentBarrier BARRIER = new ConcurrentBarrier();
 
     /**
-     * "Magic" method related to Externalizable that allows the Proxy object to replace itself with the token.
+     * "Magic" method related to Serializable that allows the Proxy object to replace itself with the token when being
+     * streamed out.
      */
     private static final MethodDescription WRITE_REPLACE = new MethodDescription(Modifier.PRIVATE, "java.lang.Object",
             "writeReplace", null, null, new String[]
@@ -456,11 +457,11 @@ public class ModuleImpl implements Module
 
         ServiceProxyToken token = SerializationSupport.createToken(serviceId);
 
-        return createProxyInstance(creator, token, serviceInterface, resources.getImplementationClass(), toString);
+        return createProxyInstance(creator, token, serviceInterface, toString);
     }
 
     private Object createProxyInstance(final ObjectCreator creator, final ServiceProxyToken token,
-                                       final Class serviceInterface, final Class serviceImplementation, final String description)
+                                       final Class serviceInterface, final String description)
     {
         ClassInstantiator instantiator = proxyFactory.createProxy(serviceInterface, new PlasticClassTransformer()
         {
