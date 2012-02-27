@@ -483,8 +483,7 @@ public class ModuleImpl implements Module
                 {
                     public void doBuild(InstructionBuilder builder)
                     {
-                        builder.loadThis().getField(plasticClass.getClassName(), creatorField.getName(),
-                                ObjectCreator.class);
+                        builder.loadThis().getField(creatorField);
                         builder.invoke(ObjectCreator.class, Object.class, "createObject").checkcast(serviceInterface)
                                 .returnResult();
                     }
@@ -499,9 +498,7 @@ public class ModuleImpl implements Module
                 {
                     public void doBuild(InstructionBuilder builder)
                     {
-                        builder.loadThis()
-                                .getField(plasticClass.getClassName(), tokenField.getName(), ServiceProxyToken.class)
-                                .returnResult();
+                        builder.loadThis().getField(tokenField).returnResult();
                     }
                 });
 
