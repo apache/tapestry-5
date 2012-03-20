@@ -23,7 +23,7 @@ public class KaptchaSymbolConstants
 {
     /**
      * Sets the default for the {@link org.apache.tapestry5.kaptcha.components.KaptchaField} component's visible parameter.
-     * This defaults to false.
+     * This defaults to true.
      *
      * @since 5.3
      */

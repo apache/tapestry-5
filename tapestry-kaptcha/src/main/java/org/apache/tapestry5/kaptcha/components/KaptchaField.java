@@ -47,8 +47,8 @@ public class KaptchaField extends AbstractField
     private KaptchaImage image;
 
     /**
-     * Controls whether the field is rendered like a password field (false, the factory default)
-     * or like a normal text field (true).
+     * Controls whether the field is rendered like a password field (false)
+     * or like a normal text field (true, the factory default).
      *
      * @see KaptchaSymbolConstants#KAPTCHA_DEFAULT_VISIBLE
      * @since 5.3

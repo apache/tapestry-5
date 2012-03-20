@@ -42,7 +42,7 @@ public class KaptchaModule
     @FactoryDefaults
     public static void factoryDefaults(MappedConfiguration<String, Object> configuration)
     {
-        configuration.add(KaptchaSymbolConstants.KAPTCHA_DEFAULT_VISIBLE, false);
+        configuration.add(KaptchaSymbolConstants.KAPTCHA_DEFAULT_VISIBLE, true);
     }
 
     @Contribute(ComponentClassResolver.class)
