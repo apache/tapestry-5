@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,20 +15,15 @@
 package org.apache.tapestry5.kaptcha.services;
 
 import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.ioc.Configuration;
-import org.apache.tapestry5.ioc.OrderedConfiguration;
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.*;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Value;
+import org.apache.tapestry5.ioc.services.FactoryDefaults;
+import org.apache.tapestry5.ioc.services.SymbolProvider;
+import org.apache.tapestry5.kaptcha.KaptchaSymbolConstants;
 import org.apache.tapestry5.kaptcha.internal.services.KaptchaDataTypeAnalyzer;
 import org.apache.tapestry5.kaptcha.internal.services.KaptchaProducerImpl;
-import org.apache.tapestry5.services.BeanBlockContribution;
-import org.apache.tapestry5.services.BeanBlockSource;
-import org.apache.tapestry5.services.ComponentClassResolver;
-import org.apache.tapestry5.services.DataTypeAnalyzer;
-import org.apache.tapestry5.services.EditBlockContribution;
-import org.apache.tapestry5.services.LibraryMapping;
+import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 
 /**
@@ -43,6 +38,13 @@ public class KaptchaModule
         binder.bind(KaptchaProducer.class, KaptchaProducerImpl.class);
     }
 
+    @Contribute(SymbolProvider.class)
+    @FactoryDefaults
+    public static void factoryDefaults(MappedConfiguration<String, Object> configuration)
+    {
+        configuration.add(KaptchaSymbolConstants.KAPTCHA_DEFAULT_VISIBLE, false);
+    }
+
     @Contribute(ComponentClassResolver.class)
     public static void provideLibraryMapping(Configuration<LibraryMapping> configuration)
     {
@@ -50,7 +52,7 @@ public class KaptchaModule
     }
 
     @Contribute(ComponentMessagesSource.class)
-    public static void provideLibrayMessages(
+    public static void provideLibraryMessages(
             OrderedConfiguration<Resource> configuration,
             @Value("classpath:org/apache/tapestry5/kaptcha/tapestry-kaptcha.properties")
             Resource coreCatalog)

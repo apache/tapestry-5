@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,30 +14,29 @@
 
 package org.apache.tapestry5.kaptcha.components;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.OutputStream;
-
-import javax.imageio.ImageIO;
-
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.kaptcha.services.KaptchaProducer;
 import org.apache.tapestry5.services.Response;
 
-import org.apache.tapestry5.kaptcha.services.KaptchaProducer;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Part of a Captcha based authentication scheme; a KaptchaImage generates a new
  * text image whenever it <em>renders</em> and can provide the previously
- * rendred text subsequently (it is stored persistently in the session).
- * <p>
- * The component renders an &lt;img&gt; tag, including width and height attributes. Other attributes
+ * rendered text subsequently (it is stored persistently in the session).
+ * <p/>
+ * The component renders an {@code <img>} tag, including width and height attributes. Other attributes
  * come from informal parameters.
  *
+ * @tapestrydoc
  * @since 5.3
  */
 @SupportsInformalParameters
@@ -72,11 +71,11 @@ public class KaptchaImage
 
         writer.element("img",
 
-        "src", link.toURI(),
+                "src", link.toURI(),
 
-        "width", producer.getWidth(),
+                "width", producer.getWidth(),
 
-        "height", producer.getHeight());
+                "height", producer.getHeight());
 
         resources.renderInformalParameters(writer);
 
