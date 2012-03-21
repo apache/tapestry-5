@@ -309,7 +309,7 @@ public final class TapestryIOCModule
         {
             public Boolean coerce(Number input)
             {
-                return input.byteValue() != 0;
+                return input.longValue() != 0;
             }
         });
 
