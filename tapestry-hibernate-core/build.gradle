@@ -1,6 +1,6 @@
 description = "Basic Hibernate services for Tapestry, useable outside of a Tapestry web application"
 
-hibernateVersion = '3.6.0.Final'
+hibernateVersion = '4.1.1.Final'
 
 dependencies {
   compile project(':tapestry-ioc')
@@ -8,6 +8,7 @@ dependencies {
   compile group: 'org.hibernate', name: 'hibernate-core', version: hibernateVersion, transitive: false
   compile "org.hibernate:hibernate-commons-annotations:3.2.0.Final"
   compile "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.0.Final"
+  compile "org.jboss.logging:jboss-logging:3.1.0.GA"  
   
   runtime "geronimo-spec:geronimo-spec-jta:1.0-M1"  
   runtime "antlr:antlr:2.7.6"
@@ -21,7 +22,7 @@ dependencies {
   
   testCompile "org.testng:testng:$testngVersion", { transitive = false }
   
-  testRuntime "org.hsqldb:hsqldb:1.8.0.10"
+  testRuntime "org.hsqldb:hsqldb:2.2.8"
 }
 
 jar {
