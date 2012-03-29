@@ -337,5 +337,24 @@ public class ZoneTests extends TapestryCoreTestCase
         assertCSS("demo-aip", "color", "rgb(0, 128, 0)");
         assertCSS("demo-aip", "text-decoration", "underline");
     }
+    
+    /**
+     * TAP5-1890
+     */
+    @Test
+    public void update_zone_with_empty_body()
+    {
+        openLinks("Zone Demo");
+
+        assertText("zone-update-message", "");
+
+        click("link=Update zone with empty body");
+
+        // Give it some time to process.
+
+        sleep(100);
+
+        assertText("zone-update-message", "Zone updated.");
+    }
 
 }
