@@ -141,7 +141,7 @@ subprojects {
   }
 
   dependencies {
-    groovy "org.codehaus.groovy:groovy-all:1.7.4"
+    groovy "org.codehaus.groovy:groovy-all:1.8.6"
 
     deployerJars "org.apache.maven.wagon:wagon-http-lightweight:1.0-beta-6"
   }
