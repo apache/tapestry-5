@@ -9,17 +9,17 @@ class StaticFieldAccess extends AbstractPlasticSpecification
         setup:
         def pc = mgr.getPlasticClass("testsubjects.StaticFieldHolder")
 
-        pc.introduceInterface(Access.class)
+        pc.introduceInterface(Access)
 
         pc.introduceMethod(new MethodDescription("java.lang.Object", "read")).changeImplementation({
             InstructionBuilder b ->
-            b.getStaticField("testsubjects.StaticFieldHolder", "VALUE", String.class).returnResult()
+            b.getStaticField("testsubjects.StaticFieldHolder", "VALUE", String).returnResult()
         } as InstructionBuilderCallback)
 
         pc.introduceMethod(new MethodDescription("void", "write", "java.lang.Object")).changeImplementation({
             InstructionBuilder b ->
-            b.loadArgument(0).checkcast(String.class)
-            b.putStaticField("testsubjects.StaticFieldHolder", "VALUE", String.class).returnResult()
+            b.loadArgument(0).checkcast(String)
+            b.putStaticField("testsubjects.StaticFieldHolder", "VALUE", String).returnResult()
         } as InstructionBuilderCallback)
 
         Access o = pc.createInstantiator().newInstance()

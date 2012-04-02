@@ -1,12 +1,13 @@
 package org.apache.tapestry5.plastic
 
-import java.sql.SQLException
 import org.apache.tapestry5.plastic.test.NoopAdvice
 import testannotations.FieldAnnotation
 import testannotations.Maybe
 import testannotations.MethodAnnotation
 import testannotations.Truth
 import testinterfaces.MagicContainer
+
+import java.sql.SQLException
 
 class MethodAdviceTests extends AbstractPlasticSpecification
 {
@@ -30,10 +31,10 @@ class MethodAdviceTests extends AbstractPlasticSpecification
 
                 assert it.getParameter(0) == 123
 
-                assert it.hasAnnotation(Deprecated.class) == false
-                assert it.hasAnnotation(Maybe.class) == true
+                assert it.hasAnnotation(Deprecated) == false
+                assert it.hasAnnotation(Maybe) == true
 
-                assert it.getAnnotation(Maybe.class).value() == Truth.YES
+                assert it.getAnnotation(Maybe).value() == Truth.YES
 
                 it.proceed()
             } as MethodAdvice)
@@ -162,11 +163,11 @@ class MethodAdviceTests extends AbstractPlasticSpecification
 
         def mgr = createMgr({ PlasticClass pc ->
 
-            pc.getMethodsWithAnnotation(MethodAnnotation.class).each({ m ->
+            pc.getMethodsWithAnnotation(MethodAnnotation).each({ m ->
                 m.addAdvice(justProceed)
             })
 
-            pc.getFieldsWithAnnotation(FieldAnnotation.class).each({ f ->
+            pc.getFieldsWithAnnotation(FieldAnnotation).each({ f ->
                 f.setConduit(fc)
             })
         } as PlasticClassTransformer)
@@ -188,11 +189,11 @@ class MethodAdviceTests extends AbstractPlasticSpecification
 
         def mgr = createMgr({ PlasticClass pc ->
 
-            pc.getFieldsWithAnnotation(FieldAnnotation.class).each({ f ->
+            pc.getFieldsWithAnnotation(FieldAnnotation).each({ f ->
                 f.setConduit(fc)
             })
 
-            pc.getMethodsWithAnnotation(MethodAnnotation.class).each({ m ->
+            pc.getMethodsWithAnnotation(MethodAnnotation).each({ m ->
                 m.addAdvice(justProceed)
             })
 
@@ -211,7 +212,7 @@ class MethodAdviceTests extends AbstractPlasticSpecification
 
         FieldConduit fc = [get: { instance, context ->
 
-            return context.get(MagicContainer.class).magic()
+            return context.get(MagicContainer).magic()
 
         }, set: { instance, context -> }] as FieldConduit
 
@@ -219,18 +220,18 @@ class MethodAdviceTests extends AbstractPlasticSpecification
 
         def mgr = createMgr({ PlasticClass pc ->
 
-            pc.getMethodsWithAnnotation(MethodAnnotation.class).each({ m ->
+            pc.getMethodsWithAnnotation(MethodAnnotation).each({ m ->
                 m.addAdvice(justProceed)
             })
 
-            pc.getFieldsWithAnnotation(FieldAnnotation.class).each({ f ->
+            pc.getFieldsWithAnnotation(FieldAnnotation).each({ f ->
                 f.setConduit(fc)
             })
         } as PlasticClassTransformer)
 
         if (false) { enableBytecodeDebugging(mgr) }
 
-        def o = mgr.getClassInstantiator("testsubjects.FieldConduitInsideAdvisedMethod").with(MagicContainer.class, container).newInstance()
+        def o = mgr.getClassInstantiator("testsubjects.FieldConduitInsideAdvisedMethod").with(MagicContainer, container).newInstance()
 
         when:
 
@@ -247,7 +248,7 @@ class MethodAdviceTests extends AbstractPlasticSpecification
 
         FieldConduit fc = [get: { instance, context ->
 
-            return context.get(MagicContainer.class)
+            return context.get(MagicContainer)
 
         }, set: { instance, context -> }] as FieldConduit
 
@@ -255,18 +256,18 @@ class MethodAdviceTests extends AbstractPlasticSpecification
 
         def mgr = createMgr({ PlasticClass pc ->
 
-            pc.getMethodsWithAnnotation(MethodAnnotation.class).each({ m ->
+            pc.getMethodsWithAnnotation(MethodAnnotation).each({ m ->
                 m.addAdvice(justProceed)
             })
 
-            pc.getFieldsWithAnnotation(FieldAnnotation.class).each({ f ->
+            pc.getFieldsWithAnnotation(FieldAnnotation).each({ f ->
                 f.setConduit(fc)
             })
         } as PlasticClassTransformer)
 
         if (false) { enableBytecodeDebugging(mgr) }
 
-        def o = mgr.getClassInstantiator("testsubjects.FieldConduitAdvisedMethodComplexCase").with(MagicContainer.class, container).newInstance()
+        def o = mgr.getClassInstantiator("testsubjects.FieldConduitAdvisedMethodComplexCase").with(MagicContainer, container).newInstance()
 
         when:
 

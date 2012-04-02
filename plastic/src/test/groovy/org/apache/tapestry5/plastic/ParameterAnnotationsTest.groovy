@@ -18,14 +18,14 @@ public class ParameterAnnotationsTest extends AbstractPlasticSpecification {
 
         params.size() == 2
         
-        params[0].type == String.class.name
+        params[0].type == String.name
         params[0].index == 0
-        params[0].hasAnnotation(TestInject.class)
-        params[0].getAnnotation(TestInject.class) instanceof TestInject
+        params[0].hasAnnotation(TestInject)
+        params[0].getAnnotation(TestInject) instanceof TestInject
         
         params[1].type == "int"
         params[1].index == 1
-        params[1].hasAnnotation(TestInject.class) == false
+        params[1].hasAnnotation(TestInject) == false
        
     }
 }

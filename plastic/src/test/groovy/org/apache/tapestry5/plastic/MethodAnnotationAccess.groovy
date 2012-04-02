@@ -13,7 +13,7 @@ class MethodAnnotationAccess extends AbstractPlasticSpecification {
 
         when:
 
-        def methods = pc.getMethodsWithAnnotation(Maybe.class)
+        def methods = pc.getMethodsWithAnnotation(Maybe)
         def noMethod = methods[0]
         def yesMethod = methods[1]
 
@@ -24,30 +24,30 @@ class MethodAnnotationAccess extends AbstractPlasticSpecification {
         noMethod.description.methodName == "no"
         yesMethod.description.methodName == "yes"
 
-        noMethod.getAnnotation(Maybe.class).value() == Truth.NO
-        yesMethod.getAnnotation(Maybe.class).value() == Truth.YES
+        noMethod.getAnnotation(Maybe).value() == Truth.NO
+        yesMethod.getAnnotation(Maybe).value() == Truth.YES
     }
 
     def "method annotation with primitive attributes"() {
         when:
-        def methods = pc.getMethodsWithAnnotation(PrimitiveValues.class)
+        def methods = pc.getMethodsWithAnnotation(PrimitiveValues)
 
         then:
         methods.size == 1
 
         when:
-        def pv = methods[0].getAnnotation(PrimitiveValues.class)
+        def pv = methods[0].getAnnotation(PrimitiveValues)
 
         then:
         pv.count()  == 5
         pv.title() == "runnables"  // explicit
-        pv.type() == Runnable.class
+        pv.type() == Runnable
         pv.message() == "created" // default
     }
 
     def "nested annotation as attribute of outer annotation"() {
         when:
-        def ann = pc.getMethodsWithAnnotation(Outer.class)[0].getAnnotation(Outer.class)
+        def ann = pc.getMethodsWithAnnotation(Outer)[0].getAnnotation(Outer)
 
         then:
         ann.maybe().value() == Truth.YES

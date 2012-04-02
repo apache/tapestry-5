@@ -1,10 +1,7 @@
 package org.apache.tapestry5.plastic
 
-import org.apache.tapestry5.plastic.PlasticManager;
-
-import spock.lang.Specification;
-import testannotations.InheritedAnnotation;
-import testannotations.SimpleAnnotation;
+import testannotations.InheritedAnnotation
+import testannotations.SimpleAnnotation
 
 class ClassAnnotationAccess extends AbstractPlasticSpecification {
 
@@ -14,22 +11,22 @@ class ClassAnnotationAccess extends AbstractPlasticSpecification {
 
         expect:
 
-        pc.hasAnnotation(Deprecated.class) == false
-        pc.getAnnotation(Deprecated.class) == null
+        pc.hasAnnotation(Deprecated) == false
+        pc.getAnnotation(Deprecated) == null
     }
 
     def "check existence of known, simple annotation"() {
 
         expect:
-        pc.hasAnnotation(SimpleAnnotation.class) == true
+        pc.hasAnnotation(SimpleAnnotation) == true
 
         when:
-        def a = pc.getAnnotation(SimpleAnnotation.class)
+        def a = pc.getAnnotation(SimpleAnnotation)
 
         then:
         a instanceof SimpleAnnotation
 
-        a.annotationType() == SimpleAnnotation.class
+        a.annotationType() == SimpleAnnotation
 
         a.toString() == "@testannotations.SimpleAnnotation"
     }
@@ -38,6 +35,6 @@ class ClassAnnotationAccess extends AbstractPlasticSpecification {
         def pc = mgr.getPlasticClass("testsubjects.InheritedAnnotationSubClass")
 
         expect:
-        pc.hasAnnotation(InheritedAnnotation.class) == true
+        pc.hasAnnotation(InheritedAnnotation) == true
     }
 }

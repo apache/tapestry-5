@@ -1,7 +1,6 @@
 package org.apache.tapestry5.plastic
 
 import org.apache.tapestry5.internal.plastic.StandardDelegate
-
 import testsubjects.HasToString
 
 class ToStringTests extends AbstractPlasticSpecification {
@@ -11,7 +10,7 @@ class ToStringTests extends AbstractPlasticSpecification {
 
         def mgr = PlasticManager.withContextClassLoader().create()
 
-        def o = mgr.createClass (Object.class, {
+        def o = mgr.createClass (Object, {
             it.addToString "<ToString>" } as PlasticClassTransformer).newInstance()
 
         expect:
@@ -26,7 +25,7 @@ class ToStringTests extends AbstractPlasticSpecification {
 
         def mgr = PlasticManager.withContextClassLoader().delegate(new StandardDelegate()).packages(["testsubjects"]).create()
 
-        def o = mgr.createClass (HasToString.class, { it.addToString "<OverrideToString>" } as PlasticClassTransformer).newInstance()
+        def o = mgr.createClass (HasToString, { it.addToString "<OverrideToString>" } as PlasticClassTransformer).newInstance()
 
         expect:
 
