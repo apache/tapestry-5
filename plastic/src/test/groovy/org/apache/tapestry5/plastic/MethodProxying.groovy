@@ -7,18 +7,18 @@ class MethodProxying extends AbstractPlasticSpecification {
     def "basic proxying"() {
         setup:
 
-        def mockRunnable = Mock(Runnable.class)
+        def mockRunnable = Mock(Runnable)
 
-        def o = mgr.createClass (Object.class, { PlasticClass pc ->
+        def o = mgr.createClass (Object, { PlasticClass pc ->
 
-            def field = pc.introduceField (Runnable.class, "delegate").inject(mockRunnable)
+            def field = pc.introduceField (Runnable, "delegate").inject(mockRunnable)
 
-            pc.proxyInterface (Runnable.class, field)
+            pc.proxyInterface (Runnable, field)
         } as PlasticClassTransformer).newInstance()
 
         expect:
 
-        Runnable.class.isInstance o
+        Runnable.isInstance o
 
         when:
 
@@ -35,11 +35,11 @@ class MethodProxying extends AbstractPlasticSpecification {
         def handle
         def methodToString
 
-        def o = mgr.createClass(Object.class, { PlasticClass pc ->
+        def o = mgr.createClass(Object, { PlasticClass pc ->
 
-            def field = pc.introduceField(Memory.class, "delegate").inject(new Memory())
+            def field = pc.introduceField(Memory, "delegate").inject(new Memory())
 
-            def m = Memory.class.getMethod("returnLast", long.class)
+            def m = Memory.getMethod("returnLast", long)
 
             def pm = pc.introduceMethod(m)
 
@@ -65,11 +65,11 @@ class MethodProxying extends AbstractPlasticSpecification {
 
         def handle
 
-        def o = mgr.createClass(Object.class, { PlasticClass pc ->
+        def o = mgr.createClass(Object, { PlasticClass pc ->
 
             def memory = new Memory()
 
-            PlasticMethod providerMethod = pc.introduceMethod(new MethodDescription(Memory.class.name, "provideDelegate")).addAdvice({ MethodInvocation mi ->
+            PlasticMethod providerMethod = pc.introduceMethod(new MethodDescription(Memory.name, "provideDelegate")).addAdvice({ MethodInvocation mi ->
 
                 mi.returnValue = memory
 
@@ -77,7 +77,7 @@ class MethodProxying extends AbstractPlasticSpecification {
 
             } as MethodAdvice)
 
-            def m = Memory.class.getMethod("returnLast", long.class)
+            def m = Memory.getMethod("returnLast", long)
 
             def pm = pc.introduceMethod(m)
 

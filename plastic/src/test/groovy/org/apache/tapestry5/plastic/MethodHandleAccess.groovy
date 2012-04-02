@@ -53,7 +53,7 @@ class MethodHandleAccess extends AbstractPlasticSpecification {
         result.returnValue == null
         result.didThrowCheckedException() == true
 
-        def e = result.getCheckedException(WillNotDoubleException.class)
+        def e = result.getCheckedException(WillNotDoubleException)
     }
 
     // This also tests object references as parameters and return values (other tests

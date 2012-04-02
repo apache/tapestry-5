@@ -1,11 +1,9 @@
 package org.apache.tapestry5.plastic
 
-import java.util.concurrent.Callable
-
-import org.apache.tapestry5.plastic.PlasticClassTransformer;
-
 import testsubjects.InjectionSubject
 import testsubjects.TestInjectTransformer
+
+import java.util.concurrent.Callable
 
 /**
  * This is the first test that integrates the class loader with the PlasticManager, simulating how Plastic will
@@ -17,10 +15,10 @@ class SimpleClassLoading extends AbstractPlasticSpecification {
     def "basic field transformation"() {
         setup:
 
-        def concreteClass = InjectionSubject.class
+        def concreteClass = InjectionSubject
         def goHandle
-        def runnable = Mock(Runnable.class)
-        def transformer = new TestInjectTransformer(Runnable.class, runnable)
+        def runnable = Mock(Runnable)
+        def transformer = new TestInjectTransformer(Runnable, runnable)
 
         def mgr = createMgr (transformer, {
             goHandle = findHandle (it, "go")
@@ -38,7 +36,7 @@ class SimpleClassLoading extends AbstractPlasticSpecification {
 
         1 * runnable.run()
 
-        concreteClass != instance.class
+        concreteClass != instance
     }
 
     def "field transformation in subclass of transformed class"() {
@@ -46,12 +44,12 @@ class SimpleClassLoading extends AbstractPlasticSpecification {
 
         def goHandle
         def callHandle
-        def runnable = Mock(Runnable.class)
-        def callable = Mock(Callable.class)
+        def runnable = Mock(Runnable)
+        def callable = Mock(Callable)
 
         def mgr = createMgr (
-                new TestInjectTransformer(Runnable.class, runnable),
-                new TestInjectTransformer(Callable.class, callable), {
+                new TestInjectTransformer(Runnable, runnable),
+                new TestInjectTransformer(Callable, callable), {
                     if (goHandle ==null) goHandle = findHandle (it, "go")
 
                     if (callHandle == null) callHandle = findHandle(it, "call")

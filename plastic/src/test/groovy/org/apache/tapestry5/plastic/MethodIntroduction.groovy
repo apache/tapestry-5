@@ -1,6 +1,5 @@
 package org.apache.tapestry5.plastic
 
-
 class MethodIntroduction extends AbstractPlasticSpecification
 {
 
@@ -46,12 +45,12 @@ class MethodIntroduction extends AbstractPlasticSpecification
 
         "java.lang.String" | "getString" | { it.getString() } | null          | null
         "java.util.Date[]" | "getDates"  | { it.getDates() }  | null          | null
-        "int"              | "getInt"    | { it.getInt() }    | 0             | Integer.class
+        "int"              | "getInt"    | { it.getInt() }    | 0             | Integer
         "int[]"            | "getInts"   | { it.getInts() }   | null          | null
-        "char"             | "getChar"   | { it.getChar() }   | 0             | Character.class
-        "float"            | "getFloat"  | { it.getFloat() }  | 0f            | Float.class
-        "long"             | "getLong"   | { it.getLong() }   | 0l            | Long.class
-        "double"           | "getDouble" | { it.getDouble() } | 0d            | Double.class
+        "char"             | "getChar"   | { it.getChar() }   | 0             | Character
+        "float"            | "getFloat"  | { it.getFloat() }  | 0f            | Float
+        "long"             | "getLong"   | { it.getLong() }   | 0l            | Long
+        "double"           | "getDouble" | { it.getDouble() } | 0d            | Double
     }
 
     def "introduce void method override"()
@@ -102,7 +101,7 @@ class MethodIntroduction extends AbstractPlasticSpecification
 
         def mgr = createMgr({ PlasticClass pc ->
             if (pc.className == CLASS_NAME)
-                introduced = pc.introduceInterface(Runnable.class).collect { it.description }
+                introduced = pc.introduceInterface(Runnable).collect { it.description }
         } as PlasticClassTransformer)
 
         when:
@@ -129,12 +128,12 @@ class MethodIntroduction extends AbstractPlasticSpecification
             PlasticClass pc ->
             if (pc.className.contains("Base"))
             {
-                pc.introduceInterface(Serializable.class)
+                pc.introduceInterface(Serializable)
             }
 
             if (pc.className.contains("Child"))
             {
-                present = pc.isInterfaceImplemented(Serializable.class)
+                present = pc.isInterfaceImplemented(Serializable)
             }
 
         } as PlasticClassTransformer)

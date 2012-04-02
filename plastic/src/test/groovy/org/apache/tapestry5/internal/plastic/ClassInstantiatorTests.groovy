@@ -1,46 +1,35 @@
-// Copyright 2011 The Apache Software Foundation
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package org.apache.tapestry5.internal.plastic
-
-import java.text.DateFormat
 
 import spock.lang.Specification
 import testsubjects.ContextCatcher
 
+import java.text.DateFormat
+
 class ClassInstantiatorTests extends Specification
 {
 
-    def ins = new ClassInstantiatorImpl(ContextCatcher.class, ContextCatcher.class.constructors[0], null)
+    def ins = new ClassInstantiatorImpl(ContextCatcher, ContextCatcher.constructors[0], null)
 
     def "adding a context value returns a new instantiator"() {
 
         String value = "instance value of type String";
 
         when:
-        def ins2 = ins.with(String.class, value)
+        def ins2 = ins.with(String, value)
 
         then:
         ! ins2.is(ins)
 
-        ins2.get(String.class).is(value)
+        ins2.get(String).is(value)
     }
 
     def "may not add a duplicate instance context value"() {
 
+        given:
+        def ins2 = ins.with(String, "initial value")
+
         when:
-        ins.with(String.class, "initial value").with(String.class, "conflicting value")
+        ins2.with(String, "conflicting value")
 
         then:
         def e = thrown(IllegalStateException)
@@ -50,7 +39,7 @@ class ClassInstantiatorTests extends Specification
 
     def "get a value not stored is a failure"() {
         when:
-        ins.get(DateFormat.class)
+        ins.get(DateFormat)
 
         then:
         def e = thrown(IllegalArgumentException)
@@ -62,10 +51,10 @@ class ClassInstantiatorTests extends Specification
 
         when:
 
-        def o = ins.with(String.class, value).newInstance()
+        def o = ins.with(String, value).newInstance()
 
         then:
 
-        o.instanceContext.get(String.class).is(value)
+        o.instanceContext.get(String).is(value)
     }
 }

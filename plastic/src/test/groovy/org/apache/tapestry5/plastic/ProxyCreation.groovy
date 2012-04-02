@@ -7,8 +7,8 @@ class ProxyCreation extends AbstractPlasticSpecification {
 
         Runnable r = Mock(Runnable)
 
-        def ins = mgr.createProxy(Runnable.class, {
-            def f = it.introduceField(Runnable.class, "delegate").inject(r)
+        def ins = mgr.createProxy(Runnable, {
+            def f = it.introduceField(Runnable, "delegate").inject(r)
 
             it.introduceMethod(new MethodDescription("void", "run")).delegateTo(f)
         } as PlasticClassTransformer)
@@ -36,11 +36,11 @@ class ProxyCreation extends AbstractPlasticSpecification {
 
         Runnable r = Mock(Runnable)
 
-        def ins = mgr.createProxy(Runnable.class, {
+        def ins = mgr.createProxy(Runnable, {
             PlasticClass pc ->
-            def f = pc.introduceField(Runnable.class, "delegate").inject(r)
+            def f = pc.introduceField(Runnable, "delegate").inject(r)
 
-            PlasticMethod dm = pc.introducePrivateMethod(Runnable.class.name, "run", null, null)
+            PlasticMethod dm = pc.introducePrivateMethod(Runnable.name, "run", null, null)
 
             assert dm.description.methodName != "run"
 
@@ -48,7 +48,7 @@ class ProxyCreation extends AbstractPlasticSpecification {
                 it.loadThis().getField(f).returnResult()
             } as InstructionBuilderCallback)
 
-            Runnable.class.methods.each( { m -> pc.introduceMethod(m).delegateTo(dm) })
+            Runnable.methods.each( { m -> pc.introduceMethod(m).delegateTo(dm) })
 
             pc.introduceMethod(new MethodDescription("void", "run")).delegateTo(f)
         } as PlasticClassTransformer)
@@ -74,7 +74,7 @@ class ProxyCreation extends AbstractPlasticSpecification {
     def "type must be an interface"() {
         when:
 
-        mgr.createProxy (String.class, {
+        mgr.createProxy (String, {
         } as PlasticClassTransformer)
 
         then:
@@ -96,8 +96,8 @@ class ProxyCreation extends AbstractPlasticSpecification {
 
         mgr.addPlasticClassListener listener
 
-        def ins = mgr.createProxy(Runnable.class, {
-            def f = it.introduceField(Runnable.class, "delegate").inject(r)
+        def ins = mgr.createProxy(Runnable, {
+            def f = it.introduceField(Runnable, "delegate").inject(r)
 
             it.introduceMethod(new MethodDescription("void", "run")).delegateTo(f)
         } as PlasticClassTransformer)

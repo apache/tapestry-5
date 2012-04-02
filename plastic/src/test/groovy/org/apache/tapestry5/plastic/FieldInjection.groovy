@@ -1,21 +1,5 @@
-// Copyright 2011 The Apache Software Foundation
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package org.apache.tapestry5.plastic
 
-import java.util.logging.Logger
-import testannotations.KindaInject
 import testsubjects.StringPropertyHolder
 
 class FieldInjection extends AbstractPlasticSpecification
@@ -51,17 +35,17 @@ class FieldInjection extends AbstractPlasticSpecification
 
             instanceType = it.instanceType
 
-            return it.get(String.class)
+            return it.get(String)
         } as ComputedValue)
 
-        def o = pc.createInstantiator().with(String.class, injected).newInstance()
+        def o = pc.createInstantiator().with(String, injected).newInstance()
 
         expect:
 
         o.value.is(injected)
         instanceType.is(o.getClass())
 
-        !instanceType.is(StringPropertyHolder.class) // it's a new class with the same name
+        !instanceType.is(StringPropertyHolder) // it's a new class with the same name
 
         when:
         o.value = "attempt to update"
@@ -79,7 +63,7 @@ class FieldInjection extends AbstractPlasticSpecification
 
         pc.allFields.first().injectFromInstanceContext()
 
-        def o = pc.createInstantiator().with(String.class, injected).newInstance()
+        def o = pc.createInstantiator().with(String, injected).newInstance()
 
         expect:
 

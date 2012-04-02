@@ -51,13 +51,13 @@ class FieldAccessTests extends AbstractPlasticSpecification
 
         PlasticClassTransformer installFieldConduit = {     PlasticClass pc ->
 
-            pc.getFieldsWithAnnotation(SimpleAnnotation.class).each { f -> f.setConduit(fc) }
+            pc.getFieldsWithAnnotation(SimpleAnnotation).each { f -> f.setConduit(fc) }
 
         } as PlasticClassTransformer
 
         PlasticClassTransformer handleInjection = { PlasticClass pc ->
 
-            pc.getFieldsWithAnnotation(KindaInject.class).each { f -> f.inject(delegate) }
+            pc.getFieldsWithAnnotation(KindaInject).each { f -> f.inject(delegate) }
         } as PlasticClassTransformer
 
         def mgr = createMgr(installFieldConduit, handleInjection)

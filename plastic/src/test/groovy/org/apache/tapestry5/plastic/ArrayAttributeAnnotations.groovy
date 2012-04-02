@@ -1,10 +1,7 @@
 package org.apache.tapestry5.plastic
 
-import org.apache.tapestry5.plastic.PlasticManager;
-
-import spock.lang.Specification;
-import testannotations.ArrayAnnotation;
-import testannotations.Truth;
+import testannotations.ArrayAnnotation
+import testannotations.Truth
 
 class ArrayAttributeAnnotations extends AbstractPlasticSpecification {
 
@@ -12,7 +9,7 @@ class ArrayAttributeAnnotations extends AbstractPlasticSpecification {
         when:
         def pc = mgr.getPlasticClass("testsubjects.AnnotationSubject")
 
-        def a = pc.getAnnotation(ArrayAnnotation.class)
+        def a = pc.getAnnotation(ArrayAnnotation)
 
         then:
         a.numbers().length == 0
@@ -24,7 +21,7 @@ class ArrayAttributeAnnotations extends AbstractPlasticSpecification {
     def "explicit values for array attributes"() {
         when:
         def pc = mgr.getPlasticClass("testsubjects.ArrayAttributesSubject")
-        def a = pc.getAnnotation(ArrayAnnotation.class)
+        def a = pc.getAnnotation(ArrayAnnotation)
 
         then:
 
@@ -32,7 +29,7 @@ class ArrayAttributeAnnotations extends AbstractPlasticSpecification {
 
         a.strings() == ["frodo", "sam"]
 
-        a.types() == [Runnable.class]
+        a.types() == [Runnable]
 
         a.annotations().length == 2
         a.annotations()[0].value() == Truth.YES
@@ -43,7 +40,7 @@ class ArrayAttributeAnnotations extends AbstractPlasticSpecification {
         when:
         def pc = mgr.getPlasticClass("testsubjects.ExplicityEmptyArrayAttributesSubject")
 
-        def a = pc.getAnnotation(ArrayAnnotation.class)
+        def a = pc.getAnnotation(ArrayAnnotation)
 
         then:
         a.numbers().length == 0

@@ -11,7 +11,7 @@ class FieldAnnotationAccess extends AbstractPlasticSpecification
         def pc = mgr.getPlasticClass("testsubjects.AnnotationSubject")
 
         when:
-        def fields = pc.getFieldsWithAnnotation(Maybe.class)
+        def fields = pc.getFieldsWithAnnotation(Maybe)
 
         then:
         fields.size() == 1
