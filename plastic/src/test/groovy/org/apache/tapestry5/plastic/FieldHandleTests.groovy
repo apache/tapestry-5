@@ -14,10 +14,12 @@
 
 package org.apache.tapestry5.plastic
 
+import testsubjects.*
+
 class FieldHandleTests extends AbstractPlasticSpecification
 {
     def "getting access to a new primitive field"() {
-        def pc = mgr.getPlasticClass("testsubjects.Empty")
+        def pc = mgr.getPlasticClass(Empty.name)
 
         def f = pc.introduceField("int", "count")
         def h = f.handle
@@ -46,7 +48,7 @@ class FieldHandleTests extends AbstractPlasticSpecification
      * differently.
      */
     def "access to existing long field"() {
-        def pc = mgr.getPlasticClass("testsubjects.LongFieldHolder")
+        def pc = mgr.getPlasticClass(LongFieldHolder.name)
 
         def f = pc.allFields.first()
         def h = f.handle
@@ -78,7 +80,7 @@ class FieldHandleTests extends AbstractPlasticSpecification
      */
     def "default value for field is not lost"() {
 
-        def pc = mgr.getPlasticClass("testsubjects.LongFieldHolder")
+        def pc = mgr.getPlasticClass(LongFieldHolder.name)
 
         def f = pc.allFields.first()
         def h = f.handle
@@ -91,7 +93,7 @@ class FieldHandleTests extends AbstractPlasticSpecification
     }
 
     def "access to reference field"() {
-        def pc = mgr.getPlasticClass("testsubjects.StringHolder")
+        def pc = mgr.getPlasticClass(StringHolder.name)
 
         def f = pc.allFields.first()
         def h = f.handle
@@ -117,7 +119,7 @@ class FieldHandleTests extends AbstractPlasticSpecification
     }
 
     def "access to multiple fields in single class"() {
-        def pc = mgr.getPlasticClass("testsubjects.MultipleFields")
+        def pc = mgr.getPlasticClass(MultipleFields.name)
 
         def fred = handleByName(pc, "fred")
         def barney = handleByName(pc, "barney")
@@ -166,7 +168,7 @@ class FieldHandleTests extends AbstractPlasticSpecification
 
         def fc = Mock(FieldConduit)
 
-        def pc = mgr.getPlasticClass("testsubjects.FieldHandleAccessOnly")
+        def pc = mgr.getPlasticClass(FieldHandleAccessOnly.name)
 
         def field = pc.allFields.first()
 

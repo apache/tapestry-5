@@ -4,10 +4,11 @@ import testannotations.Maybe
 import testannotations.Outer
 import testannotations.PrimitiveValues
 import testannotations.Truth
+import testsubjects.AnnotationSubject
 
 class MethodAnnotationAccess extends AbstractPlasticSpecification {
 
-    def pc = mgr.getPlasticClass("testsubjects.AnnotationSubject")
+    def pc = mgr.getPlasticClass(AnnotationSubject.name)
 
     def "access to method annotation with enum attribute"() {
 

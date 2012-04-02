@@ -2,12 +2,15 @@ package org.apache.tapestry5.plastic
 
 import testannotations.ArrayAnnotation
 import testannotations.Truth
+import testsubjects.AnnotationSubject
+import testsubjects.ArrayAttributesSubject
+import testsubjects.ExplicityEmptyArrayAttributesSubject
 
 class ArrayAttributeAnnotations extends AbstractPlasticSpecification {
 
     def "handling of array attribute defaults"() {
         when:
-        def pc = mgr.getPlasticClass("testsubjects.AnnotationSubject")
+        def pc = mgr.getPlasticClass(AnnotationSubject.name)
 
         def a = pc.getAnnotation(ArrayAnnotation)
 
@@ -20,7 +23,7 @@ class ArrayAttributeAnnotations extends AbstractPlasticSpecification {
 
     def "explicit values for array attributes"() {
         when:
-        def pc = mgr.getPlasticClass("testsubjects.ArrayAttributesSubject")
+        def pc = mgr.getPlasticClass(ArrayAttributesSubject.name)
         def a = pc.getAnnotation(ArrayAnnotation)
 
         then:
@@ -38,7 +41,7 @@ class ArrayAttributeAnnotations extends AbstractPlasticSpecification {
 
     def "handling of explicitly empty array attributes"() {
         when:
-        def pc = mgr.getPlasticClass("testsubjects.ExplicityEmptyArrayAttributesSubject")
+        def pc = mgr.getPlasticClass(ExplicityEmptyArrayAttributesSubject.name)
 
         def a = pc.getAnnotation(ArrayAnnotation)
 

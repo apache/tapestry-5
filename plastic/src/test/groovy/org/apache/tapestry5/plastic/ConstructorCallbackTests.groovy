@@ -1,5 +1,7 @@
 package org.apache.tapestry5.plastic
 
+import testsubjects.Empty
+
 class ConstructorCallbackTests extends AbstractPlasticSpecification
 {
     def "constructor callback invoked after field injection"()
@@ -21,7 +23,7 @@ class ConstructorCallbackTests extends AbstractPlasticSpecification
 
         when:
 
-        mgr.getClassInstantiator("testsubjects.Empty").newInstance()
+        mgr.getClassInstantiator(Empty.name).newInstance()
 
         then:
 

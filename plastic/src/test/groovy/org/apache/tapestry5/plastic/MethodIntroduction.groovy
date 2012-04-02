@@ -1,15 +1,14 @@
 package org.apache.tapestry5.plastic
 
-class MethodIntroduction extends AbstractPlasticSpecification
-{
+import testsubjects.ChildClass
 
-    static final String CLASS_NAME = "testsubjects.ChildClass"
+class MethodIntroduction extends AbstractPlasticSpecification {
 
-    def instanceWithIntroducedMethod(MethodDescription md, isOverride)
-    {
+    static final String CLASS_NAME = ChildClass.name
+
+    def instanceWithIntroducedMethod(MethodDescription md, isOverride) {
         def mgr = createMgr({ PlasticClass pc ->
-            if (pc.className == CLASS_NAME)
-            {
+            if (pc.className == CLASS_NAME) {
                 def method = pc.introduceMethod(md)
 
                 assert method.override == isOverride
@@ -19,8 +18,7 @@ class MethodIntroduction extends AbstractPlasticSpecification
         return mgr.getClassInstantiator(CLASS_NAME).newInstance()
     }
 
-    def "introduce method not present in base class"()
-    {
+    def "introduce method not present in base class"() {
 
         def o = instanceWithIntroducedMethod(new MethodDescription(returnType, methodName), false)
 
@@ -53,8 +51,7 @@ class MethodIntroduction extends AbstractPlasticSpecification
         "double"           | "getDouble" | { it.getDouble() } | 0d            | Double
     }
 
-    def "introduce void method override"()
-    {
+    def "introduce void method override"() {
 
         setup:
 
@@ -69,8 +66,7 @@ class MethodIntroduction extends AbstractPlasticSpecification
         true
     }
 
-    def "introduce primitive method override"()
-    {
+    def "introduce primitive method override"() {
         setup:
 
         def o = instanceWithIntroducedMethod(new MethodDescription("int", "primitiveMethod", "int"), true)
@@ -80,8 +76,7 @@ class MethodIntroduction extends AbstractPlasticSpecification
         o.primitiveMethod(97) == 97
     }
 
-    def "introduce object method override"()
-    {
+    def "introduce object method override"() {
 
         setup:
 
@@ -92,8 +87,7 @@ class MethodIntroduction extends AbstractPlasticSpecification
         o.objectMethod("plastic") == "plastic"
     }
 
-    def "introduce interface"()
-    {
+    def "introduce interface"() {
 
         def introduced
 
@@ -118,21 +112,18 @@ class MethodIntroduction extends AbstractPlasticSpecification
         introduced[0].methodName == "run"
     }
 
-    def "check for introduced interface is visible in subclasses"()
-    {
+    def "check for introduced interface is visible in subclasses"() {
         setup:
 
         boolean present;
 
         def mgr = createMgr({
             PlasticClass pc ->
-            if (pc.className.contains("Base"))
-            {
+            if (pc.className.contains("Base")) {
                 pc.introduceInterface(Serializable)
             }
 
-            if (pc.className.contains("Child"))
-            {
+            if (pc.className.contains("Child")) {
                 present = pc.isInterfaceImplemented(Serializable)
             }
 
@@ -140,7 +131,7 @@ class MethodIntroduction extends AbstractPlasticSpecification
 
         when:
 
-        mgr.getClassInstantiator("testsubjects.ChildClass")
+        mgr.getClassInstantiator(ChildClass.name)
 
         then:
 

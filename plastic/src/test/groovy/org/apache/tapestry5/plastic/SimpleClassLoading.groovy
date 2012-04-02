@@ -1,6 +1,7 @@
 package org.apache.tapestry5.plastic
 
 import testsubjects.InjectionSubject
+import testsubjects.InjectionSubjectSubclass
 import testsubjects.TestInjectTransformer
 
 import java.util.concurrent.Callable
@@ -20,12 +21,12 @@ class SimpleClassLoading extends AbstractPlasticSpecification {
         def runnable = Mock(Runnable)
         def transformer = new TestInjectTransformer(Runnable, runnable)
 
-        def mgr = createMgr (transformer, {
-            goHandle = findHandle (it, "go")
+        def mgr = createMgr(transformer, {
+            goHandle = findHandle(it, "go")
         } as PlasticClassTransformer);
 
 
-        def ins = mgr.getClassInstantiator ("testsubjects.InjectionSubject")
+        def ins = mgr.getClassInstantiator(InjectionSubject.name)
         def instance = ins.newInstance()
 
         when:
@@ -47,16 +48,16 @@ class SimpleClassLoading extends AbstractPlasticSpecification {
         def runnable = Mock(Runnable)
         def callable = Mock(Callable)
 
-        def mgr = createMgr (
+        def mgr = createMgr(
                 new TestInjectTransformer(Runnable, runnable),
                 new TestInjectTransformer(Callable, callable), {
-                    if (goHandle ==null) goHandle = findHandle (it, "go")
+                    if (goHandle == null) goHandle = findHandle(it, "go")
 
                     if (callHandle == null) callHandle = findHandle(it, "call")
                 } as PlasticClassTransformer)
 
 
-        def ins = mgr.getClassInstantiator ("testsubjects.InjectionSubjectSubclass")
+        def ins = mgr.getClassInstantiator(InjectionSubjectSubclass.name)
         def instance = ins.newInstance()
 
         when:

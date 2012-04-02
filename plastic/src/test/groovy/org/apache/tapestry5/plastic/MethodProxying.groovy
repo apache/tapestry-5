@@ -9,11 +9,11 @@ class MethodProxying extends AbstractPlasticSpecification {
 
         def mockRunnable = Mock(Runnable)
 
-        def o = mgr.createClass (Object, { PlasticClass pc ->
+        def o = mgr.createClass(Object, { PlasticClass pc ->
 
-            def field = pc.introduceField (Runnable, "delegate").inject(mockRunnable)
+            def field = pc.introduceField(Runnable, "delegate").inject(mockRunnable)
 
-            pc.proxyInterface (Runnable, field)
+            pc.proxyInterface(Runnable, field)
         } as PlasticClassTransformer).newInstance()
 
         expect:

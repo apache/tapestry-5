@@ -4,10 +4,12 @@ import org.apache.tapestry5.internal.plastic.NoopDelegate
 
 import java.lang.reflect.InvocationTargetException
 
+import testsubjects.*
+
 class ObtainPlasticClass extends AbstractPlasticSpecification
 {
     def "abstract classes may not be instantiated"() {
-        def pc = mgr.getPlasticClass("testsubjects.AbstractSubject")
+        def pc = mgr.getPlasticClass(AbstractSubject.name)
 
         when:
 
@@ -22,7 +24,7 @@ class ObtainPlasticClass extends AbstractPlasticSpecification
 
     def "access to simple empty class"() {
         setup:
-        def pc = mgr.getPlasticClass("testsubjects.Empty")
+        def pc = mgr.getPlasticClass(Empty.name)
 
         // More to come, but for now
 
@@ -34,7 +36,7 @@ class ObtainPlasticClass extends AbstractPlasticSpecification
 
     def "can obtain only method in class"() {
         setup:
-        def pc = mgr.getPlasticClass("testsubjects.SingleMethod")
+        def pc = mgr.getPlasticClass(SingleMethod.name)
         def methods = pc.methods
 
         expect:
@@ -44,7 +46,7 @@ class ObtainPlasticClass extends AbstractPlasticSpecification
 
     def "static methods are ignored"() {
         setup:
-        def pc = mgr.getPlasticClass("testsubjects.StaticMethodsIgnored")
+        def pc = mgr.getPlasticClass(StaticMethodsIgnored.name)
         def methods = pc.methods
 
         expect:
@@ -54,7 +56,7 @@ class ObtainPlasticClass extends AbstractPlasticSpecification
 
     def "methods obtained in sorted alphabetic order"() {
         setup:
-        def pc = mgr.getPlasticClass("testsubjects.MultipleMethods")
+        def pc = mgr.getPlasticClass(MultipleMethods.name)
         def descs = pc.methods.collect({
             it.description.toString()
         });
@@ -74,7 +76,7 @@ class ObtainPlasticClass extends AbstractPlasticSpecification
 
     def "fields obtained in sorted alphabetic order"() {
         setup:
-        def pc = mgr.getPlasticClass("testsubjects.MultipleFields")
+        def pc = mgr.getPlasticClass(MultipleFields.name)
 
         expect:
         pc.fields.collect({ it.name }) == [
@@ -87,7 +89,7 @@ class ObtainPlasticClass extends AbstractPlasticSpecification
 
     def "static fields are ignored"() {
         setup:
-        def pc = mgr.getPlasticClass("testsubjects.StaticFields")
+        def pc = mgr.getPlasticClass(testsubjects.StaticFields.name)
 
         expect:
         pc.allFields == []
@@ -96,7 +98,7 @@ class ObtainPlasticClass extends AbstractPlasticSpecification
     def "instrumented instance fields must be private"() {
         when:
 
-        PlasticClass pc = mgr.getPlasticClass("testsubjects.PublicInstanceField")
+        PlasticClass pc = mgr.getPlasticClass(testsubjects.PublicInstanceField.name)
 
         pc.getAllFields()[0].inject("fixed string value")
 
@@ -110,7 +112,7 @@ class ObtainPlasticClass extends AbstractPlasticSpecification
 
         def mgr = PlasticManager.withContextClassLoader().delegate(new NoopDelegate()).packages(["testsubjects"]).create()
 
-        Class clazz = mgr.classLoader.loadClass("testsubjects.AlternateConstructor")
+        Class clazz = mgr.classLoader.loadClass(testsubjects.AlternateConstructor.name)
 
         when:
 

@@ -1,25 +1,26 @@
 package org.apache.tapestry5.plastic
 
 import testinterfaces.Access
+import testsubjects.StaticFieldHolder
 
 class StaticFieldAccess extends AbstractPlasticSpecification
 {
     def "static fields are readable and writable"()
     {
         setup:
-        def pc = mgr.getPlasticClass("testsubjects.StaticFieldHolder")
+        def pc = mgr.getPlasticClass(StaticFieldHolder.name)
 
         pc.introduceInterface(Access)
 
-        pc.introduceMethod(new MethodDescription("java.lang.Object", "read")).changeImplementation({
+        pc.introduceMethod(new MethodDescription(Object.name, "read")).changeImplementation({
             InstructionBuilder b ->
-            b.getStaticField("testsubjects.StaticFieldHolder", "VALUE", String).returnResult()
+            b.getStaticField(StaticFieldHolder.name, "VALUE", String).returnResult()
         } as InstructionBuilderCallback)
 
-        pc.introduceMethod(new MethodDescription("void", "write", "java.lang.Object")).changeImplementation({
+        pc.introduceMethod(new MethodDescription(void.name, "write", "java.lang.Object")).changeImplementation({
             InstructionBuilder b ->
             b.loadArgument(0).checkcast(String)
-            b.putStaticField("testsubjects.StaticFieldHolder", "VALUE", String).returnResult()
+            b.putStaticField(StaticFieldHolder.name, "VALUE", String).returnResult()
         } as InstructionBuilderCallback)
 
         Access o = pc.createInstantiator().newInstance()
