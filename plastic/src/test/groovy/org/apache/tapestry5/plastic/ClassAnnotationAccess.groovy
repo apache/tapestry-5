@@ -2,10 +2,12 @@ package org.apache.tapestry5.plastic
 
 import testannotations.InheritedAnnotation
 import testannotations.SimpleAnnotation
+import testsubjects.AnnotationSubject
+import testsubjects.InheritedAnnotationSubClass
 
 class ClassAnnotationAccess extends AbstractPlasticSpecification {
 
-    def pc = mgr.getPlasticClass("testsubjects.AnnotationSubject")
+    def pc = mgr.getPlasticClass(AnnotationSubject.name)
 
     def "access to non-existent annotation"() {
 
@@ -32,7 +34,7 @@ class ClassAnnotationAccess extends AbstractPlasticSpecification {
     }
 
     def "inherited class annotations visible in subclass"() {
-        def pc = mgr.getPlasticClass("testsubjects.InheritedAnnotationSubClass")
+        def pc = mgr.getPlasticClass(InheritedAnnotationSubClass.name)
 
         expect:
         pc.hasAnnotation(InheritedAnnotation) == true

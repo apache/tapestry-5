@@ -1,18 +1,20 @@
 package org.apache.tapestry5.plastic
 
+import testsubjects.Empty
+
 import java.lang.reflect.Modifier
 
 class IntroduceFieldTests extends AbstractPlasticSpecification
 {
     def "introduced fields are not visible in the allFields list"() {
         setup:
-        def pc = mgr.getPlasticClass("testsubjects.Empty")
+        def pc = mgr.getPlasticClass(Empty.name)
 
         expect:
         pc.allFields == []
 
         when:
-        def f = pc.introduceField("java.lang.String", "message")
+        def f = pc.introduceField(String.name, "message")
 
         then:
         f.toString() == "PlasticField[private java.lang.String message (in class testsubjects.Empty)]"
@@ -22,11 +24,11 @@ class IntroduceFieldTests extends AbstractPlasticSpecification
 
     def "introducing a duplicate field name results in a unique id"() {
         setup:
-        def pc = mgr.getPlasticClass("testsubjects.Empty")
+        def pc = mgr.getPlasticClass(Empty.name)
 
         when:
-        def f1 = pc.introduceField("java.lang.Integer", "count")
-        def f2 = pc.introduceField("java.lang.Integer", "count")
+        def f1 = pc.introduceField(Integer.name, "count")
+        def f2 = pc.introduceField(Integer.name, "count")
 
         then:
         ! f1.is(f2)
@@ -39,9 +41,9 @@ class IntroduceFieldTests extends AbstractPlasticSpecification
 
     def "instantiate a class with an introduced field"() {
         setup:
-        def pc = mgr.getPlasticClass("testsubjects.Empty")
+        def pc = mgr.getPlasticClass(Empty.name)
 
-        pc.introduceField("java.lang.Integer", "count")
+        pc.introduceField(Integer.name, "count")
 
         def ins = pc.createInstantiator()
 

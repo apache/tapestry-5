@@ -1,5 +1,8 @@
 package org.apache.tapestry5.plastic
 
+import testsubjects.Empty
+import testsubjects.InjectFieldSubject
+import testsubjects.StringHolder
 import testsubjects.StringPropertyHolder
 
 class FieldInjection extends AbstractPlasticSpecification
@@ -8,9 +11,9 @@ class FieldInjection extends AbstractPlasticSpecification
     {
         String injected = "Value injected into the Empty class"
 
-        def pc = mgr.getPlasticClass("testsubjects.Empty")
+        def pc = mgr.getPlasticClass(Empty.name)
 
-        def f = pc.introduceField("java.lang.String", "stringValue");
+        def f = pc.introduceField(String.name, "stringValue");
 
         f.inject(injected);
 
@@ -29,7 +32,7 @@ class FieldInjection extends AbstractPlasticSpecification
 
         String injected = "Computed value injected into the StringPropertyHolder class"
 
-        def pc = mgr.getPlasticClass("testsubjects.StringPropertyHolder")
+        def pc = mgr.getPlasticClass(StringPropertyHolder.name)
 
         pc.allFields.first().injectComputed({
 
@@ -59,7 +62,7 @@ class FieldInjection extends AbstractPlasticSpecification
 
         String injected = "InstanceContext value injected into the StringPropertyHolder class"
 
-        def pc = mgr.getPlasticClass("testsubjects.StringPropertyHolder")
+        def pc = mgr.getPlasticClass(StringPropertyHolder.name)
 
         pc.allFields.first().injectFromInstanceContext()
 
@@ -79,7 +82,7 @@ class FieldInjection extends AbstractPlasticSpecification
     def "injection of primitive value"()
     {
 
-        def pc = mgr.getPlasticClass("testsubjects.Empty")
+        def pc = mgr.getPlasticClass(Empty.name)
 
         def f = pc.introduceField("double", "pi");
 
@@ -97,7 +100,7 @@ class FieldInjection extends AbstractPlasticSpecification
     def "injected field is read-only"()
     {
 
-        def pc = mgr.getPlasticClass("testsubjects.InjectFieldSubject")
+        def pc = mgr.getPlasticClass(InjectFieldSubject.name)
 
         def pf = pc.allFields.first();
 
@@ -128,7 +131,7 @@ class FieldInjection extends AbstractPlasticSpecification
 
     def "injected field is read-only, even via handle"()
     {
-        def pc = mgr.getPlasticClass("testsubjects.InjectFieldSubject")
+        def pc = mgr.getPlasticClass(InjectFieldSubject.name)
         def f = pc.allFields.first();
         def h = f.handle
 
@@ -150,7 +153,7 @@ class FieldInjection extends AbstractPlasticSpecification
 
     def "a field may only be injected once"()
     {
-        def pc = mgr.getPlasticClass("testsubjects.StringHolder")
+        def pc = mgr.getPlasticClass(StringHolder.name)
         def f = pc.allFields.first();
 
         f.inject("[first]")

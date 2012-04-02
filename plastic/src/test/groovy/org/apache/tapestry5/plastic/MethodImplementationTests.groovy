@@ -1,5 +1,6 @@
 package org.apache.tapestry5.plastic
 
+import testsubjects.MethodReimplementationSubject
 
 class MethodImplementationTests extends AbstractPlasticSpecification {
     def "overwrite implementation of method"() {
@@ -14,7 +15,7 @@ class MethodImplementationTests extends AbstractPlasticSpecification {
 
         when:
 
-        def o = mgr.getClassInstantiator("testsubjects.MethodReimplementationSubject").newInstance()
+        def o = mgr.getClassInstantiator(MethodReimplementationSubject.name).newInstance()
 
         then:
 
@@ -32,7 +33,7 @@ class MethodImplementationTests extends AbstractPlasticSpecification {
 
         when:
 
-        def o = mgr.getClassInstantiator("testsubjects.MethodReimplementationSubject").newInstance()
+        def o = mgr.getClassInstantiator(MethodReimplementationSubject.name).newInstance()
 
         then:
         "There's no way to tell from the outside, but should use the ICONST_2 opcode."
@@ -43,7 +44,7 @@ class MethodImplementationTests extends AbstractPlasticSpecification {
     def "while, increment, array operations"() {
         setup:
 
-        PlasticClass pc = mgr.getPlasticClass("testsubjects.WhileSubject")
+        PlasticClass pc = mgr.getPlasticClass(testsubjects.WhileSubject.name)
 
         PlasticMethod m = findMethod(pc, "firstNonNull")
 

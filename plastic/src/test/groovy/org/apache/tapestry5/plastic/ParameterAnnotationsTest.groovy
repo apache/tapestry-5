@@ -1,13 +1,15 @@
 package org.apache.tapestry5.plastic;
 
+
 import org.apache.tapestry5.plastic.test.TestInject
+import testsubjects.ParameterAnnotationsSubject
 
 public class ParameterAnnotationsTest extends AbstractPlasticSpecification {
     def "parameter annotations are visible"() {
         setup:
 
         def mgr = createMgr()
-        PlasticClass pc = mgr.getPlasticClass("testsubjects.ParameterAnnotationsSubject")
+        PlasticClass pc = mgr.getPlasticClass(ParameterAnnotationsSubject.name)
         PlasticMethod pm = findMethod(pc, "theMethod")
 
         when:

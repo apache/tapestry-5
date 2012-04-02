@@ -6,13 +6,12 @@ import testannotations.Maybe
 import testannotations.MethodAnnotation
 import testannotations.Truth
 import testinterfaces.MagicContainer
+import testsubjects.SingleMethod
 
 import java.sql.SQLException
 
-class MethodAdviceTests extends AbstractPlasticSpecification
-{
-    def "advice for a void method"()
-    {
+class MethodAdviceTests extends AbstractPlasticSpecification {
+    def "advice for a void method"() {
         setup:
 
         def didInvoke = false
@@ -42,7 +41,7 @@ class MethodAdviceTests extends AbstractPlasticSpecification
 
         when:
 
-        def o = mgr.getClassInstantiator("testsubjects.SingleMethod").newInstance()
+        def o = mgr.getClassInstantiator(SingleMethod.name).newInstance()
 
         then:
 
@@ -59,8 +58,7 @@ class MethodAdviceTests extends AbstractPlasticSpecification
         didInvoke == true
     }
 
-    def "multiple advice on method with parameters and return values"()
-    {
+    def "multiple advice on method with parameters and return values"() {
 
         setup:
 
@@ -78,15 +76,14 @@ class MethodAdviceTests extends AbstractPlasticSpecification
             } as MethodAdvice)
         } as PlasticClassTransformer)
 
-        def o = mgr.getClassInstantiator("testsubjects.MethodAdviceTarget").newInstance()
+        def o = mgr.getClassInstantiator(testsubjects.MethodAdviceTarget.name).newInstance()
 
         expect:
 
         o.dupe(2, "Fam") == "FAM FAM FAM FAM FAM FAM FAM FAM FAM FAM FAM FAM"
     }
 
-    def "method that throws exceptions"()
-    {
+    def "method that throws exceptions"() {
 
         setup:
 
@@ -94,7 +91,7 @@ class MethodAdviceTests extends AbstractPlasticSpecification
             findMethod(pc, "maybeThrow").addAdvice(new NoopAdvice())
         } as PlasticClassTransformer)
 
-        def o = mgr.getClassInstantiator("testsubjects.MethodAdviceTarget").newInstance()
+        def o = mgr.getClassInstantiator(testsubjects.MethodAdviceTarget.name).newInstance()
 
         expect:
 
@@ -109,21 +106,19 @@ class MethodAdviceTests extends AbstractPlasticSpecification
         thrown(SQLException)
     }
 
-    def "setting return value clears checked exceptions"()
-    {
+    def "setting return value clears checked exceptions"() {
         def mgr = createMgr({ PlasticClass pc ->
             findMethod(pc, "maybeThrow").addAdvice({  MethodInvocation mi ->
 
                 mi.proceed()
 
-                if (mi.didThrowCheckedException())
-                {
+                if (mi.didThrowCheckedException()) {
                     mi.setReturnValue(-1L)
                 }
             } as MethodAdvice)
         } as PlasticClassTransformer)
 
-        def o = mgr.getClassInstantiator("testsubjects.MethodAdviceTarget").newInstance()
+        def o = mgr.getClassInstantiator(testsubjects.MethodAdviceTarget.name).newInstance()
 
         expect:
 
@@ -137,15 +132,14 @@ class MethodAdviceTests extends AbstractPlasticSpecification
      *
      * @return
      */
-    def "method with long and double parameters"()
-    {
+    def "method with long and double parameters"() {
         setup:
 
         def mgr = createMgr({ PlasticClass pc ->
             findMethod(pc, "doMath").addAdvice(new NoopAdvice())
         } as PlasticClassTransformer)
 
-        def o = mgr.getClassInstantiator("testsubjects.WidePrimitives").newInstance()
+        def o = mgr.getClassInstantiator(testsubjects.WidePrimitives.name).newInstance()
 
         expect:
         "The interceptor builds proper bytecode to pass the values through"
@@ -153,8 +147,7 @@ class MethodAdviceTests extends AbstractPlasticSpecification
         o.doMath(2l, 4.0d, 5, 6l) == 38d
     }
 
-    def "method advice does not interfere with field instrumentation (advice first)"()
-    {
+    def "method advice does not interfere with field instrumentation (advice first)"() {
         FieldConduit fc = [get: { instance, context ->
             return "via conduit"
         }, set: { instance, context -> }] as FieldConduit
@@ -172,15 +165,14 @@ class MethodAdviceTests extends AbstractPlasticSpecification
             })
         } as PlasticClassTransformer)
 
-        def o = mgr.getClassInstantiator("testsubjects.FieldConduitInsideAdvisedMethod").newInstance()
+        def o = mgr.getClassInstantiator(testsubjects.FieldConduitInsideAdvisedMethod.name).newInstance()
 
         expect:
 
         o.magic == "via conduit"
     }
 
-    def "method advice does not interfere with field instrumentation (conduit first)"()
-    {
+    def "method advice does not interfere with field instrumentation (conduit first)"() {
         FieldConduit fc = [get: { instance, context ->
             return "via conduit"
         }, set: { instance, context -> }] as FieldConduit
@@ -199,15 +191,14 @@ class MethodAdviceTests extends AbstractPlasticSpecification
 
         } as PlasticClassTransformer)
 
-        def o = mgr.getClassInstantiator("testsubjects.FieldConduitInsideAdvisedMethod").newInstance()
+        def o = mgr.getClassInstantiator(testsubjects.FieldConduitInsideAdvisedMethod.name).newInstance()
 
         expect:
 
         o.magic == "via conduit"
     }
 
-    def "method advice does not interfere with field instrumentation (instance context version)"()
-    {
+    def "method advice does not interfere with field instrumentation (instance context version)"() {
         MagicContainer container = Mock()
 
         FieldConduit fc = [get: { instance, context ->
@@ -231,7 +222,7 @@ class MethodAdviceTests extends AbstractPlasticSpecification
 
         if (false) { enableBytecodeDebugging(mgr) }
 
-        def o = mgr.getClassInstantiator("testsubjects.FieldConduitInsideAdvisedMethod").with(MagicContainer, container).newInstance()
+        def o = mgr.getClassInstantiator(testsubjects.FieldConduitInsideAdvisedMethod.name).with(MagicContainer, container).newInstance()
 
         when:
 
@@ -242,8 +233,7 @@ class MethodAdviceTests extends AbstractPlasticSpecification
         1 * container.magic() >> "via context and mock"
     }
 
-    def "method advice on method that accesses a field with a conduit (more complex structure)"()
-    {
+    def "method advice on method that accesses a field with a conduit (more complex structure)"() {
         MagicContainer container = Mock()
 
         FieldConduit fc = [get: { instance, context ->
@@ -267,7 +257,7 @@ class MethodAdviceTests extends AbstractPlasticSpecification
 
         if (false) { enableBytecodeDebugging(mgr) }
 
-        def o = mgr.getClassInstantiator("testsubjects.FieldConduitAdvisedMethodComplexCase").with(MagicContainer, container).newInstance()
+        def o = mgr.getClassInstantiator(testsubjects.FieldConduitAdvisedMethodComplexCase.name).with(MagicContainer, container).newInstance()
 
         when:
 

@@ -2,6 +2,8 @@ package org.apache.tapestry5.plastic
 
 import testannotations.KindaInject
 import testannotations.SimpleAnnotation
+import testsubjects.ProtectedField
+import testsubjects.ProtectedFieldCollaborator
 
 /**
  *  Tests related to access to non-private fields between transformed classes (a new feature in 5.4).
@@ -12,13 +14,13 @@ class FieldAccessTests extends AbstractPlasticSpecification
     {
         FieldConduit fc = Mock()
 
-        PlasticClass pc = mgr.getPlasticClass("testsubjects.ProtectedField")
+        PlasticClass pc = mgr.getPlasticClass(ProtectedField.name)
 
         pc.allFields.first().setConduit(fc)
 
         def delegate = pc.createInstantiator().newInstance()
 
-        pc = mgr.getPlasticClass("testsubjects.ProtectedFieldCollaborator")
+        pc = mgr.getPlasticClass(ProtectedFieldCollaborator.name)
 
         pc.allFields.first().inject(delegate)
 
@@ -62,9 +64,9 @@ class FieldAccessTests extends AbstractPlasticSpecification
 
         def mgr = createMgr(installFieldConduit, handleInjection)
 
-        delegate = mgr.getClassInstantiator("testsubjects.ProtectedField").newInstance()
+        delegate = mgr.getClassInstantiator(ProtectedField.name).newInstance()
 
-        def collab = mgr.getClassInstantiator("testsubjects.ProtectedFieldCollaborator").newInstance()
+        def collab = mgr.getClassInstantiator(ProtectedFieldCollaborator.name).newInstance()
 
         when:
 

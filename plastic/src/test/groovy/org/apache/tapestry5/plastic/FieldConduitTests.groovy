@@ -2,6 +2,7 @@ package org.apache.tapestry5.plastic
 
 import testannotations.KindaInject
 import testinterfaces.Logger
+import testsubjects.*
 
 class FieldConduitTests extends AbstractPlasticSpecification
 {
@@ -10,7 +11,7 @@ class FieldConduitTests extends AbstractPlasticSpecification
 
         FieldConduit fc = Mock()
 
-        def pc = mgr.getPlasticClass("testsubjects.IntFieldHolder")
+        def pc = mgr.getPlasticClass(IntFieldHolder.name)
 
         pc.allFields.first().setConduit(fc)
 
@@ -43,7 +44,7 @@ class FieldConduitTests extends AbstractPlasticSpecification
     {
         FieldConduit fc = Mock()
 
-        def pc = mgr.getPlasticClass("testsubjects.IntFieldHolder")
+        def pc = mgr.getPlasticClass(IntFieldHolder.name)
 
         pc.allFields.first().setComputedConduit({ return fc } as ComputedValue)
 
@@ -62,7 +63,7 @@ class FieldConduitTests extends AbstractPlasticSpecification
     {
         FieldConduit fc = Mock()
 
-        def pc = mgr.getPlasticClass("testsubjects.LongFieldHolder")
+        def pc = mgr.getPlasticClass(LongFieldHolder.name)
 
         pc.allFields.first().setConduit(fc)
 
@@ -96,7 +97,7 @@ class FieldConduitTests extends AbstractPlasticSpecification
                 ] as PlasticManagerDelegate).packages(["testsubjects"]).create()
 
 
-        def o = mgr.getClassInstantiator("testsubjects.AccessMethodsSubject").newInstance()
+        def o = mgr.getClassInstantiator(AccessMethodsSubject.name).newInstance()
 
         def i = o.valueAccess
 
@@ -123,7 +124,7 @@ class FieldConduitTests extends AbstractPlasticSpecification
 
         def mgr = PlasticManager.withContextClassLoader().enable(TransformationOption.FIELD_WRITEBEHIND).create()
 
-        def pc = mgr.getPlasticClass("testsubjects.IntWriteBehind")
+        def pc = mgr.getPlasticClass(IntWriteBehind.name)
 
         pc.allFields.first().setConduit(fc)
 
@@ -158,7 +159,7 @@ class FieldConduitTests extends AbstractPlasticSpecification
 
         def mgr = PlasticManager.withContextClassLoader().enable(TransformationOption.FIELD_WRITEBEHIND).create()
 
-        def pc = mgr.getPlasticClass("testsubjects.LongWriteBehind")
+        def pc = mgr.getPlasticClass(LongWriteBehind.name)
 
         pc.allFields.first().setConduit(fc)
 
@@ -208,7 +209,7 @@ class FieldConduitTests extends AbstractPlasticSpecification
             enableBytecodeDebugging(mgr)
         }
 
-        def o = mgr.getClassInstantiator("testsubjects.InjectSubClass").newInstance()
+        def o = mgr.getClassInstantiator(InjectSubClass.name).newInstance()
 
         assert o.subClassLogger == logger
 

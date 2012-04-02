@@ -14,15 +14,13 @@
 
 package org.apache.tapestry5.plastic
 
-import org.apache.tapestry5.plastic.PlasticManager;
-
-import spock.lang.Specification;
+import testsubjects.SingleField
 
 class FieldClaiming extends AbstractPlasticSpecification
 {
     def "get fields ignores claimed fields"() {
         setup:
-        def pc = mgr.getPlasticClass("testsubjects.SingleField")
+        def pc = mgr.getPlasticClass(SingleField.name)
         def f = pc.unclaimedFields.first()
 
         expect:
@@ -42,7 +40,7 @@ class FieldClaiming extends AbstractPlasticSpecification
 
     def "a field may only be claimed once"() {
         setup:
-        def pc = mgr.getPlasticClass("testsubjects.SingleField")
+        def pc = mgr.getPlasticClass(SingleField.name)
         def f = pc.unclaimedFields.first()
 
         f.claim "[first tag]"
