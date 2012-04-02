@@ -5,6 +5,10 @@ dependencies {
 	testCompile "org.spockframework:spock-core:0.6-groovy-1.8"
 }
 
+test { 
+  useJUnit()
+}
+
 // Add the source directory for the imported/repackaged ASM 3.3.1 code
 
 sourceSets.main.java.srcDir "src/external/java"
