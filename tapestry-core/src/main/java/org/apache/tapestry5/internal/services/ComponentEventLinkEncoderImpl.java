@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,14 +16,15 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.internal.InternalConstants;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.security.ClientWhitelist;
 
+import java.util.List;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 {
@@ -57,24 +58,6 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
     private static final char SLASH = '/';
 
-    // A beast that recognizes all the elements of a path in a single go.
-    // We skip the leading slash, then take the next few terms (until a dot or a colon)
-    // as the page name. Then there's a sequence that sees a dot
-    // and recognizes the nested component id (which may be missing), which ends
-    // at the colon, or at the slash (or the end of the string). The colon identifies
-    // the event name (the event name is also optional). A valid path will always have
-    // a nested component id or an event name (or both) ... when both are missing, then the
-    // path is most likely a page render request. After the optional event name,
-    // the next piece is the action context, which is the remainder of the path.
-
-    private final Pattern COMPONENT_EVENT_REQUEST_PATH_PATTERN;
-
-    // Constants for the match groups in the above pattern.
-    private static final int LOGICAL_PAGE_NAME = 1;
-    private static final int NESTED_ID = 6;
-    private static final int EVENT_NAME = 9;
-    private static final int CONTEXT = 11;
-
     public ComponentEventLinkEncoderImpl(ComponentClassResolver componentClassResolver,
                                          ContextPathEncoder contextPathEncoder, LocalizationSetter localizationSetter, Request request,
                                          Response response, RequestSecurityManager requestSecurityManager, BaseURLSource baseURLSource,
@@ -97,20 +80,6 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         boolean hasAppFolder = applicationFolder.equals("");
 
         applicationFolderPrefix = hasAppFolder ? null : SLASH + applicationFolder;
-
-        String applicationFolderPattern = hasAppFolder ? "" : applicationFolder + SLASH;
-
-        COMPONENT_EVENT_REQUEST_PATH_PATTERN = Pattern.compile(
-
-                "^/" + // The leading slash is recognized but skipped
-                        applicationFolderPattern + // The folder containing the application (TAP5-743)
-                        "(((\\w(?:\\w|-)*)/)*(\\w+))" + // A series of folder names (which allow dashes) leading up to the page name, forming
-                        // the logical page name (may include the locale name)
-                        "(\\.(\\w+(\\.\\w+)*))?" + // The first dot separates the page name from the nested
-                        // component id
-                        "(\\:(\\w+))?" + // A colon, then the event type
-                        "(/(.*))?", // A slash, then the action context
-                Pattern.COMMENTS);
     }
 
     public Link createPageRenderLink(PageRenderRequestParameters parameters)
@@ -234,68 +203,179 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         return result;
     }
 
-    public ComponentEventRequestParameters decodeComponentEventRequest(Request request)
+    /**
+     * Splits path at slashes into a <em>mutable</em> list of strings. Empty terms, including the
+     * expected leading term (paths start with a '/') are dropped.
+     *
+     * @param path
+     * @return mutable list of path elements
+     */
+    private List<String> splitPath(String path)
     {
-        boolean explicitLocale = false;
+        String[] split = TapestryInternalUtils.splitPath(path);
 
-        Matcher matcher = COMPONENT_EVENT_REQUEST_PATH_PATTERN.matcher(request.getPath());
+        List<String> result = CollectionFactory.newList();
 
-        if (!matcher.matches())
-            return null;
-
-        String nestedComponentId = matcher.group(NESTED_ID);
-
-        String eventType = matcher.group(EVENT_NAME);
-
-        if (nestedComponentId == null && eventType == null)
-            return null;
-
-        String activePageName = matcher.group(LOGICAL_PAGE_NAME);
-
-        int slashx = activePageName.indexOf('/');
-
-        String possibleLocaleName = slashx > 0 ? activePageName.substring(0, slashx) : "";
-
-        if (localizationSetter.setLocaleFromLocaleName(possibleLocaleName))
+        for (String name : split)
         {
-            activePageName = activePageName.substring(slashx + 1);
-            explicitLocale = true;
+            if (name.length() > 0)
+            {
+                result.add(name);
+            }
         }
 
-        if (!componentClassResolver.isPageName(activePageName))
-            return null;
+        return result;
+    }
 
-        activePageName = componentClassResolver.canonicalizePageName(activePageName);
+    private String joinPath(List<String> path)
+    {
+        if (path.isEmpty())
+        {
+            return "";
+        }
+
+        StringBuilder builder = new StringBuilder(100);
+        String sep = "";
+
+        for (String term : path)
+        {
+            builder.append(sep).append(term);
+            sep = "/";
+        }
+
+        return builder.toString();
+    }
+
+    private String peekFirst(List<String> path)
+    {
+        if (path.size() == 0)
+        {
+            return null;
+        }
+
+        return path.get(0);
+    }
+
+    public ComponentEventRequestParameters decodeComponentEventRequest(Request request)
+    {
+        String explicitLocale = null;
+
+        // Split the path around slashes into a mutable list of terms, which will be consumed term by term.
+
+        List<String> path = splitPath(request.getPath());
+
+        if (this.applicationFolder.length() > 0)
+        {
+            // TODO: Should this be case insensitive
+
+            String inPath = path.remove(0);
+
+            if (!inPath.equals(this.applicationFolder))
+            {
+                return null;
+            }
+        }
+
+        if (path.isEmpty())
+        {
+            return null;
+        }
+
+        // Next up: the locale (which is optional)
+
+        String potentialLocale = path.get(0);
+
+        if (localizationSetter.isSupportedLocaleName(potentialLocale))
+        {
+            explicitLocale = potentialLocale;
+            path.remove(0);
+        }
+
+        StringBuilder pageName = new StringBuilder(100);
+        String sep = "";
+
+        while (!path.isEmpty())
+        {
+            String name = path.remove(0);
+            String eventType = EventConstants.ACTION;
+            String nestedComponentId = "";
+
+            boolean found = false;
+
+            // First, look for an explicit action name.
+
+            int colonx = name.lastIndexOf(':');
+
+            if (colonx > 0)
+            {
+                found = true;
+                eventType = name.substring(colonx + 1);
+                name = name.substring(0, colonx);
+            }
+
+            int dotx = name.indexOf('.');
+
+            if (dotx > 0)
+            {
+                found = true;
+                nestedComponentId = name.substring(dotx + 1);
+                name = name.substring(0, dotx);
+            }
+
+            pageName.append(sep).append(name);
+
+            if (found)
+            {
+                ComponentEventRequestParameters result = validateAndConstructComponentEventRequest(request, pageName.toString(), nestedComponentId, eventType, path);
+
+                if (result == null)
+                {
+                    return result;
+                }
+
+                if (explicitLocale == null)
+                {
+                    setLocaleFromRequest(request);
+                } else
+                {
+                    localizationSetter.setLocaleFromLocaleName(explicitLocale);
+                }
+
+                return result;
+            }
+
+            // Continue on to the next name in the path
+            sep = "/";
+        }
+
+        // Path empty before finding something that looks like a component id or event name, so
+        // it is not a component event request.
+
+        return null;
+    }
+
+    private ComponentEventRequestParameters validateAndConstructComponentEventRequest(Request request, String pageName, String nestedComponentId, String eventType, List<String> remainingPath)
+    {
+        if (!componentClassResolver.isPageName(pageName))
+        {
+            return null;
+        }
+
+        String activePageName = componentClassResolver.canonicalizePageName(pageName);
 
         if (isWhitelistOnlyAndNotValid(activePageName))
         {
             return null;
         }
 
-        EventContext eventContext = contextPathEncoder.decodePath(matcher.group(CONTEXT));
+        String value = request.getParameter(InternalConstants.CONTAINER_PAGE_NAME);
 
-        EventContext activationContext = contextPathEncoder.decodePath(request
-                .getParameter(InternalConstants.PAGE_CONTEXT_NAME));
+        String containingPageName = value == null
+                ? activePageName
+                : componentClassResolver.canonicalizePageName(value);
 
-        // The event type is often omitted, and defaults to "action".
-
-        if (eventType == null)
-            eventType = EventConstants.ACTION;
-
-        if (nestedComponentId == null)
-            nestedComponentId = "";
-
-        String containingPageName = request.getParameter(InternalConstants.CONTAINER_PAGE_NAME);
-
-        if (containingPageName == null)
-            containingPageName = activePageName;
-        else
-            containingPageName = componentClassResolver.canonicalizePageName(containingPageName);
-
-        if (!explicitLocale)
-        {
-            setLocaleFromRequest(request);
-        }
+        EventContext eventContext = contextPathEncoder.decodePath(joinPath(remainingPath));
+        EventContext activationContext = contextPathEncoder.decodePath(request.getParameter(InternalConstants.PAGE_CONTEXT_NAME));
 
         return new ComponentEventRequestParameters(activePageName, containingPageName, nestedComponentId, eventType,
                 activationContext, eventContext);

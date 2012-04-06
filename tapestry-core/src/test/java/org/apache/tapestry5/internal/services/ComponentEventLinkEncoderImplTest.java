@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -420,6 +420,8 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         LocalizationSetter ls = mockLocalizationSetter();
         MetaDataLocator metaDataLocator = neverWhitelistProtected();
 
+        expect(ls.isSupportedLocaleName("foo-bar")).andReturn(false);
+
         train_getParameter(request, InternalConstants.PAGE_CONTEXT_NAME, null);
         train_getParameter(request, InternalConstants.CONTAINER_PAGE_NAME, null);
         train_getLocale(request, Locale.ENGLISH);
@@ -428,8 +430,6 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
 
         String path = "/foo-bar/baz.biff";
         train_getPath(request, path);
-
-        train_setLocaleFromLocaleName(ls, "foo-bar", false);
 
         train_isPageName(resolver, "foo-bar/baz", true);
 
