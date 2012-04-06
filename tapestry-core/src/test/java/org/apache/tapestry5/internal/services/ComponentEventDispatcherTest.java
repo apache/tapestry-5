@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2011 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,13 +46,16 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
     {
         Request request = mockRequest();
         Response response = mockResponse();
+        LocalizationSetter ls = mockLocalizationSetter();
+
+        expect(ls.isSupportedLocaleName("foo")).andReturn(false);
 
         train_getPath(request, "/foo/bar/baz");
 
         replay();
 
         Dispatcher dispatcher = new ComponentEventDispatcher(null,
-                new ComponentEventLinkEncoderImpl(null, contextPathEncoder, null, request,
+                new ComponentEventLinkEncoderImpl(null, contextPathEncoder, ls, request,
                         response, null, null, null, true, "", null, null));
 
         assertFalse(dispatcher.dispatch(request, response));
@@ -146,9 +149,10 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
                 new String[]
                         {"alpha", "beta"}), new EmptyEventContext());
 
+
         train_getPath(request, "/mypage:eventname");
 
-        train_setLocaleFromLocaleName(ls, "", false);
+        expect(ls.isSupportedLocaleName("mypage:eventname")).andReturn(false);
 
         train_isPageName(resolver, "mypage", true);
 
@@ -189,7 +193,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         train_getPath(request, "/activepage:eventname");
 
-        train_setLocaleFromLocaleName(ls, "", false);
+        expect(ls.isSupportedLocaleName("activepage:eventname")).andReturn(false);
 
         train_isPageName(resolver, "activepage", true);
 
@@ -224,9 +228,10 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
         ComponentClassResolver resolver = mockComponentClassResolver();
         LocalizationSetter ls = mockLocalizationSetter();
 
+        expect(ls.isSupportedLocaleName("en")).andReturn(true);
+
         train_getPath(request, "/en/mypage.foo");
 
-        train_setLocaleFromLocaleName(ls, "en", true);
         train_isPageName(resolver, "mypage", false);
 
         replay();
@@ -256,7 +261,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         train_getPath(request, requestPath);
 
-        train_setLocaleFromLocaleName(localizationSetter, localeName, false);
+        expect(localizationSetter.isSupportedLocaleName(localeName)).andReturn(false);
 
         train_isPageName(resolver, containerPageName, true);
 
@@ -304,9 +309,11 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
                 containerPageName, containerPageName, "", "anevent",
                 new EmptyEventContext(), new EmptyEventContext());
 
+
+
         train_getPath(request, "/foo/MyPage:anevent");
 
-        train_setLocaleFromLocaleName(localizationSetter, "foo", false);
+        expect(localizationSetter.isSupportedLocaleName("foo")).andReturn(false);
 
         train_isPageName(resolver, containerPageName, true);
 
@@ -351,7 +358,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         train_getPath(request, requestPath);
 
-        train_setLocaleFromLocaleName(localizationSetter, localeName, false);
+        expect(localizationSetter.isSupportedLocaleName("foo")).andReturn(false);
 
         train_isPageName(resolver, containerPageName, true);
 
