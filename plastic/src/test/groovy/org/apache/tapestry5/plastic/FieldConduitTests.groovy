@@ -118,6 +118,37 @@ class FieldConduitTests extends AbstractPlasticSpecification
         1 * fc.get(o, _) >> "plastic"
     }
 
+    def "subclass access methods are reouted through field conduit"()
+    {
+        FieldConduit fc = Mock()
+
+        def mgr = PlasticManager.withContextClassLoader().delegate(
+                [
+                        transform: { PlasticClass pc ->
+                            pc.allFields.each { f -> f.setConduit(fc) }
+                        },
+                        configureInstantiator: { className, instantiator -> instantiator }
+                ] as PlasticManagerDelegate).packages(["testsubjects"]).create()
+
+        def o = mgr.getClassInstantiator(ProtectedFieldSubclass.class.name).newInstance()
+
+        when:
+
+        o.value = "wink"
+
+        then:
+
+        1 * fc.set(o, _, "wink")
+
+        when:
+
+        assert o.value == "bumble"
+
+        then:
+
+        1* fc.get(o, _) >> "bumble"
+    }
+
     def "verify writebehind on normal field"()
     {
         FieldConduit fc = Mock()
