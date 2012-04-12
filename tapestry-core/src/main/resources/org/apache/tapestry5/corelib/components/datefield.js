@@ -114,8 +114,14 @@ Tapestry.DateField = Class.create({
             var date = this.datePicker.getDate();
 
             var resultHandler = function(result) {
-                this.field.value = result;
-
+                 //TAP5-1844
+                if (this.field.value != result) { 
+						this.field.value = result;
+						Tapestry.currentFocusField = this.field;
+						//fire an FOCUS_CHANGE_EVENT event to force inputValidation on field
+						document.fire(Tapestry.FOCUS_CHANGE_EVENT, this.field);
+						 
+ 				} 
                 this.hidePopup();
 
                 new Effect.Highlight(this.field);
