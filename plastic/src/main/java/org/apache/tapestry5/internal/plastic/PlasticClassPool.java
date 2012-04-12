@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -86,7 +86,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
     private final Map<String, FieldInstrumentations> instrumentations = PlasticInternalUtils.newMap();
 
-    private final FieldInstrumentations placeholder = new FieldInstrumentations();
+    private final FieldInstrumentations placeholder = new FieldInstrumentations(null);
 
 
     private final Set<TransformationOption> options;
@@ -370,7 +370,8 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
     private void interceptFieldAccess(ClassNode classNode)
     {
-        for (MethodNode method : (List<MethodNode>) classNode.methods) {
+        for (MethodNode method : (List<MethodNode>) classNode.methods)
+        {
             interceptFieldAccess(classNode.name, method);
         }
     }
@@ -396,11 +397,17 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
             String ownerInternalName = fnode.owner;
 
-            if (ownerInternalName.equals(classInternalName)) { continue; }
+            if (ownerInternalName.equals(classInternalName))
+            {
+                continue;
+            }
 
-            FieldInstrumentation instrumentation = getFieldInstrumentations(ownerInternalName).get(fnode.name, opcode == GETFIELD);
+            FieldInstrumentation instrumentation = getFieldInstrumentation(ownerInternalName, fnode.name, opcode == GETFIELD);
 
-            if (instrumentation == null) { continue; }
+            if (instrumentation == null)
+            {
+                continue;
+            }
 
             // Replace the field access node with the appropriate method invocation.
 
@@ -426,13 +433,12 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
         String baseClassName = PlasticInternalUtils.toClassName(classNode.superName);
 
-        instrumentations.put(classNode.name, new FieldInstrumentations());
+        instrumentations.put(classNode.name, new FieldInstrumentations(classNode.superName));
 
         return createTransformation(baseClassName, classNode, false);
     }
 
     /**
-     *
      * @param baseClassName class from which the transformed class extends
      * @param classNode     node for the class
      * @param proxy         if true, the class is a new empty class; if false an existing class that's being transformed
@@ -582,7 +588,8 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
         instrumentations.get(classInternalName).read.put(fieldName, fi);
     }
 
-    FieldInstrumentations getFieldInstrumentations(String classInternalName)
+
+    private FieldInstrumentations getFieldInstrumentations(String classInternalName)
     {
         FieldInstrumentations result = instrumentations.get(classInternalName);
 
@@ -619,6 +626,32 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
         return result;
     }
+
+    FieldInstrumentation getFieldInstrumentation(String ownerClassInternalName, String fieldName, boolean forRead)
+    {
+        String currentName = ownerClassInternalName;
+
+        while (true)
+        {
+
+            if (currentName == null)
+            {
+                return null;
+            }
+
+            FieldInstrumentations instrumentations = getFieldInstrumentations(currentName);
+
+            FieldInstrumentation instrumentation = instrumentations.get(fieldName, forRead);
+
+            if (instrumentation != null)
+            {
+                return instrumentation;
+            }
+
+            currentName = instrumentations.superClassInternalName;
+        }
+    }
+
 
     void setFieldWriteInstrumentation(String classInternalName, String fieldName, FieldInstrumentation fi)
     {

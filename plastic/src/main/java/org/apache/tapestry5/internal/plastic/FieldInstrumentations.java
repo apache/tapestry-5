@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,6 +24,8 @@ import java.util.Map;
  */
 class FieldInstrumentations
 {
+    final String superClassInternalName;
+
     /**
      * Map field name to a read method.
      */
@@ -33,6 +35,11 @@ class FieldInstrumentations
      * Maps field name to a write method.
      */
     final Map<String, FieldInstrumentation> write = PlasticInternalUtils.newMap();
+
+    FieldInstrumentations(String superClassInternalName)
+    {
+        this.superClassInternalName = superClassInternalName;
+    }
 
     FieldInstrumentation get(String fieldName, boolean forRead)
     {

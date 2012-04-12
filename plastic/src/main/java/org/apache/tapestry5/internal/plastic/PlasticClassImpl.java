@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -138,7 +138,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
      * Tracks instrumentations of fields of this class, including private fields which are not published into the
      * {@link PlasticClassPool}.
      */
-    private final FieldInstrumentations fieldInstrumentations = new FieldInstrumentations();
+    private final FieldInstrumentations fieldInstrumentations;
 
     /**
      * This normal no-arguments constructor, or null. By the end of the transformation
@@ -185,6 +185,8 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         className = PlasticInternalUtils.toClassName(classNode.name);
         superClassName = PlasticInternalUtils.toClassName(classNode.superName);
+
+        fieldInstrumentations = new FieldInstrumentations(classNode.superName);
 
         annotationAccess = new DelegatingAnnotationAccess(pool.createAnnotationAccess(classNode.visibleAnnotations),
                 pool.createAnnotationAccess(superClassName));
@@ -909,9 +911,12 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
             FieldInsnNode fnode = (FieldInsnNode) node;
 
-            FieldInstrumentation instrumentation = findInstrumentations(fnode).get(fnode.name, opcode == GETFIELD);
+            FieldInstrumentation instrumentation = findFieldNodeInstrumentation(fnode, opcode == GETFIELD);
 
-            if (instrumentation == null) { continue; }
+            if (instrumentation == null)
+            {
+                continue;
+            }
 
             // Replace the field access node with the appropriate method invocation.
 
@@ -921,15 +926,29 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         }
     }
 
-    private FieldInstrumentations findInstrumentations(FieldInsnNode node)
+    private FieldInstrumentation findFieldNodeInstrumentation(FieldInsnNode node, boolean forRead)
     {
-        if (node.owner.equals(classNode.name))
+        // First look in the local fieldInstrumentations, which contains private field instrumentations
+        // (as well as non-private ones).
+
+        String searchStart = node.owner;
+
+        if (searchStart.equals(classNode.name))
         {
-            return fieldInstrumentations;
+            FieldInstrumentation result = fieldInstrumentations.get(node.name, forRead);
+
+            if (result != null)
+            {
+                return result;
+            }
+
+            // Slight optimization: start the search in the super-classes' fields, since we've already
+            // checked this classes fields.
+
+            searchStart = classNode.superName;
         }
 
-        return pool.getFieldInstrumentations(node.owner);
-
+        return pool.getFieldInstrumentation(searchStart, node.name, forRead);
     }
 
     String getInstanceContextFieldName()
