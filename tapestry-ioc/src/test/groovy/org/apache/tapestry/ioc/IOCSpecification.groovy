@@ -5,6 +5,9 @@ import org.apache.tapestry5.ioc.RegistryBuilder
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 
+/**
+ * Base class for Spock specifications that use an {@link Registry}.
+ */
 abstract class IOCSpecification extends Specification {
 
     @AutoCleanup("shutdown")
@@ -18,7 +21,7 @@ abstract class IOCSpecification extends Specification {
 
     /** Any unrecognized methods are evaluated against the registry. */
     def methodMissing(String name, args) {
-        registry."$name"(*args)
+        registry."$name"(* args)
     }
 
 
