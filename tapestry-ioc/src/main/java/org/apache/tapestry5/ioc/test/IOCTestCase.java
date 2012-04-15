@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,8 +14,11 @@
 
 package org.apache.tapestry5.ioc.test;
 
-import static java.lang.Thread.sleep;
-import static org.easymock.EasyMock.isA;
+import org.apache.tapestry5.ioc.*;
+import org.apache.tapestry5.ioc.annotations.IntermediateType;
+import org.apache.tapestry5.ioc.def.*;
+import org.apache.tapestry5.ioc.services.*;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
@@ -23,21 +26,13 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Locale;
 
-import org.apache.tapestry5.ioc.*;
-import org.apache.tapestry5.ioc.annotations.IntermediateType;
-import org.apache.tapestry5.ioc.def.*;
-import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
-import org.apache.tapestry5.ioc.services.MasterObjectProvider;
-import org.apache.tapestry5.ioc.services.PerthreadManager;
-import org.apache.tapestry5.ioc.services.PropertyAccess;
-import org.apache.tapestry5.ioc.services.PropertyAdapter;
-import org.apache.tapestry5.ioc.services.SymbolSource;
-import org.apache.tapestry5.ioc.services.ThreadLocale;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
-import org.slf4j.Logger;
+import static java.lang.Thread.sleep;
+import static org.easymock.EasyMock.isA;
 
 /**
  * Add factory and trainer methods for the public interfaces of Tapestry IOC.
+ *
+ * @deprecated In 5.4, with no replacement
  */
 public class IOCTestCase extends TestBase
 {

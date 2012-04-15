@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,7 @@
 
 package org.apache.tapestry5.ioc.test;
 
-import org.easymock.Capture;
-import org.easymock.EasyMock;
-import org.easymock.IAnswer;
-import org.easymock.IExpectationSetters;
-import org.easymock.IMocksControl;
+import org.easymock.*;
 import org.testng.annotations.AfterMethod;
 
 /**
@@ -42,6 +38,7 @@ import org.testng.annotations.AfterMethod;
  * 
  * @see org.easymock.EasyMock#createControl()
  * @see org.apache.tapestry5.ioc.test.MockTester
+ * @deprecated In 5.4, with no replacement
  */
 public class TestBase extends TestUtils
 {

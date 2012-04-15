@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
 
 package org.apache.tapestry5.ioc.test;
 
+import org.testng.Assert;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import org.testng.Assert;
 
 /**
  * Extra assertions on top of the standard set, packaged as a base class for easy referencing in tests. Also,
@@ -29,6 +29,7 @@ import org.testng.Assert;
  * to ensure backwards compatibility.
  * 
  * @since 5.2.0
+ * @deprecated In 5.4, with no replacement
  */
 public class TestUtils extends Assert
 {
