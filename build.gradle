@@ -15,6 +15,7 @@ tomcatVersion = "6.0.30"
 testngVersion = "5.14.9"
 easymockVersion = "3.0"
 servletAPIVersion = "2.5"
+spockVersion = "0.6-groovy-1.8"
 
 // Provided so that the CI server can override the normal version number for nightly builds.
 version = System.getProperty("project-version", tapestryVersion)
