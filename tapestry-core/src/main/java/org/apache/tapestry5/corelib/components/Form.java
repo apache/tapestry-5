@@ -587,7 +587,7 @@ public class Form implements ClientElement, FormValidationControl
 
         String raw = request.getParameter(SUBMITTING_ELEMENT_ID);
 
-        if (raw != null &&
+        if (InternalUtils.isNonBlank(raw) &&
                 new JSONArray(raw).getString(1).equals(InternalConstants.CANCEL_NAME))
         {
             return true;
