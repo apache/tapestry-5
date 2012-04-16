@@ -8,10 +8,8 @@ import testsubjects.ProtectedFieldCollaborator
 /**
  *  Tests related to access to non-private fields between transformed classes (a new feature in 5.4).
  */
-class FieldAccessTests extends AbstractPlasticSpecification
-{
-    def "access protected field from other transformed class"()
-    {
+class FieldAccessTests extends AbstractPlasticSpecification {
+    def "access protected field from other transformed class"() {
         FieldConduit fc = Mock()
 
         PlasticClass pc = mgr.getPlasticClass(ProtectedField.name)
@@ -37,15 +35,14 @@ class FieldAccessTests extends AbstractPlasticSpecification
 
         when:
 
-        fc.get(_, _) >> "badoop"
+        assert collab.getProtectedValue() == "badoop"
 
         then:
 
-        collab.getProtectedValue() == "badoop"
+        fc.get(_, _) >> "badoop"
     }
 
-    def "access protected field from inner class"()
-    {
+    def "access protected field from inner class"() {
 
         FieldConduit fc = Mock()
 
