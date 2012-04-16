@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -87,6 +87,7 @@ public class DateField extends AbstractField
      * Used to override the component's message catalog.
      *
      * @since 5.2.0.0
+     * @deprecated Since 5.4; override the global message key "core-date-value-not-parsable" instead (see {@link org.apache.tapestry5.services.messages.ComponentMessagesSource})
      */
     @Parameter("componentResources.messages")
     private Messages messages;
@@ -277,7 +278,7 @@ public class DateField extends AbstractField
                 parsedValue = format.parse(value);
         } catch (ParseException ex)
         {
-            tracker.recordError(this, messages.format("date-value-not-parseable", value));
+            tracker.recordError(this, messages.format("core-date-value-not-parseable", value));
             return;
         }
 

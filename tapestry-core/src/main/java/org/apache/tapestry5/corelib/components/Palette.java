@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -201,7 +201,7 @@ public class Palette extends AbstractField
      * conditionals and components. The default is the text "Available".
      */
     @Property(write = false)
-    @Parameter(required = true, allowNull = false, value = "message:available-label", defaultPrefix = BindingConstants.LITERAL)
+    @Parameter(required = true, allowNull = false, value = "message:core-palette-available-label", defaultPrefix = BindingConstants.LITERAL)
     private Block availableLabel;
 
     /**
@@ -209,7 +209,7 @@ public class Palette extends AbstractField
      * conditionals and components. The default is the text "Available".
      */
     @Property(write = false)
-    @Parameter(required = true, allowNull = false, value = "message:selected-label", defaultPrefix = BindingConstants.LITERAL)
+    @Parameter(required = true, allowNull = false, value = "message:core-palette-selected-label", defaultPrefix = BindingConstants.LITERAL)
     private Block selectedLabel;
 
     /**

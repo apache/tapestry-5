@@ -1,4 +1,4 @@
-<div class="t-palette" xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<div class="t-palette" xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
     <div class="t-palette-available">
         <div class="t-palette-title">
             <t:delegate to="availableLabel"/>
@@ -7,17 +7,17 @@
     </div>
     <div class="t-palette-controls">
         <button id="${clientId}-select" disabled="disabled">
-            <img src="${select}" alt="${message:select-label}"/>
+            <img src="${select}" alt="${message:core-palette-select-label}"/>
         </button>
         <button id="${clientId}-deselect" disabled="disabled">
-            <img src="${deselect}" alt="${message:deselect-label}"/>
+            <img src="${deselect}" alt="${message:core-palette-deselect-label}"/>
         </button>
         <t:if test="reorder">
             <button id="${clientId}-up" disabled="disabled">
-                <img src="${moveUp}" alt="${message:up-label}"/>
+                <img src="${moveUp}" alt="${message:core-palette-up-label}"/>
             </button>
             <button id="${clientId}-down" disabled="disabled">
-                <img src="${moveDown}" alt="${message:down-label}"/>
+                <img src="${moveDown}" alt="${message:core-palette-down-label}"/>
             </button>
         </t:if>
     </div>

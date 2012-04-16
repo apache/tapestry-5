@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,27 +14,15 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import java.io.IOException;
-
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.Block;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.EventConstants;
-import org.apache.tapestry5.EventContext;
-import org.apache.tapestry5.Link;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.TrackableComponentEventCallback;
-import org.apache.tapestry5.ajax.MultiZoneUpdate;
-import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.Events;
-import org.apache.tapestry5.annotations.Import;
-import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
+
+import java.io.IOException;
 
 /**
  * A component used to implement the <a
@@ -49,9 +37,9 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * {@link org.apache.tapestry5.EventConstants#PROGRESSIVE_DISPLAY} event to inform the container about the (optional)
  * event context. The event handler method may return a renderable object; if not then the component's body is rendered
  * as the partial markup response.
- * 
- * @since 5.1.0.1
+ *
  * @tapestrydoc
+ * @since 5.1.0.1
  */
 @SupportsInformalParameters
 @Import(library = "ProgressiveDisplay.js")
@@ -141,11 +129,12 @@ public class ProgressiveDisplay
 
     /**
      * Returns the body of the ProgressiveDisplay, which is sometimes (in the
-     * context of a {@linkplain MultiZoneUpdate multi-zone update})
+     * context of a
+     * {@linkplain org.apache.tapestry5.services.ajax.AjaxResponseRenderer#addRender(org.apache.tapestry5.ClientBodyElement)} partial page render})
      * the content to be included.
-     * 
-     * @since 5.2.0
+     *
      * @return body of component
+     * @since 5.2.0
      */
     public Block getBody()
     {

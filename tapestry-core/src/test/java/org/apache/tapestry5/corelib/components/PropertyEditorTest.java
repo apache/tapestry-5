@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ public class PropertyEditorTest extends TapestryTestCase
 
         train_getLocation(resources, l);
 
-        expect(messages.format("block-error", propertyName, dataType, object, exception))
+        expect(messages.format("core-block-error", propertyName, dataType, object, exception))
                 .andReturn(formattedMessage);
 
         replay();

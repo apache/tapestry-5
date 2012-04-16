@@ -40,7 +40,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 public class Alerts implements ClientElement
 {
 
-    @Parameter(value="message:dismiss-label", defaultPrefix=BindingConstants.LITERAL)
+    @Parameter(value="message:core-dismiss-label", defaultPrefix=BindingConstants.LITERAL)
     private String dismissText;
 
     @Inject

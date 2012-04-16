@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -149,7 +149,7 @@ public class GridPager
 
         Element element = writer.element("a",
                                          "href", zone == null ? link : "#",
-                                         "title", messages.format("goto-page", pageIndex));
+                                         "title", messages.format("core-goto-page", pageIndex));
 
         writer.write(Integer.toString(pageIndex));
         writer.end();

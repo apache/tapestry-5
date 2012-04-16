@@ -2729,8 +2729,8 @@ public final class TapestryModule
      * <dl>
      * <dt>AppCatalog</dt>
      * <dd>The Resource defined by {@link SymbolConstants#APPLICATION_CATALOG}</dd>
-     * <dt>ValidationMessages</dt>
-     * <dd>Messages used by validators (before:AppCatalog)</dd>
+     * <dt>Core</dt>
+     * <dd>Built in messages used by Tapestry's default validators and components (before:AppCatalog)</dd>
      * <dt>
      *
      * @since 5.2.0
@@ -2739,8 +2739,8 @@ public final class TapestryModule
                                                          @Symbol(SymbolConstants.APPLICATION_CATALOG)
                                                          Resource applicationCatalog, OrderedConfiguration<Resource> configuration)
     {
-        configuration.add("ValidationMessages",
-                assetSource.resourceForPath("org/apache/tapestry5/internal/ValidationMessages.properties"),
+        configuration.add("Core",
+                assetSource.resourceForPath("org/apache/tapestry5/core.properties"),
                 "before:AppCatalog");
         configuration.add("AppCatalog", applicationCatalog);
     }

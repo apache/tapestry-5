@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2011 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -213,11 +213,11 @@ public class GridColumns
         switch (getSortForColumn())
         {
             case ASCENDING:
-                return messages.get("ascending");
+                return messages.get("core-ascending");
             case DESCENDING:
-                return messages.get("descending");
+                return messages.get("core-descending");
             default:
-                return messages.get("sortable");
+                return messages.get("core-sortable");
         }
     }
 
