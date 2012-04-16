@@ -22,6 +22,7 @@ import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.SubmitMode;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Heartbeat;
@@ -216,7 +217,7 @@ public class Submit implements ClientElement
 
         String raw = request.getParameter(Form.SUBMITTING_ELEMENT_ID);
 
-        if (raw != null &&
+        if (InternalUtils.isNonBlank(raw) &&
                 new JSONArray(raw).getString(0).equals(clientId))
         {
             return true;
