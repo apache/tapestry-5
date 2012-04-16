@@ -21,6 +21,7 @@ import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.SubmitMode;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.FormSupport;
@@ -125,7 +126,7 @@ public class LinkSubmit implements ClientElement
 
         String raw = request.getParameter(Form.SUBMITTING_ELEMENT_ID);
 
-        if (raw != null && new JSONArray(raw).getString(0).equals(clientId))
+        if (InternalUtils.isNonBlank(raw) && new JSONArray(raw).getString(0).equals(clientId))
         {
             Runnable notification = new Runnable()
             {
