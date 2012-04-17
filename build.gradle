@@ -9,7 +9,7 @@ apply from: "md5.gradle"
 
 // Remember that when generating a release, this should be incremented. Also don"t forget to
 // tag the release in Subversion.
-tapestryVersion = "5.3.3-rc-5"
+tapestryVersion = "5.3.3"
 
 jettyVersion = "7.0.0.v20091005"
 tomcatVersion = "6.0.30"
