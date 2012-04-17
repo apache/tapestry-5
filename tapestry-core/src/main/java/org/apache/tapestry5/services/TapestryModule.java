@@ -2283,7 +2283,7 @@ public final class TapestryModule
         configuration.add("tapestry.datepicker.path", "org/apache/tapestry5/datepicker_106");
         configuration.add(SymbolConstants.DATEPICKER, "classpath:${tapestry.datepicker.path}");
 
-        configuration.add("tapestry.underscore", "classpath:org/apache/tapestry5/underscore_1_1_7.js");
+        configuration.add("tapestry.underscore", "classpath:org/apache/tapestry5/underscore_1_3_3.js");
 
         configuration.add(SymbolConstants.BLACKBIRD, "");
 
