@@ -9,10 +9,9 @@ import java.text.ParseException
 @Unroll
 class CronExpressionSpec extends Specification {
 
-
+  // This allows the any of the constants defined on Calendar to be used
+  // without qualification.
   def propertyMissing(String name) { Calendar[name] }
-
-
 
   def "isSatisfiedBy(#year, #month, #day, #hour, #minute, #second ) should be #satisfied for expression '#expr'"() {
 
@@ -41,11 +40,8 @@ class CronExpressionSpec extends Specification {
 
   def cloneViaSerialize(obj) {
     ByteArrayOutputStream baos = new ByteArrayOutputStream()
-    ObjectOutputStream oos = new ObjectOutputStream(baos)
 
-    oos.writeObject(obj)
-
-    oos.close()
+    baos.withObjectOutputStream { it.writeObject(obj) }
 
     ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray())
     ObjectInputStream ois = new ObjectInputStream(bais)
