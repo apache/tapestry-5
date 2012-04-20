@@ -8,7 +8,7 @@ import spock.lang.Specification
  * a single instance of the Registry, that is created by whatever specification is created first. */
 abstract class AbstractSharedRegistrySpecification extends Specification {
 
-  static Registry registry;
+  static Registry registry
 
   /** Any unrecognized methods are evaluated against the shared Registry instance. */
   def methodMissing(String name, args) {
@@ -20,25 +20,11 @@ abstract class AbstractSharedRegistrySpecification extends Specification {
     if (registry == null) {
       registry = IOCUtilities.buildDefaultRegistry()
     }
-
-    helpSetupSpec()
-  }
-
-  /** Does nothing; override in subclasses to do work that should occur inside setupSpec(). */
-  def helpSetupSpec() {
-
   }
 
   /** Invokes {@link Registry#cleanupThread()}. */
   def cleanupSpec() {
     registry.cleanupThread();
-
-    helpCleanupSpec()
-  }
-
-  /** Does nothing; override in subclasses to do work that should occur inside cleanupSpec(), after {@link Registry#cleanupThread()}. */
-  def helpCleanupSpec() {
-
   }
 
   // TODO: the Registry is never shutdown, since there's no notification
