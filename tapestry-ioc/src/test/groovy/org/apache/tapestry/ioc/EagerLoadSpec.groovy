@@ -3,7 +3,7 @@ package org.apache.tapestry.ioc
 import org.apache.tapestry5.ioc.EagerProxyReloadModule
 
 
-class EagerLoadSpec extends IOCSpecification {
+class EagerLoadSpec extends AbstractRegistrySpecification {
 
     def "proxied service does eager load"()
     {

@@ -6,9 +6,9 @@ import spock.lang.AutoCleanup
 import spock.lang.Specification
 
 /**
- * Base class for Spock specifications that use an {@link Registry}.
+ * Base class for Spock specifications that use a new {@link Registry} for each feature method.
  */
-abstract class IOCSpecification extends Specification {
+abstract class AbstractRegistrySpecification extends Specification {
 
     @AutoCleanup("shutdown")
     protected Registry registry;
