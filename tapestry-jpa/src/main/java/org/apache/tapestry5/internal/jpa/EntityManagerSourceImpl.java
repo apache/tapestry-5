@@ -192,7 +192,6 @@ public class EntityManagerSourceImpl implements EntityManagerSource
 
     private EntityManagerFactory createEntityManagerFactory(final String persistenceUnitName)
     {
-        final PersistenceProvider persistenceProvider = getPersistenceProvider();
 
         for (final TapestryPersistenceUnitInfo info : persistenceUnitInfos)
         {
@@ -200,6 +199,10 @@ public class EntityManagerSourceImpl implements EntityManagerSource
             {
                 final Map<String, String> properties = CollectionFactory.newCaseInsensitiveMap();
                 properties.put(JpaConstants.PERSISTENCE_UNIT_NAME, persistenceUnitName);
+
+                String providerClassName = info.getPersistenceProviderClassName();
+
+                final PersistenceProvider persistenceProvider = getPersistenceProvider(persistenceUnitName, providerClassName);
 
                 return persistenceProvider.createContainerEntityManagerFactory(info, properties);
             }
@@ -210,7 +213,7 @@ public class EntityManagerSourceImpl implements EntityManagerSource
                 persistenceUnitName));
     }
 
-    private PersistenceProvider getPersistenceProvider()
+    private PersistenceProvider getPersistenceProvider(final String persistenceUnitName, final String providerClassName)
     {
         final PersistenceProviderResolver resolver = PersistenceProviderResolverHolder
                 .getPersistenceProviderResolver();
@@ -218,10 +221,53 @@ public class EntityManagerSourceImpl implements EntityManagerSource
         final List<PersistenceProvider> providers = resolver.getPersistenceProviders();
 
         if (providers.isEmpty())
+        {
             throw new IllegalStateException(
                     "No PersistenceProvider implementation available in the runtime environment.");
+        }
+
+        if(1 < providers.size() && providerClassName == null)
+        {
+            throw new IllegalStateException(
+                    String.format("Persistence providers [%s] are available in the runtime environment " +
+                            "but no provider class is defined for the persistence unit %s.", InternalUtils.join(toProviderClasses(providers)), persistenceUnitName));
+        }
+
+        if(providerClassName != null)
+        {
+            return findPersistenceProviderByName(providers, providerClassName);
+        }
 
         return providers.get(0);
+    }
+
+    private PersistenceProvider findPersistenceProviderByName(final List<PersistenceProvider> providers, final String providerClassName)
+    {
+        PersistenceProvider provider = F.flow(providers).filter(new Predicate<PersistenceProvider>() {
+            @Override
+            public boolean accept(PersistenceProvider next) {
+                return next.getClass().getName().equals(providerClassName);
+            }
+        }).first();
+
+        if(provider == null)
+        {
+            throw new IllegalStateException(
+                    String.format("No persistence provider of type %s found in the runtime environment. " +
+                            "Following providers are available: [%s]", providerClassName, InternalUtils.join(toProviderClasses(providers))));
+        }
+
+        return provider;
+    }
+
+    private List<Class> toProviderClasses(final List<PersistenceProvider> providers)
+    {
+       return F.flow(providers).map(new Mapper<PersistenceProvider, Class>() {
+           @Override
+           public Class map(PersistenceProvider element) {
+               return element.getClass();
+           }
+       }).toList();
     }
 
     public EntityManager create(final String persistenceUnitName)
