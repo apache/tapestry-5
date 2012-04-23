@@ -31,6 +31,13 @@
 		</packages>
 	</test>
 
+	<test name="Explicit Provider Class Name In Persistence Unit Integration Tests" enabled="true">
+		<parameter name="tapestry.web-app-folder" value="src/test/app5" />
+		<packages>
+			<package name="org.apache.tapestry5.jpa.integration.app5" />
+		</packages>
+	</test>
+
 	<test name="Tapestry JPA Unit Tests" enabled="true">
 		<packages>
 			<package name="org.apache.tapestry5.internal.jpa" />
