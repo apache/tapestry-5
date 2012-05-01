@@ -16,9 +16,9 @@ dependencies {
   compile "log4j:log4j:1.2.14"
   compile "org.slf4j:slf4j-log4j12:1.6.1"
 
-  testCompile "org.spockframework:spock-core:$spockVersion"
+  testCompile "org.spockframework:spock-core:${versions.spock}"
 
-  provided "org.testng:testng:$testngVersion", { transitive = false }
+  provided "org.testng:testng:${versions.testng}", { transitive = false }
 }
 
 test {

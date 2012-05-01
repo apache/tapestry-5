@@ -6,41 +6,45 @@ apply plugin: "sonar"
 apply from: "ssh.gradle"
 apply from: "md5.gradle"
 
-// Remember that when generating a release, this should be incremented. Also don"t forget to
-// tag the release in Subversion.
-tapestryVersion = "5.4-alpha-1"
-
-jettyVersion = "7.0.0.v20091005"
-tomcatVersion = "6.0.30"
-testngVersion = "5.14.9"
-easymockVersion = "3.0"
-servletAPIVersion = "2.5"
-spockVersion = "0.6-groovy-1.8"
+project.ext.versions = [
+  // Remember that when generating a release, this should be incremented. Also don"t forget to
+  // tag the release in Subversion.
+  tapestry: "5.4-alpha-1",
+  jetty: "7.0.0.v20091005",
+  tomcat: "6.0.30",
+  testng: "5.14.9",
+  easymock: "3.0",
+  servletapi: "2.5",
+  spock: "0.6-groovy-1.8"
+]
 
 // Provided so that the CI server can override the normal version number for nightly builds.
-version = System.getProperty("project-version", tapestryVersion)
+version = System.getProperty("project-version", versions.tapestry)
 
 // Let analysis.apache.org get in touch with our builds
-sonarUrl = System.getProperty("sonarUrl", "http://analysis.apache.org");
-sonarDbUrl = System.getProperty("sonarDbUrl", "");
-sonarDbUsername = System.getProperty("sonarDbUsername", "");
-sonarDbPassword = System.getProperty("sonarDbPassword", "");
-sonarDbDriverClassName = "com.mysql.jdbc.Driver"
 
-stagingUrl = "https://repository.apache.org/service/local/staging/deploy/maven2/"
-snapshotUrl = "https://repository.apache.org/content/repositories/snapshots"
+project.ext { 
+  sonarUrl = System.getProperty("sonarUrl", "http://analysis.apache.org");
+  sonarDbUrl = System.getProperty("sonarDbUrl", "");
+  sonarDbUsername = System.getProperty("sonarDbUsername", "");
+  sonarDbPassword = System.getProperty("sonarDbPassword", "");
+  sonarDbDriverClassName = "com.mysql.jdbc.Driver"
 
-doSign = !project.hasProperty("noSign") && project.hasProperty("signing.keyId")
+  stagingUrl = "https://repository.apache.org/service/local/staging/deploy/maven2/"
+  snapshotUrl = "https://repository.apache.org/content/repositories/snapshots"
 
-// apacheDeployUserName and apacheDeployPassword should be specified in ~/.gradle/gradle.properties
+  doSign = !project.hasProperty("noSign") && project.hasProperty("signing.keyId")
 
-deployUsernameProperty = isSnapshot() ? "snapshotDeployUserName" : "apacheDeployUserName"
-deployPasswordProperty = isSnapshot() ? "snapshotDeployPassword" : "apacheDeployPassword"
+  // apacheDeployUserName and apacheDeployPassword should be specified in ~/.gradle/gradle.properties
 
-canDeploy = [deployUsernameProperty, deployPasswordProperty].every { project.hasProperty(it) }
+  deployUsernameProperty = isSnapshot() ? "snapshotDeployUserName" : "apacheDeployUserName"
+  deployPasswordProperty = isSnapshot() ? "snapshotDeployPassword" : "apacheDeployPassword"
 
-deployUsername = { getProperty(deployUsernameProperty) }
-deployPassword = { getProperty(deployPasswordProperty) }
+  canDeploy = [deployUsernameProperty, deployPasswordProperty].every { project.hasProperty(it) }
+
+  deployUsername = { getProperty(deployUsernameProperty) }
+  deployPassword = { getProperty(deployPasswordProperty) }
+}
 
 sonar {
   server {
@@ -198,11 +202,11 @@ subprojects {
     if (canDeploy) {
       repositories {
 
-        project.deployer = repositories.mavenDeployer {
+        project.ext.deployer = repositories.mavenDeployer {
           
-	  if (doSign) {
-            beforeDeployment { MavenDeployment deployment -> signPom(deployment) }
-	  }
+          if (doSign) {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+          }
 
           repository(url: stagingUrl) {
             authentication(userName: deployUsername(), password: deployPassword())
@@ -229,7 +233,7 @@ task aggregateJavadoc(type: Javadoc) {
 
   description "Build the aggregated JavaDocs for all modules"
   maxMemory "512m"
-  destinationDir file("$buildDirName/documentation/javadocs")
+  destinationDir file("$buildDir/documentation/javadocs")
   configure(options) {
     splitIndex true
     linkSource true
@@ -355,13 +359,7 @@ task zippedBinaries(type:Zip) {
       into sub.name
     }
   }
-
-  
-
 }
-
-
-
 
 if (canDeploy) {
 

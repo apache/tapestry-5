@@ -1,22 +1,22 @@
 description = "Utilities for unit and integration testing of Tapestry applications"
 
-seleniumVersion = '2.14.0'
+versions.selenium = '2.14.0'
 
 dependencies {
-  compile "org.seleniumhq.selenium:selenium-java:$seleniumVersion"
-  compile "org.seleniumhq.selenium:selenium-server:$seleniumVersion"
+  compile "org.seleniumhq.selenium:selenium-java:${versions.selenium}"
+  compile "org.seleniumhq.selenium:selenium-server:${versions.selenium}"
 
-  compile "org.testng:testng:$testngVersion"
+  compile "org.testng:testng:${versions.testng}"
     
-  compile "org.eclipse.jetty:jetty-server:$jettyVersion"
-  compile "org.eclipse.jetty:jetty-jndi:$jettyVersion"
-  compile "org.eclipse.jetty:jetty-plus:$jettyVersion"
-  compile "org.eclipse.jetty:jetty-webapp:$jettyVersion"
+  compile "org.eclipse.jetty:jetty-server:${versions.jetty}"
+  compile "org.eclipse.jetty:jetty-jndi:${versions.jetty}"
+  compile "org.eclipse.jetty:jetty-plus:${versions.jetty}"
+  compile "org.eclipse.jetty:jetty-webapp:${versions.jetty}"
   
-  compile "org.apache.tomcat:catalina:$tomcatVersion"
-  compile "org.apache.tomcat:coyote:$tomcatVersion"
+  compile "org.apache.tomcat:catalina:${versions.tomcat}"
+  compile "org.apache.tomcat:coyote:${versions.tomcat}"
   
-  compile "org.apache.tomcat:dbcp:$tomcatVersion"
+  compile "org.apache.tomcat:dbcp:${versions.tomcat}"
 
-  compile "org.easymock:easymock:$easymockVersion"
+  compile "org.easymock:easymock:${versions.easymock}"
 }

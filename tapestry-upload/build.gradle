@@ -4,7 +4,7 @@ dependencies {
   compile project(':tapestry-core')
   compile "commons-fileupload:commons-fileupload:1.2.2"
   compile "commons-io:commons-io:2.0.1"
-  provided "javax.servlet:servlet-api:$servletAPIVersion"
+  provided "javax.servlet:servlet-api:${versions.servletapi}"
 
   testCompile project(':tapestry-test')
 }

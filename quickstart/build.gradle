@@ -1,12 +1,22 @@
 import org.apache.tools.ant.filters.FixCrLfFilter
 import org.apache.tools.ant.filters.ReplaceTokens
 
+// Copy the gradle wrapper files from the project root
+processResources { 
+  from(rootDir) { 
+    include "gradlew"
+    include "gradlew.bat"
+    include "gradle/**"
+    into "archetype-resources"
+  }
+}
+
 task processFiltered(type: Copy) {
 
-    srcDir = file('filtered')
+    ext.srcDir = file('filtered')
 
     inputs.file srcDir
-    inputs.file file("../build.gradle")
+    inputs.file file("${rootDir}/build.gradle")
     outputs.dir sourceSets.main.output.classesDir
 
     from srcDir
@@ -17,9 +27,9 @@ task processFiltered(type: Copy) {
     filter(ReplaceTokens, tokens: [
             quickstartVersion: version,
             tapestryReleaseVersion: version,
-            servletApiReleaseVersion: servletAPIVersion,
-            testngReleaseVersion: testngVersion,
-            easymockReleaseVersion: easymockVersion,
+            servletApiReleaseVersion: versions.servletapi,
+            testngReleaseVersion: versions.testng,
+            easymockReleaseVersion: versions.easymock,
             year: new GregorianCalendar()[Calendar.YEAR].toString()
     ])
 }
