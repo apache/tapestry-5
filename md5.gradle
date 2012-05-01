@@ -22,4 +22,4 @@ class GenMD5 extends SourceTask {
   }
 }
 
-project.GenMD5 = GenMD5.class
+project.ext.GenMD5 = GenMD5.class

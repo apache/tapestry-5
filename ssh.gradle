@@ -1,6 +1,6 @@
-project.Scp = Scp.class
-project.SshExec = SshExec.class
-project.SshTask = SshTask.class
+project.ext.Scp = Scp.class
+project.ext.SshExec = SshExec.class
+project.ext.SshTask = SshTask.class
 
 configurations {
   sshAntTask

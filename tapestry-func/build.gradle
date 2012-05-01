@@ -1,6 +1,6 @@
 description = "Light-weight functional programming for Flows of values"
 
 dependencies {
-  testCompile   "org.testng:testng:$testngVersion"
+  testCompile   "org.testng:testng:${versions.testng}"
   testCompile   "commons-lang:commons-lang:2.6"
 }

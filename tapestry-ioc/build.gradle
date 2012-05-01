@@ -4,10 +4,9 @@ dependencies {
   compile project(':tapestry-func')
   compile project(':tapestry5-annotations')
   compile project(":plastic")
+  compile "javassist:javassist:3.12.1.GA"
 
   provided project(':tapestry-test')
-
-  compile "javassist:javassist:3.12.1.GA"
 
   // For now, keep these compile dependencies synchronized with the binaries dependencies
   // of the top-level build:
@@ -18,10 +17,14 @@ dependencies {
   compile "log4j:log4j:1.2.14"
   compile "org.slf4j:slf4j-log4j12:1.6.1"
 
-  provided "org.testng:testng:$testngVersion", { transitive = false }
+  testCompile "org.spockframework:spock-core:${versions.spock}"
+
+  provided "org.testng:testng:${versions.testng}", { transitive = false }
 }
 
 test {
+  useJUnit()
+  useTestNG()
   // Override the master build.gradle
   systemProperties.remove("tapestry.service-reloading-enabled")
 }

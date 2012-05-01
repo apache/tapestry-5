@@ -1,10 +1,12 @@
 import org.apache.tools.ant.filters.*
-import org.gradle.api.specs.AndSpec
 
 description = "Central module for Tapestry, containing all core services and components"
 
-antlrSource = "src/main/antlr"
-antlrOutput = "$buildDir/generated-sources/antlr"
+project.ext { 
+  antlrSource = "src/main/antlr"
+  antlrOutput = "$buildDir/generated-sources/antlr"
+}
+
 
 configurations {
   antlr3
@@ -17,7 +19,7 @@ dependencies {
   compile project(':tapestry-json')
 
   provided project(":tapestry-test")
-  provided "javax.servlet:servlet-api:$servletAPIVersion"
+  provided "javax.servlet:servlet-api:${versions.servletapi}"
 
   compile "commons-codec:commons-codec:1.5"
 
