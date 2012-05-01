@@ -4,8 +4,11 @@ import org.apache.tapestry5.ioc.IOCUtilities
 import org.apache.tapestry5.ioc.Registry
 import spock.lang.Specification
 
-/** Uses a static, shared instance of the Registry.  All specifications that extend from this class will share
- * a single instance of the Registry, that is created by whatever specification is created first. */
+/**
+ * Uses a static, shared instance of the {@link org.apache.tapestry5.ioc.Registry}.
+ * All specifications that extend from this class will share
+ * a single instance of the Registry; The Registry is created by whatever specification is created first.
+ * Missing method invocations are forwarded to the registry instance. */
 abstract class AbstractSharedRegistrySpecification extends Specification {
 
   static Registry registry
