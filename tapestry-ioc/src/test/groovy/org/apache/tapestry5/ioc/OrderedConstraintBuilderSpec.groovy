@@ -1,6 +1,5 @@
-package org.apache.tapestry.ioc
+package org.apache.tapestry5.ioc
 
-import org.apache.tapestry5.ioc.OrderConstraintBuilder
 import spock.lang.Specification
 
 class OrderedConstraintBuilderSpec extends Specification {

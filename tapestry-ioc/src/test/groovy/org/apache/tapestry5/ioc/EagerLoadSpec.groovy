@@ -1,7 +1,4 @@
-package org.apache.tapestry.ioc
-
-import org.apache.tapestry5.ioc.EagerProxyReloadModule
-
+package org.apache.tapestry5.ioc
 
 class EagerLoadSpec extends AbstractRegistrySpecification {
 

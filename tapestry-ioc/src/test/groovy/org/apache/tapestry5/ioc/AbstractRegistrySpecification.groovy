@@ -1,7 +1,5 @@
-package org.apache.tapestry.ioc
+package org.apache.tapestry5.ioc
 
-import org.apache.tapestry5.ioc.Registry
-import org.apache.tapestry5.ioc.RegistryBuilder
 import spock.lang.AutoCleanup
 import spock.lang.Specification
 

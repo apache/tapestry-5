@@ -1,6 +1,6 @@
 package org.apache.tapestry5.ioc.internal.services
 
-import org.apache.tapestry.ioc.AbstractSharedRegistrySpecification
+import org.apache.tapestry5.ioc.AbstractSharedRegistrySpecification
 import org.apache.tapestry5.ioc.Location
 import org.apache.tapestry5.ioc.internal.util.TapestryException
 import org.apache.tapestry5.ioc.services.ExceptionAnalyzer

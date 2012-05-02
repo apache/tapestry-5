@@ -1,7 +1,7 @@
 package org.apache.tapestry5.ioc.internal.services
 
 import org.apache.commons.lang.StringUtils
-import org.apache.tapestry.ioc.AbstractSharedRegistrySpecification
+import org.apache.tapestry5.ioc.AbstractSharedRegistrySpecification
 import org.apache.tapestry5.ioc.services.AspectDecorator
 import org.apache.tapestry5.plastic.MethodAdvice
 import org.apache.tapestry5.plastic.MethodInvocation

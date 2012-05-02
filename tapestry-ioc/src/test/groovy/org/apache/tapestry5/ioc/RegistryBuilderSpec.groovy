@@ -1,11 +1,10 @@
-package org.apache.tapestry.ioc
+package org.apache.tapestry5.ioc
 
 import org.apache.tapestry5.ioc.def.ModuleDef
 import org.apache.tapestry5.ioc.internal.DefaultModuleDefImpl
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import spock.lang.Specification
-import org.apache.tapestry5.ioc.*
 
 class RegistryBuilderSpec extends Specification {
 

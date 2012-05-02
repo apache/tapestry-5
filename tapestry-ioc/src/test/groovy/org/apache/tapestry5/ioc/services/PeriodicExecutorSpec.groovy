@@ -1,6 +1,6 @@
-package org.apache.tapestry.ioc.services
+package org.apache.tapestry5.ioc.services
 
-import org.apache.tapestry.ioc.AbstractRegistrySpecification
+import org.apache.tapestry5.ioc.AbstractRegistrySpecification
 import org.apache.tapestry5.ioc.services.cron.IntervalSchedule
 import org.apache.tapestry5.ioc.services.cron.PeriodicExecutor
 

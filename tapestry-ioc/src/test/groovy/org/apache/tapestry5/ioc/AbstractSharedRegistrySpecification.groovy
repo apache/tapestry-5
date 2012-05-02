@@ -1,7 +1,5 @@
-package org.apache.tapestry.ioc
+package org.apache.tapestry5.ioc
 
-import org.apache.tapestry5.ioc.IOCUtilities
-import org.apache.tapestry5.ioc.Registry
 import spock.lang.Specification
 
 /**

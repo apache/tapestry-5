@@ -1,7 +1,6 @@
-package org.apache.tapestry.ioc.services
+package org.apache.tapestry5.ioc.services
 
 import org.apache.tapestry5.ioc.internal.services.SystemEnvSymbolProvider
-import org.apache.tapestry5.ioc.services.SymbolProvider
 import spock.lang.Specification
 
 class SystemEnvSymbolProviderSpec extends Specification {
