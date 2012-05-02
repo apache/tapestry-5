@@ -11,6 +11,12 @@ abstract class AbstractRegistrySpecification extends Specification {
   @AutoCleanup("shutdown")
   protected Registry registry;
 
+  /**
+   * Constructs a new {@link Registry} using the indicated module classes.
+   * The Registry will be shutdown after each feature method.
+   *
+   * @param moduleClasses classes to include when building the Registry
+   */
   protected final void buildRegistry(Class... moduleClasses) {
 
     registry = new RegistryBuilder().add(moduleClasses).build()
