@@ -8,19 +8,18 @@ import spock.lang.Specification
  */
 abstract class AbstractRegistrySpecification extends Specification {
 
-    @AutoCleanup("shutdown")
-    protected Registry registry;
+  @AutoCleanup("shutdown")
+  protected Registry registry;
 
-    protected final void buildRegistry(Class... moduleClasses) {
+  protected final void buildRegistry(Class... moduleClasses) {
 
-        registry =
-            new RegistryBuilder().add(moduleClasses).build()
-    }
+    registry = new RegistryBuilder().add(moduleClasses).build()
+  }
 
-    /** Any unrecognized methods are evaluated against the registry. */
-    def methodMissing(String name, args) {
-        registry."$name"(* args)
-    }
+  /** Any unrecognized methods are evaluated against the registry. */
+  def methodMissing(String name, args) {
+    registry."$name"(* args)
+  }
 
 
 }
