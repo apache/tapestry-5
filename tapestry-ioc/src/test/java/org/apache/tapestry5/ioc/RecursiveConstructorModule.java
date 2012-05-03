@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,9 +16,6 @@ package org.apache.tapestry5.ioc;
 
 import org.apache.tapestry5.ioc.annotations.InjectService;
 
-/**
- * Used by {@link org.apache.tapestry5.ioc.IntegrationTest}.
- */
 public class RecursiveConstructorModule
 {
 

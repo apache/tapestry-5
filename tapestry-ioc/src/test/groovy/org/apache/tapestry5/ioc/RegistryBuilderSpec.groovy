@@ -11,9 +11,6 @@ class RegistryBuilderSpec extends Specification {
     def "@SubModule annotation is honored"() {
         when:
 
-        // Borrowed from IntegrationTest, this will only work if both FredModule and BarneyModule
-        // are loaded.
-
         Registry r = new RegistryBuilder().add(MasterModule).build()
 
         def service = r.getService("UnorderedNames", NameListHolder)

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
 
 package org.apache.tapestry5.ioc;
 
+import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Match;
 import org.apache.tapestry5.ioc.annotations.Order;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.services.StrategyBuilder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,94 +27,88 @@ import java.util.Map;
  * Module used to demonstrate decorator ordering.
  */
 
-public class BarneyModule
-{
-    @Match(
-            {"UnorderedNames", "Fred", "PrivateFredAlias"})
-    @Order("after:Beta")
-    public Object decorateGamma(Object delegate, DecoratorList list)
-    {
-        list.add("gamma");
+public class BarneyModule {
+  @Match(
+      {"UnorderedNames", "Fred", "PrivateFredAlias"})
+  @Order("after:Beta")
+  public Object decorateGamma(Object delegate, DecoratorList list) {
+    list.add("gamma");
 
-        return null;
-    }
+    return null;
+  }
 
-    public Sizer buildSizer(final Map<Class, Sizer> configuration)
-    {
-        return new Sizer()
-        {
-            public int size(Object object)
-            {
-                if (object == null) return 0;
+  public Sizer buildSizer(final Map<Class, Sizer> configuration, StrategyBuilder builder) {
 
-                Sizer sizer = configuration.get(object.getClass());
+    return builder.build(Sizer.class, configuration);
+  }
 
-                if (sizer != null) return sizer.size(object);
+  public void contributeSizer(MappedConfiguration<Class, Sizer> configuration) {
+    Sizer listSizer = new Sizer() {
+      public int size(Object object) {
+        List list = (List) object;
 
-                return 1;
-            }
-        };
-    }
+        return list.size();
+      }
+    };
 
-    public void contributeSizer(MappedConfiguration<Class, Sizer> configuration)
-    {
-        Sizer listSizer = new Sizer()
-        {
-            public int size(Object object)
-            {
-                List list = (List) object;
+    Sizer mapSizer = new Sizer() {
+      public int size(Object object) {
+        Map map = (Map) object;
 
-                return list.size();
-            }
-        };
+        return map.size();
+      }
+    };
 
-        Sizer mapSizer = new Sizer()
-        {
-            public int size(Object object)
-            {
-                Map map = (Map) object;
 
-                return map.size();
-            }
-        };
+    configuration.add(List.class, listSizer);
+    configuration.add(Map.class, mapSizer);
+  }
 
-        // Have to work on concrete class, rather than type, until we move the StrategyFactory
-        // over from HiveMind.
+  @Contribute(Sizer.class)
+  public void moreSizerContributions(MappedConfiguration<Class, Sizer> configuration) {
+    Sizer defaultSizer = new Sizer() {
+      @Override
+      public int size(Object object) {
+        return 1;
+      }
+    };
 
-        configuration.add(ArrayList.class, listSizer);
-        configuration.add(HashMap.class, mapSizer);
-    }
+    Sizer nullSizer = new Sizer() {
+      @Override
+      public int size(Object object) {
+        return 0;
+      }
+    };
 
-    /**
-     * Put DecoratorList in module barney, where so it won't accidentally be decorated (which recusively builds the
-     * service, and is caught as a failure).
-     */
-    public DecoratorList buildDecoratorList()
-    {
-        return new DecoratorList()
-        {
-            private List<String> names = CollectionFactory.newList();
+    configuration.add(Object.class, defaultSizer);
+    configuration.add(void.class, nullSizer);
 
-            public void add(String name)
-            {
-                names.add(name);
-            }
+  }
 
-            public List<String> getNames()
-            {
-                return names;
-            }
-        };
-    }
+  /**
+   * Put DecoratorList in module barney, where so it won't accidentally be decorated (which recusively builds the
+   * service, and is caught as a failure).
+   */
+  public DecoratorList buildDecoratorList() {
+    return new DecoratorList() {
+      private List<String> names = CollectionFactory.newList();
 
-    public void contributeUnorderedNames(Configuration<String> configuration)
-    {
-        configuration.add("Gamma");
-    }
+      public void add(String name) {
+        names.add(name);
+      }
 
-    public void contributeStringLookup(MappedConfiguration<String, String> configuration)
-    {
-        configuration.add("barney", "BARNEY");
-        configuration.add("betty", "BETTY");
-    }
+      public List<String> getNames() {
+        return names;
+      }
+    };
+  }
+
+  public void contributeUnorderedNames(Configuration<String> configuration) {
+    configuration.add("Gamma");
+  }
+
+  public void contributeStringLookup(MappedConfiguration<String, String> configuration) {
+    configuration.add("barney", "BARNEY");
+    configuration.add("betty", "BETTY");
+  }
 }

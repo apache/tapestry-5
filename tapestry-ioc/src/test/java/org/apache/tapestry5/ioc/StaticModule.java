@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2009, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,100 +20,85 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class StaticModule
-{
-    private static boolean instantiated;
+public class StaticModule {
+  private static boolean instantiated;
 
-    private static boolean fredRan;
+  private static boolean fredRan;
 
-    private static boolean decoratorRan;
+  private static boolean decoratorRan;
 
-    public StaticModule()
-    {
-        setInstantiated(true);
-    }
+  static void reset() {
+    instantiated = false;
+    fredRan = false;
+    decoratorRan = false;
+  }
 
-    public static Runnable buildFred()
-    {
-        return new Runnable()
-        {
-            public void run()
-            {
-                setFredRan(true);
-            }
-        };
-    }
+  public StaticModule() {
+    setInstantiated(true);
+  }
 
-    public static Runnable buildBarney()
-    {
-        return new Runnable()
-        {
-            public void run()
-            {
-            }
-        };
-    }
+  public static Runnable buildFred() {
+    return new Runnable() {
+      public void run() {
+        setFredRan(true);
+      }
+    };
+  }
 
-    public static Runnable decorateBarney(final Object delegate, String serviseId)
-    {
-        return new Runnable()
-        {
-            public void run()
-            {
-                setDecoratorRan(true);
+  public static Runnable buildBarney() {
+    return new Runnable() {
+      public void run() {
+      }
+    };
+  }
 
-                ((Runnable) delegate).run();
-            }
-        };
-    }
+  public static Runnable decorateBarney(final Object delegate, String serviseId) {
+    return new Runnable() {
+      public void run() {
+        setDecoratorRan(true);
 
-    static synchronized void setFredRan(boolean fredRan)
-    {
-        StaticModule.fredRan = fredRan;
-    }
+        ((Runnable) delegate).run();
+      }
+    };
+  }
 
-    static synchronized boolean getFredRan()
-    {
-        return fredRan;
-    }
+  static synchronized void setFredRan(boolean fredRan) {
+    StaticModule.fredRan = fredRan;
+  }
 
-    static synchronized void setInstantiated(boolean instantiated)
-    {
-        StaticModule.instantiated = instantiated;
-    }
+  static synchronized boolean getFredRan() {
+    return fredRan;
+  }
 
-    static synchronized boolean isInstantiated()
-    {
-        return instantiated;
-    }
+  static synchronized void setInstantiated(boolean instantiated) {
+    StaticModule.instantiated = instantiated;
+  }
 
-    static synchronized void setDecoratorRan(boolean decoratorRan)
-    {
-        StaticModule.decoratorRan = decoratorRan;
-    }
+  static synchronized boolean isInstantiated() {
+    return instantiated;
+  }
 
-    static synchronized boolean getDecoratorRan()
-    {
-        return decoratorRan;
-    }
+  static synchronized void setDecoratorRan(boolean decoratorRan) {
+    StaticModule.decoratorRan = decoratorRan;
+  }
 
-    public static NameListHolder buildNames(final Collection<String> configuration)
-    {
-        return new NameListHolder()
-        {
-            public List<String> getNames()
-            {
-                List<String> result = CollectionFactory.newList(configuration);
+  static synchronized boolean getDecoratorRan() {
+    return decoratorRan;
+  }
 
-                Collections.sort(result);
+  public static NameListHolder buildNames(final Collection<String> configuration) {
+    return new NameListHolder() {
+      public List<String> getNames() {
+        List<String> result = CollectionFactory.newList(configuration);
 
-                return result;
-            }
-        };
-    }
+        Collections.sort(result);
 
-    public static void contributeNames(Configuration<String> configuration)
-    {
-        configuration.add("Fred");
-    }
+        return result;
+      }
+    };
+  }
+
+  public static void contributeNames(Configuration<String> configuration) {
+    configuration.add("Fred");
+  }
 }
