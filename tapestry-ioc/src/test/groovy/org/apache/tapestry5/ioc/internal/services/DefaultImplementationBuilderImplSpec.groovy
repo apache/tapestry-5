@@ -3,10 +3,6 @@ package org.apache.tapestry5.ioc.internal.services
 import org.apache.tapestry5.ioc.AbstractSharedRegistrySpecification
 import org.apache.tapestry5.ioc.services.DefaultImplementationBuilder
 
-/** An interface that includes toString() */
-interface ToString {
-  String toString();
-}
 
 class DefaultImplementationBuilderImplSpec extends AbstractSharedRegistrySpecification {
 
