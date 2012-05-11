@@ -104,7 +104,8 @@ public class PerthreadManagerImpl implements PerthreadManager
                 listener.threadDidCleanup();
             } catch (Exception ex)
             {
-                logger.warn(ServiceMessages.threadCleanupError(listener, ex), ex);
+                logger.warn(String.format("Error invoking listener %s: %s", listener, ex),
+                    ex);
             }
         }
 

@@ -17,7 +17,6 @@ package org.apache.tapestry5.ioc.internal.services;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
 import org.apache.tapestry5.ioc.services.Coercion;
-import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
 import org.apache.tapestry5.plastic.PlasticUtils;
 
 public class ServiceMessages
@@ -26,11 +25,6 @@ public class ServiceMessages
 
     private ServiceMessages()
     {
-    }
-
-    public static String threadCleanupError(ThreadCleanupListener listener, Throwable cause)
-    {
-        return MESSAGES.format("thread-cleanup-error", listener, cause);
     }
 
     public static String noSuchProperty(Class clazz, String propertyName)
