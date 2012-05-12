@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.structure;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.runtime.Component;
+import org.apache.tapestry5.runtime.PageLifecycleCallbackHub;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.slf4j.Logger;
@@ -29,16 +30,16 @@ import org.slf4j.Logger;
  * Starting in release 5.2, the nature of pages changed considerably. Pages are no longer pooled instances. Instead,
  * pages are shared instances (per locale) but all internal <em>mutable</em> state is stored inside
  * {@link PerthreadManager}. Page construction time is considered to extend past the
- * {@link PageLifecycleListener#containingPageDidLoad()} lifecycle notification. This is not quite perfect from a
+ * {@linkplain  PageLifecycleCallbackHub#addPageLoadedCallback(Runnable) page loaded callback}. This is not quite perfect from a
  * threading point-of-view (arguably, even write-once-read-many fields should be protected by synchronized blocks or
  * other mechanisms). At best, we can be assured that the entire page construction phase is protected by a single
  * synchronized block (but not on the page itself). An ideal system would build the page bottom to top so that all
  * assignments could take place in constructors, assigning to final fields. Maybe some day.
  * <p/>
- * The Page object is never visible to end-user code. The page also exists to provide a kind of service to components
- * embedded (directly or indirectly) within the page.
+ * The Page object is never visible to end-user code, though it exposes an interface ({@link PageLifecycleCallbackHub} that
+ * {@linkplain org.apache.tapestry5.ComponentResources#getPageLifecycleCallbackHub() is}).
  */
-public interface Page
+public interface Page extends PageLifecycleCallbackHub
 {
     /**
      * Page construction statistics for the page.
@@ -141,6 +142,9 @@ public interface Page
 
     /**
      * Adds a listener that is notified of large scale page events.
+     *
+     * @deprecated in 5.3.3; use {@link #addPageLoadedCallback(Runnable)}, {@link #addPageAttachedCallback(Runnable)}, or
+     *             {@link #addPageDetachedCallback(Runnable)}  instead
      */
     void addLifecycleListener(PageLifecycleListener listener);
 
@@ -148,6 +152,7 @@ public interface Page
      * Removes a listener that was previously added.
      *
      * @since 5.2.0
+     * @deprecated in 5.3.3, due to introduction of {@link #addPageLoadedCallback(Runnable)}
      */
     void removeLifecycleListener(PageLifecycleListener listener);
 
@@ -165,25 +170,31 @@ public interface Page
      * string) returns the root
      * element of the page.
      *
-     * @throws IllegalArgumentException if the nestedId does not correspond to a component
+     * @throws IllegalArgumentException
+     *         if the nestedId does not correspond to a component
      */
     ComponentPageElement getComponentElementByNestedId(String nestedId);
 
     /**
      * Posts a change to a persistent field.
      *
-     * @param resources the component resources for the component or mixin containing the field whose
-     *                  value changed
-     * @param fieldName the name of the field
-     * @param newValue  the new value for the field
+     * @param resources
+     *         the component resources for the component or mixin containing the field whose
+     *         value changed
+     * @param fieldName
+     *         the name of the field
+     * @param newValue
+     *         the new value for the field
      */
     void persistFieldChange(ComponentResources resources, String fieldName, Object newValue);
 
     /**
      * Gets a change for a field within the component.
      *
-     * @param nestedId  the nested component id of the component containing the field
-     * @param fieldName the name of the persistent field
+     * @param nestedId
+     *         the nested component id of the component containing the field
+     * @param fieldName
+     *         the name of the persistent field
      * @return the value, or null if no value is stored
      */
     Object getFieldChange(String nestedId, String fieldName);
@@ -199,21 +210,12 @@ public interface Page
     /**
      * Adds a new listener for page reset events.
      *
-     * @param listener will receive notifications when the page is accessed from a different page
+     * @param listener
+     *         will receive notifications when the page is accessed from a different page
      * @since 5.2.0
+     * @deprecated in 5.3.3,
      */
     void addResetListener(PageResetListener listener);
-
-    /**
-     * Adds a verify callback, which is allowed while the page is loading. Such callbacks are invoked once,
-     * after the page has been loaded succesfully. This was added specifically to ensure that components
-     * only verify that required parameters are bound after all components and mixins of the page have had a chance
-     * to initialize.
-     *
-     * @param callback to be invoked after page loaded
-     * @since 5.3
-     */
-    void addVerifyListener(Runnable callback);
 
     /**
      * Returns true if there are any {@link PageResetListener} listeners.
@@ -226,7 +228,6 @@ public interface Page
      * Invoked to notify {@link PageResetListener} listeners.
      */
     void pageReset();
-
 
     /**
      * Invoked once at the end of page construction, to provide page construction statistics.

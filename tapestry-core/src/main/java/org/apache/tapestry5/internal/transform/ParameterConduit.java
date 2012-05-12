@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -45,11 +45,4 @@ public interface ParameterConduit extends FieldConduit<Object>
      * Resets the conduit, clearing any <em>temporarily</em> cached data (from a non-invariant {@link Binding}).
      */
     void reset();
-
-    /**
-     * Invoked from the component's {@link org.apache.tapestry5.runtime.PageLifecycleListener#containingPageDidLoad()} lifecycle method, to
-     * finishing initializing
-     * the conduit prior to real use.
-     */
-    void load();
 }

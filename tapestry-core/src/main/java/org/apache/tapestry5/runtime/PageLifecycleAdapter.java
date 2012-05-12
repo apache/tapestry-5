@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@ package org.apache.tapestry5.runtime;
 
 /**
  * Empty implementation of the {@link PageLifecycleListener} interface.
+ *
+ * @deprecated in 5.3.3, as {@link PageLifecycleListener} has been deprecated
  */
 public class PageLifecycleAdapter implements PageLifecycleListener
 {

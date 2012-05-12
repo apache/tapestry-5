@@ -1,4 +1,4 @@
-// Copyright 2006, 2009, 2011 The Apache Software Foundation
+// Copyright 2006, 2009, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,12 +18,16 @@ package org.apache.tapestry5.runtime;
  * A set of methods that allow components to know about page-level operations. When this interface is
  * {@linkplain org.apache.tapestry5.plastic.PlasticClass#introduceInterface(Class)} introduced}, the component will
  * automatically register itself as a listener with the page.
+ *
+ * @deprecated in 5.3.3, replaced with {@link PageLifecycleCallbackHub}
  */
 public interface PageLifecycleListener
 {
     /**
      * Invoked when the page finishes loading. This occurs once all components are loaded and all parameters have been
      * set.
+     *
+     * @deprecated in 5.3.3,  use {@link org.apache.tapestry5.ComponentResources#addPageLoadedCallback(Runnable)} instead
      */
     void containingPageDidLoad();
 

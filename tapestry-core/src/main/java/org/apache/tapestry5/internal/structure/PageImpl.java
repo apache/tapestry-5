@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.apache.tapestry5.internal.structure;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.internal.services.PersistentFieldManager;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.OneShotLock;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
@@ -41,13 +42,19 @@ public class PageImpl implements Page
 
     private ComponentPageElement rootElement;
 
-    private final List<PageLifecycleListener> lifecycleListeners = CollectionFactory.newThreadSafeList();
+    private List<Runnable> loadedCallbacks = CollectionFactory.newList();
 
-    private final List<PageResetListener> resetListeners = CollectionFactory.newList();
+    private final List<Runnable> attachCallbacks = CollectionFactory.newList();
+
+    private final List<Runnable> detachCallbacks = CollectionFactory.newList();
+
+    private final List<Runnable> resetCallbacks = CollectionFactory.newList();
 
     private boolean loadComplete;
 
-    private final OneShotLock lock = new OneShotLock();
+    private final OneShotLock lifecycleListenersLock = new OneShotLock();
+
+    private final OneShotLock verifyListenerLocks = new OneShotLock();
 
     private final Map<String, ComponentPageElement> idToComponent = CollectionFactory.newCaseInsensitiveMap();
 
@@ -67,10 +74,14 @@ public class PageImpl implements Page
     private static final Pattern SPLIT_ON_DOT = Pattern.compile("\\.");
 
     /**
-     * @param name                   canonicalized page name
-     * @param selector               used to locate resources
-     * @param persistentFieldManager for access to cross-request persistent values
-     * @param perThreadManager       for managing per-request mutable state
+     * @param name
+     *         canonicalized page name
+     * @param selector
+     *         used to locate resources
+     * @param persistentFieldManager
+     *         for access to cross-request persistent values
+     * @param perThreadManager
+     *         for managing per-request mutable state
      */
     public PageImpl(String name, ComponentResourceSelector selector, PersistentFieldManager persistentFieldManager,
                     PerthreadManager perThreadManager)
@@ -129,7 +140,7 @@ public class PageImpl implements Page
 
     public void setRootElement(ComponentPageElement component)
     {
-        lock.check();
+        lifecycleListenersLock.check();
 
         rootElement = component;
     }
@@ -144,33 +155,59 @@ public class PageImpl implements Page
         return rootElement.getComponent();
     }
 
-    public void addLifecycleListener(PageLifecycleListener listener)
+    public void addLifecycleListener(final PageLifecycleListener listener)
     {
-        lock.check();
+        assert listener != null;
 
-        lifecycleListeners.add(listener);
+        addPageLoadedCallback(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                listener.containingPageDidLoad();
+            }
+        });
+
+        addPageAttachedCallback(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                listener.containingPageDidAttach();
+            }
+        });
+
+        addPageDetachedCallback(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                listener.containingPageDidDetach();
+            }
+        });
     }
 
     public void removeLifecycleListener(PageLifecycleListener listener)
     {
-        lock.check();
+        lifecycleListenersLock.check();
 
-        lifecycleListeners.remove(listener);
+        throw new UnsupportedOperationException("It is not longer possible to remove a page lifecycle listener; please convert your code to use the addPageLoadedCallback() method instead.");
     }
 
     public boolean detached()
     {
         boolean result = false;
 
-        for (PageLifecycleListener listener : lifecycleListeners)
+        for (Runnable callback : detachCallbacks)
         {
             try
             {
-                listener.containingPageDidDetach();
+                callback.run();
             } catch (RuntimeException ex)
             {
-                getLogger().error(StructureMessages.detachFailure(listener, ex), ex);
                 result = true;
+
+                getLogger().error(String.format("Callback %s failed during page detach: %s", callback, InternalUtils.toMessage(ex)), ex);
             }
         }
 
@@ -179,25 +216,15 @@ public class PageImpl implements Page
 
     public void loaded()
     {
-        lock.check();
+        lifecycleListenersLock.lock();
 
-        for (PageLifecycleListener listener : lifecycleListeners)
-        {
-            listener.containingPageDidLoad();
-        }
+        invokeCallbacks(loadedCallbacks);
 
-        lock.lock();
+        loadedCallbacks = null;
 
+        verifyListenerLocks.lock();
 
-        for (Runnable callback : pageVerifyCallbacks)
-        {
-            callback.run();
-        }
-
-        // These are never needed again, so we can get rid of them. The PageLifecycleListener interface is too complicated,
-        // we don't know what's needed when, and rely on the listeners themselves to unregister when no longer needed. A better design
-        // would be more like these pageVerifyCallbacks: just use Runnable and know when it is safe to throw them away. Something
-        // to refactor to over time.
+        invokeCallbacks(pageVerifyCallbacks);
 
         pageVerifyCallbacks = null;
 
@@ -208,11 +235,7 @@ public class PageImpl implements Page
     {
         attachCount.incrementAndGet();
 
-        for (PageLifecycleListener listener : lifecycleListeners)
-            listener.restoreStateBeforePageAttach();
-
-        for (PageLifecycleListener listener : lifecycleListeners)
-            listener.containingPageDidAttach();
+        invokeCallbacks(attachCallbacks);
     }
 
     public Logger getLogger()
@@ -246,38 +269,89 @@ public class PageImpl implements Page
         return name;
     }
 
-    public void addResetListener(PageResetListener listener)
-    {
-        assert listener != null;
-        lock.check();
-
-        resetListeners.add(listener);
-    }
-
-    public void addVerifyListener(Runnable callback)
+    @Override
+    public void addResetCallback(Runnable callback)
     {
         assert callback != null;
 
-        lock.check();
+        lifecycleListenersLock.check();
+
+        resetCallbacks.add(callback);
+    }
+
+    public void addResetListener(final PageResetListener listener)
+    {
+        assert listener != null;
+
+        addResetCallback(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                listener.containingPageDidReset();
+            }
+        });
+    }
+
+    public void addVerifyCallback(Runnable callback)
+    {
+        verifyListenerLocks.check();
+
+        assert callback != null;
 
         pageVerifyCallbacks.add(callback);
     }
 
     public void pageReset()
     {
-        for (PageResetListener l : resetListeners)
-        {
-            l.containingPageDidReset();
-        }
+        invokeCallbacks(resetCallbacks);
     }
 
     public boolean hasResetListeners()
     {
-        return !resetListeners.isEmpty();
+        return !resetCallbacks.isEmpty();
     }
 
     public int getAttachCount()
     {
         return attachCount.get();
+    }
+
+    @Override
+    public void addPageLoadedCallback(Runnable callback)
+    {
+        lifecycleListenersLock.check();
+
+        assert callback != null;
+
+        loadedCallbacks.add(callback);
+    }
+
+    @Override
+    public void addPageAttachedCallback(Runnable callback)
+    {
+        lifecycleListenersLock.check();
+
+        assert callback != null;
+
+        attachCallbacks.add(callback);
+    }
+
+    @Override
+    public void addPageDetachedCallback(Runnable callback)
+    {
+        lifecycleListenersLock.check();
+
+        assert callback != null;
+
+        detachCallbacks.add(callback);
+    }
+
+    private void invokeCallbacks(List<Runnable> callbacks)
+    {
+        for (Runnable callback : callbacks)
+        {
+            callback.run();
+        }
     }
 }

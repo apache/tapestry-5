@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,15 +18,15 @@ import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
-
-import static org.easymock.EasyMock.contains;
-import static org.easymock.EasyMock.same;
 import org.slf4j.Logger;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.util.Locale;
+
+import static org.easymock.EasyMock.contains;
+import static org.easymock.EasyMock.same;
 
 public class PageImplTest extends InternalBaseTestCase
 {
@@ -134,9 +134,6 @@ public class PageImplTest extends InternalBaseTestCase
     {
         PageLifecycleListener listener1 = newPageLifecycle();
         PageLifecycleListener listener2 = newPageLifecycle();
-
-        listener1.restoreStateBeforePageAttach();
-        listener2.restoreStateBeforePageAttach();
 
         listener1.containingPageDidAttach();
         listener2.containingPageDidAttach();

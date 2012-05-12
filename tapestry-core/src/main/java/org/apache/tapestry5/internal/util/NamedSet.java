@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,12 +15,15 @@
 package org.apache.tapestry5.internal.util;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
+import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Simple, thread-safe associative array that relates a name to a value. Names are case-insensitive.
@@ -28,13 +31,15 @@ import java.util.Set;
  * though the cost of a lookup is more expensive. However, this is a good match against many of the structures inside
  * a page instance, where most lookups occur only during page constructions, and the number of values is often small.
  * <p/>
- * We use simple synchronization, as uncontested synchronized locks are very, very cheap.
+ * Each NameSet has its own {@link ReadWriteLock}.
  *
  * @param <T>
  *         the type of value stored
  */
 public class NamedSet<T>
 {
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
+
     private NamedRef<T> first;
 
     private static class NamedRef<T>
@@ -55,37 +60,53 @@ public class NamedSet<T>
     /**
      * Returns a set of the names of all stored values.
      */
-    public synchronized Set<String> getNames()
+    public Set<String> getNames()
     {
-        Set<String> result = CollectionFactory.newSet();
-
-        NamedRef<T> cursor = first;
-
-        while (cursor != null)
+        try
         {
-            result.add(cursor.name);
-            cursor = cursor.next;
-        }
+            lock.readLock().lock();
 
-        return result;
+            Set<String> result = CollectionFactory.newSet();
+
+            NamedRef<T> cursor = first;
+
+            while (cursor != null)
+            {
+                result.add(cursor.name);
+                cursor = cursor.next;
+            }
+
+            return result;
+        } finally
+        {
+            lock.readLock().unlock();
+        }
     }
 
     /**
      * Returns a set of all the values in the set.
      */
-    public synchronized Set<T> getValues()
+    public Set<T> getValues()
     {
         Set<T> result = CollectionFactory.newSet();
 
-        NamedRef<T> cursor = first;
-
-        while (cursor != null)
+        try
         {
-            result.add(cursor.value);
-            cursor = cursor.next;
-        }
+            lock.readLock().lock();
 
-        return result;
+            NamedRef<T> cursor = first;
+
+            while (cursor != null)
+            {
+                result.add(cursor.value);
+                cursor = cursor.next;
+            }
+
+            return result;
+        } finally
+        {
+            lock.readLock().unlock();
+        }
     }
 
     /**
@@ -95,21 +116,29 @@ public class NamedSet<T>
      *         used to locate the value
      * @return the value, or null if not found
      */
-    public synchronized T get(String name)
+    public T get(String name)
     {
-        NamedRef<T> cursor = first;
-
-        while (cursor != null)
+        try
         {
-            if (cursor.name.equalsIgnoreCase(name))
+            lock.readLock().lock();
+
+            NamedRef<T> cursor = first;
+
+            while (cursor != null)
             {
-                return cursor.value;
+                if (cursor.name.equalsIgnoreCase(name))
+                {
+                    return cursor.value;
+                }
+
+                cursor = cursor.next;
             }
 
-            cursor = cursor.next;
+            return null;
+        } finally
+        {
+            lock.readLock().unlock();
         }
-
-        return null;
     }
 
     /**
@@ -121,37 +150,45 @@ public class NamedSet<T>
      * @param newValue
      *         non-null value to store
      */
-    public synchronized void put(String name, T newValue)
+    public void put(String name, T newValue)
     {
         assert InternalUtils.isNonBlank(name);
         assert newValue != null;
 
-        NamedRef<T> prev = null;
-        NamedRef<T> cursor = first;
-
-        while (cursor != null)
+        try
         {
-            if (cursor.name.equalsIgnoreCase(name))
+            lock.writeLock().lock();
+
+            NamedRef<T> prev = null;
+            NamedRef<T> cursor = first;
+
+            while (cursor != null)
             {
-                // Retain the case of the name as put(), even if it doesn't match
-                // the existing case
+                if (cursor.name.equalsIgnoreCase(name))
+                {
+                    // Retain the case of the name as put(), even if it doesn't match
+                    // the existing case
 
-                cursor.name = name;
-                cursor.value = newValue;
+                    cursor.name = name;
+                    cursor.value = newValue;
 
-                return;
+                    return;
+                }
+
+                prev = cursor;
+                cursor = cursor.next;
             }
 
-            prev = cursor;
-            cursor = cursor.next;
+            NamedRef<T> newRef = new NamedRef<T>(name, newValue);
+
+            if (prev == null)
+                first = newRef;
+            else
+                prev.next = newRef;
+        } finally
+        {
+            lock.writeLock().unlock();
         }
-
-        NamedRef<T> newRef = new NamedRef<T>(name, newValue);
-
-        if (prev == null)
-            first = newRef;
-        else
-            prev.next = newRef;
     }
 
     /**
@@ -160,17 +197,9 @@ public class NamedSet<T>
      * @param worker
      *         performs an operation on, or using, the value
      */
-    public synchronized void eachValue(Worker<T> worker)
+    public void eachValue(Worker<T> worker)
     {
-        assert worker != null;
-
-        NamedRef<T> cursor = first;
-
-        while (cursor != null)
-        {
-            worker.work(cursor.value);
-            cursor = cursor.next;
-        }
+        F.flow(getValues()).each(worker);
     }
 
 
@@ -183,37 +212,46 @@ public class NamedSet<T>
      *         non-null value to store
      * @return true if value stored, false if name already exists
      */
-    public synchronized boolean putIfNew(String name, T newValue)
+    public boolean putIfNew(String name, T newValue)
     {
         assert InternalUtils.isNonBlank(name);
         assert newValue != null;
 
-        NamedRef<T> prev = null;
-        NamedRef<T> cursor = first;
-
-        while (cursor != null)
+        try
         {
-            if (cursor.name.equalsIgnoreCase(name))
+
+            lock.writeLock().lock();
+
+            NamedRef<T> prev = null;
+            NamedRef<T> cursor = first;
+
+            while (cursor != null)
             {
-                return false;
+                if (cursor.name.equalsIgnoreCase(name))
+                {
+                    return false;
+                }
+
+                prev = cursor;
+                cursor = cursor.next;
             }
 
-            prev = cursor;
-            cursor = cursor.next;
+            NamedRef<T> newRef = new NamedRef<T>(name, newValue);
+
+            if (prev == null)
+                first = newRef;
+            else
+                prev.next = newRef;
+
+            return true;
+        } finally
+        {
+            lock.writeLock().unlock();
         }
-
-        NamedRef<T> newRef = new NamedRef<T>(name, newValue);
-
-        if (prev == null)
-            first = newRef;
-        else
-            prev.next = newRef;
-
-        return true;
     }
 
     /**
-     * Convienience method for creating a new, empty set.
+     * Convenience method for creating a new, empty set.
      */
     public static <T> NamedSet<T> create()
     {
@@ -221,7 +259,7 @@ public class NamedSet<T>
     }
 
     /**
-     * Convienience method for getting a value from a set that may be null.
+     * Convenience method for getting a value from a set that may be null.
      *
      * @param <T>
      * @param set
@@ -241,7 +279,9 @@ public class NamedSet<T>
     public static Set<String> getNames(NamedSet<?> set)
     {
         if (set == null)
+        {
             return Collections.emptySet();
+        }
 
         return set.getNames();
     }
@@ -252,7 +292,9 @@ public class NamedSet<T>
     public static <T> Set<T> getValues(NamedSet<T> set)
     {
         if (set == null)
+        {
             return Collections.emptySet();
+        }
 
         return set.getValues();
     }
