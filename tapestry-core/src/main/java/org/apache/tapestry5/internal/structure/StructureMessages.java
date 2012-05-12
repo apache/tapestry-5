@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
 
 package org.apache.tapestry5.internal.structure;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.MessagesImpl;
+
+import java.util.Collection;
+import java.util.List;
 
 final class StructureMessages
 {
@@ -39,11 +39,6 @@ final class StructureMessages
     static String unknownMixin(String componentId, String mixinClassName)
     {
         return MESSAGES.format("unknown-mixin", componentId, mixinClassName);
-    }
-
-    static String detachFailure(Object listener, Throwable cause)
-    {
-        return MESSAGES.format("detach-failure", listener, cause);
     }
 
     static String wrongPhaseResultType(List<String> expectedTypes)

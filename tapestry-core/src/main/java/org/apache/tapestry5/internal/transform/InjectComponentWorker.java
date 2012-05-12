@@ -1,4 +1,4 @@
-// Copyright 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2008, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.*;
 import org.apache.tapestry5.runtime.Component;
-import org.apache.tapestry5.runtime.PageLifecycleAdapter;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
 
@@ -36,11 +35,12 @@ public class InjectComponentWorker implements ComponentClassTransformWorker2
     private final class InjectedComponentFieldValueConduit extends ReadOnlyComponentFieldConduit
     {
         private final ComponentResources resources;
+
         private final String fieldName, componentId, type;
 
         private Component embedded;
 
-        private InjectedComponentFieldValueConduit(final ComponentResources resources, String fieldName, String type,
+        private InjectedComponentFieldValueConduit(ComponentResources resources, String fieldName, String type,
                                                    String componentId)
         {
             super(resources, fieldName);
@@ -50,13 +50,12 @@ public class InjectComponentWorker implements ComponentClassTransformWorker2
             this.componentId = componentId;
             this.type = type;
 
-            resources.addPageLifecycleListener(new PageLifecycleAdapter()
+            resources.getPageLifecycleCallbackHub().addPageAttachedCallback(new Runnable()
             {
-                public void containingPageDidLoad()
+                @Override
+                public void run()
                 {
                     load();
-
-                    resources.removePageLifecycleListener(this);
                 }
             });
         }

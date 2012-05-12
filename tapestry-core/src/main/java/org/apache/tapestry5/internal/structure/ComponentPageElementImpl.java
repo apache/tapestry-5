@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -519,16 +519,23 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
      * Constructor for other components embedded within the root component or at deeper levels of
      * the hierarchy.
      *
-     * @param page             ultimately containing this component
-     * @param container        component immediately containing this component (may be null for a root component)
-     * @param id               unique (within the container) id for this component (may be null for a root
-     *                         component)
-     * @param elementName      the name of the element which represents this component in the template, or null
-     *                         for
-     *                         &lt;comp&gt; element or a page component
-     * @param instantiator     used to create the new component instance and access the component's model
-     * @param location         location of the element (within a template), used as part of exception reporting
-     * @param elementResources Provides access to common methods of various services
+     * @param page
+     *         ultimately containing this component
+     * @param container
+     *         component immediately containing this component (may be null for a root component)
+     * @param id
+     *         unique (within the container) id for this component (may be null for a root
+     *         component)
+     * @param elementName
+     *         the name of the element which represents this component in the template, or null
+     *         for
+     *         &lt;comp&gt; element or a page component
+     * @param instantiator
+     *         used to create the new component instance and access the component's model
+     * @param location
+     *         location of the element (within a template), used as part of exception reporting
+     * @param elementResources
+     *         Provides access to common methods of various services
      */
     ComponentPageElementImpl(Page page, ComponentPageElement container, String id, String nestedId, String completeId,
                              String elementName, Instantiator instantiator, Location location,
@@ -562,14 +569,11 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         renderingValue = elementResources.createPerThreadValue();
 
-        page.addLifecycleListener(new PageLifecycleAdapter()
+        page.addPageLoadedCallback(new Runnable()
         {
-            @Override
-            public void containingPageDidLoad()
+            public void run()
             {
                 pageLoaded();
-
-                ComponentPageElementImpl.this.page.removeLifecycleListener(this);
             }
         });
     }
@@ -783,7 +787,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         initializeRenderPhases();
 
-        page.addVerifyListener(new Runnable()
+        page.addVerifyCallback(new Runnable()
         {
             public void run()
             {
@@ -940,10 +944,12 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     /**
      * Invokes a callback on the component instances (the core component plus any mixins).
      *
-     * @param reverse  if true, the callbacks are in the reverse of the normal order (this is associated
-     *                 with AfterXXX
-     *                 phases)
-     * @param callback the object to receive each component instance
+     * @param reverse
+     *         if true, the callbacks are in the reverse of the normal order (this is associated
+     *         with AfterXXX
+     *         phases)
+     * @param callback
+     *         the object to receive each component instance
      */
     private void invoke(boolean reverse, ComponentCallback callback)
     {

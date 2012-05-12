@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.runtime.Component;
-import org.apache.tapestry5.runtime.PageLifecycleAdapter;
+import org.apache.tapestry5.runtime.PageLifecycleCallbackHub;
 import org.apache.tapestry5.runtime.PageLifecycleListener;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
@@ -42,6 +42,8 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * The bridge between a component and its {@link ComponentPageElement}, that supplies all kinds of
@@ -73,20 +75,34 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     private static final AnnotationProvider NULL_ANNOTATION_PROVIDER = new NullAnnotationProvider();
 
-    // Case insensitive map from parameter name to binding
+    // Map from parameter name to binding. This is mutable but not guarded by the lazy creation lock, as it is only
+    // written to during page load, not at runtime.
     private NamedSet<Binding> bindings;
 
-    // Case insensitive map from parameter name to ParameterConduit, used to support mixins
+    /**
+     * Lock, shared by all instances, on certain rare, runtime (not construction time) lazy creation, such
+     * as the creation of the {@link PerThreadValue}, to store render variables. It is possible that this lock could be converted
+     * into a static variable without affecting throughput since across all instances, reads vastly dominate writes.
+     */
+    private final ReadWriteLock lazyCreationLock = new ReentrantReadWriteLock();
+
+    // Maps from parameter name to ParameterConduit, used to support mixins
     // which need access to the containing component's PC's
+    // Guarded by this
     private NamedSet<ParameterConduit> conduits;
 
+    // Guarded by: lazyCreationLock
     private Messages messages;
 
+    // Guarded by: lazyCreationLock
     private boolean informalsComputed;
 
+    // Guarded by: lazyCreationLock
     private PerThreadValue<Map<String, Object>> renderVariables;
 
+    // Guarded by: lazyCreationLock
     private Informal firstInformal;
+
 
     /**
      * We keep a linked list of informal parameters, which saves us the expense of determining which
@@ -134,14 +150,6 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         public void work(ParameterConduit value)
         {
             value.reset();
-        }
-    };
-
-    private static Worker<ParameterConduit> LOAD_PARAMETER_CONDUIT = new Worker<ParameterConduit>()
-    {
-        public void work(ParameterConduit value)
-        {
-            value.load();
         }
     };
 
@@ -375,19 +383,48 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
             i.write(writer);
     }
 
-    private synchronized Informal firstInformal()
+    private Informal firstInformal()
     {
-        if (!informalsComputed)
+        try
         {
-            for (Map.Entry<String, Binding> e : getInformalParameterBindings().entrySet())
+            lazyCreationLock.readLock().lock();
+
+            if (!informalsComputed)
             {
-                firstInformal = new Informal(e.getKey(), e.getValue(), firstInformal);
+                computeInformals();
             }
 
-            informalsComputed = true;
+            return firstInformal;
+        } finally
+        {
+            lazyCreationLock.readLock().unlock();
         }
+    }
 
-        return firstInformal;
+    private void computeInformals()
+    {
+        try
+        {
+            lazyCreationLock.readLock().unlock();
+            // Tiny window here where some other thread may compute informals!
+            lazyCreationLock.writeLock().lock();
+
+            if (!informalsComputed)
+            {
+                for (Map.Entry<String, Binding> e : getInformalParameterBindings().entrySet())
+                {
+                    firstInformal = new Informal(e.getKey(), e.getValue(), firstInformal);
+                }
+
+                informalsComputed = true;
+            }
+        } finally
+        {
+            // Downgrade back to read:
+            lazyCreationLock.readLock().lock();
+            lazyCreationLock.writeLock().unlock();
+
+        }
     }
 
     public Component getContainer()
@@ -418,12 +455,51 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return element.getResourceSelector();
     }
 
-    public synchronized Messages getMessages()
+    public Messages getMessages()
     {
-        if (messages == null)
-            messages = elementResources.getMessages(componentModel);
+        try
+        {
+            lazyCreationLock.readLock().lock();
 
-        return messages;
+            if (messages == null)
+            {
+                obtainComponentMessages();
+            }
+
+            return messages;
+        } finally
+        {
+            lazyCreationLock.readLock().unlock();
+        }
+    }
+
+    private void obtainComponentMessages()
+    {
+
+        boolean haveWriteLock = false;
+
+        try
+        {
+            lazyCreationLock.readLock().unlock();
+
+            // Do the expensive part here, with no locks!
+
+            Messages componentMessages = elementResources.getMessages(componentModel);
+
+            lazyCreationLock.writeLock().lock();
+
+            haveWriteLock = true;
+
+            messages = componentMessages;
+        } finally
+        {
+            lazyCreationLock.readLock().lock();
+            if (haveWriteLock)
+            {
+                lazyCreationLock.writeLock().unlock();
+            }
+
+        }
     }
 
     public String getElementName(String defaultElementName)
@@ -471,22 +547,53 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return result;
     }
 
-    private synchronized Map<String, Object> getRenderVariables(boolean create)
+    private Map<String, Object> getRenderVariables(boolean create)
     {
-        if (renderVariables == null)
+        try
         {
-            if (!create)
-                return null;
+            lazyCreationLock.readLock().lock();
 
-            renderVariables = elementResources.createPerThreadValue();
+            if (renderVariables == null)
+            {
+                if (!create)
+                {
+                    return null;
+                }
+
+                createRenderVariablesPerThreadValue();
+            }
+
+            Map<String, Object> result = renderVariables.get();
+
+            if (result == null && create)
+                result = renderVariables.set(CollectionFactory.newCaseInsensitiveMap());
+
+            return result;
+        } finally
+        {
+            lazyCreationLock.readLock().unlock();
         }
+    }
 
-        Map<String, Object> result = renderVariables.get();
+    private void createRenderVariablesPerThreadValue()
+    {
+        try
+        {
+            lazyCreationLock.readLock().unlock();
+            // There's a window right here where another thread may acquire the write lock and create the PTV
+            lazyCreationLock.writeLock().lock();
 
-        if (result == null && create)
-            result = renderVariables.set(CollectionFactory.newCaseInsensitiveMap());
+            if (renderVariables == null)
+            {
+                renderVariables = elementResources.createPerThreadValue();
+            }
 
-        return result;
+        } finally
+        {
+            // The thread with the write lock is allowed to downgrade to a read lock as so:
+            lazyCreationLock.readLock().lock();
+            lazyCreationLock.writeLock().unlock();
+        }
     }
 
     public Object getRenderVariable(String name)
@@ -537,8 +644,6 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         page.addResetListener(listener);
     }
 
-
-
     private synchronized void resetParameterConduits()
     {
         if (conduits != null)
@@ -546,15 +651,6 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
             conduits.eachValue(RESET_PARAMETER_CONDUIT);
         }
     }
-
-    private synchronized void loadParameterConduits()
-    {
-        // Don't need the conduits != null, because this method will only be invoked
-        // when conduits is non-null.
-
-        conduits.eachValue(LOAD_PARAMETER_CONDUIT);
-    }
-
 
     public synchronized ParameterConduit getParameterConduit(String parameterName)
     {
@@ -566,16 +662,6 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         if (conduits == null)
         {
             conduits = NamedSet.create();
-
-            page.addLifecycleListener(new PageLifecycleAdapter()
-            {
-                @Override
-                public void containingPageDidLoad()
-                {
-                    loadParameterConduits();
-                }
-            });
-
         }
 
         conduits.put(parameterName, conduit);
@@ -599,9 +685,17 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return null;
     }
 
-    /** @since 5.3 */
+    /**
+     * @since 5.3
+     */
     public void render(MarkupWriter writer, RenderQueue queue)
     {
         queue.push(element);
+    }
+
+    @Override
+    public PageLifecycleCallbackHub getPageLifecycleCallbackHub()
+    {
+        return page;
     }
 }

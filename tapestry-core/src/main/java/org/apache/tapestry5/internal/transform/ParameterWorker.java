@@ -114,6 +114,7 @@ public class ParameterWorker implements ComponentClassTransformWorker2
     private void convertFieldIntoParameter(PlasticClass plasticClass, MutableComponentModel model,
                                            PlasticField field)
     {
+
         Parameter annotation = field.getAnnotation(Parameter.class);
 
         String fieldType = field.getTypeName();
@@ -195,6 +196,14 @@ public class ParameterWorker implements ComponentClassTransformWorker2
                         // shared with mixins.
 
                         icr.setParameterConduit(parameterName, this);
+                        icr.getPageLifecycleCallbackHub().addPageLoadedCallback(new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                load();
+                            }
+                        });
                     }
 
                     private ParameterState getState()

@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import org.apache.tapestry5.annotations.PageReset;
  * 
  * @since 5.2.0
  * @see PageReset
+ * @deprecated in 5.3.3
+ * @see org.apache.tapestry5.runtime.PageLifecycleCallbackHub#addResetCallback(Runnable)
  */
 public interface PageResetListener
 {
