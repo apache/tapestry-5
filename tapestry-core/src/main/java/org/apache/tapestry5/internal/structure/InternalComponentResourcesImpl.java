@@ -88,7 +88,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     // Maps from parameter name to ParameterConduit, used to support mixins
     // which need access to the containing component's PC's
-    // Guarded by this
+    // Guarded by: lazyCreationLock
     private NamedSet<ParameterConduit> conduits;
 
     // Guarded by: lazyCreationLock
@@ -644,27 +644,68 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         page.addResetListener(listener);
     }
 
-    private synchronized void resetParameterConduits()
+    private void resetParameterConduits()
     {
-        if (conduits != null)
+        try
         {
-            conduits.eachValue(RESET_PARAMETER_CONDUIT);
+            lazyCreationLock.readLock().lock();
+
+            if (conduits != null)
+            {
+                conduits.eachValue(RESET_PARAMETER_CONDUIT);
+            }
+        } finally
+        {
+            lazyCreationLock.readLock().unlock();
         }
     }
 
-    public synchronized ParameterConduit getParameterConduit(String parameterName)
+    public ParameterConduit getParameterConduit(String parameterName)
     {
-        return NamedSet.get(conduits, parameterName);
+        try
+        {
+            lazyCreationLock.readLock().lock();
+            return NamedSet.get(conduits, parameterName);
+        } finally
+        {
+            lazyCreationLock.readLock().unlock();
+        }
     }
 
-    public synchronized void setParameterConduit(String parameterName, ParameterConduit conduit)
+    public void setParameterConduit(String parameterName, ParameterConduit conduit)
     {
-        if (conduits == null)
+        try
         {
-            conduits = NamedSet.create();
-        }
+            lazyCreationLock.readLock().lock();
 
-        conduits.put(parameterName, conduit);
+            if (conduits == null)
+            {
+                createConduits();
+            }
+
+            conduits.put(parameterName, conduit);
+        } finally
+        {
+            lazyCreationLock.readLock().unlock();
+        }
+    }
+
+    private void createConduits()
+    {
+        try
+        {
+            lazyCreationLock.readLock().unlock();
+            lazyCreationLock.writeLock().lock();
+
+            if (conduits == null)
+            {
+                conduits = NamedSet.create();
+            }
+        } finally
+        {
+            lazyCreationLock.readLock().lock();
+            lazyCreationLock.writeLock().unlock();
+        }
     }
 
 
