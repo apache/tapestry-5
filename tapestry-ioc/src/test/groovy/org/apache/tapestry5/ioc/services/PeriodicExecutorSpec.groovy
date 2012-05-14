@@ -9,22 +9,22 @@ import java.util.concurrent.TimeUnit
 
 class PeriodicExecutorSpec extends AbstractRegistrySpecification {
 
-    def "execution intervals"() {
+  def "execution intervals"() {
 
-        buildRegistry()
+    buildRegistry()
 
-        def countDownLatch = new CountDownLatch(5);
+    def countDownLatch = new CountDownLatch(5);
 
-        def schedule = new IntervalSchedule(10)
+    def schedule = new IntervalSchedule(10)
 
-        def job = getService(PeriodicExecutor).addJob(schedule, "count incrementer", { countDownLatch.countDown(); })
+    def job = getService(PeriodicExecutor).addJob(schedule, "count incrementer", { countDownLatch.countDown(); })
 
-        countDownLatch.await 30, TimeUnit.SECONDS
+    countDownLatch.await 30, TimeUnit.SECONDS
 
-        cleanup:
+    cleanup:
 
-        job && job.cancel()
+    job && job.cancel()
 
 
-    }
+  }
 }

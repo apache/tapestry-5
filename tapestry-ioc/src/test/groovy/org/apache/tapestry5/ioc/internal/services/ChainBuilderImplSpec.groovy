@@ -4,6 +4,7 @@ import org.apache.tapestry5.ioc.AbstractSharedRegistrySpecification
 import org.apache.tapestry5.ioc.services.ChainBuilder
 
 interface ChainCommand {
+
   void run();
 
   int workInt(int input);

@@ -5,22 +5,21 @@ import org.apache.tapestry5.ioc.Location
 import org.apache.tapestry5.ioc.internal.util.TapestryException
 import org.apache.tapestry5.ioc.services.ExceptionAnalyzer
 
-class WriteOnlyPropertyException extends Exception
-{
+class WriteOnlyPropertyException extends Exception {
+
   private String code;
 
-  public String getCode()
-  {
+  public String getCode() {
     return code;
   }
 
-  public void setFaultCode(int code)
-  {
+  public void setFaultCode(int code) {
     this.code = String.format("%04d", code);
   }
 }
 
 class SelfCausedException extends RuntimeException {
+
   SelfCausedException(String message) {
     super(message);
   }
@@ -186,7 +185,7 @@ class ExceptionAnalyzerImplSpec extends AbstractSharedRegistrySpecification {
     def ei = ea.exceptionInfos[0]
 
     ei.propertyNames.contains("code")
-    ! ei.propertyNames.contains("faultCode")
+    !ei.propertyNames.contains("faultCode")
     ei.getProperty("code") == "0099"
   }
 

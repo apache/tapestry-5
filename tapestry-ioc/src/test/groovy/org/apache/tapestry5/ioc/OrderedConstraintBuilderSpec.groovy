@@ -4,27 +4,27 @@ import spock.lang.Specification
 
 class OrderedConstraintBuilderSpec extends Specification {
 
-    /** Any unrecognized methods are evaluated against {@link OrderConstraintBuilder}. */
-    def methodMissing(String name, args) {
-        OrderConstraintBuilder."$name"(* args)
-    }
+  /** Any unrecognized methods are evaluated against {@link OrderConstraintBuilder}. */
+  def methodMissing(String name, args) {
+    OrderConstraintBuilder."$name"(* args)
+  }
 
-    def "constraint ordering"() {
-        expect:
+  def "constraint ordering"() {
+    expect:
 
-        constraint.build() == values
+    constraint.build() == values
 
-        where:
+    where:
 
-        constraint || values
+    constraint || values
 
-        after("A") || ["after:A"]
-        afterAll() || ["after:*"]
-        before("B") || ["before:B"]
-        beforeAll() || ["before:*"]
+    after("A") || ["after:A"]
+    afterAll() || ["after:*"]
+    before("B") || ["before:B"]
+    beforeAll() || ["before:*"]
 
-        before("A").after("B") || ["before:A", "after:B"]
-    }
+    before("A").after("B") || ["before:A", "after:B"]
+  }
 
 
 }

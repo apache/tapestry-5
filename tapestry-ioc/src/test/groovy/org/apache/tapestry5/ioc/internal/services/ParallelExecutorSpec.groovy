@@ -83,6 +83,7 @@ class ParallelExecutorSpec extends AbstractSharedRegistrySpecification {
   def "exception inside the Invokable is rethrown by the thunk"() {
 
     def inv = new Invokable() {
+
       Object invoke() { throw new RuntimeException("Future failure!")}
     }
 

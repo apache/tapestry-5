@@ -2,6 +2,7 @@ package org.apache.tapestry5.ioc
 
 
 class ModuleInstantiationSpec extends AbstractRegistrySpecification {
+
   def setup() {
     StaticModule.reset()
   }

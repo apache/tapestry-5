@@ -4,10 +4,12 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 interface Play extends Runnable {
+
   void jump()
 }
 
 interface Runnable2 {
+
   void run()
 }
 
@@ -16,10 +18,12 @@ interface Runnable3 extends Runnable, Runnable2 {
 }
 
 interface Openable {
+
   public void open();
 }
 
 interface OpenableWithError {
+
   public void open() throws IOException;
 }
 

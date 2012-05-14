@@ -8,88 +8,88 @@ import spock.lang.Specification
 
 class RegistryBuilderSpec extends Specification {
 
-    def "@SubModule annotation is honored"() {
-        when:
+  def "@SubModule annotation is honored"() {
+    when:
 
-        Registry r = new RegistryBuilder().add(MasterModule).build()
+    Registry r = new RegistryBuilder().add(MasterModule).build()
 
-        def service = r.getService("UnorderedNames", NameListHolder)
+    def service = r.getService("UnorderedNames", NameListHolder)
 
-        then:
+    then:
 
-        service.names == ["Beta", "Gamma", "UnorderedNames"]
+    service.names == ["Beta", "Gamma", "UnorderedNames"]
 
-        cleanup:
+    cleanup:
 
-        r.shutdown()
-    }
+    r.shutdown()
+  }
 
-    def "adding modules by name, in comma seperated list, as from a manifest"() {
-        when:
+  def "adding modules by name, in comma seperated list, as from a manifest"() {
+    when:
 
-        RegistryBuilder builder = new RegistryBuilder()
+    RegistryBuilder builder = new RegistryBuilder()
 
-        IOCUtilities.addModulesInList builder,
-                "${FredModule.class.name}, ${BarneyModule.class.name}, ${RegistryBuilderTestModule.class.name}"
+    IOCUtilities.addModulesInList builder,
+        "${FredModule.class.name}, ${BarneyModule.class.name}, ${RegistryBuilderTestModule.class.name}"
 
-        Registry registry = builder.build()
+    Registry registry = builder.build()
 
-        Square service = registry.getService(Square)
+    Square service = registry.getService(Square)
 
-        then:
+    then:
 
-        service.square(4) == 16
+    service.square(4) == 16
 
-        service.toString() == "<Proxy for Square(${Square.class.name})>"
+    service.toString() == "<Proxy for Square(${Square.class.name})>"
 
-        cleanup:
+    cleanup:
 
-        registry.shutdown()
-    }
+    registry.shutdown()
+  }
 
-    def "exercise RegistryBuilder.buildAndStartupRegistry()"() {
-        when:
+  def "exercise RegistryBuilder.buildAndStartupRegistry()"() {
+    when:
 
-        Registry r = RegistryBuilder.buildAndStartupRegistry(MasterModule);
+    Registry r = RegistryBuilder.buildAndStartupRegistry(MasterModule);
 
-        NameListHolder service = r.getService("UnorderedNames", NameListHolder);
+    NameListHolder service = r.getService("UnorderedNames", NameListHolder);
 
-        then:
+    then:
 
-        service.names == ["Beta", "Gamma", "UnorderedNames"]
+    service.names == ["Beta", "Gamma", "UnorderedNames"]
 
-        cleanup:
+    cleanup:
 
-        r.shutdown();
-    }
+    r.shutdown();
+  }
 
-    def "use explicit ModuleDef with buildAndStartupRegistry()"() {
-        when:
+  def "use explicit ModuleDef with buildAndStartupRegistry()"() {
+    when:
 
-        Logger logger = LoggerFactory.getLogger(getClass());
+    Logger logger = LoggerFactory.getLogger(getClass());
 
-        ModuleDef module = new DefaultModuleDefImpl(ServiceBuilderModule,
-                logger, null);
+    ModuleDef module = new DefaultModuleDefImpl(ServiceBuilderModule,
+        logger, null);
 
-        Registry r = RegistryBuilder.buildAndStartupRegistry(module, MasterModule);
+    Registry r = RegistryBuilder.buildAndStartupRegistry(module, MasterModule);
 
-        NameListHolder nameListHolder = r.getService("UnorderedNames", NameListHolder);
+    NameListHolder nameListHolder = r.getService("UnorderedNames", NameListHolder);
 
-        then:
+    then:
 
-        nameListHolder.names == ["Beta", "Gamma", "UnorderedNames"]
+    nameListHolder.names == ["Beta", "Gamma", "UnorderedNames"]
 
-        when:
+    when:
 
-        Greeter greeter = r.getService("Greeter", Greeter)
+    Greeter greeter = r.getService("Greeter", Greeter)
 
-        then:
+    then:
 
-        greeter.greeting == "Greetings from service Greeter."
+    greeter.greeting == "Greetings from service Greeter."
 
-        cleanup:
+    cleanup:
 
-        r.shutdown();
+    r.shutdown();
 
-    }
+  }
 }

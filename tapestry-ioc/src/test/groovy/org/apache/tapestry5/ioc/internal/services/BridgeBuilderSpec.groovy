@@ -59,10 +59,12 @@ class BridgeBuilderSpec extends AbstractSharedRegistrySpecification {
     Logger logger = Mock()
 
     ToStringService service = new ToStringService() {
+
       String toString() { "Service" }
     }
 
     ToStringFilter filter = new ToStringFilter() {
+
       String toString(ToStringService s) {
         s.toString().toUpperCase()
       }
@@ -127,6 +129,7 @@ class BridgeBuilderSpec extends AbstractSharedRegistrySpecification {
     Logger logger = Mock()
 
     MiddleFilter mf = new MiddleFilter() {
+
       @Override
       void execute(int count, char ch, MiddleService service, StringBuilder buffer) {
         service.execute(count, ch, buffer)
@@ -138,6 +141,7 @@ class BridgeBuilderSpec extends AbstractSharedRegistrySpecification {
     }
 
     MiddleService ms = new MiddleService() {
+
       @Override
       void execute(int count, char ch, StringBuilder buffer) {
         count.times() { buffer.append ch }

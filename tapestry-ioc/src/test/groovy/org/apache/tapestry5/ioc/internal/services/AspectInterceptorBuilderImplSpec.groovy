@@ -9,12 +9,14 @@ import spock.lang.Shared
 
 
 interface Subject {
+
   void advised();
 
   void notAdvised();
 }
 
 interface ArraysSubject {
+
   String[] operation(String[] inputs);
 }
 

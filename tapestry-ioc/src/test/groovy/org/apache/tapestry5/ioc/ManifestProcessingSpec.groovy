@@ -11,9 +11,9 @@ class ManifestProcessingSpec extends Specification {
 
     expect:
 
-      // This is more to verify the module execution environment
-      fakejar.exists()
-      fakejar.isDirectory()
+    // This is more to verify the module execution environment
+    fakejar.exists()
+    fakejar.isDirectory()
 
     when:
 

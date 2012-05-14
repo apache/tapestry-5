@@ -8,8 +8,8 @@ import org.apache.tapestry5.ioc.services.LazyAdvisor
 
 import java.sql.SQLException
 
-public interface LazyService
-{
+public interface LazyService {
+
   void notLazyBecauseVoid();
 
   String notLazyBecauseOfReturnValue();
@@ -112,7 +112,7 @@ class LazyAdvisorImplSpec extends AbstractSharedRegistrySpecification {
     0 * _
   }
 
-  def "the @NotLazy annotation prevents laziness" () {
+  def "the @NotLazy annotation prevents laziness"() {
 
     Greeter greeter = Mock()
 

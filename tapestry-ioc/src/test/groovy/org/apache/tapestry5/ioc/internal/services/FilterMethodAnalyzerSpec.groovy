@@ -12,7 +12,6 @@ class FilterMethodAnalyzerSpec extends Specification {
 
   @Unroll
   def "position of delegate parameter for #filterMethod should be #position"() {
-
     def analyzer = new FilterMethodAnalyzer(SampleService)
 
     expect:
@@ -24,11 +23,11 @@ class FilterMethodAnalyzerSpec extends Specification {
     methodName                | position
     "simpleMatch"             | 0
     "mismatchParameterCount"  | -1
-    "mismatchReturnType"       | -1
+    "mismatchReturnType"      | -1
     "missingServiceInterface" | -1
     "complexMatch"            | 2
 
-     mainMethod = find SampleService, methodName
-     filterMethod = find SampleFilter, methodName
+    mainMethod = find SampleService, methodName
+    filterMethod = find SampleFilter, methodName
   }
 }

@@ -2,20 +2,19 @@ package org.apache.tapestry5.ioc
 
 class EagerLoadSpec extends AbstractRegistrySpecification {
 
-    def "proxied service does eager load"()
-    {
-        expect:
+  def "proxied service does eager load"() {
+    expect:
 
-        EagerProxyReloadModule.eagerLoadServiceDidLoad == false
+    EagerProxyReloadModule.eagerLoadServiceDidLoad == false
 
-        when:
+    when:
 
-        buildRegistry EagerProxyReloadModule
+    buildRegistry EagerProxyReloadModule
 
-        performRegistryStartup()
+    performRegistryStartup()
 
-        then:
+    then:
 
-        EagerProxyReloadModule.eagerLoadServiceDidLoad == true
-    }
+    EagerProxyReloadModule.eagerLoadServiceDidLoad == true
+  }
 }

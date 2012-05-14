@@ -3,30 +3,31 @@ package org.apache.tapestry5.ioc
 import spock.lang.Specification
 
 class LocatableFixture extends BaseLocatable {
-    LocatableFixture(Location location) {
-        super(location)
-    }
+
+  LocatableFixture(Location location) {
+    super(location)
+  }
 }
 
 class BaseLocatableSpec extends Specification {
 
-    def "location property is readable"() {
-        Location location = Mock()
+  def "location property is readable"() {
+    Location location = Mock()
 
-        Locatable locatable = new LocatableFixture(location)
+    Locatable locatable = new LocatableFixture(location)
 
-        expect:
+    expect:
 
-        locatable.location.is location
-    }
+    locatable.location.is location
+  }
 
-    def "location may be null"() {
-        Locatable locatable = new LocatableFixture(null);
+  def "location may be null"() {
+    Locatable locatable = new LocatableFixture(null);
 
 
-        expect:
+    expect:
 
-        locatable.location == null
-    }
+    locatable.location == null
+  }
 
 }

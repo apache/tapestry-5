@@ -78,8 +78,7 @@ class MasterObjectProviderImplSpec extends Specification {
     0 * _
   }
 
-  def "no match for a required search delegates to the ObjectLocator.getService(Class)"()
-  {
+  def "no match for a required search delegates to the ObjectLocator.getService(Class)"() {
     ObjectProvider prov1 = Mock()
     ObjectProvider prov2 = Mock()
     AnnotationProvider ap = Mock()

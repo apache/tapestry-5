@@ -7,6 +7,7 @@ import java.lang.reflect.Method
 import java.sql.SQLException
 
 class MethodSignatureSpec extends Specification {
+
   def MethodSignature find(Class sourceClass, String methodName) {
     Method match = sourceClass.methods.find { it.name == methodName }
 

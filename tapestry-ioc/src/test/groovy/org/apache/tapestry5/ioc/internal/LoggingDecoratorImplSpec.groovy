@@ -6,10 +6,12 @@ import org.slf4j.Logger
 import org.xml.sax.SAXParseException
 
 interface AdderService {
+
   long add(long operand1, long operand2);
 }
 
 interface ExceptionService {
+
   void parse() throws SAXParseException;
 }
 
@@ -151,6 +153,7 @@ class LoggingDecoratorImplSpec extends AbstractSharedRegistrySpecification {
     // delegate through, so we can't implement ToStringService as a Mock
 
     ToStringService delegate = new ToStringService() {
+
       String toString() { "FROM DELEGATE" }
     }
 
