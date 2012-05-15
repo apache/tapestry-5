@@ -17,7 +17,7 @@ package org.apache.tapestry5.runtime;
 /**
  * Empty implementation of the {@link PageLifecycleListener} interface.
  *
- * @deprecated in 5.3.3, as {@link PageLifecycleListener} has been deprecated
+ * @deprecated in 5.3.4, as {@link PageLifecycleListener} has been deprecated
  */
 public class PageLifecycleAdapter implements PageLifecycleListener
 {

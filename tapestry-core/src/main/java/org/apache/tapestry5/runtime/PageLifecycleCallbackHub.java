@@ -18,7 +18,7 @@ package org.apache.tapestry5.runtime;
  * Defines a way for different aspects of a page to add callbacks for important lifecycle events.
  *
  * @see org.apache.tapestry5.ComponentResources#getPageLifecycleCallbackHub()
- * @since 5.3.3
+ * @since 5.3.4
  */
 public interface PageLifecycleCallbackHub
 {
@@ -28,7 +28,7 @@ public interface PageLifecycleCallbackHub
      *
      * @param callback
      *         invoked once, when page is first loaded
-     * @since 5.3.3
+     * @since 5.3.4
      */
     void addPageLoadedCallback(Runnable callback);
 
@@ -36,7 +36,7 @@ public interface PageLifecycleCallbackHub
      * Adds a callback for when the page is attached to the request.
      *
      * @param callback
-     * @since 5.3.3
+     * @since 5.3.4
      */
     void addPageAttachedCallback(Runnable callback);
 
@@ -44,7 +44,7 @@ public interface PageLifecycleCallbackHub
      * Adds a callback for when the page is detached from the request.
      *
      * @param callback
-     * @since 5.3.3
+     * @since 5.3.4
      */
     void addPageDetachedCallback(Runnable callback);
 

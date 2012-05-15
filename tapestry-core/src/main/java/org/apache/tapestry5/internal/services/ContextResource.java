@@ -14,13 +14,13 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.AbstractResource;
 import org.apache.tapestry5.services.Context;
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * A resource stored with in the web application context.
@@ -31,10 +31,16 @@ public class ContextResource extends AbstractResource
 
     private final Context context;
 
+    // Guarded by lock
+    private URL url;
+
+    // Guarded by lock
+    private boolean urlResolved;
+
     public ContextResource(Context context, String path)
     {
         super(path);
-        
+
         assert context != null;
 
         this.context = context;
@@ -54,33 +60,69 @@ public class ContextResource extends AbstractResource
 
     public URL toURL()
     {
-        // This is so easy to screw up; ClassLoader.getResource() doesn't want a leading slash,
-        // and HttpServletContext.getResource() does. This is what I mean when I say that
-        // a framework is an accumulation of the combined experience of many users and developers.
-
-        String contextPath = "/" + getPath();
-
-        // Always prefer the actual file to the URL.  This is critical for templates to
-        // reload inside Tomcat.
-
-        File file = context.getRealFile(contextPath);
-
-        if (file != null && file.exists())
+        try
         {
-            try
+            lock.readLock().lock();
+
+            if (!urlResolved)
             {
-                return file.toURL();
+                resolveURL();
             }
-            catch (MalformedURLException ex)
-            {
-                throw new RuntimeException(ex);
-            }
+
+            return url;
+
+        } finally
+        {
+            lock.readLock().unlock();
         }
+    }
 
-        // But, when packaged inside a WAR or JAR, the File will not be available, so use whatever
-        // URL we get ... but reloading won't work.
+    private void resolveURL()
+    {
+        try
+        {
+            upgradeReadLockToWriteLock();
 
-        return context.getResource(contextPath);
+            // Race condition on the write lock:
+            if (urlResolved)
+            {
+                return;
+            }
+
+            // This is so easy to screw up; ClassLoader.getResource() doesn't want a leading slash,
+            // and HttpServletContext.getResource() does. This is what I mean when I say that
+            // a framework is an accumulation of the combined experience of many users and developers.
+
+            String contextPath = "/" + getPath();
+
+            // Always prefer the actual file to the URL.  This is critical for templates to
+            // reload inside Tomcat.
+
+            File file = context.getRealFile(contextPath);
+
+            if (file != null && file.exists())
+            {
+                try
+                {
+                    url = file.toURL();
+                    urlResolved = true;
+                    return;
+                } catch (MalformedURLException ex)
+                {
+                    throw new RuntimeException(ex);
+                }
+            }
+
+            // But, when packaged inside a WAR or JAR, the File will not be available, so use whatever
+            // URL we get ... but reloading won't work.
+
+            url = context.getResource(contextPath);
+            urlResolved = true;
+
+        } finally
+        {
+            downgradeWriteLockToReadLock();
+        }
     }
 
     @Override

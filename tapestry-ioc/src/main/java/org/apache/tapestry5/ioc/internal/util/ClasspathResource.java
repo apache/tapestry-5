@@ -14,9 +14,9 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
-import java.net.URL;
-
 import org.apache.tapestry5.ioc.Resource;
+
+import java.net.URL;
 
 /**
  * Implementation of {@link Resource} for files on the classpath (as defined by a {@link ClassLoader}).
@@ -25,10 +25,10 @@ public final class ClasspathResource extends AbstractResource
 {
     private final ClassLoader classLoader;
 
-    // Guarded by this
+    // Guarded by lock
     private URL url;
 
-    // Guarded by this
+    // Guarded by lock
     private boolean urlResolved;
 
     public ClasspathResource(String path)
@@ -50,15 +50,39 @@ public final class ClasspathResource extends AbstractResource
         return new ClasspathResource(classLoader, path);
     }
 
-    public synchronized URL toURL()
+    public URL toURL()
     {
-        if (!urlResolved)
+        try
         {
-            url = classLoader.getResource(getPath());
-            urlResolved = true;
-        }
+            lock.readLock().lock();
 
-        return url;
+            if (!urlResolved)
+            {
+                resolveURL();
+            }
+
+            return url;
+        } finally
+        {
+            lock.readLock().unlock();
+        }
+    }
+
+    private void resolveURL()
+    {
+        try
+        {
+            upgradeReadLockToWriteLock();
+
+            if (!urlResolved)
+            {
+                url = classLoader.getResource(getPath());
+                urlResolved = true;
+            }
+        } finally
+        {
+            downgradeWriteLockToReadLock();
+        }
     }
 
     @Override

@@ -173,7 +173,7 @@ public interface ComponentResources extends ComponentResourcesCommon
     /**
      * Adds a listener object that will be notified about page lifecycle events.
      *
-     * @deprecated In 5.3.3, use {@link #getPageLifecycleCallbackHub()} instead
+     * @deprecated In 5.3.4, use {@link #getPageLifecycleCallbackHub()} instead
      */
     void addPageLifecycleListener(PageLifecycleListener listener);
 
@@ -181,7 +181,7 @@ public interface ComponentResources extends ComponentResourcesCommon
      * Provides access to an object that can be used to register callbacks for page lifecycle events.
      *
      * @return the hub
-     * @since 5.3.3
+     * @since 5.3.4
      */
     PageLifecycleCallbackHub getPageLifecycleCallbackHub();
 
@@ -189,7 +189,7 @@ public interface ComponentResources extends ComponentResourcesCommon
      * Removes a previously added listener.
      *
      * @since 5.2.0
-     * @deprecated in 5.3.3, not necessary with {@link PageLifecycleCallbackHub#addPageLoadedCallback(Runnable)}.
+     * @deprecated in 5.3.4, not necessary with {@link PageLifecycleCallbackHub#addPageLoadedCallback(Runnable)}.
      */
     void removePageLifecycleListener(PageLifecycleListener listener);
 
