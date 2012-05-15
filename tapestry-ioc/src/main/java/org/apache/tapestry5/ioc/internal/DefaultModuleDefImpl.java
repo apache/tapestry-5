@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -90,9 +90,12 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
     }
 
     /**
-     * @param moduleClass  the class that is responsible for building services, etc.
-     * @param logger       based on the class name of the module
-     * @param proxyFactory factory used to create proxy classes at runtime
+     * @param moduleClass
+     *         the class that is responsible for building services, etc.
+     * @param logger
+     *         based on the class name of the module
+     * @param proxyFactory
+     *         factory used to create proxy classes at runtime
      */
     public DefaultModuleDefImpl(Class<?> moduleClass, Logger logger, PlasticProxyFactory proxyFactory)
     {
@@ -294,7 +297,13 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
         Class returnType = method.getReturnType();
 
         if (returnType.isPrimitive() || returnType.isArray())
-            throw new RuntimeException(IOCMessages.decoratorMethodWrongReturnType(method));
+        {
+            throw new RuntimeException(String.format(
+                    "Method %s is named like a service decorator method, but the return type (%s) is not acceptable (try Object).",
+                    InternalUtils.asString(method),
+                    method.getReturnType().getCanonicalName()));
+        }
+
 
         Set<Class> markers = extractMarkers(method, Decorate.class);
 
@@ -409,7 +418,10 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
         Class returnType = method.getReturnType();
 
         if (returnType.isPrimitive() || returnType.isArray())
-            throw new RuntimeException(IOCMessages.buildMethodWrongReturnType(method));
+            throw new RuntimeException(
+                    String.format("Method %s is named like a service builder method, but the return type (%s) is not acceptable (try an interface).",
+                            InternalUtils.asString(method),
+                            method.getReturnType().getCanonicalName()));
 
         String scope = extractServiceScope(method);
         boolean eagerLoad = method.isAnnotationPresent(EagerLoad.class);
@@ -513,11 +525,12 @@ public class DefaultModuleDefImpl implements ModuleDef2, ServiceDefAccumulator
     /**
      * See if the build class defined a bind method and invoke it.
      *
-     * @param remainingMethods set of methods as yet unaccounted for
+     * @param remainingMethods
+     *         set of methods as yet unaccounted for
      * @param modulePreventsServiceDecoration
-     *                         true if {@link org.apache.tapestry5.ioc.annotations.PreventServiceDecoration} on
-     *                         module
-     *                         class
+     *         true if {@link org.apache.tapestry5.ioc.annotations.PreventServiceDecoration} on
+     *         module
+     *         class
      */
     private void bind(Set<Method> remainingMethods, boolean modulePreventsServiceDecoration)
     {

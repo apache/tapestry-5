@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,18 +40,6 @@ final class IOCMessages
     static String buildMethodConflict(String serviceId, String conflict, String existing)
     {
         return MESSAGES.format("build-method-conflict", serviceId, conflict, existing);
-    }
-
-    static String buildMethodWrongReturnType(Method method)
-    {
-        return MESSAGES.format("build-method-wrong-return-type", asString(method), method
-                .getReturnType().getCanonicalName());
-    }
-
-    static String decoratorMethodWrongReturnType(Method method)
-    {
-        return MESSAGES.format("decorator-method-wrong-return-type", asString(method), method
-                .getReturnType().getCanonicalName());
     }
 
     static String serviceWrongInterface(String serviceId, Class actualInterface, Class requestedInterface)
