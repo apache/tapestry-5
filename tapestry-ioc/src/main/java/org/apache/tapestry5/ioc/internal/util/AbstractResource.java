@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2008, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,14 +14,15 @@
 
 package org.apache.tapestry5.ioc.internal.util;
 
+import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.util.LocalizedNameGenerator;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Locale;
-
-import org.apache.tapestry5.ioc.Resource;
-import org.apache.tapestry5.ioc.util.LocalizedNameGenerator;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Abstract implementation of {@link Resource}. Subclasses must implement the abstract methods {@link Resource#toURL()}
@@ -29,7 +30,34 @@ import org.apache.tapestry5.ioc.util.LocalizedNameGenerator;
  */
 public abstract class AbstractResource implements Resource
 {
+    private class Localization
+    {
+        final Locale locale;
+
+        final Resource resource;
+
+        final Localization next;
+
+        private Localization(Locale locale, Resource resource, Localization next)
+        {
+            this.locale = locale;
+            this.resource = resource;
+            this.next = next;
+        }
+    }
+
     private final String path;
+
+    /**
+     * A lock used to when lazily computing other values.
+     */
+    protected final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+
+    // Guarded by Lock
+    private boolean exists, existsComputed;
+
+    // Guarded by lock
+    private Localization firstLocalization;
 
     protected AbstractResource(String path)
     {
@@ -99,6 +127,69 @@ public abstract class AbstractResource implements Resource
 
     public final Resource forLocale(Locale locale)
     {
+        try
+        {
+            lock.readLock().lock();
+
+            for (Localization l = firstLocalization; l != null; l = l.next)
+            {
+                if (l.locale.equals(locale))
+                {
+                    return l.resource;
+                }
+            }
+
+            return populateLocalizationCache(locale);
+        } finally
+        {
+            lock.readLock().unlock();
+        }
+    }
+
+    private Resource populateLocalizationCache(Locale locale)
+    {
+        try
+        {
+            upgradeReadLockToWriteLock();
+
+            // Race condition: another thread may have beaten us to it:
+
+            for (Localization l = firstLocalization; l != null; l = l.next)
+            {
+                if (l.locale.equals(locale))
+                {
+                    return l.resource;
+                }
+            }
+
+            Resource result = findLocalizedResource(locale);
+
+            firstLocalization = new Localization(locale, result, firstLocalization);
+
+            return result;
+
+        } finally
+        {
+            downgradeWriteLockToReadLock();
+        }
+    }
+
+    protected final void upgradeReadLockToWriteLock()
+    {
+        lock.readLock().unlock();
+        // This is that instant where another thread may grab the write lock. Very rare, but possible.
+        lock.writeLock().lock();
+    }
+
+    protected final void downgradeWriteLockToReadLock()
+    {
+
+        lock.readLock().lock();
+        lock.writeLock().unlock();
+    }
+
+    private Resource findLocalizedResource(Locale locale)
+    {
         for (String path : new LocalizedNameGenerator(this.path, locale))
         {
             Resource potential = createResource(path);
@@ -138,7 +229,37 @@ public abstract class AbstractResource implements Resource
      */
     public boolean exists()
     {
-        return toURL() != null;
+        try
+        {
+            lock.readLock().lock();
+
+            if (!existsComputed)
+            {
+                computeExists();
+            }
+
+            return exists;
+        } finally
+        {
+            lock.readLock().unlock();
+        }
+    }
+
+    private void computeExists()
+    {
+        try
+        {
+            upgradeReadLockToWriteLock();
+
+            if (!existsComputed)
+            {
+                exists = toURL() != null;
+                existsComputed = true;
+            }
+        } finally
+        {
+            downgradeWriteLockToReadLock();
+        }
     }
 
     /**

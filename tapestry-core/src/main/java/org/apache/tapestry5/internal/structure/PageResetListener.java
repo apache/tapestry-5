@@ -21,7 +21,7 @@ import org.apache.tapestry5.annotations.PageReset;
  * 
  * @since 5.2.0
  * @see PageReset
- * @deprecated in 5.3.3
+ * @deprecated in 5.3.4
  * @see org.apache.tapestry5.runtime.PageLifecycleCallbackHub#addResetCallback(Runnable)
  */
 public interface PageResetListener

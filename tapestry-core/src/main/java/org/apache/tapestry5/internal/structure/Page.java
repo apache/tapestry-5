@@ -143,7 +143,7 @@ public interface Page extends PageLifecycleCallbackHub
     /**
      * Adds a listener that is notified of large scale page events.
      *
-     * @deprecated in 5.3.3; use {@link #addPageLoadedCallback(Runnable)}, {@link #addPageAttachedCallback(Runnable)}, or
+     * @deprecated in 5.3.4; use {@link #addPageLoadedCallback(Runnable)}, {@link #addPageAttachedCallback(Runnable)}, or
      *             {@link #addPageDetachedCallback(Runnable)}  instead
      */
     void addLifecycleListener(PageLifecycleListener listener);
@@ -152,7 +152,7 @@ public interface Page extends PageLifecycleCallbackHub
      * Removes a listener that was previously added.
      *
      * @since 5.2.0
-     * @deprecated in 5.3.3, due to introduction of {@link #addPageLoadedCallback(Runnable)}
+     * @deprecated in 5.3.4, due to introduction of {@link #addPageLoadedCallback(Runnable)}
      */
     void removeLifecycleListener(PageLifecycleListener listener);
 
@@ -213,7 +213,7 @@ public interface Page extends PageLifecycleCallbackHub
      * @param listener
      *         will receive notifications when the page is accessed from a different page
      * @since 5.2.0
-     * @deprecated in 5.3.3,
+     * @deprecated in 5.3.4,
      */
     void addResetListener(PageResetListener listener);
 

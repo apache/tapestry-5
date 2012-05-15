@@ -1,4 +1,4 @@
-// Copyright 2006, 2008 The Apache Software Foundation
+// Copyright 2006, 2008, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,7 +30,8 @@ public interface Resource
 {
 
     /**
-     * Returns true if the resource exists; if a stream to the content of the file may be openned.
+     * Returns true if the resource exists; if a stream to the content of the file may be opened. A resource exists
+     * if {@link #toURL()} returns a non-null value. Starting in release 5.3.4, the result of this is cached.
      *
      * @return true if the resource exists, false if it does not
      */
@@ -44,12 +45,14 @@ public interface Resource
     InputStream openStream() throws IOException;
 
     /**
-     * Returns the URL for the resource, or null if it does not exist.
+     * Returns the URL for the resource, or null if it does not exist. This value is lazily computed; starting in 5.3.4, subclasses may cache
+     * the result.
      */
     URL toURL();
 
     /**
-     * Returns a localized version of the resource. May return null if no such resource exists.
+     * Returns a localized version of the resource. May return null if no such resource exists. Starting in release
+     * 5.3.4, the result of this method is cached internally.
      */
     Resource forLocale(Locale locale);
 
@@ -63,7 +66,8 @@ public interface Resource
      * Returns a new Resource with the extension changed (or, if the resource does not have an extension, the extension
      * is added). The new Resource may not exist (that is, {@link #toURL()} may return null.
      *
-     * @param extension to apply to the resource, such as "html" or "properties"
+     * @param extension
+     *         to apply to the resource, such as "html" or "properties"
      * @return the new resource
      */
     Resource withExtension(String extension);

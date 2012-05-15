@@ -19,7 +19,7 @@ package org.apache.tapestry5.runtime;
  * {@linkplain org.apache.tapestry5.plastic.PlasticClass#introduceInterface(Class)} introduced}, the component will
  * automatically register itself as a listener with the page.
  *
- * @deprecated in 5.3.3, replaced with {@link PageLifecycleCallbackHub}
+ * @deprecated in 5.3.4, replaced with {@link PageLifecycleCallbackHub}
  */
 public interface PageLifecycleListener
 {
@@ -27,7 +27,7 @@ public interface PageLifecycleListener
      * Invoked when the page finishes loading. This occurs once all components are loaded and all parameters have been
      * set.
      *
-     * @deprecated in 5.3.3,  use {@link org.apache.tapestry5.ComponentResources#addPageLoadedCallback(Runnable)} instead
+     * @deprecated in 5.3.4,  use {@link org.apache.tapestry5.ComponentResources#addPageLoadedCallback(Runnable)} instead
      */
     void containingPageDidLoad();
 
