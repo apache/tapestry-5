@@ -1,5 +1,5 @@
 description = "Apache Tapestry 5 Project"
-// Test change for git commit
+
 apply plugin: "base"
 apply plugin: "sonar"
 
