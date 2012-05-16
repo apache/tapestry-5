@@ -55,16 +55,11 @@ task generateGrammarSource(type: JavaExec) {
 
 ideaModule.dependsOn generateGrammarSource
 
-ideaModule.doFirst {
+def generatedDir = file("$buildDir/generated-sources")
 
-  excludeDirs -= buildDir
+def buildMinusGeneratedDir = (buildDir.listFiles() - generatedDir) as Set<File>
 
-  def generatedDir = file("$buildDir/generated-sources")
-
-  def buildMinusGeneratedDir = (buildDir.listFiles() - generatedDir) as Set<File>
-
-  excludeDirs += buildMinusGeneratedDir
-}
+idea.module.excludeDirs += buildMinusGeneratedDir
 
 compileJava.options.fork(memoryMaximumSize: '512m')
 compileJava.dependsOn generateGrammarSource
