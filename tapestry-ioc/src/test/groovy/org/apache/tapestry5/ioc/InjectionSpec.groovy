@@ -1,6 +1,5 @@
 package org.apache.tapestry5.ioc
 
-
 class InjectionSpec extends AbstractRegistrySpecification {
 
   def "symbol in @Inject is expanded"() {
@@ -120,4 +119,5 @@ class InjectionSpec extends AbstractRegistrySpecification {
 
     g.greeting == "Override Greeting"
   }
+
 }

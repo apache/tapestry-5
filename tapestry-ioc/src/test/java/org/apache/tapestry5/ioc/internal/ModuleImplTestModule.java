@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2009, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.InjectService;
 
 /**
- * Module class used by {@link ModuleImplTest}.
+ * Module class used by {@link ModuleImplSpec}.
  */
 public class ModuleImplTestModule
 {
