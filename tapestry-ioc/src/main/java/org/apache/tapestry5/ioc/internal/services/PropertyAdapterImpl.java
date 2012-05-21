@@ -1,4 +1,4 @@
-// Copyright 2006, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2008, 2010, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc.internal.services;
 
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry5.ioc.services.PropertyAdapter;
 
@@ -115,7 +116,9 @@ public class PropertyAdapterImpl implements PropertyAdapter
     public Object get(Object instance)
     {
         if (field == null && readMethod == null)
-            throw new UnsupportedOperationException(ServiceMessages.readNotSupported(instance, name));
+        {
+            throw new UnsupportedOperationException(String.format("Class %s does not provide an accessor ('getter') method for property '%s'.", toClassName(instance), name));
+        }
 
         Throwable fail;
 
@@ -139,7 +142,12 @@ public class PropertyAdapterImpl implements PropertyAdapter
     public void set(Object instance, Object value)
     {
         if (field == null && writeMethod == null)
-            throw new UnsupportedOperationException(ServiceMessages.writeNotSupported(instance, name));
+        {
+            throw new UnsupportedOperationException(String.format("Class %s does not provide a mutator ('setter') method for property '%s'.",
+                    toClassName(instance),
+                    name
+            ));
+        }
 
         Throwable fail;
 
@@ -159,7 +167,14 @@ public class PropertyAdapterImpl implements PropertyAdapter
             fail = ex;
         }
 
-        throw new RuntimeException(ServiceMessages.writeFailure(name, instance, fail), fail);
+        throw new RuntimeException(String.format("Error updating property '%s' of %s: %s",
+                name, toClassName(instance),
+                InternalUtils.toMessage(fail)), fail);
+    }
+
+    private String toClassName(Object instance)
+    {
+        return instance == null ? "<null>" : instance.getClass().getName();
     }
 
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass)

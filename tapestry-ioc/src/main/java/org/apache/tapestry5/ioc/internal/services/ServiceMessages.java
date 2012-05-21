@@ -32,24 +32,10 @@ public class ServiceMessages
         return MESSAGES.format("no-such-property", clazz.getName(), propertyName);
     }
 
-    public static String readNotSupported(Object instance, String propertyName)
-    {
-        return MESSAGES.format("read-not-supported", instance.getClass().getName(), propertyName);
-    }
-
-    public static String writeNotSupported(Object instance, String propertyName)
-    {
-        return MESSAGES.format("write-not-supported", instance.getClass().getName(), propertyName);
-    }
 
     public static String readFailure(String propertyName, Object instance, Throwable cause)
     {
         return MESSAGES.format("read-failure", propertyName, instance, cause);
-    }
-
-    public static String writeFailure(String propertyName, Object instance, Throwable cause)
-    {
-        return MESSAGES.format("write-failure", propertyName, instance, cause);
     }
 
     public static String propertyTypeMismatch(String propertyName, Class sourceClass, Class propertyType,

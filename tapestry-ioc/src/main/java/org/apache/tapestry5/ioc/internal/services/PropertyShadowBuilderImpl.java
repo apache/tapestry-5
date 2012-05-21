@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,24 +14,10 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import org.apache.tapestry5.ioc.services.*;
+import org.apache.tapestry5.plastic.*;
 
-import org.apache.tapestry5.ioc.services.Builtin;
-import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
-import org.apache.tapestry5.ioc.services.PropertyAccess;
-import org.apache.tapestry5.ioc.services.PropertyAdapter;
-import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
-import org.apache.tapestry5.plastic.ClassInstantiator;
-import org.apache.tapestry5.plastic.Condition;
-import org.apache.tapestry5.plastic.WhenCallback;
-import org.apache.tapestry5.plastic.InstructionBuilder;
-import org.apache.tapestry5.plastic.InstructionBuilderCallback;
-import org.apache.tapestry5.plastic.MethodDescription;
-import org.apache.tapestry5.plastic.PlasticClass;
-import org.apache.tapestry5.plastic.PlasticClassTransformer;
-import org.apache.tapestry5.plastic.PlasticField;
-import org.apache.tapestry5.plastic.PlasticMethod;
+import java.lang.reflect.Method;
 
 public class PropertyShadowBuilderImpl implements PropertyShadowBuilder
 {
@@ -40,9 +26,9 @@ public class PropertyShadowBuilderImpl implements PropertyShadowBuilder
     private final PlasticProxyFactory proxyFactory;
 
     public PropertyShadowBuilderImpl(@Builtin
-    PlasticProxyFactory proxyFactory,
+                                     PlasticProxyFactory proxyFactory,
 
-    PropertyAccess propertyAccess)
+                                     PropertyAccess propertyAccess)
     {
         this.proxyFactory = proxyFactory;
         this.propertyAccess = propertyAccess;
@@ -59,7 +45,11 @@ public class PropertyShadowBuilderImpl implements PropertyShadowBuilder
             throw new RuntimeException(ServiceMessages.noSuchProperty(sourceClass, propertyName));
 
         if (!adapter.isRead())
-            throw new RuntimeException(ServiceMessages.readNotSupported(source, propertyName));
+        {
+            throw new RuntimeException(
+                    String.format("Class %s does not provide an accessor ('getter') method for property '%s'.",
+                            source.getClass().getName(), propertyName));
+        }
 
         if (!propertyType.isAssignableFrom(adapter.getType()))
             throw new RuntimeException(ServiceMessages.propertyTypeMismatch(propertyName, sourceClass,
