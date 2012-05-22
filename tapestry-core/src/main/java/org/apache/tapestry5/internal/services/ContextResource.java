@@ -104,7 +104,7 @@ public class ContextResource extends AbstractResource
             {
                 try
                 {
-                    url = file.toURL();
+                    url = file.toURI().toURL();
                     urlResolved = true;
                     return;
                 } catch (MalformedURLException ex)
