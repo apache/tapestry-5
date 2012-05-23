@@ -3,16 +3,18 @@ package org.apache.tapestry5.ioc.internal.services
 import spock.lang.Specification
 import spock.lang.Unroll
 
-
 class FilterMethodAnalyzerSpec extends Specification {
 
-  def find(clazz, name) {
+  private MethodSignature find(clazz, name) {
     new MethodSignature(clazz.methods.find { it.name == name })
   }
 
   @Unroll
-  def "position of delegate parameter for #filterMethod should be #position"() {
+  def "position of delegate parameter for #methodName should be #position"() {
     def analyzer = new FilterMethodAnalyzer(SampleService)
+
+    def mainMethod = find SampleService, methodName
+    def filterMethod = find SampleFilter, methodName
 
     expect:
 
@@ -27,7 +29,5 @@ class FilterMethodAnalyzerSpec extends Specification {
     "missingServiceInterface" | -1
     "complexMatch"            | 2
 
-    mainMethod = find SampleService, methodName
-    filterMethod = find SampleFilter, methodName
   }
 }
