@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.apache.tapestry5.internal.plastic.asm.Type;
 import org.apache.tapestry5.internal.plastic.asm.tree.*;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.plastic.*;
@@ -28,10 +29,13 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 
 public class PlasticProxyFactoryImpl implements PlasticProxyFactory
 {
     private final PlasticManager manager;
+
+    private final Map<String, Location> memberToLocation = CollectionFactory.newConcurrentMap();
 
     public PlasticProxyFactoryImpl(ClassLoader parentClassLoader, Logger logger)
     {
@@ -109,35 +113,78 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
         return bytecode == null ? null : PlasticInternalUtils.convertBytecodeToClassNode(bytecode);
     }
 
-    public Location getMethodLocation(Method method)
+    public Location getMethodLocation(final Method method)
     {
+        ObjectCreator<String> descriptionCreator = new ObjectCreator<String>()
+        {
+            @Override
+            public String createObject()
+            {
+                return InternalUtils.asString(method);
+            }
+        };
+
         return getMemberLocation(method, method.getName(), Type.getMethodDescriptor(method),
-                InternalUtils.asString(method));
+                descriptionCreator);
     }
 
-    public Location getConstructorLocation(Constructor constructor)
+    public Location getConstructorLocation(final Constructor constructor)
     {
-        StringBuilder builder = new StringBuilder(constructor.getDeclaringClass().getName()).append("(");
-        String sep = "";
-
-        for (Class parameterType : constructor.getParameterTypes())
+        ObjectCreator<String> descriptionCreator = new ObjectCreator<String>()
         {
-            builder.append(sep);
-            builder.append(parameterType.getSimpleName());
+            @Override
+            public String createObject()
+            {
+                StringBuilder builder = new StringBuilder(constructor.getDeclaringClass().getName()).append("(");
+                String sep = "";
 
-            sep = ", ";
-        }
+                for (Class parameterType : constructor.getParameterTypes())
+                {
+                    builder.append(sep);
+                    builder.append(parameterType.getSimpleName());
 
-        builder.append(")");
+                    sep = ", ";
+                }
 
-        String constructorDescription = builder.toString();
+                builder.append(")");
+
+                return builder.toString();
+            }
+        };
 
         return getMemberLocation(constructor, "<init>", Type.getConstructorDescriptor(constructor),
-                constructorDescription);
+                descriptionCreator);
     }
 
-    public Location getMemberLocation(Member member, String methodName, String memberTypeDesc, String textDescription)
+    @Override
+    public void clearCache()
     {
+        memberToLocation.clear();
+    }
+
+
+    public Location getMemberLocation(Member member, String methodName, String memberTypeDesc, ObjectCreator<String> textDescriptionCreator)
+    {
+        String className = member.getDeclaringClass().getName();
+
+        String key = className + ":" + methodName + ":" + memberTypeDesc;
+
+        Location location = memberToLocation.get(key);
+
+        if (location == null)
+        {
+            location = constructMemberLocation(member, methodName, memberTypeDesc, textDescriptionCreator.createObject());
+
+            memberToLocation.put(key, location);
+        }
+
+        return location;
+
+    }
+
+    private Location constructMemberLocation(Member member, String methodName, String memberTypeDesc, String textDescription)
+    {
+
         ClassNode classNode = readClassNode(member.getDeclaringClass());
 
         if (classNode == null)
