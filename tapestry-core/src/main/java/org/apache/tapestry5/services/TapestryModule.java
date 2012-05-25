@@ -1229,9 +1229,10 @@ public final class TapestryModule
      * href="https://issues.apache.org/jira/browse/TAP5-79">TAP5-79</a> for details. There are no longer any built-in
      * contributions to the configuration.
      *
-     * @param configuration contributions of special factories for some constants, each
-     *                      contributed factory may return a
-     *                      binding if applicable, or null otherwise
+     * @param configuration
+     *         contributions of special factories for some constants, each
+     *         contributed factory may return a
+     *         binding if applicable, or null otherwise
      */
     public BindingFactory buildPropBindingFactory(List<BindingFactory> configuration, @Autobuild
     PropBindingFactory service)
@@ -2195,7 +2196,8 @@ public final class TapestryModule
      * <p/>
      * This contributes "class", "properties" and "tml" (the template extension).
      *
-     * @param configuration collection of extensions
+     * @param configuration
+     *         collection of extensions
      */
     public static void contributeResourceDigestGenerator(Configuration<String> configuration)
     {
@@ -2664,7 +2666,8 @@ public final class TapestryModule
      * even if a user overrides the default
      * service implementation.
      *
-     * @param defaultSource The service to decorate
+     * @param defaultSource
+     *         The service to decorate
      * @param environment
      */
     public static FieldValidatorDefaultSource decorateFieldValidatorDefaultSource(
@@ -2867,5 +2870,18 @@ public final class TapestryModule
     public static void defaultWhitelist(OrderedConfiguration<WhitelistAnalyzer> configuration)
     {
         configuration.add("LocalhostOnly", new LocalhostOnly());
+    }
+
+    @Startup
+    public static void registerToClearPlasticProxyFactoryOnInvalidation(@ComponentClasses InvalidationEventHub hub, @Builtin final PlasticProxyFactory proxyFactory)
+    {
+        hub.addInvalidationListener(new InvalidationListener()
+        {
+            @Override
+            public void objectWasInvalidated()
+            {
+                proxyFactory.clearCache();
+            }
+        });
     }
 }

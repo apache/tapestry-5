@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.apache.tapestry5.ioc.ReloadAware;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.services.UpdateListener;
 import org.slf4j.Logger;
 
@@ -51,6 +52,8 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
 
     private final URLChangeTracker changeTracker = new URLChangeTracker();
 
+    private final PlasticProxyFactory proxyFactory;
+
     /**
      * The set of class names that should be loaded by the class loader. This is necessary to support
      * reloading the class when a base class changes, and to properly support access to protected methods.
@@ -63,9 +66,10 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
 
     private PlasticClassLoader loader;
 
-    protected AbstractReloadableObjectCreator(ClassLoader baseClassLoader, String implementationClassName,
+    protected AbstractReloadableObjectCreator(PlasticProxyFactory proxyFactory, ClassLoader baseClassLoader, String implementationClassName,
                                               Logger logger, OperationTracker tracker)
     {
+        this.proxyFactory = proxyFactory;
         this.baseClassLoader = baseClassLoader;
         this.implementationClassName = implementationClassName;
         this.logger = logger;
@@ -88,6 +92,8 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
         changeTracker.clear();
 
         loader = null;
+
+        proxyFactory.clearCache();
 
         boolean reloadNow = informInstanceOfReload();
 

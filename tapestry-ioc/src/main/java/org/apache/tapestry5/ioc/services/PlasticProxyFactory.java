@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -42,8 +42,10 @@ public interface PlasticProxyFactory extends PlasticClassListenerHub
      * Creates a proxy object that implements the indicated interface, then invokes the callback to further
      * configure the proxy.
      *
-     * @param interfaceType interface implemented by proxy
-     * @param callback      configures the proxy
+     * @param interfaceType
+     *         interface implemented by proxy
+     * @param callback
+     *         configures the proxy
      * @return instantiator that can be used to create an instance of the proxy class
      */
     <T> ClassInstantiator<T> createProxy(Class<T> interfaceType, PlasticClassTransformer callback);
@@ -53,7 +55,8 @@ public interface PlasticProxyFactory extends PlasticClassListenerHub
      * used in the cases where encapsulating the PlasticClass construction into a {@linkplain PlasticClassTransformer
      * callback} is not feasible (which is the case for some of the older APIs inside Tapestry IoC).
      *
-     * @param interfaceType class proxy will extend from
+     * @param interfaceType
+     *         class proxy will extend from
      * @return transformation from which an instantiator may be created
      */
     <T> PlasticClassTransformation<T> createProxyTransformation(Class<T> interfaceType);
@@ -64,10 +67,14 @@ public interface PlasticProxyFactory extends PlasticClassListenerHub
      * creator implementation may decide to
      * cache the return value as appropriate).
      *
-     * @param <T>           type of proxy
-     * @param interfaceType interface class for proxy
-     * @param creator       object responsible for creating the real object
-     * @param description   the <code>toString()</code> of the proxy
+     * @param <T>
+     *         type of proxy
+     * @param interfaceType
+     *         interface class for proxy
+     * @param creator
+     *         object responsible for creating the real object
+     * @param description
+     *         the <code>toString()</code> of the proxy
      * @return proxy instance
      */
     <T> T createProxy(Class<T> interfaceType, ObjectCreator<T> creator, String description);
@@ -75,7 +82,8 @@ public interface PlasticProxyFactory extends PlasticClassListenerHub
     /**
      * Converts a method to a {@link Location}, which includes information about the source file name and line number.
      *
-     * @param method to look up
+     * @param method
+     *         to look up
      * @return the location (identifying the method and possibly, the line number within the method)
      */
     Location getMethodLocation(Method method);
@@ -87,4 +95,13 @@ public interface PlasticProxyFactory extends PlasticClassListenerHub
      * @return the location (identifying the constructor and possibly, the line number within the method)
      */
     Location getConstructorLocation(Constructor constructor);
+
+    /**
+     * Clears any cached information stored by the proxy factory; this is useful in Tapestry development mode
+     * when a class loader may have been discarded (because the proxy factory may indirectly keep references
+     * to classes loaded by the old class loader).
+     *
+     * @since 5.3.3
+     */
+    void clearCache();
 }

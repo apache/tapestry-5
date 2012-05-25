@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package org.apache.tapestry5.ioc.internal;
 
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.slf4j.Logger;
 
 /**
@@ -25,10 +26,10 @@ public class ReloadableObjectCreator extends AbstractReloadableObjectCreator
 {
     private final ObjectLocator locator;
 
-    public ReloadableObjectCreator(ClassLoader baseClassLoader, String implementationClassName, Logger logger,
+    public ReloadableObjectCreator(PlasticProxyFactory proxyFactory, ClassLoader baseClassLoader, String implementationClassName, Logger logger,
             OperationTracker tracker, ObjectLocator locator)
     {
-        super(baseClassLoader, implementationClassName, logger, tracker);
+        super(proxyFactory, baseClassLoader, implementationClassName, logger, tracker);
 
         this.locator = locator;
     }

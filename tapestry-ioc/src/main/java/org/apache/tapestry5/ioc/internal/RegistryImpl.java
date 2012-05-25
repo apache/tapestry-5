@@ -1079,7 +1079,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     private <T> T createReloadingProxy(Class<T> interfaceClass, final Class<? extends T> implementationClass,
                                        ObjectLocator locator)
     {
-        ReloadableObjectCreator creator = new ReloadableObjectCreator(implementationClass.getClassLoader(),
+        ReloadableObjectCreator creator = new ReloadableObjectCreator(proxyFactory, implementationClass.getClassLoader(),
                 implementationClass.getName(), loggerSource.getLogger(implementationClass), this, locator);
 
         getService(UpdateListenerHub.class).addUpdateListener(creator);
