@@ -1,6 +1,6 @@
 /***
  * ASM: a very small and fast Java bytecode manipulation framework
- * Copyright (c) 2000-2007 INRIA, France Telecom
+ * Copyright (c) 2000-2011 INRIA, France Telecom
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,7 @@ package org.apache.tapestry5.internal.plastic.asm.signature;
 /**
  * A type signature parser to make a signature visitor visit an existing
  * signature.
- * 
+ *
  * @author Thomas Hallgren
  * @author Eric Bruneton
  */
@@ -45,7 +45,7 @@ public class SignatureReader {
 
     /**
      * Constructs a {@link SignatureReader} for the given signature.
-     * 
+     *
      * @param signature A <i>ClassSignature</i>, <i>MethodTypeSignature</i>,
      *        or <i>FieldTypeSignature</i>.
      */
@@ -65,7 +65,7 @@ public class SignatureReader {
      * parameter of the
      * {@link org.apache.tapestry5.internal.plastic.asm.ClassVisitor#visitMethod ClassVisitor.visitMethod}
      * method).
-     * 
+     *
      * @param v the visitor that must visit this signature.
      */
     public void accept(final SignatureVisitor v) {
@@ -118,11 +118,11 @@ public class SignatureReader {
      * method is intended to be called on a {@link SignatureReader} that was
      * created using a <i>FieldTypeSignature</i>, such as the
      * <code>signature</code> parameter of the
-     * {@link org.apache.tapestry5.internal.plastic.asm.ClassVisitor#visitField 
-     * ClassVisitor.visitField} or {@link 
+     * {@link org.apache.tapestry5.internal.plastic.asm.ClassVisitor#visitField
+     * ClassVisitor.visitField} or {@link
      * org.apache.tapestry5.internal.plastic.asm.MethodVisitor#visitLocalVariable
      * MethodVisitor.visitLocalVariable} methods.
-     * 
+     *
      * @param v the visitor that must visit this signature.
      */
     public void acceptType(final SignatureVisitor v) {
@@ -131,7 +131,7 @@ public class SignatureReader {
 
     /**
      * Parses a field type signature and makes the given visitor visit it.
-     * 
+     *
      * @param signature a string containing the signature that must be parsed.
      * @param pos index of the first character of the signature to parsed.
      * @param v the visitor that must visit this signature.

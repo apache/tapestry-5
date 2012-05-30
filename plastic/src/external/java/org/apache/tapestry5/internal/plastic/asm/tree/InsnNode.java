@@ -1,6 +1,6 @@
 /***
  * ASM: a very small and fast Java bytecode manipulation framework
- * Copyright (c) 2000-2007 INRIA, France Telecom
+ * Copyright (c) 2000-2011 INRIA, France Telecom
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,20 +29,20 @@
  */
 package org.apache.tapestry5.internal.plastic.asm.tree;
 
-import java.util.Map;
-
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
+
+import java.util.Map;
 
 /**
  * A node that represents a zero operand instruction.
- * 
+ *
  * @author Eric Bruneton
  */
 public class InsnNode extends AbstractInsnNode {
 
     /**
      * Constructs a new {@link InsnNode}.
-     * 
+     *
      * @param opcode the opcode of the instruction to be constructed. This
      *        opcode must be NOP, ACONST_NULL, ICONST_M1, ICONST_0, ICONST_1,
      *        ICONST_2, ICONST_3, ICONST_4, ICONST_5, LCONST_0, LCONST_1,
@@ -62,20 +62,23 @@ public class InsnNode extends AbstractInsnNode {
         super(opcode);
     }
 
+    @Override
     public int getType() {
         return INSN;
     }
 
     /**
      * Makes the given visitor visit this instruction.
-     * 
+     *
      * @param mv a method visitor.
      */
+    @Override
     public void accept(final MethodVisitor mv) {
         mv.visitInsn(opcode);
     }
 
-    public AbstractInsnNode clone(final Map labels) {
+    @Override
+    public AbstractInsnNode clone(final Map<LabelNode, LabelNode> labels) {
         return new InsnNode(opcode);
     }
 }

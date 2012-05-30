@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -417,7 +417,7 @@ public class PlasticInternalUtils
 
         ClassNode result = new ClassNode();
 
-        ClassVisitor adapter = new ClassAdapter(result)
+        ClassVisitor adapter = new ClassVisitor(Opcodes.ASM4, result)
         {
             @Override
             public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions)

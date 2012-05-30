@@ -17,10 +17,9 @@ package org.apache.tapestry5.ioc.internal;
 import org.apache.tapestry5.internal.plastic.ClassLoaderDelegate;
 import org.apache.tapestry5.internal.plastic.PlasticClassLoader;
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
-import org.apache.tapestry5.internal.plastic.asm.ClassAdapter;
 import org.apache.tapestry5.internal.plastic.asm.ClassReader;
 import org.apache.tapestry5.internal.plastic.asm.ClassVisitor;
-import org.apache.tapestry5.internal.plastic.asm.commons.EmptyVisitor;
+import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.ObjectCreator;
 import org.apache.tapestry5.ioc.OperationTracker;
@@ -209,7 +208,7 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
 
     public Class<?> doClassLoad(String className) throws IOException
     {
-        ClassVisitor analyzer = new ClassAdapter(new EmptyVisitor())
+        ClassVisitor analyzer = new ClassVisitor(Opcodes.ASM4)
         {
             @Override
             public void visit(int version, int access, String name, String signature, String superName, String[] interfaces)

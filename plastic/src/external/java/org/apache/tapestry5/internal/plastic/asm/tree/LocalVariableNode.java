@@ -1,6 +1,6 @@
 /***
  * ASM: a very small and fast Java bytecode manipulation framework
- * Copyright (c) 2000-2007 INRIA, France Telecom
+ * Copyright (c) 2000-2011 INRIA, France Telecom
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@ import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 
 /**
  * A node that represents a local variable declaration.
- * 
+ *
  * @author Eric Bruneton
  */
 public class LocalVariableNode {
@@ -72,7 +72,7 @@ public class LocalVariableNode {
 
     /**
      * Constructs a new {@link LocalVariableNode}.
-     * 
+     *
      * @param name the name of a local variable.
      * @param desc the type descriptor of this local variable.
      * @param signature the signature of this local variable. May be
@@ -101,7 +101,7 @@ public class LocalVariableNode {
 
     /**
      * Makes the given visitor visit this local variable declaration.
-     * 
+     *
      * @param mv a method visitor.
      */
     public void accept(final MethodVisitor mv) {

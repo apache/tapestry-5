@@ -1,3 +1,17 @@
+// Copyright 2011, 2012 The Apache Software Foundation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package org.apache.tapestry5.internal.plastic;
 
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
@@ -9,7 +23,7 @@ import java.util.List;
 
 /**
  * Responsible for tracking the advice added to a method, as well as creating the MethodInvocation
- * class for the method and ultimately rewriting the original method to instnatiate the MethodInvocation
+ * class for the method and ultimately rewriting the original method to instantiate the MethodInvocation
  * and handle the success or failure result.
  */
 class MethodAdviceManager
@@ -263,8 +277,8 @@ class MethodAdviceManager
 
     private void createNewMethod()
     {
-        String[] exceptions = (String[]) (advisedMethodNode.exceptions == null ? null
-                : advisedMethodNode.exceptions.toArray(new String[0]));
+        String[] exceptions = advisedMethodNode.exceptions == null ? null
+                : advisedMethodNode.exceptions.toArray(new String[0]);
 
         // Remove the private flag, so that the MethodInvocation implementation (in the same package)
         // can directly access the method without an additional access method.

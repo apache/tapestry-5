@@ -1,6 +1,6 @@
 /***
  * ASM: a very small and fast Java bytecode manipulation framework
- * Copyright (c) 2000-2007 INRIA, France Telecom
+ * Copyright (c) 2000-2011 INRIA, France Telecom
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,14 +29,14 @@
  */
 package org.apache.tapestry5.internal.plastic.asm.tree;
 
-import java.util.Map;
-
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 
+import java.util.Map;
+
 /**
  * A node that represents an LDC instruction.
- * 
+ *
  * @author Eric Bruneton
  */
 public class LdcInsnNode extends AbstractInsnNode {
@@ -50,7 +50,7 @@ public class LdcInsnNode extends AbstractInsnNode {
 
     /**
      * Constructs a new {@link LdcInsnNode}.
-     * 
+     *
      * @param cst the constant to be loaded on the stack. This parameter must be
      *        a non null {@link Integer}, a {@link Float}, a {@link Long}, a
      *        {@link Double} or a {@link String}.
@@ -60,15 +60,18 @@ public class LdcInsnNode extends AbstractInsnNode {
         this.cst = cst;
     }
 
+    @Override
     public int getType() {
         return LDC_INSN;
     }
 
+    @Override
     public void accept(final MethodVisitor mv) {
         mv.visitLdcInsn(cst);
     }
 
-    public AbstractInsnNode clone(final Map labels) {
+    @Override
+    public AbstractInsnNode clone(final Map<LabelNode, LabelNode> labels) {
         return new LdcInsnNode(cst);
     }
 }

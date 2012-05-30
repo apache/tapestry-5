@@ -1,6 +1,6 @@
 /***
  * ASM: a very small and fast Java bytecode manipulation framework
- * Copyright (c) 2000-2007 INRIA, France Telecom
+ * Copyright (c) 2000-2011 INRIA, France Telecom
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,16 +29,17 @@
  */
 package org.apache.tapestry5.internal.plastic.asm.tree;
 
-import org.apache.tapestry5.internal.plastic.asm.Attribute;
-import org.apache.tapestry5.internal.plastic.asm.ClassVisitor;
-import org.apache.tapestry5.internal.plastic.asm.FieldVisitor;
+import org.apache.tapestry5.internal.plastic.asm.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A node that represents a field.
- * 
+ *
  * @author Eric Bruneton
  */
-public class FieldNode extends MemberNode implements FieldVisitor {
+public class FieldNode extends FieldVisitor {
 
     /**
      * The field's access flags (see {@link org.apache.tapestry5.internal.plastic.asm.Opcodes}). This
@@ -69,18 +70,46 @@ public class FieldNode extends MemberNode implements FieldVisitor {
     public Object value;
 
     /**
-     * Constructs a new {@link FieldNode}.
-     * 
+     * The runtime visible annotations of this field. This list is a list of
+     * {@link AnnotationNode} objects. May be <tt>null</tt>.
+     *
+     * @associates AnnotationNode
+     * @label visible
+     */
+    public List<AnnotationNode> visibleAnnotations;
+
+    /**
+     * The runtime invisible annotations of this field. This list is a list of
+     * {@link AnnotationNode} objects. May be <tt>null</tt>.
+     *
+     * @associates AnnotationNode
+     * @label invisible
+     */
+    public List<AnnotationNode> invisibleAnnotations;
+
+    /**
+     * The non standard attributes of this field. This list is a list of
+     * {@link org.apache.tapestry5.internal.plastic.asm.Attribute} objects. May be <tt>null</tt>.
+     *
+     * @associates Attribute
+     */
+    public List<Attribute> attrs;
+
+    /**
+     * Constructs a new {@link FieldNode}. <i>Subclasses must not use this
+     * constructor</i>. Instead, they must use the
+     * {@link #FieldNode(int, int, String, String, String, Object)} version.
+     *
      * @param access the field's access flags (see
      *        {@link org.apache.tapestry5.internal.plastic.asm.Opcodes}). This parameter also indicates
      *        if the field is synthetic and/or deprecated.
      * @param name the field's name.
-     * @param desc the field's descriptor (see
-     *        {@link org.apache.tapestry5.internal.plastic.asm.Type Type}).
+     * @param desc the field's descriptor (see {@link org.apache.tapestry5.internal.plastic.asm.Type
+     *        Type}).
      * @param signature the field's signature.
      * @param value the field's initial value. This parameter, which may be
-     *        <tt>null</tt> if the field does not have an initial value, must
-     *        be an {@link Integer}, a {@link Float}, a {@link Long}, a
+     *        <tt>null</tt> if the field does not have an initial value, must be
+     *        an {@link Integer}, a {@link Float}, a {@link Long}, a
      *        {@link Double} or a {@link String}.
      */
     public FieldNode(
@@ -90,6 +119,37 @@ public class FieldNode extends MemberNode implements FieldVisitor {
         final String signature,
         final Object value)
     {
+        this(Opcodes.ASM4, access, name, desc, signature, value);
+    }
+
+    /**
+     * Constructs a new {@link FieldNode}. <i>Subclasses must not use this
+     * constructor</i>. Instead, they must use the
+     * {@link #FieldNode(int, int, String, String, String, Object)} version.
+     *
+     * @param api the ASM API version implemented by this visitor. Must be one
+     *        of {@link Opcodes#ASM4}.
+     * @param access the field's access flags (see
+     *        {@link org.apache.tapestry5.internal.plastic.asm.Opcodes}). This parameter also indicates
+     *        if the field is synthetic and/or deprecated.
+     * @param name the field's name.
+     * @param desc the field's descriptor (see {@link org.apache.tapestry5.internal.plastic.asm.Type
+     *        Type}).
+     * @param signature the field's signature.
+     * @param value the field's initial value. This parameter, which may be
+     *        <tt>null</tt> if the field does not have an initial value, must be
+     *        an {@link Integer}, a {@link Float}, a {@link Long}, a
+     *        {@link Double} or a {@link String}.
+     */
+    public FieldNode(
+        final int api,
+        final int access,
+        final String name,
+        final String desc,
+        final String signature,
+        final Object value)
+    {
+        super(api);
         this.access = access;
         this.name = name;
         this.desc = desc;
@@ -97,9 +157,61 @@ public class FieldNode extends MemberNode implements FieldVisitor {
         this.value = value;
     }
 
+    // ------------------------------------------------------------------------
+    // Implementation of the FieldVisitor abstract class
+    // ------------------------------------------------------------------------
+
+    @Override
+    public AnnotationVisitor visitAnnotation(
+        final String desc,
+        final boolean visible)
+    {
+        AnnotationNode an = new AnnotationNode(desc);
+        if (visible) {
+            if (visibleAnnotations == null) {
+                visibleAnnotations = new ArrayList<AnnotationNode>(1);
+            }
+            visibleAnnotations.add(an);
+        } else {
+            if (invisibleAnnotations == null) {
+                invisibleAnnotations = new ArrayList<AnnotationNode>(1);
+            }
+            invisibleAnnotations.add(an);
+        }
+        return an;
+    }
+
+    @Override
+    public void visitAttribute(final Attribute attr) {
+        if (attrs == null) {
+            attrs = new ArrayList<Attribute>(1);
+        }
+        attrs.add(attr);
+    }
+
+    @Override
+    public void visitEnd() {
+    }
+
+    // ------------------------------------------------------------------------
+    // Accept methods
+    // ------------------------------------------------------------------------
+
+    /**
+     * Checks that this field node is compatible with the given ASM API version.
+     * This methods checks that this node, and all its nodes recursively, do not
+     * contain elements that were introduced in more recent versions of the ASM
+     * API than the given version.
+     *
+     * @param api an ASM API version. Must be one of {@link Opcodes#ASM4}.
+     */
+    public void check(final int api) {
+        // nothing to do
+    }
+
     /**
      * Makes the given class visitor visit this field.
-     * 
+     *
      * @param cv a class visitor.
      */
     public void accept(final ClassVisitor cv) {
@@ -110,17 +222,17 @@ public class FieldNode extends MemberNode implements FieldVisitor {
         int i, n;
         n = visibleAnnotations == null ? 0 : visibleAnnotations.size();
         for (i = 0; i < n; ++i) {
-            AnnotationNode an = (AnnotationNode) visibleAnnotations.get(i);
+            AnnotationNode an = visibleAnnotations.get(i);
             an.accept(fv.visitAnnotation(an.desc, true));
         }
         n = invisibleAnnotations == null ? 0 : invisibleAnnotations.size();
         for (i = 0; i < n; ++i) {
-            AnnotationNode an = (AnnotationNode) invisibleAnnotations.get(i);
+            AnnotationNode an = invisibleAnnotations.get(i);
             an.accept(fv.visitAnnotation(an.desc, false));
         }
         n = attrs == null ? 0 : attrs.size();
         for (i = 0; i < n; ++i) {
-            fv.visitAttribute((Attribute) attrs.get(i));
+            fv.visitAttribute(attrs.get(i));
         }
         fv.visitEnd();
     }
