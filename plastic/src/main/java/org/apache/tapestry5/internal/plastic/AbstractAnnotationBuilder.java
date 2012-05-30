@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,21 +14,24 @@
 
 package org.apache.tapestry5.internal.plastic;
 
+import org.apache.tapestry5.internal.plastic.asm.AnnotationVisitor;
+import org.apache.tapestry5.internal.plastic.asm.Opcodes;
+import org.apache.tapestry5.internal.plastic.asm.Type;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.tapestry5.internal.plastic.asm.AnnotationVisitor;
-import org.apache.tapestry5.internal.plastic.asm.Type;
-
 @SuppressWarnings(
 { "rawtypes", "unchecked" })
-public abstract class AbstractAnnotationBuilder implements AnnotationVisitor
+public abstract class AbstractAnnotationBuilder extends AnnotationVisitor
 {
     protected final PlasticClassPool pool;
 
     public AbstractAnnotationBuilder(PlasticClassPool pool)
     {
+        super(Opcodes.ASM4);
+
         this.pool = pool;
     }
 

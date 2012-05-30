@@ -1,6 +1,6 @@
 /***
  * ASM: a very small and fast Java bytecode manipulation framework
- * Copyright (c) 2000-2007 INRIA, France Telecom
+ * Copyright (c) 2000-2011 INRIA, France Telecom
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,14 +29,14 @@
  */
 package org.apache.tapestry5.internal.plastic.asm.tree;
 
-import java.util.Map;
-
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
+
+import java.util.Map;
 
 /**
  * A node that represents a type instruction. A type instruction is an
  * instruction that takes a type descriptor as parameter.
- * 
+ *
  * @author Eric Bruneton
  */
 public class TypeInsnNode extends AbstractInsnNode {
@@ -49,7 +49,7 @@ public class TypeInsnNode extends AbstractInsnNode {
 
     /**
      * Constructs a new {@link TypeInsnNode}.
-     * 
+     *
      * @param opcode the opcode of the type instruction to be constructed. This
      *        opcode must be NEW, ANEWARRAY, CHECKCAST or INSTANCEOF.
      * @param desc the operand of the instruction to be constructed. This
@@ -62,7 +62,7 @@ public class TypeInsnNode extends AbstractInsnNode {
 
     /**
      * Sets the opcode of this instruction.
-     * 
+     *
      * @param opcode the new instruction opcode. This opcode must be NEW,
      *        ANEWARRAY, CHECKCAST or INSTANCEOF.
      */
@@ -70,15 +70,18 @@ public class TypeInsnNode extends AbstractInsnNode {
         this.opcode = opcode;
     }
 
+    @Override
     public int getType() {
         return TYPE_INSN;
     }
 
+    @Override
     public void accept(final MethodVisitor mv) {
         mv.visitTypeInsn(opcode, desc);
     }
 
-    public AbstractInsnNode clone(final Map labels) {
+    @Override
+    public AbstractInsnNode clone(final Map<LabelNode, LabelNode> labels) {
         return new TypeInsnNode(opcode, desc);
     }
 }

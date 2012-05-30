@@ -1,6 +1,6 @@
 /***
  * ASM: a very small and fast Java bytecode manipulation framework
- * Copyright (c) 2000-2007 INRIA, France Telecom
+ * Copyright (c) 2000-2011 INRIA, France Telecom
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@ import org.apache.tapestry5.internal.plastic.asm.ClassVisitor;
 
 /**
  * A node that represents an inner class.
- * 
+ *
  * @author Eric Bruneton
  */
 public class InnerClassNode {
@@ -65,7 +65,7 @@ public class InnerClassNode {
 
     /**
      * Constructs a new {@link InnerClassNode}.
-     * 
+     *
      * @param name the internal name of an inner class (see
      *        {@link org.apache.tapestry5.internal.plastic.asm.Type#getInternalName() getInternalName}).
      * @param outerName the internal name of the class to which the inner class
@@ -92,7 +92,7 @@ public class InnerClassNode {
 
     /**
      * Makes the given class visitor visit this inner class.
-     * 
+     *
      * @param cv a class visitor.
      */
     public void accept(final ClassVisitor cv) {

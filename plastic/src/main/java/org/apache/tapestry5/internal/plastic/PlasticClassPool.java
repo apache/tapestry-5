@@ -370,7 +370,7 @@ public class PlasticClassPool implements ClassLoaderDelegate, Opcodes, PlasticCl
 
     private void interceptFieldAccess(ClassNode classNode)
     {
-        for (MethodNode method : (List<MethodNode>) classNode.methods)
+        for (MethodNode method : classNode.methods)
         {
             interceptFieldAccess(classNode.name, method);
         }

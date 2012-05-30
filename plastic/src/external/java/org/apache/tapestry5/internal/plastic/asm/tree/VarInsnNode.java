@@ -1,6 +1,6 @@
 /***
  * ASM: a very small and fast Java bytecode manipulation framework
- * Copyright (c) 2000-2007 INRIA, France Telecom
+` * Copyright (c) 2000-2011 INRIA, France Telecom
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,15 +29,15 @@
  */
 package org.apache.tapestry5.internal.plastic.asm.tree;
 
-import java.util.Map;
-
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
+
+import java.util.Map;
 
 /**
  * A node that represents a local variable instruction. A local variable
  * instruction is an instruction that loads or stores the value of a local
  * variable.
- * 
+ *
  * @author Eric Bruneton
  */
 public class VarInsnNode extends AbstractInsnNode {
@@ -50,7 +50,7 @@ public class VarInsnNode extends AbstractInsnNode {
 
     /**
      * Constructs a new {@link VarInsnNode}.
-     * 
+     *
      * @param opcode the opcode of the local variable instruction to be
      *        constructed. This opcode must be ILOAD, LLOAD, FLOAD, DLOAD,
      *        ALOAD, ISTORE, LSTORE, FSTORE, DSTORE, ASTORE or RET.
@@ -64,7 +64,7 @@ public class VarInsnNode extends AbstractInsnNode {
 
     /**
      * Sets the opcode of this instruction.
-     * 
+     *
      * @param opcode the new instruction opcode. This opcode must be ILOAD,
      *        LLOAD, FLOAD, DLOAD, ALOAD, ISTORE, LSTORE, FSTORE, DSTORE, ASTORE
      *        or RET.
@@ -73,15 +73,18 @@ public class VarInsnNode extends AbstractInsnNode {
         this.opcode = opcode;
     }
 
+    @Override
     public int getType() {
         return VAR_INSN;
     }
 
+    @Override
     public void accept(final MethodVisitor mv) {
         mv.visitVarInsn(opcode, var);
     }
 
-    public AbstractInsnNode clone(final Map labels) {
+    @Override
+    public AbstractInsnNode clone(final Map<LabelNode, LabelNode> labels) {
         return new VarInsnNode(opcode, var);
     }
 }

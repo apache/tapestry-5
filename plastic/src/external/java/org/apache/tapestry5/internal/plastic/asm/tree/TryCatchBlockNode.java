@@ -1,6 +1,6 @@
 /***
  * ASM: a very small and fast Java bytecode manipulation framework
- * Copyright (c) 2000-2007 INRIA, France Telecom
+ * Copyright (c) 2000-2011 INRIA, France Telecom
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@ import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
 
 /**
  * A node that represents a try catch block.
- * 
+ *
  * @author Eric Bruneton
  */
 public class TryCatchBlockNode {
@@ -61,7 +61,7 @@ public class TryCatchBlockNode {
 
     /**
      * Constructs a new {@link TryCatchBlockNode}.
-     * 
+     *
      * @param start beginning of the exception handler's scope (inclusive).
      * @param end end of the exception handler's scope (exclusive).
      * @param handler beginning of the exception handler's code.
@@ -83,7 +83,7 @@ public class TryCatchBlockNode {
 
     /**
      * Makes the given visitor visit this try catch block.
-     * 
+     *
      * @param mv a method visitor.
      */
     public void accept(final MethodVisitor mv) {

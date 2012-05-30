@@ -1,6 +1,6 @@
 /***
  * ASM: a very small and fast Java bytecode manipulation framework
- * Copyright (c) 2000-2007 INRIA, France Telecom
+ * Copyright (c) 2000-2011 INRIA, France Telecom
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,15 +31,10 @@ package org.apache.tapestry5.internal.plastic.asm;
 
 /**
  * An {@link FieldVisitor} that generates Java fields in bytecode form.
- * 
+ *
  * @author Eric Bruneton
  */
-final class FieldWriter implements FieldVisitor {
-
-    /**
-     * Next field writer (see {@link ClassWriter#firstField firstField}).
-     */
-    FieldWriter next;
+final class FieldWriter extends FieldVisitor {
 
     /**
      * The class writer to which this field must be added.
@@ -96,7 +91,7 @@ final class FieldWriter implements FieldVisitor {
 
     /**
      * Constructs a new {@link FieldWriter}.
-     * 
+     *
      * @param cw the class writer to which this field must be added.
      * @param access the field's access flags (see {@link Opcodes}).
      * @param name the field's name.
@@ -112,10 +107,11 @@ final class FieldWriter implements FieldVisitor {
         final String signature,
         final Object value)
     {
+        super(Opcodes.ASM4);
         if (cw.firstField == null) {
             cw.firstField = this;
         } else {
-            cw.lastField.next = this;
+            cw.lastField.fv = this;
         }
         cw.lastField = this;
         this.cw = cw;
@@ -131,9 +127,10 @@ final class FieldWriter implements FieldVisitor {
     }
 
     // ------------------------------------------------------------------------
-    // Implementation of the FieldVisitor interface
+    // Implementation of the FieldVisitor abstract class
     // ------------------------------------------------------------------------
 
+    @Override
     public AnnotationVisitor visitAnnotation(
         final String desc,
         final boolean visible)
@@ -155,11 +152,13 @@ final class FieldWriter implements FieldVisitor {
         return aw;
     }
 
+    @Override
     public void visitAttribute(final Attribute attr) {
         attr.next = attrs;
         attrs = attr;
     }
 
+    @Override
     public void visitEnd() {
     }
 
@@ -169,7 +168,7 @@ final class FieldWriter implements FieldVisitor {
 
     /**
      * Returns the size of this field.
-     * 
+     *
      * @return the size of this field.
      */
     int getSize() {
@@ -208,7 +207,7 @@ final class FieldWriter implements FieldVisitor {
 
     /**
      * Puts the content of this field into the given byte vector.
-     * 
+     *
      * @param out where the content of this field must be put.
      */
     void put(final ByteVector out) {

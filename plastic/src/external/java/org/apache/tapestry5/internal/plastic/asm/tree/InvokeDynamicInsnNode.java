@@ -1,6 +1,6 @@
 /***
  * ASM: a very small and fast Java bytecode manipulation framework
- * Copyright (c) 2000-2007 INRIA, France Telecom
+ * Copyright (c) 2000-2011 INRIA, France Telecom
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,69 +27,74 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.apache.tapestry5.internal.plastic.asm.tree.analysis;
+package org.apache.tapestry5.internal.plastic.asm.tree;
 
-import java.util.Set;
+import org.apache.tapestry5.internal.plastic.asm.Handle;
+import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
+import org.apache.tapestry5.internal.plastic.asm.Opcodes;
 
-import org.apache.tapestry5.internal.plastic.asm.tree.AbstractInsnNode;
+import java.util.Map;
 
 /**
- * A {@link Value} that is represented by its type in a two types type system.
- * This type system distinguishes the ONEWORD and TWOWORDS types.
- * 
- * @author Eric Bruneton
+ * A node that represents an invokedynamic instruction.
+ *
+ * @author Remi Forax
  */
-public class SourceValue implements Value {
+public class InvokeDynamicInsnNode extends AbstractInsnNode {
 
     /**
-     * The size of this value.
+     * Invokedynamic name.
      */
-    public final int size;
+    public String name;
 
     /**
-     * The instructions that can produce this value. For example, for the Java
-     * code below, the instructions that can produce the value of <tt>i</tt>
-     * at line 5 are the txo ISTORE instructions at line 1 and 3:
-     * 
-     * <pre>
-     * 1: i = 0;
-     * 2: if (...) {
-     * 3:   i = 1;
-     * 4: }
-     * 5: return i;
-     * </pre>
-     * 
-     * This field is a set of {@link AbstractInsnNode} objects.
+     * Invokedynamic descriptor.
      */
-    public final Set insns;
+    public String desc;
 
-    public SourceValue(final int size) {
-        this(size, SmallSet.EMPTY_SET);
+    /**
+     * Bootstrap method
+     */
+    public Handle bsm;
+
+    /**
+     * Bootstrap constant arguments
+     */
+    public Object[] bsmArgs;
+
+    /**
+     * Constructs a new {@link InvokeDynamicInsnNode}.
+     *
+     * @param name invokedynamic name.
+     * @param desc invokedynamic descriptor (see {@link org.apache.tapestry5.internal.plastic.asm.Type}).
+     * @param bsm the bootstrap method.
+     * @param bsmArgs the boostrap constant arguments.
+     */
+    public InvokeDynamicInsnNode(
+        final String name,
+        final String desc,
+        final Handle bsm,
+        final Object... bsmArgs)
+    {
+        super(Opcodes.INVOKEDYNAMIC);
+        this.name = name;
+        this.desc = desc;
+        this.bsm = bsm;
+        this.bsmArgs = bsmArgs;
     }
 
-    public SourceValue(final int size, final AbstractInsnNode insn) {
-        this.size = size;
-        this.insns = new SmallSet(insn, null);
+    @Override
+    public int getType() {
+        return INVOKE_DYNAMIC_INSN;
     }
 
-    public SourceValue(final int size, final Set insns) {
-        this.size = size;
-        this.insns = insns;
+    @Override
+    public void accept(final MethodVisitor mv) {
+        mv.visitInvokeDynamicInsn(name, desc, bsm, bsmArgs);
     }
 
-    public int getSize() {
-        return size;
-    }
-
-    public boolean equals(final Object value) {
-        if (!(value instanceof SourceValue)) {
-        	return false;
-        }
-        SourceValue v = (SourceValue) value;
-        return size == v.size && insns.equals(v.insns);
-    }
-
-    public int hashCode() {
-        return insns.hashCode();
+    @Override
+    public AbstractInsnNode clone(final Map<LabelNode, LabelNode> labels) {
+        return new InvokeDynamicInsnNode(name, desc, bsm, bsmArgs);
     }
 }

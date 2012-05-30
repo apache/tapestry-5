@@ -1,6 +1,6 @@
 /***
  * ASM: a very small and fast Java bytecode manipulation framework
- * Copyright (c) 2000-2007 INRIA, France Telecom
+ * Copyright (c) 2000-2011 INRIA, France Telecom
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,14 +29,14 @@
  */
 package org.apache.tapestry5.internal.plastic.asm.tree;
 
-import java.util.Map;
-
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
+
+import java.util.Map;
 
 /**
  * A node that represents a line number declaration. These nodes are pseudo
  * instruction nodes in order to be inserted in an instruction list.
- * 
+ *
  * @author Eric Bruneton
  */
 public class LineNumberNode extends AbstractInsnNode {
@@ -54,7 +54,7 @@ public class LineNumberNode extends AbstractInsnNode {
 
     /**
      * Constructs a new {@link LineNumberNode}.
-     * 
+     *
      * @param line a line number. This number refers to the source file from
      *        which the class was compiled.
      * @param start the first instruction corresponding to this line number.
@@ -65,15 +65,18 @@ public class LineNumberNode extends AbstractInsnNode {
         this.start = start;
     }
 
+    @Override
     public int getType() {
         return LINE;
     }
 
+    @Override
     public void accept(final MethodVisitor mv) {
         mv.visitLineNumber(line, start.getLabel());
     }
 
-    public AbstractInsnNode clone(final Map labels) {
+    @Override
+    public AbstractInsnNode clone(final Map<LabelNode, LabelNode> labels) {
         return new LineNumberNode(line, clone(start, labels));
     }
 }

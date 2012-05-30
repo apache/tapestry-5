@@ -194,7 +194,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
         this.parentInheritanceData = parentInheritanceData;
         inheritanceData = parentInheritanceData.createChild(className);
 
-        for (String interfaceName : (List<String>) classNode.interfaces)
+        for (String interfaceName : classNode.interfaces)
         {
             inheritanceData.addInterface(interfaceName);
         }
@@ -203,7 +203,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         String invalidConstructorMessage = invalidConstructorMessage();
 
-        for (MethodNode node : (List<MethodNode>) classNode.methods)
+        for (MethodNode node : classNode.methods)
         {
             if (node.name.equals(CONSTRUCTOR_NAME))
             {
@@ -263,7 +263,7 @@ public class PlasticClassImpl extends Lockable implements PlasticClass, Internal
 
         fields = new ArrayList(classNode.fields.size());
 
-        for (FieldNode node : (List<FieldNode>) classNode.fields)
+        for (FieldNode node : classNode.fields)
         {
             fieldNames.add(node.name);
 

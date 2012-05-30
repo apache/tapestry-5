@@ -1,6 +1,6 @@
 /***
  * ASM: a very small and fast Java bytecode manipulation framework
- * Copyright (c) 2000-2007 INRIA, France Telecom
+ * Copyright (c) 2000-2011 INRIA, France Telecom
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,10 +29,10 @@
  */
 package org.apache.tapestry5.internal.plastic.asm.tree;
 
-import java.util.Map;
-
 import org.apache.tapestry5.internal.plastic.asm.Label;
 import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
+
+import java.util.Map;
 
 /**
  * An {@link AbstractInsnNode} that encapsulates a {@link Label}.
@@ -50,6 +50,7 @@ public class LabelNode extends AbstractInsnNode {
         this.label = label;
     }
 
+    @Override
     public int getType() {
         return LABEL;
     }
@@ -61,12 +62,14 @@ public class LabelNode extends AbstractInsnNode {
         return label;
     }
 
+    @Override
     public void accept(final MethodVisitor cv) {
         cv.visitLabel(getLabel());
     }
 
-    public AbstractInsnNode clone(final Map labels) {
-        return (LabelNode) labels.get(this);
+    @Override
+    public AbstractInsnNode clone(final Map<LabelNode, LabelNode> labels) {
+        return labels.get(this);
     }
 
     public void resetLabel() {
