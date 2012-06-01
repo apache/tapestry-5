@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2010, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,20 +14,19 @@
 
 package org.apache.tapestry5.ioc.internal;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Named;
-
 import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.InjectService;
 import org.apache.tapestry5.ioc.annotations.Value;
 import org.slf4j.Logger;
 import org.testng.Assert;
 
+import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /**
- * Used by {@link org.apache.tapestry5.ioc.internal.ServiceBuilderMethodInvokerTest}.
+ * Used by {@link org.apache.tapestry5.ioc.internal.ServiceBuilderMethodInvokerSpec}.
  */
 public class ServiceBuilderMethodFixture extends Assert
 {

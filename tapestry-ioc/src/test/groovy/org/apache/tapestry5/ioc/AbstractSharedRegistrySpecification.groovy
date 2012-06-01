@@ -2,6 +2,8 @@ package org.apache.tapestry5.ioc
 
 import spock.lang.Specification
 
+import java.lang.reflect.Method
+
 /**
  * Uses a static, shared instance of the {@link org.apache.tapestry5.ioc.Registry}.
  * All specifications that extend from this class will share
@@ -30,5 +32,13 @@ abstract class AbstractSharedRegistrySpecification extends Specification {
 
   // TODO: the Registry is never shutdown, since there's no notification
   // that all tests are completing.
+
+  protected Method findMethod(Object subject, String methodName) {
+    def method = subject.class.methods.find { it.name == methodName }
+
+    assert method != null
+
+    return method
+  }
 
 }
