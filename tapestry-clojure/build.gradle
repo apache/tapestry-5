@@ -7,6 +7,10 @@ dependencies {
   testCompile "org.spockframework:spock-core:${versions.spock}"
 }
 
+test {
+  useJUnit()
+}
+
 jar {
   manifest {
     attributes 'Tapestry-Module-Classes': 'org.apache.tapestry5.clojure.ClojureModule'
