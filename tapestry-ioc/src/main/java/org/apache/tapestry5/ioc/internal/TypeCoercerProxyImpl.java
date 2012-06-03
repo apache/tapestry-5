@@ -33,7 +33,7 @@ public final class TypeCoercerProxyImpl implements TypeCoercerProxy
         this.locator = locator;
     }
 
-    private synchronized TypeCoercer delegate()
+    private TypeCoercer delegate()
     {
         if (delegate == null)
             delegate = locator.getService(TypeCoercer.class);

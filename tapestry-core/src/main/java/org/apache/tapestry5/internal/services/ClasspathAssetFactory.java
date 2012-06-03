@@ -122,7 +122,7 @@ public class ClasspathAssetFactory implements AssetFactory
                 return resource;
             }
 
-            public synchronized String toClientURL()
+            public String toClientURL()
             {
                 if (clientURL == null)
                 {

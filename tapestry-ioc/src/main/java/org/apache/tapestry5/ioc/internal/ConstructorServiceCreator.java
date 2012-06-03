@@ -43,7 +43,7 @@ public class ConstructorServiceCreator extends AbstractServiceCreator
 
     private ObjectCreator<?> plan;
 
-    private synchronized ObjectCreator<?> getPlan()
+    private  ObjectCreator<?> getPlan()
     {
         if (plan == null)
         {

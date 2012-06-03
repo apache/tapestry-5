@@ -37,7 +37,7 @@ public class ServiceBuilderMethodInvoker extends AbstractServiceCreator
 
     private ObjectCreator<Object> plan;
 
-    private synchronized ObjectCreator<Object> getPlan()
+    private ObjectCreator<Object> getPlan()
     {
         if (plan == null)
         {
