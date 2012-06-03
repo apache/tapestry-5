@@ -1011,7 +1011,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     /**
      * Defers obtaining the symbol source until actually needed.
      */
-    private synchronized SymbolSource getSymbolSource()
+    private SymbolSource getSymbolSource()
     {
         if (symbolSource == null)
             symbolSource = getService(SYMBOL_SOURCE_SERVICE_ID, SymbolSource.class);

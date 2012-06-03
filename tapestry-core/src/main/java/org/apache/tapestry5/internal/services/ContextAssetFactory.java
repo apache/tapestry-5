@@ -70,7 +70,7 @@ public class ContextAssetFactory implements AssetFactory
                 return resource;
             }
 
-            public synchronized String toClientURL()
+            public String toClientURL()
             {
                 if (clientURL == null)
                 {
