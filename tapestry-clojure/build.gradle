@@ -4,6 +4,9 @@ dependencies {
   compile project(':tapestry-ioc')
   provided "org.clojure:clojure:1.4.0"
 
+  // Added just to prove that it works (TAP5-1945)
+  testCompile project(':tapestry-core')
+  testRuntime "javax.servlet:servlet-api:${versions.servletapi}"
   testCompile "org.spockframework:spock-core:${versions.spock}"
 }
 

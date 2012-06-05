@@ -3,6 +3,7 @@ package org.apache.tapestry5.clojure.tests
 import org.apache.tapestry5.clojure.ClojureModule
 import org.apache.tapestry5.ioc.Registry
 import org.apache.tapestry5.ioc.RegistryBuilder
+import org.apache.tapestry5.services.TapestryModule
 import spock.lang.AutoCleanup
 import spock.lang.Shared
 import spock.lang.Specification
@@ -20,7 +21,9 @@ class ClojureBuilderSpec extends Specification {
 
   def setupSpec() {
 
-    RegistryBuilder builder = new RegistryBuilder().add(TestModule, ClojureModule)
+    // ClojureModule needed as contents of MANIFEST are not available at test time
+    // TapestryModule needed as part of TAP5-1945
+    RegistryBuilder builder = new RegistryBuilder().add(TestModule, ClojureModule, TapestryModule)
 
     registry = builder.build();
 

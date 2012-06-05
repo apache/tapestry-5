@@ -23,6 +23,7 @@ import org.apache.tapestry5.clojure.MethodToFunctionSymbolMapper;
 import org.apache.tapestry5.clojure.Namespace;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.Builtin;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.plastic.*;
 
@@ -38,7 +39,7 @@ public class ClojureBuilderImpl implements ClojureBuilder
 
     private final Var REQUIRE = RT.var("clojure.core", "require");
 
-    public ClojureBuilderImpl(PlasticProxyFactory proxyFactory, MethodToFunctionSymbolMapper mapper, OperationTracker tracker)
+    public ClojureBuilderImpl(@Builtin PlasticProxyFactory proxyFactory, MethodToFunctionSymbolMapper mapper, OperationTracker tracker)
     {
         this.proxyFactory = proxyFactory;
         this.mapper = mapper;
