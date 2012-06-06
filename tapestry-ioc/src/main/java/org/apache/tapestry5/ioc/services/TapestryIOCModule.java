@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2006-2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -314,7 +314,7 @@ public final class TapestryIOCModule
             }
         });
 
-        add(configuration, void.class, Boolean.class, new Coercion<Void, Boolean>()
+        add(configuration, Void.class, Boolean.class, new Coercion<Void, Boolean>()
         {
             public Boolean coerce(Void input)
             {

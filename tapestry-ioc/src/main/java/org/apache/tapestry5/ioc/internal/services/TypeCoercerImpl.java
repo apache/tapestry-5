@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InheritanceSearch;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.LockSupport;
 import org.apache.tapestry5.ioc.services.Coercion;
 import org.apache.tapestry5.ioc.services.CoercionTuple;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
@@ -29,7 +30,7 @@ import org.apache.tapestry5.util.StringToEnumCoercion;
 import java.util.*;
 
 @SuppressWarnings("all")
-public class TypeCoercerImpl implements TypeCoercer
+public class TypeCoercerImpl extends LockSupport implements TypeCoercer
 {
     // Constructed from the service's configuration.
 
@@ -56,11 +57,12 @@ public class TypeCoercerImpl implements TypeCoercer
 
         Object coerce(Object input)
         {
-
             Class sourceType = input != null ? input.getClass() : Void.class;
 
             if (type.isAssignableFrom(sourceType))
+            {
                 return input;
+            }
 
             Coercion c = getCoercion(sourceType);
 
@@ -87,6 +89,7 @@ public class TypeCoercerImpl implements TypeCoercer
                 c = findOrCreateCoercion(sourceType, type);
                 cache.put(sourceType, c);
             }
+
             return c;
         }
     }
@@ -132,19 +135,14 @@ public class TypeCoercerImpl implements TypeCoercer
     public Object coerce(Object input, Class targetType)
     {
         assert targetType != null;
-        // This is needed by TypeCoercer, which has its own rules about how to handler void.class (as a stand-in
-        // for null). Plastic treats Void as the wrapper for void.
-        /*
-if (type == void.class)
-{
-   return type;
-}
-    */
 
         Class effectiveTargetType = PlasticUtils.toWrapperType(targetType);
 
         if (effectiveTargetType.isInstance(input))
+        {
             return input;
+        }
+
 
         return getTargetCoercion(effectiveTargetType).coerce(input);
     }
@@ -154,29 +152,14 @@ if (type == void.class)
     {
         assert sourceType != null;
         assert targetType != null;
-        // This is needed by TypeCoercer, which has its own rules about how to handler void.class (as a stand-in
-        // for null). Plastic treats Void as the wrapper for void.
-        /*
-if (type == void.class)
-{
-   return type;
-}
-    */
 
         Class effectiveSourceType = PlasticUtils.toWrapperType(sourceType);
-        // This is needed by TypeCoercer, which has its own rules about how to handler void.class (as a stand-in
-        // for null). Plastic treats Void as the wrapper for void.
-        /*
-if (type == void.class)
-{
-   return type;
-}
-    */
-
         Class effectiveTargetType = PlasticUtils.toWrapperType(targetType);
 
         if (effectiveTargetType.isAssignableFrom(effectiveSourceType))
+        {
             return NO_COERCION;
+        }
 
         return getTargetCoercion(effectiveTargetType).getCoercion(effectiveSourceType);
     }
@@ -186,61 +169,79 @@ if (type == void.class)
     {
         assert sourceType != null;
         assert targetType != null;
-        // This is needed by TypeCoercer, which has its own rules about how to handler void.class (as a stand-in
-        // for null). Plastic treats Void as the wrapper for void.
-        /*
-if (type == void.class)
-{
-   return type;
-}
-    */
 
         Class effectiveTargetType = PlasticUtils.toWrapperType(targetType);
-        // This is needed by TypeCoercer, which has its own rules about how to handler void.class (as a stand-in
-        // for null). Plastic treats Void as the wrapper for void.
-        /*
-if (type == void.class)
-{
-   return type;
-}
-    */
-
         Class effectiveSourceType = PlasticUtils.toWrapperType(sourceType);
 
         // Is a coercion even necessary? Not if the target type is assignable from the
         // input value.
 
         if (effectiveTargetType.isAssignableFrom(effectiveSourceType))
+        {
             return "";
+        }
 
         return getTargetCoercion(effectiveTargetType).explain(effectiveSourceType);
     }
 
-    private synchronized TargetCoercion getTargetCoercion(Class targetType)
+    private TargetCoercion getTargetCoercion(Class targetType)
     {
-        TargetCoercion tc = typeToTargetCoercion.get(targetType);
-
-        if (tc == null)
+        try
         {
-            tc = new TargetCoercion(targetType);
-            typeToTargetCoercion.put(targetType, tc);
-        }
+            acquireReadLock();
 
-        return tc;
+            TargetCoercion tc = typeToTargetCoercion.get(targetType);
+
+            return tc != null ? tc : createAndStoreNewTargetCoercion(targetType);
+        } finally
+        {
+            releaseReadLock();
+        }
     }
 
-    public synchronized void clearCache()
+    private TargetCoercion createAndStoreNewTargetCoercion(Class targetType)
     {
-        // There's no need to clear the typeToTargetCoercion map, as it is a WeakHashMap and
-        // will release the keys for classes that are no longer in existence. On the other hand,
-        // there's likely all sorts of references to unloaded classes inside each TargetCoercion's
-        // individual cache, so clear all those.
-
-        for (TargetCoercion tc : typeToTargetCoercion.values())
+        try
         {
-            // Can tc ever be null?
+            upgradeReadLockToWriteLock();
 
-            tc.clearCache();
+            // Inner check since some other thread may have beat us to it.
+
+            TargetCoercion tc = typeToTargetCoercion.get(targetType);
+
+            if (tc == null)
+            {
+                tc = new TargetCoercion(targetType);
+                typeToTargetCoercion.put(targetType, tc);
+            }
+
+            return tc;
+        } finally
+        {
+            downgradeWriteLockToReadLock();
+        }
+    }
+
+    public void clearCache()
+    {
+        try
+        {
+            acquireReadLock();
+
+            // There's no need to clear the typeToTargetCoercion map, as it is a WeakHashMap and
+            // will release the keys for classes that are no longer in existence. On the other hand,
+            // there's likely all sorts of references to unloaded classes inside each TargetCoercion's
+            // individual cache, so clear all those.
+
+            for (TargetCoercion tc : typeToTargetCoercion.values())
+            {
+                // Can tc ever be null?
+
+                tc.clearCache();
+            }
+        } finally
+        {
+            releaseReadLock();
         }
     }
 
@@ -257,7 +258,7 @@ if (type == void.class)
      * tuples are added to the queue, there are two factors: size (the number of steps in the coercion) and
      * "class distance" (that is, number of steps up the inheritance hiearchy). All the appropriate 1 step coercions
      * will be considered first, in class distance order. Along the way, we'll queue up all the 2 step coercions, again
-     * in class distance order. By the time we reach some of those, we'll have begun queing up the 3 step coercions, and
+     * in class distance order. By the time we reach some of those, we'll have begun queueing up the 3 step coercions, and
      * so forth, until we run out of input tuples we can use to fabricate multi-step compound coercions, or reach a
      * final response.
      * <p/>
@@ -272,7 +273,9 @@ if (type == void.class)
     private Coercion findOrCreateCoercion(Class sourceType, Class targetType)
     {
         if (sourceType == Void.class)
+        {
             return searchForNullCoercion(targetType);
+        }
 
         // These are instance variables because this method may be called concurrently.
         // On a true race, we may go to the work of seeking out and/or fabricating
@@ -297,7 +300,9 @@ if (type == void.class)
             Class tupleTargetType = tuple.getTargetType();
 
             if (targetType.isAssignableFrom(tupleTargetType))
+            {
                 return tuple.getCoercion();
+            }
 
             // So .. this tuple doesn't get us directly to the target type.
             // However, it *may* get us part of the way. Each of these
@@ -320,7 +325,8 @@ if (type == void.class)
      * search. In many cases, we
      * return a pass-thru that leaves the value as null.
      *
-     * @param targetType desired type
+     * @param targetType
+     *         desired type
      * @return the coercion
      */
     private Coercion searchForNullCoercion(Class targetType)
@@ -371,7 +377,9 @@ if (type == void.class)
             List<CoercionTuple> tuples = getTuples(c, targetType);
 
             if (tuples == null)
+            {
                 continue;
+            }
 
             for (CoercionTuple tuple : tuples)
             {
@@ -383,7 +391,9 @@ if (type == void.class)
             // a search from null.
 
             if (sourceType == Void.class)
+            {
                 return;
+            }
         }
     }
 
@@ -392,13 +402,18 @@ if (type == void.class)
      * compound coercion tuples
      * to the end of the queue.
      *
-     * @param sourceType        the source type of the coercion
-     * @param targetType        TODO
-     * @param intermediateTuple a tuple that converts from the source type to some intermediate type (that is not
-     *                          assignable to the target type)
-     * @param consideredTuples  set of tuples that have already been added to the pool (directly, or as a compound
-     *                          coercion)
-     * @param queue             the work queue of tuples
+     * @param sourceType
+     *         the source type of the coercion
+     * @param targetType
+     *         TODO
+     * @param intermediateTuple
+     *         a tuple that converts from the source type to some intermediate type (that is not
+     *         assignable to the target type)
+     * @param consideredTuples
+     *         set of tuples that have already been added to the pool (directly, or as a compound
+     *         coercion)
+     * @param queue
+     *         the work queue of tuples
      */
     @SuppressWarnings("unchecked")
     private void queueIntermediates(Class sourceType, Class targetType, CoercionTuple intermediateTuple,
@@ -411,7 +426,9 @@ if (type == void.class)
             for (CoercionTuple tuple : getTuples(c, targetType))
             {
                 if (consideredTuples.contains(tuple))
+                {
                     continue;
+                }
 
                 Class newIntermediateType = tuple.getTargetType();
 
@@ -421,7 +438,9 @@ if (type == void.class)
                 // eventually be considered and discarded.
 
                 if (sourceType.isAssignableFrom(newIntermediateType))
+                {
                     continue;
+                }
 
                 // The intermediateTuple coercer gets from S --> I1 (an intermediate type).
                 // The current tuple's coercer gets us from I2 --> X. where I2 is assignable
@@ -446,8 +465,10 @@ if (type == void.class)
     /**
      * Returns a non-null list of the tuples from the source type.
      *
-     * @param sourceType used to locate tuples
-     * @param targetType used to add synthetic tuples
+     * @param sourceType
+     *         used to locate tuples
+     * @param targetType
+     *         used to add synthetic tuples
      * @return non-null list of tuples
      */
     private List<CoercionTuple> getTuples(Class sourceType, Class targetType)
@@ -455,17 +476,21 @@ if (type == void.class)
         List<CoercionTuple> tuples = sourceTypeToTuple.get(sourceType);
 
         if (tuples == null)
+        {
             tuples = Collections.emptyList();
+        }
 
         // So, when we see String and an Enum type, we add an additional synthetic tuple to the end
         // of the real list. This is the easiest way to accomplish this is a thread-safe and class-reloading
         // safe way (i.e., what if the Enum is defined by a class loader that gets discarded?  Don't want to cause
         // memory leaks by retaining an instance). In any case, there are edge cases where we may create
         // the tuple unnecessarily (such as when an explicit string-to-enum coercion is part of the TypeCoercer
-        // configuration), but on the whole, this is cheap at works.
+        // configuration), but on the whole, this is cheap and works.
 
         if (sourceType == String.class && Enum.class.isAssignableFrom(targetType))
+        {
             tuples = extend(tuples, new CoercionTuple(sourceType, targetType, new StringToEnumCoercion(targetType)));
+        }
 
         return tuples;
     }

@@ -22,13 +22,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Locale;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Abstract implementation of {@link Resource}. Subclasses must implement the abstract methods {@link Resource#toURL()}
  * and {@link #newResource(String)} as well as toString(), hashCode() and equals().
  */
-public abstract class AbstractResource implements Resource
+public abstract class AbstractResource extends LockSupport implements Resource
 {
     private class Localization
     {
@@ -47,11 +46,6 @@ public abstract class AbstractResource implements Resource
     }
 
     private final String path;
-
-    /**
-     * A lock used to when lazily computing other values.
-     */
-    protected final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     // Guarded by Lock
     private boolean exists, existsComputed;
@@ -129,7 +123,7 @@ public abstract class AbstractResource implements Resource
     {
         try
         {
-            lock.readLock().lock();
+            acquireReadLock();
 
             for (Localization l = firstLocalization; l != null; l = l.next)
             {
@@ -142,7 +136,7 @@ public abstract class AbstractResource implements Resource
             return populateLocalizationCache(locale);
         } finally
         {
-            lock.readLock().unlock();
+            releaseReadLock();
         }
     }
 
@@ -172,20 +166,6 @@ public abstract class AbstractResource implements Resource
         {
             downgradeWriteLockToReadLock();
         }
-    }
-
-    protected final void upgradeReadLockToWriteLock()
-    {
-        lock.readLock().unlock();
-        // This is that instant where another thread may grab the write lock. Very rare, but possible.
-        lock.writeLock().lock();
-    }
-
-    protected final void downgradeWriteLockToReadLock()
-    {
-
-        lock.readLock().lock();
-        lock.writeLock().unlock();
     }
 
     private Resource findLocalizedResource(Locale locale)
@@ -231,7 +211,7 @@ public abstract class AbstractResource implements Resource
     {
         try
         {
-            lock.readLock().lock();
+            acquireReadLock();
 
             if (!existsComputed)
             {
@@ -241,7 +221,7 @@ public abstract class AbstractResource implements Resource
             return exists;
         } finally
         {
-            lock.readLock().unlock();
+            releaseReadLock();
         }
     }
 

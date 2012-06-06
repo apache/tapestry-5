@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,11 +23,11 @@ import org.apache.tapestry5.plastic.PlasticUtils;
  * describe
  * the input and output types of the coercion, needed when searching for an appropriate coercion (or sequence of
  * coercions).
- * 
+ *
  * @param <S>
- *            source (input) type
+ *         source (input) type
  * @param <T>
- *            target (output) type
+ *         target (output) type
  */
 public final class CoercionTuple<S, T>
 {
@@ -88,7 +88,7 @@ public final class CoercionTuple<S, T>
 
     /**
      * Convenience constructor to help with generics.
-     * 
+     *
      * @since 5.2.0
      */
     public static <S, T> CoercionTuple<S, T> create(Class<S> sourceType, Class<T> targetType, Coercion<S, T> coercion)
@@ -98,15 +98,15 @@ public final class CoercionTuple<S, T>
 
     /**
      * Internal-use constructor.
-     * 
+     *
      * @param sourceType
-     *            the source (or input) type of the coercion
+     *         the source (or input) type of the coercion, may be Void.class to indicate a coercion from null
      * @param targetType
-     *            the target (or output) type of the coercion
+     *         the target (or output) type of the coercion
      * @param coercion
-     *            the object that performs the coercion
+     *         the object that performs the coercion
      * @param wrap
-     *            if true, the coercion is wrapped to provide a useful toString()
+     *         if true, the coercion is wrapped to provide a useful toString()
      */
     @SuppressWarnings("unchecked")
     public CoercionTuple(Class<S> sourceType, Class<T> targetType, Coercion<S, T> coercion, boolean wrap)
@@ -115,25 +115,7 @@ public final class CoercionTuple<S, T>
         assert targetType != null;
         assert coercion != null;
 
-        // This is needed by TypeCoercer, which has its own rules about how to handler void.class (as a stand-in
-        // for null). Plastic treats Void as the wrapper for void.
-        /*
-if (type == void.class)
-{
-   return type;
-}
-    */
-
         this.sourceType = PlasticUtils.toWrapperType(sourceType);
-        // This is needed by TypeCoercer, which has its own rules about how to handler void.class (as a stand-in
-        // for null). Plastic treats Void as the wrapper for void.
-        /*
-if (type == void.class)
-{
-   return type;
-}
-    */
-
         this.targetType = PlasticUtils.toWrapperType(targetType);
         this.coercion = wrap ? new CoercionWrapper<S, T>(coercion) : coercion;
     }
