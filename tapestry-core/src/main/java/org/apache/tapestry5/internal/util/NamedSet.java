@@ -19,11 +19,11 @@ import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.LockSupport;
 
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Simple, thread-safe associative array that relates a name to a value. Names are case-insensitive.
@@ -36,10 +36,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @param <T>
  *         the type of value stored
  */
-public class NamedSet<T>
+public class NamedSet<T> extends LockSupport
 {
-    private final ReadWriteLock lock = new ReentrantReadWriteLock();
-
     private NamedRef<T> first;
 
     private static class NamedRef<T>
@@ -64,7 +62,7 @@ public class NamedSet<T>
     {
         try
         {
-            lock.readLock().lock();
+            acquireReadLock();
 
             Set<String> result = CollectionFactory.newSet();
 
@@ -79,7 +77,7 @@ public class NamedSet<T>
             return result;
         } finally
         {
-            lock.readLock().unlock();
+            releaseReadLock();
         }
     }
 
@@ -92,7 +90,7 @@ public class NamedSet<T>
 
         try
         {
-            lock.readLock().lock();
+            acquireReadLock();
 
             NamedRef<T> cursor = first;
 
@@ -105,7 +103,7 @@ public class NamedSet<T>
             return result;
         } finally
         {
-            lock.readLock().unlock();
+            releaseReadLock();
         }
     }
 
@@ -120,7 +118,7 @@ public class NamedSet<T>
     {
         try
         {
-            lock.readLock().lock();
+            acquireReadLock();
 
             NamedRef<T> cursor = first;
 
@@ -137,7 +135,7 @@ public class NamedSet<T>
             return null;
         } finally
         {
-            lock.readLock().unlock();
+            releaseReadLock();
         }
     }
 
@@ -157,7 +155,7 @@ public class NamedSet<T>
 
         try
         {
-            lock.writeLock().lock();
+            takeWriteLock();
 
             NamedRef<T> prev = null;
             NamedRef<T> cursor = first;
@@ -187,7 +185,7 @@ public class NamedSet<T>
                 prev.next = newRef;
         } finally
         {
-            lock.writeLock().unlock();
+            releaseWriteLock();
         }
     }
 
@@ -219,8 +217,7 @@ public class NamedSet<T>
 
         try
         {
-
-            lock.writeLock().lock();
+            takeWriteLock();
 
             NamedRef<T> prev = null;
             NamedRef<T> cursor = first;
@@ -246,7 +243,7 @@ public class NamedSet<T>
             return true;
         } finally
         {
-            lock.writeLock().unlock();
+            releaseWriteLock();
         }
     }
 

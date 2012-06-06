@@ -18,15 +18,19 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * Base class for classes that need to manage a  ReadWriteLock.
+ * Base class for classes that need to manage a ReadWriteLock.
  */
 public abstract class LockSupport
 {
-    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    private final Lock readLock, writeLock;
 
-    private final Lock readLock = lock.readLock();
+    protected LockSupport()
+    {
+        ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
-    private final Lock writeLock = lock.writeLock();
+        readLock = lock.readLock();
+        writeLock = lock.writeLock();
+    }
 
     /**
      * Locks the shared read lock. Any number of threads may lock the read lock at the same time.
