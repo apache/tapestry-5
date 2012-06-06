@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2006-2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.NullAnnotationProvider;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.LockSupport;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.model.ComponentModel;
@@ -42,8 +43,6 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * The bridge between a component and its {@link ComponentPageElement}, that supplies all kinds of
@@ -51,7 +50,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * component, including access to its parameters, parameter bindings, and persistent field data.
  */
 @SuppressWarnings("all")
-public class InternalComponentResourcesImpl implements InternalComponentResources
+public class InternalComponentResourcesImpl extends LockSupport implements InternalComponentResources
 {
     private final Page page;
 
@@ -79,28 +78,21 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     // written to during page load, not at runtime.
     private NamedSet<Binding> bindings;
 
-    /**
-     * Lock, shared by all instances, on certain rare, runtime (not construction time) lazy creation, such
-     * as the creation of the {@link PerThreadValue}, to store render variables. It is possible that this lock could be converted
-     * into a static variable without affecting throughput since across all instances, reads vastly dominate writes.
-     */
-    private final ReadWriteLock lazyCreationLock = new ReentrantReadWriteLock();
-
     // Maps from parameter name to ParameterConduit, used to support mixins
     // which need access to the containing component's PC's
-    // Guarded by: lazyCreationLock
+    // Guarded by: LockSupport
     private NamedSet<ParameterConduit> conduits;
 
-    // Guarded by: lazyCreationLock
+    // Guarded by: LockSupport
     private Messages messages;
 
-    // Guarded by: lazyCreationLock
+    // Guarded by: LockSupport
     private boolean informalsComputed;
 
-    // Guarded by: lazyCreationLock
+    // Guarded by: LockSupport
     private PerThreadValue<Map<String, Object>> renderVariables;
 
-    // Guarded by: lazyCreationLock
+    // Guarded by: LockSupport
     private Informal firstInformal;
 
 
@@ -387,7 +379,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     {
         try
         {
-            lazyCreationLock.readLock().lock();
+            acquireReadLock();
 
             if (!informalsComputed)
             {
@@ -397,7 +389,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
             return firstInformal;
         } finally
         {
-            lazyCreationLock.readLock().unlock();
+            releaseReadLock();
         }
     }
 
@@ -405,9 +397,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     {
         try
         {
-            lazyCreationLock.readLock().unlock();
-            // Tiny window here where some other thread may compute informals!
-            lazyCreationLock.writeLock().lock();
+            upgradeReadLockToWriteLock();
 
             if (!informalsComputed)
             {
@@ -420,17 +410,16 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
             }
         } finally
         {
-            // Downgrade back to read:
-            lazyCreationLock.readLock().lock();
-            lazyCreationLock.writeLock().unlock();
-
+            downgradeWriteLockToReadLock();
         }
     }
 
     public Component getContainer()
     {
         if (containerResources == null)
+        {
             return null;
+        }
 
         return containerResources.getComponent();
     }
@@ -459,7 +448,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     {
         try
         {
-            lazyCreationLock.readLock().lock();
+            acquireReadLock();
 
             if (messages == null)
             {
@@ -469,36 +458,23 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
             return messages;
         } finally
         {
-            lazyCreationLock.readLock().unlock();
+            releaseReadLock();
         }
     }
 
     private void obtainComponentMessages()
     {
-
-        boolean haveWriteLock = false;
-
         try
         {
-            lazyCreationLock.readLock().unlock();
+            upgradeReadLockToWriteLock();
 
-            // Do the expensive part here, with no locks!
-
-            Messages componentMessages = elementResources.getMessages(componentModel);
-
-            lazyCreationLock.writeLock().lock();
-
-            haveWriteLock = true;
-
-            messages = componentMessages;
+            if (messages == null)
+            {
+                messages = elementResources.getMessages(componentModel);
+            }
         } finally
         {
-            lazyCreationLock.readLock().lock();
-            if (haveWriteLock)
-            {
-                lazyCreationLock.writeLock().unlock();
-            }
-
+            downgradeWriteLockToReadLock();
         }
     }
 
@@ -551,7 +527,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     {
         try
         {
-            lazyCreationLock.readLock().lock();
+            acquireReadLock();
 
             if (renderVariables == null)
             {
@@ -571,7 +547,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
             return result;
         } finally
         {
-            lazyCreationLock.readLock().unlock();
+            releaseReadLock();
         }
     }
 
@@ -579,9 +555,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     {
         try
         {
-            lazyCreationLock.readLock().unlock();
-            // There's a window right here where another thread may acquire the write lock and create the PTV
-            lazyCreationLock.writeLock().lock();
+            upgradeReadLockToWriteLock();
 
             if (renderVariables == null)
             {
@@ -590,9 +564,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
         } finally
         {
-            // The thread with the write lock is allowed to downgrade to a read lock as so:
-            lazyCreationLock.readLock().lock();
-            lazyCreationLock.writeLock().unlock();
+            downgradeWriteLockToReadLock();
         }
     }
 
@@ -603,8 +575,10 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         Object result = InternalUtils.get(variablesMap, name);
 
         if (result == null)
+        {
             throw new IllegalArgumentException(StructureMessages.missingRenderVariable(getCompleteId(), name,
                     variablesMap == null ? null : variablesMap.keySet()));
+        }
 
         return result;
     }
@@ -648,7 +622,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     {
         try
         {
-            lazyCreationLock.readLock().lock();
+            acquireReadLock();
 
             if (conduits != null)
             {
@@ -656,7 +630,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
             }
         } finally
         {
-            lazyCreationLock.readLock().unlock();
+            releaseReadLock();
         }
     }
 
@@ -664,11 +638,11 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     {
         try
         {
-            lazyCreationLock.readLock().lock();
+            acquireReadLock();
             return NamedSet.get(conduits, parameterName);
         } finally
         {
-            lazyCreationLock.readLock().unlock();
+            releaseReadLock();
         }
     }
 
@@ -676,7 +650,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     {
         try
         {
-            lazyCreationLock.readLock().lock();
+            acquireReadLock();
 
             if (conduits == null)
             {
@@ -686,7 +660,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
             conduits.put(parameterName, conduit);
         } finally
         {
-            lazyCreationLock.readLock().unlock();
+            releaseReadLock();
         }
     }
 
@@ -694,17 +668,14 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     {
         try
         {
-            lazyCreationLock.readLock().unlock();
-            lazyCreationLock.writeLock().lock();
-
+            upgradeReadLockToWriteLock();
             if (conduits == null)
             {
                 conduits = NamedSet.create();
             }
         } finally
         {
-            lazyCreationLock.readLock().lock();
-            lazyCreationLock.writeLock().unlock();
+            downgradeWriteLockToReadLock();
         }
     }
 
