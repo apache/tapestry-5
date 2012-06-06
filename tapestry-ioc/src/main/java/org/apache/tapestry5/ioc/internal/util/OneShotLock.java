@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,18 +18,27 @@ package org.apache.tapestry5.ioc.internal.util;
  * Logic for handling one shot semantics for classes; classes that include a method (or methods) that "locks down" the
  * instance, to prevent it from being used again in the future.
  */
-public class OneShotLock
+public class OneShotLock extends LockSupport
 {
     private boolean lock;
 
     /**
      * Checks to see if the lock has been set (via {@link #lock()}).
      *
-     * @throws IllegalStateException if the lock is set
+     * @throws IllegalStateException
+     *         if the lock is set
      */
-    public synchronized void check()
+    public void check()
     {
-        innerCheck();
+        try
+        {
+            acquireReadLock();
+
+            innerCheck();
+        } finally
+        {
+            releaseReadLock();
+        }
     }
 
     private void innerCheck()
@@ -38,12 +47,13 @@ public class OneShotLock
         {
             // The depth to find the caller of the check() or lock() method varies between JDKs.
 
-
             StackTraceElement[] elements = Thread.currentThread().getStackTrace();
 
             int i = 0;
             while (!elements[i].getMethodName().equals("innerCheck"))
+            {
                 i++;
+            }
 
             throw new IllegalStateException(UtilMessages.oneShotLock(elements[i + 2]));
         }
@@ -52,10 +62,18 @@ public class OneShotLock
     /**
      * Checks the lock, then sets it.
      */
-    public synchronized void lock()
+    public void lock()
     {
-        innerCheck();
+        try
+        {
+            takeWriteLock();
 
-        lock = true;
+            innerCheck();
+
+            lock = true;
+        } finally
+        {
+            releaseWriteLock();
+        }
     }
 }
