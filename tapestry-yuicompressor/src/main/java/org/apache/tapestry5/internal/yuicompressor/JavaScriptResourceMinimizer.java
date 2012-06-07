@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import java.io.LineNumberReader;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * JavaScript resource minimizer based on the YUI {@link JavaScriptCompressor}.
@@ -52,9 +53,40 @@ public class JavaScriptResourceMinimizer extends AbstractMinimizer
         this.logger = logger;
     }
 
-    protected void doMinimize(StreamableResource resource, Writer output) throws IOException
+    protected void doMinimize(final StreamableResource resource, Writer output) throws IOException
     {
         final Set<Integer> errorLines = CollectionFactory.newSet();
+
+        final Runnable identifySource = new Runnable()
+        {
+            boolean sourceIdentified = false;
+
+            @Override
+            public void run()
+            {
+                if (!sourceIdentified)
+                {
+                    logger.error(String.format("JavaScript compression problems for resource %s:",
+                            resource.getDescription()));
+                    sourceIdentified = true;
+                }
+            }
+        };
+
+        final AtomicInteger warningCount = new AtomicInteger();
+
+        Runnable identifyWarnings = new Runnable() {
+            @Override
+            public void run()
+            {
+                if (warningCount.get() > 0)
+                {
+                    logger.error(String.format("%,d compression warnings; enable warning logging of %s to see details.",
+                            warningCount.get(),
+                            logger.getName()));
+                }
+            }
+        };
 
         ErrorReporter errorReporter = new ErrorReporter()
         {
@@ -68,9 +100,17 @@ public class JavaScriptResourceMinimizer extends AbstractMinimizer
 
             public void warning(String message, String sourceName, int line, String lineSource, int lineOffset)
             {
+                identifySource.run();
+
                 errorLines.add(line);
 
-                logger.warn(format(message, line, lineOffset));
+                if (logger.isWarnEnabled())
+                {
+                    logger.warn(format(message, line, lineOffset));
+                } else
+                {
+                    warningCount.incrementAndGet();
+                }
             }
 
             public EvaluatorException runtimeError(String message, String sourceName, int line, String lineSource,
@@ -83,6 +123,8 @@ public class JavaScriptResourceMinimizer extends AbstractMinimizer
 
             public void error(String message, String sourceName, int line, String lineSource, int lineOffset)
             {
+                identifySource.run();
+
                 errorLines.add(line);
 
                 logger.error(format(message, line, lineOffset));
@@ -90,21 +132,27 @@ public class JavaScriptResourceMinimizer extends AbstractMinimizer
 
         };
 
-
         Reader reader = toReader(resource);
 
         try
         {
             JavaScriptCompressor compressor = new JavaScriptCompressor(reader, errorReporter);
-            compressor.compress(output, -1, true, false, false, false);
+            compressor.compress(output, -1, true, true, false, false);
+
+            identifyWarnings.run();
+
         } catch (EvaluatorException ex)
         {
+            identifySource.run();
+
             logInputLines(resource, errorLines);
 
             recoverFromException(ex, resource, output);
 
         } catch (Exception ex)
         {
+            identifySource.run();
+
             recoverFromException(ex, resource, output);
         }
 
@@ -113,7 +161,7 @@ public class JavaScriptResourceMinimizer extends AbstractMinimizer
 
     private void recoverFromException(Exception ex, StreamableResource resource, Writer output) throws IOException
     {
-        logger.error(String.format("Exception minimizing %s: %s", resource.getDescription(), InternalUtils.toMessage(ex)), ex);
+        logger.error(InternalUtils.toMessage(ex), ex);
 
         streamUnminimized(resource, output);
     }
@@ -146,8 +194,6 @@ public class JavaScriptResourceMinimizer extends AbstractMinimizer
 
     private void logInputLines(StreamableResource resource, Set<Integer> lines)
     {
-        logger.error(String.format("Errors in resource %s:", resource.getDescription()));
-
         int last = -1;
 
         try
