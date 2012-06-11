@@ -12,7 +12,7 @@ project.ext.versions = [
   tapestry: "5.3.4-rc-6",
   jetty: "7.0.0.v20091005",
   tomcat: "6.0.30",
-  testng: "5.14.9",
+  testng: "6.5.2",
   easymock: "3.0",
   servletapi: "2.5",
   spock: "0.6-groovy-1.8"
