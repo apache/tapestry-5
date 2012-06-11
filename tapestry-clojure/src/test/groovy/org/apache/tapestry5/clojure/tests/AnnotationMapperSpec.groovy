@@ -46,7 +46,7 @@ class AnnotationMapperSpec extends Specification {
 
     when:
 
-    def method = MyInterface.methods.find() { it.name == "alpha" }
+    def method = MyInterface.methods.find { it.name == "alpha" }
 
     then:
 
