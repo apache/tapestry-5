@@ -18,10 +18,8 @@ import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
-import org.apache.tapestry5.services.assets.CompressionAnalyzer;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
 
 public class ResponseCompressionAnalyzerImpl implements ResponseCompressionAnalyzer
 {
@@ -29,16 +27,11 @@ public class ResponseCompressionAnalyzerImpl implements ResponseCompressionAnaly
 
     private final boolean gzipCompressionEnabled;
 
-    private final CompressionAnalyzer analyzer;
-
-    // configuration is left here for partial compatibility with end-user modules that contribute a value; they
-    // should contribute to CompressionAnalyzer instead.
-    public ResponseCompressionAnalyzerImpl(HttpServletRequest request, CompressionAnalyzer analyzer, @Deprecated
-    Collection<String> configuration, @Symbol(SymbolConstants.GZIP_COMPRESSION_ENABLED)
-    boolean gzipCompressionEnabled)
+    public ResponseCompressionAnalyzerImpl(HttpServletRequest request,
+                                           @Symbol(SymbolConstants.GZIP_COMPRESSION_ENABLED)
+                                           boolean gzipCompressionEnabled)
     {
         this.request = request;
-        this.analyzer = analyzer;
         this.gzipCompressionEnabled = gzipCompressionEnabled;
     }
 
@@ -71,10 +64,5 @@ public class ResponseCompressionAnalyzerImpl implements ResponseCompressionAnaly
         }
 
         return false;
-    }
-
-    public boolean isCompressable(String contentType)
-    {
-        return analyzer.isCompressable(contentType);
     }
 }

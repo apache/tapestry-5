@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009, 2010, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 package org.apache.tapestry5.internal.gzip;
 
 import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
+import org.apache.tapestry5.services.assets.CompressionAnalyzer;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -31,12 +31,12 @@ public class GZIPEnabledResponse extends HttpServletResponseWrapper
 
     private final HttpServletResponse response;
 
-    private final ResponseCompressionAnalyzer analyzer;
+    private final CompressionAnalyzer analyzer;
 
     private boolean contentLengthSet = false;
 
     public GZIPEnabledResponse(HttpServletResponse response, HttpServletRequest request, int cutover,
-            ResponseCompressionAnalyzer analyzer)
+                               CompressionAnalyzer analyzer)
     {
         super(response);
 

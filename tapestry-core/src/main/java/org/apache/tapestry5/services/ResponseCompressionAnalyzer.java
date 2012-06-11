@@ -19,7 +19,7 @@ import org.apache.tapestry5.services.assets.CompressionAnalyzer;
 /**
  * Used to determine if the client supports GZIP compression of the response.
  *
- * @see ResponseCompressionAnalyzer
+ * @see CompressionAnalyzer
  * @since 5.1.0.0
  */
 public interface ResponseCompressionAnalyzer
@@ -31,18 +31,4 @@ public interface ResponseCompressionAnalyzer
      * @return true if gzip is supported by client
      */
     boolean isGZipSupported();
-
-    /**
-     * Checks to see if the indicated content type is compressable. Many formats are already compressed; pushing them
-     * through a GZip filter consumes cycles and makes them larger.
-     * <p/>
-     * Contribute content type strings to the service's configuration to mark them as not compressable.
-     *
-     * @param contentType
-     *         the mime type of the content, such as "text/html" or "image/jpeg".
-     * @return true if compression is worthwhile
-     * @deprecated Deprecated in Tapestry 5.3. This method is to be removed at a later date. The service's configuration
-     *             is no longer used. Instead, contribute to and use {@link CompressionAnalyzer}.
-     */
-    boolean isCompressable(String contentType);
 }

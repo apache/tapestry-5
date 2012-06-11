@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.HttpServletRequestFilter;
 import org.apache.tapestry5.services.HttpServletRequestHandler;
 import org.apache.tapestry5.services.ResponseCompressionAnalyzer;
+import org.apache.tapestry5.services.assets.CompressionAnalyzer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,24 +32,29 @@ public class GZipFilter implements HttpServletRequestFilter
 {
     private final int cutover;
 
-    private final ResponseCompressionAnalyzer analyzer;
+    private final ResponseCompressionAnalyzer responseAnalyzer;
+
+    private final CompressionAnalyzer compressionAnalyzer;
 
     public GZipFilter(
             @Symbol(SymbolConstants.MIN_GZIP_SIZE)
             int cutover,
 
-            ResponseCompressionAnalyzer analyzer)
+            ResponseCompressionAnalyzer responseAnalyzer,
+
+            CompressionAnalyzer compressionAnalyzer)
     {
         this.cutover = cutover;
-        this.analyzer = analyzer;
+        this.responseAnalyzer = responseAnalyzer;
+        this.compressionAnalyzer = compressionAnalyzer;
     }
 
     public boolean service(HttpServletRequest request, HttpServletResponse response, HttpServletRequestHandler handler)
             throws IOException
     {
-        HttpServletResponse newResponse = analyzer.isGZipSupported()
-                                          ? new GZIPEnabledResponse(response, request, cutover, analyzer)
-                                          : response;
+        HttpServletResponse newResponse = responseAnalyzer.isGZipSupported()
+                ? new GZIPEnabledResponse(response, request, cutover, compressionAnalyzer)
+                : response;
 
         return handler.service(request, newResponse);
     }
