@@ -1,4 +1,4 @@
-// Copyright 2009, 2011 The Apache Software Foundation
+// Copyright 2009, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,20 +14,20 @@
 
 package org.apache.tapestry5.services;
 
-import org.apache.tapestry5.ioc.annotations.UsesConfiguration;
 import org.apache.tapestry5.services.assets.CompressionAnalyzer;
 
 /**
  * Used to determine if the client supports GZIP compression of the response.
- * 
+ *
+ * @see ResponseCompressionAnalyzer
  * @since 5.1.0.0
  */
-@UsesConfiguration(String.class)
 public interface ResponseCompressionAnalyzer
 {
     /**
-     * Checks the Accept-Encoding request header for a "gzip" token.
-     * 
+     * Checks the Accept-Encoding request header for a "gzip" token. Ensures that the protocol is not "HTTP/1.0", which
+     * does not correctly support GZip encoding (in older Internet Explorer browsers).
+     *
      * @return true if gzip is supported by client
      */
     boolean isGZipSupported();
@@ -37,9 +37,9 @@ public interface ResponseCompressionAnalyzer
      * through a GZip filter consumes cycles and makes them larger.
      * <p/>
      * Contribute content type strings to the service's configuration to mark them as not compressable.
-     * 
+     *
      * @param contentType
-     *            the mime type of the content, such as "text/html" or "image/jpeg".
+     *         the mime type of the content, such as "text/html" or "image/jpeg".
      * @return true if compression is worthwhile
      * @deprecated Deprecated in Tapestry 5.3. This method is to be removed at a later date. The service's configuration
      *             is no longer used. Instead, contribute to and use {@link CompressionAnalyzer}.
