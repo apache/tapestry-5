@@ -446,36 +446,15 @@ public class InternalComponentResourcesImpl extends LockSupport implements Inter
 
     public Messages getMessages()
     {
-        try
+        if (messages == null)
         {
-            acquireReadLock();
-
-            if (messages == null)
-            {
-                obtainComponentMessages();
-            }
-
-            return messages;
-        } finally
-        {
-            releaseReadLock();
+            // This kind of lazy loading pattern is acceptable without locking.
+            // Changes to the messages field are atomic; in some race conditions, the call to
+            // getMessages() may occur more than once (but it caches the value anyway).
+            messages = elementResources.getMessages(componentModel);
         }
-    }
 
-    private void obtainComponentMessages()
-    {
-        try
-        {
-            upgradeReadLockToWriteLock();
-
-            if (messages == null)
-            {
-                messages = elementResources.getMessages(componentModel);
-            }
-        } finally
-        {
-            downgradeWriteLockToReadLock();
-        }
+        return messages;
     }
 
     public String getElementName(String defaultElementName)

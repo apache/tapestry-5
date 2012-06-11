@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,8 +14,9 @@
 
 package org.apache.tapestry5.alerts;
 
-import org.apache.tapestry5.BaseOptimizedSessionPersistedObject;
+import org.apache.tapestry5.OptimizedSessionPersistedObject;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.LockSupport;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -26,28 +27,63 @@ import java.util.List;
  *
  * @since 5.3
  */
-public class AlertStorage extends BaseOptimizedSessionPersistedObject implements Serializable
+public class AlertStorage extends LockSupport implements Serializable, OptimizedSessionPersistedObject
 {
+    private boolean dirty;
+
     private final List<Alert> alerts = CollectionFactory.newList();
 
-    public synchronized void add(Alert alert)
+    @Override
+    public boolean checkAndResetDirtyMarker()
+    {
+        try
+        {
+            takeWriteLock();
+
+            return dirty;
+        } finally
+        {
+            dirty = false;
+
+            releaseWriteLock();
+        }
+    }
+
+
+    public void add(Alert alert)
     {
         assert alert != null;
 
-        alerts.add(alert);
+        try
+        {
+            takeWriteLock();
 
-        markDirty();
+            alerts.add(alert);
+
+            dirty = true;
+        } finally
+        {
+            releaseWriteLock();
+        }
     }
 
     /**
      * Dismisses all Alerts.
      */
-    public synchronized void dismissAll()
+    public void dismissAll()
     {
-        if (!alerts.isEmpty())
+        try
         {
-            alerts.clear();
-            markDirty();
+            takeWriteLock();
+
+            if (!alerts.isEmpty())
+            {
+                alerts.clear();
+                dirty = true;
+            }
+        } finally
+        {
+            releaseWriteLock();
         }
     }
 
@@ -55,24 +91,25 @@ public class AlertStorage extends BaseOptimizedSessionPersistedObject implements
      * Dismisses non-persistent Alerts; this is useful after rendering the {@link org.apache.tapestry5.corelib.components.Alerts}
      * component.
      */
-    public synchronized void dismissNonPersistent()
+    public void dismissNonPersistent()
     {
-        boolean dirty = false;
-
-        Iterator<Alert> i = alerts.iterator();
-
-        while (i.hasNext())
+        try
         {
-            if (!i.next().duration.persistent)
+            takeWriteLock();
+
+            Iterator<Alert> i = alerts.iterator();
+
+            while (i.hasNext())
             {
-                dirty = true;
-                i.remove();
+                if (!i.next().duration.persistent)
+                {
+                    dirty = true;
+                    i.remove();
+                }
             }
-        }
-
-        if (dirty)
+        } finally
         {
-            markDirty();
+            releaseWriteLock();
         }
     }
 
@@ -80,18 +117,26 @@ public class AlertStorage extends BaseOptimizedSessionPersistedObject implements
     /**
      * Dismisses a single Alert, if present.
      */
-    public synchronized void dismiss(long alertId)
+    public void dismiss(long alertId)
     {
-        Iterator<Alert> i = alerts.iterator();
-
-        while (i.hasNext())
+        try
         {
-            if (i.next().id == alertId)
+            takeWriteLock();
+
+            Iterator<Alert> i = alerts.iterator();
+
+            while (i.hasNext())
             {
-                i.remove();
-                markDirty();
-                return;
+                if (i.next().id == alertId)
+                {
+                    i.remove();
+                    dirty = true;
+                    return;
+                }
             }
+        } finally
+        {
+            releaseWriteLock();
         }
     }
 
@@ -103,6 +148,14 @@ public class AlertStorage extends BaseOptimizedSessionPersistedObject implements
      */
     public List<Alert> getAlerts()
     {
-        return alerts;
+        try
+        {
+            acquireReadLock();
+
+            return alerts;
+        } finally
+        {
+            releaseReadLock();
+        }
     }
 }
