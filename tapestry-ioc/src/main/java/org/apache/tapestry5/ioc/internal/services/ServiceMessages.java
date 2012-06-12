@@ -90,9 +90,4 @@ public class ServiceMessages
     {
         return MESSAGES.format("service-build-failure", serviceId, cause);
     }
-
-    public static String startupFailure(Throwable cause)
-    {
-        return MESSAGES.format("startup-failure", cause);
-    }
 }
