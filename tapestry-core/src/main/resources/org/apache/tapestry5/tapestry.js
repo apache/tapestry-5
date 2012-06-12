@@ -373,6 +373,10 @@ var Tapestry = {
 
         Tapestry.debug(Tapestry.Messages.ajaxFailure + exception, response);
 
+        // This covers just FireFox and Opera:
+        var trace = exception.stack || exception.stacktrace;
+        if (exception.stack) { Tapestry.debug(exception.stack); }
+
         throw exception;
     },
 
@@ -450,7 +454,7 @@ var Tapestry = {
                         /* Re-invoke the success handler, capturing any exceptions. */
                         successHandler.call(this, response, jsonResponse);
                     } catch (e) {
-                        finalOptions.get('onException').call(this, response);
+                        finalOptions.get('onException').call(this, response, e);
                     }
                 }
             });
