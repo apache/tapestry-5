@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ public interface PlasticClassListener
      * the event for the primary class (the class being transformed or created from scratch).
      * 
      * @param event
-     *            describes the class to be loaded, and gives access to its dissasembled
+     *            describes the class to be loaded, and gives access to its disassembled
      *            bytecode (for debugging purposes)
      */
     void classWillLoad(PlasticClassEvent event);
