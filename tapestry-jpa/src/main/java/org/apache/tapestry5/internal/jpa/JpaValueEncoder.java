@@ -70,10 +70,9 @@ public class JpaValueEncoder<E> implements ValueEncoder<E>
         final Object id = propertyAdapter.get(value);
 
         if (id == null)
-            throw new IllegalStateException(
-                    String.format(
-                            "Entity %s has an %s property of null; this probably means that it has not been persisted yet.",
-                            value, idPropertyName));
+        {
+            return null;
+        }
 
         return typeCoercer.coerce(id, String.class);
     }
