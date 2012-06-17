@@ -39,6 +39,13 @@ public class JpaIntegrationTest extends SeleniumTestCase
     }
 
     @Test
+    public void valueencode_transient_entities() throws Exception {
+        open("/EncodeTransientEntities");
+
+        assertTrue(isElementPresent("doNothingButton"));
+    }
+
+    @Test
     public void persist_entities()
     {
         open("/persistentity");

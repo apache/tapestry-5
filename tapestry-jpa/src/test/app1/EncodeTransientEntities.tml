@@ -1,0 +1,10 @@
+<html xmlns:t='http://tapestry.apache.org/schema/tapestry_5_3.xsd'>
+    <body>
+
+        <form t:type='form' action=''>
+            <input t:type='textField' t:value='user.email'/>
+            <input type='button' id='doNothingButton' value='Do Nothing'/>
+        </form>
+
+    </body>
+</html>
