@@ -70,8 +70,10 @@ public class InternalUtils
      * (where possible). {@link #asString(Method)} is used under the covers, to present a detailed, but not excessive,
      * description of the class, method and parameters.
      *
-     * @param method       method to convert to a string
-     * @param proxyFactory used to obtain the {@link Location}
+     * @param method
+     *         method to convert to a string
+     * @param proxyFactory
+     *         used to obtain the {@link Location}
      * @return the method formatted for presentation to the user
      */
     public static String asString(Method method, PlasticProxyFactory proxyFactory)
@@ -161,8 +163,10 @@ public class InternalUtils
      * Finds a specific annotation type within an array of annotations.
      *
      * @param <T>
-     * @param annotations     to search
-     * @param annotationClass to match
+     * @param annotations
+     *         to search
+     * @param annotationClass
+     *         to match
      * @return the annotation instance, if found, or null otherwise
      */
     public static <T extends Annotation> T findAnnotation(Annotation[] annotations, Class<T> annotationClass)
@@ -294,10 +298,14 @@ public class InternalUtils
      * Injects into the fields (of all visibilities) when the {@link org.apache.tapestry5.ioc.annotations.Inject} or
      * {@link org.apache.tapestry5.ioc.annotations.InjectService} annotations are present.
      *
-     * @param object    to be initialized
-     * @param locator   used to resolve external dependencies
-     * @param resources provides injection resources for fields
-     * @param tracker   track operations
+     * @param object
+     *         to be initialized
+     * @param locator
+     *         used to resolve external dependencies
+     * @param resources
+     *         provides injection resources for fields
+     * @param tracker
+     *         track operations
      */
     public static void injectIntoFields(final Object object, final ObjectLocator locator,
                                         final InjectionResources resources, OperationTracker tracker)
@@ -362,6 +370,14 @@ public class InternalUtils
 
                             if (named == null)
                             {
+                                Object value = resources.findResource(fieldType, f.getGenericType());
+
+                                if (value != null)
+                                {
+                                    inject(object, f, value);
+                                    return;
+                                }
+
                                 inject(object, f, locator.getObject(fieldType, ap));
                             } else
                             {
@@ -410,8 +426,10 @@ public class InternalUtils
      * Joins together some number of elements. If a value in the list is the empty string, it is replaced with the
      * string "(blank)".
      *
-     * @param elements  objects to be joined together
-     * @param separator used between elements when joining
+     * @param elements
+     *         objects to be joined together
+     * @param separator
+     *         used between elements when joining
      */
     public static String join(List elements, String separator)
     {
@@ -529,7 +547,8 @@ public class InternalUtils
     /**
      * Extracts the string keys from a map and returns them in sorted order. The keys are converted to strings.
      *
-     * @param map the map to extract keys from (may be null)
+     * @param map
+     *         the map to extract keys from (may be null)
      * @return the sorted keys, or the empty set if map is null
      */
 
@@ -561,7 +580,8 @@ public class InternalUtils
      *
      * @param <K>
      * @param <V>
-     * @param map the map to extract from (may be null)
+     * @param map
+     *         the map to extract from (may be null)
      * @param key
      * @return the value from the map, or null if the map is null
      */
@@ -637,7 +657,8 @@ public class InternalUtils
      * annotated with {@link org.apache.tapestry5.ioc.annotations.Inject}, it will be used (no check for multiple such
      * constructors is made, only at most a single constructor should have the annotation).
      *
-     * @param clazz to search for a constructor for
+     * @param clazz
+     *         to search for a constructor for
      * @return the constructor to be used to instantiate the class, or null if no appropriate constructor was found
      */
     public static Constructor findAutobuildConstructor(Class clazz)
@@ -658,26 +679,24 @@ public class InternalUtils
                 break;
         }
 
-        for (Constructor c : constructors)
-        {
-            if (c.getAnnotation(Inject.class) != null)
-                return c;
-        }
-
         Constructor standardConstructor = findConstructorByAnnotation(constructors, Inject.class);
         Constructor javaxConstructor = findConstructorByAnnotation(constructors, javax.inject.Inject.class);
 
         if (standardConstructor != null && javaxConstructor != null)
             throw new IllegalArgumentException(
                     String.format(
-                            "Too many autobuilt constructors found. Please use either '@%s' or '@%s' annotation to mark a constructor for autobuilding.",
+                            "Too many autobuild constructors found: use either @%s or @%s annotation to mark a single constructor for autobuilding.",
                             Inject.class.getName(), javax.inject.Inject.class.getName()));
 
         if (standardConstructor != null)
+        {
             return standardConstructor;
+        }
 
         if (javaxConstructor != null)
+        {
             return javaxConstructor;
+        }
 
         // Choose a constructor with the most parameters.
 
@@ -710,11 +729,16 @@ public class InternalUtils
      * Adds a value to a specially organized map where the values are lists of objects. This somewhat simulates a map
      * that allows multiple values for the same key.
      *
-     * @param map   to store value into
-     * @param key   for which a value is added
-     * @param value to add
-     * @param <K>   the type of key
-     * @param <V>   the type of the list
+     * @param map
+     *         to store value into
+     * @param key
+     *         for which a value is added
+     * @param value
+     *         to add
+     * @param <K>
+     *         the type of key
+     * @param <V>
+     *         the type of the list
      */
     public static <K, V> void addToMapList(Map<K, List<V>> map, K key, V value)
     {
@@ -732,7 +756,8 @@ public class InternalUtils
     /**
      * Validates that the marker annotation class had a retention policy of runtime.
      *
-     * @param markerClass the marker annotation class
+     * @param markerClass
+     *         the marker annotation class
      */
     public static void validateMarkerAnnotation(Class markerClass)
     {
@@ -765,7 +790,8 @@ public class InternalUtils
     /**
      * Extracts the message from an exception. If the exception's message is null, returns the exceptions class name.
      *
-     * @param exception to extract message from
+     * @param exception
+     *         to extract message from
      * @return message or class name
      */
     public static String toMessage(Throwable exception)
@@ -1324,7 +1350,8 @@ public class InternalUtils
      * returned.
      * If neither of the annotations is present, <code>null</code> value is returned
      *
-     * @param annotated annotated element to get annotations from
+     * @param annotated
+     *         annotated element to get annotations from
      * @since 5.3
      */
     public static String getServiceId(AnnotatedElement annotated)
