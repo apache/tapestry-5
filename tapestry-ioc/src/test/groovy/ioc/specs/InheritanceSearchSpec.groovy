@@ -1,0 +1,68 @@
+package ioc.specs
+
+import org.apache.tapestry5.plastic.PlasticUtils
+import spock.lang.Specification
+import spock.lang.Unroll
+import org.apache.tapestry5.ioc.internal.util.*
+
+class InheritanceSearchSpec extends Specification {
+
+  def "remove() is always a failure"() {
+    when:
+
+    new InheritanceSearch(Object).remove()
+
+    then:
+
+    thrown(UnsupportedOperationException)
+  }
+
+  def "exception thrown when invoking next() after Object has been reached"() {
+    def s = new InheritanceSearch(Object)
+
+    expect:
+
+    s.next() == Object
+    !s.hasNext()
+
+    when:
+
+    s.next()
+
+    then:
+
+    thrown(IllegalStateException)
+  }
+
+  @Unroll
+  def "inheritance of #className is #expectedNames"() {
+    def search = new InheritanceSearch(clazz)
+    def result = []
+    while (search.hasNext()) {
+      result << search.next()
+    }
+
+    expect:
+
+    result == expected
+
+    where:
+
+    clazz      | expected
+    Object     | [Object]
+    String     | [String, Serializable, Comparable, CharSequence, Object]
+    Comparable | [Comparable, Object]
+    FooBar     | [FooBar, Foo, Bar, Object]
+    FooBarImpl | [FooBarImpl, FooImpl, BarImpl, Bar, FooBar, Foo, Object]
+    long       | [long, Long, Number, Comparable, Serializable, Object]
+    void       | [void, Object]
+    long[]     | [long[], Cloneable, Serializable, Object]
+    int[][]    | [int[][], Cloneable, Serializable, Object]
+    String[]   | [String[], Object[], Cloneable, Serializable, Object]
+    String[][] | [String[][], Object[], Cloneable, Serializable, Object]
+
+    className = PlasticUtils.toTypeName(clazz)
+    expectedNames = expected.collect { PlasticUtils.toTypeName(it) }.join(", ")
+
+  }
+}

@@ -26,7 +26,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Used by {@link org.apache.tapestry5.ioc.internal.ServiceBuilderMethodInvokerSpec}.
+ * Used by {@link ioc.specs.ServiceBuilderMethodInvokerSpec}.
  */
 public class ServiceBuilderMethodFixture extends Assert
 {
@@ -77,17 +77,16 @@ public class ServiceBuilderMethodFixture extends Assert
     }
 
     public FieService build_injected(@InjectService("Foe")
-    FoeService foe)
+                                     FoeService foe)
     {
         assertSame(expectedFoe, foe);
 
         return fie;
     }
-    
 
 
     public FieService build_named_injected(@Named("Foe")
-    FoeService foe)
+                                           FoeService foe)
     {
         assertSame(expectedFoe, foe);
 
@@ -115,9 +114,11 @@ public class ServiceBuilderMethodFixture extends Assert
         return fie;
     }
 
-    /** Before 5.2, an @Inject was necessary here. Now we're testing that it no longer is necessary. */
+    /**
+     * Before 5.2, an @Inject was necessary here. Now we're testing that it no longer is necessary.
+     */
     public FieService build_with_forced_injection(@Value("Injected")
-    String string)
+                                                  String string)
     {
         assertEquals(string, expectedString);
 

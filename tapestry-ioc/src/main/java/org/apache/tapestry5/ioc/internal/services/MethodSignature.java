@@ -14,11 +14,11 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
-
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.plastic.PlasticUtils;
+
+import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * A representation of a {@link java.lang.reflect.Method}, identifying the name, return type, parameter types and
@@ -30,7 +30,7 @@ import org.apache.tapestry5.plastic.PlasticUtils;
  * instance and static methods</em>.
  */
 @SuppressWarnings("all")
-class MethodSignature
+public class MethodSignature
 {
     private int hashCode = -1;
 

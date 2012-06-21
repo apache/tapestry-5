@@ -14,26 +14,20 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
-import org.apache.tapestry5.plastic.ClassInstantiator;
-import org.apache.tapestry5.plastic.InstructionBuilder;
-import org.apache.tapestry5.plastic.InstructionBuilderCallback;
-import org.apache.tapestry5.plastic.PlasticClass;
-import org.apache.tapestry5.plastic.PlasticClassTransformer;
-import org.apache.tapestry5.plastic.PlasticField;
-import org.apache.tapestry5.plastic.PlasticMethod;
+import org.apache.tapestry5.plastic.*;
 import org.slf4j.Logger;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Used by the {@link org.apache.tapestry5.ioc.internal.services.PipelineBuilderImpl} to create bridge classes and to
  * create instances of bridge classes. A bridge class implements the <em>service</em> interface. Within the chain,
  * bridge 1 is passed to filter 1. Invoking methods on bridge 1 will invoke methods on filter 2.
  */
-class BridgeBuilder<S, F>
+public class BridgeBuilder<S, F>
 {
     private final Logger logger;
 
@@ -47,7 +41,7 @@ class BridgeBuilder<S, F>
 
     private ClassInstantiator<S> instantiator;
 
-    BridgeBuilder(Logger logger, Class<S> serviceInterface, Class<F> filterInterface, PlasticProxyFactory proxyFactory)
+    public BridgeBuilder(Logger logger, Class<S> serviceInterface, Class<F> filterInterface, PlasticProxyFactory proxyFactory)
     {
         this.logger = logger;
         this.serviceInterface = serviceInterface;
@@ -61,8 +55,10 @@ class BridgeBuilder<S, F>
     /**
      * Instantiates a bridge object.
      *
-     * @param nextBridge the next Bridge object in the pipeline, or the terminator service
-     * @param filter     the filter object for this step of the pipeline
+     * @param nextBridge
+     *         the next Bridge object in the pipeline, or the terminator service
+     * @param filter
+     *         the filter object for this step of the pipeline
      */
     public S instantiateBridge(S nextBridge, F filter)
     {

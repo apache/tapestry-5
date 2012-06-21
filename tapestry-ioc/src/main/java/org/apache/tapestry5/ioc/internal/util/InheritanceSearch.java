@@ -32,8 +32,8 @@ import java.util.Set;
  * Once all interfaces are exhausted, java.lang.Object is returned (it is always returned last).
  * <p/>
  * Two minor tweak to normal inheritance rules: <ul> <li> Normally, the parent class of an <em>object</em> array is
- * java.lang.Object, which is odd because Foo[] is assignable to Object[]. Thus, we tweak the search so that the
- * effective super class of Foo[] is Object[]. <li> The "super class" of a primtive type is its <em>wrapper type</em>,
+ * java.lang.Object, which is odd because FooService[] is assignable to Object[]. Thus, we tweak the search so that the
+ * effective super class of FooService[] is Object[]. <li> The "super class" of a primtive type is its <em>wrapper type</em>,
  * with the exception of void, whose "super class" is left at its normal value (Object.class) </ul>
  * <p/>
  * This class implements the {@link Iterable} interface, so it can be used directly in a for loop: <code> for (Class
@@ -144,7 +144,8 @@ public class InheritanceSearch implements Iterator<Class>, Iterable<Class>
     }
 
     /**
-     * @throws UnsupportedOperationException always
+     * @throws UnsupportedOperationException
+     *         always
      */
     public void remove()
     {

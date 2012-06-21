@@ -18,7 +18,7 @@ import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 
 /**
- * Used by {@link org.apache.tapestry5.ioc.internal.ModuleImplSpec}.
+ * Used by {@link ioc.specs.ModuleImplSpec}.
  */
 public class ExtraPublicConstructorsModule
 {

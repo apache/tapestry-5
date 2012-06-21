@@ -14,22 +14,20 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.internal.services.MethodSignature;
+import java.lang.reflect.Method;
+import java.util.*;
 
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newMap;
-
-import java.lang.reflect.Method;
-import java.util.*;
 
 /**
  * Utility used to iterate over the publically visible methods of a class or interface. The MethodIterator understands
  * some complications that can occur when a class inherits the same method from multiple interfaces and with slightly
  * different signatures (due to the fact that declared thrown exceptions can vary slightly for the "same" method).
- * 
+ *
  * @see MethodSignature#isOverridingSignatureOf(MethodSignature)
  */
-class MethodIterator
+public class MethodIterator
 {
     private boolean toString;
 
@@ -100,9 +98,9 @@ class MethodIterator
      * Returns the next method (as a {@link MethodSignature}, returning null when all are exhausted. Each method
      * signature is returned exactly once (even if the same method signature is defined in multiple inherited classes or
      * interfaces). The method signatures returned in ascending order, according to the "natural ordering".
-     * 
+     *
      * @throws NoSuchElementException
-     *             if there are no more signatures
+     *         if there are no more signatures
      */
     public MethodSignature next()
     {

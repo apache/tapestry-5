@@ -18,7 +18,7 @@ import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.InjectService;
 
 /**
- * Module class used by {@link ModuleImplSpec}.
+ * Module class used by {@link ioc.specs.ModuleImplSpec}.
  */
 public class ModuleImplTestModule
 {
@@ -52,7 +52,7 @@ public class ModuleImplTestModule
     }
 
     public FoeService buildRecursiveFoe(@InjectService("RecursiveFoe")
-    FoeService self)
+                                        FoeService self)
     {
         // While constructing self, we invoke a method on self.
 

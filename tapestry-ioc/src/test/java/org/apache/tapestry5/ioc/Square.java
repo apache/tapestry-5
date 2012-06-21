@@ -15,7 +15,7 @@
 package org.apache.tapestry5.ioc;
 
 /**
- * Used by {@link org.apache.tapestry5.ioc.RegistryBuilderSpec}.
+ * Used by {@link ioc.specs.RegistryBuilderSpec}.
  */
 public interface Square
 {

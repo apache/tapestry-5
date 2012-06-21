@@ -17,10 +17,10 @@ package org.apache.tapestry5.ioc;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 
 /**
- * Used by {@link org.apache.tapestry5.ioc.RegistryBuilderSpec}.
+ * Used by {@link ioc.specs.RegistryBuilderSpec}.
  */
 @SubModule(
-        { FredModule.class, BarneyModule.class })
+        {FredModule.class, BarneyModule.class})
 public final class MasterModule
 {
 

@@ -16,7 +16,7 @@ package org.apache.tapestry5.ioc.internal;
 
 
 /**
- * Used by {@link org.apache.tapestry5.ioc.RegistryConstructionAndRuntimeErrorsSpec}.
+ * Used by {@link ioc.specs.RegistryConstructionAndRuntimeErrorsSpec}.
  */
 public class PrivateConstructorModule
 {
@@ -24,5 +24,8 @@ public class PrivateConstructorModule
     {
     }
 
-    public Runnable buildTrigger() { return null; }
+    public Runnable buildTrigger()
+    {
+        return null;
+    }
 }

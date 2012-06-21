@@ -18,7 +18,7 @@ package org.apache.tapestry5.ioc.internal.services;
  * Used by {@link org.apache.tapestry5.ioc.internal.services.PipelineBuilderImpl} to analyze service interface methods
  * against filter interface methods to find the position of the extra service parameter (in the filter method).
  */
-class FilterMethodAnalyzer
+public class FilterMethodAnalyzer
 {
     private final Class serviceInterface;
 
