@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import org.apache.tapestry5.services.AssetSource;
 import java.lang.ref.SoftReference;
 import java.util.Locale;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 @SuppressWarnings("all")
 public class AssetSourceImpl implements AssetSource
@@ -39,7 +40,7 @@ public class AssetSourceImpl implements AssetSource
 
     private final Map<String, Resource> prefixToRootResource = CollectionFactory.newMap();
 
-    private final Map<Resource, SoftReference<Asset>> cache = CollectionFactory.newWeakHashMap();
+    private final Map<Resource, SoftReference<Asset>> cache = new WeakHashMap<Resource, SoftReference<Asset>>();
 
     private final SymbolSource symbolSource;
 

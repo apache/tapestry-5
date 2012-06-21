@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ public class RenderQueueImpl implements RenderQueue
 {
     private static final int INITIAL_QUEUE_DEPTH = 200;
 
-    private final Stack<RenderCommand> queue = CollectionFactory.newStack(INITIAL_QUEUE_DEPTH);
+    private final Stack<RenderCommand> queue = new Stack<RenderCommand>(INITIAL_QUEUE_DEPTH);
 
     private final Stack<ComponentResources> renderingComponents = CollectionFactory.newStack();
 
@@ -72,8 +72,7 @@ public class RenderQueueImpl implements RenderQueue
 
                 command.render(writer, this);
             }
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             String message = String.format("Render queue error in %s: %s", command, InternalUtils.toMessage(ex));
 
@@ -88,10 +87,10 @@ public class RenderQueueImpl implements RenderQueue
         double elapsedSeconds = ((double) elapsedNanos) / 1000000000d;
 
         logger.debug(TapestryMarkers.RENDER_COMMANDS,
-                     String.format("Executed %,d rendering commands (max queue depth: %,d) in %.3f seconds",
-                                   commandCount,
-                                   maxDepth,
-                                   elapsedSeconds));
+                String.format("Executed %,d rendering commands (max queue depth: %,d) in %.3f seconds",
+                        commandCount,
+                        maxDepth,
+                        elapsedSeconds));
     }
 
     public void startComponent(ComponentResources resources)

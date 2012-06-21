@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,10 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry5.internal.util.MultiKey;
@@ -25,9 +21,14 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
+import org.apache.tapestry5.ioc.util.CaseInsensitiveMap;
 import org.apache.tapestry5.services.messages.PropertiesFileParser;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A utility class that encapsulates all the logic for reading properties files and assembling {@link Messages} from
@@ -69,7 +70,7 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
     private final Map<String, String> emptyMap = Collections.emptyMap();
 
     public MessagesSourceImpl(boolean productionMode, URLChangeTracker tracker,
-            ComponentResourceLocator resourceLocator, PropertiesFileParser propertiesFileParser)
+                              ComponentResourceLocator resourceLocator, PropertiesFileParser propertiesFileParser)
     {
         super(productionMode);
 
@@ -169,7 +170,7 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
 
         // Make a copy of the base Map
 
-        Map<String, String> result = CollectionFactory.newCaseInsensitiveMap(base);
+        Map<String, String> result = new CaseInsensitiveMap<String>(base);
 
         // Add or overwrite properties to the copy
 
@@ -208,8 +209,7 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
         try
         {
             return propertiesFileParser.parsePropertiesFile(resource);
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             throw new RuntimeException(String.format("Unable to read message catalog from %s: %s", resource, ex), ex);
         }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -86,14 +86,6 @@ public final class CollectionFactory
     }
 
     /**
-     * @since 5.3
-     */
-    public static <K, V> Map<K, V> newWeakHashMap()
-    {
-        return new WeakHashMap<K, V>();
-    }
-
-    /**
      * Contructs and returns a new generic {@link java.util.ArrayList} instance.
      */
     public static <T> List<T> newList()
@@ -139,18 +131,9 @@ public final class CollectionFactory
         return new Stack<T>();
     }
 
-    public static <T> Stack<T> newStack(int initialSize)
-    {
-        return new Stack<T>(initialSize);
-    }
-
     public static <V> Map<String, V> newCaseInsensitiveMap()
     {
         return new CaseInsensitiveMap<V>();
     }
 
-    public static <V> Map<String, V> newCaseInsensitiveMap(Map<String, ? extends V> map)
-    {
-        return new CaseInsensitiveMap<V>(map);
-    }
 }
