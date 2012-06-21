@@ -247,7 +247,6 @@ class InternalUtilsSpec extends Specification {
 
     input             | expected | desc
     "simple"          | "simple" | "single term"
-    ""                | ""       | "empty string"
     "fee.fie.foe.fum" | "fum"    | "dotted name sequence"
   }
 
