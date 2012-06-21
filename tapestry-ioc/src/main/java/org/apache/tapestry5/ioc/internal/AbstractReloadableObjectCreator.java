@@ -26,6 +26,7 @@ import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.ReloadAware;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.internal.util.LockSupport;
 import org.apache.tapestry5.ioc.internal.util.URLChangeTracker;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.services.UpdateListener;
@@ -39,7 +40,7 @@ import java.net.URL;
 import java.util.Set;
 
 @SuppressWarnings("all")
-public abstract class AbstractReloadableObjectCreator implements ObjectCreator, UpdateListener, ClassLoaderDelegate
+public abstract class AbstractReloadableObjectCreator extends LockSupport implements ObjectCreator, UpdateListener, ClassLoaderDelegate
 {
     private final ClassLoader baseClassLoader;
 
@@ -111,14 +112,21 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
         return false;
     }
 
-    public synchronized Object createObject()
+    public Object createObject()
     {
-        if (instance == null)
+        try
         {
-            instance = createInstance();
-        }
+            acquireReadLock();
+            if (instance == null)
+            {
+                instance = createInstance();
+            }
 
-        return instance;
+            return instance;
+        } finally
+        {
+            releaseReadLock();
+        }
     }
 
     private Object createInstance()
@@ -127,9 +135,17 @@ public abstract class AbstractReloadableObjectCreator implements ObjectCreator, 
         {
             public Object invoke()
             {
-                Class reloadedClass = reloadImplementationClass();
+                try
+                {
+                    upgradeReadLockToWriteLock();
 
-                return createInstance(reloadedClass);
+                    Class reloadedClass = reloadImplementationClass();
+
+                    return createInstance(reloadedClass);
+                } finally
+                {
+                    downgradeWriteLockToReadLock();
+                }
             }
         });
     }

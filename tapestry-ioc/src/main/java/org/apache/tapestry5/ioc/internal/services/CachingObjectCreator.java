@@ -1,4 +1,4 @@
-// Copyright 2009, 2011 The Apache Software Foundation
+// Copyright 2009, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,12 +15,13 @@
 package org.apache.tapestry5.ioc.internal.services;
 
 import org.apache.tapestry5.ioc.ObjectCreator;
+import org.apache.tapestry5.ioc.internal.util.LockSupport;
 
 /**
  * An {@link org.apache.tapestry5.ioc.ObjectCreator} that delegates to another
  * {@link org.apache.tapestry5.ioc.ObjectCreator} and caches the result.
  */
-public class CachingObjectCreator<T> implements ObjectCreator<T>
+public class CachingObjectCreator<T> extends LockSupport implements ObjectCreator<T>
 {
     private boolean cached;
 
@@ -33,15 +34,39 @@ public class CachingObjectCreator<T> implements ObjectCreator<T>
         this.delegate = delegate;
     }
 
-    public synchronized T createObject()
+    public T createObject()
     {
-        if (!cached)
+        try
         {
-            cachedValue = delegate.createObject();
-            cached = true;
-            delegate = null;
-        }
+            acquireReadLock();
 
-        return cachedValue;
+            if (!cached)
+            {
+                cacheValueFromDelegate();
+            }
+
+            return cachedValue;
+        } finally
+        {
+            releaseReadLock();
+        }
+    }
+
+    private void cacheValueFromDelegate()
+    {
+        try
+        {
+            upgradeReadLockToWriteLock();
+
+            if (!cached)
+            {
+                cachedValue = delegate.createObject();
+                cached = true;
+                delegate = null;
+            }
+        } finally
+        {
+            downgradeWriteLockToReadLock();
+        }
     }
 }

@@ -56,7 +56,9 @@ public class PageImpl implements Page
 
     private final OneShotLock verifyListenerLocks = new OneShotLock();
 
-    private final Map<String, ComponentPageElement> idToComponent = CollectionFactory.newCaseInsensitiveMap();
+    // May end up with multiple mappings for the same id (with different case) to the same component.
+    // That's OK.
+    private final Map<String, ComponentPageElement> idToComponent = CollectionFactory.newConcurrentMap();
 
     private Stats stats;
 
@@ -109,12 +111,14 @@ public class PageImpl implements Page
         return String.format("Page[%s %s]", name, selector.toShortString());
     }
 
-    public synchronized ComponentPageElement getComponentElementByNestedId(String nestedId)
+    public ComponentPageElement getComponentElementByNestedId(String nestedId)
     {
         assert nestedId != null;
 
         if (nestedId.equals(""))
+        {
             return rootElement;
+        }
 
         ComponentPageElement element = idToComponent.get(nestedId);
 
@@ -246,7 +250,9 @@ public class PageImpl implements Page
     public void persistFieldChange(ComponentResources resources, String fieldName, Object newValue)
     {
         if (!loadComplete)
+        {
             throw new RuntimeException(StructureMessages.persistChangeBeforeLoadComplete());
+        }
 
         persistentFieldManager.postChange(name, resources, fieldName, newValue);
     }
@@ -254,7 +260,9 @@ public class PageImpl implements Page
     public Object getFieldChange(String nestedId, String fieldName)
     {
         if (!fieldBundle.exists())
+        {
             fieldBundle.set(persistentFieldManager.gatherChanges(name));
+        }
 
         return fieldBundle.get().getValue(nestedId, fieldName);
     }
