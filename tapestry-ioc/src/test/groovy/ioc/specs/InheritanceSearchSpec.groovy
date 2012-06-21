@@ -48,18 +48,18 @@ class InheritanceSearchSpec extends Specification {
 
     where:
 
-    clazz      | expected
-    Object     | [Object]
-    String     | [String, Serializable, Comparable, CharSequence, Object]
-    Comparable | [Comparable, Object]
-    FooBar     | [FooBar, Foo, Bar, Object]
-    FooBarImpl | [FooBarImpl, FooImpl, BarImpl, Bar, FooBar, Foo, Object]
-    long       | [long, Long, Number, Comparable, Serializable, Object]
-    void       | [void, Object]
-    long[]     | [long[], Cloneable, Serializable, Object]
-    int[][]    | [int[][], Cloneable, Serializable, Object]
-    String[]   | [String[], Object[], Cloneable, Serializable, Object]
-    String[][] | [String[][], Object[], Cloneable, Serializable, Object]
+    clazz        | expected
+    Object       | [Object]
+    String       | [String, Serializable, Comparable, CharSequence, Object]
+    Comparable   | [Comparable, Object]
+    ToyTruck     | [ToyTruck, Playable, Drivable, Object]
+    ToyTruckImpl | [ToyTruckImpl, PlayableImpl, DrivableImpl, Drivable, ToyTruck, Playable, Object]
+    long         | [long, Long, Number, Comparable, Serializable, Object]
+    void         | [void, Object]
+    long[]       | [long[], Cloneable, Serializable, Object]
+    int[][]      | [int[][], Cloneable, Serializable, Object]
+    String[]     | [String[], Object[], Cloneable, Serializable, Object]
+    String[][]   | [String[][], Object[], Cloneable, Serializable, Object]
 
     className = PlasticUtils.toTypeName(clazz)
     expectedNames = expected.collect { PlasticUtils.toTypeName(it) }.join(", ")
