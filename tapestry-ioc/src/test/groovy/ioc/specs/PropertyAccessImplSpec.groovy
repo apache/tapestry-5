@@ -497,7 +497,7 @@ class PropertyAccessImplSpec extends Specification {
   def "getAnnotation() will find annotations from an inherited field in a super-class"() {
     when:
 
-    def pa = getPropertyAdapter BeanSubclass, "value"
+    def pa = getPropertyAdapter AnnotatedBeanSubclass, "value"
 
     then:
 
