@@ -15,13 +15,14 @@
 package org.apache.tapestry5.ioc.internal.services;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newLinkedList;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newLinkedList;
 
 public class SymbolSourceImpl implements SymbolSource
 {
@@ -71,9 +72,9 @@ public class SymbolSourceImpl implements SymbolSource
 
                 if (endx < 0)
                 {
-                    String message = expandingSymbols.isEmpty() ? ServiceMessages
-                            .missingSymbolCloseBrace(input) : ServiceMessages
-                            .missingSymbolCloseBraceInPath(input, path());
+                    String message = expandingSymbols.isEmpty()
+                            ? String.format("Input string '%s' is missing a symbol closing brace.", input)
+                            : String.format("Input string '%s' is missing a symbol closing brace (in %s).", input, path());
 
                     throw new RuntimeException(message);
                 }
@@ -109,7 +110,7 @@ public class SymbolSourceImpl implements SymbolSource
             if (expandingSymbols.contains(symbolName))
             {
                 expandingSymbols.add(symbolName);
-                throw new RuntimeException(ServiceMessages.recursiveSymbol(
+                throw new RuntimeException(String.format("Symbol '%s' is defined in terms of itself (%s).",
                         symbolName,
                         pathFrom(symbolName)));
             }
@@ -128,10 +129,9 @@ public class SymbolSourceImpl implements SymbolSource
             if (value == null)
             {
 
-                String message = expandingSymbols.size() == 1 ? ServiceMessages
-                        .symbolUndefined(symbolName) : ServiceMessages.symbolUndefinedInPath(
-                        symbolName,
-                        path());
+                String message = expandingSymbols.size() == 1
+                        ? String.format("Symbol '%s' is not defined.", symbolName)
+                        : String.format("Symbol '%s' is not defined (in %s).", symbolName, path());
 
                 throw new RuntimeException(message);
             }

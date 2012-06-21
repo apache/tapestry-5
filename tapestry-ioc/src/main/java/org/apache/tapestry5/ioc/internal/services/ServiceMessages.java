@@ -50,31 +50,6 @@ public class ServiceMessages
         return MESSAGES.format("shutdown-listener-error", listener, cause);
     }
 
-    public static String recursiveSymbol(String symbolName, String path)
-    {
-        return MESSAGES.format("recursive-symbol", symbolName, path);
-    }
-
-    public static String symbolUndefined(String symbolName)
-    {
-        return MESSAGES.format("symbol-undefined", symbolName);
-    }
-
-    public static String symbolUndefinedInPath(String symbolName, String path)
-    {
-        return MESSAGES.format("symbol-undefined-in-path", symbolName, path);
-    }
-
-    public static String missingSymbolCloseBrace(String input)
-    {
-        return MESSAGES.format("missing-symbol-close-brace", input);
-    }
-
-    public static String missingSymbolCloseBraceInPath(String input, String path)
-    {
-        return MESSAGES.format("missing-symbol-close-brace-in-path", input, path);
-    }
-
     public static String failedCoercion(Object input, Class targetType, Coercion coercion, Throwable cause)
     {
         return MESSAGES.format("failed-coercion", String.valueOf(input), PlasticUtils.toTypeName(targetType),
