@@ -2,10 +2,12 @@ package ioc.specs
 
 import org.apache.tapestry5.ioc.AnnotationProvider
 import org.apache.tapestry5.ioc.ObjectCreator
-import org.apache.tapestry5.ioc.OperationTracker
 import org.apache.tapestry5.ioc.ServiceBuilderResources
+import org.apache.tapestry5.ioc.internal.FieService
+import org.apache.tapestry5.ioc.internal.FoeService
+import org.apache.tapestry5.ioc.internal.ServiceBuilderMethodFixture
+import org.apache.tapestry5.ioc.internal.ServiceBuilderMethodInvoker
 import org.slf4j.Logger
-import org.apache.tapestry5.ioc.internal.*
 
 class ServiceBuilderMethodInvokerSpec extends AbstractSharedRegistrySpecification {
 
@@ -14,7 +16,6 @@ class ServiceBuilderMethodInvokerSpec extends AbstractSharedRegistrySpecificatio
 
   Logger logger = Mock()
   FieService implementation = Mock()
-  OperationTracker tracker = new QuietOperationTracker()
   ServiceBuilderResources resources = Mock()
   ServiceBuilderMethodFixture fixture = new ServiceBuilderMethodFixture();
 

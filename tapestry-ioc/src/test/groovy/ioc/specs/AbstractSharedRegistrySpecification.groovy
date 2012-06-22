@@ -1,7 +1,9 @@
 package ioc.specs
 
 import org.apache.tapestry5.ioc.IOCUtilities
+import org.apache.tapestry5.ioc.OperationTracker
 import org.apache.tapestry5.ioc.Registry
+import org.apache.tapestry5.ioc.internal.QuietOperationTracker
 import spock.lang.Specification
 
 import java.lang.reflect.Method
@@ -14,6 +16,8 @@ import java.lang.reflect.Method
 abstract class AbstractSharedRegistrySpecification extends Specification {
 
   static Registry registry
+
+  static OperationTracker tracker = new QuietOperationTracker()
 
   /** Any unrecognized methods are evaluated against the shared Registry instance. */
   def methodMissing(String name, args) {
