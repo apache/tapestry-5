@@ -5,7 +5,7 @@
     <table t:id="table">
         <thead t:id="columns"/>
         <tbody>
-            <tr t:id="rows"/>
+        <tr t:id="rows"/>
         </tbody>
     </table>
 
@@ -15,6 +15,6 @@
         <div t:id="pager"/>
     </t:block>
 
-    <t:block id="empty">${message:no-grid-data-to-display}</t:block>
+    <t:block id="empty">${message:core-no-grid-data-to-display}</t:block>
 
 </div>

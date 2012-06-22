@@ -2,7 +2,9 @@ import groovy.io.FileType
 
 import java.util.regex.Pattern
 
-// TODO: Before final release ... delete the individual files merged together by this script, then delete this script.
+// TODO: Before final release:
+// delete the individual files merged together by this script (DONE)
+// delete this script
 
 // Script should be executed from the tapestry-core folder, i.e.
 // groovy mergeprops.groovy
