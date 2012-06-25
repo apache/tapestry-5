@@ -16,7 +16,8 @@ project.ext.versions = [
   easymock: "3.0",
   servletapi: "2.5",
   spock: "0.6-groovy-1.8",
-  hibernate: "4.1.2.Final"
+  hibernate: "4.1.2.Final",
+  wro4j: "1.4.6"
 ]
 
 // Provided so that the CI server can override the normal version number for nightly builds.

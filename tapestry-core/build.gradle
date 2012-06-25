@@ -7,6 +7,7 @@ project.ext {
   antlrOutput = "$buildDir/generated-sources/antlr"
 }
 
+apply from: "coffeescript.gradle"
 
 configurations {
   antlr3
@@ -51,6 +52,12 @@ task generateGrammarSource(type: JavaExec) {
   doFirst {
     logger.info "Executing Antlr3 grammar generation:\n${commandLine.join(' ')}"
   }
+}
+
+task compileCoffeeScript(type: CompileCoffeeScript)
+
+processResources { 
+  from compileCoffeeScript
 }
 
 ideaModule.dependsOn generateGrammarSource
