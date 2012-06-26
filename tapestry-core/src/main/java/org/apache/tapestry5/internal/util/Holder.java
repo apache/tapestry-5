@@ -46,4 +46,12 @@ public class Holder<T>
     {
         return new Holder<T>();
     }
+
+    public static <T> Holder<T> create(T initial)
+    {
+        Holder<T> result = create();
+        result.put(initial);
+
+        return result;
+    }
 }
