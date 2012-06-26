@@ -1,2 +1,3 @@
-<html><head><meta/><script></script></head><body><script data-main="/assets/abc/module-root" src="/js/require.js"></script><script type="text/javascript">Tapestry.init({"fred":"barney"});
+<html><head><meta/><script></script></head><body><script src="/js/require.js"></script><script type="text/javascript">require.config();
+Tapestry.init({"fred":"barney"});
 </script></body></html>

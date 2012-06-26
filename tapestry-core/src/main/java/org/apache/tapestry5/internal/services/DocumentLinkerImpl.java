@@ -210,7 +210,11 @@ public class DocumentLinkerImpl implements DocumentLinker
         // Eventually, (nearly) everything will be loaded as modules.
         // TODO: Do we need to include type="text/javascript"?
 
-        body.element("script", "src", requireJS.toClientURL(), "data-main", moduleManager.getClientModuleRoot());
+        body.element("script", "src", requireJS.toClientURL());
+
+        Element script = body.element("script", "type", "text/javascript");
+
+        moduleManager.writeConfiguration(script);
 
         StringBuilder block = new StringBuilder();
 
@@ -235,7 +239,8 @@ public class DocumentLinkerImpl implements DocumentLinker
             block.append("});\n");
         }
 
-        body.element("script", "type", "text/javascript").raw(block.toString());
+
+        script.raw(block.toString());
     }
 
     private void add(StringBuilder block, InitializationPriority priority)

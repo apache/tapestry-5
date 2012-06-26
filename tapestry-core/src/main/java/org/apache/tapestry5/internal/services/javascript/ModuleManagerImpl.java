@@ -14,13 +14,15 @@
 
 package org.apache.tapestry5.internal.services.javascript;
 
+import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.services.javascript.ModuleManager;
 
 public class ModuleManagerImpl implements ModuleManager
 {
     @Override
-    public String getClientModuleRoot()
+    public void writeConfiguration(Element scriptElement)
     {
-        return "/placeholder-module-root";
+        scriptElement.raw(String.format("require.config({baseUrl:\"%s\"});\n",
+                "/placeholder-base-url"));
     }
 }

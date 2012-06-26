@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.services.javascript;
 
+import org.apache.tapestry5.dom.Element;
+
 /**
  * Responsible for managing access to the JavaScript modules.
  *
@@ -22,9 +24,12 @@ package org.apache.tapestry5.services.javascript;
 public interface ModuleManager
 {
     /**
-     * Returns the URL corresponding to the RequireJS data-main attribute: a module name can be suffixed to this to
-     * for a request for the module's content.
+     * Invoked by the internal {@link org.apache.tapestry5.internal.services.DocumentLinker} service to write the configuration
+     * of the module system into the page. This is the necessary initialization of the client-side {@code require} object, including
+     * (critically) its baseUrl property.
      *
+     * @param scriptElement
+     *         {@code <script>} element to write configuration should be written (using {@link Element#raw(String)}
      */
-    String getClientModuleRoot();
+    void writeConfiguration(Element scriptElement);
 }

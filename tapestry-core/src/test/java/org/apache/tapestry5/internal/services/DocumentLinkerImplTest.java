@@ -440,11 +440,14 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
     private ModuleManager mockModuleManager()
     {
-        ModuleManager mock = newMock(ModuleManager.class);
-
-        expect(mock.getClientModuleRoot()).andReturn("/assets/abc/module-root").once();
-
-        return mock;
+        return new ModuleManager()
+        {
+            @Override
+            public void writeConfiguration(Element scriptElement)
+            {
+                scriptElement.raw("require.config();\n");
+            }
+        };
     }
 
     private Asset mockRequireJS()

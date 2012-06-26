@@ -1,3 +1,4 @@
-<html><head></head><body><p>Ready to be updated with scripts.</p><script data-main="/assets/abc/module-root" src="/js/require.js"></script><script type="text/javascript">doSomething();
+<html><head></head><body><p>Ready to be updated with scripts.</p><script src="/js/require.js"></script><script type="text/javascript">require.config();
+doSomething();
 doSomethingElse();
 </script></body></html>
