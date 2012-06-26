@@ -39,16 +39,11 @@ import org.apache.tapestry5.internal.renderers.*;
 import org.apache.tapestry5.internal.services.*;
 import org.apache.tapestry5.internal.services.ajax.AjaxFormUpdateFilter;
 import org.apache.tapestry5.internal.services.ajax.AjaxResponseRendererImpl;
-import org.apache.tapestry5.internal.services.ajax.JavaScriptSupportImpl;
 import org.apache.tapestry5.internal.services.ajax.MultiZoneUpdateEventResultProcessor;
 import org.apache.tapestry5.internal.services.assets.AssetPathConstructorImpl;
 import org.apache.tapestry5.internal.services.assets.ClasspathAssetRequestHandler;
 import org.apache.tapestry5.internal.services.assets.ContextAssetRequestHandler;
 import org.apache.tapestry5.internal.services.assets.StackAssetRequestHandler;
-import org.apache.tapestry5.internal.services.javascript.CoreJavaScriptStack;
-import org.apache.tapestry5.internal.services.javascript.DateFieldStack;
-import org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathConstructor;
-import org.apache.tapestry5.internal.services.javascript.JavaScriptStackSourceImpl;
 import org.apache.tapestry5.internal.services.linktransform.LinkTransformerImpl;
 import org.apache.tapestry5.internal.services.linktransform.LinkTransformerInterceptor;
 import org.apache.tapestry5.internal.services.messages.PropertiesFileParserImpl;
@@ -71,7 +66,6 @@ import org.apache.tapestry5.ioc.annotations.*;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.*;
 import org.apache.tapestry5.ioc.util.AvailableValues;
-import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
@@ -86,10 +80,7 @@ import org.apache.tapestry5.services.assets.AssetRequestHandler;
 import org.apache.tapestry5.services.assets.AssetsModule;
 import org.apache.tapestry5.services.dynamic.DynamicTemplate;
 import org.apache.tapestry5.services.dynamic.DynamicTemplateParser;
-import org.apache.tapestry5.services.javascript.JavaScriptStack;
-import org.apache.tapestry5.services.javascript.JavaScriptStackSource;
-import org.apache.tapestry5.services.javascript.JavaScriptSupport;
-import org.apache.tapestry5.services.javascript.StylesheetLink;
+import org.apache.tapestry5.services.javascript.*;
 import org.apache.tapestry5.services.linktransform.ComponentEventLinkTransformer;
 import org.apache.tapestry5.services.linktransform.LinkTransformer;
 import org.apache.tapestry5.services.linktransform.PageRenderLinkTransformer;
@@ -126,7 +117,7 @@ import java.util.regex.Pattern;
  */
 @Marker(Core.class)
 @SubModule(
-        {InternalModule.class, AssetsModule.class, PageLoadModule.class})
+        {InternalModule.class, AssetsModule.class, PageLoadModule.class, JavaScriptModule.class})
 public final class TapestryModule
 {
     private final PipelineBuilder pipelineBuilder;
@@ -360,7 +351,6 @@ public final class TapestryModule
         binder.bind(PageActivator.class, PageActivatorImpl.class);
         binder.bind(Dispatcher.class, AssetDispatcher.class).withSimpleId();
         binder.bind(AssetPathConstructor.class, AssetPathConstructorImpl.class);
-        binder.bind(JavaScriptStackSource.class, JavaScriptStackSourceImpl.class);
         binder.bind(TranslatorAlternatesSource.class, TranslatorAlternatesSourceImpl.class);
         binder.bind(MetaWorker.class, MetaWorkerImpl.class);
         binder.bind(LinkTransformer.class, LinkTransformerImpl.class);
@@ -1260,25 +1250,6 @@ public final class TapestryModule
     }
 
     /**
-     * Builds a proxy to the current {@link org.apache.tapestry5.RenderSupport} inside this thread's
-     * {@link org.apache.tapestry5.services.Environment}.
-     */
-    public RenderSupport buildRenderSupport()
-    {
-        return environmentalBuilder.build(RenderSupport.class);
-    }
-
-    /**
-     * Builds a proxy to the current {@link JavaScriptSupport} inside this thread's {@link Environment}.
-     *
-     * @since 5.2.0
-     */
-    public JavaScriptSupport buildJavaScriptSupport()
-    {
-        return environmentalBuilder.build(JavaScriptSupport.class);
-    }
-
-    /**
      * Builds a proxy to the current {@link org.apache.tapestry5.services.ClientBehaviorSupport} inside this
      * thread's {@link org.apache.tapestry5.services.Environment}.
      *
@@ -1804,10 +1775,6 @@ public final class TapestryModule
      * <dl>
      * <dt>DocumentLinker</dt>
      * <dd>Provides {@link org.apache.tapestry5.internal.services.DocumentLinker}</dd>
-     * <dt>JavascriptSupport</dt>
-     * <dd>Provides {@link JavaScriptSupport}</dd>
-     * <dt>RenderSupport</dt>
-     * <dd>Provides {@link org.apache.tapestry5.RenderSupport}</dd>
      * <dt>InjectDefaultStylesheet</dt>
      * <dd>Injects the default stylesheet into all pages</dd></dt>
      * <dt>ClientBehaviorSupport</dt>
@@ -1820,6 +1787,11 @@ public final class TapestryModule
      */
     public void contributeMarkupRenderer(OrderedConfiguration<MarkupRendererFilter> configuration,
 
+                                         final ModuleManager moduleManager,
+
+                                         @Path("${" + SymbolConstants.REQUIRE_JS + "}")
+                                         final Asset requireJS,
+
                                          @Symbol(SymbolConstants.OMIT_GENERATOR_META)
                                          final boolean omitGeneratorMeta,
 
@@ -1828,14 +1800,6 @@ public final class TapestryModule
 
                                          @Symbol(SymbolConstants.COMPACT_JSON)
                                          final boolean compactJSON,
-
-                                         final SymbolSource symbolSource,
-
-                                         final AssetSource assetSource,
-
-                                         final JavaScriptStackSource javascriptStackSource,
-
-                                         final JavaScriptStackPathConstructor javascriptStackPathConstructor,
 
                                          final ValidationDecoratorFactory validationDecoratorFactory,
 
@@ -1846,7 +1810,7 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                DocumentLinkerImpl linker = new DocumentLinkerImpl(omitGeneratorMeta, tapestryVersion, compactJSON);
+                DocumentLinkerImpl linker = new DocumentLinkerImpl(moduleManager, requireJS, omitGeneratorMeta, tapestryVersion, compactJSON);
 
                 environment.push(DocumentLinker.class, linker);
 
@@ -1858,40 +1822,6 @@ public final class TapestryModule
             }
         };
 
-        MarkupRendererFilter javaScriptSupport = new MarkupRendererFilter()
-        {
-            public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
-            {
-                DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
-
-                JavaScriptSupportImpl support = new JavaScriptSupportImpl(linker, javascriptStackSource,
-                        javascriptStackPathConstructor);
-
-                environment.push(JavaScriptSupport.class, support);
-
-                renderer.renderMarkup(writer);
-
-                environment.pop(JavaScriptSupport.class);
-
-                support.commit();
-            }
-        };
-
-        MarkupRendererFilter renderSupport = new MarkupRendererFilter()
-        {
-            public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
-            {
-                JavaScriptSupport javascriptSupport = environment.peekRequired(JavaScriptSupport.class);
-
-                RenderSupportImpl support = new RenderSupportImpl(symbolSource, assetSource, javascriptSupport);
-
-                environment.push(RenderSupport.class, support);
-
-                renderer.renderMarkup(writer);
-
-                environment.pop(RenderSupport.class);
-            }
-        };
 
         MarkupRendererFilter injectDefaultStylesheet = new MarkupRendererFilter()
         {
@@ -1957,9 +1887,7 @@ public final class TapestryModule
         };
 
         configuration.add("DocumentLinker", documentLinker);
-        configuration.add("JavaScriptSupport", javaScriptSupport);
-        configuration.add("RenderSupport", renderSupport);
-        configuration.add("InjectDefaultStylesheet", injectDefaultStylesheet);
+        configuration.add("InjectDefaultStylesheet", injectDefaultStylesheet, "after:JavaScriptSupport");
         configuration.add("ClientBehaviorSupport", clientBehaviorSupport);
         configuration.add("Heartbeat", heartbeat);
         configuration.add("ValidationDecorator", defaultValidationDecorator);
@@ -1971,10 +1899,6 @@ public final class TapestryModule
      * <dl>
      * <dt>DocumentLinker
      * <dd>Provides {@link org.apache.tapestry5.internal.services.DocumentLinker}
-     * <dt>JavaScriptSupport
-     * <dd>Provides {@link JavaScriptSupport}</dd>
-     * <dt>PageRenderSupport</dt>
-     * <dd>Provides {@link org.apache.tapestry5.RenderSupport}</dd>
      * <dt>ClientBehaviorSupport</dt>
      * <dd>Provides {@link ClientBehaviorSupport}</dd>
      * <dt>Heartbeat</dt>
@@ -1986,15 +1910,7 @@ public final class TapestryModule
      */
     public void contributePartialMarkupRenderer(OrderedConfiguration<PartialMarkupRendererFilter> configuration,
 
-                                                final ValidationDecoratorFactory validationDecoratorFactory,
-
-                                                final JavaScriptStackSource javascriptStackSource,
-
-                                                final JavaScriptStackPathConstructor javascriptStackPathConstructor,
-
-                                                final SymbolSource symbolSource,
-
-                                                final AssetSource assetSource)
+                                                final ValidationDecoratorFactory validationDecoratorFactory)
     {
         PartialMarkupRendererFilter documentLinker = new PartialMarkupRendererFilter()
         {
@@ -2012,46 +1928,6 @@ public final class TapestryModule
             }
         };
 
-        PartialMarkupRendererFilter javascriptSupport = new PartialMarkupRendererFilter()
-        {
-            public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
-            {
-                String uid = Long.toHexString(System.currentTimeMillis());
-
-                String namespace = "_" + uid;
-
-                IdAllocator idAllocator = new IdAllocator(namespace);
-
-                DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
-
-                JavaScriptSupportImpl support = new JavaScriptSupportImpl(linker, javascriptStackSource,
-                        javascriptStackPathConstructor, idAllocator, true);
-
-                environment.push(JavaScriptSupport.class, support);
-
-                renderer.renderMarkup(writer, reply);
-
-                environment.pop(JavaScriptSupport.class);
-
-                support.commit();
-            }
-        };
-
-        PartialMarkupRendererFilter renderSupport = new PartialMarkupRendererFilter()
-        {
-            public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
-            {
-                JavaScriptSupport javascriptSupport = environment.peekRequired(JavaScriptSupport.class);
-
-                RenderSupportImpl support = new RenderSupportImpl(symbolSource, assetSource, javascriptSupport);
-
-                environment.push(RenderSupport.class, support);
-
-                renderer.renderMarkup(writer, reply);
-
-                environment.pop(RenderSupport.class);
-            }
-        };
 
         PartialMarkupRendererFilter clientBehaviorSupport = new PartialMarkupRendererFilter()
         {
@@ -2104,9 +1980,7 @@ public final class TapestryModule
         };
 
         configuration.add("DocumentLinker", documentLinker);
-        configuration.add("JavaScriptSupport", javascriptSupport);
-        configuration.add("RenderSupport", renderSupport);
-        configuration.add("ClientBehaviorSupport", clientBehaviorSupport);
+        configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:JavaScriptSupport");
         configuration.add("Heartbeat", heartbeat);
         configuration.add("ValidationDecorator", defaultValidationDecorator);
     }
@@ -2351,6 +2225,8 @@ public final class TapestryModule
 
         // By default, no page is on the whitelist unless it has the @WhitelistAccessOnly annotation
         configuration.add(MetaDataConstants.WHITELIST_ONLY_PAGE, false);
+
+        configuration.add(SymbolConstants.REQUIRE_JS, "classpath:org/apache/tapestry5/require_2.0.2.js");
     }
 
     /**
@@ -2706,17 +2582,6 @@ public final class TapestryModule
     public Heartbeat buildHeartbeat()
     {
         return environmentalBuilder.build(Heartbeat.class);
-    }
-
-    /**
-     * Contributes the "core" and "core-datefield" {@link JavaScriptStack}s
-     *
-     * @since 5.2.0
-     */
-    public static void contributeJavaScriptStackSource(MappedConfiguration<String, JavaScriptStack> configuration)
-    {
-        configuration.addInstance(InternalConstants.CORE_STACK_NAME, CoreJavaScriptStack.class);
-        configuration.addInstance("core-datefield", DateFieldStack.class);
     }
 
     public static ComponentMessagesSource buildComponentMessagesSource(UpdateListenerHub updateListenerHub, @Autobuild

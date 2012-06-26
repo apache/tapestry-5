@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -347,6 +347,7 @@ public class SymbolConstants
     /**
      * Boolean value to indicate if every {@link  org.apache.tapestry5.Asset2} should be fully qualified or not.
      * Default to <code>false</code> meaning no Asset URL will be fully qualified.
+     *
      * @since 5.3
      */
     public static final String ASSET_URL_FULL_QUALIFIED = "tapestry.asset-url-fully-qualified";
@@ -355,4 +356,12 @@ public class SymbolConstants
      * Prefix to be used for all asset paths
      */
     public static final String ASSET_PATH_PREFIX = "tapestry.asset-path-prefix";
+
+    /**
+     * The Asset path to the copy of Require JS to include in rendered pages. Any page that makes use of any JavaScript will
+     * automatically import this library (as well as the core JavaScript stack).
+     *
+     * @since 5.4
+     */
+    public static final String REQUIRE_JS = "tapestry.requirejs";
 }

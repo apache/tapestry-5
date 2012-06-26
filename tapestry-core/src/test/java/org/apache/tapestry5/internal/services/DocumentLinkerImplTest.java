@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.dom.XMLMarkupModel;
@@ -21,6 +22,7 @@ import org.apache.tapestry5.internal.test.InternalBaseTestCase;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
+import org.apache.tapestry5.services.javascript.ModuleManager;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 import org.apache.tapestry5.services.javascript.StylesheetOptions;
 import org.testng.annotations.Test;
@@ -39,7 +41,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("not-html").text("not an HTML document");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, "1.2.3", true);
 
         // Only checked if there's something to link.
 
@@ -65,7 +67,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("not-html").text("not an HTML document");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, "1.2.3", true);
 
         // Only checked if there's something to link.
 
@@ -87,7 +89,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
     {
         Document document = new Document();
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, "1.2.3", true);
 
         linker.addScriptLink("foo.js");
         linker.addScript(InitializationPriority.NORMAL, "doSomething();");
@@ -104,7 +106,9 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), mockRequireJS(), true, "1.2.3", true);
+
+        replay();
 
         linker.addScriptLink("foo.js");
         linker.addScriptLink("bar/baz.js");
@@ -113,6 +117,8 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
         linker.updateDocument(document);
 
         check(document, "add_script_links.txt");
+
+        verify();
     }
 
     /**
@@ -125,7 +131,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be marked with generator meta.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(false, "1.2.3", true);
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, false, "1.2.3", true);
 
         linker.updateDocument(document);
 
@@ -142,7 +148,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("no_html").text("Generator meta only added if root is html tag.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(false, "1.2.3", true);
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, false, "1.2.3", true);
 
         linker.updateDocument(document);
 
@@ -156,7 +162,9 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), mockRequireJS(), true, "1.2.3", true);
+
+        replay();
 
         linker.addStylesheetLink(new StylesheetLink("style.css", new StylesheetOptions("print")));
         linker.addScriptLink("foo.js");
@@ -166,6 +174,8 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
         linker.updateDocument(document);
 
         check(document, "empty_document_with_scripts_at_top.txt");
+
+        verify();
     }
 
     @Test
@@ -175,7 +185,9 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts at top.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), mockRequireJS(), true, "1.2.3", true);
+
+        replay();
 
         linker.addScriptLink("foo.js");
         linker.addScriptLink("bar/baz.js");
@@ -184,6 +196,8 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
         linker.updateDocument(document);
 
         check(document, "add_script_links_at_top.txt");
+
+        verify();
     }
 
     @Test
@@ -193,7 +207,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with styles.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, mockRequireJS(), true, "1.2.3", true);
 
         linker.addStylesheetLink(new StylesheetLink("foo.css"));
         linker.addStylesheetLink(new StylesheetLink("bar/baz.css", new StylesheetOptions("print")));
@@ -211,7 +225,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
         document.newRootElement("html").element("head").comment(" existing head ").getContainer().element("body").text(
                 "body content");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, mockRequireJS(), true, "1.2.3", true);
 
         linker.addStylesheetLink(new StylesheetLink("foo.css"));
 
@@ -227,14 +241,18 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), mockRequireJS(), true, "1.2.3", true);
+
+        replay();
 
         linker.addScript(InitializationPriority.IMMEDIATE, "doSomething();");
         linker.addScript(InitializationPriority.IMMEDIATE, "doSomethingElse();");
 
         linker.updateDocument(document);
 
-        assertEquals(document.toString(), readFile("add_script.txt").trim());
+        check(document, "add_script.txt");
+
+        verify();
     }
 
     /**
@@ -247,7 +265,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("notbody").element("p").text("Ready to be updated with scripts.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, mockRequireJS(), true, "1.2.3", true);
 
         linker.addScriptLink("foo.js");
 
@@ -263,13 +281,17 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), mockRequireJS(), true, "1.2.3", true);
+
+        replay();
 
         linker.addScript(InitializationPriority.IMMEDIATE, "for (var i = 0; i < 5; i++)  { doIt(i); }");
 
         linker.updateDocument(document);
 
-        assertEquals(document.toString(), readFile("script_written_raw.txt").trim());
+        check(document, "script_written_raw.txt");
+
+        verify();
     }
 
     @Test
@@ -279,7 +301,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, "1.2.3", true);
 
         linker.addScriptLink("/context/foo.js");
 
@@ -302,7 +324,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
         head.element("meta");
         head.element("script");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, "1.2.3", true);
 
         linker.addScriptLink("/foo.js");
 
@@ -321,13 +343,17 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
         head.element("meta");
         head.element("script");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), mockRequireJS(), true, "1.2.3", true);
+
+        replay();
 
         linker.setInitialization(InitializationPriority.IMMEDIATE, new JSONObject("fred", "barney"));
 
         linker.updateDocument(document);
 
         assertEquals(document.toString(), readFile("immediate_initialization.txt"));
+
+        verify();
     }
 
     @Test
@@ -340,7 +366,9 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
         head.element("meta");
         head.element("script");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", false);
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), mockRequireJS(), true, "1.2.3", false);
+
+        replay();
 
         linker.setInitialization(InitializationPriority.IMMEDIATE, new JSONObject().put("fred", new JSONArray("barney",
                 "wilma", "betty")));
@@ -348,6 +376,8 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
         linker.updateDocument(document);
 
         assertEquals(document.toString(), readFile("pretty_print_initialization.txt"));
+
+        verify();
     }
 
     @Test
@@ -360,13 +390,17 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
         head.element("meta");
         head.element("script");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), mockRequireJS(), true, "1.2.3", true);
+
+        replay();
 
         linker.setInitialization(InitializationPriority.NORMAL, new JSONObject("fred", "barney"));
 
         linker.updateDocument(document);
 
         assertEquals(document.toString(), readFile("other_initialization.txt"));
+
+        verify();
     }
 
     @Test
@@ -376,7 +410,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, mockRequireJS(), true, "1.2.3", true);
 
         linker.addStylesheetLink(new StylesheetLink("everybody.css"));
         linker.addStylesheetLink(new StylesheetLink("just_ie.css", new StylesheetOptions().withCondition("IE")));
@@ -393,7 +427,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(true, "1.2.3", true);
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, mockRequireJS(), true, "1.2.3", true);
 
         linker.addStylesheetLink(new StylesheetLink("whatever.css"));
         linker.addStylesheetLink(new StylesheetLink("insertion-point.css", new StylesheetOptions().asAjaxInsertionPoint()));
@@ -402,5 +436,23 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         assertEquals(document.toString(), readFile("stylesheet_insertion_point.txt"));
 
+    }
+
+    private ModuleManager mockModuleManager()
+    {
+        ModuleManager mock = newMock(ModuleManager.class);
+
+        expect(mock.getClientModuleRoot()).andReturn("/assets/abc/module-root").once();
+
+        return mock;
+    }
+
+    private Asset mockRequireJS()
+    {
+        Asset mock = newMock(Asset.class);
+
+        expect(mock.toClientURL()).andReturn("/js/require.js").once();
+
+        return mock;
     }
 }

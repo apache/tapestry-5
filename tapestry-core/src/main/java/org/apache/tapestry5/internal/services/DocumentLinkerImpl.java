@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,13 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
+import org.apache.tapestry5.services.javascript.ModuleManager;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
 import java.util.List;
@@ -34,6 +36,8 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     private final List<StylesheetLink> includedStylesheets = CollectionFactory.newList();
 
+    private final ModuleManager moduleManager;
+
     private final boolean compactJSON;
 
     private final boolean omitGeneratorMetaTag;
@@ -42,13 +46,23 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     private boolean hasDynamicScript;
 
+    private final Asset requireJS;
+
     /**
-     * @param omitGeneratorMetaTag via symbol configuration
-     * @param tapestryVersion      version of Tapestry framework (for meta tag)
-     * @param compactJSON          should JSON content be compact or pretty printed?
+     * @param moduleManager
+     *         used to identify the root folder for dynamically loaded modules
+     * @param requireJS
+     *         asset for the library
+     * @param omitGeneratorMetaTag
+     *         via symbol configuration
+     * @param tapestryVersion
+     *         version of Tapestry framework (for meta tag)
+     * @param compactJSON
      */
-    public DocumentLinkerImpl(boolean omitGeneratorMetaTag, String tapestryVersion, boolean compactJSON)
+    public DocumentLinkerImpl(ModuleManager moduleManager, Asset requireJS, boolean omitGeneratorMetaTag, String tapestryVersion, boolean compactJSON)
     {
+        this.moduleManager = moduleManager;
+        this.requireJS = requireJS;
         this.omitGeneratorMetaTag = omitGeneratorMetaTag;
 
         tapestryBanner = String.format("Apache Tapestry Framework (version %s)", tapestryVersion);
@@ -94,7 +108,8 @@ public class DocumentLinkerImpl implements DocumentLinker
     /**
      * Updates the supplied Document, possibly adding &lt;head&gt; or &lt;body&gt; elements.
      *
-     * @param document to be updated
+     * @param document
+     *         to be updated
      */
     public void updateDocument(Document document)
     {
@@ -162,9 +177,12 @@ public class DocumentLinkerImpl implements DocumentLinker
      * Finds an element by name, or creates it. Returns the element (if found), or creates a new element
      * with the given name, and returns it. The new element will be positioned at the top or bottom of the root element.
      *
-     * @param root         element to search
-     * @param childElement element name of child
-     * @param atTop        if not found, create new element at top of root, or at bottom
+     * @param root
+     *         element to search
+     * @param childElement
+     *         element name of child
+     * @param atTop
+     *         if not found, create new element at top of root, or at bottom
      * @return the located element, or null
      */
     private Element findOrCreateElement(Element root, String childElement, boolean atTop)
@@ -182,10 +200,18 @@ public class DocumentLinkerImpl implements DocumentLinker
     /**
      * Adds the dynamic script block, which is, ultimately, a call to the client-side Tapestry.onDOMLoaded() function.
      *
-     * @param body element to add the dynamic scripting to
+     * @param body
+     *         element to add the dynamic scripting to
      */
     protected void addDynamicScriptBlock(Element body)
     {
+        // In prior releases of Tapestry, we've vacillated about where the <script> tags go
+        // (in <head> or at bottom of <body>). Switching to a module approach gives us a new chance to fix this.
+        // Eventually, (nearly) everything will be loaded as modules.
+        // TODO: Do we need to include type="text/javascript"?
+
+        body.element("script", "src", requireJS.toClientURL(), "data-main", moduleManager.getClientModuleRoot());
+
         StringBuilder block = new StringBuilder();
 
         boolean wrapped = false;
@@ -205,12 +231,11 @@ public class DocumentLinkerImpl implements DocumentLinker
         }
 
         if (wrapped)
+        {
             block.append("});\n");
+        }
 
-        Element e = body.element("script", "type", "text/javascript");
-
-        e.raw(block.toString());
-
+        body.element("script", "type", "text/javascript").raw(block.toString());
     }
 
     private void add(StringBuilder block, InitializationPriority priority)
@@ -242,8 +267,10 @@ public class DocumentLinkerImpl implements DocumentLinker
      * The new elements are inserted just before the first {@code <script>} tag, or appended at
      * the end.
      *
-     * @param headElement element to add the script links to
-     * @param scripts     scripts URLs to add as {@code <script>} elements
+     * @param headElement
+     *         element to add the script links to
+     * @param scripts
+     *         scripts URLs to add as {@code <script>} elements
      */
     protected void addScriptLinksForIncludedScripts(final Element headElement, List<String> scripts)
     {
@@ -274,8 +301,10 @@ public class DocumentLinkerImpl implements DocumentLinker
      * Locates the head element under the root ("html") element, creating it if necessary, and adds the stylesheets to
      * it.
      *
-     * @param root        element of document
-     * @param stylesheets to add to the document
+     * @param root
+     *         element of document
+     * @param stylesheets
+     *         to add to the document
      */
     protected void addStylesheetsToHead(Element root, List<StylesheetLink> stylesheets)
     {
