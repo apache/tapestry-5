@@ -28,9 +28,9 @@ import java.io.IOException;
  * the user agent (i.e., the client web browser). Starting in Tapestry 5.2,
  * asset paths are more structured, consisting of four parts:
  * <ul>
- * <li><code>/assets/</code> -- the root path for all assets
- * <li>
- * <em>application version</em> -- the application version, as defined by the
+ * <li><em>application folder</em> -- optional, based on {@link SymbolConstants#APPLICATION_FOLDER} Symbol     </li>
+ * <li><code>assets</code> -- the root path for all assets (as defined by {@link SymbolConstants#ASSET_PATH_PREFIX} Symbol)
+ * <li><em>application version</em> -- the application version, as defined by the
  * {@link SymbolConstants#APPLICATION_VERSION} symbol
  * <li><em>handler id</em> -- a handler for this part of the asset path (defined by contributions to the
  * <code>AssetDispatcher</code> service)
@@ -42,6 +42,7 @@ import java.io.IOException;
  *
  * @see AssetDispatcher
  * @see org.apache.tapestry5.services.AssetRequestDispatcher
+ * @see AssetPathConstructor
  * @since 5.2.0
  */
 public interface AssetRequestHandler
