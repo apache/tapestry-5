@@ -64,7 +64,9 @@ public class AssetPathConstructorImpl implements AssetPathConstructor
         StringBuilder builder = new StringBuilder();
 
         if (fullyQualified)
+        {
             builder.append(baseURLSource.getBaseURL(request.isSecure()));
+        }
 
         builder.append(request.getContextPath());
         builder.append(prefix);
