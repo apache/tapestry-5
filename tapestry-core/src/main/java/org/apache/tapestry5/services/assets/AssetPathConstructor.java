@@ -17,18 +17,19 @@ package org.apache.tapestry5.services.assets;
 /**
  * Encapsulates the logic or creating the path portion of an asset URL, including
  * the application version.
- * 
+ *
  * @since 5.2.0
  */
 public interface AssetPathConstructor
 {
     /**
      * Constructs an asset URL path from the virtual folder and path (within the virtual folder).
-     * 
+     *
      * @param virtualFolder
-     *            corresponds to a {@link AssetRequestHandler} contributed to the AssetDispatcher service
+     *         corresponds to a {@link AssetRequestHandler} contributed to the AssetDispatcher service
      * @param path
-     *            within the virtual folder (should <em>not</em> start with a slash)
+     *         within the virtual folder (should <em>not</em> start with a slash). May be the empty string.
+     *         When  on-blank, seperated from the reset of the path with a slash.
      * @return path portion of asset URL, including the context path, the /assets/ virtual folder, the application
      *         version number,
      *         the virtual folder, and the path extension

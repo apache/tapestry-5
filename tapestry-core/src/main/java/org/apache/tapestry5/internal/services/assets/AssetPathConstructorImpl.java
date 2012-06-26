@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.services.assets;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
@@ -57,6 +58,9 @@ public class AssetPathConstructorImpl implements AssetPathConstructor
 
     public String constructAssetPath(String virtualFolder, String path)
     {
+        assert InternalUtils.isNonBlank(virtualFolder);
+        assert path != null;
+
         StringBuilder builder = new StringBuilder();
 
         if (fullyQualified)
@@ -65,8 +69,12 @@ public class AssetPathConstructorImpl implements AssetPathConstructor
         builder.append(request.getContextPath());
         builder.append(prefix);
         builder.append(virtualFolder);
-        builder.append('/');
-        builder.append(path);
+
+        if (InternalUtils.isNonBlank(path))
+        {
+            builder.append('/');
+            builder.append(path);
+        }
 
         return builder.toString();
     }
