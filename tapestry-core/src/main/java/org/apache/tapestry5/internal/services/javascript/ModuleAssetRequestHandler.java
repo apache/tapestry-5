@@ -14,25 +14,22 @@
 
 package org.apache.tapestry5.internal.services.javascript;
 
-import org.apache.tapestry5.dom.Element;
-import org.apache.tapestry5.services.assets.AssetPathConstructor;
-import org.apache.tapestry5.services.javascript.ModuleManager;
+import org.apache.tapestry5.internal.services.AssetDispatcher;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.assets.AssetRequestHandler;
 
-public class ModuleManagerImpl implements ModuleManager
+import java.io.IOException;
+
+/**
+ * Handler contributed to {@link AssetDispatcher} with key "module-root". It interprets the extra path as a module name,
+ * and searches for the corresponding JavaScript module.
+ */
+public class ModuleAssetRequestHandler implements AssetRequestHandler
 {
-    private final String configuration;
-
-    public ModuleManagerImpl(AssetPathConstructor constructor)
-    {
-        String baseURL = constructor.constructAssetPath("module-root", "");
-
-        configuration = String.format("require.config({baseUrl:\"%s\"});\n",
-                baseURL);
-    }
-
     @Override
-    public void writeConfiguration(Element scriptElement)
+    public boolean handleAssetRequest(Request request, Response response, String extraPath) throws IOException
     {
-        scriptElement.raw(configuration);
+        return false;
     }
 }

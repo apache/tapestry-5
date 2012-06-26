@@ -16,6 +16,7 @@ package org.apache.tapestry5.services.javascript;
 
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.RenderSupport;
+import org.apache.tapestry5.services.AssetRequestDispatcher;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.DocumentLinker;
 import org.apache.tapestry5.internal.services.RenderSupportImpl;
@@ -29,6 +30,7 @@ import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.assets.AssetRequestHandler;
 
 /**
  * Defines the services related to JavaScript.
@@ -209,4 +211,12 @@ public class JavaScriptModule
         configuration.add("JavaScriptSupport", javascriptSupport, "after:DocumentLinker");
         configuration.add("RenderSupport", renderSupport);
     }
+
+    @Contribute(Dispatcher.class)
+    @AssetRequestDispatcher
+    public static void handleModuleAssetRequests(MappedConfiguration<String, AssetRequestHandler> configuration)
+    {
+        configuration.addInstance("module-root", ModuleAssetRequestHandler.class);
+    }
+
 }
