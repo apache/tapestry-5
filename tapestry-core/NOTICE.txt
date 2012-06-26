@@ -19,5 +19,9 @@ http://www.famfamfam.com/lab/icons/silk/
 This product includes Underscore.js.
 http://documentcloud.github.com/underscore/
 
+This product includes RequireJS, distributed under the terms of the "New" BSD license or the MIT license (you get
+to take your pick!).
+http://requirejs.org/
+
 
 
