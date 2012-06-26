@@ -41,6 +41,7 @@ import java.io.IOException;
  * <code>corelib</code>, and the extra path would be <code>components/select.png</code>.
  *
  * @see AssetDispatcher
+ * @see org.apache.tapestry5.services.AssetRequestDispatcher
  * @since 5.2.0
  */
 public interface AssetRequestHandler

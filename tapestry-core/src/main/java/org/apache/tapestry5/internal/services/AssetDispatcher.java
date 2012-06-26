@@ -15,6 +15,8 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.services.AssetRequestDispatcher;
+import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -40,6 +42,7 @@ import java.util.Map;
  * @see AssetRequestHandler
  */
 @UsesMappedConfiguration(AssetRequestHandler.class)
+@Marker(AssetRequestDispatcher.class)
 public class AssetDispatcher implements Dispatcher
 {
     /**

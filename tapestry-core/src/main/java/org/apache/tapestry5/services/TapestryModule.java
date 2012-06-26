@@ -451,16 +451,18 @@ public final class TapestryModule
      * Contributes an handler for each mapped classpath alias, as well handlers for context assets
      * and stack assets (combined {@link JavaScriptStack} files).
      */
-    public static void contributeAssetDispatcher(MappedConfiguration<String, AssetRequestHandler> configuration,
+    @Contribute(Dispatcher.class)
+    @AssetRequestDispatcher
+    public static void provideBuiltinAssetDispatchers(MappedConfiguration<String, AssetRequestHandler> configuration,
 
-                                                 @ContextProvider
-                                                 AssetFactory contextAssetFactory,
+                                                      @ContextProvider
+                                                      AssetFactory contextAssetFactory,
 
-                                                 @Autobuild
-                                                 StackAssetRequestHandler stackAssetRequestHandler,
+                                                      @Autobuild
+                                                      StackAssetRequestHandler stackAssetRequestHandler,
 
-                                                 ClasspathAssetAliasManager classpathAssetAliasManager, ResourceStreamer streamer,
-                                                 AssetResourceLocator assetResourceLocator)
+                                                      ClasspathAssetAliasManager classpathAssetAliasManager, ResourceStreamer streamer,
+                                                      AssetResourceLocator assetResourceLocator)
     {
         Map<String, String> mappings = classpathAssetAliasManager.getMappings();
 
@@ -1708,7 +1710,7 @@ public final class TapestryModule
      */
     public static void contributeMasterDispatcher(OrderedConfiguration<Dispatcher> configuration,
 
-                                                  @InjectService("AssetDispatcher")
+                                                  @AssetRequestDispatcher
                                                   Dispatcher assetDispatcher)
     {
         // Looks for the root path and renders the start page. This is
