@@ -19,6 +19,7 @@ import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.dom.XMLMarkupModel;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
@@ -446,6 +447,12 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
             public void writeConfiguration(Element scriptElement)
             {
                 scriptElement.raw("require.config();\n");
+            }
+
+            @Override
+            public Resource findResourceForModule(String moduleName)
+            {
+                return null;
             }
         };
     }

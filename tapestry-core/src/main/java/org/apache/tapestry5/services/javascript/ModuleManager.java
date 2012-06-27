@@ -15,6 +15,7 @@
 package org.apache.tapestry5.services.javascript;
 
 import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.ioc.Resource;
 
 /**
  * Responsible for managing access to the JavaScript modules.
@@ -32,4 +33,13 @@ public interface ModuleManager
      *         {@code <script>} element to write configuration should be written (using {@link Element#raw(String)}
      */
     void writeConfiguration(Element scriptElement);
+
+    /**
+     * Given a module name (which may be a path of names separated by slashes), locates the corresponding {@link Resource}.
+     *
+     * @param moduleName
+     *         name of module to locate
+     * @return corresponding resource, or null if not found
+     */
+    Resource findResourceForModule(String moduleName);
 }

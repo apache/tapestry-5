@@ -14,10 +14,17 @@
 
 package org.apache.tapestry5.internal.services.javascript;
 
+import org.apache.tapestry5.internal.IOOperation;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.AssetDispatcher;
+import org.apache.tapestry5.internal.services.ResourceStreamer;
+import org.apache.tapestry5.internal.util.Holder;
+import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.Response;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
+import org.apache.tapestry5.services.javascript.ModuleManager;
 
 import java.io.IOException;
 
@@ -27,9 +34,39 @@ import java.io.IOException;
  */
 public class ModuleAssetRequestHandler implements AssetRequestHandler
 {
-    @Override
-    public boolean handleAssetRequest(Request request, Response response, String extraPath) throws IOException
+    private final ModuleManager moduleManager;
+
+    private final ResourceStreamer streamer;
+
+    private final OperationTracker tracker;
+
+    public ModuleAssetRequestHandler(ModuleManager moduleManager, ResourceStreamer streamer, OperationTracker tracker)
     {
-        return false;
+        this.moduleManager = moduleManager;
+        this.streamer = streamer;
+        this.tracker = tracker;
+    }
+
+    @Override
+    public boolean handleAssetRequest(Request request, Response response, final String moduleName) throws IOException
+    {
+        final Holder<Boolean> handledHolder = Holder.create();
+
+        TapestryInternalUtils.performIO(tracker, String.format("Streaming module %s", moduleName), new IOOperation()
+        {
+            public void perform() throws IOException
+            {
+                Resource resource = moduleManager.findResourceForModule(moduleName);
+
+                if (resource != null)
+                {
+                    streamer.streamResource(resource);
+
+                    handledHolder.put(true);
+                }
+            }
+        });
+
+        return handledHolder.get();
     }
 }
