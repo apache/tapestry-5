@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006-2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -148,11 +149,14 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         /**
          * Converts a fully qualified class name to a logical name
          *
-         * @param className  fully qualified class name
-         * @param pathPrefix prefix to be placed on the logical name (to identify the library from in which the class
-         *                   lives)
-         * @param startPos   start position within the class name to extract the logical name (i.e., after the final '.' in
-         *                   "rootpackage.pages.").
+         * @param className
+         *         fully qualified class name
+         * @param pathPrefix
+         *         prefix to be placed on the logical name (to identify the library from in which the class
+         *         lives)
+         * @param startPos
+         *         start position within the class name to extract the logical name (i.e., after the final '.' in
+         *         "rootpackage.pages.").
          * @param stripTerms
          * @return a short logical name in folder format ('.' replaced with '/')
          */
@@ -499,8 +503,10 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
      * Locates a class name within the provided map, given its logical name. If not found naturally, a search inside the
      * "core" library is included.
      *
-     * @param logicalName            name to search for
-     * @param logicalNameToClassName mapping from logical name to class name
+     * @param logicalName
+     *         name to search for
+     * @param logicalNameToClassName
+     *         mapping from logical name to class name
      * @return the located class name or null
      */
     private String locate(String logicalName, Map<String, String> logicalNameToClassName)
@@ -625,5 +631,11 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     private static String[] explode(String packageName)
     {
         return DOT.split(packageName);
+    }
+
+    @Override
+    public List<String> getLibraryNames()
+    {
+        return F.flow(mappings.keySet()).remove(F.IS_BLANK).sort().toList();
     }
 }
