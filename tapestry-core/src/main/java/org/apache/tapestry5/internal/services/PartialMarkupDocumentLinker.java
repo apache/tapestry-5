@@ -57,10 +57,17 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
         priorityToInits.put(priority, initialization);
     }
 
+    @Override
+    public void setInitialization(InitializationPriority priority, String moduleName, String functionName, JSONArray arguments)
+    {
+        throw new IllegalStateException("not yet implemented");
+    }
+
     /**
      * Commits changes, adding one or more keys to the reply.
      *
-     * @param reply JSON Object to be sent to client
+     * @param reply
+     *         JSON Object to be sent to client
      */
     public void commit(JSONObject reply)
     {

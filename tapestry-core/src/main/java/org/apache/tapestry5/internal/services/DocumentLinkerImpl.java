@@ -18,6 +18,8 @@ import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.ModuleManager;
@@ -33,6 +35,8 @@ public class DocumentLinkerImpl implements DocumentLinker
     private final Map<InitializationPriority, StringBuilder> priorityToScript = CollectionFactory.newMap();
 
     private final Map<InitializationPriority, JSONObject> priorityToInit = CollectionFactory.newMap();
+
+    private final Map<InitializationPriority, List<JSONArray>> priorityToModuleInit = CollectionFactory.newMap();
 
     private final List<StylesheetLink> includedStylesheets = CollectionFactory.newList();
 
@@ -101,6 +105,28 @@ public class DocumentLinkerImpl implements DocumentLinker
     public void setInitialization(InitializationPriority priority, JSONObject initialization)
     {
         priorityToInit.put(priority, initialization);
+
+        hasDynamicScript = true;
+    }
+
+    @Override
+    public void setInitialization(InitializationPriority priority, String moduleName, String functionName, JSONArray arguments)
+    {
+        JSONArray init = new JSONArray();
+
+        String name = functionName == null ? moduleName : moduleName + ":" + functionName;
+
+        init.put(name);
+
+        if (arguments != null)
+        {
+            for (Object o : arguments)
+            {
+                init.put(o);
+            }
+        }
+
+        InternalUtils.addToMapList(priorityToModuleInit, priority, init);
 
         hasDynamicScript = true;
     }
@@ -223,7 +249,9 @@ public class DocumentLinkerImpl implements DocumentLinker
         for (InitializationPriority p : InitializationPriority.values())
         {
             if (p != InitializationPriority.IMMEDIATE && !wrapped
-                    && (priorityToScript.containsKey(p) || priorityToInit.containsKey(p)))
+                    && (priorityToScript.containsKey(p) ||
+                    priorityToInit.containsKey(p) ||
+                    priorityToModuleInit.containsKey(p)))
             {
 
                 block.append("Tapestry.onDOMLoaded(function() {\n");
@@ -245,8 +273,31 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     private void add(StringBuilder block, InitializationPriority priority)
     {
+        addModuleInits(block, priorityToModuleInit.get(priority));
+
         add(block, priorityToScript.get(priority));
         add(block, priorityToInit.get(priority));
+    }
+
+    private void addModuleInits(StringBuilder block, List<JSONArray> moduleInits)
+    {
+        if (moduleInits == null)
+        {
+            return;
+        }
+
+        block.append("require([\"core/pageinit\"], function (pageinit) {\n");
+        block.append("  pageinit([");
+
+        String sep = "";
+
+        for (JSONArray init : moduleInits) {
+            block.append(sep);
+            block.append(init.toString(compactJSON));
+            sep = ",\n  ";
+        }
+
+        block.append("]);\n});\n");
     }
 
     private void add(StringBuilder block, JSONObject init)

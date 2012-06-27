@@ -224,4 +224,15 @@ public interface JavaScriptSupport
      */
     JavaScriptSupport autofocus(FieldFocusPriority priority, String fieldId);
 
+
+    /**
+     * Requires a JavaScript module by name. On the c
+     *
+     * @param moduleName
+     *         the name of the module to require
+     * @return Initialization instance, used to configure function name, arguments, etc.
+     * @since 5.4
+     */
+    Initialization require(String moduleName);
+
 }

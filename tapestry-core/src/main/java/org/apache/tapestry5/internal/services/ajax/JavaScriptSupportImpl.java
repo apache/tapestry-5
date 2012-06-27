@@ -29,6 +29,7 @@ import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,6 +54,11 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
     private final Map<InitializationPriority, JSONObject> inits = CollectionFactory.newMap();
 
+    // Temporary name, as eventually 5.3-style inits will become a special case of
+    // 5.4 module-based initialization.
+
+    private final List<InitializationImpl> moduleInits = CollectionFactory.newList();
+
     private final JavaScriptStackSource javascriptStackSource;
 
     private final JavaScriptStackPathConstructor stackPathConstructor;
@@ -62,6 +68,48 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     private FieldFocusPriority focusPriority;
 
     private String focusFieldId;
+
+    class InitializationImpl implements Initialization
+    {
+        InitializationPriority priority = InitializationPriority.NORMAL;
+
+        final String moduleName;
+
+        String functionName;
+
+        JSONArray arguments;
+
+        InitializationImpl(String moduleName)
+        {
+            this.moduleName = moduleName;
+        }
+
+        @Override
+        public Initialization invoke(String functionName)
+        {
+            assert InternalUtils.isNonBlank(functionName);
+
+            this.functionName = functionName;
+
+            return this;
+        }
+
+        @Override
+        public Initialization priority(InitializationPriority priority)
+        {
+            assert priority != null;
+
+            this.priority = priority;
+
+            return this;
+        }
+
+        @Override
+        public void with(Object... arguments)
+        {
+            this.arguments = new JSONArray(arguments);
+        }
+    }
 
     public JavaScriptSupportImpl(DocumentLinker linker, JavaScriptStackSource javascriptStackSource,
                                  JavaScriptStackPathConstructor stackPathConstructor)
@@ -106,7 +154,9 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     public void commit()
     {
         if (focusFieldId != null)
+        {
             addInitializerCall("activate", focusFieldId);
+        }
 
         F.flow(stylesheetLinks).each(new Worker<StylesheetLink>()
         {
@@ -132,8 +182,26 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
             JSONObject init = inits.get(p);
 
             if (init != null)
+            {
                 linker.setInitialization(p, init);
+            }
         }
+
+        F.flow(moduleInits).sort(new Comparator<InitializationImpl>()
+        {
+            @Override
+            public int compare(InitializationImpl o1, InitializationImpl o2)
+            {
+                return o1.priority.compareTo(o2.priority);
+            }
+        }).each(new Worker<InitializationImpl>()
+        {
+            @Override
+            public void work(InitializationImpl element)
+            {
+                linker.setInitialization(element.priority, element.moduleName, element.functionName, element.arguments);
+            }
+        });
     }
 
     public void addInitializerCall(InitializationPriority priority, String functionName, JSONObject parameter)
@@ -358,4 +426,15 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         return this;
     }
 
+    @Override
+    public Initialization require(String moduleName)
+    {
+        assert InternalUtils.isNonBlank(moduleName);
+
+        InitializationImpl init = new InitializationImpl(moduleName);
+
+        moduleInits.add(init);
+
+        return init;
+    }
 }

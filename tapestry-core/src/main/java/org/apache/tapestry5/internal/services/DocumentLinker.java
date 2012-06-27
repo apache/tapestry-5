@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
@@ -40,13 +41,13 @@ public interface DocumentLinker
      * of the page (in a full page render) and collected as the "script" property of the partial page render response.
      * The JavaScript is executed after the page loads (or in an Ajax update, after external JavaScript libraries are
      * loaded and the DOM is updated).
-     * <p>
+     * <p/>
      * This method may be called multiple times for the same priority and the script will be accumulated.
-     * 
+     *
      * @param priority
-     *            when to execute the provided script
+     *         when to execute the provided script
      * @param script
-     *            statement to add to the block (a newline will be appended as well)
+     *         statement to add to the block (a newline will be appended as well)
      */
     void addScript(InitializationPriority priority, String script);
 
@@ -54,10 +55,27 @@ public interface DocumentLinker
      * Adds a call to the Tapestry.init() function. This may be called multiple times and the init() calls will occur
      * in order. In a normal page render, the init() calls will be added to the main JavaScript block, but in a partial
      * page render Ajax response, the initialization will be property "init" of the partial page render response.
-     * <p>
+     * <p/>
      * This method should only be invoked at most once per priority.
-     * 
+     *
      * @since 5.2.0
      */
     void setInitialization(InitializationPriority priority, JSONObject initialization);
+
+    /**
+     * Page initialization based on JavaScript modules.
+     *
+     * @param priority
+     *         priority at which to perform initialization
+     * @param moduleName
+     *         name of module; the module exports a single function, or a map of functions
+     * @param functionName
+     *         name of function exported by module, or null (if the module exports a single function)
+     * @param arguments
+     *         arguments to pass to the function
+     */
+    void setInitialization(InitializationPriority priority,
+                           String moduleName,
+                           String functionName,
+                           JSONArray arguments);
 }
