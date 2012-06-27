@@ -129,6 +129,7 @@ public interface ComponentClassResolver
      * This does not include the application itself (which is a library with the virtual path of empty string).
      *
      * @return sorted names of libraries
+     * @since 5.4
      */
     List<String> getLibraryNames();
 
@@ -150,4 +151,17 @@ public interface ComponentClassResolver
      * @since 5.3
      */
     boolean isPage(final String pageClassName);
+
+    /**
+     * For a specific library name, returns the list of package names for that library
+     * (this is usually just once, but for historical reasons, it is still possible to construct
+     * a library using multiple root packages).
+     *
+     * @param libraryName
+     *         name of library (the empty string denotes the application's
+     *         root package)
+     * @return root package names of packages, in no specific order, as an unmodifiable collection
+     * @since 5.4
+     */
+    List<String> getPackagesForLibrary(String libraryName);
 }

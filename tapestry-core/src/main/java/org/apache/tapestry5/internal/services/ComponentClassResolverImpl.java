@@ -438,6 +438,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         return locate(pageClassName, getData().pageClassNameToLogicalName) != null;
     }
 
+
     public List<String> getPageNames()
     {
         Data data = getData();
@@ -637,5 +638,20 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     public List<String> getLibraryNames()
     {
         return F.flow(mappings.keySet()).remove(F.IS_BLANK).sort().toList();
+    }
+
+
+    @Override
+    public List<String> getPackagesForLibrary(String libraryName)
+    {
+        List<String> packages = mappings.get(libraryName);
+
+        if (packages == null)
+        {
+            throw new UnknownValueException(String.format("Unknown library name '%s'.", libraryName),
+                    new AvailableValues("library mappings", mappings));
+        }
+
+        return Collections.unmodifiableList(packages);
     }
 }
