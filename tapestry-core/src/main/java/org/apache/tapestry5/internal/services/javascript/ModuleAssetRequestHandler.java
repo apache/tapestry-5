@@ -50,7 +50,7 @@ public class ModuleAssetRequestHandler implements AssetRequestHandler
     @Override
     public boolean handleAssetRequest(Request request, Response response, final String moduleName) throws IOException
     {
-        final Holder<Boolean> handledHolder = Holder.create();
+        final Holder<Boolean> handledHolder = Holder.create(false);
 
         TapestryInternalUtils.performIO(tracker, String.format("Streaming module %s", moduleName), new IOOperation()
         {
