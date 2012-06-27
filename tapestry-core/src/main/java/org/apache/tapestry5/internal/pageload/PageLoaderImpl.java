@@ -27,6 +27,7 @@ import org.apache.tapestry5.internal.structure.*;
 import org.apache.tapestry5.ioc.Invokable;
 import org.apache.tapestry5.ioc.Location;
 import org.apache.tapestry5.ioc.OperationTracker;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.TapestryException;
@@ -39,13 +40,9 @@ import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.model.EmbeddedComponentModel;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
-import org.apache.tapestry5.services.ComponentClassResolver;
-import org.apache.tapestry5.services.InvalidationEventHub;
-import org.apache.tapestry5.services.InvalidationListener;
-import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
-import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -167,7 +164,20 @@ public class PageLoaderImpl implements PageLoader, ComponentAssemblerSource
         this.symbolSource = symbolSource;
     }
 
-    public void clearCache() { cache.clear(); }
+    @PostInjection
+    public void setupInvalidation(@ComponentClasses InvalidationEventHub classesHub,
+                                  @ComponentTemplates InvalidationEventHub templatesHub,
+                                  @ComponentMessages InvalidationEventHub messagesHub)
+    {
+        classesHub.clearOnInvalidation(cache);
+        templatesHub.clearOnInvalidation(cache);
+        messagesHub.clearOnInvalidation(cache);
+    }
+
+    public void clearCache()
+    {
+        cache.clear();
+    }
 
     public Page loadPage(final String logicalPageName, final ComponentResourceSelector selector)
     {

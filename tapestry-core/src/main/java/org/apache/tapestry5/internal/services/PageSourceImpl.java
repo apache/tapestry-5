@@ -17,7 +17,11 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.internal.structure.Page;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.services.ComponentClasses;
+import org.apache.tapestry5.services.ComponentMessages;
+import org.apache.tapestry5.services.ComponentTemplates;
 import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.pageload.ComponentRequestSelectorAnalyzer;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
@@ -102,6 +106,16 @@ public class PageSourceImpl implements PageSource
 
             pageCache.put(key, ref);
         }
+    }
+
+    @PostInjection
+    public void setupInvalidation(@ComponentClasses InvalidationEventHub classesHub,
+                                  @ComponentTemplates InvalidationEventHub templatesHub,
+                                  @ComponentMessages InvalidationEventHub messagesHub)
+    {
+        classesHub.clearOnInvalidation(pageCache);
+        templatesHub.clearOnInvalidation(pageCache);
+        messagesHub.clearOnInvalidation(pageCache);
     }
 
     public void clearCache()

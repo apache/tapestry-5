@@ -22,7 +22,6 @@ import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSour
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
-import org.apache.tapestry5.ioc.annotations.Autobuild;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Marker;
 import org.apache.tapestry5.services.*;
@@ -38,20 +37,6 @@ import java.util.Map;
 @Marker(Core.class)
 public class InternalModule
 {
-
-    private final RequestGlobals requestGlobals;
-
-    private final InvalidationEventHub classesInvalidationEventHub;
-
-    public InternalModule(RequestGlobals requestGlobals,
-
-                          @ComponentClasses
-                          InvalidationEventHub classesInvalidationEventHub)
-    {
-        this.requestGlobals = requestGlobals;
-        this.classesInvalidationEventHub = classesInvalidationEventHub;
-    }
-
     /**
      * Bind all the private/internal services of Tapestry.
      */
@@ -82,69 +67,11 @@ public class InternalModule
         binder.bind(RequestPageCache.class, NonPoolingRequestPageCacheImpl.class);
         binder.bind(ComponentInstantiatorSource.class);
         binder.bind(InternalComponentInvalidationEventHub.class);
+        binder.bind(PageSource.class, PageSourceImpl.class);
+        binder.bind(PageLoader.class, PageLoaderImpl.class).preventReloading();
     }
 
-    public PageLoader buildPageLoader(@Autobuild
-                                      final PageLoaderImpl service,
-
-                                      @ComponentTemplates
-                                      InvalidationEventHub templatesHub,
-
-                                      @ComponentMessages
-                                      InvalidationEventHub messagesHub)
-    {
-        // TODO: We could combine these three using chain-of-command.
-
-        Runnable clear = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                service.clearCache();
-            }
-        };
-
-        classesInvalidationEventHub.addInvalidationCallback(clear);
-        templatesHub.addInvalidationCallback(clear);
-        messagesHub.addInvalidationCallback(clear);
-
-        return service;
-    }
-
-    public PageSource buildPageSource(@Autobuild
-                                      final PageSourceImpl service,
-
-                                      @ComponentTemplates
-                                      InvalidationEventHub templatesHub,
-
-                                      @ComponentMessages
-                                      InvalidationEventHub messagesHub)
-    {
-        // This covers invalidations due to changes to classes
-
-        Runnable clear = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                service.clearCache();
-            }
-        };
-
-        classesInvalidationEventHub.addInvalidationCallback(clear);
-
-        // This covers invalidations due to changes to message catalogs (properties files)
-
-        messagesHub.addInvalidationCallback(clear);
-
-        // ... and this covers invalidations due to changes to templates
-
-        templatesHub.addInvalidationCallback(clear);
-
-        return service;
-    }
-
-    public CookieSource buildCookieSource()
+    public static CookieSource buildCookieSource(final RequestGlobals requestGlobals)
     {
         return new CookieSource()
         {
@@ -156,7 +83,7 @@ public class InternalModule
         };
     }
 
-    public CookieSink buildCookieSink()
+    public static CookieSink buildCookieSink(final RequestGlobals requestGlobals)
     {
         return new CookieSink()
         {
