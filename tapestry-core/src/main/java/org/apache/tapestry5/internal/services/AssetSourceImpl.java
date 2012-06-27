@@ -19,7 +19,6 @@ import org.apache.tapestry5.internal.AssetConstants;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
@@ -110,7 +109,7 @@ public class AssetSourceImpl implements AssetSource
 
     private Resource getUnlocalizedResource(Resource baseResource, String path)
     {
-        assert InternalUtils.isNonBlank(path);
+        assert path != null;
         int colonx = path.indexOf(':');
 
         if (colonx < 0)
