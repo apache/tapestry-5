@@ -74,8 +74,8 @@ public interface DocumentLinker
      * @param arguments
      *         arguments to pass to the function
      */
-    void setInitialization(InitializationPriority priority,
-                           String moduleName,
-                           String functionName,
-                           JSONArray arguments);
+    void setModuleInitialization(InitializationPriority priority,
+                                 String moduleName,
+                                 String functionName,
+                                 JSONArray arguments);
 }

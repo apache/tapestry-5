@@ -411,7 +411,7 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
 
         document.newRootElement("html");
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, mockRequireJS(), true, "1.2.3", true);
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, "1.2.3", true);
 
         linker.addStylesheetLink(new StylesheetLink("everybody.css"));
         linker.addStylesheetLink(new StylesheetLink("just_ie.css", new StylesheetOptions().withCondition("IE")));
@@ -436,6 +436,28 @@ public class DocumentLinkerImplTest extends InternalBaseTestCase
         linker.updateDocument(document);
 
         assertEquals(document.toString(), readFile("stylesheet_insertion_point.txt"));
+    }
+
+    @Test
+    public void module_based_initialization()   throws Exception
+    {
+        Document document = new Document();
+
+        Element head = document.newRootElement("html").element("head");
+
+        head.element("meta");
+
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), mockRequireJS(), true, "1.2.3", true);
+
+        replay();
+
+        linker.setModuleInitialization(InitializationPriority.NORMAL, "my/module", null, null);
+        linker.setModuleInitialization(InitializationPriority.NORMAL, "my/other/module", "normal", new JSONArray(111, 222));
+        linker.setModuleInitialization(InitializationPriority.LATE, "my/other/module", "late", new JSONArray(333, 444));
+
+        linker.updateDocument(document);
+
+        assertEquals(document.toString(), readFile("module_based_initialization.txt"));
 
     }
 

@@ -110,7 +110,7 @@ public class DocumentLinkerImpl implements DocumentLinker
     }
 
     @Override
-    public void setInitialization(InitializationPriority priority, String moduleName, String functionName, JSONArray arguments)
+    public void setModuleInitialization(InitializationPriority priority, String moduleName, String functionName, JSONArray arguments)
     {
         JSONArray init = new JSONArray();
 
