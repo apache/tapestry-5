@@ -17,7 +17,9 @@ package org.apache.tapestry5.internal.services.javascript;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Worker;
+import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
@@ -40,7 +42,6 @@ public class ModuleManagerImpl implements ModuleManager
     private final Resource classpathRoot;
 
     // Note: ConcurrentHashMap does not support null as a value, alas. We use classpathRoot as a null.
-    // TODO: clear this map when resources change.
     private final Map<String, Resource> cache = CollectionFactory.newConcurrentMap();
 
     public ModuleManagerImpl(AssetPathConstructor constructor, final ComponentClassResolver resolver, AssetSource assetSource)
@@ -75,6 +76,12 @@ public class ModuleManagerImpl implements ModuleManager
 
         // TODO: A configuration used to provide overrides and/or "floating" modules outside of
         // any particular package. For example, "_" for the built-in Underscore library.
+    }
+
+    @PostInjection
+    public void setupInvalidation(ResourceChangeTracker tracker)
+    {
+        tracker.clearOnInvalidation(cache);
     }
 
     @Override
