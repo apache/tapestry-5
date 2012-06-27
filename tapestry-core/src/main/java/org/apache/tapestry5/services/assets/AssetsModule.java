@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -57,7 +57,9 @@ public class AssetsModule
                                                       boolean gzipEnabled, @Symbol(SymbolConstants.MIN_GZIP_SIZE)
     int compressionCutoff)
     {
-        return gzipEnabled ? new SRSCompressingInterceptor(compressionCutoff, delegate) : null;
+        return gzipEnabled
+                ? new SRSCompressingInterceptor(compressionCutoff, delegate)
+                : null;
     }
 
     @Decorate(id = "CacheCompressed", serviceInterface = StreamableResourceSource.class)
@@ -66,14 +68,9 @@ public class AssetsModule
                                                             @Symbol(SymbolConstants.GZIP_COMPRESSION_ENABLED)
                                                             boolean gzipEnabled, ResourceChangeTracker tracker)
     {
-        if (!gzipEnabled)
-            return null;
-
-        SRSCompressedCachingInterceptor interceptor = new SRSCompressedCachingInterceptor(delegate);
-
-        tracker.addInvalidationListener(interceptor);
-
-        return interceptor;
+        return gzipEnabled
+                ? new SRSCompressedCachingInterceptor(delegate, tracker)
+                : null;
     }
 
     @Decorate(id = "Cache", serviceInterface = StreamableResourceSource.class)
@@ -81,9 +78,7 @@ public class AssetsModule
     public StreamableResourceSource enableUncompressedCaching(StreamableResourceSource delegate,
                                                               ResourceChangeTracker tracker)
     {
-        SRSCachingInterceptor interceptor = new SRSCachingInterceptor(delegate);
-
-        tracker.addInvalidationListener(interceptor);
+        SRSCachingInterceptor interceptor = new SRSCachingInterceptor(delegate, tracker);
 
         return interceptor;
     }
@@ -94,10 +89,9 @@ public class AssetsModule
                                                        @Symbol(SymbolConstants.MINIFICATION_ENABLED)
                                                        boolean enabled)
     {
-        if (enabled)
-            return new SRSMinimizingInterceptor(delegate, minimizer);
-
-        return null;
+        return enabled
+                ? new SRSMinimizingInterceptor(delegate, minimizer)
+                : null;
     }
 
     /**

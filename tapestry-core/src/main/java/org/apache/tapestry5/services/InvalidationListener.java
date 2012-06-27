@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ package org.apache.tapestry5.services;
  *
  * @see org.apache.tapestry5.services.InvalidationEventHub
  * @since 5.1.0.0
+ * @deprecated In 5.4; use {@link InvalidationEventHub#addInvalidationCallback(Runnable)} instead
  */
 public interface InvalidationListener
 {

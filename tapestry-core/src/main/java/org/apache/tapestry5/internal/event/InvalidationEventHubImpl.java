@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.InvalidationListener;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Base implementation class for classes (especially services) that need to manage a list of
@@ -26,40 +27,76 @@ import java.util.List;
  */
 public class InvalidationEventHubImpl implements InvalidationEventHub
 {
-    private final List<InvalidationListener> listeners;
+    private final List<Runnable> callbacks;
 
     protected InvalidationEventHubImpl(boolean productionMode)
     {
         if (productionMode)
         {
-            listeners = null;
+            callbacks = null;
         } else
         {
-            listeners = CollectionFactory.newThreadSafeList();
+            callbacks = CollectionFactory.newThreadSafeList();
         }
     }
 
     /**
-     * Notifies all {@link InvalidationListener listener}s.
+     * Notifies all listeners/callbacks.
      */
     protected final void fireInvalidationEvent()
     {
-        if (listeners == null)
+        if (callbacks == null)
         {
             return;
         }
 
-        for (InvalidationListener listener : listeners)
+        for (Runnable callback : callbacks)
         {
-            listener.objectWasInvalidated();
+            callback.run();
         }
     }
 
-    public final void addInvalidationListener(InvalidationListener listener)
+    @Override
+    public final void addInvalidationCallback(Runnable callback)
     {
-        if (listeners != null)
+        assert callback != null;
+
+        // In production mode, callbacks may be null, in which case, just
+        // ignore the callback.
+        if (callbacks != null)
         {
-            listeners.add(listener);
+            callbacks.add(callback);
         }
     }
+
+    @Override
+    public final void clearOnInvalidation(final Map<?, ?> map)
+    {
+        assert map != null;
+
+        addInvalidationCallback(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                map.clear();
+            }
+        });
+    }
+
+    @Override
+    public final void addInvalidationListener(final InvalidationListener listener)
+    {
+        assert listener != null;
+
+        addInvalidationCallback(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                listener.objectWasInvalidated();
+            }
+        });
+    }
+
 }

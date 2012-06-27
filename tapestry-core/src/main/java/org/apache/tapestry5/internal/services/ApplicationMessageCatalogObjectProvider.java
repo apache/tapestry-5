@@ -34,7 +34,7 @@ import java.util.Map;
  * @see ComponentMessagesSource#getApplicationCatalog(Locale)
  * @since 5.2.0
  */
-public class ApplicationMessageCatalogObjectProvider extends LockSupport implements ObjectProvider, InvalidationListener
+public class ApplicationMessageCatalogObjectProvider extends LockSupport implements ObjectProvider
 {
     private final ObjectLocator objectLocator;
 
@@ -42,7 +42,7 @@ public class ApplicationMessageCatalogObjectProvider extends LockSupport impleme
 
     private ThreadLocale threadLocale;
 
-    private final Map<Locale, Messages> localeToMessages = CollectionFactory.newMap();
+    private final Map<Locale, Messages> localeToMessages = CollectionFactory.newConcurrentMap();
 
     private Messages proxy;
 
@@ -111,9 +111,9 @@ public class ApplicationMessageCatalogObjectProvider extends LockSupport impleme
                     "<ApplicationMessagesProxy>");
 
             // Listen for invalidations; clear our cache of localized Messages bundles when
-            // and invalidation occurs.
+            // an invalidation occurs.
 
-            messagesSource.getInvalidationEventHub().addInvalidationListener(this);
+            messagesSource.getInvalidationEventHub().clearOnInvalidation(localeToMessages);
         } finally
         {
             downgradeWriteLockToReadLock();

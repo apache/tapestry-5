@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import java.net.URL;
-import java.util.Map;
-
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
@@ -24,7 +21,10 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.ResourceDigestGenerator;
 
-public class ResourceDigestManagerImpl implements ResourceDigestManager, InvalidationListener
+import java.net.URL;
+import java.util.Map;
+
+public class ResourceDigestManagerImpl implements ResourceDigestManager
 {
     private final ResourceDigestGenerator digestGenerator;
 
@@ -55,7 +55,7 @@ public class ResourceDigestManagerImpl implements ResourceDigestManager, Invalid
     }
 
     public ResourceDigestManagerImpl(ResourceDigestGenerator digestGenerator,
-            ResourceChangeTracker resourceChangeTracker)
+                                     ResourceChangeTracker resourceChangeTracker)
     {
         this.digestGenerator = digestGenerator;
         this.resourceChangeTracker = resourceChangeTracker;
@@ -64,7 +64,7 @@ public class ResourceDigestManagerImpl implements ResourceDigestManager, Invalid
     @PostInjection
     public void listenForInvalidations()
     {
-        resourceChangeTracker.addInvalidationListener(this);
+        resourceChangeTracker.clearOnInvalidation(cache);
     }
 
     private Cached get(Resource resource)
@@ -95,14 +95,21 @@ public class ResourceDigestManagerImpl implements ResourceDigestManager, Invalid
         return get(resource).requiresDigest;
     }
 
+    @Override
     public void addInvalidationListener(InvalidationListener listener)
     {
         resourceChangeTracker.addInvalidationListener(listener);
     }
 
-    public void objectWasInvalidated()
+    @Override
+    public void addInvalidationCallback(Runnable callback)
     {
-        cache.clear();
+        resourceChangeTracker.addInvalidationCallback(callback);
     }
 
+    @Override
+    public void clearOnInvalidation(Map<?, ?> map)
+    {
+        resourceChangeTracker.clearOnInvalidation(map);
+    }
 }

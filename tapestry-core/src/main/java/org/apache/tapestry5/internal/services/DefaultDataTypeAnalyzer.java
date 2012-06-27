@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import java.util.Map;
  * conventions). This is based on a configuration of property type class to string provided as an IoC service
  * configuration.
  */
-public class DefaultDataTypeAnalyzer implements DataTypeAnalyzer, InvalidationListener
+public class DefaultDataTypeAnalyzer implements DataTypeAnalyzer, Runnable
 {
     private final StrategyRegistry<String> registry;
 
@@ -39,7 +39,7 @@ public class DefaultDataTypeAnalyzer implements DataTypeAnalyzer, InvalidationLi
      * Clears the registry on an invalidation event (this is because the registry caches results, and the keys are
      * classes that may be component classes from the invalidated component class loader).
      */
-    public void objectWasInvalidated()
+    public void run()
     {
         registry.clearCache();
     }

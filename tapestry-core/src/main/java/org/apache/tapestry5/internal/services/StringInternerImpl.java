@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,17 +15,20 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.services.InvalidationListener;
+import org.apache.tapestry5.services.ComponentClasses;
+import org.apache.tapestry5.services.InvalidationEventHub;
 
+import javax.annotation.PostConstruct;
 import java.util.Map;
 
-public class StringInternerImpl implements StringInterner, InvalidationListener
+public class StringInternerImpl implements StringInterner
 {
     private final Map<String, String> cache = CollectionFactory.newConcurrentMap();
 
-    public void objectWasInvalidated()
+    @PostConstruct
+    public void setupInvalidation(@ComponentClasses InvalidationEventHub hub)
     {
-        cache.clear();
+        hub.clearOnInvalidation(cache);
     }
 
     public String intern(String string)

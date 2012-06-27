@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathCons
 import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSource;
 import org.apache.tapestry5.internal.structure.ComponentPageElementResourcesSourceImpl;
 import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Autobuild;
@@ -86,7 +85,7 @@ public class InternalModule
     }
 
     public PageLoader buildPageLoader(@Autobuild
-                                      PageLoaderImpl service,
+                                      final PageLoaderImpl service,
 
                                       @ComponentTemplates
                                       InvalidationEventHub templatesHub,
@@ -96,15 +95,24 @@ public class InternalModule
     {
         // TODO: We could combine these three using chain-of-command.
 
-        classesInvalidationEventHub.addInvalidationListener(service);
-        templatesHub.addInvalidationListener(service);
-        messagesHub.addInvalidationListener(service);
+        Runnable clear = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                service.clearCache();
+            }
+        };
+
+        classesInvalidationEventHub.addInvalidationCallback(clear);
+        templatesHub.addInvalidationCallback(clear);
+        messagesHub.addInvalidationCallback(clear);
 
         return service;
     }
 
     public PageSource buildPageSource(@Autobuild
-                                      PageSourceImpl service,
+                                      final PageSourceImpl service,
 
                                       @ComponentTemplates
                                       InvalidationEventHub templatesHub,
@@ -114,23 +122,24 @@ public class InternalModule
     {
         // This covers invalidations due to changes to classes
 
-        classesInvalidationEventHub.addInvalidationListener(service);
+        Runnable clear = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                service.clearCache();
+            }
+        };
 
-        // This covers invalidation due to changes to message catalogs (properties files)
+        classesInvalidationEventHub.addInvalidationCallback(clear);
 
-        messagesHub.addInvalidationListener(service);
+        // This covers invalidations due to changes to message catalogs (properties files)
+
+        messagesHub.addInvalidationCallback(clear);
 
         // ... and this covers invalidations due to changes to templates
 
-        templatesHub.addInvalidationListener(service);
-
-        return service;
-    }
-
-    public ComponentClassCache buildComponentClassCache(@Autobuild
-                                                        ComponentClassCacheImpl service)
-    {
-        classesInvalidationEventHub.addInvalidationListener(service);
+        templatesHub.addInvalidationCallback(clear);
 
         return service;
     }
@@ -157,25 +166,6 @@ public class InternalModule
                 requestGlobals.getHTTPServletResponse().addCookie(cookie);
             }
         };
-    }
-
-    public PageActivationContextCollector buildPageActivationContextCollector(@Autobuild
-                                                                              PageActivationContextCollectorImpl service)
-    {
-        classesInvalidationEventHub.addInvalidationListener(service);
-
-        return service;
-    }
-
-    /**
-     * @since 5.1.0.0
-     */
-    public StringInterner buildStringInterner(@Autobuild
-                                              StringInternerImpl service)
-    {
-        classesInvalidationEventHub.addInvalidationListener(service);
-
-        return service;
     }
 
     /**

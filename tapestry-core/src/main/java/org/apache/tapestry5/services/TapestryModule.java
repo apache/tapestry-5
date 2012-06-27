@@ -362,6 +362,11 @@ public final class TapestryModule
         binder.bind(PropertyConduitSource.class, PropertyConduitSourceImpl.class);
         binder.bind(ClientWhitelist.class, ClientWhitelistImpl.class);
         binder.bind(AssetFactory.class, ClasspathAssetFactory.class).withSimpleId();
+        binder.bind(MetaDataLocator.class, MetaDataLocatorImpl.class);
+        binder.bind(ComponentClassCache.class, ComponentClassCacheImpl.class);
+        binder.bind(PageActivationContextCollector.class, PageActivationContextCollectorImpl.class);
+        binder.bind(StringInterner.class, StringInternerImpl.class);
+        binder.bind(ValueEncoderSource.class, ValueEncoderSourceImpl.class);
     }
 
     // ========================================================================
@@ -1234,15 +1239,6 @@ public final class TapestryModule
         return chainBuilder.build(BindingFactory.class, configuration);
     }
 
-    public static MetaDataLocator buildMetaDataLocator(@Autobuild
-                                                       MetaDataLocatorImpl service, @ComponentClasses
-    InvalidationEventHub hub)
-    {
-        hub.addInvalidationListener(service);
-
-        return service;
-    }
-
     public PersistentFieldStrategy buildClientPersistentFieldStrategy(LinkCreationHub linkCreationHub, @Autobuild
     ClientPersistentFieldStrategy service)
     {
@@ -1414,19 +1410,20 @@ public final class TapestryModule
                                                                 DefaultDataTypeAnalyzer service, @ComponentClasses
     InvalidationEventHub hub)
     {
-        hub.addInvalidationListener(service);
+        hub.addInvalidationCallback(service);
 
         return service;
     }
 
     public static TranslatorSource buildTranslatorSource(Map<Class, Translator> configuration,
-                                                         TranslatorAlternatesSource alternatesSource, @ComponentClasses
-    InvalidationEventHub hub)
+                                                         TranslatorAlternatesSource alternatesSource,
+                                                         @ComponentClasses
+                                                         InvalidationEventHub hub)
     {
         TranslatorSourceImpl service = new TranslatorSourceImpl(configuration,
                 alternatesSource.getTranslatorAlternates());
 
-        hub.addInvalidationListener(service);
+        hub.addInvalidationCallback(service);
 
         return service;
     }
@@ -2008,18 +2005,6 @@ public final class TapestryModule
         configuration.add(PersistenceConstants.SESSION, new SessionPersistentFieldStrategy(request));
         configuration.add(PersistenceConstants.FLASH, new FlashPersistentFieldStrategy(request));
         configuration.add(PersistenceConstants.CLIENT, clientStrategy);
-    }
-
-    @SuppressWarnings("rawtypes")
-    public static ValueEncoderSource buildValueEncoderSource(Map<Class, ValueEncoderFactory> configuration,
-                                                             @ComponentClasses
-                                                             InvalidationEventHub hub)
-    {
-        ValueEncoderSourceImpl service = new ValueEncoderSourceImpl(configuration);
-
-        hub.addInvalidationListener(service);
-
-        return service;
     }
 
     /**

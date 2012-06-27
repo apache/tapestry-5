@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,10 +40,12 @@ import org.apache.tapestry5.model.EmbeddedComponentModel;
 import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.ComponentClassResolver;
+import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.InvalidationListener;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 
+import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +66,7 @@ import java.util.Map;
  * <p/>
  * And truly, <em>This is the Tapestry Heart, This is the Tapestry Soul...</em>
  */
-public class PageLoaderImpl implements PageLoader, InvalidationListener, ComponentAssemblerSource
+public class PageLoaderImpl implements PageLoader, ComponentAssemblerSource
 {
     private static final class Key
     {
@@ -165,10 +167,7 @@ public class PageLoaderImpl implements PageLoader, InvalidationListener, Compone
         this.symbolSource = symbolSource;
     }
 
-    public void objectWasInvalidated()
-    {
-        cache.clear();
-    }
+    public void clearCache() { cache.clear(); }
 
     public Page loadPage(final String logicalPageName, final ComponentResourceSelector selector)
     {

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,13 +15,15 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.Translator;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.util.AvailableValues;
 import org.apache.tapestry5.ioc.util.StrategyRegistry;
 import org.apache.tapestry5.ioc.util.UnknownValueException;
 import org.apache.tapestry5.plastic.PlasticUtils;
-import org.apache.tapestry5.services.InvalidationListener;
+import org.apache.tapestry5.services.ComponentClasses;
+import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.TranslatorSource;
 
 import java.util.Collections;
@@ -29,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unchecked")
-public class TranslatorSourceImpl implements TranslatorSource, InvalidationListener
+public class TranslatorSourceImpl implements TranslatorSource, Runnable
 {
     private final Map<String, Translator> nameToTranslator = CollectionFactory.newCaseInsensitiveMap();
 
@@ -83,7 +85,7 @@ public class TranslatorSourceImpl implements TranslatorSource, InvalidationListe
         registry = StrategyRegistry.newInstance(Translator.class, configuration, true);
     }
 
-    public Translator get(String name)
+public Translator get(String name)
     {
         Translator result = nameToTranslator.get(name);
 
@@ -119,7 +121,11 @@ public class TranslatorSourceImpl implements TranslatorSource, InvalidationListe
         return registry.get(valueType);
     }
 
-    public void objectWasInvalidated()
+    /**
+     * Invoked by InvalidationEventHub
+     */
+    @Override
+    public void run()
     {
         registry.clearCache();
     }

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,15 +15,17 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
-import org.apache.tapestry5.services.InvalidationListener;
+import org.apache.tapestry5.services.ComponentClasses;
+import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.MetaDataLocator;
 
 import java.util.Map;
 
-public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListener
+public class MetaDataLocatorImpl implements MetaDataLocator
 {
     private final SymbolSource symbolSource;
 
@@ -42,19 +44,22 @@ public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListene
     }
 
     public MetaDataLocatorImpl(SymbolSource symbolSource, TypeCoercer typeCoercer,
-            ComponentModelSource modelSource, Map<String, String> configuration)
+                               ComponentModelSource modelSource, Map<String, String> configuration)
     {
         this.symbolSource = symbolSource;
         this.typeCoercer = typeCoercer;
         this.modelSource = modelSource;
 
         loadDefaults(configuration);
+
     }
 
-    public void objectWasInvalidated()
+    @PostInjection
+    public void setupInvalidation(@ComponentClasses InvalidationEventHub invalidationEventHub)
     {
-        cache.clear();
+        invalidationEventHub.clearOnInvalidation(cache);
     }
+
 
     private void loadDefaults(Map<String, String> configuration)
     {
@@ -111,7 +116,7 @@ public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListene
     }
 
     private String getSymbolExpandedValueFromCache(String key, String cacheKey,
-            ValueLocator valueLocator)
+                                                   ValueLocator valueLocator)
     {
         if (cache.containsKey(cacheKey))
             return cache.get(cacheKey);
@@ -121,8 +126,7 @@ public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListene
         if (value == null)
         {
             value = symbolSource.valueForSymbol(key);
-        }
-        else
+        } else
         {
             value = symbolSource.expandSymbols(value);
         }

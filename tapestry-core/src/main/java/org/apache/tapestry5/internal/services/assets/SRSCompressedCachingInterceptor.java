@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,9 +24,9 @@ import org.apache.tapestry5.services.assets.StreamableResourceSource;
  */
 public class SRSCompressedCachingInterceptor extends SRSCachingInterceptor
 {
-    public SRSCompressedCachingInterceptor(StreamableResourceSource delegate)
+    public SRSCompressedCachingInterceptor(StreamableResourceSource delegate, ResourceChangeTracker tracker)
     {
-        super(delegate);
+        super(delegate, tracker);
     }
 
     /**

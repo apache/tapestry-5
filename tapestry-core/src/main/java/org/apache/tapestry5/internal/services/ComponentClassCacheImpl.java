@@ -15,15 +15,19 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.plastic.PlasticInternalUtils;
+import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.PlasticProxyFactory;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.services.ComponentClasses;
 import org.apache.tapestry5.services.ComponentLayer;
+import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.InvalidationListener;
 
+import javax.annotation.PostConstruct;
 import java.util.Map;
 
-public class ComponentClassCacheImpl implements ComponentClassCache, InvalidationListener
+public class ComponentClassCacheImpl implements ComponentClassCache
 {
     private final Map<String, Class> cache = CollectionFactory.newConcurrentMap();
 
@@ -38,9 +42,9 @@ public class ComponentClassCacheImpl implements ComponentClassCache, Invalidatio
         this.typeCoercer = typeCoercer;
     }
 
-    public void objectWasInvalidated()
-    {
-        cache.clear();
+    @PostInjection
+    public void setupInvalidation(@ComponentClasses InvalidationEventHub hub) {
+        hub.clearOnInvalidation(cache);
     }
 
     @SuppressWarnings("unchecked")
