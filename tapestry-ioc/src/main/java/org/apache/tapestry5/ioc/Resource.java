@@ -38,7 +38,8 @@ public interface Resource
     boolean exists();
 
     /**
-     * Opens a stream to the content of the resource, or returns null if the resource does not exist.
+     * Opens a stream to the content of the resource, or returns null if the resource does not exist. The native
+     * input stream supplied by the resource is wrapped in a {@link java.io.BufferedInputStream}.
      *
      * @return an open, buffered stream to the content, if available
      */
