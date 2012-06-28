@@ -1,5 +1,5 @@
 <html><head><meta/></head><body><script src="/js/require.js"></script><script type="text/javascript">require.config();
-Tapestry.onDOMLoaded(function() {
+</script><script type="text/javascript">Tapestry.onDOMLoaded(function() {
 require(["core/pageinit"], function (pageinit) {
   pageinit([["my/module"],
   ["my/other/module:normal",111,222]]);

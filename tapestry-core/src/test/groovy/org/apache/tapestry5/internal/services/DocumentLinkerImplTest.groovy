@@ -1,5 +1,6 @@
 package org.apache.tapestry5.internal.services;
 
+
 import org.apache.tapestry5.Asset
 import org.apache.tapestry5.dom.Document
 import org.apache.tapestry5.dom.Element
@@ -7,7 +8,6 @@ import org.apache.tapestry5.dom.XMLMarkupModel
 import org.apache.tapestry5.internal.test.InternalBaseTestCase
 import org.apache.tapestry5.ioc.Resource
 import org.apache.tapestry5.json.JSONArray
-import org.apache.tapestry5.json.JSONObject
 import org.apache.tapestry5.services.javascript.InitializationPriority
 import org.apache.tapestry5.services.javascript.ModuleManager
 import org.apache.tapestry5.services.javascript.StylesheetLink
@@ -19,7 +19,8 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
     def check(Document document, String file) throws Exception {
 
         def content = readFile(file)
-        assert document.toString() == content
+
+        assertEquals document.toString(), content
     }
 
     @Test
@@ -135,48 +136,6 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         check(document, "omit_generator_meta_on_no_html_root.txt")
     }
 
-    @Test
-    void empty_document_with_scripts_at_top() throws Exception {
-        Document document = new Document(new XMLMarkupModel())
-
-        document.newRootElement("html")
-
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), mockRequireJS(), true, "1.2.3", true)
-
-        replay()
-
-        linker.addStylesheetLink(new StylesheetLink("style.css", new StylesheetOptions("print")))
-        linker.addScriptLink("foo.js")
-        linker.addScriptLink("bar/baz.js")
-        linker.addScript(InitializationPriority.IMMEDIATE, "pageInitialization();")
-
-        linker.updateDocument(document)
-
-        check(document, "empty_document_with_scripts_at_top.txt")
-
-        verify()
-    }
-
-    @Test
-    void add_script_links_at_top() throws Exception {
-        Document document = new Document(new XMLMarkupModel())
-
-        document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts at top.")
-
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), mockRequireJS(), true, "1.2.3", true)
-
-        replay()
-
-        linker.addScriptLink("foo.js")
-        linker.addScriptLink("bar/baz.js")
-        linker.addScript(InitializationPriority.NORMAL, "pageInitialization();")
-
-        linker.updateDocument(document)
-
-        check(document, "add_script_links_at_top.txt")
-
-        verify()
-    }
 
     @Test
     void add_style_links() throws Exception {
@@ -239,7 +198,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("html").element("notbody").element("p").text("Ready to be updated with scripts.")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, mockRequireJS(), true, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), mockRequireJS(), true, "1.2.3", true)
 
         linker.addScriptLink("foo.js")
 
@@ -273,36 +232,19 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), mockRequireJS(), true, "1.2.3", true)
+
+        replay()
 
         linker.addScriptLink("/context/foo.js")
 
         linker.updateDocument(document)
 
-        Element script = document.getRootElement().find("head/script")
+        assert document.toString().contains('''<script src="/context/foo.js" type="text/javascript">''')
 
-        String assetURL = script.getAttribute("src")
-
-        assertEquals(assetURL, "/context/foo.js")
+        verify()
     }
 
-    @Test
-    void added_scripts_go_before_existing_script() throws Exception {
-        Document document = new Document()
-
-        Element head = document.newRootElement("html").element("head")
-
-        head.element("meta")
-        head.element("script")
-
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, "1.2.3", true)
-
-        linker.addScriptLink("/foo.js")
-
-        linker.updateDocument(document)
-
-        assertEquals(document.toString(), readFile("added_scripts_go_before_existing_script.txt"))
-    }
 
     @Test
     void immediate_initialization() throws Exception {
@@ -321,7 +263,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         linker.updateDocument(document)
 
-        assertEquals(document.toString(), readFile("immediate_initialization.txt"))
+        check document, "immediate_initialization.txt"
 
         verify()
     }
@@ -333,20 +275,18 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         Element head = document.newRootElement("html").element("head")
 
         head.element("meta")
-        head.element("script")
 
         DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), mockRequireJS(), true, "1.2.3", false)
 
         replay()
 
-        linker.setInitialization(InitializationPriority.IMMEDIATE, new JSONObject().put("fred", new JSONArray("barney",
-            "wilma", "betty")))
+        linker.addInitialization(InitializationPriority.NORMAL, "my/module", null, null)
+        linker.addInitialization(InitializationPriority.NORMAL, "my/other/module", "normal", new JSONArray(111, 222))
+        linker.addInitialization(InitializationPriority.LATE, "my/other/module", "late", new JSONArray(333, 444))
 
         linker.updateDocument(document)
 
         assertEquals(document.toString(), readFile("pretty_print_initialization.txt"))
-
-        verify()
     }
 
     @Test

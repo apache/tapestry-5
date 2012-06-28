@@ -20,7 +20,6 @@ import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONArray;
-import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.ModuleManager;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
@@ -33,8 +32,6 @@ public class DocumentLinkerImpl implements DocumentLinker
     private final List<String> scripts = CollectionFactory.newList();
 
     private final Map<InitializationPriority, StringBuilder> priorityToScript = CollectionFactory.newMap();
-
-    private final Map<InitializationPriority, JSONObject> priorityToInit = CollectionFactory.newMap();
 
     private final Map<InitializationPriority, List<JSONArray>> priorityToModuleInit = CollectionFactory.newMap();
 
@@ -98,13 +95,6 @@ public class DocumentLinkerImpl implements DocumentLinker
         builder.append(script);
 
         builder.append("\n");
-
-        hasDynamicScript = true;
-    }
-
-    public void setInitialization(InitializationPriority priority, JSONObject initialization)
-    {
-        priorityToInit.put(priority, initialization);
 
         hasDynamicScript = true;
     }
@@ -178,7 +168,9 @@ public class DocumentLinkerImpl implements DocumentLinker
     private void addScriptElements(Element root)
     {
         if (scripts.isEmpty() && !hasDynamicScript)
+        {
             return;
+        }
 
         // This only applies when the document is an HTML document. This may need to change in the
         // future, perhaps configurable, to allow for html and xhtml and perhaps others. Does SVG
@@ -193,10 +185,8 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         // TAPESTRY-2364
 
-        addScriptLinksForIncludedScripts(head, scripts);
 
-        if (hasDynamicScript)
-            addDynamicScriptBlock(findOrCreateElement(root, "body", false));
+        addScriptsToEndOfBody(findOrCreateElement(root, "body", false));
     }
 
     /**
@@ -224,12 +214,13 @@ public class DocumentLinkerImpl implements DocumentLinker
     }
 
     /**
-     * Adds the dynamic script block, which is, ultimately, a call to the client-side Tapestry.onDOMLoaded() function.
+     * Adds {@code <script>} elements for the RequireJS library, then any statically includes JavaScript libraries
+     * (including JavaScript stack virtual assets), then the initialization script block.
      *
      * @param body
      *         element to add the dynamic scripting to
      */
-    protected void addDynamicScriptBlock(Element body)
+    protected void addScriptsToEndOfBody(Element body)
     {
         // In prior releases of Tapestry, we've vacillated about where the <script> tags go
         // (in <head> or at bottom of <body>). Switching to a module approach gives us a new chance to fix this.
@@ -238,9 +229,19 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         body.element("script", "src", requireJS.toClientURL());
 
-        Element script = body.element("script", "type", "text/javascript");
+        moduleManager.writeConfiguration(body.element("script", "type", "text/javascript"));
 
-        moduleManager.writeConfiguration(script);
+        // Next, include all stacks and individual JavaScript files *after* RequireJS.
+
+        for (String script : scripts)
+        {
+            body.element("script", "type", "text/javascript", "src", script);
+        }
+
+        if (priorityToScript.isEmpty() && priorityToModuleInit.isEmpty())
+        {
+            return;
+        }
 
         StringBuilder block = new StringBuilder();
 
@@ -250,7 +251,6 @@ public class DocumentLinkerImpl implements DocumentLinker
         {
             if (p != InitializationPriority.IMMEDIATE && !wrapped
                     && (priorityToScript.containsKey(p) ||
-                    priorityToInit.containsKey(p) ||
                     priorityToModuleInit.containsKey(p)))
             {
 
@@ -259,7 +259,9 @@ public class DocumentLinkerImpl implements DocumentLinker
                 wrapped = true;
             }
 
-            add(block, p);
+            addModuleInits(block, priorityToModuleInit.get(p));
+
+            addDirectScriptInitialization(block, priorityToScript.get(p));
         }
 
         if (wrapped)
@@ -267,16 +269,7 @@ public class DocumentLinkerImpl implements DocumentLinker
             block.append("});\n");
         }
 
-
-        script.raw(block.toString());
-    }
-
-    private void add(StringBuilder block, InitializationPriority priority)
-    {
-        addModuleInits(block, priorityToModuleInit.get(priority));
-
-        add(block, priorityToScript.get(priority));
-        add(block, priorityToInit.get(priority));
+        body.element("script", "type", "text/javascript").raw(block.toString());
     }
 
     private void addModuleInits(StringBuilder block, List<JSONArray> moduleInits)
@@ -291,7 +284,8 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         String sep = "";
 
-        for (JSONArray init : moduleInits) {
+        for (JSONArray init : moduleInits)
+        {
             block.append(sep);
             block.append(init.toString(compactJSON));
             sep = ",\n  ";
@@ -300,48 +294,12 @@ public class DocumentLinkerImpl implements DocumentLinker
         block.append("]);\n});\n");
     }
 
-    private void add(StringBuilder block, JSONObject init)
-    {
-        if (init == null)
-            return;
-
-        block.append("Tapestry.init(");
-        block.append(init.toString(compactJSON));
-        block.append(");\n");
-    }
-
-    private void add(StringBuilder block, StringBuilder content)
+    private void addDirectScriptInitialization(StringBuilder block, StringBuilder content)
     {
         if (content == null)
             return;
 
         block.append(content);
-    }
-
-    /**
-     * Adds a script link for each included script to the top of the the {@code <head>} element.
-     * The new elements are inserted just before the first {@code <script>} tag, or appended at
-     * the end.
-     *
-     * @param headElement
-     *         element to add the script links to
-     * @param scripts
-     *         scripts URLs to add as {@code <script>} elements
-     */
-    protected void addScriptLinksForIncludedScripts(final Element headElement, List<String> scripts)
-    {
-        // TAP5-1486
-
-        // Find the first existing <script> tag if it exists.
-
-        Element container = createTemporaryContainer(headElement, "script", "script-container");
-
-        for (String script : scripts)
-        {
-            container.element("script", "type", "text/javascript", "src", script);
-        }
-
-        container.pop();
     }
 
     private static Element createTemporaryContainer(Element headElement, String existingElementName, String newElementName)
