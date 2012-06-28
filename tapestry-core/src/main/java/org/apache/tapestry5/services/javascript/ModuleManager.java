@@ -16,12 +16,19 @@ package org.apache.tapestry5.services.javascript;
 
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 
 /**
  * Responsible for managing access to the JavaScript modules.
+ * <p/>
+ * The configuration of the service allows overrides of the default search path; the configuration keys
+ * are module names, and the configuration values are the resources for those module names. This is used to give
+ * commonly-used modules a short module name (e.g., "_" for <a href="http://underscore.js">Underscore.js</a>),
+ * <em>OR</em> to allow selective monkey-patching of default modules.
  *
  * @since 5.4
  */
+@UsesMappedConfiguration(Resource.class)
 public interface ModuleManager
 {
     /**

@@ -32,7 +32,9 @@ import java.util.Map;
 
 public class ModuleManagerImpl implements ModuleManager
 {
-    private final String configuration;
+    private final String requireConfig;
+
+    private final Map<String, Resource> configuration;
 
     // Library names, sorted by order of descending length.
     private final List<String> libraryNames;
@@ -44,11 +46,12 @@ public class ModuleManagerImpl implements ModuleManager
     // Note: ConcurrentHashMap does not support null as a value, alas. We use classpathRoot as a null.
     private final Map<String, Resource> cache = CollectionFactory.newConcurrentMap();
 
-    public ModuleManagerImpl(AssetPathConstructor constructor, final ComponentClassResolver resolver, AssetSource assetSource)
+    public ModuleManagerImpl(AssetPathConstructor constructor, final ComponentClassResolver resolver, AssetSource assetSource, Map<String, Resource> configuration)
     {
+        this.configuration = configuration;
         String baseURL = constructor.constructAssetPath("module-root", "");
 
-        configuration = String.format("require.config({baseUrl:\"%s\"});\n",
+        requireConfig = String.format("require.config({baseUrl:\"%s\"});\n",
                 baseURL);
 
         classpathRoot = assetSource.resourceForPath("");
@@ -73,9 +76,6 @@ public class ModuleManagerImpl implements ModuleManager
                 }).toList();
 
         libraryNameToPackageNames.put("app", resolver.getPackagesForLibrary(""));
-
-        // TODO: A configuration used to provide overrides and/or "floating" modules outside of
-        // any particular package. For example, "_" for the built-in Underscore library.
     }
 
     @PostInjection
@@ -87,7 +87,7 @@ public class ModuleManagerImpl implements ModuleManager
     @Override
     public void writeConfiguration(Element scriptElement)
     {
-        scriptElement.raw(configuration);
+        scriptElement.raw(requireConfig);
     }
 
     @Override
@@ -109,6 +109,19 @@ public class ModuleManagerImpl implements ModuleManager
 
     private Resource resolveModuleNameToResource(String moduleName)
     {
+        Resource resource = configuration.get(moduleName);
+
+        if (resource != null)
+        {
+            if (!resource.exists())
+            {
+                throw new RuntimeException(String.format("Resource %s (mapped as module '%s') does not exist.",
+                        resource, moduleName));
+            }
+
+            return resource;
+        }
+
         // Look for the longest match.
 
         for (String library : libraryNames)
