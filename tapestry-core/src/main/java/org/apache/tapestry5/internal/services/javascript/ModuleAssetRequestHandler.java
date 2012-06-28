@@ -48,11 +48,28 @@ public class ModuleAssetRequestHandler implements AssetRequestHandler
     }
 
     @Override
-    public boolean handleAssetRequest(Request request, Response response, final String moduleName) throws IOException
+    public boolean handleAssetRequest(Request request, Response response, String extraPath) throws IOException
     {
+        // Ensure request ends with '.js'.  That's the extension tacked on by RequireJS because it expects there
+        // to be a hierarchy of static JavaScript files here.
+
+        int dotx = extraPath.lastIndexOf('.');
+
+        if (dotx < 0)
+        {
+            return false;
+        }
+
+        if (!extraPath.substring(dotx + 1).equals("js"))
+        {
+            return false;
+        }
+
+        final String moduleName = extraPath.substring(0, dotx);
+
         final Holder<Boolean> handledHolder = Holder.create(false);
 
-        TapestryInternalUtils.performIO(tracker, String.format("Streaming module %s", moduleName), new IOOperation()
+        TapestryInternalUtils.performIO(tracker, String.format("Streaming module %s", extraPath), new IOOperation()
         {
             public void perform() throws IOException
             {
