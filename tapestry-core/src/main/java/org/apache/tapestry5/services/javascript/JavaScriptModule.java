@@ -16,7 +16,6 @@ package org.apache.tapestry5.services.javascript;
 
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.RenderSupport;
-import org.apache.tapestry5.services.AssetRequestDispatcher;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.DocumentLinker;
 import org.apache.tapestry5.internal.services.RenderSupportImpl;
@@ -31,6 +30,8 @@ import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
+import org.apache.tapestry5.services.assets.ResourceTransformer;
+import org.apache.tapestry5.services.assets.StreamableResourceSource;
 
 /**
  * Defines the services related to JavaScript.
@@ -217,6 +218,18 @@ public class JavaScriptModule
     public static void handleModuleAssetRequests(MappedConfiguration<String, AssetRequestHandler> configuration)
     {
         configuration.addInstance("module-root", ModuleAssetRequestHandler.class);
+    }
+
+    @Contribute(StreamableResourceSource.class)
+    public static void setupJavaScriptWrapper(MappedConfiguration<String, ResourceTransformer> configuration)
+    {
+        configuration.addInstance("jsw", JavaScriptWrapperResourceTransformer.class);
+    }
+
+    @Contribute(ModuleManager.class)
+    public static void setupExtraModules(MappedConfiguration<String, Object> configuration)
+    {
+        configuration.add("_", "classpath:org/apache/tapestry5/underscore.jsw");
     }
 
 }

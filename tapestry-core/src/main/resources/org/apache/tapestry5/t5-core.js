@@ -20,7 +20,7 @@
  *
  * @since 5.3
  */
-var T5 = {
+window.T5 = {
 
     /** _ is _.noConflict(), in other words, all Underscore functions are not inside
      * T5._, rather than simply _.

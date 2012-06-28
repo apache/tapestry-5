@@ -53,7 +53,10 @@ public class CoreJavaScriptStack implements JavaScriptStack {
           {
                   // Core scripts added to any page that uses scripting
 
-                  "${tapestry.underscore}",
+                  // TEMPORARY: For the moment, exposing Underscore as a module
+                  // and as a library; this is because statically loaded libraries (t5-core.js)
+                  // has no way to wait for module '_' to be loaded.
+                  "classpath:org/apache/tapestry5/underscore_1_3_3.js",
 
                   "${tapestry.scriptaculous}/prototype.js",
 

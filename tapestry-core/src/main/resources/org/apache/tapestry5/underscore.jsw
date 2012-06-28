@@ -1,0 +1,4 @@
+define(function (require, exports, module) {
+    @include("underscore_1_3_3.js")
+    module.exports = _.noConflict();
+});
