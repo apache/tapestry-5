@@ -317,7 +317,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         replay()
 
-        linker.setModuleInitialization(InitializationPriority.IMMEDIATE, "immediate/module", "myfunc", new JSONArray("[{ 'fred' : 'barney' }]"))
+        linker.addInitialization(InitializationPriority.IMMEDIATE, "immediate/module", "myfunc", new JSONArray("[{ 'fred' : 'barney' }]"))
 
         linker.updateDocument(document)
 
@@ -362,7 +362,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         replay()
 
-        linker.setModuleInitialization(InitializationPriority.NORMAL, "my/module", null, new JSONArray("['barney']"))
+        linker.addInitialization(InitializationPriority.NORMAL, "my/module", null, new JSONArray("['barney']"))
 
         linker.updateDocument(document)
 
@@ -415,9 +415,9 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         replay()
 
-        linker.setModuleInitialization(InitializationPriority.NORMAL, "my/module", null, null)
-        linker.setModuleInitialization(InitializationPriority.NORMAL, "my/other/module", "normal", new JSONArray(111, 222))
-        linker.setModuleInitialization(InitializationPriority.LATE, "my/other/module", "late", new JSONArray(333, 444))
+        linker.addInitialization(InitializationPriority.NORMAL, "my/module", null, null)
+        linker.addInitialization(InitializationPriority.NORMAL, "my/other/module", "normal", new JSONArray(111, 222))
+        linker.addInitialization(InitializationPriority.LATE, "my/other/module", "late", new JSONArray(333, 444))
 
         linker.updateDocument(document)
 

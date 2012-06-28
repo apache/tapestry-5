@@ -17,7 +17,7 @@ package org.apache.tapestry5.internal.services.ajax
 import org.apache.tapestry5.FieldFocusPriority;
 import org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathConstructor;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase
-import org.apache.tapestry5.json.JSONObject;
+
 import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.JavaScriptStack
 import org.apache.tapestry5.services.javascript.JavaScriptStackSource
@@ -47,7 +47,7 @@ class JavaScriptSupportAutofocusTests extends InternalBaseTestCase
         expect(coreStack.getStylesheets()).andReturn([])
         expect(coreStack.getInitialization()).andReturn(null)
 
-        linker.setModuleInitialization(InitializationPriority.NORMAL, "core/init", null,
+        linker.addInitialization(InitializationPriority.NORMAL, "core/init", null,
             new JSONArray("['activate', '$expectedFieldId']"))
 
         replay()

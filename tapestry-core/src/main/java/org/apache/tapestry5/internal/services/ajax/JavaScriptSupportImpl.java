@@ -186,7 +186,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
             @Override
             public void work(InitializationImpl element)
             {
-                linker.setModuleInitialization(element.priority, element.moduleName, element.functionName, element.arguments);
+                linker.addInitialization(element.priority, element.moduleName, element.functionName, element.arguments);
             }
         });
     }

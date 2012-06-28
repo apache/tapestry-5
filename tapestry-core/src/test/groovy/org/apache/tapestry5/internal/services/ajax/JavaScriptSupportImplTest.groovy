@@ -384,7 +384,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         arguments.each { initArgs.put it }
 
-        linker.setModuleInitialization(priority, "core/init", null, initArgs)
+        linker.addInitialization(priority, "core/init", null, initArgs)
     }
 
     @Test

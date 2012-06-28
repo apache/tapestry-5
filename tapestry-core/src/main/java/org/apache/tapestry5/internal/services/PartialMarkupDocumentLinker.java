@@ -55,7 +55,7 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
     }
 
     @Override
-    public void setModuleInitialization(InitializationPriority priority, String moduleName, String functionName, JSONArray arguments)
+    public void addInitialization(InitializationPriority priority, String moduleName, String functionName, JSONArray arguments)
     {
         String qualifiedName = functionName == null ? moduleName : moduleName + ":" + functionName;
 

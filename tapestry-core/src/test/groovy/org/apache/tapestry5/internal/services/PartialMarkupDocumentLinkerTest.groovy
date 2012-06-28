@@ -56,8 +56,8 @@ class PartialMarkupDocumentLinkerTest extends Assert {
 
         JSONObject reply = new JSONObject()
 
-        linker.setModuleInitialization(InitializationPriority.NORMAL, "core/init", "order", new JSONArray("['normal']"))
-        linker.setModuleInitialization(InitializationPriority.IMMEDIATE, "core/init", "order", new JSONArray("['immediate']"))
+        linker.addInitialization(InitializationPriority.NORMAL, "core/init", "order", new JSONArray("['normal']"))
+        linker.addInitialization(InitializationPriority.IMMEDIATE, "core/init", "order", new JSONArray("['immediate']"))
 
         linker.commit(reply)
 

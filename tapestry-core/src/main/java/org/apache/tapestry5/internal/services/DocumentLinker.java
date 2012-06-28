@@ -15,7 +15,6 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.json.JSONArray;
-import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
@@ -52,7 +51,7 @@ public interface DocumentLinker
     void addScript(InitializationPriority priority, String script);
 
     /**
-     * Page initialization based on JavaScript modules.
+     * Adds initialization, based on invoking functions exported by JavaScript modules.
      *
      * @param priority
      *         priority at which to perform initialization
@@ -61,11 +60,11 @@ public interface DocumentLinker
      * @param functionName
      *         name of function exported by module, or null (if the module exports a single function)
      * @param arguments
-     *         arguments to pass to the function
+     *         arguments to pass to the function, or null if no arguments
      * @since 5.4
      */
-    void setModuleInitialization(InitializationPriority priority,
-                                 String moduleName,
-                                 String functionName,
-                                 JSONArray arguments);
+    void addInitialization(InitializationPriority priority,
+                           String moduleName,
+                           String functionName,
+                           JSONArray arguments);
 }
