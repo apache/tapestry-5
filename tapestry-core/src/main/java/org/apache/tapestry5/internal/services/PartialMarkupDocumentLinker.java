@@ -15,11 +15,13 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
+import java.util.List;
 import java.util.Map;
 
 public class PartialMarkupDocumentLinker implements DocumentLinker
@@ -28,7 +30,7 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
 
     private final JSONArray stylesheets = new JSONArray();
 
-    private final Map<InitializationPriority, JSONObject> priorityToInits = CollectionFactory.newMap();
+    private final Map<InitializationPriority, List<JSONArray>> initsByPriority = CollectionFactory.newMap();
 
     public void addScriptLink(String scriptURL)
     {
@@ -52,15 +54,27 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
                 "DocumentLinker.addScript() is not implemented for partial page renders.");
     }
 
-    public void setInitialization(InitializationPriority priority, JSONObject initialization)
-    {
-        priorityToInits.put(priority, initialization);
-    }
-
     @Override
     public void setModuleInitialization(InitializationPriority priority, String moduleName, String functionName, JSONArray arguments)
     {
-        throw new IllegalStateException("not yet implemented");
+        String qualifiedName = functionName == null ? moduleName : moduleName + ":" + functionName;
+
+        JSONArray init = new JSONArray().put(qualifiedName);
+
+        addAll(init, arguments);
+
+        InternalUtils.addToMapList(initsByPriority, priority, init);
+    }
+
+    private static void addAll(JSONArray target, JSONArray other)
+    {
+        if (other != null)
+        {
+            for (Object o : other)
+            {
+                target.put(o);
+            }
+        }
     }
 
     /**
@@ -72,22 +86,33 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
     public void commit(JSONObject reply)
     {
         if (scripts.length() > 0)
+        {
             reply.put("scripts", scripts);
+        }
 
         if (stylesheets.length() > 0)
+        {
             reply.put("stylesheets", stylesheets);
+        }
 
-        JSONArray inits = new JSONArray();
+        JSONArray fullInits = new JSONArray();
 
         for (InitializationPriority p : InitializationPriority.values())
         {
-            JSONObject init = priorityToInits.get(p);
+            List<JSONArray> priorityInits = initsByPriority.get(p);
 
-            if (init != null)
-                inits.put(init);
+            if (priorityInits != null)
+            {
+                for (JSONArray init : priorityInits)
+                {
+                    fullInits.put(init);
+                }
+            }
         }
 
-        if (inits.length() > 0)
-            reply.put("inits", inits);
+        if (fullInits.length() > 0)
+        {
+            reply.put("inits", fullInits);
+        }
     }
 }

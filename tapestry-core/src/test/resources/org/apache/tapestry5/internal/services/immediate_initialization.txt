@@ -1,3 +1,5 @@
 <html><head><meta/><script></script></head><body><script src="/js/require.js"></script><script type="text/javascript">require.config();
-Tapestry.init({"fred":"barney"});
+require(["core/pageinit"], function (pageinit) {
+  pageinit([["immediate/module:myfunc",{"fred":"barney"}]]);
+});
 </script></body></html>

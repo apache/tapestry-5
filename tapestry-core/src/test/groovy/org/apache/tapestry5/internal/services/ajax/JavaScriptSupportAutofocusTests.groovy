@@ -16,17 +16,18 @@ package org.apache.tapestry5.internal.services.ajax
 
 import org.apache.tapestry5.FieldFocusPriority;
 import org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathConstructor;
-import org.apache.tapestry5.internal.test.InternalBaseTestCase 
+import org.apache.tapestry5.internal.test.InternalBaseTestCase
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
-import org.apache.tapestry5.services.javascript.JavaScriptStack 
-import org.apache.tapestry5.services.javascript.JavaScriptStackSource 
+import org.apache.tapestry5.services.javascript.JavaScriptStack
+import org.apache.tapestry5.services.javascript.JavaScriptStackSource
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
-import org.testng.annotations.Test;
+import org.testng.annotations.Test
+import org.apache.tapestry5.json.JSONArray;
 
-/** 
+/**
  * Tests {@link JavaScriptSupport#autofocus(org.apache.tapestry5.FieldFocusPriority, String)}
- * 
+ *
  */
 class JavaScriptSupportAutofocusTests extends InternalBaseTestCase
 {
@@ -35,40 +36,39 @@ class JavaScriptSupportAutofocusTests extends InternalBaseTestCase
         def stackSource = newMock(JavaScriptStackSource.class)
         def stackPathConstructor = newMock(JavaScriptStackPathConstructor.class)
         def coreStack = newMock(JavaScriptStack.class)
-        
+
         // Adding the autofocus will drag in the core stack
-        
+
         expect(stackSource.getStack("core")).andReturn coreStack
-        
+
         expect(stackPathConstructor.constructPathsForJavaScriptStack("core")).andReturn([])
-        
+
         expect(coreStack.getStacks()).andReturn([])
         expect(coreStack.getStylesheets()).andReturn([])
         expect(coreStack.getInitialization()).andReturn(null)
-        
-        JSONObject expected = new JSONObject("{\"activate\":[\"$expectedFieldId\"]}")
-        
-        linker.setInitialization(InitializationPriority.NORMAL, expected)
-        
+
+        linker.setModuleInitialization(InitializationPriority.NORMAL, "core/init", null,
+            new JSONArray("['activate', '$expectedFieldId']"))
+
         replay()
-        
+
         def jss = new JavaScriptSupportImpl(linker, stackSource, stackPathConstructor)
-        
+
         cls jss
-        
+
         jss.commit()
-        
+
         verify()
     }
-    
+
     @Test
     void simple_autofocus() {
-        
-        autofocus_template "fred", { 
+
+        autofocus_template "fred", {
             it.autofocus FieldFocusPriority.OPTIONAL, "fred"
         }
     }
-    
+
     @Test
     void first_focus_field_at_priority_wins() {
         autofocus_template "fred", {
@@ -76,7 +76,7 @@ class JavaScriptSupportAutofocusTests extends InternalBaseTestCase
             it.autofocus FieldFocusPriority.OPTIONAL, "barney"
         }
     }
-    
+
     @Test
     void higher_priority_wins_focus() {
         autofocus_template "barney", {

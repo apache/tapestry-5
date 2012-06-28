@@ -247,6 +247,7 @@ var Tapestry = {
      * optimization, the inner value may not be an array but instead a single
      * value.
      */
+    // Probably not used anymore:
     init: function (spec) {
         $H(spec).each(function (pair) {
             var functionName = pair.key;
@@ -348,8 +349,11 @@ var Tapestry = {
      * Called from Tapestry.loadScriptsInReply to load any initializations from
      * the Ajax partial page render response. Calls
      * Tapestry.onDomLoadedCallback() last. This logic must be deferred until
-     * after the DOM is fully updated, as initialization often refer to DOM
-     * elements.
+     * after the DOM is fully updated, as initializations often refer to DOM
+     * elements via their unique id.
+     *
+     * This has been recoded for 5.4 and is likely temporary. The format of the inits
+     * has also changed in 5.4.
      *
      * @param initializations
      *            array of parameters to pass to Tapestry.init(), one invocation
@@ -357,10 +361,14 @@ var Tapestry = {
      */
     executeInits: function (initializations) {
 
-        $A(initializations).each(function (spec) {
-            Tapestry.init(spec);
-        });
+        if (initializations) {
+            require(["core/pageinit"], function (pageinit) {
+                pageinit(initializations)
+            });
+        }
 
+        // 5.4: Concerned that this may happen too early due to the mechanics of
+        // require().
         Tapestry.onDomLoadedCallback();
     },
 
@@ -430,34 +438,34 @@ var Tapestry = {
             onException: Tapestry.ajaxExceptionHandler,
             onFailure: Tapestry.ajaxFailureHandler
         }).update(options).update({
-                onSuccess: function (response, jsonResponse) {
-                    /*
-                     * When the page is unloaded, pending Ajax requests appear to
-                     * terminate as successful (but with no reply value). Since
-                     * we're trying to navigate to a new page anyway, we just ignore
-                     * those false success callbacks. We have a listener for the
-                     * window's "beforeunload" event that sets this flag.
-                     */
-                    if (Tapestry.windowUnloaded && response.responseText.blank())
-                        return;
+                    onSuccess: function (response, jsonResponse) {
+                        /*
+                         * When the page is unloaded, pending Ajax requests appear to
+                         * terminate as successful (but with no reply value). Since
+                         * we're trying to navigate to a new page anyway, we just ignore
+                         * those false success callbacks. We have a listener for the
+                         * window's "beforeunload" event that sets this flag.
+                         */
+                        if (Tapestry.windowUnloaded && response.responseText.blank())
+                            return;
 
-                    /*
-                     * Prototype treats status == 0 as success, even though it seems
-                     * to mean the server didn't respond.
-                     */
-                    if (!response.getStatus() || !response.request.success()) {
-                        finalOptions.get('onFailure').call(this, response);
-                        return;
-                    }
+                        /*
+                         * Prototype treats status == 0 as success, even though it seems
+                         * to mean the server didn't respond.
+                         */
+                        if (!response.getStatus() || !response.request.success()) {
+                            finalOptions.get('onFailure').call(this, response);
+                            return;
+                        }
 
-                    try {
-                        /* Re-invoke the success handler, capturing any exceptions. */
-                        successHandler.call(this, response, jsonResponse);
-                    } catch (e) {
-                        finalOptions.get('onException').call(this, response, e);
+                        try {
+                            /* Re-invoke the success handler, capturing any exceptions. */
+                            successHandler.call(this, response, jsonResponse);
+                        } catch (e) {
+                            finalOptions.get('onException').call(this, response, e);
+                        }
                     }
-                }
-            });
+                });
 
         var ajaxRequest = new Ajax.Request(url, finalOptions.toObject());
 
@@ -618,8 +626,8 @@ var Tapestry = {
         var outerHTML = dummy.innerHTML;
 
         var replaceHTML = outerHTML.replace(new RegExp("^<" + tag, "i"),
-            "<" + newTagName).replace(new RegExp("</" + tag + ">$", "i"),
-            "</" + newTagName + ">");
+                "<" + newTagName).replace(new RegExp("</" + tag + ">$", "i"),
+                "</" + newTagName + ">");
 
         element.insert({
             before: replaceHTML
@@ -714,114 +722,114 @@ Element.addMethods({
 });
 
 Element
-    .addMethods(
-    'FORM',
-    {
-        /**
-         * Gets the Tapestry.FormEventManager for the form.
-         *
-         * @param form
-         *            form element
-         */
-        getFormEventManager: function (form) {
-            form = $(form);
+        .addMethods(
+        'FORM',
+        {
+            /**
+             * Gets the Tapestry.FormEventManager for the form.
+             *
+             * @param form
+             *            form element
+             */
+            getFormEventManager: function (form) {
+                form = $(form);
 
-            var manager = $T(form).formEventManager;
+                var manager = $T(form).formEventManager;
 
-            if (manager == undefined) {
+                if (manager == undefined) {
 
-                throw "No Tapestry.FormEventManager object has been created for form '#{id}'."
-                    .interpolate(form);
+                    throw "No Tapestry.FormEventManager object has been created for form '#{id}'."
+                            .interpolate(form);
+                }
+
+                return manager;
+            },
+
+            /**
+             * Identifies in the form what is the cause of the
+             * submission. The element's id is stored into the t:submit
+             * hidden field (created as needed).
+             *
+             * @param form
+             *            to update
+             * @param element
+             *            id or element that is the cause of the submit
+             *            (a Submit or LinkSubmit)
+             */
+            setSubmittingElement: function (form, element) {
+                form.getFormEventManager()
+                        .setSubmittingElement(element);
+            },
+
+            /**
+             * Turns off client validation for the next submission of
+             * the form.
+             */
+            skipValidation: function (form) {
+                $T(form).skipValidation = true;
+            },
+
+            /**
+             * Programmatically perform a submit, invoking the onsubmit
+             * event handler (if present) before calling form.submit().
+             */
+            performSubmit: function (form, event) {
+                if (form.onsubmit == undefined
+                        || form.onsubmit.call(window.document, event)) {
+                    form.submit();
+                }
+            },
+
+            /**
+             * Sends an Ajax request to the Form's action. This
+             * encapsulates a few things, such as a default onFailure
+             * handler, and working around bugs/features in Prototype
+             * concerning how submit buttons are processed.
+             *
+             * @param form
+             *            used to define the data to be sent in the
+             *            request
+             * @param options
+             *            standard Prototype Ajax Options
+             * @return Ajax.Request the Ajax.Request created for the
+             *         request
+             */
+            sendAjaxRequest: function (form, url, options) {
+                form = $(form);
+
+                /*
+                 * Generally, options should not be null or missing,
+                 * because otherwise there's no way to provide any
+                 * callbacks!
+                 */
+                options = Object.clone(options || {});
+
+                /*
+                 * Find the elements, skipping over any submit buttons.
+                 * This works around bugs in Prototype 1.6.0.2.
+                 */
+                var elements = form.getElements().reject(function (e) {
+                    return e.tagName == "INPUT" && e.type == "submit";
+                });
+
+                var hash = Form.serializeElements(elements, true);
+
+                /*
+                 * Copy the parameters in, overwriting field values,
+                 * because Prototype 1.6.0.2 does not.
+                 */
+                Object.extend(hash, options.parameters);
+
+                options.parameters = hash;
+
+                /*
+                 * Ajax.Request will convert the hash into a query
+                 * string and post it.
+                 */
+
+                return Tapestry.ajaxRequest(url, options);
             }
-
-            return manager;
-        },
-
-        /**
-         * Identifies in the form what is the cause of the
-         * submission. The element's id is stored into the t:submit
-         * hidden field (created as needed).
-         *
-         * @param form
-         *            to update
-         * @param element
-         *            id or element that is the cause of the submit
-         *            (a Submit or LinkSubmit)
-         */
-        setSubmittingElement: function (form, element) {
-            form.getFormEventManager()
-                .setSubmittingElement(element);
-        },
-
-        /**
-         * Turns off client validation for the next submission of
-         * the form.
-         */
-        skipValidation: function (form) {
-            $T(form).skipValidation = true;
-        },
-
-        /**
-         * Programmatically perform a submit, invoking the onsubmit
-         * event handler (if present) before calling form.submit().
-         */
-        performSubmit: function (form, event) {
-            if (form.onsubmit == undefined
-                || form.onsubmit.call(window.document, event)) {
-                form.submit();
-            }
-        },
-
-        /**
-         * Sends an Ajax request to the Form's action. This
-         * encapsulates a few things, such as a default onFailure
-         * handler, and working around bugs/features in Prototype
-         * concerning how submit buttons are processed.
-         *
-         * @param form
-         *            used to define the data to be sent in the
-         *            request
-         * @param options
-         *            standard Prototype Ajax Options
-         * @return Ajax.Request the Ajax.Request created for the
-         *         request
-         */
-        sendAjaxRequest: function (form, url, options) {
-            form = $(form);
-
-            /*
-             * Generally, options should not be null or missing,
-             * because otherwise there's no way to provide any
-             * callbacks!
-             */
-            options = Object.clone(options || {});
-
-            /*
-             * Find the elements, skipping over any submit buttons.
-             * This works around bugs in Prototype 1.6.0.2.
-             */
-            var elements = form.getElements().reject(function (e) {
-                return e.tagName == "INPUT" && e.type == "submit";
-            });
-
-            var hash = Form.serializeElements(elements, true);
-
-            /*
-             * Copy the parameters in, overwriting field values,
-             * because Prototype 1.6.0.2 does not.
-             */
-            Object.extend(hash, options.parameters);
-
-            options.parameters = hash;
-
-            /*
-             * Ajax.Request will convert the hash into a query
-             * string and post it.
-             */
-
-            return Tapestry.ajaxRequest(url, options);
-        }
-    });
+        });
 
 Element.addMethods([ 'INPUT', 'SELECT', 'TEXTAREA' ], {
     /**
@@ -958,7 +966,7 @@ T5.extendInitializers({
      */
     linkZone: function (spec) {
         Tapestry.Initializer.updateZoneOnEvent("click", spec.linkId,
-            spec.zoneId, spec.url);
+                spec.zoneId, spec.url);
     },
 
     /**
@@ -974,7 +982,7 @@ T5.extendInitializers({
      */
     linkSelectToZone: function (spec) {
         Tapestry.Initializer.updateZoneOnEvent("change", spec.selectId,
-            spec.zoneId, spec.url);
+                spec.zoneId, spec.url);
     },
 
     linkSubmit: function (spec) {
@@ -1025,17 +1033,17 @@ T5.extendInitializers({
         $T(element).zoneUpdater = true;
 
         var zoneElement = zoneId == '^' ? $(element).up('.t-zone')
-            : $(zoneId);
+                : $(zoneId);
 
         if (!zoneElement) {
             Tapestry
-                .error(
-                "Could not find zone element '#{zoneId}' to update on #{eventName} of element '#{elementId}'.",
-                {
-                    zoneId: zoneId,
-                    eventName: eventName,
-                    elementId: element.id
-                });
+                    .error(
+                    "Could not find zone element '#{zoneId}' to update on #{eventName} of element '#{elementId}'.",
+                    {
+                        zoneId: zoneId,
+                        eventName: eventName,
+                        elementId: element.id
+                    });
             return;
         }
 
@@ -1058,27 +1066,27 @@ T5.extendInitializers({
              */
 
             element
-                .observe(
-                Tapestry.FORM_PROCESS_SUBMIT_EVENT,
-                function () {
-                    var zoneManager = Tapestry
-                        .findZoneManager(element);
+                    .observe(
+                    Tapestry.FORM_PROCESS_SUBMIT_EVENT,
+                    function () {
+                        var zoneManager = Tapestry
+                                .findZoneManager(element);
 
-                    if (!zoneManager)
-                        return;
+                        if (!zoneManager)
+                            return;
 
-                    var successHandler = function (transport) {
-                        zoneManager
-                            .processReply(transport.responseJSON);
-                    };
+                        var successHandler = function (transport) {
+                            zoneManager
+                                    .processReply(transport.responseJSON);
+                        };
 
-                    element.sendAjaxRequest(url, {
-                        parameters: {
-                            "t:zoneid": zoneId
-                        },
-                        onSuccess: successHandler
+                        element.sendAjaxRequest(url, {
+                            parameters: {
+                                "t:zoneid": zoneId
+                            },
+                            onSuccess: successHandler
+                        });
                     });
-                });
 
             return;
         }
@@ -1122,7 +1130,7 @@ T5.extendInitializers({
      */
     formEventManager: function (spec) {
         $T(spec.formId).formEventManager = new Tapestry.FormEventManager(
-            spec);
+                spec);
     },
 
     /**
@@ -1132,45 +1140,45 @@ T5.extendInitializers({
      */
     validate: function (masterSpec) {
         $H(masterSpec)
-            .each(
-            function (pair) {
+                .each(
+                function (pair) {
 
-                var field = $(pair.key);
+                    var field = $(pair.key);
 
-                /*
-                 * Force the creation of the field event
-                 * manager.
-                 */
+                    /*
+                     * Force the creation of the field event
+                     * manager.
+                     */
 
-                $(field).getFieldEventManager();
+                    $(field).getFieldEventManager();
 
-                $A(pair.value)
-                    .each(function (spec) {
-                        /*
-                         * Each pair value is an array of specs, each spec is a 2 or 3 element array. validator function name, message, optional constraint
-                         */
+                    $A(pair.value)
+                            .each(function (spec) {
+                                /*
+                                 * Each pair value is an array of specs, each spec is a 2 or 3 element array. validator function name, message, optional constraint
+                                 */
 
-                        var name = spec[0];
-                        var message = spec[1];
-                        var constraint = spec[2];
+                                var name = spec[0];
+                                var message = spec[1];
+                                var constraint = spec[2];
 
-                        var vfunc = Tapestry.Validator[name];
+                                var vfunc = Tapestry.Validator[name];
 
-                        if (vfunc == undefined) {
-                            Tapestry
-                                .error(Tapestry.Messages.missingValidator, {
-                                name: name,
-                                fieldName: field.id
+                                if (vfunc == undefined) {
+                                    Tapestry
+                                            .error(Tapestry.Messages.missingValidator, {
+                                                name: name,
+                                                fieldName: field.id
+                                            });
+                                    return;
+                                }
+
+                                /*
+                                 * Pass the extended field, the provided message, and the constraint object to the Tapestry.Validator function, so that it can, typically, invoke field.addValidator().
+                                 */
+                                vfunc.call(this, field, message, constraint);
                             });
-                            return;
-                        }
-
-                        /*
-                         * Pass the extended field, the provided message, and the constraint object to the Tapestry.Validator function, so that it can, typically, invoke field.addValidator().
-                         */
-                        vfunc.call(this, field, message, constraint);
-                    });
-            });
+                });
     },
 
     zone: function (spec) {
@@ -1215,7 +1223,7 @@ Tapestry.Validator = {
     required: function (field, message) {
         $(field).getFieldEventManager().requiredCheck = function (value) {
             if ((T5._.isString(value) && value.strip() == '')
-                || value == null)
+                    || value == null)
                 $(field).showValidationMessage(message);
         };
     },
@@ -1596,7 +1604,7 @@ Tapestry.FieldEventManager = Class.create({
                  * change until after the FOCUS_CHANGE_EVENT notification.
                  */
                 if (Tapestry.currentFocusField == this.field
-                    && this.field.form == event.memo.form)
+                        && this.field.form == event.memo.form)
                     this.validateInput();
 
             }.bindAsEventListener(this));
@@ -1604,7 +1612,7 @@ Tapestry.FieldEventManager = Class.create({
 
         if (fem.validateOnSubmit) {
             $(this.field.form).observe(Tapestry.FORM_VALIDATE_FIELDS_EVENT,
-                this.validateInput.bindAsEventListener(this));
+                    this.validateInput.bindAsEventListener(this));
         }
     },
 
@@ -1780,9 +1788,9 @@ Tapestry.ZoneManager = Class.create({
     initialize: function (spec) {
         this.element = $(spec.element);
         this.showFunc = Tapestry.ElementEffect[spec.show]
-            || Tapestry.ElementEffect.show;
+                || Tapestry.ElementEffect.show;
         this.updateFunc = Tapestry.ElementEffect[spec.update]
-            || Tapestry.ElementEffect.highlight;
+                || Tapestry.ElementEffect.highlight;
         this.specParameters = spec.parameters;
 
         /*
@@ -1790,7 +1798,7 @@ Tapestry.ZoneManager = Class.create({
          * as a default
          */
         this.endcolor = this.element.getStyle('background-color').parseColor(
-            '#ffffff');
+                '#ffffff');
 
         /* Link the div back to this zone. */
 
@@ -1904,7 +1912,7 @@ Tapestry.FormInjector = Class.create({
         this.below = spec.below;
 
         this.showFunc = Tapestry.ElementEffect[spec.show]
-            || Tapestry.ElementEffect.highlight;
+                || Tapestry.ElementEffect.highlight;
 
         this.element.trigger = function () {
 
@@ -1997,7 +2005,7 @@ Tapestry.ScriptManager = {
             element.onreadystatechange = function () {
                 /* IE may fire either 'loaded' or 'complete', or possibly both. */
                 if (!loaded && this.readyState == 'loaded'
-                    || this.readyState == 'complete') {
+                        || this.readyState == 'complete') {
                     loaded = true;
 
                     callback.call(this);
@@ -2032,11 +2040,11 @@ Tapestry.ScriptManager = {
         var self = this;
 
         var topCallback = _(scripts).chain().map(Tapestry.rebuildURL).difference(loaded).reverse().reduce(
-            function (nextCallback, scriptURL) {
-                return function () {
-                    self.loadScript(scriptURL, nextCallback);
-                }
-            }, callback).value();
+                function (nextCallback, scriptURL) {
+                    return function () {
+                        self.loadScript(scriptURL, nextCallback);
+                    }
+                }, callback).value();
 
         // Kick if off with the callback that loads the first script:
 
@@ -2057,14 +2065,14 @@ Tapestry.ScriptManager = {
         var loaded = _(document.styleSheets).chain().pluck("href").without("").map(this.rebuildURLIfIE).value();
 
         var toLoad = _(stylesheets).chain().map(
-            function (ss) {
-                ss.href = Tapestry.rebuildURL(ss.href);
+                function (ss) {
+                    ss.href = Tapestry.rebuildURL(ss.href);
 
-                return ss;
-            }).reject(
-            function (ss) {
-                return _(loaded).contains(ss.href);
-            }).value();
+                    return ss;
+                }).reject(
+                function (ss) {
+                    return _(loaded).contains(ss.href);
+                }).value();
 
 
         var head = $$('head').first();

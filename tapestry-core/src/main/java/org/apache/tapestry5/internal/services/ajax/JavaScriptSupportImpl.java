@@ -52,12 +52,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
     private final List<StylesheetLink> stylesheetLinks = CollectionFactory.newList();
 
-    private final Map<InitializationPriority, JSONObject> inits = CollectionFactory.newMap();
-
-    // Temporary name, as eventually 5.3-style inits will become a special case of
-    // 5.4 module-based initialization.
-
-    private final List<InitializationImpl> moduleInits = CollectionFactory.newList();
+    private final List<InitializationImpl> inits = CollectionFactory.newList();
 
     private final JavaScriptStackSource javascriptStackSource;
 
@@ -148,7 +143,9 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         // (from the original page render).
 
         if (partialMode)
+        {
             addedStacks.put(InternalConstants.CORE_STACK_NAME, true);
+        }
     }
 
     public void commit()
@@ -177,17 +174,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         F.flow(stackLibraries).each(linkLibrary);
         F.flow(otherLibraries).each(linkLibrary);
 
-        for (InitializationPriority p : InitializationPriority.values())
-        {
-            JSONObject init = inits.get(p);
-
-            if (init != null)
-            {
-                linker.setInitialization(p, init);
-            }
-        }
-
-        F.flow(moduleInits).sort(new Comparator<InitializationImpl>()
+        F.flow(inits).sort(new Comparator<InitializationImpl>()
         {
             @Override
             public int compare(InitializationImpl o1, InitializationImpl o2)
@@ -224,25 +211,8 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         assert priority != null;
         assert parameter != null;
         assert InternalUtils.isNonBlank(functionName);
-        addCoreStackIfNeeded();
 
-        JSONObject init = inits.get(priority);
-
-        if (init == null)
-        {
-            init = new JSONObject();
-            inits.put(priority, init);
-        }
-
-        JSONArray invocations = init.has(functionName) ? init.getJSONArray(functionName) : null;
-
-        if (invocations == null)
-        {
-            invocations = new JSONArray();
-            init.put(functionName, invocations);
-        }
-
-        invocations.put(parameter);
+        require("core/init").priority(priority).with(functionName, parameter);
     }
 
     public void addInitializerCall(String functionName, JSONObject parameter)
@@ -431,9 +401,11 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     {
         assert InternalUtils.isNonBlank(moduleName);
 
+        addCoreStackIfNeeded();
+
         InitializationImpl init = new InitializationImpl(moduleName);
 
-        moduleInits.add(init);
+        inits.add(init);
 
         return init;
     }

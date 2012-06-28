@@ -52,17 +52,6 @@ public interface DocumentLinker
     void addScript(InitializationPriority priority, String script);
 
     /**
-     * Adds a call to the Tapestry.init() function. This may be called multiple times and the init() calls will occur
-     * in order. In a normal page render, the init() calls will be added to the main JavaScript block, but in a partial
-     * page render Ajax response, the initialization will be property "init" of the partial page render response.
-     * <p/>
-     * This method should only be invoked at most once per priority.
-     *
-     * @since 5.2.0
-     */
-    void setInitialization(InitializationPriority priority, JSONObject initialization);
-
-    /**
      * Page initialization based on JavaScript modules.
      *
      * @param priority
@@ -73,6 +62,7 @@ public interface DocumentLinker
      *         name of function exported by module, or null (if the module exports a single function)
      * @param arguments
      *         arguments to pass to the function
+     * @since 5.4
      */
     void setModuleInitialization(InitializationPriority priority,
                                  String moduleName,

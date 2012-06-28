@@ -1,5 +1,7 @@
 <html><head><meta/><script></script></head><body><script src="/js/require.js"></script><script type="text/javascript">require.config();
 Tapestry.onDOMLoaded(function() {
-Tapestry.init({"fred":"barney"});
+require(["core/pageinit"], function (pageinit) {
+  pageinit([["my/module","barney"]]);
+});
 });
 </script></body></html>
