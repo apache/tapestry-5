@@ -91,8 +91,6 @@ public class Index
                     new Item("DynamicExpansionsDemo", "Expansions in Dynamic Templates",
                             "Expansions inside Dynamic component content and attributes"),
 
-                    new Item("JavaScriptTests", "JavaScript Unit Tests", "Unit tests for client-side JavaScript"),
-
                     new Item("PACAnnotationDemo", "PageActivationContext Demo",
                             "Shows that @PageActivationContext fields are set before calls to the activate event handler."),
 
