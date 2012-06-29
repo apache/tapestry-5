@@ -1,4 +1,4 @@
-// Copyright 2008, 2011 The Apache Software Foundation
+// Copyright 2008, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,6 +35,17 @@ public class CommitAfterWorker implements ComponentClassTransformWorker2
 
     private final MethodAdvice advice = new MethodAdvice()
     {
+        private void abort()
+        {
+            try
+            {
+                manager.abort();
+            } catch (Exception e)
+            {
+                // Ignore.
+            }
+        }
+
         public void advise(MethodInvocation invocation)
         {
             try
@@ -44,10 +55,9 @@ public class CommitAfterWorker implements ComponentClassTransformWorker2
                 // Success or checked exception:
 
                 manager.commit();
-            }
-            catch (RuntimeException ex)
+            } catch (RuntimeException ex)
             {
-                manager.abort();
+                abort();
 
                 throw ex;
             }
