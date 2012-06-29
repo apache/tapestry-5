@@ -43,7 +43,7 @@ define ->
       afterFinish: -> div.remove()  # was T5.dom.remove(div)
 
     div.observe "click", ->
-      effect.cancel()
+      fade.cancel()
       div.remove() # was T5.dom.remove(div)
 
   level = (className, consolefn) ->
