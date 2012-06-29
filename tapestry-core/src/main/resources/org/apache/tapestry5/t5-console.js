@@ -13,16 +13,5 @@
 // limitations under the License.
 
 T5.define("console", function () {
-
-    exports = {};
-
-    T5._.each(["debug", "info", "warn", "error"], function (name) {
-        exports[name] = function (message) {
-            require(["core/console"], function (cc) {
-                cc[name].call(null, message);
-            });
-        };
-    });
-
-    return exports;
+    return T5.proxyFunctionsToModule("core/console", "debug", "info", "warn", "error");
 });

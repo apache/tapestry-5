@@ -25,7 +25,7 @@ window.T5 = {
     /** _ is _.noConflict(), in other words, all Underscore functions are not inside
      * T5._, rather than simply _.
      */
-    _ : _.noConflict()
+    _: _.noConflict()
 };
 
 /**
@@ -41,7 +41,7 @@ window.T5 = {
  *            object
  * @returns the destination object
  */
-T5.extend = function(destination, source) {
+T5.extend = function (destination, source) {
     var _ = T5._;
 
     if (_.isFunction(source)) {
@@ -61,9 +61,43 @@ T5.extend = function(destination, source) {
  *            object)
  * @return the namespace object
  */
-T5.define = function(name, source) {
+T5.define = function (name, source) {
     var namespace = {};
     T5[name] = namespace;
 
     return this.extend(namespace, source);
+};
+
+/**
+ * Used when mapping a new-style module to an old-style namespace.
+ * @param moduleName name of module to export from. Additional arguments are the function names
+ * to proxy.
+ * @param functionNames... names of functions to to proxy
+ * @return  An object with the function names; each value is a function that uses require()
+ * to obtain the function inside the module (asynchronously, at least the first time).
+ */
+T5.proxyFunctionsToModule = function (moduleName) {
+
+    var slice = Array.prototype.slice;
+    var _ = T5._;
+
+    var functionNames = _.tail(arguments);
+    var deps = [moduleName];
+    var result = {}
+
+    // Force the module to be loaded early, so that there will not (usually) be a delay
+    // later.
+    require(deps, function () { });
+
+   _.each(functionNames, function (name) {
+        result[name] = function () {
+            var capturedArguments = slice.call(arguments, 0);
+
+            require(deps, function (module) {
+                module[name].apply(null, capturedArguments);
+            });
+        };
+    });
+
+    return result;
 };
