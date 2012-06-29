@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public class ResourceChangeTrackerImpl extends InvalidationEventHubImpl implemen
      * all exposed assets include a URL with a version number, and each new deployment of the application should change
      * that version number.
      */
-    private final long fixedLastModifiedTime = System.currentTimeMillis();
+    private final long fixedLastModifiedTime = Math.round(System.currentTimeMillis() / 1000d) * 1000L;
 
     public ResourceChangeTrackerImpl(ClasspathURLConverter classpathURLConverter,
                                      @Symbol(SymbolConstants.PRODUCTION_MODE)
