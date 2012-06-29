@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ public class CommitAfterMethodAdvice implements MethodAdvice
         {
             if (transaction != null && transaction.isActive())
             {
-                transaction.rollback();
+                rollbackTransaction(transaction);
             }
 
             throw e;
@@ -63,6 +63,16 @@ public class CommitAfterMethodAdvice implements MethodAdvice
             transaction.commit();
         }
 
+    }
+
+    private void rollbackTransaction(EntityTransaction transaction)
+    {
+        try
+        {
+            transaction.rollback();
+        } catch (Exception e)
+        { // Ignore
+        }
     }
 
     private EntityTransaction getTransaction()
