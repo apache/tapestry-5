@@ -16,6 +16,8 @@ define ->
   nativeConsole = {}
   floatingConsole = null
 
+  # module exports are mutable; someone else could
+  # require this module to change the default DURATION
   exports =
     DURATION : 10 # seconds
 
