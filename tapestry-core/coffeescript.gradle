@@ -9,6 +9,12 @@ buildscript {
 }
 
 class CompileCoffeeScript extends DefaultTask { 
+
+  { 
+    description = "Compiles CoffeeScript sources into JavaScript"
+    group = "build"
+  }
+
   def srcDir = "src/main/coffeescript"
 
   def outputDir = "${project.buildDir}/compiled-coffeescript"
