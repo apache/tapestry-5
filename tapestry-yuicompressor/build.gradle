@@ -11,14 +11,16 @@ repositories {
   mavenRepo name: "Maven Play Plugin", url: "http://maven-play-plugin.googlecode.com/svn/mavenrepo/releases"
 }
 
-install { 
-  repositories.mavenInstaller { 
-    pom.project { 
-      repositories { 
-        repository { 
-          id "maven-play-plugin"
-          name "Maven Play Plugin"
-          url "http://maven-play-plugin.googlecode.com/svn/mavenrepo/releases"
+uploadPublished { 
+  repositories { 
+    mavenDeployer { 
+      pom.project { 
+        repositories { 
+          repository { 
+            id "maven-play-plugin"
+            name "Maven Play Plugin"
+            url "http://maven-play-plugin.googlecode.com/svn/mavenrepo/releases"
+          }
         }
       }
     }
