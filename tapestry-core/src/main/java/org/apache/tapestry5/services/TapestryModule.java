@@ -2146,8 +2146,6 @@ public final class TapestryModule
         configuration.add("tapestry.datepicker.path", "org/apache/tapestry5/datepicker_106");
         configuration.add(SymbolConstants.DATEPICKER, "classpath:${tapestry.datepicker.path}");
 
-        configuration.add(SymbolConstants.BLACKBIRD, "");
-
         configuration.add(SymbolConstants.PERSISTENCE_STRATEGY, PersistenceConstants.SESSION);
 
         configuration.add(MetaDataConstants.RESPONSE_CONTENT_TYPE, "text/html");
@@ -2171,8 +2169,6 @@ public final class TapestryModule
         configuration.add(SymbolConstants.COMPACT_JSON, SymbolConstants.PRODUCTION_MODE_VALUE);
 
         configuration.add(SymbolConstants.ENCODE_LOCALE_INTO_PATH, true);
-
-        configuration.add(SymbolConstants.BLACKBIRD_ENABLED, false);
 
         configuration.add(InternalSymbols.PRE_SELECTED_FORM_NAMES, "reset,submit,select,id,method,action,onsubmit," + InternalConstants.CANCEL_NAME);
 

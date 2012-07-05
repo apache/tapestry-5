@@ -183,13 +183,6 @@ public class SymbolConstants
      */
     public static final String COMBINE_SCRIPTS = "tapestry.combine-scripts";
 
-    /**
-     * If "true" then Blackbird JavaScript console is enabled.
-     *
-     * @since 5.2.0
-     * @deprecated in 5.3, with no replacement (due to removal of Blackbird console entirely)
-     */
-    public static final String BLACKBIRD_ENABLED = "tapestry.blackbird-enabled";
 
     /**
      * The default time interval that cookies created by Tapestry will be kept in the client web browser. The default is
@@ -226,14 +219,6 @@ public class SymbolConstants
      * @since 5.2.0
      */
     public static final String DATEPICKER = "tapestry.datepicker";
-
-    /**
-     * The Asset path to the embedded copy of blackbird packaged with Tapestry.
-     *
-     * @since 5.2.0
-     * @deprecated in 5.3 with no replacement
-     */
-    public static final String BLACKBIRD = "tapestry.blackbird";
 
     /**
      * If "true", then JSON page initialization content is compressed; if "false"
