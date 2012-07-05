@@ -1820,7 +1820,7 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                DocumentLinkerImpl linker = new DocumentLinkerImpl(moduleManager, requireJS, omitGeneratorMeta, tapestryVersion, compactJSON);
+                DocumentLinkerImpl linker = new DocumentLinkerImpl(moduleManager, omitGeneratorMeta, tapestryVersion, compactJSON);
 
                 environment.push(DocumentLinker.class, linker);
 

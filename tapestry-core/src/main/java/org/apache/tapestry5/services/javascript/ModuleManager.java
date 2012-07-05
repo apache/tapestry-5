@@ -33,13 +33,14 @@ public interface ModuleManager
 {
     /**
      * Invoked by the internal {@link org.apache.tapestry5.internal.services.DocumentLinker} service to write the configuration
-     * of the module system into the page. This is the necessary initialization of the client-side {@code require} object, including
+     * of the module system into the page, including the tag to load the RequireJS library, and the
+     * necessary initialization of the client-side {@code require} object, including
      * (critically) its baseUrl property.
      *
-     * @param scriptElement
-     *         {@code <script>} element to write configuration should be written (using {@link Element#raw(String)}
+     * @param body
+     *         {@code <body>} element of the page, to which new {@code <script>>} element(s) will be added.
      */
-    void writeConfiguration(Element scriptElement);
+    void writeInitialization(Element body);
 
     /**
      * Given a module name (which may be a path of names separated by slashes), locates the corresponding {@link Resource}.

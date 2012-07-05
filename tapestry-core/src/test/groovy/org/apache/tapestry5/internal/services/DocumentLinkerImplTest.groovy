@@ -1,7 +1,6 @@
 package org.apache.tapestry5.internal.services;
 
 
-import org.apache.tapestry5.Asset
 import org.apache.tapestry5.dom.Document
 import org.apache.tapestry5.dom.Element
 import org.apache.tapestry5.dom.XMLMarkupModel
@@ -30,7 +29,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("not-html").text("not an HTML document")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, "1.2.3", true)
 
         // Only checked if there's something to link.
 
@@ -53,7 +52,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("not-html").text("not an HTML document")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, "1.2.3", true)
 
         // Only checked if there's something to link.
 
@@ -74,7 +73,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
     void missing_root_element_is_a_noop() {
         Document document = new Document()
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, "1.2.3", true)
 
         linker.addScriptLink("foo.js")
         linker.addScript(InitializationPriority.NORMAL, "doSomething();")
@@ -90,7 +89,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), mockRequireJS(), true, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), true, "1.2.3", true)
 
         replay()
 
@@ -102,7 +101,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         check document, '''
 <?xml version="1.0"?>
-<html><head/><body><p>Ready to be updated with scripts.</p><script src="/js/require.js"/><script type="text/javascript">require.config();
+<html><body><p>Ready to be updated with scripts.</p><script src="/js/require.js"/><script type="text/javascript">require.config();
 </script><script src="foo.js" type="text/javascript"/><script src="bar/baz.js" type="text/javascript"/><script type="text/javascript">Tapestry.onDOMLoaded(function() {
 pageInitialization();
 });
@@ -120,7 +119,7 @@ pageInitialization();
 
         document.newRootElement("html").element("body").element("p").text("Ready to be marked with generator meta.")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, false, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, false, "1.2.3", true)
 
         linker.updateDocument(document)
 
@@ -139,7 +138,7 @@ pageInitialization();
 
         document.newRootElement("no_html").text("Generator meta only added if root is html tag.")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, false, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, false, "1.2.3", true)
 
         linker.updateDocument(document)
 
@@ -156,7 +155,7 @@ pageInitialization();
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with styles.")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, mockRequireJS(), true, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, "1.2.3", true)
 
         linker.addStylesheetLink(new StylesheetLink("foo.css"))
         linker.addStylesheetLink(new StylesheetLink("bar/baz.css", new StylesheetOptions("print")))
@@ -176,7 +175,7 @@ pageInitialization();
         document.newRootElement("html").element("head").comment(" existing head ").container.element("body").text(
             "body content")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, mockRequireJS(), true, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, "1.2.3", true)
 
         linker.addStylesheetLink(new StylesheetLink("foo.css"))
 
@@ -194,7 +193,7 @@ pageInitialization();
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), mockRequireJS(), true, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), true, "1.2.3", true)
 
         replay()
 
@@ -204,7 +203,7 @@ pageInitialization();
         linker.updateDocument(document)
 
         check document, '''
-<html><head></head><body><p>Ready to be updated with scripts.</p><script src="/js/require.js"></script><script type="text/javascript">require.config();
+<html><body><p>Ready to be updated with scripts.</p><script src="/js/require.js"></script><script type="text/javascript">require.config();
 </script><script type="text/javascript">doSomething();
 doSomethingElse();
 </script></body></html>
@@ -222,7 +221,7 @@ doSomethingElse();
 
         document.newRootElement("html").element("notbody").element("p").text("Ready to be updated with scripts.")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), mockRequireJS(), true, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), true, "1.2.3", true)
 
         linker.addScriptLink("foo.js")
 
@@ -230,7 +229,7 @@ doSomethingElse();
 
         check document, '''
 <?xml version="1.0"?>
-<html><head/><notbody><p>Ready to be updated with scripts.</p></notbody><body><script/><script type="text/javascript">require.config();
+<html><notbody><p>Ready to be updated with scripts.</p></notbody><body><script src="/js/require.js"/><script type="text/javascript">require.config();
 </script><script src="foo.js" type="text/javascript"/></body></html>
 '''
     }
@@ -241,7 +240,7 @@ doSomethingElse();
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), mockRequireJS(), true, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), true, "1.2.3", true)
 
         replay()
 
@@ -250,7 +249,7 @@ doSomethingElse();
         linker.updateDocument(document)
 
         check document, '''
-<html><head></head><body><p>Ready to be updated with scripts.</p><script src="/js/require.js"></script><script type="text/javascript">require.config();
+<html><body><p>Ready to be updated with scripts.</p><script src="/js/require.js"></script><script type="text/javascript">require.config();
 </script><script type="text/javascript">for (var i = 0; i < 5; i++)  { doIt(i); }
 </script></body></html>
 '''
@@ -264,7 +263,7 @@ doSomethingElse();
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), mockRequireJS(), true, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), true, "1.2.3", true)
 
         replay()
 
@@ -287,7 +286,7 @@ doSomethingElse();
         head.element("meta")
         head.element("script")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), mockRequireJS(), true, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), true, "1.2.3", true)
 
         replay()
 
@@ -314,7 +313,7 @@ doSomethingElse();
 
         head.element("meta")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), mockRequireJS(), true, "1.2.3", false)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), true, "1.2.3", false)
 
         replay()
 
@@ -358,7 +357,7 @@ require(["core/pageinit"], function (pageinit) {
         head.element("meta")
         head.element("script")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), mockRequireJS(), true, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), true, "1.2.3", true)
 
         replay()
 
@@ -384,7 +383,7 @@ require(["core/pageinit"], function (pageinit) {
 
         document.newRootElement("html")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, null, true, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, "1.2.3", true)
 
         linker.addStylesheetLink(new StylesheetLink("everybody.css"))
         linker.addStylesheetLink(new StylesheetLink("just_ie.css", new StylesheetOptions().withCondition("IE")))
@@ -406,7 +405,7 @@ require(["core/pageinit"], function (pageinit) {
 
         document.newRootElement("html")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, mockRequireJS(), true, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, "1.2.3", true)
 
         linker.addStylesheetLink(new StylesheetLink("whatever.css"))
         linker.addStylesheetLink(new StylesheetLink("insertion-point.css", new StylesheetOptions().asAjaxInsertionPoint()))
@@ -426,7 +425,7 @@ require(["core/pageinit"], function (pageinit) {
 
         head.element("meta")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), mockRequireJS(), true, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), true, "1.2.3", true)
 
         replay()
 
@@ -455,8 +454,10 @@ require(["core/pageinit"], function (pageinit) {
         return new ModuleManager() {
 
             @Override
-            void writeConfiguration(Element scriptElement) {
-                scriptElement.raw("require.config();\n")
+            void writeInitialization(Element body) {
+                // Placeholder for the real code, inside ModuleManagerImpl
+                body.element("script", "src", "/js/require.js");
+                body.element("script", "type", "text/javascript").raw("require.config();\n")
             }
 
             @Override
@@ -464,13 +465,5 @@ require(["core/pageinit"], function (pageinit) {
                 return null;
             }
         };
-    }
-
-    private Asset mockRequireJS() {
-        Asset mock = newMock(Asset.class)
-
-        expect(mock.toClientURL()).andReturn("/js/require.js").once()
-
-        return mock;
     }
 }

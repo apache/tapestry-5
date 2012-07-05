@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -47,23 +46,18 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     private boolean hasDynamicScript;
 
-    private final Asset requireJS;
-
     /**
      * @param moduleManager
      *         used to identify the root folder for dynamically loaded modules
-     * @param requireJS
-     *         asset for the library
      * @param omitGeneratorMetaTag
      *         via symbol configuration
      * @param tapestryVersion
      *         version of Tapestry framework (for meta tag)
      * @param compactJSON
      */
-    public DocumentLinkerImpl(ModuleManager moduleManager, Asset requireJS, boolean omitGeneratorMetaTag, String tapestryVersion, boolean compactJSON)
+    public DocumentLinkerImpl(ModuleManager moduleManager, boolean omitGeneratorMetaTag, String tapestryVersion, boolean compactJSON)
     {
         this.moduleManager = moduleManager;
-        this.requireJS = requireJS;
         this.omitGeneratorMetaTag = omitGeneratorMetaTag;
 
         tapestryBanner = String.format("Apache Tapestry Framework (version %s)", tapestryVersion);
@@ -181,10 +175,7 @@ public class DocumentLinkerImpl implements DocumentLinker
         if (!rootElementName.equals("html"))
             throw new RuntimeException(String.format("The root element of the rendered document was <%s>, not <html>. A root element of <html> is needed when linking JavaScript and stylesheet resources.", rootElementName));
 
-        Element head = findOrCreateElement(root, "head", true);
-
         // TAPESTRY-2364
-
 
         addScriptsToEndOfBody(findOrCreateElement(root, "body", false));
     }
@@ -208,7 +199,9 @@ public class DocumentLinkerImpl implements DocumentLinker
         // Create the element is it is missing.
 
         if (container == null)
+        {
             container = atTop ? root.elementAt(0, childElement) : root.element(childElement);
+        }
 
         return container;
     }
@@ -227,9 +220,7 @@ public class DocumentLinkerImpl implements DocumentLinker
         // Eventually, (nearly) everything will be loaded as modules.
         // TODO: Do we need to include type="text/javascript"?
 
-        body.element("script", "src", requireJS.toClientURL());
-
-        moduleManager.writeConfiguration(body.element("script", "type", "text/javascript"));
+        moduleManager.writeInitialization(body);
 
         // Next, include all stacks and individual JavaScript files *after* RequireJS.
 

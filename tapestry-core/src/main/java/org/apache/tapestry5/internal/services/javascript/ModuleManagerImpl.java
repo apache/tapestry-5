@@ -14,6 +14,9 @@
 
 package org.apache.tapestry5.internal.services.javascript;
 
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Worker;
@@ -34,6 +37,8 @@ public class ModuleManagerImpl implements ModuleManager
 {
     private final String requireConfig;
 
+    private final Asset requireJS;
+
     private final Map<String, Resource> configuration;
 
     // Library names, sorted by order of descending length.
@@ -46,8 +51,12 @@ public class ModuleManagerImpl implements ModuleManager
     // Note: ConcurrentHashMap does not support null as a value, alas. We use classpathRoot as a null.
     private final Map<String, Resource> cache = CollectionFactory.newConcurrentMap();
 
-    public ModuleManagerImpl(AssetPathConstructor constructor, final ComponentClassResolver resolver, AssetSource assetSource, Map<String, Resource> configuration)
+    public ModuleManagerImpl(AssetPathConstructor constructor, final ComponentClassResolver resolver, AssetSource assetSource,
+                             @Path("${" + SymbolConstants.REQUIRE_JS + "}")
+                             Asset requireJS,
+                             Map<String, Resource> configuration)
     {
+        this.requireJS = requireJS;
         this.configuration = configuration;
         String baseURL = constructor.constructAssetPath("module-root", "");
 
@@ -85,9 +94,11 @@ public class ModuleManagerImpl implements ModuleManager
     }
 
     @Override
-    public void writeConfiguration(Element scriptElement)
+    public void writeInitialization(Element body)
     {
-        scriptElement.raw(requireConfig);
+        body.element("script", "src", requireJS.toClientURL());
+
+        body.element("script", "type", "text/javascript").raw(requireConfig);
     }
 
     @Override
