@@ -5,6 +5,10 @@ Breaking Features:
 The definition of the symbol 'tapestry.asset-path-prefix' has changed; it no longer includes the leading and
 trailing slashes. The default in 5.3 was "/assets/", in 5.4 it is simply "assets".
 
+JavaScript Libraries (including stacks) are being replaced with modules. Note that libraries are now loaded
+with RequireJS, which may mean that global values exported by the libraries are not visible; you should explicitly
+attach properties to the global JavaScript window object, rather than assume that the context (this) is the window.
+
 Bugs fixed (in 5.4-js-rewrite branch):
 
 TAP5-1965: Replace use of Request.getContextPath() with a symbol define at application startup

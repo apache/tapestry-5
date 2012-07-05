@@ -1,0 +1,15 @@
+Ideas and TODOs:
+
+Compile CoffeeScript for modules with --bare (no top-level function wrapper), as module is always just
+defined([..], function() { ... });
+
+Replace default.css with Twitter Bootstrap + Tapestry extensions.
+
+Include a new Java module that supports writing an exception log file on error.
+
+Merge PageCatalog and ServiceStatus into a Dashboard page
+- make it extensible
+
+Add way to have services self describe (for dashboard and/or exception report).
+
+Add way for services to expose simple actions to the Dashboard (i.e., tie a UI button to a callback).
