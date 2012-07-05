@@ -25,7 +25,7 @@ import java.util.Map;
 /**
  * Resolves page names and component types to fully qualified class names. Pages and components may be provided by the
  * application or inside a <em>mapped package</em>. Page names often appear inside URLs, and component types often
- * appear in component template (when specifying the type of an embedded component).
+ * appear in component templates (when specifying the type of an embedded component).
  * <p/>
  * The service is configured using a collection of {@link LibraryMapping}s. Each mapping maps a prefix, such as "core"
  * to a root package name, such as "org.apache.tapestry5.corelib". The root package is expected to have sub-packages:
