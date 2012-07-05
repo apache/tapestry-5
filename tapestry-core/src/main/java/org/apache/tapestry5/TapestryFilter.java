@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,10 +15,11 @@
 package org.apache.tapestry5;
 
 import org.apache.tapestry5.internal.ServletContextSymbolProvider;
+import org.apache.tapestry5.internal.SingleKeySymbolProvider;
 import org.apache.tapestry5.internal.TapestryAppInitializer;
+import org.apache.tapestry5.internal.util.DelegatingSymbolProvider;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.def.ModuleDef;
-import org.apache.tapestry5.ioc.internal.services.SystemPropertiesSymbolProvider;
 import org.apache.tapestry5.ioc.services.SymbolProvider;
 import org.apache.tapestry5.services.HttpServletRequestHandler;
 import org.apache.tapestry5.services.ServletApplicationInitializer;
@@ -84,23 +85,14 @@ public class TapestryFilter implements Filter
 
         String filterName = config.getFilterName();
 
-        SymbolProvider provider = new SymbolProvider()
-        {
-            SymbolProvider contextProvider = new ServletContextSymbolProvider(context);
-            SymbolProvider systemProvider = new SystemPropertiesSymbolProvider();
+        SymbolProvider contextProvider = new ServletContextSymbolProvider(context);
+        SymbolProvider contextPathProvider = new SingleKeySymbolProvider(SymbolConstants.CONTEXT_PATH, context.getContextPath());
 
-            public String valueForSymbol(String symbolName)
-            {
-                String contextValue = contextProvider.valueForSymbol(symbolName);
-                if (contextValue != null) return contextValue;
-
-                return systemProvider.valueForSymbol(symbolName);
-            }
-        };
+        SymbolProvider combinedProvider = new DelegatingSymbolProvider(contextPathProvider, contextProvider);
 
         String executionMode = System.getProperty(SymbolConstants.EXECUTION_MODE, "production");
 
-        TapestryAppInitializer appInitializer = new TapestryAppInitializer(logger, provider,
+        TapestryAppInitializer appInitializer = new TapestryAppInitializer(logger, combinedProvider,
                 filterName, executionMode);
 
         appInitializer.addModules(provideExtraModuleDefs(context));
@@ -113,7 +105,7 @@ public class TapestryFilter implements Filter
         ServletApplicationInitializer ai = registry.getService("ServletApplicationInitializer",
                 ServletApplicationInitializer.class);
 
-        ai.initializeApplication(filterConfig.getServletContext());
+        ai.initializeApplication(context);
 
         registry.performRegistryStartup();
 
@@ -134,7 +126,8 @@ public class TapestryFilter implements Filter
      * additional
      * initialization to occur. This implementation does nothing, and my be overriden in subclasses.
      *
-     * @param registry from which services may be extracted
+     * @param registry
+     *         from which services may be extracted
      * @throws ServletException
      */
     protected void init(Registry registry) throws ServletException

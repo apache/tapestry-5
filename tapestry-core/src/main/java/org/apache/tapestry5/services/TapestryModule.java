@@ -2123,7 +2123,7 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.CLUSTERED_SESSIONS, true);
 
-        configuration.add(SymbolConstants.ASSET_PATH_PREFIX, "/assets/");
+        configuration.add(SymbolConstants.ASSET_PATH_PREFIX, "assets");
 
         configuration.add(SymbolConstants.COMPRESS_WHITESPACE, true);
 
@@ -2212,6 +2212,7 @@ public final class TapestryModule
         configuration.add(MetaDataConstants.WHITELIST_ONLY_PAGE, false);
 
         configuration.add(SymbolConstants.REQUIRE_JS, "classpath:org/apache/tapestry5/require_2.0.2.js");
+        configuration.add(SymbolConstants.CONTEXT_PATH, "");
     }
 
     /**

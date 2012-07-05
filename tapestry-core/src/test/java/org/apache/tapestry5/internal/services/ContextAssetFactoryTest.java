@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2009 The Apache Software Foundation
+// Copyright 2006, 2007, 2009, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -53,21 +53,19 @@ public class ContextAssetFactoryTest extends InternalBaseTestCase
 
         Resource r = new ContextResource(context, "foo/Bar.txt");
 
-        train_getContextPath(request, "/context");
-
         replay();
 
         AssetFactory factory = new ContextAssetFactory(
-                                    new AssetPathConstructorImpl(request,
-                                                                baseURLSource,
-                                                                "4.5.6",
-                                                                "",
-                                                                false,
-                                                                "/assets/"
-                                                            ),
-                                    context,
-                                    new IdentityAssetPathConverter()
-                                );
+                new AssetPathConstructorImpl(request,
+                        baseURLSource,
+                        "context/", "4.5.6",
+                        "",
+                        false,
+                        "assets"
+                ),
+                context,
+                new IdentityAssetPathConverter()
+        );
 
         Asset asset = factory.createAsset(r);
 
@@ -92,22 +90,21 @@ public class ContextAssetFactoryTest extends InternalBaseTestCase
 
         Resource r = new ContextResource(context, "foo/Bar.txt");
 
-        train_getContextPath(request, "/context");
         train_getBaseSource(baseURLSource, request);
 
         replay();
 
         AssetFactory factory = new ContextAssetFactory(
-                                    new AssetPathConstructorImpl(request,
-                                                                baseURLSource,
-                                                                "4.5.6",
-                                                                "",
-                                                                true,
-                                                                "/assets/"
-                                                            ),
-                                    context,
-                                    new IdentityAssetPathConverter()
-                                );
+                new AssetPathConstructorImpl(request,
+                        baseURLSource,
+                        "context/", "4.5.6",
+                        "",
+                        true,
+                        "assets"
+                ),
+                context,
+                new IdentityAssetPathConverter()
+        );
 
         Asset asset = factory.createAsset(r);
 

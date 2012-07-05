@@ -55,8 +55,8 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
         replay();
 
         Dispatcher dispatcher = new ComponentEventDispatcher(null,
-                new ComponentEventLinkEncoderImpl(null, contextPathEncoder, ls, request,
-                        response, null, null, null, true, "", null, null));
+                new ComponentEventLinkEncoderImpl(null, contextPathEncoder, ls,
+                        response, null, null, null, true, null, "", null, null));
 
         assertFalse(dispatcher.dispatch(request, response));
 
@@ -169,8 +169,8 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
         replay();
 
         Dispatcher dispatcher = new ComponentEventDispatcher(handler,
-                new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls, request,
-                        response, null, null, null, true, "", metaDataLocator, null));
+                new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
+                        response, null, null, null, true, null, "", metaDataLocator, null));
 
         assertTrue(dispatcher.dispatch(request, response));
 
@@ -212,8 +212,8 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
         replay();
 
         Dispatcher dispatcher = new ComponentEventDispatcher(handler,
-                new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls, request,
-                        response, null, null, null, true, "", metaDataLocator, null));
+                new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
+                        response, null, null, null, true, null, "", metaDataLocator, null));
 
         assertTrue(dispatcher.dispatch(request, response));
 
@@ -237,8 +237,8 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
         replay();
 
         Dispatcher dispatcher = new ComponentEventDispatcher(null,
-                new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls, request,
-                        response, null, null, null, true, "", null, null));
+                new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
+                        response, null, null, null, true, null, "", null, null));
 
         assertFalse(dispatcher.dispatch(request, response));
 
@@ -279,7 +279,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         Dispatcher dispatcher = new ComponentEventDispatcher(handler,
                 new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, localizationSetter,
-                        request, response, null, null, null, true, "", metaDataLocator, null));
+                        response, null, null, null, true, null, "", metaDataLocator, null));
 
         assertTrue(dispatcher.dispatch(request, response));
 
@@ -334,7 +334,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         Dispatcher dispatcher = new ComponentEventDispatcher(handler,
                 new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, localizationSetter,
-                        request, response, null, null, null, true, "", metaDataLocator, whitelist));
+                        response, null, null, null, true, null, "", metaDataLocator, whitelist));
 
         assertTrue(dispatcher.dispatch(request, response));
 
@@ -371,7 +371,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         Dispatcher dispatcher = new ComponentEventDispatcher(handler,
                 new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, localizationSetter,
-                        request, response, null, null, null, true, "", metaDataLocator, whitelist));
+                        response, null, null, null, true, null, "", metaDataLocator, whitelist));
 
         assertFalse(dispatcher.dispatch(request, response));
 

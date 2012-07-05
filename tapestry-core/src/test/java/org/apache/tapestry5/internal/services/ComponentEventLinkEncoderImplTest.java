@@ -50,19 +50,17 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
     public void locale_not_encoded()
     {
         RequestSecurityManager manager = mockRequestSecurityManager();
-        Request request = mockRequest();
         Response response = mockResponse();
         ContextPathEncoder contextPathEncoder = getService(ContextPathEncoder.class);
 
         expect(manager.checkPageSecurity("MyPage")).andReturn(LinkSecurity.INSECURE);
-        train_getContextPath(request, "/myapp");
 
         train_encodeURL(response, "/myapp/mypage", "MAGIC");
 
         replay();
 
-        ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null, contextPathEncoder, null, request,
-                response, manager, null, null, false, "", null, null);
+        ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null, contextPathEncoder, null,
+                response, manager, null, null, false, "/myapp", "", null, null);
 
         PageRenderRequestParameters parameters = new PageRenderRequestParameters("MyPage", new EmptyEventContext());
 
@@ -77,19 +75,17 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
     public void index_stripped_off()
     {
         RequestSecurityManager manager = mockRequestSecurityManager();
-        Request request = mockRequest();
         Response response = mockResponse();
         ContextPathEncoder contextPathEncoder = getService(ContextPathEncoder.class);
 
         expect(manager.checkPageSecurity("admin/Index")).andReturn(LinkSecurity.INSECURE);
-        train_getContextPath(request, "");
 
         train_encodeURL(response, "/admin/abc", "MAGIC");
 
         replay();
 
-        ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null, contextPathEncoder, null, request,
-                response, manager, null, null, false, "", null, null);
+        ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null, contextPathEncoder, null,
+                response, manager, null, null, false, "", "", null, null);
 
         PageRenderRequestParameters parameters = new PageRenderRequestParameters("admin/Index", new ArrayEventContext(
                 typeCoercer, "abc"));
@@ -105,19 +101,17 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
     public void root_index_page_gone()
     {
         RequestSecurityManager manager = mockRequestSecurityManager();
-        Request request = mockRequest();
         Response response = mockResponse();
         ContextPathEncoder contextPathEncoder = getService(ContextPathEncoder.class);
 
         expect(manager.checkPageSecurity("Index")).andReturn(LinkSecurity.INSECURE);
-        train_getContextPath(request, "");
 
         train_encodeURL(response, "/", "MAGIC");
 
         replay();
 
-        ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null, contextPathEncoder, null, request,
-                response, manager, null, null, false, "", null, null);
+        ComponentEventLinkEncoder encoder = new ComponentEventLinkEncoderImpl(null, contextPathEncoder, null,
+                response, manager, null, null, false, "", "", null, null);
 
         PageRenderRequestParameters parameters = new PageRenderRequestParameters("Index", new EmptyEventContext());
 
@@ -145,7 +139,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                request, response, null, null, null, true, "", null, null);
+                response, null, null, null, true, null, "", null, null);
 
         PageRenderRequestParameters parameters = linkEncoder.decodePageRenderRequest(request);
 
@@ -170,7 +164,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                request, response, null, null, null, true, "", null, null);
+                response, null, null, null, true, null, "", null, null);
 
         PageRenderRequestParameters parameters = linkEncoder.decodePageRenderRequest(request);
 
@@ -196,7 +190,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                request, response, null, null, null, true, "", null, null);
+                response, null, null, null, true, null, "", null, null);
 
         PageRenderRequestParameters parameters = linkEncoder.decodePageRenderRequest(request);
 
@@ -241,7 +235,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                request, null, null, null, null, true, "", metaDataLocator, null);
+                null, null, null, null, true, null, "", metaDataLocator, null);
 
         PageRenderRequestParameters parameters = linkEncoder.decodePageRenderRequest(request);
 
@@ -283,7 +277,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                request, null, null, null, null, true, "", metaDataLocator, null);
+                null, null, null, null, true, null, "", metaDataLocator, null);
 
         PageRenderRequestParameters parameters = linkEncoder.decodePageRenderRequest(request);
 
@@ -319,7 +313,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                request, null, null, null, null, true, "", metaDataLocator, whitelist);
+                null, null, null, null, true, null, "", metaDataLocator, whitelist);
 
         PageRenderRequestParameters parameters = linkEncoder.decodePageRenderRequest(request);
 
@@ -358,7 +352,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                request, null, null, null, null, true, "", metaDataLocator, whitelist);
+                null, null, null, null, true, null, "", metaDataLocator, whitelist);
 
         assertNull(linkEncoder.decodePageRenderRequest(request));
 
@@ -401,7 +395,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                request, null, null, null, null, true, "", metaDataLocator, null);
+                null, null, null, null, true, null, "", metaDataLocator, null);
 
         PageRenderRequestParameters parameters = linkEncoder.decodePageRenderRequest(request);
 
@@ -438,7 +432,7 @@ public class ComponentEventLinkEncoderImplTest extends InternalBaseTestCase
         replay();
 
         ComponentEventLinkEncoderImpl linkEncoder = new ComponentEventLinkEncoderImpl(resolver, contextPathEncoder, ls,
-                request, null, null, null, null, true, "", metaDataLocator, null);
+                null, null, null, null, true, null, "", metaDataLocator, null);
 
         ComponentEventRequestParameters parameters = linkEncoder.decodeComponentEventRequest(request);
 

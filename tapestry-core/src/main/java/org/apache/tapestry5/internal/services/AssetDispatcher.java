@@ -68,9 +68,15 @@ public class AssetDispatcher implements Dispatcher
                            @Symbol(SymbolConstants.ASSET_PATH_PREFIX)
                            String assetPathPrefix)
     {
-        String folder = applicationFolder.equals("") ? "" : "/" + applicationFolder;
+        StringBuilder pathPrefix = new StringBuilder("/");
 
-        this.pathPrefix = folder + assetPathPrefix + applicationVersion + "/";
+        if (! applicationFolder.equals("")) {
+            pathPrefix.append(applicationFolder).append("/");
+        }
+
+        pathPrefix.append(assetPathPrefix).append("/").append(applicationVersion).append("/");
+
+        this.pathPrefix = pathPrefix.toString();
 
         for (String path : configuration.keySet())
         {

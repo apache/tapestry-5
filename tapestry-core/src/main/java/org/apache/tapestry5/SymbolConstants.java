@@ -353,7 +353,10 @@ public class SymbolConstants
     public static final String ASSET_URL_FULL_QUALIFIED = "tapestry.asset-url-fully-qualified";
 
     /**
-     * Prefix to be used for all asset paths
+     * Prefix to be used for all asset paths, used to recognize which requests are for assets. This value
+     * is appended to the context path and the (optional {@linkplain #APPLICATION_FOLDER application folder}.
+     * Its default is "assets".  It may contain slashes, but should not begin or end with one.
+     *
      */
     public static final String ASSET_PATH_PREFIX = "tapestry.asset-path-prefix";
 
@@ -364,4 +367,11 @@ public class SymbolConstants
      * @since 5.4
      */
     public static final String REQUIRE_JS = "tapestry.requirejs";
+
+    /**
+     * Identifies the context path of the application, as determined from {@link javax.servlet.ServletContext#getContextPath()}.
+     *
+     * @since 5.4
+     */
+    public static final String CONTEXT_PATH = "tapestry.context-path";
 }

@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,6 +34,9 @@ public class AssetPathConstructorImpl implements AssetPathConstructor
     public AssetPathConstructorImpl(Request request,
                                     BaseURLSource baseURLSource,
 
+                                    @Symbol(SymbolConstants.CONTEXT_PATH)
+                                    String contextPath,
+
                                     @Symbol(SymbolConstants.APPLICATION_VERSION)
                                     String applicationVersion,
 
@@ -51,9 +54,18 @@ public class AssetPathConstructorImpl implements AssetPathConstructor
 
         this.fullyQualified = fullyQualified;
 
-        String folder = applicationFolder.equals("") ? "" : "/" + applicationFolder;
+        StringBuilder prefix = new StringBuilder("/");
 
-        this.prefix = folder + assetPathPrefix + applicationVersion + "/";
+        // Either blank, or ending in a slash:
+        prefix.append(contextPath);
+
+        if (!applicationFolder.equals("")) {
+            prefix.append(applicationFolder).append("/");
+        }
+
+        prefix.append(assetPathPrefix).append("/").append(applicationVersion).append("/");
+
+        this.prefix = prefix.toString();
     }
 
     public String constructAssetPath(String virtualFolder, String path)
@@ -68,7 +80,6 @@ public class AssetPathConstructorImpl implements AssetPathConstructor
             builder.append(baseURLSource.getBaseURL(request.isSecure()));
         }
 
-        builder.append(request.getContextPath());
         builder.append(prefix);
         builder.append(virtualFolder);
 

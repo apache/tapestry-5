@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.annotations.IntermediateType;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.util.TimeInterval;
@@ -33,13 +34,17 @@ public class CookiesImpl implements Cookies
 
     private final CookieSink cookieSink;
 
+    private final String defaultCookiePath;
+
     private final int defaultMaxAge;
 
     /**
      * @param request
      * @param cookieSource
      * @param cookieSink
-     * @param defaultMaxAge default cookie expiration time in milliseconds
+     * @param contextPath
+     * @param defaultMaxAge
+     *         default cookie expiration time in milliseconds
      */
     public CookiesImpl(Request request,
 
@@ -47,12 +52,16 @@ public class CookiesImpl implements Cookies
 
                        CookieSink cookieSink,
 
+                       @Symbol(SymbolConstants.CONTEXT_PATH)
+                       String contextPath,
+
                        @Symbol("tapestry.default-cookie-max-age") @IntermediateType(TimeInterval.class)
                        long defaultMaxAge)
     {
         this.request = request;
         this.cookieSource = cookieSource;
         this.cookieSink = cookieSink;
+        this.defaultCookiePath = contextPath + "/";
         this.defaultMaxAge = (int) (defaultMaxAge / 1000l);
     }
 
@@ -78,7 +87,7 @@ public class CookiesImpl implements Cookies
     public void writeCookieValue(String name, String value, int maxAge)
     {
         Cookie cookie = new Cookie(name, value);
-        cookie.setPath(request.getContextPath() + "/");
+        cookie.setPath(defaultCookiePath);
         cookie.setMaxAge(maxAge);
         cookie.setSecure(request.isSecure());
 
@@ -103,7 +112,7 @@ public class CookiesImpl implements Cookies
     public void writeDomainCookieValue(String name, String value, String domain, int maxAge)
     {
         Cookie cookie = new Cookie(name, value);
-        cookie.setPath(request.getContextPath() + "/");
+        cookie.setPath(defaultCookiePath);
         cookie.setDomain(domain);
         cookie.setMaxAge(maxAge);
         cookie.setSecure(request.isSecure());
@@ -125,7 +134,7 @@ public class CookiesImpl implements Cookies
     public void removeCookieValue(String name)
     {
         Cookie cookie = new Cookie(name, null);
-        cookie.setPath(request.getContextPath() + "/");
+        cookie.setPath(defaultCookiePath);
         cookie.setMaxAge(0);
         cookie.setSecure(request.isSecure());
 

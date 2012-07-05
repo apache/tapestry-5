@@ -12,9 +12,7 @@ class AssetPathConstructorImplTest extends TestBase {
 
     def request = newMock(Request)
 
-    def apc = new AssetPathConstructorImpl(request, null, "123", "", false, "/assets/")
-
-    expect(request.contextPath).andReturn("").atLeastOnce()
+    def apc = new AssetPathConstructorImpl(request, null, "", "123", "", false, "assets")
 
     replay()
 
@@ -25,14 +23,12 @@ class AssetPathConstructorImplTest extends TestBase {
     verify()
   }
 
-  @Test
+@Test
   void "construct an asset path with no extra path"() {
 
     def request = newMock(Request)
 
-    def apc = new AssetPathConstructorImpl(request, null, "123", "", false, "/assets/")
-
-    expect(request.contextPath).andReturn("")
+    def apc = new AssetPathConstructorImpl(request, null, "", "123", "", false, "assets")
 
     replay()
 
@@ -44,9 +40,7 @@ class AssetPathConstructorImplTest extends TestBase {
   void "construct asset path with an application folder"() {
     def request = newMock(Request)
 
-    def apc = new AssetPathConstructorImpl(request, null, "123", "myapp", false, "/assets/")
-
-    expect(request.contextPath).andReturn("").atLeastOnce()
+    def apc = new AssetPathConstructorImpl(request, null, "", "123", "myapp", false, "assets")
 
     replay()
 
@@ -59,9 +53,7 @@ class AssetPathConstructorImplTest extends TestBase {
   void "construct asset path with a context path"() {
     def request = newMock(Request)
 
-    def apc = new AssetPathConstructorImpl(request, null, "123", "myapp", false, "/assets/")
-
-    expect(request.contextPath).andReturn("/ctx").atLeastOnce()
+    def apc = new AssetPathConstructorImpl(request, null, "ctx/", "123", "myapp", false, "assets")
 
     replay()
 
@@ -75,15 +67,14 @@ class AssetPathConstructorImplTest extends TestBase {
     def request = newMock(Request)
     def baseURLSource = newMock(BaseURLSource)
 
-    def apc = new AssetPathConstructorImpl(request, baseURLSource, "123", "myapp", true, "/assets/")
+    def apc = new AssetPathConstructorImpl(request, baseURLSource, "mycontext/", "123", "myapp", true, "assets")
 
     expect(request.secure).andReturn(false)
-    expect(request.contextPath).andReturn("")
     expect(baseURLSource.getBaseURL(false)).andReturn("http://localhost:8080")
 
     replay()
 
-    assert apc.constructAssetPath("virt", "extra") == "http://localhost:8080/myapp/assets/123/virt/extra"
+    assert apc.constructAssetPath("virt", "extra") == "http://localhost:8080/mycontext/myapp/assets/123/virt/extra"
 
     verify()
 

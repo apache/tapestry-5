@@ -34,8 +34,6 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
     private final LocalizationSetter localizationSetter;
 
-    private final Request request;
-
     private final Response response;
 
     private final RequestSecurityManager requestSecurityManager;
@@ -50,6 +48,8 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
     private final ClientWhitelist clientWhitelist;
 
+    private final String contextPath;
+
     private final String applicationFolder;
 
     private final String applicationFolderPrefix;
@@ -59,20 +59,26 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
     private static final char SLASH = '/';
 
     public ComponentEventLinkEncoderImpl(ComponentClassResolver componentClassResolver,
-                                         ContextPathEncoder contextPathEncoder, LocalizationSetter localizationSetter, Request request,
+                                         ContextPathEncoder contextPathEncoder, LocalizationSetter localizationSetter,
                                          Response response, RequestSecurityManager requestSecurityManager, BaseURLSource baseURLSource,
-                                         PersistentLocale persistentLocale, @Symbol(SymbolConstants.ENCODE_LOCALE_INTO_PATH)
-    boolean encodeLocaleIntoPath, @Symbol(SymbolConstants.APPLICATION_FOLDER) String applicationFolder, MetaDataLocator metaDataLocator, ClientWhitelist clientWhitelist)
+                                         PersistentLocale persistentLocale,
+                                         @Symbol(SymbolConstants.ENCODE_LOCALE_INTO_PATH)
+                                         boolean encodeLocaleIntoPath,
+                                         @Symbol(SymbolConstants.CONTEXT_PATH)
+                                         String contextPath,
+                                         @Symbol(SymbolConstants.APPLICATION_FOLDER) String applicationFolder,
+                                         MetaDataLocator metaDataLocator,
+                                         ClientWhitelist clientWhitelist)
     {
         this.componentClassResolver = componentClassResolver;
         this.contextPathEncoder = contextPathEncoder;
         this.localizationSetter = localizationSetter;
-        this.request = request;
         this.response = response;
         this.requestSecurityManager = requestSecurityManager;
         this.baseURLSource = baseURLSource;
         this.persistentLocale = persistentLocale;
         this.encodeLocaleIntoPath = encodeLocaleIntoPath;
+        this.contextPath = contextPath;
         this.applicationFolder = applicationFolder;
         this.metaDataLocator = metaDataLocator;
         this.clientWhitelist = clientWhitelist;
@@ -90,7 +96,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
 
         String activePageName = parameters.getLogicalPageName();
 
-        builder.append(request.getContextPath());
+        builder.append(contextPath);
 
         encodeAppFolderAndLocale(builder);
 
@@ -158,7 +164,7 @@ public class ComponentEventLinkEncoderImpl implements ComponentEventLinkEncoder
         String nestedComponentId = parameters.getNestedComponentId();
         boolean hasComponentId = InternalUtils.isNonBlank(nestedComponentId);
 
-        builder.append(request.getContextPath());
+        builder.append(contextPath);
 
         encodeAppFolderAndLocale(builder);
 
