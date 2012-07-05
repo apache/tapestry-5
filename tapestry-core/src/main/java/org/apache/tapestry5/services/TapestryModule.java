@@ -2222,9 +2222,9 @@ public final class TapestryModule
     final InvalidationEventHub invalidationEventHub, final @Autobuild
     RestoreDirtySessionObjects restoreDirtySessionObjects)
     {
-        final InvalidationListener listener = new InvalidationListener()
+        final Runnable callback = new Runnable()
         {
-            public void objectWasInvalidated()
+            public void run()
             {
                 propertyAccess.clearCache();
 
@@ -2240,7 +2240,7 @@ public final class TapestryModule
                 // service's cache whenever
                 // the component class loader is invalidated.
 
-                invalidationEventHub.addInvalidationListener(listener);
+                invalidationEventHub.addInvalidationCallback(callback);
 
                 endOfRequestEventHub.addEndOfRequestListener(restoreDirtySessionObjects);
 
@@ -2722,10 +2722,9 @@ public final class TapestryModule
     @Startup
     public static void registerToClearPlasticProxyFactoryOnInvalidation(@ComponentClasses InvalidationEventHub hub, @Builtin final PlasticProxyFactory proxyFactory)
     {
-        hub.addInvalidationListener(new InvalidationListener()
+        hub.addInvalidationCallback(new Runnable()
         {
-            @Override
-            public void objectWasInvalidated()
+            public void run()
             {
                 proxyFactory.clearCache();
             }
