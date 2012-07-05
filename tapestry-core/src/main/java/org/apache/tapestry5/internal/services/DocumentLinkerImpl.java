@@ -280,7 +280,7 @@ public class DocumentLinkerImpl implements DocumentLinker
         }
 
         block.append("require([\"core/pageinit\"], function (pageinit) {\n");
-        block.append("  pageinit([");
+        block.append("  pageinit.initialize([");
 
         String sep = "";
 

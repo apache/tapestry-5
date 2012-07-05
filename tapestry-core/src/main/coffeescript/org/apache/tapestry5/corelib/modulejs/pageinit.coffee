@@ -13,10 +13,12 @@
 # limitations under the License.
 
 
-# Single function module used for page initialization. The function is passed an array of arrays;
-# the first value in the array defines the module to invoke. The module name may also indicate the
-# function exported by the module, as a suffix following a colon: e.g., "my/module:myfunc".
-# Any additional values in the array are passed to the function. The context of the function (this) is null.
+# Module that defines functions used for page initialization.
+# The initialize function is passed an array of initializers; each initializer is itself
+# an array. The first value in the initializer defines the name of the module to invoke.
+# The module name may also indicate the function exported by the module, as a suffix following a colon:
+# e.g., "my/module:myfunc".
+# Any additional values in the initializer are passed to the function. The context of the function (this) is null.
 define ->
   invokeInitializer = (qualifiedName, initArguments...) ->
 
@@ -26,8 +28,9 @@ define ->
       fn = if functionName? then moduleLib[functionName] else moduleLib
       fn.apply null, initArguments
 
-  # Exports this single function:
-  (inits) ->
+
+  # Exported function passed a list of initializers.
+  initialize : (inits) ->
     # apply will split the first value from the rest for us, implicitly.
     invokeInitializer.apply null, init for init in inits
 

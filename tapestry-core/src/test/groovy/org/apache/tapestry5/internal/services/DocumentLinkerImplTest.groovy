@@ -298,7 +298,7 @@ doSomethingElse();
         check document, '''
 <html><head><meta/><script></script></head><body><script src="/js/require.js"></script><script type="text/javascript">require.config();
 </script><script type="text/javascript">require(["core/pageinit"], function (pageinit) {
-  pageinit([["immediate/module:myfunc",{"fred":"barney"}]]);
+  pageinit.initialize([["immediate/module:myfunc",{"fred":"barney"}]]);
 });
 </script></body></html>
 '''
@@ -328,7 +328,7 @@ doSomethingElse();
 <html><head><meta/></head><body><script src="/js/require.js"></script><script type="text/javascript">require.config();
 </script><script type="text/javascript">Tapestry.onDOMLoaded(function() {
 require(["core/pageinit"], function (pageinit) {
-  pageinit([[
+  pageinit.initialize([[
   "my/module"
 ],
   [
@@ -338,7 +338,7 @@ require(["core/pageinit"], function (pageinit) {
 ]]);
 });
 require(["core/pageinit"], function (pageinit) {
-  pageinit([[
+  pageinit.initialize([[
   "my/other/module:late",
   333,
   444
@@ -370,7 +370,7 @@ require(["core/pageinit"], function (pageinit) {
 <html><head><meta/><script></script></head><body><script src="/js/require.js"></script><script type="text/javascript">require.config();
 </script><script type="text/javascript">Tapestry.onDOMLoaded(function() {
 require(["core/pageinit"], function (pageinit) {
-  pageinit([["my/module","barney"]]);
+  pageinit.initialize([["my/module","barney"]]);
 });
 });
 </script></body></html>
@@ -440,11 +440,11 @@ require(["core/pageinit"], function (pageinit) {
 <html><head><meta/></head><body><script src="/js/require.js"></script><script type="text/javascript">require.config();
 </script><script type="text/javascript">Tapestry.onDOMLoaded(function() {
 require(["core/pageinit"], function (pageinit) {
-  pageinit([["my/module"],
+  pageinit.initialize([["my/module"],
   ["my/other/module:normal",111,222]]);
 });
 require(["core/pageinit"], function (pageinit) {
-  pageinit([["my/other/module:late",333,444]]);
+  pageinit.initialize([["my/other/module:late",333,444]]);
 });
 });
 </script></body></html>
