@@ -229,6 +229,17 @@ public final class TapestryModule
         {
             requestGlobals.storeServletRequestResponse(servletRequest, servletResponse);
 
+            // Should have started doing this a long time ago: recoding attributes into
+            // the request for things that may be needed downstream, without having to extend
+            // Request.
+
+            servletRequest.setAttribute("servletAPI.protocol", servletRequest.getProtocol());
+            servletRequest.setAttribute("servletAPI.characterEncoding", servletRequest.getCharacterEncoding());
+            servletRequest.setAttribute("servletAPI.contentLength", servletRequest.getContentLength());
+            servletRequest.setAttribute("servletAPI.authType", servletRequest.getAuthType());
+            servletRequest.setAttribute("servletAPI.contentType", servletRequest.getContentType());
+            servletRequest.setAttribute("servletAPI.scheme", servletRequest.getScheme());
+
             Request request = new RequestImpl(servletRequest, applicationCharset, sessionFactory);
             Response response = new ResponseImpl(servletRequest, servletResponse);
 

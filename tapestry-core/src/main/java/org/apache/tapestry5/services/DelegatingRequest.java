@@ -62,6 +62,11 @@ public class DelegatingRequest implements Request
         return request.getAttribute(name);
     }
 
+    public List<String> getAttributeNames()
+    {
+        return request.getAttributeNames();
+    }
+
     public String getContextPath()
     {
         return request.getContextPath();

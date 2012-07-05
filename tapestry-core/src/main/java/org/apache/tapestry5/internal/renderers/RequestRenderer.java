@@ -44,6 +44,15 @@ public class RequestRenderer implements ObjectRenderer<Request>
 
     public void render(Request request, MarkupWriter writer)
     {
+        coreProperties(request, writer);
+        parameters(request, writer);
+        headers(request, writer);
+        attributes(request, writer);
+        context(writer);
+    }
+
+    private void coreProperties(Request request, MarkupWriter writer)
+    {
         writer.element("dl");
 
         dt(writer, "Context Path");
@@ -92,7 +101,7 @@ public class RequestRenderer implements ObjectRenderer<Request>
 
         if (!flags.isEmpty())
         {
-            dt(writer, "flags", InternalUtils.join(flags));
+            dt(writer, "Flags", InternalUtils.join(flags));
         }
 
         dt(writer, "Ports (local/server)",
@@ -101,10 +110,6 @@ public class RequestRenderer implements ObjectRenderer<Request>
         dt(writer, "Method", request.getMethod());
 
         writer.end();
-
-        parameters(request, writer);
-        headers(request, writer);
-        context(writer);
     }
 
     private void context(MarkupWriter writer)
@@ -175,8 +180,11 @@ public class RequestRenderer implements ObjectRenderer<Request>
 
     private void dt(MarkupWriter writer, String name, String value)
     {
-        dt(writer, name);
-        dd(writer, value);
+        if (value != null)
+        {
+            dt(writer, name);
+            dd(writer, value);
+        }
     }
 
     private void dt(MarkupWriter writer, String name)
@@ -208,12 +216,32 @@ public class RequestRenderer implements ObjectRenderer<Request>
 
         for (String name : request.getHeaderNames())
         {
-            dt(writer, name);
-            dd(writer, request.getHeader(name));
+            dt(writer, name, request.getHeader(name));
         }
 
         writer.end(); // dl
 
+    }
+
+    private void attributes(Request request, MarkupWriter writer)
+    {
+        List<String> attributeNames = request.getAttributeNames();
+
+        if (attributeNames.isEmpty())
+        {
+            return;
+        }
+
+        section(writer, "Attributes");
+
+        writer.element("dl");
+
+        for (String name : attributeNames)
+        {
+            dt(writer, name, String.valueOf(request.getAttribute(name)));
+        }
+
+        writer.end(); // dl
     }
 
 }

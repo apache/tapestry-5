@@ -208,6 +208,11 @@ public class TestableRequestImpl implements TestableRequest
         return attributes.get(name);
     }
 
+    public List<String> getAttributeNames()
+    {
+        return InternalUtils.sortedKeys(attributes);
+    }
+
     public void setAttribute(String name, Object value)
     {
         attributes.put(name, value);

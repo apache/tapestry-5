@@ -363,7 +363,7 @@ var Tapestry = {
 
         if (initializations) {
             require(["core/pageinit"], function (pageinit) {
-                pageinit(initializations)
+                pageinit.initialize(initializations)
             });
         }
 

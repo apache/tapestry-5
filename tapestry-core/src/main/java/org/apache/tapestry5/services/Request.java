@@ -149,6 +149,14 @@ public interface Request
     Object getAttribute(String name);
 
     /**
+     * Returns a sorted list of attribute names.
+     *
+     * @since 5.4
+     */
+    List<String> getAttributeNames();
+
+
+    /**
      * Stores an attribute in this request. Attributes are reset between requests (and remember that in Tapestry, there
      * is usually two requests per operation: the action request that redirects to a render request).
      *
