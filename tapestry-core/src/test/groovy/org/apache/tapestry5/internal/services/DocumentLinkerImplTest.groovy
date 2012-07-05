@@ -5,12 +5,13 @@ import org.apache.tapestry5.dom.Document
 import org.apache.tapestry5.dom.Element
 import org.apache.tapestry5.dom.XMLMarkupModel
 import org.apache.tapestry5.internal.test.InternalBaseTestCase
-import org.apache.tapestry5.ioc.Resource
 import org.apache.tapestry5.json.JSONArray
 import org.apache.tapestry5.services.javascript.InitializationPriority
 import org.apache.tapestry5.services.javascript.ModuleManager
 import org.apache.tapestry5.services.javascript.StylesheetLink
 import org.apache.tapestry5.services.javascript.StylesheetOptions
+import org.easymock.EasyMock
+import org.easymock.IAnswer
 import org.testng.annotations.Test
 
 class DocumentLinkerImplTest extends InternalBaseTestCase {
@@ -101,8 +102,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         check document, '''
 <?xml version="1.0"?>
-<html><body><p>Ready to be updated with scripts.</p><script src="/js/require.js"/><script type="text/javascript">require.config();
-</script><script src="foo.js" type="text/javascript"/><script src="bar/baz.js" type="text/javascript"/><script type="text/javascript">Tapestry.onDOMLoaded(function() {
+<html><body><p>Ready to be updated with scripts.</p><!--MODULE-MANAGER-INITIALIZATION--><script src="foo.js" type="text/javascript"/><script src="bar/baz.js" type="text/javascript"/><script type="text/javascript">Tapestry.onDOMLoaded(function() {
 pageInitialization();
 });
 </script></body></html>'''
@@ -203,8 +203,7 @@ pageInitialization();
         linker.updateDocument(document)
 
         check document, '''
-<html><body><p>Ready to be updated with scripts.</p><script src="/js/require.js"></script><script type="text/javascript">require.config();
-</script><script type="text/javascript">doSomething();
+<html><body><p>Ready to be updated with scripts.</p><!--MODULE-MANAGER-INITIALIZATION--><script type="text/javascript">doSomething();
 doSomethingElse();
 </script></body></html>
 '''
@@ -223,15 +222,18 @@ doSomethingElse();
 
         DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), true, "1.2.3", true)
 
+        replay()
+
         linker.addScriptLink("foo.js")
 
         linker.updateDocument(document)
 
         check document, '''
 <?xml version="1.0"?>
-<html><notbody><p>Ready to be updated with scripts.</p></notbody><body><script src="/js/require.js"/><script type="text/javascript">require.config();
-</script><script src="foo.js" type="text/javascript"/></body></html>
+<html><notbody><p>Ready to be updated with scripts.</p></notbody><body><!--MODULE-MANAGER-INITIALIZATION--><script src="foo.js" type="text/javascript"/></body></html>
 '''
+
+        verify()
     }
 
     @Test
@@ -249,8 +251,7 @@ doSomethingElse();
         linker.updateDocument(document)
 
         check document, '''
-<html><body><p>Ready to be updated with scripts.</p><script src="/js/require.js"></script><script type="text/javascript">require.config();
-</script><script type="text/javascript">for (var i = 0; i < 5; i++)  { doIt(i); }
+<html><body><p>Ready to be updated with scripts.</p><!--MODULE-MANAGER-INITIALIZATION--><script type="text/javascript">for (var i = 0; i < 5; i++)  { doIt(i); }
 </script></body></html>
 '''
 
@@ -295,8 +296,7 @@ doSomethingElse();
         linker.updateDocument(document)
 
         check document, '''
-<html><head><meta/><script></script></head><body><script src="/js/require.js"></script><script type="text/javascript">require.config();
-</script><script type="text/javascript">require(["core/pageinit"], function (pageinit) {
+<html><head><meta/><script></script></head><body><!--MODULE-MANAGER-INITIALIZATION--><script type="text/javascript">require(["core/pageinit"], function (pageinit) {
   pageinit.initialize([["immediate/module:myfunc",{"fred":"barney"}]]);
 });
 </script></body></html>
@@ -324,8 +324,7 @@ doSomethingElse();
         linker.updateDocument(document)
 
         check document, '''
-<html><head><meta/></head><body><script src="/js/require.js"></script><script type="text/javascript">require.config();
-</script><script type="text/javascript">Tapestry.onDOMLoaded(function() {
+<html><head><meta/></head><body><!--MODULE-MANAGER-INITIALIZATION--><script type="text/javascript">Tapestry.onDOMLoaded(function() {
 require(["core/pageinit"], function (pageinit) {
   pageinit.initialize([[
   "my/module"
@@ -366,8 +365,7 @@ require(["core/pageinit"], function (pageinit) {
         linker.updateDocument(document)
 
         check document, '''
-<html><head><meta/><script></script></head><body><script src="/js/require.js"></script><script type="text/javascript">require.config();
-</script><script type="text/javascript">Tapestry.onDOMLoaded(function() {
+<html><head><meta/><script></script></head><body><!--MODULE-MANAGER-INITIALIZATION--><script type="text/javascript">Tapestry.onDOMLoaded(function() {
 require(["core/pageinit"], function (pageinit) {
   pageinit.initialize([["my/module","barney"]]);
 });
@@ -436,8 +434,7 @@ require(["core/pageinit"], function (pageinit) {
         linker.updateDocument(document)
 
         check document, '''
-<html><head><meta/></head><body><script src="/js/require.js"></script><script type="text/javascript">require.config();
-</script><script type="text/javascript">Tapestry.onDOMLoaded(function() {
+<html><head><meta/></head><body><!--MODULE-MANAGER-INITIALIZATION--><script type="text/javascript">Tapestry.onDOMLoaded(function() {
 require(["core/pageinit"], function (pageinit) {
   pageinit.initialize([["my/module"],
   ["my/other/module:normal",111,222]]);
@@ -448,22 +445,20 @@ require(["core/pageinit"], function (pageinit) {
 });
 </script></body></html>
 '''
+
+        verify()
     }
 
     private ModuleManager mockModuleManager() {
-        return new ModuleManager() {
 
-            @Override
-            void writeInitialization(Element body) {
-                // Placeholder for the real code, inside ModuleManagerImpl
-                body.element("script", "src", "/js/require.js");
-                body.element("script", "type", "text/javascript").raw("require.config();\n")
-            }
+        ModuleManager mock = newMock(ModuleManager);
 
-            @Override
-            public Resource findResourceForModule(String moduleName) {
-                return null;
-            }
-        };
+        expect(mock.writeInitialization(EasyMock.isA(Element))).andAnswer({
+            def body = EasyMock.currentArguments[0]
+
+            body.comment("MODULE-MANAGER-INITIALIZATION")
+        } as IAnswer).once()
+
+        return mock;
     }
 }
