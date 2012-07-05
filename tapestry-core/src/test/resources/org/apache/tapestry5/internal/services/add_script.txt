@@ -1,4 +1,0 @@
-<html><head></head><body><p>Ready to be updated with scripts.</p><script src="/js/require.js"></script><script type="text/javascript">require.config();
-</script><script type="text/javascript">doSomething();
-doSomethingElse();
-</script></body></html>

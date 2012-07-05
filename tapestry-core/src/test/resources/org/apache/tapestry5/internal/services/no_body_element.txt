@@ -1,3 +1,0 @@
-<?xml version="1.0"?>
-<html><head/><notbody><p>Ready to be updated with scripts.</p></notbody><body><script/><script type="text/javascript">require.config();
-</script><script src="foo.js" type="text/javascript"/></body></html>

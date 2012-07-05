@@ -16,11 +16,12 @@ import org.testng.annotations.Test
 
 class DocumentLinkerImplTest extends InternalBaseTestCase {
 
-    def check(Document document, String file) throws Exception {
+    def check(Document document, String expectedContent) throws Exception {
 
-        def content = readFile(file)
+        // TestNG's assertEquals() is actually more useful here than Groovy's assert. Normally,
+        // it's the other way around.
 
-        assertEquals document.toString(), content
+        assertEquals document.toString(), expectedContent.trim()
     }
 
     @Test
@@ -64,7 +65,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         // Check that document is unchanged.
 
-        assert document.toString() == "<not-html>not an HTML document</not-html>"
+        check document, "<not-html>not an HTML document</not-html>"
 
         verify()
     }
@@ -99,7 +100,13 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         linker.updateDocument(document)
 
-        check(document, "add_script_links.txt")
+        check document, '''
+<?xml version="1.0"?>
+<html><head/><body><p>Ready to be updated with scripts.</p><script src="/js/require.js"/><script type="text/javascript">require.config();
+</script><script src="foo.js" type="text/javascript"/><script src="bar/baz.js" type="text/javascript"/><script type="text/javascript">Tapestry.onDOMLoaded(function() {
+pageInitialization();
+});
+</script></body></html>'''
 
         verify()
     }
@@ -117,7 +124,10 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         linker.updateDocument(document)
 
-        check(document, "include_generator_meta.txt")
+        check document, '''
+<?xml version="1.0"?>
+<html><head><meta content="Apache Tapestry Framework (version 1.2.3)" name="generator"/></head><body><p>Ready to be marked with generator meta.</p></body></html>
+'''
     }
 
     /**
@@ -133,7 +143,10 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         linker.updateDocument(document)
 
-        check(document, "omit_generator_meta_on_no_html_root.txt")
+        check document, '''
+<?xml version="1.0"?>
+<no_html>Generator meta only added if root is html tag.</no_html>
+'''
     }
 
 
@@ -150,7 +163,10 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         linker.updateDocument(document)
 
-        check(document, "add_style_links.txt")
+        check document, '''
+<?xml version="1.0"?>
+<html><head><link type="text/css" rel="stylesheet" href="foo.css"/><link media="print" type="text/css" rel="stylesheet" href="bar/baz.css"/></head><body><p>Ready to be updated with styles.</p></body></html>
+'''
     }
 
     @Test
@@ -166,7 +182,10 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         linker.updateDocument(document)
 
-        check(document, "existing_head_used_if_present.txt")
+        check document, '''
+<?xml version="1.0"?>
+<html><head><!-- existing head --><link type="text/css" rel="stylesheet" href="foo.css"/></head><body>body content</body></html>
+'''
     }
 
     @Test
@@ -184,7 +203,12 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         linker.updateDocument(document)
 
-        check(document, "add_script.txt")
+        check document, '''
+<html><head></head><body><p>Ready to be updated with scripts.</p><script src="/js/require.js"></script><script type="text/javascript">require.config();
+</script><script type="text/javascript">doSomething();
+doSomethingElse();
+</script></body></html>
+'''
 
         verify()
     }
@@ -204,7 +228,11 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         linker.updateDocument(document)
 
-        check(document, "no_body_element.txt")
+        check document, '''
+<?xml version="1.0"?>
+<html><head/><notbody><p>Ready to be updated with scripts.</p></notbody><body><script/><script type="text/javascript">require.config();
+</script><script src="foo.js" type="text/javascript"/></body></html>
+'''
     }
 
     @Test
@@ -221,7 +249,11 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         linker.updateDocument(document)
 
-        check(document, "script_written_raw.txt")
+        check document, '''
+<html><head></head><body><p>Ready to be updated with scripts.</p><script src="/js/require.js"></script><script type="text/javascript">require.config();
+</script><script type="text/javascript">for (var i = 0; i < 5; i++)  { doIt(i); }
+</script></body></html>
+'''
 
         verify()
     }
@@ -263,7 +295,13 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         linker.updateDocument(document)
 
-        check document, "immediate_initialization.txt"
+        check document, '''
+<html><head><meta/><script></script></head><body><script src="/js/require.js"></script><script type="text/javascript">require.config();
+</script><script type="text/javascript">require(["core/pageinit"], function (pageinit) {
+  pageinit([["immediate/module:myfunc",{"fred":"barney"}]]);
+});
+</script></body></html>
+'''
 
         verify()
     }
@@ -286,7 +324,29 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         linker.updateDocument(document)
 
-        assertEquals(document.toString(), readFile("pretty_print_initialization.txt"))
+        check document, '''
+<html><head><meta/></head><body><script src="/js/require.js"></script><script type="text/javascript">require.config();
+</script><script type="text/javascript">Tapestry.onDOMLoaded(function() {
+require(["core/pageinit"], function (pageinit) {
+  pageinit([[
+  "my/module"
+],
+  [
+  "my/other/module:normal",
+  111,
+  222
+]]);
+});
+require(["core/pageinit"], function (pageinit) {
+  pageinit([[
+  "my/other/module:late",
+  333,
+  444
+]]);
+});
+});
+</script></body></html>
+'''
     }
 
     @Test
@@ -306,8 +366,15 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         linker.updateDocument(document)
 
-        assertEquals(document.toString(), readFile("other_initialization.txt"))
-
+        check document, '''
+<html><head><meta/><script></script></head><body><script src="/js/require.js"></script><script type="text/javascript">require.config();
+</script><script type="text/javascript">Tapestry.onDOMLoaded(function() {
+require(["core/pageinit"], function (pageinit) {
+  pageinit([["my/module","barney"]]);
+});
+});
+</script></body></html>
+'''
         verify()
     }
 
@@ -324,7 +391,13 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         linker.updateDocument(document)
 
-        assertEquals(document.toString(), readFile("ie_conditional_stylesheet.txt"))
+        check document, '''
+<html><head><link type="text/css" rel="stylesheet" href="everybody.css"/>
+<!--[if IE]>
+<link type="text/css" rel="stylesheet" href="just_ie.css"/>
+<![endif]-->
+</head></html>
+'''
     }
 
     @Test
@@ -340,7 +413,9 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         linker.updateDocument(document)
 
-        assertEquals(document.toString(), readFile("stylesheet_insertion_point.txt"))
+        check document, '''
+<html><head><link type="text/css" rel="stylesheet" href="whatever.css"/><link type="text/css" rel="stylesheet t-ajax-insertion-point" href="insertion-point.css"/></head></html>
+'''
     }
 
     @Test
@@ -361,8 +436,19 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         linker.updateDocument(document)
 
-        assertEquals(document.toString(), readFile("module_based_initialization.txt"))
-
+        check document, '''
+<html><head><meta/></head><body><script src="/js/require.js"></script><script type="text/javascript">require.config();
+</script><script type="text/javascript">Tapestry.onDOMLoaded(function() {
+require(["core/pageinit"], function (pageinit) {
+  pageinit([["my/module"],
+  ["my/other/module:normal",111,222]]);
+});
+require(["core/pageinit"], function (pageinit) {
+  pageinit([["my/other/module:late",333,444]]);
+});
+});
+</script></body></html>
+'''
     }
 
     private ModuleManager mockModuleManager() {
