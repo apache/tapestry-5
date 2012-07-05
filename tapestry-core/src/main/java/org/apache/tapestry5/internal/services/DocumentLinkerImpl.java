@@ -28,7 +28,7 @@ import java.util.Map;
 
 public class DocumentLinkerImpl implements DocumentLinker
 {
-    private final List<String> scripts = CollectionFactory.newList();
+    private final List<String> scriptURLs = CollectionFactory.newList();
 
     private final Map<InitializationPriority, StringBuilder> priorityToScript = CollectionFactory.newMap();
 
@@ -44,7 +44,8 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     private final String tapestryBanner;
 
-    private boolean hasDynamicScript;
+    // Initially false; set to true when a scriptURL or any kind of initialization is added.
+    private boolean hasScriptsOrInitializations;
 
     /**
      * @param moduleManager
@@ -72,7 +73,9 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     public void addScriptLink(String scriptURL)
     {
-        scripts.add(scriptURL);
+        scriptURLs.add(scriptURL);
+
+        hasScriptsOrInitializations = true;
     }
 
     public void addScript(InitializationPriority priority, String script)
@@ -90,7 +93,7 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         builder.append("\n");
 
-        hasDynamicScript = true;
+        hasScriptsOrInitializations = true;
     }
 
     @Override
@@ -112,7 +115,7 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         InternalUtils.addToMapList(priorityToModuleInit, priority, init);
 
-        hasDynamicScript = true;
+        hasScriptsOrInitializations = true;
     }
 
     /**
@@ -161,7 +164,7 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     private void addScriptElements(Element root)
     {
-        if (scripts.isEmpty() && !hasDynamicScript)
+        if (!hasScriptsOrInitializations)
         {
             return;
         }
@@ -224,9 +227,9 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         // Next, include all stacks and individual JavaScript files *after* RequireJS.
 
-        for (String script : scripts)
+        for (String scriptURL : scriptURLs)
         {
-            body.element("script", "type", "text/javascript", "src", script);
+            body.element("script", "type", "text/javascript", "src", scriptURL);
         }
 
         if (priorityToScript.isEmpty() && priorityToModuleInit.isEmpty())
