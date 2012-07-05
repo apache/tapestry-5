@@ -23,11 +23,15 @@ import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.javascript.ModuleManager;
+import org.apache.tapestry5.services.javascript.ShimModule;
 
 import java.util.Comparator;
 import java.util.List;
@@ -39,12 +43,12 @@ public class ModuleManagerImpl implements ModuleManager
 
     private final Asset requireJS;
 
-    private final Map<String, Resource> configuration;
-
     // Library names, sorted by order of descending length.
     private final List<String> libraryNames;
 
     private final Map<String, List<String>> libraryNameToPackageNames = CollectionFactory.newMap();
+
+    private final Map<String, Resource> shimModuleNameToResource = CollectionFactory.newMap();
 
     private final Resource classpathRoot;
 
@@ -54,14 +58,13 @@ public class ModuleManagerImpl implements ModuleManager
     public ModuleManagerImpl(AssetPathConstructor constructor, final ComponentClassResolver resolver, AssetSource assetSource,
                              @Path("${" + SymbolConstants.REQUIRE_JS + "}")
                              Asset requireJS,
-                             Map<String, Resource> configuration)
+                             Map<String, ShimModule> configuration,
+                             @Symbol(SymbolConstants.COMPACT_JSON)
+                             boolean compactJSON)
     {
         this.requireJS = requireJS;
-        this.configuration = configuration;
-        String baseURL = constructor.constructAssetPath("module-root", "");
 
-        requireConfig = String.format("require.config({baseUrl:\"%s\"});\n",
-                baseURL);
+        this.requireConfig = buildRequireJSConfig(constructor.constructAssetPath("module-root", ""), compactJSON, configuration);
 
         classpathRoot = assetSource.resourceForPath("");
 
@@ -85,6 +88,39 @@ public class ModuleManagerImpl implements ModuleManager
                 }).toList();
 
         libraryNameToPackageNames.put("app", resolver.getPackagesForLibrary(""));
+    }
+
+    private String buildRequireJSConfig(String baseURL, boolean compactJSON, Map<String, ShimModule> configuration)
+    {
+        JSONObject shims = new JSONObject();
+        JSONObject config = new JSONObject().put("baseUrl", baseURL).put("shim", shims);
+
+        for (String name : configuration.keySet())
+        {
+            ShimModule module = configuration.get(name);
+
+            shimModuleNameToResource.put(name, module.resource);
+
+            JSONObject shim = new JSONObject();
+
+            if (module.dependencies != null && !module.dependencies.isEmpty())
+            {
+                for (String dep : module.dependencies)
+                {
+                    shim.accumulate("deps", dep);
+                }
+            }
+
+            if (InternalUtils.isNonBlank(module.exports))
+            {
+                shim.put("exports", module.exports);
+            }
+
+            shims.put(name, shim);
+        }
+
+        return String.format("require.config(%s);\n",
+                config.toString(compactJSON));
     }
 
     @PostInjection
@@ -112,7 +148,6 @@ public class ModuleManagerImpl implements ModuleManager
             cache.put(moduleName, resource);
         }
 
-
         // We're treating classpathRoot as a placeholder for null.
 
         return resource == classpathRoot ? null : resource;
@@ -120,16 +155,10 @@ public class ModuleManagerImpl implements ModuleManager
 
     private Resource resolveModuleNameToResource(String moduleName)
     {
-        Resource resource = configuration.get(moduleName);
+        Resource resource = shimModuleNameToResource.get(moduleName);
 
         if (resource != null)
         {
-            if (!resource.exists())
-            {
-                throw new RuntimeException(String.format("Resource %s (mapped as module '%s') does not exist.",
-                        resource, moduleName));
-            }
-
             return resource;
         }
 

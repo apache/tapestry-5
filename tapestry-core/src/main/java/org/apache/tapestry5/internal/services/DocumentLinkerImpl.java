@@ -30,8 +30,6 @@ public class DocumentLinkerImpl implements DocumentLinker
 {
     private final List<String> scriptURLs = CollectionFactory.newList();
 
-    private final Map<InitializationPriority, StringBuilder> priorityToScript = CollectionFactory.newMap();
-
     private final Map<InitializationPriority, List<JSONArray>> priorityToModuleInit = CollectionFactory.newMap();
 
     private final List<StylesheetLink> includedStylesheets = CollectionFactory.newList();
@@ -80,20 +78,7 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     public void addScript(InitializationPriority priority, String script)
     {
-
-        StringBuilder builder = priorityToScript.get(priority);
-
-        if (builder == null)
-        {
-            builder = new StringBuilder();
-            priorityToScript.put(priority, builder);
-        }
-
-        builder.append(script);
-
-        builder.append("\n");
-
-        hasScriptsOrInitializations = true;
+        addInitialization(priority, "core/pageinit", "evalJavaScript", new JSONArray().put(script));
     }
 
     @Override
@@ -232,7 +217,7 @@ public class DocumentLinkerImpl implements DocumentLinker
             body.element("script", "type", "text/javascript", "src", scriptURL);
         }
 
-        if (priorityToScript.isEmpty() && priorityToModuleInit.isEmpty())
+        if (priorityToModuleInit.isEmpty())
         {
             return;
         }
@@ -244,8 +229,7 @@ public class DocumentLinkerImpl implements DocumentLinker
         for (InitializationPriority p : InitializationPriority.values())
         {
             if (p != InitializationPriority.IMMEDIATE && !wrapped
-                    && (priorityToScript.containsKey(p) ||
-                    priorityToModuleInit.containsKey(p)))
+                    && priorityToModuleInit.containsKey(p))
             {
 
                 block.append("Tapestry.onDOMLoaded(function() {\n");
@@ -254,8 +238,6 @@ public class DocumentLinkerImpl implements DocumentLinker
             }
 
             addModuleInits(block, priorityToModuleInit.get(p));
-
-            addDirectScriptInitialization(block, priorityToScript.get(p));
         }
 
         if (wrapped)
@@ -286,14 +268,6 @@ public class DocumentLinkerImpl implements DocumentLinker
         }
 
         block.append("]);\n});\n");
-    }
-
-    private void addDirectScriptInitialization(StringBuilder block, StringBuilder content)
-    {
-        if (content == null)
-            return;
-
-        block.append(content);
     }
 
     private static Element createTemporaryContainer(Element headElement, String existingElementName, String newElementName)

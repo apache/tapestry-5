@@ -38,6 +38,11 @@ public class JavaScriptWrapperResourceTransformer implements ResourceTransformer
         this.streamableResourceSource = streamableResourceSource;
     }
 
+    public String getTransformedContentType()
+    {
+        return "text/javascript";
+    }
+
     @Override
     public InputStream transform(Resource source, ResourceDependencies dependencies) throws IOException
     {

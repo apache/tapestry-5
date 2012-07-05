@@ -338,7 +338,7 @@ public class SymbolConstants
     public static final String ASSET_URL_FULL_QUALIFIED = "tapestry.asset-url-fully-qualified";
 
     /**
-     * Prefix to be used for all asset paths, used to recognize which requests are for assets. This value
+     * Prefix to be used for all resource paths, used to recognize which requests are for assets. This value
      * is appended to the context path and the (optional {@linkplain #APPLICATION_FOLDER application folder}.
      * Its default is "assets".  It may contain slashes, but should not begin or end with one.
      *

@@ -19,9 +19,8 @@
 # The module name may also indicate the function exported by the module, as a suffix following a colon:
 # e.g., "my/module:myfunc".
 # Any additional values in the initializer are passed to the function. The context of the function (this) is null.
-define ->
+define ["_", "core/console"], (_, console) ->
   invokeInitializer = (qualifiedName, initArguments...) ->
-
     [moduleName, functionName] = qualifiedName.split ':'
 
     require [moduleName], (moduleLib) ->
@@ -29,8 +28,34 @@ define ->
       fn.apply null, initArguments
 
 
-  # Exported function passed a list of initializers.
-  initialize : (inits) ->
+  # Passed a list of initializers, executes each initializer in order. Due to asynchronous loading
+  # of modules, the exact order in which initializer functions are invoked is not predictable.
+  initialize: (inits) ->
     # apply will split the first value from the rest for us, implicitly.
     invokeInitializer.apply null, init for init in inits
+
+  # Pre-loads a number of scripts in order. When the last script is loaded,
+  # invokes the callback (with no parameters).
+  loadScripts: (scripts, callback) ->
+    reducer = (callback, script) -> ->
+      console.debug "Loading script #{script}"
+      require [script], callback
+
+    finalCallback = _.reduceRight scripts, reducer, callback
+
+    finalCallback.call(null)
+
+  # Loads all the scripts, in order. It then executes the immediate initializations.
+  # After that, it waits for the DOM to be ready and executes the other initializations.
+  loadScriptsAndInitialize: (scripts, immediateInits, otherInits) ->
+    this.loadScripts scripts, ->
+      this.initialize immediateInits
+      require ["core/domReady!"], -> this.initialize otherInits
+
+  evalJavaScript: (js) ->
+    console.debug "Evaluating: #{js}"
+    eval js
+
+
+
 

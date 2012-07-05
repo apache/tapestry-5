@@ -14,8 +14,10 @@
 
 package org.apache.tapestry5.services.javascript;
 
+import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.RenderSupport;
+import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.DocumentLinker;
 import org.apache.tapestry5.internal.services.RenderSupportImpl;
@@ -23,8 +25,10 @@ import org.apache.tapestry5.internal.services.ajax.JavaScriptSupportImpl;
 import org.apache.tapestry5.internal.services.javascript.*;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONObject;
@@ -227,9 +231,11 @@ public class JavaScriptModule
     }
 
     @Contribute(ModuleManager.class)
-    public static void setupExtraModules(MappedConfiguration<String, Object> configuration)
+    public static void setupBaseModuleShims(MappedConfiguration<String, Object> configuration,
+                                            @Inject @Path("classpath:org/apache/tapestry5/underscore_1_3_3.js")
+                                            Resource underscore)
     {
-        configuration.add("_", "classpath:org/apache/tapestry5/underscore.jsw");
+        configuration.add("_", new ShimModule(underscore, null, "_"));
     }
 
 }

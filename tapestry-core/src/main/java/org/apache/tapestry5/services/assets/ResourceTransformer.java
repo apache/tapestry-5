@@ -30,6 +30,13 @@ import java.io.InputStream;
 public interface ResourceTransformer
 {
     /**
+     * Returns the MIME type of a transformed stream.
+     *
+     * @since 5.4
+     */
+    String getTransformedContentType();
+
+    /**
      * Read the source input stream and provide a new input stream of the transformed content.
      *
      * @param source

@@ -22,13 +22,12 @@ import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
  * Responsible for managing access to the JavaScript modules.
  * <p/>
  * The configuration of the service allows overrides of the default search path; the configuration keys
- * are module names, and the configuration values are the resources for those module names. This is used to give
- * commonly-used modules a short module name (e.g., "_" for <a href="http://underscore.js">Underscore.js</a>),
- * <em>OR</em> to allow selective monkey-patching of default modules.
+ * are module names, and the configuration values are the {@link ShimModule} definitions for those module names.
+ * This is primarily used to wrap non-AMD compliant libraries for use with RequireJS (via contributed {@link ShimModule}s).
  *
  * @since 5.4
  */
-@UsesMappedConfiguration(Resource.class)
+@UsesMappedConfiguration(ShimModule.class)
 public interface ModuleManager
 {
     /**
@@ -44,6 +43,9 @@ public interface ModuleManager
 
     /**
      * Given a module name (which may be a path of names separated by slashes), locates the corresponding {@link Resource}.
+     * First checks for {@linkplain ShimModule contributed shim modules}, then searches for possible matches among the
+     * {@linkplain org.apache.tapestry5.services.ComponentClassResolver#getLibraryNames() defined library names}.  As a special
+     * case, the folder name "app" is mapped to the application's package.
      *
      * @param moduleName
      *         name of module to locate

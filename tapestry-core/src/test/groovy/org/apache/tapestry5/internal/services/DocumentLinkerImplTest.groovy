@@ -103,9 +103,12 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         check document, '''
 <?xml version="1.0"?>
 <html><body><p>Ready to be updated with scripts.</p><!--MODULE-MANAGER-INITIALIZATION--><script src="foo.js" type="text/javascript"/><script src="bar/baz.js" type="text/javascript"/><script type="text/javascript">Tapestry.onDOMLoaded(function() {
-pageInitialization();
+require(["core/pageinit"], function (pageinit) {
+  pageinit.initialize([["core/pageinit:evalJavaScript","pageInitialization();"]]);
 });
-</script></body></html>'''
+});
+</script></body></html>
+'''
 
         verify()
     }
@@ -203,8 +206,10 @@ pageInitialization();
         linker.updateDocument(document)
 
         check document, '''
-<html><body><p>Ready to be updated with scripts.</p><!--MODULE-MANAGER-INITIALIZATION--><script type="text/javascript">doSomething();
-doSomethingElse();
+<html><body><p>Ready to be updated with scripts.</p><!--MODULE-MANAGER-INITIALIZATION--><script type="text/javascript">require(["core/pageinit"], function (pageinit) {
+  pageinit.initialize([["core/pageinit:evalJavaScript","doSomething();"],
+  ["core/pageinit:evalJavaScript","doSomethingElse();"]]);
+});
 </script></body></html>
 '''
 
@@ -231,28 +236,6 @@ doSomethingElse();
         check document, '''
 <?xml version="1.0"?>
 <html><notbody><p>Ready to be updated with scripts.</p></notbody><body><!--MODULE-MANAGER-INITIALIZATION--><script src="foo.js" type="text/javascript"/></body></html>
-'''
-
-        verify()
-    }
-
-    @Test
-    void script_written_raw() throws Exception {
-        Document document = new Document()
-
-        document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.")
-
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), true, "1.2.3", true)
-
-        replay()
-
-        linker.addScript(InitializationPriority.IMMEDIATE, "for (var i = 0; i < 5; i++)  { doIt(i); }")
-
-        linker.updateDocument(document)
-
-        check document, '''
-<html><body><p>Ready to be updated with scripts.</p><!--MODULE-MANAGER-INITIALIZATION--><script type="text/javascript">for (var i = 0; i < 5; i++)  { doIt(i); }
-</script></body></html>
 '''
 
         verify()

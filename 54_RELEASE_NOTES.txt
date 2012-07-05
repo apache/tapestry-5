@@ -9,6 +9,9 @@ JavaScript Libraries (including stacks) are being replaced with modules. Note th
 with RequireJS, which may mean that global values exported by the libraries are not visible; you should explicitly
 attach properties to the global JavaScript window object, rather than assume that the context (this) is the window.
 
+The interface org.apache.tapestry5.services.assets.ResourceTransformer has had a new method added:
+getTransformedContentType().
+
 Bugs fixed (in 5.4-js-rewrite branch):
 
 TAP5-1965: Replace use of Request.getContextPath() with a symbol define at application startup

@@ -68,7 +68,7 @@ public class StreamableResourceSourceImpl implements StreamableResourceSource
 
         transformed.close();
 
-        String contentType = contentTypeAnalyzer.getContentType(baseResource);
+        String contentType = rt == null ? contentTypeAnalyzer.getContentType(baseResource) : rt.getTransformedContentType();
 
         boolean compressable = compressionAnalyzer.isCompressable(contentType);
 
