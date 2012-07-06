@@ -21,11 +21,13 @@ import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
+import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
@@ -42,6 +44,9 @@ public class ModuleManagerImpl implements ModuleManager
     private final String requireConfig;
 
     private final Asset requireJS;
+    private final Messages globalMessages;
+
+    private final boolean compactJSON;
 
     // Library names, sorted by order of descending length.
     private final List<String> libraryNames;
@@ -59,12 +64,14 @@ public class ModuleManagerImpl implements ModuleManager
                              @Path("${" + SymbolConstants.REQUIRE_JS + "}")
                              Asset requireJS,
                              Map<String, ShimModule> configuration,
-                             @Symbol(SymbolConstants.COMPACT_JSON)
-                             boolean compactJSON)
+                             Messages globalMessages, @Symbol(SymbolConstants.COMPACT_JSON)
+    boolean compactJSON)
     {
         this.requireJS = requireJS;
+        this.globalMessages = globalMessages;
+        this.compactJSON = compactJSON;
 
-        this.requireConfig = buildRequireJSConfig(constructor.constructAssetPath("module-root", ""), compactJSON, configuration);
+        this.requireConfig = buildRequireJSConfig(constructor.constructAssetPath("module-root", ""), configuration);
 
         classpathRoot = assetSource.resourceForPath("");
 
@@ -90,7 +97,7 @@ public class ModuleManagerImpl implements ModuleManager
         libraryNameToPackageNames.put("app", resolver.getPackagesForLibrary(""));
     }
 
-    private String buildRequireJSConfig(String baseURL, boolean compactJSON, Map<String, ShimModule> configuration)
+    private String buildRequireJSConfig(String baseURL, Map<String, ShimModule> configuration)
     {
         JSONObject shims = new JSONObject();
         JSONObject config = new JSONObject().put("baseUrl", baseURL).put("shim", shims);
@@ -129,12 +136,34 @@ public class ModuleManagerImpl implements ModuleManager
         tracker.clearOnInvalidation(cache);
     }
 
-    @Override
-    public void writeInitialization(Element body)
+    public void writeInitialization(Element body, List<String> scriptURLs, List<JSONArray> immediateInits, List<JSONArray> deferredInits)
     {
         body.element("script", "src", requireJS.toClientURL());
 
-        body.element("script", "type", "text/javascript").raw(requireConfig);
+        Element element = body.element("script", "type", "text/javascript");
+
+        element.raw(requireConfig);
+
+        StringBuilder content = new StringBuilder(1000);
+
+        content.append(globalMessages.format("core-page-initialization-template",
+                convert(scriptURLs),
+                convert(immediateInits),
+                convert(deferredInits)));
+
+        element.raw(content.toString());
+    }
+
+    private String convert(List<?> input)
+    {
+        JSONArray array = new JSONArray();
+
+        for (Object o : input)
+        {
+            array.put(o);
+        }
+
+        return array.toString(compactJSON);
     }
 
     @Override

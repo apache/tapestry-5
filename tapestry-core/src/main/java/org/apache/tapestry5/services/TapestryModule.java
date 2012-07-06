@@ -1799,17 +1799,11 @@ public final class TapestryModule
 
                                          final ModuleManager moduleManager,
 
-                                         @Path("${" + SymbolConstants.REQUIRE_JS + "}")
-                                         final Asset requireJS,
-
                                          @Symbol(SymbolConstants.OMIT_GENERATOR_META)
                                          final boolean omitGeneratorMeta,
 
                                          @Symbol(SymbolConstants.TAPESTRY_VERSION)
                                          final String tapestryVersion,
-
-                                         @Symbol(SymbolConstants.COMPACT_JSON)
-                                         final boolean compactJSON,
 
                                          final ValidationDecoratorFactory validationDecoratorFactory,
 
@@ -1820,7 +1814,7 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                DocumentLinkerImpl linker = new DocumentLinkerImpl(moduleManager, omitGeneratorMeta, tapestryVersion, compactJSON);
+                DocumentLinkerImpl linker = new DocumentLinkerImpl(moduleManager, omitGeneratorMeta, tapestryVersion);
 
                 environment.push(DocumentLinker.class, linker);
 

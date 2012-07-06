@@ -23,6 +23,7 @@ import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.ModuleManager;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -36,8 +37,6 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     private final ModuleManager moduleManager;
 
-    private final boolean compactJSON;
-
     private final boolean omitGeneratorMetaTag;
 
     private final String tapestryBanner;
@@ -45,23 +44,22 @@ public class DocumentLinkerImpl implements DocumentLinker
     // Initially false; set to true when a scriptURL or any kind of initialization is added.
     private boolean hasScriptsOrInitializations;
 
+    private int initCount;
+
     /**
      * @param moduleManager
      *         used to identify the root folder for dynamically loaded modules
      * @param omitGeneratorMetaTag
      *         via symbol configuration
      * @param tapestryVersion
-     *         version of Tapestry framework (for meta tag)
-     * @param compactJSON
+ *         version of Tapestry framework (for meta tag)
      */
-    public DocumentLinkerImpl(ModuleManager moduleManager, boolean omitGeneratorMetaTag, String tapestryVersion, boolean compactJSON)
+    public DocumentLinkerImpl(ModuleManager moduleManager, boolean omitGeneratorMetaTag, String tapestryVersion)
     {
         this.moduleManager = moduleManager;
         this.omitGeneratorMetaTag = omitGeneratorMetaTag;
 
         tapestryBanner = String.format("Apache Tapestry Framework (version %s)", tapestryVersion);
-
-        this.compactJSON = compactJSON;
     }
 
     public void addStylesheetLink(StylesheetLink sheet)
@@ -81,7 +79,6 @@ public class DocumentLinkerImpl implements DocumentLinker
         addInitialization(priority, "core/pageinit", "evalJavaScript", new JSONArray().put(script));
     }
 
-    @Override
     public void addInitialization(InitializationPriority priority, String moduleName, String functionName, JSONArray arguments)
     {
         JSONArray init = new JSONArray();
@@ -101,6 +98,8 @@ public class DocumentLinkerImpl implements DocumentLinker
         InternalUtils.addToMapList(priorityToModuleInit, priority, init);
 
         hasScriptsOrInitializations = true;
+
+        initCount++;
     }
 
     /**
@@ -116,7 +115,9 @@ public class DocumentLinkerImpl implements DocumentLinker
         // If the document failed to render at all, that's a different problem and is reported elsewhere.
 
         if (root == null)
+        {
             return;
+        }
 
         addStylesheetsToHead(root, includedStylesheets);
 
@@ -194,6 +195,23 @@ public class DocumentLinkerImpl implements DocumentLinker
         return container;
     }
 
+    private List<JSONArray> forPriority(InitializationPriority... priorities)
+    {
+        List<JSONArray> result = new ArrayList<JSONArray>(initCount);
+
+        for (InitializationPriority p : priorities)
+        {
+            List<JSONArray> inits = priorityToModuleInit.get(p);
+
+            if (inits != null)
+            {
+                result.addAll(inits);
+            }
+        }
+
+        return result;
+    }
+
     /**
      * Adds {@code <script>} elements for the RequireJS library, then any statically includes JavaScript libraries
      * (including JavaScript stack virtual assets), then the initialization script block.
@@ -206,68 +224,10 @@ public class DocumentLinkerImpl implements DocumentLinker
         // In prior releases of Tapestry, we've vacillated about where the <script> tags go
         // (in <head> or at bottom of <body>). Switching to a module approach gives us a new chance to fix this.
         // Eventually, (nearly) everything will be loaded as modules.
-        // TODO: Do we need to include type="text/javascript"?
 
-        moduleManager.writeInitialization(body);
-
-        // Next, include all stacks and individual JavaScript files *after* RequireJS.
-
-        for (String scriptURL : scriptURLs)
-        {
-            body.element("script", "type", "text/javascript", "src", scriptURL);
-        }
-
-        if (priorityToModuleInit.isEmpty())
-        {
-            return;
-        }
-
-        StringBuilder block = new StringBuilder();
-
-        boolean wrapped = false;
-
-        for (InitializationPriority p : InitializationPriority.values())
-        {
-            if (p != InitializationPriority.IMMEDIATE && !wrapped
-                    && priorityToModuleInit.containsKey(p))
-            {
-
-                block.append("Tapestry.onDOMLoaded(function() {\n");
-
-                wrapped = true;
-            }
-
-            addModuleInits(block, priorityToModuleInit.get(p));
-        }
-
-        if (wrapped)
-        {
-            block.append("});\n");
-        }
-
-        body.element("script", "type", "text/javascript").raw(block.toString());
-    }
-
-    private void addModuleInits(StringBuilder block, List<JSONArray> moduleInits)
-    {
-        if (moduleInits == null)
-        {
-            return;
-        }
-
-        block.append("require([\"core/pageinit\"], function (pageinit) {\n");
-        block.append("  pageinit.initialize([");
-
-        String sep = "";
-
-        for (JSONArray init : moduleInits)
-        {
-            block.append(sep);
-            block.append(init.toString(compactJSON));
-            sep = ",\n  ";
-        }
-
-        block.append("]);\n});\n");
+        moduleManager.writeInitialization(body, scriptURLs,
+                forPriority(InitializationPriority.IMMEDIATE),
+                forPriority(InitializationPriority.EARLY, InitializationPriority.NORMAL, InitializationPriority.LATE));
     }
 
     private static Element createTemporaryContainer(Element headElement, String existingElementName, String newElementName)

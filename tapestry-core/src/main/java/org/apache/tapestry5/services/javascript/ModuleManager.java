@@ -17,6 +17,10 @@ package org.apache.tapestry5.services.javascript;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
+import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.json.JSONObject;
+
+import java.util.List;
 
 /**
  * Responsible for managing access to the JavaScript modules.
@@ -34,12 +38,19 @@ public interface ModuleManager
      * Invoked by the internal {@link org.apache.tapestry5.internal.services.DocumentLinker} service to write the configuration
      * of the module system into the page, including the tag to load the RequireJS library, and the
      * necessary initialization of the client-side {@code require} object, including
-     * (critically) its baseUrl property.
+     * (critically) its baseUrl property. In addition, a call to the client-side function {@code core/pageinit:loadScriptsAndInitialize}
+     * is constructed to load static scripts and perform page initializations.
      *
      * @param body
      *         {@code <body>} element of the page, to which new {@code <script>>} element(s) will be added.
+     * @param scriptURLs
+     *         list of static JavaScript library URLs that must be loaded on the page, prior to any initializations
+     * @param immediateInits
+     *         list of immediate initializations that occur as soon as the static   JavaScript libraries are loaded
+     * @param deferredInits
+     *         List of deferred initializations that occur once the page has loaded
      */
-    void writeInitialization(Element body);
+    void writeInitialization(Element body, List<String> scriptURLs, List<JSONArray> immediateInits, List<JSONArray> deferredInits);
 
     /**
      * Given a module name (which may be a path of names separated by slashes), locates the corresponding {@link Resource}.

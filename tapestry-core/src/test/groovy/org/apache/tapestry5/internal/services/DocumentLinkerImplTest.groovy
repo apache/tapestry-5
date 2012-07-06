@@ -14,6 +14,9 @@ import org.easymock.EasyMock
 import org.easymock.IAnswer
 import org.testng.annotations.Test
 
+import static org.easymock.EasyMock.eq
+import static org.easymock.EasyMock.isA
+
 class DocumentLinkerImplTest extends InternalBaseTestCase {
 
     def check(Document document, String expectedContent) throws Exception {
@@ -30,7 +33,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("not-html").text("not an HTML document")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, "1.2.3")
 
         // Only checked if there's something to link.
 
@@ -53,7 +56,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("not-html").text("not an HTML document")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, "1.2.3")
 
         // Only checked if there's something to link.
 
@@ -74,7 +77,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
     void missing_root_element_is_a_noop() {
         Document document = new Document()
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, "1.2.3")
 
         linker.addScriptLink("foo.js")
         linker.addScript(InitializationPriority.NORMAL, "doSomething();")
@@ -90,7 +93,9 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), true, "1.2.3", true)
+        def manager = mockModuleManager(["foo.js", "bar/baz.js"], [], [new JSONArray("core/pageinit:evalJavaScript", "pageInitialization();")])
+
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, true, "1.2.3")
 
         replay()
 
@@ -102,12 +107,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         check document, '''
 <?xml version="1.0"?>
-<html><body><p>Ready to be updated with scripts.</p><!--MODULE-MANAGER-INITIALIZATION--><script src="foo.js" type="text/javascript"/><script src="bar/baz.js" type="text/javascript"/><script type="text/javascript">Tapestry.onDOMLoaded(function() {
-require(["core/pageinit"], function (pageinit) {
-  pageinit.initialize([["core/pageinit:evalJavaScript","pageInitialization();"]]);
-});
-});
-</script></body></html>
+<html><body><p>Ready to be updated with scripts.</p><!--MODULE-MANAGER-INITIALIZATION--></body></html>
 '''
 
         verify()
@@ -122,7 +122,7 @@ require(["core/pageinit"], function (pageinit) {
 
         document.newRootElement("html").element("body").element("p").text("Ready to be marked with generator meta.")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, false, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, false, "1.2.3")
 
         linker.updateDocument(document)
 
@@ -141,7 +141,7 @@ require(["core/pageinit"], function (pageinit) {
 
         document.newRootElement("no_html").text("Generator meta only added if root is html tag.")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, false, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, false, "1.2.3")
 
         linker.updateDocument(document)
 
@@ -158,7 +158,7 @@ require(["core/pageinit"], function (pageinit) {
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with styles.")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, "1.2.3")
 
         linker.addStylesheetLink(new StylesheetLink("foo.css"))
         linker.addStylesheetLink(new StylesheetLink("bar/baz.css", new StylesheetOptions("print")))
@@ -178,7 +178,7 @@ require(["core/pageinit"], function (pageinit) {
         document.newRootElement("html").element("head").comment(" existing head ").container.element("body").text(
             "body content")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, "1.2.3")
 
         linker.addStylesheetLink(new StylesheetLink("foo.css"))
 
@@ -196,21 +196,18 @@ require(["core/pageinit"], function (pageinit) {
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), true, "1.2.3", true)
+        def manager = mockModuleManager([], [new JSONArray("core/pageinit:evalJavaScript", "doSomething();")], [])
+
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, true, "1.2.3")
 
         replay()
 
         linker.addScript(InitializationPriority.IMMEDIATE, "doSomething();")
-        linker.addScript(InitializationPriority.IMMEDIATE, "doSomethingElse();")
 
         linker.updateDocument(document)
 
         check document, '''
-<html><body><p>Ready to be updated with scripts.</p><!--MODULE-MANAGER-INITIALIZATION--><script type="text/javascript">require(["core/pageinit"], function (pageinit) {
-  pageinit.initialize([["core/pageinit:evalJavaScript","doSomething();"],
-  ["core/pageinit:evalJavaScript","doSomethingElse();"]]);
-});
-</script></body></html>
+<html><body><p>Ready to be updated with scripts.</p><!--MODULE-MANAGER-INITIALIZATION--></body></html>
 '''
 
         verify()
@@ -225,7 +222,9 @@ require(["core/pageinit"], function (pageinit) {
 
         document.newRootElement("html").element("notbody").element("p").text("Ready to be updated with scripts.")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), true, "1.2.3", true)
+        def manager = mockModuleManager(["foo.js"], [], [])
+
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, true, "1.2.3")
 
         replay()
 
@@ -235,31 +234,11 @@ require(["core/pageinit"], function (pageinit) {
 
         check document, '''
 <?xml version="1.0"?>
-<html><notbody><p>Ready to be updated with scripts.</p></notbody><body><!--MODULE-MANAGER-INITIALIZATION--><script src="foo.js" type="text/javascript"/></body></html>
+<html><notbody><p>Ready to be updated with scripts.</p></notbody><body><!--MODULE-MANAGER-INITIALIZATION--></body></html>
 '''
 
         verify()
     }
-
-    @Test
-    void non_asset_script_link_disables_aggregation() throws Exception {
-        Document document = new Document()
-
-        document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.")
-
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), true, "1.2.3", true)
-
-        replay()
-
-        linker.addScriptLink("/context/foo.js")
-
-        linker.updateDocument(document)
-
-        assert document.toString().contains('''<script src="/context/foo.js" type="text/javascript">''')
-
-        verify()
-    }
-
 
     @Test
     void immediate_initialization() throws Exception {
@@ -270,7 +249,9 @@ require(["core/pageinit"], function (pageinit) {
         head.element("meta")
         head.element("script")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), true, "1.2.3", true)
+        def manager = mockModuleManager([], [new JSONArray("['immediate/module:myfunc', {'fred':'barney'}]")], [])
+
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, true, "1.2.3")
 
         replay()
 
@@ -279,56 +260,12 @@ require(["core/pageinit"], function (pageinit) {
         linker.updateDocument(document)
 
         check document, '''
-<html><head><meta/><script></script></head><body><!--MODULE-MANAGER-INITIALIZATION--><script type="text/javascript">require(["core/pageinit"], function (pageinit) {
-  pageinit.initialize([["immediate/module:myfunc",{"fred":"barney"}]]);
-});
-</script></body></html>
+<html><head><meta/><script></script></head><body><!--MODULE-MANAGER-INITIALIZATION--></body></html>
 '''
 
         verify()
     }
 
-    @Test
-    void pretty_print_initialization() throws Exception {
-        Document document = new Document()
-
-        Element head = document.newRootElement("html").element("head")
-
-        head.element("meta")
-
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), true, "1.2.3", false)
-
-        replay()
-
-        linker.addInitialization(InitializationPriority.NORMAL, "my/module", null, null)
-        linker.addInitialization(InitializationPriority.NORMAL, "my/other/module", "normal", new JSONArray(111, 222))
-        linker.addInitialization(InitializationPriority.LATE, "my/other/module", "late", new JSONArray(333, 444))
-
-        linker.updateDocument(document)
-
-        check document, '''
-<html><head><meta/></head><body><!--MODULE-MANAGER-INITIALIZATION--><script type="text/javascript">Tapestry.onDOMLoaded(function() {
-require(["core/pageinit"], function (pageinit) {
-  pageinit.initialize([[
-  "my/module"
-],
-  [
-  "my/other/module:normal",
-  111,
-  222
-]]);
-});
-require(["core/pageinit"], function (pageinit) {
-  pageinit.initialize([[
-  "my/other/module:late",
-  333,
-  444
-]]);
-});
-});
-</script></body></html>
-'''
-    }
 
     @Test
     void other_initialization() throws Exception {
@@ -339,7 +276,9 @@ require(["core/pageinit"], function (pageinit) {
         head.element("meta")
         head.element("script")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), true, "1.2.3", true)
+        def manager = mockModuleManager([], [], [new JSONArray("['my/module', 'barney']")])
+
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, true, "1.2.3")
 
         replay()
 
@@ -348,12 +287,7 @@ require(["core/pageinit"], function (pageinit) {
         linker.updateDocument(document)
 
         check document, '''
-<html><head><meta/><script></script></head><body><!--MODULE-MANAGER-INITIALIZATION--><script type="text/javascript">Tapestry.onDOMLoaded(function() {
-require(["core/pageinit"], function (pageinit) {
-  pageinit.initialize([["my/module","barney"]]);
-});
-});
-</script></body></html>
+<html><head><meta/><script></script></head><body><!--MODULE-MANAGER-INITIALIZATION--></body></html>
 '''
         verify()
     }
@@ -364,7 +298,7 @@ require(["core/pageinit"], function (pageinit) {
 
         document.newRootElement("html")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, "1.2.3")
 
         linker.addStylesheetLink(new StylesheetLink("everybody.css"))
         linker.addStylesheetLink(new StylesheetLink("just_ie.css", new StylesheetOptions().withCondition("IE")))
@@ -386,7 +320,7 @@ require(["core/pageinit"], function (pageinit) {
 
         document.newRootElement("html")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, "1.2.3", true)
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, "1.2.3")
 
         linker.addStylesheetLink(new StylesheetLink("whatever.css"))
         linker.addStylesheetLink(new StylesheetLink("insertion-point.css", new StylesheetOptions().asAjaxInsertionPoint()))
@@ -406,7 +340,11 @@ require(["core/pageinit"], function (pageinit) {
 
         head.element("meta")
 
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(mockModuleManager(), true, "1.2.3", true)
+        def manager = mockModuleManager([], [], [new JSONArray("['my/module']"),
+            new JSONArray("my/other/module:normal", 111, 222),
+            new JSONArray("my/other/module:late", 333, 444)])
+
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, true, "1.2.3")
 
         replay()
 
@@ -417,26 +355,20 @@ require(["core/pageinit"], function (pageinit) {
         linker.updateDocument(document)
 
         check document, '''
-<html><head><meta/></head><body><!--MODULE-MANAGER-INITIALIZATION--><script type="text/javascript">Tapestry.onDOMLoaded(function() {
-require(["core/pageinit"], function (pageinit) {
-  pageinit.initialize([["my/module"],
-  ["my/other/module:normal",111,222]]);
-});
-require(["core/pageinit"], function (pageinit) {
-  pageinit.initialize([["my/other/module:late",333,444]]);
-});
-});
-</script></body></html>
+<html><head><meta/></head><body><!--MODULE-MANAGER-INITIALIZATION--></body></html>
 '''
 
         verify()
     }
 
-    private ModuleManager mockModuleManager() {
+    private ModuleManager mockModuleManager(scripts, immediateInits, deferredInits) {
 
         ModuleManager mock = newMock(ModuleManager);
 
-        expect(mock.writeInitialization(EasyMock.isA(Element))).andAnswer({
+        expect(mock.writeInitialization(isA(Element),
+            eq(scripts),
+            eq(immediateInits),
+            eq(deferredInits))).andAnswer({
             def body = EasyMock.currentArguments[0]
 
             body.comment("MODULE-MANAGER-INITIALIZATION")
