@@ -27,34 +27,34 @@ define ["_", "core/console"], (_, console) ->
       fn = if functionName? then moduleLib[functionName] else moduleLib
       fn.apply null, initArguments
 
+  exports =
+    # Passed a list of initializers, executes each initializer in order. Due to asynchronous loading
+    # of modules, the exact order in which initializer functions are invoked is not predictable.
+    initialize: (inits) ->
+      # apply will split the first value from the rest for us, implicitly.
+      invokeInitializer.apply null, init for init in inits
 
-  # Passed a list of initializers, executes each initializer in order. Due to asynchronous loading
-  # of modules, the exact order in which initializer functions are invoked is not predictable.
-  initialize: (inits) ->
-    # apply will split the first value from the rest for us, implicitly.
-    invokeInitializer.apply null, init for init in inits
+    # Pre-loads a number of scripts in order. When the last script is loaded,
+    # invokes the callback (with no parameters).
+    loadScripts: (scripts, callback) ->
+      reducer = (callback, script) -> ->
+        console.debug "Loading script #{script}"
+        require [script], callback
 
-  # Pre-loads a number of scripts in order. When the last script is loaded,
-  # invokes the callback (with no parameters).
-  loadScripts: (scripts, callback) ->
-    reducer = (callback, script) -> ->
-      console.debug "Loading script #{script}"
-      require [script], callback
+      finalCallback = _.reduceRight scripts, reducer, callback
 
-    finalCallback = _.reduceRight scripts, reducer, callback
+      finalCallback.call(null)
 
-    finalCallback.call(null)
+    # Loads all the scripts, in order. It then executes the immediate initializations.
+    # After that, it waits for the DOM to be ready and executes the other initializations.
+    loadScriptsAndInitialize: (scripts, immediateInits, otherInits) ->
+      exports.loadScripts scripts, ->
+        exports.initialize immediateInits
+        require ["core/domReady!"], -> exports.initialize otherInits
 
-  # Loads all the scripts, in order. It then executes the immediate initializations.
-  # After that, it waits for the DOM to be ready and executes the other initializations.
-  loadScriptsAndInitialize: (scripts, immediateInits, otherInits) ->
-    this.loadScripts scripts, ->
-      this.initialize immediateInits
-      require ["core/domReady!"], -> this.initialize otherInits
-
-  evalJavaScript: (js) ->
-    console.debug "Evaluating: #{js}"
-    eval js
+    evalJavaScript: (js) ->
+      console.debug "Evaluating: #{js}"
+      eval js
 
 
 
