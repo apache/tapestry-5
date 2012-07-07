@@ -20,19 +20,40 @@
 # e.g., "my/module:myfunc".
 # Any additional values in the initializer are passed to the function. The context of the function (this) is null.
 define ["_", "core/console"], (_, console) ->
-  invokeInitializer = (qualifiedName, initArguments...) ->
+  invokeInitializer = (tracker, qualifiedName, initArguments) ->
     [moduleName, functionName] = qualifiedName.split ':'
 
     require [moduleName], (moduleLib) ->
       fn = if functionName? then moduleLib[functionName] else moduleLib
+      console.debug "Invoking #{qualifiedName} with " + JSON.stringify(initArguments)
       fn.apply null, initArguments
+
+      tracker()
 
   exports =
     # Passed a list of initializers, executes each initializer in order. Due to asynchronous loading
     # of modules, the exact order in which initializer functions are invoked is not predictable.
-    initialize: (inits) ->
-      # apply will split the first value from the rest for us, implicitly.
-      invokeInitializer.apply null, init for init in inits
+    initialize: (inits = [], callback) ->
+
+      callbackCountdown = inits.length + 1
+
+      # tracker gets invoked once after each require/callback, plus once extra
+      # (to handle the case where there are no inits). When the count hits zero,
+      # it invokes the callback (if there is one).
+
+      tracker = ->
+        callbackCountdown--
+
+        if callbackCountdown is 0 and callback
+          console.debug "Invoking post-initialization callback function"
+          callback()
+
+      # First value in each init is the qualified module name; anything after
+      # that are arguments to be passed to the identified function.
+      for [qualifiedName, initArguments...] in inits
+        invokeInitializer tracker, qualifiedName, initArguments
+
+      tracker()
 
     # Pre-loads a number of scripts in order. When the last script is loaded,
     # invokes the callback (with no parameters).
@@ -43,14 +64,17 @@ define ["_", "core/console"], (_, console) ->
 
       finalCallback = _.reduceRight scripts, reducer, callback
 
-      finalCallback.call(null)
+      finalCallback.call null
 
     # Loads all the scripts, in order. It then executes the immediate initializations.
     # After that, it waits for the DOM to be ready and executes the other initializations.
     loadScriptsAndInitialize: (scripts, immediateInits, otherInits) ->
       exports.loadScripts scripts, ->
         exports.initialize immediateInits
-        require ["core/domReady!"], -> exports.initialize otherInits
+        # This is where we want to get:
+        # require ["core/domReady!"], -> exports.initialize otherInits
+        # But for compatibility, this is what we're stuck with:
+        Tapestry.onDOMLoaded -> exports.initialize otherInits
 
     evalJavaScript: (js) ->
       console.debug "Evaluating: #{js}"

@@ -185,8 +185,6 @@ var Tapestry = {
 
         Tapestry.pageLoaded = true;
 
-        Tapestry.ScriptManager.initialize();
-
         $$(".t-invisible").each(function (element) {
             element.hide();
             element.removeClassName("t-invisible");
@@ -312,10 +310,13 @@ var Tapestry = {
      * <dt>redirectURL</dt>
      * <dd>URL to redirect to (in which case, the callback is not invoked)</dd>
      * <dt>inits</dt>
-     * <dd>Defines a set of calls to Tapestry.init() to perform initialization
+     * <dd>Passed to module "core/pageinit:initialize" if non-null
      * after the DOM has been updated.</dd>
      * <dt>stylesheets</dt>
      * <dd>Array of hashes, each hash has key href and optional key media</dd>
+     * <dt>scripts</dt>
+     * <dd>URLs of static JavaScript libraries to load</dd>
+     *     </dl>
      *
      * @param reply
      *            JSON response object from the server
@@ -336,12 +337,14 @@ var Tapestry = {
 
         Tapestry.ScriptManager.addStylesheets(reply.stylesheets);
 
-        Tapestry.ScriptManager.addScripts(reply.scripts, function () {
-            /* Let the caller do its thing first (i.e., modify the DOM). */
-            callback.call(this);
+        require(["core/pageinit"], function (pageinit) {
+            pageinit.loadScripts(reply.scripts,
+                    function () {
+                        /* Let the caller do its thing first (i.e., modify the DOM). */
+                        callback && callback.call(null);
 
-            /* And handle the scripts after the DOM is updated. */
-            Tapestry.executeInits(reply.inits);
+                        pageinit.initialize(reply.inits, Tapestry.onDomLoadedCallback);
+                    });
         });
     },
 
@@ -1964,92 +1967,10 @@ Tapestry.FormInjector = Class.create({
     }
 });
 
+// Used to manage Scripts and Stylesheets; now just Stylesheets, likely to go away soon.
 Tapestry.ScriptManager = {
 
-    initialize: function () {
-
-        /*
-         * Check to see if document.scripts is supported; if not (for example,
-         * FireFox), we can fake it.
-         */
-        this.emulated = false;
-
-        if (!document.scripts) {
-            this.emulated = true;
-
-            document.scripts = new Array();
-
-            $$('script').each(function (s) {
-                document.scripts.push(s);
-            });
-        }
-    },
-
-    loadScript: function (scriptURL, callback) {
-        /* IE needs the type="text/javascript" as well. */
-        var element = new Element('script', {
-            src: scriptURL,
-            type: 'text/javascript'
-        });
-
-        $$("head").first().insert({
-            bottom: element
-        });
-
-        if (this.emulated)
-            document.scripts.push(element);
-
-        if (Prototype.Browser.IE) {
-            var loaded = false;
-
-            element.onreadystatechange = function () {
-                /* IE may fire either 'loaded' or 'complete', or possibly both. */
-                if (!loaded && this.readyState == 'loaded'
-                        || this.readyState == 'complete') {
-                    loaded = true;
-
-                    callback.call(this);
-                }
-            };
-
-            return;
-        }
-
-        /* Safari, Firefox, etc. are easier. */
-
-        element.onload = callback.bindAsEventListener(this);
-    },
-
     rebuildURLIfIE: Prototype.Browser.IE ? Tapestry.rebuildURL : T5._.identity,
-
-    /**
-     * Add scripts, as needed, to the document, then waits for them all to load,
-     * and finally, calls the callback function.
-     *
-     * @param scripts
-     *            Array of scripts to load
-     * @param callback
-     *            invoked after scripts are loaded
-     */
-    addScripts: function (scripts, callback) {
-
-        var _ = T5._;
-
-        var loaded = _(document.scripts).chain().pluck("src").without("").map(this.rebuildURLIfIE).value();
-
-        var self = this;
-
-        var topCallback = _(scripts).chain().map(Tapestry.rebuildURL).difference(loaded).reverse().reduce(
-                function (nextCallback, scriptURL) {
-                    return function () {
-                        self.loadScript(scriptURL, nextCallback);
-                    }
-                }, callback).value();
-
-        // Kick if off with the callback that loads the first script:
-
-        topCallback.call(this);
-    },
 
     /**
      * Adds stylesheets to the document. Each element in stylesheets is an object with two keys: href (the URL to the CSS file) and
