@@ -1,7 +1,7 @@
 Ideas and TODOs:
 
 Compile CoffeeScript for modules with --bare (no top-level function wrapper), as module is always just
-defined([..], function() { ... });
+define([..], function() { ... });
 
 Replace default.css with Twitter Bootstrap + Tapestry extensions.
 
@@ -15,3 +15,4 @@ Add way to have services self describe (for dashboard and/or exception report).
 Add way for services to expose simple actions to the Dashboard (i.e., tie a UI button to a callback).
 
 JavaScriptWrapper (.jsw) may not be needed after all, due to ShimModule.
+
