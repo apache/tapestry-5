@@ -954,4 +954,23 @@ public final class JSONObject extends JSONCollection
     {
         return Collections.unmodifiableMap(properties);
     }
+
+    /**
+     * Invokes {@link #put(String, Object)} for each value from the map.
+     *
+     * @param newProperties
+     *         to add to this JSONObject
+     * @return this JSONObject
+     */
+    public JSONObject putAll(Map<String, Object> newProperties)
+    {
+        assert newProperties != null;
+
+        for (Map.Entry<String, Object> e : newProperties.entrySet())
+        {
+            put(e.getKey(), e.getValue());
+        }
+
+        return this;
+    }
 }

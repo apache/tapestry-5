@@ -776,4 +776,17 @@ class JSONObjectSpec extends Specification {
         object.length() == 0
         map.isEmpty()
     }
+
+    def "can add new properties via putAll()"() {
+        def object = new JSONObject("fred", "flintstone")
+
+        when:
+
+        def result = object.putAll([barney: "rubble", wilma: "flintstone"])
+
+        then:
+
+        result.is object
+        object.toCompactString() == /{"wilma":"flintstone","fred":"flintstone","barney":"rubble"}/
+    }
 }
