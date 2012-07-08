@@ -961,6 +961,7 @@ public final class JSONObject extends JSONCollection
      * @param newProperties
      *         to add to this JSONObject
      * @return this JSONObject
+     * @since 5.4
      */
     public JSONObject putAll(Map<String, Object> newProperties)
     {
