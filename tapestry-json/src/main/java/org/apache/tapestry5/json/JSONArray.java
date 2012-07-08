@@ -69,7 +69,7 @@ import java.util.List;
  * <li>Numbers may have the {@code 0-} <small>(octal)</small> or {@code 0x-} <small>(hex)</small> prefix.</li>
  * <li>Comments written in the slashshlash, slashstar, and hash conventions will be ignored.</li>
  * </ul>
- * 
+ *
  * @author JSON.org
  * @version 2
  */
@@ -108,11 +108,11 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
 
     /**
      * Construct a JSONArray from a JSONTokener.
-     * 
+     *
      * @param tokenizer
-     *            A JSONTokener
+     *         A JSONTokener
      * @throws RuntimeException
-     *             If there is a syntax error.
+     *         If there is a syntax error.
      */
     JSONArray(JSONTokener tokenizer)
     {
@@ -123,9 +123,15 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
 
     private void parse(JSONTokener tokenizer)
     {
-        if (tokenizer.nextClean() != '[') { throw tokenizer.syntaxError("A JSONArray text must start with '['"); }
+        if (tokenizer.nextClean() != '[')
+        {
+            throw tokenizer.syntaxError("A JSONArray text must start with '['");
+        }
 
-        if (tokenizer.nextClean() == ']') { return; }
+        if (tokenizer.nextClean() == ']')
+        {
+            return;
+        }
 
         tokenizer.back();
 
@@ -135,8 +141,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
             {
                 tokenizer.back();
                 list.add(JSONObject.NULL);
-            }
-            else
+            } else
             {
                 tokenizer.back();
                 list.add(tokenizer.nextValue());
@@ -146,7 +151,10 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
             {
                 case ';':
                 case ',':
-                    if (tokenizer.nextClean() == ']') { return; }
+                    if (tokenizer.nextClean() == ']')
+                    {
+                        return;
+                    }
                     tokenizer.back();
                     break;
 
@@ -161,12 +169,12 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
 
     /**
      * Get the object value associated with an index.
-     * 
+     *
      * @param index
-     *            The index must be between 0 and length() - 1.
+     *         The index must be between 0 and length() - 1.
      * @return An object value.
      * @throws RuntimeException
-     *             If there is no value for the index.
+     *         If there is no value for the index.
      */
     public Object get(int index)
     {
@@ -177,10 +185,10 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
      * Remove the object associated with the index.
      *
      * @param index
-     *            The index must be between 0 and length() - 1.
+     *         The index must be between 0 and length() - 1.
      * @return An object removed.
      * @throws RuntimeException
-     *             If there is no value for the index.
+     *         If there is no value for the index.
      */
     public Object remove(int index)
     {
@@ -189,18 +197,21 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
 
     /**
      * Get the boolean value associated with an index. The string values "true" and "false" are converted to boolean.
-     * 
+     *
      * @param index
-     *            The index must be between 0 and length() - 1.
+     *         The index must be between 0 and length() - 1.
      * @return The truth.
      * @throws RuntimeException
-     *             If there is no value for the index or if the value is not convertable to boolean.
+     *         If there is no value for the index or if the value is not convertable to boolean.
      */
     public boolean getBoolean(int index)
     {
         Object value = get(index);
 
-        if (value instanceof Boolean) { return (Boolean) value; }
+        if (value instanceof Boolean)
+        {
+            return (Boolean) value;
+        }
 
         if (value instanceof String)
         {
@@ -218,12 +229,12 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
 
     /**
      * Get the double value associated with an index.
-     * 
+     *
      * @param index
-     *            The index must be between 0 and length() - 1.
+     *         The index must be between 0 and length() - 1.
      * @return The value.
      * @throws IllegalArgumentException
-     *             If the key is not found or if the value cannot be converted to a number.
+     *         If the key is not found or if the value cannot be converted to a number.
      */
     public double getDouble(int index)
     {
@@ -235,8 +246,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
                 return ((Number) value).doubleValue();
 
             return Double.valueOf((String) value);
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             throw new IllegalArgumentException("JSONArray[" + index + "] is not a number.");
         }
@@ -244,13 +254,13 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
 
     /**
      * Get the int value associated with an index.
-     * 
+     *
      * @param index
-     *            The index must be between 0 and length() - 1.
+     *         The index must be between 0 and length() - 1.
      * @return The value.
      * @throws IllegalArgumentException
-     *             If the key is not found or if the value cannot be converted to a number. if the
-     *             value cannot be converted to a number.
+     *         If the key is not found or if the value cannot be converted to a number. if the
+     *         value cannot be converted to a number.
      */
     public int getInt(int index)
     {
@@ -260,46 +270,52 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
 
     /**
      * Get the JSONArray associated with an index.
-     * 
+     *
      * @param index
-     *            The index must be between 0 and length() - 1.
+     *         The index must be between 0 and length() - 1.
      * @return A JSONArray value.
      * @throws RuntimeException
-     *             If there is no value for the index. or if the value is not a JSONArray
+     *         If there is no value for the index. or if the value is not a JSONArray
      */
     public JSONArray getJSONArray(int index)
     {
         Object o = get(index);
-        if (o instanceof JSONArray) { return (JSONArray) o; }
+        if (o instanceof JSONArray)
+        {
+            return (JSONArray) o;
+        }
 
         throw new RuntimeException("JSONArray[" + index + "] is not a JSONArray.");
     }
 
     /**
      * Get the JSONObject associated with an index.
-     * 
+     *
      * @param index
-     *            subscript
+     *         subscript
      * @return A JSONObject value.
      * @throws RuntimeException
-     *             If there is no value for the index or if the value is not a JSONObject
+     *         If there is no value for the index or if the value is not a JSONObject
      */
     public JSONObject getJSONObject(int index)
     {
         Object o = get(index);
-        if (o instanceof JSONObject) { return (JSONObject) o; }
+        if (o instanceof JSONObject)
+        {
+            return (JSONObject) o;
+        }
 
         throw new RuntimeException("JSONArray[" + index + "] is not a JSONObject.");
     }
 
     /**
      * Get the long value associated with an index.
-     * 
+     *
      * @param index
-     *            The index must be between 0 and length() - 1.
+     *         The index must be between 0 and length() - 1.
      * @return The value.
      * @throws IllegalArgumentException
-     *             If the key is not found or if the value cannot be converted to a number.
+     *         If the key is not found or if the value cannot be converted to a number.
      */
     public long getLong(int index)
     {
@@ -309,12 +325,12 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
 
     /**
      * Get the string associated with an index.
-     * 
+     *
      * @param index
-     *            The index must be between 0 and length() - 1.
+     *         The index must be between 0 and length() - 1.
      * @return A string value.
      * @throws RuntimeException
-     *             If there is no value for the index.
+     *         If there is no value for the index.
      */
     public String getString(int index)
     {
@@ -323,9 +339,9 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
 
     /**
      * Determine if the value is null.
-     * 
+     *
      * @param index
-     *            The index must be between 0 and length() - 1.
+     *         The index must be between 0 and length() - 1.
      * @return true if the value at the index is null, or if there is no value.
      */
     public boolean isNull(int index)
@@ -335,7 +351,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
 
     /**
      * Get the number of elements in the JSONArray, included nulls.
-     * 
+     *
      * @return The length (or size).
      */
     public int length()
@@ -345,10 +361,10 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
 
     /**
      * Append an object value. This increases the array's length by one.
-     * 
+     *
      * @param value
-     *            An object value. The value should be a Boolean, Double, Integer, JSONArray, JSONObject, JSONLiteral,
-     *            Long, or String, or the JSONObject.NULL singleton.
+     *         An object value. The value should be a Boolean, Double, Integer, JSONArray, JSONObject, JSONLiteral,
+     *         Long, or String, or the JSONObject.NULL singleton.
      * @return this array
      */
     public JSONArray put(Object value)
@@ -365,29 +381,31 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
     /**
      * Put or replace an object value in the JSONArray. If the index is greater than the length of the JSONArray, then
      * null elements will be added as necessary to pad it out.
-     * 
+     *
      * @param index
-     *            The subscript.
+     *         The subscript.
      * @param value
-     *            The value to put into the array. The value should be a Boolean, Double, Integer, JSONArray,
-     *            JSONObject, JSONString, Long, or String, or the JSONObject.NULL singeton.
+     *         The value to put into the array. The value should be a Boolean, Double, Integer, JSONArray,
+     *         JSONObject, JSONString, Long, or String, or the JSONObject.NULL singeton.
      * @return this array
      * @throws RuntimeException
-     *             If the index is negative or if the the value is an invalid number.
+     *         If the index is negative or if the the value is an invalid number.
      */
     public JSONArray put(int index, Object value)
     {
         assert value != null;
 
-        if (index < 0) { throw new RuntimeException("JSONArray[" + index + "] not found."); }
+        if (index < 0)
+        {
+            throw new RuntimeException("JSONArray[" + index + "] not found.");
+        }
 
         JSONObject.testValidity(value);
 
         if (index < length())
         {
             list.set(index, value);
-        }
-        else
+        } else
         {
             while (index != length())
                 list.add(JSONObject.NULL);
@@ -396,12 +414,6 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
         }
 
         return this;
-    }
-
-    /** Used for testing. */
-    Object[] toArray()
-    {
-        return list.toArray();
     }
 
     @Override
@@ -444,5 +456,26 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
             session.newline();
 
         session.printSymbol(']');
+    }
+
+    /**
+     * Puts all objects from the collection into this JSONArray, using {@link #put(Object)}.
+     *
+     * @param collection
+     *         List, array, JSONArray, or other iterable object, or null
+     * @return this JSONArray
+     * @since 5.4
+     */
+    JSONArray putAll(Iterable<Object> collection)
+    {
+        if (collection != null)
+        {
+            for (Object o : collection)
+            {
+                put(o);
+            }
+        }
+
+        return this;
     }
 }

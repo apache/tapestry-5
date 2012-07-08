@@ -276,4 +276,29 @@ class JSONArraySpec extends Specification {
         array.toCompactString() == /["one","three"]/
     }
 
+    def "putAll() adds new objects to existing array"() {
+        def array = new JSONArray(100, 200)
+
+        when:
+
+        array.putAll([300, 400, 500])
+
+        then:
+
+        array.toCompactString() == /[100,200,300,400,500]/
+    }
+
+    def "putAll() with null does not modify the array"() {
+        def array = new JSONArray(100, 200)
+
+        when:
+
+        array.putAll(null)
+
+        then:
+
+        array.toCompactString() == /[100,200]/
+
+    }
+
 }
