@@ -87,13 +87,7 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         init.put(name);
 
-        if (arguments != null)
-        {
-            for (Object o : arguments)
-            {
-                init.put(o);
-            }
-        }
+        init.putAll(arguments);
 
         InternalUtils.addToMapList(priorityToModuleInit, priority, init);
 

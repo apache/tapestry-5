@@ -156,14 +156,7 @@ public class ModuleManagerImpl implements ModuleManager
 
     private String convert(List<?> input)
     {
-        JSONArray array = new JSONArray();
-
-        for (Object o : input)
-        {
-            array.put(o);
-        }
-
-        return array.toString(compactJSON);
+        return new JSONArray().putAll(input).toString(compactJSON);
     }
 
     @Override

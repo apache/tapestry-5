@@ -963,11 +963,11 @@ public final class JSONObject extends JSONCollection
      * @return this JSONObject
      * @since 5.4
      */
-    public JSONObject putAll(Map<String, Object> newProperties)
+    public JSONObject putAll(Map<String, ?> newProperties)
     {
         assert newProperties != null;
 
-        for (Map.Entry<String, Object> e : newProperties.entrySet())
+        for (Map.Entry<String, ?> e : newProperties.entrySet())
         {
             put(e.getKey(), e.getValue());
         }

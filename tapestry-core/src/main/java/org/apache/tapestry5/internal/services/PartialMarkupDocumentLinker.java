@@ -61,20 +61,9 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
 
         JSONArray init = new JSONArray().put(qualifiedName);
 
-        addAll(init, arguments);
+        init.putAll(arguments);
 
         InternalUtils.addToMapList(initsByPriority, priority, init);
-    }
-
-    private static void addAll(JSONArray target, JSONArray other)
-    {
-        if (other != null)
-        {
-            for (Object o : other)
-            {
-                target.put(o);
-            }
-        }
     }
 
     /**

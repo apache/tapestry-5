@@ -467,7 +467,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
      * @return this JSONArray
      * @since 5.4
      */
-    public JSONArray putAll(Iterable<Object> collection)
+    public JSONArray putAll(Iterable<?> collection)
     {
         if (collection != null)
         {
