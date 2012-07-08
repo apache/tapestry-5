@@ -731,4 +731,49 @@ class JSONObjectSpec extends Specification {
         array.getString(1) == "2"
         array.getString(2) == "false"
     }
+
+    def "toMap() is not modifiable"() {
+        def object = new JSONObject()
+
+        def map = object.toMap()
+
+        when:
+
+        map.clear()
+
+        then:
+
+        thrown(UnsupportedOperationException)
+    }
+
+    def "can access contents of object as a map"() {
+        def object = new JSONObject("foo", "bar")
+            .put("null", JSONObject.NULL)
+            .put("number", 6)
+
+        when:
+
+        def map = object.toMap()
+
+        then:
+
+        map.foo == "bar"
+        map.number == 6
+        map["null"].is(JSONObject.NULL)
+    }
+
+    def "the map returned by toMap() is live"() {
+        def object = new JSONObject("foo", "bar")
+
+        def map = object.toMap()
+
+        when:
+
+        object.put "foo", null
+
+        then:
+
+        object.length() == 0
+        map.isEmpty()
+    }
 }
