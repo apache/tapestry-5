@@ -1,11 +1,11 @@
 package json.specs
 
 import org.apache.tapestry5.json.JSONArray
+import org.apache.tapestry5.json.JSONLiteral
 import org.apache.tapestry5.json.JSONObject
 import org.apache.tapestry5.json.JSONString
 import spock.lang.Specification
 import spock.lang.Unroll
-import org.apache.tapestry5.json.JSONLiteral
 
 class JSONObjectSpec extends Specification {
 
@@ -390,6 +390,9 @@ class JSONObjectSpec extends Specification {
         /{ "akey" }/              | /Expected a ':' after a key at character 10 of/            | "missing value after key"
         /{ "fred" : 1 "barney" }/ | /Expected a ',' or '}' at character 14 of/                 | "missing property separator"
         /{ "list" : [1, 2/        | /Expected a ',' or ']' at character 16 of/                 | "missing seperator or closing bracket"
+        '''/* unclosed'''         | /Unclosed comment at character 11 of/                      | "unclosed C-style comment"
+        /{ "fred \n}/             | /Unterminated string at character 11 of/                   | "unterminated string at line end"
+        /{ fred: ,}/              | /Missing value at character 8 of /                         | "missing value after key"
     }
 
     def "can use ':' or '=>' as key seperator, and ';' as property separator"() {
@@ -510,7 +513,7 @@ class JSONObjectSpec extends Specification {
         obj1 == obj2
         obj2 == obj1
 
-        obj1 != null
+        obj1.equals(null) == false
         obj1 != json
 
         when:
@@ -570,7 +573,10 @@ class JSONObjectSpec extends Specification {
     }
 
     def "JSONLiteral can output any content"() {
-        def literal = new JSONLiteral('''function(x) { $('bar').show(); }''')
+
+        def text = '''function(x) { $('bar').show(); }'''
+
+        def literal = new JSONLiteral(text)
 
         when:
 
@@ -578,7 +584,8 @@ class JSONObjectSpec extends Specification {
 
         then:
 
-        object.toCompactString() == '''{"callback":function(x) { $('bar').show(); }}'''
+        object.toCompactString() == /{"callback":${text}}/
+        literal.toString() == text
     }
 
     def "pretty print"() {
@@ -592,4 +599,136 @@ class JSONObjectSpec extends Specification {
 }'''
     }
 
+    def "C style comments are ignored"() {
+        when:
+
+        def object = new JSONObject('''/* C comment */ { "foo" : "bar" /* *ignored* */ }''')
+
+        then:
+
+        object.get("foo") == "bar"
+    }
+
+    def "double slash comments extend to end of line"() {
+        when:
+
+        def object = new JSONObject('''{ foo: // This is a double-slash comment
+"bar" }''')
+
+        then:
+
+        object.get("foo") == "bar"
+    }
+
+    def "hash comments extend to end of line"() {
+        when:
+
+        def object = new JSONObject('''{ foo: # This is a hash comment
+"bar" }''')
+
+        then:
+
+        object.get("foo") == "bar"
+
+    }
+
+    def "pretty-print an empty JSONObject"() {
+        def object = new JSONObject()
+
+        expect:
+
+        object.toString() == /{}/
+    }
+
+    def "complex pretty-print"() {
+        when:
+
+        def object = new JSONObject('''
+{ outer: { inner: "here" },
+  number: 22.7,
+  array: [1, 2, 3],
+  boolean: true,
+  otherwise: 'a quoted string'
+}
+''')
+
+        then:
+
+        object.toString() == '''{
+  "outer" : {
+    "inner" : "here"
+  },
+  "otherwise" : "a quoted string",
+  "boolean" : true,
+  "number" : 22.7,
+  "array" : [
+    1,
+    2,
+    3
+  ]
+}'''
+    }
+
+    def "toCompactString()"() {
+        def object = new JSONObject("kermit", "frog")
+
+        expect:
+
+        object.toString(true) == /{"kermit":"frog"}/
+        object.toString(false) == /{
+  "kermit" : "frog"
+}/
+    }
+
+    def "print to PrintWriter)"() {
+        def object = new JSONObject("kermit", "frog")
+
+        expect:
+
+        print(object, true) == /{"kermit":"frog"}/
+        print(object, false) == /{
+  "kermit" : "frog"
+}/
+    }
+
+    def withPrintWriter(closure) {
+        def caw = new CharArrayWriter()
+        def pw = new PrintWriter(caw)
+
+        closure(pw)
+
+        pw.close()
+
+        return caw.toString()
+    }
+
+    def print(object, compact) {
+
+        withPrintWriter { pw -> object.print(pw, compact)}
+    }
+
+    def "prettyPrint() to PrintWriter"() {
+        def object = new JSONObject("kermit", "frog")
+
+        when:
+
+        def json = withPrintWriter { pw -> object.prettyPrint(pw) }
+
+        then:
+
+        json == /{
+  "kermit" : "frog"
+}/
+
+    }
+
+    def "getString() at index"() {
+        def array = new JSONArray("one", 2, false)
+
+        expect:
+
+        array.getString(0) == "one"
+        array.getString(1) == "2"
+        array.getString(2) == "false"
+    }
 }

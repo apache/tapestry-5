@@ -223,7 +223,7 @@ class JSONArraySpec extends Specification {
         then:
 
         array1 == array1
-        array1 != null
+        !array1.equals(null)
         array1 != this
         array1 == array2
 
@@ -261,6 +261,19 @@ class JSONArraySpec extends Specification {
         i.next() == false
 
         !i.hasNext()
+    }
+
+    def "remove an element"() {
+        def array = new JSONArray("one", "two", "three")
+
+        when:
+
+        array.remove(1)
+
+        then:
+
+        array.length() == 2
+        array.toCompactString() == /["one","three"]/
     }
 
 }

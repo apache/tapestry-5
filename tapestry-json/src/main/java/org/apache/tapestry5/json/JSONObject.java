@@ -280,7 +280,7 @@ public final class JSONObject extends JSONCollection
 
         if (existing == null)
         {
-            // Note that the original implementation of this method contradicited the method
+            // Note that the original implementation of this method contradicted the method
             // documentation.
             put(key, value);
             return this;
