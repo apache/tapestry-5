@@ -974,4 +974,32 @@ public final class JSONObject extends JSONCollection
 
         return this;
     }
+
+    /**
+     * Navigates into a nested JSONObject, creating the JSONObject if necessary. They key must not exist,
+     * or must be a JSONObject.
+     *
+     * @param key
+     * @return the nested JSONObject
+     * @throws IllegalStateException
+     *         if the current value for the key is not null and not JSONObject
+     */
+    public JSONObject in(String key)
+    {
+        assert key != null;
+
+        Object nested = properties.get(key);
+
+        if (nested != null && !(nested instanceof JSONObject))
+        {
+            throw new IllegalStateException(String.format("JSONObject[%s] is not a JSONObject.", quote(key)));
+        }
+
+        if (nested == null) {
+            nested = new JSONObject();
+            properties.put(key, nested);
+        }
+
+        return (JSONObject) nested;
+    }
 }

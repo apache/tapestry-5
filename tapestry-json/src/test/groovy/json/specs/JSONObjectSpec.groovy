@@ -789,4 +789,44 @@ class JSONObjectSpec extends Specification {
         result.is object
         object.toCompactString() == /{"wilma":"flintstone","fred":"flintstone","barney":"rubble"}/
     }
+
+    def "in() where the value is not JSONObject is an exception"() {
+        def object = new JSONObject("time", "to rock")
+
+        when:
+
+        object.in("time")
+
+        then:
+
+        IllegalStateException e = thrown()
+
+        e.message == /JSONObject["time"] is not a JSONObject./
+    }
+
+    def "in() creates a JSONObject if necessary"() {
+        def object = new JSONObject()
+
+        when:
+
+        object.in("nested").put("created", true)
+
+        then:
+
+        object.toCompactString() == /{"nested":{"created":true}}/
+    }
+
+    def "in() returns the JSONObject"() {
+        def object = new JSONObject(/{nested: {}}/)
+
+        when:
+
+        object.in("nested").put("time", "to rock")
+
+        then:
+
+        object.toCompactString() == /{"nested":{"time":"to rock"}}/
+
+    }
+
 }
