@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ package org.apache.tapestry5.json;
  */
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -466,7 +467,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
      * @return this JSONArray
      * @since 5.4
      */
-    JSONArray putAll(Iterable<Object> collection)
+    public JSONArray putAll(Iterable<Object> collection)
     {
         if (collection != null)
         {
@@ -477,5 +478,17 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
         }
 
         return this;
+    }
+
+    /**
+     * Returns an unmodifiable list of the contents of the array. This is a wrapper around the list's internal
+     * storage and is live (changes to the JSONArray affect the returned List).
+     *
+     * @return unmodifiable list of array contents
+     * @since 5.4
+     */
+    public List<Object> toList()
+    {
+        return Collections.unmodifiableList(list);
     }
 }

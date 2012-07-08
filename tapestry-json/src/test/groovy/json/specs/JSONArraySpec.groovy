@@ -298,7 +298,38 @@ class JSONArraySpec extends Specification {
         then:
 
         array.toCompactString() == /[100,200]/
+    }
 
+    def "list returned by toList() is unmodifiable"() {
+        def array = new JSONArray(100, 200)
+        def list = array.toList()
+
+        when:
+
+        list.clear()
+
+        then:
+
+        thrown(UnsupportedOperationException)
+    }
+
+    def "list from toList() is live"() {
+        def array = new JSONArray(100, 200)
+        when:
+
+        def list = array.toList()
+
+        then:
+
+        list == [100, 200]
+
+        when:
+
+        array.remove(0)
+
+        then:
+
+        list == [200]
     }
 
 }

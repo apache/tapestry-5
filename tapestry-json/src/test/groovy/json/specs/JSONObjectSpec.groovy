@@ -328,7 +328,7 @@ class JSONObjectSpec extends Specification {
         names instanceof JSONArray
         names.length() == 2
 
-        names.toArray().sort() == ["barney", "fred"]
+        new ArrayList(names.toList()).sort() == ["barney", "fred"]
     }
 
     def "names() with no properties returns null"() {
