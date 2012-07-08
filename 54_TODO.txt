@@ -1,8 +1,5 @@
 Ideas and TODOs:
 
-Compile CoffeeScript for modules with --bare (no top-level function wrapper), as module is always just
-define([..], function() { ... });
-
 Replace default.css with Twitter Bootstrap + Tapestry extensions.
 
 Include a new Java module that supports writing an exception log file on error.

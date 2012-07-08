@@ -1,61 +1,71 @@
 import ro.isdc.wro.model.resource.*
 import ro.isdc.wro.extensions.processor.js.*
+import ro.isdc.wro.extensions.processor.support.coffeescript.*
 
-buildscript { 
-  repositories {  mavenCentral() }
-  dependencies { 
-    classpath "ro.isdc.wro4j:wro4j-extensions:${versions.wro4j}"
-  }
+buildscript {
+    repositories { mavenCentral() }
+    dependencies {
+        classpath "ro.isdc.wro4j:wro4j-extensions:${versions.wro4j}"
+    }
 }
 
-class CompileCoffeeScript extends DefaultTask { 
+class CustomizedProcessor extends CoffeeScriptProcessor {
 
-  { 
-    description = "Compiles CoffeeScript sources into JavaScript"
-    group = "build"
-  }
+    protected CoffeeScript newCoffeeScript() {
+        CoffeeScript engine = new CoffeeScript()
+        engine.options = ["bare"]
+        return engine
+    }
+}
 
-  def srcDir = "src/main/coffeescript"
+class CompileCoffeeScript extends DefaultTask {
 
-  def outputDir = "${project.buildDir}/compiled-coffeescript"
-
-  @InputDirectory
-  File getSrcDir() {  project.file(srcDir) }
-
-  @OutputDirectory
-  File getOutputDir() {  project.file(outputDir) }
-
-  @TaskAction
-  void doCompile() { 
-    logger.info "Compiling CoffeeScript sources from $srcDir into $outputDir"
-
-    def outputDirFile = getOutputDir()
-    // Recursively delete output directory if it exists
-    outputDirFile.deleteDir()
-
-    def tree = project.fileTree srcDir, { 
-      include '**/*.coffee'
+    {
+        description = "Compiles CoffeeScript sources into JavaScript"
+        group = "build"
     }
 
-    def compiler = new CoffeeScriptProcessor()
+    def srcDir = "src/main/coffeescript"
 
-    tree.visit { visit ->
-      if (visit.directory) return
+    def outputDir = "${project.buildDir}/compiled-coffeescript"
 
-      def inputFile = visit.file
-      def inputPath = visit.path
-      def outputPath = inputPath.replaceAll(/\.coffee$/, '.js')
-      def outputFile = new File(outputDirFile, outputPath)
+    @InputDirectory
+    File getSrcDir() { project.file(srcDir) }
 
-      logger.info "Compiling ${inputPath}"
+    @OutputDirectory
+    File getOutputDir() { project.file(outputDir) }
 
-      outputFile.parentFile.mkdirs()
+    @TaskAction
+    void doCompile() {
+        logger.info "Compiling CoffeeScript sources from $srcDir into $outputDir"
 
-      def resource = Resource.create(inputFile.absolutePath, ResourceType.JS)
-      
-      compiler.process(resource, inputFile.newReader(), outputFile.newWriter())
+        def outputDirFile = getOutputDir()
+        // Recursively delete output directory if it exists
+        outputDirFile.deleteDir()
+
+        def tree = project.fileTree srcDir, {
+            include '**/*.coffee'
+        }
+
+        def processor = new CustomizedProcessor()
+
+        tree.visit { visit ->
+            if (visit.directory) return
+
+            def inputFile = visit.file
+            def inputPath = visit.path
+            def outputPath = inputPath.replaceAll(/\.coffee$/, '.js')
+            def outputFile = new File(outputDirFile, outputPath)
+
+            logger.info "Compiling ${inputPath}"
+
+            outputFile.parentFile.mkdirs()
+
+            def resource = Resource.create(inputFile.absolutePath, ResourceType.JS)
+
+            processor.process(resource, inputFile.newReader(), outputFile.newWriter())
+        }
     }
-  }
 
 }
 
