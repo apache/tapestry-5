@@ -15,3 +15,5 @@ Add way for services to expose simple actions to the Dashboard (i.e., tie a UI b
 
 JavaScriptWrapper (.jsw) may not be needed after all, due to ShimModule.
 
+Higher level way to assemble JavaScript inside ModuleManagerImpl and ability to feed it though minimizer? Probably not worth effort,
+as minimizer may only shrink a few spaces.
