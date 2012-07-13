@@ -4,7 +4,8 @@ description = "Central module for Tapestry, containing all core services and com
 
 project.ext { 
   antlrSource = "src/main/antlr"
-  antlrOutput = "$buildDir/generated-sources/antlr"
+  generatedDir = "$buildDir/generated-sources"
+  antlrOutput = "$generatedDir/antlr"
 }
 
 apply from: "coffeescript.gradle"
@@ -54,22 +55,37 @@ task generateGrammarSource(type: JavaExec) {
   }
 }
 
-task compileCoffeeScript(type: CompileCoffeeScript)
+task compileCoffeeScript(type: CompileCoffeeScript) { 
+  outputDir "${generatedDir}/compiled-coffeescript"
+}
+
+task compileTestCoffeeScript(type: CompileCoffeeScript) {
+    srcDir "src/test/coffeescript"
+    outputDir "${generatedDir}/compiled-test-coffeescript"
+}
 
 processResources { 
   from compileCoffeeScript
 }
 
-ideaModule.dependsOn generateGrammarSource
+processTestResources {
+  dependsOn processResources
+  from compileTestCoffeeScript
+}
 
-def generatedDir = file("$buildDir/generated-sources")
+idea.module { 
+  // dependsOn generateGrammarSource
 
-def buildMinusGeneratedDir = (buildDir.listFiles() - generatedDir) as Set<File>
+  sourceDirs += compileCoffeeScript.srcDir 
+  sourceDirs += compileCoffeeScript.outputDir
 
-idea.module.excludeDirs += buildMinusGeneratedDir
+  testSourceDirs += compileTestCoffeeScript.srcDir
+  testSourceDirs += compileTestCoffeeScript.outputDir
+
+  excludeDirs.clear()
+}
 
 compileJava.options.fork(memoryMaximumSize: '512m')
-compileJava.dependsOn generateGrammarSource
 
 // Not sure why this is necessary:
 compileTestGroovy.dependsOn compileTestJava
