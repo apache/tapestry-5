@@ -1,0 +1,13 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+<head><title>JavaScript Tests</title></head>
+<body>
+
+<h1>JavaScript Tests</h1>
+
+<div id="qunit"/>
+
+<p>
+    <t:pagelink page="index">back to index</t:pagelink>
+</p>
+</body>
+</html>

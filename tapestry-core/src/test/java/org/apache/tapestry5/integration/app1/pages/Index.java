@@ -57,6 +57,8 @@ public class Index
     private static final List<Item> ITEMS = CollectionFactory
             .newList(
 
+                    new Item("JavaScriptTests", "JavaScript Tests", "Client-side tests using Mocha and Chai"),
+
                     new Item("ModuleInitDemo", "Module-based Initialization Demo", "Invoke a module function to perform page initialization"),
 
                     new Item("OperationWorkerDemo", "Operation Worker Demo", "Demonstrate use of @Operation annotation on component methods"),
