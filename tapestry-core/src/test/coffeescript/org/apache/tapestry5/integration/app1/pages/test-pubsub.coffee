@@ -17,3 +17,18 @@ require ["core/pubsub"], (pubsub) ->
 
     ok memoValue is expectedMemo, "responder function was invoked"
 
+  test "off match by specific responder", ->
+    count = 0
+
+    responder = -> count++
+
+    pubsub.on "stim", responder
+    pubsub.fire "stim"
+
+    equal count, 1, "responder invoked on first fire"
+
+    pubsub.off null, responder
+    pubsub.fire "stim"
+
+    equal count, 1, "responder not invoked after removal"
+
