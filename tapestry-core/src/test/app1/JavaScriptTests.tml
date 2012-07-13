@@ -2,8 +2,6 @@
 <head><title>JavaScript Tests</title></head>
 <body>
 
-<h1>JavaScript Tests</h1>
-
 <div id="qunit"/>
 
 <p>
