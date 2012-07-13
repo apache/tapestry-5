@@ -64,14 +64,17 @@ public class ModuleManagerImpl implements ModuleManager
                              @Path("${" + SymbolConstants.REQUIRE_JS + "}")
                              Asset requireJS,
                              Map<String, ShimModule> configuration,
-                             Messages globalMessages, @Symbol(SymbolConstants.COMPACT_JSON)
-    boolean compactJSON)
+                             Messages globalMessages,
+                             @Symbol(SymbolConstants.COMPACT_JSON)
+                             boolean compactJSON,
+                             @Symbol(SymbolConstants.PRODUCTION_MODE)
+                             boolean productionMode)
     {
         this.requireJS = requireJS;
         this.globalMessages = globalMessages;
         this.compactJSON = compactJSON;
 
-        this.requireConfig = buildRequireJSConfig(constructor.constructAssetPath("module-root", ""), configuration);
+        this.requireConfig = buildRequireJSConfig(constructor.constructAssetPath("module-root", ""), configuration, !productionMode);
 
         classpathRoot = assetSource.resourceForPath("");
 
@@ -97,10 +100,15 @@ public class ModuleManagerImpl implements ModuleManager
         libraryNameToPackageNames.put("app", resolver.getPackagesForLibrary(""));
     }
 
-    private String buildRequireJSConfig(String baseURL, Map<String, ShimModule> configuration)
+    private String buildRequireJSConfig(String baseURL, Map<String, ShimModule> configuration, boolean devMode)
     {
-        JSONObject shims = new JSONObject();
-        JSONObject config = new JSONObject().put("baseUrl", baseURL).put("shim", shims);
+        JSONObject config = new JSONObject().put("baseUrl", baseURL);
+
+        // In DevMode, wait up to five minutes for a script, as the developer may be using the debugger.
+        if (devMode)
+        {
+            config.put("waitSeconds", 300);
+        }
 
         for (String name : configuration.keySet())
         {
@@ -108,7 +116,7 @@ public class ModuleManagerImpl implements ModuleManager
 
             shimModuleNameToResource.put(name, module.resource);
 
-            JSONObject shim = new JSONObject();
+            JSONObject shim = config.in("shim").in(name);
 
             if (module.dependencies != null && !module.dependencies.isEmpty())
             {
@@ -122,8 +130,6 @@ public class ModuleManagerImpl implements ModuleManager
             {
                 shim.put("exports", module.exports);
             }
-
-            shims.put(name, shim);
         }
 
         return String.format("require.config(%s);\n",
@@ -212,7 +218,9 @@ public class ModuleManagerImpl implements ModuleManager
 
         for (String p : packages)
         {
-            String baseName = p.replace('.', '/') + "/modulejs/" + extra;
+            // Tack on a fake extension; otherwise modules whose name includes a '.' get mangled
+            // by Resource.withExtension().
+            String baseName = p.replace('.', '/') + "/modulejs/" + extra + ".EXT";
 
             Resource baseResource = classpathRoot.forFile(baseName);
 
