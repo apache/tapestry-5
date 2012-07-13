@@ -38,7 +38,7 @@ define ["_"], (_) ->
     return
 
   addSub = (stimulusName, addFirst, responder) ->
-    [simpleName, namespaces...] = _.split stimulusName, '.'
+    [simpleName, namespaces...] = stimulusName.split '.'
 
     subscriber =
       stimulus: simpleName
@@ -47,7 +47,7 @@ define ["_"], (_) ->
 
     list = subscribers[simpleName]
 
-    if list is null
+    if not list
       subscribers[simpleName] = [subscriber]
     else
       # If iterating the list (during a publish), then do a copy-on-write.
@@ -103,7 +103,7 @@ define ["_"], (_) ->
       responder = stimulusName
       stimulusName = ""
 
-    [simpleName, namespaces...] = _.split stimulusName, '.'
+    [simpleName, namespaces...] = stimulusName.split '.'
 
     if simpleName isnt ""
       kullSubs simpleName, namespaces, responder
@@ -124,7 +124,7 @@ define ["_"], (_) ->
   exports.fire = (stimulusName, memo, context) ->
     list = subscribers[stimulusName]
 
-    return exports if list is null
+    return exports if not list
 
     event =
       running: true
