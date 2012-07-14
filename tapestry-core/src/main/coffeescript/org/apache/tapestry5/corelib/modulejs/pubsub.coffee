@@ -27,10 +27,10 @@ define ["_"], (_) ->
 
     # Work backwards to avoid excessive copies
     for i in [list.length - 1 .. 0]
-      listener = list[i]
-      if (responder is null or listener.fn is responder) and
-         # TODO: _.intersection is expensive
-         (namespaces.length == 0 or _.intersection(namespaces, listener.namespaces).length > 0)
+      subscriber = list[i]
+      # TODO: _.intersection is expensive
+      if (!responder or subscriber.fn is responder) and
+         (namespaces.length == 0 or _.intersection(namespaces, subscriber.namespaces).length > 0)
         if list.iterating
           subscribers[name] = list = list[..]
         list.splice i, 1
