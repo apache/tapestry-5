@@ -4,6 +4,7 @@ require ["core/pubsub"], (pubsub) ->
   test "export aliases", ->
     ok pubsub.on is pubsub.respondTo, "on and respondTo"
     ok pubsub.off is pubsub.stopResponding, "off and stopResponding"
+    ok pubsub.first is pubsub.respondFirst, "first and respondFirst"
 
   test "simple on/fire", ->
     memoValue = null
@@ -72,6 +73,16 @@ require ["core/pubsub"], (pubsub) ->
 
     deepEqual log, ["b:beta-second"], "only 'beta' responder invoked after removal"
 
+  test "respondFirst is invoked first", ->
+
+    log = []
+
+    pubsub.on "stim", -> log.push "alpha"
+    pubsub.first "stim", -> log.push "bravo"
+
+    pubsub.fire "stim"
+
+    deepEqual log, ["bravo", "alpha"], "first responder invoked first"
 
 
 
