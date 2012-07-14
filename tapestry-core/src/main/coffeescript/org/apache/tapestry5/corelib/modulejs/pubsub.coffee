@@ -83,7 +83,7 @@ define ["_"], (_) ->
   # Adds a responder for a stimulus, but the responder is added first in the list.
   # Otherwise, the same as respondsTo().
   # Returns this module's exports, for easy chaining of calls.
-  exports.responderFirst = exports.first = (stimulusName, responder) ->
+  exports.respondFirst = exports.first = (stimulusName, responder) ->
     addSub stimulusName, true, responder
 
     return exports
