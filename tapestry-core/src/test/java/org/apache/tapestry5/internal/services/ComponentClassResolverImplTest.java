@@ -638,32 +638,6 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void multiple_mappings_for_same_prefix()
-    {
-        String secondaryLibPackage = "org.examples.addon.lib";
-        String className = secondaryLibPackage + ".pages.MyLibPage";
-
-        ClassNameLocator locator = newClassNameLocator();
-        Logger logger = compliantLogger();
-
-        train_locateComponentClassNames(locator, secondaryLibPackage + ".pages", className);
-
-        replay();
-
-        ComponentClassResolver resolver = create(logger, locator, new LibraryMapping(LIB_PREFIX, LIB_ROOT_PACKAGE),
-                new LibraryMapping(LIB_PREFIX, secondaryLibPackage), new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
-
-        assertEquals(resolver.resolvePageNameToClassName("lib/MyLibPage"), className);
-
-        List<String> packages = resolver.getPackagesForLibrary(LIB_PREFIX);
-        List<String> sortedPackages = F.flow(packages).sort().toList();
-
-        assertListsEquals(sortedPackages, LIB_ROOT_PACKAGE, secondaryLibPackage);
-
-        verify();
-    }
-
-    @Test
     public void resolver_may_provide_library_names()
     {
         String secondaryLibPackage = "org.examples.addon.lib";
@@ -680,36 +654,6 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         assertListsEquals(resolver.getLibraryNames(), CORE_PREFIX, LIB_PREFIX);
 
         verify();
-    }
-
-    @Test
-    public void unknown_library_name_with_getPackagesForLibrary_throws_exception()
-    {
-
-        String secondaryLibPackage = "org.examples.addon.lib";
-
-        ClassNameLocator locator = newClassNameLocator();
-        Logger logger = mockLogger();
-
-
-        replay();
-
-        ComponentClassResolver resolver = create(logger, locator, new LibraryMapping(LIB_PREFIX, LIB_ROOT_PACKAGE),
-                new LibraryMapping(LIB_PREFIX, secondaryLibPackage), new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
-
-
-        try
-        {
-            resolver.getPackagesForLibrary("fisbin");
-
-            unreachable();
-        } catch (UnknownValueException ex)
-        {
-            assertEquals(ex.getMessage(), "Unknown library name 'fisbin'.");
-        }
-
-        verify();
-
     }
 
     /**

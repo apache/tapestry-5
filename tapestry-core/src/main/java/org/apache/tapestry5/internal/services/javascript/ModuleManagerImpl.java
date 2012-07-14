@@ -51,8 +51,6 @@ public class ModuleManagerImpl implements ModuleManager
     // Library names, sorted by order of descending length.
     private final List<String> libraryNames;
 
-    private final Map<String, List<String>> libraryNameToPackageNames = CollectionFactory.newMap();
-
     private final Map<String, Resource> shimModuleNameToResource = CollectionFactory.newMap();
 
     private final Resource classpathRoot;
@@ -79,14 +77,6 @@ public class ModuleManagerImpl implements ModuleManager
         classpathRoot = assetSource.resourceForPath("");
 
         libraryNames = F.flow(resolver.getLibraryNames())
-                .each(new Worker<String>()
-                {
-                    @Override
-                    public void work(String element)
-                    {
-                        libraryNameToPackageNames.put(element, resolver.getPackagesForLibrary(element));
-                    }
-                })
                 .append("app")
                 .sort(new Comparator<String>()
                 {
@@ -96,8 +86,6 @@ public class ModuleManagerImpl implements ModuleManager
                         return o2.length() - o1.length();
                     }
                 }).toList();
-
-        libraryNameToPackageNames.put("app", resolver.getPackagesForLibrary(""));
     }
 
     private String buildRequireJSConfig(String baseURL, Map<String, ShimModule> configuration, boolean devMode)
@@ -214,30 +202,22 @@ public class ModuleManagerImpl implements ModuleManager
     {
         String extra = moduleName.substring(library.length() + 1);
 
-        List<String> packages = libraryNameToPackageNames.get(library);
+        // Tack on a fake extension; otherwise modules whose name includes a '.' get mangled
+        // by Resource.withExtension().
+        String baseName = String.format("/META-INF/modules/%s/%s.EXT",
+                library,
+                extra);
 
-        for (String p : packages)
-        {
-            // Tack on a fake extension; otherwise modules whose name includes a '.' get mangled
-            // by Resource.withExtension().
-            String baseName = p.replace('.', '/') + "/modulejs/" + extra + ".EXT";
+        Resource baseResource = classpathRoot.forFile(baseName);
 
-            Resource baseResource = classpathRoot.forFile(baseName);
+        // TODO: Figure out which suffixes to try for. More configuration, somewhere, to indicate
+        // that .coffee will be converted to .js. Maybe add a method to ResourceTransformer; the MIME type
+        // produced.
 
-            // TODO: Figure out which suffixes to try for. More configuration, somewhere, to indicate
-            // that .coffee will be converted to .js. Maybe add a method to ResourceTransformer; the MIME type
-            // produced.
+        Resource resource = baseResource.withExtension("js");
 
-            Resource resource = baseResource.withExtension("js");
+        // classpathRoot is our placeholder for null:
 
-            if (resource.exists())
-            {
-                return resource;
-            }
-        }
-
-        // Not found in any package
-
-        return classpathRoot;
+        return resource.exists() ? resource : classpathRoot;
     }
 }

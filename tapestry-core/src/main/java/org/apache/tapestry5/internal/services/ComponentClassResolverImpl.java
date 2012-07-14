@@ -639,19 +639,4 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     {
         return F.flow(mappings.keySet()).remove(F.IS_BLANK).sort().toList();
     }
-
-
-    @Override
-    public List<String> getPackagesForLibrary(String libraryName)
-    {
-        List<String> packages = mappings.get(libraryName);
-
-        if (packages == null)
-        {
-            throw new UnknownValueException(String.format("Unknown library name '%s'.", libraryName),
-                    new AvailableValues("library mappings", mappings));
-        }
-
-        return Collections.unmodifiableList(packages);
-    }
 }
