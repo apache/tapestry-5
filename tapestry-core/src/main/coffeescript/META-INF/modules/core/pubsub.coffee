@@ -97,7 +97,7 @@ define ["_"], (_) ->
   # the responder was added.
   # stimulusName - optional, identifies a stimulus and optional namespaces
   # responder - optional, identifies a specific responder to remove
-  # Returns this modules exports, to support chaining.
+  # Returns this module's exports, to support chaining.
   exports.stopResponding = exports.off = (stimulusName = "", responder) ->
     if _.isFunction stimulusName
       responder = stimulusName
@@ -113,14 +113,14 @@ define ["_"], (_) ->
     return exports
 
 
-  # Fires the stimulus, passing the memo, and an even, to each responder that was previously added.
-  # The event can be used to terminate the message (it has a stop() method).
+  # Fires the stimulus, passing the memo and an event to each responder that was previously added.
+  # The event can be used to terminate the stimular prematurely, via its stop() method.
   # The context object defines the value of this for
-  # the invoked listener functions; it is often null (or omitted).
+  # the invoked responders; it is often null (or omitted).
   # stimulusName - simple name of stimulus to fire (it should not contain namespaces)
   # memo - object to be passed to each responder (as the first parameter)
   # context - context value (this) used when invoking responders
-  # Returns this modules exports, to support chaining.
+  # Returns this module's exports, to support chaining.
   exports.fire = (stimulusName, memo, context) ->
     list = subscribers[stimulusName]
 
