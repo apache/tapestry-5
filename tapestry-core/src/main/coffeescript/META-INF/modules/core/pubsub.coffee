@@ -127,6 +127,7 @@ define ["_"], (_) ->
     return exports if not list
 
     event =
+      memo: memo
       running: true
       stimulus: stimulusName
       stop: -> running = false
