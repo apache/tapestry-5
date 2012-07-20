@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,12 +16,14 @@ package org.apache.tapestry5.internal.services.assets;
 
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.services.assets.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.Set;
 
 public class StreamableResourceSourceImpl implements StreamableResourceSource
 {
@@ -41,6 +43,22 @@ public class StreamableResourceSourceImpl implements StreamableResourceSource
         this.contentTypeAnalyzer = contentTypeAnalyzer;
         this.compressionAnalyzer = compressionAnalyzer;
         this.resourceChangeTracker = resourceChangeTracker;
+    }
+
+    @Override
+    public Set<String> fileExtensionsForContentType(String contentType)
+    {
+        Set<String> result = CollectionFactory.newSet();
+
+        for (Map.Entry<String, ResourceTransformer> me : configuration.entrySet())
+        {
+            if (me.getValue().getTransformedContentType().equals(contentType))
+            {
+                result.add(me.getKey());
+            }
+        }
+
+        return result;
     }
 
     public StreamableResource getStreamableResource(Resource baseResource, StreamableResourceProcessing processing, ResourceDependencies dependencies)

@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,15 +22,13 @@ import java.io.IOException;
 /**
  * Loops the result through the {@link ResourceMinimizer} service.
  */
-public class SRSMinimizingInterceptor implements StreamableResourceSource
+public class SRSMinimizingInterceptor extends DelegatingSRS
 {
-    private final StreamableResourceSource delegate;
-
     private final ResourceMinimizer minimizer;
 
     public SRSMinimizingInterceptor(StreamableResourceSource delegate, ResourceMinimizer minimizer)
     {
-        this.delegate = delegate;
+        super(delegate);
         this.minimizer = minimizer;
     }
 

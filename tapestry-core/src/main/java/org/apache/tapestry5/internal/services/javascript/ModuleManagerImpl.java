@@ -19,7 +19,6 @@ import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.func.F;
-import org.apache.tapestry5.func.Worker;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
@@ -32,18 +31,21 @@ import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
+import org.apache.tapestry5.services.assets.StreamableResourceSource;
 import org.apache.tapestry5.services.javascript.ModuleManager;
 import org.apache.tapestry5.services.javascript.ShimModule;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ModuleManagerImpl implements ModuleManager
 {
     private final String requireConfig;
 
     private final Asset requireJS;
+
     private final Messages globalMessages;
 
     private final boolean compactJSON;
@@ -55,6 +57,8 @@ public class ModuleManagerImpl implements ModuleManager
 
     private final Resource classpathRoot;
 
+    private final Set<String> extensions;
+
     // Note: ConcurrentHashMap does not support null as a value, alas. We use classpathRoot as a null.
     private final Map<String, Resource> cache = CollectionFactory.newConcurrentMap();
 
@@ -63,6 +67,7 @@ public class ModuleManagerImpl implements ModuleManager
                              Asset requireJS,
                              Map<String, ShimModule> configuration,
                              Messages globalMessages,
+                             StreamableResourceSource streamableResourceSource,
                              @Symbol(SymbolConstants.COMPACT_JSON)
                              boolean compactJSON,
                              @Symbol(SymbolConstants.PRODUCTION_MODE)
@@ -86,6 +91,10 @@ public class ModuleManagerImpl implements ModuleManager
                         return o2.length() - o1.length();
                     }
                 }).toList();
+
+        extensions = CollectionFactory.newSet("js");
+
+        extensions.addAll(streamableResourceSource.fileExtensionsForContentType("text/javascript"));
     }
 
     private String buildRequireJSConfig(String baseURL, Map<String, ShimModule> configuration, boolean devMode)
@@ -210,14 +219,17 @@ public class ModuleManagerImpl implements ModuleManager
 
         Resource baseResource = classpathRoot.forFile(baseName);
 
-        // TODO: Figure out which suffixes to try for. More configuration, somewhere, to indicate
-        // that .coffee will be converted to .js. Maybe add a method to ResourceTransformer; the MIME type
-        // produced.
+        for (String extension : extensions)
+        {
+            Resource resource = baseResource.withExtension(extension);
 
-        Resource resource = baseResource.withExtension("js");
+            if (resource.exists())
+            {
+                return resource;
+            }
+        }
 
-        // classpathRoot is our placeholder for null:
-
-        return resource.exists() ? resource : classpathRoot;
+        // Return placeholder for null:
+        return classpathRoot;
     }
 }

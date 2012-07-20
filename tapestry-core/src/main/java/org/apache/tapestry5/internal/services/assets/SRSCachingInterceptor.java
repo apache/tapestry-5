@@ -29,15 +29,13 @@ import java.util.Map;
 /**
  * An interceptor for the {@link StreamableResourceSource} service that handles caching of content.
  */
-public class SRSCachingInterceptor implements StreamableResourceSource
+public class SRSCachingInterceptor extends DelegatingSRS
 {
-    private final StreamableResourceSource delegate;
-
     private final Map<Resource, SoftReference<StreamableResource>> cache = CollectionFactory.newConcurrentMap();
 
     public SRSCachingInterceptor(StreamableResourceSource delegate, ResourceChangeTracker tracker)
     {
-        this.delegate = delegate;
+        super(delegate);
 
         tracker.clearOnInvalidation(cache);
     }

@@ -26,6 +26,7 @@ import java.io.InputStream;
  * ResourceTransformers are contributed to the {@link StreamableResourceSource} service.
  *
  * @since 5.3
+ * @see StreamableResourceSource
  */
 public interface ResourceTransformer
 {

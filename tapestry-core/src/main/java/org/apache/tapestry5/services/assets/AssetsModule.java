@@ -58,7 +58,7 @@ public class AssetsModule
     int compressionCutoff)
     {
         return gzipEnabled
-                ? new SRSCompressingInterceptor(compressionCutoff, delegate)
+                ? new SRSCompressingInterceptor(delegate, compressionCutoff)
                 : null;
     }
 
