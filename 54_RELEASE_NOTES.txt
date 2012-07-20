@@ -16,3 +16,4 @@ Bugs fixed (in 5.4-js-rewrite branch):
 
 TAP5-1965: Replace use of Request.getContextPath() with a symbol define at application startup
 TAP5-1970: JSON API improvements
+TAP5-1977: Memory leak (perm gen) in component reloading
