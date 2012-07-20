@@ -255,27 +255,25 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
         for (LibraryMapping mapping : mappings)
         {
-            String prefix = mapping.getPathPrefix();
+            String libraryName = mapping.libraryName;
 
-            String rootPackage = mapping.getRootPackage();
-
-            List<String> packages = this.mappings.get(prefix);
+            List<String> packages = this.mappings.get(libraryName);
 
             if (packages == null)
             {
                 packages = CollectionFactory.newList();
-                this.mappings.put(prefix, packages);
+                this.mappings.put(libraryName, packages);
             }
 
-            packages.add(rootPackage);
+            packages.add(mapping.rootPackage);
 
             // These packages, which will contain classes subject to class transformation,
             // must be registered with the component instantiator (which is responsible
             // for transformation).
 
-            addSubpackagesToPackageMapping(rootPackage);
+            addSubpackagesToPackageMapping(mapping.rootPackage);
 
-            packageToLibrary.put(rootPackage, prefix);
+            packageToLibrary.put(mapping.rootPackage, libraryName);
         }
     }
 
