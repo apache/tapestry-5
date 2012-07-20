@@ -55,6 +55,11 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
     private final Map<String, ControlledPackageType> packageMappings = CollectionFactory.newMap();
 
+    /**
+     * Maps from a root package name to a component library name, including the empty string as the library name of the application.
+     */
+    private final Map<String, String> packageToLibrary = CollectionFactory.newMap();
+
     // Flag indicating that the maps have been cleared following an invalidation
     // and need to be rebuilt. The flag and the four maps below are not synchronized
     // because they are only modified inside a synchronized block. That should be strong enough ...
@@ -252,16 +257,6 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         {
             String prefix = mapping.getPathPrefix();
 
-            while (prefix.startsWith("/"))
-            {
-                prefix = prefix.substring(1);
-            }
-
-            while (prefix.endsWith("/"))
-            {
-                prefix = prefix.substring(0, prefix.length() - 1);
-            }
-
             String rootPackage = mapping.getRootPackage();
 
             List<String> packages = this.mappings.get(prefix);
@@ -279,6 +274,8 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
             // for transformation).
 
             addSubpackagesToPackageMapping(rootPackage);
+
+            packageToLibrary.put(rootPackage, prefix);
         }
     }
 
@@ -638,5 +635,34 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     public List<String> getLibraryNames()
     {
         return F.flow(mappings.keySet()).remove(F.IS_BLANK).sort().toList();
+    }
+
+    @Override
+    public String getLibraryNameForClass(String className)
+    {
+        assert className != null;
+
+        String current = className;
+
+        while (true)
+        {
+
+            int dotx = current.lastIndexOf('.');
+
+            if (dotx < 1)
+            {
+                throw new IllegalArgumentException(String.format("Class %s is not inside any package associated with any library.",
+                        className));
+            }
+
+            current = current.substring(0, dotx);
+
+            String libraryName = packageToLibrary.get(current);
+
+            if (libraryName != null)
+            {
+                return libraryName;
+            }
+        }
     }
 }

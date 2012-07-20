@@ -151,4 +151,15 @@ public interface ComponentClassResolver
      * @since 5.3
      */
     boolean isPage(final String pageClassName);
+
+    /**
+     * Given a class name of a component class, returns the library name (as defined by a
+     * {@linkplain org.apache.tapestry5.services.LibraryMapping#getPathPrefix() contributed library name}).
+     *
+     * @param className
+     * @return library name
+     * @throws IllegalArgumentException
+     *         if the class can't be matched to a contributed root package
+     */
+    String getLibraryNameForClass(String className);
 }
