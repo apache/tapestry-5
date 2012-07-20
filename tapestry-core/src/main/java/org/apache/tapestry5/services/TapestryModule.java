@@ -1405,9 +1405,10 @@ public final class TapestryModule
     @Marker(
             {Primary.class, Traditional.class})
     public ComponentEventResultProcessor buildComponentEventResultProcessor(
-            Map<Class, ComponentEventResultProcessor> configuration)
+            Map<Class, ComponentEventResultProcessor> configuration, @ComponentClasses
+    InvalidationEventHub hub)
     {
-        return constructComponentEventResultProcessor(configuration);
+        return constructComponentEventResultProcessor(configuration, hub);
     }
 
     /**
@@ -1416,13 +1417,14 @@ public final class TapestryModule
      */
     @Marker(Ajax.class)
     public ComponentEventResultProcessor buildAjaxComponentEventResultProcessor(
-            Map<Class, ComponentEventResultProcessor> configuration)
+            Map<Class, ComponentEventResultProcessor> configuration, @ComponentClasses
+    InvalidationEventHub hub)
     {
-        return constructComponentEventResultProcessor(configuration);
+        return constructComponentEventResultProcessor(configuration, hub);
     }
 
     private ComponentEventResultProcessor constructComponentEventResultProcessor(
-            Map<Class, ComponentEventResultProcessor> configuration)
+            Map<Class, ComponentEventResultProcessor> configuration, InvalidationEventHub hub)
     {
         Set<Class> handledTypes = CollectionFactory.newSet(configuration.keySet());
 
@@ -1430,8 +1432,20 @@ public final class TapestryModule
 
         configuration.put(Object.class, new ObjectComponentEventResultProcessor(handledTypes));
 
-        StrategyRegistry<ComponentEventResultProcessor> registry = StrategyRegistry.newInstance(
+        final StrategyRegistry<ComponentEventResultProcessor> registry = StrategyRegistry.newInstance(
                 ComponentEventResultProcessor.class, configuration);
+
+        //As the registry will cache component classes, we need to clear the cache when we reload components to avoid memory leaks in permgen
+        hub.addInvalidationListener(new InvalidationListener()
+        {
+
+            @Override
+            public void objectWasInvalidated()
+            {
+                registry.clearCache();
+            }
+        });
+
 
         return strategyBuilder.build(registry);
     }
