@@ -306,8 +306,10 @@ public final class ComponentInstantiatorSourceImpl implements ComponentInstantia
 
                         boolean superClassImplementsPageLifecycle = plasticClass.isInterfaceImplemented(PageLifecycleListener.class);
 
+                        String libraryName = resolver.getLibraryNameForClass(className);
+
                         final MutableComponentModel model = new MutableComponentModelImpl(className, logger, baseResource,
-                                parentModel, isPage);
+                                parentModel, isPage, libraryName);
 
                         transformerChain.transform(plasticClass, new TransformationSupportImpl(plasticClass, isRoot, model), model);
 
