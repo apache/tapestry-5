@@ -48,17 +48,16 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
     private final String startPageName;
 
-    // Map from folder name to a list of root package names.
-    // The key does not begin or end with a slash.
+    // Map from library name to a list of root package names (usuallly just one).
+    private final Map<String, List<String>> libraryNameToPackageNames = CollectionFactory.newCaseInsensitiveMap();
 
-    private final Map<String, List<String>> mappings = CollectionFactory.newCaseInsensitiveMap();
-
-    private final Map<String, ControlledPackageType> packageMappings = CollectionFactory.newMap();
+    private final Map<String, ControlledPackageType> packageNameToType = CollectionFactory.newMap();
 
     /**
-     * Maps from a root package name to a component library name, including the empty string as the library name of the application.
+     * Maps from a root package name to a component library name, including the empty string as the
+     * library name of the application.
      */
-    private final Map<String, String> packageToLibrary = CollectionFactory.newMap();
+    private final Map<String, String> packageNameToLibraryName = CollectionFactory.newMap();
 
     // Flag indicating that the maps have been cleared following an invalidation
     // and need to be rebuilt. The flag and the four maps below are not synchronized
@@ -257,12 +256,12 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         {
             String libraryName = mapping.libraryName;
 
-            List<String> packages = this.mappings.get(libraryName);
+            List<String> packages = this.libraryNameToPackageNames.get(libraryName);
 
             if (packages == null)
             {
                 packages = CollectionFactory.newList();
-                this.mappings.put(libraryName, packages);
+                this.libraryNameToPackageNames.put(libraryName, packages);
             }
 
             packages.add(mapping.rootPackage);
@@ -273,7 +272,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
             addSubpackagesToPackageMapping(mapping.rootPackage);
 
-            packageToLibrary.put(mapping.rootPackage, libraryName);
+            packageNameToLibraryName.put(mapping.rootPackage, libraryName);
         }
     }
 
@@ -281,13 +280,13 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     {
         for (String subpackage : InternalConstants.SUBPACKAGES)
         {
-            packageMappings.put(rootPackage + "." + subpackage, ControlledPackageType.COMPONENT);
+            packageNameToType.put(rootPackage + "." + subpackage, ControlledPackageType.COMPONENT);
         }
     }
 
     public Map<String, ControlledPackageType> getControlledPackageMapping()
     {
-        return Collections.unmodifiableMap(packageMappings);
+        return Collections.unmodifiableMap(packageNameToType);
     }
 
     /**
@@ -311,9 +310,9 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
         Data newData = new Data();
 
-        for (String prefix : mappings.keySet())
+        for (String prefix : libraryNameToPackageNames.keySet())
         {
-            List<String> packages = mappings.get(prefix);
+            List<String> packages = libraryNameToPackageNames.get(prefix);
 
             String folder = prefix + "/";
 
@@ -551,9 +550,9 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     {
         Map<String, String> result = CollectionFactory.newCaseInsensitiveMap();
 
-        for (String folder : mappings.keySet())
+        for (String folder : libraryNameToPackageNames.keySet())
         {
-            List<String> packageNames = mappings.get(folder);
+            List<String> packageNames = libraryNameToPackageNames.get(folder);
 
             String packageName = findCommonPackageNameForFolder(folder, packageNames);
 
@@ -632,7 +631,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     @Override
     public List<String> getLibraryNames()
     {
-        return F.flow(mappings.keySet()).remove(F.IS_BLANK).sort().toList();
+        return F.flow(libraryNameToPackageNames.keySet()).remove(F.IS_BLANK).sort().toList();
     }
 
     @Override
@@ -655,7 +654,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
             current = current.substring(0, dotx);
 
-            String libraryName = packageToLibrary.get(current);
+            String libraryName = packageNameToLibraryName.get(current);
 
             if (libraryName != null)
             {
