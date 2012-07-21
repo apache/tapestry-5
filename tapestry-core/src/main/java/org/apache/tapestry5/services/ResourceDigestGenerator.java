@@ -27,6 +27,8 @@ import java.net.URL;
  *
  * @see org.apache.tapestry5.ioc.internal.util.ClasspathResource
  * @see org.apache.tapestry5.internal.services.ClasspathAssetFactory
+ * @deprecated Deprecated in 5.4 with no replacement; see release notes about classpath assets moving
+ *             to /META-INF/assets/.
  */
 @UsesConfiguration(String.class)
 public interface ResourceDigestGenerator

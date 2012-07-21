@@ -1,58 +1,74 @@
 <html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
-  <p>
+<p>
     This page demonstrates the ability to inject assets into components and pass them around as
     parameters.
-    </p>
+</p>
 
-  <p>
+<p>
     The Tapestry banner:
-    </p>
+</p>
 
-  <img id="icon" src="${icon}"/>
+<img id="icon" src="${icon}"/>
 
-  <p>
+<p>
     A classpath asset:
-    </p>
+</p>
 
-  <img id="button" src="${button}"/>
+<img id="button" src="${button}"/>
 
+<p>
+    Image stored in META-INF/assets:
+</p>
 
-  <p>
+<img id="meta" src="${logo}"/>
+
+<p>
     Relative asset via asset: binding
-    </p>
+</p>
 
-  <img id="relative" src="${asset:../smiley.png}"/>
+<img id="relative" src="${asset:../smiley.png}"/>
 
+<p>
+    Asset in META-INF/assets via asset: binding
+</p>
 
-  <p>
+<img id="templatemeta" src="${asset:plugin.png}"/>
+
+<p>
+    Asset is sub-folder of META-INF/assets via asset: binding
+</p>
+
+<img id="metasub" src="${asset:sub/accepted.png}"/>
+
+<p>
     Context asset via context: binding
-    </p>
+</p>
 
-  <img id="viaContext" src="${context:images/asf_logo_wide.gif}"/>
+<img id="viaContext" src="${context:images/asf_logo_wide.gif}"/>
 
-  <p>
-    IE Conditional Stylesheet:      
-    </p>
+<p>
+    IE Conditional Stylesheet:
+</p>
 
-  <div class="ie-big-blue">
+<div class="ie-big-blue">
     Normal in most browsers, but Big and Blue in IE.
-    </div>
+</div>
 
-  <p>
+<p>
     Via @Import:
-    </p>
+</p>
 
-  <div class="via-import">
+<div class="via-import">
     This text should be red.
-    </div>
+</div>
 
 
-  <p>
+<p>
     Properties file URL:
     <a id="propurl" href="${properties}">
-      ${properties}
+        ${properties}
     </a>
-  </p>
+</p>
 
 </html>

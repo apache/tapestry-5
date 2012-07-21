@@ -21,7 +21,6 @@ import org.apache.tapestry5.annotations.SetupRender;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.func.Worker;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.*;
@@ -30,8 +29,6 @@ import org.apache.tapestry5.services.TransformConstants;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
-
-import java.util.Locale;
 
 /**
  * Implements the {@link Import} annotation, both at the class and at the method level.
@@ -158,14 +155,16 @@ public class ImportWorker implements ComponentClassTransformWorker2
                                              PlasticMethod method, String[] paths, Worker<Asset> operation)
     {
         if (paths.length == 0)
+        {
             return;
+        }
 
         String[] expandedPaths = expandPaths(paths);
 
         PlasticField assetListField = componentClass.introduceField(Asset[].class,
                 "importedAssets_" + method.getDescription().methodName);
 
-        initializeAssetsFromPaths(model.getBaseResource(), expandedPaths, assetListField);
+        initializeAssetsFromPaths(expandedPaths, assetListField);
 
         addMethodAssetOperationAdvice(method, assetListField.getHandle(), operation);
     }
@@ -175,8 +174,7 @@ public class ImportWorker implements ComponentClassTransformWorker2
         return F.flow(paths).map(expandSymbols).toArray(String.class);
     }
 
-    private void initializeAssetsFromPaths(final Resource baseResource,
-                                           final String[] expandedPaths, final PlasticField assetsField)
+    private void initializeAssetsFromPaths(final String[] expandedPaths, PlasticField assetsField)
     {
         assetsField.injectComputed(new ComputedValue<Asset[]>()
         {
@@ -184,18 +182,18 @@ public class ImportWorker implements ComponentClassTransformWorker2
             {
                 ComponentResources resources = context.get(ComponentResources.class);
 
-                return convertPathsToAssetArray(baseResource, resources.getLocale(), expandedPaths);
+                return convertPathsToAssetArray(resources, expandedPaths);
             }
         });
     }
 
-    private Asset[] convertPathsToAssetArray(final Resource baseResource, final Locale locale, String[] assetPaths)
+    private Asset[] convertPathsToAssetArray(final ComponentResources resources, String[] assetPaths)
     {
         return F.flow(assetPaths).map(new Mapper<String, Asset>()
         {
             public Asset map(String assetPath)
             {
-                return assetSource.getAsset(baseResource, assetPath, locale);
+                return assetSource.getComponentAsset(resources, assetPath);
             }
         }).toArray(Asset.class);
     }

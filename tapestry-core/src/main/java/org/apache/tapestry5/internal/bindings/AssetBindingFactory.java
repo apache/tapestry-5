@@ -18,7 +18,6 @@ import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.Binding;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.ioc.Location;
-import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.BindingFactory;
 
@@ -40,9 +39,11 @@ public class AssetBindingFactory implements BindingFactory
     public Binding newBinding(String description, ComponentResources container, ComponentResources component,
                               String expression, Location location)
     {
-        Resource baseResource = container.getBaseResource();
+        // There's some possibility this isn't quite right when it appears in a base class and a
+        // sub-class gets instantiated, because relative path for the asset should be relative to the
+        // base class, but will instead by relative to the subclass.
 
-        Asset asset = source.getAsset(baseResource, expression, container.getLocale());
+        Asset asset = source.getComponentAsset(container, expression);
 
         return new AssetBinding(location, description, asset);
     }

@@ -1,4 +1,4 @@
-// Copyright 2009, 2011 The Apache Software Foundation
+// Copyright 2009, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,28 +14,29 @@
 
 package org.apache.tapestry5.integration.app1;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
-
 import org.apache.tapestry5.integration.TapestryCoreTestCase;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.test.TapestryTestConstants;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
+
 public class AssetTests extends TapestryCoreTestCase
 {
     @DataProvider
     private Object[][] asset_data()
     {
-        return new Object[][]
-        {
-        { "icon", "src/test/app1/images/tapestry_banner.gif" },
-        { "button", "src/test/resources/org/apache/tapestry5/integration/app1/pages/nested/tapestry-button.png" },
-        { "viaContext", "src/test/app1/images/asf_logo_wide.gif" } };
+        return new Object[][]{
+                {"icon", "src/test/app1/images/tapestry_banner.gif"},
+                {"button", "src/test/resources/org/apache/tapestry5/integration/app1/pages/nested/tapestry-button.png"},
+                {"viaContext", "src/test/app1/images/asf_logo_wide.gif"},
+                {"meta", "src/test/resources/META-INF/assets/tapestry.png"},
+                {"templatemeta", "src/test/resources/META-INF/assets/plugin.png"}};
     }
 
     @Test(dataProvider = "asset_data")

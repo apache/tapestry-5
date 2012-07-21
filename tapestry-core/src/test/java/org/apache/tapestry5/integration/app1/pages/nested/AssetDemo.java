@@ -52,6 +52,11 @@ public class AssetDemo
     @Environmental
     private JavaScriptSupport javascriptSupport;
 
+    @Property
+    @Inject
+    @Path("tapestry.png")
+    private Asset logo;
+
     @Import(stylesheet = "context:css/via-import.css")
     void afterRender()
     {

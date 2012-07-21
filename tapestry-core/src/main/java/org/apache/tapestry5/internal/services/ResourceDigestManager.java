@@ -22,15 +22,18 @@ import org.apache.tapestry5.services.ResourceDigestGenerator;
  * Caches information about resources on the classpath. In addition, acts as an invalidation hub for any resources for
  * which information is obtained (when any of the resources are changed, invalidation listeners are notified so they can
  * clear their caches).
- * <p>
+ * <p/>
  * Note that the name and role of this class changed (and diminished) quite a bit in Tapestry 5.3. It is now focused on
+ * determining which files require a digest, and which what the digests are for resources.
+ *
+ * @deprecated Deprecated in 5.4 with no replacement; see release notes about classpath assets moving to /META-INF/assets/.
  */
 public interface ResourceDigestManager extends InvalidationEventHub
 {
     /**
      * Returns true if the path requires that the client URL for the resource include a digest to validate that the
      * client is authorized to access the resource.
-     * 
+     *
      * @param resource
      * @return true if digest is required for the resource
      * @see ResourceDigestGenerator#requiresDigest(String)
@@ -39,7 +42,7 @@ public interface ResourceDigestManager extends InvalidationEventHub
 
     /**
      * Returns the digest for the given path.
-     * 
+     *
      * @param resource
      * @return the digest, or null if the resource does not exist
      */

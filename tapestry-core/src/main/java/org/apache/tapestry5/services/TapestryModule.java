@@ -448,7 +448,15 @@ public final class TapestryModule
 
         for (String folder : folderToPackageMapping.keySet())
         {
+            // This is the 5.3 version, which is still supported:
             configuration.add(folder, toPackagePath(folderToPackageMapping.get(folder)));
+
+            // This is the 5.4 version; once 5.3 support is dropped, this can be simplified, and the
+            // "meta/" prefix stripped out.
+
+            String folderSuffix = folder.equals("") ? folder : "/" + folder;
+
+            configuration.add("meta" + folderSuffix, "META-INF/assets" + folderSuffix);
         }
     }
 
@@ -790,7 +798,7 @@ public final class TapestryModule
     {
         configuration.addInstance("Named", InjectNamedProvider.class);
         configuration.add("Block", new BlockInjectionProvider());
-        configuration.add("Asset", new AssetInjectionProvider(symbolSource, assetSource));
+        configuration.add("Asset", new AssetInjectionProvider(assetSource));
 
         configuration.add("CommonResources", new CommonResourcesInjectionProvider());
 
