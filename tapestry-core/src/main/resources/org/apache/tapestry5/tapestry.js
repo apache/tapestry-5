@@ -318,6 +318,9 @@ var Tapestry = {
      * <dd>URLs of static JavaScript libraries to load</dd>
      *     </dl>
      *
+     *     The format of this content is changing in 5.4 and this implementation
+     *     is for compatibility only; it invoke modules method core/pageinit:handlePartialPageRenderResponse
+     *
      * @param reply
      *            JSON response object from the server
      * @param callback
@@ -325,54 +328,10 @@ var Tapestry = {
      *            (presumably, to update the DOM)
      */
     loadScriptsInReply: function (reply, callback) {
-        var redirectURL = reply.redirectURL;
-
-        if (redirectURL) {
-            window.location.href = redirectURL;
-
-            /* Don't bother loading scripts or invoking the callback. */
-
-            return;
-        }
-
-        Tapestry.ScriptManager.addStylesheets(reply.stylesheets);
 
         require(["core/pageinit"], function (pageinit) {
-            pageinit.loadScripts(reply.scripts,
-                    function () {
-                        /* Let the caller do its thing first (i.e., modify the DOM). */
-                        callback && callback.call(null);
-
-                        pageinit.initialize(reply.inits, Tapestry.onDomLoadedCallback);
-                    });
+            pageinit.handlePartialPageRenderResponse(reply, callback);
         });
-    },
-
-    /**
-     * Called from Tapestry.loadScriptsInReply to load any initializations from
-     * the Ajax partial page render response. Calls
-     * Tapestry.onDomLoadedCallback() last. This logic must be deferred until
-     * after the DOM is fully updated, as initializations often refer to DOM
-     * elements via their unique id.
-     *
-     * This has been recoded for 5.4 and is likely temporary. The format of the inits
-     * has also changed in 5.4.
-     *
-     * @param initializations
-     *            array of parameters to pass to Tapestry.init(), one invocation
-     *            per element (may be null)
-     */
-    executeInits: function (initializations) {
-
-        if (initializations) {
-            require(["core/pageinit"], function (pageinit) {
-                pageinit.initialize(initializations)
-            });
-        }
-
-        // 5.4: Concerned that this may happen too early due to the mechanics of
-        // require().
-        Tapestry.onDomLoadedCallback();
     },
 
     /**
@@ -1966,56 +1925,6 @@ Tapestry.FormInjector = Class.create({
         }.bind(this);
     }
 });
-
-// Used to manage Scripts and Stylesheets; now just Stylesheets, likely to go away soon.
-Tapestry.ScriptManager = {
-
-    rebuildURLIfIE: Prototype.Browser.IE ? Tapestry.rebuildURL : T5._.identity,
-
-    /**
-     * Adds stylesheets to the document. Each element in stylesheets is an object with two keys: href (the URL to the CSS file) and
-     * (optionally) media.
-     * @param stylesheets
-     */
-    addStylesheets: function (stylesheets) {
-        if (!stylesheets)
-            return;
-
-        var _ = T5._;
-
-        var loaded = _(document.styleSheets).chain().pluck("href").without("").map(this.rebuildURLIfIE).value();
-
-        var toLoad = _(stylesheets).chain().map(
-                function (ss) {
-                    ss.href = Tapestry.rebuildURL(ss.href);
-
-                    return ss;
-                }).reject(
-                function (ss) {
-                    return _(loaded).contains(ss.href);
-                }).value();
-
-
-        var head = $$('head').first();
-
-        var insertionPoint = head.down("link[rel='stylesheet t-ajax-insertion-point']");
-
-        _(toLoad).each(function (ss) {
-
-            var element = new Element('link', { type: 'text/css', rel: 'stylesheet', href: ss.href });
-            if (ss.media) {
-                element.writeAttribute('media', ss.media);
-            }
-
-            if (insertionPoint) {
-                insertionPoint.insert({ before: element });
-            }
-            else {
-                head.insert({bottom: element});
-            }
-        });
-    }
-};
 
 /**
  * In the spirit of $(), $T() exists to access a hash of extra data about an

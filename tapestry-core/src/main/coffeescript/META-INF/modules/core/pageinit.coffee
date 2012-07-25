@@ -20,6 +20,61 @@
 # e.g., "my/module:myfunc".
 # Any additional values in the initializer are passed to the function. The context of the function (this) is null.
 define ["_", "core/console"], (_, console) ->
+  pathPrefix = null
+
+  # Borrowed from Prototype:
+  isOpera = Object.prototype.toString.call(window.opera) == '[object Opera]'
+  isIE = !!window.attachEvent && !isOpera
+
+  rebuildURL = (path) ->
+    return path if path.match /^https?:/
+
+    # See Tapestry.rebuildURL() for an error about the path not starting with a leading '/'
+    # We'll assume that doesn't happen.
+
+    if !pathPrefix
+      l = window.location
+      pathPrefix = "#{l.protocol}//#{l.host}"
+
+    return pathPrefix + path
+
+  rebuildURLOnIE =
+    if isIE then rebuildURL else _.identity
+
+  addStylesheets = (newStylesheets) ->
+    return unless newStylesheets
+
+    loaded = _.chain(document.styleSheets)
+    .pluck("href")
+    .without("")
+    .map(rebuildURLOnIE)
+
+    insertionPoint = _.find(document.styleSheets, (ss) -> ss.ownerNode.rel is "stylesheet t-ajax-insertion-point")
+
+    # Most browsers support document.head, but older IE doesn't:
+    head = document.head or document.getElementsByTagName("head")[0]
+
+    _.chain(newStylesheets)
+    .map((ss) -> { href: rebuildURL(ss.href), media: ss.media })
+    .reject((ss) -> loaded.contains(ss.href).value())
+    .each((ss) ->
+      element = document.createElement "link"
+      element.setAttribute "type", "text/css"
+      element.setAttribute "rel", "stylesheet"
+      element.setAttribute "href", ss.href
+      if ss.media
+        element.setAttribute "media", ss.media
+
+      if insertionPoint
+        head.insertBefore element, insertionPoint.ownerNode
+      else
+        head.appendChild element
+
+      console.debug "Added stylesheet #{ss.href}"
+    )
+
+    return
+
   invokeInitializer = (tracker, qualifiedName, initArguments) ->
     [moduleName, functionName] = qualifiedName.split ':'
 
@@ -31,10 +86,9 @@ define ["_", "core/console"], (_, console) ->
       tracker()
 
   exports =
-    # Passed a list of initializers, executes each initializer in order. Due to asynchronous loading
-    # of modules, the exact order in which initializer functions are invoked is not predictable.
+  # Passed a list of initializers, executes each initializer in order. Due to asynchronous loading
+  # of modules, the exact order in which initializer functions are invoked is not predictable.
     initialize: (inits = [], callback) ->
-
       callbackCountdown = inits.length + 1
 
       # tracker gets invoked once after each require/callback, plus once extra
@@ -79,6 +133,41 @@ define ["_", "core/console"], (_, console) ->
     evalJavaScript: (js) ->
       console.debug "Evaluating: #{js}"
       eval js
+
+    # Passed the JSON object response from an Ajax request, when the request is succesful.
+    # This is used for any request that attaches partial-page-render data to the main JSON object
+    # reponse.  If no such data is attached, the callback is simply invoked immediately.
+    # Otherwise, Tapestry processes the partial-page-render data. This may involve loading some number
+    # of scripts and CSS style sheets, and a number of direct updates to the DOM. After DOM updates,
+    # the callback is invoked, passed the response (with any Tapestry-specific data removed).
+    # After the callback is invoked, page initializations occur.  This method returns null.
+    # response - the JSON response object
+    # callback - invoked after scripts are loaded, but before page initializations occur (may be null)
+    # context - optional: context used when invoking the callback
+    handlePartialPageRenderResponse: (response, callback, context) ->
+      # Temporarily dealing with the 5.3 format before updating for 5.4:
+
+      # Extreme case: the data has a redirectURL which forces an immediate redirect to the URL.
+      # No other initialization or callback invocation occurs.
+      if response.redirectURL
+        window.location.href = response.redirectURL
+        return
+
+      addStylesheets response.stylesheets
+
+      exports.loadScripts response.scripts, ->
+        # TODO: Strip out Tapestry specific stuff from transport before invoking.
+        callback and callback.call context, response
+
+        exports.initialize response.inits, Tapestry.onDomLoadedCallback
+
+      return
+
+
+
+
+
+
 
 
 
