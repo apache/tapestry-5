@@ -75,12 +75,7 @@ public class Alerts implements ClientElement
 
         if (storage != null)
         {
-            for (Alert alert : storage.getAlerts())
-            {
-                javaScriptSupport.addInitializerCall("addAlert", alert.toJSON());
-            }
-
-            storage.dismissNonPersistent();
+            addAlertsFromStorage();
         }
 
 
@@ -103,5 +98,16 @@ public class Alerts implements ClientElement
         }
 
         return new JSONObject();
+    }
+
+    @HeartbeatDeferred
+    void addAlertsFromStorage()
+    {
+        for (Alert alert : storage.getAlerts())
+        {
+            javaScriptSupport.addInitializerCall("addAlert", alert.toJSON());
+        }
+
+        storage.dismissNonPersistent();
     }
 }

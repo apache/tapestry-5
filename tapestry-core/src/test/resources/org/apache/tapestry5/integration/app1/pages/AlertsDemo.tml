@@ -1,4 +1,5 @@
-<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+        xmlns:p="tapestry:parameter">
 
 <h1>Alerts Demo</h1>
 
@@ -27,4 +28,12 @@
 </p>
 
 <t:alerts class='alert-class' dismissText="Zenbu Kesu"/>
+
+<t:if test="showerrorcomponent">
+    <t:errorcomponent />
+    <p:else>
+        <t:eventlink event="showerrorcomponent">show error component</t:eventlink>
+    </p:else>
+</t:if>
+
 </html>

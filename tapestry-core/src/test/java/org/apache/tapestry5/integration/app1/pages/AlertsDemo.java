@@ -1,10 +1,12 @@
 package org.apache.tapestry5.integration.app1.pages;
 
+import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.alerts.AlertStorage;
 import org.apache.tapestry5.alerts.Duration;
 import org.apache.tapestry5.alerts.Severity;
 import org.apache.tapestry5.annotations.InjectComponent;
+import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.annotations.SessionState;
 import org.apache.tapestry5.beaneditor.ReorderProperties;
@@ -31,6 +33,10 @@ public class AlertsDemo
     @Validate("required")
     @Width(80)
     private String message;
+
+    @Persist(PersistenceConstants.FLASH)
+    @Property
+    private boolean showErrorComponent;
 
     @InjectComponent
     private Zone formZone;
@@ -63,5 +69,10 @@ public class AlertsDemo
     void onActionFromReset()
     {
         storage.dismissAll();
+    }
+
+    void onShowErrorComponent()
+    {
+        showErrorComponent = true;
     }
 }
