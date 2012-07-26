@@ -116,4 +116,13 @@ class AlertsTests extends SeleniumTestCase
         assertTrue isElementPresent("//div[@class='alert-class']")
     }
 
+    /** TAP5-1949 - alerts initialization should be deferred to include every component's alerts */
+    @Test
+    void make_sure_alerts_are_added_last()
+    {
+        openLinks 'Alerts Demo', 'reset', 'show error component'
+
+        assertTextPresent ('Error from ErrorComponent')
+    }
+
 }
