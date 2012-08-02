@@ -5,7 +5,7 @@
 # Should be executed from the tapestry-core folder.
 # Doe NOT compile the test scripts.
 
-inputdir=src/main/coffeescript/META-INF/modules
+inputDir=src/main/coffeescript/META-INF/modules
 outputDir=build/generated-sources/compiled-coffeescript/META-INF/modules
 
 # Because all of these are AMD modules, they don't need a hygenic function wrapper,
