@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006-2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -151,9 +151,17 @@ public final class InternalConstants
     /**
      * Request attribute that can be set to bypass page activation.
      *
-     * @since 5.4
      * @see org.apache.tapestry5.internal.services.StreamPageContentResultProcessor
      * @see org.apache.tapestry5.internal.services.PageRenderRequestHandlerImpl
+     * @since 5.4
      */
     public static final String BYPASS_ACTIVATION = "tapestry.bypass-page-activation";
+
+    /**
+     * Key inside the response that contains the partial page render keys that are used
+     * to update the client.
+     *
+     * @since 5.4
+     */
+    public static final String PARTIAL_KEY = "_tapestry";
 }

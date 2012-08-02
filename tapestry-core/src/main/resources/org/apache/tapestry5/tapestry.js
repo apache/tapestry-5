@@ -1,4 +1,4 @@
-/* Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+/* Copyright 2007-2012 The Apache Software Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1808,9 +1808,8 @@ Tapestry.ZoneManager = Class.create({
 
     /**
      * Invoked with a reply (i.e., transport.responseJSON), this updates the
-     * managed element and processes any JavaScript in the reply. The response
-     * should have a content key, and may have script, scripts and stylesheets
-     * keys.
+     * managed element and processes any JavaScript in the reply. The zone's
+     * content is only updated if the response has a content key.
      *
      * @param reply
      *            response in JSON format appropriate to a Tapestry.Zone
@@ -1819,22 +1818,9 @@ Tapestry.ZoneManager = Class.create({
         Tapestry.loadScriptsInReply(reply, function () {
             /*
              * In a multi-zone update, the reply.content may be missing, in
-             * which case, leave the curent content in place. TAP5-1177
+             * which case, leave the current content in place. TAP5-1177
              */
             reply.content != undefined && this.show(reply.content);
-
-            /*
-             * zones is an object of zone ids and zone content that will be
-             * present in a multi-zone update response.
-             */
-            reply.zones && Object.keys(reply.zones).each(function (zoneId) {
-                var manager = Tapestry.findZoneManagerForZone(zoneId);
-
-                if (manager) {
-                    var zoneContent = reply.zones[zoneId];
-                    manager.show(zoneContent);
-                }
-            });
         }.bind(this));
     },
 

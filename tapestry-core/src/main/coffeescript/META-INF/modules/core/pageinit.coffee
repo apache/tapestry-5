@@ -136,39 +136,49 @@ define ["_", "core/console"], (_, console) ->
 
     # Passed the JSON object response from an Ajax request, when the request is succesful.
     # This is used for any request that attaches partial-page-render data to the main JSON object
-    # reponse.  If no such data is attached, the callback is simply invoked immediately.
+    # response.  If no such data is attached, the callback is simply invoked immediately.
     # Otherwise, Tapestry processes the partial-page-render data. This may involve loading some number
-    # of scripts and CSS style sheets, and a number of direct updates to the DOM. After DOM updates,
+    # of JavaScript libraries and CSS style sheets, and a number of direct updates to the DOM. After DOM updates,
     # the callback is invoked, passed the response (with any Tapestry-specific data removed).
     # After the callback is invoked, page initializations occur.  This method returns null.
     # response - the JSON response object
     # callback - invoked after scripts are loaded, but before page initializations occur (may be null)
     # context - optional: context used when invoking the callback
     handlePartialPageRenderResponse: (response, callback, context) ->
-      # Temporarily dealing with the 5.3 format before updating for 5.4:
+
+      # Capture the partial page response portion of the overall response, and
+      # then remove it so it doesn't interfere elsewhere.
+      partial = response._tapestry
+      delete response._tapestry
 
       # Extreme case: the data has a redirectURL which forces an immediate redirect to the URL.
       # No other initialization or callback invocation occurs.
-      if response.redirectURL
-        window.location.href = response.redirectURL
+      if partial?.redirectURL
+        window.location.href = partial.redirectURL
         return
 
-      addStylesheets response.stylesheets
+      addStylesheets partial?.stylesheets
 
-      exports.loadScripts response.scripts, ->
-        # TODO: Strip out Tapestry specific stuff from transport before invoking.
+      # Make sure all libraries are loaded
+      exports.loadScripts partial?.libraries, ->
+
+        # Libraries are loaded, update each zone:
+        _(partial?.content).each ([id, content]) ->
+          # Looking forward to stripping out thie ZoneManager nonsense
+          console.debug "Updating content for zone #{id}"
+
+          zoneMgr = Tapestry.findZoneManagerForZone id
+
+          zoneMgr && zoneMgr.show content
+
+        # Invoke the callback, if present.  The callback may do its own content updates.
         callback and callback.call context, response
 
-        exports.initialize response.inits, Tapestry.onDomLoadedCallback
+        # Now that all content updates are, presumably, complete, it is time to
+        # perform initializations.  Once those complete, use the onDomLoadedCallback()
+        # to do some final changes and event registrations (hopefully, to be removed
+        # soon).
+
+        exports.initialize partial?.inits, Tapestry.onDomLoadedCallback
 
       return
-
-
-
-
-
-
-
-
-
-

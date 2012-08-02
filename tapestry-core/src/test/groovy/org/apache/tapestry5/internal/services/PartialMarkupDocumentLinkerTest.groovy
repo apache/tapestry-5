@@ -30,7 +30,7 @@ class PartialMarkupDocumentLinkerTest extends Assert {
 
         linker.commit(reply)
 
-        assert reply.toCompactString() ==  /{"scripts":["foo.js","bar.js"]}/
+        assert reply.toCompactString() == /{"_tapestry":{"libraries":["foo.js","bar.js"]}}/
 
     }
 
@@ -45,7 +45,7 @@ class PartialMarkupDocumentLinkerTest extends Assert {
 
         linker.commit(reply)
 
-        JSONObject expected = new JSONObject(/{'stylesheets':[{'href':'foo.css', 'media':'print'}, {'href':'bar.css'}]}/)
+        JSONObject expected = new JSONObject(/{"_tapestry":{'stylesheets':[{'href':'foo.css', 'media':'print'}, {'href':'bar.css'}]}}/)
 
         assert reply == expected
     }
@@ -63,6 +63,6 @@ class PartialMarkupDocumentLinkerTest extends Assert {
 
         JSONArray expected = new JSONArray("[['core/init:order', 'immediate'], ['core/init:order', 'normal']]")
 
-        assert reply.get("inits") == expected
+        assert reply.in("_tapestry").get("inits") == expected
     }
 }

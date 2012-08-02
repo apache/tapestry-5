@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONArray;
@@ -74,16 +75,6 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
      */
     public void commit(JSONObject reply)
     {
-        if (scripts.length() > 0)
-        {
-            reply.put("scripts", scripts);
-        }
-
-        if (stylesheets.length() > 0)
-        {
-            reply.put("stylesheets", stylesheets);
-        }
-
         JSONArray fullInits = new JSONArray();
 
         for (InitializationPriority p : InitializationPriority.values())
@@ -99,9 +90,29 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
             }
         }
 
+        boolean hasWork = scripts.length() > 0 || stylesheets.length() > 0 || fullInits.length() > 0;
+
+        if (!hasWork)
+        {
+            return;
+        }
+
+        JSONObject partial = reply.in(InternalConstants.PARTIAL_KEY);
+
+
+        if (scripts.length() > 0)
+        {
+            partial.put("libraries", scripts);
+        }
+
+        if (stylesheets.length() > 0)
+        {
+            partial.put("stylesheets", stylesheets);
+        }
+
         if (fullInits.length() > 0)
         {
-            reply.put("inits", fullInits);
+            partial.put("inits", fullInits);
         }
     }
 }
