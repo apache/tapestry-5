@@ -81,8 +81,6 @@ class MethodAdviceManager
 
         newMethodName = String.format("advised$%s_%s", description.methodName, PlasticUtils.nextUID());
 
-        createNewMethod();
-
         createProceedToAdvisedMethod();
     }
 
@@ -353,8 +351,15 @@ class MethodAdviceManager
         });
     }
 
+    /**
+     * Creates a new method containing the advised method's original implementation, then rewrites the
+     * advised method to create the MethodInvocation subclass, invoke proceed() on it, and handle
+     * the return value and/or checked exceptions.
+     */
     void rewriteOriginalMethod()
     {
+        createNewMethod();
+
         plasticClass.pool.realize(plasticClass.className, ClassType.METHOD_INVOCATION, invocationClassNode);
 
         String fieldName = String.format("methodinvocationbundle_%s_%s", description.methodName,
