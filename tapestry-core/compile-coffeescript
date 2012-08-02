@@ -2,6 +2,8 @@
 # This is handy when developing as the Gradle build can be very slow.
 # Starts coffee in --watch mode, so it will keep compiling files on change.
 # Expects coffee to be on the path.
+# Should be executed from the tapestry-core folder.
+# Doe NOT compile the test scripts.
 
 inputdir=src/main/coffeescript/META-INF/modules
 outputDir=build/generated-sources/compiled-coffeescript/META-INF/modules
