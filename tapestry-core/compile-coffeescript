@@ -8,6 +8,6 @@
 inputdir=src/main/coffeescript/META-INF/modules
 outputDir=build/generated-sources/compiled-coffeescript/META-INF/modules
 
-# Because all generated CoffeeScript are AMD modules, they don't need a hygenic function wrapper,
+# Because all of these are AMD modules, they don't need a hygenic function wrapper,
 # so we can use --bare
 coffee --watch --bare --output $outputDir/core $inputDir/core/*.coffee
