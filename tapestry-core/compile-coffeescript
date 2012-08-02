@@ -1,0 +1,11 @@
+#!/bin/sh
+# This is handy when developing as the Gradle build can be very slow.
+# Starts coffee in --watch mode, so it will keep compiling files on change.
+# Expects coffee to be on the path.
+
+inputdir=src/main/coffeescript/META-INF/modules
+outputDir=build/generated-sources/compiled-coffeescript/META-INF/modules
+
+# Because all generated CoffeeScript are AMD modules, they don't need a hygenic function wrapper,
+# so we can use --bare
+coffee --watch --bare --output $outputDir/core $inputDir/core/*.coffee
