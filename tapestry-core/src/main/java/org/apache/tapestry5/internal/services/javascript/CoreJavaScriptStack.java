@@ -82,8 +82,6 @@ public class CoreJavaScriptStack implements JavaScriptStack
 
                     ROOT + "/t5-core.js",
 
-                    ROOT + "/t5-spi.js",
-
                     ROOT + "/t5-prototype.js",
 
                     ROOT + "/t5-init.js",

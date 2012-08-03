@@ -18,8 +18,8 @@
  * Prototype JavaScript library. May also make modifications to Prototype to
  * work with Tapestry.
  */
-define("core/compat/t5-prototype", ["core/compat/t5-spi"], function () {
-    T5.extend(T5.spi, function () {
+define("core/compat/t5-spi", ["core/compat/t5", "core/compat/t5-events", "core/compat/t5-pubsub"], function () {
+    T5.define("spi", function () {
 
         function observe(element, eventName, listener) {
 
