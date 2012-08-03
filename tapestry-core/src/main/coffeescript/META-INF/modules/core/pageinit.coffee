@@ -134,7 +134,7 @@ define ["_", "core/console"], (_, console) ->
       console.debug "Evaluating: #{js}"
       eval js
 
-    # Passed the JSON object response from an Ajax request, when the request is succesful.
+    # Passed the JSON object response from an Ajax request, when the request is successful.
     # This is used for any request that attaches partial-page-render data to the main JSON object
     # response.  If no such data is attached, the callback is simply invoked immediately.
     # Otherwise, Tapestry processes the partial-page-render data. This may involve loading some number
