@@ -46,6 +46,8 @@ public class CoreJavaScriptStack implements JavaScriptStack
 
     private final Flow<Asset> javaScriptStack, stylesheetStack;
 
+    private final Asset forceload;
+
     private static final String ROOT = "org/apache/tapestry5";
 
     private static final String[] CORE_JAVASCRIPT = new String[]
@@ -141,6 +143,8 @@ public class CoreJavaScriptStack implements JavaScriptStack
 
         javaScriptStack = convertToAssets(javaScript);
         stylesheetStack = convertToAssets(F.flow(CORE_STYLESHEET));
+
+        forceload = expand(ROOT + "/t5-forceload.js", null);
     }
 
     public String getInitialization()
@@ -174,9 +178,9 @@ public class CoreJavaScriptStack implements JavaScriptStack
 
     public List<Asset> getJavaScriptLibraries()
     {
-        Asset messages = assetSource.getAsset(null, ROOT + "/tapestry-messages.js", threadLocale.getLocale());
+        Asset messages = expand(ROOT + "/tapestry-messages.js", threadLocale.getLocale());
 
-        return javaScriptStack.append(messages).toList();
+        return javaScriptStack.append(messages, forceload).toList();
     }
 
     public List<StylesheetLink> getStylesheets()
