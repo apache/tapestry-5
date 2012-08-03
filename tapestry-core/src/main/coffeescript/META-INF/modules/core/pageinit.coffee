@@ -55,23 +55,23 @@ define ["_", "core/console"], (_, console) ->
     head = document.head or document.getElementsByTagName("head")[0]
 
     _.chain(newStylesheets)
-    .map((ss) -> { href: rebuildURL(ss.href), media: ss.media })
-    .reject((ss) -> loaded.contains(ss.href).value())
-    .each((ss) ->
-      element = document.createElement "link"
-      element.setAttribute "type", "text/css"
-      element.setAttribute "rel", "stylesheet"
-      element.setAttribute "href", ss.href
-      if ss.media
-        element.setAttribute "media", ss.media
+      .map((ss) -> { href: rebuildURL(ss.href), media: ss.media })
+      .reject((ss) -> loaded.contains(ss.href).value())
+      .each((ss) ->
+        element = document.createElement "link"
+        element.setAttribute "type", "text/css"
+        element.setAttribute "rel", "stylesheet"
+        element.setAttribute "href", ss.href
+        if ss.media
+          element.setAttribute "media", ss.media
 
-      if insertionPoint
-        head.insertBefore element, insertionPoint.ownerNode
-      else
-        head.appendChild element
+        if insertionPoint
+          head.insertBefore element, insertionPoint.ownerNode
+        else
+          head.appendChild element
 
-      console.debug "Added stylesheet #{ss.href}"
-    )
+        console.debug "Added stylesheet #{ss.href}"
+      )
 
     return
 
