@@ -1,4 +1,4 @@
-/* Copyright 2011 The Apache Software Foundation
+/* Copyright 2011, 2012 The Apache Software Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,26 @@
  */
 
 /** Extends T5 with new functions related to page initialization. */
-T5.extend(T5, function() {
 
-	return {
-		/**
-		 * The T5.Initializer namespace, which contains functions used to
-		 * perform page load initializations.
-		 */
-		initializers : {},
+define("core/compat/t5-init", ["core/compat/t5"], function () {
+    T5.extend(T5, function () {
 
-		/**
-		 * A convenience method for extending the T5.Initializer namespace.
-		 * 
-		 * @param source
-		 *            object or function used to extend T5.initializers
-		 */
-		extendInitializers : function(source) {
-			T5.extend(T5.initializers, source);
-		}
-	};
+        return {
+            /**
+             * The T5.Initializer namespace, which contains functions used to
+             * perform page load initializations.
+             */
+            initializers: {},
+
+            /**
+             * A convenience method for extending the T5.Initializer namespace.
+             *
+             * @param source
+             *            object or function used to extend T5.initializers
+             */
+            extendInitializers: function (source) {
+                T5.extend(T5.initializers, source);
+            }
+        };
+    });
 });

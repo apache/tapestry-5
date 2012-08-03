@@ -1,4 +1,4 @@
-/* Copyright 2011 The Apache Software Foundation
+/* Copyright 2011, 2012 The Apache Software Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,91 +13,97 @@
  * limitations under the License.
  */
 
-/**
- * The master T5 namespace. A few critical functions are added directly to T5,
- * but mostly it is used as a containing namespace for namespaces defined by
- * other modules.
- *
- * @since 5.3
- */
-window.T5 = {
+define("core/compat/t5", ["_"], function (_) {
 
-    /** _ is _.noConflict(), in other words, all Underscore functions are not inside
-     * T5._, rather than simply _.
+    /**
+     * The master T5 namespace. A few critical functions are added directly to T5,
+     * but mostly it is used as a containing namespace for namespaces defined by
+     * other modules.
+     *
+     * @since 5.3
      */
-    _: _.noConflict()
-};
+    window.T5 = {
 
-/**
- * Extends an object using a source. In the simple case, the source object's
- * properties are overlaid on top of the destination object. In the typical
- * case, the source parameter is a function that returns the source object
- * ... this is to facilitate modularity and encapsulation.
- *
- * @param destination
- *            object to receive new or updated properties
- * @param source
- *            source object for properties, or function returning source
- *            object
- * @returns the destination object
- */
-T5.extend = function (destination, source) {
-    var _ = T5._;
+        /** _ is _.noConflict(), in other words, all Underscore functions are not inside
+         * T5._, rather than simply _.
+         */
+        _: _.noConflict()
+    };
 
-    if (_.isFunction(source)) {
-        source = source();
-    }
+    /**
+     * Extends an object using a source. In the simple case, the source object's
+     * properties are overlaid on top of the destination object. In the typical
+     * case, the source parameter is a function that returns the source object
+     * ... this is to facilitate modularity and encapsulation.
+     *
+     * @param destination
+     *            object to receive new or updated properties
+     * @param source
+     *            source object for properties, or function returning source
+     *            object
+     * @returns the destination object
+     */
+    T5.extend = function (destination, source) {
+        var _ = T5._;
 
-    return _.extend(destination, source);
-};
+        if (_.isFunction(source)) {
+            source = source();
+        }
 
-/**
- * Defines a new namespace under the T5 object.
- *
- * @param name
- *            string name of the namespace
- * @param source
- *            source object for properties (or function returning source
- *            object)
- * @return the namespace object
- */
-T5.define = function (name, source) {
-    var namespace = {};
-    T5[name] = namespace;
+        return _.extend(destination, source);
+    };
 
-    return this.extend(namespace, source);
-};
+    /**
+     * Defines a new namespace under the T5 object.
+     *
+     * @param name
+     *            string name of the namespace
+     * @param source
+     *            source object for properties (or function returning source
+     *            object)
+     * @return the namespace object
+     */
+    T5.define = function (name, source) {
+        var namespace = {};
+        T5[name] = namespace;
 
-/**
- * Used when mapping a new-style module to an old-style namespace.
- * @param moduleName name of module to export from. Additional arguments are the function names
- * to proxy.
- * @param functionNames... names of functions to to proxy
- * @return  An object with the function names; each value is a function that uses require()
- * to obtain the function inside the module (asynchronously, at least the first time).
- */
-T5.proxyFunctionsToModule = function (moduleName) {
+        return this.extend(namespace, source);
+    };
 
-    var slice = Array.prototype.slice;
-    var _ = T5._;
+    /**
+     * Used when mapping a new-style module to an old-style namespace.
+     * @param moduleName name of module to export from. Additional arguments are the function names
+     * to proxy.
+     * @param functionNames... names of functions to to proxy
+     * @return  An object with the function names; each value is a function that uses require()
+     * to obtain the function inside the module (asynchronously, at least the first time).
+     */
+    T5.proxyFunctionsToModule = function (moduleName) {
 
-    var functionNames = _.tail(arguments);
-    var deps = [moduleName];
-    var result = {}
+        var slice = Array.prototype.slice;
+        var _ = T5._;
 
-    // Force the module to be loaded early, so that there will not (usually) be a delay
-    // later.
-    require(deps, function () { });
+        var functionNames = _.tail(arguments);
+        var deps = [moduleName];
+        var result = {}
 
-    _.each(functionNames, function (name) {
-        result[name] = function () {
-            var capturedArguments = slice.call(arguments, 0);
+        // Force the module to be loaded early, so that there will not (usually) be a delay
+        // later.
+        require(deps, function () { });
 
-            require(deps, function (module) {
-                module[name].apply(null, capturedArguments);
-            });
-        };
-    });
+        _.each(functionNames, function (name) {
+            result[name] = function () {
+                var capturedArguments = slice.call(arguments, 0);
 
-    return result;
-};
+                require(deps, function (module) {
+                    module[name].apply(null, capturedArguments);
+                });
+            };
+        });
+
+        return result;
+    };
+
+    return T5;
+
+});

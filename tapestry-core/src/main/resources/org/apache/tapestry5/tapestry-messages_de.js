@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2009-2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,29 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-Tapestry.Messages = {
+require(["core/compat/tapestry-messages"], function () {
+    Tapestry.Messages = {
 
-    pageIsLoading : "Bitte warten während die Seite zu Ende lädt ...",
+        pageIsLoading: "Bitte warten während die Seite zu Ende lädt ...",
 
-    missingInitializer : "Die Funktion Tapestry.Initializer.#{name}() existiert nicht.",
+        missingInitializer: "Die Funktion Tapestry.Initializer.#{name}() existiert nicht.",
 
-    missingValidator :      "Die Funktion Tapestry.Validator.#{name}() existiert nicht für das Feld '#{fieldName}'.",
+        missingValidator: "Die Funktion Tapestry.Validator.#{name}() existiert nicht für das Feld '#{fieldName}'.",
 
-    ajaxFailure : "Ajax Fehler: Status #{status} für #{request.url}: ",
+        ajaxFailure: "Ajax Fehler: Status #{status} für #{request.url}: ",
 
-    ajaxRequestUnsuccessful : "Die Serveranfrage schlug fehl. Es gibt womöglich ein Problem beim Zugriff auf den Server.",
+        ajaxRequestUnsuccessful: "Die Serveranfrage schlug fehl. Es gibt womöglich ein Problem beim Zugriff auf den Server.",
 
-    clientException :     "Client exception beim Verarbeiten der Antwort: ",
+        clientException: "Client exception beim Verarbeiten der Antwort: ",
 
-    missingZone :   "Ajax Zone '#{id}' konnte für ein dynamisches Update nicht gefunden werden.",
+        missingZone: "Ajax Zone '#{id}' konnte für ein dynamisches Update nicht gefunden werden.",
 
-    noZoneManager :   "Element '#{id}' ist nicht mit einem Tapestry.ZoneManager Objekt verknüpft." ,
+        noZoneManager: "Element '#{id}' ist nicht mit einem Tapestry.ZoneManager Objekt verknüpft.",
 
-    pathDoesNotStartWithSlash : "Der externe Pfad #{path} beginnt nicht mit einem führenden '/'.",
+        pathDoesNotStartWithSlash: "Der externe Pfad #{path} beginnt nicht mit einem führenden '/'.",
 
-    notAnInteger : "Kein ganzzahliger Wert",
+        notAnInteger: "Kein ganzzahliger Wert",
 
-    invalidCharacter : "Ungültiges Zeichen",
+        invalidCharacter: "Ungültiges Zeichen",
 
-    communicationFailed : "Kommunikation mit dem Server ist fehlgeschlagen: "
-};
+        communicationFailed: "Kommunikation mit dem Server ist fehlgeschlagen: "
+    };
+});

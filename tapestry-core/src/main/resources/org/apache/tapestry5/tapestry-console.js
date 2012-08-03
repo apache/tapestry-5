@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,13 +15,15 @@
 /**
  * @deprecated in 5.3, use equivalent T5.console functions instead.
  */
-Tapestry.Logging = {
+define("core/compat/tapestry-console", ["core/compat/tapestry"], function () {
+    Tapestry.Logging = {
 
-  debug : T5.console.debug,
+        debug: T5.console.debug,
 
-  info : T5.console.info,
+        info: T5.console.info,
 
-  warn : T5.console.warn,
+        warn: T5.console.warn,
 
-  error: T5.console.error
-};
+        error: T5.console.error
+    };
+});

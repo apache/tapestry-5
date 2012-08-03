@@ -1,4 +1,4 @@
-/* Copyright 2011 The Apache Software Foundation
+/* Copyright 2011, 2012 The Apache Software Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,42 +18,44 @@
  * Prototype JavaScript library. May also make modifications to Prototype to
  * work with Tapestry.
  */
-T5.extend(T5.spi, function() {
+define("core/compat/t5-prototype", ["core/compat/t5-spi"], function () {
+    T5.extend(T5.spi, function () {
 
-    function observe(element, eventName, listener) {
+        function observe(element, eventName, listener) {
 
-        var handler = $(element).on(eventName, listener);
+            var handler = $(element).on(eventName, listener);
 
-        element = null;
-        eventName = null;
-        listener = null;
+            element = null;
+            eventName = null;
+            listener = null;
 
-        return function() {
-            handler.stop();
+            return function () {
+                handler.stop();
+            };
+        }
+
+        document.observe("dom:loaded", function () {
+            T5.sub(T5.events.REMOVE_EVENT_HANDLERS, null, function (element) {
+                        Event.stopObserving(element);
+                    }
+            );
+        });
+
+        function appendMarkup(element, markup) {
+            var element = $(element);
+
+            element.insert({ bottom: markup });
+
+            return element;
+        }
+
+        return {
+            observe: observe,
+            find: Element.down,
+            show: Element.show,
+            hide: Element.hide,
+            appendMarkup: appendMarkup
         };
-    }
-
-    document.observe("dom:loaded", function() {
-        T5.sub(T5.events.REMOVE_EVENT_HANDLERS, null, function(element) {
-                Event.stopObserving(element);
-            }
-        );
     });
 
-    function appendMarkup(element, markup) {
-        var element = $(element);
-
-        element.insert({ bottom: markup });
-
-        return element;
-    }
-
-    return {
-        observe : observe,
-        find : Element.down,
-        show : Element.show,
-        hide : Element.hide,
-        appendMarkup : appendMarkup
-    };
 });
-

@@ -55,23 +55,23 @@ define ["_", "core/console"], (_, console) ->
     head = document.head or document.getElementsByTagName("head")[0]
 
     _.chain(newStylesheets)
-      .map((ss) -> { href: rebuildURL(ss.href), media: ss.media })
-      .reject((ss) -> loaded.contains(ss.href).value())
-      .each((ss) ->
-        element = document.createElement "link"
-        element.setAttribute "type", "text/css"
-        element.setAttribute "rel", "stylesheet"
-        element.setAttribute "href", ss.href
-        if ss.media
-          element.setAttribute "media", ss.media
+    .map((ss) -> { href: rebuildURL(ss.href), media: ss.media })
+    .reject((ss) -> loaded.contains(ss.href).value())
+    .each((ss) ->
+      element = document.createElement "link"
+      element.setAttribute "type", "text/css"
+      element.setAttribute "rel", "stylesheet"
+      element.setAttribute "href", ss.href
+      if ss.media
+        element.setAttribute "media", ss.media
 
-        if insertionPoint
-          head.insertBefore element, insertionPoint.ownerNode
-        else
-          head.appendChild element
+      if insertionPoint
+        head.insertBefore element, insertionPoint.ownerNode
+      else
+        head.appendChild element
 
-        console.debug "Added stylesheet #{ss.href}"
-      )
+      console.debug "Added stylesheet #{ss.href}"
+    )
 
     return
 
@@ -128,7 +128,8 @@ define ["_", "core/console"], (_, console) ->
         # This is where we want to get:
         # require ["core/domReady!"], -> exports.initialize otherInits
         # But for compatibility, this is what we're stuck with:
-        Tapestry.onDOMLoaded -> exports.initialize otherInits
+        require ["core/compat/tapestry"], ->
+          Tapestry.onDOMLoaded -> exports.initialize otherInits
 
     evalJavaScript: (js) ->
       console.debug "Evaluating: #{js}"
@@ -160,26 +161,30 @@ define ["_", "core/console"], (_, console) ->
 
       addStylesheets partial?.stylesheets
 
-      # Make sure all libraries are loaded
-      exports.loadScripts partial?.libraries, ->
+      # Temporary ugliness: ensuring Tapestry is available since we, for the moment,
+      # make use of some of it.
+      require ["core/compat/tapestry"], ->
+        # Make sure all libraries are loaded
+        exports.loadScripts partial?.libraries, ->
 
-        # Libraries are loaded, update each zone:
-        _(partial?.content).each ([id, content]) ->
-          # Looking forward to stripping out thie ZoneManager nonsense
-          console.debug "Updating content for zone #{id}"
+          # Libraries are loaded, update each zone:
+          _(partial?.content).each ([id, content]) ->
+            console.debug "Updating content for zone #{id}"
 
-          zoneMgr = Tapestry.findZoneManagerForZone id
+            # Looking forward to stripping out this ZoneManager nonsense
 
-          zoneMgr && zoneMgr.show content
+            zoneMgr = Tapestry.findZoneManagerForZone id
 
-        # Invoke the callback, if present.  The callback may do its own content updates.
-        callback and callback.call context, response
+            zoneMgr && zoneMgr.show content
 
-        # Now that all content updates are, presumably, complete, it is time to
-        # perform initializations.  Once those complete, use the onDomLoadedCallback()
-        # to do some final changes and event registrations (hopefully, to be removed
-        # soon).
+          # Invoke the callback, if present.  The callback may do its own content updates.
+          callback and callback.call context, response
 
-        exports.initialize partial?.inits, Tapestry.onDomLoadedCallback
+          # Now that all content updates are, presumably, complete, it is time to
+          # perform initializations.  Once those complete, use the onDomLoadedCallback()
+          # to do some final changes and event registrations (hopefully, to be removed
+          # soon).
+
+          exports.initialize partial?.inits, Tapestry.onDomLoadedCallback
 
       return

@@ -1,4 +1,4 @@
-/* Copyright 2011 The Apache Software Foundation
+/* Copyright 2011, 2012 The Apache Software Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,56 +24,58 @@
  * functions; a framework layer may leave such a function alone or re-implement
  * it.
  */
-T5.define("spi", {
+define("core/compat/t5-spi", ["core/compat/t5"], function () {
+    T5.define("spi", {
 
-    /**
-     * Observes a DOM event.
-     *
-     *  @param element DOM element or element id
-     *  @param event name of event to observe
-     *  @param listener function to be invoked; the function is passed the DOM event object
-     *  @return cancel function to stop observing the event with the listener
-     */
-    observe : undefined,
+        /**
+         * Observes a DOM event.
+         *
+         *  @param element DOM element or element id
+         *  @param event name of event to observe
+         *  @param listener function to be invoked; the function is passed the DOM event object
+         *  @return cancel function to stop observing the event with the listener
+         */
+        observe: undefined,
 
-    /**
-     * Find the first child element matching a CSS selector.
-     *
-     * @param element DOM element or element id
-     * @param selector CSS selector to locate
-     * @return the element, or undefined if not found
-     */
-    find : undefined,
+        /**
+         * Find the first child element matching a CSS selector.
+         *
+         * @param element DOM element or element id
+         * @param selector CSS selector to locate
+         * @return the element, or undefined if not found
+         */
+        find: undefined,
 
-    /** Hides an element making it invisible.
-     * @param element DOM element or element id
-     */
-    hide : undefined,
+        /** Hides an element making it invisible.
+         * @param element DOM element or element id
+         */
+        hide: undefined,
 
-    /** Reveals an element, making it visible again.
-     *
-     * @param element DOM element or element id
-     */
-    show : undefined,
+        /** Reveals an element, making it visible again.
+         *
+         * @param element DOM element or element id
+         */
+        show: undefined,
 
-    /**
-     * Appends new markup to an existing element's body.
-     *
-     * @param element DOM element or element id
-     * @param markup new content as markup string
-     * @return element
-     */
-    appendMarkup: undefined,
+        /**
+         * Appends new markup to an existing element's body.
+         *
+         * @param element DOM element or element id
+         * @param markup new content as markup string
+         * @return element
+         */
+        appendMarkup: undefined,
 
-    /**
-     * Performs an ajax request, as per T5.ajax.request(). Supplied by the SPI
-     * implementation. The options parameter is not yet fully defined in Tapestry 5.3
-     * (this SPI function is not yet used anywhere).
-     *
-     * @param url
-     *            URL for Ajax request
-     * @param options
-     *            additional options defined by T5.ajax.request().
-     */
-    ajaxRequest : undefined
+        /**
+         * Performs an ajax request, as per T5.ajax.request(). Supplied by the SPI
+         * implementation. The options parameter is not yet fully defined in Tapestry 5.3
+         * (this SPI function is not yet used anywhere).
+         *
+         * @param url
+         *            URL for Ajax request
+         * @param options
+         *            additional options defined by T5.ajax.request().
+         */
+        ajaxRequest: undefined
+    });
 });

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-require(["_"], function (_) {
+define("core/compat/tapestry", ["_", "core/compat/t5-dom", "core/compat/t5-init"], function (_) {
 
     window.Tapestry = {
 

@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2009-2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,29 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-Tapestry.Messages = {
+define("core/compat/tapestry-messages", ["core/compat/tapestry"], function () {
 
-    pageIsLoading : "Please wait for the page to finish loading ...",
+    Tapestry.Messages = {
 
-    missingInitializer : "Function Tapestry.Initializer.#{name}() does not exist.",
+        pageIsLoading: "Please wait for the page to finish loading ...",
 
-    missingValidator :      "Function Tapestry.Validator.#{name}() does not exist for field '#{fieldName}'.",
+        missingInitializer: "Function Tapestry.Initializer.#{name}() does not exist.",
 
-    ajaxFailure : "Ajax failure: Status #{status} for #{request.url}: ",
+        missingValidator: "Function Tapestry.Validator.#{name}() does not exist for field '#{fieldName}'.",
 
-    ajaxRequestUnsuccessful : "Server request was unsuccessful. There may be a problem accessing the server.",
+        ajaxFailure: "Ajax failure: Status #{status} for #{request.url}: ",
 
-    clientException :     "Client exception processing response: ",
+        ajaxRequestUnsuccessful: "Server request was unsuccessful. There may be a problem accessing the server.",
 
-    missingZone :   "Unable to locate Ajax Zone '#{id}' for dynamic update.",
+        clientException: "Client exception processing response: ",
 
-    noZoneManager :   "Element '#{id}' does not have an associated Tapestry.ZoneManager object." ,
+        missingZone: "Unable to locate Ajax Zone '#{id}' for dynamic update.",
 
-    pathDoesNotStartWithSlash : "External path #{path} does not start with a leading slash.",
+        noZoneManager: "Element '#{id}' does not have an associated Tapestry.ZoneManager object.",
 
-    notAnInteger : "Not an integer",
+        pathDoesNotStartWithSlash: "External path #{path} does not start with a leading slash.",
 
-    invalidCharacter : "Invalid character",
+        notAnInteger: "Not an integer",
 
-    communicationFailed : "Communication with the server failed: "
-};
+        invalidCharacter: "Invalid character",
+
+        communicationFailed: "Communication with the server failed: "
+    };
+});

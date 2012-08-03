@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-T5.define("console", function () {
-    return T5.proxyFunctionsToModule("core/console", "debug", "info", "warn", "error");
-});
+define("core/compat/t5-console",
+        ["core/console", "core/compat/t5"],
+        function (console) {
+            T5.define("console", console);
+        });

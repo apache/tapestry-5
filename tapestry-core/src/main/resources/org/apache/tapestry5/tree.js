@@ -1,4 +1,4 @@
-/* Copyright 2011 The Apache Software Foundation
+/* Copyright 2011, 2012 The Apache Software Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,183 +12,184 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+define("core/compat/tree", ["core/compat/t5-init"], function () {
+    T5.extend(T5, {
+        tree: {
 
-T5.extend(T5, {
-    tree : {
+            /**
+             * Approximate time per pixel for the hide and reveal animations. The
+             * idea is to have small (few children) and large (many childen)
+             * animations operate at the same visible rate, even though they will
+             * take different amounts of time.
+             */
+            ANIMATION_RATE: .005,
 
-        /**
-         * Approximate time per pixel for the hide and reveal animations. The
-         * idea is to have small (few children) and large (many childen)
-         * animations operate at the same visible rate, even though they will
-         * take different amounts of time.
-         */
-        ANIMATION_RATE : .005,
+            /**
+             * Maximum animation time, in seconds. This is necessary for very large
+             * animations, otherwise its looks visually odd to see the child tree
+             * nodes whip down the screen.
+             */
+            MAX_ANIMATION_DURATION: .5,
 
-        /**
-         * Maximum animation time, in seconds. This is necessary for very large
-         * animations, otherwise its looks visually odd to see the child tree
-         * nodes whip down the screen.
-         */
-        MAX_ANIMATION_DURATION : .5,
+            /** Type of Scriptaculous effect to hide/show child nodes. */
+            TOGGLE_TYPE: 'blind',
 
-        /** Type of Scriptaculous effect to hide/show child nodes. */
-        TOGGLE_TYPE : 'blind',
+            /**
+             * Name of Scriptaculous effects queue to ensure that animations do not
+             * overwrite each other.
+             */
+            QUEUE_NAME: 't-tree-updates'
+        }
+    });
 
-        /**
-         * Name of Scriptaculous effects queue to ensure that animations do not
-         * overwrite each other.
-         */
-        QUEUE_NAME : 't-tree-updates'
-    }
-});
+    T5.extendInitializers(function () {
 
-T5.extendInitializers(function() {
+        var cfg = T5.tree;
 
-    var cfg = T5.tree;
+        function doAnimate(element) {
+            var sublist = $(element).up('li').down("ul");
 
-    function doAnimate(element) {
-        var sublist = $(element).up('li').down("ul");
+            var dim = sublist.getDimensions();
 
-        var dim = sublist.getDimensions();
+            var duration = Math.min(dim.height * cfg.ANIMATION_RATE,
+                    cfg.MAX_ANIMATION_DURATION)
 
-        var duration = Math.min(dim.height * cfg.ANIMATION_RATE,
-            cfg.MAX_ANIMATION_DURATION)
-
-        new Effect.toggle(sublist, cfg.TOGGLE_TYPE, {
-            duration : duration,
-            queue : {
-                position : 'end',
-                scope : cfg.QUEUE_NAME
-            }
-        });
-    }
-
-    function animateRevealChildren(element) {
-        $(element).addClassName("t-tree-expanded");
-
-        doAnimate(element);
-    }
-
-    function animateHideChildren(element) {
-        $(element).removeClassName("t-tree-expanded");
-
-        doAnimate(element);
-    }
-
-    function initializer(spec) {
-        var loaded = spec.expanded || spec.leaf;
-        var expanded = spec.expanded;
-        var loading = false;
-
-        if (expanded) {
-            $(spec.clientId).addClassName("t-tree-expanded")
+            new Effect.toggle(sublist, cfg.TOGGLE_TYPE, {
+                duration: duration,
+                queue: {
+                    position: 'end',
+                    scope: cfg.QUEUE_NAME
+                }
+            });
         }
 
+        function animateRevealChildren(element) {
+            $(element).addClassName("t-tree-expanded");
 
-        function successHandler(reply) {
-            // Remove the Ajax load indicator
-            $(spec.clientId).update("");
-            $(spec.clientId).removeClassName("t-empty-node");
+            doAnimate(element);
+        }
 
-            var response = reply.responseJSON;
+        function animateHideChildren(element) {
+            $(element).removeClassName("t-tree-expanded");
 
-            Tapestry.loadScriptsInReply(response, function() {
-                var element = $(spec.clientId).up("li");
-                var label = element.down("span.t-tree-label");
+            doAnimate(element);
+        }
 
-                label.insert({
-                    after : response.content
+        function initializer(spec) {
+            var loaded = spec.expanded || spec.leaf;
+            var expanded = spec.expanded;
+            var loading = false;
+
+            if (expanded) {
+                $(spec.clientId).addClassName("t-tree-expanded")
+            }
+
+
+            function successHandler(reply) {
+                // Remove the Ajax load indicator
+                $(spec.clientId).update("");
+                $(spec.clientId).removeClassName("t-empty-node");
+
+                var response = reply.responseJSON;
+
+                Tapestry.loadScriptsInReply(response, function () {
+                    var element = $(spec.clientId).up("li");
+                    var label = element.down("span.t-tree-label");
+
+                    label.insert({
+                        after: response.content
+                    });
+
+                    // Hide the new sublist so that we can animate revealing it.
+                    element.down("ul").hide();
+
+                    animateRevealChildren(spec.clientId);
+
+                    loading = false;
+                    loaded = true;
+                    expanded = true;
                 });
 
-                // Hide the new sublist so that we can animate revealing it.
-                element.down("ul").hide();
-
-                animateRevealChildren(spec.clientId);
-
-                loading = false;
-                loaded = true;
-                expanded = true;
-            });
-
-        }
-
-        function doLoad() {
-            if (loading)
-                return;
-
-            loading = true;
-
-            $(spec.clientId).addClassName("t-empty-node");
-
-            $(spec.clientId).update("<span class='t-ajax-wait'/>");
-
-            Tapestry.ajaxRequest(spec.expandChildrenURL, successHandler);
-        }
-
-        $(spec.clientId).observe("click", function(event) {
-            event.stop();
-
-            if (!loaded && spec.expandChildrenURL) {
-
-                doLoad();
-
-                return;
             }
 
-            // Children have been loaded, just a matter of toggling
-            // between showing or hiding the children.
+            function doLoad() {
+                if (loading)
+                    return;
 
-            var f = expanded ? animateHideChildren : animateRevealChildren;
+                loading = true;
 
-            f.call(null, spec.clientId);
+                $(spec.clientId).addClassName("t-empty-node");
 
-            var url = expanded ? spec.markCollapsedURL : spec.markExpandedURL;
+                $(spec.clientId).update("<span class='t-ajax-wait'/>");
 
-            // Send request, ignore response.
-
-            Tapestry.ajaxRequest(url, {});
-
-            expanded = !expanded;
-        });
-
-
-        if (spec.selectURL) {
-
-            var selected = spec.selected;
-
-            var label = $(spec.clientId).next("span.t-tree-label");
-
-            label.addClassName("t-selectable");
-
-            if (selected) {
-                label.addClassName("t-selected-leaf-node-label");
+                Tapestry.ajaxRequest(spec.expandChildrenURL, successHandler);
             }
 
-            label.observe("click", function(event) {
+            $(spec.clientId).observe("click", function (event) {
                 event.stop();
 
+                if (!loaded && spec.expandChildrenURL) {
 
-                selected = ! selected;
+                    doLoad();
 
+                    return;
+                }
+
+                // Children have been loaded, just a matter of toggling
+                // between showing or hiding the children.
+
+                var f = expanded ? animateHideChildren : animateRevealChildren;
+
+                f.call(null, spec.clientId);
+
+                var url = expanded ? spec.markCollapsedURL : spec.markExpandedURL;
+
+                // Send request, ignore response.
+
+                Tapestry.ajaxRequest(url, {});
+
+                expanded = !expanded;
+            });
+
+
+            if (spec.selectURL) {
+
+                var selected = spec.selected;
+
+                var label = $(spec.clientId).next("span.t-tree-label");
+
+                label.addClassName("t-selectable");
 
                 if (selected) {
                     label.addClassName("t-selected-leaf-node-label");
                 }
-                else {
-                    label.removeClassName("t-selected-leaf-node-label");
-                }
 
-                // TODO: In the future, we may want to select children when a parent is selected,
-                // or vice-versa. There's a lot of use cases. These will be directed from new methods
-                // on the TreeSelectionModel interface and encoded into the response. For now,
-                // the response is empty and ignored.
+                label.observe("click", function (event) {
+                    event.stop();
 
-                Tapestry.ajaxRequest(spec.selectURL, { parameters: { "t:selected": selected } });
-            });
+
+                    selected = !selected;
+
+
+                    if (selected) {
+                        label.addClassName("t-selected-leaf-node-label");
+                    }
+                    else {
+                        label.removeClassName("t-selected-leaf-node-label");
+                    }
+
+                    // TODO: In the future, we may want to select children when a parent is selected,
+                    // or vice-versa. There's a lot of use cases. These will be directed from new methods
+                    // on the TreeSelectionModel interface and encoded into the response. For now,
+                    // the response is empty and ignored.
+
+                    Tapestry.ajaxRequest(spec.selectURL, { parameters: { "t:selected": selected } });
+                });
+            }
         }
-    }
 
-    return {
-        treeNode : initializer
-    };
+        return {
+            treeNode: initializer
+        };
+    });
 });
