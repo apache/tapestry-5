@@ -144,6 +144,7 @@ define ["_", "core/console"], (_, console) ->
     # response - the JSON response object
     # callback - invoked after scripts are loaded, but before page initializations occur (may be null)
     # context - optional: context used when invoking the callback
+    # Returns null
     handlePartialPageRenderResponse: (response, callback, context) ->
 
       # Capture the partial page response portion of the overall response, and
