@@ -89,7 +89,7 @@ T5.proxyFunctionsToModule = function (moduleName) {
     // later.
     require(deps, function () { });
 
-   _.each(functionNames, function (name) {
+    _.each(functionNames, function (name) {
         result[name] = function () {
             var capturedArguments = slice.call(arguments, 0);
 

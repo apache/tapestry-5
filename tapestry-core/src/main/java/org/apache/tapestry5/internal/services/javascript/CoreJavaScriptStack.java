@@ -36,135 +36,140 @@ import java.util.Locale;
  *
  * @since 5.2.0
  */
-public class CoreJavaScriptStack implements JavaScriptStack {
-  private final boolean productionMode;
+public class CoreJavaScriptStack implements JavaScriptStack
+{
+    private final boolean productionMode;
 
-  private final SymbolSource symbolSource;
+    private final SymbolSource symbolSource;
 
-  private final AssetSource assetSource;
+    private final AssetSource assetSource;
 
-  private final ThreadLocale threadLocale;
+    private final ThreadLocale threadLocale;
 
-  private final List<Asset> javaScriptStack, stylesheetStack;
+    private final List<Asset> javaScriptStack, stylesheetStack;
 
-  private static final String ROOT = "org/apache/tapestry5";
+    private static final String ROOT = "org/apache/tapestry5";
 
-  private static final String[] CORE_JAVASCRIPT = new String[]
-          {
-                  // Core scripts added to any page that uses scripting
+    private static final String[] CORE_JAVASCRIPT = new String[]
+            {
+                    // Core scripts added to any page that uses scripting
 
-                  // TEMPORARY: For the moment, exposing Underscore as a module
-                  // and as a library; this is because statically loaded libraries (t5-core.js)
-                  // has no way to wait for module '_' to be loaded.
-                  "classpath:org/apache/tapestry5/underscore_1_3_3.js",
+                    "${tapestry.scriptaculous}/prototype.js",
 
-                  "${tapestry.scriptaculous}/prototype.js",
+                    "${tapestry.scriptaculous}/scriptaculous.js",
 
-                  "${tapestry.scriptaculous}/scriptaculous.js",
+                    "${tapestry.scriptaculous}/effects.js",
 
-                  "${tapestry.scriptaculous}/effects.js",
+                    // Below uses functions defined by the prior three.
 
-                  // Below uses functions defined by the prior three.
+                    // Order is important, there are some dependencies
+                    // going on here. Switching over to a more managed module system
+                    // is starting to look like a really nice idea!
 
-                  // Order is important, there are some dependencies
-                  // going on here. Switching over to a more managed module system
-                  // is starting to look like a really nice idea!
+                    ROOT + "/t5-core.js",
 
-                  ROOT + "/t5-core.js",
+                    ROOT + "/t5-spi.js",
 
-                  ROOT + "/t5-spi.js",
+                    ROOT + "/t5-prototype.js",
 
-                  ROOT + "/t5-prototype.js",
+                    ROOT + "/t5-init.js",
 
-                  ROOT + "/t5-init.js",
+                    ROOT + "/t5-pubsub.js",
 
-                  ROOT + "/t5-pubsub.js",
+                    ROOT + "/t5-events.js",
 
-                  ROOT + "/t5-events.js",
+                    ROOT + "/t5-dom.js",
 
-                  ROOT + "/t5-dom.js",
+                    ROOT + "/t5-console.js",
 
-                  ROOT + "/t5-console.js",
+                    ROOT + "/t5-ajax.js",
 
-                  ROOT + "/t5-ajax.js",
+                    ROOT + "/t5-formfragment.js",
 
-                  ROOT + "/t5-formfragment.js",
+                    ROOT + "/t5-alerts.js",
 
-                  ROOT + "/t5-alerts.js",
+                    ROOT + "/tapestry.js",
 
-                  ROOT + "/tapestry.js",
+                    ROOT + "/tapestry-console.js",
 
-                  ROOT + "/tapestry-console.js",
+                    ROOT + "/tree.js",
+            };
 
-                  ROOT + "/tree.js",
-          };
+    // Because of changes to the logic of how stylesheets get incorporated, the default stylesheet
+    // was removed, the logic for it is now in TapestryModule.contributeMarkupRenderer().
 
-  // Because of changes to the logic of how stylesheets get incorporated, the default stylesheet
-  // was removed, the logic for it is now in TapestryModule.contributeMarkupRenderer().
+    private static final String[] CORE_STYLESHEET = new String[]
+            {
+                    ROOT + "/tapestry-console.css",
 
-  private static final String[] CORE_STYLESHEET = new String[]
-          {
-                  ROOT + "/tapestry-console.css",
+                    ROOT + "/t5-alerts.css",
 
-                  ROOT + "/t5-alerts.css",
+                    ROOT + "/tree.css"
+            };
 
-                  ROOT + "/tree.css"
-          };
+    public CoreJavaScriptStack(
+            @Symbol(SymbolConstants.PRODUCTION_MODE)
+            boolean productionMode,
 
-  public CoreJavaScriptStack(
-          @Symbol(SymbolConstants.PRODUCTION_MODE)
-          boolean productionMode,
+            SymbolSource symbolSource,
 
-          SymbolSource symbolSource,
+            AssetSource assetSource,
 
-          AssetSource assetSource,
+            ThreadLocale threadLocale)
+    {
+        this.symbolSource = symbolSource;
+        this.productionMode = productionMode;
+        this.assetSource = assetSource;
+        this.threadLocale = threadLocale;
 
-          ThreadLocale threadLocale) {
-    this.symbolSource = symbolSource;
-    this.productionMode = productionMode;
-    this.assetSource = assetSource;
-    this.threadLocale = threadLocale;
-
-    javaScriptStack = convertToAssets(CORE_JAVASCRIPT);
-    stylesheetStack = convertToAssets(CORE_STYLESHEET);
-  }
-
-  public String getInitialization() {
-    return productionMode ? null : "Tapestry.DEBUG_ENABLED = true;";
-  }
-
-  public List<String> getStacks() {
-    return Collections.emptyList();
-  }
-
-  private List<Asset> convertToAssets(String[] paths) {
-    List<Asset> assets = CollectionFactory.newList();
-
-    for (String path : paths) {
-      assets.add(expand(path, null));
+        javaScriptStack = convertToAssets(CORE_JAVASCRIPT);
+        stylesheetStack = convertToAssets(CORE_STYLESHEET);
     }
 
-    return Collections.unmodifiableList(assets);
-  }
+    public String getInitialization()
+    {
+        return productionMode ? null : "Tapestry.DEBUG_ENABLED = true;";
+    }
 
-  private Asset expand(String path, Locale locale) {
-    String expanded = symbolSource.expandSymbols(path);
+    public List<String> getStacks()
+    {
+        return Collections.emptyList();
+    }
 
-    return assetSource.getAsset(null, expanded, locale);
-  }
+    private List<Asset> convertToAssets(String[] paths)
+    {
+        List<Asset> assets = CollectionFactory.newList();
 
-  public List<Asset> getJavaScriptLibraries() {
-    Asset messages = assetSource.getAsset(null, ROOT + "/tapestry-messages.js", threadLocale.getLocale());
+        for (String path : paths)
+        {
+            assets.add(expand(path, null));
+        }
 
-    return createStack(javaScriptStack, messages).toList();
-  }
+        return Collections.unmodifiableList(assets);
+    }
 
-  public List<StylesheetLink> getStylesheets() {
-    return createStack(stylesheetStack).map(TapestryInternalUtils.assetToStylesheetLink)
-            .toList();
-  }
+    private Asset expand(String path, Locale locale)
+    {
+        String expanded = symbolSource.expandSymbols(path);
 
-  private Flow<Asset> createStack(List<Asset> stack, Asset... assets) {
-    return F.flow(stack).append(assets);
-  }
+        return assetSource.getAsset(null, expanded, locale);
+    }
+
+    public List<Asset> getJavaScriptLibraries()
+    {
+        Asset messages = assetSource.getAsset(null, ROOT + "/tapestry-messages.js", threadLocale.getLocale());
+
+        return createStack(javaScriptStack, messages).toList();
+    }
+
+    public List<StylesheetLink> getStylesheets()
+    {
+        return createStack(stylesheetStack).map(TapestryInternalUtils.assetToStylesheetLink)
+                .toList();
+    }
+
+    private Flow<Asset> createStack(List<Asset> stack, Asset... assets)
+    {
+        return F.flow(stack).append(assets);
+    }
 }
