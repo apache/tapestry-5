@@ -80,7 +80,7 @@ public class Zone implements ClientBodyElement
      * Name of a function on the client-side Tapestry.ElementEffect object that is invoked to make the Zone's
      * &lt;div&gt; visible before being updated. If not specified, then the basic "show" method is used.
      *
-     * @deprecated No specific replacement, now does nothing (see notes on client-side JavaScript events, elsewhere)
+     * @deprecated In 5.4, with no specific replacement, now does nothing (see notes on client-side JavaScript events, elsewhere)
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL,
             value = BindingConstants.SYMBOL + ":" + ComponentParameterConstants.ZONE_SHOW_METHOD)
@@ -91,7 +91,7 @@ public class Zone implements ClientBodyElement
      * been updated. If not specified, then the basic "highlight" method is used, which performs a classic "yellow fade"
      * to indicate to the user that and update has taken place.
      *
-     * @deprecated No specific replacement, now does nothing (see notes on client-side JavaScript events, elsewhere)
+     * @deprecated In 5.4, with no specific replacement, now does nothing (see notes on client-side JavaScript events, elsewhere)
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL,
             value = BindingConstants.SYMBOL + ":" + ComponentParameterConstants.ZONE_UPDATE_METHOD)

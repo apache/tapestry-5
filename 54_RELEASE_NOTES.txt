@@ -12,6 +12,11 @@ attach properties to the global JavaScript window object, rather than assume tha
 The interface org.apache.tapestry5.services.assets.ResourceTransformer has had a new method added:
 getTransformedContentType().
 
+Minor changes to Tapestry.ElementEffects.
+
+Tapestry code no longer makes use of Scriptaculous. Instead, Tapestry will fire events on elements, and user code
+may decide to animate them using whatever library is desired.
+
 Bugs fixed (in 5.4-js-rewrite branch):
 
 TAP5-1965: Replace use of Request.getContextPath() with a symbol defined at application startup
