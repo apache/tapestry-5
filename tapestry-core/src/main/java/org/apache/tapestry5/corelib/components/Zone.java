@@ -14,15 +14,7 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.Block;
-import org.apache.tapestry5.CSSClassConstants;
-import org.apache.tapestry5.ClientBodyElement;
-import org.apache.tapestry5.ComponentAction;
-import org.apache.tapestry5.ComponentResources;
-import org.apache.tapestry5.ComponentParameterConstants;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.QueryParameterConstants;
+import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.BeginRender;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
@@ -31,13 +23,10 @@ import org.apache.tapestry5.corelib.internal.ComponentActionSink;
 import org.apache.tapestry5.corelib.internal.FormSupportAdapter;
 import org.apache.tapestry5.corelib.internal.HiddenFieldPositioner;
 import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.internal.services.RequestConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.ClientBehaviorSupport;
-import org.apache.tapestry5.services.ClientDataEncoder;
-import org.apache.tapestry5.services.Environment;
-import org.apache.tapestry5.services.FormSupport;
-import org.apache.tapestry5.services.Heartbeat;
-import org.apache.tapestry5.services.HiddenFieldLocationRules;
+import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.slf4j.Logger;
 
@@ -68,7 +57,7 @@ import org.slf4j.Logger;
  * the page). Failure to provide an explicit id results in a new, and non-predictable, id being generated for each
  * partial render, which will often result in client-side failures to locate the element to update when the Zone is
  * triggered.
- * <p>
+ * <p/>
  * In some cases, you may want to know (on the server side) the client id of the zone that was updated; this is passed
  * as part of the Ajax request, as the {@link QueryParameterConstants#ZONE_ID} parameter. An example use of this would
  * be to provide new content into a Zone that updates the same Zone, when the Zone's client-side id is dynamically
@@ -79,7 +68,7 @@ import org.slf4j.Logger;
  * <p/>
  * After the client-side content is updated, a client-side event is fired on the zone's element. The constant
  * Tapestry.ZONE_UPDATED_EVENT can be used to listen to the event.
- * 
+ *
  * @tapestrydoc
  * @see AjaxFormLoop
  * @see FormFragment
@@ -90,18 +79,22 @@ public class Zone implements ClientBodyElement
     /**
      * Name of a function on the client-side Tapestry.ElementEffect object that is invoked to make the Zone's
      * &lt;div&gt; visible before being updated. If not specified, then the basic "show" method is used.
+     *
+     * @deprecated No specific replacement, now does nothing (see notes on client-side JavaScript events, elsewhere)
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL,
-        value = BindingConstants.SYMBOL + ":" + ComponentParameterConstants.ZONE_SHOW_METHOD)
+            value = BindingConstants.SYMBOL + ":" + ComponentParameterConstants.ZONE_SHOW_METHOD)
     private String show;
 
     /**
      * Name of a function on the client-side Tapestry.ElementEffect object that is invoked after the Zone's content has
      * been updated. If not specified, then the basic "highlight" method is used, which performs a classic "yellow fade"
      * to indicate to the user that and update has taken place.
+     *
+     * @deprecated No specific replacement, now does nothing (see notes on client-side JavaScript events, elsewhere)
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL,
-        value = BindingConstants.SYMBOL + ":" + ComponentParameterConstants.ZONE_UPDATE_METHOD)
+            value = BindingConstants.SYMBOL + ":" + ComponentParameterConstants.ZONE_UPDATE_METHOD)
     private String update;
 
     /**
@@ -157,6 +150,9 @@ public class Zone implements ClientBodyElement
 
     private ComponentActionSink actionSink;
 
+    @Environmental(false)
+    private FormSupport formSupport;
+
     String defaultElementName()
     {
         return resources.getElementName("div");
@@ -173,13 +169,23 @@ public class Zone implements ClientBodyElement
         e.addClassName("t-zone");
 
         if (!visible)
+        {
             e.addClassName(CSSClassConstants.INVISIBLE);
+        }
 
-        clientBehaviorSupport.addZone(clientId, show, update);
+        JSONObject spec = new JSONObject("element", clientId);
 
-        FormSupport existingFormSupport = environment.peek(FormSupport.class);
+        insideForm = formSupport != null;
 
-        insideForm = existingFormSupport != null;
+        if (insideForm)
+        {
+            JSONObject parameters = new JSONObject(RequestConstants.FORM_CLIENTID_PARAMETER, formSupport.getClientId(),
+                    RequestConstants.FORM_COMPONENTID_PARAMETER, formSupport.getFormComponentId());
+            spec.put("parameters", parameters);
+        }
+
+        javascriptSupport.addInitializerCall("zone", spec);
+
 
         if (insideForm)
         {
@@ -187,7 +193,7 @@ public class Zone implements ClientBodyElement
 
             actionSink = new ComponentActionSink(logger, clientDataEncoder);
 
-            environment.push(FormSupport.class, new FormSupportAdapter(existingFormSupport)
+            environment.push(FormSupport.class, new FormSupportAdapter(formSupport)
             {
                 @Override
                 public <T> void store(T component, ComponentAction<T> action)
@@ -220,14 +226,13 @@ public class Zone implements ClientBodyElement
             if (actionSink.isEmpty())
             {
                 hiddenFieldPositioner.discard();
-            }
-            else
+            } else
             {
                 hiddenFieldPositioner.getElement().attributes("type", "hidden",
 
-                "name", Form.FORM_DATA,
+                        "name", Form.FORM_DATA,
 
-                "value", actionSink.getClientData());
+                        "value", actionSink.getClientData());
             }
         }
 
@@ -239,7 +244,7 @@ public class Zone implements ClientBodyElement
      * parameter, or an allocated unique id. When the id parameter is bound, this value is always accurate.
      * When the id parameter is not bound, the clientId is set during the {@linkplain BeginRender begin render phase}
      * and will be null or inaccurate before then.
-     * 
+     *
      * @return client-side element id
      */
     public String getClientId()
@@ -253,7 +258,7 @@ public class Zone implements ClientBodyElement
     /**
      * Returns the zone's body (the content enclosed by its start and end tags). This is often used as part of an Ajax
      * partial page render to update the client with a fresh render of the content inside the zone.
-     * 
+     *
      * @return the zone's body as a Block
      */
     public Block getBody()

@@ -13,9 +13,17 @@
  * limitations under the License.
  */
 
-define("core/compat/tapestry", ["_", "core/compat/t5-dom", "core/compat/t5-init"], function (_) {
+define("core/compat/tapestry", [
+    "_",
+    "core/spi",
+    "core/compat/t5-dom",
+    "core/compat/t5-console",
+    "core/compat/t5-init",
+    "core/compat/t5-ajax"], function (_, spi) {
 
     window.Tapestry = {
+
+        Logging: T5.console,
 
         /**
          * Event that allows observers to perform cross-form validation after
@@ -61,7 +69,7 @@ define("core/compat/tapestry", ["_", "core/compat/t5-dom", "core/compat/t5-init"
          */
         FOCUS_CHANGE_EVENT: "tapestry:focuschange",
 
-        /** Event, fired on a zone element when the zone is updated with new content. */
+        /** Event, triggered on a zone element after the zone's content has been updated. */
         ZONE_UPDATED_EVENT: "tapestry:zoneupdated",
 
         /**
@@ -1693,47 +1701,62 @@ define("core/compat/tapestry", ["_", "core/compat/t5-dom", "core/compat/t5-init"
         }
     });
 
+    function _show(element) {
+        return new spi.wrap(element).show();
+    }
+
+    function _hide(element) {
+        return new spi.wrap(element).hide();
+    }
+
+    function _none(element) {
+        return new spi.wrap(element);
+    }
+
     /*
      * Wrappers around Prototype and Scriptaculous effects. All the functions of
      * this object should have all-lowercase names. The methods all return the
      * Effect object they create.
+     *
+     * 5.4 notes: there are no longer any effects, and what's returned is
+     * an ElementWrapper (as defined in module "core/spi").
      */
     Tapestry.ElementEffect = {
 
-        /** Fades in the element. */
-        show: function (element) {
-            return new Effect.Appear(element);
-        },
+        /**
+         * Was: Fades the element in.
+         * Now: show the element.
+         */
+        show: _show,
 
-        /** The classic yellow background fade. */
-        highlight: function (element, color) {
-            if (color)
-                return new Effect.Highlight(element, {
-                    endcolor: color,
-                    restorecolor: color
-                });
+        /**
+         * Was: The classic yellow background fade.
+         * Now: Does nothing, returns the ElementWrapper.
+         */
+        highlight: _none,
 
-            return new Effect.Highlight(element);
-        },
+        /* Was: Scrolls the content down.
+         * Now: show the element.
+         * */
+        slidedown: _show,
 
-        /** Scrolls the content down. */
-        slidedown: function (element) {
-            return new Effect.SlideDown(element);
-        },
+        /**
+         * Was: Slides the content back up (opposite of slidedown).
+         * Now: Hides the element.
+         */
+        slideup: _hide,
 
-        /** Slids the content back up (opposite of slidedown). */
-        slideup: function (element) {
-            return new Effect.SlideUp(element);
-        },
+        /**
+         * Was: Fades the content out (opposite of show).
+         * Now: Hides the element.
+         */
+        fade: _hide,
 
-        /** Fades the content out (opposite of show). */
-        fade: function (element) {
-            return new Effect.Fade(element);
-        },
-
-        none: function (element) {
-            return element;
-        }
+        /**
+         * Was: Does nothing to the element, returns the element.
+         * Now: Does nothing, returns the ElementWrapper.
+         */
+        none: _none
     };
 
     /**
@@ -1742,31 +1765,24 @@ define("core/compat/tapestry", ["_", "core/compat/t5-dom", "core/compat/t5-init"
      */
     Tapestry.ZoneManager = Class.create({
         /*
-         * spec are the parameters for the Zone: trigger: required -- name or
-         * instance of link. element: required -- name or instance of div element to
-         * be shown, hidden and updated show: name of Tapestry.ElementEffect
-         * function used to reveal the zone if hidden update: name of
-         * Tapestry.ElementEffect function used to highlight the zone after it is
-         * updated
+         * spec are the parameters for the Zone: trigger:
+         * spec.element -- no or instance of div element
+         * spec.parameters -- additional parameters (related to Zones nested inside Forms) (optional)
+         * Prior releases included spec.hide and spec.show (to control animations) but these have been
+         * deprecated.
          */
         initialize: function (spec) {
-            this.element = $(spec.element);
-            this.showFunc = Tapestry.ElementEffect[spec.show]
-                    || Tapestry.ElementEffect.show;
-            this.updateFunc = Tapestry.ElementEffect[spec.update]
-                    || Tapestry.ElementEffect.highlight;
-            this.specParameters = spec.parameters;
+            this.elementId = spec.element;
 
-            /*
-             * TAP5-707: store the old background color of the element or take white
-             * as a default
-             */
-            this.endcolor = this.element.getStyle('background-color').parseColor(
-                    '#ffffff');
+            // When updates arrive, the outer element is always made visible.=
+            this.element = spi.wrap(spec.element);
+            this.specParameters = spec.parameters;
 
             /* Link the div back to this zone. */
 
-            $T(this.element).zoneManager = this;
+            $T(this.element.element).zoneManager = this;
+
+            // TODO: This is likely to go next:
 
             /*
              * Look inside the managed element for another element with the CSS
@@ -1777,15 +1793,11 @@ define("core/compat/tapestry", ["_", "core/compat/t5-dom", "core/compat/t5-init"
              * and update functions apply to the Zone element, not the update
              * element.
              */
-            var updates = this.element.select(".t-zone-update");
+            var updates = this.element.find(".t-zone-update");
 
-            this.updateElement = updates.first() || this.element;
+            this.updateElement =
+                    _.isEmpty(updates) ? this.element : spi.wrap(updates[0]);
         },
-
-        /*
-         * Updates the content of the div controlled by this Zone, then invokes the
-         * show function (if not visible) or the update function (if visible)
-         */
 
         /**
          * Updates the zone's content, and invokes either the update function (to
@@ -1797,15 +1809,16 @@ define("core/compat/tapestry", ["_", "core/compat/t5-dom", "core/compat/t5-init"
          */
         show: function (content) {
 
-            Tapestry.purgeChildren(this.updateElement);
+            // Purging may go into spi.ElementWrapper
+            T5.dom.purgeChildren(this.updateElement);
 
             this.updateElement.update(content);
 
-            var func = this.element.visible() ? this.updateFunc : this.showFunc;
+            if (!this.element.visible()) {
+                this.element.show();
+            }
 
-            func.call(this, this.element, this.endcolor);
-
-            this.element.fire(Tapestry.ZONE_UPDATED_EVENT);
+            this.element.trigger(Tapestry.ZONE_UPDATED_EVENT);
         },
 
         /**
@@ -1817,13 +1830,15 @@ define("core/compat/tapestry", ["_", "core/compat/t5-dom", "core/compat/t5-init"
          *            response in JSON format appropriate to a Tapestry.Zone
          */
         processReply: function (reply) {
+            var _this = this;
+
             Tapestry.loadScriptsInReply(reply, function () {
                 /*
                  * In a multi-zone update, the reply.content may be missing, in
                  * which case, leave the current content in place. TAP5-1177
                  */
-                reply.content != undefined && this.show(reply.content);
-            }.bind(this));
+                reply.content != undefined && _this.show(reply.content);
+            });
         },
 
         /**
@@ -1837,19 +1852,24 @@ define("core/compat/tapestry", ["_", "core/compat/t5-dom", "core/compat/t5-init"
          */
         updateFromURL: function (URL, parameters) {
 
+            // TODO: This is still very wedded to Prototype
+            // spi needs an ajax() function.
+
             var finalParameters = $H({
-                "t:zoneid": this.element.id
+                "t:zoneid": this.elementId
             }).update(this.specParameters);
 
             /* If parameters were supplied, merge them in with the zone id */
             if (!Object.isUndefined(parameters))
                 finalParameters.update(parameters);
 
+            var _this = this;
+
             Tapestry.ajaxRequest(URL, {
                 parameters: finalParameters.toObject(),
                 onSuccess: function (transport) {
-                    this.processReply(transport.responseJSON);
-                }.bind(this)
+                    _this.processReply(transport.responseJSON);
+                }
             });
         }
     });

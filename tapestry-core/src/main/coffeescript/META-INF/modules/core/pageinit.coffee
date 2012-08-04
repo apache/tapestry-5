@@ -113,7 +113,7 @@ define ["_", "core/console"], (_, console) ->
     # invokes the callback (with no parameters).
     loadScripts: (scripts, callback) ->
       reducer = (callback, script) -> ->
-        console.debug "Loading script #{script}"
+        console.debug "Loading library #{script}"
         require [script], callback
 
       finalCallback = _.reduceRight scripts, reducer, callback

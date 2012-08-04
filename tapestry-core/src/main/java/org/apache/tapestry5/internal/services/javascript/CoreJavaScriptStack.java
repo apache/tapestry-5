@@ -102,8 +102,6 @@ public class CoreJavaScriptStack implements JavaScriptStack
 
                     ROOT + "/tapestry.js",
 
-                    ROOT + "/tapestry-console.js",
-
                     ROOT + "/tree.js",
             };
 
