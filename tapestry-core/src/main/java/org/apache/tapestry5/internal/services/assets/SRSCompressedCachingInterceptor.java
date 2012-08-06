@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.services.assets;
 
 import org.apache.tapestry5.services.assets.CompressionStatus;
 import org.apache.tapestry5.services.assets.StreamableResource;
+import org.apache.tapestry5.services.assets.StreamableResourceProcessing;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
 
 /**
@@ -38,4 +39,12 @@ public class SRSCompressedCachingInterceptor extends SRSCachingInterceptor
         return resource.getCompression() == CompressionStatus.COMPRESSED;
     }
 
+    /**
+     * Returns true just when the processing enables compression.
+     */
+    @Override
+    protected boolean enableCache(StreamableResourceProcessing processing)
+    {
+        return processing == StreamableResourceProcessing.COMPRESSION_ENABLED;
+    }
 }

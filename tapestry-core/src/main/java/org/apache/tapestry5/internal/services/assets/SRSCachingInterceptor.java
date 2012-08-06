@@ -44,7 +44,7 @@ public class SRSCachingInterceptor implements StreamableResourceSource, Invalida
     public StreamableResource getStreamableResource(Resource baseResource, StreamableResourceProcessing processing, ResourceDependencies dependencies)
             throws IOException
     {
-        if (processing == StreamableResourceProcessing.FOR_AGGREGATION)
+        if (!enableCache(processing))
         {
             return delegate.getStreamableResource(baseResource, processing, dependencies);
         }
@@ -80,5 +80,17 @@ public class SRSCachingInterceptor implements StreamableResourceSource, Invalida
     public void objectWasInvalidated()
     {
         cache.clear();
+    }
+
+    /**
+     * Returns true unless the processing is {@link StreamableResourceProcessing#FOR_AGGREGATION}.
+     * Subclasses may override. When the cache is not enabled, the request is passed on to the interceptor's
+     * {@link #delegate}, and no attempt is made to read or update this interceptor's cache.
+     *
+     * @since 5.3.5
+     */
+    protected boolean enableCache(StreamableResourceProcessing processing)
+    {
+        return processing != StreamableResourceProcessing.FOR_AGGREGATION;
     }
 }
