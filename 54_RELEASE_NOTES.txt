@@ -23,3 +23,4 @@ TAP5-1965: Replace use of Request.getContextPath() with a symbol defined at appl
 TAP5-1970: JSON API improvements
 TAP5-1977: Memory leak (perm gen) in component reloading
 TAP5-1979: Changing the implementation of a method after adding method advice does not work; the original implementation remains
+TAP5-1868: SRSCachingInterceptor returns compressed version of asset for all clients once it was compressed for some client
