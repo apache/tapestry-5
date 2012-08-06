@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2006-2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,11 +19,13 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.JDKUtils;
 import org.apache.tapestry5.ioc.services.PerThreadValue;
 import org.apache.tapestry5.ioc.services.PerthreadManager;
+import org.apache.tapestry5.ioc.services.RegistryShutdownHub;
 import org.apache.tapestry5.ioc.services.ThreadCleanupListener;
 import org.slf4j.Logger;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 
@@ -49,6 +51,8 @@ public class PerthreadManagerImpl implements PerthreadManager
 
     private final AtomicInteger uuidGenerator = new AtomicInteger();
 
+    private final AtomicBoolean shutdown = new AtomicBoolean();
+
     public PerthreadManagerImpl(Logger logger)
     {
         this.logger = logger;
@@ -56,8 +60,29 @@ public class PerthreadManagerImpl implements PerthreadManager
         listenersValue = createValue();
     }
 
+    public void registerForShutdown(RegistryShutdownHub hub)
+    {
+        hub.addRegistryShutdownListener(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                cleanup();
+                shutdown.set(true);
+            }
+        });
+    }
+
     private Map getPerthreadMap()
     {
+        // This is a degenerate case; it may not even exist; but if during registry shutdown somehow code executes
+        // that attempts to create new values or add new listeners, those go into a new map instance that is
+        // not referenced (and so immediately GCed).
+        if (shutdown.get())
+        {
+            return CollectionFactory.newMap();
+        }
+
         lock.lock();
 
         try
@@ -105,7 +130,7 @@ public class PerthreadManagerImpl implements PerthreadManager
             } catch (Exception ex)
             {
                 logger.warn(String.format("Error invoking listener %s: %s", listener, ex),
-                    ex);
+                        ex);
             }
         }
 
