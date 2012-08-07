@@ -20,15 +20,17 @@
 
 # TODO: Define a dependency on "prototype" when that's exposed as a stub module.
 define ["_"], (_) ->
-
   split = (str) ->
     _(str.split " ").reject (s) -> s is ""
 
   # Generic view of an Event that is passed to a handler function.
-  #
+  # Properties:
+  # memo - the object passed to ElementWrapper.trigger()
+  # stop() - function to prevent propogation of the event (both bubbling and the default action).
   class Event
 
     constructor: (@prototypeEvent) ->
+      @memo = @prototypeEvent.memo
 
     # Stops the event which prevents further propagation of the event,
     # as well as event bubbling.
@@ -39,12 +41,13 @@ define ["_"], (_) ->
   # events, or even pause listening.
   class EventHandler
 
-    # Registers the handler as an event listener for matching elements and event names.
-    # elements - array of DOM elements
-    # eventNames - array of event names
-    # match - selector to match bubbled elements, or null
-    # handler - event handler function to invoke; it will be passed an Event instance
+  # Registers the handler as an event listener for matching elements and event names.
+  # elements - array of DOM elements
+  # eventNames - array of event names
+  # match - selector to match bubbled elements, or null
+  # handler - event handler function to invoke; it will be passed an Event instance
     constructor: (elements, eventNames, match, handler) ->
+      throw new Error("No event handler was provided.") unless handler?
 
       wrapped = (prototypeEvent, matchedElement) ->
         # Set "this" to be the matched element (jQuery style), rather than
@@ -55,19 +58,17 @@ define ["_"], (_) ->
       @protoHandlers = []
 
       _.each elements, (element) =>
-        _.each eventName, (eventName) =>
-          @protoHandlers.push element.on event, match, wrapped
+        _.each eventNames, (eventName) =>
+          @protoHandlers.push element.on eventName, match, wrapped
 
-     # Invoked after stop() to restart event listening. Returns this EventHandler instance.
-     start: ->
+    # Invoked after stop() to restart event listening. Returns this EventHandler instance.
+    start: ->
+      _.each @protoHandlers, (h) -> h.start()
 
-       _.each @protoHandlers, (h) -> h.start()
-
-       this
+      this
 
     # Invoked to stop or pause event listening. Returns this EventHandler instance.
     stop: ->
-
       _.each @protoHandlers, (h) -> h.stop()
 
       this
@@ -77,7 +78,6 @@ define ["_"], (_) ->
   class ElementWrapper
 
     constructor: (element) ->
-
       @element = $(element)
 
     # Hides the wrapped element, setting its display to 'none'. Returns this ElementWrapper.
@@ -148,8 +148,12 @@ define ["_"], (_) ->
       @element.visible()
 
     # Fires a named event. Returns this ElementWrapper.
-    trigger: (eventName) ->
-      @element.fire eventName
+    # eventName - name of event to trigger on the wrapped Element
+    # memo - optional value assocated with the event; available as Event.memo in event handler functions
+    trigger: (eventName, memo) ->
+      throw new Error("Attempt to trigger event with null event name") unless eventName?
+
+      @element.fire eventName, memo
       this
 
     # Adds an event handler for one or more events.
@@ -181,6 +185,14 @@ define ["_"], (_) ->
 
   exports =
 
+  # Invokes the callback only once the DOM has finished loading all elements (other resources, such as images,
+  # may still be in-transit). This is a safe time to search the DOM, modify attributes, and attach event handlers.
+  # Returns this modules exports, for chained calls.
+    domReady: (callback) ->
+      document.observe "dom:loaded", callback
+
+      exports
+
     # on() is used to add an event handler
     # selector - CSS selector used to select elements to attach handler to; alternately,
     # a single DOM element, or an array of DOM elements
@@ -191,18 +203,18 @@ define ["_"], (_) ->
     # handler - function invoked; the function is passed an Event object.
     # Returns an EventHandler object, making it possible to turn event observation on or off.
     on: (selector, events, match, handler) ->
-
-      if handler is null
+      unless handler?
         handler = match
         match = null
 
       elements = parseSelectorToElements selector
 
-      return new EventHandler(elements, split events, match, handler)
+      return new EventHandler(elements, (split events), match, handler)
 
     # Returns a wrapper for the provided DOM element that includes key behaviors:
     # hide(), show(), remove(), etc.
     # element - a DOM element, or the unique id of a DOM element
     # Returns the ElementWrapper.
     wrap: (element) ->
+      throw new Error("Attempt to wrap a null DOM element") unless element
       new ElementWrapper element

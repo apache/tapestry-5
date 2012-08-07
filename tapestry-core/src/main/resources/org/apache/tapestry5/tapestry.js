@@ -16,10 +16,12 @@
 define("core/compat/tapestry", [
     "_",
     "core/spi",
+    "core/events",
+    "core/zone",
     "core/compat/t5-dom",
     "core/compat/t5-console",
     "core/compat/t5-init",
-    "core/compat/t5-ajax"], function (_, spi) {
+    "core/compat/t5-ajax"], function (_, spi, events) {
 
     window.Tapestry = {
 
@@ -70,7 +72,7 @@ define("core/compat/tapestry", [
         FOCUS_CHANGE_EVENT: "tapestry:focuschange",
 
         /** Event, triggered on a zone element after the zone's content has been updated. */
-        ZONE_UPDATED_EVENT: "tapestry:zoneupdated",
+        ZONE_UPDATED_EVENT: events.zone.didUpdate,
 
         /**
          * Event fired on a form fragment element to change the visibility of the
@@ -1766,7 +1768,7 @@ define("core/compat/tapestry", [
     Tapestry.ZoneManager = Class.create({
         /*
          * spec are the parameters for the Zone: trigger:
-         * spec.element -- no or instance of div element
+         * spec.element -- id or instance of div element
          * spec.parameters -- additional parameters (related to Zones nested inside Forms) (optional)
          * Prior releases included spec.hide and spec.show (to control animations) but these have been
          * deprecated.
@@ -1774,29 +1776,13 @@ define("core/compat/tapestry", [
         initialize: function (spec) {
             this.elementId = spec.element;
 
-            // When updates arrive, the outer element is always made visible.=
+            // When updates arrive, the outer element is always made visible.
             this.element = spi.wrap(spec.element);
             this.specParameters = spec.parameters;
 
             /* Link the div back to this zone. */
 
             $T(this.element.element).zoneManager = this;
-
-            // TODO: This is likely to go next:
-
-            /*
-             * Look inside the managed element for another element with the CSS
-             * class "t-zone-update". If present, then this is the element whose
-             * content will be changed, rather then the entire zone's element. This
-             * allows a Zone element to contain "wrapper" markup (borders and such).
-             * Typically, such a Zone element will initially be invisible. The show
-             * and update functions apply to the Zone element, not the update
-             * element.
-             */
-            var updates = this.element.find(".t-zone-update");
-
-            this.updateElement =
-                    _.isEmpty(updates) ? this.element : spi.wrap(updates[0]);
         },
 
         /**
@@ -1808,17 +1794,7 @@ define("core/compat/tapestry", [
          * @param content
          */
         show: function (content) {
-
-            // Purging may go into spi.ElementWrapper
-            T5.dom.purgeChildren(this.updateElement);
-
-            this.updateElement.update(content);
-
-            if (!this.element.visible()) {
-                this.element.show();
-            }
-
-            this.element.trigger(Tapestry.ZONE_UPDATED_EVENT);
+            this.element.trigger(events.zone.update, content);
         },
 
         /**

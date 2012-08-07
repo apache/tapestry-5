@@ -12,7 +12,12 @@ attach properties to the global JavaScript window object, rather than assume tha
 The interface org.apache.tapestry5.services.assets.ResourceTransformer has had a new method added:
 getTransformedContentType().
 
-Minor changes to Tapestry.ElementEffects.
+Older versions of Tapestry included client-side support for an element with the CSS class "t-zone-update" as the actual
+element to be updated when new content is provided for the zone in a partial page render response. This feature
+has been removed with no replacement.
+
+Minor changes to Tapestry.ElementEffects.  Despite the names of the properties (kept for compatibility), all "effects"
+are now simply make the element appear or hide, with no animation.
 
 Tapestry code no longer makes use of Scriptaculous. Instead, Tapestry will fire events on elements, and user code
 may decide to animate them using whatever library is desired.
