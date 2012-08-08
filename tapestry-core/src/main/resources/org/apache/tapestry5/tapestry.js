@@ -180,7 +180,7 @@ define("core/compat/tapestry", [
          * document object (support for which is provided by Prototype).
          */
         onDOMLoaded: function (callback) {
-            document.observe("dom:loaded", callback);
+            spi.domReady(callback);
         },
 
         /**

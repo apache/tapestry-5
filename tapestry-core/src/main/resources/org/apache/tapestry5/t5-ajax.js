@@ -17,89 +17,15 @@
  * Defines Tapestry Ajax support, which includes sending requests and receiving
  * replies, but also includes default handlers for errors and failures, and
  * processing of Tapestry's partial page render response (a common response for
- * many types of Ajax requests).             `
+ * many types of Ajax requests).
  */
-define("core/compat/t5-ajax", ["core/compat/t5-spi"], function () {
+define("core/compat/t5-ajax", ["core/exceptionframe"], function (exceptionframe) {
     T5.define("ajax", function () {
 
-        var _ = T5._;
-        var $ = T5.$;
-        var spi = T5.spi;
-
-        var exceptionContainer, iframe, iframeDocument;
 
         function noop() {
         }
 
-        function writeToErrorIFrame(content) {
-            // Clear current content.
-            iframeDocument.open();
-            // Write in the new content.
-            iframeDocument.write(content);
-            iframeDocument.close();
-
-        }
-
-        function resizeExceptionDialog() {
-            // Very Prototype specific!
-            var dims = document.viewport.getDimensions();
-
-            iframe.width = dims.width - 100;
-            iframe.height = dims.height - (100 + 20);
-        }
-
-        /**
-         * When there's a server-side failure, Tapestry sends back the exception report page as HTML.
-         * This function creates and displays a dialog that presents that content to the user using
-         * a created iframe element.
-         * @param exceptionContext HTML markup for the exception report
-         */
-        function showExceptionDialog(exceptionContent) {
-
-            if (!exceptionContainer) {
-                var markup = [ "<div class='t-exception-container'>",
-                    "<iframe class='t-exception-frame' width='100%'></iframe>",
-                    "<div class='t-exception-controls'>",
-                    "<span class='t-exception-close'>Close</span>",
-                    "</div>",
-                    "</div>"].join("");
-
-                exceptionContainer = T5.dom.find(T5.dom.appendMarkup(document.body, markup), 'div.t-exception-container');
-
-                iframe = T5.dom.find(exceptionContainer, "iframe");
-
-                // See http://xkr.us/articles/dom/iframe-document/
-
-                iframeDocument = (iframe.contentWindow || iframe.contentDocument);
-                if (iframeDocument.document) {
-                    iframeDocument = iframeDocument.document;
-                }
-
-                var closeButton = T5.dom.find(exceptionContainer, ".t-exception-close");
-
-                T5.dom.observe(closeButton, "click", function (event) {
-                    event.stop();
-                    writeToErrorIFrame("");
-                    T5.dom.hide(exceptionContainer);
-                });
-
-                // Call it now to set initial width/height.
-
-                resizeExceptionDialog();
-
-                // Very Prototype specific:
-
-                // See http://groups.google.com/group/prototype-scriptaculous/browse_thread/thread/1b0ce3e94020121f/cdbab773fd8e7a4b
-                // debounced to handle the rate at which IE sends the resizes (every pixel!)
-
-                Event.observe(window, "resize", _.debounce(resizeExceptionDialog, 20));
-            }
-
-
-            writeToErrorIFrame(exceptionContent);
-
-            exceptionContainer.show();
-        }
 
         function defaultFailure(transport) {
         }
@@ -146,7 +72,7 @@ define("core/compat/t5-ajax", ["core/compat/t5-spi"], function () {
             defaultFailure: defaultFailure,
             defaultException: defaultException,
             defaultSuccess: noop,
-            showExceptionDialog: showExceptionDialog,
+            showExceptionDialog: exceptionframe,
             request: request
         };
     });

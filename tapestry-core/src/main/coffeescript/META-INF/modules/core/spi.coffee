@@ -13,35 +13,63 @@
 # limitations under the License.
 
 # Service Provider Interface
-# This is the core of the abstraction layer that allows the majority of components to operate
-# without caring whether the underlying infrastructure framework is Prototype, jQuery, or something else.
-# This is the standard SPI, which wraps Prototype ... but does it in a way that makes it relatively
-# easy to swap in jQuery instead.
+#
+# This is the core of the abstraction layer that allows the majority of components to operate without caring whether the
+# underlying infrastructure framework is Prototype, jQuery, or something else.  This is the standard SPI, which wraps
+# Prototype ... but does it in a way that makes it relatively easy to swap in jQuery instead.
 
 # TODO: Define a dependency on "prototype" when that's exposed as a stub module.
 define ["_"], (_) ->
   split = (str) ->
     _(str.split " ").reject (s) -> s is ""
 
-  # Generic view of an Event that is passed to a handler function.
-  # Properties:
-  # memo - the object passed to ElementWrapper.trigger()
-  # stop() - function to prevent propogation of the event (both bubbling and the default action).
-  class Event
+  # Converts content (provided to ElementWrapper.update() or .append()) into an appropriate type. This primarily exists
+  # to validate the value, and to "unpack" an ElementWrapper into a DOM element.
+  convertContent = (content) ->
+    if _.isString content
+      return content
 
-    constructor: (@prototypeEvent) ->
-      @memo = @prototypeEvent.memo
+    if _.isElement content
+      return content
+
+    if content.constructor?.name is "ElementWrapper"
+      return content.element
+
+    throw new Error "Provided value <#{content}> is not valid as DOM element content."
+
+  # Generic view of an Event that is passed to a handler function.
+  #
+  # Properties:
+  # nativeEvent - the native Event object, which may provide additional information
+  # memo - the object passed to ElementWrapper.trigger()
+  # type - the name of the event that was triggered
+  # char - the character value of the pressed key, if a printable character (string)
+  # key -The key value of the pressed key. This is the same as the char property for printable keys,
+  # or a key name for others.
+  # stop() - function to prevent propogation of the event (both bubbling and the default action).
+  class EventWrapper
+
+    constructor: (event) ->
+      @nativeEvent = event
+      @memo = event.memo
+      @type = event.type
+
+      @char = event.char
+      @key = event.key
 
     # Stops the event which prevents further propagation of the event,
     # as well as event bubbling.
     stop: ->
-      @prototypeEvent.stop()
+      @nativeEvent.stop()
 
   # Value returned from on(); an EventHandler is used to stop listening to
-  # events, or even pause listening.
+  # events, or even temporarily pause listening.
   class EventHandler
 
   # Registers the handler as an event listener for matching elements and event names.
+  # Note: it is possible to add handlers for events on the window object, but
+  # start() and stop() do not do anything for such events.
+  #
   # elements - array of DOM elements
   # eventNames - array of event names
   # match - selector to match bubbled elements, or null
@@ -52,14 +80,19 @@ define ["_"], (_) ->
       wrapped = (prototypeEvent, matchedElement) ->
         # Set "this" to be the matched element (jQuery style), rather than
         # the element on which the event is observed.
-        handler.call(matchedElement, new Event prototypeEvent)
+        handler.call(matchedElement, new EventWrapper prototypeEvent)
 
       # Prototype Event.Handler instances
       @protoHandlers = []
 
       _.each elements, (element) =>
         _.each eventNames, (eventName) =>
-          @protoHandlers.push element.on eventName, match, wrapped
+          if element is window
+            unless _.isEmpty match
+              throw Error("Matching of elements by selector is not supported for window events.")
+            Event.observe element, eventName, wrapped
+          else
+            @protoHandlers.push element.on eventName, match, wrapped
 
     # Invoked after stop() to restart event listening. Returns this EventHandler instance.
     start: ->
@@ -100,10 +133,10 @@ define ["_"], (_) ->
     getAttribute: (name) ->
       @element.readAttribute name
 
-    # Set the value of the attribute to the given value, then returns this
-    # ElementWrapper.
-    # Note: Prototype has special support for values null, true, and false
-    # that may not be duplicated by other implementations of the SPI.
+    # Set the value of the attribute to the given value, then returns this ElementWrapper.
+    #
+    # Note: Prototype has special support for values null, true, and false that may not be duplicated by other
+    # implementations of the SPI.
     setAttribute: (name, value) ->
       # TODO: case where name is an object, i.e., multiple attributes in a single call.
       # Well, you can just do it, but its not guaranteed to work the same across
@@ -125,16 +158,36 @@ define ["_"], (_) ->
       @element.addClassName name
       this
 
-    # Updates this element with new content, replacing any old content. The new content
-    # may be HTML text, or a DOM element, or null (to remove the body of the element).
+    # Updates this element with new content, replacing any old content. The new content may be HTML text, or a DOM
+    # element, or null (to remove the body of the element).
+    #
     # Returns this ElementWrapper.
     update: (content) ->
-      @element.update content
+      @element.update (convertContent content)
       this
 
-    # Returns an ElementWrapper for this element's containing element. The ElementWrapper
-    # is created lazily, and cached. Returns null if this element has no parentNode (either because
-    # this element is the document object, or because this element is not yet attached to the DOM).
+    # Appends new content (Element or HTML markup string) to the element.
+    #
+    # Returns this ElementWrapper.
+    append: (content) ->
+      @element.insert bottom: (convertContent content)
+      this
+
+    # Finds the first child element that matches the CSS selector.
+    #
+    # Returns the ElementWrapper for the child element, or null if not found.
+    find: (selector) ->
+      match = @element.down selector
+
+      # Prototype returns undefined if not found, we want to return null.
+      if match
+        new ElementWrapper match
+      else
+        return null
+
+    # Returns an ElementWrapper for this element's containing element. The ElementWrapper is created lazily, and
+    # cached. Returns null if this element has no parentNode (either because this element is the document object, or
+    # because this element is not yet attached to the DOM).
     getContainer: ->
       unless @container
         return null unless element.parentNode
@@ -142,14 +195,15 @@ define ["_"], (_) ->
 
       @container
 
-    # Returns true if this element is visible, false otherwise. This does not check
-    # to see if all containers of the element are visible.
+    # Returns true if this element is visible, false otherwise. This does not check to see if all containers of the
+    # element are visible.
     visible: ->
       @element.visible()
 
     # Fires a named event. Returns this ElementWrapper.
+    #
     # eventName - name of event to trigger on the wrapped Element
-    # memo - optional value assocated with the event; available as Event.memo in event handler functions
+    # memo - optional value assocated with the event; available as WrappedeEvent.memo in event handler functions
     trigger: (eventName, memo) ->
       throw new Error("Attempt to trigger event with null event name") unless eventName?
 
@@ -157,19 +211,16 @@ define ["_"], (_) ->
       this
 
     # Adds an event handler for one or more events.
+    #
     # events - one or more event names, separated by spaces
     # match - optional: CSS expression used as a filter; only events that bubble
     # up to the wrapped element from an originating element that matches the CSS expression
     # will invoke the handler.
-    # handler - function invoked; the function is passed an Event object.
+    # handler - function invoked; the function is passed an EventWrapper object.
+    #
     # Returns an EventHandler object, making it possible to turn event observation on or off.
     on: (events, match, handler) ->
       exports.on @element, events, match, handler
-
-    # Searches for elements contained within this element, matching the CSS selector.
-    # Returns an array of matching elements.
-    find: (selector) ->
-      @element.select selector
 
   parseSelectorToElements = (selector) ->
     if _.isString selector
@@ -183,10 +234,12 @@ define ["_"], (_) ->
 
     [selector]
 
+  bodyWrapper = null
+
   exports =
 
-  # Invokes the callback only once the DOM has finished loading all elements (other resources, such as images,
-  # may still be in-transit). This is a safe time to search the DOM, modify attributes, and attach event handlers.
+  # Invokes the callback only once the DOM has finished loading all elements (other resources, such as images, may
+  # still be in-transit). This is a safe time to search the DOM, modify attributes, and attach event handlers.
   # Returns this modules exports, for chained calls.
     domReady: (callback) ->
       document.observe "dom:loaded", callback
@@ -213,8 +266,15 @@ define ["_"], (_) ->
 
     # Returns a wrapper for the provided DOM element that includes key behaviors:
     # hide(), show(), remove(), etc.
-    # element - a DOM element, or the unique id of a DOM element
+    # element - a DOM element, or the window, or the unique id of a DOM element
     # Returns the ElementWrapper.
     wrap: (element) ->
       throw new Error("Attempt to wrap a null DOM element") unless element
       new ElementWrapper element
+
+    # Returns a wrapped version of the document.body element. Care must be take to not invoke this function before the body
+    # element exists; typically only after the DOM has loaded, such as a domReady() callback.
+    body: -> bodyWrapper ?= (exports.wrap document.body)
+
+    # Returns the current dimensions of the viewport. An object with keys width and height is returned.
+    viewportDimensions: -> document.viewport.getDimensions()

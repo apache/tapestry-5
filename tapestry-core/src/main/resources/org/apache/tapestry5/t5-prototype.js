@@ -18,12 +18,12 @@
  * Prototype JavaScript library. May also make modifications to Prototype to
  * work with Tapestry.
  */
-define("core/compat/t5-spi", ["core/compat/t5", "core/compat/t5-events", "core/compat/t5-pubsub"], function () {
+define("core/compat/t5-spi", ["core/spi", "core/compat/t5", "core/compat/t5-events", "core/compat/t5-pubsub"], function (spi) {
     T5.define("spi", function () {
 
         function observe(element, eventName, listener) {
 
-            var handler = $(element).on(eventName, listener);
+            var handler = spi.on(element, eventName, listener);
 
             element = null;
             eventName = null;
@@ -34,17 +34,17 @@ define("core/compat/t5-spi", ["core/compat/t5", "core/compat/t5-events", "core/c
             };
         }
 
-        document.observe("dom:loaded", function () {
+        /** This will likely go soon. */
+        spi.domReady(function () {
             T5.sub(T5.events.REMOVE_EVENT_HANDLERS, null, function (element) {
+                        // TODO: Remaining Prototype dependency here:
                         Event.stopObserving(element);
                     }
             );
         });
 
         function appendMarkup(element, markup) {
-            var element = $(element);
-
-            element.insert({ bottom: markup });
+            spi.wrap(element).append(markup);
 
             return element;
         }

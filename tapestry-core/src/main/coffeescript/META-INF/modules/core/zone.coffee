@@ -15,9 +15,7 @@
 define ["core/spi", "core/events"],
   (spi, events) ->
     spi.domReady ->
-      body = spi.wrap document.body
-
-      body.on events.zone.update, (event) ->
+      spi.body().on events.zone.update, (event) ->
         zone = spi.wrap this
 
         zone.trigger events.zone.willUpdate
@@ -29,7 +27,6 @@ define ["core/spi", "core/events"],
         zone.show() unless zone.visible()
 
         zone.trigger events.zone.didUpdate
-
 
     # No meaningful value is returned.
     true
