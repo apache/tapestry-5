@@ -281,6 +281,41 @@ define("core/compat/tapestry", [
             });
         },
 
+        /**
+         * Processes a typical Ajax request for a URL. In the simple case, a success
+         * handler is provided (as options). In a more complex case, an options
+         * object is provided, with keys as per Ajax.Request. The onSuccess key will
+         * be overwritten, and defaults for onException and onFailure will be
+         * provided. The handler should take up-to two parameters: the
+         * XMLHttpRequest object itself, and the JSON Response (from the X-JSON
+         * response header, usually null).
+         *
+         * This has been re-implemented in 5.4 as a wrapper around the core/ajax module.
+         *
+         * @param url
+         *            of Ajax request
+         * @param options
+         *            either a success handler, or a set of options compatible with the core/ajax module.
+         * @return the Ajax.Request object (perhaps, if prototype is the underlying
+         */
+        ajaxRequest: function (url, options) {
+            if (_.isFunction(options)) {
+                options = { onsuccess: options };
+            }
+
+            // Prototype and Tapestry 5.3 uses "onSuccess", "onException", "onFailure", but
+            // core/ajax (Tapestry 5.4) uses "onsuccess", etc.
+
+            var newOptions = {};
+            _.each(options, function (value, key) {
+                var newKey = key.substr(0, 2) === "on" ? key.toLowerCase() : key;
+
+                newOptions[newKey] = value;
+            });
+
+            return ajax(url, newOptions);
+        },
+
         /** Formats and displays an error message on the console. */
         error: function (message, substitutions) {
             Tapestry.invokeLogger(message, substitutions, Tapestry.Logging.error);
@@ -664,11 +699,11 @@ define("core/compat/tapestry", [
                     options.parameters = hash;
 
                     /*
-                     * Ajax.Request will convert the hash into a query
+                     * ajaxRequest will convert the hash into a query
                      * string and post it.
                      */
 
-                    return ajax(url, options);
+                    return Tapestry.ajaxRequest(url, options);
                 }
             });
 
@@ -906,15 +941,12 @@ define("core/compat/tapestry", [
                         .observe(
                         Tapestry.FORM_PROCESS_SUBMIT_EVENT,
                         function () {
-                            var zoneManager = Tapestry
-                                    .findZoneManager(element);
+                            var mgr = Tapestry.findZoneManager(element);
 
-                            if (!zoneManager)
-                                return;
+                            if (!mgr) {return;}
 
                             var successHandler = function (transport) {
-                                zoneManager
-                                        .processReply(transport.responseJSON);
+                                mgr.processReply(transport);
                             };
 
                             element.sendAjaxRequest(url, {
