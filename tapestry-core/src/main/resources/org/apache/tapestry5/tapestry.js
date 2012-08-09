@@ -17,11 +17,11 @@ define("core/compat/tapestry", [
     "_",
     "core/spi",
     "core/events",
+    "core/ajax",
     "core/zone",
     "core/compat/t5-dom",
     "core/compat/t5-console",
-    "core/compat/t5-init",
-    "core/compat/t5-ajax"], function (_, spi, events) {
+    "core/compat/t5-init"], function (_, spi, events, ajax) {
 
     window.Tapestry = {
 
@@ -311,139 +311,6 @@ define("core/compat/tapestry", [
                 message = message.interpolate(substitutions);
 
             loggingFunction.call(this, message);
-        },
-
-        /**
-         * Passed the JSON content of a Tapestry partial markup response, extracts
-         * the script and stylesheet information. JavaScript libraries and
-         * stylesheets are loaded, then the callback is invoked. All three keys are
-         * optional:
-         * <dl>
-         * <dt>redirectURL</dt>
-         * <dd>URL to redirect to (in which case, the callback is not invoked)</dd>
-         * <dt>inits</dt>
-         * <dd>Passed to module "core/pageinit:initialize" if non-null
-         * after the DOM has been updated.</dd>
-         * <dt>stylesheets</dt>
-         * <dd>Array of hashes, each hash has key href and optional key media</dd>
-         * <dt>scripts</dt>
-         * <dd>URLs of static JavaScript libraries to load</dd>
-         *     </dl>
-         *
-         *     The format of this content is changing in 5.4 and this implementation
-         *     is for compatibility only; it invoke modules method core/pageinit:handlePartialPageRenderResponse
-         *
-         * @param reply
-         *            JSON response object from the server
-         * @param callback
-         *            function invoked after the scripts have all loaded
-         *            (presumably, to update the DOM)
-         */
-        loadScriptsInReply: function (reply, callback) {
-
-            require(["core/pageinit"], function (pageinit) {
-                pageinit.handlePartialPageRenderResponse(reply, callback);
-            });
-        },
-
-        /**
-         * Default function for handling a communication error during an Ajax
-         * request.
-         */
-        ajaxExceptionHandler: function (response, exception) {
-            Tapestry.error(Tapestry.Messages.communicationFailed + exception);
-
-            Tapestry.debug(Tapestry.Messages.ajaxFailure + exception, response);
-
-            // This covers just FireFox and Opera:
-            var trace = exception.stack || exception.stacktrace;
-            if (exception.stack) { Tapestry.debug(exception.stack); }
-
-            throw exception;
-        },
-
-        /**
-         * Default function for handling Ajax-related failures.
-         */
-        ajaxFailureHandler: function (response) {
-            var rawMessage = response.getHeader("X-Tapestry-ErrorMessage");
-
-            var message = unescape(rawMessage).escapeHTML();
-
-            Tapestry.error(Tapestry.Messages.communicationFailed + message);
-
-            Tapestry.debug(Tapestry.Messages.ajaxFailure + message, response);
-
-            var contentType = response.getResponseHeader("content-type")
-
-            var isHTML = contentType && (contentType.split(';')[0] === "text/html");
-
-            if (isHTML) {
-                T5.ajax.showExceptionDialog(response.responseText)
-            }
-        },
-
-        /**
-         * Processes a typical Ajax request for a URL. In the simple case, a success
-         * handler is provided (as options). In a more complex case, an options
-         * object is provided, with keys as per Ajax.Request. The onSuccess key will
-         * be overwritten, and defaults for onException and onFailure will be
-         * provided. The handler should take up-to two parameters: the
-         * XMLHttpRequest object itself, and the JSON Response (from the X-JSON
-         * response header, usually null).
-         *
-         * @param url
-         *            of Ajax request
-         * @param options
-         *            either a success handler
-         * @return the Ajax.Request object
-         */
-        ajaxRequest: function (url, options) {
-
-            if (Object.isFunction(options)) {
-                return Tapestry.ajaxRequest(url, {
-                    onSuccess: options
-                });
-            }
-
-            var successHandler = (options && options.onSuccess) || Prototype.emptyFunction;
-
-            var finalOptions = $H({
-                onException: Tapestry.ajaxExceptionHandler,
-                onFailure: Tapestry.ajaxFailureHandler
-            }).update(options).update({
-                        onSuccess: function (response, jsonResponse) {
-                            /*
-                             * When the page is unloaded, pending Ajax requests appear to
-                             * terminate as successful (but with no reply value). Since
-                             * we're trying to navigate to a new page anyway, we just ignore
-                             * those false success callbacks. We have a listener for the
-                             * window's "beforeunload" event that sets this flag.
-                             */
-                            if (Tapestry.windowUnloaded && response.responseText.blank())
-                                return;
-
-                            /*
-                             * Prototype treats status == 0 as success, even though it seems
-                             * to mean the server didn't respond.
-                             */
-                            if (!response.getStatus() || !response.request.success()) {
-                                finalOptions.get('onFailure').call(this, response);
-                                return;
-                            }
-
-                            try {
-                                /* Re-invoke the success handler, capturing any exceptions. */
-                                successHandler.call(this, response, jsonResponse);
-                            } catch (e) {
-                                finalOptions.get('onException').call(this, response, e);
-                            }
-                        }
-                    });
-
-            var ajaxRequest = new Ajax.Request(url, finalOptions.toObject());
-
-            return ajaxRequest;
         },
 
         /**
@@ -801,7 +668,7 @@ define("core/compat/tapestry", [
                      * string and post it.
                      */
 
-                    return Tapestry.ajaxRequest(url, options);
+                    return ajax(url, options);
                 }
             });
 
@@ -915,14 +782,10 @@ define("core/compat/tapestry", [
                 var successHandler = function (transport) {
                     var container = $(fragmentId);
 
-                    var effect = Tapestry.ElementEffect.fade(container);
-
-                    effect.options.afterFinish = function () {
-                        Tapestry.remove(container);
-                    }
+                    Tapestry.remove(container);
                 };
 
-                Tapestry.ajaxRequest(spec.url, successHandler);
+                ajax(spec.url, { onsuccess: successHandler});
             });
         },
 
@@ -1805,16 +1668,14 @@ define("core/compat/tapestry", [
          * @param reply
          *            response in JSON format appropriate to a Tapestry.Zone
          */
-        processReply: function (reply) {
-            var _this = this;
+        processReply: function (response) {
+            /*
+             * In a multi-zone update, the reply.content may be missing, in
+             * which case, leave the current content in place. TAP5-1177
+             */
+            var reply = response.responseJSON;
 
-            Tapestry.loadScriptsInReply(reply, function () {
-                /*
-                 * In a multi-zone update, the reply.content may be missing, in
-                 * which case, leave the current content in place. TAP5-1177
-                 */
-                reply.content != undefined && _this.show(reply.content);
-            });
+            reply && reply.content != undefined && this.show(reply.content);
         },
 
         /**
@@ -1828,24 +1689,13 @@ define("core/compat/tapestry", [
          */
         updateFromURL: function (URL, parameters) {
 
-            // TODO: This is still very wedded to Prototype
-            // spi needs an ajax() function.
+            var fullParameters = _.extend({ "t:zoneid": this.elementId },
+                    this.specParameters,
+                    parameters);
 
-            var finalParameters = $H({
-                "t:zoneid": this.elementId
-            }).update(this.specParameters);
-
-            /* If parameters were supplied, merge them in with the zone id */
-            if (!Object.isUndefined(parameters))
-                finalParameters.update(parameters);
-
-            var _this = this;
-
-            Tapestry.ajaxRequest(URL, {
-                parameters: finalParameters.toObject(),
-                onSuccess: function (transport) {
-                    _this.processReply(transport.responseJSON);
-                }
+            ajax(URL, {
+                parameters: fullParameters,
+                onsuccess: _.bind(this.processReply, this)
             });
         }
     });
@@ -1880,29 +1730,24 @@ define("core/compat/tapestry", [
                     var param = {};
                     param[this.below ? "after" : "before"] = newElement;
 
-                    Tapestry.loadScriptsInReply(reply, function () {
-                        /* Add the new element with the downloaded content. */
+                    this.element.insert(param);
 
-                        this.element.insert(param);
+                    /*
+                     * Update the empty element with the content from the server
+                     */
 
-                        /*
-                         * Update the empty element with the content from the server
-                         */
+                    newElement.update(reply.content);
 
-                        newElement.update(reply.content);
+                    newElement.id = reply.elementId;
 
-                        newElement.id = reply.elementId;
+                    /*
+                     * Add some animation to reveal it all.
+                     */
 
-                        /*
-                         * Add some animation to reveal it all.
-                         */
-
-                        this.showFunc(newElement);
-
-                    }.bind(this));
+                    this.showFunc(newElement);
                 }.bind(this);
 
-                Tapestry.ajaxRequest(this.url, successHandler);
+                ajax(this.url, { onsuccess: successHandler });
 
                 return false;
 
@@ -1925,12 +1770,8 @@ define("core/compat/tapestry", [
         return $(element).getStorage();
     }
 
-    Tapestry.onDOMLoaded(Tapestry.onDomLoadedCallback);
-
-    /* Ajax code needs to know to do nothing after the window is unloaded. */
-    Event.observe(window, "beforeunload", function () {
-        Tapestry.windowUnloaded = true;
-    });
+    spi.domReady(Tapestry.onDomLoadedCallback);
+    spi.on(window, "beforeunload", function () { Tapestry.windowUnloaded = true; });
 
     return Tapestry;
 });

@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Service Provider Interface
+# core/spi (Service Provider Interface)
 #
 # This is the core of the abstraction layer that allows the majority of components to operate without caring whether the
 # underlying infrastructure framework is Prototype, jQuery, or something else.  This is the standard SPI, which wraps
 # Prototype ... but does it in a way that makes it relatively easy to swap in jQuery instead.
 
 # TODO: Define a dependency on "prototype" when that's exposed as a stub module.
-define ["_"], (_) ->
+define ["_", "core/console"], (_, console) ->
   split = (str) ->
     _(str.split " ").reject (s) -> s is ""
 
@@ -236,11 +236,61 @@ define ["_"], (_) ->
 
   bodyWrapper = null
 
-  exports =
+  # Performs an asynchronous Ajax request, invoking callbacks when it completes.  options.method - "post", "get", etc.,
+  # default: "post". Adds a "_method" parameter and uses "post" to handle "delete", etc.
+  # options.contentType - default "context "application/x-www-form-urlencoded"
+  # options.parameters - optional, additional key/value pairs
+  # options.onsuccess - handler to invoke on success. Passed the XMLHttpRequest transport object. Default does nothing.
+  # options.onfailure - handler to invoke on failure (server responds with a non-2xx code). Passed the response. Default
+  # will log and error to the console.
+  # options.onexception - handler to invoke when an exception occurs (often means the server is unavailable). Passed
+  # the exception. Default will log an error to the cnsole and throw the exception.
+  # TODO: Clarify what the response object looks like and/or wrap the Prototype Ajax.Response object.
+  ajaxRequest = (url, options = {}) ->
+    finalOptions =
+      method: options.method or "post"
+      contentType: options.contentType or "application/x-www-form-urlencoded"
+      parameters: options.parameters or {}
+      onException: (ajaxRequest, exception) ->
+        if options.onexception
+          options.onexception exception
+        else
+          console.error "Request to #{url} failed with #{exception}"
+          throw exception
 
-  # Invokes the callback only once the DOM has finished loading all elements (other resources, such as images, may
-  # still be in-transit). This is a safe time to search the DOM, modify attributes, and attach event handlers.
-  # Returns this modules exports, for chained calls.
+      onFailure: (response) ->
+        if options.onfailure
+          options.onfailure response
+        else
+          message = "Request to #{url} failed with status #{response.getStatus()}"
+          text = response.getStatusText()
+          if not _.isEmpty text
+            message += " -- #{text}"
+
+          console.error message + "."
+
+      onSuccess: (response) ->
+
+        # Prototype treats status == 0 as success, even though it may
+        # indicate that the server didn't respond.
+        if (not response.getStatus()) or (not response.request.success())
+          finalOptions.onFailure(response)
+          return
+
+        # Tapestry 5.3 includes lots more exception catching ... that just got in the way
+        # of identifying the source of problems.  That's been stripped out.
+        # Still sorting out how this will all work, especially in terms
+        # of the abstraction.
+        options.onsuccess and options.onsuccess(response)
+
+    new Ajax.Request(url, finalOptions)
+
+  exports =
+    ajaxRequest: ajaxRequest
+
+    # Invokes the callback only once the DOM has finished loading all elements (other resources, such as images, may
+    # still be in-transit). This is a safe time to search the DOM, modify attributes, and attach event handlers.
+    # Returns this modules exports, for chained calls.
     domReady: (callback) ->
       document.observe "dom:loaded", callback
 
@@ -272,8 +322,8 @@ define ["_"], (_) ->
       throw new Error("Attempt to wrap a null DOM element") unless element
       new ElementWrapper element
 
-    # Returns a wrapped version of the document.body element. Care must be take to not invoke this function before the body
-    # element exists; typically only after the DOM has loaded, such as a domReady() callback.
+    # Returns a wrapped version of the document.body element. Care must be take to not invoke this function before the
+    # body element exists; typically only after the DOM has loaded, such as a domReady() callback.
     body: -> bodyWrapper ?= (exports.wrap document.body)
 
     # Returns the current dimensions of the viewport. An object with keys width and height is returned.

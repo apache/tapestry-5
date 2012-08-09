@@ -135,23 +135,23 @@ define ["_", "core/console"], (_, console) ->
       console.debug "Evaluating: #{js}"
       eval js
 
-    # Passed the JSON object response from an Ajax request, when the request is successful.
+    # Passed the response from an Ajax request, when the request is successful.
     # This is used for any request that attaches partial-page-render data to the main JSON object
     # response.  If no such data is attached, the callback is simply invoked immediately.
     # Otherwise, Tapestry processes the partial-page-render data. This may involve loading some number
     # of JavaScript libraries and CSS style sheets, and a number of direct updates to the DOM. After DOM updates,
     # the callback is invoked, passed the response (with any Tapestry-specific data removed).
     # After the callback is invoked, page initializations occur.  This method returns null.
-    # response - the JSON response object
+    # response - the Ajax response object
     # callback - invoked after scripts are loaded, but before page initializations occur (may be null)
-    # context - optional: context used when invoking the callback
     # Returns null
-    handlePartialPageRenderResponse: (response, callback, context) ->
+    handlePartialPageRenderResponse: (response, callback) ->
 
       # Capture the partial page response portion of the overall response, and
       # then remove it so it doesn't interfere elsewhere.
-      partial = response._tapestry
-      delete response._tapestry
+      responseJSON = response.responseJSON or {}
+      partial = responseJSON._tapestry
+      delete responseJSON._tapestry
 
       # Extreme case: the data has a redirectURL which forces an immediate redirect to the URL.
       # No other initialization or callback invocation occurs.
@@ -178,7 +178,7 @@ define ["_", "core/console"], (_, console) ->
             zoneMgr && zoneMgr.show content
 
           # Invoke the callback, if present.  The callback may do its own content updates.
-          callback and callback.call context, response
+          callback and callback.call null, response
 
           # Now that all content updates are, presumably, complete, it is time to
           # perform initializations.  Once those complete, use the onDomLoadedCallback()

@@ -94,8 +94,6 @@ public class CoreJavaScriptStack implements JavaScriptStack
 
                     ROOT + "/t5-console.js",
 
-                    ROOT + "/t5-ajax.js",
-
                     ROOT + "/t5-formfragment.js",
 
                     ROOT + "/t5-alerts.js",

@@ -13,9 +13,10 @@
  * limitations under the License.
  */
 
-define("core/compat/t5-alerts", ["core/compat/t5-dom",
+define("core/compat/t5-alerts", ["core/ajax",
+    "core/compat/t5-dom",
     "core/compat/t5-init",
-    "core/compat/t5-pubsub"], function () {
+    "core/compat/t5-pubsub"], function (ajax) {
     T5.extendInitializers(function () {
 
         var $ = T5.$;
@@ -58,7 +59,7 @@ define("core/compat/t5-alerts", ["core/compat/t5-dom",
                     T5.dom.removeChildren(list);
 
                     // Don't care about the response.
-                    Tapestry.ajaxRequest(spec.dismissURL);
+                    ajax(spec.dismissURL);
                 }
             });
 
@@ -104,15 +105,11 @@ define("core/compat/t5-alerts", ["core/compat/t5-dom",
 
                     removeAlert();
 
-                    // TODO: Switch this to T5.ajax.sendRequest when implemented/available
-
                     // Send a request, we don't care about the response.
 
                     if (alertSpec.id) {
-                        Tapestry.ajaxRequest(spec.dismissURL,
-                                { parameters: {
-                                    id: alertSpec.id
-                                }});
+                        ajax(spec.dismissURL,
+                                { parameters: { id: alertSpec.id }});
                     }
                 });
 
