@@ -19,7 +19,8 @@ define ->
   # module exports are mutable; someone else could
   # require this module to change the default DURATION
   exports =
-    DURATION : 10 # seconds
+    DURATION: 10
+  # seconds
 
   try
     nativeConsole = console
@@ -30,23 +31,23 @@ define ->
     # Disable the floating console temporarily, since we have to resolve the tangle of dependencies
     # related to loading vs. the core stack, etc.
 
-#    unless floatingConsole
-#      floatingConsole = new Element "div", class: "t-console"
-#      $(document.body).insert top: floatingConsole
-#
-#    div = new Element "div", class: "t-console-entry #{className}"
-#    div.update(message).hide()
-#    floatingConsole.insert top:div
-#
-#    new Effect.Appear div, duration: .25
-#
-#    fade = new Effect.Fade div,
-#      delay: exports.DURATION
-#      afterFinish: -> div.remove()  # was T5.dom.remove(div)
-#
-#    div.observe "click", ->
-#      fade.cancel()
-#      div.remove() # was T5.dom.remove(div)
+    #    unless floatingConsole
+    #      floatingConsole = new Element "div", class: "t-console"
+    #      $(document.body).insert top: floatingConsole
+    #
+    #    div = new Element "div", class: "t-console-entry #{className}"
+    #    div.update(_.escape(message)).hide()
+    #    floatingConsole.insert top:div
+    #
+    #    new Effect.Appear div, duration: .25
+    #
+    #    fade = new Effect.Fade div,
+    #      delay: exports.DURATION
+    #      afterFinish: -> div.remove()  # was T5.dom.remove(div)
+    #
+    #    div.observe "click", ->
+    #      fade.cancel()
+    #      div.remove() # was T5.dom.remove(div)
 
   level = (className, consolefn) ->
     (message) ->
