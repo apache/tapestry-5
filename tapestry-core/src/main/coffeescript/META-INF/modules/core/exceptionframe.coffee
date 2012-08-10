@@ -38,7 +38,6 @@ define ["core/spi", "core/builder", "_"],
     # Called after the window has resized to adjust the size of the iframe.
     resize = ->
       dims = spi.viewportDimensions()
-      ;
 
       iframe.width = dims.width - 100
       iframe.height = dims.height - 120
