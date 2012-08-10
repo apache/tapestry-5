@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# ##core/zone
+#
+# Provides a default handler for the `events.zone.update` event, attached to the
+# document body.
 define ["core/spi", "core/events"],
   (spi, events) ->
     spi.domReady ->
