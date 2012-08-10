@@ -58,11 +58,13 @@ define ["core/spi", "core/builder", "_"], (spi, builder, _) ->
 
   level = (className, consolefn) ->
     (message) ->
-      # Display it floating
-      display className, message
+      if consolefn
+        consolefn and consolefn.call(console, message)
+      else
+        # Display it floating
+        display className, message
 
-      # If native console available, go for it
-      consolefn and consolefn.call(console, message)
+  # If native console available, go for it
 
   exports[name] = level("t-#{name}", nativeConsole[name]) for name in ["debug", "info", "warn"]
   exports.error = level("t-err", nativeConsole.error)

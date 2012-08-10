@@ -2,22 +2,25 @@ Scratch pad for changes destined for the 5.4 release notes page.
 
 Breaking Features:
 
-The definition of the symbol 'tapestry.asset-path-prefix' has changed; it no longer includes the leading and
-trailing slashes. The default in 5.3 was "/assets/", in 5.4 it is simply "assets".
+The definition of the symbol 'tapestry.asset-path-prefix' has changed; it no longer includes the leading and trailing
+slashes. The default in 5.3 was "/assets/", in 5.4 it is simply "assets".
 
-JavaScript Libraries (including stacks) are being replaced with modules. Note that libraries are now loaded
-with RequireJS, which may mean that global values exported by the libraries are not visible; you should explicitly
-attach properties to the global JavaScript window object, rather than assume that the context (this) is the window.
+JavaScript Libraries (including stacks) are being replaced with modules. Note that libraries are now loaded with
+RequireJS, which may mean that global values exported by the libraries are not visible; you should explicitly attach
+properties to the global JavaScript window object, rather than assume that the context (this) is the window.
 
 The interface org.apache.tapestry5.services.assets.ResourceTransformer has had a new method added:
 getTransformedContentType().
 
 Older versions of Tapestry included client-side support for an element with the CSS class "t-zone-update" as the actual
-element to be updated when new content is provided for the zone in a partial page render response. This feature
-has been removed with no replacement.
+element to be updated when new content is provided for the zone in a partial page render response. This feature has been
+removed with no replacement.
 
 Minor changes to Tapestry.ElementEffects.  Despite the names of the properties (kept for compatibility), all "effects"
 are now simply make the element appear or hide, with no animation.
 
-Tapestry code no longer makes use of Scriptaculous. Instead, Tapestry will fire events on elements, and user code
-may decide to animate them using whatever library is desired.
+Tapestry code no longer makes use of Scriptaculous. Instead, Tapestry will fire events on elements, and user code may
+decide to animate them using whatever library is desired.
+
+On the client side, the "floating console" is only used in cases where a native console is not available. (Is this a
+change from 5.3?)
