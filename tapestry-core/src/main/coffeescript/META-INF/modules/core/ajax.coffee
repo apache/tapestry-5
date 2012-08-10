@@ -17,14 +17,25 @@
 # Exports a single function, that invokes `core/spi:ajaxRequest()` with the provided `url` and a modified version of the
 # `options`.
 #
-# It wraps (or provides) `onsuccess` and `onfailure` elements, extended to handle a partial page render reponse (for
-# success), or properly log a server-side failure, including using `core/exceptionframe` module to display a server-side
-# processing exception.
+# It wraps (or provides) `onsuccess`, `onexception`, and `onfailure` handlers, extended to handle a partial page render
+# response (for success), or properly log a server-side failure or client-side exception, including using
+# `core/exceptionframe` module to display a server-side processing exception.
 define ["core/pageinit", "core/spi", "core/exceptionframe", "core/console", "_"],
   (pageinit, spi, exceptionframe, console, _) ->
-    (url, options = {}) ->
+    (url, options) ->
       newOptions = _.extend {}, options,
-        onfailure: (response) ->
+
+        # Logs the exception to the console before passing it to the
+        # provided exception handler or throwing the exception.
+        onexception: (exception) ->
+          console.error "Request to #{url} failed with #{exception}"
+
+          if options.onexception
+            options.onexception exception
+          else
+            throw exception
+
+        onfailure: (response, failureMessage) ->
           raw = response.getHeader "X-Tapestry-ErrorMessage"
           unless _.isEmpty raw
             message = window.unescape raw
@@ -37,12 +48,7 @@ define ["core/pageinit", "core/spi", "core/exceptionframe", "core/console", "_"]
             if isHTML
               exceptionframe response.responseText
           else
-            message = "Request to #{url} failed with status #{response.getStatus()}"
-            text = response.getStatusText()
-            if not _.isEmpty text
-              message += " -- #{text}"
-
-            console.error message + "."
+            console.error failureMessage
 
           options.onfailure and options.onfailure(response)
 

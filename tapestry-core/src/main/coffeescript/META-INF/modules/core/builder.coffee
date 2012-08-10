@@ -12,29 +12,41 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# core/builder
+# ##core/builder
 #
 # A system for constructing DOM element nodes for a particular structure in minimal code.  The basic syntax is:
-# builder(elementDescription, body...) and the result is a DOM element.  The element description is
-# primarily the name of the element.
+# `builder(elementDescription, body...)` and the result is a `core/spi:ElementWrapper` (a wrapper around the constructed
+# DOM elements). The element description is primarily the name of the element.
 #
-# It may contain sequences of ".name"; these appropriate CSS syntax to describe a CSS class name for the element.  The
-# element name may be omitted when CSS class names are specified, in which case "div" is the default. Multiple CSS class
-# names are allowed.
+# The element description may contain sequences of "._name_"; these appropriate CSS syntax to describe a CSS class name
+# for the element.  The element name may be omitted when CSS class names are specified, in which case `div` is the
+# default element name. Multiple CSS class names are allowed, e.g., `button.btn.btn-primary`.
 #
-# The description may also include a '>' character; this represents the start of a nested element; in this way
-# a structure can quickly be specified.
+# The description may also include the `>` character; this represents the start of a nested element; in this way
+# a structure can quickly be specified. e.g. `builder "label.checkbox > input", type: "checkbox", " Remember me"`
+# would construct:
+#
+#     <label class="checkbox>
+#        <input type="checkbox"> Remember me</input>
+#     </label>
 #
 # The body may consist of:
-# Objects: used to specify attributes and event handles of the element
-# Strings: literal text
-# Array: a nested element definition
-# For an Object, each key and value is simply added as an attribute. However, keys that start with "on" are assumed to
-# be event handler functions. The special key "on" consists of nested event handlers for the keys. The following are
-# equivlent:
-# { onclick: -> ... } and
-# { on: { click: -> ... }}
+#
+# * Objects: used to specify attributes and event handlers of the element
+# * Strings: literal text
+# * Array: a nested element definition
+#
+# For an Object, each key and value is simply added as an attribute. However, for keys that start with "on", the value
+# is assumed to be an event handler function. The special key "on" consists of nested event handlers for the events
+# whose name matches the key. The following are equivalent:
+#
+#     { onclick: -> ... }
+#
+# and
+#
+#     { on: { click: -> ... }}
 define ["_", "core/spi"], (_, spi) ->
+  # _internal_: creates a single DOM element and CSS class attribute
   createElement = (elementDescription) ->
     # TODO: Support #id for setting the id of an element, maybe others, such as ?name for the name of an input element.
     # That will require a regex or more sophisticated parsing.
@@ -48,6 +60,7 @@ define ["_", "core/spi"], (_, spi) ->
 
     return element
 
+  # _internal_: adds attributes and event handlers to a DOM element
   addAttributes = (element, attributes) ->
     return unless attributes
 
@@ -64,6 +77,7 @@ define ["_", "core/spi"], (_, spi) ->
 
     return null
 
+  # _internal_: processes the body, adding attributes and nested nodes to the DOM element
   addAttributesAndBody = (element, body) ->
     for nested in body
       unless nested?
@@ -80,6 +94,8 @@ define ["_", "core/spi"], (_, spi) ->
 
     return null
 
+  # _internal_: builds the tree from the element description, handing nested nodes, and split
+  # descriptions (containing `>`), returning the topmost DOM element
   buildTree = (elementDescription, body) ->
     splitx = elementDescription.indexOf ">"
     currentDescription =
@@ -100,7 +116,7 @@ define ["_", "core/spi"], (_, spi) ->
     return element
 
   # The module exports a single function that builds the tree of elements and returns the top element, wrapped as an
-  # spi.ElementWrapper.
+  # `core/spi:ElementWrapper`.
   (elementDescription, body...) ->
     element = buildTree elementDescription, body
 

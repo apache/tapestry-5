@@ -18,9 +18,7 @@
 # This is the core of the abstraction layer that allows the majority of components to operate without caring whether the
 # underlying infrastructure framework is Prototype, jQuery, or something else.  This is the standard SPI, which wraps
 # Prototype ... but does it in a way that makes it relatively easy to swap in jQuery instead.
-#
-# TODO: Define a dependency on "prototype" when that's exposed as a stub module.
-define ["_", "core/console"], (_, console) ->
+define ["_", "prototype"], (_) ->
 
   # _internal_: splits the string into words separated by whitespace
   split = (str) ->
@@ -40,7 +38,36 @@ define ["_", "core/console"], (_, console) ->
 
     throw new Error "Provided value <#{content}> is not valid as DOM element content."
 
-    # Generic view of an DOM event that is passed to a handler function.
+  # _internal_: Currently don't want to rely on Scriptaculous, since our needs are pretty minor.
+  animate = (element, styleName, initial, final, duration, callbacks) ->
+    styles = {}
+    range = final - initial
+    initialTime = Date.now()
+    first = true
+    animator = ->
+      elapsed = Date.now() - initialTime
+      if elapsed >= duration
+        styles[styleName] = final
+        element.setStyle styles
+        window.clearInterval timeoutID
+        callbacks.oncomplete and callbacks.oncomplete()
+
+      # TODO: Add an easein/easeout function
+
+      newValue = initial + range * (elapsed / duration)
+
+      element.setStyle styles
+
+      if first
+        callbacks.onstart and callbacks.onstart()
+        first = false
+
+    timeoutID = window.setInterval animator
+
+    styles[styleName] = initial
+    element.setStyle styles
+
+  # Generic view of an DOM event that is passed to a handler function.
   #
   # Properties:
   #
@@ -52,7 +79,7 @@ define ["_", "core/console"], (_, console) ->
   #  or a key name for others.
   class EventWrapper
 
-   constructor: (event) ->
+    constructor: (event) ->
       @nativeEvent = event
       @memo = event.memo
       @type = event.type
@@ -118,7 +145,7 @@ define ["_", "core/console"], (_, console) ->
   # Exposes the original element as property `element`.
   class ElementWrapper
 
-   constructor: (element) ->
+    constructor: (element) ->
       @element = $(element)
 
     # Hides the wrapped element, setting its display to 'none'.
@@ -182,11 +209,46 @@ define ["_", "core/console"], (_, console) ->
       @element.update (convertContent content)
       this
 
-    # Appends new content (Element or HTML markup string) to the element.
+    # Appends new content (Element, ElementWrapper, or HTML markup string) to the body of the element.
     #
     # Returns this ElementWrapper.
     append: (content) ->
       @element.insert bottom: (convertContent content)
+      this
+
+    # Prepends new content (Element, ElementWrapper, or HTML markup string) to the body of the element.
+    #
+    # Returns this ElementWrapper
+    prepend: (content) ->
+      @element.insert top: (convertContent content)
+      this
+
+    # Runs an animation to fade-in the element over the specified duration. The element may be hidden (via `hide()`)
+    # initially, and will be made visible (with initial opacity 0, which will increase over time) when the animation
+    # starts.
+    #
+    # * duration - animation duration time, in seconds
+    # * callback - function invoked after the animation is complete
+    #
+    # Returns this ElementWrapper
+    fadeIn: (duration, callback) ->
+      animate @element, "opacity", 0, 1, duration * 1000,
+        onstart: => @element.show()
+        oncomplete: callback
+
+    this
+
+    # Runs an animation to fade out an element over the specified duration. The element should already
+    # be visible and fully opaque.
+    #
+    # * duration - animation duration time, in seconds
+    # * callback - function invoked after the animation is complete
+    #
+    # Returns this ElementWrapper
+    fadeOut: (duration, callback) ->
+      animate @element, "opacity", 1, 0, duration * 1000,
+        oncomplete: callback
+
       this
 
     # Finds the first child element that matches the CSS selector.
@@ -255,6 +317,10 @@ define ["_", "core/console"], (_, console) ->
   bodyWrapper = null
 
   # Performs an asynchronous Ajax request, invoking callbacks when it completes.
+  #
+  # This is very low level; most code will want to go through the `core/ajax` module instead,
+  # which adds better handling of exceptions and failures, and handles Tapestry's
+  #
   # * options.method - "post", "get", etc., default: "post".
   #   Adds a "_method" parameter and uses "post" to handle "delete", etc.
   # * options.contentType - default "context "application/x-www-form-urlencoded"
@@ -262,9 +328,10 @@ define ["_", "core/console"], (_, console) ->
   # * options.onsuccess - handler to invoke on success. Passed the XMLHttpRequest transport object.
   #   Default does nothing.
   # * options.onfailure - handler to invoke on failure (server responds with a non-2xx code).
-  #   Passed the response. Default will log and error to the console.
+  #   Passed the response. Default will throw the exception
   # * options.onexception - handler to invoke when an exception occurs (often means the server is unavailable).
-  #   Passed the exception. Default will log an error to the cnsole and throw the exception.
+  #   Passed the exception. Default will generate an exception message and throw an `Error`.
+  #
   # TODO: Clarify what the response object looks like and/or wrap the Prototype Ajax.Response object.
   # TODO: Define what the return value is, or return exports
   ajaxRequest = (url, options = {}) ->
@@ -276,7 +343,6 @@ define ["_", "core/console"], (_, console) ->
         if options.onexception
           options.onexception exception
         else
-          console.error "Request to #{url} failed with #{exception}"
           throw exception
 
       onFailure: (response) ->
@@ -287,8 +353,12 @@ define ["_", "core/console"], (_, console) ->
           text = response.getStatusText()
           if not _.isEmpty text
             message += " -- #{text}"
+          message += "."
 
-          console.error message + "."
+          if options.onfailure
+            options.onfailure response, message
+          else
+            throw new Error(message)
 
       onSuccess: (response) ->
 

@@ -12,42 +12,49 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-define ->
+# ##core/console
+#
+# A wrapper around the native console, when it exists.
+define ["core/spi", "core/builder", "_"], (spi, builder, _) ->
   nativeConsole = {}
   floatingConsole = null
+
+  FADE_DURATION = 0.25
 
   # module exports are mutable; someone else could
   # require this module to change the default DURATION
   exports =
+  # Default duration for floating console is 10 seconds.
     DURATION: 10
-  # seconds
 
   try
+  # FireFox will throw an exception if you even access the console object and it does
+  # not exist. Wow!
     nativeConsole = console
   catch e
 
+  # _internal_: displays the message inside the floating console, creating the floating
+  # console as needed.
   display = (className, message) ->
+    unless floatingConsole
+      floatingConsole = builder ".t-console"
+      spi.body().prepend floatingConsole
 
-    # Disable the floating console temporarily, since we have to resolve the tangle of dependencies
-    # related to loading vs. the core stack, etc.
+    div = builder ".t-console-entry.#{className}", message
 
-    #    unless floatingConsole
-    #      floatingConsole = new Element "div", class: "t-console"
-    #      $(document.body).insert top: floatingConsole
-    #
-    #    div = new Element "div", class: "t-console-entry #{className}"
-    #    div.update(_.escape(message)).hide()
-    #    floatingConsole.insert top:div
-    #
-    #    new Effect.Appear div, duration: .25
-    #
-    #    fade = new Effect.Fade div,
-    #      delay: exports.DURATION
-    #      afterFinish: -> div.remove()  # was T5.dom.remove(div)
-    #
-    #    div.observe "click", ->
-    #      fade.cancel()
-    #      div.remove() # was T5.dom.remove(div)
+    floatingConsole.append div.hide().fadeIn FADE_DURATION
+
+    removed = false
+
+    runFadeout = ->
+      div.fadeOut FADE_DURATION, ->
+        div.remove() unless removed
+
+    window.setTimeout runFadeout, exports.DURATION * 1000
+
+    div.on "click", ->
+      div.remove()
+      removed = true
 
   level = (className, consolefn) ->
     (message) ->
