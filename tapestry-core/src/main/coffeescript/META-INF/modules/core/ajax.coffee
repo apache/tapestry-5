@@ -12,20 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# core/ajax
+# ##core/ajax
 #
-# A wrapper around core/spi:ajax(), that adds improved exception reporting for server-side failures
-# that render an HTML exception report page.
-
+# Exports a single function, that invokes `core/spi:ajaxRequest()` with the provided `url` and a modified version of the
+# `options`.
+#
+# It wraps (or provides) `onsuccess` and `onfailure` elements, extended to handle a partial page render reponse (for
+# success), or properly log a server-side failure, including using `core/exceptionframe` module to display a server-side
+# processing exception.
 define ["core/pageinit", "core/spi", "core/exceptionframe", "core/console", "_"],
   (pageinit, spi, exceptionframe, console, _) ->
-
-    # The exported function:
     (url, options = {}) ->
       newOptions = _.extend {}, options,
         onfailure: (response) ->
           raw = response.getHeader "X-Tapestry-ErrorMessage"
-          if not _.isEmpty raw
+          unless _.isEmpty raw
             message = window.unescape raw
             console.error "Request to #{url} failed with '#{message}'."
 
@@ -34,7 +35,7 @@ define ["core/pageinit", "core/spi", "core/exceptionframe", "core/console", "_"]
             isHTML = contentType and (contentType.split(';')[0] is "text/html")
 
             if isHTML
-              exceptionframe(response.responseText)
+              exceptionframe response.responseText
           else
             message = "Request to #{url} failed with status #{response.getStatus()}"
             text = response.getStatusText()
