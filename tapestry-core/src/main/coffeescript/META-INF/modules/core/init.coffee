@@ -12,10 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Compatibility module
-# Invokes functions on the T5.initializers namespace.
+# ## core/init
+#
+# Compatibility module, invokes functions on the T5.initializers namespace.
+#
 # Introduced in 5.4, to be removed at some point in the future, when T5.initializers is itself no more.
-
 define ["core/compat/t5-init", "core/console"], ->
   (initName, args...) ->
     fn = T5.initializers[initName]
