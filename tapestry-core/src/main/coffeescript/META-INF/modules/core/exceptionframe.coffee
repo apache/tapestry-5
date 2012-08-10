@@ -16,7 +16,6 @@
 #
 # Manages a special element used to present a HTML exception report from an Ajax request (where a non-markup response
 # was expected, including a partial page render response).
-
 define ["core/spi", "core/builder", "_"],
   (spi, builder, _) ->
     container = null
