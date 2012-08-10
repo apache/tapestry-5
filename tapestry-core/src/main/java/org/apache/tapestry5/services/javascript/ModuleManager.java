@@ -18,7 +18,6 @@ import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
 import org.apache.tapestry5.json.JSONArray;
-import org.apache.tapestry5.json.JSONObject;
 
 import java.util.List;
 
@@ -43,14 +42,14 @@ public interface ModuleManager
      *
      * @param body
      *         {@code <body>} element of the page, to which new {@code <script>>} element(s) will be added.
-     * @param scriptURLs
+     * @param libraryURLs
      *         list of static JavaScript library URLs that must be loaded on the page, prior to any initializations
      * @param immediateInits
      *         list of immediate initializations that occur as soon as the static   JavaScript libraries are loaded
      * @param deferredInits
      *         List of deferred initializations that occur once the page has loaded
      */
-    void writeInitialization(Element body, List<String> scriptURLs, List<JSONArray> immediateInits, List<JSONArray> deferredInits);
+    void writeInitialization(Element body, List<String> libraryURLs, List<JSONArray> immediateInits, List<JSONArray> deferredInits);
 
     /**
      * Given a module name (which may be a path of names separated by slashes), locates the corresponding {@link Resource}.

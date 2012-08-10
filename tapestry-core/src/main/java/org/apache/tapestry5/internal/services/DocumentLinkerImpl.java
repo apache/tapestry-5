@@ -29,7 +29,7 @@ import java.util.Map;
 
 public class DocumentLinkerImpl implements DocumentLinker
 {
-    private final List<String> scriptURLs = CollectionFactory.newList();
+    private final List<String> libraryURLs = CollectionFactory.newList();
 
     private final Map<InitializationPriority, List<JSONArray>> priorityToModuleInit = CollectionFactory.newMap();
 
@@ -52,7 +52,7 @@ public class DocumentLinkerImpl implements DocumentLinker
      * @param omitGeneratorMetaTag
      *         via symbol configuration
      * @param tapestryVersion
- *         version of Tapestry framework (for meta tag)
+     *         version of Tapestry framework (for meta tag)
      */
     public DocumentLinkerImpl(ModuleManager moduleManager, boolean omitGeneratorMetaTag, String tapestryVersion)
     {
@@ -67,9 +67,9 @@ public class DocumentLinkerImpl implements DocumentLinker
         includedStylesheets.add(sheet);
     }
 
-    public void addScriptLink(String scriptURL)
+    public void addLibrary(String libraryURL)
     {
-        scriptURLs.add(scriptURL);
+        libraryURLs.add(libraryURL);
 
         hasScriptsOrInitializations = true;
     }
@@ -219,7 +219,7 @@ public class DocumentLinkerImpl implements DocumentLinker
         // (in <head> or at bottom of <body>). Switching to a module approach gives us a new chance to fix this.
         // Eventually, (nearly) everything will be loaded as modules.
 
-        moduleManager.writeInitialization(body, scriptURLs,
+        moduleManager.writeInitialization(body, libraryURLs,
                 forPriority(InitializationPriority.IMMEDIATE),
                 forPriority(InitializationPriority.EARLY, InitializationPriority.NORMAL, InitializationPriority.LATE));
     }

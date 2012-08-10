@@ -107,8 +107,8 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         expect(stack.stacks).andReturn([])
 
-        linker.addScriptLink("stack1.js")
-        linker.addScriptLink("stack2.js")
+        linker.addLibrary("stack1.js")
+        linker.addLibrary("stack2.js")
         linker.addStylesheetLink(stylesheetLink)
     }
 
@@ -153,7 +153,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         Asset library = mockAsset("mylib.js")
 
-        linker.addScriptLink("mylib.js")
+        linker.addLibrary("mylib.js")
 
         replay()
 
@@ -191,7 +191,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         expect(mystack.initialization).andReturn null
 
-        linker.addScriptLink("stacks/mystack.js")
+        linker.addLibrary("stacks/mystack.js")
 
         replay()
 
@@ -230,7 +230,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         expect(stack.stacks).andReturn([])
 
-        linker.addScriptLink("stack.js")
+        linker.addLibrary("stack.js")
         linker.addStylesheetLink(stylesheetLink)
 
         linker.addScript(InitializationPriority.IMMEDIATE, "stackInit();")
@@ -283,8 +283,8 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         expect(parent.getStacks()).andReturn([])
 
-        linker.addScriptLink("parent.js")
-        linker.addScriptLink("child.js")
+        linker.addLibrary("parent.js")
+        linker.addLibrary("child.js")
 
         linker.addStylesheetLink(parentStylesheetLink)
         linker.addStylesheetLink(childStylesheetLink)
@@ -316,8 +316,8 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         Asset library1 = mockAsset("mylib1.js")
         Asset library2 = mockAsset("mylib2.js")
 
-        linker.addScriptLink("mylib1.js")
-        linker.addScriptLink("mylib2.js")
+        linker.addLibrary("mylib1.js")
+        linker.addLibrary("mylib2.js")
 
         replay()
 

@@ -28,7 +28,7 @@ public interface DocumentLinker
      * Adds a link to load a JavaScript library. . The &lt;script&gt; elements will be added inside
      * the document's &lt;head&gt;.
      */
-    void addScriptLink(String scriptURL);
+    void addLibrary(String libraryURL);
 
     /**
      * Adds a link to load a CSS stylesheet.

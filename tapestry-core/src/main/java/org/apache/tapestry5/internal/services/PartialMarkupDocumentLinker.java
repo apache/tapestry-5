@@ -27,15 +27,15 @@ import java.util.Map;
 
 public class PartialMarkupDocumentLinker implements DocumentLinker
 {
-    private final JSONArray scripts = new JSONArray();
+    private final JSONArray libraryURLs = new JSONArray();
 
     private final JSONArray stylesheets = new JSONArray();
 
     private final Map<InitializationPriority, List<JSONArray>> initsByPriority = CollectionFactory.newMap();
 
-    public void addScriptLink(String scriptURL)
+    public void addLibrary(String libraryURL)
     {
-        scripts.put(scriptURL);
+        libraryURLs.put(libraryURL);
     }
 
     public void addStylesheetLink(StylesheetLink stylesheet)
@@ -90,7 +90,7 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
             }
         }
 
-        boolean hasWork = scripts.length() > 0 || stylesheets.length() > 0 || fullInits.length() > 0;
+        boolean hasWork = libraryURLs.length() > 0 || stylesheets.length() > 0 || fullInits.length() > 0;
 
         if (!hasWork)
         {
@@ -100,9 +100,9 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
         JSONObject partial = reply.in(InternalConstants.PARTIAL_KEY);
 
 
-        if (scripts.length() > 0)
+        if (libraryURLs.length() > 0)
         {
-            partial.put("libraries", scripts);
+            partial.put("libraries", libraryURLs);
         }
 
         if (stylesheets.length() > 0)

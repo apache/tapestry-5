@@ -23,8 +23,8 @@ class PartialMarkupDocumentLinkerTest extends Assert {
     void script_link() {
         PartialMarkupDocumentLinker linker = new PartialMarkupDocumentLinker()
 
-        linker.addScriptLink("foo.js")
-        linker.addScriptLink("bar.js")
+        linker.addLibrary("foo.js")
+        linker.addLibrary("bar.js")
 
         JSONObject reply = new JSONObject()
 

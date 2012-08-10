@@ -167,7 +167,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         {
             public void work(String value)
             {
-                linker.addScriptLink(value);
+                linker.addLibrary(value);
             }
         };
 

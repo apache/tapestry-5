@@ -37,7 +37,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         // Only checked if there's something to link.
 
-        linker.addScriptLink("foo.js")
+        linker.addLibrary("foo.js")
         linker.addScript(InitializationPriority.NORMAL, "doSomething();")
 
         try {
@@ -79,7 +79,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         DocumentLinkerImpl linker = new DocumentLinkerImpl(null, true, "1.2.3")
 
-        linker.addScriptLink("foo.js")
+        linker.addLibrary("foo.js")
         linker.addScript(InitializationPriority.NORMAL, "doSomething();")
 
         // No root element is not an error, even though there's work to do.
@@ -99,8 +99,8 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         replay()
 
-        linker.addScriptLink("foo.js")
-        linker.addScriptLink("bar/baz.js")
+        linker.addLibrary("foo.js")
+        linker.addLibrary("bar/baz.js")
         linker.addScript(InitializationPriority.NORMAL, "pageInitialization();")
 
         linker.updateDocument(document)
@@ -228,7 +228,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         replay()
 
-        linker.addScriptLink("foo.js")
+        linker.addLibrary("foo.js")
 
         linker.updateDocument(document)
 
