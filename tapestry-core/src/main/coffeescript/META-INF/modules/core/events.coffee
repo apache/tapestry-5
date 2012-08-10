@@ -12,19 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# ## core/events
+#
 # This module defines logical names for all events that Tapestry-controlled elements
 # trigger or listener for. Prototype requires that all custom events have a namespace prefix; jQuery appears to
 # allow it without issue.
-define [], ->
-  zone: # Invoked on a zone element to force an update to its content. The event memo is the
-  # new content (an Element, or a string containing HTML markup). A top-level handler
-  # is responsible for the actual update; it fires an event on the element just before,
-  # and just after, the content is changed.
+define
+  # Defines a number of event names specific to Tapestry Zones. Zones are Tapestry components that are structured
+  # to correctly support dynamic updates from the server via an Ajax request, and a standard response
+  # (the partial page render reponse). More details are available in the `core/zone` module.
+  zone:
+    # Invoked on a zone element to force an update to its content. The event memo is the new content (an Element, or a
+    # `core/spi:ElementWrapper`, or a string containing HTML markup). A standard top-level handler is defined by module
+    # `core/zone`, and is responsible for the actual update; it triggers the `events.zone.willUpdate` and
+    # `events.zone.didUpdate` events just before and just after changing the element's content.
     update: "t5:zone-update"
 
-    # Triggered just before the content in a Zone will be updated.
+    # Triggered (by the standard handler) just before the content in a Zone will be updated.
     willUpdate: "t5:zone-will-update"
 
-    # Triggered just afer the content in a Zone has updated. If the zone was not visible,
-    # it is made visible after its content is changed, and before this event is triggered.
+    # Triggered (by the standard hanndler) just after the content in a Zone has updated. If the zone was not visible, it
+    # is made visible after its content is changed, and before this event is triggered.
     didUpdate: "t5:zone-did-update"
