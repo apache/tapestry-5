@@ -54,10 +54,6 @@ public class CoreJavaScriptStack implements JavaScriptStack
             {
                     // Core scripts added to any page that uses scripting
 
-                    // TODO: Only include prototype based on configuration
-                    "${tapestry.scriptaculous}/prototype.js",
-
-
                     // TODO: Only include these two when in compatibility mode ...
                     // after the t5-* and tapestry libraries have been stripped
                     // of Scriptaculous code.

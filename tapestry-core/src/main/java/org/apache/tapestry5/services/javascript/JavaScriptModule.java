@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.services.javascript;
 
-import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.Path;
@@ -233,9 +232,13 @@ public class JavaScriptModule
     @Contribute(ModuleManager.class)
     public static void setupBaseModuleShims(MappedConfiguration<String, Object> configuration,
                                             @Inject @Path("classpath:org/apache/tapestry5/underscore_1_3_3.js")
-                                            Resource underscore)
+                                            Resource underscore,
+
+                                            @Inject @Path("${tapestry.scriptaculous}/prototype.js")
+                                            Resource prototype)
     {
         configuration.add("_", new ShimModule(underscore, null, "_"));
+        configuration.add("prototype", new ShimModule(prototype, null, null));
     }
 
 }
