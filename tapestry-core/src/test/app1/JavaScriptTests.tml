@@ -12,5 +12,12 @@
         <t:pagelink page="index">back to index</t:pagelink>
     </li>
 </ul>
+
+
+<!-- The rest are test elements for the core/spi tests, etc. -->
+
+<div id="spi-test1"/>
+
+
 </body>
 </html>

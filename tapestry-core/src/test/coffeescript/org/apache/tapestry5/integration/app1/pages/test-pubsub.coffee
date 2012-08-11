@@ -1,6 +1,6 @@
-module "PubSub"
-
 require ["core/pubsub"], (pubsub) ->
+  module "core/pubsub"
+
   test "export aliases", ->
     ok pubsub.on is pubsub.respondTo, "on and respondTo"
     ok pubsub.off is pubsub.stopResponding, "off and stopResponding"
@@ -74,7 +74,6 @@ require ["core/pubsub"], (pubsub) ->
     deepEqual log, ["b:beta-second"], "only 'beta' responder invoked after removal"
 
   test "respondFirst is invoked first", ->
-
     log = []
 
     pubsub.on "stim", -> log.push "alpha"
@@ -83,6 +82,3 @@ require ["core/pubsub"], (pubsub) ->
     pubsub.fire "stim"
 
     deepEqual log, ["bravo", "alpha"], "first responder invoked first"
-
-
-

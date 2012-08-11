@@ -145,12 +145,12 @@ define ["_", "prototype"], (_) ->
   # Exposes the original element as property `element`.
   class ElementWrapper
 
-    constructor: (element) ->
-      @element = $(element)
+  # Passed the DOM Element
+    constructor: (@element) ->
 
-    # Hides the wrapped element, setting its display to 'none'.
-    #
-    # Returns this ElementWrapper.
+      # Hides the wrapped element, setting its display to 'none'.
+      #
+      # Returns this ElementWrapper.
     hide: ->
       @element.hide()
       this
@@ -406,10 +406,17 @@ define ["_", "prototype"], (_) ->
       return new EventHandler(elements, (split events), match, handler)
 
     # Returns an ElementWrapper for the provided DOM element that includes key behaviors:
+    #
     # * element - a DOM element, or the window, or the unique id of a DOM element
-    # Returns the ElementWrapper.
+    #
+    # Returns the ElementWrapper, or null if no DOM element with the given id exists.
     wrap: (element) ->
-      throw new Error("Attempt to wrap a null DOM element") unless element
+      if _.isString element
+        element = $ element
+        return null unless element
+      else
+        throw new Error("Attempt to wrap a null DOM element") unless element
+
       new ElementWrapper element
 
     # Returns a wrapped version of the document.body element. Care must be take to not invoke this function before the
