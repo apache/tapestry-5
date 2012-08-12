@@ -97,9 +97,6 @@ define ["_", "prototype"], (_) ->
   #
   # Registers the handler as an event listener for matching elements and event names.
   #
-  # Note: it is possible to add handlers for events on the window object, but
-  # `start()` and `stop()` do not do anything for such events.
-  #
   # * elements - array of DOM elements
   # * eventNames - array of event names
   # * match - selector to match bubbled elements, or null
@@ -108,22 +105,17 @@ define ["_", "prototype"], (_) ->
     constructor: (elements, eventNames, match, handler) ->
       throw new Error("No event handler was provided.") unless handler?
 
-      wrapped = (prototypeEvent, matchedElement) ->
+      wrapped = (prototypeEvent) ->
         # Set `this` to be the matched element (jQuery style), rather than
         # the element on which the event is observed.
-        handler.call(matchedElement, new EventWrapper prototypeEvent)
+        handler.call(prototypeEvent.findElement(), new EventWrapper prototypeEvent)
 
       # Prototype Event.Handler instances
       @protoHandlers = []
 
       _.each elements, (element) =>
         _.each eventNames, (eventName) =>
-          if element is window
-            unless _.isEmpty match
-              throw Error("Matching of elements by selector is not supported for window events.")
-            Event.observe element, eventName, wrapped
-          else
-            @protoHandlers.push element.on eventName, match, wrapped
+            @protoHandlers.push Event.on element, eventName, match, wrapped
 
     # Invoked after `stop()` to restart event listening.
     #

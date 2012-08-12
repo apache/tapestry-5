@@ -16,7 +16,13 @@
 
 <!-- The rest are test elements for the core/spi tests, etc. -->
 
+<hr/>
+
 <div id="spi-test1"/>
+
+<div id="spi-test2">
+    <a href="#">button</a>
+</div>
 
 
 </body>
