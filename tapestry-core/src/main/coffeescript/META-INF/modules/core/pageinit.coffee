@@ -81,9 +81,20 @@ define ["_", "core/console", "core/spi", "core/events"],
       [moduleName, functionName] = qualifiedName.split ':'
 
       require [moduleName], (moduleLib) ->
+
+        # Some modules export nothing but do some full-page initialization, such as adding
+        # event handlers to the body.
+        if not functionName and
+          initArguments.length is 0 and
+          not _.isFunction moduleLib
+            tracker()
+            return
+
         fn = if functionName? then moduleLib[functionName] else moduleLib
+
         console.debug "Invoking #{qualifiedName} with " + JSON.stringify(initArguments)
         fn.apply null, initArguments
+
 
         tracker()
 

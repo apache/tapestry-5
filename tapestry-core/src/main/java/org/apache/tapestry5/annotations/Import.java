@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010-2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -67,4 +67,19 @@ public @interface Import
      * @see JavaScriptSupport#importStylesheet(org.apache.tapestry5.Asset)
      */
     String[] stylesheet() default {};
+
+    /**
+     * Names of modules to import. A module name consists of a path, with the terms seperated by a slash character. The first
+     * term is the library name (or "app" for the application), e.g. <code>flash/gordon</code> would map to the file
+     * <code>META-INF/modules/flash/gordon.js</code>.  Alternately a function name can be included, after a colon seperator.
+     * e.g., <code>flash/gordon:setup</code>.
+     * <p/>
+     * Module initializations specified this way may not have an parameters, so they are typically doing single-use
+     * setup.
+     *
+     * @see org.apache.tapestry5.services.javascript.ModuleManager
+     * @see JavaScriptSupport#require(String)
+     * @since 5.4
+     */
+    String[] modules() default {};
 }

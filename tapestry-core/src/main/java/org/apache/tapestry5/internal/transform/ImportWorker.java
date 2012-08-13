@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010-2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,9 +26,13 @@ import org.apache.tapestry5.model.MutableComponentModel;
 import org.apache.tapestry5.plastic.*;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.TransformConstants;
+import org.apache.tapestry5.services.javascript.Initialization;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.TransformationSupport;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Implements the {@link Import} annotation, both at the class and at the method level.
@@ -113,6 +117,8 @@ public class ImportWorker implements ComponentClassTransformWorker2
         importLibraries(componentClass, model, method, annotation.library());
 
         importStylesheets(componentClass, model, method, annotation.stylesheet());
+
+        importModules(method, annotation.modules());
     }
 
     private void importStacks(PlasticMethod method, String[] stacks)
@@ -132,6 +138,64 @@ public class ImportWorker implements ComponentClassTransformWorker2
                 for (String stack : stacks)
                 {
                     javascriptSupport.importStack(stack);
+                }
+
+                invocation.proceed();
+            }
+        };
+    }
+
+    private void importModules(PlasticMethod method, String[] moduleNames)
+    {
+        if (moduleNames.length != 0)
+        {
+            method.addAdvice(createImportModulesAdvice(moduleNames));
+        }
+    }
+
+    class ModuleImport
+    {
+        final String moduleName, functionName;
+
+        ModuleImport(String moduleName, String functionName)
+        {
+            this.moduleName = moduleName;
+            this.functionName = functionName;
+        }
+
+        void apply(JavaScriptSupport javaScriptSupport)
+        {
+            Initialization initialization = javaScriptSupport.require(moduleName);
+
+            if (functionName != null)
+            {
+                initialization.invoke(functionName);
+            }
+        }
+    }
+
+    private MethodAdvice createImportModulesAdvice(final String[] moduleNames)
+    {
+        final List<ModuleImport> moduleImports = new ArrayList<ModuleImport>(moduleNames.length);
+
+        for (String name : moduleNames)
+        {
+            int colonx = name.indexOf(':');
+
+            String moduleName = colonx < 0 ? name : name.substring(0, colonx);
+            String functionName = colonx < 0 ? null : name.substring(colonx + 1);
+
+            moduleImports.add(new ModuleImport(moduleName, functionName));
+        }
+
+        return new MethodAdvice()
+        {
+            @Override
+            public void advise(MethodInvocation invocation)
+            {
+                for (ModuleImport moduleImport : moduleImports)
+                {
+                    moduleImport.apply(javascriptSupport);
                 }
 
                 invocation.proceed();
