@@ -24,6 +24,7 @@ define ["_", "prototype"], (_) ->
   split = (str) ->
     _(str.split " ").reject (s) -> s is ""
 
+  # _internal_: Fires a native event; something that Prototype does not normally do.
   fireNativeEvent = (element, eventName) ->
     if document.createEventObject
       # IE support:
