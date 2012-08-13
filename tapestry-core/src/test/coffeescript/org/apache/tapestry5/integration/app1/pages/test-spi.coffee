@@ -87,7 +87,7 @@ require ["core/spi"], (spi) ->
     eh = container.on "x:click", "a.btn-primary", (event) ->
       event.stop()
 
-      strictEqual this, primary.element, "this should be the element that was matched"
+      strictEqual this.element, primary.element, "this should be the wrapper for element that was matched"
 
     primary.trigger "x:click"
 

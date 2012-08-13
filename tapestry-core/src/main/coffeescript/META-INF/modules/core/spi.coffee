@@ -112,15 +112,18 @@ define ["_", "prototype"], (_) ->
   # * elements - array of DOM elements
   # * eventNames - array of event names
   # * match - selector to match bubbled elements, or null
-  # * handler - event handler function to invoke; it will be passed an EventWrapper instance
+  # * handler - event handler function to invoke; it will be passed an EventWrapper instance as the first parameter,
+  #   and the memo as the second parameter. `this` will be the ElementWrapper for the matched element.
   class EventHandler
     constructor: (elements, eventNames, match, handler) ->
       throw new Error("No event handler was provided.") unless handler?
 
       wrapped = (prototypeEvent) ->
-        # Set `this` to be the matched element (jQuery style), rather than
-        # the element on which the event is observed.
-        handler.call(prototypeEvent.findElement(), new EventWrapper prototypeEvent)
+        # Set `this` to be the matched ElementWrapper, rather than the element on which the event is observed.
+        elementWrapper = new ElementWrapper prototypeEvent.findElement()
+        eventWrapper = new EventWrapper prototypeEvent
+
+        handler.call elementWrapper, eventWrapper, eventWrapper.memo
 
       # Prototype Event.Handler instances
       @protoHandlers = []
