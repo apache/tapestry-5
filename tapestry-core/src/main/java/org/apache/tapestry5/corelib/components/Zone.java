@@ -15,10 +15,7 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.BeginRender;
-import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.corelib.internal.ComponentActionSink;
 import org.apache.tapestry5.corelib.internal.FormSupportAdapter;
 import org.apache.tapestry5.corelib.internal.HiddenFieldPositioner;
@@ -68,13 +65,14 @@ import org.slf4j.Logger;
  * A Zone starts and stops a {@link Heartbeat} when it renders (both normally, and when re-rendering).
  * <p/>
  * After the client-side content is updated, a client-side event is fired on the zone's element. The constant
- * Tapestry.ZONE_UPDATED_EVENT can be used to listen to the event.
+ * <code>core/events:zone.didUpdate</code> can be used to listen to the event.
  *
  * @tapestrydoc
  * @see AjaxFormLoop
  * @see FormFragment
  */
 @SupportsInformalParameters
+@Import(modules = "core/zone")
 public class Zone implements ClientBodyElement
 {
     /**
