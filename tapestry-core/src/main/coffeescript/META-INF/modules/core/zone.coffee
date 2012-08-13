@@ -20,17 +20,16 @@ define ["core/spi", "core/events"],
   (spi, events) ->
     spi.domReady ->
       spi.body().on events.zone.update, (event) ->
-        zone = spi.wrap this
 
-        zone.trigger events.zone.willUpdate
+        this.trigger events.zone.willUpdate
 
         # TODO: purge existing children?
 
-        zone.update event.memo
+        this.update event.memo
 
-        zone.show() unless zone.visible()
+        this.show() unless this.visible()
 
-        zone.trigger events.zone.didUpdate
+        this.trigger events.zone.didUpdate
 
     # No meaningful value is returned.
-    true
+    return
