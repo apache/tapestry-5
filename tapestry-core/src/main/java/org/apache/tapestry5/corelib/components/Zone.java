@@ -27,6 +27,7 @@ import org.apache.tapestry5.internal.services.RequestConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.compatibility.DeprecationWarning;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.slf4j.Logger;
 
@@ -153,9 +154,25 @@ public class Zone implements ClientBodyElement
     @Environmental(false)
     private FormSupport formSupport;
 
+    @Inject
+    private DeprecationWarning deprecationWarning;
+
     String defaultElementName()
     {
         return resources.getElementName("div");
+    }
+
+    void setupRender()
+    {
+        if (show != null)
+        {
+            deprecationWarning.componentParameter(resources, "show", "This parameter is ignored and may be removed.");
+        }
+
+        if (update != null)
+        {
+            deprecationWarning.componentParameter(resources, "update", "This parameter is ignored and may be removed.");
+        }
     }
 
     void beginRender(MarkupWriter writer)
