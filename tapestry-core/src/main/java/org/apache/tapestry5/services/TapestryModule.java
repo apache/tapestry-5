@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2006-2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.annotations.ContentType;
 import org.apache.tapestry5.beaneditor.DataTypeConstants;
 import org.apache.tapestry5.beaneditor.Validate;
-import org.apache.tapestry5.corelib.ClientValidation;
 import org.apache.tapestry5.grid.GridConstants;
 import org.apache.tapestry5.grid.GridDataSource;
 import org.apache.tapestry5.internal.*;
@@ -96,7 +95,6 @@ import org.apache.tapestry5.services.security.WhitelistAnalyzer;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
 import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import org.apache.tapestry5.services.transform.InjectionProvider2;
-import org.apache.tapestry5.util.StringToEnumCoercion;
 import org.apache.tapestry5.validator.*;
 import org.slf4j.Logger;
 
@@ -1159,15 +1157,6 @@ public final class TapestryModule
                 return input.getResource();
             }
         }));
-
-        // Add support for "true" and "false", for compatibility with Tapestry 5.1 and earlier.
-        // These aliases may be removed in some later release.
-
-        StringToEnumCoercion<ClientValidation> stringToClientValidationCoercion = StringToEnumCoercion
-                .create(ClientValidation.class).addAlias("true", ClientValidation.BLUR)
-                .addAlias("false", ClientValidation.NONE);
-
-        configuration.add(CoercionTuple.create(String.class, ClientValidation.class, stringToClientValidationCoercion));
 
         configuration.add(CoercionTuple.create(ValueEncoder.class, ValueEncoderFactory.class, new Coercion<ValueEncoder, ValueEncoderFactory>()
         {

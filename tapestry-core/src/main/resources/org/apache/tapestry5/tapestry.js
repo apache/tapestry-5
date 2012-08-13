@@ -1339,7 +1339,6 @@ define("core/compat/tapestry", [
 
         initialize: function (spec) {
             this.form = $(spec.formId);
-            this.validateOnBlur = spec.validate.blur;
             this.validateOnSubmit = spec.validate.submit;
 
             this.form.onsubmit = this.handleSubmit.bindAsEventListener(this);
@@ -1463,21 +1462,6 @@ define("core/compat/tapestry", [
             this.translator = Prototype.K;
 
             var fem = $(this.field.form).getFormEventManager();
-
-            if (fem.validateOnBlur) {
-
-                document.observe(Tapestry.FOCUS_CHANGE_EVENT, function (event) {
-                    /*
-                     * If changing focus *within the same form* then perform
-                     * validation. Note that Tapestry.currentFocusField does not
-                     * change until after the FOCUS_CHANGE_EVENT notification.
-                     */
-                    if (Tapestry.currentFocusField == this.field
-                            && this.field.form == event.memo.form)
-                        this.validateInput();
-
-                }.bindAsEventListener(this));
-            }
 
             if (fem.validateOnSubmit) {
                 $(this.field.form).observe(Tapestry.FORM_VALIDATE_FIELDS_EVENT,

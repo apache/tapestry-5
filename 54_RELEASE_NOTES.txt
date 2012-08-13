@@ -10,17 +10,25 @@ RequireJS, which may mean that global values exported by the libraries are not v
 properties to the global JavaScript window object, rather than assume that the context (this) is the window.
 
 The interface org.apache.tapestry5.services.assets.ResourceTransformer has had a new method added:
-getTransformedContentType().
+getTransformedContentType(). This makes it possible to determine which file extensions map to which content types
+(for example, A ResourceTransformer for CoffeeScript files, with extension ".coffee", would map to "text/javascript").
 
 Older versions of Tapestry included client-side support for an element with the CSS class "t-zone-update" as the actual
 element to be updated when new content is provided for the zone in a partial page render response. This feature has been
 removed with no replacement.
 
 Minor changes to Tapestry.ElementEffects.  Despite the names of the properties (kept for compatibility), all "effects"
-are now simply make the element appear or hide, with no animation.
+now simply make the element appear or hide, with no animation.
 
 Tapestry code no longer makes use of Scriptaculous. Instead, Tapestry will fire events on elements, and user code may
 decide to animate them using whatever library is desired.
 
 On the client side, the "floating console" is only used in cases where a native console is not available. (Is this a
 change from 5.3?)
+
+Support for validating fields on blur (i.e., when tabbing out of a field) has been removed. Validation now occurs when
+the form is submitted, or not at all. The ClientValidation.BLUR enum value has been deprecated and is now treated as
+SUBMIT.
+
+Prior releases of Tapestry mapped "true" and "false" values for Form.clientValidation to BLUR and NONE. This mapping
+was introduced in Tapestry 5.2, and has now been removed.

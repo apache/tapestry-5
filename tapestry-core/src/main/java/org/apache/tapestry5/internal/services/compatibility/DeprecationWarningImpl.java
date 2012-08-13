@@ -91,11 +91,11 @@ public class DeprecationWarningImpl implements DeprecationWarning
 
         deprecations.put(key, true);
 
-        logger.error(String.format("Component %s, parameter %s. %s\n(at %s)",
+        logger.error(String.format("Component %s, parameter %s: %s\n(at %s)",
                 key.completeId,
                 parameterName,
                 message,
-                resources.getLocation());
+                resources.getLocation()));
     }
 
     public void setupClearDeprecationsWhenInvalidated(

@@ -1,4 +1,4 @@
-// Copyright 2007, 2010 The Apache Software Foundation
+// Copyright 2007, 2010, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ public class BeanEditRemoveReorder extends BeanEditorDemo
     @Override
     public ClientValidation getClientValidation()
     {
-        return ClientValidation.BLUR;
+        return ClientValidation.SUBMIT;
     }
 
     @Override

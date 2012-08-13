@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2006-2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.compatibility.DeprecationWarning;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.slf4j.Logger;
@@ -79,7 +80,6 @@ import java.io.ObjectInputStream;
  * so that enclosed components can coordinate with the Form component. It also places a {@link ValidationTracker} into the environment during both render and submission.
  * During submission it also pushes a {@link Heartbeat} into the environment, which is {@link org.apache.tapestry5.services.Heartbeat#end() ended} just before
  * {@linkplain FormSupport#defer(Runnable) deferred FormSupport operations} are executed.
- * </p>
  * </p>
  *
  * @tapestrydoc
@@ -136,10 +136,11 @@ public class Form implements ClientElement, FormValidationControl
     private boolean clientLogicDefaultEnabled;
 
     /**
-     * Controls when client validation occurs on the client, if at all. Defaults to {@link ClientValidation#BLUR}.
+     * Controls when client validation occurs on the client, if at all. Defaults to {@link ClientValidation#SUBMIT}.
+     * {@link ClientValidation#BLUR} was the default, prior to Tapestry 5.4, but is no longer supported.
      */
     @Parameter(allowNull = false, defaultPrefix = BindingConstants.LITERAL)
-    private ClientValidation clientValidation = clientLogicDefaultEnabled ? ClientValidation.BLUR
+    private ClientValidation clientValidation = clientLogicDefaultEnabled ? ClientValidation.SUBMIT
             : ClientValidation.NONE;
 
     /**
@@ -251,6 +252,9 @@ public class Form implements ClientElement, FormValidationControl
     @Inject
     private PropertyAccess propertyAccess;
 
+    @Inject
+    private DeprecationWarning deprecationWarning;
+
     private String clientId;
 
     @Inject
@@ -296,7 +300,14 @@ public class Form implements ClientElement, FormValidationControl
         FormSupport existing = environment.peek(FormSupport.class);
 
         if (existing != null)
+        {
             throw new TapestryException(messages.get("core-form-nesting-not-allowed"), existing, null);
+        }
+
+        if (clientValidation == ClientValidation.BLUR)
+        {
+            deprecationWarning.componentParameterValue(resources, "clientValidation", clientValidation, "BLUR is no longer supported, starting in 5.4. Validation will occur as with SUBMIT.");
+        }
     }
 
     void beginRender(MarkupWriter writer)
@@ -373,8 +384,8 @@ public class Form implements ClientElement, FormValidationControl
 
     private void addJavaScriptInitialization()
     {
-        JSONObject validateSpec = new JSONObject().put("blur", clientValidation == ClientValidation.BLUR).put("submit",
-                clientValidation != ClientValidation.NONE);
+        JSONObject validateSpec = new JSONObject()
+                .put("submit", clientValidation != ClientValidation.NONE);
 
         JSONObject spec = new JSONObject("formId", clientId).put("validate", validateSpec);
 
@@ -394,12 +405,15 @@ public class Form implements ClientElement, FormValidationControl
      * <p/>
      * This method may also be invoked as the handler for the "internalCreateRenderTimeFormSupport" event.
      *
-     * @param clientId   the client-side id for the rendered form
-     *                   element
-     * @param actionSink used to collect component actions that will, ultimately, be
-     *                   written as the t:formdata hidden
-     *                   field
-     * @param allocator  used to allocate unique ids
+     * @param clientId
+     *         the client-side id for the rendered form
+     *         element
+     * @param actionSink
+     *         used to collect component actions that will, ultimately, be
+     *         written as the t:formdata hidden
+     *         field
+     * @param allocator
+     *         used to allocate unique ids
      * @return form support object
      */
     @OnEvent("internalCreateRenderTimeFormSupport")
