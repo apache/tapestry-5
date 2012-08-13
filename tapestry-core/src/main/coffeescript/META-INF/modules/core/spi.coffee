@@ -78,7 +78,7 @@ define ["_", "prototype"], (_) ->
 
     styles[styleName] = initial
     element.setStyle styles
-fadeIn
+
   # Generic view of an DOM event that is passed to a handler function.
   #
   # Properties:
