@@ -30,6 +30,39 @@ public class DeprecationWarningImpl implements DeprecationWarning
 {
     private final Logger logger;
 
+    static class ParameterDeprecationKey
+    {
+        final String completeId, parameterName;
+
+        ParameterDeprecationKey(String completeId, String parameterName)
+        {
+            this.completeId = completeId;
+            this.parameterName = parameterName;
+        }
+
+        @Override
+        public boolean equals(Object o)
+        {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            ParameterDeprecationKey that = (ParameterDeprecationKey) o;
+
+            if (!completeId.equals(that.completeId)) return false;
+            if (!parameterName.equals(that.parameterName)) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode()
+        {
+            int result = completeId.hashCode();
+            result = 31 * result + parameterName.hashCode();
+            return result;
+        }
+    }
+
     static class ParameterValueDeprecationKey
     {
         final String completeId, parameterName;
@@ -76,6 +109,25 @@ public class DeprecationWarningImpl implements DeprecationWarning
     }
 
     @Override
+    public void componentParameter(ComponentResources resources, String parameterName, String message)
+    {
+        assert resources != null;
+        assert InternalUtils.isNonBlank(parameterName);
+        assert InternalUtils.isNonBlank(message);
+
+        ParameterDeprecationKey key = new ParameterDeprecationKey(resources.getCompleteId(), parameterName);
+
+        if (deprecations.containsKey(key))
+        {
+            return;
+        }
+
+        deprecations.put(key, true);
+
+        logMessage(resources, parameterName, message);
+    }
+
+    @Override
     public void componentParameterValue(ComponentResources resources, String parameterName, Object parameterValue, String message)
     {
         assert resources != null;
@@ -91,8 +143,13 @@ public class DeprecationWarningImpl implements DeprecationWarning
 
         deprecations.put(key, true);
 
+        logMessage(resources, parameterName, message);
+    }
+
+    private void logMessage(ComponentResources resources, String parameterName, String message)
+    {
         logger.error(String.format("Component %s, parameter %s: %s\n(at %s)",
-                key.completeId,
+                resources.getCompleteId(),
                 parameterName,
                 message,
                 resources.getLocation()));

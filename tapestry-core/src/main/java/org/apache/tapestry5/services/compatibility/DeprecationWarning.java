@@ -23,6 +23,22 @@ import org.apache.tapestry5.ComponentResources;
  */
 public interface DeprecationWarning
 {
+
+    /**
+     * Used to identify a component parameter that has been deprecated. Typically, such parameters are simply
+     * ignored, but the message should be specific about this.
+     *
+     * @param resources
+     *         identifies the component, including its location
+     * @param parameterName
+     *         name of the deprecated parameter
+     * @param message
+     *         message to display; typically explains what action will be taken, such as simply ignoring the parameter entirely. This should clarify
+     *         the issue to the developer, guiding them torwards resolving the deprecation, typically be eliminating
+     *         the parameter entirely.
+     */
+    void componentParameter(ComponentResources resources, String parameterName, String message);
+
     /**
      * Used to identify a specific parameter value that is no longer supported. The first time this combination of
      * component, parameter name, and parameter value are provided, an error is logged against this service's
