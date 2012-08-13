@@ -78,7 +78,7 @@ define ["_", "prototype"], (_) ->
 
     styles[styleName] = initial
     element.setStyle styles
-
+fadeIn
   # Generic view of an DOM event that is passed to a handler function.
   #
   # Properties:
@@ -240,7 +240,7 @@ define ["_", "prototype"], (_) ->
         onstart: => @element.show()
         oncomplete: callback
 
-    this
+      this
 
     # Runs an animation to fade out an element over the specified duration. The element should already
     # be visible and fully opaque.
