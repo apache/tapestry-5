@@ -2,7 +2,7 @@ require ["core/spi"], (spi) ->
   module "core/spi"
 
   test "get wrapped element by id", ->
-    e = spi.wrap "spi-test1"
+    e = spi.wrap "spi-eventelement"
 
     ok e isnt null, "element found and wrapped"
 
@@ -14,7 +14,7 @@ require ["core/spi"], (spi) ->
   test "pause and resume events", ->
 
     clicks = 0
-    container = spi.wrap "spi-test2"
+    container = spi.wrap "spi-eventelement"
     button = container.find "a"
 
     # Remember that Prototype will never trigger a native event, just a
@@ -38,3 +38,22 @@ require ["core/spi"], (spi) ->
     button.trigger "x:click"
 
     equal clicks, 2, "notifications resume after EventHandler started"
+
+  test "selector used with events filters", ->
+
+    clicks = 0
+    container = spi.wrap "spi-eventelement"
+    primary = container.find "a.btn-primary"
+    secondary = container.find "a[data-use=secondary]"
+
+    container.on "x:click", "a.btn-primary", (event) ->
+      event.stop()
+      clicks++
+
+    primary.trigger "x:click"
+
+    equal clicks, 1, "click on selected element invokes handler"
+
+    secondary.trigger "x:click"
+
+    equal clicks, 1, "click on non-selected element does not invoke handler"

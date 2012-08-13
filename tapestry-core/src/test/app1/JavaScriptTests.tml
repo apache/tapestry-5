@@ -2,26 +2,20 @@
 <head><title>JavaScript Tests</title></head>
 <body>
 
+<h1>
+    <t:pagelink page="index">back to index</t:pagelink>
+</h1>
+
+
 <div id="qunit"/>
-
-<ul>
-    <li>
-        <t:pagelink page="javascripttests">rerun all tests</t:pagelink>
-    </li>
-    <li>
-        <t:pagelink page="index">back to index</t:pagelink>
-    </li>
-</ul>
-
 
 <!-- The rest are test elements for the core/spi tests, etc. -->
 
 <hr/>
 
-<div id="spi-test1"/>
-
-<div id="spi-test2">
-    <a href="#">button</a>
+<div id="spi-eventelement">
+    <a href="#" class="btn btn-primary">primary</a>
+    <a href="#" class="btn" data-use="secondary">secondary</a>
 </div>
 
 
