@@ -57,3 +57,29 @@ require ["core/spi"], (spi) ->
     secondary.trigger "x:click"
 
     equal clicks, 1, "click on non-selected element does not invoke handler"
+
+  test "this is matched element in handler", ->
+
+    container = spi.wrap "spi-eventelement"
+    primary = container.find "a.btn-primary"
+
+    container.on "x:click", "a.btn-primary", (event) ->
+      event.stop()
+
+      strictEqual this, primary.element, "this should be the element that was matched"
+
+    primary.trigger "x:click"
+
+  test "visibility, hide(), and show()", ->
+
+    e = (spi.wrap "spi-visibility").find "span"
+
+    equal e.visible(), true, "element is initially visible"
+
+    e.hide()
+
+    equal e.visible(), false, "element is not visible once hidden"
+
+    e.show()
+
+    equal e.visible(), true, "element is visible against once shown"

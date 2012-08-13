@@ -18,6 +18,10 @@
     <a href="#" class="btn" data-use="secondary">secondary</a>
 </div>
 
+<div id="spi-visibility">
+    <span>initially visible</span>
+</div>
+
 
 </body>
 </html>
