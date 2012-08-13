@@ -19,6 +19,7 @@ require ["core/spi"], (spi) ->
 
     # Remember that Prototype will never trigger a native event, just a
     # custom event, so we create a custom event here.
+    # NOTE: support for native events was added later.
     eh = container.on "x:click", "a", (event) ->
       event.stop()
       clicks++
@@ -39,6 +40,24 @@ require ["core/spi"], (spi) ->
 
     equal clicks, 2, "notifications resume after EventHandler started"
 
+    eh.stop()
+
+  test "trigger native events", ->
+
+    clicks = 0
+    container = spi.wrap "spi-eventelement"
+    button = container.find "a"
+
+    eh = container.on "click", "a", (event) ->
+      event.stop()
+      clicks++
+
+    button.trigger "click"
+
+    equal clicks, 1, "native event was triggered"
+
+    eh.stop()
+
   test "selector used with events filters", ->
 
     clicks = 0
@@ -46,7 +65,7 @@ require ["core/spi"], (spi) ->
     primary = container.find "a.btn-primary"
     secondary = container.find "a[data-use=secondary]"
 
-    container.on "x:click", "a.btn-primary", (event) ->
+    eh = container.on "x:click", "a.btn-primary", (event) ->
       event.stop()
       clicks++
 
@@ -58,17 +77,21 @@ require ["core/spi"], (spi) ->
 
     equal clicks, 1, "click on non-selected element does not invoke handler"
 
+    eh.stop()
+
   test "this is matched element in handler", ->
 
     container = spi.wrap "spi-eventelement"
     primary = container.find "a.btn-primary"
 
-    container.on "x:click", "a.btn-primary", (event) ->
+    eh = container.on "x:click", "a.btn-primary", (event) ->
       event.stop()
 
       strictEqual this, primary.element, "this should be the element that was matched"
 
     primary.trigger "x:click"
+
+    eh.stop()
 
   test "visibility, hide(), and show()", ->
 

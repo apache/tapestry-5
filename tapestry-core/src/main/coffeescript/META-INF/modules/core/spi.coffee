@@ -24,6 +24,17 @@ define ["_", "prototype"], (_) ->
   split = (str) ->
     _(str.split " ").reject (s) -> s is ""
 
+  fireNativeEvent = (element, eventName) ->
+    if document.createEventObject
+      # IE support:
+      event = document.createEventObject()
+      element.fireEvent "on#{eventName}", event
+    else
+      # Everyone else:
+      event = document.createEvent "HTMLEvents"
+      event.initEvent eventName, true, true
+      element.dispatchEvent event
+
   # _internal_: Converts content (provided to `ElementWrapper.update()` or `append()`) into an appropriate type. This
   # primarily exists to validate the value, and to "unpack" an ElementWrapper into a DOM element.
   convertContent = (content) ->
@@ -270,16 +281,27 @@ define ["_", "prototype"], (_) ->
     visible: ->
       @element.visible()
 
-    # Fires a named event, passing an optional _memo_ object to event handler functions.
+    # Fires a named event, passing an optional _memo_ object to event handler functions. This must support
+    # common native events (exact list TBD), as well as native events (in Prototype, native events must have
+    # a prefix that ends with a colon).
+    #
+    # * eventName - name of event to trigger on the wrapped Element
+    # * memo - optional value assocated with the event; available as WrappedeEvent.memo in event handler functions (must
+    # be null for native events)
     #
     # Returns this ElementWrapper.
-    #
-    # eventName - name of event to trigger on the wrapped Element
-    # memo - optional value assocated with the event; available as WrappedeEvent.memo in event handler functions
     trigger: (eventName, memo) ->
       throw new Error("Attempt to trigger event with null event name") unless eventName?
 
-      @element.fire eventName, memo
+      if (eventName.indexOf ':') > 0
+        # Custom event is supported directly by Prototype:
+        @element.fire eventName, memo
+      else
+        # Native events take some extra work:
+        throw new Error("Memo must be null when triggering a native event") if memo
+
+        fireNativeEvent @element, eventName
+
       this
 
     # Adds an event handler for one or more events.
