@@ -137,12 +137,12 @@ define ["_", "prototype"], (_) ->
   # Exposes the original element as property `element`.
   class ElementWrapper
 
-  # Passed the DOM Element
+    # Passed the DOM Element
     constructor: (@element) ->
 
-      # Hides the wrapped element, setting its display to 'none'.
-      #
-      # Returns this ElementWrapper.
+    # Hides the wrapped element, setting its display to 'none'.
+    #
+    # Returns this ElementWrapper.
     hide: ->
       @element.hide()
       this
