@@ -361,6 +361,34 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         verify()
     }
 
+    @Test
+    void module_initialization_with_no_parameters_coalesce() throws Exception {
+        Document document = new Document()
+
+        Element head = document.newRootElement("html").element("head")
+
+        head.element("meta")
+
+        def manager = mockModuleManager([], [], [new JSONArray("['my/module']"),
+            new JSONArray("my/other/module:normal", 111, 222)])
+
+        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, true, "1.2.3")
+
+        replay()
+
+        linker.addInitialization(InitializationPriority.NORMAL, "my/module", null, null)
+        linker.addInitialization(InitializationPriority.NORMAL, "my/other/module", "normal", new JSONArray(111, 222))
+        linker.addInitialization(InitializationPriority.NORMAL, "my/module", null, new JSONArray());
+
+        linker.updateDocument(document)
+
+        check document, '''
+<html><head><meta/></head><body><!--MODULE-MANAGER-INITIALIZATION--></body></html>
+'''
+
+        verify()
+    }
+
     private ModuleManager mockModuleManager(scripts, immediateInits, deferredInits) {
 
         ModuleManager mock = newMock(ModuleManager);

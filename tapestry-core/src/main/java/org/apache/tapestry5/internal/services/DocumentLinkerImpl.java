@@ -17,21 +17,18 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.dom.Document;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.ModuleManager;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class DocumentLinkerImpl implements DocumentLinker
 {
     private final List<String> libraryURLs = CollectionFactory.newList();
 
-    private final Map<InitializationPriority, List<JSONArray>> priorityToModuleInit = CollectionFactory.newMap();
+    private final ModuleInitsManager initsManager = new ModuleInitsManager();
 
     private final List<StylesheetLink> includedStylesheets = CollectionFactory.newList();
 
@@ -43,8 +40,6 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     // Initially false; set to true when a scriptURL or any kind of initialization is added.
     private boolean hasScriptsOrInitializations;
-
-    private int initCount;
 
     /**
      * @param moduleManager
@@ -81,19 +76,9 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     public void addInitialization(InitializationPriority priority, String moduleName, String functionName, JSONArray arguments)
     {
-        JSONArray init = new JSONArray();
-
-        String name = functionName == null ? moduleName : moduleName + ":" + functionName;
-
-        init.put(name);
-
-        init.putAll(arguments);
-
-        InternalUtils.addToMapList(priorityToModuleInit, priority, init);
+        initsManager.addInitialization(priority, moduleName, functionName, arguments);
 
         hasScriptsOrInitializations = true;
-
-        initCount++;
     }
 
     /**
@@ -189,22 +174,6 @@ public class DocumentLinkerImpl implements DocumentLinker
         return container;
     }
 
-    private List<JSONArray> forPriority(InitializationPriority... priorities)
-    {
-        List<JSONArray> result = new ArrayList<JSONArray>(initCount);
-
-        for (InitializationPriority p : priorities)
-        {
-            List<JSONArray> inits = priorityToModuleInit.get(p);
-
-            if (inits != null)
-            {
-                result.addAll(inits);
-            }
-        }
-
-        return result;
-    }
 
     /**
      * Adds {@code <script>} elements for the RequireJS library, then any statically includes JavaScript libraries
@@ -220,8 +189,8 @@ public class DocumentLinkerImpl implements DocumentLinker
         // Eventually, (nearly) everything will be loaded as modules.
 
         moduleManager.writeInitialization(body, libraryURLs,
-                forPriority(InitializationPriority.IMMEDIATE),
-                forPriority(InitializationPriority.EARLY, InitializationPriority.NORMAL, InitializationPriority.LATE));
+                initsManager.forPriority(InitializationPriority.IMMEDIATE),
+                initsManager.forPriority(InitializationPriority.EARLY, InitializationPriority.NORMAL, InitializationPriority.LATE));
     }
 
     private static Element createTemporaryContainer(Element headElement, String existingElementName, String newElementName)

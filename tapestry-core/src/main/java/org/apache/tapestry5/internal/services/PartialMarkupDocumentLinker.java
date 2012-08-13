@@ -15,15 +15,10 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.InternalConstants;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
-
-import java.util.List;
-import java.util.Map;
 
 public class PartialMarkupDocumentLinker implements DocumentLinker
 {
@@ -31,7 +26,7 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
 
     private final JSONArray stylesheets = new JSONArray();
 
-    private final Map<InitializationPriority, List<JSONArray>> initsByPriority = CollectionFactory.newMap();
+    private final ModuleInitsManager initsManager = new ModuleInitsManager();
 
     public void addLibrary(String libraryURL)
     {
@@ -58,13 +53,7 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
     @Override
     public void addInitialization(InitializationPriority priority, String moduleName, String functionName, JSONArray arguments)
     {
-        String qualifiedName = functionName == null ? moduleName : moduleName + ":" + functionName;
-
-        JSONArray init = new JSONArray().put(qualifiedName);
-
-        init.putAll(arguments);
-
-        InternalUtils.addToMapList(initsByPriority, priority, init);
+        initsManager.addInitialization(priority, moduleName, functionName, arguments);
     }
 
     /**
@@ -75,44 +64,26 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
      */
     public void commit(JSONObject reply)
     {
-        JSONArray fullInits = new JSONArray();
-
-        for (InitializationPriority p : InitializationPriority.values())
-        {
-            List<JSONArray> priorityInits = initsByPriority.get(p);
-
-            if (priorityInits != null)
-            {
-                for (JSONArray init : priorityInits)
-                {
-                    fullInits.put(init);
-                }
-            }
-        }
-
-        boolean hasWork = libraryURLs.length() > 0 || stylesheets.length() > 0 || fullInits.length() > 0;
-
-        if (!hasWork)
-        {
-            return;
-        }
-
-        JSONObject partial = reply.in(InternalConstants.PARTIAL_KEY);
-
-
         if (libraryURLs.length() > 0)
         {
-            partial.put("libraries", libraryURLs);
+            reply.in(InternalConstants.PARTIAL_KEY).put("libraries", libraryURLs);
         }
 
         if (stylesheets.length() > 0)
         {
-            partial.put("stylesheets", stylesheets);
+            reply.in(InternalConstants.PARTIAL_KEY).put("stylesheets", stylesheets);
+        }
+
+        JSONArray fullInits = new JSONArray();
+
+        for (InitializationPriority p : InitializationPriority.values())
+        {
+            fullInits.putAll(initsManager.forPriority(p));
         }
 
         if (fullInits.length() > 0)
         {
-            partial.put("inits", fullInits);
+            reply.in(InternalConstants.PARTIAL_KEY).put("inits", fullInits);
         }
     }
 }

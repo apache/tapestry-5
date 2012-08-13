@@ -226,7 +226,9 @@ public interface JavaScriptSupport
 
 
     /**
-     * Requires a JavaScript module by name. On the c
+     * Requires a JavaScript module by name. On the client, this will <code>require()</code> the module and
+     * (optionally) de-reference a function exported by the module (or, treat the module as exporting a single
+     * implicit function). The function will be invoked.
      *
      * @param moduleName
      *         the name of the module to require
