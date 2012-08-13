@@ -1,6 +1,6 @@
 Scratch pad for changes destined for the 5.4 release notes page.
 
-Non-Breaking Changes:
+# Non-Breaking Changes:
 
 A new DeprecationWarning service exists to write runtime-warnings about deprecated component parameters.
 
@@ -33,7 +33,12 @@ Tapestry 5.4 represents a shift to a more modern, lighter approach. Behavior of 
 body object. This is an overall win: it reduces the number of event handlers, solves some timing issues related
 to running initialization functions, deals with DOM updates better, and is overall more performant.
 
-Breaking Changes:
+Many of the name constants defined by the client-side Tapestry object (such as Tapestry.FORM_PREPARE_FOR_SUBMIT_EVENT)
+have had their values changed (for consistency with the new set of events defined by the `core/events` module); code
+that uses literal values (such as "tapestry:formprepareforsubmit") will break; code that correctly used the constants
+will continue to work, even though the names have changed.
+
+# Breaking Changes:
 
 The definition of the symbol 'tapestry.asset-path-prefix' has changed; it no longer includes the leading and trailing
 slashes. The default in 5.3 was "/assets/", in 5.4 it is simply "assets".
