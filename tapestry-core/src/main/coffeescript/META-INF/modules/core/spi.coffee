@@ -20,6 +20,10 @@
 # Prototype ... but does it in a way that makes it relatively easy to swap in jQuery instead.
 define ["_", "prototype"], (_) ->
 
+  # When the document has loaded, convert `domReady` to just execute the callback immediately.
+  $(document).observe "dom:loaded", ->
+    exports.domReady = (callback) -> callback()
+
   # _internal_: splits the string into words separated by whitespace
   split = (str) ->
     _(str.split " ").reject (s) -> s is ""
@@ -270,6 +274,13 @@ define ["_", "prototype"], (_) ->
       else
         return null
 
+    # Finds all child elements matching the CSS selector, returning them
+    # as an array of ElementWrappers.
+    findAll: (selector) ->
+      matches = @element.select selector
+
+      _.map matches, (e) -> new ElementWrapper e
+
     # Returns an ElementWrapper for this element's containing element. The ElementWrapper is created lazily, and
     # cached. Returns null if this element has no parentNode (either because this element is the document object, or
     # because this element is not yet attached to the DOM).
@@ -401,7 +412,7 @@ define ["_", "prototype"], (_) ->
     # still be in-transit). This is a safe time to search the DOM, modify attributes, and attach event handlers.
     # Returns this modules exports, for chained calls.
     domReady: (callback) ->
-      document.observe "dom:loaded", callback
+      $(document).observe "dom:loaded", callback
 
       exports
 
