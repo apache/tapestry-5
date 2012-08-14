@@ -44,7 +44,7 @@ import org.slf4j.Logger;
  * <p/>
  * The server side event handler can return a {@link org.apache.tapestry5.Block} or a component to render as the new
  * content on the client side. Often, re-rendering the Zone's {@linkplain #getBody() body} is useful. Multiple
- * client-side zones may be updated by returning a {@link org.apache.tapestry5.ajax.MultiZoneUpdate}.
+ * client-side zones may be updated via the {@link org.apache.tapestry5.services.ajax.AjaxResponseRenderer} service.
  * <p/>
  * Renders informal parameters, adding CSS class "t-zone" and possibly, "t-invisible".
  * <p/>
