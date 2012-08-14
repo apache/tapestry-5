@@ -14,10 +14,8 @@
 
 package org.apache.tapestry5.internal.services;
 
-import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ValidationDecorator;
-import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.internal.DefaultValidationDecorator;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.ValidationDecoratorFactory;
@@ -26,17 +24,13 @@ public class ValidationDecoratorFactoryImpl implements ValidationDecoratorFactor
 {
     private final Environment environment;
 
-    private final Asset spacerImage;
-
-    public ValidationDecoratorFactoryImpl(Environment environment, @Path("${tapestry.spacer-image}")
-    Asset spacerImage)
+    public ValidationDecoratorFactoryImpl(Environment environment)
     {
         this.environment = environment;
-        this.spacerImage = spacerImage;
     }
 
     public ValidationDecorator newInstance(MarkupWriter writer)
     {
-        return new DefaultValidationDecorator(environment, spacerImage, writer);
+        return new DefaultValidationDecorator(environment, writer);
     }
 }

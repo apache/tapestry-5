@@ -34,7 +34,7 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
 
         replay();
 
-        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null);
+        ValidationDecorator decorator = new DefaultValidationDecorator(env, null);
 
         decorator.insideLabel(null, null);
 
@@ -56,7 +56,7 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
 
         Element e = writer.element("label", "accesskey", "f");
 
-        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null);
+        ValidationDecorator decorator = new DefaultValidationDecorator(env, null);
 
         decorator.insideLabel(field, e);
 
@@ -82,7 +82,7 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
 
         Element e = writer.element("label", "accesskey", "f", "class", "foo");
 
-        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null);
+        ValidationDecorator decorator = new DefaultValidationDecorator(env, null);
 
         decorator.insideLabel(field, e);
 
@@ -107,7 +107,7 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
 
         writer.element("input", "type", "text", "name", "ex", "class", "foo", "value", "freddy", "size", "30");
 
-        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, writer);
+        ValidationDecorator decorator = new DefaultValidationDecorator(env, writer);
 
         decorator.insideField(field);
 
@@ -129,7 +129,7 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
 
         replay();
 
-        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null);
+        ValidationDecorator decorator = new DefaultValidationDecorator(env, null);
 
         decorator.insideField(field);
 
@@ -148,7 +148,7 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
 
         replay();
 
-        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null);
+        ValidationDecorator decorator = new DefaultValidationDecorator(env, null);
 
         decorator.insideLabel(field, null);
 

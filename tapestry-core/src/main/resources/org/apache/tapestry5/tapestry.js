@@ -18,10 +18,10 @@ define("core/compat/tapestry", [
     "core/spi",
     "core/events",
     "core/ajax",
-    "core/zone",
+    "core/forms",
     "core/compat/t5-dom",
     "core/compat/t5-console",
-    "core/compat/t5-init"], function (_, spi, events, ajax) {
+    "core/compat/t5-init"], function (_, spi, events, ajax, forms) {
 
     window.Tapestry = {
 
@@ -34,19 +34,19 @@ define("core/compat/tapestry", [
          * of the Form's Tapestry object to true (which will prevent form
          * submission).
          */
-        FORM_VALIDATE_EVENT: "tapestry:formvalidate",
+        FORM_VALIDATE_EVENT: events.form.validate,
 
         /**
          * Event fired just before the form submits, to allow observers to make
          * final preparations for the submission, such as updating hidden form
          * fields. The form element is passed as the event memo.
          */
-        FORM_PREPARE_FOR_SUBMIT_EVENT: "tapestry:formprepareforsubmit",
+        FORM_PREPARE_FOR_SUBMIT_EVENT: events.form.prepareForSubmit,
 
         /**
          * Form event fired after prepare.
          */
-        FORM_PROCESS_SUBMIT_EVENT: "tapestry:formprocesssubmit",
+        FORM_PROCESS_SUBMIT_EVENT: events.form.processSubmit,
 
         /**
          * Event, fired on a field element, to cause observers to validate the
@@ -63,7 +63,7 @@ define("core/compat/tapestry", [
          * on all fields within the form (observed by each field's
          * Tapestry.FieldEventManager).
          */
-        FORM_VALIDATE_FIELDS_EVENT: "tapestry:validatefields",
+        FORM_VALIDATE_FIELDS_EVENT: events.field.validate,
 
         /**
          * Event, fired on the document object, which identifies the current focus
@@ -105,7 +105,10 @@ define("core/compat/tapestry", [
         /**
          * CSS Class added to a &lt;form&gt; element that directs Tapestry to
          * prevent normal (HTTP POST) form submission, in favor of Ajax
-         * (XmlHttpRequest) submission.
+         * (XmlHttpRequest) submission.   This is still supported in Tapestry 5.4, but
+         * replaced with the data-t5-prevent-submission attribute.
+         *
+         * @deprecated Use data-t5-prevent-submission="true" instead
          */
         PREVENT_SUBMISSION: "t-prevent-submission",
 
@@ -179,9 +182,7 @@ define("core/compat/tapestry", [
          * such to load first. This simply observes the dom:loaded event on the
          * document object (support for which is provided by Prototype).
          */
-        onDOMLoaded: function (callback) {
-            spi.domReady(callback);
-        },
+        onDOMLoaded: spi.domReady,
 
         /**
          * Find all elements marked with the "t-invisible" CSS class and hide()s
@@ -223,26 +224,6 @@ define("core/compat/tapestry", [
                     });
 
                     t.observingFocusChange = true;
-                }
-            });
-
-            /*
-             * When a submit element is clicked, record the name of the element into
-             * the associated form. This is necessary for some Ajax processing, see
-             * TAPESTRY-2324.
-             *
-             * TAP5-1418: Added "type=image" so that they set the submitting element
-             * correctly.
-             */
-            $$("INPUT[type=submit]", "INPUT[type=image]").each(function (element) {
-                var t = $T(element);
-
-                if (!t.trackingClicks) {
-                    element.observe("click", function () {
-                        $(element.form).setSubmittingElement(element);
-                    });
-
-                    t.trackingClicks = true;
                 }
             });
         },
@@ -602,26 +583,6 @@ define("core/compat/tapestry", [
             'FORM',
             {
                 /**
-                 * Gets the Tapestry.FormEventManager for the form.
-                 *
-                 * @param form
-                 *            form element
-                 */
-                getFormEventManager: function (form) {
-                    form = $(form);
-
-                    var manager = $T(form).formEventManager;
-
-                    if (manager == undefined) {
-
-                        throw "No Tapestry.FormEventManager object has been created for form '#{id}'."
-                                .interpolate(form);
-                    }
-
-                    return manager;
-                },
-
-                /**
                  * Identifies in the form what is the cause of the
                  * submission. The element's id is stored into the t:submit
                  * hidden field (created as needed).
@@ -633,8 +594,7 @@ define("core/compat/tapestry", [
                  *            (a Submit or LinkSubmit)
                  */
                 setSubmittingElement: function (form, element) {
-                    form.getFormEventManager()
-                            .setSubmittingElement(element);
+                    forms.setSubmittingControl(spi.wrap(form), spi.wrap(element));
                 },
 
                 /**
@@ -642,7 +602,7 @@ define("core/compat/tapestry", [
                  * the form.
                  */
                 skipValidation: function (form) {
-                    $T(form).skipValidation = true;
+                    forms.skipValidation(spi.wrap(form));
                 },
 
                 /**
@@ -768,6 +728,7 @@ define("core/compat/tapestry", [
          *            function to be passed the field value
          */
         addValidator: function (element, validator) {
+
             element.observe(Tapestry.FIELD_VALIDATE_EVENT, function (event) {
                 try {
                     validator.call(this, event.memo.translated);
@@ -989,20 +950,6 @@ define("core/compat/tapestry", [
         },
 
         /**
-         * Sets up a Tapestry.FormEventManager for the form, and enables
-         * events for validations. This is executed with
-         * InitializationPriority.EARLY, to ensure that the FormEventManager
-         * exists vefore any validations are added for fields within the
-         * Form.
-         *
-         * @since 5.2.2
-         */
-        formEventManager: function (spec) {
-            $T(spec.formId).formEventManager = new Tapestry.FormEventManager(
-                    spec);
-        },
-
-        /**
          * Keys in the masterSpec are ids of field control elements. Value
          * is a list of validation specs. Each validation spec is a 2 or 3
          * element array.
@@ -1073,7 +1020,7 @@ define("core/compat/tapestry", [
              */
             $(clientId).observeAction("click", function (event) {
                 $(this.form).skipValidation();
-                $(this.form).setSubmittingElement(clientId);
+                $(this.form).setSubmittingElement($(clientId));
                 $(this.form).performSubmit(event);
             });
         }
@@ -1091,7 +1038,7 @@ define("core/compat/tapestry", [
 
         required: function (field, message) {
             $(field).getFieldEventManager().requiredCheck = function (value) {
-                if ((T5._.isString(value) && value.strip() == '')
+                if ((_.isString(value) && value.strip() == '')
                         || value == null)
                     $(field).showValidationMessage(message);
             };
@@ -1265,7 +1212,6 @@ define("core/compat/tapestry", [
                 return;
 
             if (Prototype.Browser.IE) {
-                var _ = T5._;
 
                 this.outerDiv.show();
 
@@ -1311,7 +1257,7 @@ define("core/compat/tapestry", [
 
                 var div = this.outerDiv;
 
-                T5._.delay(function () {
+                _.delay(function () {
                     div.hide();
                 }, this.IE_FADE_TIME);
 
@@ -1335,138 +1281,31 @@ define("core/compat/tapestry", [
         }
     });
 
-    Tapestry.FormEventManager = Class.create({
-
-        initialize: function (spec) {
-            this.form = $(spec.formId);
-            this.validateOnSubmit = spec.validate.submit;
-
-            this.form.onsubmit = this.handleSubmit.bindAsEventListener(this);
-        },
-
-        /**
-         * Identifies in the form what is the cause of the submission. The element's
-         * id is stored into the t:submit hidden field (created as needed).
-         *
-         * @param element
-         *            id or element that is the cause of the submit (a Submit or
-         *            LinkSubmit)
-         */
-        setSubmittingElement: function (element) {
-
-            if (!this.submitHidden) {
-                // skip if this is not a tapestry controlled form
-                if (this.form.getInputs("hidden", "t:formdata").size() == 0)
-                    return;
-
-                var hiddens = this.form.getInputs("hidden", "t:submit");
-
-                if (hiddens.size() == 0) {
-
-                    /**
-                     * Create a new hidden field directly after the first hidden
-                     * field in the form.
-                     */
-                    var firstHidden = this.form.getInputs("hidden").first();
-
-                    this.submitHidden = new Element("input", {
-                        type: "hidden",
-                        name: "t:submit"
-                    });
-
-                    firstHidden.insert({
-                        after: this.submitHidden
-                    });
-                } else
-                    this.submitHidden = hiddens.first();
-            }
-
-            this.submitHidden.value = element == null ? null : Object.toJSON([$(element).id, $(element).name]);
-        },
-
-        handleSubmit: function (domevent) {
-
-            /*
-             * Necessary because we set the onsubmit property of the form, rather
-             * than observing the event. But that's because we want to specfically
-             * overwrite any other handlers.
-             */
-            Event.extend(domevent);
-
-            var t = $T(this.form);
-
-            t.validationError = false;
-
-            if (!t.skipValidation) {
-
-                t.skipValidation = false;
-
-                /* Let all the fields do their validations first. */
-
-                this.form.fire(Tapestry.FORM_VALIDATE_FIELDS_EVENT, this.form);
-
-                /*
-                 * Allow observers to validate the form as a whole. The FormEvent
-                 * will be visible as event.memo. The Form will not be submitted if
-                 * event.result is set to false (it defaults to true). Still trying
-                 * to figure out what should get focus from this kind of event.
-                 */
-                if (!t.validationError)
-                    this.form.fire(Tapestry.FORM_VALIDATE_EVENT, this.form);
-
-                if (t.validationError) {
-                    domevent.stop();
-
-                    /*
-                     * Because the submission failed, the last submit element is
-                     * cleared, since the form may be submitted for some other
-                     * reason later.
-                     */
-                    this.setSubmittingElement(null);
-
-                    return false;
-                }
-            }
-
-            this.form.fire(Tapestry.FORM_PREPARE_FOR_SUBMIT_EVENT, this.form);
-
-            /*
-             * This flag can be set to prevent the form from submitting normally.
-             * This is used for some Ajax cases where the form submission must run
-             * via Ajax.Request.
-             */
-
-            if (this.form.hasClassName(Tapestry.PREVENT_SUBMISSION)) {
-                domevent.stop();
-
-                /*
-                 * Instead fire the event (a listener will then trigger the Ajax
-                 * submission). This is really a hook for the ZoneManager.
-                 */
-                this.form.fire(Tapestry.FORM_PROCESS_SUBMIT_EVENT);
-
-                return false;
-            }
-
-            /* Validation is OK, not doing Ajax, continue as planned. */
-
-            return true;
-        }
-    });
-
     Tapestry.FieldEventManager = Class.create({
 
         initialize: function (field) {
+
             this.field = $(field);
 
             this.translator = Prototype.K;
 
-            var fem = $(this.field.form).getFormEventManager();
+            // This marker clues in the Form that validation should be triggered on this
+            // element.
+            this.field.writeAttribute("data-t5-validation", true);
 
-            if (fem.validateOnSubmit) {
-                $(this.field.form).observe(Tapestry.FORM_VALIDATE_FIELDS_EVENT,
-                        this.validateInput.bindAsEventListener(this));
-            }
+            var _this = this;
+
+            $(this.field).observe(Tapestry.FORM_VALIDATE_FIELDS_EVENT,
+                    function (event) {
+
+                        _this.validateInput();
+
+                        if (_this.inError()) {
+                            event.memo.error = true;
+
+                        }
+                    }
+            );
         },
 
         getLabel: function () {
@@ -1479,11 +1318,7 @@ define("core/compat/tapestry", [
         },
 
         getIcon: function () {
-            if (!this.icon) {
-                this.icon = $(this.field.id + "_icon");
-            }
-
-            return this.icon;
+            return null;
         },
 
         /**
@@ -1494,8 +1329,6 @@ define("core/compat/tapestry", [
             this.field.removeClassName("t-error");
 
             this.getLabel() && this.getLabel().removeClassName("t-error");
-
-            this.getIcon() && this.getIcon().hide();
 
             if (this.errorPopup)
                 this.errorPopup.hide();
@@ -1510,18 +1343,10 @@ define("core/compat/tapestry", [
          *            validation message to display
          */
         showValidationMessage: function (message) {
-            $T(this.field).validationError = true;
-            $T(this.field.form).validationError = true;
 
             this.field.addClassName("t-error");
 
             this.getLabel() && this.getLabel().addClassName("t-error");
-
-            var icon = this.getIcon();
-
-            if (icon && !icon.visible()) {
-                new Effect.Appear(this.icon);
-            }
 
             if (this.errorPopup == undefined)
                 this.errorPopup = new Tapestry.ErrorPopup(this.field);
@@ -1529,56 +1354,52 @@ define("core/compat/tapestry", [
             this.errorPopup.showMessage(message);
         },
 
+        inError: function () {
+            return this.field.hasClassName("t-error");
+        },
+
         /**
-         * Invoked when a form is submitted, or when leaving a field, to perform
-         * field validations. Field validations are skipped for disabled fields. If
-         * all validations are succesful, any decorations are removed. If any
-         * validation fails, an error popup is raised for the field, to display the
+         * Invoked when a form is submitted to perform
+         * field validations. Field validations are skipped for disabled fields or fields that are not visible.
+         * If any validation fails, an error popup is raised for the field, to display the
          * validation error message.
          *
-         * @return true if the field has a validation error
          */
         validateInput: function () {
+            this.removeDecorations();
+
             if (this.field.disabled)
-                return false;
+                return;
 
             if (!this.field.isDeepVisible())
-                return false;
-
-            var t = $T(this.field);
+                return;
 
             var value = $F(this.field);
 
-            t.validationError = false;
-
-            if (this.requiredCheck)
+            if (this.requiredCheck) {
                 this.requiredCheck.call(this, value);
+
+                if (this.inError()) { return; }
+            }
 
             /*
              * Don't try to validate blank values; if the field is required, that
              * error is already noted and presented to the user.
              */
-
-            if (!t.validationError && !(T5._.isString(value) && value.blank())) {
+            if (!(_.isString(value) && value.blank())) {
                 var translated = this.translator(value);
 
                 /*
                  * If Format went ok, perhaps do the other validations.
                  */
-                if (!t.validationError) {
+                if (!this.inError()) {
                     this.field.fire(Tapestry.FIELD_VALIDATE_EVENT, {
                         value: value,
-                        translated: translated
+                        translated: translated,
                     });
                 }
+
             }
-
-            /* Lastly, if no validation errors were found, remove the decorations. */
-
-            if (!t.validationError)
-                this.field.removeDecorations();
-
-            return t.validationError;
         }
     });
 

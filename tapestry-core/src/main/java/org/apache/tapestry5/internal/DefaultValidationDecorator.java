@@ -26,21 +26,16 @@ public final class DefaultValidationDecorator extends BaseValidationDecorator
 {
     private final Environment environment;
 
-    private final Asset spacerAsset;
-
     private final MarkupWriter markupWriter;
 
     /**
      * @param environment
-     *            used to locate objects and services during the render
-     * @param spacerAsset
-     *            asset for a one-pixel spacer image used as a placeholder for the error marker icon
+     *         used to locate objects and services during the render
      * @param markupWriter
      */
-    public DefaultValidationDecorator(Environment environment, Asset spacerAsset, MarkupWriter markupWriter)
+    public DefaultValidationDecorator(Environment environment, MarkupWriter markupWriter)
     {
         this.environment = environment;
-        this.spacerAsset = spacerAsset;
         this.markupWriter = markupWriter;
     }
 
@@ -62,32 +57,14 @@ public final class DefaultValidationDecorator extends BaseValidationDecorator
     }
 
     /**
-     * Writes an icon for field after the field. The icon has the same id as the field, with ":icon" appended. This is
-     * expected by the default client-side JavaScript. The icon's src is a blank spacer image (this is to allow the
-     * image displayed to be overridden via CSS). The icon's CSS class is "t-error-icon", with "t-invisible" added
-     * if the field is not in error when rendered. If client validation is not enabled for the form containing the
-     * field and the field is not in error, then the error icon itself is not rendered.
-     * 
+     * Does nothing; prior releases would write an error icon.
+     *
      * @param field
-     *            which just completed rendering itself
+     *         which just completed rendering itself
      */
     @Override
     public void afterField(Field field)
     {
-        boolean inError = inError(field);
-
-        boolean clientValidationEnabled = getFormSupport().isClientValidationEnabled();
-
-        if (inError || clientValidationEnabled)
-        {
-            String iconId = field.getClientId() + "_icon";
-
-            String cssClass = inError ? "t-error-icon" : "t-error-icon t-invisible";
-
-            markupWriter.element("img", "src", spacerAsset.toClientURL(), "alt", "", "class", cssClass, "id", iconId);
-            markupWriter.end();
-        }
-
     }
 
     private FormSupport getFormSupport()

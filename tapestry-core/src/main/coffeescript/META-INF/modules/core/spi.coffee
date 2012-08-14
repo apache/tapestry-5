@@ -20,9 +20,10 @@
 # Prototype ... but does it in a way that makes it relatively easy to swap in jQuery instead.
 define ["_", "prototype"], (_) ->
 
+  domLoaded = false
   # When the document has loaded, convert `domReady` to just execute the callback immediately.
   $(document).observe "dom:loaded", ->
-    exports.domReady = (callback) -> callback()
+    domLoaded = true
 
   # _internal_: splits the string into words separated by whitespace
   split = (str) ->
@@ -198,6 +199,15 @@ define ["_", "prototype"], (_) ->
       @element.writeAttribute name, value
       this
 
+    # Removes the named attribute, if present.
+    #
+    # Returns this ElementWrapper
+    removeAttribute: (name) ->
+
+      @element.writeAttribute name, null
+      this
+
+
     # Returns true if the element has the indicated class name, false otherwise.
     hasClass: (name) ->
       @element.hasClassName name
@@ -232,6 +242,14 @@ define ["_", "prototype"], (_) ->
     # Returns this ElementWrapper
     prepend: (content) ->
       @element.insert top: (convertContent content)
+      this
+
+    # Inserts new content (Element, ElementWrapper, or HTML markup string) into the DOM immediately before
+    # this ElementWrapper's element.
+    #
+    # Returns this ElementWrapper
+    insertBefore: (content) ->
+      @element.insert before: (convertContent content)
       this
 
     # Runs an animation to fade-in the element over the specified duration. The element may be hidden (via `hide()`)
@@ -316,6 +334,21 @@ define ["_", "prototype"], (_) ->
         throw new Error("Memo must be null when triggering a native event") if memo
 
         fireNativeEvent @element, eventName
+
+      this
+
+    # Returns the current value of the element (which must be a form control element, such as `<input>` or
+    # `<textarea>`).
+    # TODO: Define behavior for multi-named elements, such as `<select>`.
+
+    getValue: ->
+      @element.getValue()
+
+    # Updates the value for the element (whichmust be a form control element).
+    #
+    # Returns this ElementWrapper
+    setValue: (newValue) ->
+      @element.setValue newValue
 
       this
 
@@ -410,13 +443,18 @@ define ["_", "prototype"], (_) ->
 
     # Invokes the callback only once the DOM has finished loading all elements (other resources, such as images, may
     # still be in-transit). This is a safe time to search the DOM, modify attributes, and attach event handlers.
-    # Returns this modules exports, for chained calls.
+    # Returns this modules exports, for chained calls. If the DOM has already loaded, the callback is invoked
+    # immediately.
     domReady: (callback) ->
-      $(document).observe "dom:loaded", callback
+      if domLoaded
+        callback()
+      else
+        $(document).observe "dom:loaded", callback
 
       exports
 
     # on() is used to add an event handler
+    #
     # * selector - CSS selector used to select elements to attach handler to; alternately,
     #   a single DOM element, or an array of DOM elements
     # * events - one or more event names, separated by spaces
@@ -424,6 +462,7 @@ define ["_", "prototype"], (_) ->
     # * up to a selected element from an originating element that matches the CSS expression
     #   will invoke the handler.
     # * handler - function invoked; the function is passed an Event object.
+    #
     # Returns an EventHandler object, making it possible to turn event notifications on or off.
     on: (selector, events, match, handler) ->
       unless handler?

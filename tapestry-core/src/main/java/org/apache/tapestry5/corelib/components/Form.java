@@ -34,11 +34,9 @@ import org.apache.tapestry5.ioc.services.PropertyAccess;
 import org.apache.tapestry5.ioc.util.ExceptionUtils;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONArray;
-import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.compatibility.DeprecationWarning;
-import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.slf4j.Logger;
 
@@ -204,9 +202,6 @@ public class Form implements ClientElement, FormValidationControl
     @Environmental
     private JavaScriptSupport javascriptSupport;
 
-    @Environmental
-    private JavaScriptSupport jsSupport;
-
     @Inject
     private Request request;
 
@@ -329,10 +324,10 @@ public class Form implements ClientElement, FormValidationControl
 
         formSupport = createRenderTimeFormSupport(clientId, actionSink, allocator);
 
-        addJavaScriptInitialization();
-
         if (zone != null)
+        {
             linkFormToZone(link);
+        }
 
         environment.push(FormSupport.class, formSupport);
         environment.push(ValidationTracker.class, tracker);
@@ -340,7 +335,7 @@ public class Form implements ClientElement, FormValidationControl
         if (autofocus)
         {
             ValidationDecorator autofocusDecorator = new AutofocusValidationDecorator(
-                    environment.peek(ValidationDecorator.class), tracker, jsSupport);
+                    environment.peek(ValidationDecorator.class), tracker, javascriptSupport);
             environment.push(ValidationDecorator.class, autofocusDecorator);
         }
 
@@ -365,6 +360,11 @@ public class Form implements ClientElement, FormValidationControl
             writer.attributes("onsubmit", MarkupConstants.WAIT_FOR_PAGE);
         }
 
+        if (clientValidation != ClientValidation.NONE)
+        {
+            writer.attributes("data-t5-validate", "submit");
+        }
+
         resources.renderInformalParameters(writer);
 
         div = writer.element("div", "class", CSSClassConstants.INVISIBLE);
@@ -380,16 +380,6 @@ public class Form implements ClientElement, FormValidationControl
         writer.end(); // div
 
         environment.peek(Heartbeat.class).begin();
-    }
-
-    private void addJavaScriptInitialization()
-    {
-        JSONObject validateSpec = new JSONObject()
-                .put("submit", clientValidation != ClientValidation.NONE);
-
-        JSONObject spec = new JSONObject("formId", clientId).put("validate", validateSpec);
-
-        javascriptSupport.addInitializerCall(InitializationPriority.EARLY, "formEventManager", spec);
     }
 
     @HeartbeatDeferred
