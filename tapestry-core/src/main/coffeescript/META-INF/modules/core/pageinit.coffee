@@ -140,8 +140,9 @@ define ["_", "core/console", "core/spi", "core/events"],
           spi.domReady -> exports.initialize otherInits
 
       evalJavaScript: (js) ->
-        console.debug "Evaluating: #{js}"
-        eval js
+        require ["core/compat/tapestry"], ->
+          console.debug "Evaluating: #{js}"
+          eval js
 
       # Passed the response from an Ajax request, when the request is successful.
       # This is used for any request that attaches partial-page-render data to the main JSON object
