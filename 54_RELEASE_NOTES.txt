@@ -20,7 +20,7 @@ out Prototype support for jQuery.  Prototype will no longer be bundled with Tape
 Prior releases of Tapestry would require several moving parts to initialize client behavior:
 
 * A unique id, generated on the server, on a client-side element
-* A JavaScript library that extended T5.initializers with a initialization function
+* A JavaScript library that extended T5.initializers with an initialization function
 * Creating a _spec_ to describe behavior, including URLs and the unique client element id
 * Many similar client-side event handlers on specific elements (created by the initialization function)
 
@@ -70,3 +70,7 @@ SUBMIT.
 
 Prior releases of Tapestry mapped "true" and "false" values for Form.clientValidation to BLUR and NONE. This mapping
 was introduced in Tapestry 5.2, and has now been removed.
+
+Tapestry.FormEventManager has been entirely removed, along with supporting function Element.getFormEventManager().
+
+Tapestry.FieldEventManager.getIcon() now always returns null.
