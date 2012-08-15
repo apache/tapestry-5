@@ -74,3 +74,8 @@ was introduced in Tapestry 5.2, and has now been removed.
 Tapestry.FormEventManager has been entirely removed, along with supporting function Element.getFormEventManager().
 
 Tapestry.FieldEventManager.getIcon() now always returns null.
+
+Tapestry 5.3 contained code that attempted to prevent Ajax requests until after the page had loaded; this was based
+on the function Tapestry.waitForPage().  Server components no longer make use of this function, and the function
+itself now does nothing. A replacement approach to preventing the user from interacting with links and forms before
+the page initialization has completed may be implemented in the future.

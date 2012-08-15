@@ -156,9 +156,6 @@ public class Index
                     new Item("LinkSubmitInZoneDemo", "LinkSubmit inside Zone",
                             "Ensure that a LinkSubmit works correctly when its containing Form updates a Zone"),
 
-                    new Item("SlowAjaxDemo", "Slow Ajax Demo",
-                            "Handling of client-side Ajax before the page is fully loaded"),
-
                     new Item("ProgressiveDemo", "ProgressiveDisplay Demo", "Progressive Enhancement via a component"),
 
                     new Item("ClientNumericValidationDemo", "Client-Side Numeric Validation",
@@ -368,7 +365,7 @@ public class Index
                             "Demo the autocomplete mixin for text fields"),
 
                     new Item("componentparameter", "ComponentParameter Demo",
-                            " Demo using a component type as a parameter type and succesfuly passing a component"),
+                            " Demo using a component type as a parameter type and succesfully passing a component"),
 
                     new Item("inheritinformalsdemo", "Inherit Informal Parameters Demo",
                             "Demo a component which inherits informal parameters from its container"),

@@ -1,4 +1,4 @@
-// Copyright 2008, 2009 The Apache Software Foundation
+// Copyright 2008, 2009, 2011 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@ package org.apache.tapestry5.corelib.base;
 
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Link;
-import org.apache.tapestry5.MarkupConstants;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
@@ -60,9 +59,6 @@ public abstract class AbstractComponentEventLink extends AbstractLink
 
         if (zone != null)
         {
-            if (!request.isXHR())
-                writer.getElement().forceAttributes(MarkupConstants.ONCLICK, MarkupConstants.WAIT_FOR_PAGE);
-
             clientBehaviorSupport.linkZone(getClientId(), zone, link);
         }
     }

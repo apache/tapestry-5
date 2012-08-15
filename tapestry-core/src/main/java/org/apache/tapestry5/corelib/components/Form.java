@@ -355,11 +355,6 @@ public class Form implements ClientElement, FormValidationControl
 
         form = writer.element("form", "id", clientId, "method", "post", "action", actionURL);
 
-        if ((zone != null || clientValidation != ClientValidation.NONE) && !request.isXHR())
-        {
-            writer.attributes("onsubmit", MarkupConstants.WAIT_FOR_PAGE);
-        }
-
         if (clientValidation != ClientValidation.NONE)
         {
             writer.attributes("data-t5-validate", "submit");

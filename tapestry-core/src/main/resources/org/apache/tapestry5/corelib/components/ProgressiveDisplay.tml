@@ -1,5 +1,4 @@
-<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
-        >
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
     <t:block id="defaultInitial">
         <div class="t-loading">${message:core-progressive-display-loading}</div>
     </t:block>

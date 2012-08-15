@@ -226,39 +226,6 @@ public class AjaxTests extends TapestryCoreTestCase
     }
 
     /**
-     * TAP5-544
-     */
-    @Test
-    public void slow_ajax_load_warning()
-    {
-        openLinks("Slow Ajax Demo");
-
-        // ActionLink
-
-        click("//a[@id='link']");
-
-        waitForElementToAppear("slow");
-
-        click("//a[@id='link']");
-
-        waitForElementToAppear("zoneOutput");
-
-        assertText("zoneOutput", "Updated via an ActionLink");
-
-        clickAndWait("link=refresh");
-
-        click(SUBMIT);
-
-        waitForElementToAppear("slow");
-
-        click(SUBMIT);
-
-        waitForElementToAppear("zoneOutput");
-
-        assertText("zoneOutput", "Updated via form submission.");
-    }
-
-    /**
      * TAP5-236
      */
     @Test

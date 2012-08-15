@@ -117,63 +117,10 @@ define("core/compat/tapestry", [
 
         /**
          * Invoked from onclick event handlers built into links and forms. Raises a
-         * dialog if the page is not yet fully loaded.
+         * dialog if the page is not yet fully loaded. Gutted in 5.4, does nothing ...
+         * the page loads fast enough :-).
          */
-        waitForPage: function (event) {
-            if (Tapestry.pageLoaded)
-                return true;
-
-            Event.extend(event || window.event).stop();
-
-            var body = $(document.body);
-
-            /*
-             * The overlay is stretched to cover the full screen (including
-             * scrolling areas) and is used to fade out the background ... and
-             * prevent keypresses (its z-order helps there).
-             */
-            var overlay = new Element("div", {
-                'class': 't-dialog-overlay'
-            });
-            overlay.setOpacity(0.0);
-
-            body.insert({
-                top: overlay
-            });
-
-            new Effect.Appear(overlay, {
-                duration: 0.2,
-                from: 0.0
-            });
-
-            var messageDiv = new Element("div", {
-                'class': 't-page-loading-banner'
-            }).update(Tapestry.Messages.pageIsLoading);
-            overlay.insert({
-                top: messageDiv
-            });
-
-            var hideDialog = function () {
-                new Effect.Fade(overlay, {
-                    duration: 0.2,
-                    afterFinish: function () {
-                        Tapestry.remove(overlay);
-                    }
-                });
-            };
-
-            document.observe("dom:loaded", hideDialog);
-
-            /* A rare race condition. */
-
-            if (Tapestry.pageLoaded) {
-                hideDialog.call(null);
-
-                return true;
-            } else {
-                return false;
-            }
-
+        waitForPage: function () {
         },
 
         /**
