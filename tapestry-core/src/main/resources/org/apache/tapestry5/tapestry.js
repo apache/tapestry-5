@@ -1433,15 +1433,14 @@ define("core/compat/tapestry", [
         },
 
         /**
-         * Updates the zone's content, and invokes either the update function (to
-         * highlight the change) or the show function (to reveal a hidden element).
-         * Lastly, fires the Tapestry.ZONE_UPDATED_EVENT to let listeners know that
-         * the zone was updated.
+         * Updates the zone's content; as of 5.4 this is just a shell
+         * that triggers the events.zone.update event; see the core/zone module
+         * for the default handler for that event.
          *
          * @param content
          */
         show: function (content) {
-            this.element.trigger(events.zone.update, content);
+            this.element.trigger(events.zone.update, { content: content });
         },
 
         /**

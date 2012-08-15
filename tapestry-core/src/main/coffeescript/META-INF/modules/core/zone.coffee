@@ -16,8 +16,8 @@
 #
 # Provides a default handler for the `events.zone.update` event, attached to the
 # document body.
-define ["core/spi", "core/events"],
-  (spi, events) ->
+define ["core/spi", "core/events", "_"],
+  (spi, events, _) ->
     spi.domReady ->
       spi.body().on events.zone.update, (event) ->
 
@@ -25,7 +25,13 @@ define ["core/spi", "core/events"],
 
         # TODO: purge existing children?
 
-        this.update event.memo
+        content = event.memo.content
+
+        # The server may have passed down the empty string for the content; that removes the existing content.
+        # On the other hand, the server may have not provided a content key; in that case, content is undefined
+        # which means to leave the existing content alone.
+        unless content is undefined
+          this.update content
 
         this.show() unless this.visible()
 

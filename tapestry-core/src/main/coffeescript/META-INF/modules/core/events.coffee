@@ -50,10 +50,11 @@ define
   # to correctly support dynamic updates from the server via an Ajax request, and a standard response
   # (the partial page render reponse). More details are available in the `core/zone` module.
   zone:
-    # Invoked on a zone element to force an update to its content. The event memo is the new content (an Element, or a
-    # `core/spi:ElementWrapper`, or a string containing HTML markup). A standard top-level handler is defined by module
-    # `core/zone`, and is responsible for the actual update; it triggers the `events.zone.willUpdate` and
-    # `events.zone.didUpdate` events just before and just after changing the element's content.
+    # Invoked on a zone element to force an update to its content. The event memo should contain a `content` key (an
+    # Element, or a `core/spi:ElementWrapper`, or more typically, a string containing HTML markup). A standard top-level
+    # handler is defined by module `core/zone`, and is responsible for the actual update; it triggers the
+    # `events.zone.willUpdate` and `events.zone.didUpdate` events just before and just after changing the element's
+    # content.
     update: "t5:zone:update"
 
     # Triggered (by the standard handler) just before the content in a Zone will be updated.
