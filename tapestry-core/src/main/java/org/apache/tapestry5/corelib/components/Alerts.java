@@ -14,17 +14,13 @@
 
 package org.apache.tapestry5.corelib.components;
 
+import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.ClientElement;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.alerts.Alert;
 import org.apache.tapestry5.alerts.AlertStorage;
-import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.RequestParameter;
-import org.apache.tapestry5.annotations.SessionState;
-import org.apache.tapestry5.annotations.SupportsInformalParameters;
-import org.apache.tapestry5.BindingConstants;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;

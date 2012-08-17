@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006-2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -1001,6 +1001,36 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         TextToken token1 = get(tokens, 1);
 
         assertEquals(token1.text, "\n[\u00A0]\n");
+    }
 
+    /**
+     * See <a href="https://issues.apache.org/jira/browse/TAP5-1976">TAP5-1976</a>
+     *
+     * @since 5.3.5
+     */
+    @Test
+    public void default_attributes_not_included()
+    {
+        List<TemplateToken> tokens = tokens("default_attributes_not_included.tml");
+
+        assertEquals(tokens.size(), 2);
+
+        // TAP5-1976 meant that a default attribute ("Attribute[shape=rect]") would be included.
+
+        assertEquals(toString(tokens), "Start[a] End");
+    }
+
+    private String toString(List<TemplateToken> tokens)
+    {
+        StringBuilder builder = new StringBuilder();
+        String sep = "";
+
+        for (TemplateToken token : tokens)
+        {
+            builder.append(sep).append(token.toString());
+            sep = " ";
+        }
+
+        return builder.toString();
     }
 }

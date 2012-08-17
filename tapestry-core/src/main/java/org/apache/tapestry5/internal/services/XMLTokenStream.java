@@ -1,4 +1,4 @@
-// Copyright 2009, 2011 The Apache Software Foundation
+// Copyright 2009, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.LocationImpl;
 import org.xml.sax.*;
+import org.xml.sax.ext.Attributes2;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
@@ -198,6 +199,8 @@ public class XMLTokenStream
             // The XML parser tends to reuse the same Attributes object, so
             // capture the data out of it.
 
+            Attributes2 a2 = (attributes instanceof Attributes2) ? (Attributes2) attributes : null;
+
             if (attributes.getLength() == 0)
             {
                 token.attributes = Collections.emptyList();
@@ -207,6 +210,14 @@ public class XMLTokenStream
 
                 for (int i = 0; i < attributes.getLength(); i++)
                 {
+                    // Filter out attributes that are not present in the XML input stream, but were
+                    // instead provided by DTD defaulting.
+
+                    if (a2 != null && !a2.isSpecified(i))
+                    {
+                        continue;
+                    }
+
                     String prefixedName = attributes.getQName(i);
 
                     int lastColon = prefixedName.lastIndexOf(':');
