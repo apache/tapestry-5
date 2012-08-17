@@ -1,5 +1,5 @@
 <t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
-	<t:form clientValidation="false">
+	<t:form clientValidation="none">
 		<p>
 			<t:errors />
 		</p>

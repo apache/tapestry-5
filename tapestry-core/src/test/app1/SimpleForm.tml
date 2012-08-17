@@ -6,7 +6,7 @@
         start to Tapestry 5 form support.
     </p>
 
-    <t:form clientvalidation="false">
+    <t:form clientvalidation="none">
 
         <t:errors/>
         

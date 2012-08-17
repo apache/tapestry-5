@@ -1,6 +1,6 @@
 <html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 	<h1>Validator Macro Demo</h1>
-	<t:form clientValidation="false">
+	<t:form clientValidation="none">
 		<t:errors />
 		<p>
 			<label t:type="label" for="password"/>

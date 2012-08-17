@@ -1,7 +1,7 @@
 <html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <h1>Error Demo</h1>
 
-    <t:form clientvalidation="false">
+    <t:form clientvalidation="none">
         
         <t:error for="username"/>
         <input t:type="TextField" t:id="username" validate="required"/>

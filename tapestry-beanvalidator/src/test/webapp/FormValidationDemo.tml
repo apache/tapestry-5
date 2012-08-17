@@ -1,6 +1,6 @@
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
     <body>
-        <t:form clientValidation="false">
+        <t:form clientValidation="none">
         	<t:errors/>
         	
         	<br/>

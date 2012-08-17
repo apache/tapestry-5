@@ -3,10 +3,10 @@
 
 
     <h1>Login</h1>
-    <t:beaneditform t:id="login" object="this" submitLabel="Login" clientValidation="false"/>
+    <t:beaneditform t:id="login" object="this" submitLabel="Login" clientValidation="none"/>
 
     <h1>Register</h1>
-    <t:beaneditform t:id="register" object="this" submitLabel="Register" clientValidation="false"/>
+    <t:beaneditform t:id="register" object="this" submitLabel="Register" clientValidation="none"/>
 
 
 </html>
