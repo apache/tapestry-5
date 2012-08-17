@@ -26,7 +26,7 @@
 # a structure can quickly be specified. e.g. `builder "label.checkbox > input", type: "checkbox", " Remember me"`
 # would construct:
 #
-#     <label class="checkbox>
+#     <label class="checkbox">
 #        <input type="checkbox"> Remember me</input>
 #     </label>
 #
