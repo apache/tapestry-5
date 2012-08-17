@@ -33,13 +33,13 @@ define
 
     # Triggered last, when the form is configured to not submit normally (as a standard POST). Under 5.3, this
     # configuration was achieved by adding the `t-prevent-submission` CSS class; under 5.4 it is preferred to
-    # set the `data-t5-prevent-submission` attribute. In either case, the submit event is stopped, and this
+    # set the `data-prevent-submission` attribute. In either case, the submit event is stopped, and this
     # event fired to replace it; in most cases, a handler will then handle submitting the form's data as part
     # of an Ajax request.
     processSubmit: "t5:form:process-submit"
 
   field:
-    # Triggered by the Form on all enclosed elements with the `data-t5-validation` attribute (indicating they are
+    # Triggered by the Form on all enclosed elements with the `data-validation` attribute (indicating they are
     # interested in participating with user input validation). The memo object passed to the event has an error property
     # that can be set to true to indicate a validation error. Individual fields should determine if the field is in
     # error and remove or add/update decorations for the validation error (decorations will transition from 5.3 style

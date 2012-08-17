@@ -38,6 +38,19 @@ have had their values changed (for consistency with the new set of events define
 that uses literal values (such as "tapestry:formprepareforsubmit") will break; code that correctly used the constants
 will continue to work, even though the names have changed.
 
+Tapestry is moving away from "magic class names" to a more uniform approach based on the use of HTML 5 compliant "data-"
+attributes.
+
+* data-prevent-submission: Used on a HTML form to indicate that normal submission should be suppressed; typically because
+  client-side code will be submitting the form's contents via an Ajax request.
+
+* data-skip-validation: Used on an HTML form; the immediately subsequent form submission will skip all validation.
+  This is often associated with buttons that cause a form to be canceled or otherwise submitted without client-side
+  validation.
+
+* data-validation: Used on form control elements; a non-null value indicates that the field should have the
+  `events.field.validate` event triggered on it, when the form is validating, prior to submission.
+
 # Breaking Changes:
 
 The definition of the symbol 'tapestry.asset-path-prefix' has changed; it no longer includes the leading and trailing

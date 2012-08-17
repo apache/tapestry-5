@@ -19,11 +19,11 @@
 define ["core/events", "core/spi", "core/builder", "core/compat/tapestry"],
   (events, spi, builder) ->
 
-    SKIP_VALIDATION = "data-t5-skip-validation"
+    SKIP_VALIDATION = "data-skip-validation"
 
     isPreventSubmission = (element) ->
       (element.hasClass Tapestry.PREVENT_SUBMISSION) or
-      (element.getAttribute "data-t5-prevent-submission")
+      (element.getAttribute "data-prevent-submission")
 
     clearSubmittingHidden = (form) ->
       hidden = form.find "[name=t:submit]"
@@ -47,14 +47,14 @@ define ["core/events", "core/spi", "core/builder", "core/compat/tapestry"],
 
     defaultValidateAndSubmit = (event) ->
 
-      if ((this.getAttribute "data-t5-validate") is "submit") and
+      if ((this.getAttribute "data-validate") is "submit") and
          (not this.getAttribute SKIP_VALIDATION)
 
         this.removeAttribute SKIP_VALIDATION
 
         memo = error: false
 
-        for field in this.findAll "[data-t5-validation]"
+        for field in this.findAll "[data-validation]"
            field.trigger events.field.validate, memo
 
         # Only do form validation if all individual field validation

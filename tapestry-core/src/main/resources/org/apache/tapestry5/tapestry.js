@@ -106,9 +106,9 @@ define("core/compat/tapestry", [
          * CSS Class added to a &lt;form&gt; element that directs Tapestry to
          * prevent normal (HTTP POST) form submission, in favor of Ajax
          * (XmlHttpRequest) submission.   This is still supported in Tapestry 5.4, but
-         * replaced with the data-t5-prevent-submission attribute.
+         * replaced with the data-prevent-submission attribute.
          *
-         * @deprecated Use data-t5-prevent-submission="true" instead
+         * @deprecated Use data-prevent-submission="true" instead
          */
         PREVENT_SUBMISSION: "t-prevent-submission",
 
@@ -1238,7 +1238,7 @@ define("core/compat/tapestry", [
 
             // This marker clues in the Form that validation should be triggered on this
             // element.
-            this.field.writeAttribute("data-t5-validation", true);
+            this.field.writeAttribute("data-validation", true);
 
             var _this = this;
 
