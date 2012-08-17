@@ -18,7 +18,7 @@
 # `options`.
 #
 # It wraps (or provides) `onsuccess`, `onexception`, and `onfailure` handlers, extended to handle a partial page render
-# response (for success), or properly log a server-side failure or client-side exception, including using
+# response (for success), or properly log a server-side failure or client-side exception, including using the
 # `core/exceptionframe` module to display a server-side processing exception.
 define ["core/pageinit", "core/spi", "core/exceptionframe", "core/console", "_"],
   (pageinit, spi, exceptionframe, console, _) ->
