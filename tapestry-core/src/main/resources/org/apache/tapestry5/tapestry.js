@@ -541,7 +541,7 @@ define("core/compat/tapestry", [
                  *            (a Submit or LinkSubmit)
                  */
                 setSubmittingElement: function (form, element) {
-                    forms.setSubmittingControl(spi.wrap(form), spi.wrap(element));
+                    forms.setSubmittingElement(spi.wrap(form), spi.wrap(element));
                 },
 
                 /**

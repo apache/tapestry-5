@@ -97,4 +97,4 @@ define ["core/events", "core/spi", "core/builder", "core/compat/tapestry"],
         setSubmittingHidden form, element
 
       skipValidation: (formWrapper) ->
-        form.wrapper setAttribute SKIP_VALIDATION, true
+        formWrapper.setAttribute SKIP_VALIDATION, true
