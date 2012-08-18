@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -57,8 +57,8 @@ T5.define("console", function() {
             display(className, message);
 
             // consolefn may be null when there is no native console, in which case
-            // do nothing more
-            consolefn && consolefn.call(console, message);
+            // do nothing more. It may be a non-function under IE.
+            T5._.isFunction(consolefn) && consolefn.call(console, message);
         }
     }
 
