@@ -58,11 +58,17 @@ define ["core/spi", "core/builder", "_"], (spi, builder, _) ->
 
   level = (className, consolefn) ->
     (message) ->
-      if consolefn
-        consolefn and consolefn.call(console, message)
+      # consolefn may be null if there's no console; under IE it may be non-null, but not a function
+      if _.isFunction consolefn
+        # Use the available native console
+        consolefn.call(console, message)
       else
-        # Display it floating
+        # Display it floating. If there's a real problem, such as a failed Ajax request, then the
+        # client-side code should be alerting the user in some other way, and not rely on them
+        # being able to see the logged console output.
         display className, message
+
+      return
 
   # If native console available, go for it
 
