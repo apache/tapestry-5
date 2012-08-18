@@ -1,4 +1,4 @@
-// Copyright 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2008, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,19 +17,20 @@ package org.apache.tapestry5.internal.services;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.BaseURLSource;
 import org.apache.tapestry5.services.Request;
 
 public class BaseURLSourceImpl implements BaseURLSource
 {
     private final Request request;
-    
+
     private String hostname;
     private int hostPort;
     private int secureHostPort;
 
     public BaseURLSourceImpl(Request request, @Inject @Symbol(SymbolConstants.HOSTNAME) String hostname,
-	    @Symbol(SymbolConstants.HOSTPORT) int hostPort, @Symbol(SymbolConstants.HOSTPORT_SECURE) int secureHostPort)
+                             @Symbol(SymbolConstants.HOSTPORT) int hostPort, @Symbol(SymbolConstants.HOSTPORT_SECURE) int secureHostPort)
     {
         this.request = request;
         this.hostname = hostname;
@@ -39,19 +40,49 @@ public class BaseURLSourceImpl implements BaseURLSource
 
     public String getBaseURL(boolean secure)
     {
-        int port = secure ? secureHostPort : hostPort;
-        String portSuffix = "";
+        return String.format("%s://%s%s",
+                secure ? "https" : "http",
+                hostname(),
+                portExtension(secure));
+    }
 
-        if (port <= 0) { 
+    private String portExtension(boolean secure)
+    {
+        int port = secure ? secureHostPort : hostPort;
+
+        // The default for the ports is 0, which means to use Request.serverPort. That's mostly
+        // for development.
+        if (port <= 0)
+        {
             port = request.getServerPort();
-            int schemeDefaultPort = request.isSecure() ? 443 : 80;
-            portSuffix = port == schemeDefaultPort ? "" : ":" + port;
         }
-        else if (secure && port != 443) portSuffix = ":" + port;
-        else if (port != 80) portSuffix = ":" + port;
-        
-        String hostname = "".equals(this.hostname) ? request.getServerName() : this.hostname.startsWith("$") ? System.getenv(this.hostname.substring(1)) : this.hostname;
-        
-        return String.format("%s://%s%s", secure ? "https" : "http", hostname, portSuffix);
+
+        int expectedPort = secure ? 443 : 80;
+
+        if (port == expectedPort)
+        {
+            return "";
+        }
+
+        return ":" + port;
+    }
+
+    private String hostname()
+    {
+
+        if (InternalUtils.isBlank(hostname))
+        {
+            return request.getServerName();
+        }
+
+        // This is common in some PaaS deployments, such as Heroku, where the port is passed in as
+        // and environment variable.
+
+        if (this.hostname.startsWith("$"))
+        {
+            return System.getenv(hostname.substring(1));
+        }
+
+        return hostname;
     }
 }
