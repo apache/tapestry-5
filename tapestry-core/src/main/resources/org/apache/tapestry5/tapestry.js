@@ -749,8 +749,12 @@ Element
          *            (a Submit or LinkSubmit)
          */
         setSubmittingElement: function (form, element) {
-            form.getFormEventManager()
-                .setSubmittingElement(element);
+
+            // A crude check to see if it is a Tapestry form.
+
+            if ($(form).getInputs("hidden", "t:formdata").size() > 0) {
+              form.getFormEventManager() .setSubmittingElement(element);
+            }
         },
 
         /**
