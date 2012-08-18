@@ -2054,7 +2054,7 @@ Tapestry.ScriptManager = {
 
         var _ = T5._;
 
-        var loaded = _(document.styleSheets).chain().pluck("href").without("").map(this.rebuildURLIfIE).value();
+        var loaded = _(document.styleSheets).chain().pluck("href").without("").without(null).map(this.rebuildURLIfIE).value();
 
         var toLoad = _(stylesheets).chain().map(
             function (ss) {
