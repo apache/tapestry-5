@@ -46,9 +46,12 @@ define ["_", "core/console", "core/spi", "core/events"],
     addStylesheets = (newStylesheets) ->
       return unless newStylesheets
 
+      # Figure out which stylesheets are loaded; adjust for IE, and especially, IE 9
+      # which can report a stylesheet's URL as null (not empty string).
       loaded = _.chain(document.styleSheets)
       .pluck("href")
       .without("")
+      .without(null)
       .map(rebuildURLOnIE)
 
       insertionPoint = _.find(document.styleSheets, (ss) -> ss.ownerNode.rel is "stylesheet t-ajax-insertion-point")
