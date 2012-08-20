@@ -26,6 +26,8 @@ import java.util.List;
 
 public class DocumentLinkerImpl implements DocumentLinker
 {
+    private final List<String> coreLibraryURLs = CollectionFactory.newList();
+
     private final List<String> libraryURLs = CollectionFactory.newList();
 
     private final ModuleInitsManager initsManager = new ModuleInitsManager();
@@ -60,6 +62,15 @@ public class DocumentLinkerImpl implements DocumentLinker
     public void addStylesheetLink(StylesheetLink sheet)
     {
         includedStylesheets.add(sheet);
+    }
+
+
+    @Override
+    public void addCoreLibrary(String libraryURL)
+    {
+        coreLibraryURLs.add(libraryURL);
+
+        hasScriptsOrInitializations = true;
     }
 
     public void addLibrary(String libraryURL)
@@ -188,7 +199,7 @@ public class DocumentLinkerImpl implements DocumentLinker
         // (in <head> or at bottom of <body>). Switching to a module approach gives us a new chance to fix this.
         // Eventually, (nearly) everything will be loaded as modules.
 
-        moduleManager.writeInitialization(body, libraryURLs,
+        moduleManager.writeInitialization(body, coreLibraryURLs, libraryURLs,
                 initsManager.forPriority(InitializationPriority.IMMEDIATE),
                 initsManager.forPriority(InitializationPriority.EARLY, InitializationPriority.NORMAL, InitializationPriority.LATE));
     }

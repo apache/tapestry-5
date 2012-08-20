@@ -19,12 +19,11 @@
  * the loading of the other modules before older (and third party) JavaScript code attempts to make use
  * of methods inside the T5 and Tapestry namespace objects.
  */
-require([
+define("core/compat/t5-forceload", [
     "core/compat/t5-alerts",
     "core/compat/t5-formfragment",
     "core/compat/tree",
     "core/compat/tapestry-messages"],
-        function () {
-            // Does nothing, but forces the other define()-ed "modules" to have their dependencies
-            // loaded, and to be loaded themselves.
-        });
+        // Does nothing, but forces the other define()-ed "modules" to have their dependencies
+        // loaded, and to be loaded themselves.
+        null);

@@ -28,6 +28,13 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
 
     private final ModuleInitsManager initsManager = new ModuleInitsManager();
 
+    @Override
+    public void addCoreLibrary(String libraryURL)
+    {
+        // Really, this will never happen.
+        throw new IllegalStateException("Core libraries may not be added during a partial page render.");
+    }
+
     public void addLibrary(String libraryURL)
     {
         libraryURLs.put(libraryURL);

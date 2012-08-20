@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,12 +21,30 @@ import org.apache.tapestry5.services.javascript.StylesheetLink;
 /**
  * Responsible for injecting script and style links into the &lt;head&gt; and &lt;body&gt; element of the rendered HTML
  * document.
+ *
+ * @see org.apache.tapestry5.services.javascript.ModuleManager#writeInitialization(org.apache.tapestry5.dom.Element, java.util.List, java.util.List, java.util.List, java.util.List)
+ * @since 5.4
  */
 public interface DocumentLinker
 {
     /**
-     * Adds a link to load a JavaScript library. . The &lt;script&gt; elements will be added inside
-     * the document's &lt;head&gt;.
+     * Special handling for the
+     * {@linkplain org.apache.tapestry5.internal.services.javascript.CoreJavaScriptStack }core JavaScriptStack},
+     * whose contents are loaded directly at page startup. This represents special treatment of the core JavaScriptStack,
+     * starting in release 5.4. It is necessary during the transition from JavaScript libraries (that make use of the
+     * client-side Tapestry and/or T5 globals) to modules.
+     *
+     *
+     * @param libraryURL
+     * @since 5.4
+     */
+    void addCoreLibrary(String libraryURL);
+
+    /**
+     * Adds a link to load a non-core JavaScript library. These libraries are loaded, sequentially, only once
+     * the core libraries have loaded and initialized. Thus difference between core libraries and other libraries
+     * is new in 5.4, and represents a conflict between asynchronous loading of modules (introduced in 5.4) and
+     * sequential loading of libraries (in 5.3 and earlier).
      */
     void addLibrary(String libraryURL);
 

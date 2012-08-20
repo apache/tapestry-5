@@ -60,6 +60,7 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         DocumentLinker linker = mockDocumentLinker()
         JavaScriptStackSource stackSource = mockJavaScriptStackSource()
         JavaScriptStackPathConstructor pathConstructor = mockJavaScriptStackPathConstructor()
+
         trainForCoreStack(linker, stackSource, pathConstructor)
 
         linker.addScript(InitializationPriority.IMMEDIATE, "stackInit();")
@@ -107,8 +108,8 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         expect(stack.stacks).andReturn([])
 
-        linker.addLibrary("stack1.js")
-        linker.addLibrary("stack2.js")
+        linker.addCoreLibrary("stack1.js")
+        linker.addCoreLibrary("stack2.js")
         linker.addStylesheetLink(stylesheetLink)
     }
 

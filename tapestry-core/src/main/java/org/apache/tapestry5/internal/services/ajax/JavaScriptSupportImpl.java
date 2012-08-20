@@ -44,9 +44,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
     private final Map<String, Boolean> addedStacks = CollectionFactory.newCaseInsensitiveMap();
 
-    private final List<String> stackLibraries = CollectionFactory.newList();
-
-    private final List<String> otherLibraries = CollectionFactory.newList();
+    private final Set<String> otherLibraries = CollectionFactory.newSet();
 
     private final Set<String> importedStylesheetURLs = CollectionFactory.newSet();
 
@@ -63,6 +61,8 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     private FieldFocusPriority focusPriority;
 
     private String focusFieldId;
+
+    private Map<String, String> libraryURLToStackName;
 
     class InitializationImpl implements Initialization
     {
@@ -162,17 +162,6 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
                 linker.addStylesheetLink(value);
             }
         });
-
-        Worker<String> linkLibrary = new Worker<String>()
-        {
-            public void work(String value)
-            {
-                linker.addLibrary(value);
-            }
-        };
-
-        F.flow(stackLibraries).each(linkLibrary);
-        F.flow(otherLibraries).each(linkLibrary);
 
         F.flow(inits).sort(new Comparator<InitializationImpl>()
         {
@@ -283,13 +272,14 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
         if (!otherLibraries.contains(libraryURL))
         {
+            linker.addLibrary(libraryURL);
+
             otherLibraries.add(libraryURL);
         }
 
         return this;
     }
 
-    private Map<String, String> libraryURLToStackName;
 
     /**
      * Locates the name of the stack that includes the library URL. Returns the stack,
@@ -326,7 +316,9 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     private void addAssetsFromStack(String stackName)
     {
         if (addedStacks.containsKey(stackName))
+        {
             return;
+        }
 
         JavaScriptStack stack = javascriptStackSource.getStack(stackName);
 
@@ -335,7 +327,18 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
             addAssetsFromStack(dependentStackname);
         }
 
-        stackLibraries.addAll(stackPathConstructor.constructPathsForJavaScriptStack(stackName));
+        List<String> libraryURLs = stackPathConstructor.constructPathsForJavaScriptStack(stackName);
+
+        for (String libraryURL : libraryURLs)
+        {
+            if (stackName.equals(InternalConstants.CORE_STACK_NAME))
+            {
+                linker.addCoreLibrary(libraryURL);
+            } else
+            {
+                linker.addLibrary(libraryURL);
+            }
+        }
 
         stylesheetLinks.addAll(stack.getStylesheets());
 
@@ -344,7 +347,9 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         String initialization = stack.getInitialization();
 
         if (initialization != null)
+        {
             addScript(InitializationPriority.IMMEDIATE, initialization);
+        }
     }
 
     public JavaScriptSupport importStylesheet(Asset stylesheet)
