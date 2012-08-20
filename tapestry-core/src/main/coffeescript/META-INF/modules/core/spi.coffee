@@ -56,15 +56,15 @@ define ["_", "prototype"], (_) ->
     throw new Error "Provided value <#{content}> is not valid as DOM element content."
 
   # _internal_: Currently don't want to rely on Scriptaculous, since our needs are pretty minor.
-  animate = (element, styleName, initial, final, duration, callbacks) ->
+  animate = (element, styleName, initialValue, finalValue, duration, callbacks) ->
     styles = {}
-    range = final - initial
+    range = finalValue - initialValue
     initialTime = Date.now()
     first = true
     animator = ->
       elapsed = Date.now() - initialTime
       if elapsed >= duration
-        styles[styleName] = final
+        styles[styleName] = finalValue
         element.setStyle styles
         window.clearInterval timeoutID
         callbacks.oncomplete and callbacks.oncomplete()
@@ -81,7 +81,7 @@ define ["_", "prototype"], (_) ->
 
     timeoutID = window.setInterval animator
 
-    styles[styleName] = initial
+    styles[styleName] = initialValue
     element.setStyle styles
 
   # Generic view of an DOM event that is passed to a handler function.
@@ -98,11 +98,10 @@ define ["_", "prototype"], (_) ->
 
     constructor: (event) ->
       @nativeEvent = event
-      @memo = event.memo
-      @type = event.type
 
-      @char = event.char
-      @key = event.key
+      # This is to satisfy YUICompressor which doesn't seem to like 'char', even
+      # though it doesn't appear to be a reserved word.
+      this[name] = event[name] for name in ["memo", "type", "char", "key"]
 
     # Stops the event which prevents further propagation of the DOM event,
     # as well as DOM event bubbling.
