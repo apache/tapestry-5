@@ -53,7 +53,7 @@ var Scriptaculous = {
        throw("script.aculo.us requires the Prototype JavaScript framework >= " +
         Scriptaculous.REQUIRED_PROTOTYPE);
 
-// Tapestry turns off this mechanism, and replaces it with RenderSupport.addScriptLink().
+// Tapestry turns off this mechanism, and replaces it with the JavaScriptSupport environmental.
 
 //    var js = /scriptaculous\.js(\?.*)?$/;
 //    $$('head script[src]').findAll(function(s) {
