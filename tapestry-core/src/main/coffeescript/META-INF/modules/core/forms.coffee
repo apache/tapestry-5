@@ -26,14 +26,14 @@ define ["core/events", "core/spi", "core/builder", "core/compat/tapestry"],
       (element.getAttribute "data-prevent-submission")
 
     clearSubmittingHidden = (form) ->
-      hidden = form.find "[name=t:submit]"
+      hidden = form.find "[name='t:submit']"
 
       hidden.setValue null if hidden
 
       return
 
     setSubmittingHidden = (form, wrapper) ->
-      hidden = form.find "[name=t:submit]"
+      hidden = form.find "[name='t:submit']"
 
       unless hidden
         firstHidden = form.find "input[type=hidden]"
