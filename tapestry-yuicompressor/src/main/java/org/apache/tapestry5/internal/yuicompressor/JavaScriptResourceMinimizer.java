@@ -46,6 +46,12 @@ public class JavaScriptResourceMinimizer extends AbstractMinimizer
         EXACT, NEAR, FAR
     }
 
+    private static final String[] IGNORED_WARNINGS = {
+            "Try to use a single 'var' statement per scope.",
+            "Using 'eval' is not recommended",
+            "has already been declared in the same scope"
+    };
+
     public JavaScriptResourceMinimizer(final Logger logger, OperationTracker tracker)
     {
         super(logger, tracker, "JavaScript");
@@ -75,7 +81,8 @@ public class JavaScriptResourceMinimizer extends AbstractMinimizer
 
         final AtomicInteger warningCount = new AtomicInteger();
 
-        Runnable identifyWarnings = new Runnable() {
+        Runnable identifyWarnings = new Runnable()
+        {
             @Override
             public void run()
             {
@@ -100,6 +107,14 @@ public class JavaScriptResourceMinimizer extends AbstractMinimizer
 
             public void warning(String message, String sourceName, int line, String lineSource, int lineOffset)
             {
+                for (String ignored : IGNORED_WARNINGS)
+                {
+                    if (message.contains(ignored))
+                    {
+                        return;
+                    }
+                }
+
                 identifySource.run();
 
                 errorLines.add(line);
