@@ -37,8 +37,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class JavaScriptResourceMinimizer extends AbstractMinimizer
 {
-    private final Logger logger;
-
     private final static int RANGE = 5;
 
     private enum Where
@@ -55,8 +53,6 @@ public class JavaScriptResourceMinimizer extends AbstractMinimizer
     public JavaScriptResourceMinimizer(final Logger logger, OperationTracker tracker)
     {
         super(logger, tracker, "JavaScript");
-
-        this.logger = logger;
     }
 
     protected void doMinimize(final StreamableResource resource, Writer output) throws IOException

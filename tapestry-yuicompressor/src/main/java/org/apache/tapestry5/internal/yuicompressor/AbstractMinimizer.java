@@ -37,9 +37,9 @@ public abstract class AbstractMinimizer implements ResourceMinimizer
 {
     private static final double NANOS_TO_MILLIS = 1.0d / 1000000.0d;
 
-    private final Logger logger;
+    protected final Logger logger;
 
-    private final OperationTracker tracker;
+    protected final OperationTracker tracker;
 
     private final String resourceType;
 
@@ -82,10 +82,10 @@ public abstract class AbstractMinimizer implements ResourceMinimizer
                 input.getContentType(), CompressionStatus.COMPRESSABLE,
                 input.getLastModified(), new BytestreamCache(bos));
 
-        long elapsedNanos = System.nanoTime() - startNanos;
-
-        if (logger.isDebugEnabled())
+        if (logger.isInfoEnabled())
         {
+            long elapsedNanos = System.nanoTime() - startNanos;
+
             int inputSize = input.getSize();
             int outputSize = output.getSize();
 
@@ -93,7 +93,7 @@ public abstract class AbstractMinimizer implements ResourceMinimizer
             // e.g., reducing 100 bytes to 25 would be a (100-25)/100 reduction, or 75%
             double reduction = 100d * ((double) (inputSize - outputSize)) / ((double) inputSize);
 
-            logger.debug(String.format("Minimized %s (%,d input bytes of %s to %,d output bytes in %.2f ms, %.2f%% reduction)",
+            logger.info(String.format("Minimized %s (%,d input bytes of %s to %,d output bytes in %.2f ms, %.2f%% reduction)",
                     input.getDescription(), inputSize, resourceType, outputSize, elapsedMillis, reduction));
         }
 

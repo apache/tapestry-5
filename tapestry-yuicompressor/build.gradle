@@ -2,7 +2,7 @@ description = "Integrates YUI Compressor to minimize JavaScript and CSS resource
 
 dependencies {
   compile project(':tapestry-core') 
-  compile "com.google.code.maven-play-plugin.com.yahoo.platform.yui:yuicompressor:2.4.7"
+  compile "com.yahoo.platform.yui:yuicompressor:2.4.7"
     
   testCompile project(':tapestry-test')
 }
@@ -10,21 +10,6 @@ dependencies {
 repositories { 
   mavenRepo name: "Maven Play Plugin", url: "http://maven-play-plugin.googlecode.com/svn/mavenrepo/releases"
 }
-
-install { 
-  repositories.mavenInstaller { 
-    pom.project { 
-      repositories { 
-        repository { 
-          id "maven-play-plugin"
-          name "Maven Play Plugin"
-          url "http://maven-play-plugin.googlecode.com/svn/mavenrepo/releases"
-        }
-      }
-    }
-  }
-}
-
 
 jar {
     manifest {
