@@ -42,6 +42,11 @@ public class AlertManagerImpl implements AlertManager
         needAlertStorageCleanup = perThreadManager.createValue();
     }
 
+    public void success(String message)
+    {
+        alert(Duration.SINGLE, Severity.SUCCESS, message);
+    }
+    
     public void info(String message)
     {
         alert(Duration.SINGLE, Severity.INFO, message);

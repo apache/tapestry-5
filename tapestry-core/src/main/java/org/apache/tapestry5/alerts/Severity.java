@@ -19,7 +19,7 @@ package org.apache.tapestry5.alerts;
  */
 public enum Severity
 {
-    INFO, WARN, ERROR;
+    SUCCESS, INFO, WARN, ERROR;
 
     /**
      * The CSS class to be used for the client list element.

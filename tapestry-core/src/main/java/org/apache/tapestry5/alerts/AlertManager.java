@@ -22,6 +22,13 @@ package org.apache.tapestry5.alerts;
  */
 public interface AlertManager
 {
+   /**
+     * Adds an {@link Severity#SUCCESS} alert with the default duration, {@link Duration#SINGLE}.
+     *
+     * @param message to present to the user
+     */
+    void success(String message);
+
     /**
      * Adds an {@link Severity#INFO} alert with the default duration, {@link Duration#SINGLE}.
      *
