@@ -331,7 +331,7 @@ public class PageTester
         setupRequestFromURI(link.toRedirectURI());
     }
 
-    private void setupRequestFromURI(String URI)
+     void setupRequestFromURI(String URI)
     {
         String linkPath = stripContextFromPath(URI);
 
@@ -342,7 +342,7 @@ public class PageTester
         request.clear().setPath(path);
 
         if (comma > 0)
-            decodeParametersIntoRequest(path.substring(comma + 1));
+            decodeParametersIntoRequest(linkPath.substring(comma + 1));
     }
 
     private void decodeParametersIntoRequest(String queryString)

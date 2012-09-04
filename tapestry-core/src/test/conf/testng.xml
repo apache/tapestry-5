@@ -10,6 +10,7 @@
 <suite name="Tapestry Core" annotations="1.5" verbose="2">
     <test name="Component Unit Tests" enabled="true">
         <packages>
+            <package name="org.apache.tapestry5.test"/>
             <package name="org.apache.tapestry5.integration.pagelevel"/>
             <package name="org.apache.tapestry5.corelib.base"/>
             <package name="org.apache.tapestry5.corelib.components"/>
