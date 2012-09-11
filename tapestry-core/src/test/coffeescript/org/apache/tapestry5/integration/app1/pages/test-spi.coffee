@@ -2,19 +2,19 @@ require ["core/spi"], (spi) ->
   module "core/spi"
 
   test "get wrapped element by id", ->
-    e = spi.wrap "spi-eventelement"
+    e = spi "spi-eventelement"
 
     ok e isnt null, "element found and wrapped"
 
   test "get wrapped element by unknown id is null", ->
-    e = spi.wrap "spi-does-not-exist-element"
+    e = spi "spi-does-not-exist-element"
 
     ok e is null, "element not found and null"
 
   test "pause and resume events", ->
 
     clicks = 0
-    container = spi.wrap "spi-eventelement"
+    container = spi "spi-eventelement"
     button = container.find "a"
 
     # Remember that Prototype will never trigger a native event, just a
@@ -45,7 +45,7 @@ require ["core/spi"], (spi) ->
   test "trigger native events", ->
 
     clicks = 0
-    container = spi.wrap "spi-eventelement"
+    container = spi "spi-eventelement"
     button = container.find "a"
 
     eh = container.on "click", "a", (event) ->
@@ -61,7 +61,7 @@ require ["core/spi"], (spi) ->
   test "selector used with events filters", ->
 
     clicks = 0
-    container = spi.wrap "spi-eventelement"
+    container = spi "spi-eventelement"
     primary = container.find "a.btn-primary"
     secondary = container.find "a[data-use=secondary]"
 
@@ -81,7 +81,7 @@ require ["core/spi"], (spi) ->
 
   test "this is matched element in handler", ->
 
-    container = spi.wrap "spi-eventelement"
+    container = spi "spi-eventelement"
     primary = container.find "a.btn-primary"
 
     eh = container.on "x:click", "a.btn-primary", (event) ->
@@ -95,7 +95,7 @@ require ["core/spi"], (spi) ->
 
   test "visibility, hide(), and show()", ->
 
-    e = (spi.wrap "spi-visibility").find "span"
+    e = (spi "spi-visibility").find "span"
 
     equal e.visible(), true, "element is initially visible"
 

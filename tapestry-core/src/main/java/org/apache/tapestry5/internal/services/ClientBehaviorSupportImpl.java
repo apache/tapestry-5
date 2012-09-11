@@ -18,7 +18,6 @@ import org.apache.tapestry5.Field;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.corelib.data.InsertPosition;
 import org.apache.tapestry5.json.JSONArray;
-import org.apache.tapestry5.json.JSONLiteral;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ClientBehaviorSupport;
 import org.apache.tapestry5.services.Environment;
@@ -72,7 +71,7 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
     }
 
     /**
-     * @deprecated Use {@link #addFormFragment(String,boolean,String,String)} instead
+     * @deprecated Use {@link #addFormFragment(String, boolean, String, String)} instead
      */
     public void addFormFragment(String clientId, String showFunctionName, String hideFunctionName)
     {
@@ -89,18 +88,7 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
 
     public void addFormFragment(String clientId, boolean alwaysSubmit, String showFunctionName, String hideFunctionName, String visibilityBoundFunctionName)
     {
-        JSONObject spec = new JSONObject("element", clientId);
-
-        addFunction(spec, "show", showFunctionName);
-        addFunction(spec, "hide", hideFunctionName);
-
-        if (visibilityBoundFunctionName != null)
-            spec.put("bound", new JSONLiteral(visibilityBoundFunctionName));
-
-        if (alwaysSubmit)
-            spec.put("alwaysSubmit", true);
-
-        javascriptSupport.addInitializerCall("formFragment", spec);
+        throw new UnsupportedOperationException("ClientBehaviorSupport.addFormFragment is no longer supported. Use the core/form-fragment module instead.");
     }
 
     public void addFormInjector(String clientId, Link link, InsertPosition insertPosition, String showFunctionName)
@@ -149,6 +137,8 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
     public void commit()
     {
         if (validations.length() != 0)
+        {
             javascriptSupport.addInitializerCall("validate", validations);
+        }
     }
 }

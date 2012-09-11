@@ -21,9 +21,7 @@
 define ["_", "prototype"], (_) ->
 
   domLoaded = false
-  # When the document has loaded, convert `domReady` to just execute the callback immediately.
-  $(document).observe "dom:loaded", ->
-    domLoaded = true
+  $(document).observe "dom:loaded", -> domLoaded = true
 
   # _internal_: splits the string into words separated by whitespace
   split = (str) ->
@@ -120,7 +118,7 @@ define ["_", "prototype"], (_) ->
   #   and the memo as the second parameter. `this` will be the ElementWrapper for the matched element.
   class EventHandler
     constructor: (elements, eventNames, match, handler) ->
-      throw new Error("No event handler was provided.") unless handler?
+      throw new Error "No event handler was provided." unless handler?
 
       wrapped = (prototypeEvent) ->
         # Set `this` to be the matched ElementWrapper, rather than the element on which the event is observed.
@@ -298,23 +296,43 @@ define ["_", "prototype"], (_) ->
 
       _.map matches, (e) -> new ElementWrapper e
 
-    # Returns an ElementWrapper for this element's containing element. The ElementWrapper is created lazily, and
+    # Returns an ElementWrapper for this element's containing element.  The ElementWrapper is created lazily, and
     # cached. Returns null if this element has no parentNode (either because this element is the document object, or
     # because this element is not yet attached to the DOM).
-    getContainer: ->
-      unless @container
-        return null unless element.parentNode
-        @container = new ElementWrapper(element.parentNode)
+    container: ->
+      parentNode = @element.parentNode
+      return null unless parentNode
 
-      @container
+      new ElementWrapper(parentNode)
 
     # Returns true if this element is visible, false otherwise. This does not check to see if all containers of the
     # element are visible.
     visible: ->
       @element.visible()
 
+    # Returns true if this element is visible, and all parent elements are also visible.
+    # * options - optional object used to customize the search:
+    # ** bound - function passed the DOM element, returns true if the element represents the upper bound that terminates
+    #   the search (at which point, true is returned).
+    #
+    # The default bound is the document body (this is a change from 5.3, where the default bound was the nearest
+    # form element).
+    deepVisible: (options) ->
+
+      boundf = options?.bound or (element) -> element is document.body
+
+      cursor = this
+      while cursor
+        return false unless cursor.visible()
+        cursor = cursor.container()
+
+        return true if cursor and boundf cursor.element
+
+      # Bound not reached, meaning that the Element is not currently attached to the DOM.
+      false
+
     # Fires a named event, passing an optional _memo_ object to event handler functions. This must support
-    # common native events (exact list TBD), as well as native events (in Prototype, native events must have
+    # common native events (exact list TBD), as well as custom events (in Prototype, custom events must have
     # a prefix that ends with a colon).
     #
     # * eventName - name of event to trigger on the wrapped Element
@@ -323,14 +341,14 @@ define ["_", "prototype"], (_) ->
     #
     # Returns this ElementWrapper.
     trigger: (eventName, memo) ->
-      throw new Error("Attempt to trigger event with null event name") unless eventName?
+      throw new Error "Attempt to trigger event with null event name" unless eventName?
 
       if (eventName.indexOf ':') > 0
         # Custom event is supported directly by Prototype:
         @element.fire eventName, memo
       else
         # Native events take some extra work:
-        throw new Error("Memo must be null when triggering a native event") if memo
+        throw new Error "Memo must be null when triggering a native event" if memo
 
         fireNativeEvent @element, eventName
 
@@ -353,16 +371,17 @@ define ["_", "prototype"], (_) ->
 
     # Adds an event handler for one or more events.
     #
-    # events - one or more event names, separated by spaces
-    # match - optional: CSS expression used as a filter; only events that bubble
-    # up to the wrapped element from an originating element that matches the CSS expression
-    # will invoke the handler.
-    # handler - function invoked; the function is passed an EventWrapper object.
+    # * events - one or more event names, separated by spaces
+    # * match - optional: CSS expression used as a filter; only events that bubble
+    #   up to the wrapped element from an originating element that matches the CSS expression
+    #   will invoke the handler.
+    # * handler - function invoked; the function is passed an EventWrapper object.
     #
     # Returns an EventHandler object, making it possible to turn event observation on or off.
     on: (events, match, handler) ->
       exports.on @element, events, match, handler
 
+  # _internal_: converts a selector to an array of DOM elements
   parseSelectorToElements = (selector) ->
     if _.isString selector
       return $$ selector
@@ -380,7 +399,8 @@ define ["_", "prototype"], (_) ->
   # Performs an asynchronous Ajax request, invoking callbacks when it completes.
   #
   # This is very low level; most code will want to go through the `core/ajax` module instead,
-  # which adds better handling of exceptions and failures, and handles Tapestry's
+  # which adds better handling of exceptions and failures, and handles Tapestry's partial page
+  # render reponse keys.
   #
   # * options.method - "post", "get", etc., default: "post".
   #   Adds a "_method" parameter and uses "post" to handle "delete", etc.
@@ -419,7 +439,7 @@ define ["_", "prototype"], (_) ->
           if options.onfailure
             options.onfailure response, message
           else
-            throw new Error(message)
+            throw new Error message
 
       onSuccess: (response) ->
 
@@ -437,12 +457,30 @@ define ["_", "prototype"], (_) ->
 
     new Ajax.Request(url, finalOptions)
 
-  exports =
+
+  # The main export is a function that wraps a DOM element as an ElementWrapper; additional functions are attached as
+  # properties.
+  #
+  # * element - a DOM element, or a string id of a DOM element
+  #
+  # Returns the ElementWrapper, or null if no element with the id exists
+  exports = wrapElement = (element) ->
+    if _.isString element
+      element = $ element
+      return null unless element
+    else
+      throw new Error "Attempt to wrap a null DOM element" unless element
+
+    new ElementWrapper element
+
+  _.extend exports,
+    wrap: wrapElement
+
     ajaxRequest: ajaxRequest
 
     # Invokes the callback only once the DOM has finished loading all elements (other resources, such as images, may
     # still be in-transit). This is a safe time to search the DOM, modify attributes, and attach event handlers.
-    # Returns this modules exports, for chained calls. If the DOM has already loaded, the callback is invoked
+    # Returns this module's exports, for chained calls. If the DOM has already loaded, the callback is invoked
     # immediately.
     domReady: (callback) ->
       if domLoaded
@@ -470,25 +508,14 @@ define ["_", "prototype"], (_) ->
 
       elements = parseSelectorToElements selector
 
-      return new EventHandler(elements, (split events), match, handler)
-
-    # Returns an ElementWrapper for the provided DOM element that includes key behaviors:
-    #
-    # * element - a DOM element, or the window, or the unique id of a DOM element
-    #
-    # Returns the ElementWrapper, or null if no DOM element with the given id exists.
-    wrap: (element) ->
-      if _.isString element
-        element = $ element
-        return null unless element
-      else
-        throw new Error("Attempt to wrap a null DOM element") unless element
-
-      new ElementWrapper element
+      new EventHandler(elements, (split events), match, handler)
 
     # Returns a wrapped version of the document.body element. Care must be take to not invoke this function before the
     # body element exists; typically only after the DOM has loaded, such as a `domReady()` callback.
-    body: -> bodyWrapper ?= (exports.wrap document.body)
+    body: ->
+      throw new Error "May not access body until after DOM has loaded." unless domLoaded
+
+      bodyWrapper ?= (wrapElement document.body)
 
     # Returns the current dimensions of the viewport. An object with keys `width` and `height` (in pixels) is returned.
     viewportDimensions: -> document.viewport.getDimensions()

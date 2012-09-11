@@ -23,6 +23,8 @@ import org.apache.tapestry5.corelib.data.InsertPosition;
  * the client-side behavior associated with {@link org.apache.tapestry5.corelib.components.FormFragment}s.
  *
  * @see org.apache.tapestry5.corelib.components.Zone
+ * @deprecated Deprecated in 5.4 with no replacement. Use {@link org.apache.tapestry5.services.javascript.JavaScriptSupport} directly,
+ *             instead.
  */
 public interface ClientBehaviorSupport
 {
@@ -88,6 +90,8 @@ public interface ClientBehaviorSupport
     /**
      * Adds a new client-side Tapestry.FormFragment object. FormFragment's are used to make parts of a client-side form
      * visible or invisible, which involves interactions with both the server-side and client-side validation.
+     * <p/>
+     * <strong>This implementation has been removed in 5.4; it throws an {@link UnsupportedOperationException}.</strong>
      *
      * @param clientId
      *         client-side id of the element that will be made visible or invisible
@@ -101,6 +105,7 @@ public interface ClientBehaviorSupport
      * @param visibilityBoundFunctionName
      *         name of the function used to bound the isDeepVisible search, or null for the default
      * @since 5.3
+     * @deprecated In 5.4; use the <code>core/form-fragment</code> module instead.
      */
     void addFormFragment(String clientId, boolean alwaysSubmit, String showFunctionName, String hideFunctionName, String visibilityBoundFunctionName);
 

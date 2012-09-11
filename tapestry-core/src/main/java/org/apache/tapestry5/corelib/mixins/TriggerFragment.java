@@ -1,4 +1,4 @@
-// Copyright 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2008, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -59,8 +59,15 @@ public class TriggerFragment
     @HeartbeatDeferred
     void beginRender()
     {
-        JSONObject spec = new JSONObject("triggerId", container.getClientId(), "fragmentId", fragment.getClientId()).put("invert", invert);
+        JSONObject spec = new JSONObject(
+                "triggerId", container.getClientId(),
+                "fragmentId", fragment.getClientId());
 
-        javascriptSupport.addInitializerCall("linkTriggerToFormFragment", spec);
+        if (invert)
+        {
+            spec.put("invert", true);
+        }
+
+        javascriptSupport.require("core/form-fragment").invoke("linkTrigger").with(spec);
     }
 }

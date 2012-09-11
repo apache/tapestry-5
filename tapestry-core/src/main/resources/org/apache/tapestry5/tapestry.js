@@ -504,7 +504,7 @@ define("core/compat/tapestry", [
                  *            (a Submit or LinkSubmit)
                  */
                 setSubmittingElement: function (form, element) {
-                    forms.setSubmittingElement(spi.wrap(form), spi.wrap(element));
+                    forms.setSubmittingElement(spi(form), spi(element));
                 },
 
                 /**
@@ -512,7 +512,7 @@ define("core/compat/tapestry", [
                  * the form.
                  */
                 skipValidation: function (form) {
-                    forms.skipValidation(spi.wrap(form));
+                    forms.skipValidation(spi(form));
                 },
 
                 /**
@@ -1314,15 +1314,15 @@ define("core/compat/tapestry", [
     });
 
     function _show(element) {
-        return new spi.wrap(element).show();
+        return new spi(element).show();
     }
 
     function _hide(element) {
-        return new spi.wrap(element).hide();
+        return new spi(element).hide();
     }
 
     function _none(element) {
-        return new spi.wrap(element);
+        return new spi(element);
     }
 
     /*
@@ -1387,7 +1387,7 @@ define("core/compat/tapestry", [
             this.elementId = spec.element;
 
             // When updates arrive, the outer element is always made visible.
-            this.element = spi.wrap(spec.element);
+            this.element = spi(spec.element);
             this.specParameters = spec.parameters;
 
             /* Link the div back to this zone. */

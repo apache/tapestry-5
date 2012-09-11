@@ -64,7 +64,7 @@ define ["_", "core/spi"], (_, spi) ->
   addAttributes = (element, attributes) ->
     return unless attributes
 
-    wrapper = spi.wrap element
+    wrapper = spi element
 
     for name, value of attributes
       if name is "on"
@@ -120,4 +120,4 @@ define ["_", "core/spi"], (_, spi) ->
   (elementDescription, body...) ->
     element = buildTree elementDescription, body
 
-    spi.wrap element
+    spi element

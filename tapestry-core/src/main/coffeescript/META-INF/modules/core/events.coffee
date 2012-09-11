@@ -63,3 +63,11 @@ define
     # Triggered (by the standard hanndler) just after the content in a Zone has updated. If the zone was not visible, it
     # is made visible after its content is changed, and before this event is triggered.
     didUpdate: "t5:zone:did-update"
+
+  # Event names for arbitrary elements. These notifications exist primarily to allow for customizations in how
+  # certain behaviors are presented, for example, to add animation when certain elements are hidden or revealed.
+  element:
+    # Triggered when a hidden element has just been displayed.
+    didShow: "t5:element:did-show"
+    # Trigered when a visible element has just been hidden.
+    didHide: "t5:element:did-hide"

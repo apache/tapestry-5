@@ -21,7 +21,6 @@
  */
 define("core/compat/t5-forceload", [
     "core/compat/t5-alerts",
-    "core/compat/t5-formfragment",
     "core/compat/tree",
     "core/compat/tapestry-messages"],
         // Does nothing, but forces the other define()-ed "modules" to have their dependencies

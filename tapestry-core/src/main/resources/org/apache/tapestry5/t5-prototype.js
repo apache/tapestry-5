@@ -44,7 +44,7 @@ define("core/compat/t5-spi", ["core/spi", "core/compat/t5", "core/compat/t5-even
         });
 
         function appendMarkup(element, markup) {
-            spi.wrap(element).append(markup);
+            spi(element).append(markup);
 
             return element;
         }

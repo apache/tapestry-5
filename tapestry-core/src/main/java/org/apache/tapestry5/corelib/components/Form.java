@@ -357,7 +357,7 @@ public class Form implements ClientElement, FormValidationControl
 
         if (clientValidation != ClientValidation.NONE)
         {
-            writer.attributes("data-t5-validate", "submit");
+            writer.attributes("data-validate", "submit");
         }
 
         resources.renderInformalParameters(writer);

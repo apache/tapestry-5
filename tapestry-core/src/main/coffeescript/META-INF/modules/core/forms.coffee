@@ -90,7 +90,7 @@ define ["core/events", "core/spi", "core/builder", "core/compat/tapestry"],
       # was responsible for the eventual submit; this is very important to Ajax updates, otherwise the
       # information about which control triggered the submit gets lost.
       spi.body().on "click", "input[type=submit], input[type=image]", (event) ->
-        setSubmittingHidden (spi.wrap this.element.form), this
+        setSubmittingHidden (spi this.element.form), this
 
     exports =
       setSubmittingElement: (form, element) ->
