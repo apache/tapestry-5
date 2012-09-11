@@ -323,43 +323,6 @@ define("core/compat/tapestry", [
         },
 
         /**
-         * Used to reconstruct a complete URL from a path that is (or may be)
-         * relative to window.location. This is used when determining if a
-         * JavaScript library or CSS stylesheet has already been loaded. Recognizes
-         * complete URLs (which are returned unchanged), otherwise the URLs are
-         * expected to be absolute paths.
-         *
-         * @param path
-         * @return complete URL as string
-         */
-        rebuildURL: function (path) {
-            if (path.match(/^https?:/)) {
-                return path;
-            }
-
-            if (!path.startsWith("/")) {
-                Tapestry.error(Tapestry.Messages.pathDoesNotStartWithSlash, {
-                    path: path
-                });
-
-                return path;
-            }
-
-            if (!Tapestry.buildUrl) {
-                var l = window.location;
-                Tapestry.buildUrl = l.protocol + "//" + l.host;
-            }
-
-            return Tapestry.buildUrl + path;
-        },
-
-        stripToLastSlash: function (URL) {
-            var slashx = URL.lastIndexOf("/");
-
-            return URL.substring(0, slashx + 1);
-        },
-
-        /**
          * Convert a user-provided localized number to an ordinary number (not a
          * string). Removes seperators and leading/trailing whitespace. Disallows
          * the decimal point if isInteger is true.
@@ -1342,7 +1305,7 @@ define("core/compat/tapestry", [
                 if (!this.inError()) {
                     this.field.fire(Tapestry.FIELD_VALIDATE_EVENT, {
                         value: value,
-                        translated: translated,
+                        translated: translated
                     });
                 }
 

@@ -69,13 +69,13 @@ element to be updated when new content is provided for the zone in a partial pag
 removed with no replacement.
 
 Minor changes to Tapestry.ElementEffects.  Despite the names of the properties (kept for compatibility), all "effects"
-now simply make the element appear or hide, with no animation.
+now simply make the element appear or hide, with no animation.  The value returned from these methods is now an
+ElementWrapper, as defined by the core/spi module.
 
 Tapestry code no longer makes use of Scriptaculous. Instead, Tapestry will fire events on elements, and user code may
-decide to animate them using whatever library is desired.
+decide to animate them using whatever library is desired. The event names are defined in the core/events module.
 
-On the client side, the "floating console" is only used in cases where a native console is not available. (Is this a
-change from 5.3?)
+On the client side, the "floating console" is only used in cases where a native console is not available.
 
 Support for validating fields on blur (i.e., when tabbing out of a field) has been removed. Validation now occurs when
 the form is submitted, or not at all. The ClientValidation.BLUR enum value has been deprecated and is now treated as
@@ -86,9 +86,15 @@ was introduced in Tapestry 5.2, and has now been removed.
 
 Tapestry.FormEventManager has been entirely removed, along with supporting function Element.getFormEventManager().
 
-Tapestry.FieldEventManager.getIcon() now always returns null.
+Tapestry.FieldEventManager.getIcon() now always returns null. The icon image is no longer rendered (on the server)
+by the DefaultValidationDecorator. Shortly, a switch to using Twitter Bootstrap to present validation errors
+will occur.
 
 Tapestry 5.3 contained code that attempted to prevent Ajax requests until after the page had loaded; this was based
 on the function Tapestry.waitForPage().  Server components no longer make use of this function, and the function
 itself now does nothing. A replacement approach to preventing the user from interacting with links and forms before
 the page initialization has completed may be implemented in the future.
+
+Many functions on the Tapestry object have been removed, as they were only used internally:
+- rebuildURL
+- stripToLastSlash
