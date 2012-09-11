@@ -26,6 +26,7 @@ public interface AlertManager
      * Adds an {@link Severity#SUCCESS} alert with the default duration, {@link Duration#SINGLE}.
      *
      * @param message to present to the user
+     * @since 5.3.6
      */
     void success(String message);
 
