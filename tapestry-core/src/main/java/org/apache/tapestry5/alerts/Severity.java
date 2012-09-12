@@ -16,10 +16,27 @@ package org.apache.tapestry5.alerts;
 
 /**
  * The severity of an {@link Alert}, used primarily to control how it is decorated when presented to the user on the client side.
+ * 
+ * @since 5.3
  */
 public enum Severity
 {
-    SUCCESS, INFO, WARN, ERROR;
+    /**
+     * @since 5.3.6
+     */
+    SUCCESS, 
+    /**
+     * @since 5.3
+     */
+    INFO, 
+    /**
+     * @since 5.3
+     */
+    WARN, 
+    /**
+     * @since 5.3
+     */
+    ERROR;
 
     /**
      * The CSS class to be used for the client list element.
