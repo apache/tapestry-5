@@ -17,9 +17,11 @@
  * component is dynamically added to the form via Ajax.
  */
 Tapestry.Initializer.injectedUpload = function(element)
-{
-	var form = $(element).form;
-	  
-    form.enctype = "multipart/form-data";
-    form.encoding = "multipart/form-data"; 
+{	
+    var form = $(element).form; 
+    if (form)
+    {
+        form.enctype = "multipart/form-data";
+        form.encoding = "multipart/form-data";
+    } 
 }
