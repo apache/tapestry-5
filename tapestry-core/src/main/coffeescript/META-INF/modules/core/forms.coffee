@@ -66,7 +66,7 @@ define ["core/events", "core/spi", "core/builder", "core/compat/tapestry"],
           event.stop()
           return
 
-      # Allow certaint types of elements to do last-moment set up. Basically, this is for
+      # Allow certain types of elements to do last-moment set up. Basically, this is for
       # FormFragment, or similar, to make their t:hidden field enabled or disabled to match
       # their UI's visible/hidden status. This is assumed to work.
       this.trigger events.form.prepareForSubmit
