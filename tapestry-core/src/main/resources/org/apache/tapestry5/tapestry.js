@@ -50,7 +50,7 @@ define("core/compat/tapestry", [
 
         /**
          * Event, fired on a field element, to cause observers to validate the
-         * input. Passes a memo object with two keys: "value" (the raw input value)
+         * input. Passed a memo object with two keys: "value" (the raw input value)
          * and "translated" (the parsed value, usually meaning a number parsed from
          * a string). Observers may invoke Element.showValidationMessage() to
          * identify that the field is in error (and decorate the field and show a
