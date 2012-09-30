@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ public class ReloadTest extends IOCTestCase
 
         // URLClassLoader REQUIRES that File URLs end with a slash! That's a half hour of my life gone!
 
-        URL classesURL = new URL("file:" + classesDir.getCanonicalPath() + "/");
+        URL classesURL = new URL(classesDir.toURI().toString() + "/");
 
         System.out.println("Reload classes dir: " + classesURL);
 
