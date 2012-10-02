@@ -18,8 +18,20 @@
 # This is the core of the abstraction layer that allows the majority of components to operate without caring whether the
 # underlying infrastructure framework is Prototype, jQuery, or something else.  This is the standard SPI, which wraps
 # Prototype ... but does it in a way that makes it relatively easy to swap in jQuery instead.
+#
+# The SPI has a number of disadvantages:
+#
+# * It adds a number of layers of wrapper around the infrastructure framework objects
+# * It is leaky; some behaviors will vary slightly based on the active infrastructure framework
+# * The SPI is alien to both Prototype and jQuery developers; it mixes some ideas from both
+# * It is much less powerful or expressive than either infrastructure framework used directly
+#
+# It is quite concievable that some components will require direct access to the infrastructure framework, especially
+# those that are wrappers around third party libraries or plugins; however many simple components may need no more than
+# the SPI and gain the valuable benefit of not caring about the infrastructure framework.
 define ["_", "prototype"], (_) ->
 
+  # It is useful in the `exports.domLoaded` function to know when the DOM has in fact been loaded.
   domLoaded = false
   $(document).observe "dom:loaded", -> domLoaded = true
 
@@ -114,8 +126,8 @@ define ["_", "prototype"], (_) ->
   # * elements - array of DOM elements
   # * eventNames - array of event names
   # * match - selector to match bubbled elements, or null
-  # * handler - event handler function to invoke; it will be passed an EventWrapper instance as the first parameter,
-  #   and the memo as the second parameter. `this` will be the ElementWrapper for the matched element.
+  # * handler - event handler function to invoke; it will be passed an `EventWrapper` instance as the first parameter,
+  #   and the memo as the second parameter. `this` will be the `ElementWrapper` for the matched element.
   class EventHandler
     constructor: (elements, eventNames, match, handler) ->
       throw new Error "No event handler was provided." unless handler?
@@ -135,20 +147,16 @@ define ["_", "prototype"], (_) ->
             @protoHandlers.push Event.on element, eventName, match, wrapped
 
     # Invoked after `stop()` to restart event listening.
-    #
-    # Returns this EventHandler instance.
     start: ->
       _.each @protoHandlers, (h) -> h.start()
 
-      this
+      return this
 
     # Invoked to stop event listening. Listening can be re-instanted with `start()`.
-    #
-    # Returns this EventHandler instance.
     stop: ->
       _.each @protoHandlers, (h) -> h.stop()
 
-      this
+      return this
 
   # Wraps a DOM element, providing some common behaviors.
   # Exposes the original element as property `element`.
@@ -158,25 +166,22 @@ define ["_", "prototype"], (_) ->
     constructor: (@element) ->
 
     # Hides the wrapped element, setting its display to 'none'.
-    #
-    # Returns this ElementWrapper.
     hide: ->
       @element.hide()
-      this
+
+      return this
 
     # Displays the wrapped element if hidden.
-    #
-    # Returns this ElementWrapper.
     show: ->
       @element.show()
-      this
+
+      return this
 
     # Removes the wrapped element from the DOM.  It can later be re-attached.
-    #
-    # Returns this ElementWrapper.
     remove: ->
       @element.remove()
-      this
+
+      return this
 
     # Returns the value of an attribute as a string, or null if the attribute
     # does not exist.
@@ -185,8 +190,6 @@ define ["_", "prototype"], (_) ->
 
     # Set the value of the attribute to the given value.
     #
-    # Returns this ElementWrapper.
-    #
     # Note: Prototype has special support for values null, true, and false that may not be duplicated by other
     # implementations of the SPI.
     setAttribute: (name, value) ->
@@ -194,60 +197,57 @@ define ["_", "prototype"], (_) ->
       # Well, you can just do it, but its not guaranteed to work the same across
       # different SPIs.
       @element.writeAttribute name, value
-      this
+
+      return this
 
     # Removes the named attribute, if present.
-    #
-    # Returns this ElementWrapper
     removeAttribute: (name) ->
 
       @element.writeAttribute name, null
-      this
 
+      return this
 
     # Returns true if the element has the indicated class name, false otherwise.
     hasClass: (name) ->
       @element.hasClassName name
 
-    # Removes the class name from the element, then returns this ElementWrapper.
+    # Removes the class name from the element.
     removeClass: (name) ->
       @element.removeClassName name
-      this
 
-    # Adds the class name to the element, then returns this ElementWrapper.
+      return this
+
+    # Adds the class name to the element.
     addClass: (name) ->
       @element.addClassName name
-      this
+
+      return this
 
     # Updates this element with new content, replacing any old content. The new content may be HTML text, or a DOM
     # element, or null (to remove the body of the element).
-    #
-    # Returns this ElementWrapper.
     update: (content) ->
       @element.update (convertContent content)
-      this
+
+      return this
 
     # Appends new content (Element, ElementWrapper, or HTML markup string) to the body of the element.
-    #
-    # Returns this ElementWrapper.
     append: (content) ->
       @element.insert bottom: (convertContent content)
-      this
+
+      return this
 
     # Prepends new content (Element, ElementWrapper, or HTML markup string) to the body of the element.
-    #
-    # Returns this ElementWrapper
     prepend: (content) ->
       @element.insert top: (convertContent content)
-      this
+
+      return this
 
     # Inserts new content (Element, ElementWrapper, or HTML markup string) into the DOM immediately before
     # this ElementWrapper's element.
-    #
-    # Returns this ElementWrapper
     insertBefore: (content) ->
       @element.insert before: (convertContent content)
-      this
+
+      return this
 
     # Runs an animation to fade-in the element over the specified duration. The element may be hidden (via `hide()`)
     # initially, and will be made visible (with initial opacity 0, which will increase over time) when the animation
@@ -255,31 +255,26 @@ define ["_", "prototype"], (_) ->
     #
     # * duration - animation duration time, in seconds
     # * callback - function invoked after the animation is complete
-    #
-    # Returns this ElementWrapper
     fadeIn: (duration, callback) ->
       animate @element, "opacity", 0, 1, duration * 1000,
         onstart: => @element.show()
         oncomplete: callback
 
-      this
+      return this
 
     # Runs an animation to fade out an element over the specified duration. The element should already
     # be visible and fully opaque.
     #
     # * duration - animation duration time, in seconds
     # * callback - function invoked after the animation is complete
-    #
-    # Returns this ElementWrapper
     fadeOut: (duration, callback) ->
       animate @element, "opacity", 1, 0, duration * 1000,
         oncomplete: callback
 
-      this
+      return this
 
-    # Finds the first child element that matches the CSS selector.
-    #
-    # Returns the ElementWrapper for the child element, or null if not found.
+    # Finds the first child element that matches the CSS selector, wrapped as an ElementWrapper.
+    # Returns null if not found.
     find: (selector) ->
       match = @element.down selector
 
@@ -310,26 +305,20 @@ define ["_", "prototype"], (_) ->
     visible: ->
       @element.visible()
 
-    # Returns true if this element is visible, and all parent elements are also visible.
-    # * options - optional object used to customize the search:
-    # ** bound - function passed the DOM element, returns true if the element represents the upper bound that terminates
-    #   the search (at which point, true is returned).
+    # Returns true if this element is visible, and all parent elements are also visible, up to the document body.
     #
-    # The default bound is the document body (this is a change from 5.3, where the default bound was the nearest
-    # form element).
-    deepVisible: (options) ->
-
-      boundf = options?.bound or (element) -> element is document.body
+    # Note that in Tapestry 5.3, the search would stop at the nearest form element, not the document body.
+    deepVisible: ->
 
       cursor = this
       while cursor
         return false unless cursor.visible()
         cursor = cursor.container()
 
-        return true if cursor and boundf cursor.element
+        return true if cursor and cursor.element is document.body
 
       # Bound not reached, meaning that the Element is not currently attached to the DOM.
-      false
+      return false
 
     # Fires a named event, passing an optional _memo_ object to event handler functions. This must support
     # common native events (exact list TBD), as well as custom events (in Prototype, custom events must have
@@ -338,8 +327,6 @@ define ["_", "prototype"], (_) ->
     # * eventName - name of event to trigger on the wrapped Element
     # * memo - optional value assocated with the event; available as WrappedeEvent.memo in event handler functions (must
     # be null for native events)
-    #
-    # Returns this ElementWrapper.
     trigger: (eventName, memo) ->
       throw new Error "Attempt to trigger event with null event name" unless eventName?
 
@@ -352,22 +339,19 @@ define ["_", "prototype"], (_) ->
 
         fireNativeEvent @element, eventName
 
-      this
+      return this
 
     # Returns the current value of the element (which must be a form control element, such as `<input>` or
     # `<textarea>`).
     # TODO: Define behavior for multi-named elements, such as `<select>`.
-
     getValue: ->
       @element.getValue()
 
-    # Updates the value for the element (whichmust be a form control element).
-    #
-    # Returns this ElementWrapper
+    # Updates the value for the element (which must be a form control element).
     setValue: (newValue) ->
       @element.setValue newValue
 
-      this
+      return this
 
     # Adds an event handler for one or more events.
     #
@@ -375,11 +359,14 @@ define ["_", "prototype"], (_) ->
     # * match - optional: CSS expression used as a filter; only events that bubble
     #   up to the wrapped element from an originating element that matches the CSS expression
     #   will invoke the handler.
-    # * handler - function invoked; the function is passed an EventWrapper object.
+    # * handler - function invoked; the function is passed an `EventWrapper` object, and the
+    #   context (`this`) is the `ElementWrapper` for the matched element.
     #
     # Returns an EventHandler object, making it possible to turn event observation on or off.
     on: (events, match, handler) ->
       exports.on @element, events, match, handler
+
+      return this
 
   # _internal_: converts a selector to an array of DOM elements
   parseSelectorToElements = (selector) ->
@@ -455,6 +442,8 @@ define ["_", "prototype"], (_) ->
         # of the abstraction.
         options.onsuccess and options.onsuccess(response)
 
+
+    # TODO: This is not good; we need yet another wrapper of some kind here.
     new Ajax.Request(url, finalOptions)
 
 
@@ -488,7 +477,7 @@ define ["_", "prototype"], (_) ->
       else
         $(document).observe "dom:loaded", callback
 
-      exports
+      return exports
 
     # on() is used to add an event handler
     #
@@ -498,7 +487,8 @@ define ["_", "prototype"], (_) ->
     # * match - optional: CSS expression used as a filter; only events that bubble
     # * up to a selected element from an originating element that matches the CSS expression
     #   will invoke the handler.
-    # * handler - function invoked; the function is passed an Event object.
+    # * handler - function invoked; the function is passed an `EventWrapper` object, and the context (`this`)
+    #   is the `ElementWrapper` for the matched element
     #
     # Returns an EventHandler object, making it possible to turn event notifications on or off.
     on: (selector, events, match, handler) ->
