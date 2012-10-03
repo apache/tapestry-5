@@ -144,6 +144,7 @@ define ["_", "core/console", "core/spi", "core/events"],
           require ["core/compat/t5-forceload"], ->
             console.debug "Core libraries loaded."
             exports.loadLibraries libraries, ->
+              console.debug "Additional libraries loaded." if libraries?.length > 0
               exports.initialize immediateInits
 
               spi.domReady -> exports.initialize otherInits
