@@ -31,10 +31,6 @@
 # the SPI and gain the valuable benefit of not caring about the infrastructure framework.
 define ["_", "prototype"], (_) ->
 
-  # It is useful in the `exports.domLoaded` function to know when the DOM has in fact been loaded.
-  domLoaded = false
-  $(document).observe "dom:loaded", -> domLoaded = true
-
   # _internal_: splits the string into words separated by whitespace
   split = (str) ->
     _(str.split " ").reject (s) -> s is ""
@@ -472,7 +468,14 @@ define ["_", "prototype"], (_) ->
     # Returns this module's exports, for chained calls. If the DOM has already loaded, the callback is invoked
     # immediately.
     domReady: (callback) ->
-      if domLoaded
+      # Hack for IE, which doesn't fire the dom:loaded event reliably.  However, we know that any code here
+      # is invoked from the footer of the document, so the rest can be assumed to be loaded.
+
+      if Prototype.Browser.IE
+        document.loaded = true
+
+      # Prototype sets this property when the document is loaded.
+      if document.loaded
         callback()
       else
         $(document).observe "dom:loaded", callback
@@ -503,7 +506,7 @@ define ["_", "prototype"], (_) ->
     # Returns a wrapped version of the document.body element. Care must be take to not invoke this function before the
     # body element exists; typically only after the DOM has loaded, such as a `domReady()` callback.
     body: ->
-      throw new Error "May not access body until after DOM has loaded." unless domLoaded
+      throw new Error "May not access body until after DOM has loaded." unless document.loaded
 
       bodyWrapper ?= (wrapElement document.body)
 

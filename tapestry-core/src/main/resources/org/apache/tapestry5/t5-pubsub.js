@@ -28,7 +28,12 @@ define("core/compat/t5-pubsub", ["core/compat/t5"], function () {
 
         // Necessary since T5.dom depends on T5.pubsub
         function $(element) {
-            return T5.$(element);
+            // Note: duplicates code from t5-dom.js (T5.dom.locate).
+            if (_.isString(element)) {
+                return document.getElementById(element);
+            }
+
+            return element; // may be null, otherwise presumed to be a DOM node
         }
 
         function purgePublisherCache(topic) {

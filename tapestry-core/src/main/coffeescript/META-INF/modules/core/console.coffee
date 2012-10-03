@@ -58,23 +58,31 @@ define ["core/spi", "core/builder", "_"], (spi, builder, _) ->
 
   level = (className, consolefn) ->
     (message) ->
-      # consolefn may be null if there's no console; under IE it may be non-null, but not a function
-      if _.isFunction consolefn
-        # Use the available native console
-        consolefn.call(console, message)
-      else
+      # consolefn may be null if there's no console; under IE it may be non-null, but not a function.
+      unless consolefn
         # Display it floating. If there's a real problem, such as a failed Ajax request, then the
         # client-side code should be alerting the user in some other way, and not rely on them
         # being able to see the logged console output.
         display className, message
+        return
+
+      if _.isFunction consolefn
+        # Use the available native console, calling it like an instance method
+        consolefn.call console, message
+      else
+        # And IE just has to be different. The properties of console are callable, like functions,
+        # but aren't proper functions that work with `call()` either.
+        consolefn message
 
       return
 
-  # If native console available, go for it
+  # If native console available, go for it.  IE doesn't have debug, so we use log instead.
 
-  exports[name] = level("t-#{name}", nativeConsole[name]) for name in ["debug", "info", "warn"]
-  exports.error = level("t-err", nativeConsole.error)
+  exports.debug = level "t-debug", (nativeConsole.debug or nativeConsole.log)
+  exports.info = level "t-info", nativeConsole.info
+  exports.warn = level "t-warn", nativeConsole.warn
+  exports.error = level "t-err", nativeConsole.error
 
   # Return the exports; we keep a reference to it, so we can see exports.DURATION, even
-  # if someone else modifies it.
+  # if some other module imports this one and modified that property.
   return exports
