@@ -113,9 +113,6 @@ public class Zone implements ClientBodyElement
     @Environmental
     private JavaScriptSupport javascriptSupport;
 
-    @Environmental
-    private ClientBehaviorSupport clientBehaviorSupport;
-
     @Inject
     private Environment environment;
 
