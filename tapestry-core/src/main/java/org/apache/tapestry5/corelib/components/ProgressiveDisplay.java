@@ -42,7 +42,7 @@ import java.io.IOException;
  * @since 5.1.0.1
  */
 @SupportsInformalParameters
-@Import(library = "ProgressiveDisplay.js")
+@Import(library = "ProgressiveDisplay.js", modules = "core/zone")
 @Events(EventConstants.PROGRESSIVE_DISPLAY)
 @SuppressWarnings("all")
 public class ProgressiveDisplay
