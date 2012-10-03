@@ -79,13 +79,13 @@ define("core/compat/tapestry", [
          * fragment. The event memo object includes a key, visible, that should be
          * true or false.
          */
-        CHANGE_VISIBILITY_EVENT: "tapestry:changevisibility",
+        CHANGE_VISIBILITY_EVENT: events.formfragment.changeVisibility,
 
         /**
          * Event fired on a form fragment element to hide the element and remove it
          * from the DOM.
          */
-        HIDE_AND_REMOVE_EVENT: "tapestry:hideandremove",
+        HIDE_AND_REMOVE_EVENT: events.formfragment.remove,
 
         /**
          * Event fired on a link or submit to request that it request that the

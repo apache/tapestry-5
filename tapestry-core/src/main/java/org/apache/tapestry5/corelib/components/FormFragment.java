@@ -16,6 +16,7 @@ package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
 import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.internal.ComponentActionSink;
@@ -24,8 +25,6 @@ import org.apache.tapestry5.corelib.internal.HiddenFieldPositioner;
 import org.apache.tapestry5.corelib.mixins.TriggerFragment;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.json.JSONLiteral;
-import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ClientDataEncoder;
 import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.FormSupport;
@@ -38,16 +37,16 @@ import org.slf4j.Logger;
  * automatically bypass validation when the fragment is invisible. The trick is to also bypass server-side form
  * processing for such fields when the form is submitted; client-side logic "removes" the
  * {@link org.apache.tapestry5.corelib.components.Form#FORM_DATA form data} for the fragment if it is invisible when the
- * form
- * is submitted; alternately, client-side logic can simply remove the form fragment element (including its visible and
+ * form is submitted (e.g., the hidden form field is disabled);
+ * alternately, client-side logic can simply remove the form fragment element (including its visible and
  * hidden fields) to prevent server-side processing.
  * <p/>
- * The client-side element will now listen to two new event defined by client-side constants:
+ * The client-side element will now listen to two new events defined by client-side constants:
  * <dl>
- * <dt>Tapestry.CHANGE_VISIBILITY_EVENT</dt>
+ * <dt>core/events.formfragment.changeVisibility or Tapestry.CHANGE_VISIBILITY_EVENT</dt>
  * <dd>Change the visibility as per the event memo's visibility property. When the visibility changes, the correct
  * animation is executed.</dd>
- * <dt>Tapestry.HIDE_AND_REMOVE_EVENT</dt>
+ * <dt>core/events.formfragment.remove or Tapestry.HIDE_AND_REMOVE_EVENT</dt>
  * <dd>Hides the element, then removes it from the DOM entirely.
  * </dl>
  *
@@ -56,6 +55,7 @@ import org.slf4j.Logger;
  * @see Form
  */
 @SupportsInformalParameters
+@Import(modules = "core/form-fragment")
 public class FormFragment implements ClientElement
 {
     /**
@@ -109,13 +109,14 @@ public class FormFragment implements ClientElement
     private String idParameter;
 
     /**
-     * A javascript function that overrides the default visibility search bound.
+     * The name of a javascript function that overrides the default visibility search bound.
      * Tapestry normally ensures that not only the form fragment but all parent elements up to the containing body
      * are visible when determining whether to submit the contents of a form fragment.  This behavior can be modified by
      * supplying a javascript function that receives the "current" element in the chain.  Returning true will stop the
      * search (and report ElementWrapper.deepVisible() as true).  Returning false will continue the search up the chain.
      *
      * @since 5.3
+     * @deprecated Deprecated in 5.4 with no current replacement.
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL, allowNull = false)
     private String visibleBound;
@@ -161,7 +162,9 @@ public class FormFragment implements ClientElement
 
         hiddenFieldPositioner = new HiddenFieldPositioner(writer, rules);
 
-        Element element = writer.element(this.element, "id", clientId);
+        Element element = writer.element(this.element,
+                "id", clientId,
+                "data-component-type", "core/FormFragment");
 
         resources.renderInformalParameters(writer);
 
@@ -169,20 +172,6 @@ public class FormFragment implements ClientElement
         {
             element.addClassName(CSSClassConstants.INVISIBLE);
         }
-
-        JSONObject spec = new JSONObject("element", clientId);
-
-        if (visibleBound != null)
-        {
-            spec.put("bound", new JSONLiteral(visibleBound));
-        }
-
-        if (alwaysSubmit)
-        {
-            spec.put("alwaysSubmit", true);
-        }
-
-        javascriptSupport.require("core/form-fragment").invoke("initFragment").with(spec);
 
         componentActions = new ComponentActionSink(logger, clientDataEncoder);
 
@@ -223,15 +212,25 @@ public class FormFragment implements ClientElement
      */
     void afterRender(MarkupWriter writer)
     {
-        hiddenFieldPositioner.getElement().attributes("type", "hidden",
+        Element hidden = hiddenFieldPositioner.getElement();
+
+        hidden.attributes("type", "hidden",
 
                 "name", Form.FORM_DATA,
 
-                "id", clientId + "-hidden",
 
                 "value", componentActions.getClientData());
 
+        if (!alwaysSubmit)
+        {
+            // Make it possible for the FormFragment to locate the hidden field, even if
+            // FormFragments get nested in some complex way.  When the always submit option
+            // is enabled, there's no need for the hidden field to be locatable.
+            hidden.attributes("data-for-fragment", clientId);
+        }
+
         writer.end(); // div
+
 
         environment.pop(FormSupport.class);
     }

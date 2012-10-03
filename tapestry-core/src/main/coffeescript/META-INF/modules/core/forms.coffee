@@ -69,14 +69,14 @@ define ["core/events", "core/spi", "core/builder", "core/compat/tapestry"],
       # Allow certain types of elements to do last-moment set up. Basically, this is for
       # FormFragment, or similar, to make their t:hidden field enabled or disabled to match
       # their UI's visible/hidden status. This is assumed to work.
-      this.trigger events.form.prepareForSubmit
+      this.trigger events.form.prepareForSubmit, this
 
       # Sometimes we want to submit the form normally, for a full-page render.
       # Othertimes we want to stop here and let the `events.form.processSubmit`
       # handler take it from here.
       if isPreventSubmission this
         event.stop()
-        this.trigger events.form.processSubmit
+        this.trigger events.form.processSubmit, this
 
       # Otherwise, the event is good, there are no validation problems, let the normal processing commence.
       return
@@ -89,7 +89,7 @@ define ["core/events", "core/spi", "core/builder", "core/compat/tapestry"],
       # On any click on a submit or image, update the containing form to indicate that the element
       # was responsible for the eventual submit; this is very important to Ajax updates, otherwise the
       # information about which control triggered the submit gets lost.
-      spi.body().on "click", "input[type=submit], input[type=image]", (event) ->
+      spi.body().on "click", "input[type=submit], input[type=image]", ->
         setSubmittingHidden (spi this.element.form), this
 
     exports =

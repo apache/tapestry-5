@@ -29,6 +29,7 @@ define
     # Triggered after `validateForm` (when there are no prior validation exceptions), to allow certain elements
     # to configure themselves immediately before the form is submitted. This exists primarily for components such
     # as FormFragment, which will update a enable or disable a hidden field to match the visibility of the fragment.
+    # The `core/spi.EventWrapper` for the form element is passed as the memo.
     prepareForSubmit: "t5:form:prepare-for-submit"
 
     # Triggered last, when the form is configured to not submit normally (as a standard POST). Under 5.3, this
@@ -36,6 +37,7 @@ define
     # set the `data-prevent-submission` attribute. In either case, the submit event is stopped, and this
     # event fired to replace it; in most cases, a handler will then handle submitting the form's data as part
     # of an Ajax request.
+    # The `core/spi.EventWrapper` for the form element is passed as the memo.
     processSubmit: "t5:form:process-submit"
 
   field:
@@ -71,3 +73,14 @@ define
     didShow: "t5:element:did-show"
     # Trigered when a visible element has just been hidden.
     didHide: "t5:element:did-hide"
+  # Event names specific to client-side element associated with the FormFragment component. These events exist to allow
+  # client code to cleanly adjust the visibility of the fragment, or remove it.
+  formfragment:
+    # Requests that the fragment change its visibility. The event memo is an object with a single key, visible, a
+    # boolean. The fragment will show or hide itself if necessary (triggering the `element.didShow` or
+    # `element.didHide` event).
+    changeVisibility: "t5:fragment:change-visibility"
+    # Request that the fragment remove itself entirely. This event is of no practical use, as it is simply equivalent
+    # to invoking `spi/ElementWrapper.remove()` on the fragment's element; the event exists for compatibility with
+    # Tapestry 5.3 and will be removed in Tapestry 5.5.
+    remove: "t5:fragment:remove"

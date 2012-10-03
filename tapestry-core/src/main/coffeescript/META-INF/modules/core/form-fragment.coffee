@@ -15,45 +15,49 @@
 
 # ##core/form-fragment
 #
-define ["core/spi", "core/events", "core/compat/tapestry"],
-  (spi, events) ->
+define ["_", "core/spi", "core/events", "core/compat/tapestry"],
+  (_, spi, events) ->
 
-    # Initializes a FormFragment element
-    #
-    # * spec.element - id of fragment's element
-    # * spec.bound - (optional) reference to function that determines bound
-    #   (used with `core/spi:EventWrapper.deepVisible()`)
-    # * spec.alwaysSubmit - (optional) if true, then fields inside the fragment submit their values
-    #   even when the fragment is not visible. If false (default), then field data is not submitted.
-    initFragment = (spec) ->
-      element = spi spec.element
-      hidden = spi "#{spec.element}-hidden"
-      form = spi hidden.element.form
+    SELECTOR = '[data-component-type="core/FormFragment"]'
 
-      opts = spec.bound and { bound: spec.bound} or null
+    # Setup up top-level event handlers for FormFragment-related DOM events.
+    spi.domReady ->
+      body = spi.body()
 
-      unless spec.alwaysSubmit
-        hidden.element.disabled = ! element.deepVisible opts
+      # This is mostly for compatibility with 5.3, which supported
+      # a DOM event to ask a fragment to remove itself.  This makes less sense since
+      # default animations were eliminated in 5.4.
+      body.on events.formfragment.remove, SELECTOR, (event) ->
+        this.remove()
 
-      updateUI = (makeVisible) ->
-        unless spec.alwaysSubmit
-          hidden.element.disabled = ! (makeVisible and element.container().deepVisible opts)
+      # When any form fires the prepareForSubmit event, check to see if
+      # any form fragments are contained within, and give them a chance
+      # to enabled/disable their hidden field.
+      body.on events.form.prepareForSubmit, "form", (event) ->
 
-        element[if makeVisible then "show" else "hide"]()
+        fragments = this.findAll SELECTOR
 
-        element.trigger events.element[if makeVisible then "didShow" else "didHide"]
+        _.each fragments, (frag) ->
 
-      element.on Tapestry.CHANGE_VISIBILITY_EVENT, (event) ->
+          fragmentId = frag.getAttribute "id"
+
+          hidden = frag.find "input[type=hidden][data-for-fragment=#{fragmentId}]"
+
+          # If found (e.g., not alwaysSubmit), then enable/disable the field.
+          hidden && hidden.setAttribute "disabled", not frag.deepVisible()
+
+      # Again, a DOM event to make the FormFragment visible or invisible; this is useful
+      # because of the didShow/didHide events ... but we're really just seeing the evolution
+      # from the old style (the FormFragment class as controller) to the new style (DOM events and
+      # top-level event handlers).
+      body.on events.formfragment.changeVisibility, SELECTOR, (event) ->
         event.stop()
 
         makeVisible = event.memo.visible
 
-        unless makeVisible is element.visible()
-          updateUI makeVisible
+        this[if makeVisible then "show" else "hide"]()
 
-      element.on Tapestry.HIDE_AND_REMOVE_EVENT, (event) ->
-        event.stop()
-        element.remove()
+        this.trigger events.element[if makeVisible then "didShow" else "didHide"]
 
     # Initializes a trigger for a FormFragment
     #
@@ -68,11 +72,11 @@ define ["core/spi", "core/events", "core/compat/tapestry"],
         checked = trigger.element.checked
         makeVisible = checked isnt invert
 
-        (spi spec.fragmentId).trigger Tapestry.CHANGE_VISIBILITY_EVENT,  visible: makeVisible
+        (spi spec.fragmentId).trigger events.formfragment.changeVisibility,  visible: makeVisible
 
       if trigger.element.type is "radio"
         spi.on trigger.element.form, "click", update
       else
         trigger.on "click", update
 
-    { initFragment, linkTrigger }
+    { linkTrigger }
