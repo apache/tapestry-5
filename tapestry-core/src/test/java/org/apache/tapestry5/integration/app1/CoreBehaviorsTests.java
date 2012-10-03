@@ -1078,10 +1078,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         click("link=ajax");
 
-        waitForCSSSelectedElementToAppear("div.t-console div.t-err");
-
-        assertText(
-                "css=div.t-console div.t-err", "Communication with the server failed: Request event 'action' (on component UnhandledEventDemo:ajax) was not handled; you must provide a matching event handler method in the component or in one of its containers.");
+        // Since 5.4 no longer creates the floating console if a native console exists, its now hard to ensure what was written to the console.
     }
 
     /**
