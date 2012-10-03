@@ -28,8 +28,8 @@ define ["core/spi", "core/builder", "_"], (spi, builder, _) ->
     DURATION: 10
 
   try
-  # FireFox will throw an exception if you even access the console object and it does
-  # not exist. Wow!
+    # FireFox will throw an exception if you even access the console object and it does
+    # not exist. Wow!
     nativeConsole = console
   catch e
 
