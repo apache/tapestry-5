@@ -102,8 +102,8 @@ define ["_", "core/console", "core/spi", "core/events"],
         tracker()
 
     exports =
-    # Passed a list of initializers, executes each initializer in order. Due to asynchronous loading
-    # of modules, the exact order in which initializer functions are invoked is not predictable.
+      # Passed a list of initializers, executes each initializer in order. Due to asynchronous loading
+      # of modules, the exact order in which initializer functions are invoked is not predictable.
       initialize: (inits = [], callback) ->
         callbackCountdown = inits.length + 1
 
