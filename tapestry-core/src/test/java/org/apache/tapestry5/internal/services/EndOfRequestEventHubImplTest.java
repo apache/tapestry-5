@@ -16,14 +16,26 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.events.EndOfRequestListener;
 import org.apache.tapestry5.internal.test.InternalBaseTestCase;
+import org.apache.tapestry5.services.Request;
+import org.apache.tapestry5.services.RequestGlobals;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class EndOfRequestEventHubImplTest extends InternalBaseTestCase
 {
+    private RequestGlobals globals = mockRequestGlobals();
+    private Request request = mockRequest();
+
+    @BeforeMethod
+    public void setup()
+    {
+        expect(globals.getRequest()).andReturn(request);
+    }
+
     @Test
     public void add_and_notify()
     {
-        EndOfRequestEventHub hub = new EndOfRequestEventHubImpl();
+        EndOfRequestEventHub hub = new EndOfRequestEventHubImpl(globals);
 
         EndOfRequestListener listener = newMock(EndOfRequestListener.class);
 
@@ -42,7 +54,7 @@ public class EndOfRequestEventHubImplTest extends InternalBaseTestCase
     @Test
     public void add_remove_notify()
     {
-        EndOfRequestEventHub hub = new EndOfRequestEventHubImpl();
+        EndOfRequestEventHub hub = new EndOfRequestEventHubImpl(globals);
 
         EndOfRequestListener listener = newMock(EndOfRequestListener.class);
 
