@@ -45,7 +45,7 @@ class ReloadSpec extends Specification {
 
     classesDir = new File(System.getProperty("java.io.tmpdir"), uid)
 
-    def classesURL = new URL("file:" + classesDir.getCanonicalPath() + "/")
+    def classesURL = new URL(classesDir.toURI().toString() + "/")    
 
     classLoader = new URLClassLoader([classesURL] as URL[],
         Thread.currentThread().contextClassLoader)
