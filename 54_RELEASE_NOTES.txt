@@ -53,6 +53,10 @@ attributes.
 
 # Breaking Changes:
 
+The FormFragment component's visibleBound parameter is no longer supported; it was used to make a decision about how
+far up the DOM above the FormFragment's client-side element should be searched when determining visibility. This may
+resurface in the future as a CSS expression, but is currently not supported.
+
 The definition of the symbol 'tapestry.asset-path-prefix' has changed; it no longer includes the leading and trailing
 slashes. The default in 5.3 was "/assets/", in 5.4 it is simply "assets".
 
@@ -62,15 +66,15 @@ properties to the global JavaScript window object, rather than assume that the c
 
 The interface org.apache.tapestry5.services.assets.ResourceTransformer has had a new method added:
 getTransformedContentType(). This makes it possible to determine which file extensions map to which content types
-(for example, A ResourceTransformer for CoffeeScript files, with extension ".coffee", would map to "text/javascript").
+(for example, a ResourceTransformer for CoffeeScript files, with extension ".coffee", would map to "text/javascript").
 
 Older versions of Tapestry included client-side support for an element with the CSS class "t-zone-update" as the actual
 element to be updated when new content is provided for the zone in a partial page render response. This feature has been
 removed with no replacement.
 
-Minor changes to Tapestry.ElementEffects.  Despite the names of the properties (kept for compatibility), all "effects"
-now simply make the element appear or hide, with no animation.  The value returned from these methods is now an
-ElementWrapper, as defined by the core/spi module.
+The Tapestry.ElementEffects object has changed significantly.  Despite the names of the properties (kept for compatibility),
+all "effects" now simply make the element appear or hide, with no animation.  The value returned from these methods is
+now an ElementWrapper, as defined by the core/spi module.
 
 Tapestry code no longer makes use of Scriptaculous. Instead, Tapestry will fire events on elements, and user code may
 decide to animate them using whatever library is desired. The event names are defined in the core/events module.
