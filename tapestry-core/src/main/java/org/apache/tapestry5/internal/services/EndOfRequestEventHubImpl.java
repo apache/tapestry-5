@@ -16,11 +16,18 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.events.EndOfRequestListener;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.services.RequestGlobals;
 
 import java.util.List;
 
 public class EndOfRequestEventHubImpl implements EndOfRequestEventHub
 {
+    private final RequestGlobals requestGlobals;
+
+    public EndOfRequestEventHubImpl(RequestGlobals requestGlobals) {
+	this.requestGlobals = requestGlobals;
+    }
+
     private final List<EndOfRequestListener> listeners = CollectionFactory.newThreadSafeList();
 
     public void addEndOfRequestListener(EndOfRequestListener listener)
@@ -35,6 +42,8 @@ public class EndOfRequestEventHubImpl implements EndOfRequestEventHub
 
     public void fire()
     {
+        // TAP5-986: do not fire if request is already cleaned up. Container may use the same thread for different dispatches
+        if (requestGlobals.getRequest() == null) return;
         for (EndOfRequestListener l : listeners)
         {
             l.requestDidComplete();
