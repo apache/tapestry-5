@@ -67,7 +67,7 @@ public class AjaxTests extends TapestryCoreTestCase
         click("off");
 
         click("subVisible");
-        
+
         waitForCondition("selenium.browserbot.getCurrentWindow().$('code').isDeepVisible() == false", PAGE_LOAD_TIMEOUT);
 
         clickAndWait(SUBMIT);
@@ -75,7 +75,7 @@ public class AjaxTests extends TapestryCoreTestCase
         assertText("name", "Barney");
         assertText("email", "rubble@bedrock.gov");
         assertText("code", "");
-        
+
         // .. but it still gets submitted, thanks to alwyassubmit=true
         assertText("sub", "subvalue");
     }
@@ -92,18 +92,22 @@ public class AjaxTests extends TapestryCoreTestCase
         String condition = "selenium.browserbot.getCurrentWindow().$('innertrigger1').isDeepVisible() == false";
         waitForCondition(condition, PAGE_LOAD_TIMEOUT);
         assertTrue(isVisible("outertext1"));
-		
+
         //now make sure that hide_and_remove is properly handled, as well...
         assertTrue(isVisible("outertext2"));
         assertTrue(isVisible("innertext2"));
         click("innertrigger2");
-        condition="!(selenium.browserbot.getCurrentWindow().$('innertrigger2'))";
+        condition = "!(selenium.browserbot.getCurrentWindow().$('innertrigger2'))";
         waitForCondition(condition, PAGE_LOAD_TIMEOUT);
         assertFalse(isElementPresent("innertext2"));
         assertTrue(isElementPresent("outertext2"));
     }
 
-    @Test
+    /**
+     * Disabled; the functionality was not well thought out and has been removed; something similar may replace it
+     * in the future.
+     */
+    @Test(enabled = false)
     public void form_fragment_explicit_visible_bounds()
     {
         openLinks("Form Fragment Explicit Visible Bounds Demo");
@@ -142,7 +146,7 @@ public class AjaxTests extends TapestryCoreTestCase
         clickAndWait("link=Clear Saved State");
     }
 
-    @Test
+    @Test(enabled = false)
     public void form_fragment_visible_bound_validation()
     {
         openLinks("Form Fragment Explicit Visible Bounds Demo");
