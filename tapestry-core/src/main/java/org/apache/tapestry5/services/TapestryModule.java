@@ -2224,6 +2224,10 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.REQUIRE_JS, "classpath:org/apache/tapestry5/require_2.0.2.js");
         configuration.add(SymbolConstants.CONTEXT_PATH, "");
+
+        // Leaving this as the default results in a runtime error logged to the console (and a default password is used);
+        // you are expected to override this symbol.
+        configuration.add(SymbolConstants.HMAC_PASSPHRASE, "");
     }
 
     /**

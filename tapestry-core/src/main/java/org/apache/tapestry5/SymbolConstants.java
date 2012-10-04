@@ -341,7 +341,6 @@ public class SymbolConstants
      * Prefix to be used for all resource paths, used to recognize which requests are for assets. This value
      * is appended to the context path and the (optional {@linkplain #APPLICATION_FOLDER application folder}.
      * Its default is "assets".  It may contain slashes, but should not begin or end with one.
-     *
      */
     public static final String ASSET_PATH_PREFIX = "tapestry.asset-path-prefix";
 
@@ -359,4 +358,15 @@ public class SymbolConstants
      * @since 5.4
      */
     public static final String CONTEXT_PATH = "tapestry.context-path";
+
+    /**
+     * A passphrase used as the basis of hash-based message authentication (HMAC) for any object stream data stored on
+     * the client.  The default phrase is the empty string, which will result in a logged runtime <em>error</em>.
+     * You should configure this to a reasonable value (longer is better) and ensure that all servers in your cluster
+     * share the same value (configuring this in code, rather than the command line, is preferred).
+     *
+     * @see org.apache.tapestry5.services.ClientDataEncoder
+     * @since 5.3.6
+     */
+    public static final String HMAC_PASSPHRASE = "tapestry.hmac-passphrase";
 }

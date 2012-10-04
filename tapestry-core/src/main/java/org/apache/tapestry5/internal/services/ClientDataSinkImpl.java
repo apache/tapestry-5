@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.internal.util.Base64OutputStream;
+import org.apache.tapestry5.internal.util.MacOutputStream;
+import org.apache.tapestry5.internal.util.TeeOutputStream;
 import org.apache.tapestry5.services.ClientDataSink;
 import org.apache.tapestry5.services.URLEncoder;
 
@@ -22,6 +24,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.security.Key;
 import java.util.zip.GZIPOutputStream;
 
 public class ClientDataSinkImpl implements ClientDataSink
@@ -34,12 +37,17 @@ public class ClientDataSinkImpl implements ClientDataSink
 
     private boolean closed;
 
-    public ClientDataSinkImpl(URLEncoder urlEncoder) throws IOException
+    private final MacOutputStream macOutputStream;
+
+    public ClientDataSinkImpl(URLEncoder urlEncoder, Key hmacKey) throws IOException
     {
         this.urlEncoder = urlEncoder;
-        base64OutputStream = new Base64OutputStream();
 
-        final BufferedOutputStream pipeline = new BufferedOutputStream(new GZIPOutputStream(base64OutputStream));
+        base64OutputStream = new Base64OutputStream();
+        macOutputStream =  MacOutputStream.streamFor(hmacKey);
+
+        final BufferedOutputStream pipeline = new BufferedOutputStream(new GZIPOutputStream(
+                new TeeOutputStream(macOutputStream, base64OutputStream)));
 
         OutputStream guard = new OutputStream()
         {
@@ -92,14 +100,13 @@ public class ClientDataSinkImpl implements ClientDataSink
             try
             {
                 objectOutputStream.close();
-            }
-            catch (IOException ex)
+            } catch (IOException ex)
             {
                 // Ignore.
             }
         }
 
-        return base64OutputStream.toBase64();
+        return macOutputStream.getResult() + ":" + base64OutputStream.toBase64();
     }
 
     public String getEncodedClientData()
