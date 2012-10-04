@@ -2394,6 +2394,10 @@ public final class TapestryModule
 
         // By default, no page is on the whitelist unless it has the @WhitelistAccessOnly annotation
         configuration.add(MetaDataConstants.WHITELIST_ONLY_PAGE, false);
+
+        // Leaving this as the default results in a runtime error logged to the console (and a default password is used);
+        // you are expected to override this symbol.
+        configuration.add(SymbolConstants.HMAC_PASSPHRASE, "");
     }
 
     /**

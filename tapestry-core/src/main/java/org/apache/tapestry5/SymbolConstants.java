@@ -365,4 +365,15 @@ public class SymbolConstants
      * Prefix to be used for all asset paths
      */
     public static final String ASSET_PATH_PREFIX = "tapestry.asset-path-prefix";
+
+    /**
+     * A passphrase used as the basis of hash-based message authentication (HMAC) for any object stream data stored on
+     * the client.  The default phrase is the empty string, which will result in a logged runtime <em>error</em>.
+     * You should configure this to a reasonable value (longer is better) and ensure that all servers in your cluster
+     * share the same value (configuring this in code, rather than the command line, is preferred).
+     *
+     * @see org.apache.tapestry5.services.ClientDataEncoder
+     * @since 5.3.6
+     */
+    public static final String HMAC_PASSPHRASE = "tapestry.hmac-passphrase";
 }
