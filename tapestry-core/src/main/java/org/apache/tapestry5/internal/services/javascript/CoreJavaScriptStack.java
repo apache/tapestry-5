@@ -102,6 +102,8 @@ public class CoreJavaScriptStack implements JavaScriptStack
 
     private static final String[] CORE_STYLESHEET = new String[]
             {
+                    "${tapestry.bootstrap-root}/css/bootstrap.css",
+
                     ROOT + "/tapestry-console.css",
 
                     ROOT + "/t5-alerts.css",

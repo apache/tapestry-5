@@ -1,67 +1,55 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 <head>
-    <title>Tapestry Integration Test Application #1</title>
-    <t:doctype name="html"/>
+    <title>Tapestry Integration Test Application</title>
 </head>
 <body>
-<div id="wrap">
 
-    <div id="header">
-        <h1>Tapestry Integration Test Application</h1>
+
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+
+            <t:pagelink t:id="back" class="brand" page="Index">Tapestry Integration Test Application</t:pagelink>
+
+            <ul class="nav">
+                <li class="navbar-text">
+                    Page: <span id="activePageName">${componentResources.pageName}</span>
+                </li>
+                <li class="divider-vertical"></li>
+                <li class="navbar-text">
+                    Access:
+                    <span id="secure">${secure}</span>
+                </li>
+                <li class="divider-vertical"></li>
+                <li class="navbar-text">
+                    Locale: ${componentResources.locale}
+                </li>
+            </ul>
+
+            <p class="navbar-text pull-right">
+                Release ${tapestryVersion}
+            </p>
+        </div>
     </div>
+</div>
 
-    <div id="content">
-        <div id="topspread">
-            <t:alerts/>
-            <t:body/>
-        </div>
+<div class="container">
 
+    <t:alerts/>
 
-        <div id="right">
-            <div class="menu">
-                <h4>Navigation</h4>
-                <ul>
-                    <li>
-                        Page:
-                        <span id="activePageName">${componentResources.pageName}</span>
-                    </li>
-                    <li>Access:
-                        <span id="secure">${secure}</span>
-                    </li>
-                    <li>
-                        <t:pagelink page="index">Back to index</t:pagelink>
-                    </li>
-                </ul>
+    <t:body/>
 
-                <h4>Infrastructure</h4>
+    <hr/>
 
-                <dl>
-                    <dt>Locale:</dt>
-                    <dd>${componentResources.locale}</dd>
-                </dl>
+    <h3>Request info:</h3>
 
-            </div>
-        </div>
+    <t:renderobject object="request"/>
 
-        <div id="left">
-            <h3>Request info:</h3>
-
-            <t:renderobject object="request"/>
-
-        </div>
-
-
-        <div style="clear:both;"></div>
-
-
-    </div>
-    <div id="footer">
-        &copy; 2008-2010
+    <p class="well">
+        &copy; 2008-2012
         <a href="http://apache.org/">Apache Software Foundation</a>
-    </div>
-
-    <div id="bottom"/>
+    </p>
 
 </div>
 

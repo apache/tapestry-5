@@ -14,9 +14,11 @@
 
 package org.apache.tapestry5.integration.app1.components;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.Request;
 
 /**
@@ -24,12 +26,17 @@ import org.apache.tapestry5.services.Request;
  * T5 naming.
  */
 @Import(stylesheet =
-        {"context:layout/style.css", "context:css/app.css"})
+        {"context:css/app.css"})
 public class Border
 {
     @Inject
     @Property
     private Request request;
+
+    @Inject
+    @Symbol(SymbolConstants.TAPESTRY_VERSION)
+    @Property
+    private String tapestryVersion;
 
     public String getSecure()
     {

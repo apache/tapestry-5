@@ -80,7 +80,10 @@ import org.apache.tapestry5.services.assets.AssetsModule;
 import org.apache.tapestry5.services.compatibility.CompatibilityModule;
 import org.apache.tapestry5.services.dynamic.DynamicTemplate;
 import org.apache.tapestry5.services.dynamic.DynamicTemplateParser;
-import org.apache.tapestry5.services.javascript.*;
+import org.apache.tapestry5.services.javascript.JavaScriptModule;
+import org.apache.tapestry5.services.javascript.JavaScriptStack;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
+import org.apache.tapestry5.services.javascript.ModuleManager;
 import org.apache.tapestry5.services.linktransform.ComponentEventLinkTransformer;
 import org.apache.tapestry5.services.linktransform.LinkTransformer;
 import org.apache.tapestry5.services.linktransform.PageRenderLinkTransformer;
@@ -1795,8 +1798,6 @@ public final class TapestryModule
      * <dl>
      * <dt>DocumentLinker</dt>
      * <dd>Provides {@link org.apache.tapestry5.internal.services.DocumentLinker}</dd>
-     * <dt>InjectDefaultStylesheet</dt>
-     * <dd>Injects the default stylesheet into all pages</dd></dt>
      * <dt>ClientBehaviorSupport</dt>
      * <dd>Provides {@link ClientBehaviorSupport}</dd>
      * <dt>Heartbeat</dt>
@@ -1815,10 +1816,7 @@ public final class TapestryModule
                                          @Symbol(SymbolConstants.TAPESTRY_VERSION)
                                          final String tapestryVersion,
 
-                                         final ValidationDecoratorFactory validationDecoratorFactory,
-
-                                         @Path("${tapestry.default-stylesheet}")
-                                         final Asset defaultStylesheet)
+                                         final ValidationDecoratorFactory validationDecoratorFactory)
     {
         MarkupRendererFilter documentLinker = new MarkupRendererFilter()
         {
@@ -1836,18 +1834,6 @@ public final class TapestryModule
             }
         };
 
-
-        MarkupRendererFilter injectDefaultStylesheet = new MarkupRendererFilter()
-        {
-            public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
-            {
-                DocumentLinker linker = environment.peekRequired(DocumentLinker.class);
-
-                linker.addStylesheetLink(new StylesheetLink(defaultStylesheet.toClientURL()));
-
-                renderer.renderMarkup(writer);
-            }
-        };
 
         MarkupRendererFilter clientBehaviorSupport = new MarkupRendererFilter()
         {
@@ -1901,8 +1887,7 @@ public final class TapestryModule
         };
 
         configuration.add("DocumentLinker", documentLinker);
-        configuration.add("InjectDefaultStylesheet", injectDefaultStylesheet, "after:JavaScriptSupport");
-        configuration.add("ClientBehaviorSupport", clientBehaviorSupport);
+        configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:JavaScriptSupport");
         configuration.add("Heartbeat", heartbeat);
         configuration.add("ValidationDecorator", defaultValidationDecorator);
     }
@@ -2131,7 +2116,8 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.START_PAGE_NAME, "start");
 
-        configuration.add(SymbolConstants.DEFAULT_STYLESHEET, "classpath:/org/apache/tapestry5/default.css");
+        configuration.add(SymbolConstants.DEFAULT_STYLESHEET, "");
+
         configuration.add("tapestry.spacer-image", "classpath:/org/apache/tapestry5/spacer.gif");
 
         configuration.add(SymbolConstants.PRODUCTION_MODE, true);
@@ -2228,6 +2214,8 @@ public final class TapestryModule
         // Leaving this as the default results in a runtime error logged to the console (and a default password is used);
         // you are expected to override this symbol.
         configuration.add(SymbolConstants.HMAC_PASSPHRASE, "");
+
+        configuration.add(SymbolConstants.BOOTSTRAP_ROOT, "classpath:META-INF/assets/tapestry5/bootstrap_2_1_1");
     }
 
     /**

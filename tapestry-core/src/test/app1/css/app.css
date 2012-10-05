@@ -1,3 +1,7 @@
+BODY {
+    padding-top: 40px;
+}
+
 SPAN.inherit {
     font-style: italic;
 }
@@ -18,7 +22,6 @@ DIV.menu {
 /** Copy of "#right h3" */
 
 DIV#left H3 {
-    background: #4A1605 url( ../layout/images/rightbig.gif ) no-repeat;
     height: 30px;
     line-height: 30px;
     color: #fff;
@@ -29,7 +32,6 @@ DIV#left H3 {
 
 /* Copy of ".menu h4" */
 DIV.t-env-data-section {
-    background: #4A1605 url( ../layout/images/rightsmall.gif ) no-repeat;
     height: 20px;
     line-height: 20px;
     color: #fff;

@@ -203,6 +203,7 @@ public class SymbolConstants
      * The default stylesheet automatically injected into every rendered HTML page.
      *
      * @since 5.2.0
+     * @deprecated Deprecated in 5.4 with no replacement; the stylesheet is now associated with the core {@link JavaScriptStack}.
      */
     public static final String DEFAULT_STYLESHEET = "tapestry.default-stylesheet";
 
@@ -369,4 +370,13 @@ public class SymbolConstants
      * @since 5.3.6
      */
     public static final String HMAC_PASSPHRASE = "tapestry.hmac-passphrase";
+
+    /**
+     * The root asset path for Twitter Bootstrap; if your application uses a modified version of Bootstrap,
+     * you can override this symbol to have Tapestry automatically use your version. The value should be a path
+     * to a folder (under "classpath:" or "context:") and should not include a trailing slash.
+     *
+     * @since 5.4
+     */
+    public static final String BOOTSTRAP_ROOT = "tapestry.bootstrap-root";
 }
