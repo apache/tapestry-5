@@ -22,11 +22,11 @@ define
   # All events are triggered on a specific HTML `<form>` element, and top-level handlers take it from there.
   form:
 
-    # Triggered after `events.field.validate`, when there are no field validation exceptions, to allow for cross-form
-    # validation.
-    validateForm: "t5:form:validate"
+    # Triggered after fields have been validated, when there are no field validation exceptions, to allow for
+    # cross-form validation.
+    validate: "t5:form:validate"
 
-    # Triggered after `validateForm` (when there are no prior validation exceptions), to allow certain elements
+    # Triggered after `validate` (when there are no prior validation exceptions), to allow certain elements
     # to configure themselves immediately before the form is submitted. This exists primarily for components such
     # as FormFragment, which will update a enable or disable a hidden field to match the visibility of the fragment.
     # The `core/spi.EventWrapper` for the form element is passed as the memo.

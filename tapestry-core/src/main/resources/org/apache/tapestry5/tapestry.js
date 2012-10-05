@@ -56,14 +56,14 @@ define("core/compat/tapestry", [
          * identify that the field is in error (and decorate the field and show a
          * popup error message).
          */
-        FIELD_VALIDATE_EVENT: "tapestry:fieldvalidate",
+        FIELD_VALIDATE_EVENT: events.field.validate,
 
         /**
          * Event notification, on a form object, that is used to trigger validation
          * on all fields within the form (observed by each field's
          * Tapestry.FieldEventManager).
          */
-        FORM_VALIDATE_FIELDS_EVENT: events.field.validate,
+        FORM_VALIDATE_FIELDS_EVENT: events.form.validateFields,
 
         /**
          * Event, fired on the document object, which identifies the current focus
@@ -1211,7 +1211,7 @@ define("core/compat/tapestry", [
                         _this.validateInput();
 
                         if (_this.inError()) {
-                            event.memo.error = true;
+                            event.memo.error = true;                                      <
 
                         }
                     }
