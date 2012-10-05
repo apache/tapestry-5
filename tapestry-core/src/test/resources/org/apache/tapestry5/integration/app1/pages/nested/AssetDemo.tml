@@ -36,7 +36,7 @@
 <img id="templatemeta" src="${asset:plugin.png}"/>
 
 <p>
-    Asset is sub-folder of META-INF/assets via asset: binding
+    Asset in sub-folder of META-INF/assets via asset: binding
 </p>
 
 <img id="metasub" src="${asset:sub/accepted.png}"/>
