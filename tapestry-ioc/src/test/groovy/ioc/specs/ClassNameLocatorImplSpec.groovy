@@ -1,76 +1,80 @@
 package ioc.specs
 
 import org.apache.tapestry5.ioc.internal.services.ClassNameLocatorImpl
+import org.apache.tapestry5.ioc.internal.services.ClasspathScannerImpl
 import org.apache.tapestry5.ioc.internal.services.ClasspathURLConverterImpl
 import org.apache.tapestry5.ioc.services.ClassNameLocator
+import org.apache.tapestry5.ioc.services.ClasspathScanner
 import spock.lang.Specification
 
 class ClassNameLocatorImplSpec extends Specification {
 
-  ClassNameLocator locator = new ClassNameLocatorImpl(new ClasspathURLConverterImpl());
+    ClasspathScanner scanner = new ClasspathScannerImpl(new ClasspathURLConverterImpl())
 
-  def assertInList(classNames, packageName, String... expectedNames) {
+    ClassNameLocator locator = new ClassNameLocatorImpl(scanner);
 
-    expectedNames.each { name ->
-      String qualifiedName = "${packageName}.${name}"
+    def assertInList(classNames, packageName, String... expectedNames) {
 
-      assert classNames.contains(qualifiedName), "[$qualifiedName] not present in ${classNames.join(', ')}."
+        expectedNames.each { name ->
+            String qualifiedName = "${packageName}.${name}"
+
+            assert classNames.contains(qualifiedName), "[$qualifiedName] not present in ${classNames.join(', ')}."
+        }
     }
-  }
 
-  def assertNotInList(classNames, packageName, String... expectedNames) {
+    def assertNotInList(classNames, packageName, String... expectedNames) {
 
-    expectedNames.each { name ->
-      String qualifiedName = "${packageName}.${name}"
+        expectedNames.each { name ->
+            String qualifiedName = "${packageName}.${name}"
 
-      assert !classNames.contains(qualifiedName), "[$qualifiedName] should not be present in ${classNames.join(', ')}."
+            assert !classNames.contains(qualifiedName), "[$qualifiedName] should not be present in ${classNames.join(', ')}."
+        }
     }
-  }
 
-  def "locate classes inside a JAR file on the classpath"() {
+    def "locate classes inside a JAR file on the classpath"() {
 
-    expect:
+        expect:
 
-    assertInList locator.locateClassNames("javax.inject"),
-        "javax.inject",
-        "Inject", "Named", "Singleton"
-  }
+        assertInList locator.locateClassNames("javax.inject"),
+            "javax.inject",
+            "Inject", "Named", "Singleton"
+    }
 
-  def "can locate classes inside a subpackage, inside a classpath JAR file"() {
+    def "can locate classes inside a subpackage, inside a classpath JAR file"() {
 
-    expect:
+        expect:
 
-    assertInList locator.locateClassNames("org.slf4j"),
-        "org.slf4j",
-        "spi.MDCAdapter"
-  }
+        assertInList locator.locateClassNames("org.slf4j"),
+            "org.slf4j",
+            "spi.MDCAdapter"
+    }
 
-  def "can locate classes in local folder, but exclude inner classes"() {
+    def "can locate classes in local folder, but exclude inner classes"() {
 
-    def packageName = "org.apache.tapestry5.ioc.services"
+        def packageName = "org.apache.tapestry5.ioc.services"
 
-    when:
+        when:
 
-    def names = locator.locateClassNames packageName
+        def names = locator.locateClassNames packageName
 
-    then:
+        then:
 
-    assertInList names, packageName, "SymbolSource", "TapestryIOCModule"
+        assertInList names, packageName, "SymbolSource", "TapestryIOCModule"
 
-    assertNotInList names, packageName, 'TapestryIOCMOdules$1'
-  }
+        assertNotInList names, packageName, 'TapestryIOCMOdules$1'
+    }
 
-  def "can locate classes in subpackage of local folders"() {
-    def packageName = "org.apache.tapestry5"
+    def "can locate classes in subpackage of local folders"() {
+        def packageName = "org.apache.tapestry5"
 
-    when:
+        when:
 
-    def names = locator.locateClassNames packageName
+        def names = locator.locateClassNames packageName
 
-    then:
+        then:
 
-    assertInList names, packageName, "ioc.Orderable", "ioc.services.ChainBuilder"
-    assertNotInList names, packageName, 'services.TapestryIOCModule$1'
-  }
+        assertInList names, packageName, "ioc.Orderable", "ioc.services.ChainBuilder"
+        assertNotInList names, packageName, 'services.TapestryIOCModule$1'
+    }
 
 }

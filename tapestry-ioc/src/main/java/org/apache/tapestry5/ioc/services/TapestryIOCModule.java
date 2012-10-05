@@ -65,6 +65,7 @@ public final class TapestryIOCModule
         binder.bind(Runnable.class, RegistryStartup.class).withSimpleId();
         binder.bind(MasterObjectProvider.class, MasterObjectProviderImpl.class).preventReloading();
         binder.bind(ClassNameLocator.class, ClassNameLocatorImpl.class);
+        binder.bind(ClasspathScanner.class, ClasspathScannerImpl.class);
         binder.bind(AspectDecorator.class, AspectDecoratorImpl.class);
         binder.bind(ClasspathURLConverter.class, ClasspathURLConverterImpl.class);
         binder.bind(ServiceOverride.class, ServiceOverrideImpl.class);

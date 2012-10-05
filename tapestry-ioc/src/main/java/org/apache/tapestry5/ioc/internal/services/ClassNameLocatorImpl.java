@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,53 +14,64 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.func.F;
+import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.ioc.services.ClassNameLocator;
-import org.apache.tapestry5.ioc.services.ClasspathURLConverter;
-import org.apache.tapestry5.ioc.util.Stack;
+import org.apache.tapestry5.ioc.services.ClasspathMatcher;
+import org.apache.tapestry5.ioc.services.ClasspathScanner;
 
-import java.io.*;
-import java.net.JarURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
+import java.io.IOException;
 import java.util.Collection;
-import java.util.Enumeration;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
 public class ClassNameLocatorImpl implements ClassNameLocator
 {
-    private static final String CLASS_SUFFIX = ".class";
-    public static final String PACKAGE_INFO = "package-info.class";
-
-    private final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-
-    private final ClasspathURLConverter converter;
+    private final ClasspathScanner scanner;
 
     // This matches normal class files but not inner class files (which contain a '$'.
 
     private final Pattern CLASS_NAME_PATTERN = Pattern.compile("^\\p{javaJavaIdentifierStart}[\\p{javaJavaIdentifierPart}&&[^\\$]]*\\.class$", Pattern.CASE_INSENSITIVE);
 
-    private final Pattern FOLDER_NAME_PATTERN = Pattern.compile("^\\p{javaJavaIdentifierStart}[\\p{javaJavaIdentifierPart}]*$", Pattern.CASE_INSENSITIVE);
-
-    static class Queued
+    /**
+     * Matches paths that are classes, but not for inner classes, or the package-info.class psuedo-class (used for package-level annotations).
+     */
+    private final ClasspathMatcher CLASS_NAME_MATCHER = new ClasspathMatcher()
     {
-        final URL packageURL;
-
-        final String packagePath;
-
-        public Queued(final URL packageURL, final String packagePath)
+        @Override
+        public boolean matches(String packagePath, String fileName)
         {
-            this.packageURL = packageURL;
-            this.packagePath = packagePath;
-        }
-    }
+            if (!CLASS_NAME_PATTERN.matcher(fileName).matches())
+            {
+                return false;
+            }
 
-    public ClassNameLocatorImpl(ClasspathURLConverter converter)
+            // Filter out inner classes.
+
+            if (fileName.contains("$") || fileName.equals("package-info.class"))
+            {
+                return false;
+            }
+
+            return true;
+        }
+    };
+
+    /**
+     * Maps a path name ("foo/bar/Baz.class") to a class name ("foo.bar.Baz").
+     */
+    private final Mapper<String, String> CLASS_NAME_MAPPER = new Mapper<String, String>()
     {
-        this.converter = converter;
+        @Override
+        public String map(String element)
+        {
+            return element.substring(0, element.length() - 6).replace('/', '.');
+        }
+    };
+
+
+    public ClassNameLocatorImpl(ClasspathScanner scanner)
+    {
+        this.scanner = scanner;
     }
 
     /**
@@ -72,8 +83,9 @@ public class ClassNameLocatorImpl implements ClassNameLocator
 
         try
         {
+            Collection<String> matches = scanner.scan(packagePath, CLASS_NAME_MATCHER);
 
-            return findClassesWithinPath(packagePath);
+            return F.flow(matches).map(CLASS_NAME_MAPPER).toSet();
 
         } catch (IOException ex)
         {
@@ -81,261 +93,5 @@ public class ClassNameLocatorImpl implements ClassNameLocator
         }
     }
 
-    private Collection<String> findClassesWithinPath(String packagePath) throws IOException
-    {
-        Collection<String> result = CollectionFactory.newList();
-
-        Enumeration<URL> urls = contextClassLoader.getResources(packagePath);
-
-        while (urls.hasMoreElements())
-        {
-            URL url = urls.nextElement();
-
-            URL converted = converter.convert(url);
-
-            scanURL(packagePath, result, converted);
-        }
-
-        return result;
-    }
-
-    private void scanURL(String packagePath, Collection<String> componentClassNames, URL url) throws IOException
-    {
-        URLConnection connection = url.openConnection();
-
-        JarFile jarFile;
-
-        if (connection instanceof JarURLConnection)
-        {
-            jarFile = ((JarURLConnection) connection).getJarFile();
-        } else
-        {
-            jarFile = getAlternativeJarFile(url);
-        }
-
-        if (jarFile != null)
-        {
-            scanJarFile(packagePath, componentClassNames, jarFile);
-        } else if (supportsDirStream(url))
-        {
-            Stack<Queued> queue = CollectionFactory.newStack();
-
-            queue.push(new Queued(url, packagePath));
-
-            while (!queue.isEmpty())
-            {
-                Queued queued = queue.pop();
-
-                scanDirStream(queued.packagePath, queued.packageURL, componentClassNames, queue);
-            }
-        } else
-        {
-            // Try scanning file system.
-            String packageName = packagePath.replace("/", ".");
-            if (packageName.endsWith("."))
-            {
-                packageName = packageName.substring(0, packageName.length() - 1);
-            }
-            scanDir(packageName, new File(url.getFile()), componentClassNames);
-        }
-
-    }
-
-    /**
-     * Check whether container supports opening a stream on a dir/package to get a list of its contents.
-     *
-     * @param packageURL
-     * @return
-     */
-    private boolean supportsDirStream(URL packageURL)
-    {
-        InputStream is = null;
-        try
-        {
-            is = packageURL.openStream();
-            return true;
-        } catch (FileNotFoundException ex)
-        {
-            return false;
-        } catch (IOException e)
-        {
-            return false;
-        } finally
-        {
-            InternalUtils.close(is);
-        }
-    }
-
-    private void scanDirStream(String packagePath, URL packageURL, Collection<String> componentClassNames,
-                               Stack<Queued> queue) throws IOException
-    {
-        InputStream is;
-
-        try
-        {
-            is = new BufferedInputStream(packageURL.openStream());
-        } catch (FileNotFoundException ex)
-        {
-            // This can happen for certain application servers (JBoss 4.0.5 for example), that
-            // export part of the exploded WAR for deployment, but leave part (WEB-INF/classes)
-            // unexploded.
-
-            return;
-        }
-
-        Reader reader = new InputStreamReader(is);
-        LineNumberReader lineReader = new LineNumberReader(reader);
-
-        String packageName = null;
-
-        try
-        {
-            while (true)
-            {
-                String line = lineReader.readLine();
-
-                if (line == null) break;
-
-                if (CLASS_NAME_PATTERN.matcher(line).matches())
-                {
-                    if (packageName == null)
-                    {
-                        packageName = packagePath.replace('/', '.');
-                    }
-
-                    // packagePath ends with '/', packageName ends with '.'
-
-                    String fileName = line.substring(0, line.length() - CLASS_SUFFIX.length());
-
-                    if (!fileName.equals("package-info"))
-                    {
-                        String fullClassName = packageName + fileName;
-
-                        componentClassNames.add(fullClassName);
-                    }
-
-                    continue;
-                }
-
-                // This should match just directories.  It may also match files that have no extension;
-                // when we read those, none of the lines should look like class files.
-
-                if (FOLDER_NAME_PATTERN.matcher(line).matches())
-                {
-                    URL newURL = new URL(packageURL.toExternalForm() + line + "/");
-                    String newPackagePath = packagePath + line + "/";
-
-                    queue.push(new Queued(newURL, newPackagePath));
-                }
-            }
-
-            lineReader.close();
-            lineReader = null;
-        } finally
-        {
-            InternalUtils.close(lineReader);
-        }
-
-    }
-
-    private void scanJarFile(String packagePath, Collection<String> componentClassNames, JarFile jarFile)
-    {
-        Enumeration<JarEntry> e = jarFile.entries();
-
-        while (e.hasMoreElements())
-        {
-            String name = e.nextElement().getName();
-
-            if (!name.startsWith(packagePath)) continue;
-
-
-            int lastSlashx = name.lastIndexOf('/');
-
-            String fileName = name.substring(lastSlashx + 1);
-
-            if (isClassName(fileName))
-            {
-
-                // Strip off .class and convert the slashes back to periods.
-                String className =
-                        name.substring(0, lastSlashx + 1).replace('/', '.') +
-                                fileName.substring(0, fileName.length() - CLASS_SUFFIX.length());
-
-
-                componentClassNames.add(className);
-            }
-        }
-    }
-
-    /**
-     * Scan a dir for classes. Will recursively look in the supplied directory and all sub directories.
-     *
-     * @param packageName         Name of package that this directory corresponds to.
-     * @param dir                 Dir to scan for classes.
-     * @param componentClassNames List of class names that have been found.
-     */
-    private void scanDir(String packageName, File dir, Collection<String> componentClassNames)
-    {
-        if (dir.exists() && dir.isDirectory())
-        {
-            for (File file : dir.listFiles())
-            {
-                String fileName = file.getName();
-                if (file.isDirectory())
-                {
-                    scanDir(packageName + "." + fileName, file, componentClassNames);
-                }
-                // https://issues.apache.org/jira/browse/TAP5-1737
-                // Use of package-info.java leaves these package-info.class files around.
-                else if (isClassName(fileName))
-                {
-                    String className = packageName + "." + fileName.substring(0,
-                            fileName.length() - CLASS_SUFFIX.length());
-                    componentClassNames.add(className);
-                }
-            }
-        }
-    }
-
-    private boolean isClassName(String fileName)
-    {
-        return fileName.endsWith(CLASS_SUFFIX) && !fileName.equals(PACKAGE_INFO) && !fileName.contains("$");
-    }
-
-    /**
-     * For URLs to JARs that do not use JarURLConnection - allowed by the servlet spec - attempt to produce a JarFile
-     * object all the same. Known servlet engines that function like this include Weblogic and OC4J. This is not a full
-     * solution, since an unpacked WAR or EAR will not have JAR "files" as such.
-     *
-     * @param url URL of jar
-     * @return JarFile or null
-     * @throws java.io.IOException If error occurs creating jar file
-     */
-    private JarFile getAlternativeJarFile(URL url) throws IOException
-    {
-        String urlFile = url.getFile();
-        // Trim off any suffix - which is prefixed by "!/" on Weblogic
-        int separatorIndex = urlFile.indexOf("!/");
-
-        // OK, didn't find that. Try the less safe "!", used on OC4J
-        if (separatorIndex == -1)
-        {
-            separatorIndex = urlFile.indexOf('!');
-        }
-
-        if (separatorIndex != -1)
-        {
-            String jarFileUrl = urlFile.substring(0, separatorIndex);
-            // And trim off any "file:" prefix.
-            if (jarFileUrl.startsWith("file:"))
-            {
-                jarFileUrl = jarFileUrl.substring("file:".length());
-            }
-
-            return new JarFile(jarFileUrl);
-        }
-
-        return null;
-    }
 
 }
