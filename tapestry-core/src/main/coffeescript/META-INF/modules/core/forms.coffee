@@ -59,7 +59,7 @@ define ["core/events", "core/spi", "core/builder", "core/compat/tapestry"],
 
         # Only do form validation if all individual field validation
         # was successful.
-        this.trigger events.form.validateForm, memo unless memo.error
+        this.trigger events.form.validate, memo unless memo.error
 
         if memo.error
           clearSubmittingHidden this

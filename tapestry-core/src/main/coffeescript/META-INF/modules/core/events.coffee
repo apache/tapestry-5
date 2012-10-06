@@ -22,6 +22,10 @@ define
   # All events are triggered on a specific HTML `<form>` element, and top-level handlers take it from there.
   form:
 
+    # Triggered early, to kick off a search for fields that should have `events.field.validate` triggered.
+    # This is also where decorations are added or removed from individual fields.
+    validateFields: "t5:form:validate-fields"
+
     # Triggered after fields have been validated, when there are no field validation exceptions, to allow for
     # cross-form validation.
     validate: "t5:form:validate"
