@@ -1211,8 +1211,7 @@ define("core/compat/tapestry", [
                         _this.validateInput();
 
                         if (_this.inError()) {
-                            event.memo.error = true;                                      <
-
+                            event.memo.error = true;
                         }
                     }
             );
