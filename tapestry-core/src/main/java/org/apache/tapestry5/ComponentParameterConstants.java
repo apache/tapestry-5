@@ -107,4 +107,12 @@ public class ComponentParameterConstants
      */
     public static final String ZONE_UPDATE_METHOD = "tapestry.components.zone_update_method";
 
+    /**
+     * Default CSS class for the {@link org.apache.tapestry5.corelib.components.Submit}
+     * component.
+     *
+     * @since 5.4.
+     */
+    public static final String SUBMIT_CSS_CLASS = "tapestry.components.submit_css_class";
+
 }

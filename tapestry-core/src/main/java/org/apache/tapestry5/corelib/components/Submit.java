@@ -94,6 +94,15 @@ public class Submit implements ClientElement
     @Parameter(allowNull = false, defaultPrefix = BindingConstants.LITERAL)
     private SubmitMode mode = SubmitMode.NORMAL;
 
+    /**
+     * CSS class for the element.
+     *
+     * @since 5.4
+     */
+    @Parameter(name = "class", defaultPrefix = BindingConstants.LITERAL,
+            value = BindingConstants.SYMBOL + ":" + ComponentParameterConstants.SUBMIT_CSS_CLASS)
+    private String cssClass;
+
     @Environmental
     private FormSupport formSupport;
 
@@ -159,6 +168,8 @@ public class Submit implements ClientElement
                 "type", type,
 
                 "name", name,
+
+                "class", cssClass,
 
                 "id", clientId);
 
