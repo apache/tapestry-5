@@ -26,10 +26,6 @@
                     Locale: ${componentResources.locale}
                 </li>
             </ul>
-
-            <p class="navbar-text pull-right">
-                Release ${tapestryVersion}
-            </p>
         </div>
     </div>
 </div>
