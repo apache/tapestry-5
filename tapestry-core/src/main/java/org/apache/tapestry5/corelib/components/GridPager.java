@@ -28,7 +28,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * Generates a series of links used to jump to a particular page index within the overall data set.
- * 
+ *
  * @tapestrydoc
  */
 @Events(InternalConstants.GRID_INPLACE_UPDATE + " (internal event)")
@@ -90,7 +90,8 @@ public class GridPager
 
         if (maxPages < 2) return;
 
-        writer.element("div", "class", "t-data-grid-pager");
+        writer.element("div", "class", "pagination");
+        writer.element("ul");
 
         lastIndex = 0;
 
@@ -104,8 +105,7 @@ public class GridPager
         {
             low = 1;
             high = 2 * range + 1;
-        }
-        else
+        } else
         {
             if (high > maxPages)
             {
@@ -121,6 +121,7 @@ public class GridPager
             writePageLink(writer, i);
 
         writer.end();
+        writer.end();
     }
 
     private void writePageLink(MarkupWriter writer, int pageIndex)
@@ -129,30 +130,44 @@ public class GridPager
 
         if (pageIndex <= lastIndex) return;
 
-        if (pageIndex != lastIndex + 1) writer.write(" ... ");
+        if (pageIndex != lastIndex + 1) {
+            writer.element("li", "class", "disabled");
+            writer.element("a", "href", "#");
+            writer.write(" ... ");
+            writer.end();
+            writer.end();
+        }
 
         lastIndex = pageIndex;
 
         if (pageIndex == currentPage)
         {
-            writer.element("span", "class", "current");
+            writer.element("li", "class", "active");
+            writer.element("a", "href", "#");
             writer.write(Integer.toString(pageIndex));
+            writer.end();
             writer.end();
             return;
         }
 
+        writer.element("li");
+
         Object[] context = zone == null
-                           ? new Object[] { pageIndex }
-                           : new Object[] { pageIndex, zone };
+                ? new Object[]{pageIndex}
+                : new Object[]{pageIndex, zone};
 
         Link link = resources.createEventLink(EventConstants.ACTION, context);
 
         Element element = writer.element("a",
-                                         "href", zone == null ? link : "#",
-                                         "title", messages.format("core-goto-page", pageIndex));
+                "href", zone == null ? link : "#",
+                "title", messages.format("core-goto-page", pageIndex));
+
 
         writer.write(Integer.toString(pageIndex));
+
         writer.end();
+
+        writer.end();   // li
 
         if (zone != null)
         {
@@ -162,6 +177,8 @@ public class GridPager
 
             clientBehaviorSupport.linkZone(id, zone, link);
         }
+
+
     }
 
     /**
@@ -181,7 +198,7 @@ public class GridPager
     {
         onAction(newPage);
 
-        resources.triggerEvent(InternalConstants.GRID_INPLACE_UPDATE, new Object[] { zone }, null);
+        resources.triggerEvent(InternalConstants.GRID_INPLACE_UPDATE, new Object[]{zone}, null);
 
         return true; // abort event
     }
