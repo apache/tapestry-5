@@ -1330,9 +1330,6 @@ public final class TapestryModule
      * configuration can be extended to allow for different automatic injections
      * (based on some combination of field
      * type and field name).
-     * <p/>
-     * Note that contributions to this service may be old-style {@link InjectionProvider}, which will
-     * be coerced to {@link InjectionProvider2}.
      */
     public InjectionProvider2 buildInjectionProvider(List<InjectionProvider2> configuration)
     {

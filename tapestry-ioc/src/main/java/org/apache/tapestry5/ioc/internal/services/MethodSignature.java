@@ -218,7 +218,7 @@ public class MethodSignature
     /**
      * Returns a string consisting of the name of the method and its parameter types. This is similar to
      * {@link #toString()}, but omits the return type and information about thrown exceptions. A unique id is used by
-     * {@link org.apache.tapestry5.ioc.internal.util.MethodIterator} to identify overlapping methods (methods with the same name and parameter types but with
+     * {@link org.apache.tapestry5.ioc.internal.services.MethodIterator} to identify overlapping methods (methods with the same name and parameter types but with
      * different thrown exceptions).
      *
      * @see #isOverridingSignatureOf(MethodSignature)
