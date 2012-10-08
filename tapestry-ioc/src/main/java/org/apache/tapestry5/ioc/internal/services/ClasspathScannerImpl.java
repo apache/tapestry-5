@@ -39,6 +39,7 @@ public class ClasspathScannerImpl implements ClasspathScanner
 
     private final Pattern FOLDER_NAME_PATTERN = Pattern.compile("^\\p{javaJavaIdentifierStart}[\\p{javaJavaIdentifierPart}]*$", Pattern.CASE_INSENSITIVE);
 
+
     public ClasspathScannerImpl(ClasspathURLConverter converter)
     {
         this.converter = converter;
@@ -125,26 +126,28 @@ public class ClasspathScannerImpl implements ClasspathScanner
         return null;
     }
 
-    static class Queued
+    /**
+     * Variation of {@link Runnable} that throws {@link IOException}.  Still think checked exceptions are a good idea?
+     */
+    interface IOWork
     {
-        final URL packageURL;
-
-        final String packagePath;
-
-        public Queued(final URL packageURL, final String packagePath)
-        {
-            this.packageURL = packageURL;
-            this.packagePath = packagePath;
-        }
+        void run() throws IOException;
     }
 
+    /**
+     * Encapsulates the data, result, and queue of deferred operations for performing the scan.
+     */
     class Job
     {
         final ClasspathMatcher matcher;
 
         final Set<String> matches = CollectionFactory.newSet();
 
-        final Stack<Queued> queue = CollectionFactory.newStack();
+        /**
+         * Explicit queue used to avoid deep tail-recursion.
+         */
+        final Stack<IOWork> queue = CollectionFactory.newStack();
+
 
         Job(ClasspathMatcher matcher)
         {
@@ -166,16 +169,16 @@ public class ClasspathScannerImpl implements ClasspathScanner
 
                 while (!queue.isEmpty())
                 {
-                    Queued queued = queue.pop();
+                    IOWork queued = queue.pop();
 
-                    scanDirStream(queued.packagePath, queued.packageURL);
+                    queued.run();
                 }
             }
 
             return matches;
         }
 
-        void scanURL(String packagePath, URL url) throws IOException
+        void scanURL(final String packagePath, final URL url) throws IOException
         {
             URLConnection connection = url.openConnection();
 
@@ -194,7 +197,14 @@ public class ClasspathScannerImpl implements ClasspathScanner
                 scanJarFile(packagePath, jarFile);
             } else if (supportsDirStream(url))
             {
-                queue.push(new Queued(url, packagePath));
+                queue.push(new IOWork()
+                {
+                    @Override
+                    public void run() throws IOException
+                    {
+                        scanDirStream(packagePath, url);
+                    }
+                });
             } else
             {
                 // Try scanning file system.
@@ -216,15 +226,22 @@ public class ClasspathScannerImpl implements ClasspathScanner
         {
             if (packageDir.exists() && packageDir.isDirectory())
             {
-                for (File file : packageDir.listFiles())
+                for (final File file : packageDir.listFiles())
                 {
                     String fileName = file.getName();
 
                     if (file.isDirectory())
                     {
-                        // TODO: A second queue instead of recursion.
+                        final String nestedPackagePath = fileName + "/";
 
-                        scanDir(packagePath + fileName + "/", file);
+                        queue.push(new IOWork()
+                        {
+                            @Override
+                            public void run() throws IOException
+                            {
+                                scanDir(nestedPackagePath, file);
+                            }
+                        });
                     }
 
                     if (matcher.matches(packagePath, fileName))
@@ -273,13 +290,21 @@ public class ClasspathScannerImpl implements ClasspathScanner
 
                         if (FOLDER_NAME_PATTERN.matcher(line).matches())
                         {
-                            URL newURL = new URL(packageURL.toExternalForm() + line + "/");
-                            String newPackagePath = packagePath + line + "/";
+                            final URL newURL = new URL(packageURL.toExternalForm() + line + "/");
+                            final String nestedPackagePath = packagePath + line + "/";
 
-                            queue.push(new Queued(newURL, newPackagePath));
+                            queue.push(new IOWork()
+                            {
+                                @Override
+                                public void run() throws IOException
+                                {
+                                    scanURL(nestedPackagePath, newURL);
+                                }
+                            });
                         }
                     }
                 }
+
                 lineReader.close();
                 lineReader = null;
             } finally
