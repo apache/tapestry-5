@@ -1578,7 +1578,7 @@ public final class TapestryModule
      * partial page renders.
      * Supports an ordered configuration of {@link org.apache.tapestry5.services.PartialMarkupRendererFilter}s.
      *
-     * @see #contributePartialMarkupRenderer(org.apache.tapestry5.ioc.OrderedConfiguration, org.apache.tapestry5.Asset, org.apache.tapestry5.services.javascript.JavaScriptStackSource, org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathConstructor, org.apache.tapestry5.ioc.services.SymbolSource, AssetSource)
+     * @see #contributePartialMarkupRenderer
      */
     public PartialMarkupRenderer buildPartialMarkupRenderer(Logger logger,
                                                             List<PartialMarkupRendererFilter> configuration, @Autobuild

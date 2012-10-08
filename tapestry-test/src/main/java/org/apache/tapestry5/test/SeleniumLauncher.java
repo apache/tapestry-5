@@ -36,11 +36,9 @@ public class SeleniumLauncher
     }
 
     /**
-     * Invoked from {@link #startup(String, String, int, String, ITestContext)} to launch the web
-     * server to be
-     * tested. The return value is a Runnable that will shut down the launched server at the end of
-     * the test (it is coded this way so that the default Jetty web server can be more easily
-     * replaced).
+     * Launches the web server to be tested. The return value is a Runnable that
+     * will shut down the launched server at the end of the test (it is coded
+     * this way so that the default Jetty web server can be more easily replaced).
      * 
      * @param webAppFolder
      *            path to the web application context
