@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.util.Base64InputStream;
 import org.apache.tapestry5.internal.util.MacOutputStream;
@@ -38,19 +39,29 @@ public class ClientDataEncoderImpl implements ClientDataEncoder
 
     private final Key hmacKey;
 
-    public ClientDataEncoderImpl(URLEncoder urlEncoder, @Symbol(SymbolConstants.HMAC_PASSPHRASE) String passphrase, Logger logger) throws UnsupportedEncodingException
+    public ClientDataEncoderImpl(URLEncoder urlEncoder, @Symbol(SymbolConstants.HMAC_PASSPHRASE) String passphrase,
+                                 Logger logger,
+                                 @Symbol(SymbolConstants.APPLICATION_VERSION)
+                                 String applicationPackageName, AlertManager alertManager) throws UnsupportedEncodingException
     {
         this.urlEncoder = urlEncoder;
 
         if (passphrase.equals(""))
         {
-            logger.error(String.format("The symbol '%s' has not been configured. " +
+            String message = String.format("The symbol '%s' has not been configured. " +
                     "This is used to configure hash-based message authentication of Tapestry data stored in forms, or in the URL. " +
-                    "You application is less secure, and more vulnerable to denial-of-service attacks, when this symbol is left unconfigured.",
-                    SymbolConstants.HMAC_PASSPHRASE));
+                    "You application is less secure, and more vulnerable to denial-of-service attacks, when this symbol is not configured.",
+                    SymbolConstants.HMAC_PASSPHRASE);
 
-            // Errors at lower levels if the passphrase is empty, so override the parameter to set a default value.
-            passphrase = "DEFAULT";
+            // Now to really get the attention of the developer!
+
+            alertManager.error(message);
+
+            logger.error(message);
+
+            // Override the blank parameter to set a default value. Use the application package name,
+            // which is justly slightly more secure than having a fixed default.
+            passphrase = applicationPackageName;
         }
 
         hmacKey = new SecretKeySpec(passphrase.getBytes("UTF8"), "HmacSHA1");
