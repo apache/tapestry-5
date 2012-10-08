@@ -1,5 +1,6 @@
 package org.apache.tapestry5.internal.services
 
+import org.apache.tapestry5.alerts.AlertManager
 import org.apache.tapestry5.ioc.test.TestBase
 import org.apache.tapestry5.services.ClientDataEncoder
 import org.easymock.EasyMock
@@ -43,12 +44,14 @@ class ClientDataEncoderImplTest extends TestBase {
     @Test
     void blank_passphrase_works_but_logs_error() {
         Logger logger = newMock Logger
+        AlertManager alertManager = newMock AlertManager
 
         logger.error(EasyMock.isA(String))
+        alertManager.error(EasyMock.isA(String))
 
         replay()
 
-        ClientDataEncoder cde = new ClientDataEncoderImpl(null, "", logger)
+        ClientDataEncoder cde = new ClientDataEncoderImpl(null, "", logger, "foo.bar", alertManager)
 
         tryEncodeAndDecode cde
 
@@ -57,15 +60,15 @@ class ClientDataEncoderImplTest extends TestBase {
 
     @Test
     void no_logged_error_with_non_blank_passphrase() {
-        ClientDataEncoder cde = new ClientDataEncoderImpl(null, "Testing, Testing, 1.., 2.., 3...", null)
+        ClientDataEncoder cde = new ClientDataEncoderImpl(null, "Testing, Testing, 1.., 2.., 3...", null, "foo.bar", null)
 
         tryEncodeAndDecode cde
     }
 
     @Test
     void passphrase_affects_encoded_output() {
-        ClientDataEncoder first = new ClientDataEncoderImpl(null, "first passphrase", null)
-        ClientDataEncoder second = new ClientDataEncoderImpl(null, " different passphrase ", null)
+        ClientDataEncoder first = new ClientDataEncoderImpl(null, "first passphrase", null, "foo.bar", null)
+        ClientDataEncoder second = new ClientDataEncoderImpl(null, " different passphrase ", null, "foo.bar", null)
 
         def input = "current time millis is ${System.currentTimeMillis()} ms"
 
@@ -79,7 +82,7 @@ class ClientDataEncoderImplTest extends TestBase {
 
     @Test(expectedExceptions = IllegalArgumentException)
     void decode_with_missing_hmac_prefix_is_a_failure() {
-        ClientDataEncoder cde = new ClientDataEncoderImpl(null, "a passphrase", null)
+        ClientDataEncoder cde = new ClientDataEncoderImpl(null, "a passphrase", null, "foo.bar", null)
 
         cde.decodeClientData("so completely invalid")
     }
@@ -89,8 +92,8 @@ class ClientDataEncoderImplTest extends TestBase {
 
         // Simulate tampering by encoding with one passphrase and attempting to decode with a different
         // passphrase.
-        ClientDataEncoder first = new ClientDataEncoderImpl(null, "first passphrase", null)
-        ClientDataEncoder second = new ClientDataEncoderImpl(null, " different passphrase ", null)
+        ClientDataEncoder first = new ClientDataEncoderImpl(null, "first passphrase", null, "foo.bar", null)
+        ClientDataEncoder second = new ClientDataEncoderImpl(null, " different passphrase ", null, "foo.bar", null)
 
         def input = "current time millis is ${System.currentTimeMillis()} ms"
 
