@@ -23,10 +23,7 @@ import org.apache.tapestry5.json.JSONObject;
  * filters are often in place so as to contribute {@link org.apache.tapestry5.annotations.Environmental} services to the
  * pages and components that render.
  * 
- * @see org.apache.tapestry5.services.TapestryModule#contributePartialMarkupRenderer(org.apache.tapestry5.ioc.OrderedConfiguration,
- *      org.apache.tapestry5.Asset, org.apache.tapestry5.services.javascript.JavaScriptStackSource,
- *      org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathConstructor,
- *      org.apache.tapestry5.ioc.services.SymbolSource, AssetSource)
+ * @see org.apache.tapestry5.services.TapestryModule#contributePartialMarkupRenderer
  */
 public interface PartialMarkupRendererFilter
 {

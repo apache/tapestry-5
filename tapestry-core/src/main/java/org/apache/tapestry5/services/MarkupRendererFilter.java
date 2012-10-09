@@ -21,10 +21,7 @@ import org.apache.tapestry5.MarkupWriter;
  * and/or after the main rendering process. Typically, this is to allow for the placement of
  * {@linkplain org.apache.tapestry5.services.Environment environmental services}.
  * 
- * @see org.apache.tapestry5.services.TapestryModule#contributeMarkupRenderer(org.apache.tapestry5.ioc.OrderedConfiguration,
- *      org.apache.tapestry5.Asset, boolean, String, boolean, org.apache.tapestry5.ioc.services.SymbolSource,
- *      AssetSource, org.apache.tapestry5.services.javascript.JavaScriptStackSource,
- *      org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathConstructor, org.apache.tapestry5.Asset)
+ * @see org.apache.tapestry5.services.TapestryModule#contributeMarkupRenderer
  */
 public interface MarkupRendererFilter
 {
