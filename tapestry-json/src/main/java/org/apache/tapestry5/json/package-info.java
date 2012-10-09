@@ -13,6 +13,6 @@
 // limitations under the License.
 
 /**
- * [INTERNAL USE ONLY] support classes for the {@link org.apache.tapestry5.corelib.components.BeanEditor} component; API subject to change
+ * Repackaged, improved (and tested) version of code originally from json.org
  */
-package org.apache.tapestry5.internal.beaneditor;
+package org.apache.tapestry5.json;

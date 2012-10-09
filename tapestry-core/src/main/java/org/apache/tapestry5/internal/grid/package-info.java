@@ -13,6 +13,6 @@
 // limitations under the License.
 
 /**
- * [INTERNAL USE ONLY] support classes for the {@link org.apache.tapestry5.corelib.components.BeanEditor} component; API subject to change
+ * [INTERNAL USE ONLY] support classes for the {@link org.apache.tapestry5.corelib.components.Grid} component; API subject to change
  */
-package org.apache.tapestry5.internal.beaneditor;
+package org.apache.tapestry5.internal.grid;

@@ -27,7 +27,7 @@ public interface PageLifecycleListener
      * Invoked when the page finishes loading. This occurs once all components are loaded and all parameters have been
      * set.
      *
-     * @deprecated in 5.3.4,  use {@link org.apache.tapestry5.ComponentResources#addPageLoadedCallback(Runnable)} instead
+     * @deprecated in 5.3.4,  use {@link org.apache.tapestry5.runtime.PageLifecycleCallbackHub#addPageLoadedCallback(Runnable)} instead
      */
     void containingPageDidLoad();
 
