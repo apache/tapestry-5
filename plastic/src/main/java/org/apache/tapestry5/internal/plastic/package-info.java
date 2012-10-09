@@ -13,6 +13,6 @@
 // limitations under the License.
 
 /**
- * [INTERNAL USE ONLY] support classes for Hibernate integration; API subject to change
+ * [INTERNAL USE ONLY] Plastic implementation details; API subject to change
  */
-package org.apache.tapestry5.internal.hibernate;
+package org.apache.tapestry5.internal.plastic;

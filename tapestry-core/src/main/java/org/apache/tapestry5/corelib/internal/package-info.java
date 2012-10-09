@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * For internal use only; API subject to change. Provides support for Tapestry
+ * [INTERNAL USE ONLY] support classes for the Tapestry-core module; API subject to change
  * core components.
  */
 package org.apache.tapestry5.corelib.internal;

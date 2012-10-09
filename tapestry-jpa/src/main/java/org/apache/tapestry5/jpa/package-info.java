@@ -13,6 +13,6 @@
 // limitations under the License.
 
 /**
- * [INTERNAL USE ONLY] support classes for Hibernate integration; API subject to change
+ * Provides support for simple CRUD applications built on top of Tapestry and JPA
  */
-package org.apache.tapestry5.internal.hibernate;
+package org.apache.tapestry5.jpa;
