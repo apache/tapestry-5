@@ -1,4 +1,4 @@
-// Copyright 2006, 2009 The Apache Software Foundation
+// Copyright 2006, 2009, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,9 +31,9 @@ public class ClientDataEncoderTest extends InternalBaseTestCase
     private ClientDataEncoder encoder;
 
     @BeforeClass
-    public void setup()
+    public void setup() throws Exception
     {
-        encoder = getService(ClientDataEncoder.class);
+        encoder = new ClientDataEncoderImpl(new URLEncoderImpl(), "passphrase", null, "unused application-package-name", null);
     }
 
 
@@ -63,7 +63,7 @@ public class ClientDataEncoderTest extends InternalBaseTestCase
     @Test
     public void checks_for_eof() throws Exception
     {
-        String[] values = { "fred", "barney", "wilma" };
+        String[] values = {"fred", "barney", "wilma"};
 
         ClientDataSink sink = encoder.createSink();
 
@@ -89,8 +89,7 @@ public class ClientDataEncoderTest extends InternalBaseTestCase
         {
             ois.readObject();
             fail("Unreachable.");
-        }
-        catch (EOFException ex)
+        } catch (EOFException ex)
         {
             // Expected.
         }
