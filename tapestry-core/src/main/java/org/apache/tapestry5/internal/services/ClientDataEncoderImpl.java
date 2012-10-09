@@ -16,6 +16,7 @@ package org.apache.tapestry5.internal.services;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.alerts.AlertManager;
+import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.util.Base64InputStream;
 import org.apache.tapestry5.internal.util.MacOutputStream;
@@ -41,7 +42,7 @@ public class ClientDataEncoderImpl implements ClientDataEncoder
 
     public ClientDataEncoderImpl(URLEncoder urlEncoder, @Symbol(SymbolConstants.HMAC_PASSPHRASE) String passphrase,
                                  Logger logger,
-                                 @Symbol(SymbolConstants.APPLICATION_VERSION)
+                                 @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
                                  String applicationPackageName, AlertManager alertManager) throws UnsupportedEncodingException
     {
         this.urlEncoder = urlEncoder;
