@@ -13,6 +13,6 @@
 // limitations under the License.
 
 /**
- * [INTERNAL USE ONLY] support services for the {@link org.apache.tapestry5.corelib.components.Kaptcha} component
+ * [INTERNAL USE ONLY] support services for the Kaptcha component; API subject to change
  */
-package org.apache.tapestry5.kaptcha.components;
+package org.apache.tapestry5.kaptcha.internal.services;

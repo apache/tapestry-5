@@ -13,6 +13,6 @@
 // limitations under the License.
 
 /**
- * [INTERNAL USE ONLY] support classes for the  JMX module; API subject to change
+ * Allows easy exposure of Tapestry Services as JMX MBeans
  */
 package org.apache.tapestry5.jmx;

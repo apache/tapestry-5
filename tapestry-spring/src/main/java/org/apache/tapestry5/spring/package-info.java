@@ -13,6 +13,6 @@
 // limitations under the License.
 
 /**
- * [INTERNAL USE ONLY] support classes for Hibernate integration; API subject to change
+ * Integration of Tapestry with the Spring Inversion Of Control Container
  */
-package org.apache.tapestry5.internal.hibernate;
+package org.apache.tapestry5.spring;

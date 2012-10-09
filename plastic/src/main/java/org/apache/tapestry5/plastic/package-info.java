@@ -13,6 +13,6 @@
 // limitations under the License.
 
 /**
- * [INTERNAL USE ONLY] support classes for Hibernate integration; API subject to change
+ * Plastic, Tapestry's component class transformation library based on ASM
  */
-package org.apache.tapestry5.internal.hibernate;
+package org.apache.tapestry5.plastic;

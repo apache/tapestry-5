@@ -13,6 +13,6 @@
 // limitations under the License.
 
 /**
- * [INTERNAL USE ONLY] support classes for Hibernate integration; API subject to change
+ * JavaDoc Plugin for Tapestry that generates component reference documentation for component classes
  */
-package org.apache.tapestry5.internal.hibernate;
+package org.apache.tapestry5.javadoc;
