@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,8 +13,6 @@
 // limitations under the License.
 
 /**
- * For internal usage only.
- * Support classes for Alerts.
- * API subject to change.
+ * [INTERNAL USE ONLY] support classes for Alerts; API subject to change
  */
 package org.apache.tapestry5.internal.alerts;
