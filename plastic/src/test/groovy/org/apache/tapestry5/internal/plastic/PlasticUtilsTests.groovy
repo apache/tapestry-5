@@ -1,6 +1,7 @@
 package org.apache.tapestry5.internal.plastic
 
 import org.apache.tapestry5.plastic.PlasticUtils
+
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -21,6 +22,16 @@ class PlasticUtilsTests extends Specification
         "java.lang.String[]" | "[Ljava/lang/String;"
         "java.lang.Long[][]" | "[[Ljava/lang/Long;"
     }
+
+		def "Do not urlencode file paths"()
+		{
+				URL url = getClass().getClassLoader().getResource(".");
+				File file = new File(new File(url.toURI()), "webapp##01.test");
+				file.createNewFile();
+				file.deleteOnExit();
+				expect:
+				PlasticInternalUtils.getStreamForPath(getClass().classLoader, file.getAbsolutePath().substring(new File(url.toURI()).getAbsolutePath().length()) ) != null
+		}
 
     def "Descriptor #descriptor as class name should be #className"()
     {
