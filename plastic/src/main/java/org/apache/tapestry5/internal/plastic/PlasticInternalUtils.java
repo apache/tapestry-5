@@ -14,20 +14,37 @@
 
 package org.apache.tapestry5.internal.plastic;
 
-import org.apache.tapestry5.internal.plastic.asm.*;
+import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.lang.reflect.Array;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.tapestry5.internal.plastic.asm.ClassReader;
+import org.apache.tapestry5.internal.plastic.asm.ClassVisitor;
+import org.apache.tapestry5.internal.plastic.asm.MethodVisitor;
+import org.apache.tapestry5.internal.plastic.asm.Opcodes;
+import org.apache.tapestry5.internal.plastic.asm.Type;
 import org.apache.tapestry5.internal.plastic.asm.commons.JSRInlinerAdapter;
 import org.apache.tapestry5.internal.plastic.asm.tree.ClassNode;
 import org.apache.tapestry5.internal.plastic.asm.tree.MethodNode;
 import org.apache.tapestry5.internal.plastic.asm.util.TraceClassVisitor;
 import org.apache.tapestry5.plastic.InstanceContext;
 import org.apache.tapestry5.plastic.MethodDescription;
-
-import java.io.*;
-import java.lang.reflect.Array;
-import java.net.URL;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @SuppressWarnings("rawtypes")
 public class PlasticInternalUtils
@@ -389,7 +406,7 @@ public class PlasticInternalUtils
         }
     }
 
-    private static InputStream getStreamForPath(ClassLoader loader, String path) throws IOException
+    static InputStream getStreamForPath(ClassLoader loader, String path) throws IOException
     {
         URL url = loader.getResource(path);
 
@@ -403,9 +420,12 @@ public class PlasticInternalUtils
 
         if (url.getProtocol().equals("file"))
         {
-            String urlPath = url.getPath();
-            String decoded = urlPath.replaceAll("%20", " ");
-            return new FileInputStream(new File(decoded));
+            try {
+                return new FileInputStream(new File(url.toURI()));
+            } catch (URISyntaxException e)
+            {
+                return null;
+            }
         }
 
         return url.openStream();
