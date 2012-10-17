@@ -16,7 +16,7 @@ Tapestry.DateField = Class.create({
 
     // Initializes a DateField from a JSON specification.
 
-    initialize : function(spec) {
+    initialize: function (spec) {
         this.field = $(spec.field);
         this.trigger = $(spec.field + "-trigger");
         this.parseURL = spec.parseURL;
@@ -27,7 +27,7 @@ Tapestry.DateField = Class.create({
         this.popup = null;
     },
 
-    triggerClicked : function() {
+    triggerClicked: function () {
         if (this.field.disabled)
             return;
 
@@ -53,7 +53,7 @@ Tapestry.DateField = Class.create({
             return;
         }
 
-        var resultHandler = function(result) {
+        var resultHandler = function (result) {
             var date = new Date();
 
             date.setTime(result);
@@ -65,17 +65,17 @@ Tapestry.DateField = Class.create({
             this.revealPopup();
         };
 
-        var errorHandler = function(message) {
+        var errorHandler = function (message) {
             this.field.showValidationMessage(message.escapeHTML());
             this.field.activate();
         };
 
         this.sendServerRequest(this.parseURL, value, resultHandler,
-            errorHandler);
+                errorHandler);
     },
 
-    sendServerRequest : function(url, input, resultHandler, errorHandler) {
-        var successHandler = function(response) {
+    sendServerRequest: function (url, input, resultHandler, errorHandler) {
+        var successHandler = function (response) {
             var json = response.responseJSON;
 
             var result = json.result;
@@ -89,15 +89,15 @@ Tapestry.DateField = Class.create({
         }.bind(this);
 
         Tapestry.ajaxRequest(url, {
-            method : 'get',
-            parameters : {
-                input : input
+            method: 'get',
+            parameters: {
+                input: input
             },
-            onSuccess : successHandler
+            onSuccess: successHandler
         });
     },
 
-    createPopup : function() {
+    createPopup: function () {
         this.datePicker = new DatePicker();
 
         this.datePicker.setFirstWeekDay(this.firstDay);
@@ -105,29 +105,27 @@ Tapestry.DateField = Class.create({
         this.popup = $(this.datePicker.create());
 
         this.field.insert({
-            after : this.popup
+            after: this.popup
         });
 
         this.popup.absolutize().hide();
 
-        this.datePicker.onselect = function() {
+        this.datePicker.onselect = function () {
             var date = this.datePicker.getDate();
 
-            var resultHandler = function(result) {
-				//TAP5-1844
-                if (this.field.value != result) { 
-						this.field.value = result;
-						Tapestry.currentFocusField = this.field;
-						//fire an FOCUS_CHANGE_EVENT event to force inputValidation on field
-						document.fire(Tapestry.FOCUS_CHANGE_EVENT, this.field);
-						 
- 				} 
-                this.hidePopup();
+            var resultHandler = function (result) {
+                //TAP5-1844
+                if (this.field.value != result) {
+                    this.field.value = result;
+                    Tapestry.currentFocusField = this.field;
+                    //fire an FOCUS_CHANGE_EVENT event to force inputValidation on field
+                    document.fire(Tapestry.FOCUS_CHANGE_EVENT, this.field);
 
-                new Effect.Highlight(this.field);
+                }
+                this.hidePopup();
             };
 
-            var errorHandler = function(message) {
+            var errorHandler = function (message) {
                 this.field.showValidationMessage(message.escapeHTML());
                 this.field.activate();
 
@@ -142,11 +140,11 @@ Tapestry.DateField = Class.create({
             }
 
             this.sendServerRequest(this.formatURL, date.getTime(),
-                resultHandler, errorHandler);
+                    resultHandler, errorHandler);
         }.bind(this);
     },
 
-    positionPopup : function() {
+    positionPopup: function () {
         // The field may be a hidden field, in which csae, position the popup
         // based on the trigger, not
         // the hidden.
@@ -154,34 +152,34 @@ Tapestry.DateField = Class.create({
         var reference = this.field.type == "text" ? this.field : this.trigger;
 
         this.popup.clonePosition(reference, {
-            offsetTop : reference.getHeight() + 2
+            offsetTop: reference.getHeight() + 2
         }).setStyle({
-                width : "",
-                height : ""
-            });
+                    width: "",
+                    height: ""
+                });
     },
 
     /** Duration, in seconds, used when fading the popup in or out. */
 
-    FADE_DURATION : .20,
+    FADE_DURATION: .20,
 
-    hidePopup : function() {
+    hidePopup: function () {
         new Effect.Fade(this.popup, {
-            duration : this.FADE_DURATION
+            duration: this.FADE_DURATION
         });
     },
 
-    revealPopup : function() {
+    revealPopup: function () {
 
         // Only show one DateField popup at a time.
 
         if (Tapestry.DateField.activeDateField != undefined
-            && Tapestry.DateField.activeDateField != this) {
+                && Tapestry.DateField.activeDateField != this) {
             Tapestry.DateField.activeDateField.hidePopup();
         }
 
         new Effect.Appear(this.popup, {
-            duration : this.FADE_DURATION
+            duration: this.FADE_DURATION
         });
 
         Tapestry.DateField.activeDateField = this;
@@ -190,13 +188,13 @@ Tapestry.DateField = Class.create({
 
 Tapestry.DateField.localized = false;
 
-Tapestry.DateField.initLocalization = function(localization) {
+Tapestry.DateField.initLocalization = function (localization) {
     DatePicker.months = localization.months;
     DatePicker.days = localization.days.toArray();
 
     Tapestry.DateField.prototype.firstDay = localization.firstDay;
 };
 
-Tapestry.Initializer.dateField = function(spec) {
+Tapestry.Initializer.dateField = function (spec) {
     new Tapestry.DateField(spec);
 }

@@ -67,7 +67,7 @@ define("core/compat/tapestry", [
 
         /**
          * Event, fired on the document object, which identifies the current focus
-         * input element.
+         * input element. Starting in Tapestry 5.4, focus changing is not longer tracked.
          */
         FOCUS_CHANGE_EVENT: "tapestry:focuschange",
 
@@ -106,7 +106,7 @@ define("core/compat/tapestry", [
          * CSS Class added to a &lt;form&gt; element that directs Tapestry to
          * prevent normal (HTTP POST) form submission, in favor of Ajax
          * (XmlHttpRequest) submission.   This is still supported in Tapestry 5.4, but
-         * replaced with the data-prevent-submission attribute.
+         * replaced with the data-prevent-submission attribute. It will be removed in Tapestry 5.5.
          *
          * @deprecated Use data-prevent-submission="true" instead
          */
@@ -148,30 +148,6 @@ define("core/compat/tapestry", [
             $$(".t-invisible").each(function (element) {
                 element.hide();
                 element.removeClassName("t-invisible");
-            });
-
-            /*
-             * Adds a focus observer that fades all error popups except for the
-             * field in question.
-             */
-            $$("INPUT", "SELECT", "TEXTAREA").each(function (element) {
-                /*
-                 * Due to Ajax, we may execute the callback multiple times, and we
-                 * don't want to add multiple listeners to the same element.
-                 */
-                var t = $T(element);
-
-                if (!t.observingFocusChange) {
-                    element.observe("focus", function () {
-                        if (element != Tapestry.currentFocusField) {
-                            document.fire(Tapestry.FOCUS_CHANGE_EVENT, element);
-
-                            Tapestry.currentFocusField = element;
-                        }
-                    });
-
-                    t.observingFocusChange = true;
-                }
             });
         },
 
@@ -1064,26 +1040,6 @@ define("core/compat/tapestry", [
             };
 
             Event.observe(window, "resize", this.repositionBubble.bind(this));
-
-            document.observe(Tapestry.FOCUS_CHANGE_EVENT, function (event) {
-                if (this.ignoreNextFocus) {
-                    this.ignoreNextFocus = false;
-                    return;
-                }
-
-                if (event.memo == this.field) {
-                    this.fadeIn();
-                    return;
-                }
-
-                /*
-                 * If this field is not the focus field after a focus change, then
-                 * its bubble, if visible, should fade out. This covers tabbing
-                 * from one form to another.
-                 */
-                this.fadeOut();
-
-            }.bind(this));
         },
 
         showMessage: function (message) {
