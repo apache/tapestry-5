@@ -85,7 +85,10 @@ idea.module {
   excludeDirs.clear()
 }
 
-compileJava.options.fork(memoryMaximumSize: '512m')
+compileJava {
+    dependsOn generateGrammarSource
+    options.fork(memoryMaximumSize: '512m')
+}
 
 // Not sure why this is necessary:
 compileTestGroovy.dependsOn compileTestJava
