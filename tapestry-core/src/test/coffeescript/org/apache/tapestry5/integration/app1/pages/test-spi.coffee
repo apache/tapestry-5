@@ -15,7 +15,7 @@ require ["core/spi"], (spi) ->
 
     clicks = 0
     container = spi "spi-eventelement"
-    button = container.find "a"
+    button = container.findFirst "a"
 
     # Remember that Prototype will never trigger a native event, just a
     # custom event, so we create a custom event here.
@@ -46,7 +46,7 @@ require ["core/spi"], (spi) ->
 
     clicks = 0
     container = spi "spi-eventelement"
-    button = container.find "a"
+    button = container.findFirst "a"
 
     eh = container.on "click", "a", (event) ->
       event.stop()
@@ -62,8 +62,8 @@ require ["core/spi"], (spi) ->
 
     clicks = 0
     container = spi "spi-eventelement"
-    primary = container.find "a.btn-primary"
-    secondary = container.find "a[data-use=secondary]"
+    primary = container.findFirst "a.btn-primary"
+    secondary = container.findFirst "a[data-use=secondary]"
 
     eh = container.on "x:click", "a.btn-primary", (event) ->
       event.stop()
@@ -82,7 +82,7 @@ require ["core/spi"], (spi) ->
   test "this is matched element in handler", ->
 
     container = spi "spi-eventelement"
-    primary = container.find "a.btn-primary"
+    primary = container.findFirst "a.btn-primary"
 
     eh = container.on "x:click", "a.btn-primary", (event) ->
       event.stop()
@@ -95,7 +95,7 @@ require ["core/spi"], (spi) ->
 
   test "visibility, hide(), and show()", ->
 
-    e = (spi "spi-visibility").find "span"
+    e = (spi "spi-visibility").findFirst "span"
 
     equal e.visible(), true, "element is initially visible"
 

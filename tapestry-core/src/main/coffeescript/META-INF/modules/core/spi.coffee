@@ -245,6 +245,13 @@ define ["_", "prototype"], (_) ->
 
       return this
 
+    # Inserts new content (Element, ElementWrapper, or HTML markup string) into the DOM immediately after
+    # this ElementWrapper's element.
+    insertAfter: (content) ->
+      @element.insert after: (convertContent content)
+
+      return this
+
     # Runs an animation to fade-in the element over the specified duration. The element may be hidden (via `hide()`)
     # initially, and will be made visible (with initial opacity 0, which will increase over time) when the animation
     # starts.
@@ -271,7 +278,7 @@ define ["_", "prototype"], (_) ->
 
     # Finds the first child element that matches the CSS selector, wrapped as an ElementWrapper.
     # Returns null if not found.
-    find: (selector) ->
+    findFirst: (selector) ->
       match = @element.down selector
 
       # Prototype returns undefined if not found, we want to return null.
@@ -280,12 +287,22 @@ define ["_", "prototype"], (_) ->
       else
         return null
 
-    # Finds all child elements matching the CSS selector, returning them
+    # Finds _all_ child elements matching the CSS selector, returning them
     # as an array of ElementWrappers.
-    findAll: (selector) ->
+    find: (selector) ->
       matches = @element.select selector
 
       _.map matches, (e) -> new ElementWrapper e
+
+    # Find the first container element that matches the selector (wrapped as an ElementWrapper),
+    # or returns null.
+    findContainer: (selector) ->
+      container = @element.up selector
+
+      if container
+        return new ElementWrapper container
+      else
+        return null
 
     # Returns an ElementWrapper for this element's containing element.  The ElementWrapper is created lazily, and
     # cached. Returns null if this element has no parentNode (either because this element is the document object, or

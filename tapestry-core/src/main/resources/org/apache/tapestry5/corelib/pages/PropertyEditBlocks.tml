@@ -1,44 +1,71 @@
-<div xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<div xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
 
     <t:block id="text">
-        <t:label for="textField"/>
-        <input t:id="textField"/>
+        <t:label class="control-label" for="textField"/>
+        <div class="controls">
+            <input t:id="textField"/>
+        </div>
     </t:block>
 
     <t:block id="number">
-        <t:label for="numberField"/>
-        <input t:id="numberField" class="t-number"/>
+        <t:label class="control-label" for="numberField"/>
+        <div class="controls">
+            <input t:id="numberField" class="t-number"/>
+        </div>
     </t:block>
 
 
     <t:block id="enum">
-        <t:label for="select"/>
-        <input t:id="select"/>
+
+        <t:label class="control-label" for="select"/>
+        <div class="controls">
+            <input t:id="select"/>
+        </div>
+
     </t:block>
 
     <t:block id="boolean">
-        <t:label for="checkboxField"/>
-        <input t:id="checkboxField"/>
+
+        <div class="controls">
+            <label class="checkbox">
+                <input t:id="checkboxField"/>
+                ${context.label}
+            </label>
+        </div>
+
     </t:block>
 
     <t:block id="date">
-        <t:label for="dateField"/>
-        <input t:id="dateField"/>
+
+        <t:label class="control-label" for="dateField"/>
+        <div class="controls">
+            <input t:id="dateField"/>
+        </div>
+
     </t:block>
 
     <t:block id="calendar">
-        <t:label for="calendarField"/>
-        <input t:id="calendarField"/>
+
+        <t:label class="control-label" for="calendarField"/>
+        <div class="controls">
+            <input t:id="calendarField"/>
+        </div>
+
     </t:block>
 
     <t:block id="password">
-        <t:label for="passwordField"/>
-        <input t:id="passwordField"/>
+
+        <t:label class="control-label" for="passwordField"/>
+        <div class="controls">
+            <input t:id="passwordField"/>
+        </div>
+
     </t:block>
 
     <t:block id="longtext">
-        <t:label for="textarea"/>
-        <textarea t:id="textarea"/>
+        <t:label class="control-label" for="textarea"/>
+        <div class="controls">
+            <textarea t:id="textarea"/>
+        </div>
     </t:block>
-
 </div>

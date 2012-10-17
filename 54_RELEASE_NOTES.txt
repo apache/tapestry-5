@@ -91,8 +91,7 @@ was introduced in Tapestry 5.2, and has now been removed.
 Tapestry.FormEventManager has been entirely removed, along with supporting function Element.getFormEventManager().
 
 Tapestry.FieldEventManager.getIcon() now always returns null. The icon image is no longer rendered (on the server)
-by the DefaultValidationDecorator. Shortly, a switch to using Twitter Bootstrap to present validation errors
-will occur.
+by the DefaultValidationDecorator.
 
 Tapestry 5.3 contained code that attempted to prevent Ajax requests until after the page had loaded; this was based
 on the function Tapestry.waitForPage().  Server components no longer make use of this function, and the function
@@ -102,3 +101,26 @@ the page initialization has completed may be implemented in the future.
 Many functions on the Tapestry object have been removed, as they were only used internally:
 - rebuildURL
 - stripToLastSlash
+
+== Twitter Bootstrap
+
+Tapestry now includes a default copy of Twitter Bootstrap in addition to its own default set of CSS rules (the
+file "default.css" automatically included in rendered pages). The Tapestry CSS has been largely eliminated; instead
+components now refer to standard Bootstrap CSS classes.
+
+ValidationDecorator and ValidationDecoratorFactory are deprecated in 5.4 and will be removed in 5.5. The default
+implementation of ValidationDecorator now does nothing. All the logic related to presentation of errors has moved
+to the client, and expects and leverages the Twitter Bootstrap CSS.
+
+Tapestry.ErrorPopup (the controller that managed Tapestry 5.3's floating error bubbles) has been removed entirely.
+Fields that require validation messages to be displayed fire events, and the default handlers show and update
+help blocks that appear (by default) beneath the fields. To get the full effect, you should enclose your fields inside
+.control-group elements, as described in the Bootstrap documentation:
+http://twitter.github.com/bootstrap/base-css.html#forms
+
+== BeanEditor / BeanEditForm
+
+The property edit blocks contributed to the BeanBlockSource service should expect to be nested inside a
+div.control-group, which is provided around the editor for each property.
+
+

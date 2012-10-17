@@ -50,7 +50,7 @@ define ["core/spi", "core/builder", "_"],
 
       spi.body().append container.hide()
 
-      iframe = (container.find "iframe").element
+      iframe = (container.findFirst "iframe").element
 
       # See http://xkr.us/articles/dom/iframe-document/
 

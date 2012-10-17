@@ -34,6 +34,7 @@ import java.io.Serializable;
  * {@link RenderDisabled} and {@link DiscardBody} mixins.
  */
 @SupportsInformalParameters
+@Import(modules = "core/fields")
 public abstract class AbstractField implements Field
 {
     /**
@@ -198,7 +199,8 @@ public abstract class AbstractField implements Field
      * controlName property will already have been set. This method is only invoked if the field is <strong>not
      * {@link #isDisabled() disabled}</strong>.
      *
-     * @param controlName the control name of the rendered element (used to find the correct parameter in the request)
+     * @param controlName
+     *         the control name of the rendered element (used to find the correct parameter in the request)
      */
     protected abstract void processSubmission(String controlName);
 

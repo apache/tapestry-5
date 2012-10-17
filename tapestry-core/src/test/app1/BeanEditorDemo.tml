@@ -1,39 +1,42 @@
 <t:border xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
-  <h1>${pageTitle}</h1>
+    <h1>${pageTitle}</h1>
 
-  <p id="message">
-    <strong>${message}</strong>
-  </p>
+    <p id="message">
+        <strong>${message}</strong>
+    </p>
 
-  <form t:id="registrationData" submitlabel="Register" cancel="true">
+    <form t:id="registrationData" submitlabel="Register" cancel="true">
 
-    <t:parameter name="firstName">
-      <t:label for="firstName"/>
-      <input t:type="TextField" t:id="firstName" value="registrationData.firstName" size="40"/>
-      (First Name is Required)
-    </t:parameter>
+        <t:parameter name="firstName">
+            <t:label for="firstName"/>
+            <div class="controls">
+                <div class="input-append">
+                    <input t:type="TextField" t:id="firstName" value="registrationData.firstName" size="40"/>
+                    <span class="add-on">FN</span>
+                </div>
+                <p class="help-block">First name is required.</p>
+            </div>
+        </t:parameter>
 
-  </form>
+    </form>
 
-  <p>
-    [
-    <a t:type="ActionLink" t:id="clear">Clear Data</a>
-    ]
-  </p>
+    <p>
+        <a t:type="ActionLink" class="btn btn-warning" t:id="clear">Clear Data</a>
+    </p>
 
-  <h2>Second Form</h2>
+    <h2>Second Form</h2>
 
-  <p>
-    Used to test tabbing
-    <em>between</em>
-    forms.
-  </p>
+    <p>
+        Used to test tabbing
+        <em>between</em>
+        forms.
+    </p>
 
-  <p>
-    <t:form t:id="search">
-      <t:label for="searchTerm"/>
-      <t:textfield t:id="searchTerm"/>
-      <input type="submit"/>
-    </t:form>
-  </p>
+    <p>
+        <t:form t:id="search">
+            <t:label for="searchTerm"/>
+            <t:textfield t:id="searchTerm"/>
+            <input type="submit"/>
+        </t:form>
+    </p>
 </t:border>

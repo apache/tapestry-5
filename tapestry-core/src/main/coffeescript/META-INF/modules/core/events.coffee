@@ -21,11 +21,6 @@ define
   # Defines events related to the validation and submission of forms. See module `core/forms` for further details.
   # All events are triggered on a specific HTML `<form>` element, and top-level handlers take it from there.
   form:
-
-    # Triggered early, to kick off a search for fields that should have `events.field.validate` triggered.
-    # This is also where decorations are added or removed from individual fields.
-    validateFields: "t5:form:validate-fields"
-
     # Triggered after fields have been validated, when there are no field validation exceptions, to allow for
     # cross-form validation.
     validate: "t5:form:validate"
@@ -51,6 +46,31 @@ define
     # error and remove or add/update decorations for the validation error (decorations will transition from 5.3 style
     # popups to Twitter Bootstrap in the near future).
     validate: "t5:field:validate"
+
+    # Clears and hides the element used to display validation error messages. There is no memo for
+    # this event. The p.help-block for the field is located (if it exists) and empties and hidden.
+    # The containing .control-group element (if it exists) has its "error" class name removed.
+    clearValidationError: "t5:field:clear-validation-error"
+
+    # Presents a validation error for a field. The event memo should have a `message` key; the message to present
+    # (as a string, or even as a detached DOM element). The help block for the field will be located or created,
+    # made visible, and have its content updated to `memo.message`.  If a containing element has the class ".control-group",
+    # then the class "error" will be added.
+    #
+    # The rules for locating the help block:
+    # * Search for element with attribute `data-error-block-for` set to the field's `id` attribute
+    # * If not found, find the enclosing .controls or .control-group element
+    # * Search enclosing element for an element with attribute `data-presentation="error"`
+    # * Otherwise, it is not found (but may be created dynamically)
+    # * If found, set the `data-error-block-for` attribute to the field's `id` (assigning the id if necesssary)
+    #
+    # The rules for creating the help block:
+    # * The element is created as `p.help-block` with `data-error-block-for` attribute set to the
+    #   field's id.  The field will be assigned an id if necesary.
+    # * Normally, the block is inserted after the field
+    # * If the field's container has class "input-append" or "input-prepend", then the block is inserted after the container
+    #
+    showValidationError: "t5:field:show-validation-error"
 
   # Defines a number of event names specific to Tapestry Zones. Zones are Tapestry components that are structured
   # to correctly support dynamic updates from the server via an Ajax request, and a standard response

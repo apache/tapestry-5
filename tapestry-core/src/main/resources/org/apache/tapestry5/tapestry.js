@@ -56,14 +56,14 @@ define("core/compat/tapestry", [
          * identify that the field is in error (and decorate the field and show a
          * popup error message).
          */
-        FIELD_VALIDATE_EVENT: events.field.validate,
+        FIELD_VALIDATE_EVENT: "tapestry:field-validate",
 
         /**
          * Event notification, on a form object, that is used to trigger validation
          * on all fields within the form (observed by each field's
-         * Tapestry.FieldEventManager).
+         * Tapestry.FieldEventManager).  Note: no longer used in 5.4.
          */
-        FORM_VALIDATE_FIELDS_EVENT: events.form.validateFields,
+        FORM_VALIDATE_FIELDS_EVENT: "tapestry:form-validate-fields",
 
         /**
          * Event, fired on the document object, which identifies the current focus
@@ -979,174 +979,6 @@ define("core/compat/tapestry", [
         }
     };
 
-    Tapestry.ErrorPopup = Class.create({
-
-        /*
-         * If the images associated with the error popup are overridden (by
-         * overriding Tapestry's default.css stylesheet), then some of these values
-         * may also need to be adjusted.
-         */
-        BUBBLE_VERT_OFFSET: -34,
-
-        BUBBLE_HORIZONTAL_OFFSET: -20,
-
-        BUBBLE_WIDTH: "auto",
-
-        BUBBLE_HEIGHT: "39px",
-
-        IE_FADE_TIME: 500,
-
-        initialize: function (field) {
-            this.field = $(field);
-
-            // The UI elements (outerDiv and friends) are created by the first call to setMessage().
-            this.outerDiv = null;
-        },
-
-        /**
-         * Invoked once, from setMessage(), to create the outerDiv and innerSpan elements, as well as necessary listeners
-         *  (to hide the popup if clicked), and reposition the popup as necessary when the window resizes.
-         */
-        createUI: function () {
-            this.innerSpan = new Element("span");
-            this.outerDiv = $(new Element("div", {
-                'id': this.field.id + "_errorpopup",
-                'class': 't-error-popup'
-            })).update(this.innerSpan).hide();
-
-            var body = $(document.body);
-
-            body.insert({
-                bottom: this.outerDiv
-            });
-
-            this.outerDiv.absolutize();
-
-            this.outerDiv.observe("click", function (event) {
-                this.ignoreNextFocus = true;
-
-                this.stopAnimation();
-
-                this.outerDiv.hide();
-
-                this.field.activate();
-
-                event.stop();
-            }.bindAsEventListener(this));
-
-            this.queue = {
-                position: 'end',
-                scope: this.field.id
-            };
-
-            Event.observe(window, "resize", this.repositionBubble.bind(this));
-        },
-
-        showMessage: function (message) {
-
-            if (this.outerDiv == null) {
-                this.createUI();
-            }
-
-            this.stopAnimation();
-
-            this.innerSpan.update(message);
-
-            this.hasMessage = true;
-
-            this.fadeIn();
-        },
-
-        repositionBubble: function () {
-            var fieldPos = this.field.cumulativeOffset();
-
-            this.outerDiv.setStyle({
-                top: (fieldPos[1] + this.BUBBLE_VERT_OFFSET) + "px",
-                left: (fieldPos[0] + this.BUBBLE_HORIZONTAL_OFFSET) + "px",
-                width: this.BUBBLE_WIDTH,
-                height: this.BUBBLE_HEIGHT
-            });
-        },
-
-        fadeIn: function () {
-            if (!this.hasMessage)
-                return;
-
-            this.repositionBubble();
-
-            if (this.animation)
-                return;
-
-            if (Prototype.Browser.IE) {
-
-                this.outerDiv.show();
-
-                var bound = _.bind(this.hideIfNotFocused, this);
-
-                _.delay(bound, this.IE_FADE_TIME);
-
-                return;
-            }
-
-            this.animation = new Effect.Appear(this.outerDiv, {
-                queue: this.queue,
-                afterFinish: function () {
-                    this.animation = null;
-
-                    if (this.field != Tapestry.currentFocusField)
-                        this.fadeOut();
-                }.bind(this)
-            });
-        },
-
-        /** Used in IE to hide the field if not the focus field. */
-        hideIfNotFocused: function () {
-
-            if (this.outerDiv != null && this.field != Tapestry.currentFocusField) {
-                this.outerDiv.hide();
-            }
-        },
-
-
-        stopAnimation: function () {
-            if (this.animation)
-                this.animation.cancel();
-
-            this.animation = null;
-        },
-
-        fadeOut: function () {
-            if (this.animation || this.outerDiv == null)
-                return;
-
-            if (Prototype.Browser.IE) {
-
-                var div = this.outerDiv;
-
-                _.delay(function () {
-                    div.hide();
-                }, this.IE_FADE_TIME);
-
-                return;
-            }
-
-            this.animation = new Effect.Fade(this.outerDiv, {
-                queue: this.queue,
-                afterFinish: function () {
-                    this.animation = null;
-                }.bind(this)
-            });
-        },
-
-        hide: function () {
-            this.hasMessage = false;
-
-            this.stopAnimation();
-
-            this.outerDiv && this.outerDiv.hide();
-        }
-    });
-
     Tapestry.FieldEventManager = Class.create({
 
         initialize: function (field) {
@@ -1161,7 +993,7 @@ define("core/compat/tapestry", [
 
             var _this = this;
 
-            $(this.field).observe(Tapestry.FORM_VALIDATE_FIELDS_EVENT,
+            $(this.field).observe(events.field.validate,
                     function (event) {
 
                         _this.validateInput();
@@ -1187,22 +1019,16 @@ define("core/compat/tapestry", [
         },
 
         /**
-         * Removes validation decorations if present. Hides the ErrorPopup, if it
-         * exists.
+         * Removes validation messages, etc.
          */
         removeDecorations: function () {
+
             this.field.removeClassName("t-error");
-
-            this.getLabel() && this.getLabel().removeClassName("t-error");
-
-            if (this.errorPopup)
-                this.errorPopup.hide();
+            this.field.fire(events.field.clearValidationError);
         },
 
         /**
-         * Show a validation error message, which will add decorations to the field
-         * and it label, make the icon visible, and raise the field's
-         * Tapestry.ErrorPopup to show the message.
+         * Show a validation error message.
          *
          * @param message
          *            validation message to display
@@ -1211,12 +1037,7 @@ define("core/compat/tapestry", [
 
             this.field.addClassName("t-error");
 
-            this.getLabel() && this.getLabel().addClassName("t-error");
-
-            if (this.errorPopup == undefined)
-                this.errorPopup = new Tapestry.ErrorPopup(this.field);
-
-            this.errorPopup.showMessage(message);
+            this.field.fire(events.field.showValidationError, { message: message });
         },
 
         inError: function () {

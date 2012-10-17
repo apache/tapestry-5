@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,23 +14,19 @@
 
 package org.apache.tapestry5.internal.services;
 
+import org.apache.tapestry5.BaseValidationDecorator;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ValidationDecorator;
-import org.apache.tapestry5.internal.DefaultValidationDecorator;
-import org.apache.tapestry5.services.Environment;
 import org.apache.tapestry5.services.ValidationDecoratorFactory;
 
 public class ValidationDecoratorFactoryImpl implements ValidationDecoratorFactory
 {
-    private final Environment environment;
-
-    public ValidationDecoratorFactoryImpl(Environment environment)
+    public ValidationDecoratorFactoryImpl()
     {
-        this.environment = environment;
     }
 
     public ValidationDecorator newInstance(MarkupWriter writer)
     {
-        return new DefaultValidationDecorator(environment, writer);
+        return new BaseValidationDecorator();
     }
 }

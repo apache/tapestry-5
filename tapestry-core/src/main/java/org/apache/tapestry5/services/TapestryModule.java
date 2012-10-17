@@ -2182,8 +2182,6 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.APPLICATION_FOLDER, "");
 
-        configuration.add(ComponentParameterConstants.SUBMIT_CSS_CLASS, "btn btn-primary");
-
         // Grid component parameters defaults
         configuration.add(ComponentParameterConstants.GRID_ROWS_PER_PAGE, GridConstants.ROWS_PER_PAGE);
         configuration.add(ComponentParameterConstants.GRID_PAGER_POSITION, GridConstants.PAGER_POSITION);

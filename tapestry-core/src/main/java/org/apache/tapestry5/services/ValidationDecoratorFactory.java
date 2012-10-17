@@ -20,9 +20,10 @@ import org.apache.tapestry5.ValidationDecorator;
 /**
  * Creates an instance of {@link org.apache.tapestry5.ValidationDecorator} for a
  * {@link org.apache.tapestry5.MarkupWriter}.    This service is overridden in applications
- * that do not wish to use {@link org.apache.tapestry5.internal.DefaultValidationDecorator}.
+ * that do not wish to use the {@linkplain org.apache.tapestry5.BaseValidationDecorator default no-op validation decorator}.
  *
  * @since 5.3
+ * @deprecated Deprecated in 5.4 with no replacement, as {@link ValidationDecorator} is being phased out.
  */
 public interface ValidationDecoratorFactory
 {

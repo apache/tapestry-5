@@ -31,13 +31,13 @@ define ["_", "core/spi", "core/events", "core/compat/tapestry"],
     # to enabled/disable their hidden field.
     spi.onDocument events.form.prepareForSubmit, "form", (event) ->
 
-      fragments = this.findAll SELECTOR
+      fragments = this.find SELECTOR
 
       _.each fragments, (frag) ->
 
         fragmentId = frag.getAttribute "id"
 
-        hidden = frag.find "input[type=hidden][data-for-fragment=#{fragmentId}]"
+        hidden = frag.findFirst "input[type=hidden][data-for-fragment=#{fragmentId}]"
 
         # If found (e.g., not alwaysSubmit), then enable/disable the field.
         hidden && hidden.setAttribute "disabled", not frag.deepVisible()

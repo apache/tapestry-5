@@ -26,17 +26,17 @@ define ["core/events", "core/spi", "core/builder", "core/compat/tapestry"],
       (element.getAttribute "data-prevent-submission")
 
     clearSubmittingHidden = (form) ->
-      hidden = form.find "[name='t:submit']"
+      hidden = form.findFirst "[name='t:submit']"
 
       hidden.setValue null if hidden
 
       return
 
     setSubmittingHidden = (form, wrapper) ->
-      hidden = form.find "[name='t:submit']"
+      hidden = form.findFirst "[name='t:submit']"
 
       unless hidden
-        firstHidden = form.find "input[type=hidden]"
+        firstHidden = form.findFirst "input[type=hidden]"
         hidden = builder "input", type:"hidden", name:"t:submit"
         firstHidden.insertBefore hidden
 
@@ -54,7 +54,8 @@ define ["core/events", "core/spi", "core/builder", "core/compat/tapestry"],
 
         memo = error: false
 
-        for field in this.findAll "[data-validation]"
+        # This will become more relevant shortly, when field validation is modernized:
+        for field in this.find "[data-validation]"
            field.trigger events.field.validate, memo
 
         # Only do form validation if all individual field validation

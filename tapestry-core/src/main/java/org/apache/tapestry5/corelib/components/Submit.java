@@ -100,7 +100,7 @@ public class Submit implements ClientElement
      * @since 5.4
      */
     @Parameter(name = "class", defaultPrefix = BindingConstants.LITERAL,
-            value = BindingConstants.SYMBOL + ":" + ComponentParameterConstants.SUBMIT_CSS_CLASS)
+            value = "message:core-components.submit.class")
     private String cssClass;
 
     @Environmental
