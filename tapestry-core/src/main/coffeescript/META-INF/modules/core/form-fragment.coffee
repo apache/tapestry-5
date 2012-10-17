@@ -20,37 +20,33 @@ define ["_", "core/spi", "core/events", "core/compat/tapestry"],
 
     SELECTOR = '[data-component-type="core/FormFragment"]'
 
-    # Setup up top-level event handlers for FormFragment-related DOM events.
-    spi.domReady ->
-      body = spi.body()
+    # This is mostly for compatibility with 5.3, which supported
+    # a DOM event to ask a fragment to remove itself.  This makes less sense since
+    # default animations were eliminated in 5.4.
+    spi.onDocument events.formfragment.remove, SELECTOR, (event) ->
+      this.remove()
 
-      # This is mostly for compatibility with 5.3, which supported
-      # a DOM event to ask a fragment to remove itself.  This makes less sense since
-      # default animations were eliminated in 5.4.
-      body.on events.formfragment.remove, SELECTOR, (event) ->
-        this.remove()
+    # When any form fires the prepareForSubmit event, check to see if
+    # any form fragments are contained within, and give them a chance
+    # to enabled/disable their hidden field.
+    spi.onDocument events.form.prepareForSubmit, "form", (event) ->
 
-      # When any form fires the prepareForSubmit event, check to see if
-      # any form fragments are contained within, and give them a chance
-      # to enabled/disable their hidden field.
-      body.on events.form.prepareForSubmit, "form", (event) ->
+      fragments = this.findAll SELECTOR
 
-        fragments = this.findAll SELECTOR
+      _.each fragments, (frag) ->
 
-        _.each fragments, (frag) ->
+        fragmentId = frag.getAttribute "id"
 
-          fragmentId = frag.getAttribute "id"
+        hidden = frag.find "input[type=hidden][data-for-fragment=#{fragmentId}]"
 
-          hidden = frag.find "input[type=hidden][data-for-fragment=#{fragmentId}]"
+        # If found (e.g., not alwaysSubmit), then enable/disable the field.
+        hidden && hidden.setAttribute "disabled", not frag.deepVisible()
 
-          # If found (e.g., not alwaysSubmit), then enable/disable the field.
-          hidden && hidden.setAttribute "disabled", not frag.deepVisible()
-
-      # Again, a DOM event to make the FormFragment visible or invisible; this is useful
-      # because of the didShow/didHide events ... but we're really just seeing the evolution
-      # from the old style (the FormFragment class as controller) to the new style (DOM events and
-      # top-level event handlers).
-      body.on events.formfragment.changeVisibility, SELECTOR, (event) ->
+    # Again, a DOM event to make the FormFragment visible or invisible; this is useful
+    # because of the didShow/didHide events ... but we're really just seeing the evolution
+    # from the old style (the FormFragment class as controller) to the new style (DOM events and
+    # top-level event handlers).
+    spi.onDocument events.formfragment.changeVisibility, SELECTOR, (event) ->
         event.stop()
 
         makeVisible = event.memo.visible

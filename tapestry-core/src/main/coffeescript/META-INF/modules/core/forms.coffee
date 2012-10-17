@@ -81,16 +81,15 @@ define ["core/events", "core/spi", "core/builder", "core/compat/tapestry"],
       # Otherwise, the event is good, there are no validation problems, let the normal processing commence.
       return
 
-    spi.domReady ->
-      # TODO: May want to define a data attribute to control whether Tapestry gets
-      # involved at all?
-      spi.body().on "submit", "form", defaultValidateAndSubmit
+    # TODO: May want to define a data attribute to control whether Tapestry gets
+    # involved at all?
+    spi.onDocument "submit", "form", defaultValidateAndSubmit
 
-      # On any click on a submit or image, update the containing form to indicate that the element
-      # was responsible for the eventual submit; this is very important to Ajax updates, otherwise the
-      # information about which control triggered the submit gets lost.
-      spi.body().on "click", "input[type=submit], input[type=image]", ->
-        setSubmittingHidden (spi this.element.form), this
+    # On any click on a submit or image, update the containing form to indicate that the element
+    # was responsible for the eventual submit; this is very important to Ajax updates, otherwise the
+    # information about which control triggered the submit gets lost.
+    spi.onDocument "click", "input[type=submit], input[type=image]", ->
+      setSubmittingHidden (spi this.element.form), this
 
     exports =
       setSubmittingElement: (form, element) ->

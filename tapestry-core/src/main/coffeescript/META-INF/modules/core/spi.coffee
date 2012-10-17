@@ -114,12 +114,12 @@ define ["_", "prototype"], (_) ->
     stop: ->
       @nativeEvent.stop()
 
-  # Value returned from `on()`; an EventHandler is used to stop listening to
+  # Value returned from `on()` or `onDocument()`; an EventHandler is used to stop listening to
   # events, or even temporarily pause listening.
   #
   # Registers the handler as an event listener for matching elements and event names.
   #
-  # * elements - array of DOM elements
+  # * elements - array of DOM elements (or the document object)
   # * eventNames - array of event names
   # * match - selector to match bubbled elements, or null
   # * handler - event handler function to invoke; it will be passed an `EventWrapper` instance as the first parameter,
@@ -502,6 +502,11 @@ define ["_", "prototype"], (_) ->
       elements = parseSelectorToElements selector
 
       new EventHandler(elements, (split events), match, handler)
+
+    # onDocument() is used to add an event handler to the document object; this is used
+    # for global (or default) handlers.
+    onDocument: (events, match, handler) ->
+      exports.on document, events, match, handler
 
     # Returns a wrapped version of the document.body element. Care must be take to not invoke this function before the
     # body element exists; typically only after the DOM has loaded, such as a `domReady()` callback.

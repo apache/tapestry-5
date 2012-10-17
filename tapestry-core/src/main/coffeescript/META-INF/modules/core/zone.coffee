@@ -18,24 +18,23 @@
 # document body.
 define ["core/spi", "core/events", "_"],
   (spi, events, _) ->
-    spi.domReady ->
-      spi.body().on events.zone.update, (event) ->
+    spi.onDocument events.zone.update, (event) ->
 
-        this.trigger events.zone.willUpdate
+      this.trigger events.zone.willUpdate
 
-        # TODO: purge existing children?
+      # TODO: purge existing children?
 
-        content = event.memo.content
+      content = event.memo.content
 
-        # The server may have passed down the empty string for the content; that removes the existing content.
-        # On the other hand, the server may have not provided a content key; in that case, content is undefined
-        # which means to leave the existing content alone.
-        unless content is undefined
-          this.update content
+      # The server may have passed down the empty string for the content; that removes the existing content.
+      # On the other hand, the server may have not provided a content key; in that case, content is undefined
+      # which means to leave the existing content alone.
+      unless content is undefined
+        this.update content
 
-        this.show() unless this.visible()
+      this.show() unless this.visible()
 
-        this.trigger events.zone.didUpdate
+      this.trigger events.zone.didUpdate
 
     # No meaningful value is returned.
     return
