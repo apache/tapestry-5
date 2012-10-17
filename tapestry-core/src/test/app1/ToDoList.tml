@@ -6,21 +6,21 @@
         
         <t:errors/>
         
-        <table class="t-data-table">
+        <table class="table table-bordered">
             <tr>
                 <th> Title </th>
                 <th> Reorder </th>
             </tr>
             <tr t:type="Loop" source="items" value="item" encoder="toDoItemEncoder">
                 <td>
-                    <input t:type="TextField" t:id="title" value="item.title" size="30"
+                    <input t:type="TextField" t:id="title" value="item.title" size="30" class="input-large"
                         validate="required"/>
                 </td>
                 <td> NOT YET </td>            
             </tr>
             <tr>
                 <td colspan="2">
-                    <input type="submit" value="Update ToDos"/>
+                    <input type="submit" value="Update ToDos" class="btn"/>
                     <input t:type="Submit" t:id="addNew" value="Add new ToDo"/>
                 </td>
             </tr>
@@ -30,7 +30,7 @@
     
     
     <p>
-        <a t:type="ActionLink" t:id="reset">reset the database</a>
+        <a t:type="ActionLink" t:id="reset" class="btn btn-warning">reset the database</a>
     </p>
     
 </html>
