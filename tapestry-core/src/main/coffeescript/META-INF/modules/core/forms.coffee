@@ -67,7 +67,7 @@ define ["core/events", "core/spi", "core/builder", "core/compat/tapestry"],
           return
 
       # Allow certain types of elements to do last-moment set up. Basically, this is for
-      # FormFragment, or similar, to make their t:hidden field enabled or disabled to match
+      # FormFragment, or similar, to make their hidden field enabled or disabled to match
       # their UI's visible/hidden status. This is assumed to work.
       this.trigger events.form.prepareForSubmit, this
 
@@ -92,8 +92,7 @@ define ["core/events", "core/spi", "core/builder", "core/compat/tapestry"],
       setSubmittingHidden (spi this.element.form), this
 
     exports =
-      setSubmittingElement: (form, element) ->
-        setSubmittingHidden form, element
+      setSubmittingElement: setSubmittingHidden
 
       skipValidation: (formWrapper) ->
         formWrapper.setAttribute SKIP_VALIDATION, true
