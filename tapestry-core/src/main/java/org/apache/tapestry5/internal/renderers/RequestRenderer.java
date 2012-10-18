@@ -16,7 +16,6 @@ package org.apache.tapestry5.internal.renderers;
 
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.annotations.Primary;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
@@ -53,7 +52,7 @@ public class RequestRenderer implements ObjectRenderer<Request>
 
     private void coreProperties(Request request, MarkupWriter writer)
     {
-        writer.element("dl");
+        writer.element("dl", "class", "dl-horizontal");
 
         dt(writer, "Context Path");
 
@@ -203,7 +202,7 @@ public class RequestRenderer implements ObjectRenderer<Request>
 
     private void section(MarkupWriter writer, String name)
     {
-        writer.element("div", "class", InternalConstants.OBJECT_RENDER_DIV_SECTION);
+        writer.element("h3");
         writer.write(name);
         writer.end();
     }
@@ -212,7 +211,7 @@ public class RequestRenderer implements ObjectRenderer<Request>
     {
         section(writer, "Headers");
 
-        writer.element("dl");
+        writer.element("dl", "class", "dl-horizontal");
 
         for (String name : request.getHeaderNames())
         {
