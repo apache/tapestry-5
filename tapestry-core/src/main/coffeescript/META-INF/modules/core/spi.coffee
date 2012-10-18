@@ -379,8 +379,6 @@ define ["_", "prototype"], (_) ->
     on: (events, match, handler) ->
       exports.on @element, events, match, handler
 
-      return this
-
   # _internal_: converts a selector to an array of DOM elements
   parseSelectorToElements = (selector) ->
     if _.isString selector
