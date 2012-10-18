@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,14 +14,13 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.ValidationTracker;
-import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.annotations.AfterRender;
+import org.apache.tapestry5.annotations.BeginRender;
+import org.apache.tapestry5.annotations.Mixin;
+import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
-import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.Request;
 
 /**
  * A Checkbox component is simply a &lt;input type="checkbox"&gt;.
@@ -37,23 +36,14 @@ public class Checkbox extends AbstractField
     @Parameter(required = true, autoconnect = true)
     private boolean value;
 
-    @Inject
-    private Request request;
-
     @SuppressWarnings("unused")
     @Mixin
     private RenderDisabled renderDisabled;
 
-    @Inject
-    private ComponentResources resources;
-
-    @Environmental
-    private ValidationTracker tracker;
-
     @BeginRender
     void begin(MarkupWriter writer)
     {
-        String asSubmitted = tracker.getInput(this);
+        String asSubmitted = validationTracker.getInput(this);
 
         boolean checked = asSubmitted != null ? Boolean.parseBoolean(asSubmitted) : value;
 
@@ -83,7 +73,7 @@ public class Checkbox extends AbstractField
 
         // record as "true" or "false"
 
-        tracker.recordInput(this, Boolean.toString(postedValue != null));
+        validationTracker.recordInput(this, Boolean.toString(postedValue != null));
 
         value = postedValue != null;
     }

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2011 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,15 +15,16 @@
 package org.apache.tapestry5.upload.components;
 
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.annotations.Events;
+import org.apache.tapestry5.annotations.Mixin;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.FieldValidatorDefaultSource;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.upload.services.MultipartDecoder;
 import org.apache.tapestry5.upload.services.UploadedFile;
 
@@ -53,26 +54,11 @@ public class Upload extends AbstractField
     @SuppressWarnings("unchecked")
     private FieldValidator<Object> validate;
 
-    @Environmental
-    private ValidationTracker tracker;
-
     @Inject
     private MultipartDecoder decoder;
 
-    @Environmental
-    private FormSupport formSupport;
-
-    @Inject
-    private ComponentDefaultProvider defaultProvider;
-
-    @Inject
-    private ComponentResources resources;
-
     @Inject
     private Locale locale;
-
-    @Inject
-    private FieldValidationSupport fieldValidationSupport;
 
     @SuppressWarnings("unused")
     @Mixin
@@ -82,11 +68,6 @@ public class Upload extends AbstractField
     @Path("upload.js")
     private Asset uploadScript;
 
-    @Inject
-    private Request request;
-
-    @Environmental
-    private JavaScriptSupport javaScriptSupport;
 
     /**
      * Computes a default value for the "validate" parameter using {@link FieldValidatorDefaultSource}.
@@ -107,7 +88,7 @@ public class Upload extends AbstractField
         this.value = value;
         if (validate != null) this.validate = validate;
         this.decoder = decoder;
-        this.tracker = tracker;
+        this.validationTracker = tracker;
         this.resources = resources;
         this.fieldValidationSupport = fieldValidationSupport;
     }
@@ -128,7 +109,7 @@ public class Upload extends AbstractField
             fieldValidationSupport.validate(uploaded, resources, validate);
         } catch (ValidationException ex)
         {
-            tracker.recordError(this, ex.getMessage());
+            validationTracker.recordError(this, ex.getMessage());
         }
 
         value = uploaded;

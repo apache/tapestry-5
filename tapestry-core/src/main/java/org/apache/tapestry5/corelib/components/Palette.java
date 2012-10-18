@@ -15,7 +15,6 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
@@ -25,9 +24,6 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.json.JSONArray;
-import org.apache.tapestry5.services.ComponentDefaultProvider;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 import java.util.Collections;
 import java.util.List;
@@ -226,30 +222,6 @@ public class Palette extends AbstractField
     @Property(write = false)
     private Asset moveUp;
 
-    /**
-     * Used to include scripting code in the rendered page.
-     */
-    @Environmental
-    private JavaScriptSupport javascriptSupport;
-
-    @Environmental
-    private ValidationTracker tracker;
-
-    /**
-     * Needed to access query parameters when processing form submission.
-     */
-    @Inject
-    private Request request;
-
-    @Inject
-    private ComponentDefaultProvider defaultProvider;
-
-    @Inject
-    private ComponentResources componentResources;
-
-    @Inject
-    private FieldValidationSupport fieldValidationSupport;
-
     private SelectModelRenderer renderer;
 
     /**
@@ -322,7 +294,7 @@ public class Palette extends AbstractField
     {
         String parameterValue = request.getParameter(controlName + "-values");
 
-        this.tracker.recordInput(this, parameterValue);
+        validationTracker.recordInput(this, parameterValue);
 
         JSONArray values = new JSONArray(parameterValue);
 
@@ -351,12 +323,12 @@ public class Palette extends AbstractField
 
         try
         {
-            this.fieldValidationSupport.validate(selected, this.componentResources, this.validate);
+            fieldValidationSupport.validate(selected, resources, validate);
 
             this.selected = selected;
         } catch (final ValidationException e)
         {
-            this.tracker.recordError(this, e.getMessage());
+            validationTracker.recordError(this, e.getMessage());
         }
 
         removePropertyNameFromBeanValidationContext();
@@ -390,7 +362,7 @@ public class Palette extends AbstractField
 
         String clientId = getClientId();
 
-        javascriptSupport.addScript("new Tapestry.Palette('%s', %s, %s);", clientId, reorder, naturalOrder
+        javaScriptSupport.addScript("new Tapestry.Palette('%s', %s, %s);", clientId, reorder, naturalOrder
                 .toString(compactJSON));
 
         writer.element("input", "type", "hidden", "id", clientId + "-values", "name", getControlName() + "-values",
@@ -459,7 +431,7 @@ public class Palette extends AbstractField
      */
     Binding defaultValidate()
     {
-        return this.defaultProvider.defaultValidatorBinding("selected", this.componentResources);
+        return this.defaultProvider.defaultValidatorBinding("selected", this.resources);
     }
 
     // Avoids a strange Javassist bytecode error, c'est lavie!

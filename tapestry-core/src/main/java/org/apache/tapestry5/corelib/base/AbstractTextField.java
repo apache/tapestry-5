@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,8 +21,6 @@ import org.apache.tapestry5.corelib.mixins.RenderDisabled;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.services.ComponentDefaultProvider;
-import org.apache.tapestry5.services.Request;
 
 import java.lang.annotation.Annotation;
 import java.util.Locale;
@@ -42,6 +40,8 @@ import java.util.Locale;
  * Likewise, on a form submit, the "parseclient" event handler method will be passed the string provided by the client,
  * and may provide a non-null value as the parsed value. Returning null allows the normal translator to operate. The
  * event handler may also throw {@link org.apache.tapestry5.ValidationException}.
+ *
+ * @tapestrydoc
  */
 @Events(
         {EventConstants.TO_CLIENT, EventConstants.VALIDATE, EventConstants.PARSE_CLIENT})
@@ -88,27 +88,12 @@ public abstract class AbstractTextField extends AbstractField
     @Parameter(defaultPrefix = BindingConstants.NULLFIELDSTRATEGY, value = "default")
     private NullFieldStrategy nulls;
 
-    @Environmental
-    private ValidationTracker tracker;
-
-    @Inject
-    private ComponentResources resources;
-
     @Inject
     private Locale locale;
-
-    @Inject
-    private Request request;
-
-    @Inject
-    private FieldValidationSupport fieldValidationSupport;
 
     @SuppressWarnings("unused")
     @Mixin
     private RenderDisabled renderDisabled;
-
-    @Inject
-    private ComponentDefaultProvider defaultProvider;
 
     /**
      * Computes a default value for the "translate" parameter using
@@ -145,7 +130,7 @@ public abstract class AbstractTextField extends AbstractField
     @BeginRender
     void begin(MarkupWriter writer)
     {
-        String value = tracker.getInput(this);
+        String value = validationTracker.getInput(this);
 
         // If this is a response to a form submission, and the user provided a value.
         // then send that exact value back at them.
@@ -181,8 +166,10 @@ public abstract class AbstractTextField extends AbstractField
      * Generally, the subclass will invoke {@link MarkupWriter#element(String, Object[])}, and will be responsible for
      * including an {@link AfterRender} phase method to invoke {@link MarkupWriter#end()}.
      *
-     * @param writer markup write to send output to
-     * @param value  the value (either obtained and translated from the value parameter, or obtained from the tracker)
+     * @param writer
+     *         markup write to send output to
+     * @param value
+     *         the value (either obtained and translated from the value parameter, or obtained from the tracker)
      */
     protected abstract void writeFieldTag(MarkupWriter writer, String value);
 
@@ -193,7 +180,7 @@ public abstract class AbstractTextField extends AbstractField
     {
         String rawValue = request.getParameter(controlName);
 
-        tracker.recordInput(this, rawValue);
+        validationTracker.recordInput(this, rawValue);
 
         try
         {
@@ -210,7 +197,7 @@ public abstract class AbstractTextField extends AbstractField
                 value = translated;
         } catch (ValidationException ex)
         {
-            tracker.recordError(this, ex.getMessage());
+            validationTracker.recordError(this, ex.getMessage());
         }
 
         removePropertyNameFromBeanValidationContext();

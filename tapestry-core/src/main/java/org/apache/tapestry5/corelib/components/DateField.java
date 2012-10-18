@@ -15,15 +15,16 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.annotations.Events;
+import org.apache.tapestry5.annotations.Import;
+import org.apache.tapestry5.annotations.Parameter;
+import org.apache.tapestry5.annotations.RequestParameter;
 import org.apache.tapestry5.corelib.base.AbstractField;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -92,26 +93,8 @@ public class DateField extends AbstractField
     @Parameter("componentResources.messages")
     private Messages messages;
 
-    @Environmental
-    private JavaScriptSupport support;
-
-    @Environmental
-    private ValidationTracker tracker;
-
-    @Inject
-    private ComponentResources resources;
-
-    @Inject
-    private Request request;
-
     @Inject
     private Locale locale;
-
-    @Inject
-    private ComponentDefaultProvider defaultProvider;
-
-    @Inject
-    private FieldValidationSupport fieldValidationSupport;
 
     private static final String RESULT = "result";
 
@@ -195,7 +178,7 @@ public class DateField extends AbstractField
 
     void beginRender(MarkupWriter writer)
     {
-        String value = tracker.getInput(this);
+        String value = validationTracker.getInput(this);
 
         if (value == null)
             value = formatCurrentValue();
@@ -246,7 +229,7 @@ public class DateField extends AbstractField
         spec.put("parseURL", resources.createEventLink("parse").toURI());
         spec.put("formatURL", resources.createEventLink("format").toURI());
 
-        support.addInitializerCall("dateField", spec);
+        javaScriptSupport.addInitializerCall("dateField", spec);
     }
 
     private void writeDisabled(MarkupWriter writer)
@@ -268,7 +251,7 @@ public class DateField extends AbstractField
     {
         String value = request.getParameter(controlName);
 
-        tracker.recordInput(this, value);
+        validationTracker.recordInput(this, value);
 
         Date parsedValue = null;
 
@@ -278,7 +261,7 @@ public class DateField extends AbstractField
                 parsedValue = format.parse(value);
         } catch (ParseException ex)
         {
-            tracker.recordError(this, messages.format("core-date-value-not-parseable", value));
+            validationTracker.recordError(this, messages.format("core-date-value-not-parseable", value));
             return;
         }
 
@@ -290,7 +273,7 @@ public class DateField extends AbstractField
             this.value = parsedValue;
         } catch (ValidationException ex)
         {
-            tracker.recordError(this, ex.getMessage());
+            validationTracker.recordError(this, ex.getMessage());
         }
 
         removePropertyNameFromBeanValidationContext();
