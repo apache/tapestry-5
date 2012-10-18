@@ -34,10 +34,20 @@ public interface DeprecationWarning
      *         name of the deprecated parameter
      * @param message
      *         message to display; typically explains what action will be taken, such as simply ignoring the parameter entirely. This should clarify
-     *         the issue to the developer, guiding them torwards resolving the deprecation, typically be eliminating
+     *         the issue to the developer, guiding them towards resolving the deprecation, typically be eliminating
      *         the parameter entirely.
      */
     void componentParameter(ComponentResources resources, String parameterName, String message);
+
+    /**
+     * The most common case: a parameter is no longer supported and will likely be removed in the future.
+     *
+     * @param resources
+     *         identifies the component, including its location
+     * @param parameterName
+     *         name of the deprecated parameter
+     */
+    void ignoredComponentParameter(ComponentResources resources, String parameterName);
 
     /**
      * Used to identify a specific parameter value that is no longer supported. The first time this combination of

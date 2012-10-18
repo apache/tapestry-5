@@ -14,26 +14,9 @@
 
 package org.apache.tapestry5.corelib.mixins;
 
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.CSSClassConstants;
-import org.apache.tapestry5.ComponentEventCallback;
-import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.*;
 import org.apache.tapestry5.ContentType;
-import org.apache.tapestry5.EventConstants;
-import org.apache.tapestry5.Field;
-import org.apache.tapestry5.Link;
-import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.Events;
-import org.apache.tapestry5.annotations.Import;
-import org.apache.tapestry5.annotations.InjectContainer;
-import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.Path;
-import org.apache.tapestry5.annotations.RequestParameter;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.internal.util.Holder;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
@@ -42,6 +25,9 @@ import org.apache.tapestry5.services.MarkupWriterFactory;
 import org.apache.tapestry5.services.ResponseRenderer;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.util.TextStreamResponse;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A mixin for a text field that allows for autocompletion of text fields. This is based on Prototype's autocompleter
@@ -58,18 +44,18 @@ import org.apache.tapestry5.util.TextStreamResponse;
  * partial input string sent from the client. The return value should be an array or list of completions, in
  * presentation order. I.e.
  * <p/>
- * 
+ * <p/>
  * <pre>
  * String[] onProvideCompletionsFromMyField(String input)
  * {
  *   return . . .;
  * }
  * </pre>
- * 
+ *
  * @tapestrydoc
  */
 @Import(library =
-{ "${tapestry.scriptaculous}/controls.js", "autocomplete.js" })
+        {"${tapestry.scriptaculous}/controls.js", "autocomplete.js"})
 @Events(EventConstants.PROVIDE_COMPLETIONS)
 public class Autocomplete
 {
@@ -125,7 +111,7 @@ public class Autocomplete
     /**
      * Mixin afterRender phrase occurs after the component itself. This is where we write the &lt;div&gt; element and
      * the JavaScript.
-     * 
+     *
      * @param writer
      */
     void afterRender(MarkupWriter writer)
@@ -140,20 +126,22 @@ public class Autocomplete
 
         writer.element("img",
 
-        "src", spacerImage.toClientURL(),
+                "src", spacerImage.toClientURL(),
 
-        "class", "t-autoloader-icon " + CSSClassConstants.INVISIBLE,
+                "class", "t-autoloader-icon",
 
-        "alt", "",
+                "style", "display:none;",
 
-        "id", loaderId);
+                "alt", "",
+
+                "id", loaderId);
         writer.end();
 
         writer.element("div",
 
-        "id", menuId,
+                "id", menuId,
 
-        "class", "t-autocomplete-menu");
+                "class", "t-autocomplete-menu");
         writer.end();
 
         Link link = resources.createEventLink(EVENT_NAME);
@@ -186,7 +174,7 @@ public class Autocomplete
     }
 
     Object onAutocomplete(@RequestParameter(PARAM_NAME)
-    String input)
+                          String input)
     {
         final Holder<List> matchesHolder = Holder.create();
 
@@ -207,7 +195,7 @@ public class Autocomplete
         };
 
         resources.triggerEvent(EventConstants.PROVIDE_COMPLETIONS, new Object[]
-        { input }, callback);
+                {input}, callback);
 
         ContentType contentType = responseRenderer.findContentType(this);
 
@@ -225,9 +213,9 @@ public class Autocomplete
      * <p/>
      * <p/>
      * This implementation does nothing.
-     * 
+     *
      * @param config
-     *            parameters object
+     *         parameters object
      */
     protected void configure(JSONObject config)
     {
@@ -237,11 +225,11 @@ public class Autocomplete
      * Generates the markup response that will be returned to the client; this should be an &lt;ul&gt; element with
      * nested &lt;li&gt; elements. Subclasses may override this to produce more involved markup (including images and
      * CSS class attributes).
-     * 
+     *
      * @param writer
-     *            to write the list to
+     *         to write the list to
      * @param matches
-     *            list of matching objects, each should be converted to a string
+     *         list of matching objects, each should be converted to a string
      */
     protected void generateResponseMarkup(MarkupWriter writer, List matches)
     {

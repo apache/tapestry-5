@@ -16,11 +16,15 @@ package org.apache.tapestry5;
 
 /**
  * Constants used when rendering a CSS class attribute.
+ *
+ * @deprecated Deprecated in 5.4 with no replacement.
  */
 public class CSSClassConstants
 {
     /**
      * CSS class name that causes a rendered element to be invisible on the client side.
+     *
+     * @deprecated Removed in Tapestry 5.4 with no replacement.
      */
     public static final String INVISIBLE = "t-invisible";
 
@@ -36,6 +40,8 @@ public class CSSClassConstants
      * CSS class name for individual validation errors.
      *
      * @since 5.2.0
+     * @deprecated Deprecated in 5.4 with no replacement; decoration of fields with validation errors
+     *             has moved to the client.
      */
     public static final String ERROR_SINGLE = "t-error-single";
 }

@@ -132,23 +132,12 @@ define("core/compat/tapestry", [
         onDOMLoaded: spi.domReady,
 
         /**
-         * Find all elements marked with the "t-invisible" CSS class and hide()s
-         * them, so that Prototype's visible() method operates correctly. In
-         * addition, finds form control elements and adds additional listeners to
-         * them to support form field input validation.
-         *
-         * <p>
-         * This is invoked when the DOM is first loaded, and AGAIN whenever dynamic
-         * content is loaded via the Zone mechanism.
+         * This is invoked when the DOM is first loaded.
          */
         onDomLoadedCallback: function () {
 
             Tapestry.pageLoaded = true;
 
-            $$(".t-invisible").each(function (element) {
-                element.hide();
-                element.removeClassName("t-invisible");
-            });
         },
 
         /*

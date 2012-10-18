@@ -161,9 +161,9 @@ define ["_", "core/console", "core/spi", "core/events"],
       # of JavaScript libraries and CSS style sheets, and a number of direct updates to the DOM. After DOM updates,
       # the callback is invoked, passed the response (with any Tapestry-specific data removed).
       # After the callback is invoked, page initializations occur.  This method returns null.
-      # response - the Ajax response object
-      # callback - invoked after scripts are loaded, but before page initializations occur (may be null)
-      # Returns null
+
+      # * response - the Ajax response object
+      # * callback - invoked after scripts are loaded, but before page initializations occur (may be null)
       handlePartialPageRenderResponse: (response, callback) ->
 
         # Capture the partial page response portion of the overall response, and
@@ -186,7 +186,7 @@ define ["_", "core/console", "core/spi", "core/events"],
           # Make sure all libraries are loaded
           exports.loadLibraries partial?.libraries, ->
 
-            # Libraries are loaded, update each zone:
+            # After libraries are loaded, update each zone:
             _(partial?.content).each ([id, content]) ->
               console.debug "Updating content for zone #{id}"
 
@@ -196,13 +196,9 @@ define ["_", "core/console", "core/spi", "core/events"],
                 zone.trigger events.zone.update, content
 
             # Invoke the callback, if present.  The callback may do its own content updates.
-            callback and callback.call null, response
+            callback and callback(response)
 
-            # Now that all content updates are, presumably, complete, it is time to
-            # perform initializations.  Once those complete, use the onDomLoadedCallback()
-            # to do some final changes and event registrations (hopefully, to be removed
-            # soon).
-
-            exports.initialize partial?.inits, Tapestry.onDomLoadedCallback
+            # Lastly, perform initializations from the partial page render response.
+            exports.initialize partial?.inits
 
         return

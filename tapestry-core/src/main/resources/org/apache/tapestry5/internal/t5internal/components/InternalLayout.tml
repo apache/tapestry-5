@@ -3,23 +3,31 @@
 <head><title>Tapestry 5: ${title}</title></head>
 <body>
 
-
-<div class="t-header">
-    <a href="http://tapestry.apache.org">Apache Tapestry 5</a>
-    &nbsp;
-    <span class="detail">version ${frameworkVersion}</span>
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <a href="http://tapestry.apache.org/" class="brand">Apache Tapestry 5</a>
+            <ul class="nav">
+                <li class="navbar-text">Version: ${frameworkVersion}</li>
+                <li class="divider-vertical"/>
+                <li class="navbar-text">${title}</li>
+            </ul>
+        </div>
+    </div>
 </div>
 
-<div class="t-content">
-    <h1>${title}</h1>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span2">
+            <t:delegate to="leftNav"/>
+        </div>
+        <div class="span10">
+            <t:alerts/>
 
-    <t:alerts/>
+            <t:body/>
+        </div>
 
-    <t:body/>
-</div>
-
-<div class="t-menu">
-    <t:delegate to="leftNav"/>
+    </div>
 </div>
 
 </body>

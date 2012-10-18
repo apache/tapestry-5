@@ -170,7 +170,7 @@ public class FormFragment implements ClientElement
 
         if (!visible)
         {
-            element.addClassName(CSSClassConstants.INVISIBLE);
+            element.attribute("style", "display: none;");
         }
 
         componentActions = new ComponentActionSink(logger, clientDataEncoder);

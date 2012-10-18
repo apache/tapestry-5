@@ -15,6 +15,7 @@
 package org.apache.tapestry5.internal.services.compatibility;
 
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.ComponentClasses;
@@ -29,6 +30,8 @@ import java.util.Map;
 public class DeprecationWarningImpl implements DeprecationWarning
 {
     private final Logger logger;
+
+    private final AlertManager alertManager;
 
     static class ParameterDeprecationKey
     {
@@ -103,9 +106,10 @@ public class DeprecationWarningImpl implements DeprecationWarning
     // Really used as a set.
     private final Map<Object, Boolean> deprecations = CollectionFactory.newConcurrentMap();
 
-    public DeprecationWarningImpl(Logger logger)
+    public DeprecationWarningImpl(Logger logger, AlertManager alertManager)
     {
         this.logger = logger;
+        this.alertManager = alertManager;
     }
 
     @Override
@@ -125,6 +129,12 @@ public class DeprecationWarningImpl implements DeprecationWarning
         deprecations.put(key, true);
 
         logMessage(resources, parameterName, message);
+    }
+
+    @Override
+    public void ignoredComponentParameter(ComponentResources resources, String parameterName)
+    {
+        componentParameter(resources, parameterName, "This parameter is ignored and may be removed in a future release.");
     }
 
     @Override
@@ -148,11 +158,15 @@ public class DeprecationWarningImpl implements DeprecationWarning
 
     private void logMessage(ComponentResources resources, String parameterName, String message)
     {
-        logger.error(String.format("Component %s, parameter %s: %s\n(at %s)",
+        String text = String.format("Component %s, parameter %s: %s\n(at %s)",
                 resources.getCompleteId(),
                 parameterName,
                 message,
-                resources.getLocation()));
+                resources.getLocation());
+
+        logger.error(text);
+
+        alertManager.warn(text);
     }
 
     public void setupClearDeprecationsWhenInvalidated(

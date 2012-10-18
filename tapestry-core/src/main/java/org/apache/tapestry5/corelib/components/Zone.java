@@ -81,8 +81,7 @@ public class Zone implements ClientBodyElement
      *
      * @deprecated In 5.4, with no specific replacement, now does nothing (see notes on client-side JavaScript events, elsewhere)
      */
-    @Parameter(defaultPrefix = BindingConstants.LITERAL,
-            value = BindingConstants.SYMBOL + ":" + ComponentParameterConstants.ZONE_SHOW_METHOD)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String show;
 
     /**
@@ -92,8 +91,7 @@ public class Zone implements ClientBodyElement
      *
      * @deprecated In 5.4, with no specific replacement, now does nothing (see notes on client-side JavaScript events, elsewhere)
      */
-    @Parameter(defaultPrefix = BindingConstants.LITERAL,
-            value = BindingConstants.SYMBOL + ":" + ComponentParameterConstants.ZONE_UPDATE_METHOD)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String update;
 
     /**
@@ -117,11 +115,13 @@ public class Zone implements ClientBodyElement
     private Environment environment;
 
     /**
-     * If true (the default) then the zone will render normally. If false, then the "t-invisible" CSS class is added,
-     * which will make the zone initially invisible.
+     * In prior releases, this parameter could be overridden to false to force the outer element of the rendered
+     * Zone to be non-visible. This behavior is no longer supported.
+     *
+     * @deprecated Deprecated in 5.4 with no replacement.
      */
     @Parameter
-    private boolean visible = true;
+    private boolean visible;
 
     @Inject
     private ComponentResources resources;
@@ -157,16 +157,21 @@ public class Zone implements ClientBodyElement
         return resources.getElementName("div");
     }
 
-    void setupRender()
+    void pageLoaded()
     {
-        if (show != null)
+        if (resources.isBound("show"))
         {
-            deprecationWarning.componentParameter(resources, "show", "This parameter is ignored and may be removed.");
+            deprecationWarning.ignoredComponentParameter(resources, "show");
         }
 
-        if (update != null)
+        if (resources.isBound("update"))
         {
-            deprecationWarning.componentParameter(resources, "update", "This parameter is ignored and may be removed.");
+            deprecationWarning.ignoredComponentParameter(resources, "update");
+        }
+
+        if (resources.isBound("visible"))
+        {
+            deprecationWarning.ignoredComponentParameter(resources, "visible");
         }
     }
 
@@ -178,12 +183,8 @@ public class Zone implements ClientBodyElement
 
         resources.renderInformalParameters(writer);
 
+        // This will likely be removed in 5.5.
         e.addClassName("t-zone");
-
-        if (!visible)
-        {
-            e.addClassName(CSSClassConstants.INVISIBLE);
-        }
 
         JSONObject spec = new JSONObject("element", clientId);
 

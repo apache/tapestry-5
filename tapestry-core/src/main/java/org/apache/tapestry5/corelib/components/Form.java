@@ -362,7 +362,7 @@ public class Form implements ClientElement, FormValidationControl
 
         resources.renderInformalParameters(writer);
 
-        div = writer.element("div", "class", CSSClassConstants.INVISIBLE);
+        div = writer.element("div");
 
         for (String parameterName : link.getParameterNames())
         {
