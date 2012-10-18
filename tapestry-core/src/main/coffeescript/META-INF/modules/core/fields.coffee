@@ -35,7 +35,6 @@ define ["_", "core/events", "core/spi", "core/builder"],
     #
     # * field - element wrapper for the field
     findHelpBlock = (field) ->
-
       fieldId = field.getAttribute "id"
 
       # When the field has an id (the normal case!), search the body for
@@ -71,7 +70,6 @@ define ["_", "core/events", "core/spi", "core/builder"],
       return block
 
     createHelpBlock = (field) ->
-
       fieldId = ensureFieldId field
 
       # No containing group ... this is a problem, probably an old 5.3 application upgraded to 5.4
@@ -90,6 +88,9 @@ define ["_", "core/events", "core/spi", "core/builder"],
 
       return block
 
+    showValidationError = (id, message) ->
+      spi.wrap(id).trigger events.field.showValidationError, { message }
+
     # Default registrations:
 
     spi.onDocument events.field.clearValidationError, ->
@@ -105,7 +106,6 @@ define ["_", "core/events", "core/spi", "core/builder"],
       return
 
     spi.onDocument events.field.showValidationError, (event, memo) ->
-
       block = exports.findHelpBlock this
 
       unless block
@@ -117,4 +117,4 @@ define ["_", "core/events", "core/spi", "core/builder"],
 
       group and group.addClass "error"
 
-    exports = {findHelpBlock, createHelpBlock}
+    exports = {findHelpBlock, createHelpBlock, showValidationError}

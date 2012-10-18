@@ -227,11 +227,20 @@ public abstract class AbstractField implements Field
 
     /**
      * Allows the validation decorator to write markup after the field has written all of its markup.
+     * In addition, may invoke the <code>core/fields:showValidationError</code> function to present
+     * the field's error (if it has one) to the user.
      */
     @AfterRender
     final void afterDecorator()
     {
         decorator.afterField(this);
+
+        String error = validationTracker.getError(this);
+
+        if (error != null)
+        {
+            javaScriptSupport.require("core/fields").invoke("showValidationError").with(assignedClientId, error);
+        }
     }
 
     /**
