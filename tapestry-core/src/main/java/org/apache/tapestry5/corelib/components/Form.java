@@ -418,14 +418,19 @@ public class Form implements ClientElement, FormValidationControl
         String encodingType = formSupport.getEncodingType();
 
         if (encodingType != null)
+        {
             form.forceAttributes("enctype", encodingType);
+        }
 
         writer.end(); // form
 
         div.element("input", "type", "hidden", "name", FORM_DATA, "value", actionSink.getClientData());
+        div.pop();
 
         if (autofocus)
+        {
             environment.pop(ValidationDecorator.class);
+        }
     }
 
     void cleanupRender()
