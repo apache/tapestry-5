@@ -142,17 +142,16 @@ define ["_", "core/console", "core/spi", "core/events"],
       loadLibrariesAndInitialize: (coreLibraries, libraries, immediateInits, otherInits) ->
         exports.loadLibraries coreLibraries, ->
           require ["core/compat/t5-forceload"], ->
-            console.debug "Core libraries loaded."
+            console.debug "#{coreLibraries.length} core libraries loaded"
             exports.loadLibraries libraries, ->
-              console.debug "Additional libraries loaded." if libraries?.length > 0
+              console.debug "#{libraries?.length or 0} additional libraries loaded"
               exports.initialize immediateInits
 
               spi.domReady -> exports.initialize otherInits
 
       evalJavaScript: (js) ->
-        require ["core/compat/tapestry"], ->
-          console.debug "Evaluating: #{js}"
-          eval js
+        console.debug "Evaluating: #{js}"
+        eval js
 
       # Passed the response from an Ajax request, when the request is successful.
       # This is used for any request that attaches partial-page-render data to the main JSON object
@@ -180,25 +179,22 @@ define ["_", "core/console", "core/spi", "core/events"],
 
         addStylesheets partial?.stylesheets
 
-        # Temporary ugliness: ensuring Tapestry is available since we, for the moment,
-        # make use of some of it.
-        require ["core/compat/tapestry"], ->
-          # Make sure all libraries are loaded
-          exports.loadLibraries partial?.libraries, ->
+        # Make sure all libraries are loaded
+        exports.loadLibraries partial?.libraries, ->
 
-            # After libraries are loaded, update each zone:
-            _(partial?.content).each ([id, content]) ->
-              console.debug "Updating content for zone #{id}"
+          # After libraries are loaded, update each zone:
+          _(partial?.content).each ([id, content]) ->
+            console.debug "Updating content for zone #{id}"
 
-              zone = spi.wrap id
+            zone = spi.wrap id
 
-              if zone
-                zone.trigger events.zone.update, content
+            if zone
+              zone.trigger events.zone.update, content
 
-            # Invoke the callback, if present.  The callback may do its own content updates.
-            callback and callback(response)
+          # Invoke the callback, if present.  The callback may do its own content updates.
+          callback and callback(response)
 
-            # Lastly, perform initializations from the partial page render response.
-            exports.initialize partial?.inits
+          # Lastly, perform initializations from the partial page render response.
+          exports.initialize partial?.inits
 
         return
