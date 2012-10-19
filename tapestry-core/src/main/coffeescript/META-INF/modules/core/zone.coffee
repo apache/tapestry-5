@@ -26,8 +26,6 @@ define ["core/spi", "core/events", "core/ajax", "core/console", "_"],
 
       this.trigger events.zone.willUpdate
 
-      # TODO: purge existing children?
-
       content = event.memo.content
 
       # The server may have passed down the empty string for the content; that removes the existing content.
@@ -44,9 +42,9 @@ define ["core/spi", "core/events", "core/ajax", "core/console", "_"],
     spi.onDocument events.zone.refresh, (event) ->
 
       # A Zone inside a form will render some additional parameters to coordinate updates with the Form on the server.
-      parameters = this.getAttribute "data-zone-parameters"
+      attr = this.getAttribute "data-zone-parameters"
 
-      parameters = if parameters is null then null else JSON.parse(parameters)
+      parameters = attr and JSON.parse attr
 
       ajax event.memo.url,
         parameters: _.extend { "t:zoneid": this.element.id }, parameters, event.memo.parameters
