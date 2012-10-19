@@ -54,7 +54,6 @@ import java.util.*;
  * <p/>
  * The <code>put</code> methods adds values to an object. For example,
  * <p/>
- * <p/>
  * <pre>
  * myString = new JSONObject().put(&quot;JSON&quot;, &quot;Hello, World!&quot;).toString();
  * </pre>
@@ -83,9 +82,9 @@ import java.util.*;
  * constructing JSON (and not parsing it), many of the non-essential methods have been removed (since the original code
  * came with no tests).
  * <p/>
- * Finally, support for the {@link org.apache.tapestry5.json.JSONLiteral} type has been added, which allow the exact
+ * Finally, support for the {@link org.apache.tapestry5.json.JSONLiteral} type has been added, which allows the exact
  * output to be controlled; useful when a JSONObject is being used as a configuration object, and must contain values
- * that are not simple data, such as an inline function (technically making the result not JSON).
+ * that are not simple data, such as an inline function (making the result not JSON).
  *
  * @author JSON.org
  * @version 2
@@ -151,17 +150,22 @@ public final class JSONObject extends JSONCollection
     }
 
     /**
-     * Constructs a new JSONObject using a series of String keys and values.
+     * Constructs a new JSONObject using a series of String keys and object values.
+     * Object values sholuld be compatible with {@link #put(String, Object)}. Keys must be strings
+     * (toString() will be invoked on each key).
+     *
+     * Prior to release 5.4, keysAndValues was type String...; changing it to Object... makes
+     * it much easier to initialize a JSONObject in a single statement, which is more readable.
      *
      * @since 5.2.0
      */
-    public JSONObject(String... keysAndValues)
+    public JSONObject(Object... keysAndValues)
     {
         int i = 0;
 
         while (i < keysAndValues.length)
         {
-            put(keysAndValues[i++], keysAndValues[i++]);
+            put(keysAndValues[i++].toString(), keysAndValues[i++]);
         }
     }
 

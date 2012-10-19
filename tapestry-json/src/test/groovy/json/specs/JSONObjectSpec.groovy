@@ -826,7 +826,19 @@ class JSONObjectSpec extends Specification {
         then:
 
         object.toCompactString() == /{"nested":{"time":"to rock"}}/
+    }
 
+    def "constructor supports non-string keys and values"() {
+        when:
+
+        def object = new JSONObject(true, "truthy", false, false)
+
+        then:
+
+        object.has "true"
+        object.getString("true") == "truthy"
+        object.has "false"
+        object.get("false").is false
     }
 
 }

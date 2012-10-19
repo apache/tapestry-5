@@ -332,4 +332,14 @@ class JSONArraySpec extends Specification {
         list == [200]
     }
 
+    def "can initialize JSONObject from an Iterable"() {
+        when:
+
+        def list = JSONArray.from([1, 2, 3])
+
+        then:
+
+        list.toString(true) == "[1,2,3]"
+    }
+
 }
