@@ -15,9 +15,10 @@ project.ext.versions = [
     testng: "5.14.10",
     easymock: "3.0",
     servletapi: "2.5",
-    spock: "0.6-groovy-1.8",
+    spock: "0.7-groovy-2.0",
     hibernate: "4.1.2.Final",
-    wro4j: "1.4.6"
+    wro4j: "1.5.0",
+    groovy: "2.0.5"
 ]
 
 // Provided so that the CI server can override the normal version number for nightly builds.
@@ -148,7 +149,7 @@ subprojects {
     }
 
     dependencies {
-        groovy "org.codehaus.groovy:groovy-all:1.8.6"
+        groovy "org.codehaus.groovy:groovy-all:${versions.groovy}"
 
         deployerJars "org.apache.maven.wagon:wagon-http-lightweight:1.0-beta-6"
     }
