@@ -22,6 +22,7 @@ import org.apache.tapestry5.corelib.internal.HiddenFieldPositioner;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.internal.services.RequestConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.compatibility.DeprecationWarning;
@@ -33,20 +34,12 @@ import org.slf4j.Logger;
  * Zone renders out as a &lt;div&gt; element (or whatever is specified in the template) and may have content initially,
  * or may only get its content as a result of client side activity.
  * <p/>
- * Often, Zones are initially invisible, in which case the visible parameter may be set to false (it defaults to true).
- * <p/>
- * When a user clicks an {@link org.apache.tapestry5.corelib.components.ActionLink} whose zone parameter is set, the
- * corresponding client-side Tapestry.ZoneManager object is located. It will update the content of the Zone's
- * &lt;div&gt; and then invoke either a show method (if the div is not visible) or an update method (if the div is
- * visible). The show and update parameters are the <em>names</em> of functions attached to the Tapestry.ElementEffect
- * object. Likewise, a {@link org.apache.tapestry5.corelib.components.Form} component may also trigger an update of a
- * client-side Zone.
+ * When a user clicks an {@link org.apache.tapestry5.corelib.components.ActionLink} whose zone parameter is set triggers a
+ * series of client-side behaviors, and an Ajax request to the server.
  * <p/>
  * The server side event handler can return a {@link org.apache.tapestry5.Block} or a component to render as the new
  * content on the client side. Often, re-rendering the Zone's {@linkplain #getBody() body} is useful. Multiple
  * client-side zones may be updated via the {@link org.apache.tapestry5.services.ajax.AjaxResponseRenderer} service.
- * <p/>
- * Renders informal parameters, adding CSS class "t-zone" and possibly, "t-invisible".
  * <p/>
  * You will often want to specify the id parameter of the Zone, in addition to it's Tapestry component id; this "locks
  * down" the client-side id, so the same value is used even in later partial renders of the page (essential if the Zone
@@ -152,6 +145,10 @@ public class Zone implements ClientBodyElement
     @Inject
     private DeprecationWarning deprecationWarning;
 
+    @Inject
+    @Symbol(SymbolConstants.COMPACT_JSON)
+    private boolean compactJSON;
+
     String defaultElementName()
     {
         return resources.getElementName("div");
@@ -159,34 +156,18 @@ public class Zone implements ClientBodyElement
 
     void pageLoaded()
     {
-        if (resources.isBound("show"))
-        {
-            deprecationWarning.ignoredComponentParameter(resources, "show");
-        }
-
-        if (resources.isBound("update"))
-        {
-            deprecationWarning.ignoredComponentParameter(resources, "update");
-        }
-
-        if (resources.isBound("visible"))
-        {
-            deprecationWarning.ignoredComponentParameter(resources, "visible");
-        }
+        deprecationWarning.ignoredComponentParameters(resources, "show", "update", "visible");
     }
 
     void beginRender(MarkupWriter writer)
     {
         clientId = resources.isBound("id") ? idParameter : javascriptSupport.allocateClientId(resources);
 
-        Element e = writer.element(elementName, "id", clientId);
+        Element e = writer.element(elementName,
+                "id", clientId,
+                "data-zone", "true");
 
         resources.renderInformalParameters(writer);
-
-        // This will likely be removed in 5.5.
-        e.addClassName("t-zone");
-
-        JSONObject spec = new JSONObject("element", clientId);
 
         insideForm = formSupport != null;
 
@@ -194,11 +175,10 @@ public class Zone implements ClientBodyElement
         {
             JSONObject parameters = new JSONObject(RequestConstants.FORM_CLIENTID_PARAMETER, formSupport.getClientId(),
                     RequestConstants.FORM_COMPONENTID_PARAMETER, formSupport.getFormComponentId());
-            spec.put("parameters", parameters);
+
+            e.attribute("data-zone-parameters",
+                    parameters.toString(compactJSON));
         }
-
-        javascriptSupport.addInitializerCall("zone", spec);
-
 
         if (insideForm)
         {

@@ -69,7 +69,6 @@ define
     #   field's id.  The field will be assigned an id if necesary.
     # * Normally, the block is inserted after the field
     # * If the field's container has class "input-append" or "input-prepend", then the block is inserted after the container
-    #
     showValidationError: "t5:field:show-validation-error"
 
   # Defines a number of event names specific to Tapestry Zones. Zones are Tapestry components that are structured
@@ -90,6 +89,14 @@ define
     # is made visible after its content is changed, and before this event is triggered.
     didUpdate: "t5:zone:did-update"
 
+    # Triggered on a zone element, the default handler will peform an Ajax request and, when the response is available,
+    # update the zone (via `events.zone.update`). The request should provide a partial page render response. If the
+    # response includes a `content` key, its value will be the markup to replace the zone element's body.
+    #
+    # * memo.url - URL to use for the Ajax request
+    # * memo.parameters - (optional) additional query parameters for the request
+    refresh: "t5:zone:refresh"
+
   # Event names for arbitrary elements. These notifications exist primarily to allow for customizations in how
   # certain behaviors are presented, for example, to add animation when certain elements are hidden or revealed.
   element:
@@ -104,7 +111,7 @@ define
     # boolean. The fragment will show or hide itself if necessary (triggering the `element.didShow` or
     # `element.didHide` event).
     changeVisibility: "t5:fragment:change-visibility"
-    # Request that the fragment remove itself entirely. This event is of no practical use, as it is simply equivalent
+    # Requests that the fragment remove itself entirely. This event is of no practical use, as it is simply equivalent
     # to invoking `spi/ElementWrapper.remove()` on the fragment's element; the event exists for compatibility with
     # Tapestry 5.3 and will be removed in Tapestry 5.5.
     remove: "t5:fragment:remove"

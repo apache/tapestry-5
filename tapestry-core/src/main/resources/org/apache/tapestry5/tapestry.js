@@ -241,51 +241,6 @@ define("core/compat/tapestry", [
             loggingFunction.call(this, message);
         },
 
-        /**
-         * Obtains the Tapestry.ZoneManager object associated with a triggering
-         * element (an &lt;a&gt; or &lt;form&gt;) configured to update a zone.
-         * Writes errors to the AjaxConsole if the zone and ZoneManager can not be
-         * resolved.
-         *
-         * @param element
-         *            triggering element (id or instance)
-         * @return Tapestry.ZoneManager instance for updated zone, or null if not
-         *         found.
-         */
-        findZoneManager: function (element) {
-            var zoneId = $T(element).zoneId;
-
-            return Tapestry.findZoneManagerForZone(zoneId);
-        },
-
-        /**
-         * Obtains the Tapestry.ZoneManager object associated with a zone element
-         * (usually a &lt;div&gt;). Writes errors to the Ajax console if the element
-         * or manager can not be resolved.
-         *
-         * @param zoneElement
-         *            zone element (id or instance)
-         * @return Tapestry.ZoneManager instance for zone, or null if not found
-         */
-        findZoneManagerForZone: function (zoneElement) {
-            var element = $(zoneElement);
-
-            if (!element) {
-                Tapestry.error(Tapestry.Messages.missingZone, {
-                    id: zoneElement
-                });
-                return null;
-            }
-
-            var manager = $T(element).zoneManager;
-
-            if (!manager) {
-                Tapestry.error(Tapestry.Messages.noZoneManager, element);
-                return null;
-            }
-
-            return manager;
-        },
 
         /**
          * Convert a user-provided localized number to an ordinary number (not a
@@ -872,11 +827,6 @@ define("core/compat/tapestry", [
                     });
         },
 
-        zone: function (spec) {
-            new Tapestry.ZoneManager(spec);
-        },
-
-
         formInjector: function (spec) {
             new Tapestry.FormInjector(spec);
         },
@@ -1135,81 +1085,6 @@ define("core/compat/tapestry", [
          */
         none: _none
     };
-
-    /**
-     * Manages a &lt;div&gt; (or other element) for dynamic updates.
-     *
-     */
-    Tapestry.ZoneManager = Class.create({
-        /*
-         * spec are the parameters for the Zone: trigger:
-         * spec.element -- id or instance of div element
-         * spec.parameters -- additional parameters (related to Zones nested inside Forms) (optional)
-         * Prior releases included spec.hide and spec.show (to control animations) but these have been
-         * deprecated.
-         */
-        initialize: function (spec) {
-            this.elementId = spec.element;
-
-            // When updates arrive, the outer element is always made visible.
-            this.element = spi(spec.element);
-            this.specParameters = spec.parameters;
-
-            /* Link the div back to this zone. */
-
-            $T(this.element.element).zoneManager = this;
-        },
-
-        /**
-         * Updates the zone's content; as of 5.4 this is just a shell
-         * that triggers the events.zone.update event; see the core/zone module
-         * for the default handler for that event.
-         *
-         * @param content
-         */
-        show: function (content) {
-            this.element.trigger(events.zone.update, { content: content });
-        },
-
-        /**
-         * Invoked with a reply (i.e., transport.responseJSON), this updates the
-         * managed element and processes any JavaScript in the reply. The zone's
-         * content is only updated if the response has a content key.
-         *
-         * @param reply
-         *            response in JSON format appropriate to a Tapestry.Zone
-         */
-        processReply: function (response) {
-            /*
-             * In a multi-zone update, the reply.content may be missing, in
-             * which case, leave the current content in place. TAP5-1177
-             */
-            var reply = response.responseJSON;
-
-            reply && reply.content != undefined && this.show(reply.content);
-        },
-
-        /**
-         * Initiates an Ajax request to update this zone by sending a request to the
-         * URL. Expects the correct JSON reply (wth keys content, etc.).
-         *
-         * @param URL
-         *            component event request URL
-         * @param parameters
-         *            object containing additional key/value pairs (optional)
-         */
-        updateFromURL: function (URL, parameters) {
-
-            var fullParameters = _.extend({ "t:zoneid": this.elementId },
-                    this.specParameters,
-                    parameters);
-
-            ajax(URL, {
-                parameters: fullParameters,
-                onsuccess: _.bind(this.processReply, this)
-            });
-        }
-    });
 
     Tapestry.FormInjector = Class.create({
 

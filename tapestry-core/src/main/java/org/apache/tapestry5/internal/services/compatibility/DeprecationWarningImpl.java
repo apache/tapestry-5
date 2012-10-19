@@ -132,9 +132,18 @@ public class DeprecationWarningImpl implements DeprecationWarning
     }
 
     @Override
-    public void ignoredComponentParameter(ComponentResources resources, String parameterName)
+    public void ignoredComponentParameters(ComponentResources resources, String... parameterNames)
     {
-        componentParameter(resources, parameterName, "This parameter is ignored and may be removed in a future release.");
+        assert resources != null;
+
+        for (String name : parameterNames)
+        {
+
+            if (resources.isBound(name))
+            {
+                componentParameter(resources, name, "This parameter is ignored and may be removed in a future release.");
+            }
+        }
     }
 
     @Override
