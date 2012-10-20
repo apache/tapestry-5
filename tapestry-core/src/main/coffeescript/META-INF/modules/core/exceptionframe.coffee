@@ -29,10 +29,10 @@ define ["core/spi", "core/builder", "_"],
       iframeDocument.write content
       iframeDocument.close()
 
-    clear = (event) ->
-      event.stop()
+    clear = ->
       write ""
       container.hide()
+      return false
 
     # Called after the window has resized to adjust the size of the iframe.
     resize = ->

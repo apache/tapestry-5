@@ -20,9 +20,9 @@ require ["core/spi"], (spi) ->
     # Remember that Prototype will never trigger a native event, just a
     # custom event, so we create a custom event here.
     # NOTE: support for native events was added later.
-    eh = container.on "x:click", "a", (event) ->
-      event.stop()
+    eh = container.on "x:click", "a", ->
       clicks++
+      return false
 
     button.trigger "x:click"
 
@@ -48,9 +48,9 @@ require ["core/spi"], (spi) ->
     container = spi "spi-eventelement"
     button = container.findFirst "a"
 
-    eh = container.on "click", "a", (event) ->
-      event.stop()
+    eh = container.on "click", "a", ->
       clicks++
+      return false
 
     button.trigger "click"
 
@@ -65,9 +65,9 @@ require ["core/spi"], (spi) ->
     primary = container.findFirst "a.btn-primary"
     secondary = container.findFirst "a[data-use=secondary]"
 
-    eh = container.on "x:click", "a.btn-primary", (event) ->
-      event.stop()
+    eh = container.on "x:click", "a.btn-primary", ->
       clicks++
+      return false
 
     primary.trigger "x:click"
 
@@ -84,10 +84,11 @@ require ["core/spi"], (spi) ->
     container = spi "spi-eventelement"
     primary = container.findFirst "a.btn-primary"
 
-    eh = container.on "x:click", "a.btn-primary", (event) ->
-      event.stop()
+    eh = container.on "x:click", "a.btn-primary", ->
 
       strictEqual this.element, primary.element, "this should be the wrapper for element that was matched"
+
+      return false
 
     primary.trigger "x:click"
 

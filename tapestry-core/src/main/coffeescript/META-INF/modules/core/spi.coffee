@@ -124,6 +124,10 @@ define ["_", "prototype"], (_) ->
   # * match - selector to match bubbled elements, or null
   # * handler - event handler function to invoke; it will be passed an `EventWrapper` instance as the first parameter,
   #   and the memo as the second parameter. `this` will be the `ElementWrapper` for the matched element.
+  #
+  # Event handlers may return false to stop event propogation; this prevents an event from bubbling up, and
+  # prevents any browser default behavior from triggering.  This is often easier than accepting the `EventWrapper`
+  # object as the first parameter and invoking `stop()`.
   class EventHandler
     constructor: (elements, eventNames, match, handler) ->
       throw new Error "No event handler was provided." unless handler?
@@ -133,7 +137,13 @@ define ["_", "prototype"], (_) ->
         elementWrapper = new ElementWrapper prototypeEvent.findElement()
         eventWrapper = new EventWrapper prototypeEvent
 
-        handler.call elementWrapper, eventWrapper, eventWrapper.memo
+        result = handler.call elementWrapper, eventWrapper, eventWrapper.memo
+
+        # If an event handler returns exactly false, then stop the event.
+        if result is false
+          prototypeEvent.stop()
+
+        return
 
       # Prototype Event.Handler instances
       @protoHandlers = []

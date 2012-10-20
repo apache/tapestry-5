@@ -45,7 +45,7 @@ define ["core/events", "core/spi", "core/builder", "core/compat/tapestry"],
 
       hidden.setValue value
 
-    defaultValidateAndSubmit = (event) ->
+    defaultValidateAndSubmit = ->
 
       if ((this.getAttribute "data-validate") is "submit") and
          (not this.getAttribute SKIP_VALIDATION)
@@ -64,8 +64,7 @@ define ["core/events", "core/spi", "core/builder", "core/compat/tapestry"],
 
         if memo.error
           clearSubmittingHidden this
-          event.stop()
-          return
+          return false
 
       # Allow certain types of elements to do last-moment set up. Basically, this is for
       # FormFragment, or similar, to make their hidden field enabled or disabled to match
@@ -76,8 +75,8 @@ define ["core/events", "core/spi", "core/builder", "core/compat/tapestry"],
       # Othertimes we want to stop here and let the `events.form.processSubmit`
       # handler take it from here.
       if isPreventSubmission this
-        event.stop()
         this.trigger events.form.processSubmit, this
+        return false
 
       # Otherwise, the event is good, there are no validation problems, let the normal processing commence.
       return

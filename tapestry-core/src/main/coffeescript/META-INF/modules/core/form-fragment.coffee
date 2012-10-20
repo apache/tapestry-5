@@ -47,13 +47,13 @@ define ["_", "core/spi", "core/events", "core/compat/tapestry"],
     # from the old style (the FormFragment class as controller) to the new style (DOM events and
     # top-level event handlers).
     spi.onDocument events.formfragment.changeVisibility, SELECTOR, (event) ->
-        event.stop()
-
         makeVisible = event.memo.visible
 
         this[if makeVisible then "show" else "hide"]()
 
         this.trigger events.element[if makeVisible then "didShow" else "didHide"]
+
+        return false
 
     # Initializes a trigger for a FormFragment
     #
