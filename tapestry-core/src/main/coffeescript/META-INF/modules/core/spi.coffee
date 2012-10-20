@@ -349,9 +349,13 @@ define ["_", "prototype"], (_) ->
     #
     # * eventName - name of event to trigger on the wrapped Element
     # * memo - optional value assocated with the event; available as WrappedeEvent.memo in event handler functions (must
-    # be null for native events)
+    #   be null for native events). The memo, when provided, should be an object; it is an error if it is a string or other
+    #  non-object type..
     trigger: (eventName, memo) ->
       throw new Error "Attempt to trigger event with null event name" unless eventName?
+
+      unless (_.isNull memo) or (_.isObject memo) or (_.isUndefined memo)
+        throw new Error "Event memo may be null or an object, but not a simple type."
 
       if (eventName.indexOf ':') > 0
         # Custom event is supported directly by Prototype:
