@@ -22,6 +22,8 @@ import org.apache.tapestry5.corelib.data.InsertPosition;
  * Collects details about zone usage for efficient initialization of the client side objects. This has grown to include
  * the client-side behavior associated with {@link org.apache.tapestry5.corelib.components.FormFragment}s.
  *
+ * This interface is only kept for binary compatibility in Tapestry 5.4; the implementation no longer does anything.
+ *
  * @see org.apache.tapestry5.corelib.components.Zone
  * @deprecated Deprecated in 5.4 with no replacement. Use {@link org.apache.tapestry5.services.javascript.JavaScriptSupport} directly,
  *             instead.
@@ -40,12 +42,14 @@ public interface ClientBehaviorSupport
      *         default
      * @param updateFunctionName
      *         name of function used to highlight the function after an update, or null for default
-     * @deprecated In 5.4 with no replacement
      */
     void addZone(String clientId, String showFunctionName, String updateFunctionName);
 
     /**
      * Sets the client-side onclick handler for an &lt;a&gt; element to perform an Ajax update of a zone.
+     * <p/>
+     * Starting in Tapestry 5.4, this can be accomplished by adding a "data-update-zone" attribute
+     * to the element.  The attribute value may be {@code ^} or the id of the zone's client element.
      *
      * @param linkId
      *         id of the link to Ajax enable

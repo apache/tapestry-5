@@ -124,3 +124,7 @@ The property edit blocks contributed to the BeanBlockSource service should expec
 div.control-group, which is provided around the editor for each property.
 
 
+== ClientBehaviorSupport
+
+This service, primarily used by built-in components in Tapestry 5.3, is no longer useful in 5.4. The service
+still exists, but the methods do nothing, and the service and interface will be removed in 5.5.

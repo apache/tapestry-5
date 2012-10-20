@@ -615,22 +615,6 @@ define("core/compat/tapestry", [
             });
         },
 
-        /**
-         * Convert a form or link into a trigger of an Ajax update that
-         * updates the indicated Zone.
-         *
-         * @param spec.linkId
-         *            id or instance of &lt;form&gt; or &lt;a&gt; element
-         * @param spec.zoneId
-         *            id of the element to update when link clicked or form
-         *            submitted
-         * @param spec.url
-         *            absolute component event request URL
-         */
-        linkZone: function (spec) {
-            Tapestry.Initializer.updateZoneOnEvent("click", spec.linkId,
-                    spec.zoneId, spec.url);
-        },
 
         /**
          * Converts a link into an Ajax update of a Zone. The url includes

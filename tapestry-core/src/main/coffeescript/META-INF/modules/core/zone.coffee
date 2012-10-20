@@ -22,6 +22,34 @@
 define ["core/spi", "core/events", "core/ajax", "core/console", "_"],
 
   (spi, events, ajax, console, _) ->
+
+    findZone = (element) ->
+      zoneId = element.getAttribute "data-update-zone"
+
+      if zoneId is "^"
+        zone = element.findContainer "[data-zone]"
+
+        if zone is null
+          console.error "Unable to locate containing zone for #{element}."
+
+        return zone
+
+      zone = spi zoneId
+
+      if zone is null
+        console.error "Unable to locate zone '#{zoneId}'."
+
+      return zone
+
+    spi.onDocument "click", "a[data-update-zone]", ->
+
+      zone = findZone this
+
+      if zone
+        zone.trigger events.zone.refresh,  url: this.getAttribute "href"
+
+      return false
+
     spi.onDocument events.zone.update, (event) ->
 
       this.trigger events.zone.willUpdate

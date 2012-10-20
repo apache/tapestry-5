@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2011 The Apache Software Foundation
+// Copyright 2008, 2009, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,10 +17,8 @@ package org.apache.tapestry5.corelib.base;
 import org.apache.tapestry5.BindingConstants;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.ClientBehaviorSupport;
 import org.apache.tapestry5.services.Request;
 
 /**
@@ -43,9 +41,6 @@ public abstract class AbstractComponentEventLink extends AbstractLink
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String zone;
 
-    @Environmental
-    private ClientBehaviorSupport clientBehaviorSupport;
-
     @Inject
     private Request request;
 
@@ -57,16 +52,14 @@ public abstract class AbstractComponentEventLink extends AbstractLink
 
         writeLink(writer, link);
 
-        if (zone != null)
-        {
-            clientBehaviorSupport.linkZone(getClientId(), zone, link);
-        }
+        writer.attributes("data-update-zone", zone);
     }
 
     /**
      * Invoked to create the Link that will become the href attribute of the output.
      *
-     * @param eventContext the context as an object array, possibly null
+     * @param eventContext
+     *         the context as an object array, possibly null
      */
     protected abstract Link createLink(Object[] eventContext);
 

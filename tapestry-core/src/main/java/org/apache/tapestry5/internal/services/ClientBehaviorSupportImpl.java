@@ -65,9 +65,6 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
 
     public void linkZone(String linkId, String elementId, Link eventLink)
     {
-        JSONObject spec = new JSONObject("linkId", linkId, "zoneId", elementId, "url", eventLink.toURI());
-
-        javascriptSupport.addInitializerCall("linkZone", spec);
     }
 
     /**
