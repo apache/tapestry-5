@@ -285,7 +285,7 @@ dependencies {
 }
 
 task continuousIntegration {
-  dependsOn subprojects.build, aggregateJavadoc, subprojects.uploadPublished
+  dependsOn subprojects.build, aggregateJavadoc
   description "Task executed on Jenkins CI server after SVN commits"
 }
 
