@@ -166,10 +166,16 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
         if (cd.parameters.isEmpty())
             return;
 
-        writer.write("<dt><b>Parameters:</b></dt><dd>");
-
-        writer.write("<table border='1' cellpadding='3' cellspacing='0'>"
-                + "<tr><th>Name</th><th>Type</th><th>Flags</th><th>Default</th><th>Default Prefix</th><th>Since</th><th>Description</th></tr>");
+        writer.write("</dl>"
+        		+ "<table width='100%' cellspacing='0' cellpadding='3' border='1' class='parameters'>"
+        		+ "<thead><tr class='TableHeadingColor' bgcolor='#CCCCFF'>"
+        		+ "<th align='left' colspan='7'>"
+        		+ "<font size='+2'><b>Component Parameters</b></font>"
+        		+ "</th></tr>"
+        		+ "<tr class='columnHeaders'>"
+        		+ "<th>Name</th><th>Description</th><th>Type</th><th>Flags</th><th>Default</th>"
+                + "<th>Default Prefix</th><th>Since</th>"
+        		+ "</tr></thead><tbody>");
 
         for (String name : InternalUtils.sortedKeys(cd.parameters))
         {
@@ -178,15 +184,20 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
             writerParameter(pd, writer);
         }
 
-        writer.write("</table></dd>");
+        writer.write("</tbody></table></dd>");
     }
 
     private void writerParameter(ParameterDescription pd, Writer writer) throws IOException
     {
         writer.write("<tr>");
 
-        element(writer, "td", pd.name);
-        element(writer, "td", pd.type);
+        element(writer, "th", pd.name);
+
+        writer.write("<td>");
+        pd.writeDescription(writer);
+        writer.write("</td>");
+
+        element(writer, "td", addWordBreaks(shortenClassName(pd.type)));
 
         List<String> flags = CollectionFactory.newList();
 
@@ -200,15 +211,11 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
             flags.add("Not Null");
 
         element(writer, "td", InternalUtils.join(flags));
-        element(writer, "td", pd.defaultValue);
+        element(writer, "td", addWordBreaks(pd.defaultValue));
         element(writer, "td", pd.defaultPrefix);
         element(writer, "td", pd.since);
 
-        writer.write("<td>");
-
-        pd.writeDescription(writer);
-
-        writer.write("</td></tr>");
+        writer.write("</tr>");
     }
 
     private void writeEvents(ClassDescription cd, Writer writer) throws IOException
@@ -216,7 +223,10 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
         if (cd.events.isEmpty())
             return;
 
-        writer.write("<dt><b>Events:</b></dt><dd><dl>");
+        writer.write("<p><table width='100%' cellspacing='0' cellpadding='3' border='1' class='parameters'>"
+        		+ "<thead><tr class='TableHeadingColor' bgcolor='#CCCCFF'>"
+        		+ "<th align='left'>"
+        		+ "<font size='+2'><b>Events:</b></font></th></tr></thead></table></p><dl>");
 
         for (String name : InternalUtils.sortedKeys(cd.events))
         {
@@ -230,7 +240,33 @@ public class TapestryDocTaglet implements Taglet, ClassDescriptionSource
             }
         }
 
-        writer.write("</dl></dd>");
+        writer.write("</dl>");
+    }
+    
+    /**
+	 * Insert a <wbr/> tag after each period and colon in the given string, to
+	 * allow browsers to break words at those points. (Otherwise the Parameters
+	 * tables are too wide.)
+	 * 
+	 * @param words
+	 *            any string, possibly containing periods or colons
+	 * @return the new string, possibly containing <wbr/> tags
+	 */
+    private String addWordBreaks(String words)
+    {
+		return words.replace(".", ".<wbr/>").replace(":", ":<wbr/>");
+    }
+    
+    /**
+     * Shorten the given class name by removing built-in Java packages
+     * (currently just java.lang)
+     * 
+     * @param className name of class, with package
+     * @return potentially shorter class name
+     */
+    private String shortenClassName(String name)
+    {
+    	return name.replace("java.lang.", "");
     }
 
     private void streamXdoc(ClassDoc classDoc, Writer writer) throws Exception
