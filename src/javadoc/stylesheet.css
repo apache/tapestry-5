@@ -28,7 +28,7 @@ a:hover
 /* Headings */
 h1
 {
-     background: url(images/tapestry.png) no-repeat;
+     background: url(tapestry.png) no-repeat;
         font-size:28px;
         color:#007c00;
         padding: 2.0em;
@@ -36,7 +36,12 @@ h1
 h1,h2,h3 {
         color: #569D2F;
 }
- 
+
+wbr:after
+{
+        content: "\00200B";  /* IE fix */
+}
+
 /* Table colors */
 
 table
@@ -62,13 +67,41 @@ th
 .TableHeadingColor th
 {
         background-color: #569D2F;
-        background-image: url(doc-files/th-background.png);
         background-repeat: repeat-x;
         color:#fff;
         font-size:14px;
         height:26px;
 }
- 
+.TableHeadingColor th font[size="+2"] 
+{ 
+        font-size: 10pt; 
+}
+table.parameters tbody th 
+{
+        background: #F4F4F4;
+        color: #333;
+        border: 1px dotted #ccc;
+        font-weight: normal;
+}
+table.parameters thead tr.columnHeaders th 
+{
+	   background: #e6e6e6; 
+	   color: #6e6e6e; 
+       border-left: 1px dotted #999;
+       border-right: 1px dotted #999;
+}
+body > dt > b 
+{ 
+        display: block; 
+        padding: 0.3em 0 0 0.3em; 
+        margin-top: 1em; 
+        background: #569D2F; 
+        color: #fff; 
+        border: 1px solid black;
+        font-size: 14px; 
+        height: 26px; 
+}
+
 .TableSubHeadingColor  
 {
         background: #f7ffee;
@@ -168,10 +201,4 @@ tr.TableRowColor:hover
 .NavBarCell3    
 {
         border:none;
-}
- 
-/* Override sizes in font tags */
-font
-{
-        font: inherit !important;
 }
