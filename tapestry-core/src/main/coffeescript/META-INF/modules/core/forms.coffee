@@ -23,9 +23,6 @@ define ["core/events", "core/spi", "core/builder", "_"],
     # the form was submitted by a "cancel" button).
     SKIP_VALIDATION = "t5:skip-validation"
 
-    isPreventSubmission = (element) ->
-      element.attribute "data-prevent-submission"
-
     clearSubmittingHidden = (form) ->
       hidden = form.findFirst "[name='t:submit']"
 
@@ -115,16 +112,10 @@ define ["core/events", "core/spi", "core/builder", "_"],
       # is no memo.
       this.trigger events.form.prepareForSubmit, this
 
-      # Sometimes we want to submit the form normally, for a full-page render.
-      # Othertimes we want to stop here and let the `events.form.processSubmit`
-      # handler take it from here.
-      # TODO: Prevent Submission may not be necessary, as we can simply handle the submit
-      # at a higher level. This may be Tapestry 5.3 thinking.
-      if isPreventSubmission this
-        this.trigger events.form.processSubmit, this
-        return false
 
       # Otherwise, the event is good, there are no validation problems, let the normal processing commence.
+      # Possibly, the document event handler in core/zone will intercept form submission if this
+      # is an Ajax submission.
       return
 
     # TODO: May want to define a data attribute to control whether Tapestry gets

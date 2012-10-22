@@ -103,11 +103,10 @@ define("core/compat/tapestry", [
         CONSOLE_DURATION: 10,
 
         /**
-         * CSS Class added to a &lt;form&gt; element that directs Tapestry to
+         * CSS Class added to a &lt;form&gt; element that directs Tapestry 5.3 to
          * prevent normal (HTTP POST) form submission, in favor of Ajax
-         * (XmlHttpRequest) submission.    It will be removed in Tapestry 5.5.
+         * (XmlHttpRequest) submission. It is ignored under 5.4.
          *
-         * @deprecated Use data-prevent-submission="true" instead
          */
         PREVENT_SUBMISSION: "t-prevent-submission",
 

@@ -31,14 +31,6 @@ define
     # The `core/spi.EventWrapper` for the form element is passed as the memo.
     prepareForSubmit: "t5:form:prepare-for-submit"
 
-    # Triggered last, when the form is configured to not submit normally (as a standard POST). Under 5.3, this
-    # configuration was achieved by adding the `t-prevent-submission` CSS class; under 5.4 it is preferred to
-    # set the `data-prevent-submission` attribute. In either case, the submit event is stopped, and this
-    # event fired to replace it; in most cases, a handler will then handle submitting the form's data as part
-    # of an Ajax request.
-    # The `core/spi.EventWrapper` for the form element is passed as the memo.
-    processSubmit: "t5:form:process-submit"
-
   field:
     # Triggered by the Form on all enclosed elements with the `data-validation` attribute (indicating they are
     # interested in participating with user input validation). The memo object passed to the event has an error property
