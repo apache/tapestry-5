@@ -198,7 +198,7 @@ define ["_", "prototype"], (_) ->
     #
     # * name - the attribute to read or update, or an object of keys and values
     # * value - (optional) the new value for the attribute
-    attribute: (name) ->
+    attribute: (name, value) ->
 
       if _.isObject name
         for name, value of name
@@ -207,7 +207,7 @@ define ["_", "prototype"], (_) ->
 
       current = @element.readAttribute name
       if arguments.length > 1
-        @element.writeAttribute name, arguments[1]
+        @element.writeAttribute name, value
 
       return current
 
@@ -366,13 +366,31 @@ define ["_", "prototype"], (_) ->
       return this
 
     # With no parameters, returns the current value of the element (which must be a form control element, such as `<input>` or
-    # `<textarea>`). With one parameter, updates the field's value, and returns the previous value.
+    # `<textarea>`). With one parameter, updates the field's value, and returns the previous value. The underlying
+    # foundation is responsible for mapping this correctly based on the type of control element.
     # TODO: Define behavior for multi-named elements, such as `<select>`.
-    value: ->
+    #
+    # * newValue - (optional) new value for field
+    value: (newValue) ->
       current = @element.getValue()
 
       if arguments.length > 0
-        @element.setValue arguments[0]
+        @element.setValue newValue
+
+      return current
+
+    # Stores or retrieves meta-data on the element. With one parameter, the current value for the name
+    # is returned (or undefined). With two parameters, the meta-data is updated and the previous value returned.
+    # For Prototype, the meta data is essentially empty (except, perhaps, for some internal keys used to store
+    # event handling information).  For jQuery, the meta data may be initialized from data- attributes.
+    #
+    # * name - name of meta-data value to store or retrieve
+    # * value - (optional) new value for meta-data
+    meta: (name, value) ->
+      current = @element.retrieve name
+
+      if arguments.length > 1
+        @element.store name, value
 
       return current
 
