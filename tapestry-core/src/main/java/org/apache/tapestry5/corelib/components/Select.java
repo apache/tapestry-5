@@ -25,7 +25,6 @@ import org.apache.tapestry5.internal.util.SelectModelRenderer;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.util.EnumSelectModel;
@@ -196,11 +195,13 @@ public class Select extends AbstractField
 
         if (this.zone != null)
         {
+            javaScriptSupport.require("core/select");
+
             Link link = resources.createEventLink(CHANGE_EVENT);
 
-            JSONObject spec = new JSONObject("selectId", getClientId(), "zoneId", zone, "url", link.toURI());
-
-            javascriptSupport.addInitializerCall("linkSelectToZone", spec);
+            writer.attributes(
+                    "data-update-zone", zone,
+                    "data-update-url", link);
         }
     }
 

@@ -613,23 +613,6 @@ define("core/compat/tapestry", [
             });
         },
 
-
-        /**
-         * Converts a link into an Ajax update of a Zone. The url includes
-         * the information to reconnect with the server-side Form.
-         *
-         * @param spec.selectId
-         *            id or instance of &lt;select&gt;
-         * @param spec.zoneId
-         *            id of element to update when select is changed
-         * @param spec.url
-         *            component event request URL
-         */
-        linkSelectToZone: function (spec) {
-            Tapestry.Initializer.updateZoneOnEvent("change", spec.selectId,
-                    spec.zoneId, spec.url);
-        },
-
         linkSubmit: function (spec) {
 
             Tapestry.replaceElementTagName(spec.clientId, "A");

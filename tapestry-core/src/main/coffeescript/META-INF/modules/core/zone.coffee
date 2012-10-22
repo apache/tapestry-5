@@ -23,6 +23,11 @@ define ["core/spi", "core/events", "core/ajax", "core/console", "core/forms",  "
 
   (spi, events, ajax, console, forms, _) ->
 
+    # For a given element that may have the `data-update-zone` attribute, locates the
+    # zone element. May return null if the zone can not be found (after logging an error
+    # to the console).
+    #
+    # * element starting point for determining zone
     findZone = (element) ->
       zoneId = element.attribute "data-update-zone"
 
@@ -108,5 +113,5 @@ define ["core/spi", "core/events", "core/ajax", "core/console", "core/forms",  "
 
         zone.trigger events.zone.refresh, { url }
 
-    # Most of this module is document event handlers, but there's also one export.
-    return { deferredZoneUpdate }
+    # Most of this module is document event handlers, but there's also some exports.
+    return { deferredZoneUpdate, findZone }
