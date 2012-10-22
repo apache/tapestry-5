@@ -23,7 +23,7 @@ define ["core/events", "core/spi", "core/builder", "core/compat/tapestry"],
 
     isPreventSubmission = (element) ->
       (element.hasClass Tapestry.PREVENT_SUBMISSION) or
-      (element.getAttribute "data-prevent-submission")
+      (element.geattribute "data-prevent-submission")
 
     clearSubmittingHidden = (form) ->
       hidden = form.findFirst "[name='t:submit']"
@@ -47,10 +47,10 @@ define ["core/events", "core/spi", "core/builder", "core/compat/tapestry"],
 
     defaultValidateAndSubmit = ->
 
-      if ((this.getAttribute "data-validate") is "submit") and
-         (not this.getAttribute SKIP_VALIDATION)
+      if ((this.attribute "data-validate") is "submit") and
+         (not this.attribute SKIP_VALIDATION)
 
-        this.removeAttribute SKIP_VALIDATION
+        this.attribute SKIP_VALIDATION
 
         memo = error: false
 
@@ -95,4 +95,4 @@ define ["core/events", "core/spi", "core/builder", "core/compat/tapestry"],
       setSubmittingElement: setSubmittingHidden
 
       skipValidation: (formWrapper) ->
-        formWrapper.setAttribute SKIP_VALIDATION, true
+        formWrapper.attribute SKIP_VALIDATION, true

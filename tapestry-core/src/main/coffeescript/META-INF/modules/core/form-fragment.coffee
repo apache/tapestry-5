@@ -35,12 +35,12 @@ define ["_", "core/spi", "core/events", "core/compat/tapestry"],
 
       _.each fragments, (frag) ->
 
-        fragmentId = frag.getAttribute "id"
+        fragmentId = frag.attribute "id"
 
         hidden = frag.findFirst "input[type=hidden][data-for-fragment=#{fragmentId}]"
 
         # If found (e.g., not alwaysSubmit), then enable/disable the field.
-        hidden && hidden.setAttribute "disabled", not frag.deepVisible()
+        hidden && hidden.attribute "disabled", not frag.deepVisible()
 
     # Again, a DOM event to make the FormFragment visible or invisible; this is useful
     # because of the didShow/didHide events ... but we're really just seeing the evolution

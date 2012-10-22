@@ -21,11 +21,11 @@ define ["_", "core/events", "core/spi", "core/builder"],
   (_, events, spi, builder) ->
 
     ensureFieldId = (field) ->
-      fieldId = field.getAttribute "id"
+      fieldId = field.attribute "id"
 
       unless fieldId
         fieldId = _.uniqueId "field"
-        field.setAttribute "id", fieldId
+        field.attribute "id", fieldId
 
       return fieldId
 
@@ -35,7 +35,7 @@ define ["_", "core/events", "core/spi", "core/builder"],
     #
     # * field - element wrapper for the field
     findHelpBlock = (field) ->
-      fieldId = field.getAttribute "id"
+      fieldId = field.attribute "id"
 
       # When the field has an id (the normal case!), search the body for
       # the matching help block.
@@ -63,9 +63,9 @@ define ["_", "core/events", "core/spi", "core/builder"],
           # Assign a unique (hopefully!) client id for the field, which will be
           # used to link the field and the label together.
           fieldId = _.uniqueId "field"
-          field.setAttribute "id", fieldId
+          field.attribute "id", fieldId
 
-        block.setAttribute "data-error-block-for", fieldId
+        block.attribute "data-error-block-for", fieldId
 
       return block
 

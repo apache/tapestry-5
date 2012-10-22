@@ -25,7 +25,7 @@ define ["core/spi", "core/events"], (spi, events) ->
 
     zone = this.findContainer "[data-zone]"
 
-    zone.trigger events.zone.refresh, url: a.getAttribute "href"
+    zone.trigger events.zone.refresh, url: this.attribute "href"
 
     return false
 

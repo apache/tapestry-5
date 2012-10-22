@@ -150,7 +150,7 @@ define ["_", "prototype"], (_) ->
 
       _.each elements, (element) =>
         _.each eventNames, (eventName) =>
-            @protoHandlers.push Event.on element, eventName, match, wrapped
+          @protoHandlers.push Event.on element, eventName, match, wrapped
 
     # Invoked after `stop()` to restart event listening.
     start: ->
@@ -168,10 +168,10 @@ define ["_", "prototype"], (_) ->
   # Exposes the original element as property `element`.
   class ElementWrapper
 
-    # Passed the DOM Element
+  # Passed the DOM Element
     constructor: (@element) ->
 
-    # Hides the wrapped element, setting its display to 'none'.
+      # Hides the wrapped element, setting its display to 'none'.
     hide: ->
       @element.hide()
 
@@ -189,29 +189,27 @@ define ["_", "prototype"], (_) ->
 
       return this
 
-    # Returns the value of an attribute as a string, or null if the attribute
-    # does not exist.
-    getAttribute: (name) ->
-      @element.readAttribute name
-
-    # Set the value of the attribute to the given value.
+    # Reads or updates an attribute. With one argument, returns the current value
+    # of the attribute. With two arguments, updates the attribute's value, and returns
+    # the previous value. Setting an attribute to null is the same as removing it.
     #
-    # Note: Prototype has special support for values null, true, and false that may not be duplicated by other
-    # implementations of the SPI.
-    setAttribute: (name, value) ->
-      # TODO: case where name is an object, i.e., multiple attributes in a single call.
-      # Well, you can just do it, but its not guaranteed to work the same across
-      # different SPIs.
-      @element.writeAttribute name, value
+    # Alternately, the first attribute can be an object in which case all the keys
+    # and values of the object are applied as attributes, and this `ElementWrapper` is returned.
+    #
+    # * name - the attribute to read or update, or an object of keys and values
+    # * value - (optional) the new value for the attribute
+    attribute: (name) ->
 
-      return this
+      if _.isObject name
+        for name, value of name
+            @element.writeAttribute name, value
+        return this
 
-    # Removes the named attribute, if present.
-    removeAttribute: (name) ->
+      current = @element.readAttribute name
+      if arguments.length > 1
+        @element.writeAttribute name, arguments[1]
 
-      @element.writeAttribute name, null
-
-      return this
+      return current
 
     # Returns true if the element has the indicated class name, false otherwise.
     hasClass: (name) ->
@@ -332,7 +330,6 @@ define ["_", "prototype"], (_) ->
     #
     # Note that in Tapestry 5.3, the search would stop at the nearest form element, not the document body.
     deepVisible: ->
-
       cursor = this
       while cursor
         return false unless cursor.visible()
@@ -368,17 +365,16 @@ define ["_", "prototype"], (_) ->
 
       return this
 
-    # Returns the current value of the element (which must be a form control element, such as `<input>` or
-    # `<textarea>`).
+    # With no parameters, returns the current value of the element (which must be a form control element, such as `<input>` or
+    # `<textarea>`). With one parameter, updates the field's value, and returns the previous value.
     # TODO: Define behavior for multi-named elements, such as `<select>`.
-    getValue: ->
-      @element.getValue()
+    value: ->
+      current = @element.getValue()
 
-    # Updates the value for the element (which must be a form control element).
-    setValue: (newValue) ->
-      @element.setValue newValue
+      if arguments.length > 0
+        @element.setValue arguments[0]
 
-      return this
+      return current
 
     # Adds an event handler for one or more events.
     #
@@ -499,7 +495,6 @@ define ["_", "prototype"], (_) ->
     domReady: (callback) ->
       # Hack for IE, which doesn't fire the dom:loaded event reliably.  However, we know that any code here
       # is invoked from the footer of the document, so the rest can be assumed to be loaded.
-
       if Prototype.Browser.IE
         document.loaded = true
 

@@ -24,7 +24,7 @@ define ["core/spi", "core/events", "core/ajax", "core/console", "_"],
   (spi, events, ajax, console, _) ->
 
     findZone = (element) ->
-      zoneId = element.getAttribute "data-update-zone"
+      zoneId = element.attribute "data-update-zone"
 
       if zoneId is "^"
         zone = element.findContainer "[data-zone]"
@@ -46,7 +46,7 @@ define ["core/spi", "core/events", "core/ajax", "core/console", "_"],
       zone = findZone this
 
       if zone
-        zone.trigger events.zone.refresh,  url: this.getAttribute "href"
+        zone.trigger events.zone.refresh,  url: this.attribute "href"
 
       return false
 
@@ -70,7 +70,7 @@ define ["core/spi", "core/events", "core/ajax", "core/console", "_"],
     spi.onDocument events.zone.refresh, (event) ->
 
       # A Zone inside a form will render some additional parameters to coordinate updates with the Form on the server.
-      attr = this.getAttribute "data-zone-parameters"
+      attr = this.attribute "data-zone-parameters"
 
       parameters = attr and JSON.parse attr
 

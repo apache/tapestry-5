@@ -73,7 +73,7 @@ define ["_", "core/spi"], (_, spi) ->
       else if name.startsWith "on"
         wrapper.on (name.substring 2), value
       else
-        wrapper.setAttribute name, value
+        wrapper.attribute name, value
 
     return null
 
