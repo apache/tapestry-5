@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,36 +14,26 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.Component;
-import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.Persist;
-import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.annotations.SupportsInformalParameters;
+import org.apache.tapestry5.annotations.*;
 import org.apache.tapestry5.beaneditor.BeanModel;
 import org.apache.tapestry5.beaneditor.PropertyModel;
 import org.apache.tapestry5.corelib.data.GridPagerPosition;
-import org.apache.tapestry5.grid.ColumnSort;
-import org.apache.tapestry5.grid.GridDataSource;
-import org.apache.tapestry5.grid.GridModel;
-import org.apache.tapestry5.grid.GridSortModel;
-import org.apache.tapestry5.grid.SortConstraint;
+import org.apache.tapestry5.grid.*;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry5.internal.bindings.AbstractBinding;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.BeanModelSource;
-import org.apache.tapestry5.services.ClientBehaviorSupport;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
 import org.apache.tapestry5.services.ComponentEventResultProcessor;
 import org.apache.tapestry5.services.FormSupport;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A grid presents tabular data. It is a composite component, created in terms of several sub-components. The
@@ -60,11 +50,11 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * encoder parameter), or use an entity type for the "row" parameter for which
  * Tapestry can provide a ValueEncoder automatically. This will allow Tapestry
  * to use a unique ID for each row that doesn't change when rows are reordered.
- * 
+ *
+ * @tapestrydoc
  * @see org.apache.tapestry5.beaneditor.BeanModel
  * @see org.apache.tapestry5.services.BeanModelSource
  * @see org.apache.tapestry5.grid.GridDataSource
- * @tapestrydoc
  * @see BeanEditForm
  * @see BeanDisplay
  * @see Loop
@@ -199,14 +189,16 @@ public class Grid implements GridModel
     /**
      * If true, then the Grid will be wrapped in an element that acts like a
      * {@link org.apache.tapestry5.corelib.components.Zone}; all the paging and sorting links will refresh the zone,
-     * repainting
-     * the entire grid within it, but leaving the rest of the page (outside the zone) unchanged.
+     * repainting the entire grid within it, but leaving the rest of the page (outside the zone) unchanged.
      */
     @Parameter
     private boolean inPlace;
 
     /**
-     * The name of the psuedo-zone that encloses the Grid.
+     * The name of the psuedo-zone that encloses the Grid. Starting in 5.4, this is always either
+     * null or "^" and is not really used the way it was in 5.3; instead it triggerers the addition
+     * of a {@code data-inplace-grid-links} attribute in a div surrounding any links related to
+     * sorting or pagination. The rest is sorted out on the client. See module {@code core/grid}.
      */
     @Property(write = false)
     private String zone;
@@ -229,19 +221,19 @@ public class Grid implements GridModel
     private BeanModelSource modelSource;
 
     @Environmental
-    private ClientBehaviorSupport clientBehaviorSupport;
+    private JavaScriptSupport javaScriptSupport;
 
     @Component(parameters =
-    { "index=inherit:columnIndex", "lean=inherit:lean", "overrides=overrides", "zone=zone" })
+            {"index=inherit:columnIndex", "lean=inherit:lean", "overrides=overrides", "zone=zone"})
     private GridColumns columns;
 
     @Component(parameters =
-    { "columnIndex=inherit:columnIndex", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "row=row",
-            "overrides=overrides" }, publishParameters = "rowIndex,rowClass,volatile,encoder,lean")
+            {"columnIndex=inherit:columnIndex", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "row=row",
+                    "overrides=overrides"}, publishParameters = "rowIndex,rowClass,volatile,encoder,lean")
     private GridRows rows;
 
     @Component(parameters =
-    { "source=dataSource", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "zone=zone" })
+            {"source=dataSource", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "zone=zone"})
     private GridPager pager;
 
     @Component(parameters = "to=pagerTop")
@@ -255,9 +247,6 @@ public class Grid implements GridModel
 
     @Environmental(false)
     private FormSupport formSupport;
-
-    @Environmental
-    private JavaScriptSupport jsSupport;
 
     /**
      * Defines where block and label overrides are obtained from. By default, the Grid component provides block
@@ -383,7 +372,7 @@ public class Grid implements GridModel
      * Returns a {@link org.apache.tapestry5.Binding} instance that attempts to identify the model from the source
      * parameter (via {@link org.apache.tapestry5.grid.GridDataSource#getRowType()}. Subclasses may override to provide
      * a different mechanism. The returning binding is variant (not invariant).
-     * 
+     *
      * @see BeanModelSource#createDisplayModel(Class, org.apache.tapestry5.ioc.Messages)
      */
     protected Binding defaultModel()
@@ -493,13 +482,17 @@ public class Grid implements GridModel
 
         if (inPlace && zone == null)
         {
-            zone = jsSupport.allocateClientId(resources);
+            javaScriptSupport.require("core/zone");
+            javaScriptSupport.require("core/grid");
 
-            writer.element("div", "id", zone);
-
-            clientBehaviorSupport.addZone(zone, null, "show");
+            writer.element("div", "data-zone", "true");
 
             didRenderZoneDiv = true;
+
+            // Through Tapestry 5.3, we had a specific id for the zone that had to be passed down to the
+            // GridPager and etc.  That's no longer necessary, so zone will always be null or "^".  We don't
+            // even need any special ids to be allocated!
+            zone = "^";
         }
 
         return null;
@@ -598,9 +591,9 @@ public class Grid implements GridModel
      * {@link org.apache.tapestry5.services.ComponentEventResultProcessor#processResultValue(Object)} passing this (the
      * Grid component) as the content provider for the update.
      */
-    void onInPlaceUpdate(String zone) throws IOException
+    void onInPlaceUpdate() throws IOException
     {
-        this.zone = zone;
+        this.zone = "^";
 
         componentEventResultProcessor.processResultValue(this);
     }

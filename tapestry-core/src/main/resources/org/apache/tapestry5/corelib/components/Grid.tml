@@ -1,4 +1,4 @@
-<div class="t-data-grid" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
 
     <div t:id="pagerTop"/>
 
@@ -17,4 +17,4 @@
 
     <t:block id="empty">${message:core-no-grid-data-to-display}</t:block>
 
-</div>
+</t:container>
