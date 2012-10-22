@@ -16,19 +16,21 @@
 #
 # Defines handlers for HTML forms and HTML field elements, specifically to control input validation.
 
-define ["core/events", "core/spi", "core/builder", "core/compat/tapestry"],
-  (events, spi, builder) ->
+define ["core/events", "core/spi", "core/builder", "_"],
+  (events, spi, builder, _) ->
 
-    SKIP_VALIDATION = "data-skip-validation"
+    # Meta-data name that indicates the next submission should skip validation (typically, because
+    # the form was submitted by a "cancel" button).
+    SKIP_VALIDATION = "t5:skip-validation"
 
     isPreventSubmission = (element) ->
-      (element.hasClass Tapestry.PREVENT_SUBMISSION) or
-      (element.geattribute "data-prevent-submission")
+      element.attribute "data-prevent-submission"
 
     clearSubmittingHidden = (form) ->
       hidden = form.findFirst "[name='t:submit']"
 
-      hidden.setValue null if hidden
+      # Clear if found
+      hidden and hidden.value null
 
       return
 
@@ -43,14 +45,55 @@ define ["core/events", "core/spi", "core/builder", "core/compat/tapestry"],
       # TODO: Research why we need id and name and get rid of one if possible.
       value = Object.toJSON [ wrapper.element.id, wrapper.element.name ]
 
-      hidden.setValue value
+      hidden.value value
+
+      return
+
+    # Passed the element wrapper for a form element, returns a map of all the values
+    # for all non-disabled fields (including hidden fields, select, textarea). This is primarily
+    # used when assembling an Ajax request for a form submission.
+    gatherParameters = (form) ->
+      result = {}
+
+      fields = form.find "input, select, textarea"
+
+      _.each fields, (field) ->
+          return if field.attribute "disabled"
+
+          type = field.element.type
+
+          # Ignore types file and submit; file doesn't make sense for Ajax, and submit
+          # is handled by keeping a hidden field active with the data Tapestry needs
+          # on the server.
+          return if type is "file" || type is "submit"
+
+          value = field.value()
+
+          return if value is null
+
+          name = field.element.name
+
+          existing = result[name]
+
+          if _.isArray existing
+            existing.push value
+            return
+
+          if existing
+            result[name] = [existing, value]
+            return
+
+          result[name] = value
+
+      return result
+
 
     defaultValidateAndSubmit = ->
 
       if ((this.attribute "data-validate") is "submit") and
-         (not this.attribute SKIP_VALIDATION)
+         (not this.meta SKIP_VALIDATION)
 
-        this.attribute SKIP_VALIDATION
+        this.meta SKIP_VALIDATION, null
 
         memo = error: false
 
@@ -68,12 +111,15 @@ define ["core/events", "core/spi", "core/builder", "core/compat/tapestry"],
 
       # Allow certain types of elements to do last-moment set up. Basically, this is for
       # FormFragment, or similar, to make their hidden field enabled or disabled to match
-      # their UI's visible/hidden status. This is assumed to work.
+      # their UI's visible/hidden status. This is assumed to work or throw an exception; there
+      # is no memo.
       this.trigger events.form.prepareForSubmit, this
 
       # Sometimes we want to submit the form normally, for a full-page render.
       # Othertimes we want to stop here and let the `events.form.processSubmit`
       # handler take it from here.
+      # TODO: Prevent Submission may not be necessary, as we can simply handle the submit
+      # at a higher level. This may be Tapestry 5.3 thinking.
       if isPreventSubmission this
         this.trigger events.form.processSubmit, this
         return false
@@ -92,7 +138,11 @@ define ["core/events", "core/spi", "core/builder", "core/compat/tapestry"],
       setSubmittingHidden (spi this.element.form), this
 
     exports =
+      gatherParameters: gatherParameters
+
       setSubmittingElement: setSubmittingHidden
 
-      skipValidation: (formWrapper) ->
-        formWrapper.attribute SKIP_VALIDATION, true
+      # Sets a flag on the form to indicate that client-side validation should be bypassed.
+      # This is typically associated with submit buttons that "cancel" the form.
+      skipValidation: (form) ->
+        form.meta SKIP_VALIDATION, true

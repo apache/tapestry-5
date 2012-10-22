@@ -324,11 +324,6 @@ public class Form implements ClientElement, FormValidationControl
 
         formSupport = createRenderTimeFormSupport(clientId, actionSink, allocator);
 
-        if (zone != null)
-        {
-            linkFormToZone(link);
-        }
-
         environment.push(FormSupport.class, formSupport);
         environment.push(ValidationTracker.class, tracker);
 
@@ -353,7 +348,11 @@ public class Form implements ClientElement, FormValidationControl
         // Save the form element for later, in case we want to write an encoding
         // type attribute.
 
-        form = writer.element("form", "id", clientId, "method", "post", "action", actionURL);
+        form = writer.element("form",
+                "id", clientId,
+                "method", "post",
+                "action", actionURL,
+                "data-update-zone", zone);
 
         if (clientValidation != ClientValidation.NONE)
         {

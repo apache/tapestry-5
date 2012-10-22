@@ -19,9 +19,9 @@
 # Typically, a client-side zone element is rendered by, and corresponds to, a server-side
 # core/Zone component; however, certain other components (such as core/ProgressiveDisplay) may
 # also be treated as zones.
-define ["core/spi", "core/events", "core/ajax", "core/console", "_"],
+define ["core/spi", "core/events", "core/ajax", "core/console", "core/forms",  "_"],
 
-  (spi, events, ajax, console, _) ->
+  (spi, events, ajax, console, forms, _) ->
 
     findZone = (element) ->
       zoneId = element.attribute "data-update-zone"
@@ -47,6 +47,19 @@ define ["core/spi", "core/events", "core/ajax", "core/console", "_"],
 
       if zone
         zone.trigger events.zone.refresh,  url: this.attribute "href"
+
+      return false
+
+    spi.onDocument "submit", "form[data-update-zone]", ->
+
+      zone = findZone this
+
+      if zone
+        formParameters = forms.gatherParameters this
+
+        zone.trigger events.zone.refresh,
+          url: (this.attribute "action")
+          parameters: formParameters
 
       return false
 
@@ -95,5 +108,5 @@ define ["core/spi", "core/events", "core/ajax", "core/console", "_"],
 
         zone.trigger events.zone.refresh, { url }
 
-
+    # Most of this module is document event handlers, but there's also one export.
     return { deferredZoneUpdate }
