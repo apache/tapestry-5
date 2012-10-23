@@ -189,7 +189,7 @@ define ["_", "core/console", "core/spi", "core/events"],
             zone = spi.wrap id
 
             if zone
-              zone.trigger events.zone.update, content
+              zone.trigger events.zone.update, { content }
 
           # Invoke the callback, if present.  The callback may do its own content updates.
           callback and callback(response)
