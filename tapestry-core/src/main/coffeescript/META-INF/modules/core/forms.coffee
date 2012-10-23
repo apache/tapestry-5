@@ -29,9 +29,17 @@ define ["core/events", "core/spi", "core/builder", "_"],
       # Clear if found
       hidden and hidden.value null
 
+      form.meta SKIP_VALIDATION, null
+
       return
 
-    setSubmittingHidden = (form, wrapper) ->
+    setSubmittingHidden = (form, submitter) ->
+
+      mode = submitter.attribute "data-submit-mode"
+      isCancel = mode and mode isnt "normal"
+      if isCancel
+        form.meta SKIP_VALIDATION, true
+
       hidden = form.findFirst "[name='t:submit']"
 
       unless hidden
@@ -40,7 +48,7 @@ define ["core/events", "core/spi", "core/builder", "_"],
         firstHidden.insertBefore hidden
 
       # TODO: Research why we need id and name and get rid of one if possible.
-      value = Object.toJSON [ wrapper.element.id, wrapper.element.name ]
+      value = Object.toJSON [ submitter.element.id, isCancel ? "cancel" : submitter.element.name ]
 
       hidden.value value
 
@@ -118,8 +126,6 @@ define ["core/events", "core/spi", "core/builder", "_"],
       # is an Ajax submission.
       return
 
-    # TODO: May want to define a data attribute to control whether Tapestry gets
-    # involved at all?
     spi.onDocument "submit", "form", defaultValidateAndSubmit
 
     # On any click on a submit or image, update the containing form to indicate that the element
@@ -127,6 +133,23 @@ define ["core/events", "core/spi", "core/builder", "_"],
     # information about which control triggered the submit gets lost.
     spi.onDocument "click", "input[type=submit], input[type=image]", ->
       setSubmittingHidden (spi this.element.form), this
+      return
+
+    # Support for link submits. `data-submit-mode` will be non-null, possibly "cancel".
+    # Update the hidden field, but also cancel the default behavior for the click.
+    spi.onDocument "click", "a[data-submit-mode]", ->
+      form = this.findContainer "form"
+
+      unless form
+        console.error "Submitting link element not contained inside a form element."
+        return false
+
+      setSubmittingHidden form, this
+
+      form.element.submit()
+
+      # And cancel the default behavior for the original click event
+      return false
 
     exports =
       gatherParameters: gatherParameters

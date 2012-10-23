@@ -288,40 +288,6 @@ define("core/compat/tapestry", [
         },
 
         /**
-         * Creates a clone of the indicated element, but with the alternate tag
-         * name. Attributes of the original node are copied to the new node. Tag
-         * names should be all upper-case. The content of the original element is
-         * copied to the new element and the original element is removed. Event
-         * observers on the original element will be lost.
-         *
-         * @param element
-         *            element or element id
-         * @since 5.2.0
-         */
-        replaceElementTagName: function (element, newTagName) {
-
-            element = $(element);
-
-            var tag = element.tagName;
-
-            /* outerHTML is IE only; this simulates it on any browser. */
-
-            var dummy = document.createElement('html');
-            dummy.appendChild(element.cloneNode(true));
-            var outerHTML = dummy.innerHTML;
-
-            var replaceHTML = outerHTML.replace(new RegExp("^<" + tag, "i"),
-                    "<" + newTagName).replace(new RegExp("</" + tag + ">$", "i"),
-                    "</" + newTagName + ">");
-
-            element.insert({
-                before: replaceHTML
-            });
-
-            T5.dom.remove(element);
-        },
-
-        /**
          * Removes an element and all of its direct and indirect children. The
          * element is first purged, to ensure that Internet Explorer doesn't leak
          * memory if event handlers associated with the element (or its children)
@@ -601,29 +567,6 @@ define("core/compat/tapestry", [
             });
         },
 
-        linkSubmit: function (spec) {
-
-            Tapestry.replaceElementTagName(spec.clientId, "A");
-
-            $(spec.clientId).writeAttribute("href", "#");
-
-            if (spec.mode == "cancel") {
-                $(spec.clientId).writeAttribute("name", "cancel");
-            }
-
-            $(spec.clientId).observeAction("click", function (event) {
-
-                var form = $(spec.form);
-
-                if (spec.mode != "normal") {
-                    form.skipValidation();
-                }
-
-                form.setSubmittingElement(this);
-
-                form.performSubmit(event);
-            });
-        },
 
         /**
          * Used by other initializers to connect an element (either a link

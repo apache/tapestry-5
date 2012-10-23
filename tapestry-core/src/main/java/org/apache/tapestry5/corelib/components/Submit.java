@@ -20,7 +20,6 @@ import org.apache.tapestry5.annotations.Events;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
 import org.apache.tapestry5.corelib.SubmitMode;
-import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONArray;
@@ -32,7 +31,8 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 /**
  * Corresponds to &lt;input type="submit"&gt; or &lt;input type="image"&gt;, a client-side element that can force the
  * enclosing form to submit. The submit responsible for the form submission will post a notification that allows the
- * application to know that it was the responsible entity. The notification is named "selected" and has no context.
+ * application to know that it was the responsible entity. The notification is named
+ * {@linkplain EventConstants#SELECTED selected}, by default, and has no context.
  *
  * @tapestrydoc
  */
@@ -153,11 +153,7 @@ public class Submit implements ClientElement
     {
         clientId = javascriptSupport.allocateClientId(resources);
 
-        boolean isCancel = mode == SubmitMode.CANCEL;
-
-        String name =
-                isCancel ? InternalConstants.CANCEL_NAME :
-                        formSupport.allocateControlName(resources.getId());
+        String name = formSupport.allocateControlName(resources.getId());
 
         // Save the element, to see if an id is later requested.
 
@@ -168,6 +164,8 @@ public class Submit implements ClientElement
                 "type", type,
 
                 "name", name,
+
+                "data-submit-mode", mode.name().toLowerCase(),
 
                 "class", cssClass,
 
@@ -186,11 +184,6 @@ public class Submit implements ClientElement
         formSupport.store(this, new ProcessSubmission(clientId, name));
 
         resources.renderInformalParameters(writer);
-
-        if (mode != SubmitMode.NORMAL)
-        {
-            javascriptSupport.addInitializerCall("enableBypassValidation", getClientId());
-        }
     }
 
     void afterRender(MarkupWriter writer)
