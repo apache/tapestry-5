@@ -152,7 +152,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     {
         if (focusFieldId != null)
         {
-            addInitializerCall("activate", focusFieldId);
+            require("core/pageinit").invoke("focus").with(focusFieldId);
         }
 
         F.flow(stylesheetLinks).each(new Worker<StylesheetLink>()
@@ -230,7 +230,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
         if (partialMode)
         {
-            addInitializerCall(priority, "evalScript", newScript);
+            require("core/pageinit").invoke("intervalId").with(newScript);
         } else
         {
             linker.addScript(priority, newScript);

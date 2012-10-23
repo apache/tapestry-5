@@ -576,18 +576,6 @@ define("core/compat/tapestry", [
     /** Container of functions that may be invoked by the Tapestry.init() function. */
     T5.extendInitializers({
 
-        /** Make the given field the active field (focus on the field). */
-        activate: function (id) {
-            $(id).activate();
-        },
-
-        /**
-         * evalScript is a synonym for the JavaScript eval function. It is
-         * used in Ajax requests to handle any setup code that does not fit
-         * into a standard Tapestry.Initializer call.
-         */
-        evalScript: eval,
-
         ajaxFormLoop: function (spec) {
             var rowInjector = $(spec.rowInjector);
 

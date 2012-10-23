@@ -153,6 +153,11 @@ define ["_", "core/console", "core/spi", "core/events"],
         console.debug "Evaluating: #{js}"
         eval js
 
+      focus: (fieldId) ->
+        field = spi fieldId
+
+        field && field.focus()
+
       # Passed the response from an Ajax request, when the request is successful.
       # This is used for any request that attaches partial-page-render data to the main JSON object
       # response.  If no such data is attached, the callback is simply invoked immediately.

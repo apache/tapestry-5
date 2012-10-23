@@ -211,6 +211,12 @@ define ["_", "prototype"], (_) ->
 
       return current
 
+    # Moves the cursor to the field.
+    focus: ->
+      @element.focus()
+
+      return this
+
     # Returns true if the element has the indicated class name, false otherwise.
     hasClass: (name) ->
       @element.hasClassName name
