@@ -108,7 +108,9 @@ public class FormInjector implements ClientElement
     {
         clientId = javascriptSupport.allocateClientId(resources);
 
-        clientElement = writer.element(element, "id", clientId);
+        clientElement = writer.element(element,
+                "id", clientId,
+                "data-container-type", "core/ajaxformloop/fragment");
 
         resources.renderInformalParameters(writer);
 

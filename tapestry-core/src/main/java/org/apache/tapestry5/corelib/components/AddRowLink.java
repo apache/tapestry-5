@@ -27,7 +27,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * row. Triggers a server-side {@linkplain org.apache.tapestry5.EventConstants#ADD_ROW addRow} event on the
  * AjaxFormLoop, which must return the newly added object, which will be rendered in the body of the AjaxFormLoop and
  * sent to the client web browser.
- * 
+ *
  * @tapestrydoc
  */
 @SupportsInformalParameters
@@ -44,12 +44,13 @@ public class AddRowLink
 
     void beginRender(MarkupWriter writer)
     {
-        String id = jsSupport.allocateClientId(resources);
+        writer.element("a",
+                "href", "#",
+                "data-afl-behavior", "insert-before");
 
-        writer.element("a", "id", id, "href", "#");
         resources.renderInformalParameters(writer);
 
-        context.addAddRowTrigger(id);
+
     }
 
     void afterRender(MarkupWriter writer)

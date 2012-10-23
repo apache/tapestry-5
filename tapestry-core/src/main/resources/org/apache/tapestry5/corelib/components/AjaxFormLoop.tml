@@ -1,21 +1,24 @@
-<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
 
     <t:formfragment t:id="fragment" element="prop:element" visible="true">
         <t:delegate to="block:ajaxResponse"/>
     </t:formfragment>
 
     <t:block id="tail">
-        <t:forminjector element="prop:element" t:id="rowInjector" show="inherit:show" context="inherit:context">
-            <t:delegate to="prop:addRow"/>
-            <t:block id="defaultAddRow">
-                <t:addrowlink>Add row</t:addrowlink>
-            </t:block>
-        </t:forminjector>
+        <div data-container-type="core/ajaxformloop-fragment">
+            <t:any element="prop:element" data-afl-behavior="insert-before">
+                <t:delegate to="prop:addRow"/>
+            </t:any>
+        </div>
+    </t:block>
 
-        <t:block id="ajaxResponse">
-            <t:delegate to="beforeBody"/>
-            <t:body/>
-            <t:delegate to="afterBody"/>
-        </t:block>
+    <t:block id="defaultAddRow">
+        <t:addrowlink class="btn"><i class="icon-add"/> Add row</t:addrowlink>
+    </t:block>
+
+    <t:block id="ajaxResponse">
+        <t:delegate to="beforeBody"/>
+        <t:body/>
+        <t:delegate to="afterBody"/>
     </t:block>
 </t:container>

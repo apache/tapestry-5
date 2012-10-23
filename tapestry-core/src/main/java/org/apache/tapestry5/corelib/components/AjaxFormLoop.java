@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,30 +14,19 @@
 
 package org.apache.tapestry5.corelib.components;
 
+import org.apache.tapestry5.*;
+import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.corelib.internal.AjaxFormLoopContext;
+import org.apache.tapestry5.internal.services.RequestConstants;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
+
 import java.util.Collections;
 import java.util.Iterator;
-
-import org.apache.tapestry5.*;
-import org.apache.tapestry5.annotations.Environmental;
-import org.apache.tapestry5.annotations.Events;
-import org.apache.tapestry5.annotations.InjectComponent;
-import org.apache.tapestry5.annotations.Log;
-import org.apache.tapestry5.annotations.Parameter;
-import org.apache.tapestry5.annotations.Property;
-import org.apache.tapestry5.corelib.internal.AjaxFormLoopContext;
-import org.apache.tapestry5.internal.services.PageRenderQueue;
-import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
-import org.apache.tapestry5.json.JSONArray;
-import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.ComponentDefaultProvider;
-import org.apache.tapestry5.services.Environment;
-import org.apache.tapestry5.services.FormSupport;
-import org.apache.tapestry5.services.Heartbeat;
-import org.apache.tapestry5.services.PartialMarkupRenderer;
-import org.apache.tapestry5.services.PartialMarkupRendererFilter;
-import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * A special form of the {@link org.apache.tapestry5.corelib.components.Loop}
@@ -56,17 +45,18 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * The addRow event will receive the context specified by the context parameter.
  * <p/>
  * The removeRow event will receive the client-side value for the row being iterated.
- * 
+ *
+ * @tapestrydoc
  * @see EventConstants#ADD_ROW
  * @see EventConstants#REMOVE_ROW
- * @tapestrydoc
  * @see AddRowLink
  * @see RemoveRowLink
  * @see Loop
  * @see FormInjector
  */
 @Events(
-{ EventConstants.ADD_ROW, EventConstants.REMOVE_ROW })
+        {EventConstants.ADD_ROW, EventConstants.REMOVE_ROW})
+@Import(modules = "core/ajaxformloop")
 public class AjaxFormLoop
 {
     /**
@@ -100,7 +90,9 @@ public class AjaxFormLoop
     /**
      * The context for the form loop (optional parameter). This list of values will be converted into strings and
      * included in the URI. The strings will be coerced back to whatever their values are and made available to event
-     * handler methods.
+     * handler methods. Note that the context is only encoded and available to the {@linkplain EventConstants#ADD_ROW addRow}
+     * event; for the {@linkplain EventConstants#REMOVE_ROW} event, the context passed to event handlers
+     * is simply the decoded value for the row that is to be removed.
      */
     @Parameter
     private Object[] context;
@@ -125,13 +117,10 @@ public class AjaxFormLoop
      * "source" parameter) into unique client-side strings (typically IDs) and
      * back. Note: this parameter may be OMITTED if Tapestry is configured to
      * provide a ValueEncoder automatically for the type of property bound to
-     * the "value" parameter. 
+     * the "value" parameter.
      */
     @Parameter(required = true, allowNull = false)
     private ValueEncoder<Object> encoder;
-
-    @InjectComponent
-    private ClientElement rowInjector;
 
     @InjectComponent
     private FormFragment fragment;
@@ -154,8 +143,6 @@ public class AjaxFormLoop
     @Inject
     private JavaScriptSupport jsSupport;
 
-    private JSONArray addRowTriggers;
-
     private Iterator iterator;
 
     @Inject
@@ -164,10 +151,9 @@ public class AjaxFormLoop
     @Inject
     private ComponentDefaultProvider defaultProvider;
 
-    @Inject
-    private PageRenderQueue pageRenderQueue;
 
-    private boolean renderingInjector;
+    @Inject
+    private AjaxResponseRenderer ajaxResponseRenderer;
 
     ValueEncoder defaultEncoder()
     {
@@ -176,31 +162,10 @@ public class AjaxFormLoop
 
     private final AjaxFormLoopContext formLoopContext = new AjaxFormLoopContext()
     {
-        public void addAddRowTrigger(String clientId)
+        @Override
+        public String encodedRowValue()
         {
-            assert InternalUtils.isNonBlank(clientId);
-            addRowTriggers.put(clientId);
-        }
-
-        private String currentFragmentId()
-        {
-            ClientElement element = renderingInjector ? rowInjector : fragment;
-
-            return element.getClientId();
-        }
-
-        public void addRemoveRowTrigger(String clientId)
-        {
-            Link link = resources.createEventLink("triggerRemoveRow", toClientValue());
-
-            String asURI = link.toURI();
-
-            JSONObject spec = new JSONObject();
-            spec.put("link", clientId);
-            spec.put("fragment", currentFragmentId());
-            spec.put("url", asURI);
-
-            jsSupport.addInitializerCall("formLoopRemoveLink", spec);
+            return encoder.toClient(value);
         }
     };
 
@@ -299,8 +264,7 @@ public class AjaxFormLoop
     };
 
     @SuppressWarnings(
-    { "unchecked" })
-    @Log
+            {"unchecked"})
     private void syncValue(String clientValue)
     {
         Object value = encoder.toValue(clientValue);
@@ -336,21 +300,28 @@ public class AjaxFormLoop
      * value.
      */
     @SuppressWarnings(
-    { "unchecked" })
+            {"unchecked"})
     private String toClientValue()
     {
         return encoder.toClient(value);
     }
 
-    void setupRender()
+    void setupRender(MarkupWriter writer)
     {
-        addRowTriggers = new JSONArray();
-
         pushContext();
 
         iterator = source == null ? Collections.EMPTY_LIST.iterator() : source.iterator();
 
-        renderingInjector = false;
+        Link removeRowLink = resources.createEventLink("triggerRemoveRow", context);
+        Link injectRowLink = resources.createEventLink("injectRow", context);
+
+        injectRowLink.addParameter(RequestConstants.FORM_CLIENTID_PARAMETER, formSupport.getClientId());
+        injectRowLink.addParameter(RequestConstants.FORM_COMPONENTID_PARAMETER, formSupport.getFormComponentId());
+
+        writer.element("div",
+                "data-container-type", "core/ajaxformloop",
+                "data-remove-row-url", removeRowLink,
+                "data-inject-row-url", injectRowLink);
     }
 
     private void pushContext()
@@ -360,6 +331,8 @@ public class AjaxFormLoop
 
     boolean beginRender(MarkupWriter writer)
     {
+        writer.element("div", "data-container-type", "core/ajaxformloop-fragment");
+
         if (!iterator.hasNext())
             return false;
 
@@ -370,12 +343,13 @@ public class AjaxFormLoop
 
     Object afterRender(MarkupWriter writer)
     {
+        writer.end();
+
         // When out of source items to render, switch over to the addRow block (either the default,
         // or from the addRow parameter) before proceeding to cleanup render.
 
         if (!iterator.hasNext())
         {
-            renderingInjector = true;
             return tail;
         }
 
@@ -384,16 +358,11 @@ public class AjaxFormLoop
         return false;
     }
 
-    void cleanupRender()
+    void cleanupRender(MarkupWriter writer)
     {
+        writer.end();
+
         popContext();
-
-        JSONObject spec = new JSONObject();
-
-        spec.put("rowInjector", rowInjector.getClientId());
-        spec.put("addRowTriggers", addRowTriggers);
-
-        jsSupport.addInitializerCall("ajaxFormLoop", spec);
     }
 
     private void popContext()
@@ -401,12 +370,7 @@ public class AjaxFormLoop
         environment.pop(AjaxFormLoopContext.class);
     }
 
-    /**
-     * When the action event arrives from the FormInjector, we fire our own event, "addRow" to tell the container to add
-     * a new row, and to return that new entity for rendering.
-     */
-    @Log
-    Object onActionFromRowInjector(EventContext context)
+    Object onInjectRow(EventContext context)
     {
         ComponentEventCallback callback = new ComponentEventCallback()
         {
@@ -425,9 +389,7 @@ public class AjaxFormLoop
                     "Event handler for event 'addRow' from %s should have returned a non-null value.",
                     resources.getCompleteId()));
 
-        renderingInjector = true;
-
-        pageRenderQueue.addPartialMarkupRendererFilter(new PartialMarkupRendererFilter()
+        ajaxResponseRenderer.addFilter(new PartialMarkupRendererFilter()
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {
@@ -442,13 +404,12 @@ public class AjaxFormLoop
         return ajaxResponse;
     }
 
-    @Log
-    Object onTriggerRemoveRow(String rowId)
+    Object onTriggerRemoveRow(@RequestParameter("t:rowvalue") String encodedValue)
     {
-        Object value = encoder.toValue(rowId);
+        syncValue(encodedValue);
 
         resources.triggerEvent(EventConstants.REMOVE_ROW, new Object[]
-        { value }, null);
+                {value}, null);
 
         return new JSONObject();
     }
