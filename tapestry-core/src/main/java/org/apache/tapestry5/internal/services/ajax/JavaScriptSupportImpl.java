@@ -230,7 +230,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
         if (partialMode)
         {
-            require("core/pageinit").invoke("intervalId").with(newScript);
+            require("core/pageinit").invoke("evalJavaScript").with(newScript);
         } else
         {
             linker.addScript(priority, newScript);
