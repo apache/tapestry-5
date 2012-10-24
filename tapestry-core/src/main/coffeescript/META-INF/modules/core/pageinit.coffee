@@ -141,13 +141,12 @@ define ["_", "core/console", "core/spi", "core/events"],
       # earlier, where dependencies were exclusively defined in terms of load order (and there were lots of globals).
       loadLibrariesAndInitialize: (coreLibraries, libraries, immediateInits, otherInits) ->
         exports.loadLibraries coreLibraries, ->
-          require ["core/compat/t5-forceload"], ->
-            console.debug "#{coreLibraries.length} core libraries loaded"
-            exports.loadLibraries libraries, ->
-              console.debug "#{libraries?.length or 0} additional libraries loaded"
-              exports.initialize immediateInits
+          console.debug "#{coreLibraries?.length or 0} core libraries loaded"
+          exports.loadLibraries libraries, ->
+            console.debug "#{libraries?.length or 0} additional libraries loaded"
+            exports.initialize immediateInits
 
-              spi.domReady -> exports.initialize otherInits
+            spi.domReady -> exports.initialize otherInits
 
       evalJavaScript: (js) ->
         console.debug "Evaluating: #{js}"

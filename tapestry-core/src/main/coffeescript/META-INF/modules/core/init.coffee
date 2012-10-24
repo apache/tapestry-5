@@ -17,10 +17,12 @@
 # Compatibility module, invokes functions on the T5.initializers namespace.
 #
 # Introduced in 5.4, to be removed at some point in the future, when T5.initializers is itself no more.
-define ["core/compat/t5-init", "core/console"], ->
-  (initName, args...) ->
-    fn = T5.initializers[initName]
-    if not fn
-      console.error "Initialization function '#{initName}' not found in T5.initializers namespace."
-    else
-      fn.apply null, args
+define ["core/console", "core/t53-compatibility"], ->
+  (console) ->
+    # Exports a single function that finds an initializer in `T5.initializers` and invokes it.
+    (initName, args...) ->
+      fn = T5.initializers[initName]
+      if not fn
+        console.error "Initialization function '#{initName}' not found in T5.initializers namespace."
+      else
+        fn.apply null, args

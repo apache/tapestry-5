@@ -12,6 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+// TEMPORARY: KEPT AROUND FOR REFERENCE, TO BE REIMPLEMENTED/DELETED SHORTLY
+
 define("core/compat/tree", ["core/compat/t5-init"], function () {
     T5.extend(T5, {
         tree: {

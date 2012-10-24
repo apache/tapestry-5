@@ -13,6 +13,8 @@
  * limitations under the License.
  */
 
+// TEMPORARY: KEPT AROUND FOR REFERENCE, TO BE DELETED SHORTLY
+
 define("core/compat/tapestry", [
     "_",
     "core/spi",

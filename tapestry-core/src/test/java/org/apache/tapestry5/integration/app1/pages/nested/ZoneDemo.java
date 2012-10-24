@@ -213,9 +213,9 @@ public class ZoneDemo
     {
         jss.importStylesheet(new StylesheetLink(overridesCSS, new StylesheetOptions().asAjaxInsertionPoint()));
 
-        jss.addScript(
-                "$('%s').observe(Tapestry.ZONE_UPDATED_EVENT, function() { $('zone-update-message').update('Zone updated.'); });",
-                output.getClientId());
+//        jss.addScript(
+//                "$('%s').observe(Tapestry.ZONE_UPDATED_EVENT, function() { $('zone-update-message').update('Zone updated.'); });",
+//                output.getClientId());
     }
 
     Object onActionFromBadZone()

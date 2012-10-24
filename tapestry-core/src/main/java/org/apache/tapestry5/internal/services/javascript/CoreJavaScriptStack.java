@@ -15,14 +15,11 @@
 package org.apache.tapestry5.internal.services.javascript;
 
 import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Flow;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.internal.TapestryInternalUtils;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.SymbolSource;
-import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
@@ -42,11 +39,7 @@ public class CoreJavaScriptStack implements JavaScriptStack
 
     private final AssetSource assetSource;
 
-    private final ThreadLocale threadLocale;
-
     private final Flow<Asset> javaScriptStack, stylesheetStack;
-
-    private final Asset forceload;
 
     private static final String ROOT = "org/apache/tapestry5";
 
@@ -63,38 +56,12 @@ public class CoreJavaScriptStack implements JavaScriptStack
                     "${tapestry.scriptaculous}/effects.js",
 
                     // TODO: Include jQuery based on configuration
+                    // .... probably be generally available as module "$"
 
                     // TODO: Possibly extract prototype/scriptaculous/jquery from the stack
                     // (as has been done with Underscore), and convert to a shimmed module.
 
-                    // Below uses functions defined by the above.
-
-                    // Order is important, there are some dependencies
-                    // going on here. Switching over to a more managed module system
-                    // is starting to look like a really nice idea!
-
-                    // Update: most (all?) of these have been rewritten to use require() or define()
-                    // to help manage dependencies, but there's likely some bugs in there!
-
-                    ROOT + "/t5-core.js",
-
-                    ROOT + "/t5-prototype.js",
-
-                    ROOT + "/t5-init.js",
-
-                    ROOT + "/t5-pubsub.js",
-
-                    ROOT + "/t5-events.js",
-
-                    ROOT + "/t5-dom.js",
-
-                    ROOT + "/t5-console.js",
-
-                    ROOT + "/t5-alerts.js",
-
-                    ROOT + "/tapestry.js",
-
-                    ROOT + "/tree.js",
+                    ROOT + "/t53-compatibility.js",
             };
 
     // Because of changes to the logic of how stylesheets get incorporated, the default stylesheet
@@ -104,6 +71,8 @@ public class CoreJavaScriptStack implements JavaScriptStack
             {
                     "${tapestry.bootstrap-root}/css/bootstrap.css",
 
+                    // The following are mostly temporary:
+
                     ROOT + "/tapestry-console.css",
 
                     ROOT + "/t5-alerts.css",
@@ -111,30 +80,16 @@ public class CoreJavaScriptStack implements JavaScriptStack
                     ROOT + "/tree.css"
             };
 
-    public CoreJavaScriptStack(
-            @Symbol(SymbolConstants.PRODUCTION_MODE)
-            boolean productionMode,
-
-            SymbolSource symbolSource,
-
-            AssetSource assetSource,
-
-            ThreadLocale threadLocale)
+    public CoreJavaScriptStack(SymbolSource symbolSource, AssetSource assetSource)
     {
         this.symbolSource = symbolSource;
         this.assetSource = assetSource;
-        this.threadLocale = threadLocale;
 
         Flow<String> coreJavascript = F.flow(CORE_JAVASCRIPT);
 
-        Flow<String> javaScript = productionMode
-                ? coreJavascript
-                : coreJavascript.append(ROOT + "/tapestry-debug.js");
-
-        javaScriptStack = convertToAssets(javaScript);
+        javaScriptStack = convertToAssets(coreJavascript);
         stylesheetStack = convertToAssets(F.flow(CORE_STYLESHEET));
 
-        forceload = expand(ROOT + "/t5-forceload.js", null);
     }
 
     public String getInitialization()
@@ -168,9 +123,7 @@ public class CoreJavaScriptStack implements JavaScriptStack
 
     public List<Asset> getJavaScriptLibraries()
     {
-        Asset messages = expand(ROOT + "/tapestry-messages.js", threadLocale.getLocale());
-
-        return javaScriptStack.append(messages, forceload).toList();
+        return javaScriptStack.toList();
     }
 
     public List<StylesheetLink> getStylesheets()
