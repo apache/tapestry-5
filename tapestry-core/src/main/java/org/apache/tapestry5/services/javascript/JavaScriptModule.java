@@ -231,7 +231,7 @@ public class JavaScriptModule
 
     @Contribute(ModuleManager.class)
     public static void setupBaseModuleShims(MappedConfiguration<String, Object> configuration,
-                                            @Inject @Path("classpath:org/apache/tapestry5/underscore_1_3_3.js")
+                                            @Inject @Path("classpath:META-INF/assets/tapestry5/underscore_1_4_2.js")
                                             Resource underscore,
 
                                             @Inject @Path("${tapestry.scriptaculous}/prototype.js")
