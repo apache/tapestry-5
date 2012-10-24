@@ -14,11 +14,47 @@
 
 # ## core/init
 #
-# Compatibility module, invokes functions on the T5.initializers namespace.
+# Tapestry 5.3 compatibility module, invokes functions on the T5.initializers namespace.
 #
-# Introduced in 5.4, to be removed at some point in the future, when T5.initializers is itself no more.
-define ["core/console", "core/t53-compatibility"], ->
-  (console) ->
+# Provides a small amount of backwards compatibility to the Tapestry 5.3 approach.
+# This provides placeholders for the following:
+#
+# * `T5` namespace, including `extend`, `define`, and `initializers`, `extendInitializers`, and `_` properties
+# * `Tapestry` namespace: just the `Initializer` property, as an alias of `T5.initializers`
+#
+# Introduced in 5.4, to be removed in the next release.
+define ["core/console", "_"],
+
+  (console, _) ->
+
+    extend = (destination, source) ->
+      if _.isFunction source
+        source = source()
+
+      _.extend destination, source
+
+    T5 =
+      _: _.noConflict()
+      extend: extend
+
+      define: (name, source) ->
+
+        namespace = extend {}, source
+
+        T5[name] = namespace
+
+      initializers: {}
+
+      extendInitializers: (source) ->
+
+        extend T5.initializers, source
+
+    Tapestry =
+      Initializer: T5.initializers
+
+    window.T5 = T5
+    window.Tapestry = Tapestry
+
     # Exports a single function that finds an initializer in `T5.initializers` and invokes it.
     (initName, args...) ->
       fn = T5.initializers[initName]

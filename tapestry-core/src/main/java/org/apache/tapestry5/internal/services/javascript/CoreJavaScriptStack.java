@@ -60,8 +60,6 @@ public class CoreJavaScriptStack implements JavaScriptStack
 
                     // TODO: Possibly extract prototype/scriptaculous/jquery from the stack
                     // (as has been done with Underscore), and convert to a shimmed module.
-
-                    ROOT + "/t53-compatibility.js",
             };
 
     // Because of changes to the logic of how stylesheets get incorporated, the default stylesheet
