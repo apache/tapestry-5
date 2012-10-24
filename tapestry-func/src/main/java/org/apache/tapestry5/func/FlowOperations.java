@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,15 +14,16 @@
 
 package org.apache.tapestry5.func;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
 /**
  * @param <T>
- *            the type of data in the flow
+ *         the type of data in the flow
  * @param <FT>
- *            the type of flow (either Flow<T> or ZippedFlow<Tuple<T, ?>)
+ *         the type of flow (either Flow<T> or ZippedFlow<Tuple<T, ?>)
  * @since 5.3
  */
 public interface FlowOperations<T, FT> extends Iterable<T>
@@ -41,7 +42,7 @@ public interface FlowOperations<T, FT> extends Iterable<T>
 
     /**
      * Applies the worker to each element in the Flow, then returns the flow for further behaviors.
-     * <p>
+     * <p/>
      * Each is a non-lazy operation; it will fully realize the values of the Flow.
      */
     FT each(Worker<? super T> worker);
@@ -58,7 +59,9 @@ public interface FlowOperations<T, FT> extends Iterable<T>
      */
     Set<T> toSet();
 
-    /** Returns a new flow with the same elements but in reverse order. */
+    /**
+     * Returns a new flow with the same elements but in reverse order.
+     */
     FT reverse();
 
     /**
@@ -94,32 +97,38 @@ public interface FlowOperations<T, FT> extends Iterable<T>
 
     /**
      * Returns a new flow containing just the first elements from this Flow.
-     * 
+     *
      * @param length
-     *            maximum number of values in the Flow
+     *         maximum number of values in the Flow
      */
     FT take(int length);
 
     /**
      * Returns a new flow with the first elements omitted.
-     * 
+     *
      * @param length
-     *            number of values to drop
+     *         number of values to drop
      */
     FT drop(int length);
 
     /**
-     * Returns a new Flow with the elements in the list appended to this Flow. This is a lazy
+     * Returns a new Flow with the elements in the collection appended to this Flow. This is a lazy
      * operation.
+     * <p/>
+     * Note that the type of this method changed from {@code List} to {@link Collection} in Tapestry 5.4. This
+     * is considered a compatible change.
+     *
+     * @param collection
+     *         collection of elements to be appended
      */
-    FT concat(List<? extends T> list);
+    FT concat(Collection<? extends T> collection);
 
     /**
      * Applies a Reducer to the values of the Flow. The Reducer is passed the initial value
      * and the first element from the Flow. The result is captured as the accumulator and passed
      * to the Reducer with the next value from the Flow, and so on. The final accumulator
      * value is returned. If the flow is empty, the initial value is returned.
-     * <p>
+     * <p/>
      * Reducing is a non-lazy operation; it will fully realize the values of the Flow.
      */
     <A> A reduce(Reducer<A, T> reducer, A initial);
@@ -127,7 +136,7 @@ public interface FlowOperations<T, FT> extends Iterable<T>
     /**
      * Removes null elements from the flow (null tuples from a ZippedFlow), leaving just the
      * non-null elements. This is a lazy operation.
-     * 
+     *
      * @since 5.3
      */
     FT removeNulls();
