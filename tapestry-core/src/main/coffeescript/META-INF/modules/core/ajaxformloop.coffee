@@ -15,7 +15,7 @@
 # ## core/ajaxformloop
 #
 # Provides handlers related to the core/AjaxFormLoop component (as well as core/AddRowLink and
-# core/RemoveRowLink.
+# core/RemoveRowLink).
 define ["core/spi", "core/events", "core/console", "core/ajax", "core/builder"],
   (spi, events, console, ajax, builder) ->
 
