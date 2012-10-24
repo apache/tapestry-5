@@ -198,10 +198,19 @@ public class JavaScriptModule
     {
         for (Locale locale : localizationSetter.getSupportedLocales())
         {
-            MessageCatalogResource resource = new MessageCatalogResource(locale, messagesSource,  resourceChangeTracker, compactJSON);
+            MessageCatalogResource resource = new MessageCatalogResource(locale, messagesSource, resourceChangeTracker, compactJSON);
 
             configuration.add("core/messages/" + locale.toString(), new ShimModule(resource, null, null));
         }
+    }
+
+    /**
+     * Contributes 'LocaleEmitter', which writes the {@code data-locale} attribute into the HTML tag.
+     */
+    @Contribute(MarkupRenderer.class)
+    public static void renderLocaleAttributeIntoPages(OrderedConfiguration<MarkupRendererFilter> configuration)
+    {
+        configuration.addInstance("LocaleEmitter", LocaleEmitterFilter.class);
     }
 
 }
