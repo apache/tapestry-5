@@ -114,10 +114,7 @@ define ["_", "prototype"], (_) ->
     stop: ->
       @nativeEvent.stop()
 
-  # Value returned from `on()` or `onDocument()`; an EventHandler is used to stop listening to
-  # events, or even temporarily pause listening.
-  #
-  # Registers the handler as an event listener for matching elements and event names.
+  # _internal_: Interface between the SPI's event model, and Prototype's.
   #
   # * elements - array of DOM elements (or the document object)
   # * eventNames - array of event names
@@ -128,12 +125,13 @@ define ["_", "prototype"], (_) ->
   # Event handlers may return false to stop event propogation; this prevents an event from bubbling up, and
   # prevents any browser default behavior from triggering.  This is often easier than accepting the `EventWrapper`
   # object as the first parameter and invoking `stop()`.
-  class EventHandler
-    constructor: (elements, eventNames, match, handler) ->
+
+  onevent = (elements, eventNames, match, handler) ->
       throw new Error "No event handler was provided." unless handler?
 
       wrapped = (prototypeEvent) ->
-        # Set `this` to be the matched ElementWrapper, rather than the element on which the event is observed.
+        # Set `this` to be the matched ElementWrapper, rather than the element on which the event is observed
+        # (which is often further up the hierarchy).
         elementWrapper = new ElementWrapper prototypeEvent.findElement()
         eventWrapper = new EventWrapper prototypeEvent
 
@@ -145,24 +143,11 @@ define ["_", "prototype"], (_) ->
 
         return
 
-      # Prototype Event.Handler instances
-      @protoHandlers = []
+      for element in elements
+        for eventName in eventNames
+          Event.on element, eventName, match, wrapped
 
-      _.each elements, (element) =>
-        _.each eventNames, (eventName) =>
-          @protoHandlers.push Event.on element, eventName, match, wrapped
-
-    # Invoked after `stop()` to restart event listening.
-    start: ->
-      _.each @protoHandlers, (h) -> h.start()
-
-      return this
-
-    # Invoked to stop event listening. Listening can be re-instanted with `start()`.
-    stop: ->
-      _.each @protoHandlers, (h) -> h.stop()
-
-      return this
+      return
 
   # Wraps a DOM element, providing some common behaviors.
   # Exposes the original element as property `element`.
@@ -408,10 +393,9 @@ define ["_", "prototype"], (_) ->
     #   will invoke the handler.
     # * handler - function invoked; the function is passed an `EventWrapper` object, and the
     #   context (`this`) is the `ElementWrapper` for the matched element.
-    #
-    # Returns an EventHandler object, making it possible to turn event observation on or off.
     on: (events, match, handler) ->
       exports.on @element, events, match, handler
+      return this
 
   # _internal_: converts a selector to an array of DOM elements
   parseSelectorToElements = (selector) ->
@@ -505,6 +489,8 @@ define ["_", "prototype"], (_) ->
     else
       throw new Error "Attempt to wrap a null DOM element" unless element
 
+    # Assume the object is a DOM element, document or window; something that is compatible with the
+    # Prototype API (especially with respect to events).
     new ElementWrapper element
 
   _.extend exports,
@@ -530,18 +516,17 @@ define ["_", "prototype"], (_) ->
 
       return exports
 
-    # on() is used to add an event handler
+    # Used to add an event handler to an element (possibly from elements below it in the hierarch).
     #
     # * selector - CSS selector used to select elements to attach handler to; alternately,
-    #   a single DOM element, or an array of DOM elements
+    #   a single DOM element, or an array of DOM elements. The document is considered an element
+    #   for these purposes.
     # * events - one or more event names, separated by spaces
     # * match - optional: CSS expression used as a filter; only events that bubble
     # * up to a selected element from an originating element that matches the CSS expression
     #   will invoke the handler.
     # * handler - function invoked; the function is passed an `EventWrapper` object, and the context (`this`)
     #   is the `ElementWrapper` for the matched element
-    #
-    # Returns an EventHandler object, making it possible to turn event notifications on or off.
     on: (selector, events, match, handler) ->
       unless handler?
         handler = match
@@ -549,7 +534,8 @@ define ["_", "prototype"], (_) ->
 
       elements = parseSelectorToElements selector
 
-      new EventHandler(elements, (split events), match, handler)
+      onevent elements, (split events), match, handler
+      return
 
     # onDocument() is used to add an event handler to the document object; this is used
     # for global (or default) handlers.

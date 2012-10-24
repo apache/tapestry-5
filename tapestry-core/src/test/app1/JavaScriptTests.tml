@@ -11,17 +11,28 @@
 
 <!-- The rest are test elements for the core/spi tests, etc. -->
 
-<hr/>
+<div class="container">
 
-<div id="spi-eventelement">
+<div id="spi-eventelement-native">
     <a href="#" class="btn btn-primary">primary</a>
     <a href="#" class="btn" data-use="secondary">secondary</a>
+</div>
+
+<div id="spi-eventelement-selector">
+    <a href="#" class="btn btn-primary">primary</a>
+    <a href="#" class="btn" data-use="secondary">secondary</a>
+</div>
+
+
+<div id="spi-eventelement-matched">
+    <a href="#" class="btn btn-primary">primary</a>
 </div>
 
 <div id="spi-visibility">
     <span>initially visible</span>
 </div>
 
+</div>
 
 </body>
 </html>

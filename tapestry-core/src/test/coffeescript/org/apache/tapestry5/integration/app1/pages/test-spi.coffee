@@ -2,7 +2,7 @@ require ["core/spi"], (spi) ->
   module "core/spi"
 
   test "get wrapped element by id", ->
-    e = spi "spi-eventelement"
+    e = spi "spi-eventelement-native"
 
     ok e isnt null, "element found and wrapped"
 
@@ -11,44 +11,13 @@ require ["core/spi"], (spi) ->
 
     ok e is null, "element not found and null"
 
-  test "pause and resume events", ->
-
-    clicks = 0
-    container = spi "spi-eventelement"
-    button = container.findFirst "a"
-
-    # Remember that Prototype will never trigger a native event, just a
-    # custom event, so we create a custom event here.
-    # NOTE: support for native events was added later.
-    eh = container.on "x:click", "a", ->
-      clicks++
-      return false
-
-    button.trigger "x:click"
-
-    equal clicks, 1, "first click registered"
-
-    eh.stop()
-
-    button.trigger "x:click"
-
-    equal clicks, 1, "no notification when EventHandler stopped"
-
-    eh.start()
-
-    button.trigger "x:click"
-
-    equal clicks, 2, "notifications resume after EventHandler started"
-
-    eh.stop()
-
   test "trigger native events", ->
 
     clicks = 0
-    container = spi "spi-eventelement"
+    container = spi "spi-eventelement-native"
     button = container.findFirst "a"
 
-    eh = container.on "click", "a", ->
+    container.on "click", "a", ->
       clicks++
       return false
 
@@ -56,16 +25,14 @@ require ["core/spi"], (spi) ->
 
     equal clicks, 1, "native event was triggered"
 
-    eh.stop()
-
   test "selector used with events filters", ->
 
     clicks = 0
-    container = spi "spi-eventelement"
+    container = spi "spi-eventelement-selector"
     primary = container.findFirst "a.btn-primary"
     secondary = container.findFirst "a[data-use=secondary]"
 
-    eh = container.on "x:click", "a.btn-primary", ->
+    container.on "x:click", "a.btn-primary", ->
       clicks++
       return false
 
@@ -77,22 +44,18 @@ require ["core/spi"], (spi) ->
 
     equal clicks, 1, "click on non-selected element does not invoke handler"
 
-    eh.stop()
-
   test "this is matched element in handler", ->
 
-    container = spi "spi-eventelement"
+    container = spi "spi-eventelement-matched"
     primary = container.findFirst "a.btn-primary"
 
-    eh = container.on "x:click", "a.btn-primary", ->
+    container.on "x:click", "a.btn-primary", ->
 
       strictEqual this.element, primary.element, "this should be the wrapper for element that was matched"
 
       return false
 
     primary.trigger "x:click"
-
-    eh.stop()
 
   test "visibility, hide(), and show()", ->
 
