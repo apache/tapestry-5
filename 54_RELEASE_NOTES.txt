@@ -33,11 +33,6 @@ Tapestry 5.4 represents a shift to a more modern, lighter approach. Behavior of 
 body object. This is an overall win: it reduces the number of event handlers, solves some timing issues related
 to running initialization functions, deals with DOM updates better, and is overall more performant.
 
-Many of the name constants defined by the client-side Tapestry object (such as Tapestry.FORM_PREPARE_FOR_SUBMIT_EVENT)
-have had their values changed (for consistency with the new set of events defined by the `core/events` module); code
-that uses literal values (such as "tapestry:formprepareforsubmit") will break; code that correctly used the constants
-will continue to work, even though the names have changed.
-
 Tapestry is moving away from "magic class names" to a more uniform approach based on the use of HTML 5 compliant "data-"
 attributes.
 
@@ -132,12 +127,12 @@ help blocks that appear (by default) beneath the fields. To get the full effect,
 .control-group elements, as described in the Bootstrap documentation:
 http://twitter.github.com/bootstrap/base-css.html#forms
 
-== BeanEditor / BeanEditForm
+## BeanEditor / BeanEditForm
 
 The property edit blocks contributed to the BeanBlockSource service should expect to be nested inside a
 div.control-group, which is provided around the editor for each property.
 
-== ClientBehaviorSupport
+## ClientBehaviorSupport
 
 This service, primarily used by built-in components in Tapestry 5.3, is no longer useful in 5.4. The service
 still exists, but the methods do nothing, and the service and interface will be removed in 5.5.
