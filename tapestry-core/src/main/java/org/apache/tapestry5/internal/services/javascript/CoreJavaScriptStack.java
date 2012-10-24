@@ -41,7 +41,7 @@ public class CoreJavaScriptStack implements JavaScriptStack
 
     private final Flow<Asset> javaScriptStack, stylesheetStack;
 
-    private static final String ROOT = "org/apache/tapestry5";
+    private static final String ROOT = "${tapestry.asset.root}";
 
     private static final String[] CORE_JAVASCRIPT = new String[]
             {

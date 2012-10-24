@@ -491,7 +491,7 @@ DIV.t-exception-container .t-exception-close {
     padding-left: 22px;
     height: 18px;
     cursor: pointer;
-    background: #e8e8e8 url("silk/delete.png") no-repeat;
+    background: #e8e8e8 url("../../../org/apache/tapestry5/silk/delete.png") no-repeat;
     border-radius: 5px;
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;

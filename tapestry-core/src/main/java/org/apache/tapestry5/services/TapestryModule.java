@@ -2118,7 +2118,7 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.DEFAULT_STYLESHEET, "");
 
-        configuration.add("tapestry.spacer-image", "classpath:/org/apache/tapestry5/spacer.gif");
+        configuration.add("tapestry.spacer-image", "classpath:META-INF/assets/tapestry5/spacer.gif");
 
         configuration.add(SymbolConstants.PRODUCTION_MODE, true);
 
@@ -2139,13 +2139,13 @@ public final class TapestryModule
         // files deleted between scriptaculous releases to be accidentally left lying around).
         // There's also a ClasspathAliasManager contribution based on the path.
 
-        configuration.add(SymbolConstants.SCRIPTACULOUS, "classpath:${tapestry.scriptaculous.path}");
-        configuration.add("tapestry.scriptaculous.path", "org/apache/tapestry5/scriptaculous_1_9_0");
+        configuration.add("tapestry.asset.root", "META-INF/assets/tapestry5");
+
+        configuration.add(SymbolConstants.SCRIPTACULOUS, "${tapestry.asset.root}/scriptaculous_1_9_0");
 
         // Likewise for WebFX DatePicker, currently version 1.0.6
 
-        configuration.add("tapestry.datepicker.path", "org/apache/tapestry5/datepicker_106");
-        configuration.add(SymbolConstants.DATEPICKER, "classpath:${tapestry.datepicker.path}");
+        configuration.add(SymbolConstants.DATEPICKER, "${tapestry.asset.root}/datepicker_106");
 
         configuration.add(SymbolConstants.PERSISTENCE_STRATEGY, PersistenceConstants.SESSION);
 
@@ -2206,14 +2206,14 @@ public final class TapestryModule
         // By default, no page is on the whitelist unless it has the @WhitelistAccessOnly annotation
         configuration.add(MetaDataConstants.WHITELIST_ONLY_PAGE, false);
 
-        configuration.add(SymbolConstants.REQUIRE_JS, "classpath:org/apache/tapestry5/require_2.0.2.js");
+        configuration.add(SymbolConstants.REQUIRE_JS, "${tapestry.asset.root}/require_2.0.2.js");
         configuration.add(SymbolConstants.CONTEXT_PATH, "");
 
         // Leaving this as the default results in a runtime error logged to the console (and a default password is used);
         // you are expected to override this symbol.
         configuration.add(SymbolConstants.HMAC_PASSPHRASE, "");
 
-        configuration.add(SymbolConstants.BOOTSTRAP_ROOT, "classpath:META-INF/assets/tapestry5/bootstrap_2_1_1");
+        configuration.add(SymbolConstants.BOOTSTRAP_ROOT, "${tapestry.asset.root}/bootstrap_2_1_1");
     }
 
     /**

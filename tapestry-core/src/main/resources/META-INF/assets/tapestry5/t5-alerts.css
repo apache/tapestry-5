@@ -5,7 +5,7 @@ DIV.t-alert-container {
 DIV.t-alert-controls {
     display: inline-block;
     cursor: pointer;
-    background: #e8e8e8 url("silk/delete.png") no-repeat;
+    background: #e8e8e8 url("../../../org/apache/tapestry5/silk/delete.png") no-repeat;
     border-radius: 5px;
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
@@ -19,7 +19,7 @@ DIV.t-alert-control A:hover {
 }
 
 DIV.t-alert-container DIV.t-error {
-    background: red url("silk/cancel.png") no-repeat;
+    background: red url("../../../org/apache/tapestry5/silk/cancel.png") no-repeat;
     font-weight: bold;
     color: white;
     border-radius: 5px;
@@ -30,7 +30,7 @@ DIV.t-alert-container DIV.t-error {
 }
 
 DIV.t-alert-container DIV.t-warn {
-    background: #f4da5b url("silk/error.png") no-repeat;
+    background: #f4da5b url("../../../org/apache/tapestry5/silk/error.png") no-repeat;
     font-weight: bold;
     border-radius: 5px;
     -moz-border-radius: 5px;
@@ -40,7 +40,7 @@ DIV.t-alert-container DIV.t-warn {
 }
 
 DIV.t-alert-container DIV.t-info {
-    background: green url("silk/information.png") no-repeat;
+    background: green url("../../../org/apache/tapestry5/silk/information.png") no-repeat;
     border-radius: 5px;
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
@@ -56,6 +56,6 @@ DIV.t-dismiss {
     cursor: pointer;
     width: 16px;
     height: 16px;
-    background: url("silk/delete.png")
+    background: url("../../../org/apache/tapestry5/silk/delete.png")
 }
 
