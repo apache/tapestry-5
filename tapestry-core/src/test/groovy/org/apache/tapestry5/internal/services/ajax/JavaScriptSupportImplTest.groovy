@@ -42,7 +42,8 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
     void partial_mode_add_script() {
         DocumentLinker linker = mockDocumentLinker()
 
-        train_init(linker, InitializationPriority.NORMAL, "evalScript", "doSomething();")
+        linker.addInitialization(InitializationPriority.NORMAL, "core/pageinit", "evalJavaScript",
+            new JSONArray().put("doSomething();"))
 
         replay()
 
@@ -108,8 +109,8 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
 
         expect(stack.stacks).andReturn([])
 
-        linker.addCoreLibrary("stack1.js")
-        linker.addCoreLibrary("stack2.js")
+        linker.addLibrary("stack1.js")
+        linker.addLibrary("stack2.js")
         linker.addStylesheetLink(stylesheetLink)
     }
 

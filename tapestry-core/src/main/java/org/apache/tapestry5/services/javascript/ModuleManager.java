@@ -42,17 +42,14 @@ public interface ModuleManager
      *
      * @param body
      *         {@code <body>} element of the page, to which new {@code <script>>} element(s) will be added.
-     * @param coreLibraryURLs
-     *         list of static JavaScript library URLs that must be loaded on the page, prior to any initializations
      * @param libraryURLs
      *         list of additional static JavaScript library URLs that must be loaded on the page, after the
      *         coreLibraryURLs, and before an initializations
      * @param immediateInits
-     *         list of immediate initializations that occur as soon as the static JavaScript libraries are loaded
+ *         list of immediate initializations that occur as soon as the static JavaScript libraries are loaded
      * @param deferredInits
-     *          list of initializations that are deferred until after the browser document is ready    *
      */
-    void writeInitialization(Element body, List<String> coreLibraryURLs, List<String> libraryURLs, List<JSONArray> immediateInits, List<JSONArray> deferredInits);
+    void writeInitialization(Element body, List<String> libraryURLs, List<JSONArray> immediateInits, List<JSONArray> deferredInits);
 
     /**
      * Given a module name (which may be a path of names separated by slashes), locates the corresponding {@link Resource}.

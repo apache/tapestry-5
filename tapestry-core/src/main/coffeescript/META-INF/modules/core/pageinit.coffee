@@ -134,19 +134,15 @@ define ["_", "core/console", "core/spi", "core/events"],
 
         finalCallback.call null
 
-      # Loads all the core libraries (the core JavaScript Stack), in order.It then ensures that some key modules have
-      # initialized, and loads all other libraries in order (this includes other stacks beyond core, and free-standing
-      # libraries). It then executes the immediate initializations. After that, it waits for the DOM to be ready and
-      # executes the other initializations. A lot of the complexity here is for compatibility with Tapestry 5.3 and
-      # earlier, where dependencies were exclusively defined in terms of load order (and there were lots of globals).
-      loadLibrariesAndInitialize: (coreLibraries, libraries, immediateInits, otherInits) ->
-        exports.loadLibraries coreLibraries, ->
-          console.debug "#{coreLibraries?.length or 0} core libraries loaded"
-          exports.loadLibraries libraries, ->
-            console.debug "#{libraries?.length or 0} additional libraries loaded"
-            exports.initialize immediateInits
+      # Loads all specified libraries in order (this includes other the core stack, other stacks, and
+      # any free-standing libraries). It then executes the immediate initializations. After that, it waits for the DOM to be
+      # ready (which, given typical Tapestry page structure, it almost certainly is at the point this function
+      # executed), and then executes the other initializations.
+      loadLibrariesAndInitialize: (libraries, immediateInits, otherInits) ->
+        exports.loadLibraries libraries, ->
+          exports.initialize immediateInits
 
-            spi.domReady -> exports.initialize otherInits
+          spi.domReady -> exports.initialize otherInits
 
       evalJavaScript: (js) ->
         console.debug "Evaluating: #{js}"

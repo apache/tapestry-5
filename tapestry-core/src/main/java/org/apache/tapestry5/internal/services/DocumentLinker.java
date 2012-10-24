@@ -22,23 +22,11 @@ import org.apache.tapestry5.services.javascript.StylesheetLink;
  * Responsible for injecting script and style links into the &lt;head&gt; and &lt;body&gt; element of the rendered HTML
  * document.
  *
- * @see org.apache.tapestry5.services.javascript.ModuleManager#writeInitialization(org.apache.tapestry5.dom.Element, java.util.List, java.util.List, java.util.List, java.util.List)
+ * @see org.apache.tapestry5.services.javascript.ModuleManager#writeInitialization(org.apache.tapestry5.dom.Element, java.util.List
  * @since 5.4
  */
 public interface DocumentLinker
 {
-    /**
-     * Special handling for the
-     * {@linkplain org.apache.tapestry5.internal.services.javascript.CoreJavaScriptStack }core JavaScriptStack},
-     * whose contents are loaded directly at page startup. This represents special treatment of the core JavaScriptStack,
-     * starting in release 5.4. It is necessary during the transition from JavaScript libraries (that make use of the
-     * client-side Tapestry and/or T5 globals) to modules.
-     *
-     *
-     * @param libraryURL
-     * @since 5.4
-     */
-    void addCoreLibrary(String libraryURL);
 
     /**
      * Adds a link to load a non-core JavaScript library. These libraries are loaded, sequentially, only once

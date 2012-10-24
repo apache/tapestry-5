@@ -331,13 +331,7 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
         for (String libraryURL : libraryURLs)
         {
-            if (stackName.equals(InternalConstants.CORE_STACK_NAME))
-            {
-                linker.addCoreLibrary(libraryURL);
-            } else
-            {
-                linker.addLibrary(libraryURL);
-            }
+            linker.addLibrary(libraryURL);
         }
 
         stylesheetLinks.addAll(stack.getStylesheets());
