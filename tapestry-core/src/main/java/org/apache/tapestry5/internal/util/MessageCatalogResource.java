@@ -49,6 +49,14 @@ public class MessageCatalogResource extends VirtualResource
             {
                 bytes = null;
 
+                // What's all this then?  This MessageCatalogResource is converted, as if it was a real file, into
+                // a StreamableResource by the StreamableResourceService service; as a virtual resource, we don't have
+                // any date-time-modified information for the application message catalog (as if that was possible,
+                // given that its composed of multiple files). The ComponentMessagesSource can tell us when
+                // *some* properties file has changed (not necessarily one used in the application message catalog,
+                // but that's the breaks). When that occurs, we tell the ResourceChangeTracker to fire its invalidation
+                // event. That flushes out all the assets it has cached, including StreamableResources for JavaScript files,
+                // including the one created here to represent the application message catalog.
                 changeTracker.forceInvalidationEvent();
             }
         });
