@@ -14,15 +14,17 @@
 
 package org.apache.tapestry5.services.javascript;
 
-import org.apache.tapestry5.*;
+import org.apache.tapestry5.Asset;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.FieldFocusPriority;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.json.JSONArray;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.EnvironmentalShadowBuilder;
 
 /**
- * An environmental that acts as a replacement for the {@link RenderSupport} environmental, renaming and streamlining
- * the key methods. JavaScriptSupport is very stateful, accumulating JavaScript stacks, libraries and initialization
+ * The JavaScriptSupport environmental is very stateful, accumulating JavaScript stacks, libraries and initialization
  * code until the end of the main page render; it then updates the rendered DOM (adding &lt;script&gt; tags to the
  * &lt;head&gt; and &lt;body&gt;) before the document is streamed to the client.
  * <p/>
@@ -32,10 +34,9 @@ import org.apache.tapestry5.services.EnvironmentalShadowBuilder;
  * for service-layer objects.
  * <p/>
  * The term "import" is used on many methods to indicate that the indicated resource (stack, library or stylesheet) will
- * only be added to the final Document once.
+ * only be added to the final cocument once, even when there are repeated calls.
  * <p/>
- * The name is slightly a misnomer, since there's a side-line of
- * {@linkplain #importStylesheet(StylesheetLink)} as well.
+ * The name is slightly a misnomer, since there's a side-line of {@linkplain #importStylesheet(StylesheetLink)} as well.
  * <p/>
  * JavaScriptSupport works equally well inside an Ajax request that produces a JSON-formatted partial page update response.
  *

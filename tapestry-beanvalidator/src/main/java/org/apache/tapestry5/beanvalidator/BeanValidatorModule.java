@@ -15,7 +15,6 @@ package org.apache.tapestry5.beanvalidator;
 
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.internal.beanvalidator.*;
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.MappedConfiguration;
@@ -25,6 +24,7 @@ import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 import javax.validation.MessageInterpolator;
 import javax.validation.Validator;
@@ -109,12 +109,13 @@ public class BeanValidatorModule
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                RenderSupport renderSupport = environment.peek(RenderSupport.class);
+
+                JavaScriptSupport javaScriptSupport = environment.peek(JavaScriptSupport.class);
 
                 Asset validators = assetSource.getAsset(null, "org/apache/tapestry5/beanvalidator/tapestry-beanvalidator.js",
                         threadLocale.getLocale());
 
-                renderSupport.addScriptLink(validators);
+                javaScriptSupport.importJavaScriptLibrary(validators);
 
                 renderer.renderMarkup(writer);
             }

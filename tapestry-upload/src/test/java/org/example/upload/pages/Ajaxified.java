@@ -15,11 +15,11 @@
 package org.example.upload.pages;
 
 import org.apache.tapestry5.Block;
-import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.corelib.components.FormInjector;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.example.upload.base.UploadBasePage;
 
 public class Ajaxified extends UploadBasePage
@@ -31,7 +31,7 @@ public class Ajaxified extends UploadBasePage
     private FormInjector injector;
 
     @Environmental
-    private RenderSupport renderSupport;
+    private JavaScriptSupport javaScriptSupport;
 
     Object onActionFromInjector()
     {
@@ -40,7 +40,7 @@ public class Ajaxified extends UploadBasePage
 
     void afterRender()
     {
-        renderSupport.addScript(
+        javaScriptSupport.addScript(
                 "$('trigger').observe('click', function(event) { $('%s').trigger(); Event.stop(event); });",
                 injector.getClientId());
     }

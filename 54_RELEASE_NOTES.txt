@@ -53,16 +53,34 @@ attributes.
 
 # Breaking Changes:
 
+## RenderSupport Removed
+
+The RenderSupport interface, which was deprecated in Tapestry 5.2, has been removed entirely.
+
+## FormFragment Component
+
 The FormFragment component's visibleBound parameter is no longer supported; it was used to make a decision about how
 far up the DOM above the FormFragment's client-side element should be searched when determining visibility. This may
 resurface in the future as a CSS expression, but is currently not supported.
 
+## Symbol tapestry.asset-path-prefix
+
 The definition of the symbol 'tapestry.asset-path-prefix' has changed; it no longer includes the leading and trailing
 slashes. The default in 5.3 was "/assets/", in 5.4 it is simply "assets".
+
+## Libraries de-emphasized for modules
 
 JavaScript Libraries (including stacks) are being replaced with modules. Note that libraries are now loaded with
 RequireJS, which may mean that global values exported by the libraries are not visible; you should explicitly attach
 properties to the global JavaScript window object, rather than assume that the context (this) is the window.
+
+
+## T5 and Tapestry namespaces all but eliminated
+
+Only a limited number of properties exported as the `T5` and `Tapestry` namespaces (on the client) still exist; enough
+to continue to support the `T5.initializers` approach to page initialization that was used in Tapestry 5.3 and earlier.
+
+## New method on ResourceTransformer
 
 The interface org.apache.tapestry5.services.assets.ResourceTransformer has had a new method added:
 getTransformedContentType(). This makes it possible to determine which file extensions map to which content types
@@ -72,37 +90,34 @@ Older versions of Tapestry included client-side support for an element with the 
 element to be updated when new content is provided for the zone in a partial page render response. This feature has been
 removed with no replacement.
 
-The Tapestry.ElementEffects object has changed significantly.  Despite the names of the properties (kept for compatibility),
-all "effects" now simply make the element appear or hide, with no animation.  The value returned from these methods is
-now an ElementWrapper, as defined by the core/spi module.
+## Scriptaculous Deprecated
 
 Tapestry code no longer makes use of Scriptaculous. Instead, Tapestry will fire events on elements, and user code may
 decide to animate them using whatever library is desired. The event names are defined in the core/events module.
 
-On the client side, the "floating console" is only used in cases where a native console is not available.
+## Floating Console
+
+On the client side, the "floating console" is now only used in cases where a native console is not available.
+
+
+## Form.clientValidation parameter
+
+Prior releases of Tapestry mapped "true" and "false" values for Form.clientValidation to BLUR and NONE. This mapping
+was introduced in Tapestry 5.2, and has now been removed.
 
 Support for validating fields on blur (i.e., when tabbing out of a field) has been removed. Validation now occurs when
 the form is submitted, or not at all. The ClientValidation.BLUR enum value has been deprecated and is now treated as
 SUBMIT.
 
-Prior releases of Tapestry mapped "true" and "false" values for Form.clientValidation to BLUR and NONE. This mapping
-was introduced in Tapestry 5.2, and has now been removed.
 
-Tapestry.FormEventManager has been entirely removed, along with supporting function Element.getFormEventManager().
-
-Tapestry.FieldEventManager.getIcon() now always returns null. The icon image is no longer rendered (on the server)
-by the DefaultValidationDecorator.
+## Wait-for-page logic removed
 
 Tapestry 5.3 contained code that attempted to prevent Ajax requests until after the page had loaded; this was based
 on the function Tapestry.waitForPage().  Server components no longer make use of this function, and the function
 itself now does nothing. A replacement approach to preventing the user from interacting with links and forms before
 the page initialization has completed may be implemented in the future.
 
-Many functions on the Tapestry object have been removed, as they were only used internally:
-- rebuildURL
-- stripToLastSlash
-
-== Twitter Bootstrap
+## Twitter Bootstrap
 
 Tapestry now includes a default copy of Twitter Bootstrap in addition to its own default set of CSS rules (the
 file "default.css" automatically included in rendered pages). The Tapestry CSS has been largely eliminated; instead
@@ -112,7 +127,6 @@ ValidationDecorator and ValidationDecoratorFactory are deprecated in 5.4 and wil
 implementation of ValidationDecorator now does nothing. All the logic related to presentation of errors has moved
 to the client, and expects and leverages the Twitter Bootstrap CSS.
 
-Tapestry.ErrorPopup (the controller that managed Tapestry 5.3's floating error bubbles) has been removed entirely.
 Fields that require validation messages to be displayed fire events, and the default handlers show and update
 help blocks that appear (by default) beneath the fields. To get the full effect, you should enclose your fields inside
 .control-group elements, as described in the Bootstrap documentation:
@@ -122,7 +136,6 @@ http://twitter.github.com/bootstrap/base-css.html#forms
 
 The property edit blocks contributed to the BeanBlockSource service should expect to be nested inside a
 div.control-group, which is provided around the editor for each property.
-
 
 == ClientBehaviorSupport
 

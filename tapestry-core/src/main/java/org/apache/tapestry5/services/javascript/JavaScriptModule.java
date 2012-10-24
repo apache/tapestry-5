@@ -15,11 +15,9 @@
 package org.apache.tapestry5.services.javascript;
 
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.RenderSupport;
 import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.DocumentLinker;
-import org.apache.tapestry5.internal.services.RenderSupportImpl;
 import org.apache.tapestry5.internal.services.ajax.JavaScriptSupportImpl;
 import org.apache.tapestry5.internal.services.javascript.*;
 import org.apache.tapestry5.ioc.MappedConfiguration;
@@ -28,7 +26,6 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.*;
@@ -70,16 +67,6 @@ public class JavaScriptModule
         configuration.addInstance("core-datefield", DateFieldStack.class);
     }
 
-
-    /**
-     * Builds a proxy to the current {@link org.apache.tapestry5.RenderSupport} inside this thread's
-     * {@link org.apache.tapestry5.services.Environment}.
-     */
-    public RenderSupport buildRenderSupport()
-    {
-        return environmentalBuilder.build(RenderSupport.class);
-    }
-
     /**
      * Builds a proxy to the current {@link JavaScriptSupport} inside this thread's {@link org.apache.tapestry5.services.Environment}.
      *
@@ -98,16 +85,12 @@ public class JavaScriptModule
      * <dl>
      * <dt>JavascriptSupport</dt>
      * <dd>Provides {@link JavaScriptSupport}</dd>
-     * <dt>RenderSupport</dt>
-     * <dd>Provides {@link org.apache.tapestry5.RenderSupport}</dd>
      * </dl>
      */
     @Contribute(MarkupRenderer.class)
     public void exposeJavaScriptSupportForFullPageRenders(OrderedConfiguration<MarkupRendererFilter> configuration,
                                                           final JavaScriptStackSource javascriptStackSource,
-                                                          final JavaScriptStackPathConstructor javascriptStackPathConstructor,
-                                                          final SymbolSource symbolSource,
-                                                          final AssetSource assetSource)
+                                                          final JavaScriptStackPathConstructor javascriptStackPathConstructor)
     {
 
         MarkupRendererFilter javaScriptSupport = new MarkupRendererFilter()
@@ -129,25 +112,7 @@ public class JavaScriptModule
             }
         };
 
-        MarkupRendererFilter renderSupport = new MarkupRendererFilter()
-        {
-            public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
-            {
-                JavaScriptSupport javascriptSupport = environment.peekRequired(JavaScriptSupport.class);
-
-                RenderSupportImpl support = new RenderSupportImpl(symbolSource, assetSource, javascriptSupport);
-
-                environment.push(RenderSupport.class, support);
-
-                renderer.renderMarkup(writer);
-
-                environment.pop(RenderSupport.class);
-            }
-        };
-
         configuration.add("JavaScriptSupport", javaScriptSupport, "after:DocumentLinker");
-
-        configuration.add("RenderSupport", renderSupport);
     }
 
     /**
@@ -156,19 +121,13 @@ public class JavaScriptModule
      * <dl>
      * <dt>JavaScriptSupport
      * <dd>Provides {@link JavaScriptSupport}</dd>
-     * <dt>PageRenderSupport</dt>
-     * <dd>Provides {@link org.apache.tapestry5.RenderSupport}</dd>
      * </dl>
      */
     @Contribute(PartialMarkupRenderer.class)
     public void exposeJavaScriptSupportForPartialPageRender(OrderedConfiguration<PartialMarkupRendererFilter> configuration,
                                                             final JavaScriptStackSource javascriptStackSource,
 
-                                                            final JavaScriptStackPathConstructor javascriptStackPathConstructor,
-
-                                                            final SymbolSource symbolSource,
-
-                                                            final AssetSource assetSource)
+                                                            final JavaScriptStackPathConstructor javascriptStackPathConstructor)
     {
         PartialMarkupRendererFilter javascriptSupport = new PartialMarkupRendererFilter()
         {
@@ -195,25 +154,7 @@ public class JavaScriptModule
             }
         };
 
-        PartialMarkupRendererFilter renderSupport = new PartialMarkupRendererFilter()
-        {
-            public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
-            {
-                JavaScriptSupport javascriptSupport = environment.peekRequired(JavaScriptSupport.class);
-
-                RenderSupportImpl support = new RenderSupportImpl(symbolSource, assetSource, javascriptSupport);
-
-                environment.push(RenderSupport.class, support);
-
-                renderer.renderMarkup(writer, reply);
-
-                environment.pop(RenderSupport.class);
-            }
-        };
-
-
         configuration.add("JavaScriptSupport", javascriptSupport, "after:DocumentLinker");
-        configuration.add("RenderSupport", renderSupport);
     }
 
     @Contribute(Dispatcher.class)
