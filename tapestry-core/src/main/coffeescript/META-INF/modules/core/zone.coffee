@@ -19,6 +19,9 @@
 # Typically, a client-side zone element is rendered by, and corresponds to, a server-side
 # core/Zone component; however, certain other components (such as core/ProgressiveDisplay) may
 # also be treated as zones.
+#
+# Most often, a zone is any element with attribute `data-container-type=zone` and corresponds
+# to a core/Zone server-side component.
 define ["core/spi", "core/events", "core/ajax", "core/console", "core/forms",  "_"],
 
   (spi, events, ajax, console, forms, _) ->
@@ -27,12 +30,12 @@ define ["core/spi", "core/events", "core/ajax", "core/console", "core/forms",  "
     # zone element. May return null if the zone can not be found (after logging an error
     # to the console).
     #
-    # * element starting point for determining zone
+    # * element - starting point for determining zone
     findZone = (element) ->
       zoneId = element.attribute "data-update-zone"
 
       if zoneId is "^"
-        zone = element.findContainer "[data-zone]"
+        zone = element.findContainer "[data-container-type=zone]"
 
         if zone is null
           console.error "Unable to locate containing zone for #{element}."
@@ -113,5 +116,5 @@ define ["core/spi", "core/events", "core/ajax", "core/console", "core/forms",  "
 
         zone.trigger events.zone.refresh, { url }
 
-    # Most of this module is document event handlers, but there's also some exports.
+    # Most of this module is document-level event handlers, but there's also some exports.
     return { deferredZoneUpdate, findZone }

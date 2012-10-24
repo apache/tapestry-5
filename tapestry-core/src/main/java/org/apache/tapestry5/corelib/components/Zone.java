@@ -165,7 +165,7 @@ public class Zone implements ClientBodyElement
 
         Element e = writer.element(elementName,
                 "id", clientId,
-                "data-zone", "true");
+                "data-container-type", "zone");
 
         resources.renderInformalParameters(writer);
 
