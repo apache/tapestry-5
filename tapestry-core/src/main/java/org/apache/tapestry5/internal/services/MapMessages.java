@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import org.apache.tapestry5.ioc.util.AbstractMessages;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Implementation of {@link Messages} based on a simple Map (of string keys and values).
@@ -48,5 +49,11 @@ public class MapMessages extends AbstractMessages
     protected String valueForKey(String key)
     {
         return properties.get(key);
+    }
+
+    @Override
+    public Set<String> getKeys()
+    {
+        return properties.keySet();
     }
 }

@@ -15,23 +15,30 @@
 package org.apache.tapestry5.services.javascript;
 
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.internal.InternalConstants;
 import org.apache.tapestry5.internal.services.DocumentLinker;
 import org.apache.tapestry5.internal.services.ajax.JavaScriptSupportImpl;
+import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.internal.services.javascript.*;
+import org.apache.tapestry5.internal.util.MessageCatalogResource;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.util.IdAllocator;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.assets.AssetRequestHandler;
 import org.apache.tapestry5.services.assets.ResourceTransformer;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
+import org.apache.tapestry5.services.messages.ComponentMessagesSource;
+
+import java.util.Locale;
 
 /**
  * Defines the services related to JavaScript.
@@ -180,6 +187,21 @@ public class JavaScriptModule
     {
         configuration.add("_", new ShimModule(underscore, null, "_"));
         configuration.add("prototype", new ShimModule(prototype, null, null));
+    }
+
+    @Contribute(ModuleManager.class)
+    public static void setupApplicationCatalogModules(MappedConfiguration<String, Object> configuration,
+                                                      LocalizationSetter localizationSetter,
+                                                      ComponentMessagesSource messagesSource,
+                                                      ResourceChangeTracker resourceChangeTracker,
+                                                      @Symbol(SymbolConstants.COMPACT_JSON) boolean compactJSON)
+    {
+        for (Locale locale : localizationSetter.getSupportedLocales())
+        {
+            MessageCatalogResource resource = new MessageCatalogResource(locale, messagesSource,  resourceChangeTracker, compactJSON);
+
+            configuration.add("core/messages/" + locale.toString(), new ShimModule(resource, null, null));
+        }
     }
 
 }

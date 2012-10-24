@@ -69,12 +69,22 @@ public class ResourceChangeTrackerImpl extends InvalidationEventHubImpl implemen
         trackResource(dependency);
     }
 
+    @Override
+    public void forceInvalidationEvent()
+    {
+        fireInvalidationEvent();
+
+        if (tracker != null)
+        {
+            tracker.clear();
+        }
+    }
+
     public void checkForUpdates()
     {
         if (tracker.containsChanges())
         {
-            fireInvalidationEvent();
-            tracker.clear();
+            forceInvalidationEvent();
         }
     }
 
