@@ -81,7 +81,8 @@ public class Alert implements Serializable
 
     public JSONObject toJSON()
     {
-        JSONObject result = new JSONObject("message", message, "class", severity.cssClass);
+        JSONObject result = new JSONObject("message", message,
+                "severity", severity.name().toLowerCase() );
 
         if (duration == Duration.TRANSIENT)
         {

@@ -15,69 +15,67 @@
 package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.BindingConstants;
-import org.apache.tapestry5.ClientElement;
-import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.Link;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.alerts.Alert;
 import org.apache.tapestry5.alerts.AlertStorage;
 import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.corelib.base.BaseClientElement;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.json.JSONObject;
-import org.apache.tapestry5.services.javascript.InitializationPriority;
-import org.apache.tapestry5.services.javascript.JavaScriptSupport;
+import org.apache.tapestry5.services.compatibility.DeprecationWarning;
 
 /**
  * Renders out an empty {@code <div>} element and provides JavaScript initialization to make the element
  * the container for alerts. After rendering markup (and initialization JavaScript), it
  * {@linkplain org.apache.tapestry5.alerts.AlertStorage#dismissNonPersistent() removes all non-persistent alerts}.
- * 
+ * <p/>
  * Alerts are created using the {@link org.apache.tapestry5.alerts.AlertManager} service.
  *
  * @tapestrydoc
  * @since 5.3
  */
 @SupportsInformalParameters
-public class Alerts implements ClientElement
+@Import(stack = "core")
+public class Alerts extends BaseClientElement
 {
 
-    @Parameter(value="message:core-dismiss-label", defaultPrefix=BindingConstants.LITERAL)
+    /**
+     * Allows the button used to dismiss all alerts to be customized (and localized).
+     *
+     * @deprecated Deprecated in Tapestry 5.4; override the {@code core-dismiss-label} message key in
+     *             your application's message catalog. This parameter is now ignored.
+     */
+    @Parameter(value = "message:core-dismiss-label", defaultPrefix = BindingConstants.LITERAL)
     private String dismissText;
-
-    @Inject
-    private ComponentResources resources;
-
-    @Environmental
-    private JavaScriptSupport javaScriptSupport;
 
     @SessionState(create = false)
     private AlertStorage storage;
 
-    private String clientId;
+    @Inject
+    private DeprecationWarning deprecationWarning;
 
-    public String getClientId()
+    void onPageLoaded()
     {
-        return clientId;
+        deprecationWarning.ignoredComponentParameters(resources, "dismissText");
     }
 
     boolean beginRender(MarkupWriter writer)
     {
-        clientId = javaScriptSupport.allocateClientId(resources);
+        Link dismissLink = resources.createEventLink("dismiss");
 
-        writer.element("div", "id", clientId);
+        storeElement(writer.element("div",
+                "data-container-type", "alerts",
+                "data-dismiss-url", dismissLink));
+
         resources.renderInformalParameters(writer);
         writer.end();
-
-        JSONObject spec = new JSONObject("id", clientId,
-                "dismissURL", resources.createEventLink("dismiss").toURI(),
-                "dismissText", dismissText);
-
-        javaScriptSupport.addInitializerCall(InitializationPriority.EARLY, "alertManager", spec);
 
         if (storage != null)
         {
             for (Alert alert : storage.getAlerts())
             {
-                javaScriptSupport.addInitializerCall("addAlert", alert.toJSON());
+                javaScriptSupport.require("core/alert").with(alert.toJSON());
             }
 
             storage.dismissNonPersistent();
