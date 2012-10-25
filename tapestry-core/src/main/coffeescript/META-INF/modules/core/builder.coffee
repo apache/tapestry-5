@@ -56,7 +56,8 @@ define ["_", "core/spi"], (_, spi) ->
 
     element = document.createElement elementName
 
-    element.className = terms.join " "
+    if terms.length
+      element.className = terms.join " "
 
     return element
 
