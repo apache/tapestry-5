@@ -485,7 +485,7 @@ public class Grid implements GridModel
             javaScriptSupport.require("core/zone");
             javaScriptSupport.require("core/grid");
 
-            writer.element("div", "data-zone", "true");
+            writer.element("div", "data-container-type", "zone");
 
             didRenderZoneDiv = true;
 

@@ -19,13 +19,17 @@
 # div[data-zone] around the table, and code here intercepts clicks on links that
 # are inside a div[data-inplace-grid-links].
 #
-define ["core/spi", "core/events"],
+define ["core/spi", "core/events", "core/console"],
 
-  (spi, events) ->
+  (spi, events, console) ->
 
     spi.onDocument "[data-inplace-grid-links] a", ->
 
-      zone = this.findContainer "[data-zone]"
+      zone = this.findContainer "[data-container-type=zone]"
+
+      unless zone
+        console.error "Unable to find containing zone for live update of grid."
+        return false
 
       zone.trigger events.zone.refresh, url: this.attribute "href"
 
