@@ -105,6 +105,7 @@ define ["_", "core/console", "core/spi", "core/events"],
       # Passed a list of initializers, executes each initializer in order. Due to asynchronous loading
       # of modules, the exact order in which initializer functions are invoked is not predictable.
       initialize: (inits = [], callback) ->
+        console.debug "Executing #{inits.length} inits"
         callbackCountdown = inits.length + 1
 
         # tracker gets invoked once after each require/callback, plus once extra
@@ -113,8 +114,9 @@ define ["_", "core/console", "core/spi", "core/events"],
         tracker = ->
           callbackCountdown--
 
-          if callbackCountdown is 0 and callback
-            callback()
+          if callbackCountdown is 0
+            console.debug "Inits completed"
+            callback() if callback
 
         # First value in each init is the qualified module name; anything after
         # that are arguments to be passed to the identified function.
@@ -139,10 +141,14 @@ define ["_", "core/console", "core/spi", "core/events"],
       # ready (which, given typical Tapestry page structure, it almost certainly is at the point this function
       # executed), and then executes the other initializations.
       loadLibrariesAndInitialize: (libraries, immediateInits, otherInits) ->
+        console.debug "Loading #{libraries?.length or 0} libraries"
         exports.loadLibraries libraries, ->
+          console.debug "Executing immediate inits"
           exports.initialize immediateInits
 
-          spi.domReady -> exports.initialize otherInits
+          spi.domReady ->
+            console.debug "Executing ordinary inits"
+            exports.initialize otherInits
 
       evalJavaScript: (js) ->
         console.debug "Evaluating: #{js}"
