@@ -179,14 +179,22 @@ public class JavaScriptModule
 
     @Contribute(ModuleManager.class)
     public static void setupBaseModuleShims(MappedConfiguration<String, Object> configuration,
-                                            @Inject @Path("classpath:META-INF/assets/tapestry5/underscore_1_4_2.js")
+                                            @Inject @Path("${tapestry.asset.root}/underscore_1_4_2.js")
                                             Resource underscore,
 
                                             @Inject @Path("${tapestry.scriptaculous}/prototype.js")
-                                            Resource prototype)
+                                            Resource prototype,
+
+                                            @Inject @Path("${tapestry.asset.root}/jquery-1.8.2.js")
+                                            Resource jQuery,
+
+                                            @Inject @Path("${" + SymbolConstants.BOOTSTRAP_ROOT + "}/js/bootstrap.js")
+                                            Resource bootstrap)
     {
-        configuration.add("_", new ShimModule(underscore, null, "_"));
-        configuration.add("prototype", new ShimModule(prototype, null, null));
+        configuration.add("_", new ShimModule(underscore).exports("_"));
+        configuration.add("$", new ShimModule(jQuery).initializeWith("jQuery.noConflict()"));
+        configuration.add("prototype", new ShimModule(prototype));
+        configuration.add("bootstrap", new ShimModule(bootstrap).dependsOn("$"));
     }
 
     @Contribute(ModuleManager.class)
@@ -200,7 +208,7 @@ public class JavaScriptModule
         {
             MessageCatalogResource resource = new MessageCatalogResource(locale, messagesSource, resourceChangeTracker, compactJSON);
 
-            configuration.add("core/messages/" + locale.toString(), new ShimModule(resource, null, null));
+            configuration.add("core/messages/" + locale.toString(), new ShimModule(resource));
         }
     }
 

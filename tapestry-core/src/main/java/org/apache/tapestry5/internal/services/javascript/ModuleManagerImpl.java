@@ -25,8 +25,8 @@ import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.json.JSONLiteral;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
@@ -99,7 +99,7 @@ public class ModuleManagerImpl implements ModuleManager
 
     private String buildRequireJSConfig(String baseURL, Map<String, ShimModule> configuration, boolean devMode)
     {
-        JSONObject config = new JSONObject().put("baseUrl", baseURL);
+        JSONObject config = new JSONObject("baseUrl", baseURL);
 
         // In DevMode, wait up to five minutes for a script, as the developer may be using the debugger.
         if (devMode)
@@ -113,24 +113,54 @@ public class ModuleManagerImpl implements ModuleManager
 
             shimModuleNameToResource.put(name, module.resource);
 
-            JSONObject shim = config.in("shim").in(name);
-
-            if (module.dependencies != null && !module.dependencies.isEmpty())
+            // Some modules (particularly overrides) just need an alternate location for their content
+            // on the server.
+            if (module.getNeedsConfiguration())
             {
-                for (String dep : module.dependencies)
-                {
-                    shim.accumulate("deps", dep);
-                }
-            }
-
-            if (InternalUtils.isNonBlank(module.exports))
-            {
-                shim.put("exports", module.exports);
+                // Others are libraries being shimmed as AMD modules, and need some configuration
+                // to ensure that everything hooks up properly on the client.
+                addModuleToConfig(config, name, module);
             }
         }
 
-        return String.format("require.config(%s);\n",
-                config.toString(compactJSON));
+        return String.format("require.config(%s);\n", config.toString(compactJSON));
+    }
+
+    private void addModuleToConfig(JSONObject config, String name, ShimModule module)
+    {
+        JSONObject shimConfig = config.in("shim");
+
+        boolean nestDependencies = false;
+
+        String exports = module.getExports();
+
+        if (exports != null)
+        {
+            shimConfig.in(name).put("exports", exports);
+            nestDependencies = true;
+        }
+
+        String initExpression = module.getInitExpression();
+
+        if (initExpression != null)
+        {
+            String function = String.format("function() { return %s; }", initExpression);
+            shimConfig.in(name).put("init", new JSONLiteral(function));
+            nestDependencies = true;
+        }
+
+        List<String> dependencies = module.getDependencies();
+
+        if (dependencies != null)
+        {
+            JSONObject container = nestDependencies ? shimConfig.in(name) : shimConfig;
+            String key = nestDependencies ? "deps" : name;
+
+            for (String dep : dependencies)
+            {
+                container.append(key, dep);
+            }
+        }
     }
 
     @PostInjection

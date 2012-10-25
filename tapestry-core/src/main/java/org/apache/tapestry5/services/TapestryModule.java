@@ -2206,7 +2206,7 @@ public final class TapestryModule
         // By default, no page is on the whitelist unless it has the @WhitelistAccessOnly annotation
         configuration.add(MetaDataConstants.WHITELIST_ONLY_PAGE, false);
 
-        configuration.add(SymbolConstants.REQUIRE_JS, "${tapestry.asset.root}/require_2.0.2.js");
+        configuration.add(SymbolConstants.REQUIRE_JS, "${tapestry.asset.root}/require-2.1.1.js");
         configuration.add(SymbolConstants.CONTEXT_PATH, "");
 
         // Leaving this as the default results in a runtime error logged to the console (and a default password is used);
