@@ -219,9 +219,9 @@ define ["_", "prototype"], (_) ->
       return this
 
     # Updates this element with new content, replacing any old content. The new content may be HTML text, or a DOM
-    # element, or null (to remove the body of the element).
+    # element, or null (to remove the body of the element). Passing null will remove all content.
     update: (content) ->
-      @element.update (convertContent content)
+      @element.update (content and convertContent content)
 
       return this
 
@@ -498,24 +498,6 @@ define ["_", "prototype"], (_) ->
 
     ajaxRequest: ajaxRequest
 
-    # Invokes the callback only once the DOM has finished loading all elements (other resources, such as images, may
-    # still be in-transit). This is a safe time to search the DOM, modify attributes, and attach event handlers.
-    # Returns this module's exports, for chained calls. If the DOM has already loaded, the callback is invoked
-    # immediately.
-    domReady: (callback) ->
-      # Hack for IE, which doesn't fire the dom:loaded event reliably.  However, we know that any code here
-      # is invoked from the footer of the document, so the rest can be assumed to be loaded.
-      if Prototype.Browser.IE
-        document.loaded = true
-
-      # Prototype sets this property when the document is loaded.
-      if document.loaded
-        callback()
-      else
-        $(document).observe "dom:loaded", callback
-
-      return exports
-
     # Used to add an event handler to an element (possibly from elements below it in the hierarch).
     #
     # * selector - CSS selector used to select elements to attach handler to; alternately,
@@ -542,11 +524,10 @@ define ["_", "prototype"], (_) ->
     onDocument: (events, match, handler) ->
       exports.on document, events, match, handler
 
-    # Returns a wrapped version of the document.body element. Care must be take to not invoke this function before the
-    # body element exists; typically only after the DOM has loaded, such as a `domReady()` callback.
+    # Returns a wrapped version of the document.body element. Because all Tapestry JavaScript occurs
+    # inside a block at the end of the document, inside the `<body`> element, it is assumed that
+    # it is always safe to get the body.
     body: ->
-      throw new Error "May not access body until after DOM has loaded." unless document.loaded
-
       bodyWrapper ?= (wrapElement document.body)
 
     # Returns the current dimensions of the viewport. An object with keys `width` and `height` (in pixels) is returned.

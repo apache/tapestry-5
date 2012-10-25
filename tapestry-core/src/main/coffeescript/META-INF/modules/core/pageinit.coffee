@@ -144,9 +144,7 @@ define ["_", "core/console", "core/spi", "core/events"],
         console.debug "Loading #{libraries?.length or 0} libraries"
         exports.loadLibraries libraries, ->
           console.debug "Executing immediate inits"
-          exports.initialize immediateInits
-
-          spi.domReady ->
+          exports.initialize immediateInits, ->
             console.debug "Executing ordinary inits"
             exports.initialize otherInits
 
