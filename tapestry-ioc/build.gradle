@@ -5,7 +5,7 @@ dependencies {
   compile project(':tapestry5-annotations')
   compile project(":plastic")
 
-  provided project(':tapestry-test')
+  compile project(':tapestry-test')
 
   // For now, keep these compile dependencies synchronized with the binaries dependencies
   // of the top-level build:
