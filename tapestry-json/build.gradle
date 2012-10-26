@@ -2,7 +2,7 @@ description = "Repackaged, improved (and tested) version of code originally from
 
 dependencies {
 
-    provided project(':tapestry-ioc')
+    compile project(':tapestry-ioc')
     testCompile project(':tapestry-test')
 
 }
