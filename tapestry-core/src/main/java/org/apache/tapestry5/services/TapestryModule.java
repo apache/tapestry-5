@@ -2874,7 +2874,6 @@ public final class TapestryModule
     {
         hub.addInvalidationListener(new InvalidationListener()
         {
-            @Override
             public void objectWasInvalidated()
             {
                 proxyFactory.clearCache();

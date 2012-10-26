@@ -117,7 +117,6 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
     {
         ObjectCreator<String> descriptionCreator = new ObjectCreator<String>()
         {
-            @Override
             public String createObject()
             {
                 return InternalUtils.asString(method);
@@ -132,7 +131,6 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
     {
         ObjectCreator<String> descriptionCreator = new ObjectCreator<String>()
         {
-            @Override
             public String createObject()
             {
                 StringBuilder builder = new StringBuilder(constructor.getDeclaringClass().getName()).append("(");
@@ -156,7 +154,6 @@ public class PlasticProxyFactoryImpl implements PlasticProxyFactory
                 descriptionCreator);
     }
 
-    @Override
     public void clearCache()
     {
         memberToLocation.clear();

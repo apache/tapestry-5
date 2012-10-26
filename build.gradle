@@ -77,7 +77,7 @@ allprojects {
     project {
       // Technically, Tapestry is built for JDK 1.5, but we're all using Eclipse or IntelliJ with
       // JDK 1.6 at this point.
-      jdkName = "1.6"
+      jdkName = "1.5"
     }
   }
 

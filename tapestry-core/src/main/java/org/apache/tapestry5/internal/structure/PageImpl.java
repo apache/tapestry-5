@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
+// Copyright 2006-2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -165,7 +165,6 @@ public class PageImpl implements Page
 
         addPageLoadedCallback(new Runnable()
         {
-            @Override
             public void run()
             {
                 listener.containingPageDidLoad();
@@ -174,7 +173,6 @@ public class PageImpl implements Page
 
         addPageAttachedCallback(new Runnable()
         {
-            @Override
             public void run()
             {
                 listener.containingPageDidAttach();
@@ -183,7 +181,6 @@ public class PageImpl implements Page
 
         addPageDetachedCallback(new Runnable()
         {
-            @Override
             public void run()
             {
                 listener.containingPageDidDetach();
@@ -277,7 +274,6 @@ public class PageImpl implements Page
         return name;
     }
 
-    @Override
     public void addResetCallback(Runnable callback)
     {
         assert callback != null;
@@ -293,7 +289,6 @@ public class PageImpl implements Page
 
         addResetCallback(new Runnable()
         {
-            @Override
             public void run()
             {
                 listener.containingPageDidReset();
@@ -325,7 +320,6 @@ public class PageImpl implements Page
         return attachCount.get();
     }
 
-    @Override
     public void addPageLoadedCallback(Runnable callback)
     {
         lifecycleListenersLock.check();
@@ -335,7 +329,6 @@ public class PageImpl implements Page
         loadedCallbacks.add(callback);
     }
 
-    @Override
     public void addPageAttachedCallback(Runnable callback)
     {
         lifecycleListenersLock.check();
@@ -345,7 +338,6 @@ public class PageImpl implements Page
         attachCallbacks.add(callback);
     }
 
-    @Override
     public void addPageDetachedCallback(Runnable callback)
     {
         lifecycleListenersLock.check();

@@ -67,14 +67,12 @@ public class BarneyModule {
   @Contribute(Sizer.class)
   public void moreSizerContributions(MappedConfiguration<Class, Sizer> configuration) {
     Sizer defaultSizer = new Sizer() {
-      @Override
       public int size(Object object) {
         return 1;
       }
     };
 
     Sizer nullSizer = new Sizer() {
-      @Override
       public int size(Object object) {
         return 0;
       }

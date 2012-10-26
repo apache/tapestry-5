@@ -34,7 +34,6 @@ public class OperationWorker implements ComponentClassTransformWorker2
         this.advisor = advisor;
     }
 
-    @Override
     public void transform(PlasticClass plasticClass, TransformationSupport support, MutableComponentModel model)
     {
         for (PlasticMethod method : plasticClass.getMethodsWithAnnotation(Operation.class))

@@ -132,7 +132,6 @@ public class DefaultRequestExceptionHandlerTest extends InternalBaseTestCase {
     @Test
     public void handleRequestExceptionWithConfiguredAssistant() throws IOException {
         ExceptionHandlerAssistant assistant = new ExceptionHandlerAssistant() {
-            @Override
             public Object handleRequestException(Throwable exception, List<Object> exceptionContext)
                     throws IOException
             {

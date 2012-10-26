@@ -33,7 +33,6 @@ public class AlertStorage extends LockSupport implements Serializable, Optimized
 
     private final List<Alert> alerts = CollectionFactory.newList();
 
-    @Override
     public boolean checkAndResetDirtyMarker()
     {
         try

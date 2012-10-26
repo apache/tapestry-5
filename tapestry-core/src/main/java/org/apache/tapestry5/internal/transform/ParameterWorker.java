@@ -198,7 +198,6 @@ public class ParameterWorker implements ComponentClassTransformWorker2
                         icr.setParameterConduit(parameterName, this);
                         icr.getPageLifecycleCallbackHub().addPageLoadedCallback(new Runnable()
                         {
-                            @Override
                             public void run()
                             {
                                 load();

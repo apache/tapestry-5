@@ -61,7 +61,6 @@ public class JavaScriptResourceMinimizer extends AbstractMinimizer
         {
             boolean sourceIdentified = false;
 
-            @Override
             public void run()
             {
                 if (!sourceIdentified)
@@ -76,7 +75,6 @@ public class JavaScriptResourceMinimizer extends AbstractMinimizer
         final AtomicInteger warningCount = new AtomicInteger();
 
         Runnable identifyWarnings = new Runnable() {
-            @Override
             public void run()
             {
                 if (warningCount.get() > 0)

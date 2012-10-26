@@ -35,12 +35,10 @@ public class AppModule {
     static {
 
         PersistenceProviderResolverHolder.setPersistenceProviderResolver(new PersistenceProviderResolver() {
-            @Override
             public List<PersistenceProvider> getPersistenceProviders() {
                 return Arrays.<PersistenceProvider>asList(new DummyPersistenceProvider());
             }
 
-            @Override
             public void clearCachedProviders() {
             }
         }
