@@ -9,7 +9,9 @@ apply from: "md5.gradle"
 project.ext.versions = [
   // Remember that when generating a release, this should be incremented. Also don"t forget to
   // tag the release in Subversion.
-  tapestry: "5.4-alpha-1",
+  // Version number is always "5.x(.y)?-SNAPSHOT" and only gets fixed, e.g. to 5.4-alpha-1
+  // during a release
+  tapestry: "5.4-SNAPSHOT",
   jetty: "7.0.0.v20091005",
   tomcat: "6.0.30",
   testng: "6.5.2",
