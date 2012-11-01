@@ -35,6 +35,8 @@ import java.util.List;
  * Implementations may need to inject the {@link ThreadLocale} service in order to determine the current locale (if any
  * of the JavaScript library or stylesheet assets are localized). They will generally need to inject the
  * {@link AssetSource} service as well.
+ * <p/>
+ * The {@link ExtensibleJavaScriptStack} is the best way to create new stacks.
  *
  * @see ThreadLocale
  * @since 5.2.0
@@ -64,7 +66,7 @@ public interface JavaScriptStack
      * until the DOM is loaded). As with the other methods, if localization is a factor, the result of this method
      * should be localized.
      *
-     * @deprecated No longer used in Tapestry 5.4; may be removed in a future release. Implementations
+     * @deprecated Deprecated in Tapestry 5.4; may be removed in a future release. Implementations
      *             may return null.
      */
     String getInitialization();
