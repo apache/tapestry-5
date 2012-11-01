@@ -27,17 +27,48 @@ define
 
     # Triggered after `validate` (when there are no prior validation exceptions), to allow certain elements
     # to configure themselves immediately before the form is submitted. This exists primarily for components such
-    # as FormFragment, which will update a enable or disable a hidden field to match the visibility of the fragment.
-    # The `core/spi.EventWrapper` for the form element is passed as the memo.
+    # as FormFragment, which will enable or disable a hidden field to match the visibility of the fragment.
+    # There is no event memo.
     prepareForSubmit: "t5:form:prepare-for-submit"
 
+  # Events releated to form input fields. Primarily, these events are related to form input validation.
+  # Validating a field involves three major steps:
+  #
+  # * optional - check for a required field that has no value
+  # * translate - translate a string to another representation, such as `Date`, or a number
+  # * validate - validate the field against any number of other constraints (such as ranges)
+  #
+  # The latter two steps occur only if the field's value is non-blank. A field that is blank but not
+  # required is considered valid. In each step, if the event listener detects an input validation error,
+  # it is expected to set the memo's `error`property to true _and_ trigger a `showValidationError'
+  # event (to present a message specific to the case).
   field:
-    # Triggered by the Form on all enclosed elements with the `data-validation` attribute (indicating they are
-    # interested in participating with user input validation). The memo object passed to the event has an error property
-    # that can be set to true to indicate a validation error. Individual fields should determine if the field is in
-    # error and remove or add/update decorations for the validation error (decorations will transition from 5.3 style
-    # popups to Twitter Bootstrap in the near future).
+
+    # Perform the optionality check. The event memo includes a `value` property. If the field is required
+    # but the value is blank, then the `error` property should be set to true.
+    optional: "t5:field:optional"
+
+    # Trigged by the field if there is a field value. The event memo includes the value as the `value` property.
+    # An event handler may update the event, setting the `translated` property to an alternate formatting, or
+    # alternate representation (e.g., `Date`, or a number) for the input value. If the input can not be translated,
+    # then the handler should set the memo's `error` property to true, and trigger a `showValidationError` event.
+    translate: "t5:field:translate"
+
+    # Triggered by the field if there is a field value, and the `translate` event succeeded. The event memo
+    # includes a `value' property, and a `translated` property. If any constraints on the field are invalid,
+    # then the event handler should set the memo's `error` property and trigger a `showValidationError` event.
     validate: "t5:field:validate"
+
+    # Triggered by the form on all enclosed elements with the `data-validation` attribute (indicating they are
+    # interested in participating with user input validation). The default implementation fires a series of
+    # events: `optional`, `translate`, `validate`. The latter two are always skipped if the input is blank, or if
+    # a preceding event set the memo's `error` property to true.  If all events complete without setting an error,
+    # then the `clearValidationError` event is triggered, so remove any validation errors from previous
+    # validation cycles.
+    #
+    # This event is passed a memo object; it should set the memo's `error` property to true if validation failed
+    # for the field.
+    inputValidation: "t5:field:input-validation"
 
     # Clears and hides the element used to display validation error messages. There is no memo for
     # this event. The p.help-block for the field is located (if it exists) and empties and hidden.
@@ -50,13 +81,16 @@ define
     # then the class "error" will be added.
     #
     # The rules for locating the help block:
+    #
     # * Search for element with attribute `data-error-block-for` set to the field's `id` attribute
     # * If not found, find the enclosing .controls or .control-group element
     # * Search enclosing element for an element with attribute `data-presentation="error"`
     # * Otherwise, it is not found (but may be created dynamically)
-    # * If found, set the `data-error-block-for` attribute to the field's `id` (assigning the id if necesssary)
+    # * If found, set the `data-error-block-for` attribute to the field's `id` (assigning a unique id to the field
+    #   if not already present)
     #
     # The rules for creating the help block:
+    #
     # * The element is created as `p.help-block` with `data-error-block-for` attribute set to the
     #   field's id.  The field will be assigned an id if necesary.
     # * Normally, the block is inserted after the field

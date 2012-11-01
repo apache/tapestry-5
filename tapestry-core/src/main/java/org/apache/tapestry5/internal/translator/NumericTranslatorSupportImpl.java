@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009, 2010, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,16 +14,6 @@
 
 package org.apache.tapestry5.internal.translator;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.tapestry5.Field;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -33,8 +23,17 @@ import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ClientBehaviorSupport;
 import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 public class NumericTranslatorSupportImpl implements NumericTranslatorSupport
 {
@@ -57,9 +56,9 @@ public class NumericTranslatorSupportImpl implements NumericTranslatorSupport
     private static final String DECIMAL_FORMAT_SYMBOLS_PROVIDED = "tapestry.decimal-format-symbols-provided";
 
     public NumericTranslatorSupportImpl(TypeCoercer typeCoercer, ThreadLocale threadLocale, Request request,
-            JavaScriptSupport javascriptSupport, ClientBehaviorSupport clientBehaviorSupport, 
-            @Symbol(SymbolConstants.COMPACT_JSON)
-            boolean compactJSON)
+                                        JavaScriptSupport javascriptSupport, ClientBehaviorSupport clientBehaviorSupport,
+                                        @Symbol(SymbolConstants.COMPACT_JSON)
+                                        boolean compactJSON)
     {
         this.typeCoercer = typeCoercer;
         this.threadLocale = threadLocale;
@@ -69,7 +68,7 @@ public class NumericTranslatorSupportImpl implements NumericTranslatorSupport
         this.compactJSON = compactJSON;
 
         Class[] integerTypes =
-        { Byte.class, Short.class, Integer.class, Long.class, BigInteger.class };
+                {Byte.class, Short.class, Integer.class, Long.class, BigInteger.class};
 
         for (Class c : integerTypes)
             this.integerTypes.add(c);
@@ -80,8 +79,7 @@ public class NumericTranslatorSupportImpl implements NumericTranslatorSupport
     {
         if (request.getAttribute(DECIMAL_FORMAT_SYMBOLS_PROVIDED) == null)
         {
-            javascriptSupport.addScript(InitializationPriority.IMMEDIATE, "Tapestry.decimalFormatSymbols = %s;",
-                    createJSONDecimalFormatSymbols().toString(compactJSON));
+            javascriptSupport.require("core/validation").invoke("configureDecimals").with(createJSONDecimalFormatSymbols());
 
             request.setAttribute(DECIMAL_FORMAT_SYMBOLS_PROVIDED, true);
         }

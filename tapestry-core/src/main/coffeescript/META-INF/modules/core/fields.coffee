@@ -16,9 +16,8 @@
 #
 # Module for logic relating to form input fields (input, select, textarea); specifically
 # presenting validation errors and perfoming input validation when necessary.
-
-define ["_", "core/events", "core/spi", "core/builder"],
-  (_, events, spi, builder) ->
+define ["_", "core/events", "core/spi", "core/builder", "core/utils", "core/forms"],
+  (_, events, spi, builder, utils) ->
 
     ensureFieldId = (field) ->
       fieldId = field.attribute "id"
@@ -92,6 +91,42 @@ define ["_", "core/events", "core/spi", "core/builder"],
       spi.wrap(id).trigger events.field.showValidationError, { message }
 
     # Default registrations:
+
+    spi.onDocument events.field.inputValidation, (event, formMemo) ->
+
+      # When not visible to the user, ignore the input validation. Components
+      # are generally configured so that they do not submit a value to the server
+      # when not visible ... this is what the core/FormFragment component is responsible
+      # for.
+      return unless this.deepVisible()
+
+      failure = false
+
+      memo = value: this.value()
+
+      this.trigger events.field.optional, memo
+
+      if memo.error
+        failure = true
+      else
+        unless utils.isBlank memo.value
+          this.trigger events.field.translate, memo
+
+          if memo.error
+            failure = true
+          else
+            memo.translated |= memo.value
+
+            this.trigger events.field.validate, memo
+
+            failure |= memo.error
+
+      if failure
+        formMemo.error = true
+      else
+        this.trigger events.field.clearValidationError
+
+      return
 
     spi.onDocument events.field.clearValidationError, ->
       block = exports.findHelpBlock this

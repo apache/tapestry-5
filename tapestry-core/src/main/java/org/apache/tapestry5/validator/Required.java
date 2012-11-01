@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,15 +20,16 @@ import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.ioc.MessageFormatter;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * A validator that enforces that the value is not null and not the empty string. This validator is not configurable.
  */
 public final class Required extends AbstractValidator<Void, Object>
 {
-    public Required()
+    public Required(JavaScriptSupport javaScriptSupport)
     {
-        super(null, Object.class, "required");
+        super(null, Object.class, "required", javaScriptSupport);
     }
 
     public void validate(Field field, Void constraintValue, MessageFormatter formatter, Object value)
@@ -54,6 +55,15 @@ public final class Required extends AbstractValidator<Void, Object>
     public void render(Field field, Void constraintValue, MessageFormatter formatter, MarkupWriter writer,
                        FormSupport formSupport)
     {
-        formSupport.addValidation(field, "required", buildMessage(formatter, field), null);
+
+        if (formSupport.isClientValidationEnabled())
+        {
+            javaScriptSupport.require("core/validation");
+
+            writer.getElement().attributes(
+                    "data-validation", "true",
+                    "data-optionality", "required",
+                    "data-required-message", buildMessage(formatter, field));
+        }
     }
 }

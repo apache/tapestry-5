@@ -104,22 +104,23 @@ define ["core/events", "core/spi", "core/builder", "_"],
 
         # This will become more relevant shortly, when field validation is modernized:
         for field in this.find "[data-validation]"
-           field.trigger events.field.validate, memo
+          field.trigger events.field.inputValidation, memo
 
         # Only do form validation if all individual field validation
         # was successful.
-        this.trigger events.form.validate, memo unless memo.error
+        unless memo.error
+          this.trigger events.form.validate, memo
 
         if memo.error
           clearSubmittingHidden this
+          # Cancel the original submit event when there's an error
           return false
 
       # Allow certain types of elements to do last-moment set up. Basically, this is for
       # FormFragment, or similar, to make their hidden field enabled or disabled to match
       # their UI's visible/hidden status. This is assumed to work or throw an exception; there
       # is no memo.
-      this.trigger events.form.prepareForSubmit, this
-
+      this.trigger events.form.prepareForSubmit
 
       # Otherwise, the event is good, there are no validation problems, let the normal processing commence.
       # Possibly, the document event handler in core/zone will intercept form submission if this

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ public final class MinLength extends AbstractValidator<Integer, String>
 {
     public MinLength()
     {
-        super(Integer.class, String.class, "minimum-string-length");
+        super(Integer.class, String.class, "minimum-string-length", null);
     }
 
     public void validate(Field field, Integer constraintValue, MessageFormatter formatter, String value)

@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ public class Regexp extends AbstractValidator<Pattern, String>
 {
     public Regexp()
     {
-        super(Pattern.class, String.class, "regexp");
+        super(Pattern.class, String.class, "regexp", null);
     }
 
     private String buildMessage(MessageFormatter formatter, Field field, Pattern constraintValue)

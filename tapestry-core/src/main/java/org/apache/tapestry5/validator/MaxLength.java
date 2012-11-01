@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ public final class MaxLength extends AbstractValidator<Integer, String>
 {
     public MaxLength()
     {
-        super(Integer.class, String.class, "maximum-string-length");
+        super(Integer.class, String.class, "maximum-string-length", null);
     }
 
     public void validate(Field field, Integer constraintValue, MessageFormatter formatter, String value)

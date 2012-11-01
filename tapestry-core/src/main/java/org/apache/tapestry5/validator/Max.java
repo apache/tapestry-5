@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007, 2008, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ public class Max extends AbstractValidator<Long, Number>
 {
     public Max()
     {
-        super(Long.class, Number.class, "max-integer");
+        super(Long.class, Number.class, "max-integer", null);
     }
 
     public void validate(Field field, Long constraintValue, MessageFormatter formatter, Number value)

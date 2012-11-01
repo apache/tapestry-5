@@ -29,7 +29,8 @@ public interface FormSupport extends ClientElement
     /**
      * Allocates a unique (within the form) control name for some enclosed component, based on the component's id.
      *
-     * @param id the component's id
+     * @param id
+     *         the component's id
      * @return a unique string, usually the component's id, but sometime extended with a unique number or string
      */
     String allocateControlName(String id);
@@ -45,8 +46,10 @@ public interface FormSupport extends ClientElement
      * immediately. This is useful for defining an action that should occur symmetrically in both the render request and
      * the form submission's action request.
      *
-     * @param component component against which to trigger the action
-     * @param action    the action that will be triggered (and passed the component)
+     * @param component
+     *         component against which to trigger the action
+     * @param action
+     *         the action that will be triggered (and passed the component)
      */
     <T> void storeAndExecute(T component, ComponentAction<T> action);
 
@@ -57,15 +60,18 @@ public interface FormSupport extends ClientElement
      * components can not be determined. During a form render, runnables are executed after the body of the form has
      * rendered.
      *
-     * @param command to be executed
+     * @param command
+     *         to be executed
      */
     void defer(Runnable command);
 
     /**
      * Sets the encoding type for the Form. This should only be set once, and if
      *
-     * @param encodingType MIME type indicating type of encoding for the form
-     * @throws IllegalStateException if the encoding type has already been set to a value different than the supplied
+     * @param encodingType
+     *         MIME type indicating type of encoding for the form
+     * @throws IllegalStateException
+     *         if the encoding type has already been set to a value different than the supplied
      */
     void setEncodingType(String encodingType);
 
@@ -73,10 +79,15 @@ public interface FormSupport extends ClientElement
      * Collects field validation information. A Form may turn off client-side validation, in which case these calls will
      * be ignored.
      *
-     * @param field          for which validation is being generated
-     * @param validationName name of validation method (see Tapestry.Validation in tapestry.js)
-     * @param message        the error message to display if the field is invalid
-     * @param constraint     additional constraint value, or null for validations that don't require a constraint
+     * @param field
+     *         for which validation is being generated
+     * @param validationName
+     *         name of validation method (see Tapestry.Validation in tapestry.js)
+     * @param message
+     *         the error message to display if the field is invalid
+     * @param constraint
+     *         additional constraint value, or null for validations that don't require a constraint
+     * @deprecated Deprecated in 5.4 with no exact replacement
      */
     void addValidation(Field field, String validationName, String message, Object constraint);
 

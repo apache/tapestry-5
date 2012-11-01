@@ -1,4 +1,4 @@
-// Copyright 2008 The Apache Software Foundation
+// Copyright 2008, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry5.validator;
 
 import org.apache.tapestry5.Validator;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * Base class for constructing a {@link org.apache.tapestry5.Validator}.
@@ -27,11 +28,14 @@ public abstract class AbstractValidator<C, T> implements Validator<C, T>
 
     private final String messageKey;
 
-    protected AbstractValidator(Class<C> constraintType, Class<T> valueType, String messageKey)
+    protected final JavaScriptSupport javaScriptSupport;
+
+    protected AbstractValidator(Class<C> constraintType, Class<T> valueType, String messageKey, JavaScriptSupport javaScriptSupport)
     {
         this.constraintType = constraintType;
         this.valueType = valueType;
         this.messageKey = messageKey;
+        this.javaScriptSupport = javaScriptSupport;
     }
 
     public final Class<C> getConstraintType()
