@@ -3,7 +3,6 @@ package org.apache.tapestry5.internal.services.ajax;
 
 import org.apache.tapestry5.Asset
 import org.apache.tapestry5.ComponentResources
-import org.apache.tapestry5.internal.InternalConstants
 import org.apache.tapestry5.internal.services.DocumentLinker
 import org.apache.tapestry5.internal.services.javascript.JavaScriptStackPathConstructor
 import org.apache.tapestry5.internal.test.InternalBaseTestCase
@@ -56,64 +55,6 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         verify()
     }
 
-    @Test
-    void adding_script_will_add_stack() {
-        DocumentLinker linker = mockDocumentLinker()
-        JavaScriptStackSource stackSource = mockJavaScriptStackSource()
-        JavaScriptStackPathConstructor pathConstructor = mockJavaScriptStackPathConstructor()
-
-        trainForCoreStack(linker, stackSource, pathConstructor)
-
-        linker.addScript(InitializationPriority.IMMEDIATE, "stackInit();")
-        linker.addScript(InitializationPriority.NORMAL, "doSomething();")
-
-        replay()
-
-        JavaScriptSupportImpl jss = new JavaScriptSupportImpl(linker, stackSource, pathConstructor)
-
-        jss.addScript("doSomething();")
-
-        jss.commit()
-
-        verify()
-    }
-
-    private void trainForEmptyCoreStack(DocumentLinker linker, JavaScriptStackSource stackSource,
-                                        JavaScriptStackPathConstructor pathConstructor) {
-        JavaScriptStack stack = mockJavaScriptStack()
-
-        expect(stackSource.getStack(InternalConstants.CORE_STACK_NAME)).andReturn stack
-
-        expect(pathConstructor.constructPathsForJavaScriptStack(InternalConstants.CORE_STACK_NAME)).andReturn([])
-
-        expect(stack.stylesheets).andReturn([])
-
-        expect(stack.initialization).andReturn null
-
-        expect(stack.stacks).andReturn([])
-    }
-
-    private void trainForCoreStack(DocumentLinker linker, JavaScriptStackSource stackSource,
-                                   JavaScriptStackPathConstructor pathConstructor) {
-        JavaScriptStack stack = mockJavaScriptStack()
-
-        StylesheetLink stylesheetLink = new StylesheetLink("style.css")
-
-        expect(stackSource.getStack(InternalConstants.CORE_STACK_NAME)).andReturn stack
-
-        expect(pathConstructor.constructPathsForJavaScriptStack(InternalConstants.CORE_STACK_NAME)).andReturn(["stack1.js", "stack2.js"])
-
-        expect(stack.stylesheets).andReturn([stylesheetLink])
-
-        expect(stack.initialization).andReturn "stackInit();"
-
-        expect(stack.stacks).andReturn([])
-
-        linker.addLibrary("stack1.js")
-        linker.addLibrary("stack2.js")
-        linker.addStylesheetLink(stylesheetLink)
-    }
-
     protected final JavaScriptStack mockJavaScriptStack() {
         return newMock(JavaScriptStack.class)
     }
@@ -131,7 +72,6 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         DocumentLinker linker = mockDocumentLinker()
         JavaScriptStackSource stackSource = mockJavaScriptStackSource()
         JavaScriptStackPathConstructor pathConstructor = mockJavaScriptStackPathConstructor()
-        trainForEmptyCoreStack(linker, stackSource, pathConstructor)
 
         linker.addScript(InitializationPriority.IMMEDIATE, "doSomething();")
 
@@ -149,7 +89,6 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         DocumentLinker linker = mockDocumentLinker()
         JavaScriptStackSource stackSource = mockJavaScriptStackSource()
         JavaScriptStackPathConstructor pathConstructor = mockJavaScriptStackPathConstructor()
-        trainForEmptyCoreStack(linker, stackSource, pathConstructor)
 
         trainForNoStackNames(stackSource)
 
@@ -173,7 +112,6 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         DocumentLinker linker = mockDocumentLinker()
         JavaScriptStackSource stackSource = mockJavaScriptStackSource()
         JavaScriptStackPathConstructor pathConstructor = mockJavaScriptStackPathConstructor()
-        trainForEmptyCoreStack(linker, stackSource, pathConstructor)
 
         Asset library1 = mockAsset("mylib1.js")
         Asset library2 = mockAsset("mylib2.js")
@@ -218,8 +156,6 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         JavaScriptStackSource stackSource = mockJavaScriptStackSource()
         JavaScriptStackPathConstructor pathConstructor = mockJavaScriptStackPathConstructor()
 
-        trainForCoreStack(linker, stackSource, pathConstructor)
-
         JavaScriptStack stack = mockJavaScriptStack()
 
         StylesheetLink stylesheetLink = new StylesheetLink("stack.css")
@@ -235,7 +171,6 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         linker.addLibrary("stack.js")
         linker.addStylesheetLink(stylesheetLink)
 
-        linker.addScript(InitializationPriority.IMMEDIATE, "stackInit();")
         linker.addScript(InitializationPriority.IMMEDIATE, "customInit();")
 
         replay()
@@ -257,8 +192,6 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         DocumentLinker linker = mockDocumentLinker()
         JavaScriptStackSource stackSource = mockJavaScriptStackSource()
         JavaScriptStackPathConstructor pathConstructor = mockJavaScriptStackPathConstructor()
-
-        trainForCoreStack(linker, stackSource, pathConstructor)
 
         JavaScriptStack child = mockJavaScriptStack()
         JavaScriptStack parent = mockJavaScriptStack()
@@ -291,7 +224,6 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         linker.addStylesheetLink(parentStylesheetLink)
         linker.addStylesheetLink(childStylesheetLink)
 
-        linker.addScript(InitializationPriority.IMMEDIATE, "stackInit();")
         linker.addScript(InitializationPriority.IMMEDIATE, "parentInit();")
         linker.addScript(InitializationPriority.IMMEDIATE, "childInit();")
 
@@ -311,7 +243,6 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         DocumentLinker linker = mockDocumentLinker()
         JavaScriptStackSource stackSource = mockJavaScriptStackSource()
         JavaScriptStackPathConstructor pathConstructor = mockJavaScriptStackPathConstructor()
-        trainForEmptyCoreStack(linker, stackSource, pathConstructor)
 
         trainForNoStackNames(stackSource)
 
@@ -339,7 +270,6 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         DocumentLinker linker = mockDocumentLinker()
         JavaScriptStackSource stackSource = mockJavaScriptStackSource()
         JavaScriptStackPathConstructor pathConstructor = mockJavaScriptStackPathConstructor()
-        trainForEmptyCoreStack(linker, stackSource, pathConstructor)
 
         train_init(linker, InitializationPriority.IMMEDIATE, "setup", "chuck")
         train_init(linker, InitializationPriority.IMMEDIATE, "setup", "charley")
@@ -361,7 +291,6 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         DocumentLinker linker = mockDocumentLinker()
         JavaScriptStackSource stackSource = mockJavaScriptStackSource()
         JavaScriptStackPathConstructor pathConstructor = mockJavaScriptStackPathConstructor()
-        trainForEmptyCoreStack(linker, stackSource, pathConstructor)
 
         JSONArray chuck = new JSONArray("chuck", "yeager")
         JSONArray buzz = new JSONArray("buzz", "aldrin")
@@ -394,7 +323,6 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         DocumentLinker linker = mockDocumentLinker()
         JavaScriptStackSource stackSource = mockJavaScriptStackSource()
         JavaScriptStackPathConstructor pathConstructor = mockJavaScriptStackPathConstructor()
-        trainForEmptyCoreStack(linker, stackSource, pathConstructor)
 
         train_init(linker, InitializationPriority.NORMAL, "setup", "chuck")
 
@@ -414,7 +342,6 @@ class JavaScriptSupportImplTest extends InternalBaseTestCase {
         DocumentLinker linker = mockDocumentLinker()
         JavaScriptStackSource stackSource = mockJavaScriptStackSource()
         JavaScriptStackPathConstructor pathConstructor = mockJavaScriptStackPathConstructor()
-        trainForEmptyCoreStack(linker, stackSource, pathConstructor)
 
         JSONArray chuck = new JSONArray("chuck", "yeager")
 

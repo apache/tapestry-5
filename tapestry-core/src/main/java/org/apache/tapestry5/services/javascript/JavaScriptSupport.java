@@ -72,6 +72,7 @@ public interface JavaScriptSupport
      *         format string (as per {@link String#format(String, Object...)}
      * @param arguments
      *         arguments referenced by format specifiers
+     * @deprecated Deprecated in 5.4; refactor to use {@linkplain #require(String) JavaScript modules} instead
      */
     void addScript(String format, Object... arguments);
 
@@ -84,6 +85,7 @@ public interface JavaScriptSupport
      *         format string (as per {@link String#format(String, Object...)}
      * @param arguments
      *         arguments referenced by format specifiers
+     * @deprecated Deprecated in 5.4; refactor to use {@linkplain #require(String) JavaScript modules} instead
      */
     void addScript(InitializationPriority priority, String format, Object... arguments);
 
@@ -96,6 +98,7 @@ public interface JavaScriptSupport
      *         name of client-side function (within Tapestry.Initializer namespace) to execute
      * @param parameter
      *         object to pass to the client-side function
+     * @deprecated Deprecated in 5.4; refactor to use {@linkplain #require(String) JavaScript modules} instead
      */
     void addInitializerCall(String functionName, JSONObject parameter);
 
@@ -109,6 +112,7 @@ public interface JavaScriptSupport
      * @param parameter
      *         array of parameters to pass to the client-side function
      * @since 5.3
+     * @deprecated Deprecated in 5.4; refactor to use {@linkplain #require(String) JavaScript modules} instead
      */
     void addInitializerCall(String functionName, JSONArray parameter);
 
@@ -122,6 +126,7 @@ public interface JavaScriptSupport
      * @param parameter
      *         array of parameters to pass to the client-side function
      * @since 5.3
+     * @deprecated Deprecated in 5.4; refactor to use {@linkplain #require(String) JavaScript modules} instead
      */
     void addInitializerCall(InitializationPriority priority, String functionName, JSONArray parameter);
 
@@ -136,6 +141,7 @@ public interface JavaScriptSupport
      *         name of client-side function (within Tapestry.Initializer namespace) to execute
      * @param parameter
      *         object to pass to the client-side function
+     * @deprecated Deprecated in 5.4; refactor to use {@linkplain #require(String) JavaScript modules} instead
      */
     void addInitializerCall(InitializationPriority priority, String functionName, JSONObject parameter);
 
@@ -148,6 +154,7 @@ public interface JavaScriptSupport
      *         name of client-side function (within Tapestry.Initializer namespace) to execute
      * @param parameter
      *         string to pass to function (typically, a client id)
+     * @deprecated Deprecated in 5.4; refactor to use {@linkplain #require(String) JavaScript modules} instead
      */
     void addInitializerCall(String functionName, String parameter);
 
@@ -162,12 +169,15 @@ public interface JavaScriptSupport
      *         name of client-side function (within Tapestry.Initializer namespace) to execute
      * @param parameter
      *         string to pass to function (typically, a client id)
+     * @deprecated Deprecated in 5.4; refactor to use {@linkplain #require(String) JavaScript modules} instead
      */
     void addInitializerCall(InitializationPriority priority, String functionName, String parameter);
 
     /**
      * Imports a JavaScript library as part of the rendered page. Libraries are added in the order
-     * they are first imported; duplicate imports are ignored.
+     * they are first imported; duplicate imports are ignored. Libraries are added to the page serially
+     * (whereas modules may be loaded in parallel), and all libraries are added before any modules are loaded.
+     * Because of this, it is preferrable to organize your JavaScript into modules, rather than libraries.
      *
      * @return this JavaScriptSupport, for further configuration
      * @see org.apache.tapestry5.annotations.Import
@@ -200,6 +210,8 @@ public interface JavaScriptSupport
      * {@linkplain SymbolConstants#COMBINE_SCRIPTS JavaScript aggregation} in enabled, the stack will be represented by
      * a single virtual URL; otherwise the individual asset URLs of the stack
      * will be added to the document.
+     * <p/>
+     * Please refer to the {@linkplain #importJavaScriptLibrary(Asset) notes about libraries vs. modules}.
      *
      * @param stackName
      *         the name of the stack (case is ignored); the stack must exist
@@ -209,6 +221,8 @@ public interface JavaScriptSupport
 
     /**
      * Import a Javascript library with an arbitrary URL.
+     * <p/>
+     * Please refer to the {@linkplain #importJavaScriptLibrary(Asset) notes about libraries vs. modules}.
      */
     JavaScriptSupport importJavaScriptLibrary(String libraryURL);
 
@@ -229,7 +243,12 @@ public interface JavaScriptSupport
     /**
      * Requires a JavaScript module by name. On the client, this will <code>require()</code> the module and
      * (optionally) de-reference a function exported by the module (or, treat the module as exporting a single
-     * implicit function). The function will be invoked.
+     * implicit function). The function will be invoked. Use the returned {@link Initialization} to specify the function name
+     * to invoke, and the parameters to pass to the function.
+     * <p/>
+     * In some cases, a module exports no functions, but performs some initialization (typically, adding document-level
+     * event handlers), in which case a call to require() is sufficient. In cases where the module, or a function
+     * within the module, are invoked with no parameters, the calls will be collapsed into a single invocation.
      *
      * @param moduleName
      *         the name of the module to require

@@ -224,8 +224,6 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         assert priority != null;
         assert InternalUtils.isNonBlank(format);
 
-        addCoreStackIfNeeded();
-
         String newScript = arguments.length == 0 ? format : String.format(format, arguments);
 
         if (partialMode)
@@ -261,7 +259,6 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
 
     public JavaScriptSupport importJavaScriptLibrary(String libraryURL)
     {
-        addCoreStackIfNeeded();
 
         String stackName = findStackForLibrary(libraryURL);
 
@@ -306,11 +303,6 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
         }
 
         return libraryURLToStackName;
-    }
-
-    private void addCoreStackIfNeeded()
-    {
-        addAssetsFromStack(InternalConstants.CORE_STACK_NAME);
     }
 
     private void addAssetsFromStack(String stackName)
@@ -374,8 +366,6 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     {
         assert InternalUtils.isNonBlank(stackName);
 
-        addCoreStackIfNeeded();
-
         addAssetsFromStack(stackName);
 
         return this;
@@ -399,8 +389,6 @@ public class JavaScriptSupportImpl implements JavaScriptSupport
     public Initialization require(String moduleName)
     {
         assert InternalUtils.isNonBlank(moduleName);
-
-        addCoreStackIfNeeded();
 
         InitializationImpl init = new InitializationImpl(moduleName);
 

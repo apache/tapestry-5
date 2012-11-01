@@ -69,7 +69,6 @@ JavaScript Libraries (including stacks) are being replaced with modules. Note th
 RequireJS, which may mean that global values exported by the libraries are not visible; you should explicitly attach
 properties to the global JavaScript window object, rather than assume that the context (this) is the window.
 
-
 ## T5 and Tapestry namespaces all but eliminated
 
 Only a limited number of properties exported as the `T5` and `Tapestry` namespaces (on the client) still exist; enough
@@ -94,7 +93,6 @@ decide to animate them using whatever library is desired. The event names are de
 
 On the client side, the "floating console" is now only used in cases where a native console is not available.
 
-
 ## Form.clientValidation parameter
 
 Prior releases of Tapestry mapped "true" and "false" values for Form.clientValidation to BLUR and NONE. This mapping
@@ -103,7 +101,6 @@ was introduced in Tapestry 5.2, and has now been removed.
 Support for validating fields on blur (i.e., when tabbing out of a field) has been removed. Validation now occurs when
 the form is submitted, or not at all. The ClientValidation.BLUR enum value has been deprecated and is now treated as
 SUBMIT.
-
 
 ## Wait-for-page logic removed
 
@@ -117,6 +114,9 @@ the page initialization has completed may be implemented in the future.
 Tapestry now includes a default copy of Twitter Bootstrap in addition to its own default set of CSS rules (the
 file "default.css" automatically included in rendered pages). The Tapestry CSS has been largely eliminated; instead
 components now refer to standard Bootstrap CSS classes.
+
+The Bootstrap CSS is now only present if the `core` JavaScript stack is imported. You may need to change your application's
+layout component to do so explicitly, by adding `@Import(stack="core")` to the class.
 
 ValidationDecorator and ValidationDecoratorFactory are deprecated in 5.4 and will be removed in 5.5. The default
 implementation of ValidationDecorator now does nothing. All the logic related to presentation of errors has moved
@@ -136,3 +136,10 @@ div.control-group, which is provided around the editor for each property.
 
 This service, primarily used by built-in components in Tapestry 5.3, is no longer useful in 5.4. The service
 still exists, but the methods do nothing, and the service and interface will be removed in 5.5.
+
+## JavaScriptSupport
+
+In prior releases, adding _any_ JavaScript to the application would implicitly import the `core` JavaScript stack.
+This no longer occurs; in most cases, the core stack is provided automatically by other components.
+
+You may want to consider adding `@Import(stack="core")` to your applications' main layout component.
