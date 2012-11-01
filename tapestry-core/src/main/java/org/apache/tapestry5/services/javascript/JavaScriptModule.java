@@ -61,6 +61,7 @@ public class JavaScriptModule
     {
         binder.bind(ModuleManager.class, ModuleManagerImpl.class);
         binder.bind(JavaScriptStackSource.class, JavaScriptStackSourceImpl.class);
+        binder.bind(JavaScriptStack.class, ExtensibleJavaScriptStack.class).withMarker(Core.class).withId("CoreJavaScriptStack");
     }
 
     /**
@@ -68,11 +69,47 @@ public class JavaScriptModule
      *
      * @since 5.2.0
      */
-    public static void contributeJavaScriptStackSource(MappedConfiguration<String, JavaScriptStack> configuration)
+    @Contribute(JavaScriptStackSource.class)
+    public static void provideBuiltinJavaScriptStacks(MappedConfiguration<String, JavaScriptStack> configuration, @Core JavaScriptStack coreStack)
     {
-        configuration.addInstance(InternalConstants.CORE_STACK_NAME, CoreJavaScriptStack.class);
+        configuration.add(InternalConstants.CORE_STACK_NAME, coreStack);
         configuration.addInstance("core-datefield", DateFieldStack.class);
     }
+
+    @Contribute(JavaScriptStack.class)
+    @Core
+    public static void setupCoreJavaScriptStack(OrderedConfiguration<StackExtension> configuration)
+    {
+        final String ROOT = "${tapestry.asset.root}";
+
+        add(configuration, StackExtensionType.LIBRARY, "${tapestry.scriptaculous}/scriptaculous.js",
+                "${tapestry.scriptaculous}/effects.js",
+                ROOT + "/t53-compatibility.js"
+        );
+
+        add(configuration, StackExtensionType.STYLESHEET,
+                "${tapestry.bootstrap-root}/css/bootstrap.css",
+
+                // The following are mostly temporary:
+
+                ROOT + "/tapestry-console.css",
+
+                ROOT + "/t5-alerts.css",
+
+                ROOT + "/tree.css");
+    }
+
+    private static void add(OrderedConfiguration<StackExtension> configuration, StackExtensionType type, String... paths)
+    {
+        for (String path : paths)
+        {
+            int slashx = path.lastIndexOf('/');
+            String id = path.substring(slashx + 1);
+
+            configuration.add(id, new StackExtension(type, path));
+        }
+    }
+
 
     /**
      * Builds a proxy to the current {@link JavaScriptSupport} inside this thread's {@link org.apache.tapestry5.services.Environment}.
