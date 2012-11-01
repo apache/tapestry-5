@@ -34,7 +34,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  */
 @SupportsInformalParameters
 @Events(EventConstants.SELECTED + " by default, may be overridden")
-@Import(modules = "core/forms")
+@Import(module = "core/forms")
 public class LinkSubmit implements ClientElement
 {
     /**

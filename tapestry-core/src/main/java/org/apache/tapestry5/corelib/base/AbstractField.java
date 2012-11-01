@@ -36,7 +36,7 @@ import java.io.Serializable;
  * @tapestrydoc
  */
 @SupportsInformalParameters
-@Import(modules = "core/fields")
+@Import(module = "core/fields")
 public abstract class AbstractField implements Field
 {
     /**

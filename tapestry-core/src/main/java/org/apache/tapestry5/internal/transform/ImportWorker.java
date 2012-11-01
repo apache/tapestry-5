@@ -118,7 +118,7 @@ public class ImportWorker implements ComponentClassTransformWorker2
 
         importStylesheets(componentClass, model, method, annotation.stylesheet());
 
-        importModules(method, annotation.modules());
+        importModules(method, annotation.module());
     }
 
     private void importStacks(PlasticMethod method, String[] stacks)

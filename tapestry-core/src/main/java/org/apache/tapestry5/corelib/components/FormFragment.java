@@ -55,7 +55,7 @@ import org.slf4j.Logger;
  * @see Form
  */
 @SupportsInformalParameters
-@Import(modules = "core/form-fragment")
+@Import(module = "core/form-fragment")
 public class FormFragment implements ClientElement
 {
     /**

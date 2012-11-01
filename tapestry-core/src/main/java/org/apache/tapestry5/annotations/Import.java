@@ -81,5 +81,5 @@ public @interface Import
      * @see JavaScriptSupport#require(String)
      * @since 5.4
      */
-    String[] modules() default {};
+    String[] module() default {};
 }
