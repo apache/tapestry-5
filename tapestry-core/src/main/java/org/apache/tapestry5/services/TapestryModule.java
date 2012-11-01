@@ -2582,21 +2582,20 @@ public final class TapestryModule
     /**
      * Contributes:
      * <dl>
+     * <dt>Core</dt>
+     * <dd>Built in messages used by Tapestry's default validators and components</dd>
      * <dt>AppCatalog</dt>
      * <dd>The Resource defined by {@link SymbolConstants#APPLICATION_CATALOG}</dd>
-     * <dt>Core</dt>
-     * <dd>Built in messages used by Tapestry's default validators and components (before:AppCatalog)</dd>
      * <dt>
      *
      * @since 5.2.0
      */
-    public static void contributeComponentMessagesSource(AssetSource assetSource,
+    @Contribute(ComponentMessagesSource.class)
+    public static void setupGlobalMessageCatalog(AssetSource assetSource,
                                                          @Symbol(SymbolConstants.APPLICATION_CATALOG)
                                                          Resource applicationCatalog, OrderedConfiguration<Resource> configuration)
     {
-        configuration.add("Core",
-                assetSource.resourceForPath("org/apache/tapestry5/core.properties"),
-                "before:AppCatalog");
+        configuration.add("Core", assetSource.resourceForPath("org/apache/tapestry5/core.properties"));
         configuration.add("AppCatalog", applicationCatalog);
     }
 
