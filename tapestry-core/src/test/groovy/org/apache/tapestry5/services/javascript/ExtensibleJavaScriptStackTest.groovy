@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,10 +14,11 @@
 
 package org.apache.tapestry5.services.javascript;
 
-import org.apache.tapestry5.Asset;
-import org.apache.tapestry5.services.AssetSource;
-import org.apache.tapestry5.test.TapestryTestCase;
-import org.testng.annotations.Test;
+
+import org.apache.tapestry5.Asset
+import org.apache.tapestry5.services.AssetSource
+import org.apache.tapestry5.test.TapestryTestCase
+import org.testng.annotations.Test
 
 /** @since 5.3 */
 class ExtensibleJavaScriptStackTest extends TapestryTestCase {
@@ -37,8 +38,8 @@ class ExtensibleJavaScriptStackTest extends TapestryTestCase {
         replay()
 
         ExtensibleJavaScriptStack stack = new ExtensibleJavaScriptStack(mockSource, [
-            new StackExtension (StackExtensionType.LIBRARY, lib1path),
-            new StackExtension (StackExtensionType.LIBRARY, lib2path),
+            new StackExtension(StackExtensionType.LIBRARY, lib1path),
+            new StackExtension(StackExtensionType.LIBRARY, lib2path),
         ])
 
         assert stack.stacks.empty
@@ -47,6 +48,24 @@ class ExtensibleJavaScriptStackTest extends TapestryTestCase {
         assert stack.initialization == null
 
         verify()
+    }
+
+    @Test
+    void contributed_stack() {
+        AssetSource mockSource = mockAssetSource()
+
+        replay()
+
+        ExtensibleJavaScriptStack stack = new ExtensibleJavaScriptStack(mockSource, [
+            new StackExtension(StackExtensionType.STACK, "stacka"),
+            new StackExtension(StackExtensionType.STACK, "stackb"),
+        ])
+
+        assert stack.stacks == ["stacka", "stackb"]
+        assert stack.javaScriptLibraries.empty
+
+        verify()
+
     }
 
     @Test
@@ -70,8 +89,8 @@ class ExtensibleJavaScriptStackTest extends TapestryTestCase {
         replay()
 
         ExtensibleJavaScriptStack stack = new ExtensibleJavaScriptStack(mockSource, [
-            new StackExtension (StackExtensionType.STYLESHEET, stylesheet1path),
-            new StackExtension (StackExtensionType.STYLESHEET, stylesheet2path),
+            new StackExtension(StackExtensionType.STYLESHEET, stylesheet1path),
+            new StackExtension(StackExtensionType.STYLESHEET, stylesheet2path),
         ])
 
         assert stack.stacks.empty
@@ -89,8 +108,8 @@ class ExtensibleJavaScriptStackTest extends TapestryTestCase {
     @Test
     void initializations_are_combined() {
         ExtensibleJavaScriptStack stack = new ExtensibleJavaScriptStack(null, [
-            new StackExtension (StackExtensionType.INITIALIZATION, "doThis();"),
-            new StackExtension (StackExtensionType.INITIALIZATION, "doThat();"),
+            new StackExtension(StackExtensionType.INITIALIZATION, "doThis();"),
+            new StackExtension(StackExtensionType.INITIALIZATION, "doThat();"),
         ])
 
         assert stack.initialization == "doThis();\ndoThat();"

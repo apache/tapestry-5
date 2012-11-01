@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,6 @@
 
 package org.apache.tapestry5.services.javascript;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Flow;
@@ -28,6 +25,8 @@ import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.AssetSource;
 
+import java.util.List;
+
 /**
  * An extensible implementation of {@link JavaScriptStack} that can be used as the implementation of a service.
  * The contributions to the service are used to supply the libraries, stylesheets, and initialization for a
@@ -35,11 +34,11 @@ import org.apache.tapestry5.services.AssetSource;
  * {@link ServiceBinder#bind(Class, Class)} and {@link ServiceBindingOptions#withMarker(Class...)} to construct the
  * service, then use the marker annotation to inject the service when contributing the service into to the
  * {@link JavaScriptStackSource}.
- * <p>
+ * <p/>
  * A limitation of this implementation is that the contributed assets are not localized at all.
- * 
- * @since 5.3
+ *
  * @see StackExtension
+ * @since 5.3
  */
 @UsesOrderedConfiguration(StackExtension.class)
 public class ExtensibleJavaScriptStack implements JavaScriptStack
@@ -49,6 +48,8 @@ public class ExtensibleJavaScriptStack implements JavaScriptStack
     private final List<Asset> libraries;
 
     private final List<StylesheetLink> stylesheets;
+
+    private final List<String> stacks;
 
     private final String initialization;
 
@@ -68,7 +69,9 @@ public class ExtensibleJavaScriptStack implements JavaScriptStack
         public String map(StackExtension element)
         {
             return element.value;
-        };
+        }
+
+        ;
     };
 
     private final Mapper<String, Asset> stringToAsset = new Mapper<String, Asset>()
@@ -76,7 +79,9 @@ public class ExtensibleJavaScriptStack implements JavaScriptStack
         public Asset map(String value)
         {
             return assetSource.getExpandedAsset(value);
-        };
+        }
+
+        ;
     };
 
     private final Mapper<Asset, StylesheetLink> assetToStylesheetLink = new Mapper<Asset, StylesheetLink>()
@@ -84,7 +89,9 @@ public class ExtensibleJavaScriptStack implements JavaScriptStack
         public StylesheetLink map(Asset asset)
         {
             return new StylesheetLink(asset);
-        };
+        }
+
+        ;
     };
 
     public ExtensibleJavaScriptStack(AssetSource assetSource, List<StackExtension> configuration)
@@ -94,6 +101,8 @@ public class ExtensibleJavaScriptStack implements JavaScriptStack
         Flow<StackExtension> extensions = F.flow(configuration);
 
         libraries = extensions.filter(by(StackExtensionType.LIBRARY)).map(extractValue).map(stringToAsset).toList();
+
+        stacks = extensions.filter(by(StackExtensionType.STACK)).map(extractValue).toList();
 
         stylesheets = extensions.filter(by(StackExtensionType.STYLESHEET)).map(extractValue).map(stringToAsset)
                 .map(assetToStylesheetLink).toList();
@@ -106,7 +115,7 @@ public class ExtensibleJavaScriptStack implements JavaScriptStack
 
     public List<String> getStacks()
     {
-        return Collections.emptyList();
+        return stacks;
     }
 
     public List<Asset> getJavaScriptLibraries()

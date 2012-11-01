@@ -36,6 +36,16 @@ public enum StackExtensionType
     LIBRARY,
 
     /**
+     * A dependency on another JavaScriptStack. Note that this is especially useful as, starting in 5.4, there is
+     * no automatic dependency on the "core" stack, as there was in earlier versions.
+     *
+     * @see JavaScriptSupport#importStack(String)
+     * @see org.apache.tapestry5.services.javascript.JavaScriptStack#getStylesheets()
+     * @since 5.4
+     */
+    STACK,
+
+    /**
      * A stylesheet. The extension value will be converted using {@link AssetSource#getExpandedAsset(String)},
      * meaning that {@linkplain SymbolSource symbols} will be expanded.
      *
