@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.apache.tapestry5.ioc.util.Stack;
 
 import java.io.PrintWriter;
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * An element that will render with a begin tag and attributes, a body, and an end tag. Also acts as a factory for
@@ -43,7 +44,9 @@ public final class Element extends Node
 
     private final Document document;
 
-    private static final String CLASS_ATTRIBUTE = "class";
+    private static final Pattern SPACES = Pattern.compile("\\s+");
+
+    private static final String[] EMPTY_ARRAY = new String[0];
 
     /**
      * URI of the namespace which contains the element. A quirk in XML is that the element may be in a namespace it
@@ -88,9 +91,11 @@ public final class Element extends Node
     /**
      * Adds an attribute to the element, but only if the attribute name does not already exist.
      *
-     * @param name  the name of the attribute to add
-     * @param value the value for the attribute. A value of null is allowed, and no attribute will be added to the
-     *              element.
+     * @param name
+     *         the name of the attribute to add
+     * @param value
+     *         the value for the attribute. A value of null is allowed, and no attribute will be added to the
+     *         element.
      */
     public Element attribute(String name, String value)
     {
@@ -100,10 +105,13 @@ public final class Element extends Node
     /**
      * Adds a namespaced attribute to the element, but only if the attribute name does not already exist.
      *
-     * @param namespace the namespace to contain the attribute, or null
-     * @param name      the name of the attribute to add
-     * @param value     the value for the attribute. A value of null is allowed, and no attribute will be added to the
-     *                  element.
+     * @param namespace
+     *         the namespace to contain the attribute, or null
+     * @param name
+     *         the name of the attribute to add
+     * @param value
+     *         the value for the attribute. A value of null is allowed, and no attribute will be added to the
+     *         element.
      */
     public Element attribute(String namespace, String name, String value)
     {
@@ -159,7 +167,8 @@ public final class Element extends Node
     /**
      * Convenience for invoking {@link #attribute(String, String)} multiple times.
      *
-     * @param namesAndValues alternating attribute names and attribute values
+     * @param namesAndValues
+     *         alternating attribute names and attribute values
      */
     public Element attributes(String... namesAndValues)
     {
@@ -179,7 +188,8 @@ public final class Element extends Node
      * Forces changes to a number of attributes. The new attributes <em>overwrite</em> previous values. Overriding an
      * attribute's value to null will remove the attribute entirely.
      *
-     * @param namesAndValues alternating attribute names and attribute values
+     * @param namesAndValues
+     *         alternating attribute names and attribute values
      * @return this element
      */
     public Element forceAttributes(String... namesAndValues)
@@ -192,8 +202,10 @@ public final class Element extends Node
      * values. Overriding attribute's value to null will remove the attribute entirely.
      * TAP5-708: don't use element namespace for attributes
      *
-     * @param namespace      the namespace or null
-     * @param namesAndValues alternating attribute name and value
+     * @param namespace
+     *         the namespace or null
+     * @param namesAndValues
+     *         alternating attribute name and value
      * @return this element
      */
     public Element forceAttributesNS(String namespace, String... namesAndValues)
@@ -214,8 +226,10 @@ public final class Element extends Node
     /**
      * Creates and returns a new Element node as a child of this node.
      *
-     * @param name           the name of the element to create
-     * @param namesAndValues alternating attribute names and attribute values
+     * @param name
+     *         the name of the element to create
+     * @param namesAndValues
+     *         alternating attribute names and attribute values
      */
     public Element element(String name, String... namesAndValues)
     {
@@ -230,8 +244,10 @@ public final class Element extends Node
     /**
      * Inserts a new element before this element.
      *
-     * @param name           element name
-     * @param namesAndValues attribute names and values
+     * @param name
+     *         element name
+     * @param namesAndValues
+     *         attribute names and values
      * @return the new element
      * @since 5.3
      */
@@ -250,8 +266,10 @@ public final class Element extends Node
     /**
      * Creates and returns a new Element within a namespace as a child of this node.
      *
-     * @param namespace namespace to contain the element, or null
-     * @param name      element name to create within the namespace
+     * @param namespace
+     *         namespace to contain the element, or null
+     * @param name
+     *         element name to create within the namespace
      * @return the newly created element
      */
     public Element elementNS(String namespace, String name)
@@ -263,9 +281,12 @@ public final class Element extends Node
     /**
      * Creates a new element, as a child of the current index, at the indicated index.
      *
-     * @param index          to insert at
-     * @param name           element name
-     * @param namesAndValues attribute name / attribute value pairs
+     * @param index
+     *         to insert at
+     * @param name
+     *         element name
+     * @param namesAndValues
+     *         attribute name / attribute value pairs
      * @return the new element
      */
     public Element elementAt(int index, String name, String... namesAndValues)
@@ -303,7 +324,8 @@ public final class Element extends Node
      * Adds and returns a new text node (the text node is returned so that {@link Text#write(String)} or [@link
      * {@link Text#writef(String, Object[])} may be invoked .
      *
-     * @param text initial text for the node
+     * @param text
+     *         initial text for the node
      * @return the new Text node
      */
     public Text text(String text)
@@ -314,7 +336,8 @@ public final class Element extends Node
     /**
      * Adds and returns a new CDATA node.
      *
-     * @param content the content to be rendered by the node
+     * @param content
+     *         the content to be rendered by the node
      * @return the newly created node
      */
     public CData cdata(String content)
@@ -427,7 +450,8 @@ public final class Element extends Node
      * Performs a width-first
      * search of the document tree.
      *
-     * @param id the value of the id attribute of the element being looked for
+     * @param id
+     *         the value of the id attribute of the element being looked for
      * @return the element if found. null if not found.
      */
     public Element getElementById(final String id)
@@ -438,8 +462,10 @@ public final class Element extends Node
     /**
      * Tries to find an element under this element (including itself) whose given attribute has a given value.
      *
-     * @param attributeName  the name of the attribute of the element being looked for
-     * @param attributeValue the value of the attribute of the element being looked for
+     * @param attributeName
+     *         the name of the attribute of the element being looked for
+     * @param attributeValue
+     *         the value of the attribute of the element being looked for
      * @return the element if found. null if not found.
      * @since 5.2.3
      */
@@ -461,7 +487,8 @@ public final class Element extends Node
     /**
      * Tries to find an element under this element (including itself) accepted by the given predicate.
      *
-     * @param predicate Predicate to accept the element
+     * @param predicate
+     *         Predicate to accept the element
      * @return the element if found. null if not found.
      * @since 5.2.3
      */
@@ -589,30 +616,65 @@ public final class Element extends Node
     }
 
     /**
-     * Adds one or more CSS class names to the "class" attribute. No check for duplicates is made. Note that CSS class
+     * Adds one or more CSS class names to the "class" attribute, using {@link #extendAttribute}. Note that CSS class
      * names are case insensitive on the client.
      *
-     * @param className one or more CSS class names
+     * @param classNames
+     *         one or more CSS class names
      * @return the element for further configuration
      */
-    public Element addClassName(String... className)
+    public Element addClassName(String... classNames)
     {
-        String classes = getAttribute(CLASS_ATTRIBUTE);
+        return extendAttribute("class", classNames);
+    }
 
-        StringBuilder builder = new StringBuilder();
+    /**
+     * Adds one or more new values to an attribute; the attribute is considered to have multiple
+     * value separated by spaces (such as the HTML {@code class} attribute). The new values are added
+     * to the existing ones. Duplicates are removed (the comparison is, however, case sensitive). The order
+     * of the individual words inside the attribute value may change.
+     *
+     * @param name
+     *         name of attribute to update
+     * @param words
+     *         additional words to add to the attribute value; they should not contain any whitespace
+     * @return the element for further configuration
+     * @since 5.4
+     */
+    public Element extendAttribute(String name, String... words)
+    {
+        Set<String> values = CollectionFactory.newSet();
 
-        if (classes != null)
-            builder.append(classes);
+        String attributeValue = getAttribute(name);
 
-        for (String name : className)
+        String[] existing = attributeValue == null ? EMPTY_ARRAY : SPACES.split(attributeValue);
+
+        int length = 0;
+
+        for (String word : existing)
         {
-            if (builder.length() > 0)
-                builder.append(" ");
+            length += word.length() + 1;
 
-            builder.append(name);
+            values.add(word);
         }
 
-        forceAttributes(CLASS_ATTRIBUTE, builder.toString());
+        for (String word : words)
+        {
+            length += word.length() + 1;
+
+            values.add(word);
+        }
+
+        StringBuilder builder = new StringBuilder(length);
+        String sep = "";
+
+        for (String word : values)
+        {
+            builder.append(sep).append(word);
+            sep = " ";
+        }
+
+        updateAttribute(null, name, builder.toString(), true);
 
         return this;
     }
@@ -622,8 +684,10 @@ public final class Element extends Node
      * attributes nested within the element are rendered, and will also cause <code>xmlns:</code> attributes (to define
      * the namespace and prefix) to be rendered.
      *
-     * @param namespace       URI of the namespace
-     * @param namespacePrefix prefix
+     * @param namespace
+     *         URI of the namespace
+     * @param namespacePrefix
+     *         prefix
      * @return this element
      */
     public Element defineNamespace(String namespace, String namespacePrefix)
@@ -807,7 +871,8 @@ public final class Element extends Node
      * Depth-first visitor traversal of this Element and its Element children. The traversal order is the same as render
      * order.
      *
-     * @param visitor callback
+     * @param visitor
+     *         callback
      * @since 5.1.0.0
      */
     public void visit(Visitor visitor)
