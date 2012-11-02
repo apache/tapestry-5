@@ -15,7 +15,9 @@
 package org.apache.tapestry5.internal.services.javascript;
 
 import org.apache.tapestry5.MarkupWriter;
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.dom.Element;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.services.MarkupRenderer;
 import org.apache.tapestry5.services.MarkupRendererFilter;
@@ -30,9 +32,12 @@ public class ConfigureHTMLElementFilter implements MarkupRendererFilter
 {
     private final ThreadLocale threadLocale;
 
-    public ConfigureHTMLElementFilter(ThreadLocale threadLocale)
+    private final boolean debugEnabled;
+
+    public ConfigureHTMLElementFilter(ThreadLocale threadLocale, @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode)
     {
         this.threadLocale = threadLocale;
+        this.debugEnabled = !productionMode;
     }
 
     @Override
@@ -44,11 +49,17 @@ public class ConfigureHTMLElementFilter implements MarkupRendererFilter
 
         Element html = writer.getDocument().find("html");
 
-        // If it is an HTML document, with a root HTML node, put data-locale
-        // attribute inplace for the client.
+        // If it is an HTML document, with a root HTML node, add attributes
+        // to describe locale, and if debug is enabled.
         if (html != null)
         {
             html.attributes("data-locale", threadLocale.getLocale().toString());
+
+            if (debugEnabled)
+            {
+                html.attributes("data-debug-enabled", "true");
+            }
+
         }
     }
 }

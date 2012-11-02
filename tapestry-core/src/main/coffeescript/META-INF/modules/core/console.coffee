@@ -76,13 +76,23 @@ define ["core/spi", "core/builder", "_"], (spi, builder, _) ->
 
       return
 
-  # If native console available, go for it.  IE doesn't have debug, so we use log instead.
 
-  exports.debug = level "t-debug", (nativeConsole.debug or nativeConsole.log)
+  # Determine whether debug is enabled by checking for the necessary attribute (which is missing
+  # in production mode).
+  exports.debugEnabled = (document.documentElement.getAttribute "data-debug-enabled")?
+
+  # When debugging is not enabled, then the debug function becomes a no-op.
+  exports.debug =
+    if exports.debugEnabled
+      # If native console available, go for it.  IE doesn't have debug, so we use log instead.
+      level "t-debug", (nativeConsole.debug or nativeConsole.log)
+    else
+      ->
+
   exports.info = level "t-info", nativeConsole.info
   exports.warn = level "t-warn", nativeConsole.warn
   exports.error = level "t-err", nativeConsole.error
 
   # Return the exports; we keep a reference to it, so we can see exports.DURATION, even
-  # if some other module imports this one and modified that property.
+  # if some other module imports this one and modifies that property.
   return exports
