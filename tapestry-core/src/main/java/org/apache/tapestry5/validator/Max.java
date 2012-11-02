@@ -19,15 +19,16 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.ioc.MessageFormatter;
 import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * Enforces a maximum integer value.
  */
 public class Max extends AbstractValidator<Long, Number>
 {
-    public Max()
+    public Max(JavaScriptSupport javaScriptSupport)
     {
-        super(Long.class, Number.class, "max-integer", null);
+        super(Long.class, Number.class, "max-integer", javaScriptSupport);
     }
 
     public void validate(Field field, Long constraintValue, MessageFormatter formatter, Number value)
@@ -45,7 +46,13 @@ public class Max extends AbstractValidator<Long, Number>
     public void render(Field field, Long constraintValue, MessageFormatter formatter, MarkupWriter writer,
                        FormSupport formSupport)
     {
-        formSupport.addValidation(field, "max", buildMessage(formatter, field, constraintValue), constraintValue);
+        if (formSupport.isClientValidationEnabled())
+        {
+            javaScriptSupport.require("core/validation");
+            writer.getElement().attributes("data-validation", "true",
+                    "data-validate-max", constraintValue.toString(),
+                    "data-max-message", buildMessage(formatter, field, constraintValue));
+        }
     }
 
 }

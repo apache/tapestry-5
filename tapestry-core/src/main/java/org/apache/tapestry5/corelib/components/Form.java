@@ -234,9 +234,6 @@ public class Form implements ClientElement, FormValidationControl
 
     private ComponentActionSink actionSink;
 
-    @Environmental
-    private ClientBehaviorSupport clientBehaviorSupport;
-
     @SuppressWarnings("unchecked")
     @Environmental
     private TrackableComponentEventCallback eventCallback;
@@ -376,12 +373,6 @@ public class Form implements ClientElement, FormValidationControl
         environment.peek(Heartbeat.class).begin();
     }
 
-    @HeartbeatDeferred
-    private void linkFormToZone(Link link)
-    {
-        clientBehaviorSupport.linkZone(clientId, zone, link);
-    }
-
     /**
      * Creates an {@link org.apache.tapestry5.corelib.internal.InternalFormSupport} for
      * this Form. This method is used
@@ -404,7 +395,7 @@ public class Form implements ClientElement, FormValidationControl
     InternalFormSupport createRenderTimeFormSupport(String clientId, ComponentActionSink actionSink,
                                                     IdAllocator allocator)
     {
-        return new FormSupportImpl(resources, clientId, actionSink, clientBehaviorSupport,
+        return new FormSupportImpl(resources, clientId, actionSink,
                 clientValidation != ClientValidation.NONE, allocator, validationId);
     }
 

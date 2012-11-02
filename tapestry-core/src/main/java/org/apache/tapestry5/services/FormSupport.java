@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2006, 2007, 2008, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -87,7 +87,10 @@ public interface FormSupport extends ClientElement
      *         the error message to display if the field is invalid
      * @param constraint
      *         additional constraint value, or null for validations that don't require a constraint
-     * @deprecated Deprecated in 5.4 with no exact replacement
+     * @deprecated Deprecated in 5.4 with no exact replacement; this default implementation now does nothing.
+     *             Invoke {@link #isClientValidationEnabled()}, and (if true),
+     *             use {@link org.apache.tapestry5.services.javascript.JavaScriptSupport} to add necessary modules, and add
+     *             triggering and configuring attributes to the field's {@link org.apache.tapestry5.dom.Element}.
      */
     void addValidation(Field field, String validationName, String message, Object constraint);
 

@@ -116,5 +116,17 @@ define ["_", "core/spi", "core/events", "core/utils", "core/messages", "core/fie
       if memo.translated.length > min
         memo.error = (this.attribute "data-max-length-message") or "TOO LONG"
 
+    spi.onDocument events.field.validate, "[data-validate-max]", (event, memo) ->
+      max = parseInt this.attribute "data-validate-max"
+
+      if memo.translated > max
+        memo.error = (this.attribute "data-max-message") or "TOO LARGE"
+
+    spi.onDocument events.field.validate, "[data-validate-min]", (event, memo) ->
+      min = parseInt this.attribute "data-validate-min"
+
+      if memo.translated < min
+        memo.error = (this.attribute "data-min-message") or "TOO SMALL"
+
     # Export the number parser, just to be nice (and to support some testing).
     return { parseNumber }

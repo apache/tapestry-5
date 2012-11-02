@@ -771,8 +771,8 @@ public final class TapestryModule
         configuration.addInstance("required", Required.class);
         configuration.addInstance("minlength", MinLength.class);
         configuration.addInstance("maxlength", MaxLength.class);
-        configuration.add("min", new Min());
-        configuration.add("max", new Max());
+        configuration.addInstance("min", Min.class);
+        configuration.addInstance("max", Max.class);
         configuration.add("regexp", new Regexp());
         configuration.add("email", new Email());
         configuration.add("none", new None());
@@ -1840,18 +1840,13 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                JavaScriptSupport javascriptSupport = environment.peekRequired(JavaScriptSupport.class);
-
-                ClientBehaviorSupportImpl clientBehaviorSupport = new ClientBehaviorSupportImpl(javascriptSupport,
-                        environment);
+                ClientBehaviorSupportImpl clientBehaviorSupport = new ClientBehaviorSupportImpl();
 
                 environment.push(ClientBehaviorSupport.class, clientBehaviorSupport);
 
                 renderer.renderMarkup(writer);
 
                 environment.pop(ClientBehaviorSupport.class);
-
-                clientBehaviorSupport.commit();
             }
         };
 
@@ -1935,7 +1930,7 @@ public final class TapestryModule
             {
                 JavaScriptSupport javascriptSupport = environment.peekRequired(JavaScriptSupport.class);
 
-                ClientBehaviorSupportImpl support = new ClientBehaviorSupportImpl(javascriptSupport, environment);
+                ClientBehaviorSupportImpl support = new ClientBehaviorSupportImpl();
 
                 environment.push(ClientBehaviorSupport.class, support);
 

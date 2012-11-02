@@ -21,8 +21,9 @@ import org.apache.tapestry5.corelib.data.InsertPosition;
 /**
  * Collects details about zone usage for efficient initialization of the client side objects. This has grown to include
  * the client-side behavior associated with {@link org.apache.tapestry5.corelib.components.FormFragment}s.
- *
- * This interface is only kept for binary compatibility in Tapestry 5.4; the implementation no longer does anything.
+ * <p/>
+ * This interface is only kept for binary compatibility in Tapestry 5.4; the implementation no longer does anything but
+ * throw exceptions and will be removed in 5.5.
  *
  * @see org.apache.tapestry5.corelib.components.Zone
  * @deprecated Deprecated in 5.4 with no replacement. Use {@link org.apache.tapestry5.services.javascript.JavaScriptSupport} directly,
