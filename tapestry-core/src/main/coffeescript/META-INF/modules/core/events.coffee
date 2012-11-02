@@ -40,6 +40,10 @@ define
   #
   # A field that is blank but not required is considered valid: the translate and validate steps are skipped.
   #
+  # When a validation error occurs, the event handler should present the validation error (see below), but also
+  # return `false`. This will prevent the event from propogating to other event handlers (Tapestry only supports
+  # a single validation exception per field).
+  #
   # Presenting validation error: The event handler has two options for indicating a validation failure
   # at any of the three steps:
   #
@@ -47,6 +51,7 @@ define
   #   make the validation error visible)
   # * set the `error` property of the memo to the message to display; this will indicate a failure, and the
   #   `showValidationError` event will be triggered automatically.
+  # * In addition, return `false` to prevent the event bubbling (see note above).
   field:
 
     # Perform the optionality check. The event memo includes a `value` property. If the field is required

@@ -94,11 +94,12 @@ define ["_", "core/spi", "core/events", "core/utils", "core/messages", "core/fie
         memo.translated = result
       catch e
         memo.error = (field.attribute "data-translation-message") or e.message or "ERROR"
+        return false
 
     spi.onDocument events.field.optional, "[data-optionality=required]", (event, memo) ->
 
       if utils.isBlank memo.value
-        memo.error =  (this.attribute "data-required-message") || "REQUIRED"
+        memo.error =  (this.attribute "data-required-message") or "REQUIRED"
 
     spi.onDocument events.field.translate, "[data-translation=numeric]", (event, memo) ->
       translate this, memo, false
@@ -111,24 +112,28 @@ define ["_", "core/spi", "core/events", "core/utils", "core/messages", "core/fie
 
       if memo.translated.length < min
         memo.error = (this.attribute "data-min-length-message") or "TOO SHORT"
+        return false
 
     spi.onDocument events.field.validate, "[data-validate-max-length]", (event, memo) ->
-      min = parseInt this.attribute "data-validate-max-length"
+      max = parseInt this.attribute "data-validate-max-length"
 
-      if memo.translated.length > min
+      if memo.translated.length > max
         memo.error = (this.attribute "data-max-length-message") or "TOO LONG"
+        return false
 
     spi.onDocument events.field.validate, "[data-validate-max]", (event, memo) ->
       max = parseInt this.attribute "data-validate-max"
 
       if memo.translated > max
         memo.error = (this.attribute "data-max-message") or "TOO LARGE"
+        return false
 
     spi.onDocument events.field.validate, "[data-validate-min]", (event, memo) ->
       min = parseInt this.attribute "data-validate-min"
 
       if memo.translated < min
         memo.error = (this.attribute "data-min-message") or "TOO SMALL"
+        return false
 
     spi.onDocument events.field.validate, "[data-validate-regexp]", (event, memo) ->
 
@@ -140,6 +145,7 @@ define ["_", "core/spi", "core/events", "core/utils", "core/messages", "core/fie
 
       unless re.test memo.translated
         memo.error = (this.attribute "data-regexp-message") or "INVALID"
+        return false
 
     # Export the number parser, just to be nice (and to support some testing).
     return { parseNumber }
