@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.internal.pageload;
 
-import java.util.List;
-
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Mapper;
 import org.apache.tapestry5.ioc.Resource;
@@ -24,6 +22,9 @@ import org.apache.tapestry5.model.ComponentModel;
 import org.apache.tapestry5.services.pageload.ComponentResourceLocator;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
 import org.apache.tapestry5.services.templates.ComponentTemplateLocator;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class DefaultComponentResourceLocator implements ComponentResourceLocator
 {
@@ -45,6 +46,12 @@ public class DefaultComponentResourceLocator implements ComponentResourceLocator
     public List<Resource> locateMessageCatalog(final Resource baseResource, ComponentResourceSelector selector)
     {
         String baseName = baseResource.getFile();
+
+        // This is the case for some of the "virtual resources" introduced in 5.4
+        if (baseName == null)
+        {
+            return Arrays.asList(baseResource.forLocale(selector.locale));
+        }
 
         return F.flow(new LocalizedNameGenerator(baseName, selector.locale).iterator()).map(new Mapper<String, Resource>()
         {

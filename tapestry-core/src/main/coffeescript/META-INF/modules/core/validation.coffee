@@ -27,4 +27,5 @@ define ["core/spi", "core/events", "core/utils", "core/fields"],
         memo.error = true
         return false
 
-    configureDecimals: ->
+    # Export nothing for now
+    return null

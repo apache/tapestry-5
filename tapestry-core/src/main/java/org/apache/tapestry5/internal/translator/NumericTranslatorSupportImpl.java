@@ -15,14 +15,10 @@
 package org.apache.tapestry5.internal.translator;
 
 import org.apache.tapestry5.Field;
-import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
-import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ClientBehaviorSupport;
-import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 import java.math.BigDecimal;
@@ -32,7 +28,6 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 public class NumericTranslatorSupportImpl implements NumericTranslatorSupport
@@ -41,78 +36,33 @@ public class NumericTranslatorSupportImpl implements NumericTranslatorSupport
 
     private final ThreadLocale threadLocale;
 
-    private final Request request;
-
     private final JavaScriptSupport javascriptSupport;
 
     private final ClientBehaviorSupport clientBehaviorSupport;
 
-    private final boolean compactJSON;
-
-    private final Map<Locale, DecimalFormatSymbols> symbolsCache = CollectionFactory.newConcurrentMap();
-
     private final Set<Class> integerTypes = CollectionFactory.newSet();
 
-    private static final String DECIMAL_FORMAT_SYMBOLS_PROVIDED = "tapestry.decimal-format-symbols-provided";
-
-    public NumericTranslatorSupportImpl(TypeCoercer typeCoercer, ThreadLocale threadLocale, Request request,
-                                        JavaScriptSupport javascriptSupport, ClientBehaviorSupport clientBehaviorSupport,
-                                        @Symbol(SymbolConstants.COMPACT_JSON)
-                                        boolean compactJSON)
+    public NumericTranslatorSupportImpl(TypeCoercer typeCoercer, ThreadLocale threadLocale,
+                                        JavaScriptSupport javascriptSupport, ClientBehaviorSupport clientBehaviorSupport)
     {
         this.typeCoercer = typeCoercer;
         this.threadLocale = threadLocale;
-        this.request = request;
         this.javascriptSupport = javascriptSupport;
         this.clientBehaviorSupport = clientBehaviorSupport;
-        this.compactJSON = compactJSON;
 
         Class[] integerTypes =
                 {Byte.class, Short.class, Integer.class, Long.class, BigInteger.class};
 
         for (Class c : integerTypes)
+        {
             this.integerTypes.add(c);
+        }
 
     }
 
     public <T extends Number> void addValidation(Class<T> type, Field field, String message)
     {
-        if (request.getAttribute(DECIMAL_FORMAT_SYMBOLS_PROVIDED) == null)
-        {
-            javascriptSupport.require("core/validation").invoke("configureDecimals").with(createJSONDecimalFormatSymbols());
-
-            request.setAttribute(DECIMAL_FORMAT_SYMBOLS_PROVIDED, true);
-        }
-
         clientBehaviorSupport.addValidation(field, "numericformat", message, isIntegerType(type));
-    }
-
-    private JSONObject createJSONDecimalFormatSymbols()
-    {
-        Locale locale = threadLocale.getLocale();
-
-        DecimalFormatSymbols symbols = getSymbols(locale);
-
-        JSONObject result = new JSONObject();
-
-        result.put("groupingSeparator", toString(symbols.getGroupingSeparator()));
-        result.put("minusSign", toString(symbols.getMinusSign()));
-        result.put("decimalSeparator", toString(symbols.getDecimalSeparator()));
-
-        return result;
-    }
-
-    private DecimalFormatSymbols getSymbols(Locale locale)
-    {
-        DecimalFormatSymbols symbols = symbolsCache.get(locale);
-
-        if (symbols == null)
-        {
-            symbols = new DecimalFormatSymbols(locale);
-            symbolsCache.put(locale, symbols);
-        }
-
-        return symbols;
     }
 
     private boolean isIntegerType(Class type)
@@ -132,7 +82,7 @@ public class NumericTranslatorSupportImpl implements NumericTranslatorSupport
     private NumericFormatter getParseFormatter(Class type)
     {
         Locale locale = threadLocale.getLocale();
-        DecimalFormatSymbols symbols = getSymbols(locale);
+        DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(locale);
 
         if (type.equals(BigInteger.class))
             return new BigIntegerNumericFormatter(symbols);
@@ -165,7 +115,7 @@ public class NumericTranslatorSupportImpl implements NumericTranslatorSupport
     {
         Locale locale = threadLocale.getLocale();
 
-        DecimalFormatSymbols symbols = getSymbols(locale);
+        DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(locale);
 
         if (type.equals(BigInteger.class))
             return new BigIntegerNumericFormatter(symbols);
