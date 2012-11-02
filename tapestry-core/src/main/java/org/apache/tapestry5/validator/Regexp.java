@@ -19,15 +19,19 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.ioc.MessageFormatter;
 import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Enforces that the input matches a provided regular expression.
+ */
 public class Regexp extends AbstractValidator<Pattern, String>
 {
-    public Regexp()
+    public Regexp(JavaScriptSupport javaScriptSupport)
     {
-        super(Pattern.class, String.class, "regexp", null);
+        super(Pattern.class, String.class, "regexp", javaScriptSupport);
     }
 
     private String buildMessage(MessageFormatter formatter, Field field, Pattern constraintValue)
@@ -38,8 +42,17 @@ public class Regexp extends AbstractValidator<Pattern, String>
     public void render(Field field, Pattern constraintValue, MessageFormatter formatter, MarkupWriter writer,
                        FormSupport formSupport)
     {
+        if (formSupport.isClientValidationEnabled())
+        {
+            javaScriptSupport.require("core/validation");
+
+            writer.getElement().attributes("data-validation", "true",
+                    "data-validate-regexp", constraintValue.pattern(),
+                    "data-regexp-message", buildMessage(formatter, field, constraintValue));
+        }
+
         formSupport.addValidation(field, "regexp", buildMessage(formatter, field, constraintValue),
-                                  constraintValue.pattern());
+                constraintValue.pattern());
     }
 
     public void validate(Field field, Pattern constraintValue, MessageFormatter formatter, String value)

@@ -19,6 +19,8 @@
 define ["_", "core/spi", "core/events", "core/utils", "core/messages", "core/fields"],
   (_, spi, events, utils, messages) ->
 
+    REGEXP_META = "t5:regular-expression"
+
     minus = messages "decimal-symbols.minus"
     grouping = messages "decimal-symbols.group"
     decimal = messages "decimal-symbols.decimal"
@@ -127,6 +129,17 @@ define ["_", "core/spi", "core/events", "core/utils", "core/messages", "core/fie
 
       if memo.translated < min
         memo.error = (this.attribute "data-min-message") or "TOO SMALL"
+
+    spi.onDocument events.field.validate, "[data-validate-regexp]", (event, memo) ->
+
+      # Cache the compiled regular expression.
+      re = this.meta REGEXP_META
+      unless re
+        re = new RegExp(this.attribute "data-validate-regexp")
+        this.meta REGEXP_META, re
+
+      unless re.test memo.translated
+        memo.error = (this.attribute "data-regexp-message") or "INVALID"
 
     # Export the number parser, just to be nice (and to support some testing).
     return { parseNumber }

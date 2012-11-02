@@ -83,7 +83,6 @@ import org.apache.tapestry5.services.dynamic.DynamicTemplate;
 import org.apache.tapestry5.services.dynamic.DynamicTemplateParser;
 import org.apache.tapestry5.services.javascript.JavaScriptModule;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
-import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.apache.tapestry5.services.javascript.ModuleManager;
 import org.apache.tapestry5.services.linktransform.ComponentEventLinkTransformer;
 import org.apache.tapestry5.services.linktransform.LinkTransformer;
@@ -773,7 +772,7 @@ public final class TapestryModule
         configuration.addInstance("maxlength", MaxLength.class);
         configuration.addInstance("min", Min.class);
         configuration.addInstance("max", Max.class);
-        configuration.add("regexp", new Regexp());
+        configuration.addInstance("regexp", Regexp.class);
         configuration.add("email", new Email());
         configuration.add("none", new None());
     }
@@ -1928,8 +1927,6 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {
-                JavaScriptSupport javascriptSupport = environment.peekRequired(JavaScriptSupport.class);
-
                 ClientBehaviorSupportImpl support = new ClientBehaviorSupportImpl();
 
                 environment.push(ClientBehaviorSupport.class, support);
@@ -1937,8 +1934,6 @@ public final class TapestryModule
                 renderer.renderMarkup(writer, reply);
 
                 environment.pop(ClientBehaviorSupport.class);
-
-                support.commit();
             }
         };
 
