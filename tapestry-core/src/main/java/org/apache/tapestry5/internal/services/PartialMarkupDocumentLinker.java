@@ -20,6 +20,8 @@ import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.javascript.InitializationPriority;
 import org.apache.tapestry5.services.javascript.StylesheetLink;
 
+import java.util.List;
+
 public class PartialMarkupDocumentLinker implements DocumentLinker
 {
     private final JSONArray libraryURLs = new JSONArray();
@@ -74,16 +76,11 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
             reply.in(InternalConstants.PARTIAL_KEY).put("stylesheets", stylesheets);
         }
 
-        JSONArray fullInits = new JSONArray();
+        List<JSONArray> inits = initsManager.getSortedInits();
 
-        for (InitializationPriority p : InitializationPriority.values())
+        if (inits.size() > 0)
         {
-            fullInits.putAll(initsManager.forPriority(p));
-        }
-
-        if (fullInits.length() > 0)
-        {
-            reply.in(InternalConstants.PARTIAL_KEY).put("inits", fullInits);
+            reply.in(InternalConstants.PARTIAL_KEY).put("inits", JSONArray.from(inits));
         }
     }
 }

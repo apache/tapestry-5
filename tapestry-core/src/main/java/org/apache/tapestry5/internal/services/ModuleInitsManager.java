@@ -62,11 +62,15 @@ public class ModuleInitsManager
         initCount++;
     }
 
-    public List<JSONArray> forPriority(InitializationPriority... priorities)
+    /**
+     * Returns all previously added inits, sorted by {@link InitializationPriority}, then by order in which they
+     * were added.
+     */
+    public List<JSONArray> getSortedInits()
     {
         List<JSONArray> result = new ArrayList<JSONArray>(initCount);
 
-        for (InitializationPriority p : priorities)
+        for (InitializationPriority p : InitializationPriority.values())
         {
             List<JSONArray> initsForPriority = inits.get(p);
 
