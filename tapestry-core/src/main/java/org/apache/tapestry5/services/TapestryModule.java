@@ -765,7 +765,8 @@ public final class TapestryModule
      * <li>none</li>
      * </ul>
      */
-    public static void contributeFieldValidatorSource(MappedConfiguration<String, Validator> configuration)
+    @Contribute(FieldValidatorSource.class)
+    public static void setupCoreFrameworkValidators(MappedConfiguration<String, Validator> configuration)
     {
         configuration.addInstance("required", Required.class);
         configuration.addInstance("minlength", MinLength.class);
@@ -773,7 +774,7 @@ public final class TapestryModule
         configuration.addInstance("min", Min.class);
         configuration.addInstance("max", Max.class);
         configuration.addInstance("regexp", Regexp.class);
-        configuration.add("email", new Email());
+        configuration.addInstance("email", Email.class);
         configuration.add("none", new None());
     }
 

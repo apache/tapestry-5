@@ -1,4 +1,4 @@
-// Copyright 2007, 2008, 2010 The Apache Software Foundation
+// Copyright 2007, 2008, 2010, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,15 +14,15 @@
 
 package org.apache.tapestry5.integration.app1.data;
 
-import java.util.List;
-
 import org.apache.tapestry5.beaneditor.DataType;
 import org.apache.tapestry5.beaneditor.ReorderProperties;
 import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.beaneditor.Width;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 
-@ReorderProperties("firstname,lastname,birthyear,sex")
+import java.util.List;
+
+@ReorderProperties("firstname,lastname,email,birthyear,sex")
 public class RegistrationData
 {
     private String lastName;
@@ -40,6 +40,9 @@ public class RegistrationData
     private String notes;
 
     private List<String> roles = CollectionFactory.newList();
+
+    @Validate("email")
+    public String email;
 
     @Validate("min=1900,max=2007")
     @Width(4)

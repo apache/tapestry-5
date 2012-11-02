@@ -19,11 +19,14 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.ioc.MessageFormatter;
 import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 import java.util.regex.Pattern;
 
 /**
  * A validator that checks if a given string is well-formed email address. This validator is not configurable.
+ * <p/>
+ * Starting with release 5.4, this validator also performs client-side validation.
  */
 public class Email extends AbstractValidator<Void, String>
 {
@@ -36,14 +39,22 @@ public class Email extends AbstractValidator<Void, String>
     private static final Pattern PATTERN = Pattern
             .compile("^" + ATOM + "+(\\." + ATOM + "+)*@" + DOMAIN + "|" + IP_DOMAIN + ")$", Pattern.CASE_INSENSITIVE);
 
-    public Email()
+    public Email(JavaScriptSupport javaScriptSupport)
     {
-        super(null, String.class, "invalid-email", null);
+        super(null, String.class, "invalid-email", javaScriptSupport);
     }
 
-    public void render(Field field, Void constraintValue, MessageFormatter formatter, MarkupWriter markupWriter,
+    public void render(Field field, Void constraintValue, MessageFormatter formatter, MarkupWriter writer,
                        FormSupport formSupport)
     {
+        if (formSupport.isClientValidationEnabled())
+        {
+            javaScriptSupport.require("core/validation");
+
+            writer.getElement().attributes("data-validation", "true",
+                    "data-validate-regexp", PATTERN.pattern(),
+                    "data-regexp-message", buildMessage(formatter, field));
+        }
     }
 
     private String buildMessage(MessageFormatter formatter, Field field)
