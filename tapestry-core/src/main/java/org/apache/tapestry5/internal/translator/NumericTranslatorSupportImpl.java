@@ -14,11 +14,10 @@
 
 package org.apache.tapestry5.internal.translator;
 
-import org.apache.tapestry5.Field;
+import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
-import org.apache.tapestry5.services.ClientBehaviorSupport;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 import java.math.BigDecimal;
@@ -38,17 +37,14 @@ public class NumericTranslatorSupportImpl implements NumericTranslatorSupport
 
     private final JavaScriptSupport javascriptSupport;
 
-    private final ClientBehaviorSupport clientBehaviorSupport;
-
     private final Set<Class> integerTypes = CollectionFactory.newSet();
 
     public NumericTranslatorSupportImpl(TypeCoercer typeCoercer, ThreadLocale threadLocale,
-                                        JavaScriptSupport javascriptSupport, ClientBehaviorSupport clientBehaviorSupport)
+                                        JavaScriptSupport javascriptSupport)
     {
         this.typeCoercer = typeCoercer;
         this.threadLocale = threadLocale;
         this.javascriptSupport = javascriptSupport;
-        this.clientBehaviorSupport = clientBehaviorSupport;
 
         Class[] integerTypes =
                 {Byte.class, Short.class, Integer.class, Long.class, BigInteger.class};
@@ -60,9 +56,15 @@ public class NumericTranslatorSupportImpl implements NumericTranslatorSupport
 
     }
 
-    public <T extends Number> void addValidation(Class<T> type, Field field, String message)
+    public <T extends Number> void setupTranslation(Class<T> type, Element element, String message)
     {
-        clientBehaviorSupport.addValidation(field, "numericformat", message, isIntegerType(type));
+        String translation = isIntegerType(type) ? "integer" : "numeric";
+
+        javascriptSupport.require("core/validation");
+
+        element.attributes("data-validation", "true",
+                "data-translation", translation,
+                "data-translation-message", message);
     }
 
     private boolean isIntegerType(Class type)

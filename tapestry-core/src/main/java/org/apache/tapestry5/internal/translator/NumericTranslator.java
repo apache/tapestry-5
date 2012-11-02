@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,7 +41,9 @@ public class NumericTranslator<T extends Number> extends AbstractTranslator<T>
     public void render(Field field, String message, MarkupWriter writer, FormSupport formSupport)
     {
         if (formSupport.isClientValidationEnabled())
-            support.addValidation(getType(), field, message);
+        {
+            support.setupTranslation(getType(), writer.getElement(), message);
+        }
     }
 
     public T parseClient(Field field, String clientValue, String message) throws ValidationException
@@ -49,8 +51,7 @@ public class NumericTranslator<T extends Number> extends AbstractTranslator<T>
         try
         {
             return support.parseClient(getType(), clientValue);
-        }
-        catch (ParseException ex)
+        } catch (ParseException ex)
         {
             throw new ValidationException(message);
         }

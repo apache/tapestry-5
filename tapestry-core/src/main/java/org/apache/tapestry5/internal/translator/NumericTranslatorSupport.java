@@ -1,4 +1,4 @@
-// Copyright 2009 The Apache Software Foundation
+// Copyright 2009, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.internal.translator;
 
-import org.apache.tapestry5.Field;
+import org.apache.tapestry5.dom.Element;
 
 import java.text.ParseException;
 
@@ -62,9 +62,8 @@ public interface NumericTranslatorSupport
      * Adds client-side format validation for the field, appropriate to the indicated type.
      *
      * @param type    value type
-     * @param field   field to which validation should be added
+     * @param element
      * @param message message if the client-side value can't be parsed as a number
-     * @param <T>
      */
-    <T extends Number> void addValidation(Class<T> type, Field field, String message);
+    <T extends Number> void setupTranslation(Class<T> type, Element element, String message);
 }
