@@ -14,6 +14,8 @@
 
 package org.apache.tapestry5.ioc.services;
 
+import java.lang.annotation.Annotation;
+
 /**
  * A wrapper around the JavaBean Introspector that allows more manageable access to JavaBean properties of objects.
  * <p/>
@@ -26,7 +28,7 @@ public interface PropertyAccess
 {
     /**
      * Reads the value of a property.
-     * 
+     *
      * @throws UnsupportedOperationException
      *             if the property is write only
      * @throws IllegalArgumentException
@@ -36,13 +38,27 @@ public interface PropertyAccess
 
     /**
      * Updates the value of a property.
-     * 
+     *
      * @throws UnsupportedOperationException
      *             if the property is read only
      * @throws IllegalArgumentException
      *             if property does not exist
      */
     void set(Object instance, String propertyName, Object value);
+
+    /**
+     * Returns the annotation of a given property for the specified type if such an annotation is present, else null.
+     * A convenience over invoking {@link #getAdapter(Object)}.{@link #ClassPropertyAdapter.getPropertyAdapter(String)}.{@link #PropertyAdapter.getAnnotation(Class)}
+     *
+     * @param instance     the object to read a value from
+     * @param propertyName the name of the property to read (case is ignored)
+     * @param annotationClass the type of annotation to return
+     * @throws IllegalArgumentException
+     *             if property does not exist
+     *
+     * @since 5.4
+     */
+    Annotation getAnnotation(Object instance, String propertyName, Class<? extends Annotation> annotationClass);
 
     /**
      * Returns the adapter for a particular object instance. A convienience over invoking {@link #getAdapter(Class)}.

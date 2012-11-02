@@ -14,18 +14,19 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.internal.util.GenericsUtils;
-import org.apache.tapestry5.ioc.internal.util.InternalUtils;
-import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
-import org.apache.tapestry5.ioc.services.PropertyAdapter;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
 
 import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+import org.apache.tapestry5.ioc.internal.util.GenericsUtils;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
+import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
+import org.apache.tapestry5.ioc.services.PropertyAdapter;
 
 public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
 {
@@ -103,6 +104,10 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
     public void set(Object instance, String propertyName, Object value)
     {
         adaptorFor(propertyName).set(instance, value);
+    }
+
+    public Annotation getAnnotation(Object instance, String propertyName, Class<? extends Annotation> annotationClass) {
+	return adaptorFor(propertyName).getAnnotation(annotationClass);
     }
 
     private PropertyAdapter adaptorFor(String name)

@@ -1,20 +1,19 @@
 package ioc.specs
 
+import java.awt.Image
+import java.beans.*
+import java.lang.reflect.Method
+
 import org.apache.tapestry5.beaneditor.DataType
 import org.apache.tapestry5.beaneditor.Validate
 import org.apache.tapestry5.ioc.annotations.Scope
+import org.apache.tapestry5.ioc.internal.services.*
 import org.apache.tapestry5.ioc.internal.util.Pair
 import org.apache.tapestry5.ioc.internal.util.StringLongPair
 import org.apache.tapestry5.ioc.services.ClassPropertyAdapter
 import org.apache.tapestry5.ioc.services.PropertyAccess
 
-import java.awt.Image
-import java.lang.reflect.Method
-
-import org.apache.tapestry5.ioc.internal.services.*
 import spock.lang.*
-
-import java.beans.*
 
 class ExceptionBean {
 
@@ -437,6 +436,19 @@ class PropertyAccessImplSpec extends Specification {
 
     cpa.propertyNames == ["class", "primitiveProperty"]
   }
+
+  def "getAnnotation from a bean property"() {
+    AnnotatedBean b = new AnnotatedBean()
+
+    when:
+
+    def annotation = access.getAnnotation(b, "annotationOnRead", Scope)
+
+    then:
+
+    annotation.value() == "onread"
+  }
+
 
   def "getAnnotation() when annotation is not present is null"() {
 

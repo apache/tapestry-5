@@ -14,20 +14,21 @@
 
 package org.apache.tapestry5.ioc.internal.services;
 
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
-import org.apache.tapestry5.ioc.services.PropertyAccess;
-
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.services.ClassPropertyAdapter;
+import org.apache.tapestry5.ioc.services.PropertyAccess;
 
 @SuppressWarnings("unchecked")
 public class PropertyAccessImpl implements PropertyAccess
@@ -43,6 +44,11 @@ public class PropertyAccessImpl implements PropertyAccess
     {
         getAdapter(instance).set(instance, propertyName, value);
     }
+
+    public Annotation getAnnotation(Object instance, String propertyName, Class<? extends Annotation> annotationClass) {
+	return getAdapter(instance).getAnnotation(instance, propertyName, annotationClass);
+    }
+
 
     /**
      * Clears the cache of adapters and asks the {@link Introspector} to clear its cache.

@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.ioc.services;
 
+import java.lang.annotation.Annotation;
 import java.util.List;
 
 /**
@@ -62,4 +63,17 @@ public interface ClassPropertyAdapter
      * @throws IllegalArgumentException      if property does not exist
      */
     void set(Object instance, String propertyName, Object value);
+
+    /**
+     * Returns the annotation of a given property for the specified type if such an annotation is present, else null.
+     *
+     * @param instance     the object to read a value from
+     * @param propertyName the name of the property to read (case is ignored)
+     * @param annotationClass the type of annotation to return
+     *
+     * @throws IllegalArgumentException      if property does not exist
+     *
+     * @since 5.4
+     */
+    Annotation getAnnotation(Object instance, String propertyName, Class<? extends Annotation> annotationClass);
 }
