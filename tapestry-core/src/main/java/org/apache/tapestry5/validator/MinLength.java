@@ -19,15 +19,16 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.ioc.MessageFormatter;
 import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * Validates that a string value has a minimum length.
  */
 public final class MinLength extends AbstractValidator<Integer, String>
 {
-    public MinLength()
+    public MinLength(JavaScriptSupport javaScriptSupport)
     {
-        super(Integer.class, String.class, "minimum-string-length", null);
+        super(Integer.class, String.class, "minimum-string-length", javaScriptSupport);
     }
 
     public void validate(Field field, Integer constraintValue, MessageFormatter formatter, String value)
@@ -45,6 +46,11 @@ public final class MinLength extends AbstractValidator<Integer, String>
     public void render(Field field, Integer constraintValue, MessageFormatter formatter, MarkupWriter writer,
                        FormSupport formSupport)
     {
-        formSupport.addValidation(field, "minlength", buildMessage(formatter, field, constraintValue), constraintValue);
+        if (formSupport.isClientValidationEnabled())
+        {
+            writer.getElement().attributes("data-validate", "true",
+                    "data-validate-min-length", constraintValue.toString(),
+                    "data-min-length-message", buildMessage(formatter, field, constraintValue));
+        }
     }
 }

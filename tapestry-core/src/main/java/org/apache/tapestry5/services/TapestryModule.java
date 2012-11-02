@@ -769,8 +769,8 @@ public final class TapestryModule
     public static void contributeFieldValidatorSource(MappedConfiguration<String, Validator> configuration)
     {
         configuration.addInstance("required", Required.class);
-        configuration.add("minlength", new MinLength());
-        configuration.add("maxlength", new MaxLength());
+        configuration.addInstance("minlength", MinLength.class);
+        configuration.addInstance("maxlength", MaxLength.class);
         configuration.add("min", new Min());
         configuration.add("max", new Max());
         configuration.add("regexp", new Regexp());

@@ -19,12 +19,16 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.ioc.MessageFormatter;
 import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
+/**
+ * Validates that a string value has not exceeded a maximum length.
+ */
 public final class MaxLength extends AbstractValidator<Integer, String>
 {
-    public MaxLength()
+    public MaxLength(JavaScriptSupport javaScriptSupport)
     {
-        super(Integer.class, String.class, "maximum-string-length", null);
+        super(Integer.class, String.class, "maximum-string-length", javaScriptSupport);
     }
 
     public void validate(Field field, Integer constraintValue, MessageFormatter formatter, String value)
@@ -42,9 +46,11 @@ public final class MaxLength extends AbstractValidator<Integer, String>
     public void render(Field field, Integer constraintValue, MessageFormatter formatter, MarkupWriter writer,
                        FormSupport formSupport)
     {
-        // TODO: write a maxlength attribute into the element?  But that's only for
-        // textfield, not for textarea.
-
-        formSupport.addValidation(field, "maxlength", buildMessage(formatter, field, constraintValue), constraintValue);
+        if (formSupport.isClientValidationEnabled())
+        {
+            writer.getElement().attributes("data-validate", "true",
+                    "data-validate-max-length", constraintValue.toString(),
+                    "data-max-length-message", buildMessage(formatter, field, constraintValue));
+        }
     }
 }

@@ -82,6 +82,9 @@ define ["_", "core/spi", "core/events", "core/utils", "core/messages", "core/fie
 
       return Number canonical
 
+    error = (field, message) ->
+      field.trigger events.field.showValidationError, { message }
+
     translate = (field, memo, isInteger) ->
       try
         result = parseNumber memo.value, isInteger
@@ -90,17 +93,17 @@ define ["_", "core/spi", "core/events", "core/utils", "core/messages", "core/fie
           throw messages "core-input-not-numeric"
 
         memo.translated = result
-      catch error
+      catch e
         memo.error = true
-        message = (field.attribute "data-translation-message") or error.message or "ERROR"
+        message = (field.attribute "data-translation-message") or e.message or "ERROR"
 
-        field.trigger events.field.showValidationError, { message }
+        error field, message
 
     spi.onDocument events.field.optional, "[data-optionality=required]", (event, memo) ->
 
       if utils.isBlank memo.value
         message = (this.attribute "data-required-message") || "REQUIRED"
-        this.trigger events.field.showValidationError, { message }
+        error this, message
         memo.error = true
         return false
 
@@ -110,6 +113,19 @@ define ["_", "core/spi", "core/events", "core/utils", "core/messages", "core/fie
     spi.onDocument events.field.translate, "[data-translation=integer]", (event, memo) ->
       translate this, memo, true
 
+    spi.onDocument events.field.validate, "[data-validate-min-length]", (event, memo) ->
+      min = parseInt this.attribute "data-validate-min-length"
+
+      if memo.translated.length < min
+        memo.error = true
+        error this, (this.attribute "data-min-length-message") or "TOO SHORT"
+
+    spi.onDocument events.field.validate, "[data-validate-max-length]", (event, memo) ->
+      min = parseInt this.attribute "data-validate-max-length"
+
+      if memo.translated.length > min
+        memo.error = true
+        error this, (this.attribute "data-max-length-message") or "TOO LONG"
 
     # Export the number parser, just to be nice (and to support some testing).
     return { parseNumber }

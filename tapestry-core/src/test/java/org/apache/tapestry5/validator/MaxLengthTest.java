@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ public class MaxLengthTest extends InternalBaseTestCase
 
         replay();
 
-        MaxLength validator = new MaxLength();
+        MaxLength validator = new MaxLength(null);
 
         validator.validate(field, value.length(), formatter, value);
 
@@ -52,7 +52,7 @@ public class MaxLengthTest extends InternalBaseTestCase
 
         replay();
 
-        MaxLength validator = new MaxLength();
+        MaxLength validator = new MaxLength(null);
 
         try
         {
