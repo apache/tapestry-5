@@ -97,7 +97,6 @@ public class MessageCatalogResource extends VirtualResource
             bytes = assembleCatalog().getBytes(UTF8);
         }
 
-
         return bytes;
     }
 
@@ -109,7 +108,19 @@ public class MessageCatalogResource extends VirtualResource
 
         for (String key : messages.getKeys())
         {
-            catalog.put(key, messages.get(key));
+            if (key.startsWith("private-"))
+            {
+                continue;
+            }
+
+            String value = messages.get(key);
+
+            if (value.contains("%"))
+            {
+                continue;
+            }
+
+            catalog.put(key, value);
         }
 
         StringBuilder builder = new StringBuilder(2000);
