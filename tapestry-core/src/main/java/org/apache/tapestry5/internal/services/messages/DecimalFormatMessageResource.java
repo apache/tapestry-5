@@ -17,7 +17,6 @@ package org.apache.tapestry5.internal.services.messages;
 import org.apache.tapestry5.internal.util.VirtualResource;
 import org.apache.tapestry5.ioc.Resource;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -53,7 +52,7 @@ public class DecimalFormatMessageResource extends VirtualResource
     @Override
     public String getPath()
     {
-        return String.format("<Virtual DecimalFormat symbols for %s>", locale);
+        return String.format("<Virtual DecimalFormat symbols for locale %s>", locale == null ? "(none)" : locale);
     }
 
     @Override
@@ -85,9 +84,7 @@ public class DecimalFormatMessageResource extends VirtualResource
         write(builder, "minus", symbols.getMinusSign());
         write(builder, "decimal", symbols.getDecimalSeparator());
 
-        byte[] bytes = builder.toString().getBytes("UTF-8");
-
-        return new ByteArrayInputStream(bytes);
+        return toInputStream(builder.toString());
     }
 
     private void write(StringBuilder builder, String name, char value)

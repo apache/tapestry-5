@@ -19,10 +19,8 @@ import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.messages.ComponentMessagesSource;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.Locale;
 
@@ -89,23 +87,16 @@ public class MessageCatalogResource extends VirtualResource
     @Override
     public InputStream openStream() throws IOException
     {
-        return new ByteArrayInputStream(getBytes());
+        return toInputStream(getBytes());
     }
 
-    private byte[] getBytes()
+    private byte[] getBytes() throws IOException
     {
-        if (bytes != null)
+        if (bytes == null)
         {
-            return bytes;
+            bytes = assembleCatalog().getBytes(UTF8);
         }
 
-        try
-        {
-            bytes = assembleCatalog().getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e)
-        {
-            throw new RuntimeException(e);
-        }
 
         return bytes;
     }

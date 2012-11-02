@@ -16,7 +16,11 @@ package org.apache.tapestry5.internal.util;
 
 import org.apache.tapestry5.ioc.Resource;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Locale;
 
 /**
@@ -31,6 +35,8 @@ import java.util.Locale;
  */
 public abstract class VirtualResource implements Resource
 {
+    protected static final Charset UTF8 = Charset.forName("UTF-8");
+
     private <T> T unsupported(String name)
     {
         throw new UnsupportedOperationException(String.format("Method %s() is not supported for a VirtualResource.", name));
@@ -83,5 +89,15 @@ public abstract class VirtualResource implements Resource
     public String getPath()
     {
         return unsupported("getPath");
+    }
+
+    protected InputStream toInputStream(String content) throws IOException
+    {
+        return toInputStream(content.getBytes(UTF8));
+    }
+
+    protected InputStream toInputStream(byte[] content) throws IOException
+    {
+        return new ByteArrayInputStream(content);
     }
 }
