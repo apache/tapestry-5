@@ -18,15 +18,15 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.internal.services.StringValueEncoder;
 import org.example.testapp.entities.TestEntity;
 
-public class ClientValidationDemo 
+public class ClientValidationDemo
 {
-	@Property
-	@Persist
-	private TestEntity testEntity;
-	
-	public StringValueEncoder getStringValueEncoder()
-	{
-		return new StringValueEncoder();
-	}
-	
+    @Property
+    @Persist
+    private TestEntity testEntity;
+
+    public StringValueEncoder getStringValueEncoder()
+    {
+        return new StringValueEncoder();
+    }
+
 }
