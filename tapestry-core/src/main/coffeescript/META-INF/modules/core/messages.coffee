@@ -21,13 +21,23 @@ do ->
   # In the unexpected case that the data-locale attribute is missing, assume English
   locale = (document.documentElement.getAttribute "data-locale") or "en"
 
-  define ["core/messages/#{locale}"],
-    (messages) ->
+  define ["core/messages/#{locale}", "_", "core/console"],
+    (messages, _, console) ->
 
       # Returns the application message catalog message for the given key. Returns
       # a placeholder if the key is not found.
       get = (key) ->
-        return messages[key] || "[[Missing Key: '#{key}']]"
+        value = messages[key]
+
+        if value
+          return value
+        else
+          console.error "No value for message catalog key '#{key}' exists."
+          return "[[Missing Key: '#{key}']]"
+
+      # Returns all keys that are defined by the underlying catalog, in no specific order.
+      get.keys = -> _.keys messages
+
 
       # Export get as the main function; perhaps later we'll add a "format"
       # or something similar as a property of get.
