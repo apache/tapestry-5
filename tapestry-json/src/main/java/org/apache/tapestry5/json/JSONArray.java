@@ -112,7 +112,7 @@ public final class JSONArray extends JSONCollection implements Iterable<Object>
      *         collection ot value to include, or null
      * @since 5.4
      */
-    public static JSONArray from(Iterable<Object> iterable)
+    public static JSONArray from(Iterable<?> iterable)
     {
         return new JSONArray().putAll(iterable);
     }
