@@ -21,15 +21,16 @@ import org.apache.tapestry5.services.MarkupRenderer;
 import org.apache.tapestry5.services.MarkupRendererFilter;
 
 /**
- * Responsible for the {@code data-locale} attribute written into the HTML element.
+ * Responsible for writing attributes needed to configure the client, into the
+ * HTML element.
  *
  * @since 5.4
  */
-public class LocaleEmitterFilter implements MarkupRendererFilter
+public class ConfigureHTMLElementFilter implements MarkupRendererFilter
 {
     private final ThreadLocale threadLocale;
 
-    public LocaleEmitterFilter(ThreadLocale threadLocale)
+    public ConfigureHTMLElementFilter(ThreadLocale threadLocale)
     {
         this.threadLocale = threadLocale;
     }

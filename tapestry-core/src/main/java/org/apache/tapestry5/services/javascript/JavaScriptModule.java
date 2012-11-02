@@ -250,12 +250,12 @@ public class JavaScriptModule
     }
 
     /**
-     * Contributes 'LocaleEmitter', which writes the {@code data-locale} attribute into the HTML tag.
+     * Contributes 'ConfigureHTMLElement', which writes the attributes into the HTML tag to describe locale, etc.
      */
     @Contribute(MarkupRenderer.class)
     public static void renderLocaleAttributeIntoPages(OrderedConfiguration<MarkupRendererFilter> configuration)
     {
-        configuration.addInstance("LocaleEmitter", LocaleEmitterFilter.class);
+        configuration.addInstance("ConfigureHTMLElement", ConfigureHTMLElementFilter.class);
     }
 
 }
