@@ -41,15 +41,17 @@ public interface ModuleManager
      * is constructed to load static scripts and perform page initializations.
      *
      * @param body
-     *         {@code <body>} element of the page, to which new {@code <script>>} element(s) will be added.
+     *         {@code <body>} element of the page, to which new {@code <script>} element(s) will be added.
      * @param libraryURLs
      *         list of additional static JavaScript library URLs that must be loaded on the page, after the
      *         coreLibraryURLs, and before an initializations
-     * @param immediateInits
- *         list of immediate initializations that occur as soon as the static JavaScript libraries are loaded
-     * @param deferredInits
+     * @param inits
+     *         initializations for the page, in the desired execution order. Each element consists of a
+     *         qualified function name, followed by parameters to pass to the function. A qualified function name
+     *         is either a module name, or a module name suffixed with the name of a function property exported by the module
+     *         (separated by a ':', e.g. "myapp/mymodule:myfunc").
      */
-    void writeInitialization(Element body, List<String> libraryURLs, List<JSONArray> immediateInits, List<JSONArray> deferredInits);
+    void writeInitialization(Element body, List<String> libraryURLs, List<JSONArray> inits);
 
     /**
      * Given a module name (which may be a path of names separated by slashes), locates the corresponding {@link Resource}.

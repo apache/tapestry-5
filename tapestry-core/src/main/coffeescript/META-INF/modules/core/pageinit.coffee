@@ -116,7 +116,7 @@ define ["_", "core/console", "core/spi", "core/events"],
           callbackCountdown--
 
           if callbackCountdown is 0
-            console.debug "Inits completed"
+            console.debug "All inits executed"
             callback() if callback
 
         # First value in each init is the qualified module name; anything after
@@ -141,13 +141,9 @@ define ["_", "core/console", "core/spi", "core/events"],
       # any free-standing libraries). It then executes the immediate initializations. After that, it waits for the DOM to be
       # ready (which, given typical Tapestry page structure, it almost certainly is at the point this function
       # executed), and then executes the other initializations.
-      loadLibrariesAndInitialize: (libraries, immediateInits, otherInits) ->
+      loadLibrariesAndInitialize: (libraries, inits) ->
         console.debug "Loading #{libraries?.length or 0} libraries"
-        exports.loadLibraries libraries, ->
-          console.debug "Executing immediate inits"
-          exports.initialize immediateInits, ->
-            console.debug "Executing ordinary inits"
-            exports.initialize otherInits
+        exports.loadLibraries libraries, -> exports.initialize inits
 
       evalJavaScript: (js) ->
         console.debug "Evaluating: #{js}"

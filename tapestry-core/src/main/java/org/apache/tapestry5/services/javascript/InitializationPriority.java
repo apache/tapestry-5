@@ -18,7 +18,8 @@ package org.apache.tapestry5.services.javascript;
  * Sets the priority for JavaScript initialization scripting. InitializationPriority allows coarse-grained control
  * over the order in which initialization occurs on the client. The default is normally {@link #NORMAL}. Starting in 5.4,
  * these values have less meaning, as the {@linkplain JavaScriptSupport#require(String) dynamic loading of modules} may
- * have unexpected effects on the exact order in which initialization occurs.
+ * have unexpected effects on the exact order in which initialization occurs as some initializations may be deferred until
+ * a referenced module, or a dependency of a referenced module, has been loaded.
  *
  * @since 5.2.0
  */
@@ -29,22 +30,23 @@ public enum InitializationPriority
      * JavaScript's {@code eval}, and occurs once all {@linkplain JavaScriptSupport#importJavaScriptLibrary(org.apache.tapestry5.Asset) JavaScript libraries}
      * (but not modules) for the page have been loaded.
      * <p/>
-     * In an Ajax update, IMMEDIATE code is executed after the DOM is updated and before EARLY.
+     *
+     * @deprecated Deprecated in 5.4; this is now treated as "earlier than {@linkplain #EARLY early}".
      */
     IMMEDIATE,
 
     /**
-     * Execution is deferred until the page loads. All early execution occurs before {@link #NORMAL}.
+     * All early execution occurs before {@link #NORMAL}.
      */
     EARLY,
 
     /**
-     * Execution is deferred until the page loads. This is the typical priority.
+     * This is the typical priority.
      */
     NORMAL,
 
     /**
-     * Execution is deferred until the page loads. Execution occurs after {@link #NORMAL}.
+     * Execution occurs after {@link #NORMAL}.
      */
     LATE
 }

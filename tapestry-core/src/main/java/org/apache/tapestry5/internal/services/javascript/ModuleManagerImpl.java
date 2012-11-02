@@ -169,7 +169,7 @@ public class ModuleManagerImpl implements ModuleManager
         tracker.clearOnInvalidation(cache);
     }
 
-    public void writeInitialization(Element body, List<String> libraryURLs, List<JSONArray> immediateInits, List<JSONArray> deferredInits)
+    public void writeInitialization(Element body, List<String> libraryURLs, List<JSONArray> inits)
     {
         body.element("script", "src", requireJS.toClientURL());
 
@@ -181,8 +181,7 @@ public class ModuleManagerImpl implements ModuleManager
 
         content.append(globalMessages.format("core-page-initialization-template",
                 convert(libraryURLs),
-                convert(immediateInits),
-                convert(deferredInits)));
+                convert(inits)));
 
         element.raw(content.toString());
     }

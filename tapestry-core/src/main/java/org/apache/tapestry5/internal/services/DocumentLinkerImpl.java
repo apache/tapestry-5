@@ -190,8 +190,7 @@ public class DocumentLinkerImpl implements DocumentLinker
         // Eventually, (nearly) everything will be loaded as modules.
 
         moduleManager.writeInitialization(body, libraryURLs,
-                initsManager.forPriority(InitializationPriority.IMMEDIATE),
-                initsManager.forPriority(InitializationPriority.EARLY, InitializationPriority.NORMAL, InitializationPriority.LATE));
+                initsManager.forPriority(InitializationPriority.IMMEDIATE, InitializationPriority.EARLY, InitializationPriority.NORMAL, InitializationPriority.LATE));
     }
 
     private static Element createTemporaryContainer(Element headElement, String existingElementName, String newElementName)
