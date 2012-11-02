@@ -38,25 +38,30 @@ define
   # * translate - translate a string to another representation, such as `Date`, or a number
   # * validate - validate the field against any number of other constraints (such as ranges)
   #
-  # The latter two steps occur only if the field's value is non-blank. A field that is blank but not
-  # required is considered valid. In each step, if the event listener detects an input validation error,
-  # it is expected to set the memo's `error`property to true _and_ trigger a `showValidationError'
-  # event (to present a message specific to the case).
+  # A field that is blank but not required is considered valid: the translate and validate steps are skipped.
+  #
+  # Presenting validation error: The event handler has two options for indicating a validation failure
+  # at any of the three steps:
+  #
+  # * set the `error` property of the memo to true, and trigger the `showValidationError` event (or otherwise
+  #   make the validation error visible)
+  # * set the `error` property of the memo to the message to display; this will indicate a failure, and the
+  #   `showValidationError` event will be triggered automatically.
   field:
 
     # Perform the optionality check. The event memo includes a `value` property. If the field is required
-    # but the value is blank, then the `error` property should be set to true.
+    # but the value is blank, then a validation error should be presented (as described above).
     optional: "t5:field:optional"
 
     # Trigged by the field if there is a field value. The event memo includes the value as the `value` property.
     # An event handler may update the event, setting the `translated` property to an alternate formatting, or
     # alternate representation (e.g., `Date`, or a number) for the input value. If the input can not be translated,
-    # then the handler should set the memo's `error` property to true, and trigger a `showValidationError` event.
+    # then a validation error should be presented (as described above).
     translate: "t5:field:translate"
 
     # Triggered by the field if there is a field value, and the `translate` event succeeded. The event memo
     # includes a `value' property, and a `translated` property. If any constraints on the field are invalid,
-    # then the event handler should set the memo's `error` property and trigger a `showValidationError` event.
+    # then the event handler should be presented (as described above).
     validate: "t5:field:validate"
 
     # Triggered by the form on all enclosed elements with the `data-validation` attribute (indicating they are

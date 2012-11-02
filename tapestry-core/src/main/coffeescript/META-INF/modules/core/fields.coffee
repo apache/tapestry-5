@@ -104,24 +104,31 @@ define ["_", "core/events", "core/spi", "core/builder", "core/utils", "core/form
 
       memo = value: this.value()
 
+      postEventTrigger = =>
+        if memo.error
+          # Assume the event handler displayed the message.
+          failure = true
+
+          if _.isString memo.error
+            this.trigger events.field.showValidationError, { message: memo.error }
+
       this.trigger events.field.optional, memo
 
-      if memo.error
-        failure = true
-      else
-        unless utils.isBlank memo.value
-          this.trigger events.field.translate, memo
+      postEventTrigger()
 
-          if memo.error
-            failure = true
-          else
+      unless failure or (utils.isBlank memo.value)
+
+        this.trigger events.field.translate, memo
+
+        postEventTrigger()
+
+        unless failure
             if _.isUndefined memo.translated
               memo.translated = memo.value
 
             this.trigger events.field.validate, memo
 
-            if memo.error
-              failure = true
+            postEventTrigger()
 
       if failure
         formMemo.error = true
