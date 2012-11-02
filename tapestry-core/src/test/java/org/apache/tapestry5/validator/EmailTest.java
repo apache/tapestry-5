@@ -40,12 +40,8 @@ public class EmailTest extends InternalBaseTestCase
     @Test
     public void input_mismatch() throws Exception
     {
-        String label = "My Field";
-        Field field = mockFieldWithLabel(label);
+        Field field = mockField();
         MessageFormatter formatter = mockMessageFormatter();
-        String message = "{message}";
-
-        train_format(formatter, message, label);
 
         replay();
 
@@ -58,16 +54,7 @@ public class EmailTest extends InternalBaseTestCase
         }
         catch (ValidationException ex)
         {
-            assertEquals(ex.getMessage(), message);
-
-            verify();
         }
-
-        field = mockFieldWithLabel(label);
-
-        train_format(formatter, message, label);
-
-        replay();
 
         try
         {
@@ -76,10 +63,9 @@ public class EmailTest extends InternalBaseTestCase
         }
         catch (ValidationException ex)
         {
-            assertEquals(ex.getMessage(), message);
-
-            verify();
         }
+
+        verify();
 
     }
 }
