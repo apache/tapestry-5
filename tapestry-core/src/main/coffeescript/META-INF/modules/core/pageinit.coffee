@@ -90,6 +90,7 @@ define ["_", "core/console", "core/spi", "core/events"],
         if not functionName and
           initArguments.length is 0 and
           not _.isFunction moduleLib
+            console.debug "Loaded module #{moduleName}"
             tracker()
             return
 
