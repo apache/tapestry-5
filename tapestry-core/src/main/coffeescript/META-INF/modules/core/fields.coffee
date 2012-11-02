@@ -115,11 +115,13 @@ define ["_", "core/events", "core/spi", "core/builder", "core/utils", "core/form
           if memo.error
             failure = true
           else
-            memo.translated |= memo.value
+            if _.isUndefined memo.translated
+              memo.translated = memo.value
 
             this.trigger events.field.validate, memo
 
-            failure |= memo.error
+            if memo.error
+              failure = true
 
       if failure
         formMemo.error = true
