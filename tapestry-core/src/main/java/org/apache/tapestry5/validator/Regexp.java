@@ -50,9 +50,6 @@ public class Regexp extends AbstractValidator<Pattern, String>
                     "data-validate-regexp", constraintValue.pattern(),
                     "data-regexp-message", buildMessage(formatter, field, constraintValue));
         }
-
-        formSupport.addValidation(field, "regexp", buildMessage(formatter, field, constraintValue),
-                constraintValue.pattern());
     }
 
     public void validate(Field field, Pattern constraintValue, MessageFormatter formatter, String value)
