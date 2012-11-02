@@ -45,12 +45,12 @@
 # and
 #
 #     { on: { click: -> ... }}
-define ["_", "core/spi"], (_, spi) ->
+define ["_", "core/spi", "core/utils"], (_, spi, utils) ->
   # _internal_: creates a single DOM element and CSS class attribute
   createElement = (elementDescription) ->
     # TODO: Support #id for setting the id of an element, maybe others, such as ?name for the name of an input element.
     # That will require a regex or more sophisticated parsing.
-    terms = elementDescription.trim().split(".")
+    terms = utils.trim(elementDescription).split(".")
 
     elementName = terms.shift() or "div"
 

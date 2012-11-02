@@ -17,4 +17,13 @@
 # A few handy functions.
 define [], ->
 
-  isBlank: (input) -> input is null or input.trim().length == 0
+  trim = (input) ->
+    if String.prototype.trim
+      input.trim()
+    else
+      input.replace(/^\s+/, '').replace(/\s+$/, '')
+
+  exports =
+    # Trims leading and trailing whitespace from a string. Delegates to String.prototype.trim if present.
+    trim: trim
+    isBlank: (input) -> input is null or (exports.trim input).length == 0
