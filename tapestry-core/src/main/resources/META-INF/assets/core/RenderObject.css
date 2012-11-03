@@ -1,0 +1,29 @@
+TABLE.t-location-outer {
+    padding: 5px;
+    border-collapse: collapse;
+    border: 1px solid black;
+    width: 100%;
+}
+
+TD.t-location-line {
+    width: 40px;
+    text-align: right;
+    padding: 0px;
+    background-color: #E1E1E1;
+    padding-right: 3px;
+    border-right: 1px solid black;
+}
+
+TD.t-location-content {
+    border-top: 1px solid silver;
+    border-right: 1px solid black;
+    white-space: pre;
+}
+
+TD.t-location-current {
+    background-color: #FFFFCF;
+}
+
+TD.t-location-content-first {
+    border-top: 1px solid black;
+}

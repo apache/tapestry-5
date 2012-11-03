@@ -1,0 +1,18 @@
+UL.t-stack-trace LI {
+    font-size: small;
+}
+
+LI.t-usercode-frame {
+    font-weight: bold;
+    color: blue;
+}
+
+LI.t-omitted-frame {
+    display: none;
+    color: gray;
+    list-style: square;
+}
+
+DT:after {
+    content: ":";
+}

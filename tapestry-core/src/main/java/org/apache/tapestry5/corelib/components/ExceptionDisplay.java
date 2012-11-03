@@ -1,4 +1,4 @@
-// Copyright 2008, 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2008, 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import java.util.List;
-
 import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
@@ -29,6 +27,8 @@ import org.apache.tapestry5.services.StackTraceElementAnalyzer;
 import org.apache.tapestry5.services.StackTraceElementClassConstants;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
+import java.util.List;
+
 /**
  * Integral part of the default {@link org.apache.tapestry5.corelib.pages.ExceptionReport} page used to break apart and
  * display the properties of the exception.
@@ -36,7 +36,7 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
  * @see org.apache.tapestry5.ioc.services.ExceptionAnalyzer
  * @tapestrydoc
  */
-@Import(library = "exceptiondisplay.js")
+@Import(stylesheet = "ExceptionDisplay.css")
 public class ExceptionDisplay
 {
     /**
@@ -81,13 +81,6 @@ public class ExceptionDisplay
         toggleId = jsSupport.allocateClientId("toggleStack");
     }
 
-    public boolean getShowPropertyList()
-    {
-        // True if either is non-empty
-
-        return !(info.getPropertyNames().isEmpty() && info.getStackTrace().isEmpty());
-    }
-
     public Object getPropertyValue()
     {
         return info.getProperty(propertyName);
@@ -96,7 +89,9 @@ public class ExceptionDisplay
     public String getFrameClass()
     {
         if (sawDoFilter)
+        {
             return StackTraceElementClassConstants.OMITTED;
+        }
 
         String result = frameAnalyzer.classForFrame(frame);
 
@@ -107,6 +102,6 @@ public class ExceptionDisplay
 
     void afterRender()
     {
-        jsSupport.addScript("Tapestry.stackFrameToggle('%s');", toggleId);
+        // jsSupport.addScript("Tapestry.stackFrameToggle('%s');", toggleId);
     }
 }

@@ -1,36 +1,40 @@
-<div xml:space="default" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" class="t-exception-report">
-    <ul>
-        <t:loop source="stack" value="info">
-            <li>
-                <span class="t-exception-class-name">${info.className}</span>
+<div xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
+    <t:loop source="stack" value="info">
 
-                <div t:type="if" test="info.message" class="t-exception-message">${info.message}</div>
+        <div class="well">
+            <h3>${info.className}</h3>
 
-                <dl t:type="if" test="showPropertyList">
+            <t:if test="info.message">
+                <p><strong>${info.message}</strong></p>
+            </t:if>
+
+            <t:if test="info.propertyNames">
+                <dl>
                     <t:loop source="info.propertyNames" value="propertyName">
                         <dt>${propertyName}</dt>
                         <dd>
                             <t:renderobject object="propertyValue"/>
                         </dd>
                     </t:loop>
-                    <t:if test="info.stackTrace">
-                        <dt>
-                            <span class="t-exception-stack-controls">
-                                <input type="checkbox" id="${toggleId}" checked="checked"/>
-                                <label for="${toggleId}">Filter stack frames</label>
-                            </span>
-                            Stack trace
-                        </dt>
-                        <dd>
-                            <ul class="t-stack-trace">
-                                <li t:type="loop" source="info.stackTrace" value="frame" class="${frameClass}">
-                                    ${frame}
-                                </li>
-                            </ul>
-                        </dd>
-                    </t:if>
                 </dl>
-            </li>
-        </t:loop>
-    </ul>
+            </t:if>
+
+        </div>
+
+        <t:if test="info.stackTrace">
+            <div>
+                <form action="#" class="form-inline pull-right">
+                    <label class="checkbox">
+                        <input type="checkbox" data-behavior="master" checked="true"/> Filter Frames?
+                    </label>
+                </form>
+                <h4>Stack trace:</h4>
+            </div>
+            <ul class="t-stack-trace">
+                <li t:type="loop" source="info.stackTrace" value="frame" class="${frameClass}">
+                    ${frame}
+                </li>
+            </ul>
+        </t:if>
+    </t:loop>
 </div>
