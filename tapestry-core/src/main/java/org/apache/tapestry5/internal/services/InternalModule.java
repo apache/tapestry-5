@@ -64,7 +64,7 @@ public class InternalModule
         binder.bind(JavaScriptStackPathConstructor.class);
         binder.bind(AjaxFormUpdateController.class);
         binder.bind(ResourceDigestManager.class, ResourceDigestManagerImpl.class);
-        binder.bind(RequestPageCache.class, NonPoolingRequestPageCacheImpl.class);
+        binder.bind(RequestPageCache.class, RequestPageCacheImpl.class);
         binder.bind(ComponentInstantiatorSource.class);
         binder.bind(InternalComponentInvalidationEventHub.class);
         binder.bind(PageSource.class, PageSourceImpl.class);

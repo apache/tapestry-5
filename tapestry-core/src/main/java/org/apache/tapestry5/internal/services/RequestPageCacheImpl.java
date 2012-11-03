@@ -1,4 +1,4 @@
-// Copyright 2010, 2011 The Apache Software Foundation
+// Copyright 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import java.util.Map;
  * @since 5.2
  */
 @Scope(ScopeConstants.PERTHREAD)
-public class NonPoolingRequestPageCacheImpl implements RequestPageCache, ThreadCleanupListener
+public class RequestPageCacheImpl implements RequestPageCache, ThreadCleanupListener
 {
     private final Logger logger;
 
@@ -44,7 +44,7 @@ public class NonPoolingRequestPageCacheImpl implements RequestPageCache, ThreadC
 
     private final Map<String, Page> cache = CollectionFactory.newMap();
 
-    public NonPoolingRequestPageCacheImpl(Logger logger, ComponentClassResolver resolver, PageSource pageSource)
+    public RequestPageCacheImpl(Logger logger, ComponentClassResolver resolver, PageSource pageSource)
     {
         this.logger = logger;
         this.resolver = resolver;
