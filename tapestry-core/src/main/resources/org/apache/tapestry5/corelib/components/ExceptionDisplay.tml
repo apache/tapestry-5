@@ -25,12 +25,12 @@
             <div>
                 <form action="#" class="form-inline pull-right">
                     <label class="checkbox">
-                        <input type="checkbox" data-behavior="master" checked="true"/> Filter Frames?
+                        <input type="checkbox" data-behavior="stack-trace-filter-toggle" checked="true"/> Filter Frames?
                     </label>
                 </form>
                 <h4>Stack trace:</h4>
             </div>
-            <ul class="t-stack-trace">
+            <ul class="t-stack-trace t-filtered">
                 <li t:type="loop" source="info.stackTrace" value="frame" class="${frameClass}">
                     ${frame}
                 </li>

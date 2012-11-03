@@ -8,9 +8,12 @@ LI.t-usercode-frame {
 }
 
 LI.t-omitted-frame {
-    display: none;
     color: gray;
     list-style: square;
+}
+
+UL.t-filtered LI.t-omitted-frame {
+    display: none;
 }
 
 DT:after {

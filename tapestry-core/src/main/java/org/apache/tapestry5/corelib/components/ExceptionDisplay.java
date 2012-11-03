@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.corelib.components;
 
-import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Parameter;
 import org.apache.tapestry5.annotations.Property;
@@ -25,18 +24,17 @@ import org.apache.tapestry5.ioc.services.ExceptionAnalyzer;
 import org.apache.tapestry5.ioc.services.ExceptionInfo;
 import org.apache.tapestry5.services.StackTraceElementAnalyzer;
 import org.apache.tapestry5.services.StackTraceElementClassConstants;
-import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 import java.util.List;
 
 /**
  * Integral part of the default {@link org.apache.tapestry5.corelib.pages.ExceptionReport} page used to break apart and
  * display the properties of the exception.
- * 
- * @see org.apache.tapestry5.ioc.services.ExceptionAnalyzer
+ *
  * @tapestrydoc
+ * @see org.apache.tapestry5.ioc.services.ExceptionAnalyzer
  */
-@Import(stylesheet = "ExceptionDisplay.css")
+@Import(stylesheet = "ExceptionDisplay.css", module = "core/exception-display")
 public class ExceptionDisplay
 {
     /**
@@ -60,12 +58,6 @@ public class ExceptionDisplay
     @Property
     private List<ExceptionInfo> stack;
 
-    @Environmental
-    private JavaScriptSupport jsSupport;
-
-    @Property
-    private String toggleId;
-
     private boolean sawDoFilter;
 
     @Inject
@@ -77,8 +69,6 @@ public class ExceptionDisplay
         ExceptionAnalysis analysis = analyzer.analyze(exception);
 
         stack = analysis.getExceptionInfos();
-
-        toggleId = jsSupport.allocateClientId("toggleStack");
     }
 
     public Object getPropertyValue()
@@ -98,10 +88,5 @@ public class ExceptionDisplay
         sawDoFilter |= frame.getMethodName().equals("doFilter");
 
         return result;
-    }
-
-    void afterRender()
-    {
-        // jsSupport.addScript("Tapestry.stackFrameToggle('%s');", toggleId);
     }
 }
