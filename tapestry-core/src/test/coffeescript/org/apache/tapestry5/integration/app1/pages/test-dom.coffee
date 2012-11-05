@@ -1,20 +1,20 @@
-require ["core/spi"], (spi) ->
-  module "core/spi"
+require ["core/dom"], (dom) ->
+  module "core/dom"
 
   test "get wrapped element by id", ->
-    e = spi "spi-eventelement-native"
+    e = dom "dom-eventelement-native"
 
     ok e isnt null, "element found and wrapped"
 
   test "get wrapped element by unknown id is null", ->
-    e = spi "spi-does-not-exist-element"
+    e = dom "dom-does-not-exist-element"
 
     ok e is null, "element not found and null"
 
   test "trigger native events", ->
 
     clicks = 0
-    container = spi "spi-eventelement-native"
+    container = dom "dom-eventelement-native"
     button = container.findFirst "a"
 
     container.on "click", "a", ->
@@ -28,7 +28,7 @@ require ["core/spi"], (spi) ->
   test "selector used with events filters", ->
 
     clicks = 0
-    container = spi "spi-eventelement-selector"
+    container = dom "dom-eventelement-selector"
     primary = container.findFirst "a.btn-primary"
     secondary = container.findFirst "a[data-use=secondary]"
 
@@ -46,7 +46,7 @@ require ["core/spi"], (spi) ->
 
   test "this is matched element in handler", ->
 
-    container = spi "spi-eventelement-matched"
+    container = dom "dom-eventelement-matched"
     primary = container.findFirst "a.btn-primary"
 
     container.on "x:click", "a.btn-primary", ->
@@ -59,7 +59,7 @@ require ["core/spi"], (spi) ->
 
   test "visibility, hide(), and show()", ->
 
-    e = (spi "spi-visibility").findFirst "span"
+    e = (dom "dom-visibility").findFirst "span"
 
     equal e.visible(), true, "element is initially visible"
 

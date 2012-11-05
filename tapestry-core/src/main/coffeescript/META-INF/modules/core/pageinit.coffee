@@ -20,8 +20,8 @@
 # The module name may also indicate the function exported by the module, as a suffix following a colon:
 # e.g., "my/module:myfunc".
 # Any additional values in the initializer are passed to the function. The context of the function (this) is null.
-define ["_", "core/console", "core/spi", "core/events"],
-  (_, console, spi, events) ->
+define ["_", "core/console", "core/dom", "core/events"],
+  (_, console, dom, events) ->
     pathPrefix = null
 
     # Borrowed from Prototype:
@@ -150,7 +150,7 @@ define ["_", "core/console", "core/spi", "core/events"],
         eval js
 
       focus: (fieldId) ->
-        field = spi fieldId
+        field = dom fieldId
 
         field && field.focus()
 
@@ -187,7 +187,7 @@ define ["_", "core/console", "core/spi", "core/events"],
           _(partial?.content).each ([id, content]) ->
             console.debug "Updating content for zone #{id}"
 
-            zone = spi.wrap id
+            zone = dom.wrap id
 
             if zone
               zone.trigger events.zone.update, { content }

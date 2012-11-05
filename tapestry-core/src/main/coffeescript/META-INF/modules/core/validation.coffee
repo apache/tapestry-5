@@ -16,8 +16,8 @@
 #
 # Support for Tapestry's built-in set of translators and validators.
 #
-define ["_", "core/spi", "core/events", "core/utils", "core/messages", "core/fields"],
-  (_, spi, events, utils, messages) ->
+define ["_", "core/dom", "core/events", "core/utils", "core/messages", "core/fields"],
+  (_, dom, events, utils, messages) ->
 
     REGEXP_META = "t5:regular-expression"
 
@@ -96,46 +96,46 @@ define ["_", "core/spi", "core/events", "core/utils", "core/messages", "core/fie
         memo.error = (field.attribute "data-translation-message") or e.message or "ERROR"
         return false
 
-    spi.onDocument events.field.optional, "[data-optionality=required]", (event, memo) ->
+    dom.onDocument events.field.optional, "[data-optionality=required]", (event, memo) ->
 
       if utils.isBlank memo.value
         memo.error =  (this.attribute "data-required-message") or "REQUIRED"
 
-    spi.onDocument events.field.translate, "[data-translation=numeric]", (event, memo) ->
+    dom.onDocument events.field.translate, "[data-translation=numeric]", (event, memo) ->
       translate this, memo, false
 
-    spi.onDocument events.field.translate, "[data-translation=integer]", (event, memo) ->
+    dom.onDocument events.field.translate, "[data-translation=integer]", (event, memo) ->
       translate this, memo, true
 
-    spi.onDocument events.field.validate, "[data-validate-min-length]", (event, memo) ->
+    dom.onDocument events.field.validate, "[data-validate-min-length]", (event, memo) ->
       min = parseInt this.attribute "data-validate-min-length"
 
       if memo.translated.length < min
         memo.error = (this.attribute "data-min-length-message") or "TOO SHORT"
         return false
 
-    spi.onDocument events.field.validate, "[data-validate-max-length]", (event, memo) ->
+    dom.onDocument events.field.validate, "[data-validate-max-length]", (event, memo) ->
       max = parseInt this.attribute "data-validate-max-length"
 
       if memo.translated.length > max
         memo.error = (this.attribute "data-max-length-message") or "TOO LONG"
         return false
 
-    spi.onDocument events.field.validate, "[data-validate-max]", (event, memo) ->
+    dom.onDocument events.field.validate, "[data-validate-max]", (event, memo) ->
       max = parseInt this.attribute "data-validate-max"
 
       if memo.translated > max
         memo.error = (this.attribute "data-max-message") or "TOO LARGE"
         return false
 
-    spi.onDocument events.field.validate, "[data-validate-min]", (event, memo) ->
+    dom.onDocument events.field.validate, "[data-validate-min]", (event, memo) ->
       min = parseInt this.attribute "data-validate-min"
 
       if memo.translated < min
         memo.error = (this.attribute "data-min-message") or "TOO SMALL"
         return false
 
-    spi.onDocument events.field.validate, "[data-validate-regexp]", (event, memo) ->
+    dom.onDocument events.field.validate, "[data-validate-regexp]", (event, memo) ->
 
       # Cache the compiled regular expression.
       re = this.meta REGEXP_META

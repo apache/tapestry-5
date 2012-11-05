@@ -16,14 +16,14 @@
 #
 # Provides handlers related to the core/AjaxFormLoop component (as well as core/AddRowLink and
 # core/RemoveRowLink).
-define ["core/spi", "core/events", "core/console", "core/ajax", "core/builder"],
-  (spi, events, console, ajax, builder) ->
+define ["core/dom", "core/events", "core/console", "core/ajax", "core/builder"],
+  (dom, events, console, ajax, builder) ->
 
     # "afl" is short for "AjaxFormLoop".
     AFL_SELECTOR = "[data-container-type=core/ajaxformloop]"
     FRAGMENT_TYPE = "core/ajaxformloop-fragment"
 
-    spi.onDocument "click", "#{AFL_SELECTOR} [data-afl-behavior=remove]", ->
+    dom.onDocument "click", "#{AFL_SELECTOR} [data-afl-behavior=remove]", ->
 
       afl = this.findContainer AFL_SELECTOR
 
@@ -50,7 +50,7 @@ define ["core/spi", "core/events", "core/console", "core/ajax", "core/builder"],
 
       return false
 
-    spi.onDocument "click", "#{AFL_SELECTOR} [data-afl-behavior=insert-before]", ->
+    dom.onDocument "click", "#{AFL_SELECTOR} [data-afl-behavior=insert-before]", ->
 
       afl = this.findContainer AFL_SELECTOR
 

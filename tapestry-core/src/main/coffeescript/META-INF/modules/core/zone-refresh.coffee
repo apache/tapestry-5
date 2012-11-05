@@ -14,13 +14,13 @@
 
 # ##core/zone-refresh
 
-define ["core/events", "core/spi", "core/console"],
-  (events, spi, console) ->
+define ["core/events", "core/dom", "core/console"],
+  (events, dom, console) ->
 
     # Initialize a timer for the zone at the specified period (in seconds). The zone will be
     # refreshed with the provided URL.
     initialize = (zoneId, period, url) ->
-      zone = spi zoneId
+      zone = dom zoneId
 
       unless zone
         console.err "Zone #{zoneId} not found for periodic refresh."
@@ -49,7 +49,7 @@ define ["core/events", "core/spi", "core/console"],
       intervalId = window.setInterval handler, period * 1000
 
       # Not sure if this is needed except for IE:
-      (spi window).on "beforeunload", ->
+      (dom window).on "beforeunload", ->
         window.clearInterval intervalId
 
     # export the single function:

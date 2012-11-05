@@ -14,14 +14,14 @@
 
 # ##core/ajax
 #
-# Exports a single function, that invokes `core/spi:ajaxRequest()` with the provided `url` and a modified version of the
+# Exports a single function, that invokes `core/dom:ajaxRequest()` with the provided `url` and a modified version of the
 # `options`.
 #
 # It wraps (or provides) `onsuccess`, `onexception`, and `onfailure` handlers, extended to handle a partial page render
 # response (for success), or properly log a server-side failure or client-side exception, including using the
 # `core/exceptionframe` module to display a server-side processing exception.
-define ["core/pageinit", "core/spi", "core/exceptionframe", "core/console", "_"],
-  (pageinit, spi, exceptionframe, console, _) ->
+define ["core/pageinit", "core/dom", "core/exceptionframe", "core/console", "_"],
+  (pageinit, dom, exceptionframe, console, _) ->
     (url, options) ->
       newOptions = _.extend {}, options,
 
@@ -57,4 +57,4 @@ define ["core/pageinit", "core/spi", "core/exceptionframe", "core/console", "_"]
         onsuccess: (response) ->
           pageinit.handlePartialPageRenderResponse response, options.onsuccess
 
-      spi.ajaxRequest url, newOptions
+      dom.ajaxRequest url, newOptions

@@ -16,13 +16,13 @@
 #
 # Provides dynamic behavior for the core/ExceptionDisplay component; specifically,
 # filtering the stack trace.
-define ["core/spi"],
-  (spi) ->
+define ["core/dom"],
+  (dom) ->
 
-    spi.onDocument "click", "[data-behavior=stack-trace-filter-toggle]", ->
+    dom.onDocument "click", "[data-behavior=stack-trace-filter-toggle]", ->
       checked = this.element.checked
 
-      for traceList in spi.body().find "ul.t-stack-trace"
+      for traceList in dom.body().find "ul.t-stack-trace"
         traceList[if checked then "addClass" else "removeClass"] "t-filtered"
 
       return

@@ -112,7 +112,7 @@ define
   # (the partial page render reponse). More details are available in the `core/zone` module.
   zone:
     # Invoked on a zone element to force an update to its content. The event memo should contain a `content` key (an
-    # Element, or a `core/spi:ElementWrapper`, or more typically, a string containing HTML markup). A standard top-level
+    # Element, or a `core/dom:ElementWrapper`, or more typically, a string containing HTML markup). A standard top-level
     # handler is defined by module `core/zone`, and is responsible for the actual update; it triggers the
     # `events.zone.willUpdate` and `events.zone.didUpdate` events just before and just after changing the element's
     # content.
@@ -148,6 +148,6 @@ define
     # `element.didHide` event).
     changeVisibility: "t5:fragment:change-visibility"
     # Requests that the fragment remove itself entirely. This event is of no practical use, as it is simply equivalent
-    # to invoking `spi/ElementWrapper.remove()` on the fragment's element; the event exists for compatibility with
+    # to invoking `dom/ElementWrapper.remove()` on the fragment's element; the event exists for compatibility with
     # Tapestry 5.3 and will be removed in Tapestry 5.5.
     remove: "t5:fragment:remove"

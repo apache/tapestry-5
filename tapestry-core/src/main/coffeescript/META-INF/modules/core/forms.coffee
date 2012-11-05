@@ -16,8 +16,8 @@
 #
 # Defines handlers for HTML forms and HTML field elements, specifically to control input validation.
 
-define ["core/events", "core/spi", "core/builder", "_"],
-  (events, spi, builder, _) ->
+define ["core/events", "core/dom", "core/builder", "_"],
+  (events, dom, builder, _) ->
 
     # Meta-data name that indicates the next submission should skip validation (typically, because
     # the form was submitted by a "cancel" button).
@@ -127,18 +127,18 @@ define ["core/events", "core/spi", "core/builder", "_"],
       # is an Ajax submission.
       return
 
-    spi.onDocument "submit", "form", defaultValidateAndSubmit
+    dom.onDocument "submit", "form", defaultValidateAndSubmit
 
     # On any click on a submit or image, update the containing form to indicate that the element
     # was responsible for the eventual submit; this is very important to Ajax updates, otherwise the
     # information about which control triggered the submit gets lost.
-    spi.onDocument "click", "input[type=submit], input[type=image]", ->
-      setSubmittingHidden (spi this.element.form), this
+    dom.onDocument "click", "input[type=submit], input[type=image]", ->
+      setSubmittingHidden (dom this.element.form), this
       return
 
     # Support for link submits. `data-submit-mode` will be non-null, possibly "cancel".
     # Update the hidden field, but also cancel the default behavior for the click.
-    spi.onDocument "click", "a[data-submit-mode]", ->
+    dom.onDocument "click", "a[data-submit-mode]", ->
       form = this.findContainer "form"
 
       unless form

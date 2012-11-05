@@ -22,9 +22,9 @@
 #
 # Most often, a zone is any element with attribute `data-container-type=zone` and corresponds
 # to a core/Zone server-side component.
-define ["core/spi", "core/events", "core/ajax", "core/console", "core/forms",  "_"],
+define ["core/dom", "core/events", "core/ajax", "core/console", "core/forms",  "_"],
 
-  (spi, events, ajax, console, forms, _) ->
+  (dom, events, ajax, console, forms, _) ->
 
     # For a given element that may have the `data-update-zone` attribute, locates the
     # zone element. May return null if the zone can not be found (after logging an error
@@ -42,14 +42,14 @@ define ["core/spi", "core/events", "core/ajax", "core/console", "core/forms",  "
 
         return zone
 
-      zone = spi zoneId
+      zone = dom zoneId
 
       if zone is null
         console.error "Unable to locate zone '#{zoneId}'."
 
       return zone
 
-    spi.onDocument "click", "a[data-update-zone]", ->
+    dom.onDocument "click", "a[data-update-zone]", ->
 
       zone = findZone this
 
@@ -58,7 +58,7 @@ define ["core/spi", "core/events", "core/ajax", "core/console", "core/forms",  "
 
       return false
 
-    spi.onDocument "submit", "form[data-update-zone]", ->
+    dom.onDocument "submit", "form[data-update-zone]", ->
 
       zone = findZone this
 
@@ -71,7 +71,7 @@ define ["core/spi", "core/events", "core/ajax", "core/console", "core/forms",  "
 
       return false
 
-    spi.onDocument events.zone.update, (event) ->
+    dom.onDocument events.zone.update, (event) ->
 
       this.trigger events.zone.willUpdate
 
@@ -88,7 +88,7 @@ define ["core/spi", "core/events", "core/ajax", "core/console", "core/forms",  "
 
       this.trigger events.zone.didUpdate
 
-    spi.onDocument events.zone.refresh, (event) ->
+    dom.onDocument events.zone.refresh, (event) ->
 
       # A Zone inside a form will render some additional parameters to coordinate updates with the Form on the server.
       attr = this.attribute "data-zone-parameters"
@@ -108,7 +108,7 @@ define ["core/spi", "core/events", "core/ajax", "core/console", "core/forms",  "
     deferredZoneUpdate = (id, url) ->
 
       _.defer ->
-        zone = spi id
+        zone = dom id
 
         if zone is null
           console.error "Could not locate element '#{id}' to update."

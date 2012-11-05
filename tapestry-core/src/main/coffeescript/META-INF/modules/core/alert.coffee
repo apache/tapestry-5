@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# ##core/ajax
+# ##core/alert
 #
 # Support for the core/Alerts components.
 #
-define ["core/spi", "core/console", "core/messages", "core/builder", "core/ajax", "_"],
-  (spi, console, messages, builder, ajax, _) ->
+define ["core/dom", "core/console", "core/messages", "core/builder", "core/ajax", "_"],
+  (dom, console, messages, builder, ajax, _) ->
 
     severityToClass =
       warn: "alert alert-warning"
@@ -77,7 +77,7 @@ define ["core/spi", "core/console", "core/messages", "core/builder", "core/ajax"
         return false
 
     findInnerContainer = ->
-      outer = spi.body().findFirst "[data-container-type=alerts]"
+      outer = dom.body().findFirst "[data-container-type=alerts]"
 
       unless outer
         console.error "Unable to locate alert container element to present an alert."

@@ -16,8 +16,8 @@
 #
 # Manages a special element used to present a HTML exception report from an Ajax request (where a non-markup response
 # was expected, including a partial page render response).
-define ["core/spi", "core/builder", "_"],
-  (spi, builder, _) ->
+define ["core/dom", "core/builder", "_"],
+  (dom, builder, _) ->
     container = null
     iframe = null
     iframeDocument = null
@@ -36,7 +36,7 @@ define ["core/spi", "core/builder", "_"],
 
     # Called after the window has resized to adjust the size of the iframe.
     resize = ->
-      dims = spi.viewportDimensions()
+      dims = dom.viewportDimensions()
 
       iframe.width = dims.width - 100
       iframe.height = dims.height - 120
@@ -48,7 +48,7 @@ define ["core/spi", "core/builder", "_"],
         ["iframe.t-exception-frame", width: "100%"],
         [".t-exception-controls > span.t-exception-close", "Close"]
 
-      spi.body().append container.hide()
+      dom.body().append container.hide()
 
       iframe = (container.findFirst "iframe").element
 
@@ -60,7 +60,7 @@ define ["core/spi", "core/builder", "_"],
 
       container.on "click", ".t-exception-close", clear
 
-      spi.on window, "resize", (_.debounce resize, 20)
+      dom.on window, "resize", (_.debounce resize, 20)
 
     # Export single function:
 

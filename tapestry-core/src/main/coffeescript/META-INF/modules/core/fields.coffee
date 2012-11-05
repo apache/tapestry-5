@@ -16,8 +16,8 @@
 #
 # Module for logic relating to form input fields (input, select, textarea); specifically
 # presenting validation errors and perfoming input validation when necessary.
-define ["_", "core/events", "core/spi", "core/builder", "core/utils", "core/forms"],
-  (_, events, spi, builder, utils) ->
+define ["_", "core/events", "core/dom", "core/builder", "core/utils", "core/forms"],
+  (_, events, dom, builder, utils) ->
 
     ensureFieldId = (field) ->
       fieldId = field.attribute "id"
@@ -39,7 +39,7 @@ define ["_", "core/events", "core/spi", "core/builder", "core/utils", "core/form
       # When the field has an id (the normal case!), search the body for
       # the matching help block.
       if fieldId
-        block = spi.body().findFirst "[data-error-block-for=#{fieldId}]"
+        block = dom.body().findFirst "[data-error-block-for=#{fieldId}]"
 
         return block if block
       else
@@ -88,11 +88,11 @@ define ["_", "core/events", "core/spi", "core/builder", "core/utils", "core/form
       return block
 
     showValidationError = (id, message) ->
-      spi.wrap(id).trigger events.field.showValidationError, { message }
+      dom.wrap(id).trigger events.field.showValidationError, { message }
 
     # Default registrations:
 
-    spi.onDocument events.field.inputValidation, (event, formMemo) ->
+    dom.onDocument events.field.inputValidation, (event, formMemo) ->
 
       # When not visible to the user, ignore the input validation. Components
       # are generally configured so that they do not submit a value to the server
@@ -137,7 +137,7 @@ define ["_", "core/events", "core/spi", "core/builder", "core/utils", "core/form
 
       return
 
-    spi.onDocument events.field.clearValidationError, ->
+    dom.onDocument events.field.clearValidationError, ->
       block = exports.findHelpBlock this
 
       if block
@@ -149,7 +149,7 @@ define ["_", "core/events", "core/spi", "core/builder", "core/utils", "core/form
 
       return
 
-    spi.onDocument events.field.showValidationError, (event, memo) ->
+    dom.onDocument events.field.showValidationError, (event, memo) ->
       block = exports.findHelpBlock this
 
       unless block

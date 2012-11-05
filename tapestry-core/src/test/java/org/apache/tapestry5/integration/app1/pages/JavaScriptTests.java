@@ -7,7 +7,7 @@ import org.apache.tapestry5.annotations.Import;
         "qunit-config.js",
 
         "test-pubsub.js",
-        "test-spi.js",
+        "test-dom.js",
         "test-messages.js",
         "test-validation.js",
 

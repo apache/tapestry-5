@@ -15,7 +15,7 @@
 # ##core/console
 #
 # A wrapper around the native console, when it exists.
-define ["core/spi", "core/builder", "_"], (spi, builder, _) ->
+define ["core/dom", "core/builder", "_"], (dom, builder, _) ->
   nativeConsole = {}
   floatingConsole = null
 
@@ -38,7 +38,7 @@ define ["core/spi", "core/builder", "_"], (spi, builder, _) ->
   display = (className, message) ->
     unless floatingConsole
       floatingConsole = builder ".t-console"
-      spi.body().prepend floatingConsole
+      dom.body().prepend floatingConsole
 
     div = builder ".t-console-entry.#{className}", message
 

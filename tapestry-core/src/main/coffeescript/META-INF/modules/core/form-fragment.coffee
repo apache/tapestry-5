@@ -15,21 +15,21 @@
 
 # ##core/form-fragment
 #
-define ["_", "core/spi", "core/events"],
-  (_, spi, events) ->
+define ["_", "core/dom", "core/events"],
+  (_, dom, events) ->
 
     SELECTOR = '[data-component-type="core/FormFragment"]'
 
     # This is mostly for compatibility with 5.3, which supported
     # a DOM event to ask a fragment to remove itself.  This makes less sense since
     # default animations were eliminated in 5.4.
-    spi.onDocument events.formfragment.remove, SELECTOR, (event) ->
+    dom.onDocument events.formfragment.remove, SELECTOR, (event) ->
       this.remove()
 
     # When any form fires the prepareForSubmit event, check to see if
     # any form fragments are contained within, and give them a chance
     # to enabled/disable their hidden field.
-    spi.onDocument events.form.prepareForSubmit, "form", (event) ->
+    dom.onDocument events.form.prepareForSubmit, "form", (event) ->
 
       fragments = this.find SELECTOR
 
@@ -46,7 +46,7 @@ define ["_", "core/spi", "core/events"],
     # because of the didShow/didHide events ... but we're really just seeing the evolution
     # from the old style (the FormFragment class as controller) to the new style (DOM events and
     # top-level event handlers).
-    spi.onDocument events.formfragment.changeVisibility, SELECTOR, (event) ->
+    dom.onDocument events.formfragment.changeVisibility, SELECTOR, (event) ->
         makeVisible = event.memo.visible
 
         this[if makeVisible then "show" else "hide"]()
@@ -61,17 +61,17 @@ define ["_", "core/spi", "core/events"],
     # * spec.fragmentId - id of FormFragment element
     # * spec.invert - (optional) if true, then checked trigger hides (not shows) the fragment
     linkTrigger = (spec) ->
-      trigger = spi spec.triggerId
+      trigger = dom spec.triggerId
       invert = spec.invert or false
 
       update = ->
         checked = trigger.element.checked
         makeVisible = checked isnt invert
 
-        (spi spec.fragmentId).trigger events.formfragment.changeVisibility,  visible: makeVisible
+        (dom spec.fragmentId).trigger events.formfragment.changeVisibility,  visible: makeVisible
 
       if trigger.element.type is "radio"
-        spi.on trigger.element.form, "click", update
+        dom.on trigger.element.form, "click", update
       else
         trigger.on "click", update
 

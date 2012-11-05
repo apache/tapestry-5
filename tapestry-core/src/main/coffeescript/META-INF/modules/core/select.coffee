@@ -16,11 +16,11 @@
 #
 # Provides a document event handler that triggers an update a zone when the value
 # of a select element within the zone changes.
-define ["core/events", "core/spi", "core/zone"],
+define ["core/events", "core/dom", "core/zone"],
 
-  (events, spi, zone) ->
+  (events, dom, zone) ->
 
-        spi.onDocument "change", "select[data-update-zone]", ->
+        dom.onDocument "change", "select[data-update-zone]", ->
 
           containingZone = zone.findZone this
 

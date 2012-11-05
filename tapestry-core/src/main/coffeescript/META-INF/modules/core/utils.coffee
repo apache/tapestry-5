@@ -15,7 +15,7 @@
 ## core/utils
 #
 # A few handy functions.
-define [], ->
+define ["_"], (_) ->
 
   trim = (input) ->
     if String.prototype.trim
@@ -27,3 +27,6 @@ define [], ->
     # Trims leading and trailing whitespace from a string. Delegates to String.prototype.trim if present.
     trim: trim
     isBlank: (input) -> input is null or (exports.trim input).length == 0
+
+    # Splits the input string into words separated by whitespace
+    split: (str) -> _(str.split " ").reject((s) -> s is "")

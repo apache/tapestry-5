@@ -13,29 +13,25 @@
 # limitations under the License.
 
 
-# ##core/spi (Service Provider Interface)
+# ##core/dom
 #
-# This is the core of the abstraction layer that allows the majority of components to operate without caring whether the
-# underlying infrastructure framework is Prototype, jQuery, or something else.  This is the standard SPI, which wraps
-# Prototype ... but does it in a way that makes it relatively easy to swap in jQuery instead.
+# This is the abstraction layer that allows the majority of components to operate without caring whether the
+# underlying infrastructure framework is Prototype, jQuery, or something else.  This implementation is specific
+# to Prototype, but Tapestry can be adapted to any infrastreucture framework by re-implementing this module.
 #
-# The SPI has a number of disadvantages:
+# The abstraction layer has a number of disadvantages:
 #
 # * It adds a number of layers of wrapper around the infrastructure framework objects
 # * It is leaky; some behaviors will vary slightly based on the active infrastructure framework
-# * The SPI is alien to both Prototype and jQuery developers; it mixes some ideas from both
+# * The abstraction is alien to both Prototype and jQuery developers; it mixes some ideas from both
 # * It is much less powerful or expressive than either infrastructure framework used directly
 #
 # It is quite concievable that some components will require direct access to the infrastructure framework, especially
 # those that are wrappers around third party libraries or plugins; however many simple components may need no more than
-# the SPI and gain the valuable benefit of not caring about the infrastructure framework.
-define ["_", "prototype"], (_) ->
+# the abstract layer and gain the valuable benefit of not caring about the infrastructure framework.
+define ["_", "core/utils", "prototype"], (_, utils) ->
 
-  # _internal_: splits the string into words separated by whitespace
-  split = (str) ->
-    _(str.split " ").reject (s) -> s is ""
-
-  # _internal_: Fires a native event; something that Prototype does not normally do.
+  # Fires a native event; something that Prototype does not normally do.
   fireNativeEvent = (element, eventName) ->
     if document.createEventObject
       # IE support:
@@ -47,7 +43,7 @@ define ["_", "prototype"], (_) ->
       event.initEvent eventName, true, true
       element.dispatchEvent event
 
-  # _internal_: Converts content (provided to `ElementWrapper.update()` or `append()`) into an appropriate type. This
+  # Converts content (provided to `ElementWrapper.update()` or `append()`) into an appropriate type. This
   # primarily exists to validate the value, and to "unpack" an ElementWrapper into a DOM element.
   convertContent = (content) ->
     if _.isString content
@@ -61,7 +57,7 @@ define ["_", "prototype"], (_) ->
 
     throw new Error "Provided value <#{content}> is not valid as DOM element content."
 
-  # _internal_: Currently don't want to rely on Scriptaculous, since our needs are pretty minor.
+  # Currently don't want to rely on Scriptaculous, since our needs are pretty minor.
   animate = (element, styleName, initialValue, finalValue, duration, callbacks) ->
     styles = {}
     range = finalValue - initialValue
@@ -114,7 +110,7 @@ define ["_", "prototype"], (_) ->
     stop: ->
       @nativeEvent.stop()
 
-  # _internal_: Interface between the SPI's event model, and Prototype's.
+  # Interface between the dom's event model, and Prototype's.
   #
   # * elements - array of DOM elements (or the document object)
   # * eventNames - array of event names
@@ -397,7 +393,7 @@ define ["_", "prototype"], (_) ->
       exports.on @element, events, match, handler
       return this
 
-  # _internal_: converts a selector to an array of DOM elements
+  # converts a selector to an array of DOM elements
   parseSelectorToElements = (selector) ->
     if _.isString selector
       return $$ selector
@@ -516,7 +512,7 @@ define ["_", "prototype"], (_) ->
 
       elements = parseSelectorToElements selector
 
-      onevent elements, (split events), match, handler
+      onevent elements, (utils.split events), match, handler
       return
 
     # onDocument() is used to add an event handler to the document object; this is used
