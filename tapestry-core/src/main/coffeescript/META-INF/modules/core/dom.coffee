@@ -525,6 +525,3 @@ define ["_", "core/utils", "prototype"], (_, utils) ->
     # it is always safe to get the body.
     body: ->
       bodyWrapper ?= (wrapElement document.body)
-
-    # Returns the current dimensions of the viewport. An object with keys `width` and `height` (in pixels) is returned.
-    viewportDimensions: -> document.viewport.getDimensions()

@@ -23,11 +23,11 @@
 
         <t:if test="info.stackTrace">
             <div>
-                <form action="#" class="form-inline pull-right">
+                <div class="pull-right">
                     <label class="checkbox">
                         <input type="checkbox" data-behavior="stack-trace-filter-toggle" checked="true"/> Filter Frames?
                     </label>
-                </form>
+                </div>
                 <h4>Stack trace:</h4>
             </div>
             <ul class="t-stack-trace t-filtered">

@@ -34,19 +34,12 @@ define ["core/dom", "core/builder", "_"],
       container.hide()
       return false
 
-    # Called after the window has resized to adjust the size of the iframe.
-    resize = ->
-      dims = dom.viewportDimensions()
-
-      iframe.width = dims.width - 100
-      iframe.height = dims.height - 120
-
     create = ->
       return if container
 
       container = builder ".t-exception-container",
-        ["iframe.t-exception-frame", width: "100%"],
-        [".t-exception-controls > span.t-exception-close", "Close"]
+        ["iframe"],
+        ["div > button.pull-right.btn.btn-primary", "Close"]
 
       dom.body().append container.hide()
 
@@ -58,14 +51,11 @@ define ["core/dom", "core/builder", "_"],
       if iframeDocument.document
         iframeDocument = iframeDocument.document
 
-      container.on "click", ".t-exception-close", clear
-
-      dom.on window, "resize", (_.debounce resize, 20)
+      container.on "click", "button", clear
 
     # Export single function:
 
     (exceptionContent) ->
       create()
       write exceptionContent
-      resize()
       container.show()

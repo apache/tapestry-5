@@ -90,11 +90,9 @@ public class JavaScriptModule
         add(configuration, StackExtensionType.STYLESHEET,
                 "${tapestry.bootstrap-root}/css/bootstrap.css",
 
-                // The following are mostly temporary:
+                ROOT + "/exception-frame.css",
 
                 ROOT + "/tapestry-console.css",
-
-                ROOT + "/t5-alerts.css",
 
                 ROOT + "/tree.css");
     }
