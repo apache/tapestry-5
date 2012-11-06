@@ -143,3 +143,7 @@ In prior releases, adding _any_ JavaScript to the application would implicitly i
 This no longer occurs; in most cases, the core stack is provided automatically by other components.
 
 You may want to consider adding `@Import(stack="core")` to your applications' main layout component.
+
+## Palette Component
+
+The selected property is now type `Collection`, not specifically type `List`. It is no longer allowed to be null.

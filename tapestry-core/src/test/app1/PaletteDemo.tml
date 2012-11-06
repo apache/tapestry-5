@@ -3,28 +3,37 @@
 <h1>Palette Demo</h1>
 
 
-<t:form>
-    <div>
-        <label class="checkbox">
-            <t:checkbox t:id="reorder"/>
-            Enable Reorder
-        </label>
+<t:form t:id="demo" class="form-horizontal">
+    <div class="control-group">
+        <div class="controls">
+
+            <label class="checkbox">
+                <t:checkbox t:id="reorder"/>
+                Enable Reorder
+            </label>
+        </div>
+
     </div>
 
 
-    <div>
+    <div class="control-group">
 
-        <t:palette t:id="languages" model="languageModel" reorder="reorder" encoder="languageEncoder"
-                   availableLabel="Languages Offered" validate="required">
-            <t:parameter name="selectedLabel" xml:space="default">
-                Selected
-                <t:if test="reorder">/ Ranked</t:if>
-                Languages
-            </t:parameter>
-        </t:palette>
+        <t:label for="languages"/>
+
+        <div class="controls">
+
+            <t:palette t:id="languages" model="languageModel" reorder="reorder" encoder="languageEncoder"
+                       availableLabel="Languages Offered" validate="required">
+                <t:parameter name="selectedLabel" xml:space="default">
+                    Selected
+                    <t:if test="reorder">/ Ranked</t:if>
+                    Languages
+                </t:parameter>
+            </t:palette>
+        </div>
     </div>
 
-    <div>
+    <div class="form-actions">
         <input type="submit" class="btn btn-primary"/>
     </div>
 

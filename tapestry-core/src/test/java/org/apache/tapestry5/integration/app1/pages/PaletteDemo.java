@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,12 +18,14 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.SelectModel;
 import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.integration.app1.data.ProgrammingLanguage;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.services.TypeCoercer;
 import org.apache.tapestry5.util.EnumSelectModel;
 import org.apache.tapestry5.util.EnumValueEncoder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PaletteDemo
@@ -32,32 +34,23 @@ public class PaletteDemo
     private ComponentResources resources;
 
     @Persist
+    @Property
     private List<ProgrammingLanguage> languages;
 
     @Persist
+    @Property
     private boolean reorder;
 
     @Inject
     private TypeCoercer typeCoercer;
 
-    public boolean isReorder()
-    {
-        return reorder;
-    }
 
-    public void setReorder(boolean reorder)
+    void onPrepareFromDemo()
     {
-        this.reorder = reorder;
-    }
-
-    public List<ProgrammingLanguage> getLanguages()
-    {
-        return languages;
-    }
-
-    public void setLanguages(List<ProgrammingLanguage> selected)
-    {
-        languages = selected;
+        if (languages == null)
+        {
+            languages = new ArrayList<ProgrammingLanguage>();
+        }
     }
 
     public SelectModel getLanguageModel()

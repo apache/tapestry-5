@@ -1,0 +1,47 @@
+DIV.t-palette {
+    display: inline;
+}
+
+DIV.t-palette SELECT {
+    margin-bottom: 2px;
+    width: 200px;
+}
+
+DIV.t-palette-title {
+    color: white;
+    background-color: #809FFF;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 3px;
+    display: block;
+}
+
+DIV.t-palette-available {
+    float: left;
+}
+
+DIV.t-palette-controls {
+    margin: 5px 5px;
+    float: left;
+}
+
+DIV.t-palette-controls > DIV {
+    margin-top: 5px;
+}
+
+DIV.t-palette-controls > DIV:first-child {
+    margin-top: 0;
+}
+
+DIV.t-palette-selected {
+    float: left;
+    clear: right;
+}
+
+DIV.t-palette-spacer {
+    clear: left;
+}
+
+DIV.t-palette-title {
+    width: 200px;
+}
