@@ -169,7 +169,7 @@ public class ModuleManagerImpl implements ModuleManager
         tracker.clearOnInvalidation(cache);
     }
 
-    public void writeInitialization(Element body, List<String> libraryURLs, List<JSONArray> inits)
+    public void writeInitialization(Element body, List<String> libraryURLs, List<?> inits)
     {
         body.element("script", "src", requireJS.toClientURL());
 

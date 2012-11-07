@@ -123,9 +123,15 @@ define ["_", "core/console", "core/dom", "core/events"],
             callback() if callback
 
         # First value in each init is the qualified module name; anything after
-        # that are arguments to be passed to the identified function.
-        for [qualifiedName, initArguments...] in inits
-          invokeInitializer tracker, qualifiedName, initArguments
+        # that are arguments to be passed to the identified function. A string
+        # is the name of a module to load, or function to invoke, that
+        # takes no parameters.
+        for init in inits
+          if _.isString init
+            invokeInitializer tracker, init, []
+          else
+            [qualifiedName, initArguments...] = init
+            invokeInitializer tracker, qualifiedName, initArguments
 
         tracker()
 

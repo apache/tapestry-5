@@ -28,7 +28,7 @@ public class ModuleInitsManager
 {
     private final Set<String> pureInits = CollectionFactory.newSet();
 
-    private final Map<InitializationPriority, List<JSONArray>> inits = CollectionFactory.newMap();
+    private final Map<InitializationPriority, List<Object>> inits = CollectionFactory.newMap();
 
     private int initCount;
 
@@ -49,15 +49,18 @@ public class ModuleInitsManager
             }
 
             pureInits.add(name);
+            InternalUtils.addToMapList(inits, priority, name);
+        } else
+        {
+
+            JSONArray init = new JSONArray();
+
+            init.put(name);
+
+            init.putAll(arguments);
+
+            InternalUtils.addToMapList(inits, priority, init);
         }
-
-        JSONArray init = new JSONArray();
-
-        init.put(name);
-
-        init.putAll(arguments);
-
-        InternalUtils.addToMapList(inits, priority, init);
 
         initCount++;
     }
@@ -66,13 +69,13 @@ public class ModuleInitsManager
      * Returns all previously added inits, sorted by {@link InitializationPriority}, then by order in which they
      * were added.
      */
-    public List<JSONArray> getSortedInits()
+    public List<?> getSortedInits()
     {
-        List<JSONArray> result = new ArrayList<JSONArray>(initCount);
+        List<Object> result = new ArrayList<Object>(initCount);
 
         for (InitializationPriority p : InitializationPriority.values())
         {
-            List<JSONArray> initsForPriority = inits.get(p);
+            List<Object> initsForPriority = inits.get(p);
 
             if (initsForPriority != null)
             {

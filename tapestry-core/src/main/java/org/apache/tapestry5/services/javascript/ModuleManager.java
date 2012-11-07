@@ -17,7 +17,6 @@ package org.apache.tapestry5.services.javascript;
 import org.apache.tapestry5.dom.Element;
 import org.apache.tapestry5.ioc.Resource;
 import org.apache.tapestry5.ioc.annotations.UsesMappedConfiguration;
-import org.apache.tapestry5.json.JSONArray;
 
 import java.util.List;
 
@@ -50,8 +49,10 @@ public interface ModuleManager
      *         qualified function name, followed by parameters to pass to the function. A qualified function name
      *         is either a module name, or a module name suffixed with the name of a function property exported by the module
      *         (separated by a ':', e.g. "myapp/mymodule:myfunc").
+     *         When there are no arguments, the qualified function name may be used; where there are arguments, the
+     *         init must be a JSONArray.
      */
-    void writeInitialization(Element body, List<String> libraryURLs, List<JSONArray> inits);
+    void writeInitialization(Element body, List<String> libraryURLs, List<?> inits);
 
     /**
      * Given a module name (which may be a path of names separated by slashes), locates the corresponding {@link Resource}.

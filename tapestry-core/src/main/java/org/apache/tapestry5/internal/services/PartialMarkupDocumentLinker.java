@@ -76,7 +76,7 @@ public class PartialMarkupDocumentLinker implements DocumentLinker
             reply.in(InternalConstants.PARTIAL_KEY).put("stylesheets", stylesheets);
         }
 
-        List<JSONArray> inits = initsManager.getSortedInits();
+        List<?> inits = initsManager.getSortedInits();
 
         if (inits.size() > 0)
         {
