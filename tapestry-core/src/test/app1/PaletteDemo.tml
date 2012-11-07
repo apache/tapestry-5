@@ -25,8 +25,8 @@
             <t:palette t:id="languages" model="languageModel" reorder="reorder" encoder="languageEncoder"
                        availableLabel="Languages Offered" validate="required">
                 <t:parameter name="selectedLabel" xml:space="default">
-                    Selected
-                    <t:if test="reorder">/ Ranked</t:if>
+                    <t:if test="reorder" else="Selected">Ranked
+                    </t:if>
                     Languages
                 </t:parameter>
             </t:palette>
