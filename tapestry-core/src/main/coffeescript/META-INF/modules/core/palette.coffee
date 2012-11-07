@@ -21,15 +21,15 @@ define ["core/dom", "_"],
 
       constructor: (id) ->
         @selected = (dom id)
-        container = @selected.findContainer ".t-palette"
-        @available = container.findFirst ".t-palette-available select"
-        @hidden = container.findFirst "input[type=hidden]"
+        @container = @selected.findContainer ".t-palette"
+        @available = @container.findFirst ".t-palette-available select"
+        @hidden = @container.findFirst "input[type=hidden]"
 
-        @select = container.findFirst "[data-action=select]"
-        @deselect = container.findFirst "[data-action=deselect]"
+        @select = @container.findFirst "[data-action=select]"
+        @deselect = @container.findFirst "[data-action=deselect]"
 
-        @moveUp = container.findFirst "[data-action=move-up]"
-        @moveDown = container.findFirst "[data-action=move-down]"
+        @moveUp = @container.findFirst "[data-action=move-up]"
+        @moveDown = @container.findFirst "[data-action=move-down]"
 
         # Track where reorder is allowed based on whether the buttons actually exist
         @reorder = @moveUp isnt null
@@ -70,15 +70,27 @@ define ["core/dom", "_"],
           @selected.element.add option
 
       updateHidden: ->
-        values = _.pluck(this.selected, "value")
-        hidden.value JSON.stringify values
+        values = _.pluck(@selected.element.options, "value")
+        @hidden.value JSON.stringify values
 
       bindEvents: ->
+        @container.on "change", "select", =>
+          @updateButtons()
+          return false
+
         @select.on "click", =>
           @doSelect()
           return false
 
+        @available.on "dblclick", =>
+          @doSelect()
+          return false
+
         @deselect.on "click", =>
+          @doDeselect()
+          return false
+
+        @selected.on "dblclick", =>
           @doDeselect()
           return false
 
@@ -92,6 +104,10 @@ define ["core/dom", "_"],
         if @reorder
           @moveUp.disabled = nothingSelected or @allSelectionsAtTop()
           @moveDown.disabled = nothingSelected or @allSelectionsAtBottom()
+
+      doSelect: -> @transferOptions @available, @selected, @reorder
+
+      doDeselect: -> @transferOptions @selected, @available, false
 
       transferOptions: (from, to, atEnd) ->
         if from.element.selectedIndex is -1
@@ -111,7 +127,7 @@ define ["core/dom", "_"],
         for i in [(e.length - 1)..(e.selectedIndex)] by -1
           o = options[i]
           if o.selected
-            select.remove i
+            e.remove i
             movers.unshift o
 
         return movers
@@ -123,7 +139,7 @@ define ["core/dom", "_"],
         @updateHidden()
         @updateButtons()
 
-      moveOptions: (option, to, atEnd) ->
+      moveOption: (option, to, atEnd) ->
         before = null
 
         unless atEnd
