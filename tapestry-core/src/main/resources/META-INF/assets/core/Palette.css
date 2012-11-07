@@ -14,6 +14,7 @@ DIV.t-palette-title {
     font-weight: bold;
     margin-bottom: 3px;
     display: block;
+    width: 200px;
 }
 
 DIV.t-palette-available {
@@ -40,8 +41,4 @@ DIV.t-palette-selected {
 
 DIV.t-palette-spacer {
     clear: left;
-}
-
-DIV.t-palette-title {
-    width: 200px;
 }
