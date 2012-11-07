@@ -25,8 +25,6 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.json.JSONArray;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Multiple selection component. Generates a UI consisting of two &lt;select&gt; elements configured for multiple
@@ -148,13 +146,6 @@ public class Palette extends AbstractField
     @Property(write = false)
     private boolean reorder;
 
-    /**
-     * Used during rendering to identify the options corresponding to selected values (from the selected parameter), in
-     * the order they should be displayed on the page.
-     */
-    private List<OptionModel> selectedOptions;
-
-    private Map<Object, OptionModel> valueToOptionModel;
 
     /**
      * Number of rows to display.
@@ -191,7 +182,15 @@ public class Palette extends AbstractField
 
     public String getInitialJSON()
     {
-        return new JSONArray().toString(compactJSON);
+        JSONArray array = new JSONArray();
+
+        for (Object o : selected)
+        {
+            String value = encoder.toClient(o);
+            array.put(value);
+        }
+
+        return array.toString(compactJSON);
     }
 
 
