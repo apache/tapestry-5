@@ -69,6 +69,10 @@ define ["core/dom", "_"],
         for option in movers
           @selected.element.add option
 
+      updateAfterChange: ->
+        @updateHidden()
+        @updateButtons()
+
       updateHidden: ->
         values = _.pluck(@selected.element.options, "value")
         @hidden.value JSON.stringify values
@@ -94,6 +98,15 @@ define ["core/dom", "_"],
           @doDeselect()
           return false
 
+        if @reorder
+          @moveUp.on "click", =>
+            @doMoveUp()
+            return false
+
+          @moveDown.on "click", =>
+            @doMoveDown()
+            return false
+
       updateButtons: ->
         @select.element.disabled = @available.element.selectedIndex < 0
 
@@ -102,12 +115,36 @@ define ["core/dom", "_"],
         @deselect.element.disabled = nothingSelected
 
         if @reorder
-          @moveUp.disabled = nothingSelected or @allSelectionsAtTop()
-          @moveDown.disabled = nothingSelected or @allSelectionsAtBottom()
+          @moveUp.element.disabled = nothingSelected or @allSelectionsAtTop()
+          @moveDown.element.disabled = nothingSelected or @allSelectionsAtBottom()
 
       doSelect: -> @transferOptions @available, @selected, @reorder
 
       doDeselect: -> @transferOptions @selected, @available, false
+
+      doMoveUp: ->
+        e = @selected.element
+        pos = e.selectedIndex - 1
+        movers = @removeSelectedOptions @selected
+        before = e.options[if pos < 0 then 0 else pos]
+
+        @reorderOptions movers, before
+
+      doMoveDown: ->
+        e = @selected.element
+        lastSelected = _.chain(e.options).toArray().reverse().find((o) -> o.selected).value()
+
+        lastPos = lastSelected.index
+        before = e.options[lastPos + 2]
+
+        movers = @removeSelectedOptions @selected
+
+        @reorderOptions movers, before
+
+      reorderOptions: (movers, before) ->
+        for mover in movers
+          @addOption @selected, mover, before
+        @updateAfterChange()
 
       transferOptions: (from, to, atEnd) ->
         if from.element.selectedIndex is -1
@@ -136,8 +173,7 @@ define ["core/dom", "_"],
         _.each movers, (o) =>
           @moveOption o, to, atEnd
 
-        @updateHidden()
-        @updateButtons()
+        @updateAfterChange()
 
       moveOption: (option, to, atEnd) ->
         before = null
@@ -165,7 +201,7 @@ define ["core/dom", "_"],
         if e.selectedIndex < 0
           return -1
 
-        for i in  [(e.options.length -1)..(e.selectedIndex + 1)] by -1
+        for i in [(e.options.length - 1)..(e.selectedIndex)] by -1
           if e.options[i].selected
             return i
 
@@ -173,12 +209,14 @@ define ["core/dom", "_"],
 
       allSelectionsAtTop: ->
         last = @indexOfLastSelection @selected
-        options = @selected.options
+        options = _.toArray @selected.element.options
 
         _(options[0..last]).all (o) -> o.selected
 
       allSelectionsAtBottom: ->
-        last = @selected.element.selectedIndex
+        e = @selected.element
+        last = e.selectedIndex
+        options = _.toArray e.options
 
         _(options[last..]).all (o) -> o.selected
 
