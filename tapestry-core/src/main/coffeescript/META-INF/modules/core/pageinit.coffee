@@ -96,7 +96,10 @@ define ["_", "core/console", "core/dom", "core/events"],
 
         fn = if functionName? then moduleLib[functionName] else moduleLib
 
-        console.debug "Invoking #{qualifiedName} with " + JSON.stringify(initArguments)
+        if console.debugEnabled
+          argsString = _.map(initArguments, JSON.stringify).join(", ")
+          console.debug "Invoking #{qualifiedName}(#{argsString})"
+
         fn.apply null, initArguments
 
 
