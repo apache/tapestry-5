@@ -102,7 +102,6 @@ define ["core/events", "core/dom", "core/builder", "_"],
 
         memo = error: false
 
-        # This will become more relevant shortly, when field validation is modernized:
         for field in this.find "[data-validation]"
           field.trigger events.field.inputValidation, memo
 
