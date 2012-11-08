@@ -2110,8 +2110,6 @@ public final class TapestryModule
 
         configuration.add(SymbolConstants.DEFAULT_STYLESHEET, "");
 
-        configuration.add("tapestry.spacer-image", "classpath:META-INF/assets/tapestry5/spacer.gif");
-
         configuration.add(SymbolConstants.PRODUCTION_MODE, true);
 
         configuration.add(SymbolConstants.CLUSTERED_SESSIONS, true);
