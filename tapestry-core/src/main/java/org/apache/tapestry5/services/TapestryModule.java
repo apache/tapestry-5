@@ -45,7 +45,7 @@ import org.apache.tapestry5.internal.services.assets.ContextAssetRequestHandler;
 import org.apache.tapestry5.internal.services.assets.StackAssetRequestHandler;
 import org.apache.tapestry5.internal.services.linktransform.LinkTransformerImpl;
 import org.apache.tapestry5.internal.services.linktransform.LinkTransformerInterceptor;
-import org.apache.tapestry5.internal.services.messages.DecimalFormatMessageResource;
+import org.apache.tapestry5.internal.services.messages.ClientLocalizationMessageResource;
 import org.apache.tapestry5.internal.services.messages.PropertiesFileParserImpl;
 import org.apache.tapestry5.internal.services.meta.ContentTypeExtractor;
 import org.apache.tapestry5.internal.services.meta.MetaAnnotationExtractor;
@@ -2574,7 +2574,7 @@ public final class TapestryModule
     /**
      * Contributes:
      * <dl>
-     * <dt>DecimalSymbols</dt>
+     * <dt>ClientLocalization</dt>
      * <dd>A virtual resource of formatting symbols for decimal numbers</dd>
      * <dt>Core</dt>
      * <dd>Built in messages used by Tapestry's default validators and components</dd>
@@ -2589,7 +2589,7 @@ public final class TapestryModule
                                                  @Symbol(SymbolConstants.APPLICATION_CATALOG)
                                                  Resource applicationCatalog, OrderedConfiguration<Resource> configuration)
     {
-        configuration.add("DecimalSymbols", new DecimalFormatMessageResource());
+        configuration.add("ClientLocalization", new ClientLocalizationMessageResource());
         configuration.add("Core", assetSource.resourceForPath("org/apache/tapestry5/core.properties"));
         configuration.add("AppCatalog", applicationCatalog);
     }

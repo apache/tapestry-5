@@ -24,21 +24,21 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 /**
- * Provides a number of symbols related to formatting numbers; by exposing these in the global message catalog,
+ * Provides a number of symbols related to client-side localization; by exposing these in the global message catalog,
  * they are available to the client (via the "core/messages" module).
  *
  * @since 5.4
  */
-public class DecimalFormatMessageResource extends VirtualResource
+public class ClientLocalizationMessageResource extends VirtualResource
 {
     private final Locale locale;
 
-    public DecimalFormatMessageResource()
+    public ClientLocalizationMessageResource()
     {
         this(null);
     }
 
-    DecimalFormatMessageResource(Locale locale)
+    ClientLocalizationMessageResource(Locale locale)
     {
         this.locale = locale;
     }
@@ -52,7 +52,7 @@ public class DecimalFormatMessageResource extends VirtualResource
     @Override
     public String getPath()
     {
-        return String.format("<Virtual DecimalFormat symbols for locale %s>", locale == null ? "(none)" : locale);
+        return String.format("<Client localization symbols for locale %s>", locale == null ? "(none)" : locale);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class DecimalFormatMessageResource extends VirtualResource
     @Override
     public Resource forLocale(Locale locale)
     {
-        return new DecimalFormatMessageResource(locale);
+        return new ClientLocalizationMessageResource(locale);
     }
 
     @Override
