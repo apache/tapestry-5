@@ -49,7 +49,9 @@ import java.util.Locale;
  * @see TextField
  */
 // TODO: More testing; see https://issues.apache.org/jira/browse/TAPESTRY-1844
-@Import(library = "${tapestry.datepicker}/js/datepicker.js", stylesheet = "${tapestry.datepicker}/css/datepicker.css")
+@Import(library = "${tapestry.datepicker}/js/datepicker.js",
+        stylesheet = "${tapestry.datepicker}/css/datepicker.css",
+        module = "core/datefield")
 @Events(EventConstants.VALIDATE)
 public class DateField extends AbstractField
 {
@@ -237,7 +239,6 @@ public class DateField extends AbstractField
 
         writer.end();
 
-
         writer.element("button",
                 "class", "btn",
                 "alt", "[Show]");
@@ -245,16 +246,7 @@ public class DateField extends AbstractField
         writer.end();
         writer.end();
 
-
         writer.end(); // outer div
-
-//        JSONObject spec = new JSONObject();
-//
-//        spec.put("field", clientId);
-//        spec.put("parseURL", resources.createEventLink("parse").toURI());
-//        spec.put("formatURL", resources.createEventLink("format").toURI());
-//
-//        javaScriptSupport.addInitializerCall("dateField", spec);
     }
 
     private void writeDisabled(MarkupWriter writer)
