@@ -38,7 +38,7 @@
 
     <hr/>
 
-    <h3>Request info:</h3>
+    <h2>Request</h2>
 
     <t:renderobject object="request"/>
 
