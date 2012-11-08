@@ -16,12 +16,15 @@ package org.apache.tapestry5.internal.services.messages;
 
 import org.apache.tapestry5.internal.util.VirtualResource;
 import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.text.DateFormatSymbols;
 import java.text.DecimalFormatSymbols;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * Provides a number of symbols related to client-side localization; by exposing these in the global message catalog,
@@ -76,19 +79,45 @@ public class ClientLocalizationMessageResource extends VirtualResource
     @Override
     public InputStream openStream() throws IOException
     {
-        DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(locale);
+        DecimalFormatSymbols decimalSymbols = DecimalFormatSymbols.getInstance(locale);
 
-        StringBuilder builder = new StringBuilder(200);
+        Map<String, Object> symbols = CollectionFactory.newMap();
 
-        write(builder, "group", symbols.getGroupingSeparator());
-        write(builder, "minus", symbols.getMinusSign());
-        write(builder, "decimal", symbols.getDecimalSeparator());
+        symbols.put("decimal-symbols.group", decimalSymbols.getGroupingSeparator());
+        symbols.put("decimal-symbols.minus", decimalSymbols.getMinusSign());
+        symbols.put("decimal-symbols.decimal", decimalSymbols.getDecimalSeparator());
+
+        DateFormatSymbols dateSymbols = new DateFormatSymbols(locale);
+
+        List<String> months = Arrays.asList(dateSymbols.getMonths()).subList(0, 12);
+
+        // Comma-separated list, starting with January
+        symbols.put("date-symbols.months", InternalUtils.join(months));
+
+        List<String> days = Arrays.asList(dateSymbols.getWeekdays()).subList(1, 8);
+
+        // Comma-separated list, starting with Sunday
+        symbols.put("date-symbols.days", InternalUtils.join(days));
+
+        Calendar c = Calendar.getInstance(locale);
+
+        // First day of the week, usually 0 for Sunday (e.g., in the US) or 1 for Monday
+        // (e.g., France).
+        symbols.put("date-symbols.first-day", c.getFirstDayOfWeek() - 1);
+
+
+        StringBuilder builder = new StringBuilder();
+
+        for (Map.Entry<String, Object> entry : symbols.entrySet())
+        {
+            write(builder, entry.getKey(), entry.getValue());
+        }
 
         return toInputStream(builder.toString());
     }
 
-    private void write(StringBuilder builder, String name, char value)
+    private void write(StringBuilder builder, String name, Object value)
     {
-        builder.append("decimal-symbols.").append(name).append("=").append(value).append("\n");
+        builder.append(name).append("=").append(value).append("\n");
     }
 }
