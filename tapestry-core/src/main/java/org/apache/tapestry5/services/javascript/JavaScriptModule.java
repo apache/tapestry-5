@@ -65,7 +65,7 @@ public class JavaScriptModule
     }
 
     /**
-     * Contributes the "core" and "core-datefield" {@link JavaScriptStack}s
+     * Contributes the "core" {@link JavaScriptStack}s
      *
      * @since 5.2.0
      */
@@ -73,7 +73,6 @@ public class JavaScriptModule
     public static void provideBuiltinJavaScriptStacks(MappedConfiguration<String, JavaScriptStack> configuration, @Core JavaScriptStack coreStack)
     {
         configuration.add(InternalConstants.CORE_STACK_NAME, coreStack);
-        configuration.addInstance("core-datefield", DateFieldStack.class);
     }
 
     @Contribute(JavaScriptStack.class)

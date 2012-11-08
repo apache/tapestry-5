@@ -25,6 +25,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.ComponentDefaultProvider;
+import org.apache.tapestry5.services.compatibility.DeprecationWarning;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -36,7 +37,7 @@ import java.util.Locale;
  * A component used to collect a provided date from the user using a client-side JavaScript calendar. Non-JavaScript
  * clients can simply type into a text field.
  * <p/>
- * One wierd aspect here is that, because client-side JavaScript formatting and parsing is so limited, we (currently)
+ * One aspect here is that, because client-side JavaScript formatting and parsing is so limited, we (currently)
  * use Ajax to send the user's input to the server for parsing (before raising the popup) and formatting (after closing
  * the popup). Weird and inefficient, but easier than writing client-side JavaScript for that purpose.
  * <p/>
@@ -48,7 +49,7 @@ import java.util.Locale;
  * @see TextField
  */
 // TODO: More testing; see https://issues.apache.org/jira/browse/TAPESTRY-1844
-@Import(stack = "core-datefield")
+@Import(library = "${tapestry.datepicker}/js/datepicker.js", stylesheet = "${tapestry.datepicker}/css/datepicker.css")
 @Events(EventConstants.VALIDATE)
 public class DateField extends AbstractField
 {
@@ -81,7 +82,12 @@ public class DateField extends AbstractField
     @SuppressWarnings("unchecked")
     private FieldValidator<Object> validate;
 
-    @Parameter(defaultPrefix = BindingConstants.ASSET, value = "datefield.gif")
+    /**
+     * Icon used for the date field trigger button. This was used in Tapestry 5.3 and earlier and is now ignored.
+     *
+     * @deprecated Deprecated in 5.4 with no replacement. The component leverages the Twitter Bootstrap glyphicons support.
+     */
+    @Parameter(defaultPrefix = BindingConstants.ASSET)
     private Asset icon;
 
     /**
@@ -96,10 +102,18 @@ public class DateField extends AbstractField
     @Inject
     private Locale locale;
 
+    @Inject
+    private DeprecationWarning deprecationWarning;
+
     private static final String RESULT = "result";
 
     private static final String ERROR = "error";
     private static final String INPUT_PARAMETER = "input";
+
+    void pageLoaded()
+    {
+        deprecationWarning.ignoredComponentParameters(resources, "icon");
+    }
 
     DateFormat defaultFormat()
     {
@@ -181,14 +195,27 @@ public class DateField extends AbstractField
         String value = validationTracker.getInput(this);
 
         if (value == null)
+        {
             value = formatCurrentValue();
+        }
 
         String clientId = getClientId();
-        String triggerId = clientId + "-trigger";
+
+        writer.element("div",
+                "data-component-type", "core/DateField",
+                "data-parse-url", resources.createEventLink("parse").toString(),
+                "data-format-url", resources.createEventLink("format").toString());
+
+        if (!hideTextField)
+        {
+            writer.attributes("class", "input-append");
+        }
 
         writer.element("input",
 
                 "type", hideTextField ? "hidden" : "text",
+
+                "class", "input-small",
 
                 "name", getControlName(),
 
@@ -210,26 +237,24 @@ public class DateField extends AbstractField
 
         writer.end();
 
-        // Now the trigger icon.
 
-        writer.element("img",
-
-                "id", triggerId,
-
-                "class", "t-calendar-trigger",
-
-                "src", icon.toClientURL(),
-
+        writer.element("button",
+                "class", "btn",
                 "alt", "[Show]");
-        writer.end(); // img
+        writer.element("i", "class", "icon-calendar");
+        writer.end();
+        writer.end();
 
-        JSONObject spec = new JSONObject();
 
-        spec.put("field", clientId);
-        spec.put("parseURL", resources.createEventLink("parse").toURI());
-        spec.put("formatURL", resources.createEventLink("format").toURI());
+        writer.end(); // outer div
 
-        javaScriptSupport.addInitializerCall("dateField", spec);
+//        JSONObject spec = new JSONObject();
+//
+//        spec.put("field", clientId);
+//        spec.put("parseURL", resources.createEventLink("parse").toURI());
+//        spec.put("formatURL", resources.createEventLink("format").toURI());
+//
+//        javaScriptSupport.addInitializerCall("dateField", spec);
     }
 
     private void writeDisabled(MarkupWriter writer)

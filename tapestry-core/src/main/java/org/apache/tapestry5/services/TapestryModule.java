@@ -2131,7 +2131,7 @@ public final class TapestryModule
         // files deleted between scriptaculous releases to be accidentally left lying around).
         // There's also a ClasspathAliasManager contribution based on the path.
 
-        configuration.add("tapestry.asset.root", "META-INF/assets/tapestry5");
+        configuration.add("tapestry.asset.root", "classpath:/META-INF/assets/tapestry5");
 
         configuration.add(SymbolConstants.SCRIPTACULOUS, "${tapestry.asset.root}/scriptaculous_1_9_0");
 
