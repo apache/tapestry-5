@@ -23,7 +23,7 @@
 # the framework, others provided by the application, or third-party libraries).
 #
 # Messages in the catalog that contain Java-style format specifiers are not included, as there
-# is not facility for formatting those on the client. This is actually done as a simple test for the
+# is no facility for formatting those on the client. This is actually done as a simple test for the
 # presence of the `%` character.  In addition, any message key that begins with "private-" is
 # assumed to contain sensitive data (such as database URLs or passwords) and will not be
 # exposed to the client.
