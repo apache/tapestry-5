@@ -42,6 +42,7 @@ import org.apache.tapestry5.runtime.RenderCommand;
 import org.apache.tapestry5.runtime.RenderQueue;
 import org.apache.tapestry5.services.*;
 import org.apache.tapestry5.services.pageload.ComponentResourceSelector;
+import org.slf4j.Logger;
 
 import java.util.Collections;
 import java.util.List;
@@ -145,11 +146,13 @@ public class PageLoaderImpl implements PageLoader, ComponentAssemblerSource
 
     private final SymbolSource symbolSource;
 
+    private final Logger logger;
+
     public PageLoaderImpl(ComponentInstantiatorSource instantiatorSource, ComponentTemplateSource templateSource,
                           PageElementFactory elementFactory, ComponentPageElementResourcesSource resourcesSource,
                           ComponentClassResolver componentClassResolver, PersistentFieldManager persistentFieldManager,
                           StringInterner interner, OperationTracker tracker, PerthreadManager perThreadManager, Request request,
-                          SymbolSource symbolSource)
+                          SymbolSource symbolSource, Logger logger)
     {
         this.instantiatorSource = instantiatorSource;
         this.templateSource = templateSource;
@@ -162,6 +165,7 @@ public class PageLoaderImpl implements PageLoader, ComponentAssemblerSource
         this.perThreadManager = perThreadManager;
         this.request = request;
         this.symbolSource = symbolSource;
+        this.logger = logger;
     }
 
     @PostInjection
@@ -183,6 +187,8 @@ public class PageLoaderImpl implements PageLoader, ComponentAssemblerSource
     {
         final String pageClassName = componentClassResolver.resolvePageNameToClassName(logicalPageName);
 
+        final long startTime = System.nanoTime();
+
         return tracker.invoke("Constructing instance of page class " + pageClassName, new Invokable<Page>()
         {
             public Page invoke()
@@ -200,6 +206,23 @@ public class PageLoaderImpl implements PageLoader, ComponentAssemblerSource
                 // into the page's default state.
 
                 page.loaded();
+
+                long elapsedTime = System.nanoTime() - startTime;
+
+                double elapsedMS = elapsedTime * 10E-7d;
+
+                if (logger.isInfoEnabled())
+                {
+                    logger.info(String.format("Loaded page '%s' (%s) in %.3f ms",
+                            logicalPageName, selector.toShortString(), elapsedMS));
+                }
+
+                // The rough stats are set by the assembler, and don't include the page load time;
+                // so we update them to match.
+
+                Page.Stats roughStats = page.getStats();
+
+                page.setStats(new Page.Stats(elapsedMS, roughStats.componentCount, roughStats.weight));
 
                 return page;
             }
