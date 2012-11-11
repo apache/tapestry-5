@@ -15,8 +15,9 @@
 # ##core/datefield
 #
 # Provides support for the `core/DateField` component.
-define ["core/dom", "core/events", "core/messages", "core/builder", "_"],
-  (dom, events, messages, builder, _) ->
+define ["core/dom", "core/events", "core/messages", "core/builder", "core/ajax",
+  "core/alert", "_"],
+  (dom, events, messages, builder, ajax, alert, _) ->
 
     # Translate from the provided order (SUNDAY = 0, MONDAY = 1), to
     # the order needed by the DatePicker component (MONDAY = 0 ... SUNDAY = 6)
@@ -42,12 +43,43 @@ define ["core/dom", "core/events", "core/messages", "core/builder", "_"],
 
         unless @popup
           @createPopup()
+        else if @popup.visible()
+          @popup.hide()
           return
 
-        if @popup.visible()
-          @popup.hide()
-        else
+        value = @field.value()
+
+        if value is ""
+          @datePicker.setDate null
           @popup.show()
+          return
+
+        @field.addClass "ajax-wait"
+
+        ajax (@container.attribute "data-parse-url"),
+          parameters:
+            input: value
+          onerror: =>
+            @field.removeClass "ajax-wait"
+            @field.focus()
+
+          onsuccess: (response) =>
+            @field.removeClass "ajax-wait"
+            reply = response.responseJSON
+
+            if reply.result
+              date = new Date()
+              date.setTime reply.result
+              @datePicker.setDate date
+              @popup.show()
+              return
+
+            @field.focus()
+
+            @fieldError reply.error
+
+      fieldError: (message) ->
+        alert { message }
 
       createPopup: ->
         @datePicker = new DatePicker()
@@ -55,10 +87,31 @@ define ["core/dom", "core/events", "core/messages", "core/builder", "_"],
         @popup.append dom @datePicker.create()
         @trigger.insertAfter @popup
 
-      # @popup.absolutize().hide()
+        @datePicker.onselect = _.bind @onSelect, this
 
-      positionPopup: ->
-        reference = @container.findFirst "input[type=text], button"
+      onSelect: ->
+        @field.addClass "t-ajax-wait"
+
+        date = @datePicker.getDate()
+
+        if date is null
+          @popup.hide()
+          @field.value ""
+          return
+
+        ajax (@container.attribute "data-format-url"),
+          parameters:
+            input: date.getTime()
+          onerror: (message) =>
+            @field.removeClass "t-ajax-wait"
+            @fieldError message
+            @popup.hide()
+          onsuccess: (response) =>
+            @field.removeClass "t-ajax-wait"
+            @field.value response.responseJSON.result
+            @popup.hide()
+
+
 
     scan = (root) ->
       for container in root.find "[data-component-type=core/DateField]"
