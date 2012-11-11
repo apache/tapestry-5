@@ -92,12 +92,12 @@ public class ClientLocalizationMessageResource extends VirtualResource
         List<String> months = Arrays.asList(dateSymbols.getMonths()).subList(0, 12);
 
         // Comma-separated list, starting with January
-        symbols.put("date-symbols.months", InternalUtils.join(months));
+        symbols.put("date-symbols.months", InternalUtils.join(months, ","));
 
         List<String> days = Arrays.asList(dateSymbols.getWeekdays()).subList(1, 8);
 
         // Comma-separated list, starting with Sunday
-        symbols.put("date-symbols.days", InternalUtils.join(days));
+        symbols.put("date-symbols.days", InternalUtils.join(days, ","));
 
         Calendar c = Calendar.getInstance(locale);
 
