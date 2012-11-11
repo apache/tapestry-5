@@ -16,8 +16,9 @@
 #
 # Provides support for the `core/DateField` component.
 define ["core/dom", "core/events", "core/messages", "core/builder", "core/ajax",
-  "core/alert", "_"],
-  (dom, events, messages, builder, ajax, alert, _) ->
+  "_", "core/alert", "core/fields"],
+  (dom, events, messages, builder, ajax, _, alert) ->
+
 
     # Translate from the provided order (SUNDAY = 0, MONDAY = 1), to
     # the order needed by the DatePicker component (MONDAY = 0 ... SUNDAY = 6)
@@ -27,7 +28,17 @@ define ["core/dom", "core/events", "core/messages", "core/builder", "core/ajax",
     # Loalize a few other things.
     DatePicker.months = (messages "date-symbols.months").split ","
     days = (messages "date-symbols.days").split ","
+
+    # Shuffle sunday to the end, so that monday is first.
+
+    days.push days.shift()
+
     DatePicker.days = _.map days, (name) -> name.substr(0, 1).toLowerCase()
+
+    # Track the active popup; only one allowed at a time. May look to rework this
+    # later so that there's just one popup and it is moved around the viewport, or
+    # around the DOM.
+    activePopup = null
 
     class Controller
       constructor: (@container) ->
@@ -38,20 +49,32 @@ define ["core/dom", "core/events", "core/messages", "core/builder", "core/ajax",
           @doTogglePopup()
           false
 
+      showPopup: ->
+        if activePopup and activePopup isnt @popup
+          activePopup.hide()
+
+        @popup.show()
+        activePopup = @popup
+
+      hidePopup: ->
+        @popup.hide()
+        activePopup = null
+
       doTogglePopup: ->
         return if @field.element.disabled
 
         unless @popup
           @createPopup()
+          activePopup?.hide()
         else if @popup.visible()
-          @popup.hide()
+          @hidePopup()
           return
 
         value = @field.value()
 
         if value is ""
           @datePicker.setDate null
-          @popup.show()
+          @showPopup()
           return
 
         @field.addClass "ajax-wait"
@@ -59,58 +82,70 @@ define ["core/dom", "core/events", "core/messages", "core/builder", "core/ajax",
         ajax (@container.attribute "data-parse-url"),
           parameters:
             input: value
-          onerror: =>
+          onerror: (message) =>
             @field.removeClass "ajax-wait"
-            @field.focus()
+            @fieldError message
 
           onsuccess: (response) =>
             @field.removeClass "ajax-wait"
             reply = response.responseJSON
 
             if reply.result
+              @clearFieldError()
+
               date = new Date()
               date.setTime reply.result
               @datePicker.setDate date
-              @popup.show()
+              @showPopup()
               return
-
-            @field.focus()
 
             @fieldError reply.error
 
+            # Because the popup overlays where the error message appears, we
+            # show it as an alert, too.
+            alert { message: reply.error }
+
+            @datePicker.setDate null
+            @showPopup()
+
       fieldError: (message) ->
-        alert { message }
+        @field.focus().trigger events.field.showValidationError, { message }
+
+      clearFieldError: ->
+        @field.trigger events.field.clearValidationError
 
       createPopup: ->
         @datePicker = new DatePicker()
+        @datePicker.setFirstWeekDay datePickerFirstDay
         @popup = builder "div.t-datefield-popup"
         @popup.append dom @datePicker.create()
-        @trigger.insertAfter @popup
+        @container.append @popup
 
         @datePicker.onselect = _.bind @onSelect, this
 
       onSelect: ->
-        @field.addClass "t-ajax-wait"
-
         date = @datePicker.getDate()
 
         if date is null
-          @popup.hide()
+          @hidePopup()
+          @clearFieldError()
           @field.value ""
           return
+
+        @field.addClass "ajax-wait"
+
 
         ajax (@container.attribute "data-format-url"),
           parameters:
             input: date.getTime()
           onerror: (message) =>
-            @field.removeClass "t-ajax-wait"
+            @field.removeClass "ajax-wait"
             @fieldError message
-            @popup.hide()
           onsuccess: (response) =>
-            @field.removeClass "t-ajax-wait"
+            @field.removeClass "ajax-wait"
+            @clearFieldError()
             @field.value response.responseJSON.result
-            @popup.hide()
-
+            @hidePopup()
 
 
     scan = (root) ->
