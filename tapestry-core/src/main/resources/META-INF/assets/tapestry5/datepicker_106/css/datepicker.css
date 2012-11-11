@@ -111,11 +111,6 @@
     height: 14px;
 }
 
-.datePicker .todayButton,
-.datePicker .noneButton {
-    width: 50px;
-}
-
 .datePicker .labelPopup {
     position: absolute;
     min-width: 130px;
