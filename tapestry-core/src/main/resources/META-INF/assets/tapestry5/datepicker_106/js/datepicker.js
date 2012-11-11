@@ -47,7 +47,8 @@
 |            | value.  Separating them simplifies a lot of logic and resolves |
 |            | TAP5-1409. Also somewhat smarter for whether to trigger        |
 |            | onselect when clicking "today" (and/or "none")                 |
-| 2012-11-11 | Minor changes to integrate into a page with Twitter Bootstrap  |
+| 2012-11-11 | Minor changes to integrate into a page with Twitter Bootstrap, |
+|            | and to support localizing the Today/None buttons.              |
 |-----------------------------------------------------------------------------|
 | Created 2001-10-?? | All changes are in the log above. | Updated 2006-05-28 |
 \----------------------------------------------------------------------------*/
@@ -91,6 +92,10 @@ DatePicker.months = [
     "May", "June", "July", "August",
     "September", "October", "November", "December"];
 DatePicker.days = ["m", "t", "w", "t", "f", "s", "s"];
+
+// Allow these to be localized
+DatePicker.TODAY = "Today"
+DatePicker.NONE = "None"
 
 
 // Function invoked whenever the selected date changes, whether by
@@ -188,7 +193,7 @@ DatePicker.prototype.create = function (doc)
     this._todayButton = doc.createElement("button");
     this._todayButton.className = "btn";
     this._todayButton.setAttribute("type", "button");
-    this._todayButton.appendChild(doc.createTextNode("Today"));
+    this._todayButton.appendChild(doc.createTextNode(DatePicker.TODAY));
     td.appendChild(this._todayButton);
     tr.appendChild(td);
 
@@ -201,7 +206,7 @@ DatePicker.prototype.create = function (doc)
     this._noneButton = doc.createElement("button");
     this._noneButton.className = "btn";
     this._noneButton.setAttribute("type", "button");
-    this._noneButton.appendChild(doc.createTextNode("None"));
+    this._noneButton.appendChild(doc.createTextNode(DatePicker.NONE));
     td.appendChild(this._noneButton);
     tr.appendChild(td);
 

@@ -97,6 +97,10 @@
     display: block;
 }
 
+.datePicker button.btn {
+    font-size: x-small;
+}
+
 .datePicker .previousButton {
     background: buttonface url("../images/arrow.left.png") no-repeat center center;
 }

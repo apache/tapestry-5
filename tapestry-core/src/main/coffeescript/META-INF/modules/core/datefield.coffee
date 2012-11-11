@@ -35,6 +35,9 @@ define ["core/dom", "core/events", "core/messages", "core/builder", "core/ajax",
 
     DatePicker.days = _.map days, (name) -> name.substr(0, 1).toLowerCase()
 
+    DatePicker.TODAY = messages "core-datefield-today"
+    DatePicker.NONE = messages "core-datefield-none"
+
     # Track the active popup; only one allowed at a time. May look to rework this
     # later so that there's just one popup and it is moved around the viewport, or
     # around the DOM.

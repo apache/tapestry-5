@@ -2099,7 +2099,7 @@ public final class TapestryModule
         // This should be overridden for particular applications. These are the
         // locales for which we have (at least some) localized messages.
         configuration.add(SymbolConstants.SUPPORTED_LOCALES,
-                "en,it,es,zh_CN,pt_PT,de,ru,hr,fi_FI,sv_SE,fr_FR,da,pt_BR,ja,el,bg,no_NB,sr_RS,mk_MK");
+                "en,it,es,zh_CN,pt_PT,de,ru,hr,fi_FI,sv_SE,fr,da,pt_BR,ja,el,bg,no_NB,sr_RS,mk_MK");
 
         configuration.add(SymbolConstants.TAPESTRY_VERSION,
                 VersionUtils.readVersionNumber("META-INF/gradle/org.apache.tapestry/tapestry-core/project.properties"));
