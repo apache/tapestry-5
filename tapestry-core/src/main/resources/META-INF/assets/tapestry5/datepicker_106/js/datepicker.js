@@ -334,14 +334,6 @@ DatePicker.prototype.create = function (doc)
             }
             parent = parent.parentNode;
         }
-        
-        if (Tapestry.DateField.activeDateField !=  null) {
-        
-            if (insideDatePicker == null && targ.className != 't-calendar-trigger') {
-                Tapestry.DateField.activeDateField.hidePopup();
-                Tapestry.DateField.activeDateField = null;
-            }
-        }
     }
     return this._el;
 };
