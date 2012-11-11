@@ -1,0 +1,5 @@
+div.t-datefield-popup {
+    position: absolute;
+    z-index: 1000;
+    margin-top: 2px;
+}

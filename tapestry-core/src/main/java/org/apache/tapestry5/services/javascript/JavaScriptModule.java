@@ -89,6 +89,8 @@ public class JavaScriptModule
         add(configuration, StackExtensionType.STYLESHEET,
                 "${tapestry.bootstrap-root}/css/bootstrap.css",
 
+                ROOT + "/tapestry.css",
+
                 ROOT + "/exception-frame.css",
 
                 ROOT + "/tapestry-console.css",
