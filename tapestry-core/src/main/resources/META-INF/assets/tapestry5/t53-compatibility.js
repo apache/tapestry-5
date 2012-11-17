@@ -22,7 +22,7 @@
 define("core/t53-compatibility", ["_"], function(_) {
     var T5, Tapestry;
     T5 = {
-        _: _.noConflict(),
+        _: _,
         extend: function(destination, source) {
             if (_.isFunction(source)) {
                 source = source();
