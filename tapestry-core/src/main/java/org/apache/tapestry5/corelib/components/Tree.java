@@ -51,12 +51,6 @@ import java.util.List;
 public class Tree
 {
     /**
-     * Name of query parameter that stores the node id of the node being operated on
-     * (expanded, collapsed, etc.).
-     */
-    private static final String NODE_ID = "t:nodeid";
-
-    /**
      * The model that drives the tree, determining top level nodes and making revealing the overall structure of the
      * tree.
      */
@@ -271,7 +265,7 @@ public class Tree
         return resources.createEventLink("treeAction");
     }
 
-    Object onTreeAction(@RequestParameter(NODE_ID) String nodeId,
+    Object onTreeAction(@RequestParameter("t:nodeid") String nodeId,
                         @RequestParameter("t:action") String action)
     {
         if (action.equalsIgnoreCase("expand"))
@@ -311,7 +305,7 @@ public class Tree
         return new RenderNodes(container.getChildren());
     }
 
-    Object doMarkExpanded(@RequestParameter(NODE_ID) String nodeId)
+    Object doMarkExpanded(String nodeId)
     {
         expansionModel.markExpanded(model.getById(nodeId));
 
@@ -319,7 +313,7 @@ public class Tree
     }
 
 
-    Object doMarkCollapsed(@RequestParameter(NODE_ID) String nodeId)
+    Object doMarkCollapsed(String nodeId)
     {
         expansionModel.markCollapsed(model.getById(nodeId));
 
