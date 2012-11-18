@@ -2,6 +2,7 @@
 
     <div class="${containerClass}"
          data-component-type="core/Tree"
+         data-tree-node-selection-enabled="${selectionEnabled}"
          data-tree-action-url="${treeActionLink}">
         <t:delegate to="renderRootNodes"/>
     </div>

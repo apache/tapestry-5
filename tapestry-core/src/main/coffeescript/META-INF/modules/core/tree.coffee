@@ -24,6 +24,7 @@ define ["core/dom", "core/ajax", "core/zone"],
     LOADING = "tree-children-loading"
     LOADED = "tree-children-loaded"
     EXPANDED = "t-tree-expanded"
+    SELECTED = "t-selected-leaf-node"
 
     send = (node, action, onsuccess) ->
       container = node.findContainer TREE
@@ -86,7 +87,26 @@ define ["core/dom", "core/ajax", "core/zone"],
 
       return false
 
+    toggleSelection = ->
+
+      selected = this.hasClass SELECTED
+
+      node = this.findContainer("li").findFirst("[#{NODE_ID}]")
+
+      if selected
+        this.removeClass SELECTED
+        send node, "deselect"
+      else
+        this.addClass SELECTED
+        send node, "select"
+
+      return false
+
     dom.onDocument "click", SELECTOR, clickHandler
+
+    dom.onDocument "click",
+      "#{TREE}[data-tree-node-selection-enabled] LI.t-leaf-node > .t-tree-label",
+      toggleSelection
 
 
     return null

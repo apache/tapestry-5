@@ -36,6 +36,9 @@ import java.util.List;
  * to track which nodes have been expanded. The optional {@link TreeSelectionModel} is used to track node selections (as currently
  * implemented, only leaf nodes may be selected).
  * <p/>
+ * Tree is <em>not</em> a form control component; all changes made to the tree on the client
+ * (expansions, collapsing, and selections) are propogated immediately back to the server.
+ * <p/>
  * The Tree component uses special tricks to support recursive rendering of the Tree as necessary.
  *
  * @tapestrydoc
@@ -98,7 +101,7 @@ public class Tree
     /**
      * Optional parameter used to inform the container about the value of the currently rendering TreeNode; this
      * is often preferable to the TreeNode, and like the node parameter, is primarily used when the label parameter
-     * it bound.
+     * is bound.
      */
     @Parameter
     private Object value;
@@ -136,6 +139,15 @@ public class Tree
         }
     };
 
+    private static RenderCommand MARK_SELECTED = new RenderCommand()
+    {
+        @Override
+        public void render(MarkupWriter writer, RenderQueue queue)
+        {
+            writer.getElement().addClassName("t-selected-leaf-node");
+        }
+    };
+
     /**
      * Renders a single node (which may be the last within its containing node).
      * This is a mix of immediate rendering, and queuing up various Blocks and Render commands
@@ -159,6 +171,8 @@ public class Tree
 
                 value = node.getValue();
 
+                boolean isLeaf = node.isLeaf();
+
                 writer.element("li");
 
                 if (isLast)
@@ -166,17 +180,19 @@ public class Tree
                     writer.attributes("class", "t-last");
                 }
 
+                if (isLeaf)
+                {
+                    writer.getElement().addClassName("t-leaf-node");
+                }
+
                 Element e = writer.element("span", "class", "t-tree-icon");
 
-                if (node.isLeaf())
-                {
-                    e.addClassName("t-leaf-node");
-                } else if (!node.getHasChildren())
+                if (!isLeaf && !node.getHasChildren())
                 {
                     e.addClassName("t-empty-node");
                 }
 
-                boolean hasChildren = !node.isLeaf() && node.getHasChildren();
+                boolean hasChildren = !isLeaf && node.getHasChildren();
                 boolean expanded = hasChildren && expansionModel.isExpanded(node);
 
                 writer.attributes("data-node-id", node.getId());
@@ -201,6 +217,12 @@ public class Tree
 
                 queue.push(RENDER_CLOSE_TAG);
                 queue.push(label);
+
+                if (isLeaf && selectionModel != null && selectionModel.isSelected(node))
+                {
+                    queue.push(MARK_SELECTED);
+                }
+
                 queue.push(RENDER_LABEL_SPAN);
 
             }
@@ -267,7 +289,7 @@ public class Tree
             return doMarkCollapsed(nodeId);
         }
 
-        if (action.equalsIgnoreCase("selected"))
+        if (action.equalsIgnoreCase("select"))
         {
             return doUpdateSelected(nodeId, true);
         }
@@ -376,5 +398,10 @@ public class Tree
     public void clearExpansions()
     {
         expansionModel.clear();
+    }
+
+    public Boolean getSelectionEnabled()
+    {
+        return selectionModel != null ? true : null;
     }
 }

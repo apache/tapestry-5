@@ -46,16 +46,16 @@ SPAN.t-tree-icon {
   background-position: 0px 0px;
 }
 
-SPAN.t-tree-icon.t-leaf-node {
+LI.t-leaf-node > SPAN.t-tree-icon {
   cursor: default;
   background-position: -32px -16px;
 }
 
-SPAN.t-tree-label.t-selectable {
+DIV[data-tree-node-selection-enabled] LI.t-leaf-node > .t-tree-label {
     cursor: pointer;
 }
 
-SPAN.t-tree-label.t-selected-leaf-node-label {
+SPAN.t-tree-label.t-selected-leaf-node {
   font-weight: bold;
 }
 
@@ -73,20 +73,4 @@ SPAN.t-ajax-wait {
   height: 16px;
   display: inline-block;
   background-image: url(ajax-loader.gif);
-}
-
-SPAN.t-tree-icon.t-expand {
-  width: 16px;
-  height: 16px;
-  background-image: url(expand.png);
-  display: inline-block;
-  cursor: pointer;
-}
-
-SPAN.t-tree-icon.t-collapse {
-  width: 16px;
-  height: 16px;
-  background-image: url(collapse.png);
-  display: inline-block;
-  cursor: pointer;
 }
