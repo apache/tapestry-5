@@ -29,6 +29,7 @@ DIV.t-tree-container LI {
   line-height: 1.5;
 }
 
+/* The last one needs a special tweak to keep the vertical bar from extending down too far. */
 DIV.t-tree-container LI.t-last
 {
     background-color: white;
@@ -46,15 +47,21 @@ SPAN.t-tree-icon {
   background-position: 0px 0px;
 }
 
+/* Fiddle with it so that leaf nodes do not appear clickable. The label is clickable, the document
+   icon is not. */
 LI.t-leaf-node > SPAN.t-tree-icon {
   cursor: default;
   background-position: -32px -16px;
 }
 
+/* When the Tree is configured for selection, then it is the label, only on leaf nodes, that is
+    clickable. */
 DIV[data-tree-node-selection-enabled] LI.t-leaf-node > .t-tree-label {
     cursor: pointer;
 }
 
+/* Marking selection leaf nodes in bold if selected will hopefully change soon. We may even be smart
+   enough to render a checkbox. */
 SPAN.t-tree-label.t-selected-leaf-node {
   font-weight: bold;
 }
