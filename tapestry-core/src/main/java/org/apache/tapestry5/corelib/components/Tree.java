@@ -183,7 +183,8 @@ public class Tree
 
                 if (expanded)
                 {
-                    writer.attributes("data-node-expanded", true);
+                    // Inform the client side, so it doesn't try to fetch it a second time.
+                    e.addClassName("t-tree-expanded");
                 }
 
                 writer.end(); // span.t-tree-icon

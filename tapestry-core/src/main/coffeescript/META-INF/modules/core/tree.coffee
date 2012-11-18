@@ -17,50 +17,71 @@
 # Handlers to support to the core/Tree Tapestry component
 define ["core/dom", "core/ajax", "core/zone"],
   (dom, ajax) ->
-
     TREE = "[data-component-type=core/Tree]"
     NODE_ID = "data-node-id"
     SELECTOR = "#{TREE} [#{NODE_ID}]"
 
     LOADING = "tree-children-loading"
     LOADED = "tree-children-loaded"
+    EXPANDED = "t-tree-expanded"
+
+    send = (node, action, onsuccess) ->
+      container = node.findContainer TREE
+      url = container.attribute "data-tree-action-url"
+
+      ajax url,
+        parameters:
+          "t:action": action
+          "t:nodeid": node.attribute NODE_ID
+        onsuccess: onsuccess
 
     loadChildren = (node) ->
 
       # Ignore duplicate requests to load the children.
-
       return if node.meta LOADING
-
-      container = node.findContainer TREE
-      url = container.attribute "data-tree-action-url"
 
       node.meta LOADING, true
 
       node.addClass "t-empty-node"
       node.update "<span class='t-ajax-wait'/>"
 
-      ajax url,
-        parameters:
-          "t:action": "expand"
-          "t:nodeid": node.attribute NODE_ID
-        onsuccess: (reply) ->
-          node.update("").removeClass "t-empty-node"
+      send node, "expand", (reply) ->
+        # Remove the Ajax spinner and  mark the node as expanded (it will have a "-"
+        # icon instead of a "+" icon)
+        node.update("").addClass(EXPANDED).removeClass("t-empty-node")
 
-          label = node.findContainer("li").findFirst(".t-tree-label")
+        label = node.findContainer("li").findFirst(".t-tree-label")
 
-          label.insertAfter reply.responseJSON.content
+        label.insertAfter reply.responseJSON.content
 
-          node.meta LOADING, false
-          node.meta LOADED, true
+        node.meta LOADING, false
+        node.meta LOADED, true
+
+    toggle = (node) ->
+      sublist = node.findContainer("li").findFirst("ul")
+
+      if node.hasClass EXPANDED
+        node.removeClass EXPANDED
+        sublist.hide()
+        send node, "markCollapsed"
+        return
+
+      node.addClass EXPANDED
+      sublist.show()
+      send node, "markExpanded"
 
     clickHandler = ->
 
       # First case is dynamically loaded due to user action; second case
       # is rendered with overall page due to server-side expansion model.
-      loaded = (this.meta LOADED) or (this.attribute "data-node-expanded")
+      loaded = (this.meta LOADED) or (this.hasClass EXPANDED)
 
       if (not loaded) and (not this.hasClass "t-empty-node")
         loadChildren this
+        return false
+
+      unless this.hasClass "t-leaf-node"
+        toggle this
         return false
 
       return false
