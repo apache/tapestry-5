@@ -1,11 +1,13 @@
-<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
 
-  <div class="${containerClass}">
-    <t:delegate to="renderRootNodes"/>
-  </div>
+    <div class="${containerClass}"
+         data-component-type="core/Tree"
+         data-tree-action-url="${treeActionLink}">
+        <t:delegate to="renderRootNodes"/>
+    </div>
 
-  <t:block id="defaultRenderTreeNodeLabel">
-    ${node.label}
-  </t:block>
+    <t:block id="defaultRenderTreeNodeLabel">
+        ${node.label}
+    </t:block>
 
 </t:container>

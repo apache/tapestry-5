@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,14 +38,21 @@ import java.util.List;
  * <p/>
  * The Tree component uses special tricks to support recursive rendering of the Tree as necessary.
  *
- * @since 5.3
  * @tapestrydoc
+ * @since 5.3
  */
 @SuppressWarnings(
         {"rawtypes", "unchecked", "unused"})
 @Events({EventConstants.NODE_SELECTED, EventConstants.NODE_UNSELECTED})
+@Import(module = "core/tree")
 public class Tree
 {
+    /**
+     * Name of query parameter that stores the node id of the node being operated on
+     * (expanded, collapsed, etc.).
+     */
+    private static final String NODE_ID = "t:nodeid";
+
     /**
      * The model that drives the tree, determining top level nodes and making revealing the overall structure of the
      * tree.
@@ -134,8 +141,10 @@ public class Tree
      * This is a mix of immediate rendering, and queuing up various Blocks and Render commands
      * to do the rest. May recursively render child nodes of the active node.
      *
-     * @param node   to render
-     * @param isLast if true, add "t-last" attribute to the LI element
+     * @param node
+     *         to render
+     * @param isLast
+     *         if true, add "t-last" attribute to the LI element
      * @return command to render the node
      */
     private RenderCommand toRenderCommand(final TreeNode node, final boolean isLast)
@@ -153,58 +162,31 @@ public class Tree
                 writer.element("li");
 
                 if (isLast)
+                {
                     writer.attributes("class", "t-last");
+                }
 
                 Element e = writer.element("span", "class", "t-tree-icon");
 
                 if (node.isLeaf())
+                {
                     e.addClassName("t-leaf-node");
-                else if (!node.getHasChildren())
+                } else if (!node.getHasChildren())
+                {
                     e.addClassName("t-empty-node");
+                }
 
                 boolean hasChildren = !node.isLeaf() && node.getHasChildren();
                 boolean expanded = hasChildren && expansionModel.isExpanded(node);
 
-                String clientId = jss.allocateClientId(resources);
+                writer.attributes("data-node-id", node.getId());
 
-                JSONObject spec = new JSONObject("clientId", clientId);
-
-                e.attribute("id", clientId);
-
-                spec.put("leaf", node.isLeaf());
-
-                if (hasChildren)
+                if (expanded)
                 {
-                    Link expandChildren = resources.createEventLink("expandChildren", node.getId());
-                    Link markExpanded = resources.createEventLink("markExpanded", node.getId());
-                    Link markCollapsed = resources.createEventLink("markCollapsed", node.getId());
-
-                    spec.put("expandChildrenURL", expandChildren.toString())
-                            .put("markExpandedURL", markExpanded.toString())
-                            .put("markCollapsedURL", markCollapsed.toString());
-
-                    if (expanded)
-                        spec.put("expanded", true);
-                } else
-                {
-                    if (selectionModel != null)
-                    {
-                        // May need to address this in the future; in other tree implementations I've constructed,
-                        // folders are selectable, and selections even propagate up and down the tree.
-
-                        Link selectLeaf = resources.createEventLink("select", node.getId());
-
-                        spec.put("selectURL", selectLeaf.toString());
-                        if (selectionModel.isSelected(node))
-                        {
-                            spec.put("selected", true);
-                        }
-                    }
+                    writer.attributes("data-node-expanded", true);
                 }
 
-                jss.addInitializerCall("treeNode", spec);
-
-                writer.end(); // span.tx-tree-icon
+                writer.end(); // span.t-tree-icon
 
                 // From here on in, we're pushing things onto the queue. Remember that
                 // execution order is reversed from order commands are pushed.
@@ -212,7 +194,6 @@ public class Tree
                 queue.push(RENDER_CLOSE_TAG); // li
 
                 if (expanded)
-
                 {
                     queue.push(new RenderNodes(node.getChildren()));
                 }
@@ -222,9 +203,7 @@ public class Tree
                 queue.push(RENDER_LABEL_SPAN);
 
             }
-        }
-
-                ;
+        };
     }
 
     /**
@@ -264,7 +243,43 @@ public class Tree
         return className == null ? "t-tree-container" : "t-tree-container " + className;
     }
 
-    Object onExpandChildren(String nodeId)
+    public Link getTreeActionLink()
+    {
+        return resources.createEventLink("treeAction");
+    }
+
+    Object onTreeAction(@RequestParameter(NODE_ID) String nodeId,
+                        @RequestParameter("t:action") String action)
+    {
+        if (action.equalsIgnoreCase("expand"))
+        {
+            return doExpandChildren(nodeId);
+        }
+
+        if (action.equalsIgnoreCase("markExpanded"))
+        {
+            return doMarkExpanded(nodeId);
+        }
+
+        if (action.equalsIgnoreCase("markCollapsed"))
+        {
+            return doMarkCollapsed(nodeId);
+        }
+
+        if (action.equalsIgnoreCase("selected"))
+        {
+            return doUpdateSelected(nodeId, true);
+        }
+
+        if (action.equalsIgnoreCase("deselect"))
+        {
+            return doUpdateSelected(nodeId, false);
+        }
+
+        throw new IllegalArgumentException(String.format("Unexpected action: '%s' for Tree component.", action));
+    }
+
+    Object doExpandChildren(String nodeId)
     {
         TreeNode container = model.getById(nodeId);
 
@@ -273,21 +288,22 @@ public class Tree
         return new RenderNodes(container.getChildren());
     }
 
-    Object onMarkExpanded(String nodeId)
+    Object doMarkExpanded(@RequestParameter(NODE_ID) String nodeId)
     {
         expansionModel.markExpanded(model.getById(nodeId));
 
         return new JSONObject();
     }
 
-    Object onMarkCollapsed(String nodeId)
+
+    Object doMarkCollapsed(@RequestParameter(NODE_ID) String nodeId)
     {
         expansionModel.markCollapsed(model.getById(nodeId));
 
         return new JSONObject();
     }
 
-    Object onSelect(String nodeId, @RequestParameter("t:selected") boolean selected)
+    Object doUpdateSelected(String nodeId, boolean selected)
     {
         TreeNode node = model.getById(nodeId);
 
@@ -312,7 +328,9 @@ public class Tree
         final Object result = callback.getResult();
 
         if (result != null)
+        {
             return result;
+        }
 
         return new JSONObject();
     }
@@ -320,7 +338,9 @@ public class Tree
     public TreeExpansionModel getDefaultTreeExpansionModel()
     {
         if (defaultTreeExpansionModel == null)
+        {
             defaultTreeExpansionModel = new DefaultTreeExpansionModel();
+        }
 
         return defaultTreeExpansionModel;
     }
