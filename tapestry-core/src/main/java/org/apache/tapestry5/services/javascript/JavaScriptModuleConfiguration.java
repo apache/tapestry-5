@@ -26,10 +26,15 @@ import java.util.List;
  * <p/>
  * Instances of this class are contributed to the {@link ModuleManager} service;  the contribution key is the module name
  * (typically, a single word).
+ * <p/>
+ * In some cases, an instance may be created and contributed to override a default module; if the module has no dependencies,
+ * exports, or initExpression (that is, if it is a proper AMD module, where such dependencies are provided inside
+ * the module itself), then no client-side shim configuration will be written for the module, but requests for the
+ * module will be satisfied by the resource.'
  *
  * @since 5.4
  */
-public final class ShimModule
+public final class JavaScriptModuleConfiguration
 {
     /**
      * The resource for this shim module.
@@ -50,7 +55,7 @@ public final class ShimModule
 
     private boolean needsConfiguration;
 
-    public ShimModule(Resource resource)
+    public JavaScriptModuleConfiguration(Resource resource)
     {
         assert resource != null;
 
@@ -61,9 +66,9 @@ public final class ShimModule
      * A list of other module names the shim depends on.
      *
      * @param moduleNames
-     * @return this ShimModule for further configuration
+     * @return this JavaScriptModuleConfiguration for further configuration
      */
-    public ShimModule dependsOn(String... moduleNames)
+    public JavaScriptModuleConfiguration dependsOn(String... moduleNames)
     {
         assert moduleNames.length > 0;
 
@@ -83,9 +88,9 @@ public final class ShimModule
      * The name of a global variable exported by the module. This will be the value injected into
      * modules that depend on the shim.
      *
-     * @return this ShimModule for further configuration
+     * @return this JavaScriptModuleConfiguration for further configuration
      */
-    public ShimModule exports(String exports)
+    public JavaScriptModuleConfiguration exports(String exports)
     {
         assert exports != null;
 
@@ -105,12 +110,16 @@ public final class ShimModule
      * Used as an alternative to {@linkplain #exports(String)}, this allows a short expression to be specified; the
      * expression is used to initialize, clean up, and (usually) return the module's export value. For Underscore, this
      * would be "_.noConflict()".  If the expression returns null, then the exports value is used.
+     * <p/>
+     * In RequireJS 2.1.1 (the version shipped with Tapestry, currently), an init function is not invoked unless
+     * the shim also defines an exports. See <a href="https://github.com/jrburke/requirejs/issues/517">RequireJS issue 517</a>.
+     * At this time, you should specify {@link #exports} even if you provide a {@link #initializeWith(String)}}.
      *
      * @param expression
      *         initialization expression
-     * @return this ShimModule, for further configuration
+     * @return this JavaScriptModuleConfiguration, for further configuration
      */
-    public ShimModule initializeWith(String expression)
+    public JavaScriptModuleConfiguration initializeWith(String expression)
     {
         assert expression != null;
 

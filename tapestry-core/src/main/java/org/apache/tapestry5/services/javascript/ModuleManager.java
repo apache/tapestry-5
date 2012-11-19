@@ -24,12 +24,12 @@ import java.util.List;
  * Responsible for managing access to the JavaScript modules.
  * <p/>
  * The configuration of the service allows overrides of the default search path; the configuration keys
- * are module names, and the configuration values are the {@link ShimModule} definitions for those module names.
- * This is primarily used to wrap non-AMD compliant libraries for use with RequireJS (via contributed {@link ShimModule}s).
+ * are module names, and the configuration values are the {@link JavaScriptModuleConfiguration} definitions for those module names.
+ * This is primarily used to wrap non-AMD compliant libraries for use with RequireJS (via contributed {@link JavaScriptModuleConfiguration}s).
  *
  * @since 5.4
  */
-@UsesMappedConfiguration(ShimModule.class)
+@UsesMappedConfiguration(JavaScriptModuleConfiguration.class)
 public interface ModuleManager
 {
     /**
@@ -56,7 +56,7 @@ public interface ModuleManager
 
     /**
      * Given a module name (which may be a path of names separated by slashes), locates the corresponding {@link Resource}.
-     * First checks for {@linkplain ShimModule contributed shim modules}, then searches for possible matches among the
+     * First checks for {@linkplain JavaScriptModuleConfiguration contributed shim modules}, then searches for possible matches among the
      * {@linkplain org.apache.tapestry5.services.ComponentClassResolver#getLibraryNames() defined library names}.  As a special
      * case, the folder name "app" is mapped to the application's package.
      *

@@ -218,19 +218,24 @@ public class JavaScriptModule
                                             @Inject @Path("${tapestry.asset.root}/underscore_1_4_2.js")
                                             Resource underscore,
 
+                                            @Inject @Path("${tapestry.asset.root}/jquery-shim.js")
+                                            Resource jqueryShim,
+
                                             @Inject @Path("${tapestry.scriptaculous}/prototype.js")
                                             Resource prototype,
 
-                                            @Inject @Path("${tapestry.asset.root}/jquery-1.8.2.js")
+                                            @Inject @Path("${tapestry.asset.root}/jquery-1.8.3.js")
                                             Resource jQuery,
 
                                             @Inject @Path("${" + SymbolConstants.BOOTSTRAP_ROOT + "}/js/bootstrap.js")
                                             Resource bootstrap)
     {
-        configuration.add("_", new ShimModule(underscore).exports("_"));
-        configuration.add("$", new ShimModule(jQuery).initializeWith("jQuery.noConflict()"));
-        configuration.add("prototype", new ShimModule(prototype));
-        configuration.add("bootstrap", new ShimModule(bootstrap).dependsOn("$"));
+        configuration.add("_", new JavaScriptModuleConfiguration(underscore).exports("_"));
+        // Hacking around https://github.com/jrburke/requirejs/issues/534
+        configuration.add("jquery-library", new JavaScriptModuleConfiguration(jQuery));
+        configuration.add("jquery", new JavaScriptModuleConfiguration(jqueryShim));
+        configuration.add("prototype", new JavaScriptModuleConfiguration(prototype));
+        configuration.add("bootstrap", new JavaScriptModuleConfiguration(bootstrap).dependsOn("jquery"));
     }
 
     @Contribute(ModuleManager.class)
@@ -244,7 +249,7 @@ public class JavaScriptModule
         {
             MessageCatalogResource resource = new MessageCatalogResource(locale, messagesSource, resourceChangeTracker, compactJSON);
 
-            configuration.add("core/messages/" + locale.toString(), new ShimModule(resource));
+            configuration.add("core/messages/" + locale.toString(), new JavaScriptModuleConfiguration(resource));
         }
     }
 

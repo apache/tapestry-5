@@ -31,6 +31,10 @@
 # the abstract layer and gain the valuable benefit of not caring about the infrastructure framework.
 define ["_", "core/utils", "prototype"], (_, utils) ->
 
+  # Save a local reference to Prototype.$ ... see notes about some challenges using Prototype, jQuery,
+  # and RequireJS together, here: https://github.com/jrburke/requirejs/issues/534
+  $ = window.$
+
   # Fires a native event; something that Prototype does not normally do.
   fireNativeEvent = (element, eventName) ->
     if document.createEventObject

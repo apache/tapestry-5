@@ -32,8 +32,8 @@ import org.apache.tapestry5.services.AssetSource;
 import org.apache.tapestry5.services.ComponentClassResolver;
 import org.apache.tapestry5.services.assets.AssetPathConstructor;
 import org.apache.tapestry5.services.assets.StreamableResourceSource;
+import org.apache.tapestry5.services.javascript.JavaScriptModuleConfiguration;
 import org.apache.tapestry5.services.javascript.ModuleManager;
-import org.apache.tapestry5.services.javascript.ShimModule;
 
 import java.util.Comparator;
 import java.util.List;
@@ -65,7 +65,7 @@ public class ModuleManagerImpl implements ModuleManager
     public ModuleManagerImpl(AssetPathConstructor constructor, final ComponentClassResolver resolver, AssetSource assetSource,
                              @Path("${" + SymbolConstants.REQUIRE_JS + "}")
                              Asset requireJS,
-                             Map<String, ShimModule> configuration,
+                             Map<String, JavaScriptModuleConfiguration> configuration,
                              Messages globalMessages,
                              StreamableResourceSource streamableResourceSource,
                              @Symbol(SymbolConstants.COMPACT_JSON)
@@ -97,7 +97,7 @@ public class ModuleManagerImpl implements ModuleManager
         extensions.addAll(streamableResourceSource.fileExtensionsForContentType("text/javascript"));
     }
 
-    private String buildRequireJSConfig(String baseURL, Map<String, ShimModule> configuration, boolean devMode)
+    private String buildRequireJSConfig(String baseURL, Map<String, JavaScriptModuleConfiguration> configuration, boolean devMode)
     {
         JSONObject config = new JSONObject("baseUrl", baseURL);
 
@@ -109,7 +109,7 @@ public class ModuleManagerImpl implements ModuleManager
 
         for (String name : configuration.keySet())
         {
-            ShimModule module = configuration.get(name);
+            JavaScriptModuleConfiguration module = configuration.get(name);
 
             shimModuleNameToResource.put(name, module.resource);
 
@@ -123,10 +123,10 @@ public class ModuleManagerImpl implements ModuleManager
             }
         }
 
-        return String.format("require.config(%s);\n", config.toString(compactJSON));
+        return String.format("requirejs.config(%s);\n", config.toString(compactJSON));
     }
 
-    private void addModuleToConfig(JSONObject config, String name, ShimModule module)
+    private void addModuleToConfig(JSONObject config, String name, JavaScriptModuleConfiguration module)
     {
         JSONObject shimConfig = config.in("shim");
 
