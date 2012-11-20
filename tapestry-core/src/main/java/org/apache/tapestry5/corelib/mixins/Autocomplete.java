@@ -53,6 +53,7 @@ import java.util.List;
  * @tapestrydoc
  */
 @Events(EventConstants.PROVIDE_COMPLETIONS)
+@MixinAfter
 public class Autocomplete
 {
     static final String EVENT_NAME = "autocomplete";
@@ -90,6 +91,7 @@ public class Autocomplete
     /**
      * If given, then the autocompleter will support multiple input values, seperated by any of the individual
      * characters in the string.
+     *
      * @deprecated Deprecated in 5.4 with no replacement.
      */
     @Parameter(defaultPrefix = BindingConstants.LITERAL)
@@ -101,6 +103,11 @@ public class Autocomplete
     void pageLoaded()
     {
         deprecationWarning.ignoredComponentParameters(resources, "frequency", "tokens");
+    }
+
+    void beginRender(MarkupWriter writer)
+    {
+        writer.attributes("autocomplete", "off");
     }
 
     void afterRender()
