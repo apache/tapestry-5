@@ -20,6 +20,7 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.annotations.AfterRender;
 import org.apache.tapestry5.annotations.BeginRender;
 import org.apache.tapestry5.annotations.Events;
+import org.apache.tapestry5.annotations.MixinAfter;
 import org.apache.tapestry5.ioc.annotations.Inject;
 
 /**
@@ -35,6 +36,7 @@ import org.apache.tapestry5.ioc.annotations.Inject;
  */
 @Events(
 { "beginRender", "afterRender" })
+@MixinAfter
 public class RenderNotification
 {
     @Inject
