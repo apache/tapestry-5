@@ -93,7 +93,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.")
 
-        def manager = mockModuleManager(["core.js", "foo.js", "bar/baz.js"], [], [new JSONArray("core/pageinit:evalJavaScript", "pageInitialization();")])
+        def manager = mockModuleManager(["core.js", "foo.js", "bar/baz.js"], [new JSONArray("core/pageinit:evalJavaScript", "pageInitialization();")])
 
         DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, true, "1.2.3")
 
@@ -197,7 +197,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.")
 
-        def manager = mockModuleManager([], [new JSONArray("core/pageinit:evalJavaScript", "doSomething();")], [])
+        def manager = mockModuleManager([], [new JSONArray("core/pageinit:evalJavaScript", "doSomething();")])
 
         DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, true, "1.2.3")
 
@@ -223,7 +223,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         document.newRootElement("html").element("notbody").element("p").text("Ready to be updated with scripts.")
 
-        def manager = mockModuleManager(["foo.js"], [], [])
+        def manager = mockModuleManager(["foo.js"], [])
 
         DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, true, "1.2.3")
 
@@ -250,7 +250,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         head.element("meta")
         head.element("script")
 
-        def manager = mockModuleManager([], [new JSONArray("['immediate/module:myfunc', {'fred':'barney'}]")], [])
+        def manager = mockModuleManager([], [new JSONArray("['immediate/module:myfunc', {'fred':'barney'}]")])
 
         DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, true, "1.2.3")
 
@@ -267,31 +267,6 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         verify()
     }
 
-
-    @Test
-    void other_initialization() throws Exception {
-        Document document = new Document()
-
-        Element head = document.newRootElement("html").element("head")
-
-        head.element("meta")
-        head.element("script")
-
-        def manager = mockModuleManager([], [], [new JSONArray("['my/module', 'barney']")])
-
-        DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, true, "1.2.3")
-
-        replay()
-
-        linker.addInitialization(InitializationPriority.NORMAL, "my/module", null, new JSONArray("['barney']"))
-
-        linker.updateDocument(document)
-
-        check document, '''
-<html><head><meta/><script></script></head><body><!--MODULE-MANAGER-INITIALIZATION--></body></html>
-'''
-        verify()
-    }
 
     @Test
     void ie_conditional_stylesheet() throws Exception {
@@ -341,7 +316,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         head.element("meta")
 
-        def manager = mockModuleManager([], [], [new JSONArray("['my/module']"),
+        def manager = mockModuleManager([], ["my/module",
             new JSONArray("my/other/module:normal", 111, 222),
             new JSONArray("my/other/module:late", 333, 444)])
 
@@ -370,7 +345,7 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
 
         head.element("meta")
 
-        def manager = mockModuleManager([], [], [new JSONArray("['my/module']"),
+        def manager = mockModuleManager([], ["my/module",
             new JSONArray("my/other/module:normal", 111, 222)])
 
         DocumentLinkerImpl linker = new DocumentLinkerImpl(manager, true, "1.2.3")
@@ -390,14 +365,13 @@ class DocumentLinkerImplTest extends InternalBaseTestCase {
         verify()
     }
 
-    private ModuleManager mockModuleManager(def libraryURLs, def immediateInits, def deferredInits) {
+    private ModuleManager mockModuleManager(def libraryURLs, def inits) {
 
         ModuleManager mock = newMock(ModuleManager);
 
         expect(mock.writeInitialization(isA(Element),
             eq(libraryURLs),
-            eq(immediateInits),
-            eq(deferredInits))).andAnswer({
+            eq(inits))).andAnswer({
             def body = EasyMock.currentArguments[0]
 
             body.comment("MODULE-MANAGER-INITIALIZATION")
