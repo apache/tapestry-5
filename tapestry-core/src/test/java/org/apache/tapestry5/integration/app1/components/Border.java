@@ -14,6 +14,7 @@
 
 package org.apache.tapestry5.integration.app1.components;
 
+import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.annotations.Import;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -31,9 +32,19 @@ public class Border
     @Property
     private Request request;
 
+    @Inject
+    private ComponentResources resources;
+
     public String getSecure()
     {
         return request.isSecure() ? "secure" : "insecure";
+    }
+
+    boolean onActionFromReset()
+    {
+        resources.discardPersistentFieldChanges();
+
+        return true;
     }
 
 }

@@ -14,16 +14,15 @@
 
             <ul class="nav">
                 <li class="navbar-text">
-                    Page: <span id="activePageName">${componentResources.pageName}</span>
+                    <p>
+                        Page: <span id="activePageName">${componentResources.pageName}</span>,
+                        <span id="secure">${secure}</span>,
+                        locale
+                        <span id="pagelocale">${componentResources.locale}</span>
+                    </p>
                 </li>
-                <li class="divider-vertical"></li>
-                <li class="navbar-text">
-                    Access:
-                    <span id="secure">${secure}</span>
-                </li>
-                <li class="divider-vertical"></li>
-                <li class="navbar-text">
-                    Locale: ${componentResources.locale}
+                <li>
+                    <t:actionlink t:id="reset">Reset Page State</t:actionlink>
                 </li>
             </ul>
         </div>
