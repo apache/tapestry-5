@@ -108,4 +108,29 @@ class ClientDataEncoderImplTest extends TestBase {
         }
     }
 
+    @Test(expectedExceptions = EOFException)
+    void check_for_eof() {
+        ClientDataEncoder cde = new ClientDataEncoderImpl(null, "hmac passphrase", null, "foo.bar", null)
+
+        def sink = cde.createSink()
+
+        def os = sink.objectOutputStream
+
+        def names = ["fred", "barney", "wilma"]
+
+        names.each { os.writeObject it }
+
+        os.close()
+
+        def ois = cde.decodeClientData(sink.clientData)
+
+        names.each { assert (ois.readObject() == it )}
+
+        // This should fail:
+
+        ois.readObject()
+
+        unreachable()
+    }
+
 }
