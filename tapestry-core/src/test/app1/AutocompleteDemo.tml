@@ -6,7 +6,7 @@
         <t:errors/>
 
         <div class="control-group">
-            <t:label class="control-label" for="title"/>
+            <t:label  for="title"/>
             <div class="controls">
                 <t:textfield t:id="title" t:mixins="autocomplete" tokens=",;" size="60"/>
             </div>
