@@ -57,6 +57,7 @@ import java.util.Iterator;
 @Events(
         {EventConstants.ADD_ROW, EventConstants.REMOVE_ROW})
 @Import(module = "core/ajaxformloop")
+@SupportsInformalParameters
 public class AjaxFormLoop
 {
     /**
@@ -150,7 +151,6 @@ public class AjaxFormLoop
 
     @Inject
     private ComponentDefaultProvider defaultProvider;
-
 
     @Inject
     private AjaxResponseRenderer ajaxResponseRenderer;
@@ -319,7 +319,7 @@ public class AjaxFormLoop
         injectRowLink.addParameter(RequestConstants.FORM_COMPONENTID_PARAMETER, formSupport.getFormComponentId());
 
         writer.element("div",
-                "data-container-type", "core/ajaxformloop",
+                "data-container-type", "core/AjaxFormLoop",
                 "data-remove-row-url", removeRowLink,
                 "data-inject-row-url", injectRowLink);
     }
@@ -331,20 +331,20 @@ public class AjaxFormLoop
 
     boolean beginRender(MarkupWriter writer)
     {
-        writer.element("div", "data-container-type", "core/ajaxformloop-fragment");
-
         if (!iterator.hasNext())
+        {
             return false;
+        }
 
         value = iterator.next();
 
-        return true; // Render body, etc.
+        // Return true: render the body for this value; that ends up being a form-fragment.
+
+        return true;
     }
 
     Object afterRender(MarkupWriter writer)
     {
-        writer.end();
-
         // When out of source items to render, switch over to the addRow block (either the default,
         // or from the addRow parameter) before proceeding to cleanup render.
 
@@ -356,6 +356,15 @@ public class AjaxFormLoop
         // There's more to come, loop back to begin render.
 
         return false;
+    }
+
+    // Capture BeginRender event from the formfragment or the addRowWrapper, and render the informal parameters
+    // into the row.
+    boolean onBeginRender(MarkupWriter writer)
+    {
+        resources.renderInformalParameters(writer);
+
+        return true;
     }
 
     void cleanupRender(MarkupWriter writer)

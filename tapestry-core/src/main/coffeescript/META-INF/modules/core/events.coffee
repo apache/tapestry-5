@@ -122,7 +122,12 @@ define
     willUpdate: "t5:zone:will-update"
 
     # Triggered (by the standard hanndler) just after the content in a Zone has updated. If the zone was not visible, it
-    # is made visible after its content is changed, and before this event is triggered.
+    # is made visible after its content is changed, and before this event is triggered. Some number of other components that
+    # also perform Ajax updates of the page also trigger this event.
+    #
+    # Certain components bind this event to scan new additions to the page to see if certain structures exist and
+    # create client-side support in the form of controllers and event handlers. DateField is one such example
+    # (see `core/datefield` module).
     didUpdate: "t5:zone:did-update"
 
     # Triggered on a zone element, the default handler will peform an Ajax request and, when the response is available,

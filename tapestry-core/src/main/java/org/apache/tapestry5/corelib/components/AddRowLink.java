@@ -1,4 +1,4 @@
-// Copyright 2008, 2010, 2011 The Apache Software Foundation
+// Copyright 2008, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,11 +16,8 @@ package org.apache.tapestry5.corelib.components;
 
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.MarkupWriter;
-import org.apache.tapestry5.annotations.Environmental;
 import org.apache.tapestry5.annotations.SupportsInformalParameters;
-import org.apache.tapestry5.corelib.internal.AjaxFormLoopContext;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
  * Used inside an {@link org.apache.tapestry5.corelib.components.AjaxFormLoop} component to spur the addition of a new
@@ -33,24 +30,14 @@ import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 @SupportsInformalParameters
 public class AddRowLink
 {
-    @Environmental
-    private AjaxFormLoopContext context;
-
-    @Inject
-    private JavaScriptSupport jsSupport;
-
     @Inject
     private ComponentResources resources;
 
     void beginRender(MarkupWriter writer)
     {
-        writer.element("a",
-                "href", "#",
-                "data-afl-behavior", "insert-before");
+        writer.element("a", "href", "#", "data-afl-trigger", "add");
 
         resources.renderInformalParameters(writer);
-
-
     }
 
     void afterRender(MarkupWriter writer)

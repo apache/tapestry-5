@@ -20,7 +20,7 @@ define ["core/dom", "core/events", "core/console", "core/ajax", "core/builder"],
   (dom, events, console, ajax, builder) ->
 
     # "afl" is short for "AjaxFormLoop".
-    AFL_SELECTOR = "[data-container-type=core/ajaxformloop]"
+    AFL_SELECTOR = "[data-container-type=core/AjaxFormLoop]"
     FRAGMENT_TYPE = "core/ajaxformloop-fragment"
 
     dom.onDocument "click", "#{AFL_SELECTOR} [data-afl-behavior=remove]", ->
@@ -50,13 +50,11 @@ define ["core/dom", "core/events", "core/console", "core/ajax", "core/builder"],
 
       return false
 
-    dom.onDocument "click", "#{AFL_SELECTOR} [data-afl-behavior=insert-before]", ->
+    dom.onDocument "click", "#{AFL_SELECTOR} [data-afl-behavior=insert-before] [data-afl-trigger=add]", ->
 
       afl = this.findContainer AFL_SELECTOR
 
-      unless afl
-        console.error "Enclosing element for AjaxFormLoop inject row link not found."
-        return false
+      insertionPoint = this.findContainer "[data-afl-behavior=insert-before]"
 
       url = afl.attribute "data-inject-row-url"
 
@@ -64,17 +62,19 @@ define ["core/dom", "core/events", "core/console", "core/ajax", "core/builder"],
         onsuccess: (response) =>
           content = response.responseJSON?.content
 
-          insertionPoint = this.findContainer "[data-container-type=#{FRAGMENT_TYPE}]"
-
           # Create a new element with the same type (usually "div") and class as this element.
           # It will contain the new content.
           newElement = builder insertionPoint.element.tagName,
-              class: insertionPoint.element.class,
+              class: insertionPoint.element.className,
               "data-container-type": FRAGMENT_TYPE
 
           newElement.update content
 
           insertionPoint.insertBefore newElement
+
+          # Trigger this event, to inform the world that the zone-like new element has been updated
+          # with content.
+          newElement.trigger events.zone.didUpdate,
 
       return false
 
