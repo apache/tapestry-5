@@ -10,9 +10,5 @@
         <a t:type="ActionLink" t:id="show">show the message</a>
     </p>
 
-    <p>
-        <a t:id="refresh" t:type="PageLink" page="FlashDemo">refresh the page</a>
-    </p>
-
 
 </html>

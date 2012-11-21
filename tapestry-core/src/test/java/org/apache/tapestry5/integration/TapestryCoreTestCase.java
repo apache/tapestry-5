@@ -1,4 +1,4 @@
-// Copyright 2009, 2011 The Apache Software Foundation
+// Copyright 2009, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,11 @@ import org.apache.tapestry5.test.SeleniumTestCase;
 
 public abstract class TapestryCoreTestCase extends SeleniumTestCase
 {
+    public static final String BACK_TO_INDEX = "link=Tapestry Integration Test Application";
+    public static final String REFRESH_PAGE = "link=Refresh Page";
+    public static final String EXCEPTION_PROCESSING_REQUEST = "An exception has occurred processing this request.";
+    public static final String TEST_APP_BANNER = "Tapestry Integration Test Application";
+
     protected final void assertTextSeries(String idFormat, int startIndex, String... values)
     {
         for (int i = 0; i < values.length; i++)

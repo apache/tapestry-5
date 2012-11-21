@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
 <head>
     <title>Tapestry Integration Test Application</title>
 </head>
@@ -24,28 +24,36 @@
                 <li>
                     <t:actionlink t:id="reset">Reset Page State</t:actionlink>
                 </li>
+                <li>
+                    <t:pagelink page="prop:componentResources.pageName">Refresh Page</t:pagelink>
+                </li>
             </ul>
         </div>
     </div>
 </div>
 
+<t:remove>
+    "main" just helps ensure that we can select elements in this space, and not
+    in the navigation above.
+</t:remove>
 <div class="container">
+    <div class="main">
 
-    <t:alerts/>
+        <t:alerts/>
 
-    <t:body/>
+        <t:body/>
 
-    <hr/>
+        <hr/>
 
-    <h2>Request</h2>
+        <h2>Request</h2>
 
-    <t:renderobject object="request"/>
+        <t:renderobject object="request"/>
 
-    <p class="well">
-        &copy; 2008-2012
-        <a href="http://apache.org/">Apache Software Foundation</a>
-    </p>
-
+        <p class="well">
+            &copy; 2008-2012
+            <a href="http://apache.org/">Apache Software Foundation</a>
+        </p>
+    </div>
 </div>
 
 

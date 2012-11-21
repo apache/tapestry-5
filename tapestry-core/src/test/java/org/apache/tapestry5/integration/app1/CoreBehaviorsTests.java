@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         assertTextPresent("[You clicked the link!]");
 
-        clickAndWait("link=refresh the page");
+        clickAndWait(REFRESH_PAGE);
 
         assertTextPresent("[]");
     }
@@ -382,13 +382,13 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         clickAndWait("link=kick target");
 
-        assertTextSeries("//li[%d]", 1, "betty", "wilma", "betty/wilma", "\u82B1\u5B50");
+        assertTextSeries("//div[@class='main']//li[%d]", 1, "betty", "wilma", "betty/wilma", "\u82B1\u5B50");
         assertTextPresent("No component context.");
 
         clickAndWait("link=go");
 
-        assertTextSeries("//li[%d]", 1, "betty", "wilma", "betty/wilma", "\u82B1\u5B50");
-        assertTextSeries("//ul[2]/li[%d]", 1, "fred", "barney", "clark kent", "fred/barney", "\u592A\u90CE");
+        assertTextSeries("//div[@class='main']//li[%d]", 1, "betty", "wilma", "betty/wilma", "\u82B1\u5B50");
+        assertTextSeries("//div[@class='main']//ul[2]/li[%d]", 1, "fred", "barney", "clark kent", "fred/barney", "\u592A\u90CE");
     }
 
     @Test
@@ -398,7 +398,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         clickAndWait("link=kick target");
 
-        assertTextSeries("//li[%d]", 1, "betty", "wilma", "betty/wilma", "\u82B1\u5B50");
+        assertTextSeries("//div[@class='main']//li[%d]", 1, "betty", "wilma", "betty/wilma", "\u82B1\u5B50");
 
         clickAndWait("link=Target base, no context");
 
@@ -416,25 +416,25 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         clickAndWait("link=literal context");
 
-        assertText("//li[1]", "literal context");
+        assertText("//div[@class='main']//li[1]", "literal context");
 
         clickAndWait("link=PageLink Context Demo");
 
         clickAndWait("link=computed context");
 
-        assertTextSeries("//li[%d]", 1, "fred", "7", "true");
+        assertTextSeries("//div[@class='main']//li[%d]", 1, "fred", "7", "true");
 
         clickAndWait("link=PageLink Context Demo");
 
         clickAndWait("link=unsafe characters");
 
-        assertText("//li[1]", "unsafe characters: !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~");
+        assertText("//div[@class='main']//li[1]", "unsafe characters: !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~");
 
         clickAndWait("link=PageLink Context Demo");
 
         clickAndWait("link=japanese kanji");
 
-        assertText("//li[1]", "japanese kanji: \u65E5\u672C\u8A9E");
+        assertText("//div[@class='main']//li[1]", "japanese kanji: \u65E5\u672C\u8A9E");
 
         // TAPESTRY-2221
 
@@ -442,7 +442,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         clickAndWait("link=Null in context");
 
-        assertText("//li[1]", "NULL");
+        assertText("//div[@class='main']//li[1]", "NULL");
     }
 
     private void openLinkParameterTest()
@@ -526,7 +526,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         openLinks("Recursive Demo");
 
         assertTextPresent(
-                "An unexpected application exception has occurred.",
+                EXCEPTION_PROCESSING_REQUEST,
                 "The template for component org.apache.tapestry5.integration.app1.components.Recursive is recursive (contains another direct or indirect reference to component org.apache.tapestry5.integration.app1.components.Recursive). This is not supported (components may not contain themselves).",
                 "component is <t:recursive>recursive</t:recursive>, so we\'ll see a failure.");
     }
@@ -620,7 +620,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     {
         openBaseURL();
 
-        assertTextPresent("Tapestry 5 Integration Application 1");
+        assertTextPresent(TEST_APP_BANNER);
 
         clickAndWait("link=Return Types");
         assertTextPresent("Return Type Tests");
@@ -629,22 +629,22 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertTextPresent("Return Type Tests");
 
         clickAndWait("link=string");
-        assertTextPresent("Tapestry 5 Integration Application 1");
+        assertTextPresent(TEST_APP_BANNER);
         goBack();
         waitForPageToLoad();
 
         clickAndWait("link=class");
-        assertTextPresent("Tapestry 5 Integration Application 1");
+        assertTextPresent(TEST_APP_BANNER);
         goBack();
         waitForPageToLoad();
 
         clickAndWait("link=page");
-        assertTextPresent("Tapestry 5 Integration Application 1");
+        assertTextPresent(TEST_APP_BANNER);
         goBack();
         waitForPageToLoad();
 
         clickAndWait("link=link");
-        assertTextPresent("Tapestry 5 Integration Application 1");
+        assertTextPresent(TEST_APP_BANNER);
         goBack();
         waitForPageToLoad();
 
@@ -654,7 +654,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         waitForPageToLoad();
 
         clickAndWait("link=stream page content");
-        assertTextPresent("Tapestry 5 Integration Application 1");
+        assertTextPresent(TEST_APP_BANNER);
         goBack();
         waitForPageToLoad();
 
@@ -673,7 +673,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         clickAndWait("link=bad");
         assertTextPresent(
-                "An unexpected application exception has occurred.",
+                EXCEPTION_PROCESSING_REQUEST,
                 "Handling result from method org.apache.tapestry5.integration.app1.pages.ReturnTypes.onActionFromBadReturnValue().",
                 "A component event handler method returned the value 20. Return type java.lang.Integer can not be handled.",
                 "context:ReturnTypes.tml, line 50");
@@ -750,7 +750,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     {
         openLinks("Var Binding Demo");
 
-        assertTextSeries("//li[%d]", 1, "1", "2", "3");
+        assertTextSeries("//div[@class='main']//li[%d]", 1, "1", "2", "3");
     }
 
     /**
@@ -774,7 +774,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         clickAndWait("link=force invalid event context");
 
-        assertTextPresent("An unexpected application exception has occurred.",
+        assertTextPresent(EXCEPTION_PROCESSING_REQUEST,
                 "org.apache.tapestry5.runtime.ComponentEventException", "java.lang.NumberFormatException");
     }
 
@@ -799,7 +799,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     {
         openLinks("Render Error Demo");
 
-        assertTextPresent("An unexpected application exception has occurred");
+        assertTextPresent(EXCEPTION_PROCESSING_REQUEST);
 
         // Just sample a smattering of the vast amount of data in the exception
         // report.
@@ -876,7 +876,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         assertText("message", "updated");
 
-        clickAndWait("link=Refresh page");
+        clickAndWait(REFRESH_PAGE);
 
         assertText("message", "updated");
 
@@ -941,7 +941,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         openLinks("Protected Fields Demo", "Trigger the Exception");
 
         assertTextPresent(
-                "An unexpected application exception has occurred.",
+                EXCEPTION_PROCESSING_REQUEST,
                 "Field _field of class org.apache.tapestry5.integration.app1.pages.ProtectedFields must be instrumented, and may not be public.");
     }
 
@@ -1258,7 +1258,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         // load invocation order)
         assertEchoMixins("defaultbinding", "goodbye", 0, -1, -1, 1, false);
         assertText("mypropertyoutput5", "goodbye");
-        
+
         // binding to a published parameter
         assertText("publishedparameter_before", "publishedvalue-before");
         assertText("p3-value", "publishedvaluetemporaryvalue");
@@ -1311,7 +1311,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     {
         openLinks("Missing Component Class Exception");
         assertTextPresent(
-                "An unexpected application exception has occurred",
+                EXCEPTION_PROCESSING_REQUEST,
                 "Failure creating embedded component 'componentwithnotype' of org.apache.tapestry5.integration.app1.pages.MissingComponentClassException: You must specify the type via t:type, the element, or @Component");
     }
 
@@ -1377,7 +1377,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertText("//span[@class='watch'][2]", "0");
         assertText("//span[@class='watch'][3]", "1");
 
-        clickAndWait("link=Back to index");
+        clickAndWait(BACK_TO_INDEX);
 
         // TAPESTRY-2338: Make sure the data is cleared.
 
@@ -1401,7 +1401,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         assertText("value", "111");
 
-        clickAndWait("link=Back to index");
+        clickAndWait(BACK_TO_INDEX);
 
         // TAPESTRY-2338: Make sure the data is cleared.
 
@@ -1428,7 +1428,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         openLinks("BindParameter error handling");
 
         assertTextPresent(
-                "An unexpected application exception has occurred.",
+                EXCEPTION_PROCESSING_REQUEST,
 
                 "Failure binding parameter field 'boundParameter' of mixin BindParameterNoSuchParameter:throwexception$echovalue2 (type org.apache.tapestry5.integration.app1.mixins.EchoValue2)",
 
@@ -1441,7 +1441,8 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         openLinks("BindParameter on component");
 
         assertTextPresent(
-                "An unexpected application exception has occurred.",
+                EXCEPTION_PROCESSING_REQUEST,
+
                 "@BindParameter was used on field 'value' of component class 'org.apache.tapestry5.integration.app1.components.BindParameterComponent', but @BindParameter should only be used in mixins.");
     }
 
@@ -1483,11 +1484,11 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
         assertText("secure", "secure");
         assertText("message", "Form submitted");
 
-        clickAndWait("link=Back to index");
+        clickAndWait(BACK_TO_INDEX);
 
         // Back to the insecure home page.
 
-        assertText("//h1", "Tapestry Integration Test Application");
+        assertText("activePageName", "Index");
     }
 
     /**
@@ -1568,7 +1569,7 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
 
         assertText("current", "2");
 
-        clickAndWait("link=Back to index");
+        clickAndWait(BACK_TO_INDEX);
         clickAndWait("link=PageReset Annotation Demo");
 
         assertText("current", "0");
