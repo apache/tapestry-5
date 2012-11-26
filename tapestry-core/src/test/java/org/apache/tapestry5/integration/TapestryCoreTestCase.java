@@ -63,6 +63,6 @@ public abstract class TapestryCoreTestCase extends SeleniumTestCase
         waitForCSSSelectedElementToAppear("[data-container-type=alerts] .alert");
 
         // Add the special "x" for the close button to the text.
-        assertText("[data-container-type=alerts] .alert", "\u00d7" + text);
+        assertText("css=[data-container-type=alerts] .alert", "\u00d7" + text);
     }
 }
