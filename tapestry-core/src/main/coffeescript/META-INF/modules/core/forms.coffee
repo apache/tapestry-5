@@ -48,7 +48,8 @@ define ["core/events", "core/dom", "core/builder", "_"],
         firstHidden.insertBefore hidden
 
       # TODO: Research why we need id and name and get rid of one if possible.
-      value = Object.toJSON [ submitter.element.id, isCancel ? "cancel" : submitter.element.name ]
+      name = if isCancel then "cancel" else submitted.element.name
+      value = Object.toJSON [ submitter.element.id, name ]
 
       hidden.value value
 
