@@ -128,7 +128,8 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      * This method will be invoked in <em>each</em> subclass, but is set up to only startup the servers once (it checks
      * the {@link ITestContext} to see if the necessary keys are already present).
      *
-     * @param testContext Used to share objects between the launcher and the test suites
+     * @param testContext
+     *         Used to share objects between the launcher and the test suites
      * @throws Exception
      */
     @BeforeTest(dependsOnGroups =
@@ -280,11 +281,16 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      * server to be tested. The return value is a Runnable that can be invoked later to cleanly shut down the launched
      * server at the end of the test.
      *
-     * @param container    identifies which web server should be launched
-     * @param webAppFolder path to the web application context
-     * @param contextPath  the path the context is mapped to, usually the empty string
-     * @param port         the port number the server should handle
-     * @param sslPort      the port number on which the server should handle secure requests
+     * @param container
+     *         identifies which web server should be launched
+     * @param webAppFolder
+     *         path to the web application context
+     * @param contextPath
+     *         the path the context is mapped to, usually the empty string
+     * @param port
+     *         the port number the server should handle
+     * @param sslPort
+     *         the port number on which the server should handle secure requests
      * @return Runnable used to shut down the server
      * @throws Exception
      */
@@ -337,12 +343,12 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     }
 
     /**
-     * Delegates to {@link ErrorReporter#writeErrorReport()} to capture the current page markup in a
+     * Delegates to {@link ErrorReporter#writeErrorReport(String)} to capture the current page markup in a
      * file for later analysis.
      */
-    protected void writeErrorReport()
+    protected void writeErrorReport(String reportText)
     {
-        errorReporter.writeErrorReport();
+        errorReporter.writeErrorReport(reportText);
     }
 
     /**
@@ -1155,11 +1161,43 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     // End of delegate methods
     // ---------------------------------------------------------------------
 
+    private final void reportAndThrowAssertionError(String message, Object... arguments)
+    {
+        StringBuilder builder = new StringBuilder(5000);
+
+        String formatted = String.format(message, arguments);
+
+        builder.append(formatted);
+
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+
+        StringBuilder buffer = new StringBuilder(5000);
+
+        boolean enabled = false;
+
+        for (StackTraceElement e : stackTrace)
+        {
+            if (enabled)
+            {
+                buffer.append("\n- ");
+                buffer.append(e);
+                continue;
+            }
+
+            if (e.getMethodName().equals("reportAndThrowAssertionError"))
+            {
+                enabled = true;
+            }
+        }
+
+        writeErrorReport(builder.toString());
+
+        throw new AssertionError(formatted);
+    }
+
     protected final void unreachable()
     {
-        writeErrorReport();
-
-        throw new AssertionError("This statement should not be reachable.");
+        reportAndThrowAssertionError("An unreachable statement was reached.");
     }
 
     /**
@@ -1175,8 +1213,10 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     /**
      * Asserts the text of an element, identified by the locator.
      *
-     * @param locator  identifies the element whose text value is to be asserted
-     * @param expected expected value for the element's text
+     * @param locator
+     *         identifies the element whose text value is to be asserted
+     * @param expected
+     *         expected value for the element's text
      */
     protected final void assertText(String locator, String expected)
     {
@@ -1193,11 +1233,11 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         }
 
         if (actual.equals(expected))
+        {
             return;
+        }
 
-        writeErrorReport();
-
-        throw new AssertionError(String.format("%s was '%s' not '%s'", locator, actual, expected));
+        reportAndThrowAssertionError("%s was '%s' not '%s'", locator, actual, expected);
     }
 
     protected final void assertTextPresent(String... text)
@@ -1205,18 +1245,19 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         for (String item : text)
         {
             if (isTextPresent(item))
+            {
                 continue;
+            }
 
-            writeErrorReport();
-
-            throw new AssertionError("Page did not contain '" + item + "'.");
+            reportAndThrowAssertionError("Page did not contain '" + item + "'.");
         }
     }
 
     /**
      * Assets that each string provided is present somewhere in the current document.
      *
-     * @param expected string expected to be present
+     * @param expected
+     *         string expected to be present
      */
     protected final void assertSourcePresent(String... expected)
     {
@@ -1225,11 +1266,11 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
         for (String snippet : expected)
         {
             if (source.contains(snippet))
+            {
                 continue;
+            }
 
-            writeErrorReport();
-
-            throw new AssertionError("Page did not contain source '" + snippet + "'.");
+            reportAndThrowAssertionError("Page did not contain source '" + snippet + "'.");
         }
     }
 
@@ -1237,7 +1278,8 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      * Click a link identified by a locator, then wait for the resulting page to load.
      * This is not useful for Ajax updates, just normal full-page refreshes.
      *
-     * @param locator identifies the link to click
+     * @param locator
+     *         identifies the link to click
      */
     protected final void clickAndWait(String locator)
     {
@@ -1258,8 +1300,10 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     /**
      * Used when the locator identifies an attribute, not an element.
      *
-     * @param locator  identifies the attribute whose value is to be asserted
-     * @param expected expected value for the attribute
+     * @param locator
+     *         identifies the attribute whose value is to be asserted
+     * @param expected
+     *         expected value for the attribute
      */
     protected final void assertAttribute(String locator, String expected)
     {
@@ -1270,26 +1314,25 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             actual = getAttribute(locator);
         } catch (RuntimeException ex)
         {
-            System.err.printf("Error accessing %s: %s", locator, ex.getMessage());
 
-            writeErrorReport();
-
-            throw ex;
+            reportAndThrowAssertionError("Error accessing %s: %s", locator, ex.getMessage());
         }
 
         if (actual.equals(expected))
+        {
             return;
+        }
 
-        writeErrorReport();
-
-        throw new AssertionError(String.format("%s was '%s' not '%s'", locator, actual, expected));
+        reportAndThrowAssertionError("%s was '%s' not '%s'", locator, actual, expected);
     }
 
     /**
      * Assets that the value in the field matches the expectation
      *
-     * @param locator  identifies the field
-     * @param expected expected value for the field
+     * @param locator
+     *         identifies the field
+     * @param expected
+     *         expected value for the field
      * @since 5.3
      */
     protected final void assertFieldValue(String locator, String expected)
@@ -1299,9 +1342,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             assertEquals(getValue(locator), expected);
         } catch (AssertionError ex)
         {
-            writeErrorReport();
-
-            throw ex;
+            reportAndThrowAssertionError("Failure accessing %s: %s", locator, ex);
         }
     }
 
@@ -1341,7 +1382,8 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      * Waits, up to the page load limit for an element (identified by a CSS rule) to exist
      * (it is not assured that the element will be visible).
      *
-     * @param cssRule used to locate the element
+     * @param cssRule
+     *         used to locate the element
      * @since 5.3
      */
     protected void waitForCSSSelectedElementToAppear(String cssRule)
@@ -1355,7 +1397,8 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      * Waits for the element with the given client-side id to be present in the DOM (
      * does not assure that the element is visible).
      *
-     * @param elementId identifies the element
+     * @param elementId
+     *         identifies the element
      * @since 5.3
      */
     protected final void waitForElementToAppear(String elementId)
@@ -1369,7 +1412,8 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     /**
      * Waits for the element to be removed from the DOM.
      *
-     * @param elementId client-side id of element
+     * @param elementId
+     *         client-side id of element
      * @since 5.3
      */
     protected final void waitForElementToDisappear(String elementId)
@@ -1384,7 +1428,8 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      * Note that waitForElementToAppear waits for the element to be present in the dom, visible or not. waitForVisible
      * waits for an element that already exists in the dom to become visible.
      *
-     * @param selector element selector
+     * @param selector
+     *         element selector
      * @since 5.3
      */
     protected final void waitForVisible(String selector)
@@ -1399,7 +1444,8 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      * Note that waitForElementToDisappear waits for the element to be absent from the dom, visible or not. waitForInvisible
      * waits for an existing element to become invisible.
      *
-     * @param selector element selector
+     * @param selector
+     *         element selector
      * @since 5.3
      */
     protected final void waitForInvisible(String selector)
@@ -1412,7 +1458,8 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     /**
      * Asserts that the current page's title matches the expected value.
      *
-     * @param expected value for title
+     * @param expected
+     *         value for title
      * @since 5.3
      */
     protected final void assertTitle(String expected)
@@ -1422,7 +1469,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
             assertEquals(getTitle(), expected);
         } catch (AssertionError ex)
         {
-            writeErrorReport();
+            reportAndThrowAssertionError("Unexpected title: %s", ex);
 
             throw ex;
         }
@@ -1431,7 +1478,8 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     /**
      * Waits until all active XHR requests are completed.
      *
-     * @param timeout timeout to wait for
+     * @param timeout
+     *         timeout to wait for
      * @since 5.3
      */
     protected final void waitForAjaxRequestsToComplete(String timeout)

@@ -1,4 +1,4 @@
-// Copyright 2009, 2010 The Apache Software Foundation
+// Copyright 2009, 2010, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@ public class ErrorReporterImpl implements ErrorReporter
 
     }
 
-    public void writeErrorReport()
+    public void writeErrorReport(String reportText)
     {
         String htmlSource = commandProcessor.getString("getHtmlSource", new String[]
                 {});
@@ -88,23 +88,17 @@ public class ErrorReporterImpl implements ErrorReporter
             previousNames.add(baseFileName);
         }
 
-        File report = new File(dir, baseFileName + ".html");
+        File report = new File(dir, baseFileName + ".txt");
 
-        System.err.println("Writing current page's HTML source to: " + report);
+        System.err.println("Writing failure report to: " + report);
 
-        try
-        {
-            FileWriter fw = new FileWriter(report);
+        writeContent(report, reportText);
 
-            fw.write(htmlSource);
+        File capturedSource = new File(dir, baseFileName + ".html");
 
-            outputPaths.add(report);
+        System.err.println("Writing current page's HTML source to: " + capturedSource);
 
-            fw.close();
-        } catch (IOException ex)
-        {
-            // Ignore.
-        }
+        writeContent(capturedSource, htmlSource);
 
         File capture = new File(dir, baseFileName + ".png");
 
@@ -119,6 +113,23 @@ public class ErrorReporterImpl implements ErrorReporter
         } catch (Exception ex)
         {
             System.err.println(ex.getMessage());
+        }
+    }
+
+    private void writeContent(File file, String content)
+    {
+        try
+        {
+            FileWriter fw = new FileWriter(file);
+
+            fw.write(content);
+
+            outputPaths.add(file);
+
+            fw.close();
+        } catch (IOException ex)
+        {
+            // Ignore.
         }
     }
 

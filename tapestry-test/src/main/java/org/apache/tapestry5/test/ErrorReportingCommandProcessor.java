@@ -38,8 +38,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
     {
         StringBuilder builder = new StringBuilder();
 
-        builder.append(BORDER);
-        builder.append("\nSelenium failure processing command ");
+        builder.append("Selenium failure processing command ");
         builder.append(command);
         builder.append("(");
 
@@ -64,6 +63,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
 
                 builder.append("\n");
                 builder.append(BORDER);
+                builder.append("\n");
 
                 builder.append(logs);
             }
@@ -74,13 +74,13 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
         }
 
 
-        builder.append("\n");
-        builder.append(BORDER);
+        String report = builder.toString();
 
-        System.err.println(builder.toString());
+        System.err.println(BORDER);
+        System.err.println(report);
+        System.err.println(BORDER);
 
-
-        errorReporter.writeErrorReport();
+        errorReporter.writeErrorReport(report);
     }
 
     public String doCommand(String command, String[] args)
