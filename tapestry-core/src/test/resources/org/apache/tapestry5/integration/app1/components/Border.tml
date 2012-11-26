@@ -39,7 +39,8 @@
 <div class="container">
     <div class="main">
 
-        <t:alerts/>
+        <t:remove>alert-class is for the AlertsTest.check_informal_parameters test</t:remove>
+        <t:alerts class="alert-class"/>
 
         <t:body/>
 
