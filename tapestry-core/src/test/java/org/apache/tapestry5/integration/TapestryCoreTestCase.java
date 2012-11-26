@@ -51,4 +51,18 @@ public abstract class TapestryCoreTestCase extends SeleniumTestCase
             assertFieldValue(id, values[i]);
         }
     }
+
+    /**
+     * Asserts that the text of the first alert matches the given value. Waits for the alerts container
+     * and the alert itself to appear.
+     *
+     * @param text
+     */
+    protected final void assertFirstAlert(String text)
+    {
+        waitForCSSSelectedElementToAppear("[data-container-type=alerts] .alert");
+
+        // Add the special "x" for the close button to the text.
+        assertText("[data-container-type=alerts] .alert", "\u00d7" + text);
+    }
 }
