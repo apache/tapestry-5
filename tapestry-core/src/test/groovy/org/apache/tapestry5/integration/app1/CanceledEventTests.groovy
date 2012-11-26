@@ -10,9 +10,11 @@ class CanceledEventTests extends TapestryCoreTestCase
     {
         openLinks "Canceled Event Demo"
 
+        sleep 100
+
         clickAndWait SUBMIT
 
-        assertText "css=.t-alert-container", "Form was canceled."
+        assertFirstAlert "Form was canceled."
     }
 
     @Test
@@ -20,8 +22,10 @@ class CanceledEventTests extends TapestryCoreTestCase
     {
         openLinks "Canceled Event Demo"
 
+        sleep 100
+
         clickAndWait "link=Cancel Form"
 
-        assertText "css=.t-alert-container", "Form was canceled."
+        assertFirstAlert "Form was canceled."
     }
 }
