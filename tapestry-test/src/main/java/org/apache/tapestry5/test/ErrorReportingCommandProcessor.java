@@ -1,4 +1,4 @@
-// Copyright 2007, 2009 The Apache Software Foundation
+// Copyright 2007, 2009, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -55,9 +55,30 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
         builder.append("): ");
         builder.append(ex.toString());
 
+        try
+        {
+            String logs = delegate.getString("retrieveLastRemoteControlLogs", new String[]{});
+
+            if (logs != null && logs.length() > 0)
+            {
+
+                builder.append("\n");
+                builder.append(BORDER);
+
+                builder.append(logs);
+            }
+
+        } catch (Exception ex2)
+        {
+            // Skip the logs.
+        }
+
+
+        builder.append("\n");
         builder.append(BORDER);
 
         System.err.println(builder.toString());
+
 
         errorReporter.writeErrorReport();
     }
@@ -67,8 +88,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
         try
         {
             return delegate.doCommand(command, args);
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             reportError(command, args, ex);
             throw ex;
@@ -80,8 +100,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
         try
         {
             return delegate.getBoolean(string, strings);
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             reportError(string, strings, ex);
             throw ex;
@@ -93,8 +112,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
         try
         {
             return delegate.getBooleanArray(string, strings);
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             reportError(string, strings, ex);
             throw ex;
@@ -106,8 +124,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
         try
         {
             return delegate.getNumber(string, strings);
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             reportError(string, strings, ex);
             throw ex;
@@ -119,8 +136,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
         try
         {
             return delegate.getNumberArray(string, strings);
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             reportError(string, strings, ex);
             throw ex;
@@ -132,8 +148,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
         try
         {
             return delegate.getString(string, strings);
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             reportError(string, strings, ex);
             throw ex;
@@ -145,8 +160,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
         try
         {
             return delegate.getStringArray(string, strings);
-        }
-        catch (RuntimeException ex)
+        } catch (RuntimeException ex)
         {
             reportError(string, strings, ex);
             throw ex;
