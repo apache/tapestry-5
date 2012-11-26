@@ -1346,7 +1346,7 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
      */
     protected void waitForCSSSelectedElementToAppear(String cssRule)
     {
-        String condition = String.format("window.$$(\"%s\").size() > 0", cssRule);
+        String condition = String.format("window.$$ && window.$$(\"%s\").size() > 0", cssRule);
 
         waitForCondition(condition, PAGE_LOAD_TIMEOUT);
     }
