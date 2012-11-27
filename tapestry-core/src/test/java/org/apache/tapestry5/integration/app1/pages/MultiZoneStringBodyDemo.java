@@ -1,12 +1,14 @@
 package org.apache.tapestry5.integration.app1.pages;
 
 import org.apache.tapestry5.Block;
-import org.apache.tapestry5.ajax.MultiZoneUpdate;
 import org.apache.tapestry5.annotations.InjectComponent;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.corelib.components.Zone;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.ajax.AjaxResponseRenderer;
 
-public class MultiZoneStringBodyDemo {
+public class MultiZoneStringBodyDemo
+{
 
     @Property
     private String[] list = {
@@ -22,41 +24,26 @@ public class MultiZoneStringBodyDemo {
     @InjectComponent
     private Zone wholeLoopZone;
 
-    @InjectComponent
-    private Zone dummyZone;
+    @Inject
+    private AjaxResponseRenderer ajaxResponseRenderer;
 
-    public String getRowId() {
+    public String getRowId()
+    {
         return "row-" + index;
     }
 
-    public String getClickId() {
-        return "click_" + getItemId();
-    }
-
-    public int getItemId() {
-        return index;
-    }
-
-    public MultiZoneUpdate onClick(int i) {
-
-        MultiZoneUpdate mzu = new MultiZoneUpdate("dummyZone", dummyZone);
-
-        while (i < list.length) {
-
-            String clientId = "row-" + (i);
-
-            String value = Integer.toString(i) + " is the integer value";
-
-            mzu = mzu.add(clientId, value);
+    void onClick(int i)
+    {
+        while (i < list.length)
+        {
+            ajaxResponseRenderer.addRender("row-" + (i), Integer.toString(i) + " is the integer value");
 
             ++i;
         }
-
-        return mzu;
-
     }
 
-    public Block onReset() {
+    public Block onReset()
+    {
         return wholeLoopZone.getBody();
     }
 

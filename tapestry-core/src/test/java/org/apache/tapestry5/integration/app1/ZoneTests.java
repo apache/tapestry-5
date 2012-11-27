@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,6 +31,8 @@ public class ZoneTests extends TapestryCoreTestCase
     public void select_zone()
     {
         openLinks("Select Zone Demo");
+
+        sleep(SETUP_TIME);
 
         select("carMaker", "Bmw");
 
@@ -260,21 +262,21 @@ public class ZoneTests extends TapestryCoreTestCase
             assertText("row-" + i, numbers[i]);
         }
 
-        click("click_7");
+        click("link=click 7");
         waitForElementToAppear("row-7");
 
-        // 7- are unchanged
-        for (int i = 0; i <= 7; i++)
+        // 0-6 are unchanged
+        for (int i = 0; i < 7; i++)
         {
             assertText("row-" + i, numbers[i]);
         }
-        // 8+ are modified
-        for (int i = 8; i <= 10; i++)
+        // 7+ are modified
+        for (int i = 7; i <= 10; i++)
         {
             assertText("row-" + i, i + " is the integer value");
         }
 
-        click("reset");
+        click("link=Reset Zones");
         waitForElementToAppear("wholeLoopZone");
 
         // all elements reset via AJAX
@@ -300,9 +302,11 @@ public class ZoneTests extends TapestryCoreTestCase
     {
         openLinks("Zone Demo");
 
+        sleep(SETUP_TIME);
+
         click("link=Select \"CSS Injection\"");
 
-        sleep(100);
+        sleep(SETUP_TIME);
 
         // First check that the update arrived
 
@@ -310,7 +314,6 @@ public class ZoneTests extends TapestryCoreTestCase
 
         // Next see if we can verify that the presentation matches the exceptations; greend and underlined.  Underlined from
         // zonedemo-viaajax.css; green from zonedmeo-overrides.css (not blue as defined in zonedemo-viaajax.css).
-
 
         assertCSS("demo-aip", "color", "rgb(0, 128, 0)");
         assertCSS("demo-aip", "text-decoration", "underline");
