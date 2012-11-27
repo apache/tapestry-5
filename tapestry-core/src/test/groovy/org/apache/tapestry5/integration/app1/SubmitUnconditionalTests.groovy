@@ -6,22 +6,26 @@ import org.testng.annotations.Test
 
 class SubmitUnconditionalTests extends TapestryCoreTestCase {
 
-  @Test
-  void submit_with_unconditional_mode() {
-    openLinks "Cancel Demo"
+    @Test
+    void submit_with_unconditional_mode() {
+        openLinks "Cancel Demo"
 
-    clickAndWait "//input[@value='Abort']"
+        sleep SETUP_TIME
 
-    assertText "message", "onSelectedFromAbort() invoked."
-  }
+        clickAndWait "//input[@value='Abort']"
 
-  @Test
-  void LinkSubmit_with_unconditional_mode() {
+        assertText "message", "onSelectedFromAbort() invoked."
+    }
 
-    openLinks "Cancel Demo"
+    @Test
+    void LinkSubmit_with_unconditional_mode() {
 
-    clickAndWait "link=Abort"
+        openLinks "Cancel Demo"
 
-    assertText "message", "onSelectedFromAbortLink() invoked."
-  }
+        sleep SETUP_TIME
+
+        clickAndWait "link=Abort"
+
+        assertText "message", "onSelectedFromAbortLink() invoked."
+    }
 }

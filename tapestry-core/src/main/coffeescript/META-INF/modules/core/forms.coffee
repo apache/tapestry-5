@@ -36,8 +36,8 @@ define ["core/events", "core/dom", "core/builder", "_"],
     setSubmittingHidden = (form, submitter) ->
 
       mode = submitter.attribute "data-submit-mode"
-      isCancel = mode and mode isnt "normal"
-      if isCancel
+      isCancel = mode is "cancel"
+      if mode and mode isnt "normal"
         form.meta SKIP_VALIDATION, true
 
       hidden = form.findFirst "[name='t:submit']"
@@ -48,7 +48,7 @@ define ["core/events", "core/dom", "core/builder", "_"],
         firstHidden.insertBefore hidden
 
       # TODO: Research why we need id and name and get rid of one if possible.
-      name = if isCancel then "cancel" else submitted.element.name
+      name = if isCancel then "cancel" else submitter.element.name
       value = Object.toJSON [ submitter.element.id, name ]
 
       hidden.value value

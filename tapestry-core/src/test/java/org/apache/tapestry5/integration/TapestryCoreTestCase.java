@@ -23,6 +23,12 @@ public abstract class TapestryCoreTestCase extends SeleniumTestCase
     public static final String EXCEPTION_PROCESSING_REQUEST = "An exception has occurred processing this request.";
     public static final String TEST_APP_BANNER = "Tapestry Integration Test Application";
 
+    /**
+     * Number of milliseconds to sleep after the page has loaded, when giving JavaScript a chance to fully initialize.
+     * Perhaps we need another option, say one that sets a flag on the HTML element once the initializations are complete.
+     */
+    public static final int SETUP_TIME = 100;
+
     protected final void assertTextSeries(String idFormat, int startIndex, String... values)
     {
         for (int i = 0; i < values.length; i++)
