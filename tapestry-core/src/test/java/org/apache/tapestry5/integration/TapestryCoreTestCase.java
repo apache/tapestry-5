@@ -23,12 +23,6 @@ public abstract class TapestryCoreTestCase extends SeleniumTestCase
     public static final String EXCEPTION_PROCESSING_REQUEST = "An exception has occurred processing this request.";
     public static final String TEST_APP_BANNER = "Tapestry Integration Test Application";
 
-    /**
-     * Number of milliseconds to sleep after the page has loaded, when giving JavaScript a chance to fully initialize.
-     * Perhaps we need another option, say one that sets a flag on the HTML element once the initializations are complete.
-     */
-    public static final int SETUP_TIME = 100;
-
     protected final void assertTextSeries(String idFormat, int startIndex, String... values)
     {
         for (int i = 0; i < values.length; i++)
@@ -63,6 +57,7 @@ public abstract class TapestryCoreTestCase extends SeleniumTestCase
      * and the alert itself to appear.
      *
      * @param text
+     * @since 5.4
      */
     protected final void assertFirstAlert(String text)
     {
@@ -70,5 +65,26 @@ public abstract class TapestryCoreTestCase extends SeleniumTestCase
 
         // Add the special "x" for the close button to the text.
         assertText("css=[data-container-type=alerts] .alert", "\u00d7" + text);
+    }
+
+    /**
+     * Waits for page initialization to finish, which is recognized by the {@code data-page-loaded} attribute
+     * being added to the HTML element. Polls at 20ms intervals for 200ms.
+     *
+     * @since 5.4
+     */
+    protected final void waitForPageLoaded()
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            if (isElementPresent("css=html[data-page-loaded]"))
+            {
+                return;
+            }
+
+            sleep(20);
+        }
+
+        reportAndThrowAssertionError("Page did not finish loading.");
     }
 }

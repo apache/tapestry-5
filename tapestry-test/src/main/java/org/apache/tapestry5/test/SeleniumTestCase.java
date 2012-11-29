@@ -1161,7 +1161,15 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     // End of delegate methods
     // ---------------------------------------------------------------------
 
-    private final void reportAndThrowAssertionError(String message, Object... arguments)
+    /**
+     * Formats a message from the provided arguments, which is written to System.err. In addition,
+     * captures the AUT's markup, screenshot, and a report to the output directory.
+     *
+     * @param message
+     * @param arguments
+     * @since 5.4
+     */
+    protected final void reportAndThrowAssertionError(String message, Object... arguments)
     {
         StringBuilder builder = new StringBuilder(5000);
 
@@ -1476,11 +1484,12 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     }
 
     /**
-     * Waits until all active XHR requests are completed.
+     * Waits until all active XHR requests are completed. However, this is Prototype-based.
      *
      * @param timeout
      *         timeout to wait for
      * @since 5.3
+     * @deprecated Deprecated in 5.4 as it is tied to Prototype.
      */
     protected final void waitForAjaxRequestsToComplete(String timeout)
     {

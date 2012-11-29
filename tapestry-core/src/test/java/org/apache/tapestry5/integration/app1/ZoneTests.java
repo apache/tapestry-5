@@ -32,7 +32,7 @@ public class ZoneTests extends TapestryCoreTestCase
     {
         openLinks("Select Zone Demo");
 
-        sleep(SETUP_TIME);
+        waitForPageLoaded();
 
         select("carMaker", "Bmw");
 
@@ -302,11 +302,11 @@ public class ZoneTests extends TapestryCoreTestCase
     {
         openLinks("Zone Demo");
 
-        sleep(SETUP_TIME);
+        waitForPageLoaded();
 
         click("link=Select \"CSS Injection\"");
 
-        sleep(SETUP_TIME);
+        waitForPageLoaded();
 
         // First check that the update arrived
 
@@ -318,7 +318,7 @@ public class ZoneTests extends TapestryCoreTestCase
         assertCSS("demo-aip", "color", "rgb(0, 128, 0)");
         assertCSS("demo-aip", "text-decoration", "underline");
     }
-    
+
     /**
      * TAP5-1890
      */

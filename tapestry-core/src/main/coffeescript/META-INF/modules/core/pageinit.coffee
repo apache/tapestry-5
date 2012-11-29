@@ -152,7 +152,14 @@ define ["_", "core/console", "core/dom", "core/events"],
       # executed), and then executes the other initializations.
       loadLibrariesAndInitialize: (libraries, inits) ->
         console.debug "Loading #{libraries?.length or 0} libraries"
-        exports.loadLibraries libraries, -> exports.initialize inits
+        exports.loadLibraries libraries,
+          -> exports.initialize inits,
+            ->
+              # At this point, all libraries have been loaded, and all inits should have executed. Unless some of
+              # the inits triggered Ajax updates (such as a core/ProgressiveDisplay component), then the page should
+              # be ready to go. We set a flag, mostly used by test suites, to ensure that all is ready.
+
+              (dom document.documentElement).attribute "data-page-loaded", "true"
 
       evalJavaScript: (js) ->
         console.debug "Evaluating: #{js}"

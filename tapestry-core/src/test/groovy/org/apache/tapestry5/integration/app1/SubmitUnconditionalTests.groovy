@@ -10,7 +10,7 @@ class SubmitUnconditionalTests extends TapestryCoreTestCase {
     void submit_with_unconditional_mode() {
         openLinks "Cancel Demo"
 
-        sleep SETUP_TIME
+        waitForPageLoaded()
 
         clickAndWait "//input[@value='Abort']"
 
@@ -22,7 +22,7 @@ class SubmitUnconditionalTests extends TapestryCoreTestCase {
 
         openLinks "Cancel Demo"
 
-        sleep SETUP_TIME
+        waitForPageLoaded()
 
         clickAndWait "link=Abort"
 
