@@ -153,3 +153,9 @@ The selected property is now type `Collection`, not specifically type `List`. It
 The Autocomplete mixin has been rewritten to use Bootstrap; this implies it will also force jQuery onto the page,
 to support the Bootstrap JavaScript library. In addition, Bootstrap's typeahead component does not support multiple
 tokens, so this behavior has been removed.
+
+## RenderNotification Mixin
+
+The timing of this mixin has changed, it now has the @MixinAfter annotation, so it triggers its events *after*
+the component to which it attaches has executed its @BeginRender phase, and *before* the component executes
+its @AfterRender phase.
