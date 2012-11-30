@@ -85,7 +85,7 @@ public class RequestRenderer implements ObjectRenderer<Request>
 
         if (request.isXHR())
         {
-            flags.add("xhr");
+            flags.add("XHR");
         }
 
         if (request.isRequestedSessionIdValid())
