@@ -21,7 +21,7 @@ class PageCatalogTests extends TapestryCoreTestCase
 
         sleep 1000
 
-        assertTextPresent "Page cache cleared"
+        assertTextPresent "Page cache cleared"                                                                bzonref
 
         click "link=Run the GC"
 

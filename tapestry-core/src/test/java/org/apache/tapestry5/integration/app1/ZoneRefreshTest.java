@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,35 +19,40 @@ import org.testng.annotations.Test;
 
 public class ZoneRefreshTest extends SeleniumTestCase
 {
-   @Test
-   public void test_if_zone_with_event_handler_returning_void_works() throws Exception
-   {
-      openBaseURL();
-      clickAndWait("link=Zone Refresh With Event Handler Returning Void");
-      checkZoneValues("zone", 3);
-   }
+    @Test
+    public void test_if_zone_with_event_handler_returning_void_works() throws Exception
+    {
+        openBaseURL();
 
-   @Test
-   public void test_if_zone_with_event_handler_returning_zone_works() throws Exception
-   {
-      openBaseURL();
-      clickAndWait("link=Zone Refresh With Event Handler Returning Zone");
-      checkZoneValues("zone", 3);
-   }
+        clickAndWait("link=Zone Refresh With Event Handler Returning Void");
 
-   private void checkZoneValues(String zone, int times) throws Exception
-   {
-      for(int i = 1; i <= times; ++i)
-      {
-         //Wait for ajax call to begin
-         waitForCondition("selenium.browserbot.getCurrentWindow().Ajax.activeRequestCount != 0", "20000");
-         
-         //Wait for ajax call from end
-         waitForCondition("selenium.browserbot.getCurrentWindow().Ajax.activeRequestCount == 0", "20000");
-         
-         //Check the value changed
-         assertText(zone, String.valueOf(i));
-      }
-   }
+        checkZoneValues("zone", 3);
+    }
+
+    @Test
+    public void test_if_zone_with_event_handler_returning_zone_works() throws Exception
+    {
+        openBaseURL();
+        clickAndWait("link=Zone Refresh With Event Handler Returning Zone");
+        checkZoneValues("zone", 3);
+    }
+
+    private void checkZoneValues(String zone, int times) throws Exception
+    {
+        // Wait until Prototype is loaded ...
+        waitForCondition("selenium.browserbot.getCurrentWindow().Ajax", "20000");
+
+        for (int i = 1; i <= times; ++i)
+        {
+            // Wait for ajax call to begin
+            waitForCondition("selenium.browserbot.getCurrentWindow().Ajax.activeRequestCount != 0", "20000");
+
+            // Wait for ajax call from end
+            waitForCondition("selenium.browserbot.getCurrentWindow().Ajax.activeRequestCount == 0", "20000");
+
+            // Check the value changed
+            assertText(zone, String.valueOf(i));
+        }
+    }
 
 }
