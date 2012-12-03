@@ -63,10 +63,4 @@ public class PaletteDemo
     {
         return new EnumValueEncoder(typeCoercer, ProgrammingLanguage.class);
     }
-
-    void onActionFromReset()
-    {
-        reorder = false;
-        languages = null;
-    }
 }

@@ -33,6 +33,7 @@ public abstract class TapestryCoreTestCase extends SeleniumTestCase
         }
     }
 
+    /** @deprecated Deprecated in 5.4, should not be used, as it expects 5.3 style error popups. */
     protected final void assertBubbleMessage(String fieldId, String expected)
     {
         String popupId = fieldId + "_errorpopup";

@@ -23,56 +23,77 @@ import org.testng.annotations.Test;
  */
 public class PaletteTests extends TapestryCoreTestCase
 {
+
+    public static final String AVAILABLE_OPTIONS = "css=.t-palette-available select";
+
+    public static final String SELECTED_OPTIONS = "css=.t-palette-selected select";
+
+    public static final String SELECT_BUTTON = "css=.t-palette [data-action=select]";
+
+    public static final String DESELECT_BUTTON = "css=.t-palette [data-action=deselect]";
+
+    public static final String MOVE_UP_BUTTON = "css=.t-palette [data-action=move-up]";
+
+    public static final String MOVE_DOWN_BUTTON = "css=.t-palette [data-action=move-down]";
+
     @Test
     public void palette_component()
     {
-        openLinks("Palette Demo", "reset");
+        openLinks("Palette Demo", "Reset Page State");
 
-        assertText("//div[@class='t-palette-available']/div[@class='t-palette-title']",
+        waitForPageLoaded();
+
+        assertText("css=.t-palette-available .t-palette-title",
                 "Languages Offered");
-        assertText("//div[@class='t-palette-selected']/div[@class='t-palette-title']",
+        assertText("css=.t-palette-selected .t-palette-title",
                 "Selected Languages");
 
-        addSelection("languages-avail", "label=Haskell");
-        addSelection("languages-avail", "label=Javascript");
-        click("languages-select");
+        addSelection(AVAILABLE_OPTIONS, "label=Haskell");
+        addSelection(AVAILABLE_OPTIONS, "label=Javascript");
+        click(SELECT_BUTTON);
 
         clickAndWait(SUBMIT);
+
         assertTextPresent("Selected Languages: [HASKELL, JAVASCRIPT]");
 
-        addSelection("languages", "label=Javascript");
-        click("languages-deselect");
+        waitForPageLoaded();
 
-        addSelection("languages-avail", "label=Perl");
-        removeSelection("languages-avail", "label=Javascript");
-        addSelection("languages-avail", "label=Erlang");
-        addSelection("languages-avail", "label=Java");
-        addSelection("languages-avail", "label=Lisp");
-        addSelection("languages-avail", "label=Ml");
-        addSelection("languages-avail", "label=Python");
-        addSelection("languages-avail", "label=Ruby");
+        addSelection(SELECTED_OPTIONS, "label=Javascript");
 
-        click("languages-select");
+        click(DESELECT_BUTTON);
+
+        addSelection(AVAILABLE_OPTIONS, "label=Perl");
+        removeSelection(AVAILABLE_OPTIONS, "label=Javascript");
+        addSelection(AVAILABLE_OPTIONS, "label=Erlang");
+        addSelection(AVAILABLE_OPTIONS, "label=Java");
+        addSelection(AVAILABLE_OPTIONS, "label=Lisp");
+        addSelection(AVAILABLE_OPTIONS, "label=Ml");
+        addSelection(AVAILABLE_OPTIONS, "label=Python");
+        addSelection(AVAILABLE_OPTIONS, "label=Ruby");
+
+        click(SELECT_BUTTON);
 
         clickAndWait(SUBMIT);
 
         assertTextPresent("[ERLANG, HASKELL, JAVA, LISP, ML, PERL, PYTHON, RUBY]");
 
         check("reorder");
+
         clickAndWait(SUBMIT);
 
-        assertText("//div[@class='t-palette-selected']/div[@class='t-palette-title']",
-                "Selected / Ranked Languages");
+        waitForPageLoaded();
 
-        addSelection("languages", "label=Ruby");
+        addSelection(SELECTED_OPTIONS, "label=Ruby");
 
         for (int i = 0; i < 6; i++)
-            click("languages-up");
+        {
+            click(MOVE_UP_BUTTON);
+        }
 
-        removeSelection("languages", "label=Ruby");
-        addSelection("languages", "label=Perl");
+        removeSelection(SELECTED_OPTIONS, "label=Ruby");
+        addSelection(SELECTED_OPTIONS, "label=Perl");
 
-        click("languages-down");
+        click(MOVE_DOWN_BUTTON);
 
         clickAndWait(SUBMIT);
 
@@ -85,7 +106,7 @@ public class PaletteTests extends TapestryCoreTestCase
     @Test
     public void palette_component_disabled_options()
     {
-        openLinks("Palette Demo", "reset");
+        openLinks("Palette Demo", "Reset Page State");
 
         /*
          * force of the options to be disabled rather than creating the model
@@ -93,20 +114,22 @@ public class PaletteTests extends TapestryCoreTestCase
          * it is possible to get into this state by creating a model with
          * disabled options.
          */
-        getEval("this.browserbot.findElement('//select[@id=\"languages-avail\"]/option[1]').disabled = 'disabled';");
+        getEval("this.browserbot.findElement('" + AVAILABLE_OPTIONS + " option').disabled = 'disabled';");
 
         // causes an error in the js console but does not throw an exception
         // here. optimally, this would make the test case fail.
-        doubleClick("//select[@id=\"languages-avail\"]/option[1]");
+        doubleClick(AVAILABLE_OPTIONS + " option");
     }
 
     @Test
     public void palette_component_client_validation()
     {
-        openLinks("Palette Demo", "reset");
+        openLinks("Palette Demo", "Reset Page State");
+
+        waitForPageLoaded();
 
         click(SUBMIT);
 
-        assertBubbleMessage("languages", "You must provide a value for Languages.");
+        assertTextPresent("You must provide a value for Languages.");
     }
 }

@@ -41,7 +41,4 @@
 
 <p>Selected Languages: ${languages}</p>
 
-<p>
-    <t:actionlink t:id="reset" class="btn btn-warning">reset</t:actionlink>
-</p>
 </html>
