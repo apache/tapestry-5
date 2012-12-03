@@ -10,7 +10,7 @@ class CanceledEventTests extends TapestryCoreTestCase
     {
         openLinks "Canceled Event Demo"
 
-        sleep 100
+        waitForPageLoaded()
 
         clickAndWait SUBMIT
 
@@ -22,7 +22,7 @@ class CanceledEventTests extends TapestryCoreTestCase
     {
         openLinks "Canceled Event Demo"
 
-        sleep 100
+        waitForPageLoaded()
 
         clickAndWait "link=Cancel Form"
 
