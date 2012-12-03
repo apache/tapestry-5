@@ -278,4 +278,9 @@ public class Palette extends AbstractField
     {
         return disabled ? "disabled" : null;
     }
+
+    void onBeginRenderFromSelected(MarkupWriter writer)
+    {
+        validate.render(writer);
+    }
 }

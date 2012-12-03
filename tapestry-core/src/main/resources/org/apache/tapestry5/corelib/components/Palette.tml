@@ -43,7 +43,7 @@
         <div class="t-palette-title">
             <t:delegate to="selectedLabel"/>
         </div>
-        <select id="${clientId}" multiple="multiple" size="${size}" disabled="${disabledValue}">
+        <select t:type="any" t:id="selected" id="${clientId}" multiple="multiple" size="${size}" disabled="${disabledValue}" t:mixins="rendernotification">
             <t:remove>Starts empty, populated on the client side.</t:remove>
         </select>
     </div>
