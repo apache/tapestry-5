@@ -48,4 +48,5 @@
         </select>
     </div>
     <div class="t-palette-spacer"/>
+    <p class="help-block" data-error-block-for="${clientId}"/>
 </div>
