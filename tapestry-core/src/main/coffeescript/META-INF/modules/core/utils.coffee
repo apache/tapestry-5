@@ -26,7 +26,15 @@ define ["_"], (_) ->
   exports =
     # Trims leading and trailing whitespace from a string. Delegates to String.prototype.trim if present.
     trim: trim
-    isBlank: (input) -> input is null or (exports.trim input).length == 0
+    # Determines if the input is a blank string, or null, or an empty array.
+    isBlank: (input) ->
+
+        return true if input is null
+
+        if _.isArray input
+          return input.length is 0
+
+        return (exports.trim input).length is 0
 
     # Splits the input string into words separated by whitespace
     split: (str) -> _(str.split " ").reject((s) -> s is "")
