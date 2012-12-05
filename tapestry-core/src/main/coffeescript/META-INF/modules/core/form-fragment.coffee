@@ -15,7 +15,7 @@
 
 # ##core/form-fragment
 #
-define ["_", "core/dom", "core/events"],
+define ["_", "core/dom", "core/events", "core/forms"],
   (_, dom, events) ->
 
     SELECTOR = '[data-component-type="core/FormFragment"]'
