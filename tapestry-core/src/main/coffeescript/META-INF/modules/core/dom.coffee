@@ -36,16 +36,18 @@ define ["_", "core/utils", "prototype"], (_, utils) ->
   $ = window.$
 
   # Fires a native event; something that Prototype does not normally do.
+  # Returns true if the event completed normally, false if it was canceled.
   fireNativeEvent = (element, eventName) ->
     if document.createEventObject
       # IE support:
       event = document.createEventObject()
-      element.fireEvent "on#{eventName}", event
-    else
-      # Everyone else:
-      event = document.createEvent "HTMLEvents"
-      event.initEvent eventName, true, true
-      element.dispatchEvent event
+      return element.fireEvent "on#{eventName}", event
+
+    # Everyone else:
+    event = document.createEvent "HTMLEvents"
+    event.initEvent eventName, true, true
+    element.dispatchEvent event
+    return not event.defaultPrevented
 
   # Converts content (provided to `ElementWrapper.update()` or `append()`) into an appropriate type. This
   # primarily exists to validate the value, and to "unpack" an ElementWrapper into a DOM element.
@@ -339,6 +341,8 @@ define ["_", "core/utils", "prototype"], (_, utils) ->
     # * memo - optional value assocated with the event; available as WrappedeEvent.memo in event handler functions (must
     #   be null for native events). The memo, when provided, should be an object; it is an error if it is a string or other
     #  non-object type..
+    #
+    # Returns true if the event fully executed, or false if the event was canceled.
     trigger: (eventName, memo) ->
       throw new Error "Attempt to trigger event with null event name" unless eventName?
 
@@ -347,14 +351,14 @@ define ["_", "core/utils", "prototype"], (_, utils) ->
 
       if (eventName.indexOf ':') > 0
         # Custom event is supported directly by Prototype:
-        @element.fire eventName, memo
-      else
-        # Native events take some extra work:
-        throw new Error "Memo must be null when triggering a native event" if memo
+        event = @element.fire eventName, memo
+        return not event.defaultPrevented
 
-        fireNativeEvent @element, eventName
+      # Native events take some extra work:
+      if memo
+        throw new Error "Memo must be null when triggering a native event"
 
-      return this
+      fireNativeEvent @element, eventName
 
     # With no parameters, returns the current value of the element (which must be a form control element, such as `<input>` or
     # `<textarea>`). With one parameter, updates the field's value, and returns the previous value. The underlying
