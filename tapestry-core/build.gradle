@@ -1,8 +1,9 @@
 import org.apache.tools.ant.filters.*
+import org.gradle.plugins.ide.idea.model.*
 
 description = "Central module for Tapestry, containing all core services and components"
 
-project.ext { 
+project.ext {
   antlrSource = "src/main/antlr"
   generatedDir = "$buildDir/generated-sources"
   antlrOutput = "$generatedDir/antlr"
@@ -55,7 +56,7 @@ task generateGrammarSource(type: JavaExec) {
   }
 }
 
-task compileCoffeeScript(type: CompileCoffeeScript) { 
+task compileCoffeeScript(type: CompileCoffeeScript) {
   outputDir "${generatedDir}/compiled-coffeescript"
 }
 
@@ -64,7 +65,7 @@ task compileTestCoffeeScript(type: CompileCoffeeScript) {
     outputDir "${generatedDir}/compiled-test-coffeescript"
 }
 
-processResources { 
+processResources {
   from compileCoffeeScript
 }
 
@@ -73,16 +74,20 @@ processTestResources {
   from compileTestCoffeeScript
 }
 
-idea.module { 
-  // dependsOn generateGrammarSource
-
-  sourceDirs += compileCoffeeScript.srcDir 
+idea.module {
+  sourceDirs += compileCoffeeScript.srcDir
   sourceDirs += compileCoffeeScript.outputDir
 
   testSourceDirs += compileTestCoffeeScript.srcDir
   testSourceDirs += compileTestCoffeeScript.outputDir
 
-  excludeDirs.clear()
+  // Hack the IML so that "build" is not excluded; necessary because several directories under build
+  // are added as source, resources, or test folders.
+  iml.whenMerged { module ->
+    module.excludeFolders.removeAll {
+      it.canonicalUrl.endsWith "/build"
+    }
+  }
 }
 
 compileJava {
