@@ -44,9 +44,9 @@ public class ZoneTests extends TapestryCoreTestCase
 
         waitForCondition(condition, PAGE_LOAD_TIMEOUT);
 
-        assertText(String.format("//div[@class='%s']/span", "t-error-popup"), "You must provide a value for Car Model.");
+        assertTextPresent("You must provide a value for Car Model.");
 
-        String selectLocator = "//div[@id='modelZone']//select";
+        String selectLocator = "css=div#modelZone select";
 
         select(selectLocator, "7 Series");
 
@@ -73,6 +73,8 @@ public class ZoneTests extends TapestryCoreTestCase
     public void zone_updates()
     {
         openLinks("Zone Demo");
+
+        waitForPageInitialized();
 
         assertTextPresent("No name has been selected.");
 
@@ -110,13 +112,15 @@ public class ZoneTests extends TapestryCoreTestCase
     {
         openLinks("Multiple Zone Update Demo");
 
+        waitForPageInitialized();
+
         String now = getText("now");
 
         assertText("wilma", "Wilma Flintstone");
 
         assertText("message", "");
 
-        click("update");
+        click("link=update");
 
         waitForElementToAppear("fredName");
 
@@ -164,6 +168,8 @@ public class ZoneTests extends TapestryCoreTestCase
     public void zone_updated_event_triggered_on_client()
     {
         openLinks("Zone Demo");
+
+        waitForPageInitialized();
 
         assertText("zone-update-message", "");
 
@@ -223,6 +229,8 @@ public class ZoneTests extends TapestryCoreTestCase
     {
         openLinks("Zone/Form Update Demo");
 
+        waitForPageInitialized();
+
         click("link=Update the form");
 
         waitForElementToAppear("updated");
@@ -241,6 +249,8 @@ public class ZoneTests extends TapestryCoreTestCase
     public void update_to_zone_inside_form()
     {
         openLinks("MultiZone Update inside a Form");
+
+        waitForPageInitialized();
 
         select("selectValue1", "3 pre ajax");
 
@@ -328,6 +338,8 @@ public class ZoneTests extends TapestryCoreTestCase
     public void update_zone_with_empty_body()
     {
         openLinks("Zone Demo");
+
+        waitForPageInitialized();
 
         assertText("zone-update-message", "");
 
