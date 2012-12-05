@@ -12,14 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// ##core/t53-compatibility (Service Provider Interface)
-//
 // Provides a small amount of backwards compatibility to the Tapestry 5.3 approach.
 // This provides placeholders for the following:
 //
 // * `T5` namespace, including `extend`, `define`, and `initializers`, `extendInitializers`, and `_` properties
+//
 // * `Tapestry` namespace: just the `Initializer` property, as an alias of `T5.initializers`
-define("core/t53-compatibility", ["_"], function(_) {
+require(["_"], function(_) {
     var T5, Tapestry;
     T5 = {
         _: _,
