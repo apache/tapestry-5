@@ -32,7 +32,7 @@ public class ZoneTests extends TapestryCoreTestCase
     {
         openLinks("Select Zone Demo");
 
-        waitForPageLoaded();
+        waitForPageInitialized();
 
         select("carMaker", "Bmw");
 
@@ -184,6 +184,8 @@ public class ZoneTests extends TapestryCoreTestCase
     {
         openLinks("LinkSubmit inside Zone");
 
+        waitForPageInitialized();
+
         String now = getText("now");
 
         waitForElementToAppear("mySubmit");
@@ -300,13 +302,15 @@ public class ZoneTests extends TapestryCoreTestCase
     {
         openLinks("Zone Demo");
 
-        waitForPageLoaded();
+        waitForPageInitialized();
 
         click("link=Select \"CSS Injection\"");
 
-        waitForPageLoaded();
+        waitForPageInitialized();
 
         // First check that the update arrived
+
+        waitForElementToAppear("demo-aip");
 
         assertText("demo-aip", "This should be styled GREEN.");
 

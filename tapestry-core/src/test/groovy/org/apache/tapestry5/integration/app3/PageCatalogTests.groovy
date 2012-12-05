@@ -15,7 +15,7 @@ class PageCatalogTests extends TapestryCoreTestCase
 
         assertTitle title
 
-        waitForPageLoaded()
+        waitForPageInitialized()
 
         click "link=clear the cache"
 

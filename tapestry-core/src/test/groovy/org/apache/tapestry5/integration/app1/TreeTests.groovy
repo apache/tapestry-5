@@ -28,7 +28,7 @@ class TreeTests extends TapestryCoreTestCase
 
         clickAndWait "link=Clear Expansions"
 
-        waitForPageLoaded()
+        waitForPageInitialized()
 
         //Click on Games
         click "//div[@class='t-tree-container test-hook']/ul/li[2]/span[@class='t-tree-icon']"
@@ -60,7 +60,7 @@ class TreeTests extends TapestryCoreTestCase
 
         clickAndWait "link=Clear All"
 
-        waitForPageLoaded()
+        waitForPageInitialized()
 
         click "//span[@class='t-tree-icon']"
 

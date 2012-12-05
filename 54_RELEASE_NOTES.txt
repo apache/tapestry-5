@@ -109,6 +109,9 @@ on the function Tapestry.waitForPage().  Server components no longer make use of
 itself now does nothing. A replacement approach to preventing the user from interacting with links and forms before
 the page initialization has completed may be implemented in the future.
 
+However, once initial page initialization has occurred, the attribute `data-page-initialized` on the root HTML element
+is set to "true".
+
 ## Twitter Bootstrap
 
 Tapestry now includes a default copy of Twitter Bootstrap in addition to its own default set of CSS rules (the

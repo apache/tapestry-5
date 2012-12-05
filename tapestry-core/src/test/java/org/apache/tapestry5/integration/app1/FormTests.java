@@ -163,7 +163,7 @@ public class FormTests extends TapestryCoreTestCase
 
         clickAndWait("link=Clear Data");
 
-        waitForPageLoaded();
+        waitForPageInitialized();
 
         clickAndWait("//input[@value='Cancel']");
 

@@ -66,7 +66,7 @@ class AlertsTests extends TapestryCoreTestCase {
         select "css=#ajax select[name=\"duration\"]", "Until Dismissed"
         type "css=#ajax input[name=\"message\"]", "ajax error until"
 
-        waitForPageLoaded()
+        waitForPageInitialized()
 
         click "//input[@value='Ajax Update']"
 

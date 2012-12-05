@@ -29,7 +29,7 @@ class FormFieldFocusTest extends TapestryCoreTestCase
     {
         openLinks "FormFieldFocus (DEPRECATED) Demo"
 
-        waitForPageLoaded()
+        waitForPageInitialized()
 
         assertEquals getEval("window.document.activeElement.value"), "But I got the focus!"
 
@@ -40,7 +40,7 @@ class FormFieldFocusTest extends TapestryCoreTestCase
     {
         openLinks "OverrideFieldFocus Demo"
 
-        waitForPageLoaded()
+        waitForPageInitialized()
 
         assertEquals getEval("window.document.activeElement.value"), "But I got the focus!"
 

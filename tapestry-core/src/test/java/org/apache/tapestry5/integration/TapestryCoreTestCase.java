@@ -59,16 +59,16 @@ public abstract class TapestryCoreTestCase extends SeleniumTestCase
     }
 
     /**
-     * Waits for page initialization to finish, which is recognized by the {@code data-page-loaded} attribute
+     * Waits for page initialization to finish, which is recognized by the {@code data-page-initialized} attribute
      * being added to the HTML element. Polls at 20ms intervals for 200ms.
      *
      * @since 5.4
      */
-    protected final void waitForPageLoaded()
+    protected final void waitForPageInitialized()
     {
         for (int i = 0; i < 10; i++)
         {
-            if (isElementPresent("css=html[data-page-loaded]"))
+            if (isElementPresent("css=html[data-page-initialized]"))
             {
                 return;
             }
@@ -76,6 +76,6 @@ public abstract class TapestryCoreTestCase extends SeleniumTestCase
             sleep(20);
         }
 
-        reportAndThrowAssertionError("Page did not finish loading.");
+        reportAndThrowAssertionError("Page did not finish initializing.");
     }
 }
