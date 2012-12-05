@@ -192,8 +192,6 @@ public class FormTests extends TapestryCoreTestCase
 
         click(update); // but don't wait
 
-        waitForCondition("selenium.browserbot.getCurrentWindow().document.getElementById('zipCode_errorpopup')", "5000");
-
         assertTextPresent("A zip code consists of five or nine digits, eg: 02134 or 90125-4472.");
 
         type("zipCode", "12345");
@@ -247,7 +245,7 @@ public class FormTests extends TapestryCoreTestCase
 
         click("id=asteroidImpact-trigger");
 
-        assertBubbleMessage("asteroidImpact", "Unparseable date: \"&lt;script&gt;alert('T5 is great'); &lt;/script&gt;\"");
+        assertTextPresent("Unparseable date: \"&lt;script&gt;alert('T5 is great'); &lt;/script&gt;\"");
     }
 
     // TAP5-1409
@@ -578,11 +576,8 @@ public class FormTests extends TapestryCoreTestCase
 
         click(SUBMIT);
 
-        waitForElementToAppear("amount_errorpopup");
-        waitForElementToAppear("quantity_errorpopup");
-
-        assertText("//div[@id='amount_errorpopup']/span", "You must provide a numeric value for Amount.");
-        assertText("//div[@id='quantity_errorpopup']/span", "Provide quantity as a number.");
+        assertTextPresent("You must provide a numeric value for Amount.",
+                "Provide quantity as a number.");
     }
 
     /**
@@ -738,13 +733,13 @@ public class FormTests extends TapestryCoreTestCase
         type("longValue", "4000.");
         click(SUBMIT);
 
-        assertBubbleMessage("longValue", "You must provide an integer value for Long Value.");
+        assertTextPresent("You must provide an integer value for Long Value.");
 
         type("doubleValue", "abc");
 
         click(SUBMIT);
 
-        assertBubbleMessage("doubleValue", "You must provide a numeric value for Double Value.");
+        assertTextPresent("You must provide a numeric value for Double Value.");
     }
 
     @Test
@@ -756,9 +751,7 @@ public class FormTests extends TapestryCoreTestCase
 
         click(SUBMIT);
 
-        waitForElementToAppear("longValue_errorpopup");
-
-        assertText("//div[@id='longValue_errorpopup']/span", "You must provide an integer value for Long Value.");
+        assertTextPresent("You must provide an integer value for Long Value.");
 
         type("longValue", "37");
 
@@ -786,19 +779,19 @@ public class FormTests extends TapestryCoreTestCase
 
         click(SUBMIT);
 
-        assertBubbleMessage("name", "You must provide a value for Name.");
-        assertBubbleMessage("age", "You must provide a value for Age.");
+        assertTextPresent("You must provide a value for Name.");
+        assertTextPresent("You must provide a value for Age.");
 
         type("name", "behemoth");
         type("age", "0");
         select("type", "label=Snake");
 
         click(SUBMIT);
-        assertBubbleMessage("age", "Age requires a value of at least 1.");
+        assertTextPresent("Age requires a value of at least 1.");
 
         type("age", "121");
         click(SUBMIT);
-        assertBubbleMessage("age", "Age requires a value no larger than 120.");
+        assertTextPresent("Age requires a value no larger than 120.");
 
         type("age", "5");
         clickAndWait(SUBMIT);
@@ -817,8 +810,6 @@ public class FormTests extends TapestryCoreTestCase
         waitForElementToAppear("fred");
 
         click("//a[@id='fred']");
-
-        waitForElementToAppear("name_errorpopup");
 
         assertTextPresent("You must provide a value for Name.");
 

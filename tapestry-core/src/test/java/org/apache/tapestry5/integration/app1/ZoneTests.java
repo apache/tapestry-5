@@ -190,8 +190,6 @@ public class ZoneTests extends TapestryCoreTestCase
 
         click("//a[@id='mySubmit']");
 
-        waitForElementToAppear("value_errorpopup");
-
         type("value", "robot chicken");
 
         click("//a[@id='mySubmit']");

@@ -113,7 +113,7 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
         //@NotNull
         click(SUBMIT);
 
-        assertBubbleMessage("notNullValue", "Not Null Value may not be null");
+        assertTextPresent("Not Null Value may not be null");
 
         type("notNullValue", "igor");
 
@@ -122,7 +122,7 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
 
         click(SUBMIT);
 
-        assertBubbleMessage("minValue", "Min Value must be greater than or equal to 6");
+        assertTextPresent("Min Value must be greater than or equal to 6");
 
         //@Max
         type("minValue", "6");
@@ -130,7 +130,7 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
 
         click(SUBMIT);
 
-        assertBubbleMessage("maxValue", "Max Value must be less than or equal to 100");
+        assertTextPresent("Max Value must be less than or equal to 100");
 
         //@Null
         type("maxValue", "100");
@@ -140,7 +140,7 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
 
         click(SUBMIT);
 
-        assertBubbleMessage("stringSizeValue", "String Size Value size must be between 3 and 6");
+        assertTextPresent("String Size Value size must be between 3 and 6");
 
         click(SUBMIT);
 
@@ -151,11 +151,11 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
 
         click(SUBMIT);
 
-        assertBubbleMessage("languages", "Languages size must be between 2 and 3");
+        assertTextPresent("Languages size must be between 2 and 3");
 
         click(SUBMIT);
 
-        assertBubbleMessage("nullValue", "Null Value must be null");
+        assertTextPresent("Null Value must be null");
     }
 
 
@@ -166,21 +166,21 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
 
         click(SUBMIT);
 
-        assertBubbleMessage("loginName", "Login Name may not be null");
-        assertBubbleMessage("secretPassword", "Secret Password may not be null");
-        assertBubbleMessage("programmingLanguages", "Programming Languages may not be null");
-        assertBubbleMessage("favoriteColors", "Favorite Colors may not be null");
-        assertBubbleMessage("birthDay", "Birth Day may not be null");
+        assertTextPresent("Login Name may not be null");
+        assertTextPresent("Secret Password may not be null");
+        assertTextPresent("Programming Languages may not be null");
+        assertTextPresent("Favorite Colors may not be null");
+        assertTextPresent("Birth Day may not be null");
 
         type("loginName", "123");
         click(SUBMIT);
 
-        assertBubbleMessage("loginName", "Login Name must match \"[a-zA-Z]+\"");
+        assertTextPresent("Login Name must match \"[a-zA-Z]+\"");
 
         type("loginName", "abc");
         click(SUBMIT);
 
-        assertBubbleMessage("loginName", "You must provide at least 5 characters for Login Name.");
+        assertTextPresent("You must provide at least 5 characters for Login Name.");
     }
 
     /*
@@ -202,12 +202,4 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
         assertTextPresent("Login Name size must be between 7 and 10", "Login Name must match \"[0-9]+\"");
     }
 
-    protected final void assertBubbleMessage(String fieldId, String expected)
-    {
-        String popupId = fieldId + "_errorpopup";
-
-        waitForElementToAppear(popupId);
-
-        assertText(String.format("//div[@id='%s']/span", popupId), expected);
-    }
 }

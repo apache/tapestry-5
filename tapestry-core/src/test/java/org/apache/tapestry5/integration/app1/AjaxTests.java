@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -157,7 +157,7 @@ public class AjaxTests extends TapestryCoreTestCase
         assertFieldValue("value1", "");
         //submitting should result in error in value1...
         click("saveform");
-        assertBubbleMessage("value1", "You must provide a value for Value1.");
+        assertTextPresent("You must provide a value for Value1.");
 
         //still wind up being able to submit here b/c there's no (good) way to highlight the error in the invisible tab.
         //but the form should return with errors.
