@@ -141,6 +141,8 @@ public class CoreBehaviorsTests extends TapestryCoreTestCase
     {
         openLinks("Expressions in JS Functions Demo");
 
+        waitForPageLoaded();
+
         click("button1");
         waitForCondition("selenium.getValue('target') == 'test1'", PAGE_LOAD_TIMEOUT);
 
