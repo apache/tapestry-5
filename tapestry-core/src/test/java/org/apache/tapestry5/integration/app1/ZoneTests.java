@@ -78,15 +78,11 @@ public class ZoneTests extends TapestryCoreTestCase
 
         assertTextPresent("No name has been selected.");
 
-        // Hate doing this, but selecting by the text isn't working, perhaps
-        // because of the
-        // HTML entities.
-        click("select_0");
+        click("link=Select \"Mr. <Roboto>\"");
 
-        // And that's as far as we can go currently, because
-        // of limitations in Selenium 0.8.3 and bugs in Selenium 0.9.2.
+        sleep(100);
 
-        // assertTextPresent("Selected: Mr. &lt;Roboto&gt;");
+        assertTextPresent("Selected: Mr. <Roboto>");
 
         click("link=Direct JSON response");
     }
