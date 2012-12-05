@@ -70,6 +70,8 @@ define ["_", "core/dom", "core/events"],
 
         (dom spec.fragmentId).trigger events.formfragment.changeVisibility,  visible: makeVisible
 
+        return
+
       if trigger.element.type is "radio"
         dom.on trigger.element.form, "click", update
       else
