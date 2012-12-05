@@ -74,7 +74,7 @@ define ["core/dom", "core/events", "core/console", "core/ajax", "core/builder"],
 
           # Trigger this event, to inform the world that the zone-like new element has been updated
           # with content.
-          newElement.trigger events.zone.didUpdate,
+          newElement.trigger events.zone.didUpdate
 
       return false
 
