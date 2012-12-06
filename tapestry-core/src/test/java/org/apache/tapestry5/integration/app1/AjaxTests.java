@@ -202,21 +202,21 @@ public class AjaxTests extends TapestryCoreTestCase
 
         assertText("sum", "0.0");
 
-        click("link=Add a row");
+        click("link=Add another value");
 
-        sleep(1000);
+        sleep(250);
 
         type("//input[@type='text'][1]", "5.1");
 
-        // I wanted to add two rows, but Selenium didn't want to play.
-
         clickAndWait(SUBMIT);
+
+        waitForPageInitialized();
 
         assertText("sum", "5.1");
 
         click("link=remove");
 
-        sleep(2000);
+        sleep(100);
 
         clickAndWait(SUBMIT);
 
