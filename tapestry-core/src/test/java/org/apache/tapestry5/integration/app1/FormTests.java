@@ -127,10 +127,7 @@ public class FormTests extends TapestryCoreTestCase
     {
         openLinks("Client Validation Demo");
 
-        // Used to ensure that the <script> tag was present, but that's hard to
-        // do with script combining enabled.
-
-        clickAndWait("link=Clear Data");
+        clickAndWait("link=Reset Page State");
 
         // Notice: click, not click and wait.
 
@@ -210,36 +207,39 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void basic_datefield()
     {
-        openLinks("DateField Demo", "clear", "english");
+        openLinks("DateField Demo", "Reset Page State", "english");
+
+        waitForPageInitialized();
 
         type("birthday", "24 dec 1966");
         type("asteroidImpact", "05/28/2046");
 
         clickAndWait(SUBMIT);
 
-        assertTextPresent("Birthday: [12/24/1966]");
-        assertTextPresent("Impact: [05/28/2046]");
+        assertText("birthday-output", "12/24/1966");
+        assertText("impact-output", "05/28/2046");
 
         assertFieldValue("birthday", "24 Dec 1966");
         assertFieldValue("asteroidImpact", "5/28/2046");
 
         clickAndWait("link=french");
 
-        click("birthday-trigger");
+        waitForPageInitialized();
 
-        waitForCondition("selenium.browserbot.getCurrentWindow().$$('DIV.datePicker').first().isDeepVisible() == true",
-                PAGE_LOAD_TIMEOUT);
+        click("css=i.icon-calendar");
+
+        sleep(50);
 
         assertText("//A[@class='topLabel']", "1966 d\u00e9cembre");
-
-        clickAndWait("link=english");
     }
 
     // TAP5-1057
     @Test
     public void xss_datefield()
     {
-        openLinks("DateField Demo", "clear", "english");
+        openLinks("DateField Demo", "Reset Page State", "english");
+
+        waitForPageInitialized();
 
         type("asteroidImpact", "<script>alert('T5 is great'); </script>");
 
@@ -252,7 +252,10 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void datefield_select_newmonth_samedate()
     {
-        openLinks("DateField Demo", "clear", "english");
+        openLinks("DateField Demo", "Reset Page State", "english");
+
+        waitForPageInitialized();
+
         //start with a known date...
         type("asteroidImpact", "05/28/2035");
 
@@ -328,7 +331,9 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void datefield_clickoutside_closes()
     {
-        openLinks("DateField Demo", "clear", "english");
+        waitForPageInitialized();
+
+        openLinks("DateField Demo", "Reset Page State", "english");
         type("asteroidImpact", "05/28/2046");
 
         click("id=asteroidImpact-trigger");
@@ -349,9 +354,11 @@ public class FormTests extends TapestryCoreTestCase
         //Instead, we take advantage of knowing that the datepicker disappears with this bug /almost/ 
         //immediately after picking the month label, so we sleep the test for a few seconds to provide
         //ammple time for the bug to manifest. 
-        try {
+        try
+        {
             Thread.sleep(1500);
-        } catch (Exception e){/*Ignore the interrupted exception */}
+        } catch (Exception e)
+        {/*Ignore the interrupted exception */}
         assertTrue(isVisible("css=div.datePicker"));
     }
 
@@ -519,7 +526,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void wrapper_types_with_text_field()
     {
-        openLinks("TextField Wrapper Types", "clear");
+        openLinks("TextField Wrapper Types", "Reset Page State");
 
         assertFieldValue("count", "");
         assertText("value", "null");
@@ -570,6 +577,8 @@ public class FormTests extends TapestryCoreTestCase
     public void client_field_format_validation()
     {
         openLinks("Client Format Validation");
+
+        waitForPageInitialized();
 
         type("amount", "abc");
         type("quantity", "abc");
@@ -690,7 +699,9 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void client_side_numeric_validation()
     {
-        openLinks("Client-Side Numeric Validation", "reset");
+        openLinks("Client-Side Numeric Validation", "Reset Page State");
+
+        waitForPageInitialized();
 
         assertText("outputLongValue", "1000");
         assertText("outputDoubleValue", "1234.67");
@@ -728,7 +739,7 @@ public class FormTests extends TapestryCoreTestCase
         assertText("outputLongValue", "3000");
         assertText("outputDoubleValue", "5444333.22");
 
-        clickAndWait("link=reset");
+        clickAndWait("link=Reset Page State");
 
         type("longValue", "4000.");
         click(SUBMIT);
@@ -746,6 +757,8 @@ public class FormTests extends TapestryCoreTestCase
     public void client_validation_for_numeric_fields_that_are_not_required()
     {
         openLinks("Form Zone Demo");
+
+        waitForPageInitialized();
 
         type("longValue", "alpha");
 
@@ -831,7 +844,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void calendar_field_inside_bean_editor()
     {
-        openLinks("BeanEditor / Calendar Demo", "clear");
+        openLinks("BeanEditor / Calendar Demo", "Reset Page State");
 
         type("calendar", "04/06/1978");
 

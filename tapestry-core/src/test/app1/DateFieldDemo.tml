@@ -37,17 +37,17 @@
 
 <t:if test="birthday">
     <hr/>
-    <p>
-        Birthday: [
-        <t:output value="birthday" format="dateFormat"/>
-        ]
-    </p>
 
-    <p>
-        Impact: [
-        <t:output value="asteroidImpact" format="dateFormat"/>
-        ]
-    </p>
+    <dl>
+        <dt>Birthday</dt>
+        <dd id="birthday-output">
+            <t:output value="birthday" format="dateFormat"/>
+        </dd>
+        <dt>Impact</dt>
+        <dd id="impact-output">
+            <t:output value="asteroidImpact" format="dateFormat"/>
+        </dd>
+    </dl>
 </t:if>
 
 
