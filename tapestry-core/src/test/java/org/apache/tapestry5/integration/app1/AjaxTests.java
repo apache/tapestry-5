@@ -34,7 +34,11 @@ public class AjaxTests extends TapestryCoreTestCase
     @Test
     public void form_fragment()
     {
-        openLinks("Form Fragment Demo", "Clear");
+        // setSpeed("250");
+
+        openLinks("Form Fragment Demo", "Clear Errors");
+
+        waitForPageInitialized();
 
         type("name", "Fred");
 
@@ -51,24 +55,26 @@ public class AjaxTests extends TapestryCoreTestCase
         assertText("email", "");
 
         clickAndWait("link=Back");
-        clickAndWait("link=Clear");
+        clickAndWait("link=Clear Errors");
+
+        waitForPageInitialized();
 
         click("subscribeToEmail");
         click("on");
 
+        // Type a value into the "always submit" field ...
         type("sub", "subvalue");
 
-        waitForCondition("selenium.browserbot.getCurrentWindow().$('code').isDeepVisible() == true", PAGE_LOAD_TIMEOUT);
-
+        // And the other fields ...
         type("name", "Barney");
         type("email", "rubble@bedrock.gov");
         type("code", "ABC123");
 
+        // Now turn off the fragment for the "code" field
         click("off");
 
+        // And hide the subcode fields (but they still always submit)
         click("subVisible");
-
-        waitForCondition("selenium.browserbot.getCurrentWindow().$('code').isDeepVisible() == false", PAGE_LOAD_TIMEOUT);
 
         clickAndWait(SUBMIT);
 
@@ -85,6 +91,9 @@ public class AjaxTests extends TapestryCoreTestCase
     public void nested_form_fragment()
     {
         openLinks("Nested Form Fragment Demo");
+
+        waitForPageInitialized();
+
         assertTrue(isVisible("outertext1"));
         assertTrue(isVisible("innertext1"));
         assertTrue(isChecked("innertrigger1"));
@@ -189,6 +198,8 @@ public class AjaxTests extends TapestryCoreTestCase
     {
         openLinks("FormInjector Demo");
 
+        waitForPageInitialized();
+
         assertText("sum", "0.0");
 
         click("link=Add a row");
@@ -222,11 +233,9 @@ public class AjaxTests extends TapestryCoreTestCase
 
         click("link=Failure on the server side");
 
-        // Wait for the console to appear
-
-        waitForCSSSelectedElementToAppear("div.t-console div");
-
-        assertTextPresent("Communication with the server failed: Server-side exception.");
+        // Not more more testing can be done; there's no client-side console
+        // because Tapestry now favors the native console (when present),
+        // and the iframe containing the server-side Ajax exception is opaque.
     }
 
     /**
@@ -236,6 +245,8 @@ public class AjaxTests extends TapestryCoreTestCase
     public void progressive_display()
     {
         openLinks("ProgressiveDisplay Demo");
+
+        waitForPageInitialized();
 
         waitForElementToAppear("content1");
         assertText("content1", "Progressive Display content #1.");

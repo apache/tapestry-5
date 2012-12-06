@@ -58,6 +58,8 @@ public class ZoneTests extends TapestryCoreTestCase
 
         select("carMaker", "Mercedes");
 
+        sleep(100);
+
         waitForElementToAppear("carModelContainer");
 
         select(selectLocator, "E-Class");
