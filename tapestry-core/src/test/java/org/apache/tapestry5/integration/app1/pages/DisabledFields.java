@@ -21,6 +21,7 @@ import org.apache.tapestry5.beaneditor.Validate;
 import org.apache.tapestry5.corelib.components.Submit;
 import org.apache.tapestry5.internal.services.StringValueEncoder;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -33,6 +34,14 @@ public class DisabledFields
     private Date date;
 
     private List<String> values;
+
+    void onPrepare()
+    {
+        if (values == null)
+        {
+            values = new ArrayList<String>();
+        }
+    }
 
     @InjectComponent
     @Property

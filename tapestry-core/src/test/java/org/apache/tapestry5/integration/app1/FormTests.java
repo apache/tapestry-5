@@ -456,13 +456,13 @@ public class FormTests extends TapestryCoreTestCase
 
                         "//input[@id='datefield']",
 
-                        "//select[@id='palette-avail']",
+                        "//div[@class='t-palette']//input[@type='hidden']",
 
-                        "//button[@id='palette-select']",
+                        "//div[@class='t-palette-available']//select",
 
-                        "//button[@id='palette-deselect']",
+                        "//div[@class='t-palette-selected']//select",
 
-                        "//select[@id='palette']",
+                        "//div[@class='t-palette-controls']//button",
 
                         "//input[@id='submit_0']"};
 
