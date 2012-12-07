@@ -42,9 +42,6 @@ task generateGrammarSource(type: JavaExec) {
   inputs.source fileTree(dir: antlrSource, include: "**/*.g")
   outputs.dir file(antlrOutput)
 
-  // See http://forums.gradle.org/gradle/topics/why_does_a_task_execute_even_when_inputs_and_outputs_are_defined_and_nothing_has_changed
-  outputs.upToDateSpec = new AndSpec();
-
   classpath configurations.antlr3
 
   main "org.antlr.Tool"
