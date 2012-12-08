@@ -699,7 +699,7 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void client_side_numeric_validation()
     {
-        openLinks("Client-Side Numeric Validation", "Reset Page State");
+        openLinks("Client-Side Numeric Validation", "Reset Page State", "Setup Values");
 
         waitForPageInitialized();
 
@@ -720,7 +720,7 @@ public class FormTests extends TapestryCoreTestCase
         assertFieldValue("longValue", "2000");
         assertFieldValue("doubleValue", "-456,789.12");
 
-        clickAndWait("link=switch to German");
+        clickAndWait("link=Switch to German");
 
         assertText("outputLongValue", "2000");
         assertText("outputDoubleValue", "-456789.12");
@@ -739,7 +739,9 @@ public class FormTests extends TapestryCoreTestCase
         assertText("outputLongValue", "3000");
         assertText("outputDoubleValue", "5444333.22");
 
-        clickAndWait("link=Reset Page State");
+        clickAndWait("link=Setup Values");
+
+        waitForPageInitialized();
 
         type("longValue", "4000.");
         click(SUBMIT);
