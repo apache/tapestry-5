@@ -243,7 +243,9 @@ public class FormTests extends TapestryCoreTestCase
 
         type("asteroidImpact", "<script>alert('T5 is great'); </script>");
 
-        click("id=asteroidImpact-trigger");
+        click("css=.x-impact .btn");
+
+        // This appears to be a legitimate bug introduced in 5.4:
 
         assertTextPresent("Unparseable date: \"&lt;script&gt;alert('T5 is great'); &lt;/script&gt;\"");
     }
@@ -259,7 +261,8 @@ public class FormTests extends TapestryCoreTestCase
         //start with a known date...
         type("asteroidImpact", "05/28/2035");
 
-        click("id=asteroidImpact-trigger");
+        click("css=.x-impact .btn");
+
         waitForCSSSelectedElementToAppear("div.datePicker");
         assertEquals(getText("css=td.selected"), "28");
 
@@ -290,7 +293,8 @@ public class FormTests extends TapestryCoreTestCase
         //4) Pressing the "None" button should always close the popup and result in no date.
 
         //#3
-        click("id=asteroidImpact-trigger");
+        click("css=.x-impact .btn");
+
         waitForCSSSelectedElementToAppear("div.datePicker");
         click("css=button.todayButton");
         waitForInvisible(pickerGoneSelector);
@@ -299,7 +303,8 @@ public class FormTests extends TapestryCoreTestCase
         assertFieldValue("asteroidImpact", new SimpleDateFormat("M/d/yyyy").format(new Date()));
 
         //#2...
-        click("id=asteroidImpact-trigger");
+        click("css=.x-impact .btn");
+
         waitForCSSSelectedElementToAppear("div.datePicker");
         click("css=button.nextButton");
         waitForCondition(selectedGoneCondition, PAGE_LOAD_TIMEOUT);
@@ -313,13 +318,16 @@ public class FormTests extends TapestryCoreTestCase
         assertFieldValue("asteroidImpact", value);
 
         //#4...
-        click("id=asteroidImpact-trigger");
+
+        click("css=.x-impact .btn");
+
         waitForCSSSelectedElementToAppear("div.datePicker");
         click("css=button.noneButton");
         waitForInvisible(pickerGoneSelector);
         assertFieldValue("asteroidImpact", "");
 
-        click("id=asteroidImpact-trigger");
+        click("css=.x-impact .btn");
+
         waitForCSSSelectedElementToAppear("div.datePicker");
         assertFalse(isElementPresent("css=td.selected"));
         click("css=button.noneButton");
@@ -331,19 +339,20 @@ public class FormTests extends TapestryCoreTestCase
     @Test
     public void datefield_clickoutside_closes()
     {
+        openLinks("DateField Demo", "Reset Page State", "english");
+
         waitForPageInitialized();
 
-        openLinks("DateField Demo", "Reset Page State", "english");
         type("asteroidImpact", "05/28/2046");
 
-        click("id=asteroidImpact-trigger");
+        click("css=.x-impact .btn");
         waitForCSSSelectedElementToAppear("div.datePicker");
 
-        click("id=asteroidImpact");
+        click("css=.x-impact .btn");
         waitForInvisible("css=div.datePicker");
 
         //also make sure that clicking the month label /doesn't/ close the picker
-        click("id=asteroidImpact-trigger");
+        click("css=.x-impact .btn");
         waitForCSSSelectedElementToAppear("div.datePicker");
         click("css=a.topLabel");
         waitForCSSSelectedElementToAppear("div.labelPopup");
@@ -353,12 +362,10 @@ public class FormTests extends TapestryCoreTestCase
         //It's basically impossible to express "wait until the popup doesn't disappear" 
         //Instead, we take advantage of knowing that the datepicker disappears with this bug /almost/ 
         //immediately after picking the month label, so we sleep the test for a few seconds to provide
-        //ammple time for the bug to manifest. 
-        try
-        {
-            Thread.sleep(1500);
-        } catch (Exception e)
-        {/*Ignore the interrupted exception */}
+        //ammple time for the bug to manifest.
+
+        sleep(100);
+
         assertTrue(isVisible("css=div.datePicker"));
     }
 

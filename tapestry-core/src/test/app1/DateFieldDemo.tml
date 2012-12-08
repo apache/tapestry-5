@@ -6,14 +6,14 @@
 <t:form>
     <t:errors/>
 
-    <div class="control-group">
+    <div class="control-group x-birthday">
         <t:label for="birthday"/>
         <div class="controls">
             <t:datefield format="d MMM yyyy" hidetextfield="true" t:id="birthday"/>
         </div>
     </div>
 
-    <div class="control-group">
+    <div class="control-group x-impact">
         <t:label for="asteroidImpact"/>
         <div class="controls">
             <t:datefield t:id="asteroidImpact"/>
