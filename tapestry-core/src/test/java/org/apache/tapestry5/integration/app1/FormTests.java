@@ -40,12 +40,12 @@ public class FormTests extends TapestryCoreTestCase
     {
         openLinks("Page Context in Form");
 
-        assertTextSeries("//li[%d]", 1, "betty", "wilma", "context with spaces", "context/with/slashes");
+        assertTextSeries("//div[@class='main']//li[%d]", 1, "betty", "wilma", "context with spaces", "context/with/slashes");
         assertFieldValue("t:ac", "betty/wilma/context$0020with$0020spaces/context$002fwith$002fslashes");
 
         clickAndWait(SUBMIT);
 
-        assertTextSeries("//li[%d]", 1, "betty", "wilma", "context with spaces", "context/with/slashes");
+        assertTextSeries("//div[@class='main']//li[%d]", 1, "betty", "wilma", "context with spaces", "context/with/slashes");
         assertFieldValue("t:ac", "betty/wilma/context$0020with$0020spaces/context$002fwith$002fslashes");
     }
 
@@ -222,7 +222,7 @@ public class FormTests extends TapestryCoreTestCase
 
         click("css=.x-birthday i.icon-calendar");
 
-        sleep(50);
+        sleep(200);
 
         assertText("//A[@class='topLabel']", "1966 d\u00e9cembre");
     }
@@ -317,18 +317,20 @@ public class FormTests extends TapestryCoreTestCase
 
         waitForCSSSelectedElementToAppear("div.datePicker");
 
-        click("//button[@text='None']");
+        String noneButton = "//button[text()='None']";
+
+        click(noneButton);
 
         waitForInvisible(pickerGoneSelector);
 
         assertFieldValue("asteroidImpact", "");
 
-        click("//button[@text='None']");
+        click(noneButton);
 
         waitForCSSSelectedElementToAppear("div.datePicker");
         assertFalse(isElementPresent("css=td.selected"));
 
-        click("//button[@text='None']");
+        click(noneButton);
 
         waitForInvisible(pickerGoneSelector);
         assertFieldValue("asteroidImpact", "");
