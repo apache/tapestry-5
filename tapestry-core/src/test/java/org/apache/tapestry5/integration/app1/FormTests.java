@@ -80,22 +80,20 @@ public class FormTests extends TapestryCoreTestCase
         openLinks("ValidForm");
 
         clickAndWait(SUBMIT);
+
+        waitForPageInitialized();
+
         assertTextPresent("You must provide a value for Email.");
         // is an overridden validation error message:
         assertTextPresent("Please provide a detailed description of the incident.");
-
-        // Check on decorations via the default validation decorator:
-
-        assertAttribute("//label[1]/@class", "t-error");
-        assertAttribute("//label[2]/@class", "t-error");
-        assertAttribute("//input[@id='email']/@class", "t-error");
-        assertAttribute("//textarea[@id='message']/@class", "t-error");
 
         type("email", "foo@bar.baz");
         type("message", "Show me the money!");
         type("hours", "foo");
 
         clickAndWait(SUBMIT);
+
+        waitForPageInitialized();
 
         assertTextPresent("[false]");
         assertTextPresent("You must provide an integer value for Hours.");
@@ -106,15 +104,7 @@ public class FormTests extends TapestryCoreTestCase
         click("//input[@id='urgent']");
         clickAndWait(SUBMIT);
 
-        // Make sure the decoration went away.
-
-        // Sorry, not sure how to do that, since the attributes don't exist, we
-        // get xpath errors.
-
-        // assertText("//label[1]/@class", "");
-        // assertText("//label[2]/@class", "");
-        // assertText("//input[@id='email']/@class", "");
-        // assertText("//textarea[@id='message']/@class", "");
+        waitForPageInitialized();
 
         assertTextPresent("[foo@bar.baz]");
         assertTextPresent("[Show me the money!]");
@@ -128,6 +118,8 @@ public class FormTests extends TapestryCoreTestCase
         openLinks("Client Validation Demo");
 
         clickAndWait("link=Reset Page State");
+
+        waitForPageInitialized();
 
         // Notice: click, not click and wait.
 
@@ -183,6 +175,8 @@ public class FormTests extends TapestryCoreTestCase
     {
         openLinks("Regexp Demo");
 
+        waitForPageInitialized();
+
         String update = SUBMIT;
 
         type("zipCode", "abc");
@@ -226,7 +220,7 @@ public class FormTests extends TapestryCoreTestCase
 
         waitForPageInitialized();
 
-        click("css=i.icon-calendar");
+        click("css=.x-birthday i.icon-calendar");
 
         sleep(50);
 
@@ -296,7 +290,7 @@ public class FormTests extends TapestryCoreTestCase
         click("css=.x-impact .btn");
 
         waitForCSSSelectedElementToAppear("div.datePicker");
-        click("css=button.todayButton");
+        click("css=div.datePicker .footerTable button");
         waitForInvisible(pickerGoneSelector);
 
         String value = getValue("asteroidImpact");
@@ -309,11 +303,11 @@ public class FormTests extends TapestryCoreTestCase
         click("css=button.nextButton");
         waitForCondition(selectedGoneCondition, PAGE_LOAD_TIMEOUT);
 
-        click("css=button.todayButton");
+        click("css=div.datePicker .footerTable button");
         waitForCSSSelectedElementToAppear("td.selected");
 
         //#1
-        click("css=button.todayButton");
+        click("css=div.datePicker .footerTable button");
         waitForInvisible(pickerGoneSelector);
         assertFieldValue("asteroidImpact", value);
 
@@ -322,15 +316,20 @@ public class FormTests extends TapestryCoreTestCase
         click("css=.x-impact .btn");
 
         waitForCSSSelectedElementToAppear("div.datePicker");
-        click("css=button.noneButton");
+
+        click("//button[@text='None']");
+
         waitForInvisible(pickerGoneSelector);
+
         assertFieldValue("asteroidImpact", "");
 
-        click("css=.x-impact .btn");
+        click("//button[@text='None']");
 
         waitForCSSSelectedElementToAppear("div.datePicker");
         assertFalse(isElementPresent("css=td.selected"));
-        click("css=button.noneButton");
+
+        click("//button[@text='None']");
+
         waitForInvisible(pickerGoneSelector);
         assertFieldValue("asteroidImpact", "");
     }
@@ -512,7 +511,9 @@ public class FormTests extends TapestryCoreTestCase
 
         // This is sub-optimal, as it doesn't esnure that the before/after field
         // values really do wrap around
-        // the field (they do, but that's hard to prove!).
+        // the field (they do, but that's hard to prove!). It is also susceptible to
+        // idiosyncrasies around how Tapestry renders attributes, and how the browser
+        // represents them.
 
         // Along the way we are also testing:
         // - primitive types are automatically required
@@ -520,10 +521,10 @@ public class FormTests extends TapestryCoreTestCase
         // ComponentFieldValidator.isRequired()
 
         assertSourcePresent(
-                "[Before label for Value]<label for=\"value\">Value</label>[After label for Value]",
+                "[Before label for Value]<label for=\"value\" class=\"control-label\">Value</label>[After label for Value]",
                 "[Before field Value]",
                 "[After field Value (optional)]",
-                "[Before label for Required Value]<label for=\"requiredValue\">Required Value</label>[After label for Required Value]",
+                "[Before label for Required Value]<label for=\"requiredValue\" class=\"control-label\">Required Value</label>[After label for Required Value]",
                 "[Before field Required Value]", "[After field Required Value (required)]");
     }
 
@@ -693,6 +694,8 @@ public class FormTests extends TapestryCoreTestCase
     {
         openLinks("LinkSubmit Without Validator Demo");
 
+        waitForPageInitialized();
+
         type("searchField", "Anders Haraldsson");
 
         clickAndWait("//a[@id='searchLink']");
@@ -799,6 +802,8 @@ public class FormTests extends TapestryCoreTestCase
     {
         openLinks("Validation Constraints From Messages");
 
+        waitForPageInitialized();
+
         click(SUBMIT);
 
         assertTextPresent("You must provide a value for Name.");
@@ -827,7 +832,7 @@ public class FormTests extends TapestryCoreTestCase
     {
         openLinks("LinkSubmit Demo");
 
-        // Wait a moment for the page to initialize.
+        waitForPageInitialized();
 
         waitForElementToAppear("fred");
 
@@ -981,6 +986,8 @@ public class FormTests extends TapestryCoreTestCase
     {
         openLinks("Cancel Demo");
 
+        waitForPageInitialized();
+
         clickAndWait("//input[@value='Cancel Form']");
 
         assertText("message", "Form was canceled.");
@@ -990,6 +997,8 @@ public class FormTests extends TapestryCoreTestCase
     public void use_of_cancel_mode_with_submitlink()
     {
         openLinks("Cancel Demo");
+
+        waitForPageInitialized();
 
         clickAndWait("link=Cancel Form");
 
@@ -1002,13 +1011,10 @@ public class FormTests extends TapestryCoreTestCase
         openLinks("Select Demo");
 
         clickAndWait(SUBMIT);
+
+        waitForPageInitialized();
+
         assertTextPresent("You must provide a value for Color.");
-
-        // Check on decorations via the default validation decorator:
-
-        assertAttribute("//label[@for='color']/@class", "t-error");
-        assertAttribute("//select[@id='color']/@class", "t-error");
-        assertAttribute("//img[@id='color_icon']/@class", "t-error-icon");
 
         select("color", "label=Green");
 
