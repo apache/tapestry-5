@@ -33,8 +33,12 @@
 # The body may consist of:
 #
 # * Objects: used to specify attributes and event handlers of the element
-# * Strings: literal text
+# * Strings: literal markup text
 # * Array: a nested element definition
+#
+# Literal text is NOT escaped. You should be careful to use `core/dom:escapeHTML` if the body contains
+# any potential markup that should be escaped; alternately, it may be easier to use embedded markup in the body
+# than to use an element definition.
 #
 # For an Object, each key and value is simply added as an attribute. However, for keys that start with "on", the value
 # is assumed to be an event handler function. The special key "on" consists of nested event handlers for the events
@@ -84,7 +88,7 @@ define ["_", "core/dom", "core/utils"], (_, dom, utils) ->
       unless nested?
         # Ignore null nodes
       else if _.isString nested
-        element.appendChild document.createTextNode nested
+        element.innerHTML += nested
       else if _.isArray nested
         [elementDescription, nestedBody...] = nested
         nestedElement = buildTree elementDescription, nestedBody

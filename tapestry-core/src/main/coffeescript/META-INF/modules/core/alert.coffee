@@ -89,8 +89,11 @@ define ["core/dom", "core/console", "core/messages", "core/builder", "core/ajax"
 
       return outer?.findFirst "[data-container-type=inner]"
 
-    # The `data` for the alert has a number of keys to control its behavior
-
+    # The `data` for the alert has a number of keys to control its behavior:
+    #
+    # * severity - used to determine the CSS class, may be "warn", "error", or "info" (the default)
+    # * message - message to display to as te alert's body
+    # * markup - if true, then the message contains markup that should not be HTML escaped
     alert = (data) ->
 
       container = findInnerContainer()
@@ -99,12 +102,14 @@ define ["core/dom", "core/console", "core/messages", "core/builder", "core/ajax"
 
       className = severityToClass[data.severity] or "alert"
 
+      content = if data.markup then data.message else dom.escapeHTML data.message
+
       # Note that `data-dismiss=alert` is purposely excluded
       # - we want to handle closes w/ notifications to the server if not transient
       # - we don't want to rely on bootstrap.js, as that will drag jQuery into the application
       element = builder "div", class: className,
         ["button.close", "\u00d7"]
-        data.message
+        content
 
       if data.id
         element.attribute "data-alert-id", data.id

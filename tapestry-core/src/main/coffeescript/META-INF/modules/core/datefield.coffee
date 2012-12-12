@@ -16,8 +16,8 @@
 #
 # Provides support for the `core/DateField` component.
 define ["core/dom", "core/events", "core/messages", "core/builder", "core/ajax",
-  "_", "core/alert", "core/fields"],
-  (dom, events, messages, builder, ajax, _, alert) ->
+  "_", "core/fields"],
+  (dom, events, messages, builder, ajax, _) ->
 
 
     # Translate from the provided order (SUNDAY = 0, MONDAY = 1), to
@@ -102,14 +102,9 @@ define ["core/dom", "core/events", "core/messages", "core/builder", "core/ajax",
               @showPopup()
               return
 
-            @fieldError reply.error
-
-            # Because the popup overlays where the error message appears, we
-            # show it as an alert, too.
-            alert { message: reply.error }
-
-            @datePicker.setDate null
-            @showPopup()
+            @fieldError (dom.escapeHTML reply.error)
+            @hidePopup()
+            return
 
       fieldError: (message) ->
         @field.focus().trigger events.field.showValidationError, { message }

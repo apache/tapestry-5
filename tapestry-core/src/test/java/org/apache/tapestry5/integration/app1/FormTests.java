@@ -239,9 +239,9 @@ public class FormTests extends TapestryCoreTestCase
 
         click("css=.x-impact .btn");
 
-        // This appears to be a legitimate bug introduced in 5.4:
+        sleep(100);
 
-        assertTextPresent("Unparseable date: \"&lt;script&gt;alert('T5 is great'); &lt;/script&gt;\"");
+        assertSourcePresent("Unparseable date: \"&lt;script&gt;alert('T5 is great'); &lt;/script&gt;\"");
     }
 
     // TAP5-1409

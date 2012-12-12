@@ -500,6 +500,9 @@ define ["_", "core/utils", "prototype"], (_, utils) ->
   _.extend exports,
     wrap: wrapElement
 
+    # Escape's HTML markup in the string.
+    escapeHTML: (str) -> str.escapeHTML()
+
     ajaxRequest: ajaxRequest
 
     # Used to add an event handler to an element (possibly from elements below it in the hierarch).

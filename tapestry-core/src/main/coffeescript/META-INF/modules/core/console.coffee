@@ -40,7 +40,7 @@ define ["core/dom", "core/builder", "_"], (dom, builder, _) ->
       floatingConsole = builder ".t-console"
       dom.body().prepend floatingConsole
 
-    div = builder ".t-console-entry.#{className}", message
+    div = builder ".t-console-entry.#{className}", (dom.escapeHTML message)
 
     floatingConsole.append div.hide().fadeIn FADE_DURATION
 
