@@ -1500,4 +1500,25 @@ public abstract class SeleniumTestCase extends Assert implements Selenium
     {
         return selenium.getCssCount(str);
     }
+
+    /**
+     * Waits for page initialization to finish, which is recognized by the {@code data-page-initialized} attribute
+     * being added to the HTML element. Polls at 20ms intervals for 200ms.
+     *
+     * @since 5.4
+     */
+    protected final void waitForPageInitialized()
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            if (isElementPresent("css=html[data-page-initialized]"))
+            {
+                return;
+            }
+
+            sleep(20);
+        }
+
+        reportAndThrowAssertionError("Page did not finish initializing.");
+    }
 }
