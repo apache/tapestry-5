@@ -1,5 +1,6 @@
 import org.apache.tools.ant.filters.*
 import org.gradle.plugins.ide.idea.model.*
+import t5build.*
 
 description = "Central module for Tapestry, containing all core services and components"
 
@@ -8,8 +9,6 @@ project.ext {
   generatedDir = "$buildDir/generated-sources"
   antlrOutput = "$generatedDir/antlr"
 }
-
-apply from: "coffeescript.gradle"
 
 configurations {
   antlr3

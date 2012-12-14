@@ -1,13 +1,10 @@
+package t5build
+
 import ro.isdc.wro.model.resource.*
 import ro.isdc.wro.extensions.processor.js.*
 import ro.isdc.wro.extensions.processor.support.coffeescript.*
-
-buildscript {
-    repositories { mavenCentral() }
-    dependencies {
-        classpath "ro.isdc.wro4j:wro4j-extensions:${versions.wro4j}"
-    }
-}
+import org.gradle.api.*
+import org.gradle.api.tasks.*
 
 class CustomizedProcessor extends CoffeeScriptProcessor {
 
@@ -68,5 +65,3 @@ class CompileCoffeeScript extends DefaultTask {
     }
 
 }
-
-project.ext.CompileCoffeeScript = CompileCoffeeScript
