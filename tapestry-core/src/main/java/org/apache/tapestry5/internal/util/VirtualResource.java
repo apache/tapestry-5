@@ -64,7 +64,7 @@ public abstract class VirtualResource implements Resource
     @Override
     public Resource forFile(String relativePath)
     {
-        return unsupported("forFile");
+        return this;
     }
 
     @Override

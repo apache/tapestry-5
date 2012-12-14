@@ -62,6 +62,8 @@ public interface Resource
     /**
      * Returns a Resource based on a relative path, relative to the folder containing the resource. Understands the "."
      * (current folder) and ".." (parent folder) conventions, and treats multiple sequential slashes as a single slash.
+     * <p/>
+     * Virtual resources (resources fabricated at runtime) return themselves.
      */
     Resource forFile(String relativePath);
 
