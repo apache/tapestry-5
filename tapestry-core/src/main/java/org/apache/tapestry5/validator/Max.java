@@ -19,6 +19,7 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.ioc.MessageFormatter;
 import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.javascript.DataConstants;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
@@ -49,7 +50,8 @@ public class Max extends AbstractValidator<Long, Number>
         if (formSupport.isClientValidationEnabled())
         {
             javaScriptSupport.require("core/validation");
-            writer.getElement().attributes("data-validation", "true",
+
+            writer.attributes(DataConstants.VALIDATION_ATTRIBUTE, true,
                     "data-validate-max", constraintValue.toString(),
                     "data-max-message", buildMessage(formatter, field, constraintValue));
         }

@@ -19,6 +19,7 @@ import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.ioc.MessageFormatter;
 import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.javascript.DataConstants;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 import java.util.regex.Pattern;
@@ -45,7 +46,8 @@ public class Email extends AbstractValidator<Void, String>
         {
             javaScriptSupport.require("core/validation");
 
-            writer.getElement().attributes("data-validation", "true",
+            writer.attributes(
+                    DataConstants.VALIDATION_ATTRIBUTE, true,
                     "data-validate-regexp", PATTERN.pattern(),
                     "data-regexp-message", formatter.toString());
         }

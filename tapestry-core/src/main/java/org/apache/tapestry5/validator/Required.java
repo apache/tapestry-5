@@ -20,6 +20,7 @@ import org.apache.tapestry5.ValidationException;
 import org.apache.tapestry5.ioc.MessageFormatter;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.services.FormSupport;
+import org.apache.tapestry5.services.javascript.DataConstants;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 /**
@@ -60,8 +61,8 @@ public final class Required extends AbstractValidator<Void, Object>
         {
             javaScriptSupport.require("core/validation");
 
-            writer.getElement().attributes(
-                    "data-validation", "true",
+            writer.attributes(
+                    DataConstants.VALIDATION_ATTRIBUTE, true,
                     "data-optionality", "required",
                     "data-required-message", buildMessage(formatter, field));
         }

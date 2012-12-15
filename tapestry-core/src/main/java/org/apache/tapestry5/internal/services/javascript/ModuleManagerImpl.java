@@ -18,7 +18,6 @@ import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.annotations.Path;
 import org.apache.tapestry5.dom.Element;
-import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.internal.services.assets.ResourceChangeTracker;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.Resource;
@@ -35,7 +34,6 @@ import org.apache.tapestry5.services.assets.StreamableResourceSource;
 import org.apache.tapestry5.services.javascript.JavaScriptModuleConfiguration;
 import org.apache.tapestry5.services.javascript.ModuleManager;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,9 +47,6 @@ public class ModuleManagerImpl implements ModuleManager
     private final Messages globalMessages;
 
     private final boolean compactJSON;
-
-    // Library names, sorted by order of descending length.
-    private final List<String> libraryNames;
 
     private final Map<String, Resource> shimModuleNameToResource = CollectionFactory.newMap();
 
@@ -80,17 +75,6 @@ public class ModuleManagerImpl implements ModuleManager
         this.requireConfig = buildRequireJSConfig(constructor.constructAssetPath("module-root", ""), configuration, !productionMode);
 
         classpathRoot = assetSource.resourceForPath("");
-
-        libraryNames = F.flow(resolver.getLibraryNames())
-                .append("app")
-                .sort(new Comparator<String>()
-                {
-                    @Override
-                    public int compare(String o1, String o2)
-                    {
-                        return o2.length() - o1.length();
-                    }
-                }).toList();
 
         extensions = CollectionFactory.newSet("js");
 
@@ -216,41 +200,16 @@ public class ModuleManagerImpl implements ModuleManager
             return resource;
         }
 
-        // Look for the longest match.
-
-        for (String library : libraryNames)
-        {
-            int len = library.length();
-
-            if (moduleName.length() <= len)
-            {
-                continue;
-            }
-
-            if (moduleName.startsWith(library) && moduleName.charAt(len) == '/')
-            {
-                return findResourceInsideLibrary(library, moduleName);
-            }
-        }
-
-        return classpathRoot;
-    }
-
-    private Resource findResourceInsideLibrary(String library, String moduleName)
-    {
-        String extra = moduleName.substring(library.length() + 1);
 
         // Tack on a fake extension; otherwise modules whose name includes a '.' get mangled
         // by Resource.withExtension().
-        String baseName = String.format("/META-INF/modules/%s/%s.EXT",
-                library,
-                extra);
+        String baseName = String.format("/META-INF/modules/%s.EXT", moduleName);
 
         Resource baseResource = classpathRoot.forFile(baseName);
 
         for (String extension : extensions)
         {
-            Resource resource = baseResource.withExtension(extension);
+            resource = baseResource.withExtension(extension);
 
             if (resource.exists())
             {
