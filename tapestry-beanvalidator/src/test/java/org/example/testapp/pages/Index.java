@@ -13,10 +13,13 @@
 // limitations under the License.
 package org.example.testapp.pages;
 
+import org.apache.tapestry5.annotations.Import;
+
 /**
  * Start page of the test app.
  *
  */
+@Import(stack = "core")
 public class Index 
 {
 

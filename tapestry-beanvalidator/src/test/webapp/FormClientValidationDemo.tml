@@ -1,28 +1,32 @@
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
-    <body>
-        <t:form>
-        	<t:errors/>
-        	
-        	<br/>
-        	
-        	<t:textfield t:id="loginName" value="userName"/>
-        	
-        	<br/>
-        	
-        	<t:textfield t:id="secretPassword" value="password"/>
-        	
-        	<br/>
-        	<t:palette t:id="programmingLanguages" model="literal:Java,C,Ruby,Python,Perl" selected="languages" encoder="stringValueEncoder"/>       
-        		
-        	<br/>
-        	<t:select t:id="favoriteColors" model="literal:Red,Green,Blue" value="color"/>   
-        	     	
-        	<br/>
-        	<t:datefield t:id="birthDay" value="date" format="dd.MM.yyyy"/>
+<body>
+<div class="container">
 
-        	<br/>
-        	<input type="submit" value="Go"/>
-        	
-        </t:form>
-    </body>
+    <t:form>
+        <t:errors/>
+
+        <br/>
+
+        <t:textfield t:id="loginName" value="userName"/>
+
+        <br/>
+
+        <t:textfield t:id="secretPassword" value="password"/>
+
+        <br/>
+        <t:palette t:id="programmingLanguages" model="literal:Java,C,Ruby,Python,Perl" selected="languages"
+                   encoder="stringValueEncoder"/>
+
+        <br/>
+        <t:select t:id="favoriteColors" model="literal:Red,Green,Blue" value="color"/>
+
+        <br/>
+        <t:datefield t:id="birthDay" value="date" format="dd.MM.yyyy"/>
+
+        <br/>
+        <input type="submit" value="Go"/>
+
+    </t:form>
+</div>
+</body>
 </html>

@@ -21,6 +21,10 @@ import org.testng.annotations.Test;
 @TapestryTestConfiguration(webAppFolder = "src/test/webapp")
 public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
 {
+    public static final String AVAILABLE_OPTIONS = "css=.t-palette-available select";
+
+    public static final String SELECT_BUTTON = "css=.t-palette [data-action=select]";
+
     @Test
     public void form_validation() throws Exception
     {
@@ -29,6 +33,8 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
         //Test JSR-303 validator
 
         clickAndWait(SUBMIT);
+
+        // waitForPageInitialized();
 
         assertTextPresent("Login Name may not be null");
         assertTextPresent("Secret Password may not be null");
@@ -40,9 +46,9 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
 
         type("secretPassword", "igor");
 
-        addSelection("programmingLanguages-avail", "label=Java");
-        addSelection("programmingLanguages-avail", "label=Ruby");
-        click("programmingLanguages-select");
+        addSelection(AVAILABLE_OPTIONS, "label=Java");
+        addSelection(AVAILABLE_OPTIONS, "label=Ruby");
+        click(SELECT_BUTTON);
 
         select("favoriteColors", "label=Green");
 
@@ -106,9 +112,11 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
     }
 
     @Test
-    public void client_validaton() throws Exception
+    public void client_validation() throws Exception
     {
         openLinks("Client Validation Demo");
+
+        waitForPageInitialized();
 
         //@NotNull
         click(SUBMIT);
@@ -146,14 +154,18 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
 
         type("stringSizeValue", "ab");
 
-        addSelection("languages-avail", "label=Java");
-        click("languages-select");
+        click(SUBMIT);
+
+        // Have to select at least one value
+
+        addSelection(AVAILABLE_OPTIONS, "label=Ruby");
+        click(SELECT_BUTTON);
 
         click(SUBMIT);
 
         assertTextPresent("Languages size must be between 2 and 3");
 
-        click(SUBMIT);
+        waitForPageInitialized();
 
         assertTextPresent("Null Value must be null");
     }
@@ -164,13 +176,15 @@ public class TapestryBeanValidationIntegrationTests extends SeleniumTestCase
     {
         openLinks("Form Client Validation Demo");
 
+        waitForPageInitialized();
+
         click(SUBMIT);
 
         assertTextPresent("Login Name may not be null");
         assertTextPresent("Secret Password may not be null");
-        assertTextPresent("Programming Languages may not be null");
         assertTextPresent("Favorite Colors may not be null");
         assertTextPresent("Birth Day may not be null");
+
 
         type("loginName", "123");
         click(SUBMIT);

@@ -1,4 +1,4 @@
-// Copyright 2010 The Apache Software Foundation
+// Copyright 2010, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,35 +13,35 @@
 // limitations under the License.
 package org.apache.tapestry5.internal.beanvalidator;
 
-import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
+import org.apache.tapestry5.beanvalidator.ClientConstraintDescriptor;
+import org.apache.tapestry5.beanvalidator.ClientConstraintDescriptorSource;
 
 import java.util.Collection;
 
-import org.apache.tapestry5.beanvalidator.ClientConstraintDescriptorSource;
-import org.apache.tapestry5.beanvalidator.ClientConstraintDescriptor;
+import static org.apache.tapestry5.ioc.internal.util.CollectionFactory.newList;
 
-public class ClientConstraintDescriptorImpl implements ClientConstraintDescriptorSource 
+public class ClientConstraintDescriptorImpl implements ClientConstraintDescriptorSource
 {
 
-   private Collection<ClientConstraintDescriptor> descriptors = newList();
+    private Collection<ClientConstraintDescriptor> descriptors = newList();
 
-   public ClientConstraintDescriptorImpl(
-         final Collection<ClientConstraintDescriptor> configuration) 
-   {
-     super();
-     this.descriptors = configuration;
-   }
+    public ClientConstraintDescriptorImpl(
+            final Collection<ClientConstraintDescriptor> configuration)
+    {
+        this.descriptors = configuration;
+    }
 
-   public ClientConstraintDescriptor getConstraintDescriptor(final Class annotationClass) 
-   {
-     for (final ClientConstraintDescriptor desc : this.descriptors) 
-     {
-         if (desc.getAnnotationClass().equals(annotationClass)) 
-         {
-           return desc;
-         }
-     }
-     return null;
-   }
+    public ClientConstraintDescriptor getConstraintDescriptor(final Class annotationClass)
+    {
+        for (final ClientConstraintDescriptor desc : this.descriptors)
+        {
+            if (desc.getAnnotationClass().equals(annotationClass))
+            {
+                return desc;
+            }
+        }
+
+        return null;
+    }
 
 }

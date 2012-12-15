@@ -1,4 +1,4 @@
-// Copyright 2009, 2010, 2011 The Apache Software Foundation
+// Copyright 2009, 2010, 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
 // limitations under the License.
 package org.apache.tapestry5.beanvalidator;
 
-import org.apache.tapestry5.Asset;
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.internal.beanvalidator.*;
 import org.apache.tapestry5.ioc.Configuration;
@@ -23,7 +22,8 @@ import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
 import org.apache.tapestry5.ioc.services.ThreadLocale;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.services.FieldValidatorDefaultSource;
+import org.apache.tapestry5.services.javascript.DataConstants;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 
 import javax.validation.MessageInterpolator;
@@ -31,6 +31,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.*;
 import javax.validation.groups.Default;
+import java.util.Map;
 
 /**
  * Module for JSR-303 services.
@@ -85,44 +86,100 @@ public class BeanValidatorModule
         });
     }
 
-    public static void contributeClientConstraintDescriptorSource(
-            final Configuration<ClientConstraintDescriptor> configuration)
+    public static void contributeClientConstraintDescriptorSource(final JavaScriptSupport javaScriptSupport,
+                                                                  final Configuration<ClientConstraintDescriptor> configuration)
     {
-        configuration.add(new ClientConstraintDescriptor(Max.class, "maxnumber", "value"));
-        configuration.add(new ClientConstraintDescriptor(Min.class, "minnumber", "value"));
-        configuration.add(new ClientConstraintDescriptor(NotNull.class, "notnull"));
-        configuration.add(new ClientConstraintDescriptor(Null.class, "isnull"));
-        configuration.add(new ClientConstraintDescriptor(Pattern.class, "pattern", "regexp"));
-        configuration.add(new ClientConstraintDescriptor(Size.class, "size", "min", "max"));
-    }
-
-    public void contributeMarkupRenderer(
-            OrderedConfiguration<MarkupRendererFilter> configuration,
-
-            final AssetSource assetSource,
-
-            final ThreadLocale threadLocale,
-
-            final Environment environment)
-    {
-        MarkupRendererFilter injectBeanValidatorScript = new MarkupRendererFilter()
+        configuration.add(new BaseCCD(Max.class, "value")
         {
-            public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
+            @Override
+            public void applyClientValidation(MarkupWriter writer, String message, Map<String, Object> attributes)
             {
+                javaScriptSupport.require("core/validation");
+                writer.attributes(
+                        "data-validate", true,
+                        "data-validate-max", attributes.get("value"),
+                        "data-max-message", message);
 
-                JavaScriptSupport javaScriptSupport = environment.peek(JavaScriptSupport.class);
-
-                Asset validators = assetSource.getAsset(null, "org/apache/tapestry5/beanvalidator/tapestry-beanvalidator.js",
-                        threadLocale.getLocale());
-
-                javaScriptSupport.importJavaScriptLibrary(validators);
-
-                renderer.renderMarkup(writer);
             }
-        };
+        });
 
+        configuration.add(new BaseCCD(Min.class, "value")
+        {
+            @Override
+            public void applyClientValidation(MarkupWriter writer, String message, Map<String, Object> attributes)
+            {
+                javaScriptSupport.require("core/validation");
+                writer.attributes(
+                        DataConstants.VALIDATION_ATTRIBUTE, true,
+                        "data-validate-min", attributes.get("value"),
+                        "data-min-message", message);
 
-        configuration.add("BeanValidatorScript", injectBeanValidatorScript, "after:*");
+            }
+        });
+
+        configuration.add(new BaseCCD(NotNull.class)
+        {
+            @Override
+            public void applyClientValidation(MarkupWriter writer, String message, Map<String, Object> attributes)
+            {
+                javaScriptSupport.require("core/validation");
+                writer.attributes(
+                        DataConstants.VALIDATION_ATTRIBUTE, true,
+                        "data-optionality", "required",
+                        "data-required-message", message);
+            }
+        });
+
+        configuration.add(new BaseCCD(Null.class)
+        {
+            @Override
+            public void applyClientValidation(MarkupWriter writer, String message, Map<String, Object> attributes)
+            {
+                javaScriptSupport.require("beanvalidator/validation");
+                writer.attributes(
+                        DataConstants.VALIDATION_ATTRIBUTE, true,
+                        "data-optionality", "prohibited",
+                        "data-prohibited-message", message);
+            }
+        });
+
+        configuration.add(new BaseCCD(Pattern.class, "regexp")
+        {
+            @Override
+            public void applyClientValidation(MarkupWriter writer, String message, Map<String, Object> attributes)
+            {
+                javaScriptSupport.require("core/validation");
+                writer.attributes(
+                        DataConstants.VALIDATION_ATTRIBUTE, true,
+                        "data-validate-regexp", attributes.get("regexp"),
+                        "data-regexp-message", message);
+            }
+        });
+
+        configuration.add(new BaseCCD(Size.class, "min", "max")
+        {
+            @Override
+            public void applyClientValidation(MarkupWriter writer, String message, Map<String, Object> attributes)
+            {
+                javaScriptSupport.require("beanvalidator/validation");
+                writer.attributes(
+                        DataConstants.VALIDATION_ATTRIBUTE, true,
+                        "data-range-message", message);
+
+                int min = (Integer) attributes.get("min");
+
+                if (min != 0)
+                {
+                    writer.attributes("data-range-min", min);
+                }
+
+                int max = (Integer) attributes.get("max");
+
+                if (max != Integer.MAX_VALUE)
+                {
+                    writer.attributes("data-range-max", max);
+                }
+            }
+        });
     }
-
 }
