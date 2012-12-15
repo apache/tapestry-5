@@ -1,4 +1,4 @@
-// Copyright 2011 The Apache Software Foundation
+// Copyright 2011, 2012 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,18 +19,26 @@ import org.testng.annotations.Test;
 
 class YUICompressorIntegrationTests extends SeleniumTestCase
 {
+    def AVAILABLE_OPTIONS = "css=.t-palette-available select";
+
+    def SELECT_BUTTON = "css=.t-palette [data-action=select]";
+
     @Test
     void basic_functionality() {
 
         openBaseURL()
 
-        addSelection "languages-avail", "label=Clojure"
-        click "languages-select"
+        waitForPageInitialized()
 
-        addSelection "languages-avail", "label=Java"
-        click "languages-select"
+        addSelection AVAILABLE_OPTIONS, "label=Clojure"
+        click SELECT_BUTTON
+
+        addSelection AVAILABLE_OPTIONS, "label=Java"
+        click SELECT_BUTTON
         
         clickAndWait SUBMIT
+
+        waitForPageInitialized()
 
         assertText "selected", "CLOJURE, JAVA"
     }
