@@ -20,6 +20,7 @@ define ["core/dom", "core/console", "core/messages", "core/builder", "core/ajax"
   (dom, console, messages, builder, ajax, _) ->
 
     severityToClass =
+      success: "alert alert-success"
       warn: "alert alert-warning"
       error: "alert alert-error"
 
